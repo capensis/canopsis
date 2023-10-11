@@ -312,6 +312,7 @@ export const isArrayPatternRuleField = value => [
   ALARM_PATTERN_FIELDS.connector,
   ALARM_PATTERN_FIELDS.connectorName,
   ALARM_PATTERN_FIELDS.resource,
+  ALARM_PATTERN_FIELDS.tags,
   ENTITY_PATTERN_FIELDS.id,
   EVENT_FILTER_PATTERN_FIELDS.component,
   EVENT_FILTER_PATTERN_FIELDS.connector,
@@ -571,7 +572,7 @@ export const getOperatorsByRule = (rule, ruleType) => {
   }
 
   if (
-    (isInfosRuleType(ruleType) || isExtraInfosPatternRuleField(ruleType))
+    (isInfosRuleType(ruleType) || isExtraInfosRuleType(ruleType))
     && rule.field === PATTERN_RULE_INFOS_FIELDS.name
   ) {
     return PATTERN_INFOS_NAME_OPERATORS;
@@ -1099,6 +1100,14 @@ export const formGroupToPatternRules = group => group.rules.map(formRuleToPatter
  * @return {PatternGroups}
  */
 export const formGroupsToPatternRules = groups => groups.map(formGroupToPatternRules);
+
+/**
+ * Convert form groups to pattern rules query
+ *
+ * @param {PatternGroupsForm} [groups = []]
+ * @return {string}
+ */
+export const formGroupsToPatternRulesQuery = (groups = []) => JSON.stringify(formGroupsToPatternRules(groups));
 
 /**
  * Convert pattern form to pattern

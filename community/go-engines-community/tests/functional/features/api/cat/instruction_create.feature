@@ -2,6 +2,7 @@ Feature: Create a instruction
   I need to be able to create a instruction
   Only admin should be able to create a instruction
 
+  @concurrent
   Scenario: given create manual instruction request should return ok
     When I am admin
     When I do POST /api/v4/cat/instructions:
@@ -545,6 +546,7 @@ Feature: Create a instruction
     }
     """
 
+  @concurrent
   Scenario: given create auto instruction request should return ok
     When I am admin
     When I do POST /api/v4/cat/instructions:
@@ -556,8 +558,11 @@ Feature: Create a instruction
       "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
       "description": "test-instruction-to-create-2-description",
       "enabled": true,
-      "priority": 21,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"
@@ -611,8 +616,11 @@ Feature: Create a instruction
       ],
       "description": "test-instruction-to-create-2-description",
       "enabled": true,
-      "priority": 21,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"
@@ -708,8 +716,11 @@ Feature: Create a instruction
       ],
       "description": "test-instruction-to-create-2-description",
       "enabled": true,
-      "priority": 21,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"
@@ -767,6 +778,7 @@ Feature: Create a instruction
     }
     """
 
+  @concurrent
   Scenario: given create request with custom id should return ok
     When I am admin
     When I do POST /api/v4/cat/instructions:
@@ -807,6 +819,7 @@ Feature: Create a instruction
     When I do GET /api/v4/cat/instructions/test-instruction-to-create-4-id
     Then the response code should be 200
 
+  @concurrent
   Scenario: given create request with custom id that already exist should return error
     When I am admin
     When I do POST /api/v4/cat/instructions:
@@ -825,6 +838,7 @@ Feature: Create a instruction
     }
     """
 
+  @concurrent
   Scenario: given create request with name that already exist should return error
     When I am admin
     When I do POST /api/v4/cat/instructions:
@@ -843,6 +857,7 @@ Feature: Create a instruction
     }
     """
 
+  @concurrent
   Scenario: given invalid create request to create manual instruction should return error
     When I am admin
     When I do POST /api/v4/cat/instructions:
@@ -865,6 +880,7 @@ Feature: Create a instruction
     }
     """
 
+  @concurrent
   Scenario: given invalid create request to create auto instruction should return error
     When I am admin
     When I do POST /api/v4/cat/instructions:
@@ -909,7 +925,11 @@ Feature: Create a instruction
     """json
     {
       "type": 1,
-      "triggers": ["notexist"]
+      "triggers": [
+        {
+          "type": "notexist"
+        }
+      ]
     }
     """
     Then the response code should be 400
@@ -917,11 +937,12 @@ Feature: Create a instruction
     """json
     {
       "errors": {
-        "triggers.0": "Triggers[0] must be one of [create statedec stateinc changestate unsnooze activate pbhenter pbhleave]."
+        "triggers.0.type": "Type must be one of [create statedec stateinc changestate unsnooze activate pbhenter pbhleave eventscount]."
       }
     }
     """
 
+  @concurrent
   Scenario: given create request with not exist job should return error
     When I am admin
     When I do POST /api/v4/cat/instructions:
@@ -971,6 +992,7 @@ Feature: Create a instruction
     }
     """
 
+  @concurrent
   Scenario: given create request with not exist pbehavior type should return error
     When I am admin
     When I do POST /api/v4/cat/instructions:
@@ -1034,6 +1056,7 @@ Feature: Create a instruction
     }
     """
 
+  @concurrent
   Scenario: given create request with invalid patterns should return error
     When I am admin
     When I do POST /api/v4/cat/instructions:
@@ -1262,8 +1285,11 @@ Feature: Create a instruction
       "name": "test-instruction-to-create-3-name",
       "description": "test-instruction-to-create-3-description",
       "enabled": true,
-      "priority": 21,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"
@@ -1292,8 +1318,11 @@ Feature: Create a instruction
       "name": "test-instruction-to-create-3-name",
       "description": "test-instruction-to-create-3-description",
       "enabled": true,
-      "priority": 21,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"
@@ -1314,7 +1343,8 @@ Feature: Create a instruction
       }
     }
     """
-    
+
+  @concurrent
   Scenario: given create simplified manual instruction request should return ok
     When I am admin
     When I do POST /api/v4/cat/instructions:
@@ -1530,7 +1560,8 @@ Feature: Create a instruction
       ]
     }
     """
-    
+
+  @concurrent
   Scenario: given create simplified manual instruction request with manual instruction fields should return error
     When I am admin
     When I do POST /api/v4/cat/instructions:
@@ -1652,11 +1683,310 @@ Feature: Create a instruction
       }
     }
     """
+    
+  @concurrent
+  Scenario: given create auto instruction request with events count trigger should return ok
+    When I am admin
+    When I do POST /api/v4/cat/instructions:
+    """json
+    {
+      "type": 1,
+      "name": "test-instruction-to-create-8-name",
+      "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+      "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+      "description": "test-instruction-to-create-8-description",
+      "enabled": true,
+      "triggers": [
+        {
+          "type": "eventscount",
+          "threshold": 3
+        }
+      ],
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "jobs": [
+        {
+          "stop_on_fail": true,
+          "job": "test-job-to-instruction-edit-1"
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    Then the response body should contain:
+    """json
+    {
+      "type": 1,
+      "status": 0,
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+      "corporate_alarm_pattern_title": "test-pattern-to-rule-edit-1-title",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-rule-edit-1-pattern"
+            }
+          }
+        ]
+      ],
+      "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+      "corporate_entity_pattern_title": "test-pattern-to-rule-edit-2-title",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-rule-edit-2-pattern"
+            }
+          }
+        ]
+      ],
+      "description": "test-instruction-to-create-8-description",
+      "enabled": true,
+      "triggers": [
+        {
+          "type": "eventscount",
+          "threshold": 3
+        }
+      ],
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "name": "test-instruction-to-create-8-name",
+      "jobs": [
+        {
+          "stop_on_fail": true,
+          "job": {
+            "_id": "test-job-to-instruction-edit-1",
+            "author": {
+              "_id": "root",
+              "name": "root"
+            },
+            "config": {
+              "_id": "test-job-config-to-edit-instruction",
+              "auth_token": "test-auth-token",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
+              "host": "http://example.com",
+              "name": "test-job-config-to-edit-instruction-name",
+              "type": "rundeck"
+            },
+            "job_id": "test-job-to-instruction-edit-1-external-id",
+            "name": "test-job-to-instruction-edit-1-name",
+            "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+          }
+        }
+      ]
+    }
+    """
+    When I do GET /api/v4/cat/instructions/{{ .lastResponse._id }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "type": 1,
+      "status": 0,
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+      "corporate_alarm_pattern_title": "test-pattern-to-rule-edit-1-title",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-rule-edit-1-pattern"
+            }
+          }
+        ]
+      ],
+      "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+      "corporate_entity_pattern_title": "test-pattern-to-rule-edit-2-title",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-rule-edit-2-pattern"
+            }
+          }
+        ]
+      ],
+      "description": "test-instruction-to-create-8-description",
+      "enabled": true,
+      "triggers": [
+        {
+          "type": "eventscount",
+          "threshold": 3
+        }
+      ],
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "name": "test-instruction-to-create-8-name",
+      "jobs": [
+        {
+          "stop_on_fail": true,
+          "job": {
+            "_id": "test-job-to-instruction-edit-1",
+            "author": {
+              "_id": "root",
+              "name": "root"
+            },
+            "config": {
+              "_id": "test-job-config-to-edit-instruction",
+              "auth_token": "test-auth-token",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
+              "host": "http://example.com",
+              "name": "test-job-config-to-edit-instruction-name",
+              "type": "rundeck"
+            },
+            "job_id": "test-job-to-instruction-edit-1-external-id",
+            "name": "test-job-to-instruction-edit-1-name",
+            "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+          }
+        }
+      ]
+    }
+    """
+    
+  @concurrent
+  Scenario: given create auto instruction requests with invalid threshold value should return errors
+    When I am admin
+    When I do POST /api/v4/cat/instructions:
+    """json
+    {
+      "type": 1,
+      "name": "test-instruction-to-create-9-name",
+      "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+      "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+      "description": "test-instruction-to-create-9-description",
+      "enabled": true,
+      "triggers": [
+        {
+          "type": "eventscount"
+        }
+      ],
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "jobs": [
+        {
+          "stop_on_fail": true,
+          "job": "test-job-to-instruction-edit-1"
+        }
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "triggers.0.threshold": "Threshold is required when Type eventscount is defined."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/instructions:
+    """json
+    {
+      "type": 1,
+      "name": "test-instruction-to-create-9-name",
+      "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+      "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+      "description": "test-instruction-to-create-9-description",
+      "enabled": true,
+      "triggers": [
+        {
+          "type": "eventscount",
+          "threshold": 1
+        }
+      ],
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "jobs": [
+        {
+          "stop_on_fail": true,
+          "job": "test-job-to-instruction-edit-1"
+        }
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "triggers.0.threshold": "Threshold should be greater than 1."
+      }
+    }
+    """
+    When I do POST /api/v4/cat/instructions:
+    """json
+    {
+      "type": 1,
+      "name": "test-instruction-to-create-9-name",
+      "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+      "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+      "description": "test-instruction-to-create-9-description",
+      "enabled": true,
+      "triggers": [
+        {
+          "type": "create",
+          "threshold": 1
+        }
+      ],
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "jobs": [
+        {
+          "stop_on_fail": true,
+          "job": "test-job-to-instruction-edit-1"
+        }
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "triggers.0.threshold": "Threshold should be empty when Type eventscount is not defined."
+      }
+    }
+    """
 
+  @concurrent
   Scenario: given create request and no auth user should not allow access
     When I do POST /api/v4/cat/instructions
     Then the response code should be 401
 
+  @concurrent
   Scenario: given create request and auth user without permissions should not allow access
     When I am noperms
     When I do POST /api/v4/cat/instructions

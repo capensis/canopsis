@@ -110,7 +110,7 @@ export default {
       default: false,
     },
     contentClass: {
-      type: [String, Object],
+      type: [String, Object, Array],
       required: false,
     },
   },

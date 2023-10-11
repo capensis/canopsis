@@ -22,9 +22,9 @@ import { MODALS, WIDGET_TEMPLATES_TYPES, COLUMNS_WIDGET_TEMPLATES_TYPES } from '
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 
-import ModalWrapper from '../modal-wrapper.vue';
-
 import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html';
+
+import ModalWrapper from '../modal-wrapper.vue';
 
 /**
  * Modal to create widget

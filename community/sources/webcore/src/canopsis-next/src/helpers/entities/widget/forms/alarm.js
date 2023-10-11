@@ -28,6 +28,8 @@ import { convertDurationToString, durationWithEnabledToForm, isValidUnit } from 
 import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/array';
 import { kioskParametersToForm } from '@/helpers/entities/shared/kiosk/form';
 
+import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html';
+
 import { formToWidgetTemplateValue, widgetTemplateValueToForm } from '../template/form';
 import { formToWidgetColumns, widgetColumnsToForm } from '../column/form';
 import { getWidgetColumnLabel, getWidgetColumnSortable } from '../list';
@@ -35,8 +37,6 @@ import { getWidgetColumnLabel, getWidgetColumnSortable } from '../list';
 import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from './bar-chart';
 import { formToLineChartWidgetParameters, lineChartWidgetParametersToForm } from './line-chart';
 import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './numbers-chart';
-
-import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html';
 
 /**
  * @typedef {'BarChart', 'LineChart', 'Numbers'} AlarmChartType
@@ -161,6 +161,7 @@ import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html'
  * @property {boolean} isAckNoteRequired
  * @property {boolean} isSnoozeNoteRequired
  * @property {boolean} isRemoveAlarmsFromMetaAlarmCommentRequired
+ * @property {boolean} isUncancelAlarmsCommentRequired
  * @property {boolean} isMultiAckEnabled
  * @property {boolean} isMultiDeclareTicketEnabled
  * @property {boolean} isHtmlEnabledOnTimeLine
@@ -172,6 +173,7 @@ import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html'
 /**
  * @typedef {AlarmListWidgetDefaultParameters} AlarmListWidgetParameters
  * @property {DurationWithEnabled} periodic_refresh
+ * @property {boolean} liveWatching
  * @property {string | null} mainFilter
  * @property {WidgetLiveReporting} liveReporting
  * @property {WidgetSort} sort
@@ -334,9 +336,10 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   isAckNoteRequired: !!parameters.isAckNoteRequired,
   isSnoozeNoteRequired: !!parameters.isSnoozeNoteRequired,
   isRemoveAlarmsFromMetaAlarmCommentRequired: parameters.isRemoveAlarmsFromMetaAlarmCommentRequired ?? true,
+  isUncancelAlarmsCommentRequired: parameters.isUncancelAlarmsCommentRequired ?? true,
   isMultiAckEnabled: !!parameters.isMultiAckEnabled,
   isMultiDeclareTicketEnabled: !!parameters.isMultiDeclareTicketEnabled,
-  isHtmlEnabledOnTimeLine: !!parameters.isHtmlEnabledOnTimeLine,
+  isHtmlEnabledOnTimeLine: parameters.isHtmlEnabledOnTimeLine ?? true,
   isActionsAllowWithOkState: !!parameters.isActionsAllowWithOkState,
   sticky_header: !!parameters.sticky_header,
   dense: parameters.dense ?? ALARM_DENSE_TYPES.large,
@@ -380,6 +383,7 @@ export const alarmListWidgetParametersToForm = (parameters = {}) => ({
   ...alarmListWidgetDefaultParametersToForm(parameters),
 
   periodic_refresh: periodicRefreshToDurationForm(parameters.periodic_refresh),
+  liveWatching: parameters.liveWatching ?? false,
   mainFilter: parameters.mainFilter ?? null,
   clearFilterDisabled: parameters.clearFilterDisabled ?? false,
   liveReporting: parameters.liveReporting

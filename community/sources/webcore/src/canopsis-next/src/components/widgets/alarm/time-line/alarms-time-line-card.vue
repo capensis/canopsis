@@ -1,7 +1,7 @@
 <template lang="pug">
   div.time-line-card
-    div.time-line-card__header
-      template(v-if="isStateCounter")
+    div.time-line-card__header.text--secondary
+      template(v-if="isNotStateCounter")
         c-alarm-chip.chips.pr-2(
           v-if="!isStepTypeAction",
           :value="step.val",
@@ -10,9 +10,9 @@
         p {{ stepTitle }}
       p(v-else) {{ $t('alarm.timeLine.stateCounter.header') }}
 
-    div.time-line-card__content
-      template(v-if="isStateCounter")
-        p(v-if="isHtmlEnabled", v-html="step.m")
+    div.time-line-card__content.text--disabled
+      template(v-if="isNotStateCounter")
+        c-compiled-template(v-if="isHtmlEnabled", :template="step.m")
         p(v-else) {{ step.m }}
       table(v-else)
         tr
@@ -42,7 +42,7 @@ export default {
     },
   },
   computed: {
-    isStateCounter() {
+    isNotStateCounter() {
       return this.step._t !== 'statecounter';
     },
   },
@@ -82,14 +82,6 @@ $border_line: #DDDDE0;
       &:first-letter {
         text-transform: uppercase;
       }
-    }
-
-    .theme--light & {
-      color: #686868;
-    }
-
-    .theme--dark & {
-      color: #989898;
     }
   }
 

@@ -31,7 +31,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
         class="v-table__overflow"
       >
         <table
-          class="v-datatable v-table v-datatable--select-all v-datatable--dense theme--light"
+          class="v-datatable v-table v-datatable--expand v-datatable--select-all v-datatable--dense theme--light"
         >
           <thead
             style="transform: translateY(0px); opacity: 1;"
@@ -143,15 +143,15 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
           </thead>
           <tbody>
             <alarms-list-row-stub
-              columns="[object Object]"
               columnsfilters=""
               expandable="true"
-              hideactions="true"
+              headers="[object Object]"
               istourenabled="true"
               medium="true"
               parentalarm="[object Object]"
               refreshalarmslist="[Function]"
               row="[object Object]"
+              search=""
               selectable="true"
               selectedtag="tag"
               widget="[object Object]"
@@ -166,14 +166,14 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               />
             </tr>
             <alarms-list-row-stub
-              columns="[object Object]"
               columnsfilters=""
               expandable="true"
-              hideactions="true"
+              headers="[object Object]"
               medium="true"
               parentalarm="[object Object]"
               refreshalarmslist="[Function]"
               row="[object Object]"
+              search=""
               selectable="true"
               selectedtag="tag"
               widget="[object Object]"
@@ -188,14 +188,14 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               />
             </tr>
             <alarms-list-row-stub
-              columns="[object Object]"
               columnsfilters=""
               expandable="true"
-              hideactions="true"
+              headers="[object Object]"
               medium="true"
               parentalarm="[object Object]"
               refreshalarmslist="[Function]"
               row="[object Object]"
+              search=""
               selectable="true"
               selectedtag="tag"
               widget="[object Object]"
@@ -210,14 +210,14 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               />
             </tr>
             <alarms-list-row-stub
-              columns="[object Object]"
               columnsfilters=""
               expandable="true"
-              hideactions="true"
+              headers="[object Object]"
               medium="true"
               parentalarm="[object Object]"
               refreshalarmslist="[Function]"
               row="[object Object]"
+              search=""
               selectable="true"
               selectedtag="tag"
               widget="[object Object]"
@@ -232,14 +232,14 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               />
             </tr>
             <alarms-list-row-stub
-              columns="[object Object]"
               columnsfilters=""
               expandable="true"
-              hideactions="true"
+              headers="[object Object]"
               medium="true"
               parentalarm="[object Object]"
               refreshalarmslist="[Function]"
               row="[object Object]"
+              search=""
               selectable="true"
               selectedtag="tag"
               widget="[object Object]"
@@ -318,7 +318,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
               <th
                 aria-label="Actions: Not sorted."
                 aria-sort="none"
-                class="column text-xs-left"
+                class="column text-xs-left alarms-list-table__draggable-column"
                 data-value="actions"
                 role="columnheader"
                 scope="col"
@@ -327,6 +327,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                   header="[object Object]"
                   selectedtag=""
                 />
+                <!---->
                 <!---->
               </th>
             </tr>
@@ -383,7 +384,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 role="columnheader"
                 scope="col"
                 tabindex="0"
-                width="104px"
+                width="40px"
               >
                 <alarm-header-cell-stub
                   header="[object Object]"
@@ -402,7 +403,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
               <th
                 aria-label="Actions: Not sorted."
                 aria-sort="none"
-                class="column text-xs-left"
+                class="column text-xs-left alarms-list-table__draggable-column"
                 data-value="actions"
                 role="columnheader"
                 scope="col"
@@ -411,6 +412,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                   header="[object Object]"
                   selectedtag=""
                 />
+                <!---->
                 <!---->
               </th>
             </tr>
@@ -519,7 +521,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
               <th
                 aria-label="Actions: Not sorted."
                 aria-sort="none"
-                class="column text-xs-left"
+                class="column text-xs-left alarms-list-table__draggable-column"
                 data-value="actions"
                 role="columnheader"
                 scope="col"
@@ -528,6 +530,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                   header="[object Object]"
                   selectedtag=""
                 />
+                <!---->
                 <!---->
               </th>
             </tr>
@@ -638,7 +641,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
               <th
                 aria-label="Actions: Not sorted."
                 aria-sort="none"
-                class="column text-xs-left"
+                class="column text-xs-left alarms-list-table__draggable-column"
                 data-value="actions"
                 role="columnheader"
                 scope="col"
@@ -647,6 +650,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                   header="[object Object]"
                   selectedtag=""
                 />
+                <!---->
                 <!---->
               </th>
             </tr>
@@ -728,7 +732,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
         class="v-table__overflow"
       >
         <table
-          class="v-datatable v-table theme--light"
+          class="v-datatable v-table v-datatable--expand theme--light"
         >
           <thead>
             <tr>
@@ -739,6 +743,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                 data-value=""
                 role="columnheader"
                 scope="col"
+                width="82"
               >
                 <alarm-header-cell-stub
                   header="[object Object]"
@@ -773,7 +778,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               <th
                 aria-label="Actions: Not sorted."
                 aria-sort="none"
-                class="column text-xs-left"
+                class="column text-xs-left alarms-list-table__draggable-column"
                 data-value="actions"
                 role="columnheader"
                 scope="col"
@@ -782,6 +787,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                   header="[object Object]"
                   selectedtag=""
                 />
+                <!---->
                 <!---->
               </th>
             </tr>
@@ -796,11 +802,12 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
           </thead>
           <tbody>
             <alarms-list-row-stub
-              columns="[object Object]"
               columnsfilters=""
               expandable="true"
+              headers="[object Object],[object Object],[object Object]"
               refreshalarmslist="[Function]"
               row="[object Object]"
+              search=""
               selectedtag=""
               widget="[object Object]"
             />
@@ -814,11 +821,12 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               />
             </tr>
             <alarms-list-row-stub
-              columns="[object Object]"
               columnsfilters=""
               expandable="true"
+              headers="[object Object],[object Object],[object Object]"
               refreshalarmslist="[Function]"
               row="[object Object]"
+              search=""
               selectedtag=""
               widget="[object Object]"
             />
@@ -832,11 +840,12 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               />
             </tr>
             <alarms-list-row-stub
-              columns="[object Object]"
               columnsfilters=""
               expandable="true"
+              headers="[object Object],[object Object],[object Object]"
               refreshalarmslist="[Function]"
               row="[object Object]"
+              search=""
               selectedtag=""
               widget="[object Object]"
             />
@@ -850,11 +859,12 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               />
             </tr>
             <alarms-list-row-stub
-              columns="[object Object]"
               columnsfilters=""
               expandable="true"
+              headers="[object Object],[object Object],[object Object]"
               refreshalarmslist="[Function]"
               row="[object Object]"
+              search=""
               selectedtag=""
               widget="[object Object]"
             />
@@ -868,11 +878,12 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               />
             </tr>
             <alarms-list-row-stub
-              columns="[object Object]"
               columnsfilters=""
               expandable="true"
+              headers="[object Object],[object Object],[object Object]"
               refreshalarmslist="[Function]"
               row="[object Object]"
+              search=""
               selectedtag=""
               widget="[object Object]"
             />

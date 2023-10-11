@@ -710,53 +710,6 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
               </div>
             </td>
           </tr>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
-              >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <!---->
-              </div>
-            </td>
-            <td>
-              name-10
-            </td>
-            <td>
-              system-name-10
-            </td>
-            <td>
-              <c-enabled-stub />
-            </td>
-            <td>
-              04/03/2021 13:44:58
-            </td>
-            <td>
-              04/03/2021 13:44:58
-            </td>
-            <td>
-              author-name-10
-            </td>
-            <td>
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  type="edit"
-                />
-                <c-action-btn-stub
-                  type="duplicate"
-                />
-                <c-action-btn-stub
-                  type="delete"
-                />
-              </div>
-            </td>
-          </tr>
         </tbody>
       </table>
     </div>

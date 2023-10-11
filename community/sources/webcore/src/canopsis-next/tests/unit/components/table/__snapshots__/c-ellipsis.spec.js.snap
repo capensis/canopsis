@@ -3,7 +3,7 @@
 exports[`c-ellipsis Renders \`c-ellipsis\` correctly 1`] = `
 <div><span>omnis esse recusandae magni similique porro quaera</span>
   <div class="v-menu"><span class="ml-1">...</span>
-    <div class="v-card v-sheet theme--dark">
+    <div class="v-card v-sheet theme--light">
       <div class="v-card__title pre-wrap">omnis esse recusandae magni similique porro quaerat alias vel deserunt porro voluptate
         voluptatibus commodi sequi et qui fugiat exercitationem et et eligendi ad officia quis suscipit earum soluta
         minima architecto numquam et voluptatibus quia officiis nulla veritatis soluta optio assumenda est fugiat est

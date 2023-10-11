@@ -142,7 +142,7 @@ Utilisation générique :
 Ce helper attend un unique paramètre :
 
 *  `nombre-de-secondes` (obligatoire). Une variable, ou un entier positif correspondant à un [timestamp Unix](https://fr.wikipedia.org/wiki/Heure_Unix) réglé sur UTC. Si la variable est vide, le helper n'affichera rien.
-*  `format` (optionnel). Seul le format `long` est pris en charge. Il s'agit d'afficher la date au format long `30/03/1987 10:00:00` même si le timestamp correspond à la date du jour.
+*  `format` (optionnel). Il s'agit du format [moment](https://momentjscom.readthedocs.io/en/latest/moment/04-displaying/01-format/). De plus, le format `long` est également pris en charge. Il s'agit d'afficher la date au format long `30/03/1987 10:00:00` même si le timestamp correspond à la date du jour.
 
 #### Exemple d'utilisation du helper `timestamp`
 
@@ -151,6 +151,24 @@ Afficher le timestamp Unix de `544089600` secondes (correspondant au 30 mars 
 ```handlebars
 {{timestamp 544089600}}
 {{timestamp 544089600 format='long'}}
+```
+
+Afficher la date à partir du timestamp lorsque la date est aujourd'hui (07:07:17)
+
+```handlebars
+{{timestamp 1673932037}}
+```
+
+Afficher la date à partir du timestamp sur un format long (17/01/2023 07:07:17)
+
+```handlebars
+{{timestamp 1673932037 format='long'}}
+```
+
+Afficher la date à partir du timestamp sur un format personnalisé (January 17th 2023, 07:07:17 am)
+
+```handlebars
+{{timestamp 1673932037 format='MMMM Do YYYY, h:mm:ss a'}}
 ```
 
 ### Helper `request`
@@ -505,9 +523,44 @@ Ce helper permet d'afficher les `liens` d'une alarme ou d'une entité.
 
 ```handlebars
 {{#copy 'Valeur à copier'}}Label{{/copy}}
-{{#copy alarm.v.display_name}}<button>Cliquer pour copier</button>{{/copy}}
 ```
 
 Ce helper permet de copier le contenu de sa valeur dans le clipboard pour utilsiation ultérieure.
 
+#### Exemple d'utilisation du helper `copy`
+
+Copier dans le presse papier la valeur de l'identifiant d'une alarme :
+
+{{#copy alarm.v.display_name}}<button>Cliquer pour copier</button>{{/copy}}
+
+Copier dans le presse papier la structure d'un événement à partir d'une alarme :
+
+```handlebars
+{{#copy (concat '{
+  "connector" : "' alarm.v.connector '",
+  "connector_name" : "' alarm.v.connector_name '",
+  "component" : "' alarm.v.component '",
+  "resource" : "' alarm.v.resource '",
+  "source_type" : "resource",
+  "event_type" : "check",
+  "output" : "' alarm.v.output '",
+  "state" : ' alarm.v.state.val '
+}') }}Cliquez pour copier la base de l'événement d'origine{{/copy}}
+```
+
+### Helper `json`
+
+```handlebars
+{{json alarm.v 'display_name'}}
+```
+
+Ce helper permet de renvoyer des informations au format json
+
+#### Exemple d'utilisation du helper `json`
+
+Renvoyer au format json une alarme complète :
+
+```handlebars
+{{json alarm.v }}
+```
 

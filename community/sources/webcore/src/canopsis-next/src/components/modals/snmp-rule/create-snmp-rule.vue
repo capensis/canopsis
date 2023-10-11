@@ -15,9 +15,9 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { MODALS, SNMP_STATE_TYPES } from '@/constants';
+import { snmpRuleToForm, formToSnmpRule } from '@/helpers/entities/snmp-rule/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -29,6 +29,10 @@ import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.createSnmpRule,
+  $_veeValidate: {
+    validator: 'new',
+    delay: VALIDATION_DELAY,
+  },
   components: { SnmpRuleForm, ModalWrapper },
   mixins: [
     modalInnerMixin,
@@ -36,52 +40,21 @@ export default {
     confirmableModalMixinCreator(),
   ],
   data() {
-    const defaultModuleMibObjectForm = {
-      value: '',
-      regex: '',
-      formatter: '',
-    };
-
-    const defaultSnmpRule = {
-      oid: {
-        oid: '',
-        mibName: '',
-        moduleName: '',
-      },
-      component: { ...defaultModuleMibObjectForm },
-      connector_name: { ...defaultModuleMibObjectForm },
-      output: { ...defaultModuleMibObjectForm },
-      resource: { ...defaultModuleMibObjectForm },
-      state: {
-        type: SNMP_STATE_TYPES.simple,
-      },
-    };
+    const { snmpRule } = this.modal.config;
 
     return {
-      form: this.modal.config.snmpRule ? cloneDeep(this.modal.config.snmpRule) : defaultSnmpRule,
+      form: snmpRuleToForm(snmpRule),
     };
   },
   computed: {
     title() {
-      if (this.config.snmpRule) {
-        return this.$t('modals.createSnmpRule.edit.title');
-      }
-
-      return this.$t('modals.createSnmpRule.create.title');
+      return this.config.title ?? this.$t('modals.createSnmpRule.create.title');
     },
   },
   methods: {
     async submit() {
       if (this.config.action) {
-        const preparedData = this.form;
-
-        if (preparedData._id) {
-          preparedData.id = preparedData._id;
-        }
-
-        await this.config.action({
-          document: preparedData,
-        });
+        await this.config.action(formToSnmpRule(this.form));
       }
 
       this.$modals.hide();

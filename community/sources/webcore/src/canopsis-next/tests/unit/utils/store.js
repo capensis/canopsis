@@ -3,6 +3,8 @@ import Vuex from 'vuex';
 import AxiosMockAdapter from 'axios-mock-adapter';
 import Faker from 'faker';
 
+import { CANOPSIS_EDITION } from '@/constants';
+
 import request from '@/services/request';
 import { DEFAULT_ENTITY_MODULE_TYPES } from '@/store/plugins/entities/create-crud-module';
 
@@ -309,22 +311,38 @@ export const testsEntityModule = ({
 };
 
 export const createAuthModule = () => {
+  const currentUser = jest.fn()
+    .mockReturnValue({});
   const currentUserPermissionsById = jest.fn()
     .mockReturnValue({});
+  const login = jest.fn();
+  const fetchCurrentUser = jest.fn();
+
   const authModule = {
     name: 'auth',
     getters: {
+      currentUser,
       currentUserPermissionsById,
+    },
+    actions: {
+      login,
+      fetchCurrentUser,
     },
   };
 
   afterEach(() => {
+    currentUser.mockClear();
     currentUserPermissionsById.mockClear();
+    login.mockClear();
+    fetchCurrentUser.mockClear();
   });
 
   return {
     authModule,
+    currentUser,
     currentUserPermissionsById,
+    login,
+    fetchCurrentUser,
   };
 };
 
@@ -446,6 +464,74 @@ export const createWidgetModule = () => {
     updateWidgetFilter,
     removeWidgetFilter,
     updateGridPositions,
+  };
+};
+
+export const createViewModule = () => {
+  const groups = jest.fn().mockReturnValue([]);
+  const pending = jest.fn().mockReturnValue(false);
+  const fetchGroupsList = jest.fn();
+  const fetchGroupsListWithoutStore = jest.fn();
+  const updateViewsPositions = jest.fn();
+  const createGroup = jest.fn();
+  const updateGroup = jest.fn();
+  const removeGroup = jest.fn();
+  const copyView = jest.fn();
+  const createView = jest.fn();
+  const updateView = jest.fn();
+  const removeView = jest.fn();
+
+  afterEach(() => {
+    fetchGroupsList.mockClear();
+    fetchGroupsListWithoutStore.mockClear();
+    updateViewsPositions.mockClear();
+    createGroup.mockClear();
+    updateGroup.mockClear();
+    removeGroup.mockClear();
+    createView.mockClear();
+    copyView.mockClear();
+    updateView.mockClear();
+    removeView.mockClear();
+    groups.mockClear();
+    pending.mockClear();
+  });
+
+  const viewModule = {
+    name: 'view',
+    getters: {
+      items: groups,
+      pending,
+    },
+    actions: {
+      fetchList: fetchGroupsList,
+      fetchListWithoutStore: fetchGroupsListWithoutStore,
+      updatePositionsView: updateViewsPositions,
+      create: createGroup,
+      update: updateGroup,
+      remove: removeGroup,
+      copyView,
+      createView,
+      updateView,
+      removeView,
+    },
+  };
+
+  return {
+    viewModule,
+
+    groups,
+    pending,
+
+    fetchGroupsList,
+    fetchGroupsListWithoutStore,
+    updateViewsPositions,
+    createGroup,
+    updateGroup,
+    removeGroup,
+    createView,
+    copyView,
+    updateView,
+    removeView,
   };
 };
 
@@ -1042,5 +1128,157 @@ export const createPatternModule = () => {
     patternModule,
     checkPatternsEntitiesCount,
     checkPatternsAlarmsCount,
+  };
+};
+
+export const createInfoModule = () => {
+  const description = jest.fn().mockReturnValue('');
+  const maintenance = jest.fn().mockReturnValue(false);
+  const footer = jest.fn().mockReturnValue('');
+  const casConfig = jest.fn().mockReturnValue({});
+  const samlConfig = jest.fn().mockReturnValue({});
+  const edition = jest.fn().mockReturnValue(CANOPSIS_EDITION.community);
+  const version = jest.fn().mockReturnValue();
+  const isCASAuthEnabled = jest.fn().mockReturnValue(false);
+  const isSAMLAuthEnabled = jest.fn().mockReturnValue(false);
+  const isLDAPAuthEnabled = jest.fn().mockReturnValue(false);
+
+  afterEach(() => {
+    maintenance.mockClear();
+    description.mockClear();
+    footer.mockClear();
+    casConfig.mockClear();
+    samlConfig.mockClear();
+    edition.mockClear();
+    version.mockClear();
+    isCASAuthEnabled.mockClear();
+    isSAMLAuthEnabled.mockClear();
+    isLDAPAuthEnabled.mockClear();
+  });
+
+  const infoModule = {
+    name: 'info',
+    getters: {
+      maintenance,
+      description,
+      footer,
+      casConfig,
+      samlConfig,
+      edition,
+      version,
+      isCASAuthEnabled,
+      isSAMLAuthEnabled,
+      isLDAPAuthEnabled,
+    },
+  };
+
+  return {
+    infoModule,
+    maintenance,
+    description,
+    footer,
+    casConfig,
+    samlConfig,
+    edition,
+    version,
+    isCASAuthEnabled,
+    isSAMLAuthEnabled,
+    isLDAPAuthEnabled,
+  };
+};
+
+export const createNavigationModule = () => {
+  const isEditingMode = jest.fn().mockReturnValue(false);
+  const toggleEditingMode = jest.fn();
+
+  afterEach(() => {
+    isEditingMode.mockClear();
+    toggleEditingMode.mockClear();
+  });
+
+  const navigationModule = {
+    name: 'navigation',
+    getters: {
+      isEditingMode,
+    },
+    actions: {
+      toggleEditingMode,
+    },
+  };
+
+  return {
+    navigationModule,
+    isEditingMode,
+    toggleEditingMode,
+  };
+};
+
+export const createModalsModule = () => {
+  const hasMaximizedModal = jest.fn().mockReturnValue(false);
+
+  afterEach(() => {
+    hasMaximizedModal.mockClear();
+  });
+
+  const modalsModule = {
+    name: 'modals',
+    getters: {
+      hasMaximizedModal,
+    },
+  };
+
+  return {
+    modalsModule,
+    hasMaximizedModal,
+  };
+};
+
+export const createEntitiesModule = () => {
+  const registerGetter = jest.fn();
+  const unregisterGetter = jest.fn();
+
+  afterEach(() => {
+    registerGetter.mockClear();
+    unregisterGetter.mockClear();
+  });
+
+  const entitiesModule = {
+    name: 'entities',
+    actions: {
+      registerGetter,
+      unregisterGetter,
+    },
+  };
+
+  return {
+    entitiesModule,
+    registerGetter,
+    unregisterGetter,
+  };
+};
+
+export const createPlaylistModule = () => {
+  const playlists = jest.fn().mockReturnValue([]);
+  const fetchPlaylistsList = jest.fn();
+
+  afterEach(() => {
+    playlists.mockClear();
+    fetchPlaylistsList.mockClear();
+  });
+
+  const playlistModule = {
+    name: 'playlist',
+    getters: {
+      items: playlists,
+    },
+    actions: {
+      fetchList: fetchPlaylistsList,
+    },
+  };
+
+  return {
+    playlistModule,
+    playlists,
+    fetchPlaylistsList,
   };
 };

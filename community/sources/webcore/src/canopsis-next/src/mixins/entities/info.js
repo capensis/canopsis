@@ -35,6 +35,8 @@ export const entitiesInfoMixin = {
       fileUploadMaxSize: 'fileUploadMaxSize',
       remediationJobConfigTypes: 'remediationJobConfigTypes',
       maintenance: 'maintenance',
+      defaultColorTheme: 'defaultColorTheme',
+      eventsCountTriggerDefaultThreshold: 'eventsCountTriggerDefaultThreshold',
     }),
 
     isProVersion() {

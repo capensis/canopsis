@@ -9,7 +9,11 @@ Feature: scenarios should be triggered by remediation triggers
     {
       "name": "test-scenario-action-remediation-triggers-second-1-name",
       "enabled": true,
-      "triggers": ["autoinstructionresultfail"],
+      "triggers": [
+        {
+          "type": "autoinstructionresultfail"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -164,7 +168,11 @@ Feature: scenarios should be triggered by remediation triggers
     {
       "name": "test-scenario-action-remediation-triggers-second-2-name",
       "enabled": true,
-      "triggers": ["autoinstructionresultfail"],
+      "triggers": [
+        {
+          "type": "autoinstructionresultfail"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -319,7 +327,11 @@ Feature: scenarios should be triggered by remediation triggers
     {
       "name": "test-scenario-action-remediation-triggers-second-3-name",
       "enabled": true,
-      "triggers": ["autoinstructionresultok"],
+      "triggers": [
+        {
+          "type": "autoinstructionresultok"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -343,7 +355,7 @@ Feature: scenarios should be triggered by remediation triggers
                 "password": "test"
               },
               "headers": {"Content-Type": "application/json"},
-              "payload": "{\"name\":\"{{ `{{ .Alarm.Value.Output }}` }}\",\"enabled\":true,\"triggers\":[\"comment\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"{{ `{{ .Entity.ID }}` }}\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"name\":\"{{ `{{ .Alarm.Value.Output }}` }}\",\"enabled\":true,\"triggers\":[{\"type\":\"comment\"}],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"{{ `{{ .Entity.ID }}` }}\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             },
             "declare_ticket": {
               "ticket_id": "_id"
@@ -588,7 +600,11 @@ Feature: scenarios should be triggered by remediation triggers
     {
       "name": "test-scenario-action-remediation-triggers-second-4-name",
       "enabled": true,
-      "triggers": ["autoinstructionresultok"],
+      "triggers": [
+        {
+          "type": "autoinstructionresultok"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -612,7 +628,7 @@ Feature: scenarios should be triggered by remediation triggers
                 "password": "test"
               },
               "headers": {"Content-Type": "application/json"},
-              "payload": "{\"name\":\"{{ `{{ .Alarm.Value.Output }}` }}\",\"enabled\":true,\"triggers\":[\"comment\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"{{ `{{ .Entity.ID }}` }}\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"name\":\"{{ `{{ .Alarm.Value.Output }}` }}\",\"enabled\":true,\"triggers\":[{\"type\":\"comment\"}],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"{{ `{{ .Entity.ID }}` }}\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             },
             "declare_ticket": {
               "ticket_id": "_id"
@@ -854,7 +870,11 @@ Feature: scenarios should be triggered by remediation triggers
     {
       "name": "test-scenario-action-remediation-triggers-second-5-name",
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [

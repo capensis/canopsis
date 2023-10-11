@@ -84,8 +84,8 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
     Exécuter les commandes suivantes :
 
     ```sh
-    docker-compose restart reconfigure
-    docker-compose restart
+    docker compose restart reconfigure
+    docker compose restart
     ```
 
 ## Description des options
@@ -109,13 +109,12 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 | JunitApi       | "/tmp/canopsis/junit"                    | Emplacement des fichiers temporaires uploadés par le module Junit (via API) |
 
 
-
 ### Section [Canopsis.alarm]
 
 | Attribut                          | Exemple de valeur     | Description                          |
 | :-------------------------------- | :---------------------| :----------------------------------- |
 | StealthyInterval                  |                       | Encore utilisé ?          |
-| EnableLastEventDate               | true,false            | Active la mise à jour du champ `last_event_date` d'une alarme à chaque événement        | 
+| :warning: Obsolète :warning: EnableLastEventDate               | true,false            | Active la mise à jour du champ `last_event_date` d'une alarme à chaque événement :warning: Depuis Canopsis 23.10, la date de dernier changement est nécessairement calculée :warning:  | 
 | CancelAutosolveDelay              | "1h"                  | Délai de résolution effective d'une alarme après annulation depuis l'interface graphiqe |
 | DisplayNameScheme                 | "{{ rand_string 3 }}-{{ rand_string 3 }}-{{ rand_string 3 }}" | Schéma utilisé pour générer le champ `display_name` d'une alarme |
 | OutputLength                      | 255                   | Nombre maximum de caractères du champ `output` avant troncage | 
@@ -156,6 +155,7 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 | TokenSigningMethod  | "HS256"            | Méthode de signature d'un token d'authentification |
 | BulkMaxSize         | 1000               | Taille maximum d'un batch de changement de données en base |
 | ExportBulkize       | 5000               | Nombre maximum d'alarmes d'un batch pour l'export. Ce paramètre doit être diminué si les alarmes que vous souhaitez exporter sont volumineuses |
+| AuthorScheme        | ["$username"]      | Permet de définir la manière de représenter l'auteur d'une action dans Canopsis. Ex : `["$username", " ", "$firstname", " ", "$lastname", " ", "$email", " ", "$_id"] ` |
 
 
 ### Section [Canopsis.logger]
@@ -190,9 +190,10 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 
 ### Section [Canopsis.template.vars]
 
-| Attribut     | Exemple de valeur  | Description                           |
-| :----------- | :------------------| :------------------------------------ |
-| var1 | "valeur1" | Ces variables peuvent être utilisées dans des [templates Go](../../guide-utilisation/templates-go/index.md) sous la forme `{{ .Env.var }}` ou dans l'interface graphique en [Handlebars](../../guide-utilisation/cas-d-usage/template_handlebars.md) sous la forme `{{ env.var1 }}` |
+| Attribut                | Exemple de valeur  | Description                           |
+| :---------------------- | :------------------| :------------------------------------ |
+| system_env_var_prefixes | ["ENV_"]           | Les variables d'environnement peuvent être utilisées dans des [templates Go](../../guide-utilisation/templates-go/index.md) sous la forme `{{ .Env.System.ENV_var }}` ou dans l'interface graphique en [Handlebars](../../guide-utilisation/cas-d-usage/template_handlebars.md) sous la forme `{{ env.System.ENV_var }}`.<br />Seules les variables dont le prefixe est mentionné dans ce paramètre seront lues. |
+| var1                    | "valeur1"          | Ces variables peuvent être utilisées dans des [templates Go](../../guide-utilisation/templates-go/index.md) sous la forme `{{ .Env.var }}` ou dans l'interface graphique en [Handlebars](../../guide-utilisation/cas-d-usage/template_handlebars.md) sous la forme `{{ env.var1 }}` |
  
 
 ### Section [Remediation]

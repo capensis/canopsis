@@ -2,7 +2,11 @@
   c-no-events-icon(v-if="isNoEventsStatus", :value="idleSince", :size="iconSize", color="error", top)
   v-tooltip(v-else, top)
     template(#activator="{ on }")
-      v-icon.d-block(v-on="on", :color="statusColor", :size="iconSize") {{ status.icon }}
+      v-icon.d-block(
+        v-on="on",
+        :size="iconSize",
+        :style="{ color: statusColor, caretColor: statusColor}"
+      ) {{ status.icon }}
     span {{ $t(`common.statusTypes.${statusValue}`) }}
 </template>
 
