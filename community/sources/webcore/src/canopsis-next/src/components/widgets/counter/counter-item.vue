@@ -1,5 +1,5 @@
 <template lang="pug">
-  card-with-see-alarms-btn.white--text.counter-item(
+  card-with-see-alarms-btn.counter-item(
     :class="itemClasses",
     :style="itemStyle",
     :show-button="hasAlarmsListAccess",
@@ -15,7 +15,7 @@
       v-icon help
     div
       v-layout(justify-start)
-        v-icon.px-3.py-2.white--text(size="2em") {{ icon }}
+        v-icon.px-3.py-2(size="2em") {{ icon }}
         c-compiled-template.counter-item__template.pt-3(
           :template="widget.parameters.blockTemplate",
           :context="templateContext"
@@ -170,10 +170,6 @@ export default {
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: 1.2em;
-
-    &, & a {
-      color: white;
-    }
   }
 
   &__help-btn {

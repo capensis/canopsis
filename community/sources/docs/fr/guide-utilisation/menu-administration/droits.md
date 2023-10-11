@@ -8,7 +8,7 @@ Pour accéder à ce menu, cliquez sur Administration > Droits :
 
 ## Gestion des droits
 
-Après la création d'un nouveau [rôle](./roles/) il est nécessaire d'y associer des droits pour utiliser Canopsis.
+Après la création d'un nouveau [rôle](./roles.md) il est nécessaire d'y associer des droits pour utiliser Canopsis.
 
 La vue principale se compose d'un tableau avec plusieurs onglets que nous allons détailler.
 

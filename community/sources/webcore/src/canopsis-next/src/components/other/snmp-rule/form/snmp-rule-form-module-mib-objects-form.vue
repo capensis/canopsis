@@ -50,6 +50,7 @@ import { formMixin } from '@/mixins/form';
 import SnmpRuleFormField from './snmp-rule-form-field-title.vue';
 
 export default {
+  inject: ['$validator'],
   components: { SnmpRuleFormField },
   mixins: [formMixin],
   model: {

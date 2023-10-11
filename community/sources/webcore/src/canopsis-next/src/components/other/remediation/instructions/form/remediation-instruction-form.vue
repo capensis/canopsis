@@ -4,7 +4,7 @@
       v-flex(xs3)
         c-instruction-type-field.mb-2(
           v-field="form.type",
-          :disabled="disabled"
+          :disabled="disabled || !isNew"
         )
       v-flex
         c-enabled-field.mt-0(
@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { REMEDIATION_AUTO_INSTRUCTION_TRIGGERS } from '@/constants';
+import { REMEDIATION_AUTO_INSTRUCTION_TRIGGERS_TYPES } from '@/constants';
 
 import { isInstructionAuto, isInstructionSimpleManual } from '@/helpers/entities/remediation/instruction/form';
 
@@ -80,6 +80,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    isNew: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     isAutoType() {
@@ -91,7 +95,7 @@ export default {
     },
 
     availableTriggers() {
-      return REMEDIATION_AUTO_INSTRUCTION_TRIGGERS;
+      return REMEDIATION_AUTO_INSTRUCTION_TRIGGERS_TYPES;
     },
   },
 };

@@ -29,7 +29,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
         class="v-expansion-panel__header"
       >
         <span
-          class="v-label theme--light"
+          class="v-label"
         >
           Shapes
         </span>
@@ -76,7 +76,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 45 36"
@@ -109,7 +109,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 45 36"
@@ -143,7 +143,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 35 36"
@@ -176,7 +176,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 36 36"
@@ -211,7 +211,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 45 45"
@@ -244,7 +244,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 45 36"
@@ -275,7 +275,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 55 36"
@@ -305,7 +305,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 45 36"
@@ -354,7 +354,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 45 36"
@@ -387,7 +387,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 45 45"
@@ -418,7 +418,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 45 45"
@@ -451,7 +451,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 45 45"
@@ -489,7 +489,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 45 45"
@@ -532,7 +532,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 45 45"
@@ -565,7 +565,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 45 45"
@@ -606,7 +606,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 45 45"
@@ -655,7 +655,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 45 45"
@@ -672,7 +672,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -681,7 +680,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -690,7 +688,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -699,7 +696,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -708,7 +704,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -717,7 +712,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -726,7 +720,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -735,7 +728,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -769,7 +761,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 45 45"
@@ -786,7 +778,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -795,7 +786,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -804,7 +794,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -813,7 +802,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -822,7 +810,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -831,7 +818,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -840,7 +826,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -849,7 +834,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -895,7 +879,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
         class="v-expansion-panel__header"
       >
         <span
-          class="v-label theme--light"
+          class="v-label"
         >
           Icons
         </span>
@@ -936,7 +920,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                 class="v-btn__content"
               >
                 <span
-                  class="grey--text text--darken-3 flowchart-sidebar__button-svg"
+                  class="text--disabled flowchart-sidebar__button-svg"
                 >
                   <svg>
                     <text>
@@ -965,7 +949,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                 class="v-btn__content"
               >
                 <span
-                  class="grey--text text--darken-3 flowchart-sidebar__button-svg"
+                  class="text--disabled flowchart-sidebar__button-svg"
                 >
                   <svg>
                     <text>
@@ -1021,7 +1005,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
         class="v-expansion-panel__header"
       >
         <span
-          class="v-label theme--light"
+          class="v-label"
         >
           Shapes
         </span>
@@ -1068,7 +1052,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 45 36"
@@ -1101,7 +1085,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 45 36"
@@ -1135,7 +1119,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 35 36"
@@ -1168,7 +1152,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 36 36"
@@ -1203,7 +1187,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 45 45"
@@ -1236,7 +1220,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 45 36"
@@ -1267,7 +1251,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 55 36"
@@ -1297,7 +1281,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 45 36"
@@ -1346,7 +1330,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 45 36"
@@ -1379,7 +1363,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 45 45"
@@ -1410,7 +1394,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 45 45"
@@ -1443,7 +1427,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 45 45"
@@ -1481,7 +1465,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 45 45"
@@ -1524,7 +1508,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 45 45"
@@ -1557,7 +1541,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 45 45"
@@ -1598,7 +1582,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 45 45"
@@ -1647,7 +1631,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 45 45"
@@ -1664,7 +1648,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -1673,7 +1656,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -1682,7 +1664,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -1691,7 +1672,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -1700,7 +1680,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -1709,7 +1688,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -1718,7 +1696,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -1727,7 +1704,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -1761,7 +1737,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                   class="v-btn__content"
                 >
                   <svg
-                    class="grey--text text--darken-3 pa-1"
+                    class="pa-1 text--disabled"
                     fill="none"
                     height="45"
                     viewBox="0 0 45 45"
@@ -1778,7 +1754,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -1787,7 +1762,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -1796,7 +1770,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -1805,7 +1778,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -1814,7 +1786,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -1823,7 +1794,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -1832,7 +1802,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -1841,7 +1810,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                     />
                      
                     <rect
-                      fill="white"
                       height="4"
                       stroke="currentColor"
                       width="4"
@@ -1887,7 +1855,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
         class="v-expansion-panel__header"
       >
         <span
-          class="v-label theme--light"
+          class="v-label"
         >
           Icons
         </span>
@@ -1928,7 +1896,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                 class="v-btn__content"
               >
                 <span
-                  class="grey--text text--darken-3 flowchart-sidebar__button-svg"
+                  class="text--disabled flowchart-sidebar__button-svg"
                 >
                   <svg>
                     <text>
@@ -1957,7 +1925,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                 class="v-btn__content"
               >
                 <span
-                  class="grey--text text--darken-3 flowchart-sidebar__button-svg"
+                  class="text--disabled flowchart-sidebar__button-svg"
                 >
                   <svg>
                     <text>

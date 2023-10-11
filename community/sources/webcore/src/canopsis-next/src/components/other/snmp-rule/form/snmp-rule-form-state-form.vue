@@ -20,10 +20,16 @@
       )
       v-layout(row, wrap)
         v-flex(xs12)
-          v-layout(v-for="(state, key) in $constants.ENTITIES_STATES", :key="key", row, wrap, align-center)
+          v-layout(
+            v-for="{ value, color, key, text } in availableStates",
+            :key="value",
+            row,
+            wrap,
+            align-center
+          )
             v-flex(xs2)
-              v-chip(:style="{ backgroundColor: $constants.ENTITIES_STATES_STYLES[state].color }", label)
-                strong.state-title {{ $t(`modals.createChangeStateEvent.states.${key}`) }}
+              v-chip(:style="{ backgroundColor: color }", label)
+                strong.state-title {{ text }}
             v-flex(xs10)
               v-text-field(v-field="form[key]", :placeholder="$t('snmpRule.writeTemplate')")
     template(v-else)
@@ -33,7 +39,9 @@
 </template>
 
 <script>
-import { SNMP_STATE_TYPES } from '@/constants';
+import { SNMP_STATE_TYPES, SNMP_TEMPLATE_STATE_STATES } from '@/constants';
+
+import { getSnmpRuleStateColor } from '@/helpers/entities/snmp-rule/color';
 
 import { formBaseMixin } from '@/mixins/form';
 
@@ -62,10 +70,23 @@ export default {
       type: Array,
       default: () => [],
     },
+    stateValues: {
+      type: Object,
+      default: () => SNMP_TEMPLATE_STATE_STATES,
+    },
   },
   computed: {
     isTemplate() {
       return this.form.type === SNMP_STATE_TYPES.template;
+    },
+
+    availableStates() {
+      return Object.entries(this.stateValues).map(([key, state]) => ({
+        key,
+        text: this.$t(`snmpRule.states.${key}`),
+        value: state,
+        color: getSnmpRuleStateColor(state),
+      }));
     },
   },
   methods: {

@@ -71,21 +71,13 @@ func (p *ackRemoveProcessor) Process(ctx context.Context, event rpc.AxeEvent) (R
 	}
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
 	var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
-	firstTry := true
+
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
 		updatedServiceStates = nil
-		var err error
-		if !firstTry {
-			entity, err = findEntity(ctx, event.Entity.ID, p.entityCollection)
-			if err != nil {
-				return err
-			}
-		}
 
-		firstTry = false
 		alarm := types.Alarm{}
-		err = p.alarmCollection.FindOneAndUpdate(ctx, match, update, opts).Decode(&alarm)
+		err := p.alarmCollection.FindOneAndUpdate(ctx, match, update, opts).Decode(&alarm)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				return nil

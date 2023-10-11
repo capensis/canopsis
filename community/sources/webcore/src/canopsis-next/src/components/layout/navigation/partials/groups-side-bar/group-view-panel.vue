@@ -11,21 +11,19 @@
             v-btn.ma-0(
               v-show="hasEditAccess",
               :disabled="isOrderChanged",
-              :data-test="`editViewButton-view-${view._id}`",
               depressed,
               small,
               icon,
-              @click.prevent="editHandler"
+              @click.prevent="$emit('change')"
             )
               v-icon(small) edit
             v-btn.ma-0(
               v-show="isEditing",
               :disabled="isOrderChanged",
-              :data-test="`copyViewButton-view-${view._id}`",
               depressed,
               small,
               icon,
-              @click.prevent="duplicateHandler"
+              @click.prevent="$emit('duplicate')"
             )
               v-icon(small) file_copy
     v-divider
@@ -61,19 +59,11 @@ export default {
   },
   computed: {
     cardColor() {
-      return this.isViewActive ? 'secondary white--text lighten-3' : 'secondary white--text lighten-1';
+      return `secondary ${this.isViewActive ? 'lighten-3' : 'lighten-1'}`;
     },
 
     ellipsis() {
       return !this.$slots.title && !this.$scopedSlots.title;
-    },
-  },
-  methods: {
-    editHandler() {
-      this.$emit('change');
-    },
-    duplicateHandler() {
-      this.$emit('duplicate');
     },
   },
 };

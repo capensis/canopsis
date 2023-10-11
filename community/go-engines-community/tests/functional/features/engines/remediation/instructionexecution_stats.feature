@@ -313,7 +313,11 @@ Feature: update an instruction statistics
     """json
     {
       "type": 1,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "name": "test-instruction-to-stats-update-2-name",
       "entity_pattern": [
         [
@@ -890,7 +894,11 @@ Feature: update an instruction statistics
     """json
     {
       "type": 1,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "name": "test-instruction-to-stats-update-4-name",
       "entity_pattern": [
         [

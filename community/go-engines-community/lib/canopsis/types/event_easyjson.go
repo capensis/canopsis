@@ -292,6 +292,8 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.IsMetaAlarmUpdated = bool(in.Bool())
 		case "instr_matched":
 			out.IsInstructionMatched = bool(in.Bool())
+		case "healthcheck":
+			out.Healthcheck = bool(in.Bool())
 		case "ticket":
 			out.Ticket = string(in.String())
 		case "ticket_url":
@@ -654,6 +656,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.RawString(prefix)
 		out.Bool(bool(in.IsInstructionMatched))
 	}
+	if in.Healthcheck {
+		const prefix string = ",\"healthcheck\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.Healthcheck))
+	}
 	if in.Ticket != "" {
 		const prefix string = ",\"ticket\":"
 		out.RawString(prefix)
@@ -874,10 +881,24 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 					in.AddError((*out.PreviousPbehaviorTime).UnmarshalJSON(data))
 				}
 			}
+		case "PreviousEntityPbehaviorTime":
+			if in.IsNull() {
+				in.Skip()
+				out.PreviousEntityPbehaviorTime = nil
+			} else {
+				if out.PreviousEntityPbehaviorTime == nil {
+					out.PreviousEntityPbehaviorTime = new(CpsTime)
+				}
+				if data := in.Raw(); in.Ok() {
+					in.AddError((*out.PreviousEntityPbehaviorTime).UnmarshalJSON(data))
+				}
+			}
 		case "PreviousPbehaviorTypeID":
 			out.PreviousPbehaviorTypeID = string(in.String())
 		case "PreviousPbehaviorCannonicalType":
 			out.PreviousPbehaviorCannonicalType = string(in.String())
+		case "EventsCount":
+			out.EventsCount = int(in.Int())
 		default:
 			in.SkipRecursive()
 		}
@@ -927,6 +948,15 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		}
 	}
 	{
+		const prefix string = ",\"PreviousEntityPbehaviorTime\":"
+		out.RawString(prefix)
+		if in.PreviousEntityPbehaviorTime == nil {
+			out.RawString("null")
+		} else {
+			out.Raw((*in.PreviousEntityPbehaviorTime).MarshalJSON())
+		}
+	}
+	{
 		const prefix string = ",\"PreviousPbehaviorTypeID\":"
 		out.RawString(prefix)
 		out.String(string(in.PreviousPbehaviorTypeID))
@@ -935,6 +965,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"PreviousPbehaviorCannonicalType\":"
 		out.RawString(prefix)
 		out.String(string(in.PreviousPbehaviorCannonicalType))
+	}
+	{
+		const prefix string = ",\"EventsCount\":"
+		out.RawString(prefix)
+		out.Int(int(in.EventsCount))
 	}
 	out.RawByte('}')
 }

@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import layoutNavigationGroupsBarGroupMixin from '@/mixins/layout/navigation/groups-bar-group';
+import { layoutNavigationGroupsBarGroupMixin } from '@/mixins/layout/navigation/groups-bar-group';
 
 import GroupsTopBarGroupView from './groups-top-bar-group-view.vue';
 

@@ -1,0 +1,110 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`groups-side-bar-playlists Renders \`groups-side-bar-playlists\` with custom props 1`] = `
+<ul
+  class="v-expansion-panel sidebar-playlists v-expansion-panel--focusable theme--dark"
+>
+  <li
+    class="v-expansion-panel__container secondary lighten-1"
+    tabindex="0"
+  >
+    <div
+      class="v-expansion-panel__header"
+    >
+      <div
+        class="panel-header"
+      >
+        <span>
+          Playlists
+        </span>
+      </div>
+      <transition-stub
+        name="fade-transition"
+      >
+        <div
+          class="v-expansion-panel__header__icon"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--dark"
+          >
+            keyboard_arrow_down
+          </i>
+        </div>
+      </transition-stub>
+    </div>
+    <transition-stub
+      mode="in-out"
+      name="expand-transition"
+    >
+      <div
+        class="v-expansion-panel__body"
+        style="display: none;"
+      >
+        <router-link-stub
+          title="playlist-1-name"
+          to="[object Object]"
+        >
+          <div
+            class="secondary lighten-2 sidebar-playlists__button v-card v-sheet theme--dark"
+          >
+            <div
+              class="v-card__text"
+            >
+              <div
+                class="layout align-center justify-space-between"
+              >
+                <div
+                  class="flex"
+                >
+                  <div
+                    class="layout align-center"
+                  >
+                    <span
+                      class="ellipsis pl-3"
+                    >
+                      playlist-1-name
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </router-link-stub>
+        <router-link-stub
+          title="playlist-2-name"
+          to="[object Object]"
+        >
+          <div
+            class="secondary lighten-2 sidebar-playlists__button v-card v-sheet theme--dark"
+          >
+            <div
+              class="v-card__text"
+            >
+              <div
+                class="layout align-center justify-space-between"
+              >
+                <div
+                  class="flex"
+                >
+                  <div
+                    class="layout align-center"
+                  >
+                    <span
+                      class="ellipsis pl-3"
+                    >
+                      playlist-2-name
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </router-link-stub>
+      </div>
+    </transition-stub>
+  </li>
+</ul>
+`;
+
+exports[`groups-side-bar-playlists Renders \`groups-side-bar-playlists\` with required props 1`] = `<!---->`;

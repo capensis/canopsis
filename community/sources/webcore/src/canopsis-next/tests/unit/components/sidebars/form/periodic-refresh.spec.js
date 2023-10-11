@@ -8,9 +8,11 @@ import PeriodicRefresh from '@/components/sidebars/form/fields/periodic-refresh.
 const stubs = {
   'widget-settings-item': true,
   'periodic-refresh-field': true,
+  'live-watching-field': true,
 };
 
 const selectPeriodicRefreshField = wrapper => wrapper.find('periodic-refresh-field-stub');
+const selectLiveWatchingField = wrapper => wrapper.find('live-watching-field-stub');
 
 describe('periodic-refresh', () => {
   const factory = generateShallowRenderer(PeriodicRefresh, { stubs });
@@ -31,11 +33,15 @@ describe('periodic-refresh', () => {
   });
 
   it('Unit as seconds settled created, if unit doesn\'t exist', () => {
+    const form = {
+      periodic_refresh: {
+        value: 1,
+      },
+    };
+
     const wrapper = factory({
       propsData: {
-        value: {
-          value: 1,
-        },
+        form,
       },
     });
 
@@ -45,36 +51,72 @@ describe('periodic-refresh', () => {
 
     const [eventData] = inputEvents[0];
     expect(eventData).toEqual({
-      value: 1,
-      unit: TIME_UNITS.second,
+      ...form,
+      periodic_refresh: {
+        ...form.periodic_refresh,
+
+        unit: TIME_UNITS.second,
+      },
     });
   });
 
   it('Value changed after trigger periodic refresh field', () => {
     const wrapper = factory({
       propsData: {
-        value: {
-          value: 1,
-          unit: TIME_UNITS.day,
+        form: {
+          periodic_refresh: {
+            value: 1,
+            unit: TIME_UNITS.day,
+          },
         },
       },
     });
-
-    const periodicRefreshField = selectPeriodicRefreshField(wrapper);
 
     const newValue = {
       value: 2,
       unit: TIME_UNITS.week,
     };
 
-    periodicRefreshField.vm.$emit('input', newValue);
+    selectPeriodicRefreshField(wrapper).vm.$emit('input', newValue);
 
     const inputEvents = wrapper.emitted('input');
 
     expect(inputEvents).toHaveLength(1);
 
     const [eventData] = inputEvents[0];
-    expect(eventData).toBe(newValue);
+    expect(eventData).toEqual({
+      periodic_refresh: newValue,
+    });
+  });
+
+  it('Live watching triggers input on changes', () => {
+    const form = {
+      periodic_refresh: {
+        value: 1,
+        unit: TIME_UNITS.second,
+      },
+    };
+
+    const wrapper = factory({
+      propsData: {
+        form,
+        withLiveWatching: true,
+      },
+    });
+
+    const newLiveWatching = true;
+
+    selectLiveWatchingField(wrapper).vm.$emit('input', newLiveWatching);
+
+    const inputEvents = wrapper.emitted('input');
+
+    expect(inputEvents).toHaveLength(1);
+
+    const [eventData] = inputEvents[0];
+    expect(eventData).toEqual({
+      ...form,
+      liveWatching: newLiveWatching,
+    });
   });
 
   it('Renders `periodic-refresh` with default props', () => {
@@ -83,14 +125,26 @@ describe('periodic-refresh', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
+  it('Renders `periodic-refresh` with with life watching', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        withLifeWatching: true,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
   it('Renders `periodic-refresh` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
-        value: {
-          value: 1,
-          unit: TIME_UNITS.minute,
-        },
         name: 'customName',
+        form: {
+          periodic_refresh: {
+            value: 1,
+            unit: TIME_UNITS.minute,
+          },
+        },
       },
     });
 
@@ -102,9 +156,11 @@ describe('periodic-refresh', () => {
 
     const wrapper = snapshotFactory({
       propsData: {
-        value: {
-          value: 1,
-          unit: TIME_UNITS.minute,
+        form: {
+          periodic_refresh: {
+            value: 1,
+            unit: TIME_UNITS.minute,
+          },
         },
         name,
       },

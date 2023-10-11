@@ -231,6 +231,13 @@ export const entitiesModule = {
     },
 
     /**
+     * @typedef {Object} EntitiesNormalizationConfig
+     * @property {Object} schema - Schema for the resource
+     * @property {Object} data - Data for normalization
+     * @property {string} mutationType - Mutation type after normalization
+     */
+
+    /**
      * @typedef {Object} EntitiesRequestConfig
      * @property {string} route - Route of resource
      * @property {Object} schema - Schema for the resource
@@ -259,7 +266,7 @@ export const entitiesModule = {
      * @returns {Promise<EntitiesResponseData>}
      */
     async sendRequest(
-      { commit },
+      { dispatch },
       {
         route,
         schema,
@@ -294,8 +301,11 @@ export const entitiesModule = {
           throw new Error(`Invalid method: ${method}`);
       }
 
-      const normalizedData = normalize(dataPreparer(data), schema);
-      commit(mutationType, normalizedData.entities);
+      const normalizedData = await dispatch('addToStore', {
+        schema,
+        data: dataPreparer(data),
+        mutationType,
+      });
 
       if (afterCommit) {
         afterCommit({ data, normalizedData });
@@ -346,6 +356,22 @@ export const entitiesModule = {
      */
     async delete({ dispatch }, config) {
       return dispatch('sendRequest', { ...config, method: REQUEST_METHODS.delete });
+    },
+
+    /**
+     *
+     * @param {VuexActionContext} context
+     * @param schema
+     * @param data
+     * @param mutationType
+     * @returns {*}
+     */
+    addToStore({ commit }, { schema, data, mutationType = internalTypes.ENTITIES_UPDATE }) {
+      const normalizedData = normalize(data, schema);
+
+      commit(mutationType, normalizedData.entities);
+
+      return normalizedData;
     },
 
     /**

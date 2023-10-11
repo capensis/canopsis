@@ -1,9 +1,6 @@
 <template lang="pug">
   div
-    snmp-rule-form-module-form(
-      v-field="form.oid",
-      :module-mibs.sync="moduleMibs"
-    )
+    snmp-rule-form-module-form(v-field="form.oid")
     v-layout(v-if="selectedModuleMib", row)
       v-flex(xs12)
         v-alert.mt-3(
@@ -61,22 +58,15 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {
-      moduleMibs: [],
-    };
-  },
   computed: {
     selectedModuleMib() {
-      return this.moduleMibs.find(({ name }) => name === this.form.oid.mibName);
+      return this.form.oid?.mib;
     },
 
     selectedModuleMibObjects() {
-      if (this.selectedModuleMib) {
-        return Object.keys(this.selectedModuleMib.objects);
-      }
-
-      return [];
+      return this.selectedModuleMib?.objects
+        ? Object.keys(this.selectedModuleMib.objects)
+        : [];
     },
   },
 };
