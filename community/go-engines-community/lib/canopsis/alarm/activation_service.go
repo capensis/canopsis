@@ -60,6 +60,7 @@ func (s *baseActivationService) sendActivationEvent(ctx context.Context, alarm t
 		Timestamp:         types.NewCpsTime(),
 		ReceivedTimestamp: eventReceivedTimestamp,
 		EventType:         types.EventTypeActivate,
+		Initiator:         types.InitiatorSystem,
 	}
 	event.SourceType = event.DetectSourceType()
 	body, err := s.encoder.Encode(event)

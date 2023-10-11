@@ -104,6 +104,7 @@ Feature: instruction execution should be added to alarm steps
                 "_t": "instructionstart",
                 "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
+                "initiator": "user",
                 "m": "Instruction test-instruction-axe-api-instruction-1-name."
               }
             ],
@@ -247,12 +248,14 @@ Feature: instruction execution should be added to alarm steps
                 "_t": "instructionstart",
                 "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
+                "initiator": "user",
                 "m": "Instruction test-instruction-axe-api-instruction-2-name."
               },
               {
                 "_t": "instructioncomplete",
                 "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
+                "initiator": "user",
                 "m": "Instruction test-instruction-axe-api-instruction-2-name."
               }
             ],
@@ -380,12 +383,14 @@ Feature: instruction execution should be added to alarm steps
                 "_t": "instructionstart",
                 "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
+                "initiator": "user",
                 "m": "Instruction test-instruction-axe-api-instruction-3-name."
               },
               {
                 "_t": "instructionpause",
                 "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
+                "initiator": "user",
                 "m": "Instruction test-instruction-axe-api-instruction-3-name."
               }
             ],
@@ -524,18 +529,21 @@ Feature: instruction execution should be added to alarm steps
                 "_t": "instructionstart",
                 "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
+                "initiator": "user",
                 "m": "Instruction test-instruction-axe-api-instruction-4-name."
               },
               {
                 "_t": "instructionpause",
                 "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
+                "initiator": "user",
                 "m": "Instruction test-instruction-axe-api-instruction-4-name."
               },
               {
                 "_t": "instructionresume",
                 "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
+                "initiator": "user",
                 "m": "Instruction test-instruction-axe-api-instruction-4-name."
               }
             ],
@@ -665,12 +673,14 @@ Feature: instruction execution should be added to alarm steps
                 "_t": "instructionstart",
                 "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
+                "initiator": "user",
                 "m": "Instruction test-instruction-axe-api-instruction-5-name."
               },
               {
                 "_t": "instructionabort",
                 "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
+                "initiator": "user",
                 "m": "Instruction test-instruction-axe-api-instruction-5-name."
               }
             ],
@@ -817,12 +827,14 @@ Feature: instruction execution should be added to alarm steps
                 "_t": "instructionstart",
                 "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
+                "initiator": "user",
                 "m": "Instruction test-instruction-axe-api-instruction-6-name."
               },
               {
                 "_t": "instructionfail",
                 "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
+                "initiator": "user",
                 "m": "Instruction test-instruction-axe-api-instruction-6-name."
               }
             ],

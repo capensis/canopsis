@@ -5,25 +5,23 @@ Feature: create an alarm for a resource
   Three entities should be created in the db: for a component,
   for a connector, for a resource
 
+  @concurrent
   Scenario: given an event for a resource should create alarm and entities
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test_post_connector_create_alarm",
+      "connector_name": "test_post_connector_name_create_alarm",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test_post_component_create_alarm",
+      "resource": "test_post_resource_create_alarm",
+      "state": 1,
+      "output": "noveo alarm"
+    }
     """
-      {
-        "connector" : "test_post_connector_create_alarm",
-        "connector_name" : "test_post_connector_name_create_alarm",
-        "source_type" : "resource",
-        "event_type" : "check",
-        "component" : "test_post_component_create_alarm",
-        "resource" : "test_post_resource_create_alarm",
-        "state" : 1,
-        "output" : "noveo alarm"
-      }
-    """
-    Then the response code should be 200
-    When I wait the end of event processing
     Then an entity test_post_component_create_alarm should be in the db
     And an entity test_post_connector_create_alarm/test_post_connector_name_create_alarm should be in the db
     And an entity test_post_resource_create_alarm/test_post_component_create_alarm should be in the db
     And an alarm test_post_resource_create_alarm/test_post_component_create_alarm should be in the db
-

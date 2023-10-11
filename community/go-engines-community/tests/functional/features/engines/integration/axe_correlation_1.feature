@@ -32,10 +32,16 @@ Feature: create and update meta alarm
             "meta": "{{ .metaAlarmRuleID }}",
             "state": {
               "_t": "stateinc",
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 2
             },
             "status": {
               "_t": "statusinc",
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 1
             }
           }
@@ -72,10 +78,16 @@ Feature: create and update meta alarm
             "meta": "{{ .metaAlarmRuleID }}",
             "state": {
               "_t": "stateinc",
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 3
             },
             "status": {
               "_t": "statusinc",
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 1
             }
           }
@@ -168,16 +180,22 @@ Feature: create and update meta alarm
               {
                 "_t": "stateinc",
                 "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system",
                 "val": 2
               },
               {
                 "_t": "statusinc",
                 "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system",
                 "val": 1
               },
               {
                 "_t": "stateinc",
                 "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system",
                 "val": 3
               }
             ],
@@ -257,7 +275,8 @@ Feature: create and update meta alarm
               {
                 "_t": "metaalarmattach",
                 "a": "engine.correlation",
-                "val": 0
+                "user_id": "",
+                "initiator": "system"
               }
             ],
             "meta": {
@@ -304,30 +323,24 @@ Feature: create and update meta alarm
       ]
     }
     """
+    When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
     When I save response metaAlarmEntityID={{ (index .lastResponse.data 0).entity._id }}
-    When I save response metaAlarmConnector={{ (index .lastResponse.data 0).v.connector }}
-    When I save response metaAlarmConnectorName={{ (index .lastResponse.data 0).v.connector_name }}
     When I save response metaAlarmComponent={{ (index .lastResponse.data 0).v.component }}
     When I save response metaAlarmResource={{ (index .lastResponse.data 0).v.resource }}
-    When I send an event:
+    When I do PUT /api/v4/alarms/{{ .metaAlarmID }}/ack:
     """json
     {
-      "connector": "{{ .metaAlarmConnector }}",
-      "connector_name": "{{ .metaAlarmConnectorName }}",
-      "source_type": "resource",
-      "event_type": "ack",
-      "component": "{{ .metaAlarmComponent }}",
-      "resource": "{{ .metaAlarmResource }}",
-      "output": "test-output-axe-correlation-2"
+      "comment": "test-output-axe-correlation-2"
     }
     """
+    Then the response code should be 204
     Then I wait the end of events processing which contain:
     """json
     [
       {
         "event_type": "ack",
-        "connector": "{{ .metaAlarmConnector }}",
-        "connector_name": "{{ .metaAlarmConnectorName }}",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .metaAlarmComponent }}",
         "resource": "{{ .metaAlarmResource }}",
         "source_type": "resource"
@@ -353,6 +366,8 @@ Feature: create and update meta alarm
             "ack": {
               "_t": "ack",
               "a": "root John Doe admin@canopsis.net",
+              "user_id": "root",
+              "initiator": "user",
               "m": "test-output-axe-correlation-2"
             },
             "children": [],
@@ -409,11 +424,16 @@ Feature: create and update meta alarm
                 "val": 1
               },
               {
-                "_t": "metaalarmattach"
+                "_t": "metaalarmattach",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system"
               },
               {
                 "_t": "ack",
                 "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
+                "initiator": "user",
                 "m": "test-output-axe-correlation-2"
               }
             ],
@@ -526,14 +546,23 @@ Feature: create and update meta alarm
             "data": [
               {
                 "_t": "stateinc",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system",
                 "val": 1
               },
               {
                 "_t": "statusinc",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system",
                 "val": 1
               },
               {
                 "_t": "stateinc",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system",
                 "val": 2
               }
             ],
@@ -578,31 +607,25 @@ Feature: create and update meta alarm
       ]
     }
     """
+    When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
     When I save response metaAlarmEntityID={{ (index .lastResponse.data 0).entity._id }}
-    When I save response metaAlarmConnector={{ (index .lastResponse.data 0).v.connector }}
-    When I save response metaAlarmConnectorName={{ (index .lastResponse.data 0).v.connector_name }}
     When I save response metaAlarmComponent={{ (index .lastResponse.data 0).v.component }}
     When I save response metaAlarmResource={{ (index .lastResponse.data 0).v.resource }}
-    When I send an event:
+    When I do PUT /api/v4/alarms/{{ .metaAlarmID }}/changestate:
     """json
     {
-      "connector": "{{ .metaAlarmConnector }}",
-      "connector_name": "{{ .metaAlarmConnectorName }}",
-      "source_type": "resource",
-      "event_type": "changestate",
       "state": 2,
-      "component": "{{ .metaAlarmComponent }}",
-      "resource": "{{ .metaAlarmResource }}",
-      "output": "test-output-axe-correlation-4"
+      "comment": "test-output-axe-correlation-4"
     }
     """
+    Then the response code should be 204
     Then I wait the end of events processing which contain:
     """json
     [
       {
         "event_type": "changestate",
-        "connector": "{{ .metaAlarmConnector }}",
-        "connector_name": "{{ .metaAlarmConnectorName }}",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .metaAlarmComponent }}",
         "resource": "{{ .metaAlarmResource }}",
         "source_type": "resource"
@@ -636,6 +659,8 @@ Feature: create and update meta alarm
             "state": {
               "_t": "changestate",
               "a": "root John Doe admin@canopsis.net",
+              "user_id": "root",
+              "initiator": "user",
               "m": "test-output-axe-correlation-4",
               "val": 2
             },
@@ -684,11 +709,14 @@ Feature: create and update meta alarm
               {
                 "_t": "metaalarmattach",
                 "a": "engine.correlation",
-                "val": 0
+                "user_id": "",
+                "initiator": "system"
               },
               {
                 "_t": "changestate",
                 "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
+                "initiator": "user",
                 "m": "test-output-axe-correlation-4",
                 "val": 2
               }
@@ -816,9 +844,15 @@ Feature: create and update meta alarm
             "connector_name": "correlation",
             "meta": "{{ .metaAlarmRuleID }}",
             "state": {
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 2
             },
             "status": {
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 1
             }
           }
@@ -856,14 +890,23 @@ Feature: create and update meta alarm
             "data": [
               {
                 "_t": "stateinc",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system",
                 "val": 1
               },
               {
                 "_t": "statusinc",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system",
                 "val": 1
               },
               {
                 "_t": "stateinc",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system",
                 "val": 2
               }
             ],
@@ -936,10 +979,16 @@ Feature: create and update meta alarm
             "connector_name": "correlation",
             "meta": "{{ .metaAlarmRuleID }}",
             "state": {
-              "val": 1
+              "val": 1,
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system"
             },
             "status": {
-              "val": 1
+              "val": 1,
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system"
             }
           }
         }
@@ -976,14 +1025,23 @@ Feature: create and update meta alarm
             "data": [
               {
                 "_t": "stateinc",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system",
                 "val": 2
               },
               {
                 "_t": "statusinc",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system",
                 "val": 1
               },
               {
                 "_t": "statedec",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system",
                 "val": 1
               }
             ],
@@ -1028,31 +1086,28 @@ Feature: create and update meta alarm
       ]
     }
     """
+    When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
     When I save response metaAlarmEntityID={{ (index .lastResponse.data 0).entity._id }}
-    When I save response metaAlarmConnector={{ (index .lastResponse.data 0).v.connector }}
-    When I save response metaAlarmConnectorName={{ (index .lastResponse.data 0).v.connector_name }}
     When I save response metaAlarmComponent={{ (index .lastResponse.data 0).v.component }}
     When I save response metaAlarmResource={{ (index .lastResponse.data 0).v.resource }}
-    When I send an event:
+    When I do PUT /api/v4/alarms/{{ .metaAlarmID }}/snooze:
     """json
     {
-      "connector": "{{ .metaAlarmConnector }}",
-      "connector_name": "{{ .metaAlarmConnectorName }}",
-      "source_type": "resource",
-      "event_type": "snooze",
-      "duration": 6000,
-      "component": "{{ .metaAlarmComponent }}",
-      "resource": "{{ .metaAlarmResource }}",
-      "output": "test-output-axe-correlation-8"
+      "duration": {
+        "value": 100,
+        "unit": "m"
+      },
+      "comment": "test-output-axe-correlation-8"
     }
     """
+    Then the response code should be 204
     Then I wait the end of events processing which contain:
     """json
     [
       {
         "event_type": "snooze",
-        "connector": "{{ .metaAlarmConnector }}",
-        "connector_name": "{{ .metaAlarmConnectorName }}",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .metaAlarmComponent }}",
         "resource": "{{ .metaAlarmResource }}",
         "source_type": "resource"
@@ -1163,10 +1218,15 @@ Feature: create and update meta alarm
               },
               {
                 "_t": "metaalarmattach",
-                "a": "engine.correlation"
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system"
               },
               {
-                "_t": "snooze"
+                "_t": "snooze",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
+                "initiator": "user"
               }
             ],
             "meta": {
@@ -1223,10 +1283,16 @@ Feature: create and update meta alarm
             "meta": "{{ .metaAlarmRuleID }}",
             "state": {
               "_t": "stateinc",
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 3
             },
             "status": {
               "_t": "statusinc",
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 1
             }
           }
@@ -1327,7 +1393,9 @@ Feature: create and update meta alarm
               },
               {
                 "_t": "metaalarmattach",
-                "a": "engine.correlation"
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system"
               }
             ],
             "meta": {
@@ -1354,7 +1422,9 @@ Feature: create and update meta alarm
               },
               {
                 "_t": "metaalarmattach",
-                "a": "engine.correlation"
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system"
               }
             ],
             "meta": {

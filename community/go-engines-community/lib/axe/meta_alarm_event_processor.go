@@ -182,7 +182,7 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event rpc
 			}
 		}
 
-		err = UpdateAlarmState(&metaAlarm, *event.Entity, event.Parameters.Timestamp, worstState, event.Parameters.Output, p.alarmStatusService)
+		err = updateMetaAlarmState(&metaAlarm, *event.Entity, event.Parameters.Timestamp, worstState, event.Parameters.Output, p.alarmStatusService)
 		if err != nil {
 			return err
 		}
@@ -306,7 +306,7 @@ func (p *metaAlarmEventProcessor) AttachChildrenToMetaAlarm(ctx context.Context,
 		metaAlarm.IncrementEventsCount(eventsCount)
 
 		if worstState > metaAlarm.CurrentState() {
-			err = UpdateAlarmState(&metaAlarm, *event.Entity, event.Parameters.Timestamp, worstState, metaAlarm.Value.Output, p.alarmStatusService)
+			err = updateMetaAlarmState(&metaAlarm, *event.Entity, event.Parameters.Timestamp, worstState, metaAlarm.Value.Output, p.alarmStatusService)
 			if err != nil {
 				return err
 			}
@@ -419,7 +419,7 @@ func (p *metaAlarmEventProcessor) DetachChildrenFromMetaAlarm(ctx context.Contex
 		metaAlarm.PartialUpdateLastEventDate(lastEventDate)
 		metaAlarm.IncrementEventsCount(eventsCount)
 
-		err = UpdateAlarmState(&metaAlarm, *event.Entity, event.Parameters.Timestamp, worstState, metaAlarm.Value.Output, p.alarmStatusService)
+		err = updateMetaAlarmState(&metaAlarm, *event.Entity, event.Parameters.Timestamp, worstState, metaAlarm.Value.Output, p.alarmStatusService)
 		if err != nil {
 			return err
 		}
@@ -464,7 +464,6 @@ func (p *metaAlarmEventProcessor) applyActionsOnChildren(metaAlarm types.Alarm, 
 			ConnectorName: childAlarm.Value.ConnectorName,
 			Resource:      childAlarm.Value.Resource,
 			Component:     childAlarm.Value.Component,
-			Initiator:     types.InitiatorSystem,
 			Timestamp:     types.NewCpsTime(),
 		}
 		childEvent.SourceType = childEvent.DetectSourceType()
@@ -473,6 +472,7 @@ func (p *metaAlarmEventProcessor) applyActionsOnChildren(metaAlarm types.Alarm, 
 			childEvent.Output = step.Message
 			childEvent.Author = step.Author
 			childEvent.UserID = step.UserID
+			childEvent.Initiator = step.Initiator
 			childEvent.Role = step.Role
 			switch step.Type {
 			case types.AlarmStepAck:
@@ -538,7 +538,7 @@ func (p *metaAlarmEventProcessor) processParentRpc(ctx context.Context, event rp
 		Output:     event.Parameters.Output,
 		Author:     event.Parameters.Author,
 		UserID:     event.Parameters.User,
-		Initiator:  types.InitiatorSystem,
+		Initiator:  event.Parameters.Initiator,
 		TicketInfo: event.Parameters.TicketInfo,
 	}
 
@@ -602,7 +602,7 @@ func (p *metaAlarmEventProcessor) processComponentRpc(ctx context.Context, event
 			TicketInfo:    componentAlarm.Value.Ticket.TicketInfo,
 			Author:        event.Parameters.Author,
 			UserID:        event.Parameters.User,
-			Initiator:     types.InitiatorSystem,
+			Initiator:     event.Parameters.Initiator,
 		}
 		resourceEvent.SourceType = resourceEvent.DetectSourceType()
 
@@ -837,7 +837,7 @@ func (p *metaAlarmEventProcessor) updateParentState(ctx context.Context, childAl
 						return nil
 					}
 
-					err = UpdateAlarmState(&parentAlarm.Alarm, parentAlarm.Entity, childAlarm.Value.LastUpdateDate,
+					err = updateMetaAlarmState(&parentAlarm.Alarm, parentAlarm.Entity, childAlarm.Value.LastUpdateDate,
 						newState, parentAlarm.Alarm.Value.Output, p.alarmStatusService)
 					if err != nil {
 						return fmt.Errorf("cannot update parent: %w", err)
@@ -1008,7 +1008,7 @@ func applyOnChild(changeType types.AlarmChangeType) bool {
 	return false
 }
 
-func UpdateAlarmState(alarm *types.Alarm, entity types.Entity, timestamp types.CpsTime, state types.CpsNumber, output string,
+func updateMetaAlarmState(alarm *types.Alarm, entity types.Entity, timestamp types.CpsTime, state types.CpsNumber, output string,
 	service alarmstatus.Service) error {
 	var currentState, currentStatus types.CpsNumber
 	if alarm.Value.State != nil {
@@ -1016,13 +1016,7 @@ func UpdateAlarmState(alarm *types.Alarm, entity types.Entity, timestamp types.C
 		currentStatus = alarm.Value.Status.Value
 	}
 
-	author := ""
-	if entity.Type != types.EntityTypeService {
-		author = strings.Replace(entity.Connector, "/", ".", 1)
-	} else {
-		author = alarm.Value.Connector + "." + alarm.Value.ConnectorName
-	}
-
+	author := strings.Replace(entity.Connector, "/", ".", 1)
 	if state != currentState {
 		// Event is an OK, so the alarm should be resolved anyway
 		if alarm.IsStateLocked() && state != types.AlarmStateOK {
@@ -1030,7 +1024,7 @@ func UpdateAlarmState(alarm *types.Alarm, entity types.Entity, timestamp types.C
 		}
 
 		// Create new Step to keep track of the alarm history
-		newStep := types.NewAlarmStep(types.AlarmStepStateIncrease, timestamp, author, output, "", "", "")
+		newStep := types.NewAlarmStep(types.AlarmStepStateIncrease, timestamp, author, output, "", "", types.InitiatorSystem)
 		newStep.Value = state
 
 		if state < currentState {
@@ -1066,7 +1060,7 @@ func UpdateAlarmState(alarm *types.Alarm, entity types.Entity, timestamp types.C
 	}
 
 	// Create new Step to keep track of the alarm history
-	newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, timestamp, author, output, "", "", "")
+	newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, timestamp, author, output, "", "", types.InitiatorSystem)
 	newStepStatus.Value = newStatus
 
 	if newStatus < currentStatus {
