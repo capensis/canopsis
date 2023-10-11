@@ -30,7 +30,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
       class="v-table__overflow"
     >
       <table
-        class="v-datatable v-table v-datatable--select-all theme--light"
+        class="v-datatable v-table v-datatable--expand v-datatable--select-all theme--light"
       >
         <thead>
           <tr>
@@ -1060,85 +1060,6 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               tag="td"
             />
           </tr>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
-              >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
-              </div>
-            </td>
-            <td>
-              c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-10
-            </td>
-            <td>
-              Enrichment
-            </td>
-            <td>
-              10
-            </td>
-            <td>
-              <c-enabled-stub />
-            </td>
-            <td>
-              -
-            </td>
-            <td>
-              author-10
-            </td>
-            <td>
-              04/03/2021 13:44:58
-            </td>
-            <td>
-              04/03/2021 13:44:58
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                clear
-              </i>
-            </td>
-            <td>
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  type="edit"
-                />
-                <c-action-btn-stub
-                  type="duplicate"
-                />
-                <c-action-btn-stub
-                  type="delete"
-                />
-                <pbehaviors-create-action-btn-stub
-                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-10"
-                />
-                <pbehaviors-list-action-btn-stub
-                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-10"
-                />
-              </div>
-            </td>
-          </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
         </tbody>
       </table>
     </div>
@@ -1179,7 +1100,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
       class="v-table__overflow"
     >
       <table
-        class="v-datatable v-table theme--light"
+        class="v-datatable v-table v-datatable--expand theme--light"
       >
         <thead>
           <tr>
@@ -1433,7 +1354,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
       class="v-table__overflow"
     >
       <table
-        class="v-datatable v-table theme--light"
+        class="v-datatable v-table v-datatable--expand theme--light"
       >
         <thead>
           <tr>
@@ -1705,7 +1626,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
             class="v-datatable__expand-row"
           >
             <transition-group-stub
-              class="v-datatable__expand-col"
+              class="v-datatable__expand-col v-datatable__expand-col--expanded"
               colspan="11"
               tag="td"
             >
@@ -2344,74 +2265,6 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               tag="td"
             />
           </tr>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
-              >
-                <!---->
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
-              </div>
-            </td>
-            <td>
-              c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-10
-            </td>
-            <td>
-              Enrichment
-            </td>
-            <td>
-              10
-            </td>
-            <td>
-              <c-enabled-stub />
-            </td>
-            <td>
-              -
-            </td>
-            <td>
-              author-10
-            </td>
-            <td>
-              04/03/2021 13:44:58
-            </td>
-            <td>
-              04/03/2021 13:44:58
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                clear
-              </i>
-            </td>
-            <td>
-              <div
-                class="layout row"
-              >
-                <!---->
-                <!---->
-                <!---->
-                <pbehaviors-create-action-btn-stub
-                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-10"
-                />
-                <pbehaviors-list-action-btn-stub
-                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-10"
-                />
-              </div>
-            </td>
-          </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
         </tbody>
       </table>
     </div>
@@ -2454,7 +2307,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
       class="v-table__overflow"
     >
       <table
-        class="v-datatable v-table theme--light"
+        class="v-datatable v-table v-datatable--expand theme--light"
       >
         <thead>
           <tr>
@@ -3379,78 +3232,6 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
                 />
                 <pbehaviors-list-action-btn-stub
                   entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-9"
-                />
-              </div>
-            </td>
-          </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
-              >
-                <!---->
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
-              </div>
-            </td>
-            <td>
-              c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-10
-            </td>
-            <td>
-              Enrichment
-            </td>
-            <td>
-              10
-            </td>
-            <td>
-              <c-enabled-stub />
-            </td>
-            <td>
-              -
-            </td>
-            <td>
-              author-10
-            </td>
-            <td>
-              04/03/2021 13:44:58
-            </td>
-            <td>
-              04/03/2021 13:44:58
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                clear
-              </i>
-            </td>
-            <td>
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  badge-value="true"
-                  type="edit"
-                />
-                <!---->
-                <!---->
-                <pbehaviors-create-action-btn-stub
-                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-10"
-                />
-                <pbehaviors-list-action-btn-stub
-                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-10"
                 />
               </div>
             </td>

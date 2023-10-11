@@ -39,7 +39,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                 >
                   :
                   <div
-                    class="pl-1 d-inline-block grey--text text--darken-1 body-1 font-italic"
+                    class="pl-1 d-inline-block text--secondary body-1 font-italic"
                   >
                     Empty object
                   </div>
@@ -108,7 +108,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                     >
                       :
                       <c-ellipsis-stub
-                        class="pl-1 d-inline-block grey--text body-1 pre-wrap"
+                        class="pl-1 d-inline-block text--secondary body-1 pre-wrap"
                         text="1"
                       />
                     </span>
@@ -142,7 +142,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                     >
                       :
                       <c-ellipsis-stub
-                        class="pl-1 d-inline-block grey--text body-1 pre-wrap"
+                        class="pl-1 d-inline-block text--secondary body-1 pre-wrap"
                         text="string"
                       />
                     </span>
@@ -176,7 +176,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                     >
                       :
                       <c-ellipsis-stub
-                        class="pl-1 d-inline-block grey--text body-1 pre-wrap"
+                        class="pl-1 d-inline-block text--secondary body-1 pre-wrap"
                         text="false"
                       />
                     </span>
@@ -210,7 +210,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                     >
                       :
                       <c-ellipsis-stub
-                        class="pl-1 d-inline-block grey--text body-1 pre-wrap"
+                        class="pl-1 d-inline-block text--secondary body-1 pre-wrap"
                         text="null"
                       />
                     </span>
@@ -244,7 +244,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                     >
                       :
                       <c-ellipsis-stub
-                        class="pl-1 d-inline-block grey--text body-1 pre-wrap"
+                        class="pl-1 d-inline-block text--secondary body-1 pre-wrap"
                         text="undefined"
                       />
                     </span>
@@ -385,7 +385,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                                 >
                                   :
                                   <c-ellipsis-stub
-                                    class="pl-1 d-inline-block grey--text body-1 pre-wrap"
+                                    class="pl-1 d-inline-block text--secondary body-1 pre-wrap"
                                     text="53"
                                   />
                                 </span>
@@ -419,7 +419,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                                 >
                                   :
                                   <div
-                                    class="pl-1 d-inline-block grey--text text--darken-1 body-1 font-italic"
+                                    class="pl-1 d-inline-block text--secondary body-1 font-italic"
                                   >
                                     Empty object
                                   </div>
@@ -463,7 +463,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                         >
                           :
                           <div
-                            class="pl-1 d-inline-block grey--text text--darken-1 body-1 font-italic"
+                            class="pl-1 d-inline-block text--secondary body-1 font-italic"
                           >
                             Empty object
                           </div>
@@ -559,7 +559,7 @@ exports[`variables-help Renders \`variables-help\` with original flag 1`] = `
                 >
                   :
                   <div
-                    class="pl-1 d-inline-block grey--text text--darken-1 body-1 font-italic"
+                    class="pl-1 d-inline-block text--secondary body-1 font-italic"
                   >
                     Empty object
                   </div>

@@ -59,19 +59,10 @@ func (p *recomputeEntityServiceProcessor) Process(ctx context.Context, event rpc
 	if event.Entity.Enabled {
 		entity := *event.Entity
 		var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
-		firstTry := true
+
 		err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
-			updatedServiceStates = nil
-
 			var err error
-			if !firstTry {
-				entity, err = findEntity(ctx, event.Entity.ID, p.entityCollection)
-				if err != nil {
-					return err
-				}
-			}
 
-			firstTry = false
 			updatedServiceStates, err = p.stateCountersService.RecomputeEntityServiceCounters(ctx, entity)
 			return err
 		})

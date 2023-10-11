@@ -45,9 +45,11 @@ export const chartMetricsOptionsMixin = {
     },
 
     realMetricsCount() {
+      const length = this.metrics?.length ?? 0;
+
       return this.hasHistoryData
-        ? this.metrics?.length * 2
-        : this.metrics?.length;
+        ? length * 2
+        : length;
     },
 
     tooltipBodyFontSize() {
@@ -183,7 +185,7 @@ export const chartMetricsOptionsMixin = {
   },
   methods: {
     getChartTooltipLabel({ raw, dataset }) {
-      const value = convertMetricValueToString(raw.y, dataset.metric, dataset.unit);
+      const value = convertMetricValueToString({ value: raw.y, metric: dataset.metric, unit: dataset.unit });
 
       const messageKey = `kpi.metrics.tooltip.${dataset.metric}`;
 

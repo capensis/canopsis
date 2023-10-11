@@ -65,7 +65,12 @@ func NewStore(db mongo.DbClient, linkGenerator link.Generator, logger zerolog.Lo
 
 func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 	cursor, err := s.dbCollection.Aggregate(ctx, []bson.M{
-		{"$match": bson.M{"_id": id, "type": types.EntityTypeService, "soft_deleted": bson.M{"$exists": false}}},
+		{"$match": bson.M{
+			"_id":          id,
+			"type":         types.EntityTypeService,
+			"soft_deleted": bson.M{"$exists": false},
+			"healthcheck":  bson.M{"$in": bson.A{nil, false}},
+		}},
 		{"$lookup": bson.M{
 			"from":         mongo.EntityCategoryMongoCollection,
 			"localField":   "category",

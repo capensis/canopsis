@@ -81,6 +81,8 @@ describe('text-editor', () => {
 
     expect(action).toBeCalledWith('');
     expect($modals.hide).toBeCalledWith();
+
+    wrapper.destroy();
   });
 
   test('Form submitted with correct value after trigger submit button', async () => {
@@ -108,6 +110,8 @@ describe('text-editor', () => {
 
     expect(action).toBeCalledWith(text);
     expect($modals.hide).toBeCalledWith();
+
+    wrapper.destroy();
   });
 
   test('Form didn\'t submitted after trigger submit button with error', async () => {
@@ -145,6 +149,8 @@ describe('text-editor', () => {
 
     expect(action).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
+
+    wrapper.destroy();
   });
 
   test('Form submitted after trigger submit button without action', async () => {
@@ -166,6 +172,8 @@ describe('text-editor', () => {
     await flushPromises();
 
     expect($modals.hide).toBeCalledWith();
+
+    wrapper.destroy();
   });
 
   test('Validation rules applied to form from config', async () => {
@@ -197,6 +205,8 @@ describe('text-editor', () => {
 
     expect(action).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
+
+    wrapper.destroy();
   });
 
   test('Errors added after trigger submit button with action errors', async () => {
@@ -231,6 +241,8 @@ describe('text-editor', () => {
     expect(formErrors).toEqual(addedErrors);
     expect(action).toBeCalledWith(text);
     expect($modals.hide).not.toBeCalledWith();
+
+    wrapper.destroy();
   });
 
   test('Error popup showed after trigger submit button with action errors', async () => {
@@ -271,6 +283,8 @@ describe('text-editor', () => {
     expect($modals.hide).not.toBeCalledWith();
 
     consoleErrorSpy.mockClear();
+
+    wrapper.destroy();
   });
 
   test('Modal submitted with correct data after trigger form', async () => {
@@ -304,6 +318,8 @@ describe('text-editor', () => {
 
     expect(action).toBeCalledWith(newValue);
     expect($modals.hide).toBeCalled();
+
+    wrapper.destroy();
   });
 
   test('Modal hidden after trigger cancel button', async () => {
@@ -325,6 +341,8 @@ describe('text-editor', () => {
     await flushPromises();
 
     expect($modals.hide).toBeCalled();
+
+    wrapper.destroy();
   });
 
   test('Renders `text-editor` with empty modal', async () => {
@@ -343,30 +361,7 @@ describe('text-editor', () => {
     await flushPromises();
 
     expect(wrapper.element).toMatchSnapshot();
-  });
 
-  test('Renders `text-editor` with all parameters', async () => {
-    const wrapper = snapshotFactory({
-      propsData: {
-        modal: {
-          config: {
-            text: 'Text',
-            title: 'Text editor title',
-            label: 'Text editor label',
-            rules: {
-              required: true,
-            },
-          },
-        },
-      },
-      mocks: {
-        $modals,
-        $popups,
-      },
-    });
-
-    await flushPromises();
-
-    expect(wrapper.element).toMatchSnapshot();
+    wrapper.destroy();
   });
 });

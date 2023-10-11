@@ -20,7 +20,7 @@ import { isEmpty } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import { SOCKET_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
-import { EXCLUDED_SERVER_ERROR_STATUSES, MAX_LIMIT, ROUTES_NAMES } from '@/constants';
+import { EXCLUDED_SERVER_ERROR_STATUSES, MAX_LIMIT, RESPONSE_STATUSES, ROUTES_NAMES } from '@/constants';
 
 import Socket from '@/plugins/socket/services/socket';
 
@@ -92,7 +92,11 @@ export default {
       this.fetchTemplateVars(),
     ]);
 
-    this.fetchAppInfoWithErrorHandling();
+    await this.fetchAppInfoWithErrorHandling();
+
+    if (!this.isLoggedIn) {
+      this.setTheme(this.defaultColorTheme);
+    }
   },
   methods: {
     ...mapActions({
@@ -111,6 +115,7 @@ export default {
       const unwatch = this.$watch('currentUser', async (currentUser) => {
         if (!isEmpty(currentUser)) {
           this.$socket.authenticate(localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY));
+
           this.setTheme(currentUser.ui_theme);
 
           await this.filesAccess();
@@ -144,7 +149,8 @@ export default {
       try {
         this.$socket
           .connect(SOCKET_URL)
-          .on('error', this.socketErrorHandler);
+          .on('error', this.socketErrorHandler)
+          .on(Socket.EVENTS_TYPES.networkError, this.socketConnectionFailureHandler);
       } catch (err) {
         this.$popups.error({
           text: this.$t('errors.socketConnectionProblem'),
@@ -157,13 +163,33 @@ export default {
 
     socketErrorHandler({ message } = {}) {
       if (message) {
-        this.$popups.error({ text: message });
+        const statusCode = +message;
 
-        if (message === Socket.ERROR_MESSAGES.authenticationFailed) {
+        if (statusCode === RESPONSE_STATUSES.unauthorized || message === Socket.ERROR_MESSAGES.authenticationFailed) {
           localStorageService.set('warningPopup', this.$t('warnings.authTokenExpired'));
           this.logout();
+
+          return;
         }
+
+        const textKey = {
+          [RESPONSE_STATUSES.notFound]: 'errors.socketConnectionRoomNotFound',
+          [RESPONSE_STATUSES.forbidden]: 'errors.socketConnectionRoomForbidden',
+          [RESPONSE_STATUSES.badRequest]: 'errors.socketConnectionRoomBadRequest',
+          [RESPONSE_STATUSES.internalServerError]: 'errors.socketConnectionRoomInternalServerError',
+        }[statusCode];
+
+        const text = this.$te(textKey) ? this.$t(textKey) : message;
+
+        this.$popups.error({ text });
       }
+    },
+
+    socketConnectionFailureHandler() {
+      this.$popups.error({
+        text: this.$t('errors.socketConnectionProblem'),
+        autoClose: false,
+      });
     },
 
     async fetchCurrentUserWithErrorHandling() {
@@ -209,17 +235,17 @@ export default {
 </script>
 
 <style lang="scss">
-  #app {
-    &.-fullscreen {
-      width: 100%;
+#app {
+  &.-fullscreen {
+    width: 100%;
 
-      #main-navigation {
-        display: none;
-      }
+    #main-navigation {
+      display: none;
+    }
 
-      #main-content {
-        padding: 0 !important;
-      }
+    #main-content {
+      padding: 0 !important;
     }
   }
+}
 </style>

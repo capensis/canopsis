@@ -25,7 +25,7 @@ Ce schéma présente le cycle de vie d'un trap SNMP depuis son émission jusqu'�
 
 ## Prérequis
 
-Le moteur `SNMP` de Canopsis doit être démarré pour que les traps envoyés par
+Le moteur `snmp` de Canopsis doit être démarré pour que les traps envoyés par
 `snmp2canopsis` soient traités jusqu'au bout.
 
 ## Émission des traps SNMP
@@ -34,7 +34,7 @@ L'émission des traps SNMP n'est pas traitée dans ce guide dans la mesure où c
 
 Il faut configurer sur les différents émetteurs l'adresse du récepteur de traps
 ainsi que son port : il s'agit de l'adresse du connecteur `snmp2canopsis` et du
-port 162 (port par défaut d'un récepteur de traps SNMP).
+port UDP 162 (port par défaut d'un récepteur de traps SNMP).
 
 ## Connecteur snmp2canopsis
 
@@ -56,7 +56,7 @@ ip = 0.0.0.0
 port = 162
 
 [amqp]
-host = localhost
+host = rabbitmq
 port = 5672
 user = cpsrabbit
 password = canopsis
@@ -112,25 +112,32 @@ Exemple de JSON en sortie du connecteur :
 Le connecteur ne possédant aucune MIB, `snmp_trap_oid` et le tableau `snmp_vars`
 contiennent les OID des éléments sans aucune traduction.
 
-Les messages seront traduits ultérieurement, par le moteur `SNMP` de Canopsis.
+On remarque que le connecteur produit une structure JSON qui rappelle le format
+des évènements Canopsis. Notons le type d'évènement (`event_type`) : `trap`.
 
 #### Publication du JSON
 
 Les traps transformés en JSON sont publiés dans le bus AMQP de Canopsis, dans
 un exchange dédié : `canopsis.snmp`.
 
+#### Suite du traitement
+
+Ces messages (évènements de type `trap`) seront traduits ultérieurement en
+évènements de type `check`, par le moteur `snmp` de Canopsis.
+
 ### Exécution
 
-Pour faciliter les intégrations, nous utilisons des conteneurs `Docker` pour cette étape.
+Nous utilisons généralement un conteneur `Docker` pour cette étape.
 
-```sh
-$ sudo docker run -v snmp2canopsisdata:/connector-snmp2canopsis/etc canopsis/canopsis-cat-connector-snmp:2.4
+```console
+$ docker run -v snmp2canopsisdata:/connector-snmp2canopsis/etc \
+    docker.canopsis.net/docker/pro/canopsis-pro-connector-snmp:v22.10.1
 
-[2017-06-20 13:18:06.700607] INFO: snmp2canopsis: Read configuration from /connector-snmp2canopsis/etc/snmp2canopsis.conf
-[2017-06-20 13:18:06.701409] DEBUG: amqp: Thread started
-[2017-06-20 13:18:06.702131] INFO: amqp: Connecting to cpsrabbit@172.17.0.1, on canopsis
-[2017-06-20 13:18:06.701857] INFO: snmp: Start SNMP listener on 0.0.0.0:162
-[2017-06-20 13:18:06.707382] DEBUG: amqp: Read the snmp queue
+[2023-09-21 09:18:06.700607] INFO: snmp2canopsis: Read configuration from /connector-snmp2canopsis/etc/snmp2canopsis.conf
+[2023-09-21 09:18:06.701409] DEBUG: amqp: Thread started
+[2023-09-21 09:18:06.702131] INFO: amqp: Connecting to cpsrabbit@rabbitmq, on canopsis
+[2023-09-21 09:18:06.701857] INFO: snmp: Start SNMP listener on 0.0.0.0:162
+[2023-09-21 09:18:06.707382] DEBUG: amqp: Read the snmp queue
 ```
 
 La configuration associée est la suivante :
@@ -141,7 +148,7 @@ ip = 0.0.0.0
 port = 162
 
 [amqp]
-host = 172.17.0.1
+host = rabbitmq
 port = 5672
 user = cpsrabbit
 password = canopsis
@@ -151,27 +158,28 @@ exchange = canopsis.snmp
 
 ### Test de fonctionnement
 
-Afin de valider le fonctionnement, nous pouvons générer un trap SNMP.
+Afin de valider le fonctionnement, nous pouvons générer un trap SNMP depuis une
+machine.
 
 Nous aurons besoin de la commande `snmptrap`.
 
 Pour installer cette commande sous Debian :
 
-```bash
-apt-get install snmp
+```console
+# apt install snmp
 ```
 
-Pour installer cette commande sous RHEL/CentOS :
+Pour installer cette commande sous EL (RHEL/Rocky Linux/AlmaLinux/…) :
 
-```bash
-yum install net-snmp-utils
+```console
+# yum install net-snmp-utils
 ```
 
 Pour le test, nous allons nous appuyer sur la MIB Nagios
 [NAGIOS-NOTIFY-MIB][notify_mib] et sa dépendance [nagios-root][root_mib].
 
-[notify_mib]: https://github.com/monitoring-plugins/nagios-mib/blob/master/MIB/NAGIOS-NOTIFY-MIB
-[root_mib]: https://github.com/nagios-plugins/nagios-mib/blob/master/src-mib/nagios-root.mib
+[notify_mib]: https://github.com/monitoring-plugins/nagios-mib/raw/master/MIB/NAGIOS-NOTIFY-MIB
+[root_mib]: https://github.com/nagios-plugins/nagios-mib/raw/master/src-mib/nagios-root.mib
 
 Les deux fichiers récupérés doivent être placés dans le répertoire des MIB
 SNMP : `/usr/share/snmp/mibs`.

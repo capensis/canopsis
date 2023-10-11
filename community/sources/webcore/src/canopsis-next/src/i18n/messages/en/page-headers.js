@@ -133,4 +133,12 @@ export default {
     title: 'Instruction rating',
     message: 'This page contains the statistics on the instructions execution. Users can rate instructions based on their performance.',
   },
+
+  /**
+   * Profile
+   */
+  [USERS_PERMISSIONS.technical.profile.theme]: {
+    title: 'Theme',
+    message: '', // TODO: add correct message
+  },
 };

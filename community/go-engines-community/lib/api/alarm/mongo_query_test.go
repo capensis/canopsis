@@ -64,7 +64,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected, []bson.M{
-		{"$match": bson.M{"entity.enabled": true}},
+		{"$match": bson.M{
+			"entity.enabled":     true,
+			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
+			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
+		}},
 		{"$project": bson.M{"entity": 0}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
@@ -80,7 +84,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -160,7 +164,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected, []bson.M{
-		{"$match": bson.M{"entity.enabled": true}},
+		{"$match": bson.M{
+			"entity.enabled":     true,
+			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
+			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
+		}},
 		{"$project": bson.M{"entity": 0}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
@@ -176,7 +184,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -259,7 +267,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected, []bson.M{
-		{"$match": bson.M{"entity.enabled": true}},
+		{"$match": bson.M{
+			"entity.enabled":     true,
+			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
+			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
+		}},
 		{"$project": bson.M{"entity": 0}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
@@ -275,7 +287,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -352,7 +364,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected, []bson.M{
-		{"$match": bson.M{"entity.enabled": true}},
+		{"$match": bson.M{
+			"entity.enabled":     true,
+			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
+			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
+		}},
 		{"$project": bson.M{"entity": 0}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
@@ -368,7 +384,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -458,7 +474,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected,
-		bson.M{"$match": bson.M{"entity.enabled": true}},
+		bson.M{"$match": bson.M{
+			"entity.enabled":     true,
+			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
+			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
+		}},
 		bson.M{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
 			{"entity.category": bson.M{"$eq": "test-category"}},
 		}}}}},
@@ -477,7 +497,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -538,7 +558,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected, []bson.M{
-		{"$match": bson.M{"entity.enabled": true}},
+		{"$match": bson.M{
+			"entity.enabled":     true,
+			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
+			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
+		}},
 		{"$project": bson.M{"entity": 0}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
@@ -554,7 +578,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -627,7 +651,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expected = append(expected, getEntityCategoryLookup()...)
 	expected = append(expected, getPbehaviorLookup(authorProvider)...)
 	expected = append(expected,
-		bson.M{"$match": bson.M{"entity.enabled": true}},
+		bson.M{"$match": bson.M{
+			"entity.enabled":     true,
+			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
+			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
+		}},
 		bson.M{"$match": bson.M{"$and": []bson.M{
 			{"v.connector": "test-connector"},
 			{"v.duration": bson.M{"$gt": 600}},
@@ -654,7 +682,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -705,7 +733,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithCategor
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected,
-		bson.M{"$match": bson.M{"entity.enabled": true}},
+		bson.M{"$match": bson.M{
+			"entity.enabled":     true,
+			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
+			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
+		}},
 		bson.M{"$match": bson.M{"$and": []bson.M{
 			{"entity.category": bson.M{"$eq": "test-category"}},
 		}}},
@@ -726,7 +758,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithCategor
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -852,7 +884,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected, getInstructionExecutionLookup(false)...)
 	expected = append(expected,
-		bson.M{"$match": bson.M{"entity.enabled": true}},
+		bson.M{"$match": bson.M{
+			"entity.enabled":     true,
+			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
+			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
+		}},
 		bson.M{"$match": bson.M{"$and": []bson.M{
 			{"$and": []bson.M{
 				{"instruction_execution.instruction": bson.M{"$nin": []string{instructionId}}},
@@ -892,7 +928,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -960,7 +996,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithEntityS
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected, getPbehaviorLookup(authorProvider)...)
 	expected = append(expected,
-		bson.M{"$match": bson.M{"entity.enabled": true}},
+		bson.M{"$match": bson.M{
+			"entity.enabled":     true,
+			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
+			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
+		}},
 		bson.M{"$match": bson.M{"$and": []bson.M{
 			{"pbehavior._id": "test-pbehavior"},
 			{"entity.name": "test-entity"},
@@ -983,7 +1023,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithEntityS
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -1073,7 +1113,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected, []bson.M{
-		{"$match": bson.M{"entity.enabled": true}},
+		{"$match": bson.M{
+			"entity.enabled":     true,
+			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
+			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
+		}},
 		{"$project": bson.M{"entity": 0}},
 		{"$addFields": bson.M{"v.active_duration": activeDurationField}},
 		{"$facet": bson.M{
@@ -1090,7 +1134,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -1154,7 +1198,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected, []bson.M{
-		{"$match": bson.M{"entity.enabled": true}},
+		{"$match": bson.M{
+			"entity.enabled":     true,
+			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
+			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
+		}},
 		{"$project": bson.M{"entity": 0}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
@@ -1170,7 +1218,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -1188,25 +1236,19 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 		Pattern: fmt.Sprintf(".*%s.*", search),
 		Options: "i",
 	}
+	opened := true
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
 			FilterRequest: FilterRequest{
 				BaseFilterRequest: BaseFilterRequest{
+					Opened:      &opened,
 					Search:      search,
 					OnlyParents: true,
 				},
 			},
 		},
 	}
-	filteredChildrenLookup := getFilteredChildrenLookup(mongo.AlarmMongoCollection, bson.M{
-		"$or": []bson.M{
-			{"v.connector": searchRegexp},
-			{"v.connector_name": searchRegexp},
-			{"v.component": searchRegexp},
-			{"v.resource": searchRegexp},
-		},
-	})
 	now := types.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
@@ -1221,7 +1263,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getMetaAlarmRuleLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getChildrenCountLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, filteredChildrenLookup...)
 	fields := getComputedFields(now)
 	fields["is_meta_alarm"] = getIsMetaAlarmField()
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
@@ -1236,25 +1277,33 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 			"resolved_children":   0,
 		},
 	})
-	expected := []bson.M{
-		{"$match": bson.M{"$and": []bson.M{{"$or": []bson.M{
-			{"v.parents": nil},
-			{"v.parents": bson.M{"$eq": bson.A{}}},
-			{"v.meta": bson.M{"$ne": nil}},
-		}}}}},
-	}
-	expected = append(expected, getEntityLookup()...)
-	expected = append(expected, filteredChildrenLookup...)
-	expected = append(expected,
-		bson.M{"$match": bson.M{"entity.enabled": true}},
-		bson.M{"$match": bson.M{"$or": []bson.M{
+	expected := getOnlyParentsSearchPipeline(bson.M{
+		"v.resolved": nil,
+		"$or": []bson.M{
 			{"v.connector": searchRegexp},
 			{"v.connector_name": searchRegexp},
 			{"v.component": searchRegexp},
 			{"v.resource": searchRegexp},
-			{"filtered_children": bson.M{"$ne": bson.A{}}},
+		},
+	}, mongo.AlarmMongoCollection, bson.M{"v.resolved": nil}, false)
+	expected = append(expected,
+		bson.M{"$match": bson.M{"$and": []bson.M{
+			{"v.resolved": nil},
+			{"$or": []bson.M{
+				{"v.parents": nil},
+				{"v.parents": bson.M{"$eq": bson.A{}}},
+				{"v.meta": bson.M{"$ne": nil}},
+			}},
 		}}},
-		bson.M{"$project": bson.M{"entity": 0, "filtered_children": 0}},
+	)
+	expected = append(expected, getEntityLookup()...)
+	expected = append(expected,
+		bson.M{"$match": bson.M{
+			"entity.enabled":     true,
+			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
+			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
+		}},
+		bson.M{"$project": bson.M{"entity": 0}},
 		bson.M{"$facet": bson.M{
 			"data":        expectedDataPipeline,
 			"total_count": []bson.M{{"$count": "count"}},
@@ -1269,7 +1318,107 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
+		t.Errorf("unexpected result: %s", diff)
+	}
+}
+
+func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchByEntityInfosAndOnlyParents_ShouldBuildQuery(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	mockDbClient := createMockDbClient(ctrl)
+	authorProvider := author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
+	search := "test-search"
+	searchRegexp := primitive.Regex{
+		Pattern: fmt.Sprintf(".*%s.*", search),
+		Options: "i",
+	}
+	opened := true
+	request := ListRequestWithPagination{
+		Query: pagination.GetDefaultQuery(),
+		ListRequest: ListRequest{
+			FilterRequest: FilterRequest{
+				SearchBy: []string{
+					"entity.infos.info1.value",
+				},
+				BaseFilterRequest: BaseFilterRequest{
+					Opened:      &opened,
+					Search:      search,
+					OnlyParents: true,
+				},
+			},
+		},
+	}
+	now := types.NewCpsTime()
+	expectedDataPipeline := []bson.M{
+		{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
+		{"$skip": 0},
+		{"$limit": 10},
+	}
+	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getMetaAlarmRuleLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getChildrenCountLookup()...)
+	fields := getComputedFields(now)
+	fields["is_meta_alarm"] = getIsMetaAlarmField()
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$addFields": fields,
+	})
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$project": bson.M{
+			"entity.services":     0,
+			"v.steps":             0,
+			"pbehavior.comments":  0,
+			"pbehavior_info_type": 0,
+			"resolved_children":   0,
+		},
+	})
+	expected := getOnlyParentsSearchPipeline(bson.M{
+		"v.resolved": nil,
+		"$or": []bson.M{
+			{"entity.infos.info1.value": searchRegexp},
+		},
+	}, mongo.AlarmMongoCollection, bson.M{"v.resolved": nil}, true)
+	expected = append(expected,
+		bson.M{"$match": bson.M{"$and": []bson.M{
+			{"v.resolved": nil},
+			{"$or": []bson.M{
+				{"v.parents": nil},
+				{"v.parents": bson.M{"$eq": bson.A{}}},
+				{"v.meta": bson.M{"$ne": nil}},
+			}},
+		}}},
+	)
+	expected = append(expected, getEntityLookup()...)
+	expected = append(expected,
+		bson.M{"$match": bson.M{
+			"entity.enabled":     true,
+			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
+			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
+		}},
+		bson.M{"$project": bson.M{"entity": 0}},
+		bson.M{"$facet": bson.M{
+			"data":        expectedDataPipeline,
+			"total_count": []bson.M{{"$count": "count"}},
+		}},
+		bson.M{"$addFields": bson.M{
+			"total_count": bson.M{"$sum": "$total_count.count"},
+		}},
+	)
+
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
+	result, err := b.CreateListAggregationPipeline(ctx, request, now)
+	if err != nil {
+		t.Errorf("expected no error but got %v", err)
+	}
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -1326,7 +1475,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected, []bson.M{
-		{"$match": bson.M{"entity.enabled": true}},
+		{"$match": bson.M{
+			"entity.enabled":     true,
+			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
+			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
+		}},
 		{"$project": bson.M{"entity": 0}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
@@ -1342,7 +1495,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -1399,7 +1552,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected, []bson.M{
-		{"$match": bson.M{"entity.enabled": true}},
+		{"$match": bson.M{
+			"entity.enabled":     true,
+			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
+			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
+		}},
 		{"$match": bson.M{"$and": []bson.M{
 			{"entity.name": bson.M{"$regex": "test name"}},
 			{"v.duration": bson.M{"$gt": 100}},
@@ -1419,7 +1576,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -1476,7 +1633,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected, []bson.M{
-		{"$match": bson.M{"entity.enabled": true}},
+		{"$match": bson.M{
+			"entity.enabled":     true,
+			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
+			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
+		}},
 		{"$match": bson.M{"entity.infos.test1.value": bson.M{"$regex": "test val"}}},
 		{"$project": bson.M{"entity": 0}},
 		{"$facet": bson.M{
@@ -1493,7 +1654,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -1622,7 +1783,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected,
-		bson.M{"$match": bson.M{"entity.enabled": true}},
+		bson.M{"$match": bson.M{
+			"entity.enabled":     true,
+			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
+			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
+		}},
 		bson.M{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
 			{"entity.category": bson.M{"$eq": "test-category"}},
 		}}}}},
@@ -1644,7 +1809,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }

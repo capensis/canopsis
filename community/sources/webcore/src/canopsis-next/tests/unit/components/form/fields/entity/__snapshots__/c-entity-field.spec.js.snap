@@ -4,6 +4,7 @@ exports[`c-entity-field Renders \`c-entity-field\` with array value 1`] = `
 <div
   class="v-input c-select-field c-lazy-search-field v-text-field v-select v-select--chips v-select--chips--small v-autocomplete v-input--is-label-active v-input--is-dirty v-input--is-focused theme--light primary--text"
   items="[object Object],[object Object],[object Object]"
+  limit="10"
 >
   <div
     class="v-input__control"
@@ -221,6 +222,7 @@ exports[`c-entity-field Renders \`c-entity-field\` with custom props 1`] = `
 <div
   class="v-input c-select-field c-lazy-search-field v-text-field v-select v-autocomplete v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
   items="[object Object],[object Object],[object Object]"
+  limit="10"
   loading="true"
   search="Text 2"
 >
@@ -329,6 +331,7 @@ exports[`c-entity-field Renders \`c-entity-field\` with custom props 2`] = `
 exports[`c-entity-field Renders \`c-entity-field\` with default props 1`] = `
 <div
   class="v-input c-select-field c-lazy-search-field v-text-field v-select v-autocomplete v-input--is-focused theme--light primary--text"
+  limit="10"
 >
   <div
     class="v-input__control"

@@ -10,6 +10,7 @@ import (
 	"time"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	alarmapi "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -19,6 +20,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	apilogger "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
+	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	apitechmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -44,6 +46,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session/mongostore"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/sharetoken"
@@ -102,7 +105,7 @@ func Default(
 		p.DataStorageConfigProvider = config.NewDataStorageConfigProvider(cfg, logger)
 	}
 	if p.TemplateConfigProvider == nil {
-		p.TemplateConfigProvider = config.NewTemplateConfigProvider(cfg)
+		p.TemplateConfigProvider = config.NewTemplateConfigProvider(cfg, logger)
 	}
 	// Set mongodb setting.
 	config.SetDbClientRetry(dbClient, cfg)
@@ -206,8 +209,11 @@ func Default(
 		exportExecutor = export.NewTaskExecutor(dbClient, p.TimezoneConfigProvider, logger)
 	}
 
+	alarmStore := alarmapi.NewStore(dbClient, linkGenerator, p.TimezoneConfigProvider,
+		author.NewProvider(dbClient, p.ApiConfigProvider), json.NewDecoder(), logger)
 	websocketStore := websocket.NewStore(dbClient, flags.IntegrationPeriodicalWaitTime)
-	websocketHub, err := newWebsocketHub(enforcer, security.GetTokenProviders(), flags.IntegrationPeriodicalWaitTime, logger)
+	websocketHub, err := newWebsocketHub(enforcer, security.GetTokenProviders(), flags.IntegrationPeriodicalWaitTime,
+		dbClient, alarmStore, logger)
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot create websocket hub: %w", err)
 	}
@@ -418,6 +424,8 @@ func newWebsocketHub(
 	enforcer libsecurity.Enforcer,
 	tokenProviders []libsecurity.TokenProvider,
 	checkAuthInterval time.Duration,
+	dbClient mongo.DbClient,
+	alarmStore alarmapi.Store,
 	logger zerolog.Logger,
 ) (websocket.Hub, error) {
 	websocketUpgrader := websocket.NewUpgrader(gorillawebsocket.Upgrader{
@@ -428,13 +436,31 @@ func newWebsocketHub(
 		},
 	})
 	websocketAuthorizer := websocket.NewAuthorizer(enforcer, tokenProviders)
-	websocketHub := websocket.NewHub(websocketUpgrader, websocketAuthorizer,
-		checkAuthInterval, logger)
+	websocketHub := websocket.NewHub(websocketUpgrader, websocketAuthorizer, checkAuthInterval, logger)
 	if err := websocketHub.RegisterRoom(websocket.RoomBroadcastMessages); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("fail to register websocket room: %w", err)
 	}
+
 	if err := websocketHub.RegisterRoom(websocket.RoomLoggedUserCount); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("fail to register websocket room: %w", err)
 	}
+
+	alarmWatcher := alarmapi.NewWatcher(dbClient, websocketHub, alarmStore, json.NewEncoder(), json.NewDecoder(), logger)
+	err := websocketHub.RegisterGroup(websocket.RoomAlarmsGroup, websocket.GroupParameters{
+		OnJoin:  alarmWatcher.StartWatch,
+		OnLeave: alarmWatcher.StopWatch,
+	}, apisecurity.PermAlarmRead, securitymodel.PermissionCan)
+	if err != nil {
+		return nil, fmt.Errorf("fail to register websocket group: %w", err)
+	}
+
+	err = websocketHub.RegisterGroup(websocket.RoomAlarmDetailsGroup, websocket.GroupParameters{
+		OnJoin:  alarmWatcher.StartWatchDetails,
+		OnLeave: alarmWatcher.StopWatch,
+	}, apisecurity.PermAlarmRead, securitymodel.PermissionCan)
+	if err != nil {
+		return nil, fmt.Errorf("fail to register websocket group: %w", err)
+	}
+
 	return websocketHub, nil
 }

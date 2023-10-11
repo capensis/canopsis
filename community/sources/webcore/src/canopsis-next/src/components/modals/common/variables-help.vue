@@ -14,9 +14,9 @@
         template(#label="{ item, leaf }")
           div {{ item.name }}
             span.pl-1(v-if="leaf") :
-              c-ellipsis.pl-1.d-inline-block.grey--text.body-1.pre-wrap(:text="String(item.value)")
+              c-ellipsis.pl-1.d-inline-block.text--secondary.body-1.pre-wrap(:text="String(item.value)")
             span.pl-1(v-else-if="!leaf && !(item.children && item.children.length)") :
-              div.pl-1.d-inline-block.grey--text.text--darken-1.body-1.font-italic {{ $t('common.emptyObject') }}
+              div.pl-1.d-inline-block.text--secondary.body-1.font-italic {{ $t('common.emptyObject') }}
 
         template(#append="{ leaf, item }")
           c-copy-btn(

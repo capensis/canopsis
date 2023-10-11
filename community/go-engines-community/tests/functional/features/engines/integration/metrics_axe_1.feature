@@ -71,7 +71,11 @@ Feature: Metrics should be added on alarm changes
     """json
     {
       "type": 1,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "name": "test-instruction-metrics-axe-2-1-name",
       "description": "test-instruction-metrics-axe-2-1-description",
       "enabled": true,
@@ -106,7 +110,11 @@ Feature: Metrics should be added on alarm changes
     """json
     {
       "type": 1,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "name": "test-instruction-metrics-axe-2-2-name",
       "description": "test-instruction-metrics-axe-2-2-description",
       "enabled": true,

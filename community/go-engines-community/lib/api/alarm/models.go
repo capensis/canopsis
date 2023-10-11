@@ -130,12 +130,50 @@ type SortRequest struct {
 
 type DetailsRequest struct {
 	ID                 string               `json:"_id" binding:"required"`
+	Search             string               `json:"search"`
+	SearchBy           []string             `json:"search_by"`
 	Opened             *bool                `json:"opened"`
 	WithInstructions   bool                 `json:"with_instructions"`
 	WithDeclareTickets bool                 `json:"with_declare_tickets"`
 	Steps              *StepsRequest        `json:"steps"`
 	Children           *ChildDetailsRequest `json:"children"`
 	PerfData           []string             `json:"perf_data"`
+}
+
+func (r *DetailsRequest) Format() {
+	defaultQuery := pagination.GetDefaultQuery()
+
+	if r.Steps != nil {
+		r.Steps.Paginate = true
+		if r.Steps.Page == 0 {
+			r.Steps.Page = defaultQuery.Page
+		}
+		if r.Steps.Limit == 0 {
+			r.Steps.Limit = defaultQuery.Limit
+		}
+	}
+
+	if r.Children != nil {
+		r.Children.Paginate = true
+		if r.Children.Page == 0 {
+			r.Children.Page = defaultQuery.Page
+		}
+		if r.Children.Limit == 0 {
+			r.Children.Limit = defaultQuery.Limit
+		}
+	}
+}
+
+func (r *DetailsRequest) GetOpenedFilter() int {
+	if r.Opened == nil {
+		return OpenedAndRecentResolved
+	}
+
+	if *r.Opened {
+		return OnlyOpened
+	}
+
+	return OnlyResolved
 }
 
 type StepsRequest struct {
@@ -149,18 +187,6 @@ type ChildDetailsRequest struct {
 	SortRequest
 }
 
-func (r DetailsRequest) GetOpenedFilter() int {
-	if r.Opened == nil {
-		return OpenedAndRecentResolved
-	}
-
-	if *r.Opened {
-		return OnlyOpened
-	}
-
-	return OnlyResolved
-}
-
 type DetailsResponse struct {
 	ID     string            `json:"_id"`
 	Status int               `json:"status"`
@@ -170,6 +196,9 @@ type DetailsResponse struct {
 }
 
 type Details struct {
+	// Only for websocket
+	ID string `bson:"-" json:"_id,omitempty"`
+
 	Steps    *StepDetails     `bson:"steps" json:"steps,omitempty"`
 	Children *ChildrenDetails `bson:"children" json:"children,omitempty"`
 
@@ -229,7 +258,6 @@ type Alarm struct {
 	OpenedChildren       *int64         `bson:"opened_children,omitempty" json:"opened_children,omitempty"`
 	ClosedChildren       *int64         `bson:"closed_children,omitempty" json:"closed_children,omitempty"`
 	ChildrenInstructions *bool          `bson:"children_instructions" json:"children_instructions,omitempty"`
-	FilteredChildrenIDs  []string       `bson:"filtered_children,omitempty" json:"filtered_children,omitempty"`
 	// Meta alarm child fields
 	Parents        *int64          `bson:"parents" json:"parents,omitempty"`
 	MetaAlarmRules []MetaAlarmRule `bson:"meta_alarm_rules" json:"meta_alarm_rules,omitempty"`
@@ -247,6 +275,9 @@ type Alarm struct {
 	ImpactState int64                `bson:"impact_state" json:"impact_state"`
 
 	AssignedDeclareTicketRules []AssignedDeclareTicketRule `bson:"-" json:"assigned_declare_ticket_rules,omitempty"`
+
+	// Only for details request
+	Filtered *bool `bson:"filtered" json:"filtered,omitempty"`
 }
 
 type MetaAlarmRule struct {

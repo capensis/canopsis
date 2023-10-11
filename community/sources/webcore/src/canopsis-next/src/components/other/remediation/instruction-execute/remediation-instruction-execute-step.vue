@@ -22,6 +22,8 @@
         :operations="step.operations",
         :step-number="stepNumber",
         :is-first-step="isFirstStep",
+        :next-pending="nextPending",
+        :previous-pending="previousPending",
         v-on="$listeners",
         @finish="showEndpointModal"
       )
@@ -52,6 +54,14 @@ export default {
       default: false,
     },
     isLastStep: {
+      type: Boolean,
+      default: false,
+    },
+    previousPending: {
+      type: Boolean,
+      default: false,
+    },
+    nextPending: {
       type: Boolean,
       default: false,
     },
