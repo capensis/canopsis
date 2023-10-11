@@ -1,13 +1,24 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
+import { createSelectInputStub } from '@unit/stubs/input';
 
 import CEntityField from '@/components/forms/fields/alarm/c-alarm-tag-field.vue';
+import CLazySearchField from '@/components/forms/fields/c-lazy-search-field.vue';
+import CSelectField from '@/components/forms/fields/c-select-field.vue';
 
 const stubs = {
   'c-alarm-action-chip': true,
+  'c-lazy-search-field': CLazySearchField,
+  'c-select-field': createSelectInputStub('c-select-field'),
 };
 
-const selectSelectField = wrapper => wrapper.find('v-select-stub');
+const snapshotStubs = {
+  'c-alarm-action-chip': true,
+  'c-lazy-search-field': CLazySearchField,
+  'c-select-field': CSelectField,
+};
+
+const selectSelectField = wrapper => wrapper.find('.c-select-field');
 
 describe('c-alarm-tag-field', () => {
   const items = [
@@ -44,13 +55,13 @@ describe('c-alarm-tag-field', () => {
         pending: pendingGetter,
       },
       actions: {
-        fetchList: fetchAlarmTags,
+        fetchListWithoutStore: fetchAlarmTags,
       },
     },
   ]);
 
   const factory = generateShallowRenderer(CEntityField, { stubs });
-  const snapshotFactory = generateRenderer(CEntityField, { stubs });
+  const snapshotFactory = generateRenderer(CEntityField, { stubs: snapshotStubs });
 
   afterEach(() => {
     fetchAlarmTags.mockClear();
