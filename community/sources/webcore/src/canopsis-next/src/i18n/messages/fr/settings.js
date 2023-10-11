@@ -262,8 +262,8 @@ export default {
     },
   },
   actionRequiredSettings: {
-    title: 'Paramètres d\'état d\'action requise',
-    isBlinking: 'Clignotant',
+    title: 'Paramètres lorsqu\'une action est requise',
+    isBlinking: 'Clignotement de la tuile ?',
     customColor: 'Couleur personnalisée',
     customIcon: 'Icône personnalisée',
   },
