@@ -124,6 +124,8 @@ Feature: run a declare ticket rule
             "ticket": {
               "_t": "declareticket",
               "a": "root John Doe admin@canopsis.net",
+              "user_id": "root",
+              "initiator": "user",
               "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-1-name. Ticket ID: test-ticket-declareticket-execution-second-1. Ticket URL: https://test-host. Ticket name: test-component-declareticket-execution-second-1.",
               "ticket": "test-ticket-declareticket-execution-second-1",
               "ticket_url": "https://test-host",
@@ -139,6 +141,8 @@ Feature: run a declare ticket rule
               {
                 "_t": "declareticket",
                 "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
+                "initiator": "user",
                 "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-1-name. Ticket ID: test-ticket-declareticket-execution-second-1. Ticket URL: https://test-host. Ticket name: test-component-declareticket-execution-second-1.",
                 "ticket": "test-ticket-declareticket-execution-second-1",
                 "ticket_url": "https://test-host",
@@ -161,6 +165,8 @@ Feature: run a declare ticket rule
             "ticket": {
               "_t": "declareticket",
               "a": "root John Doe admin@canopsis.net",
+              "user_id": "root",
+              "initiator": "user",
               "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-1-name. Ticket ID: test-ticket-declareticket-execution-second-1. Ticket URL: https://test-host. Ticket name: test-component-declareticket-execution-second-1.",
               "ticket": "test-ticket-declareticket-execution-second-1",
               "ticket_url": "https://test-host",
@@ -176,6 +182,8 @@ Feature: run a declare ticket rule
               {
                 "_t": "declareticket",
                 "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
+                "initiator": "user",
                 "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-1-name. Ticket ID: test-ticket-declareticket-execution-second-1. Ticket URL: https://test-host. Ticket name: test-component-declareticket-execution-second-1.",
                 "ticket": "test-ticket-declareticket-execution-second-1",
                 "ticket_url": "https://test-host",
@@ -234,18 +242,21 @@ Feature: run a declare ticket rule
         "_t": "webhookstart",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-1-name"
       },
       {
         "_t": "webhookcomplete",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-1-name"
       },
       {
         "_t": "declareticket",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-1-name. Ticket ID: test-ticket-declareticket-execution-second-1. Ticket URL: https://test-host. Ticket name: test-component-declareticket-execution-second-1."
       }
     ]
@@ -263,6 +274,7 @@ Feature: run a declare ticket rule
         "_t": "declareticket",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-1-name. Ticket ID: test-ticket-declareticket-execution-second-1. Ticket URL: https://test-host. Ticket name: test-component-declareticket-execution-second-1."
       }
     ]
@@ -400,12 +412,16 @@ Feature: run a declare ticket rule
             "ticket": {
               "_t": "declareticket",
               "a": "root John Doe admin@canopsis.net",
+              "user_id": "root",
+              "initiator": "user",
               "ticket": "test-ticket-declareticket-execution-second-2"
             },
             "tickets": [
               {
                 "_t": "declareticket",
                 "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
+                "initiator": "user",
                 "ticket": "test-ticket-declareticket-execution-second-2"
               }
             ],
@@ -449,24 +465,28 @@ Feature: run a declare ticket rule
         "_t": "webhookstart",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-2-name"
       },
       {
         "_t": "webhookcomplete",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-2-name"
       },
       {
         "_t": "declareticket",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-2-name. Ticket ID: test-ticket-declareticket-execution-second-2."
       },
       {
         "_t": "ack",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "test-scenario-declareticket-execution-second-2-output"
       }
     ]
@@ -602,12 +622,16 @@ Feature: run a declare ticket rule
             "ticket": {
               "_t": "declareticket",
               "a": "root John Doe admin@canopsis.net",
+              "user_id": "root",
+              "initiator": "user",
               "ticket": "test-ticket-declareticket-execution-second-3"
             },
             "tickets": [
               {
                 "_t": "declareticket",
                 "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
+                "initiator": "user",
                 "ticket": "test-ticket-declareticket-execution-second-3"
               }
             ],
@@ -652,18 +676,21 @@ Feature: run a declare ticket rule
         "_t": "webhookstart",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-3-name"
       },
       {
         "_t": "webhookcomplete",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-3-name"
       },
       {
         "_t": "declareticket",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-3-name. Ticket ID: test-ticket-declareticket-execution-second-3."
       }
     ]
@@ -796,6 +823,8 @@ Feature: run a declare ticket rule
             "ticket": {
               "_t": "declareticket",
               "a": "root John Doe admin@canopsis.net",
+              "user_id": "root",
+              "initiator": "user",
               "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-4-name. Ticket ID: N/A. Ticket URL: https://test/test-ticket-declareticket-execution-second-4. Ticket name: test-ticket-declareticket-execution-second-4 test-resource-declareticket-execution-second-4-1.",
               "ticket": "N/A",
               "ticket_url": "https://test/test-ticket-declareticket-execution-second-4",
@@ -811,6 +840,8 @@ Feature: run a declare ticket rule
               {
                 "_t": "declareticket",
                 "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
+                "initiator": "user",
                 "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-4-name. Ticket ID: N/A. Ticket URL: https://test/test-ticket-declareticket-execution-second-4. Ticket name: test-ticket-declareticket-execution-second-4 test-resource-declareticket-execution-second-4-1.",
                 "ticket": "N/A",
                 "ticket_url": "https://test/test-ticket-declareticket-execution-second-4",
@@ -834,6 +865,8 @@ Feature: run a declare ticket rule
             "ticket": {
               "_t": "declareticket",
               "a": "root John Doe admin@canopsis.net",
+              "user_id": "root",
+              "initiator": "user",
               "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-4-name. Ticket ID: N/A. Ticket URL: https://test/test-ticket-declareticket-execution-second-4. Ticket name: test-ticket-declareticket-execution-second-4 test-resource-declareticket-execution-second-4-2.",
               "ticket": "N/A",
               "ticket_url": "https://test/test-ticket-declareticket-execution-second-4",
@@ -849,6 +882,8 @@ Feature: run a declare ticket rule
               {
                 "_t": "declareticket",
                 "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
+                "initiator": "user",
                 "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-4-name. Ticket ID: N/A. Ticket URL: https://test/test-ticket-declareticket-execution-second-4. Ticket name: test-ticket-declareticket-execution-second-4 test-resource-declareticket-execution-second-4-2.",
                 "ticket": "N/A",
                 "ticket_url": "https://test/test-ticket-declareticket-execution-second-4",
@@ -907,18 +942,21 @@ Feature: run a declare ticket rule
         "_t": "webhookstart",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-4-name"
       },
       {
         "_t": "webhookcomplete",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-4-name"
       },
       {
         "_t": "declareticket",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-4-name. Ticket ID: N/A. Ticket URL: https://test/test-ticket-declareticket-execution-second-4. Ticket name: test-ticket-declareticket-execution-second-4 test-resource-declareticket-execution-second-4-1."
       }
     ]
@@ -936,18 +974,21 @@ Feature: run a declare ticket rule
         "_t": "webhookstart",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-4-name"
       },
       {
         "_t": "webhookcomplete",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-4-name"
       },
       {
         "_t": "declareticket",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-4-name. Ticket ID: N/A. Ticket URL: https://test/test-ticket-declareticket-execution-second-4. Ticket name: test-ticket-declareticket-execution-second-4 test-resource-declareticket-execution-second-4-2."
       }
     ]
@@ -1062,6 +1103,8 @@ Feature: run a declare ticket rule
             "ticket": {
               "_t": "declareticket",
               "a": "root John Doe admin@canopsis.net",
+              "user_id": "root",
+              "initiator": "user",
               "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-5-name. Ticket ID: test-ticket-declareticket-execution-second-5. Ticket URL: https://test-host-declareticket-execution-second-5/test-ticket-declareticket-execution-second-5.",
               "ticket": "test-ticket-declareticket-execution-second-5",
               "ticket_url": "https://test-host-declareticket-execution-second-5/test-ticket-declareticket-execution-second-5",
@@ -1074,6 +1117,8 @@ Feature: run a declare ticket rule
               {
                 "_t": "declareticket",
                 "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
+                "initiator": "user",
                 "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-5-name. Ticket ID: test-ticket-declareticket-execution-second-5. Ticket URL: https://test-host-declareticket-execution-second-5/test-ticket-declareticket-execution-second-5.",
                 "ticket": "test-ticket-declareticket-execution-second-5",
                 "ticket_url": "https://test-host-declareticket-execution-second-5/test-ticket-declareticket-execution-second-5",

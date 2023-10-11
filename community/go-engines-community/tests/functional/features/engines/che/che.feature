@@ -373,9 +373,10 @@ Feature: create entities on event
     }
     """
 
+  @concurrent
   Scenario: given resources check events should create entities, context graph should be valid
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-context-graph-build-connector-che-1",
@@ -388,8 +389,7 @@ Feature: create entities on event
       "output": "test-context-graph-build-output-che-1"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-context-graph-build-connector-che-1",
@@ -402,8 +402,7 @@ Feature: create entities on event
       "output": "test-context-graph-build-output-che-1"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-context-graph-build-connector-che-1",
@@ -416,7 +415,6 @@ Feature: create entities on event
       "output": "test-context-graph-build-output-che-1"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/entities?search=test-context-graph-build
     Then the response code should be 200
     Then the response body should contain:

@@ -1,27 +1,26 @@
 Feature: get service entities
   I need to be able to get service entities
 
+  @concurrent
   Scenario: given one dependency with maintenance pbehavior should get one entity
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
-      "connector" : "test-connector-pbehavior-weather-service-entity-1",
-      "connector_name": "test-connector-name-pbehavior-weather-service-entity-1",
-      "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-entity-1",
-      "resource" : "test-resource-pbehavior-weather-service-entity-1",
-      "state" : 2,
-      "output" : "noveo alarm"
+      "state": 2,
+      "output": "test-output-pbehavior-weather-service-entity-1",
+      "connector": "test-connector-pbehavior-weather-service-entity-1",
+      "connector_name": "test-connector-name-pbehavior-weather-service-entity-1",
+      "component": "test-component-pbehavior-weather-service-entity-1",
+      "resource": "test-resource-pbehavior-weather-service-entity-1",
+      "source_type": "resource"
     }
     """
-    When I wait the end of event processing
     When I do POST /api/v4/entityservices:
     """json
     {
-      "_id": "test-pbehavior-weather-service-entity-1",
-      "name": "test-pbehavior-weather-service-entity-1",
+      "name": "test-pbehavior-weather-service-entity-1-1",
       "output_template": "test-pbehavior-weather-service-entity-1",
       "category": "test-category-pbehavior-weather-service-entity",
       "impact_level": 1,
@@ -41,7 +40,25 @@ Feature: get service entities
     }
     """
     Then the response code should be 201
-    When I wait the end of 2 events processing
+    When I save response serviceId={{ .lastResponse._id }}
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}"
+      }
+    ]
+    """
     When I do POST /api/v4/pbehaviors:
     """json
     {
@@ -66,8 +83,27 @@ Feature: get service entities
     }
     """
     Then the response code should be 201
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/weather-services/test-pbehavior-weather-service-entity-1
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "pbhenter",
+        "connector": "test-connector-pbehavior-weather-service-entity-1",
+        "connector_name": "test-connector-name-pbehavior-weather-service-entity-1",
+        "component": "test-component-pbehavior-weather-service-entity-1",
+        "resource": "test-resource-pbehavior-weather-service-entity-1",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}",
+        "source_type": "service"
+      }
+    ]
+    """
+    When I do GET /api/v4/weather-services/{{ .serviceId }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -115,26 +151,25 @@ Feature: get service entities
     }
     """
 
+  @concurrent
   Scenario: given one dependency with active pbehavior should get one entity
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
-      "connector" : "test-connector-pbehavior-weather-service-entity-2",
+      "connector": "test-connector-pbehavior-weather-service-entity-2",
       "connector_name": "test-connector-name-pbehavior-weather-service-entity-2",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-entity-2",
-      "resource" : "test-resource-pbehavior-weather-service-entity-2",
-      "state" : 2,
-      "output" : "noveo alarm"
+      "component": "test-component-pbehavior-weather-service-entity-2",
+      "resource": "test-resource-pbehavior-weather-service-entity-2",
+      "state": 2,
+      "output": "test-output-pbehavior-weather-service-entity-2"
     }
     """
-    When I wait the end of event processing
     When I do POST /api/v4/entityservices:
     """json
     {
-      "_id": "test-pbehavior-weather-service-entity-2",
       "name": "test-pbehavior-weather-service-entity-2",
       "output_template": "test-pbehavior-weather-service-entity-2",
       "category": "test-category-pbehavior-weather-service-entity",
@@ -155,7 +190,25 @@ Feature: get service entities
     }
     """
     Then the response code should be 201
-    When I wait the end of 2 events processing
+    When I save response serviceId={{ .lastResponse._id }}
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}"
+      }
+    ]
+    """
     When I do POST /api/v4/pbehaviors:
     """json
     {
@@ -180,8 +233,27 @@ Feature: get service entities
     }
     """
     Then the response code should be 201
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/weather-services/test-pbehavior-weather-service-entity-2
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "pbhenter",
+        "connector": "test-connector-pbehavior-weather-service-entity-2",
+        "connector_name": "test-connector-name-pbehavior-weather-service-entity-2",
+        "component": "test-component-pbehavior-weather-service-entity-2",
+        "resource": "test-resource-pbehavior-weather-service-entity-2",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}",
+        "source_type": "service"
+      }
+    ]
+    """
+    When I do GET /api/v4/weather-services/{{ .serviceId }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -229,40 +301,59 @@ Feature: get service entities
     }
     """
 
-  Scenario: given dependency with maintenance pbehavior
-  and another dependency without pbehavior should get multiple entities
+  @concurrent
+  Scenario: given dependency with maintenance pbehavior and another dependency without pbehavior should get multiple entities
     Given I am admin
     When I send an event:
     """json
     {
-      "connector" :  "test-connector-pbehavior-weather-service-entity-3",
+      "connector": "test-connector-pbehavior-weather-service-entity-3",
       "connector_name": "test-connector-name-pbehavior-weather-service-entity-3",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-entity-3",
-      "resource" : "test-resource-pbehavior-weather-service-entity-3-1",
-      "state" : 3,
-      "output" : "noveo alarm"
+      "component": "test-component-pbehavior-weather-service-entity-3",
+      "resource": "test-resource-pbehavior-weather-service-entity-3-1",
+      "state": 3,
+      "output": "test-output-pbehavior-weather-service-entity-3"
     }
     """
     When I send an event:
     """json
     {
-      "connector" :  "test-connector-pbehavior-weather-service-entity-3",
+      "connector": "test-connector-pbehavior-weather-service-entity-3",
       "connector_name": "test-connector-name-pbehavior-weather-service-entity-3",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-entity-3",
-      "resource" : "test-resource-pbehavior-weather-service-entity-3-2",
-      "state" : 2,
-      "output" : "noveo alarm"
+      "component": "test-component-pbehavior-weather-service-entity-3",
+      "resource": "test-resource-pbehavior-weather-service-entity-3-2",
+      "state": 2,
+      "output": "test-output-pbehavior-weather-service-entity-3"
     }
     """
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "activate",
+        "connector": "test-connector-pbehavior-weather-service-entity-3",
+        "connector_name": "test-connector-name-pbehavior-weather-service-entity-3",
+        "component": "test-component-pbehavior-weather-service-entity-3",
+        "resource": "test-resource-pbehavior-weather-service-entity-3-1",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "activate",
+        "connector": "test-connector-pbehavior-weather-service-entity-3",
+        "connector_name": "test-connector-name-pbehavior-weather-service-entity-3",
+        "component": "test-component-pbehavior-weather-service-entity-3",
+        "resource": "test-resource-pbehavior-weather-service-entity-3-2",
+        "source_type": "resource"
+      }
+    ]
+    """
     When I do POST /api/v4/entityservices:
     """json
     {
-      "_id": "test-pbehavior-weather-service-entity-3",
       "name": "test-pbehavior-weather-service-entity-3",
       "output_template": "test-pbehavior-weather-service-entity-3",
       "category": "test-category-pbehavior-weather-service-entity",
@@ -286,7 +377,25 @@ Feature: get service entities
     }
     """
     Then the response code should be 201
-    When I wait the end of 2 events processing
+    When I save response serviceId={{ .lastResponse._id }}
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}"
+      }
+    ]
+    """
     When I do POST /api/v4/pbehaviors:
     """json
     {
@@ -311,8 +420,27 @@ Feature: get service entities
     }
     """
     Then the response code should be 201
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/weather-services/test-pbehavior-weather-service-entity-3
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "pbhenter",
+        "connector": "test-connector-pbehavior-weather-service-entity-3",
+        "connector_name": "test-connector-name-pbehavior-weather-service-entity-3",
+        "component": "test-component-pbehavior-weather-service-entity-3",
+        "resource": "test-resource-pbehavior-weather-service-entity-3-1",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}",
+        "source_type": "service"
+      }
+    ]
+    """
+    When I do GET /api/v4/weather-services/{{ .serviceId }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -369,26 +497,25 @@ Feature: get service entities
     }
     """
 
+  @concurrent
   Scenario: given service with maintenance pbehavior should not get gray flag
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
-      "connector" :  "test-connector-pbehavior-weather-service-entity-4",
+      "connector": "test-connector-pbehavior-weather-service-entity-4",
       "connector_name": "test-connector-name-pbehavior-weather-service-entity-4",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-entity-4",
-      "resource" : "test-resource-pbehavior-weather-service-entity-4",
-      "state" : 3,
-      "output" : "noveo alarm"
+      "component": "test-component-pbehavior-weather-service-entity-4",
+      "resource": "test-resource-pbehavior-weather-service-entity-4",
+      "state": 3,
+      "output": "test-output-pbehavior-weather-service-entity-4"
     }
     """
-    When I wait the end of event processing
     When I do POST /api/v4/entityservices:
     """json
     {
-      "_id": "test-pbehavior-weather-service-entity-4",
       "name": "test-pbehavior-weather-service-entity-4",
       "output_template": "test-pbehavior-weather-service-entity-4",
       "category": "test-category-pbehavior-weather-service-entity",
@@ -409,7 +536,25 @@ Feature: get service entities
     }
     """
     Then the response code should be 201
-    When I wait the end of 2 events processing
+    When I save response serviceId={{ .lastResponse._id }}
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}"
+      }
+    ]
+    """
     When I do POST /api/v4/pbehaviors:
     """json
     {
@@ -434,8 +579,16 @@ Feature: get service entities
     }
     """
     Then the response code should be 201
-    When I wait the end of event processing
-    When I do GET /api/v4/weather-services/test-pbehavior-weather-service-entity-4
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "pbhenter",
+      "connector": "engine",
+      "connector_name": "pbehavior",
+      "component": "{{ .serviceId }}"
+    }
+    """
+    When I do GET /api/v4/weather-services/{{ .serviceId }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -460,26 +613,25 @@ Feature: get service entities
     }
     """
 
+  @concurrent
   Scenario: given service with maintenance pbehavior without alarm should not get gray flag
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
-      "connector" :  "test-connector-pbehavior-weather-service-entity-5",
+      "connector": "test-connector-pbehavior-weather-service-entity-5",
       "connector_name": "test-connector-name-pbehavior-weather-service-entity-5",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-entity-5",
-      "resource" : "test-resource-pbehavior-weather-service-entity-5",
-      "state" : 0,
-      "output" : "noveo alarm"
+      "component": "test-component-pbehavior-weather-service-entity-5",
+      "resource": "test-resource-pbehavior-weather-service-entity-5",
+      "state": 0,
+      "output": "test-output-pbehavior-weather-service-entity-5"
     }
     """
-    When I wait the end of event processing
     When I do POST /api/v4/entityservices:
     """json
     {
-      "_id": "test-pbehavior-weather-service-entity-5",
       "name": "test-pbehavior-weather-service-entity-5",
       "output_template": "test-pbehavior-weather-service-entity-5",
       "category": "test-category-pbehavior-weather-service-entity",
@@ -500,7 +652,26 @@ Feature: get service entities
     }
     """
     Then the response code should be 201
-    When I wait the end of 2 events processing
+    When I save response serviceId={{ .lastResponse._id }}
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}",
+        "source_type": "service"
+      }
+    ]
+    """
     When I do POST /api/v4/pbehaviors:
     """json
     {
@@ -525,8 +696,16 @@ Feature: get service entities
     }
     """
     Then the response code should be 201
-    When I wait the end of event processing
-    When I do GET /api/v4/weather-services/test-pbehavior-weather-service-entity-5
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "pbhenter",
+      "connector": "engine",
+      "connector_name": "pbehavior",
+      "component": "{{ .serviceId }}"
+    }
+    """
+    When I do GET /api/v4/weather-services/{{ .serviceId }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -551,26 +730,25 @@ Feature: get service entities
     }
     """
 
+  @concurrent
   Scenario: given dependency with maintenance pbehavior without alarm should get gray flag
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
-      "connector" :  "test-connector-pbehavior-weather-service-entity-6",
+      "connector": "test-connector-pbehavior-weather-service-entity-6",
       "connector_name": "test-connector-name-pbehavior-weather-service-entity-6",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-entity-6",
-      "resource" : "test-resource-pbehavior-weather-service-entity-6",
-      "state" : 0,
-      "output" : "noveo alarm"
+      "component": "test-component-pbehavior-weather-service-entity-6",
+      "resource": "test-resource-pbehavior-weather-service-entity-6",
+      "state": 0,
+      "output": "test-output-pbehavior-weather-service-entity-6"
     }
     """
-    When I wait the end of event processing
     When I do POST /api/v4/entityservices:
     """json
     {
-      "_id": "test-pbehavior-weather-service-entity-6",
       "name": "test-pbehavior-weather-service-entity-6",
       "output_template": "test-pbehavior-weather-service-entity-6",
       "category": "test-category-pbehavior-weather-service-entity",
@@ -591,7 +769,26 @@ Feature: get service entities
     }
     """
     Then the response code should be 201
-    When I wait the end of 2 events processing
+    When I save response serviceId={{ .lastResponse._id }}
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}",
+        "source_type": "service"
+      }
+    ]
+    """
     When I do POST /api/v4/pbehaviors:
     """json
     {
@@ -616,8 +813,27 @@ Feature: get service entities
     }
     """
     Then the response code should be 201
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/weather-services/test-pbehavior-weather-service-entity-6
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "pbhenter",
+        "connector": "test-connector-pbehavior-weather-service-entity-6",
+        "connector_name": "test-connector-name-pbehavior-weather-service-entity-6",
+        "component": "test-component-pbehavior-weather-service-entity-6",
+        "resource": "test-resource-pbehavior-weather-service-entity-6",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}",
+        "source_type": "service"
+      }
+    ]
+    """
+    When I do GET /api/v4/weather-services/{{ .serviceId }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -665,26 +881,25 @@ Feature: get service entities
     }
     """
 
+  @concurrent
   Scenario: given dependency with origin pbehavior should get origin icon
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
-      "connector" : "test-connector-pbehavior-weather-service-entity-7",
+      "connector": "test-connector-pbehavior-weather-service-entity-7",
       "connector_name": "test-connector-name-pbehavior-weather-service-entity-7",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-entity-7",
-      "resource" : "test-resource-pbehavior-weather-service-entity-7",
-      "state" : 2,
-      "output" : "noveo alarm"
+      "component": "test-component-pbehavior-weather-service-entity-7",
+      "resource": "test-resource-pbehavior-weather-service-entity-7",
+      "state": 2,
+      "output": "test-output-pbehavior-weather-service-entity-7"
     }
     """
-    When I wait the end of event processing
     When I do POST /api/v4/entityservices:
     """json
     {
-      "_id": "test-pbehavior-weather-service-entity-7",
       "name": "test-pbehavior-weather-service-entity-7",
       "output_template": "test-pbehavior-weather-service-entity-7",
       "category": "test-category-pbehavior-weather-service-entity",
@@ -705,7 +920,25 @@ Feature: get service entities
     }
     """
     Then the response code should be 201
-    When I wait the end of 2 events processing
+    When I save response serviceId={{ .lastResponse._id }}
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}"
+      }
+    ]
+    """
     When I do POST /api/v4/bulk/entity-pbehaviors:
     """json
     [
@@ -722,8 +955,27 @@ Feature: get service entities
     ]
     """
     Then the response code should be 207
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/weather-services/test-pbehavior-weather-service-entity-7?pbh_origin=pbehavior-weather-service-entity-7
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "pbhenter",
+        "connector": "test-connector-pbehavior-weather-service-entity-7",
+        "connector_name": "test-connector-name-pbehavior-weather-service-entity-7",
+        "component": "test-component-pbehavior-weather-service-entity-7",
+        "resource": "test-resource-pbehavior-weather-service-entity-7",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}",
+        "source_type": "service"
+      }
+    ]
+    """
+    When I do GET /api/v4/weather-services/{{ .serviceId }}?pbh_origin=pbehavior-weather-service-entity-7
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -772,26 +1024,25 @@ Feature: get service entities
     }
     """
 
+  @concurrent
   Scenario: given dependency with origin pause pbehavior and maintenance pbehavior should get origin icon
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
-      "connector" : "test-connector-pbehavior-weather-service-entity-8",
+      "connector": "test-connector-pbehavior-weather-service-entity-8",
       "connector_name": "test-connector-name-pbehavior-weather-service-entity-8",
       "source_type": "resource",
       "event_type": "check",
-      "component" :  "test-component-pbehavior-weather-service-entity-8",
-      "resource" : "test-resource-pbehavior-weather-service-entity-8",
-      "state" : 2,
-      "output" : "noveo alarm"
+      "component": "test-component-pbehavior-weather-service-entity-8",
+      "resource": "test-resource-pbehavior-weather-service-entity-8",
+      "state": 2,
+      "output": "test-output-pbehavior-weather-service-entity-8"
     }
     """
-    When I wait the end of event processing
     When I do POST /api/v4/entityservices:
     """json
     {
-      "_id": "test-pbehavior-weather-service-entity-8",
       "name": "test-pbehavior-weather-service-entity-8",
       "output_template": "test-pbehavior-weather-service-entity-8",
       "category": "test-category-pbehavior-weather-service-entity",
@@ -812,7 +1063,25 @@ Feature: get service entities
     }
     """
     Then the response code should be 201
-    When I wait the end of 2 events processing
+    When I save response serviceId={{ .lastResponse._id }}
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}"
+      }
+    ]
+    """
     When I do POST /api/v4/pbehaviors:
     """json
     {
@@ -837,7 +1106,26 @@ Feature: get service entities
     }
     """
     Then the response code should be 201
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "pbhenter",
+        "connector": "test-connector-pbehavior-weather-service-entity-8",
+        "connector_name": "test-connector-name-pbehavior-weather-service-entity-8",
+        "component": "test-component-pbehavior-weather-service-entity-8",
+        "resource": "test-resource-pbehavior-weather-service-entity-8",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}",
+        "source_type": "service"
+      }
+    ]
+    """
     When I do POST /api/v4/bulk/entity-pbehaviors:
     """json
     [
@@ -854,7 +1142,7 @@ Feature: get service entities
     ]
     """
     Then the response code should be 207
-    When I do GET /api/v4/weather-services/test-pbehavior-weather-service-entity-8?pbh_origin=pbehavior-weather-service-entity-8
+    When I do GET /api/v4/weather-services/{{ .serviceId }}?pbh_origin=pbehavior-weather-service-entity-8
     Then the response code should be 200
     Then the response body should contain:
     """json

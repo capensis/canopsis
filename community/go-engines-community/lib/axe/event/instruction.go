@@ -244,6 +244,7 @@ func sendTriggerEvent(
 		SourceType:    event.Entity.Type,
 		AlarmChange:   &result.AlarmChange,
 		AlarmID:       result.Alarm.ID,
+		Initiator:     types.InitiatorSystem,
 	})
 	if err != nil {
 		logger.Err(err).Msgf("cannot encode event")
