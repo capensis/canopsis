@@ -2,7 +2,7 @@ import axios from 'axios';
 import { get } from 'lodash';
 
 import { API_HOST, LOCAL_STORAGE_ACCESS_TOKEN_KEY, ROUTER_ACCESS_TOKEN_KEY } from '@/config';
-import { RESPONSE_STATUSES } from '@/constants';
+import { LOGOUT_RESPONSE_STATUSES } from '@/constants';
 
 import localStorageService from '@/services/local-storage';
 
@@ -81,9 +81,9 @@ function errorResponseHandler(responseWithError) {
     const { response, config } = responseWithError;
 
     /**
-     * When we will receive 502 or 401 error we must remove cookie to avoid getting a infinity page refreshing
+     * When we will receive 503 or 502 or 401 error we must remove cookie to avoid getting a infinity page refreshing
      */
-    if ([RESPONSE_STATUSES.badGateway, RESPONSE_STATUSES.unauthorized].includes(response.status)) {
+    if (LOGOUT_RESPONSE_STATUSES.includes(response.status)) {
       const queryParams = new URLSearchParams(window.location.search);
       const hasAccessToken = localStorageService.has(LOCAL_STORAGE_ACCESS_TOKEN_KEY)
         || queryParams.has(ROUTER_ACCESS_TOKEN_KEY);
