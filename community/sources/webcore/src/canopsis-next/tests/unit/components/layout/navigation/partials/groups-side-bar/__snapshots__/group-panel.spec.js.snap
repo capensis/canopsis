@@ -11,7 +11,6 @@ exports[`group-panel Renders \`group-panel\` with custom props 1`] = `
     <div
       class="panel-header"
     >
-      <!---->
       <div
         class="panel-header__title"
       >
@@ -20,6 +19,7 @@ exports[`group-panel Renders \`group-panel\` with custom props 1`] = `
       <div
         class="panel-header__actions"
       >
+        <!---->
         <button
           class="v-btn v-btn--disabled v-btn--icon v-btn--depressed v-btn--small theme--light"
           disabled="disabled"
@@ -67,7 +67,6 @@ exports[`group-panel Renders \`group-panel\` with required props 1`] = `
     <div
       class="panel-header"
     >
-      <!---->
       <div
         class="panel-header__title"
       >
@@ -76,6 +75,7 @@ exports[`group-panel Renders \`group-panel\` with required props 1`] = `
       <div
         class="panel-header__actions"
       >
+        <!---->
         <button
           class="v-btn v-btn--icon v-btn--depressed v-btn--small theme--light"
           style="display: none;"

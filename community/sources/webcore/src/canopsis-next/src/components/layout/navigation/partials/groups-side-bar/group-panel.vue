@@ -6,9 +6,9 @@
     template(#header="")
       div.panel-header
         slot(name="title")
-          v-icon.panel-header__icon.mr-2(v-if="group.is_private", small) lock
           div.panel-header__title {{ group.title }}
         div.panel-header__actions
+          v-icon.mr-2(v-if="group.is_private", small) lock
           v-btn(
             v-show="isEditing",
             :disabled="orderChanged",
@@ -56,7 +56,7 @@ export default {
     align-items: center;
     justify-content: space-between;
 
-    &__icon, &__actions {
+    &__actions {
       flex-shrink: 0;
     }
 

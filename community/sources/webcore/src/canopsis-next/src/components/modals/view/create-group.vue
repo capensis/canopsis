@@ -91,9 +91,7 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        if (this.config.action) {
-          this.config.action?.(groupToRequest({ ...this.group, ...this.form }));
-        }
+        this.config.action?.(groupToRequest({ ...this.group, ...this.form }));
 
         this.$modals.hide();
       }
