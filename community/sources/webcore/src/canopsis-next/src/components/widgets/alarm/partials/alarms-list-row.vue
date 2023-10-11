@@ -17,23 +17,9 @@
           :small="small",
           :search="search"
         )
-    td.alarm-list-row__cell(v-for="column in columns", :key="column.value")
-      alarm-column-value(
-        :alarm="alarm",
-        :widget="widget",
-        :column="column",
-        :selected-tag="selectedTag",
-        :small="small",
-        @activate="activateRow",
-        @select:tag="$emit('select:tag', $event)"
-      )
-      span.alarms-list-table__resize-handler(
-        v-if="resizing",
-        @mousedown.prevent="$emit('start:resize', column.value)",
-        @click.stop=""
-      )
-    td(v-if="!hideActions")
+    td.alarm-list-row__cell(v-for="header in availableHeaders", :key="header.value")
       actions-panel(
+        v-if="header.value === 'actions'",
         :item="alarm",
         :widget="widget",
         :parent-alarm="parentAlarm",
@@ -41,9 +27,19 @@
         :small="small",
         :wrap="wrapActions"
       )
+      alarm-column-value(
+        v-else,
+        :alarm="alarm",
+        :widget="widget",
+        :column="header",
+        :selected-tag="selectedTag",
+        :small="small",
+        @activate="activateRow",
+        @select:tag="$emit('select:tag', $event)"
+      )
       span.alarms-list-table__resize-handler(
         v-if="resizing",
-        @mousedown.prevent="$emit('start:resize', 'actions')",
+        @mousedown.prevent="$emit('start:resize', header.value)",
         @click.stop=""
       )
 </template>
@@ -97,7 +93,7 @@ export default {
       type: Object,
       required: true,
     },
-    columns: {
+    headers: {
       type: Array,
       required: true,
     },
@@ -121,10 +117,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    hideActions: {
-      type: Boolean,
-      default: false,
-    },
     selectedTag: {
       type: String,
       default: '',
@@ -145,6 +137,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    showInstructionIcon: {
+      type: Boolean,
+      default: false,
+    },
     search: {
       type: String,
       default: '',
@@ -161,7 +157,7 @@ export default {
     },
 
     hasRowActions() {
-      return this.selectable || this.expandable || this.hasAlarmInstruction;
+      return this.selectable || this.expandable || this.showInstructionIcon;
     },
 
     hasAlarmInstruction() {
@@ -207,6 +203,10 @@ export default {
       }
 
       return classes;
+    },
+
+    availableHeaders() {
+      return this.headers.filter(({ value }) => value);
     },
   },
   methods: {
