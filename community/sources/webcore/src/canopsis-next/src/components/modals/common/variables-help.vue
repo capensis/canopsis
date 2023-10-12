@@ -24,7 +24,7 @@
               v-tooltip(left)
                 template(#activator="{ on: tooltipOn }")
                   v-btn(v-on="{ ...tooltipOn, ...on }", icon)
-                    v-icon save_alt
+                    v-icon {{ leaf ? 'content_copy' : 'save_alt' }}
                 span {{ getTooltipContent(leaf, item) }}
 
             v-list(dense)
