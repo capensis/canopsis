@@ -194,7 +194,7 @@ export default {
       name: 'Droits sur l\'explorateur de contexte : Filtrer par catégorie',
       description: 'Les utilisateurs disposant de cette autorisation peuvent filtrer les entités par catégorie',
     },
-    [USERS_PERMISSIONS.business.context.actions.exportAsCsv]: {G
+    [USERS_PERMISSIONS.business.context.actions.exportAsCsv]: {
       name: 'Droits sur l\'explorateur de contexte : Exporter au format csv',
       description: 'Les utilisateurs disposant de cette autorisation peuvent exporter des entités sous forme de fichier CSV',
     },
