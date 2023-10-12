@@ -1,3 +1,5 @@
+import flushPromises from 'flush-promises';
+
 import { generateRenderer } from '@unit/utils/vue';
 import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
@@ -15,16 +17,21 @@ jest.mock('@/helpers/file/files', () => ({
 const snapshotStubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
   'patterns-form': true,
-  'c-action-btn': true,
-  'c-copy-btn': true,
   'c-ellipsis': true,
+  'v-menu': {
+    template: `
+      <div class="v-menu">
+        <slot name="activator" />
+        <slot />
+      </div>
+    `,
+  },
 };
 
 const selectTreeviewNodes = wrapper => wrapper.findAll('.v-treeview-node');
 const selectTreeviewNodeByIndex = (wrapper, index) => selectTreeviewNodes(wrapper).at(index);
 const selectTreeviewChildren = wrapper => wrapper.find('.v-treeview-node__children');
-const selectCopyButton = wrapper => wrapper.find('c-copy-btn-stub');
-const selectActionButton = wrapper => wrapper.find('c-action-btn-stub');
+const selectListTileByIndex = (wrapper, index) => wrapper.findAll('.v-list__tile').at(index);
 const selectTreeviewNodeToggle = wrapper => wrapper
   .find('.v-treeview-node__toggle:not(.v-treeview-node__toggle--open)');
 
@@ -48,6 +55,7 @@ const openAllNodes = async (wrapper) => {
       },
     ),
   );
+  await flushPromises();
   await selectTreeviewNodes(wrapper).wrappers.reduce(
     (acc, node) => {
       const children = selectTreeviewChildren(node);
@@ -94,7 +102,6 @@ describe('variables-help', () => {
   };
 
   const snapshotFactory = generateRenderer(VariablesHelp, {
-
     stubs: snapshotStubs,
     mocks: { $popups },
     parentComponent: {
@@ -105,26 +112,43 @@ describe('variables-help', () => {
     },
   });
 
-  test('Path copied after trigger copy button', async () => {
+  test('Path success copied after trigger copy button', async () => {
+    const copyText = jest.fn().mockResolvedValue();
     const wrapper = snapshotFactory({
       propsData: {
         modal,
       },
       mocks: {
         $modals,
+        $copyText: copyText,
       },
     });
 
     await openAllNodes(wrapper);
 
-    const copyButton = selectCopyButton(selectTreeviewNodeByIndex(wrapper, 10));
+    await selectListTileByIndex(selectTreeviewNodeByIndex(wrapper, 10), 0).trigger('click');
 
-    expect(copyButton.vm.$attrs.value).toEqual('test2.array_prop.[0].obj_prop.deep_prop');
-
-    await copyButton.vm.$emit('success');
+    expect(copyText).toBeCalledWith('test2.array_prop.[0].obj_prop.deep_prop');
     expect($popups.success).toBeCalledWith({ text: 'Path copied to clipboard' });
+  });
 
-    await copyButton.vm.$emit('error');
+  test('Path error copied after trigger copy button', async () => {
+    const copyText = jest.fn().mockRejectedValue();
+    const wrapper = snapshotFactory({
+      propsData: {
+        modal,
+      },
+      mocks: {
+        $modals,
+        $copyText: copyText,
+      },
+    });
+
+    await openAllNodes(wrapper);
+
+    await selectListTileByIndex(selectTreeviewNodeByIndex(wrapper, 10), 0).trigger('click');
+
+    expect(copyText).toBeCalledWith('test2.array_prop.[0].obj_prop.deep_prop');
     expect($popups.error).toBeCalledWith({ text: 'Something went wrong...' });
   });
 
@@ -140,9 +164,7 @@ describe('variables-help', () => {
 
     await openAllNodes(wrapper);
 
-    const actionButton = selectActionButton(selectTreeviewNodeByIndex(wrapper, 7));
-
-    await actionButton.vm.$emit('click');
+    await selectListTileByIndex(selectTreeviewNodeByIndex(wrapper, 7), 0).trigger('click');
 
     expect(saveJsonFile).toBeCalledWith(
       variablesObjectSecond.array_prop,

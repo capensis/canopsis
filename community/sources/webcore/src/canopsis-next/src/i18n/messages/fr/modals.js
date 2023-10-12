@@ -205,7 +205,6 @@ export default {
   },
   variablesHelp: {
     variables: 'Variables',
-    copyToClipboard: 'Copier dans le presse-papier',
   },
   service: {
     refreshEntities: 'Rafraîchir la liste des entités',
