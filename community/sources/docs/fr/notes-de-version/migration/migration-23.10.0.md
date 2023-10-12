@@ -269,6 +269,7 @@ https://git.canopsis.net/canopsis/canopsis-pro/-/issues/4992
 
 https://git.canopsis.net/canopsis/canopsis-pro/-/issues/5042
 
+Ne pas utiliser l'URI avec le replciaset
 
 ## Suppression du paramètre EnableLastEventDate
 
