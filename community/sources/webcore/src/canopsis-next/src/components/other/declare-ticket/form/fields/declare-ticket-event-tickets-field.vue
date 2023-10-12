@@ -1,12 +1,14 @@
 <template lang="pug">
-  v-layout.declare-ticket-event-tickets-chips-field(row, wrap)
-    declare-ticket-event-tickets-chip-field(
+  v-layout(column)
+    v-checkbox(
       v-for="chip in chips",
       :key="chip.value",
-      :value="chip.active",
-      :disabled="disabled",
-      @input="updateActive(chip.value)"
-    ) {{ chip.text }}
+      :input-value="chip.active",
+      :label="chip.text",
+      color="primary",
+      hide-details,
+      @change="updateActive(chip.value)"
+    )
 </template>
 
 <script>
@@ -14,10 +16,7 @@ import { filterValue } from '@/helpers/array';
 
 import { formMixin } from '@/mixins/form';
 
-import DeclareTicketEventTicketsChipField from './declare-ticket-event-tickets-chip-field.vue';
-
 export default {
-  components: { DeclareTicketEventTicketsChipField },
   mixins: [formMixin],
   model: {
     prop: 'value',
@@ -61,10 +60,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-.declare-ticket-event-tickets-chips-field {
-  margin: 5px;
-  gap: 5px;
-}
-</style>
