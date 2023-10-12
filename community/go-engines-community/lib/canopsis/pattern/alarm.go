@@ -466,6 +466,11 @@ func getAlarmStringField(alarm types.Alarm, f string) (string, bool) {
 			return "", true
 		}
 		return alarm.Value.LastComment.Message, true
+	case "v.last_comment.initiator":
+		if alarm.Value.LastComment == nil {
+			return "", true
+		}
+		return alarm.Value.LastComment.Initiator, true
 	case "v.ticket.m":
 		if alarm.Value.Ticket == nil {
 			return "", true
@@ -478,6 +483,12 @@ func getAlarmStringField(alarm types.Alarm, f string) (string, bool) {
 		}
 
 		return alarm.Value.Ticket.Ticket, true
+	case "v.ticket.initiator":
+		if alarm.Value.Ticket == nil {
+			return "", true
+		}
+
+		return alarm.Value.Ticket.Initiator, true
 	case "v.ack.a":
 		if alarm.Value.ACK == nil {
 			return "", true
@@ -496,6 +507,12 @@ func getAlarmStringField(alarm types.Alarm, f string) (string, bool) {
 		}
 
 		return alarm.Value.ACK.Initiator, true
+	case "v.canceled.initiator":
+		if alarm.Value.Canceled == nil {
+			return "", true
+		}
+
+		return alarm.Value.Canceled.Initiator, true
 	default:
 		if n := strings.TrimPrefix(f, "v.ticket.ticket_data."); n != f {
 			if alarm.Value.Ticket == nil || alarm.Value.Ticket.TicketData == nil {
