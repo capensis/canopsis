@@ -50,6 +50,11 @@ exports[`actions-panel Renders \`actions-panel\` with auto instruction in runnin
     Periodical behavior|pause|pbehaviorAdd
   </button>
   <button
+    class="action-addBookmark"
+  >
+    Add bookmark|$vuetify.icons.bookmark_add|addBookmark
+  </button>
+  <button
     class="action-comment"
   >
     Comment|comment|comment
@@ -152,6 +157,11 @@ exports[`actions-panel Renders \`actions-panel\` with links in alarm 1`] = `
     Periodical behavior|pause|pbehaviorAdd
   </button>
   <button
+    class="action-addBookmark"
+  >
+    Add bookmark|$vuetify.icons.bookmark_add|addBookmark
+  </button>
+  <button
     class="action-comment"
   >
     Comment|comment|comment
@@ -199,6 +209,11 @@ exports[`actions-panel Renders \`actions-panel\` with links in resolved alarm 1`
 <div
   class="shared-actions-panel"
 >
+  <button
+    class="action-addBookmark"
+  >
+    Add bookmark|$vuetify.icons.bookmark_add|addBookmark
+  </button>
   <button
     class="action-RuleId.icon.Label"
   >
@@ -265,6 +280,11 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in runn
     class="action-pbehaviorAdd"
   >
     Periodical behavior|pause|pbehaviorAdd
+  </button>
+  <button
+    class="action-addBookmark"
+  >
+    Add bookmark|$vuetify.icons.bookmark_add|addBookmark
   </button>
   <button
     class="action-comment"
@@ -357,6 +377,11 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in wait
     Periodical behavior|pause|pbehaviorAdd
   </button>
   <button
+    class="action-addBookmark"
+  >
+    Add bookmark|$vuetify.icons.bookmark_add|addBookmark
+  </button>
+  <button
     class="action-comment"
   >
     Comment|comment|comment
@@ -445,6 +470,11 @@ exports[`actions-panel Renders \`actions-panel\` with parentAlarm with auto meta
     class="action-pbehaviorAdd"
   >
     Periodical behavior|pause|pbehaviorAdd
+  </button>
+  <button
+    class="action-addBookmark"
+  >
+    Add bookmark|$vuetify.icons.bookmark_add|addBookmark
   </button>
   <button
     class="action-comment"
@@ -540,6 +570,11 @@ exports[`actions-panel Renders \`actions-panel\` with paused manual instruction 
     Periodical behavior|pause|pbehaviorAdd
   </button>
   <button
+    class="action-addBookmark"
+  >
+    Add bookmark|$vuetify.icons.bookmark_add|addBookmark
+  </button>
+  <button
     class="action-comment"
   >
     Comment|comment|comment
@@ -577,6 +612,11 @@ exports[`actions-panel Renders \`actions-panel\` with resolved alarm 1`] = `
 <div
   class="shared-actions-panel"
 >
+  <button
+    class="action-addBookmark"
+  >
+    Add bookmark|$vuetify.icons.bookmark_add|addBookmark
+  </button>
   <button
     class="action-variablesHelp"
   >
@@ -638,6 +678,11 @@ exports[`actions-panel Renders \`actions-panel\` with simple manual instruction 
     class="action-pbehaviorAdd"
   >
     Periodical behavior|pause|pbehaviorAdd
+  </button>
+  <button
+    class="action-addBookmark"
+  >
+    Add bookmark|$vuetify.icons.bookmark_add|addBookmark
   </button>
   <button
     class="action-comment"
@@ -736,6 +781,11 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and flapp
     Periodical behavior|pause|pbehaviorAdd
   </button>
   <button
+    class="action-addBookmark"
+  >
+    Add bookmark|$vuetify.icons.bookmark_add|addBookmark
+  </button>
+  <button
     class="action-comment"
   >
     Comment|comment|comment
@@ -802,6 +852,11 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and ongoi
     class="action-pbehaviorAdd"
   >
     Periodical behavior|pause|pbehaviorAdd
+  </button>
+  <button
+    class="action-addBookmark"
+  >
+    Add bookmark|$vuetify.icons.bookmark_add|addBookmark
   </button>
   <button
     class="action-comment"
@@ -892,6 +947,11 @@ exports[`actions-panel Renders \`actions-panel\` without assigned_declare_ticket
     Periodical behavior|pause|pbehaviorAdd
   </button>
   <button
+    class="action-addBookmark"
+  >
+    Add bookmark|$vuetify.icons.bookmark_add|addBookmark
+  </button>
+  <button
     class="action-comment"
   >
     Comment|comment|comment
@@ -948,6 +1008,11 @@ exports[`actions-panel Renders \`actions-panel\` without entity, instructions, b
     class="action-pbehaviorAdd"
   >
     Periodical behavior|pause|pbehaviorAdd
+  </button>
+  <button
+    class="action-addBookmark"
+  >
+    Add bookmark|$vuetify.icons.bookmark_add|addBookmark
   </button>
   <button
     class="action-comment"

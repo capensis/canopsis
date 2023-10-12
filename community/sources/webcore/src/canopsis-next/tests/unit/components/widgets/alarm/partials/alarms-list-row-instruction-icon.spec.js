@@ -1,14 +1,14 @@
 import { generateRenderer } from '@unit/utils/vue';
 import { INSTRUCTION_EXECUTION_ICONS } from '@/constants';
 
-import AlarmsListRowIcon from '@/components/widgets/alarm/partials/alarms-list-row-icon.vue';
+import AlarmsListRowInstructionsIcon from '@/components/widgets/alarm/partials/alarms-list-row-instructions-icon.vue';
 
-describe('alarms-list-row-icon', () => {
-  const snapshotFactory = generateRenderer(AlarmsListRowIcon, {
+describe('alarms-list-row-instructions-icon', () => {
+  const snapshotFactory = generateRenderer(AlarmsListRowInstructionsIcon, {
     attachTo: document.body,
   });
 
-  it('Renders `alarms-list-row-icon` with instruction', () => {
+  it('Renders `alarms-list-row-instructions-icon` with instruction', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {},
@@ -19,7 +19,7 @@ describe('alarms-list-row-icon', () => {
     expect(wrapper).toMatchTooltipSnapshot();
   });
 
-  it('Renders `alarms-list-row-icon` with all auto instructions', () => {
+  it('Renders `alarms-list-row-instructions-icon` with all auto instructions', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {
@@ -32,7 +32,7 @@ describe('alarms-list-row-icon', () => {
     expect(wrapper).toMatchTooltipSnapshot();
   });
 
-  it('Renders `alarms-list-row-icon` with auto instruction failed', () => {
+  it('Renders `alarms-list-row-instructions-icon` with auto instruction failed', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {
@@ -45,7 +45,7 @@ describe('alarms-list-row-icon', () => {
     expect(wrapper).toMatchTooltipSnapshot();
   });
 
-  it('Renders `alarms-list-row-icon` with auto instruction running', () => {
+  it('Renders `alarms-list-row-instructions-icon` with auto instruction running', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {
@@ -58,7 +58,7 @@ describe('alarms-list-row-icon', () => {
     expect(wrapper).toMatchTooltipSnapshot();
   });
 
-  it('Renders `alarms-list-row-icon` with manual instruction waiting result', () => {
+  it('Renders `alarms-list-row-instructions-icon` with manual instruction waiting result', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {
@@ -71,7 +71,7 @@ describe('alarms-list-row-icon', () => {
     expect(wrapper).toMatchTooltipSnapshot();
   });
 
-  it('Renders `alarms-list-row-icon` with manual instruction running', () => {
+  it('Renders `alarms-list-row-instructions-icon` with manual instruction running', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {
