@@ -20,7 +20,7 @@ import { isEmpty } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import { SOCKET_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
-import { EXCLUDED_SERVER_ERROR_STATUSES, MAX_LIMIT, ROUTES_NAMES } from '@/constants';
+import { EXCLUDED_SERVER_ERROR_STATUSES, MAX_LIMIT, RESPONSE_STATUSES, ROUTES_NAMES } from '@/constants';
 
 import Socket from '@/plugins/socket/services/socket';
 
@@ -163,12 +163,25 @@ export default {
 
     socketErrorHandler({ message } = {}) {
       if (message) {
-        this.$popups.error({ text: message });
+        const statusCode = +message;
 
-        if (message === Socket.ERROR_MESSAGES.authenticationFailed) {
+        if (statusCode === RESPONSE_STATUSES.unauthorized || message === Socket.ERROR_MESSAGES.authenticationFailed) {
           localStorageService.set('warningPopup', this.$t('warnings.authTokenExpired'));
           this.logout();
+
+          return;
         }
+
+        const textKey = {
+          [RESPONSE_STATUSES.notFound]: 'errors.socketConnectionRoomNotFound',
+          [RESPONSE_STATUSES.forbidden]: 'errors.socketConnectionRoomForbidden',
+          [RESPONSE_STATUSES.badRequest]: 'errors.socketConnectionRoomBadRequest',
+          [RESPONSE_STATUSES.internalServerError]: 'errors.socketConnectionRoomInternalServerError',
+        }[statusCode];
+
+        const text = this.$te(textKey) ? this.$t(textKey) : message;
+
+        this.$popups.error({ text });
       }
     },
 

@@ -317,7 +317,7 @@ widget_filters:
 
   filter_context_explorer_service:
     <<: *filter
-    title: Observateur
+    title: Service
     widget: "@widget_context_explorer"
     position: 3
     entity_pattern:
