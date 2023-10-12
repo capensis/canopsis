@@ -182,6 +182,10 @@ export const USERS_PERMISSIONS = {
 
         exportAsCsv: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_exportAsCsv`,
 
+        addBookmark: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_addBookmark`,
+        removeBookmark: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_removeBookmark`,
+        filterByBookmark: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_filterByBookmark`,
+
         ...featuresService.get('constants.USERS_PERMISSIONS.business.alarmsList.actions'),
       },
     },
@@ -444,6 +448,9 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
 
     [ALARM_LIST_ACTIONS_TYPES.executeInstruction]:
     USERS_PERMISSIONS.business.alarmsList.actions.executeInstruction,
+
+    [ALARM_LIST_ACTIONS_TYPES.addBookmark]: USERS_PERMISSIONS.business.alarmsList.actions.addBookmark,
+    [ALARM_LIST_ACTIONS_TYPES.removeBookmark]: USERS_PERMISSIONS.business.alarmsList.actions.removeBookmark,
   },
 
   context: {

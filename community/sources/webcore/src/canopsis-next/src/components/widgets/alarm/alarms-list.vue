@@ -52,6 +52,14 @@
             with-entity,
             with-pbehavior
           )
+      v-flex(v-if="hasAccessToFilterByBookmark")
+        v-switch.mt-0(
+          :value="query.only_bookmarks",
+          :label="$t('alarm.filterByBookmark')",
+          color="primary",
+          hide-details,
+          @change="updateOnlyBookmarks"
+        )
       v-flex
         alarms-list-remediation-instructions-filters(
           :filters.sync="remediationInstructionsFilters",
@@ -133,6 +141,7 @@ import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
 import { entitiesAlarmTagMixin } from '@/mixins/entities/alarm-tag';
 import { entitiesAlarmDetailsMixin } from '@/mixins/entities/alarm/details';
 import { permissionsWidgetsAlarmsListCorrelation } from '@/mixins/permissions/widgets/alarms-list/correlation';
+import { permissionsWidgetsAlarmsListBookmark } from '@/mixins/permissions/widgets/alarms-list/bookmark';
 import { permissionsWidgetsAlarmsListCategory } from '@/mixins/permissions/widgets/alarms-list/category';
 import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widgets/alarms-list/filters';
 import {
@@ -176,6 +185,7 @@ export default {
     entitiesAlarmDetailsMixin,
     permissionsWidgetsAlarmsListCategory,
     permissionsWidgetsAlarmsListCorrelation,
+    permissionsWidgetsAlarmsListBookmark,
     permissionsWidgetsAlarmsListFilters,
     permissionsWidgetsAlarmsListRemediationInstructionsFilters,
     exportMixinCreator({
@@ -296,9 +306,7 @@ export default {
     },
 
     updateCorrelation(correlation) {
-      this.updateContentInUserPreference({
-        isCorrelationEnabled: correlation,
-      });
+      this.updateContentInUserPreference({ isCorrelationEnabled: correlation });
 
       this.query = {
         ...this.query,
@@ -308,12 +316,21 @@ export default {
       };
     },
 
+    updateOnlyBookmarks(onlyBookmarks) {
+      this.updateContentInUserPreference({ onlyBookmarks });
+
+      this.query = {
+        ...this.query,
+
+        page: 1,
+        only_bookmarks: onlyBookmarks,
+      };
+    },
+
     updateCategory(category) {
       const categoryId = category && category._id;
 
-      this.updateContentInUserPreference({
-        category: categoryId,
-      });
+      this.updateContentInUserPreference({ category: categoryId });
 
       this.query = {
         ...this.query,
@@ -324,9 +341,7 @@ export default {
     },
 
     updateRecordsPerPage(limit) {
-      this.updateContentInUserPreference({
-        itemsPerPage: limit,
-      });
+      this.updateContentInUserPreference({ itemsPerPage: limit });
 
       this.query = {
         ...this.query,
@@ -336,9 +351,7 @@ export default {
     },
 
     updateDense(dense) {
-      this.updateContentInUserPreference({
-        dense,
-      });
+      this.updateContentInUserPreference({ dense });
     },
 
     expandFirstAlarm() {
@@ -416,7 +429,15 @@ export default {
       const columns = widgetExportColumns?.length ? widgetExportColumns : widgetColumns;
 
       return {
-        ...pick(query, ['search', 'category', 'correlation', 'opened', 'tstart', 'tstop']),
+        ...pick(query, [
+          'search',
+          'category',
+          'correlation',
+          'opened',
+          'tstart',
+          'tstop',
+          'only_bookmarks',
+        ]),
 
         fields: columns.map(({ value, text }) => ({ name: value, label: text })),
         filters: query.filters,
