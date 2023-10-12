@@ -479,7 +479,7 @@ export default {
       description: 'Cette autorisation définit l\'accès aux raisons PBehavior',
     },
     [USERS_PERMISSIONS.technical.planningExceptions]: {
-	    name: 'Planification : dates d\'exceptions',
+      name: 'Planification : dates d\'exceptions',
       description: 'Cette autorisation définit l\'accès aux dates d\'exception pour PBehaviors',
     },
     [USERS_PERMISSIONS.technical.remediation]: {
