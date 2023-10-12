@@ -103,6 +103,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 			EventType:     types.EventTypeUpdateStatus,
 			Author:        canopsis.DefaultEventAuthor,
 			Output:        "",
+			Initiator:     types.InitiatorSystem,
 		}
 		eventUpdateStatus.SourceType = eventUpdateStatus.DetectSourceType()
 		err = w.publishToEngineFIFO(ctx, eventUpdateStatus)
@@ -120,6 +121,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 			Resource:      alarm.Value.Resource,
 			Timestamp:     types.CpsTime{Time: time.Now()},
 			EventType:     types.EventTypeResolveClose,
+			Initiator:     types.InitiatorSystem,
 		}
 		eventResolveClosed.SourceType = eventResolveClosed.DetectSourceType()
 		err = w.publishToEngineFIFO(ctx, eventResolveClosed)
@@ -137,6 +139,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 			Resource:      alarm.Value.Resource,
 			Timestamp:     types.CpsTime{Time: time.Now()},
 			EventType:     types.EventTypeResolveCancel,
+			Initiator:     types.InitiatorSystem,
 		}
 		eventResolveCancel.SourceType = eventResolveCancel.DetectSourceType()
 		err = w.publishToEngineFIFO(ctx, eventResolveCancel)
@@ -154,6 +157,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 			Resource:      alarm.Value.Resource,
 			Timestamp:     types.CpsTime{Time: time.Now()},
 			EventType:     types.EventTypeUnsnooze,
+			Initiator:     types.InitiatorSystem,
 		}
 		eventUnsnooze.SourceType = eventUnsnooze.DetectSourceType()
 		err = w.publishToEngineFIFO(ctx, eventUnsnooze)

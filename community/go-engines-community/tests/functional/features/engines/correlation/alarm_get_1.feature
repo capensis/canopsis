@@ -134,6 +134,8 @@ Feature: Get alarms
     }
     """
     When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
+    When I save response metaAlarmDisplayName={{ (index .lastResponse.data 0).v.display_name }}
+    When I save response metaAlarmEntityId={{ (index .lastResponse.data 0).entity._id }}
     When I do POST /api/v4/alarm-details:
     """json
     [
@@ -260,10 +262,18 @@ Feature: Get alarms
           "steps": {
             "data": [
               {
-                "_t": "stateinc"
+                "_t": "stateinc",
+                "a": "engine.correlation",
+                "initiator": "system",
+                "m": "",
+                "val": 1
               },
               {
-                "_t": "statusinc"
+                "_t": "statusinc",
+                "a": "engine.correlation",
+                "initiator": "system",
+                "m": "",
+                "val": 1
               }
             ],
             "meta": {
@@ -312,7 +322,10 @@ Feature: Get alarms
                 "_t": "statusinc"
               },
               {
-                "_t": "metaalarmattach"
+                "_t": "metaalarmattach",
+                "a": "engine.correlation",
+                "initiator": "system",
+                "m": "Rule: {test-metaalarm-rule-alarm-correlation-get-1-1-name}\n Displayname: {{ `{` }}{{ .metaAlarmDisplayName }}{{ `}` }}\n Entity: {{ `{` }}{{ .metaAlarmEntityId }}{{ `}` }}"
               }
             ],
             "meta": {

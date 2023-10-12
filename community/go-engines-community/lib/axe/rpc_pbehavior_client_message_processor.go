@@ -65,6 +65,7 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 			Parameters: rpc.AxeParameters{
 				PbehaviorInfo: event.PbhEvent.PbehaviorInfo,
 				Author:        event.PbhEvent.Author,
+				Initiator:     event.PbhEvent.Initiator,
 				Output:        event.PbhEvent.Output,
 			},
 		})

@@ -1,6 +1,7 @@
 Feature: get pbehavior
   I need to be able to get pbehavior
 
+  @concurrent
   Scenario: given pbehavior should return true status
     Given I am admin
     When I do POST /api/v4/pbehaviors:
@@ -44,6 +45,7 @@ Feature: get pbehavior
     }
     """
 
+  @concurrent
   Scenario: given pbehavior should return true status
     Given I am admin
     When I do POST /api/v4/pbehaviors:
@@ -88,6 +90,7 @@ Feature: get pbehavior
     }
     """
 
+  @concurrent
   Scenario: given pbehavior should return false status
     Given I am admin
     When I do POST /api/v4/pbehaviors:
@@ -134,22 +137,22 @@ Feature: get pbehavior
     }
     """
 
+  @concurrent
   Scenario: given pbehavior should return status
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
-      "connector" : "test-connector-pbehavior-api-4",
-      "connector_name" : "test-connector-name-pbehavior-api-4",
-      "source_type" : "resource",
-      "event_type" : "check",
-      "component" : "test-component-pbehavior-api-4",
-      "resource" : "test-resource-pbehavior-api-4",
-      "state" : 0,
-      "output" : "noveo alarm"
+      "event_type": "check",
+      "state": 0,
+      "output": "test-output-pbehavior-api-4",
+      "connector": "test-connector-pbehavior-api-4",
+      "connector_name": "test-connector-name-pbehavior-api-4",
+      "component": "test-component-pbehavior-api-4",
+      "resource": "test-resource-pbehavior-api-4",
+      "source_type": "resource"
     }
     """
-    When I wait the end of event processing
     When I do POST /api/v4/pbehaviors:
     """json
     {
@@ -174,7 +177,17 @@ Feature: get pbehavior
     }
     """
     Then the response code should be 201
-    When I wait the end of event processing
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "pbhenter",
+      "connector": "test-connector-pbehavior-api-4",
+      "connector_name": "test-connector-name-pbehavior-api-4",
+      "component": "test-component-pbehavior-api-4",
+      "resource": "test-resource-pbehavior-api-4",
+      "source_type": "resource"
+    }
+    """
     When I wait 1s
     When I do POST /api/v4/pbehaviors:
     """json
