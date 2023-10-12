@@ -1,3 +1,5 @@
+import flushPromises from 'flush-promises';
+
 import { generateRenderer } from '@unit/utils/vue';
 import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
@@ -7,7 +9,6 @@ import { saveJsonFile } from '@/helpers/file/files';
 import ClickOutside from '@/services/click-outside';
 
 import VariablesHelp from '@/components/modals/common/variables-help.vue';
-import flushPromises from 'flush-promises';
 
 jest.mock('@/helpers/file/files', () => ({
   saveJsonFile: jest.fn(),
