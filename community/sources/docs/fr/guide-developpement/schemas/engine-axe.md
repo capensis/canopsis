@@ -38,7 +38,7 @@ flowchart
 
 ### Scenarios
 
-See [engine-action](./engine-actoin.md).
+See [engine-action](./engine-action.md).
 
 ### Declare ticket rules
 
