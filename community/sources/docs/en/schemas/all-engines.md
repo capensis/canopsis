@@ -30,7 +30,6 @@ flowchart
         ECH[engine-che]
         EF[engine-fifo]
         EPH[engine-pbehavior]
-        ESE[engine-service]
         ECO[engine-correlation]
         EDI[engine-dynamic-infos]
         ER[engine-remediation]
@@ -39,8 +38,7 @@ flowchart
         EF -- AMQP --> ECH
         ECH -- AMQP --> EAX
         EAX -- AMQP --> ECO
-        ECO -- AMQP --> ESE
-        ESE -- AMQP --> EDI
+        ECO -- AMQP --> EDI
         EDI -- AMQP --> EAC
         A -- AMQP --> EF
         EPH <-. AMQP .-> EAX
@@ -49,7 +47,6 @@ flowchart
         EW -. AMQP .-> EAX
         EAC <-. AMQP .-> EW
         EAC <-. AMQP .-> EAX
-        ESE <-. AMQP .-> EAX
         A -. AMQP .-> EDI
         A -. AMQP .-> ER
         A -. AMQP .-> EW
@@ -109,17 +106,14 @@ flowchart
         ECH[engine-che]
         EF[engine-fifo]
         EP[engine-pbehavior]
-        ESE[engine-service]
         A[API]
         EF -- AMQP --> ECH
         ECH -- AMQP --> EAX
-        EAX -- AMQP --> ESE
-        ESE -- AMQP --> EAC
+        EAX -- AMQP --> EAC
         A -- AMQP --> EF
         EP <-. AMQP .-> EAX
         A -. AMQP .-> EP
         EAC <-. AMQP .-> EAX
-        ESE <-. AMQP .-> EAX
     end
     subgraph Pilot computer
         UI[Browser UI]
@@ -133,7 +127,6 @@ flowchart
 - [engine-che](./engine-che.md)
 - [engine-axe](./engine-axe.md)
 - [engine-correlation](./engine-correlation.md)
-- [engine-service](./engine-service.md)
 - [engine-dynamic-infos](./engine-dynamic-infos.md)
 - [engine-action](./engine-action.md)
 - [engine-pbehavior](./engine-pbehavior.md)
