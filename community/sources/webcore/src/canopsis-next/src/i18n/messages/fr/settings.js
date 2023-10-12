@@ -79,8 +79,8 @@ export default {
   headerTitle: 'Titre de l\'en-tête',
   defaultSampling: 'Echantillonnage par défaut',
   defaultTimeRange: 'Plage horaire par défaut',
-  liveWatching: 'Regarder en direct',
-  liveWatchingTooltip: 'Si activé, les informations sur les changements d\'alarmes sont récupérées à l\'aide de websockets',
+  liveWatching: 'Mises à jour en direct',
+  liveWatchingTooltip: 'Si activé, les alarmes sont mises à jour en direct à l\'aide de websockets',
   exportCsv: {
     title: 'Exporter CSV',
     fields: {
