@@ -10,7 +10,11 @@ Feature: update alarm on action
       "name": "test-scenario-action-axe-1-name",
       "priority": 10040,
       "enabled": true,
-      "triggers": ["resolve"],
+      "triggers": [
+        {
+          "type": "resolve"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -34,7 +38,7 @@ Feature: update alarm on action
                 "password": "test"
               },
               "headers": {"Content-Type": "application/json"},
-              "payload": "{\"priority\": 10041,\"name\":\"{{ `{{ .Entity.ID }}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-axe-1-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"priority\": 10041,\"name\":\"{{ `{{ .Entity.ID }}` }}\",\"enabled\":true,\"triggers\":[{\"type\":\"create\"}],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-axe-1-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             },
             "declare_ticket": {
               "ticket_id": "_id"
@@ -161,7 +165,11 @@ Feature: update alarm on action
       "name": "test-scenario-action-axe-2-name",
       "priority": 10042,
       "enabled": true,
-      "triggers": ["resolve"],
+      "triggers": [
+        {
+          "type": "resolve"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -305,7 +313,11 @@ Feature: update alarm on action
     {
       "name": "test-scenario-action-axe-3-name",
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -329,7 +341,7 @@ Feature: update alarm on action
                 "password": "test"
               },
               "headers": {"Content-Type": "application/json"},
-              "payload": "{\"name\":\"{{ `{{ .Alarm.Value.Output }}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-axe-3-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"name\":\"{{ `{{ .Alarm.Value.Output }}` }}\",\"enabled\":true,\"triggers\":[{\"type\":\"create\"}],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-axe-3-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             },
             "declare_ticket": {
               "ticket_id": "name"
@@ -559,7 +571,11 @@ Feature: update alarm on action
     {
       "name": "test-scenario-action-axe-4-name",
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -583,7 +599,7 @@ Feature: update alarm on action
                 "password": "test"
               },
               "headers": {"Content-Type": "application/json"},
-              "payload": "{\"name\":\"{{ `{{ .Alarm.Value.Output }}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-axe-4-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"name\":\"{{ `{{ .Alarm.Value.Output }}` }}\",\"enabled\":true,\"triggers\":[{\"type\":\"create\"}],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-axe-4-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             },
             "declare_ticket": {
               "ticket_id": "name",

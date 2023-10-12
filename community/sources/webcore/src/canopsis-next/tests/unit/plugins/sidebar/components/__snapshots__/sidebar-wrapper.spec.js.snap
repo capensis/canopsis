@@ -15,38 +15,29 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with default slot 1`] = `
         style="height: 64px;"
       >
         <div
-          class="v-list theme--light"
-          role="list"
+          class="layout row align-center"
         >
           <div
-            role="listitem"
+            class="flex white--text subheading"
+          >
+            Alarm list settings
+          </div>
+          <button
+            class="v-btn v-btn--icon theme--light"
+            type="button"
           >
             <div
-              class="v-list__tile theme--light"
+              class="v-btn__content"
             >
-              <div
-                class="v-list__tile__title white--text"
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light white--text"
               >
-                Alarm list settings
-              </div>
+                close
+              </i>
             </div>
-          </div>
+          </button>
         </div>
-        <button
-          class="v-btn v-btn--icon theme--light"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light white--text"
-            >
-              close
-            </i>
-          </div>
-        </button>
       </div>
     </nav>
     <hr
@@ -77,38 +68,29 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: alarm-settings 1
         style="height: 64px;"
       >
         <div
-          class="v-list theme--light"
-          role="list"
+          class="layout row align-center"
         >
           <div
-            role="listitem"
+            class="flex white--text subheading"
+          >
+            Alarm list settings
+          </div>
+          <button
+            class="v-btn v-btn--icon theme--light"
+            type="button"
           >
             <div
-              class="v-list__tile theme--light"
+              class="v-btn__content"
             >
-              <div
-                class="v-list__tile__title white--text"
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light white--text"
               >
-                Alarm list settings
-              </div>
+                close
+              </i>
             </div>
-          </div>
+          </button>
         </div>
-        <button
-          class="v-btn v-btn--icon theme--light"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light white--text"
-            >
-              close
-            </i>
-          </div>
-        </button>
       </div>
     </nav>
     <hr
@@ -136,38 +118,29 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: alarm-statistics
         style="height: 64px;"
       >
         <div
-          class="v-list theme--light"
-          role="list"
+          class="layout row align-center"
         >
           <div
-            role="listitem"
+            class="flex white--text subheading"
+          >
+            Alarm statistics settings
+          </div>
+          <button
+            class="v-btn v-btn--icon theme--light"
+            type="button"
           >
             <div
-              class="v-list__tile theme--light"
+              class="v-btn__content"
             >
-              <div
-                class="v-list__tile__title white--text"
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light white--text"
               >
-                Alarm statistics settings
-              </div>
+                close
+              </i>
             </div>
-          </div>
+          </button>
         </div>
-        <button
-          class="v-btn v-btn--icon theme--light"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light white--text"
-            >
-              close
-            </i>
-          </div>
-        </button>
       </div>
     </nav>
     <hr
@@ -195,38 +168,29 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: bar-chart-settin
         style="height: 64px;"
       >
         <div
-          class="v-list theme--light"
-          role="list"
+          class="layout row align-center"
         >
           <div
-            role="listitem"
+            class="flex white--text subheading"
+          >
+            Bar chart settings
+          </div>
+          <button
+            class="v-btn v-btn--icon theme--light"
+            type="button"
           >
             <div
-              class="v-list__tile theme--light"
+              class="v-btn__content"
             >
-              <div
-                class="v-list__tile__title white--text"
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light white--text"
               >
-                Bar chart settings
-              </div>
+                close
+              </i>
             </div>
-          </div>
+          </button>
         </div>
-        <button
-          class="v-btn v-btn--icon theme--light"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light white--text"
-            >
-              close
-            </i>
-          </div>
-        </button>
       </div>
     </nav>
     <hr
@@ -254,38 +218,29 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: context-settings
         style="height: 64px;"
       >
         <div
-          class="v-list theme--light"
-          role="list"
+          class="layout row align-center"
         >
           <div
-            role="listitem"
+            class="flex white--text subheading"
+          >
+            Context table settings
+          </div>
+          <button
+            class="v-btn v-btn--icon theme--light"
+            type="button"
           >
             <div
-              class="v-list__tile theme--light"
+              class="v-btn__content"
             >
-              <div
-                class="v-list__tile__title white--text"
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light white--text"
               >
-                Context table settings
-              </div>
+                close
+              </i>
             </div>
-          </div>
+          </button>
         </div>
-        <button
-          class="v-btn v-btn--icon theme--light"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light white--text"
-            >
-              close
-            </i>
-          </div>
-        </button>
       </div>
     </nav>
     <hr
@@ -313,38 +268,29 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: counter-settings
         style="height: 64px;"
       >
         <div
-          class="v-list theme--light"
-          role="list"
+          class="layout row align-center"
         >
           <div
-            role="listitem"
+            class="flex white--text subheading"
+          >
+            Counter settings
+          </div>
+          <button
+            class="v-btn v-btn--icon theme--light"
+            type="button"
           >
             <div
-              class="v-list__tile theme--light"
+              class="v-btn__content"
             >
-              <div
-                class="v-list__tile__title white--text"
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light white--text"
               >
-                Counter settings
-              </div>
+                close
+              </i>
             </div>
-          </div>
+          </button>
         </div>
-        <button
-          class="v-btn v-btn--icon theme--light"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light white--text"
-            >
-              close
-            </i>
-          </div>
-        </button>
       </div>
     </nav>
     <hr
@@ -372,38 +318,29 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: line-chart-setti
         style="height: 64px;"
       >
         <div
-          class="v-list theme--light"
-          role="list"
+          class="layout row align-center"
         >
           <div
-            role="listitem"
+            class="flex white--text subheading"
+          >
+            Line chart settings
+          </div>
+          <button
+            class="v-btn v-btn--icon theme--light"
+            type="button"
           >
             <div
-              class="v-list__tile theme--light"
+              class="v-btn__content"
             >
-              <div
-                class="v-list__tile__title white--text"
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light white--text"
               >
-                Line chart settings
-              </div>
+                close
+              </i>
             </div>
-          </div>
+          </button>
         </div>
-        <button
-          class="v-btn v-btn--icon theme--light"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light white--text"
-            >
-              close
-            </i>
-          </div>
-        </button>
       </div>
     </nav>
     <hr
@@ -431,38 +368,29 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: map-settings 1`]
         style="height: 64px;"
       >
         <div
-          class="v-list theme--light"
-          role="list"
+          class="layout row align-center"
         >
           <div
-            role="listitem"
+            class="flex white--text subheading"
+          >
+            Mapping widget settings
+          </div>
+          <button
+            class="v-btn v-btn--icon theme--light"
+            type="button"
           >
             <div
-              class="v-list__tile theme--light"
+              class="v-btn__content"
             >
-              <div
-                class="v-list__tile__title white--text"
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light white--text"
               >
-                Mapping widget settings
-              </div>
+                close
+              </i>
             </div>
-          </div>
+          </button>
         </div>
-        <button
-          class="v-btn v-btn--icon theme--light"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light white--text"
-            >
-              close
-            </i>
-          </div>
-        </button>
       </div>
     </nav>
     <hr
@@ -490,38 +418,29 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: numbers-settings
         style="height: 64px;"
       >
         <div
-          class="v-list theme--light"
-          role="list"
+          class="layout row align-center"
         >
           <div
-            role="listitem"
+            class="flex white--text subheading"
+          >
+            Numbers settings
+          </div>
+          <button
+            class="v-btn v-btn--icon theme--light"
+            type="button"
           >
             <div
-              class="v-list__tile theme--light"
+              class="v-btn__content"
             >
-              <div
-                class="v-list__tile__title white--text"
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light white--text"
               >
-                Numbers settings
-              </div>
+                close
+              </i>
             </div>
-          </div>
+          </button>
         </div>
-        <button
-          class="v-btn v-btn--icon theme--light"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light white--text"
-            >
-              close
-            </i>
-          </div>
-        </button>
       </div>
     </nav>
     <hr
@@ -549,38 +468,29 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: pie-chart-settin
         style="height: 64px;"
       >
         <div
-          class="v-list theme--light"
-          role="list"
+          class="layout row align-center"
         >
           <div
-            role="listitem"
+            class="flex white--text subheading"
+          >
+            Pie chart settings
+          </div>
+          <button
+            class="v-btn v-btn--icon theme--light"
+            type="button"
           >
             <div
-              class="v-list__tile theme--light"
+              class="v-btn__content"
             >
-              <div
-                class="v-list__tile__title white--text"
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light white--text"
               >
-                Pie chart settings
-              </div>
+                close
+              </i>
             </div>
-          </div>
+          </button>
         </div>
-        <button
-          class="v-btn v-btn--icon theme--light"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light white--text"
-            >
-              close
-            </i>
-          </div>
-        </button>
       </div>
     </nav>
     <hr
@@ -608,38 +518,29 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: service-weather-
         style="height: 64px;"
       >
         <div
-          class="v-list theme--light"
-          role="list"
+          class="layout row align-center"
         >
           <div
-            role="listitem"
+            class="flex white--text subheading"
+          >
+            Service weather settings
+          </div>
+          <button
+            class="v-btn v-btn--icon theme--light"
+            type="button"
           >
             <div
-              class="v-list__tile theme--light"
+              class="v-btn__content"
             >
-              <div
-                class="v-list__tile__title white--text"
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light white--text"
               >
-                Service weather settings
-              </div>
+                close
+              </i>
             </div>
-          </div>
+          </button>
         </div>
-        <button
-          class="v-btn v-btn--icon theme--light"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light white--text"
-            >
-              close
-            </i>
-          </div>
-        </button>
       </div>
     </nav>
     <hr
@@ -667,38 +568,29 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: stats-calendar-s
         style="height: 64px;"
       >
         <div
-          class="v-list theme--light"
-          role="list"
+          class="layout row align-center"
         >
           <div
-            role="listitem"
+            class="flex white--text subheading"
+          >
+            Stats calendar settings
+          </div>
+          <button
+            class="v-btn v-btn--icon theme--light"
+            type="button"
           >
             <div
-              class="v-list__tile theme--light"
+              class="v-btn__content"
             >
-              <div
-                class="v-list__tile__title white--text"
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light white--text"
               >
-                Stats calendar settings
-              </div>
+                close
+              </i>
             </div>
-          </div>
+          </button>
         </div>
-        <button
-          class="v-btn v-btn--icon theme--light"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light white--text"
-            >
-              close
-            </i>
-          </div>
-        </button>
       </div>
     </nav>
     <hr
@@ -726,38 +618,29 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: testing-weather-
         style="height: 64px;"
       >
         <div
-          class="v-list theme--light"
-          role="list"
+          class="layout row align-center"
         >
           <div
-            role="listitem"
+            class="flex white--text subheading"
+          >
+            Testing weather
+          </div>
+          <button
+            class="v-btn v-btn--icon theme--light"
+            type="button"
           >
             <div
-              class="v-list__tile theme--light"
+              class="v-btn__content"
             >
-              <div
-                class="v-list__tile__title white--text"
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light white--text"
               >
-                Testing weather
-              </div>
+                close
+              </i>
             </div>
-          </div>
+          </button>
         </div>
-        <button
-          class="v-btn v-btn--icon theme--light"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light white--text"
-            >
-              close
-            </i>
-          </div>
-        </button>
       </div>
     </nav>
     <hr
@@ -785,38 +668,29 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: text-settings 1`
         style="height: 64px;"
       >
         <div
-          class="v-list theme--light"
-          role="list"
+          class="layout row align-center"
         >
           <div
-            role="listitem"
+            class="flex white--text subheading"
+          >
+            Text settings
+          </div>
+          <button
+            class="v-btn v-btn--icon theme--light"
+            type="button"
           >
             <div
-              class="v-list__tile theme--light"
+              class="v-btn__content"
             >
-              <div
-                class="v-list__tile__title white--text"
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light white--text"
               >
-                Text settings
-              </div>
+                close
+              </i>
             </div>
-          </div>
+          </button>
         </div>
-        <button
-          class="v-btn v-btn--icon theme--light"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light white--text"
-            >
-              close
-            </i>
-          </div>
-        </button>
       </div>
     </nav>
     <hr
@@ -844,38 +718,29 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: user-statistics-
         style="height: 64px;"
       >
         <div
-          class="v-list theme--light"
-          role="list"
+          class="layout row align-center"
         >
           <div
-            role="listitem"
+            class="flex white--text subheading"
+          >
+            User statistics settings
+          </div>
+          <button
+            class="v-btn v-btn--icon theme--light"
+            type="button"
           >
             <div
-              class="v-list__tile theme--light"
+              class="v-btn__content"
             >
-              <div
-                class="v-list__tile__title white--text"
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light white--text"
               >
-                User statistics settings
-              </div>
+                close
+              </i>
             </div>
-          </div>
+          </button>
         </div>
-        <button
-          class="v-btn v-btn--icon theme--light"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light white--text"
-            >
-              close
-            </i>
-          </div>
-        </button>
       </div>
     </nav>
     <hr

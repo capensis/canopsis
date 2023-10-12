@@ -10,7 +10,11 @@ Feature: send activation event on unsnooze
       "name": "test-scenario-axe-action-activation-name",
       "priority": 10058,
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
