@@ -6,6 +6,7 @@ import { createCRUDModule } from '@/store/plugins/entities';
 
 export default createCRUDModule({
   route: API_ROUTES.alarmTag.list,
+  withWithoutStore: true,
 }, {
   actions: {
     bulkRemove(context, { data }) {

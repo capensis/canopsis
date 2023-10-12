@@ -367,6 +367,14 @@ paths:
         -  PERMISSIONS: `api_alarm_tag:read`
       operationId: alarm-tags-get
       parameters:
+        - name: values[]
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
         - $ref: '#/components/parameters/withFlags'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/page'

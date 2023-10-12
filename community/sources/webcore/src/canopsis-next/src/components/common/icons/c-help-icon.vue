@@ -3,7 +3,7 @@
     template(#activator="{ bind, on }")
       v-icon(v-bind="bind", v-on="on", :color="color", :size="size", :class="iconClass") {{ icon }}
     slot
-      c-compiled-template.pre-wrap(:template="text")
+      div.pre-wrap(v-html="text")
 </template>
 
 <script>

@@ -25,7 +25,13 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { MODALS, USERS_PERMISSIONS, ENTITIES_STATES_KEYS, COUNTER_STATES_ICONS } from '@/constants';
+import {
+  MODALS,
+  USERS_PERMISSIONS,
+  ENTITIES_STATES_KEYS,
+  COUNTER_STATES_ICONS,
+  COUNTER_EXPORT_FILE_NAME_PREFIX,
+} from '@/constants';
 
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 import { convertObjectToTreeview } from '@/helpers/treeview';
@@ -148,6 +154,8 @@ export default {
         name: MODALS.variablesHelp,
         config: {
           variables,
+          exportEntity: this.counter,
+          exportEntityName: COUNTER_EXPORT_FILE_NAME_PREFIX,
         },
       });
     },
