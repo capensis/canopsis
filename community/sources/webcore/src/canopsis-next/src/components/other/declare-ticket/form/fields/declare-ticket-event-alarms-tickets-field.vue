@@ -15,6 +15,7 @@
         td.text-xs-left {{ item.v.resource }}
         td(v-if="!hideTickets")
           declare-ticket-event-tickets-field(
+            :alarm-tickets="item.v.tickets",
             :value="activeTicketsByAlarms[item._id]",
             :tickets="ticketsByAlarms[item._id]",
             @input="updateTickets(item._id, $event)"
@@ -30,10 +31,12 @@ import { revertGroupBy } from '@/helpers/collection';
 
 import { formMixin } from '@/mixins/form';
 
+import ExtraDetailsTicket from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-ticket.vue';
+
 import DeclareTicketEventTicketsField from './declare-ticket-event-tickets-field.vue';
 
 export default {
-  components: { DeclareTicketEventTicketsField },
+  components: { ExtraDetailsTicket, DeclareTicketEventTicketsField },
   mixins: [formMixin],
   model: {
     prop: 'value',
