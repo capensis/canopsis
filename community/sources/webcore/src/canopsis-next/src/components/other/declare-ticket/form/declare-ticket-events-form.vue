@@ -6,26 +6,30 @@
         :alarms="alarms",
         :tickets-by-alarms="ticketsByAlarms",
         :hide-ticket-resource="hideTicketResource",
-        hide-remove,
+        hide-row-select,
         @input="updateCommonValue"
       )
     template(v-else)
       c-information-block(v-for="group in groups", :key="group.ticketId", :title="$t('declareTicket.applyRules')")
         v-layout.mt-2
-          declare-ticket-event-tickets-chip-field(
-            :value="group.enabled",
-            @input="updateEnabledTickets(group.ticketId)"
-          ) {{ group.name }}
+          v-checkbox(
+            :input-value="group.everyEnabled",
+            :indeterminate="group.someEnabled",
+            :label="group.name",
+            color="primary",
+            hide-details,
+            @change="updateEnabledTickets(group.ticketId)"
+          )
         declare-ticket-event-form(
           :form="group.value",
           :alarms="group.alarms",
           :tickets-by-alarms="group.ticketsByAlarms",
           :hide-ticket-resource="hideTicketResource",
-          disable-tickets,
+          hide-tickets,
           @input="updateGroup(group.ticketId, $event)"
         )
       c-information-block(v-if="alarmsWithoutTickets.length", :title="$t('declareTicket.noRulesForAlarms')")
-        declare-ticket-event-alarms-tickets-field(:alarms="alarmsWithoutTickets", hide-tickets)
+        declare-ticket-event-alarms-tickets-field(:alarms="alarmsWithoutTickets", hide-tickets, hide-row-select)
     c-alert(v-if="hasErrors", type="error") {{ $t('declareTicket.errors.ticketRequired') }}
 </template>
 
@@ -35,12 +39,11 @@ import { keyBy, pick } from 'lodash';
 import { formMixin } from '@/mixins/form';
 
 import DeclareTicketEventForm from './declare-ticket-event-form.vue';
-import DeclareTicketEventTicketsChipField from './fields/declare-ticket-event-tickets-chip-field.vue';
 import DeclareTicketEventAlarmsTicketsField from './fields/declare-ticket-event-alarms-tickets-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { DeclareTicketEventAlarmsTicketsField, DeclareTicketEventTicketsChipField, DeclareTicketEventForm },
+  components: { DeclareTicketEventAlarmsTicketsField, DeclareTicketEventForm },
   mixins: [formMixin],
   model: {
     prop: 'form',
@@ -117,11 +120,15 @@ export default {
 
     groups() {
       return Object.entries(this.alarmsByTickets).map(([ticketId, { alarms: alarmsIds, name }]) => {
-        const enabled = this.form.alarms_by_tickets[ticketId].length > 0;
+        const selectedAlarms = this.form.alarms_by_tickets[ticketId];
+
+        const everyEnabled = selectedAlarms.length === alarmsIds.length;
+        const someEnabled = !everyEnabled && selectedAlarms.length > 0;
         const activeTickets = [{ _id: ticketId, name }];
 
         return {
-          enabled,
+          everyEnabled,
+          someEnabled,
           value: {
             alarms_by_tickets: pick(this.form.alarms_by_tickets, [ticketId]),
             comment: this.form.comments_by_tickets[ticketId],

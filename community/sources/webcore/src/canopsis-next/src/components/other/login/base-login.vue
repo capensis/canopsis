@@ -14,8 +14,8 @@
               type="submit",
               color="primary"
             ) {{ $t('common.connect') }}
-            v-flex(v-if="serverErrorMessage", xs9)
-              c-alert.py-1.my-0.font-weight-bold(type="error") {{ serverErrorMessage }}
+            v-flex(xs9)
+              c-alert.py-1.my-0.font-weight-bold(:value="!!serverErrorMessage", type="error") {{ serverErrorMessage }}
           template(v-if="footer")
             v-divider.my-2
             v-layout

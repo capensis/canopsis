@@ -277,7 +277,11 @@ Feature: run a declare ticket rule
       "name": "test-scenario-declareticket-execution-second-2-name",
       "priority": 10080,
       "enabled": true,
-      "triggers": ["declareticketwebhook"],
+      "triggers": [
+        {
+          "type": "declareticketwebhook"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -488,7 +492,11 @@ Feature: run a declare ticket rule
       "name": "test-scenario-declareticket-execution-second-3-name",
       "priority": 10081,
       "enabled": true,
-      "triggers": ["declareticketwebhook"],
+      "triggers": [
+        {
+          "type": "declareticketwebhook"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [

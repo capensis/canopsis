@@ -2,15 +2,18 @@ Feature: Bulk update a scenario
   I need to be able to bulk update scenarios
   Only admin should be able to bulk update scenarios
 
+  @concurrent
   Scenario: given bulk update request and no auth user should not allow access
     When I do PUT /api/v4/bulk/scenarios
     Then the response code should be 401
 
+  @concurrent
   Scenario: given bulk update request and auth user by api key without permissions should not allow access
     When I am noperms
     When I do PUT /api/v4/bulk/scenarios
     Then the response code should be 403
 
+  @concurrent
   Scenario: given bulk update request should return multi status and should be handled independently
     When I am admin
     When I do PUT /api/v4/bulk/scenarios:
@@ -20,8 +23,14 @@ Feature: Bulk update a scenario
         "_id": "test-scenario-to-bulk-update-1",
         "name": "test-scenario-to-bulk-update-1-name",
         "enabled": true,
-        "priority": 7,
-        "triggers": ["create","pbhenter"],
+        "triggers": [
+          {
+            "type": "create"
+          },
+          {
+            "type": "pbhenter"
+          }
+        ],
         "actions": [
           {
             "alarm_pattern": [
@@ -52,8 +61,14 @@ Feature: Bulk update a scenario
         "_id": "test-scenario-to-bulk-update-1",
         "name": "test-scenario-to-bulk-update-1-name-twice",
         "enabled": true,
-        "priority": 7,
-        "triggers": ["create","pbhenter"],
+        "triggers": [
+          {
+            "type": "create"
+          },
+          {
+            "type": "pbhenter"
+          }
+        ],
         "actions": [
           {
             "alarm_pattern": [
@@ -84,7 +99,11 @@ Feature: Bulk update a scenario
       {
         "name": "test-scenario-to-check-unique-name-name",
         "enabled": true,
-        "triggers": ["create"],
+        "triggers": [
+          {
+            "type": "create"
+          }
+        ],
         "actions": [
           {
             "alarm_pattern": [
@@ -125,13 +144,21 @@ Feature: Bulk update a scenario
       {
         "name": "test-scenario-to-bulk-create-4-name",
         "enabled": true,
-        "triggers": ["create"],
+        "triggers": [
+          {
+            "type": "create"
+          }
+        ],
         "actions": [{}]
       },
       {
         "name": "test-scenario-to-bulk-create-4-name",
         "enabled": true,
-        "triggers": ["create"],
+        "triggers": [
+          {
+            "type": "create"
+          }
+        ],
         "actions": [
           {
             "alarm_pattern": [
@@ -165,7 +192,11 @@ Feature: Bulk update a scenario
       {
         "name": "test-scenario-to-bulk-create-4-name",
         "enabled": true,
-        "triggers": ["create"],
+        "triggers": [
+          {
+            "type": "create"
+          }
+        ],
         "actions": [
           {
             "alarm_pattern": [
@@ -199,7 +230,11 @@ Feature: Bulk update a scenario
       {
         "name": "test-scenario-to-bulk-create-4-name",
         "enabled": true,
-        "triggers": ["create"],
+        "triggers": [
+          {
+            "type": "create"
+          }
+        ],
         "actions": [
           {
             "alarm_pattern": [
@@ -233,7 +268,11 @@ Feature: Bulk update a scenario
       {
         "name": "test-scenario-to-bulk-create-4-name",
         "enabled": true,
-        "triggers": ["create"],
+        "triggers": [
+          {
+            "type": "create"
+          }
+        ],
         "actions": [
           {
             "alarm_pattern": [
@@ -271,7 +310,11 @@ Feature: Bulk update a scenario
       {
         "name": "test-scenario-to-bulk-create-4-name",
         "enabled": true,
-        "triggers": ["create"],
+        "triggers": [
+          {
+            "type": "create"
+          }
+        ],
         "actions": [
           {
             "alarm_pattern": [
@@ -307,8 +350,14 @@ Feature: Bulk update a scenario
         "_id": "test-scenario-to-bulk-update-2",
         "name": "test-scenario-to-bulk-update-2-name",
         "enabled": true,
-        "priority": 8,
-        "triggers": ["create","pbhenter"],
+        "triggers": [
+          {
+            "type": "create"
+          },
+          {
+            "type": "pbhenter"
+          }
+        ],
         "actions": [
           {
             "alarm_pattern": [
@@ -339,8 +388,11 @@ Feature: Bulk update a scenario
         "_id": "test-scenario-to-bulk-update-3",
         "name": "test-scenario-to-bulk-update-3-name",
         "enabled": true,
-        "priority": 17,
-        "triggers": ["create"],
+        "triggers": [
+          {
+            "type": "create"
+          }
+        ],
         "delay": {
           "value": 3,
           "unit": "s"
@@ -413,7 +465,11 @@ Feature: Bulk update a scenario
       {
         "name": "test-scenario-to-bulk-update-3-name",
         "enabled": true,
-        "triggers": ["create"],
+        "triggers": [
+          {
+            "type": "create"
+          }
+        ],
         "delay": {
           "value": 3,
           "unit": "s"
@@ -482,8 +538,14 @@ Feature: Bulk update a scenario
           "_id": "test-scenario-to-bulk-update-1",
           "name": "test-scenario-to-bulk-update-1-name",
           "enabled": true,
-          "priority": 7,
-          "triggers": ["create","pbhenter"],
+          "triggers": [
+            {
+              "type": "create"
+            },
+            {
+              "type": "pbhenter"
+            }
+          ],
           "actions": [
             {
               "alarm_pattern": [
@@ -518,8 +580,14 @@ Feature: Bulk update a scenario
           "_id": "test-scenario-to-bulk-update-1",
           "name": "test-scenario-to-bulk-update-1-name-twice",
           "enabled": true,
-          "priority": 7,
-          "triggers": ["create","pbhenter"],
+          "triggers": [
+            {
+              "type": "create"
+            },
+            {
+              "type": "pbhenter"
+            }
+          ],
           "actions": [
             {
               "alarm_pattern": [
@@ -567,7 +635,11 @@ Feature: Bulk update a scenario
         "item": {
           "name": "test-scenario-to-check-unique-name-name",
           "enabled": true,
-          "triggers": ["create"],
+          "triggers": [
+            {
+              "type": "create"
+            }
+          ],
           "actions": [
             {
               "alarm_pattern": [
@@ -617,7 +689,11 @@ Feature: Bulk update a scenario
         "item": {
           "name": "test-scenario-to-bulk-create-4-name",
           "enabled": true,
-          "triggers": ["create"],
+          "triggers": [
+            {
+              "type": "create"
+            }
+          ],
           "actions": [{}]
         }
       },
@@ -630,7 +706,11 @@ Feature: Bulk update a scenario
         "item": {
           "name": "test-scenario-to-bulk-create-4-name",
           "enabled": true,
-          "triggers": ["create"],
+          "triggers": [
+            {
+              "type": "create"
+            }
+          ],
           "actions": [
             {
               "alarm_pattern": [
@@ -671,7 +751,11 @@ Feature: Bulk update a scenario
         "item": {
           "name": "test-scenario-to-bulk-create-4-name",
           "enabled": true,
-          "triggers": ["create"],
+          "triggers": [
+            {
+              "type": "create"
+            }
+          ],
           "actions": [
             {
               "alarm_pattern": [
@@ -712,7 +796,11 @@ Feature: Bulk update a scenario
         "item": {
           "name": "test-scenario-to-bulk-create-4-name",
           "enabled": true,
-          "triggers": ["create"],
+          "triggers": [
+            {
+              "type": "create"
+            }
+          ],
           "actions": [
             {
               "alarm_pattern": [
@@ -757,7 +845,11 @@ Feature: Bulk update a scenario
         "item": {
           "name": "test-scenario-to-bulk-create-4-name",
           "enabled": true,
-          "triggers": ["create"],
+          "triggers": [
+            {
+              "type": "create"
+            }
+          ],
           "actions": [
             {
               "alarm_pattern": [
@@ -802,7 +894,11 @@ Feature: Bulk update a scenario
         "item": {
           "name": "test-scenario-to-bulk-create-4-name",
           "enabled": true,
-          "triggers": ["create"],
+          "triggers": [
+            {
+              "type": "create"
+            }
+          ],
           "actions": [
             {
               "alarm_pattern": [
@@ -846,8 +942,14 @@ Feature: Bulk update a scenario
           "_id": "test-scenario-to-bulk-update-2",
           "name": "test-scenario-to-bulk-update-2-name",
           "enabled": true,
-          "priority": 8,
-          "triggers": ["create","pbhenter"],
+          "triggers": [
+            {
+              "type": "create"
+            },
+            {
+              "type": "pbhenter"
+            }
+          ],
           "actions": [
             {
               "alarm_pattern": [
@@ -882,8 +984,11 @@ Feature: Bulk update a scenario
           "_id": "test-scenario-to-bulk-update-3",
           "name": "test-scenario-to-bulk-update-3-name",
           "enabled": true,
-          "priority": 17,
-          "triggers": ["create"],
+          "triggers": [
+            {
+              "type": "create"
+            }
+          ],
           "delay": {
             "value": 3,
             "unit": "s"
@@ -959,7 +1064,11 @@ Feature: Bulk update a scenario
         "item": {
           "name": "test-scenario-to-bulk-update-3-name",
           "enabled": true,
-          "triggers": ["create"],
+          "triggers": [
+            {
+              "type": "create"
+            }
+          ],
           "delay": {
             "value": 3,
             "unit": "s"
@@ -1036,10 +1145,16 @@ Feature: Bulk update a scenario
             "name": "root"
           },
           "enabled": true,
-          "priority": 7,
           "delay": null,
           "disable_during_periods": null,
-          "triggers": ["create","pbhenter"],
+          "triggers": [
+            {
+              "type": "create"
+            },
+            {
+              "type": "pbhenter"
+            }
+          ],
           "actions": [
             {
               "alarm_pattern": [
@@ -1076,10 +1191,16 @@ Feature: Bulk update a scenario
             "name": "root"
           },
           "enabled": true,
-          "priority": 8,
           "delay": null,
           "disable_during_periods": null,
-          "triggers": ["create","pbhenter"],
+          "triggers": [
+            {
+              "type": "create"
+            },
+            {
+              "type": "pbhenter"
+            }
+          ],
           "actions": [
             {
               "alarm_pattern": [
@@ -1116,7 +1237,11 @@ Feature: Bulk update a scenario
             "name": "root"
           },
           "enabled": true,
-          "triggers": ["create"],
+          "triggers": [
+            {
+              "type": "create"
+            }
+          ],
           "delay": {
             "value": 3,
             "unit": "s"

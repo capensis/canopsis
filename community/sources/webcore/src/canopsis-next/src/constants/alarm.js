@@ -532,3 +532,5 @@ export const ALARM_LINK_TD_PADDINGS = {
   [ALARM_DENSE_TYPES.medium]: 6,
   [ALARM_DENSE_TYPES.small]: 6,
 };
+
+export const ALARM_EXPORT_FILE_NAME_PREFIX = 'alarm';
