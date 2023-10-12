@@ -32,13 +32,47 @@ flowchart
     C -- 1 . Event --> EF
     EF -- 2 . Event --> ECH
     ECH -- 3 . Event --> EAX
-    EAX -. 4 . Store alarm .-> MDB
+    EAX -.->|4 . Store alarm| MDB
     EAX -- 5 . Event --> EN
+```
+
+### Create/update/remove a service.
+
+```mermaid
+flowchart
+    A[API]
+    EF[engine-fifo]
+    ECH[engine-che]
+    EAX[engine-axe]
+    MDB[(MongoDB)]
+    A -- 1 . Compute event --> EF
+    EF -- 2 . Compute event --> ECH
+    ECH -.->|3 . Update service dependencies| MDB
+    ECH -- 4 . Compute event --> EAX
+    EAX -.->|5 . Update service counters| MDB
+    EAX -- 6 . Check event for service --> EF
+```
+
+### Update a service on an alarm change.
+
+```mermaid
+flowchart
+    C[Canopsis connector]
+    EF[engine-fifo]
+    ECH[engine-che]
+    EAX[engine-axe]
+    MDB[(MongoDB)]
+    C -- 1 . Event --> EF
+    EF -- 2 . Event --> ECH
+    ECH -.->|3 . Update resource dependencies| MDB
+    ECH -- 4 . Event --> EAX
+    EAX -.->|5 . Update service counters| MDB
+    EAX -- 6 . Check event for service --> EF
 ```
 
 ### Scenarios
 
-See [engine-action](./engine-actoin.md).
+See [engine-action](./engine-action.md).
 
 ### Declare ticket rules
 

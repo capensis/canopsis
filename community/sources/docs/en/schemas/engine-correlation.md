@@ -35,11 +35,11 @@ flowchart
     EF -- 1 . Event --> EC
     EC -- 2 . Event --> EAX
     EAX -- 3 . Event --> ECO
-    ECO -. 4 . Check counters .-> R
+    ECO -.->|4 . Check counters| R
     ECO -- 5 . Meta alarm event --> EF
     EF -- 6 . Meta alarm event --> EC
     EC -- 7 . Meta alarm event --> EAX
-    EAX -. 8 . Create meta alarm .-> MDB
+    EAX -.->|8 . Create meta alarm| MDB
     ECO -- 5. Event --> EN
 ```
 
@@ -54,7 +54,7 @@ flowchart
     MDB[(MongoDB)]
     EF -- 1 . Event --> EC
     EC -- 2 . Event --> EAX
-    EAX -. 3 . Update meta alarm .-> MDB
+    EAX -.->|3 . Update meta alarm| MDB
     EAX -- 4. Event --> EN
 ```
 
@@ -69,11 +69,11 @@ flowchart
     MDB[(MongoDB)]
     EF -- 1 . Meta alarm event --> EC
     EC -- 2 . Meta alarm event --> EAX
-    EAX -. 3 . Update meta alarm .-> MDB
+    EAX -.->|3 . Update meta alarm| MDB
     EAX -- 4. Child event --> EF
     EAX -- 4. Meta alarm event --> EN
     EF -- 5. Child event --> EC
     EC -- 6. Child event --> EAX
-    EAX -. 7 . Update child alarm .-> MDB
+    EAX -.->|7 . Update child alarm| MDB
     EAX -- 8. Child event --> EN
 ```
