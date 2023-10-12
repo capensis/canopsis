@@ -138,7 +138,7 @@ export default {
    * Profile
    */
   [USERS_PERMISSIONS.technical.profile.theme]: {
-    title: 'Thèmes de couleurs',
+    title: 'Thèmes graphiques',
     message: '', // TODO: add correct message
   },
 };
