@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
+	"sort"
 	"strings"
 	"time"
 
@@ -46,7 +48,7 @@ func (m *runInfoManager) SaveInstance(ctx context.Context, info InstanceRunInfo,
 		return fmt.Errorf("cannot marshal info: %w", err)
 	}
 
-	res := m.client.Set(ctx, m.GetCacheKey(info), b, expiration)
+	res := m.client.Set(ctx, m.getCacheKey(info), b, expiration)
 	if err := res.Err(); err != nil {
 		return fmt.Errorf("cannot save info to cache: %w", err)
 	}
@@ -54,8 +56,8 @@ func (m *runInfoManager) SaveInstance(ctx context.Context, info InstanceRunInfo,
 	return nil
 }
 
-func (m *runInfoManager) GetEngineQueues(ctx context.Context) ([]RunInfo, error) {
-	recentInfos := make(map[string]InstanceRunInfo)
+func (m *runInfoManager) GetEngines(ctx context.Context) ([]RunInfo, error) {
+	infosByName := make(map[string]*RunInfo)
 	var cursor uint64
 	processedKeys := make(map[string]bool)
 
@@ -82,18 +84,56 @@ func (m *runInfoManager) GetEngineQueues(ctx context.Context) ([]RunInfo, error)
 			}
 
 			for i, v := range resGet.Val() {
-				if s, ok := v.(string); ok {
-					var info InstanceRunInfo
-					err := json.Unmarshal([]byte(s), &info)
-					if err != nil {
-						return nil, fmt.Errorf("cannot unmarshal info key=%q: %w", unprocessedKeys[i], err)
+				s, ok := v.(string)
+				if !ok {
+					if v == nil {
+						continue
 					}
 
-					if recentInfo, ok := recentInfos[info.Name]; !ok || recentInfo.Time.Before(info.Time) {
-						recentInfos[info.Name] = info
+					return nil, fmt.Errorf("expect string for key=%q but got type=%T", unprocessedKeys[i], v)
+				}
+
+				var info InstanceRunInfo
+				err := json.Unmarshal([]byte(s), &info)
+				if err != nil {
+					return nil, fmt.Errorf("cannot unmarshal info key=%q: %w", unprocessedKeys[i], err)
+				}
+
+				sort.Strings(info.RpcConsumeQueues)
+				sort.Strings(info.RpcPublishQueues)
+
+				if v, ok := infosByName[info.Name]; ok {
+					v.Instances++
+
+					if v.ConsumeQueue != info.ConsumeQueue || v.PublishQueue != info.PublishQueue ||
+						!reflect.DeepEqual(v.RpcConsumeQueues, info.RpcConsumeQueues) ||
+						!reflect.DeepEqual(v.RpcPublishQueues, info.RpcPublishQueues) {
+						v.HasDiffConfig = true
+					}
+
+					if v.Time.Before(info.Time) {
+						v.QueueLength = info.QueueLength
+						v.Time = info.Time
+
+						if v.HasDiffConfig {
+							v.ConsumeQueue = info.ConsumeQueue
+							v.PublishQueue = info.PublishQueue
+							v.RpcConsumeQueues = info.RpcConsumeQueues
+							v.RpcPublishQueues = info.RpcPublishQueues
+						}
 					}
 				} else {
-					return nil, fmt.Errorf("expect string for key=%q but got type=%T", unprocessedKeys[i], v)
+					infosByName[info.Name] = &RunInfo{
+						Name:             info.Name,
+						ConsumeQueue:     info.ConsumeQueue,
+						PublishQueue:     info.PublishQueue,
+						RpcConsumeQueues: info.RpcConsumeQueues,
+						RpcPublishQueues: info.RpcPublishQueues,
+						Instances:        1,
+						QueueLength:      info.QueueLength,
+						Time:             info.Time,
+						HasDiffConfig:    false,
+					}
 				}
 			}
 		}
@@ -103,20 +143,20 @@ func (m *runInfoManager) GetEngineQueues(ctx context.Context) ([]RunInfo, error)
 		}
 	}
 
-	infos := make([]RunInfo, len(recentInfos))
+	infos := make([]RunInfo, len(infosByName))
 	i := 0
-	for _, info := range recentInfos {
-		infos[i] = RunInfo{
-			Name:         info.Name,
-			ConsumeQueue: info.ConsumeQueue,
-			PublishQueue: info.PublishQueue,
-		}
+	for _, info := range infosByName {
+		infos[i] = *info
 		i++
 	}
+
+	sort.Slice(infos, func(i, j int) bool {
+		return infos[i].Name < infos[j].Name
+	})
 
 	return infos, nil
 }
 
-func (m *runInfoManager) GetCacheKey(info InstanceRunInfo) string {
+func (m *runInfoManager) getCacheKey(info InstanceRunInfo) string {
 	return strings.Join([]string{m.key, info.Name, info.ID}, libredis.KeyDelimiter)
 }
