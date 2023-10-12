@@ -171,6 +171,7 @@ FilePattern = "/tmp/import_%s.json"
 [Canopsis.api]
 TokenSigningMethod = "HS256"
 BulkMaxSize = 10000
+ExportMongoClientTimeout = "1m"
 AuthorScheme = ["$username"]
 #AuthorScheme = ["$username", " ", "$firstname", " ", "$lastname", " ", "$email", " ", "$_id"]
 
