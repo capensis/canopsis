@@ -5,7 +5,13 @@
 <script>
 import { compact, pickBy } from 'lodash';
 
-import { MODALS, CONTEXT_ACTIONS_TYPES, ENTITY_TYPES, OLD_PATTERNS_FIELDS } from '@/constants';
+import {
+  MODALS,
+  CONTEXT_ACTIONS_TYPES,
+  ENTITY_TYPES,
+  OLD_PATTERNS_FIELDS,
+  ENTITY_EXPORT_FILE_NAME_PREFIX,
+} from '@/constants';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
 import { createEntityIdPatternByValue, isOldPattern } from '@/helpers/entities/pattern/form';
@@ -189,6 +195,8 @@ export default {
         name: MODALS.variablesHelp,
         config: {
           variables,
+          exportEntity: this.item,
+          exportEntityName: `${ENTITY_EXPORT_FILE_NAME_PREFIX}-${this.item._id}`,
         },
       });
     },

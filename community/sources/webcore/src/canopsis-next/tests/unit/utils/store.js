@@ -311,6 +311,8 @@ export const testsEntityModule = ({
 };
 
 export const createAuthModule = () => {
+  const currentUser = jest.fn()
+    .mockReturnValue({});
   const currentUserPermissionsById = jest.fn()
     .mockReturnValue({});
   const login = jest.fn();
@@ -319,6 +321,7 @@ export const createAuthModule = () => {
   const authModule = {
     name: 'auth',
     getters: {
+      currentUser,
       currentUserPermissionsById,
     },
     actions: {
@@ -328,6 +331,7 @@ export const createAuthModule = () => {
   };
 
   afterEach(() => {
+    currentUser.mockClear();
     currentUserPermissionsById.mockClear();
     login.mockClear();
     fetchCurrentUser.mockClear();
@@ -335,6 +339,7 @@ export const createAuthModule = () => {
 
   return {
     authModule,
+    currentUser,
     currentUserPermissionsById,
     login,
     fetchCurrentUser,
@@ -459,6 +464,74 @@ export const createWidgetModule = () => {
     updateWidgetFilter,
     removeWidgetFilter,
     updateGridPositions,
+  };
+};
+
+export const createViewModule = () => {
+  const groups = jest.fn().mockReturnValue([]);
+  const pending = jest.fn().mockReturnValue(false);
+  const fetchGroupsList = jest.fn();
+  const fetchGroupsListWithoutStore = jest.fn();
+  const updateViewsPositions = jest.fn();
+  const createGroup = jest.fn();
+  const updateGroup = jest.fn();
+  const removeGroup = jest.fn();
+  const copyView = jest.fn();
+  const createView = jest.fn();
+  const updateView = jest.fn();
+  const removeView = jest.fn();
+
+  afterEach(() => {
+    fetchGroupsList.mockClear();
+    fetchGroupsListWithoutStore.mockClear();
+    updateViewsPositions.mockClear();
+    createGroup.mockClear();
+    updateGroup.mockClear();
+    removeGroup.mockClear();
+    createView.mockClear();
+    copyView.mockClear();
+    updateView.mockClear();
+    removeView.mockClear();
+    groups.mockClear();
+    pending.mockClear();
+  });
+
+  const viewModule = {
+    name: 'view',
+    getters: {
+      items: groups,
+      pending,
+    },
+    actions: {
+      fetchList: fetchGroupsList,
+      fetchListWithoutStore: fetchGroupsListWithoutStore,
+      updatePositionsView: updateViewsPositions,
+      create: createGroup,
+      update: updateGroup,
+      remove: removeGroup,
+      copyView,
+      createView,
+      updateView,
+      removeView,
+    },
+  };
+
+  return {
+    viewModule,
+
+    groups,
+    pending,
+
+    fetchGroupsList,
+    fetchGroupsListWithoutStore,
+    updateViewsPositions,
+    createGroup,
+    updateGroup,
+    removeGroup,
+    createView,
+    copyView,
+    updateView,
+    removeView,
   };
 };
 
@@ -1060,6 +1133,7 @@ export const createPatternModule = () => {
 
 export const createInfoModule = () => {
   const description = jest.fn().mockReturnValue('');
+  const maintenance = jest.fn().mockReturnValue(false);
   const footer = jest.fn().mockReturnValue('');
   const casConfig = jest.fn().mockReturnValue({});
   const samlConfig = jest.fn().mockReturnValue({});
@@ -1070,6 +1144,7 @@ export const createInfoModule = () => {
   const isLDAPAuthEnabled = jest.fn().mockReturnValue(false);
 
   afterEach(() => {
+    maintenance.mockClear();
     description.mockClear();
     footer.mockClear();
     casConfig.mockClear();
@@ -1084,6 +1159,7 @@ export const createInfoModule = () => {
   const infoModule = {
     name: 'info',
     getters: {
+      maintenance,
       description,
       footer,
       casConfig,
@@ -1098,6 +1174,7 @@ export const createInfoModule = () => {
 
   return {
     infoModule,
+    maintenance,
     description,
     footer,
     casConfig,
@@ -1177,36 +1254,6 @@ export const createEntitiesModule = () => {
     entitiesModule,
     registerGetter,
     unregisterGetter,
-  };
-};
-
-export const createViewModule = () => {
-  const pending = jest.fn().mockReturnValue(false);
-  const groups = jest.fn().mockReturnValue([]);
-  const updateViewsPositions = jest.fn();
-  const fetchGroupsList = jest.fn();
-
-  afterEach(() => {
-    updateViewsPositions.mockClear();
-  });
-
-  const viewModule = {
-    name: 'view',
-    getters: {
-      pending,
-      items: groups,
-    },
-    actions: {
-      updatePositionsView: updateViewsPositions,
-      fetchList: fetchGroupsList,
-    },
-  };
-
-  return {
-    viewModule,
-    groups,
-    fetchGroupsList,
-    updateViewsPositions,
   };
 };
 

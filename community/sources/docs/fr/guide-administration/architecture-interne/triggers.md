@@ -1,8 +1,8 @@
 # Triggers (Go)
 
-Dans Canopsis, le traitement des [évènements](../../guide-utilisation/vocabulaire/index.md#evenement) par le moteur [`engine-axe`](../moteurs/moteur-axe.md), des actions automatisées par le moteur [`engine-action`](../moteurs/moteur-action.md) et des webhooks par le moteur [`engine-webhook`](../moteurs/moteur-webhook.md) peuvent déclencher des `triggers`.
+Dans Canopsis, le traitement des [évènements](../../guide-utilisation/vocabulaire/index.md#evenement) par le moteur `engine-axe`, des actions automatisées par le moteur `engine-action` et des webhooks par le moteur `engine-webhook` peuvent déclencher des `triggers`.
 
-Ces `triggers` peuvent servir comme point de déclenchement pour les [actions automatisées](../moteurs/moteur-action.md) et les [webhooks](../moteurs/moteur-webhook.md).
+Ces `triggers` peuvent servir comme point de déclenchement pour les actions automatisées et les webhooks.
 
 
 | Nom                      | Description                                                                                         |
