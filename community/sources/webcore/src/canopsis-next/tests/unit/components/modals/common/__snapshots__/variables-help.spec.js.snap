@@ -259,7 +259,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                         aria-hidden="true"
                         class="v-icon material-icons theme--light"
                       >
-                        save_alt
+                        content_copy
                       </i>
                     </div>
                   </button>
@@ -351,7 +351,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                         aria-hidden="true"
                         class="v-icon material-icons theme--light"
                       >
-                        save_alt
+                        content_copy
                       </i>
                     </div>
                   </button>
@@ -443,7 +443,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                         aria-hidden="true"
                         class="v-icon material-icons theme--light"
                       >
-                        save_alt
+                        content_copy
                       </i>
                     </div>
                   </button>
@@ -535,7 +535,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                         aria-hidden="true"
                         class="v-icon material-icons theme--light"
                       >
-                        save_alt
+                        content_copy
                       </i>
                     </div>
                   </button>
@@ -627,7 +627,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                         aria-hidden="true"
                         class="v-icon material-icons theme--light"
                       >
-                        save_alt
+                        content_copy
                       </i>
                     </div>
                   </button>
@@ -1018,7 +1018,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                                     aria-hidden="true"
                                     class="v-icon material-icons theme--light"
                                   >
-                                    save_alt
+                                    content_copy
                                   </i>
                                 </div>
                               </button>
