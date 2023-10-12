@@ -29,8 +29,8 @@ flowchart
     EF[engine-fifo]
     EPH[engine-pbehavior]
     R[(Redis)]
-    A -. 1 . Compute event .-> EPH
-    EPH -. 2 . Update computed intervals .-> R
+    A -.->|1 . Compute event| EPH
+    EPH -.->|2 . Update computed intervals| R
     EPH -- 3 . Pbhenter/pbhleave events --> EF
 ```
 
@@ -41,7 +41,7 @@ flowchart
     EF[engine-fifo]
     EPH[engine-pbehavior]
     R[(Redis)]
-    EPH -. 1 . Update computed intervals .-> R
+    EPH -.->|1 . Update computed intervals| R
     EPH -- 2 . Pbhenter/pbhleave events --> EF
 ```
 

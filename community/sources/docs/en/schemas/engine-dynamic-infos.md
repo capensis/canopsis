@@ -36,7 +36,7 @@ flowchart
     ECH -- 3 . Event --> EAX
     EAX -- 4 . Event --> OE
     OE -- 5 . Event --> EDI
-    EDI -. 6 . Update alarm .-> MDB
+    EDI -.->|6 . Update alarm| MDB
     EDI -- 7 . Event --> EN
 ```
 
@@ -48,5 +48,5 @@ flowchart
     EDI[engine-dynamic-infos]
     MDB[(MongoDB)]
     A -- 1 . Updated rule --> EDI
-    EDI -. 2 . Update alarms .-> MDB
+    EDI -.->|2 . Update alarms| MDB
 ```
