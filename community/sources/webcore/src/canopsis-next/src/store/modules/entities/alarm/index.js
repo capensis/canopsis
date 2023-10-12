@@ -193,6 +193,14 @@ export default {
       return request.put(`${API_ROUTES.alarms.bulkList}/changestate`, data);
     },
 
+    addBookmarkToAlarm(context, { id }) {
+      return request.put(`${API_ROUTES.alarms.list}/${id}/bookmark`);
+    },
+
+    removeBookmarkFromAlarm(context, { id }) {
+      return request.delete(`${API_ROUTES.alarms.list}/${id}/bookmark`);
+    },
+
     updateItemInStore({ dispatch }, alarm) {
       return dispatch('entities/addToStore', {
         schema: alarmSchema,

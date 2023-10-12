@@ -50,6 +50,8 @@ export const widgetActionsPanelAlarmMixin = {
       bulkCreateAlarmCancelEvent: 'bulkCreateAlarmCancelEvent',
       bulkCreateAlarmUnCancelEvent: 'bulkCreateAlarmUnCancelEvent',
       bulkCreateAlarmChangestateEvent: 'bulkCreateAlarmChangestateEvent',
+      addBookmarkToAlarm: 'addBookmarkToAlarm',
+      removeBookmarkFromAlarm: 'removeBookmarkFromAlarm',
     }),
 
     isActionTypeInPending(type) {
@@ -457,6 +459,42 @@ export const widgetActionsPanelAlarmMixin = {
       }
 
       return this.checkAccess(permission);
+    },
+
+    async addBookmarkByAlarm(alarm) {
+      try {
+        this.setActionPending(ALARM_LIST_ACTIONS_TYPES.addBookmark, true);
+
+        await this.addBookmarkToAlarm({ id: alarm._id });
+
+        this.$popups.success({ text: this.$t('alarm.popups.addBookmarkSuccess') });
+
+        await this.afterSubmit();
+      } catch (err) {
+        console.error(err);
+
+        this.$popups.error({ text: this.$t('alarm.popups.addBookmarkFailed') });
+      } finally {
+        this.setActionPending(ALARM_LIST_ACTIONS_TYPES.addBookmark, false);
+      }
+    },
+
+    async removeBookmarkByAlarm(alarm) {
+      try {
+        this.setActionPending(ALARM_LIST_ACTIONS_TYPES.removeBookmark, true);
+
+        await this.removeBookmarkFromAlarm({ id: alarm._id });
+
+        this.$popups.success({ text: this.$t('alarm.popups.removeBookmarkSuccess') });
+
+        await this.afterSubmit();
+      } catch (err) {
+        console.error(err);
+
+        this.$popups.error({ text: this.$t('alarm.popups.removeBookmarkFailed') });
+      } finally {
+        this.setActionPending(ALARM_LIST_ACTIONS_TYPES.removeBookmark, false);
+      }
     },
   },
 };
