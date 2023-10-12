@@ -108,7 +108,9 @@ export default {
 
           await this.filesAccess();
 
-          this.showPausedExecutionsPopup();
+          if (this.isProVersion) {
+            this.showPausedExecutionsPopup();
+          }
 
           unwatch();
         }
