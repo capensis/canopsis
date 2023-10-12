@@ -6,7 +6,7 @@ const DEFAULT_SANITIZE_OPTIONS = {
     'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol', 'nl', 'li', 'b', 'i', 'strong', 'em',
     'code', 'hr', 'br', 'div', 'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre', 'span', 'font', 'u',
     'img', 'video', 'audio', 'abbr', 'address', 'bdo', 'cite', 'q', 'dfn', 'var', 'area', 'map', 'dl', 'dt', 'dd',
-    'section', 'article', 'colgroup', 'col', 'strike',
+    'section', 'article', 'colgroup', 'col', 'strike', 'button',
 
     /**
      * VUE COMPONENTS

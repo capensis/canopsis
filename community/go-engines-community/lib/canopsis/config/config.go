@@ -43,6 +43,8 @@ type SectionGlobal struct {
 
 	BuildEntityInfosDictionary  bool `toml:"BuildEntityInfosDictionary"`
 	BuildDynamicInfosDictionary bool `toml:"BuildDynamicInfosDictionary"`
+
+	EventsCountTriggerDefaultThreshold int `toml:"EventsCountTriggerDefaultThreshold"`
 }
 
 func (s *SectionGlobal) GetReconnectTimeout() time.Duration {

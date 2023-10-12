@@ -205,7 +205,6 @@ export default {
   },
   variablesHelp: {
     variables: 'Variables',
-    copyToClipboard: 'Copy to clipboard',
   },
   service: {
     refreshEntities: 'Refresh entities list',

@@ -186,18 +186,6 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
               type-pbehavior-entity-9
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
-              id-pbehavior-entity-10
-            </td>
-            <td>
-              name-pbehavior-entity-10
-            </td>
-            <td>
-              type-pbehavior-entity-10
-            </td>
-          </tr>
         </tbody>
       </table>
     </div>

@@ -23,7 +23,11 @@ Feature: scenarios should be triggered by remediation triggers
       "name": "test-scenario-action-remediation-triggers-1-name",
       "priority": 10050,
       "enabled": true,
-      "triggers": ["instructionfail"],
+      "triggers": [
+        {
+          "type": "instructionfail"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -148,7 +152,11 @@ Feature: scenarios should be triggered by remediation triggers
       "name": "test-scenario-action-remediation-triggers-2-name",
       "priority": 10051,
       "enabled": true,
-      "triggers": ["autoinstructionfail"],
+      "triggers": [
+        {
+          "type": "autoinstructionfail"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -291,7 +299,11 @@ Feature: scenarios should be triggered by remediation triggers
       "name": "test-scenario-action-remediation-triggers-3-name",
       "priority": 10052,
       "enabled": true,
-      "triggers": ["instructionjobfail"],
+      "triggers": [
+        {
+          "type": "instructionjobfail"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -447,7 +459,11 @@ Feature: scenarios should be triggered by remediation triggers
       "name": "test-scenario-action-remediation-triggers-4-name",
       "priority": 10053,
       "enabled": true,
-      "triggers": ["instructionjobfail"],
+      "triggers": [
+        {
+          "type": "instructionjobfail"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -607,7 +623,11 @@ Feature: scenarios should be triggered by remediation triggers
       "name": "test-scenario-action-remediation-triggers-5-name",
       "priority": 10054,
       "enabled": true,
-      "triggers": ["instructioncomplete"],
+      "triggers": [
+        {
+          "type": "instructioncomplete"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -727,7 +747,11 @@ Feature: scenarios should be triggered by remediation triggers
       "name": "test-scenario-action-remediation-triggers-6-name",
       "priority": 10055,
       "enabled": true,
-      "triggers": ["autoinstructioncomplete"],
+      "triggers": [
+        {
+          "type": "autoinstructioncomplete"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -883,7 +907,11 @@ Feature: scenarios should be triggered by remediation triggers
       "name": "test-scenario-action-remediation-triggers-7-name",
       "priority": 10056,
       "enabled": true,
-      "triggers": ["instructionjobcomplete"],
+      "triggers": [
+        {
+          "type": "instructionjobcomplete"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -1016,7 +1044,11 @@ Feature: scenarios should be triggered by remediation triggers
       "name": "test-scenario-action-remediation-triggers-8-name",
       "priority": 10057,
       "enabled": true,
-      "triggers": ["instructionjobcomplete"],
+      "triggers": [
+        {
+          "type": "instructionjobcomplete"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -1113,7 +1145,11 @@ Feature: scenarios should be triggered by remediation triggers
     {
       "name": "test-scenario-action-remediation-triggers-9-name",
       "enabled": true,
-      "triggers": ["autoinstructionresultok"],
+      "triggers": [
+        {
+          "type": "autoinstructionresultok"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [

@@ -8,7 +8,11 @@ Feature: Metrics should be added on alarm changes
     """json
     {
       "type": 1,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "priority": 60,
       "name": "test-instruction-to-auto-metrics-1-1-name",
       "entity_pattern": [
@@ -41,7 +45,14 @@ Feature: Metrics should be added on alarm changes
     """json
     {
       "type": 1,
-      "triggers": ["create", "stateinc"],
+      "triggers": [
+        {
+          "type": "create"
+        },
+        {
+          "type": "stateinc"
+        }
+      ],
       "priority": 61,
       "name": "test-instruction-to-auto-metrics-1-2-name",
       "entity_pattern": [
@@ -74,7 +85,11 @@ Feature: Metrics should be added on alarm changes
     """json
     {
       "type": 1,
-      "triggers": ["stateinc"],
+      "triggers": [
+        {
+          "type": "stateinc"
+        }
+      ],
       "priority": 62,
       "name": "test-instruction-to-auto-metrics-1-3-name",
       "entity_pattern": [
@@ -205,7 +220,11 @@ Feature: Metrics should be added on alarm changes
     """json
     {
       "type": 1,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "priority": 63,
       "name": "test-instruction-to-auto-metrics-2-1-name",
       "entity_pattern": [
@@ -238,7 +257,11 @@ Feature: Metrics should be added on alarm changes
     """json
     {
       "type": 1,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "priority": 64,
       "name": "test-instruction-to-auto-metrics-2-2-name",
       "entity_pattern": [
