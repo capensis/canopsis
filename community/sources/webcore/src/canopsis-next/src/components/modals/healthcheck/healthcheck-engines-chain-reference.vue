@@ -4,24 +4,22 @@
       span {{ title }}
     template(#text="")
       div.pre-wrap {{ $t('healthcheck.chainConfigurationInvalid') }}
-      div.healthcheck-engine-chain-reference
-        healthcheck-network-graph(
-          :engines-graph="enginesGraph",
-          :engines-parameters="enginesParameters"
-        )
+      v-fade-transition
+        v-layout(v-if="pending", justify-center)
+          v-progress-circular(color="primary", indeterminate)
+        div.healthcheck-engine-chain-reference(v-else)
+          healthcheck-network-graph(
+            :engines-graph="enginesGraph",
+            :engines-parameters="enginesParameters"
+          )
     template(#actions="")
       v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.ok') }}
 </template>
 
 <script>
-import {
-  MODALS,
-  HEALTHCHECK_ENGINES_NAMES,
-  HEALTHCHECK_SERVICES_NAMES,
-  HEALTHCHECK_ENGINES_REFERENCE_EDGES,
-  HEALTHCHECK_ENGINES_PRO_REFERENCE_EDGES,
-  PRO_ENGINES,
-} from '@/constants';
+import { createNamespacedHelpers } from 'vuex';
+
+import { MODALS, HEALTHCHECK_SERVICES_NAMES } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { healthcheckNodesMixin } from '@/mixins/healthcheck/healthcheck-nodes';
@@ -31,21 +29,22 @@ import HealthcheckNetworkGraph from '@/components/other/healthcheck/healthcheck-
 
 import ModalWrapper from '../modal-wrapper.vue';
 
+const { mapActions } = createNamespacedHelpers('healthcheck');
+
 export default {
   name: MODALS.healthcheckEnginesChainReference,
   components: { HealthcheckNetworkGraph, ModalWrapper },
   mixins: [modalInnerMixin, healthcheckNodesMixin, entitiesInfoMixin],
+  data() {
+    return {
+      pending: false,
+      enginesGraph: {
+        edges: [],
+        nodes: [],
+      },
+    };
+  },
   computed: {
-    enginesGraph() {
-      return {
-        nodes: Object.values(HEALTHCHECK_ENGINES_NAMES)
-          .filter(name => this.isProVersion || !PRO_ENGINES.includes(name)),
-        edges: this.isProVersion
-          ? HEALTHCHECK_ENGINES_PRO_REFERENCE_EDGES
-          : HEALTHCHECK_ENGINES_REFERENCE_EDGES,
-      };
-    },
-
     enginesParameters() {
       return this.enginesGraph.nodes.reduce((acc, name) => {
         acc[name] = { name, is_running: true };
@@ -56,6 +55,25 @@ export default {
 
     title() {
       return this.getNodeName(HEALTHCHECK_SERVICES_NAMES.enginesChain);
+    },
+  },
+  mounted() {
+    this.fetchList();
+  },
+  methods: {
+    ...mapActions({
+      fetchEnginesOrderWithoutStore: 'fetchEnginesOrderWithoutStore',
+    }),
+
+    async fetchList() {
+      try {
+        this.pending = true;
+        this.enginesGraph = await this.fetchEnginesOrderWithoutStore();
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.pending = false;
+      }
     },
   },
 };
