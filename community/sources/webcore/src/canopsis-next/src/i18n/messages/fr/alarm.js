@@ -181,6 +181,7 @@ export default {
     initialOutput: 'Sortie initiale longue',
     initialLongOutput: 'Sortie longue initiale',
     lastComment: 'Dernier commentaire',
+    lastCommentInitiator: 'Initiateur du dernier commentaire',
     ackBy: 'Acquitté par',
     ackMessage: 'Message de l\'acquittement',
     ackInitiator: 'Origine de l\'acquittement',
@@ -203,6 +204,7 @@ export default {
     ticketAuthor: 'Auteur du ticket',
     ticketId: 'ID du ticket',
     ticketMessage: 'Message du ticket',
+    ticketInitiator: 'Initiateur du ticket',
     ticketCreatedAt: 'Ticket créé à',
     ticketData: 'Données du ticket',
     entityId: 'ID d\'entité',
@@ -219,5 +221,6 @@ export default {
     entityLastPbehaviorDate: 'Date du dernier comportement de l\'entité',
     openedChildren: 'Conséquences ouvertes',
     closedChildren: 'Conséquences fermées',
+    canceledInitiator: 'Initiateur annulé',
   },
 };
