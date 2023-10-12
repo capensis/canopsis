@@ -6,6 +6,7 @@ import {
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
   LINK_RULE_ACTIONS,
   ALARM_LIST_ACTIONS_TYPES,
+  ALARM_EXPORT_FILE_NAME_PREFIX,
 } from '@/constants';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
@@ -388,14 +389,15 @@ export const widgetActionsPanelAlarmMixin = {
       }
     },
 
-    showVariablesHelperModalByAlarm({
-      entity,
-      pbehavior,
-      infos,
-      ...alarm
-    }) {
+    showVariablesHelperModalByAlarm(alarm) {
+      const {
+        entity,
+        pbehavior,
+        infos,
+        ...alarmOtherFields
+      } = alarm;
       const variables = [{
-        ...convertObjectToTreeview(alarm, 'alarm'),
+        ...convertObjectToTreeview(alarmOtherFields, 'alarm'),
 
         original: this.item,
       }];
@@ -411,6 +413,8 @@ export const widgetActionsPanelAlarmMixin = {
       this.$modals.show({
         name: MODALS.variablesHelp,
         config: {
+          exportEntity: alarm,
+          exportEntityName: `${ALARM_EXPORT_FILE_NAME_PREFIX}-${alarm._id}`,
           variables,
         },
       });
