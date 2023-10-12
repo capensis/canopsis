@@ -140,13 +140,15 @@ export function convertAlarmUserPreferenceToQuery({ content }) {
     itemsPerPage,
     category,
     mainFilter,
+    onlyBookmarks = false,
     isCorrelationEnabled = false,
   } = content;
 
   const query = {
+    category,
     correlation: isCorrelationEnabled,
     filter: mainFilter,
-    category,
+    only_bookmarks: onlyBookmarks,
   };
 
   if (itemsPerPage) {

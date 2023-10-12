@@ -48,6 +48,7 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
         <!---->
       </div>
     </div>
+    <!---->
     <div
       class="flex"
     >
@@ -150,6 +151,7 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
     >
       <!---->
     </div>
+    <!---->
     <div
       class="flex"
     >
@@ -217,7 +219,7 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
 </div>
 `;
 
-exports[`alarms-list Renders \`alarms-list\` with default props and user filter permission 1`] = `
+exports[`alarms-list Renders \`alarms-list\` with default props and user filter permission and correlation and bookmark 1`] = `
 <div>
   <div
     class="layout row wrap justify-space-between align-end mb-4"
@@ -246,7 +248,24 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
       />
     </div>
     <!---->
-    <!---->
+    <div
+      class="flex"
+    >
+      <v-switch-stub
+        backgroundcolor=""
+        class="mt-0"
+        color="primary"
+        errorcount="1"
+        errormessages=""
+        hidedetails="true"
+        label="Correlation"
+        messages=""
+        ripple="true"
+        rules=""
+        successmessages=""
+        valuecomparator="[Function]"
+      />
+    </div>
     <div
       class="flex"
     >
@@ -265,6 +284,24 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
         />
         <!---->
       </div>
+    </div>
+    <div
+      class="flex"
+    >
+      <v-switch-stub
+        backgroundcolor=""
+        class="mt-0"
+        color="primary"
+        errorcount="1"
+        errormessages=""
+        hidedetails="true"
+        label="Filter by bookmark"
+        messages=""
+        ripple="true"
+        rules=""
+        successmessages=""
+        valuecomparator="[Function]"
+      />
     </div>
     <div
       class="flex"

@@ -6,8 +6,10 @@
           template(v-if="selectable")
             v-checkbox-functional.ma-0(v-if="isAlarmSelectable", v-field="selected", hide-details)
             v-checkbox-functional(v-else, disabled, hide-details)
-        v-layout(v-if="hasAlarmInstruction", align-center, justify-center)
-          alarms-list-row-icon(:alarm="alarm")
+        v-layout(v-if="hasAlarmInstruction", align-center)
+          alarms-list-row-instructions-icon(:alarm="alarm")
+        v-layout(v-if="hasBookmark", align-center)
+          alarms-list-row-bookmark-icon
         alarms-expand-panel-btn(
           v-if="expandable",
           v-model="row.expanded",
@@ -57,7 +59,8 @@ import ActionsPanel from '../actions/actions-panel.vue';
 import AlarmColumnValue from '../columns-formatting/alarm-column-value.vue';
 import AlarmsExpandPanelBtn from '../expand-panel/alarms-expand-panel-btn.vue';
 
-import AlarmsListRowIcon from './alarms-list-row-icon.vue';
+import AlarmsListRowInstructionsIcon from './alarms-list-row-instructions-icon.vue';
+import AlarmsListRowBookmarkIcon from './alarms-list-row-bookmark-icon.vue';
 
 export default {
   inject: ['$system'],
@@ -65,7 +68,8 @@ export default {
     ActionsPanel,
     AlarmColumnValue,
     AlarmsExpandPanelBtn,
-    AlarmsListRowIcon,
+    AlarmsListRowInstructionsIcon,
+    AlarmsListRowBookmarkIcon,
   },
   mixins: [formBaseMixin],
   model: {
@@ -156,8 +160,12 @@ export default {
       return this.row.item;
     },
 
+    hasBookmark() {
+      return !!this.alarm.bookmark;
+    },
+
     hasRowActions() {
-      return this.selectable || this.expandable || this.showInstructionIcon;
+      return this.selectable || this.expandable || this.showInstructionIcon || this.hasBookmark;
     },
 
     hasAlarmInstruction() {
@@ -233,6 +241,10 @@ export default {
     width: 24px;
     max-width: 24px;
     height: 24px;
+
+    .v-input--selection-controls__input {
+      margin: 0;
+    }
   }
 
   &__icons {

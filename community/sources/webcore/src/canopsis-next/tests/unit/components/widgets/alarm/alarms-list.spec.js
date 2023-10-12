@@ -60,7 +60,7 @@ const snapshotStubs = {
   'mass-actions-panel': true,
 };
 
-const selectCorrelationField = wrapper => wrapper.find('v-switch-stub');
+const selectVSwitch = wrapper => wrapper.find('v-switch-stub');
 const selectFilterSelectorField = wrapper => wrapper.find('filter-selector-stub');
 const selectCategoryField = wrapper => wrapper.find('c-entity-category-field-stub');
 const selectExportButton = wrapper => wrapper.findAll('c-action-btn-stub').at(1);
@@ -89,6 +89,7 @@ describe('alarms-list', () => {
   const userPreferences = {
     content: {
       isCorrelationEnabled: false,
+      onlyBookmarks: false,
       itemsPerPage: 13,
       category: 'category-id',
     },
@@ -112,6 +113,7 @@ describe('alarms-list', () => {
     filters: [],
     active_columns: widget.parameters.widgetColumns.map(v => v.value),
     correlation: userPreferences.content.isCorrelationEnabled,
+    only_bookmarks: userPreferences.content.onlyBookmarks,
     category: userPreferences.content.category,
     limit: userPreferences.content.itemsPerPage,
     tstart: QUICK_RANGES.last1Year.start,
@@ -388,7 +390,7 @@ describe('alarms-list', () => {
 
     updateQuery.mockClear();
 
-    const correlationField = selectCorrelationField(wrapper);
+    const correlationField = selectVSwitch(wrapper);
 
     correlationField.vm.$emit('change', !userPreferences.content.isCorrelationEnabled);
 
@@ -415,6 +417,68 @@ describe('alarms-list', () => {
 
           page: 1,
           correlation: !userPreferences.content.isCorrelationEnabled,
+        },
+      },
+      undefined,
+    );
+  });
+
+  it('Only bookmark updated after trigger filter by bookmark field', async () => {
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        alarmModule,
+        sideBarModule,
+        infoModule,
+        queryModule,
+        viewModule,
+        userPreferenceModule,
+        alarmTagModule,
+        {
+          ...authModule,
+          getters: {
+            currentUser: {},
+            currentUserPermissionsById: {
+              [USERS_PERMISSIONS.business.alarmsList.actions.filterByBookmark]: { actions: [] },
+            },
+          },
+        },
+      ]),
+      propsData: {
+        widget,
+      },
+    });
+
+    await flushPromises();
+
+    updateQuery.mockClear();
+
+    const filterByBookmarkField = selectVSwitch(wrapper);
+
+    filterByBookmarkField.vm.$emit('change', !userPreferences.content.onlyBookmarks);
+
+    await flushPromises();
+
+    expect(updateUserPreference).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        data: {
+          content: {
+            ...userPreferences.content,
+            onlyBookmarks: !userPreferences.content.onlyBookmarks,
+          },
+        },
+      },
+      undefined,
+    );
+    expect(updateQuery).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        id: widget._id,
+        query: {
+          ...defaultQuery,
+
+          page: 1,
+          only_bookmarks: !userPreferences.content.onlyBookmarks,
         },
       },
       undefined,
@@ -927,6 +991,7 @@ describe('alarms-list', () => {
           search: defaultQuery.search,
           category: defaultQuery.category,
           correlation: defaultQuery.correlation,
+          only_bookmarks: defaultQuery.only_bookmarks,
           opened: defaultQuery.opened,
           tstart: nowSubtractOneYearUnix,
           tstop: 1386370800,
@@ -1017,6 +1082,7 @@ describe('alarms-list', () => {
           search: defaultQuery.search,
           category: defaultQuery.category,
           correlation: defaultQuery.correlation,
+          only_bookmarks: defaultQuery.only_bookmarks,
           opened: defaultQuery.opened,
           tstart: nowSubtractOneYearUnix,
           tstop: 1386370800,
@@ -1082,6 +1148,7 @@ describe('alarms-list', () => {
           search: defaultQuery.search,
           category: defaultQuery.category,
           correlation: defaultQuery.correlation,
+          only_bookmarks: defaultQuery.only_bookmarks,
           opened: defaultQuery.opened,
           tstart: nowSubtractOneYearUnix,
           tstop: 1386370800,
@@ -1695,7 +1762,7 @@ describe('alarms-list', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `alarms-list` with default props and user filter permission', async () => {
+  it('Renders `alarms-list` with default props and user filter permission and correlation and bookmark', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         widget,
@@ -1714,6 +1781,8 @@ describe('alarms-list', () => {
             currentUser: {},
             currentUserPermissionsById: {
               [USERS_PERMISSIONS.business.alarmsList.actions.userFilter]: { actions: [] },
+              [USERS_PERMISSIONS.business.alarmsList.actions.correlation]: { actions: [] },
+              [USERS_PERMISSIONS.business.alarmsList.actions.filterByBookmark]: { actions: [] },
             },
           },
         },
