@@ -32,7 +32,7 @@ import { infosToArray } from '../shared/form';
  * @returns {ServiceForm}
  */
 export const serviceToForm = (service = {}) => ({
-  impact_level: service.impact_level ?? 1,
+  impact_level: service.impact_level,
   name: service.name ?? '',
   category: service.category ?? '',
   enabled: service.enabled ?? true,
