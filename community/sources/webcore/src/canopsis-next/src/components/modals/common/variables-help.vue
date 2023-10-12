@@ -6,7 +6,7 @@
       v-layout(v-if="config.exportEntity", justify-end)
         v-btn(color="primary", small, @click="exportOriginal")
           v-icon(left) file_download
-          span {{ $t('common.download') }}
+          span {{ $t('common.exportToJson') }}
       v-treeview(:items="config.variables", item-key="name")
         template(#prepend="{ item }")
           div.caption.font-italic(v-if="item.isArray") {{`(${$t('common.variableTypes.array')})`}}
@@ -19,7 +19,7 @@
               div.pl-1.d-inline-block.text--secondary.body-1.font-italic {{ $t('common.emptyObject') }}
 
         template(#append="{ leaf, item }")
-          v-menu(bottom, left)
+          v-menu(bottom, left, offset-y)
             template(#activator="{ on }")
               v-tooltip(left)
                 template(#activator="{ on: tooltipOn }")
