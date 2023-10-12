@@ -24,7 +24,7 @@ import { keyBy, merge } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import {
-  ALARM_ACK_INITIATORS,
+  ALARM_EVENT_INITIATORS,
   ALARM_PATTERN_FIELDS,
   BASIC_ENTITY_TYPES,
   ENTITIES_STATES,
@@ -309,13 +309,13 @@ export default {
       };
     },
 
-    ackInitiatorOptions() {
+    initiatorOptions() {
       return {
         operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
         valueField: {
           is: 'c-select-field',
           props: {
-            items: Object.values(ALARM_ACK_INITIATORS),
+            items: Object.values(ALARM_EVENT_INITIATORS),
           },
         },
       };
@@ -397,7 +397,7 @@ export default {
         },
         {
           value: ALARM_PATTERN_FIELDS.ackInitiator,
-          options: this.ackInitiatorOptions,
+          options: this.initiatorOptions,
         },
         {
           value: ALARM_PATTERN_FIELDS.resolved,
@@ -416,6 +416,10 @@ export default {
           options: this.stringWithExistOptions,
         },
         {
+          value: ALARM_PATTERN_FIELDS.ticketInitiator,
+          options: this.initiatorOptions,
+        },
+        {
           value: ALARM_PATTERN_FIELDS.ticketData,
           options: this.ticketDataOptions,
         },
@@ -428,8 +432,16 @@ export default {
           options: this.canceledOptions,
         },
         {
+          value: ALARM_PATTERN_FIELDS.canceledInitiator,
+          options: this.initiatorOptions,
+        },
+        {
           value: ALARM_PATTERN_FIELDS.lastComment,
           options: this.stringWithExistOptions,
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.lastCommentInitiator,
+          options: this.initiatorOptions,
         },
         {
           value: ALARM_PATTERN_FIELDS.tags,
