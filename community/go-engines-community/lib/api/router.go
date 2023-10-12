@@ -95,6 +95,7 @@ func RegisterRoutes(
 	enforcer libsecurity.Enforcer,
 	linkGenerator link.Generator,
 	dbClient mongo.DbClient,
+	dbExportClient mongo.DbClient,
 	pgPoolProvider postgres.PoolProvider,
 	amqpChannel amqp.Channel,
 	apiConfigProvider config.ApiConfigProvider,
@@ -262,7 +263,7 @@ func RegisterRoutes(
 			)
 		}
 
-		alarmStore := alarm.NewStore(dbClient, linkGenerator, timezoneConfigProvider, authorProvider, json.NewDecoder(), logger)
+		alarmStore := alarm.NewStore(dbClient, dbExportClient, linkGenerator, timezoneConfigProvider, authorProvider, json.NewDecoder(), logger)
 		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, json.NewEncoder(), logger)
 		alarmActionAPI := alarmaction.NewApi(alarmaction.NewStore(dbClient, amqpChannel, "",
 			canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, logger), logger)
@@ -382,7 +383,7 @@ func RegisterRoutes(
 			exportConfigurationAPI.Export,
 		)
 
-		entityStore := entity.NewStore(dbClient, timezoneConfigProvider, json.NewDecoder())
+		entityStore := entity.NewStore(dbClient, dbExportClient, timezoneConfigProvider, json.NewDecoder())
 		entityAPI := entity.NewApi(
 			entityStore,
 			exportExecutor,
