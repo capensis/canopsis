@@ -50,6 +50,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
               bottom="bottom"
               class="v-menu"
               left="left"
+              offset-y="offset-y"
             >
               <button
                 class="v-btn v-btn--icon theme--light"
@@ -145,6 +146,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
               bottom="bottom"
               class="v-menu"
               left="left"
+              offset-y="offset-y"
             >
               <button
                 class="v-btn v-btn--icon theme--light"
@@ -244,6 +246,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                   bottom="bottom"
                   class="v-menu"
                   left="left"
+                  offset-y="offset-y"
                 >
                   <button
                     class="v-btn v-btn--icon theme--light"
@@ -335,6 +338,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                   bottom="bottom"
                   class="v-menu"
                   left="left"
+                  offset-y="offset-y"
                 >
                   <button
                     class="v-btn v-btn--icon theme--light"
@@ -426,6 +430,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                   bottom="bottom"
                   class="v-menu"
                   left="left"
+                  offset-y="offset-y"
                 >
                   <button
                     class="v-btn v-btn--icon theme--light"
@@ -517,6 +522,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                   bottom="bottom"
                   class="v-menu"
                   left="left"
+                  offset-y="offset-y"
                 >
                   <button
                     class="v-btn v-btn--icon theme--light"
@@ -608,6 +614,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                   bottom="bottom"
                   class="v-menu"
                   left="left"
+                  offset-y="offset-y"
                 >
                   <button
                     class="v-btn v-btn--icon theme--light"
@@ -702,6 +709,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                   bottom="bottom"
                   class="v-menu"
                   left="left"
+                  offset-y="offset-y"
                 >
                   <button
                     class="v-btn v-btn--icon theme--light"
@@ -799,6 +807,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                       bottom="bottom"
                       class="v-menu"
                       left="left"
+                      offset-y="offset-y"
                     >
                       <button
                         class="v-btn v-btn--icon theme--light"
@@ -896,6 +905,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                           bottom="bottom"
                           class="v-menu"
                           left="left"
+                          offset-y="offset-y"
                         >
                           <button
                             class="v-btn v-btn--icon theme--light"
@@ -995,6 +1005,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                               bottom="bottom"
                               class="v-menu"
                               left="left"
+                              offset-y="offset-y"
                             >
                               <button
                                 class="v-btn v-btn--icon theme--light"
@@ -1087,6 +1098,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                               bottom="bottom"
                               class="v-menu"
                               left="left"
+                              offset-y="offset-y"
                             >
                               <button
                                 class="v-btn v-btn--icon theme--light"
@@ -1194,6 +1206,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                       bottom="bottom"
                       class="v-menu"
                       left="left"
+                      offset-y="offset-y"
                     >
                       <button
                         class="v-btn v-btn--icon theme--light"
@@ -1353,6 +1366,7 @@ exports[`variables-help Renders \`variables-help\` with original flag 1`] = `
               bottom="bottom"
               class="v-menu"
               left="left"
+              offset-y="offset-y"
             >
               <span
                 class="v-tooltip v-tooltip--left"
@@ -1489,6 +1503,7 @@ exports[`variables-help Renders \`variables-help\` with original flag 1`] = `
               bottom="bottom"
               class="v-menu"
               left="left"
+              offset-y="offset-y"
             >
               <span
                 class="v-tooltip v-tooltip--left"
