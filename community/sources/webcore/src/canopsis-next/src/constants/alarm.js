@@ -13,6 +13,7 @@ export const ALARM_FIELDS = {
   component: 'v.component',
   resource: 'v.resource',
   lastComment: 'v.last_comment.m',
+  lastCommentInitiator: 'v.last_comment.initiator',
   ackBy: 'v.ack.a',
   ackMessage: 'v.ack.m',
   ackInitiator: 'v.ack.initiator',
@@ -43,6 +44,7 @@ export const ALARM_FIELDS = {
   links: 'links',
   ticketAuthor: 'v.ticket.a',
   ticketMessage: 'v.ticket.m',
+  ticketInitiator: 'v.ticket.initiator',
   ticketValue: 'v.ticket.ticket',
   ticketCreatedAt: 'v.ticket.t',
   entityId: 'entity._id',
@@ -65,6 +67,7 @@ export const ALARM_FIELDS = {
   ticket: 'v.ticket',
   ticketData: 'v.ticket.ticket_data',
   canceled: 'v.canceled',
+  canceledInitiator: 'v.canceled.initiator',
   snooze: 'v.snooze',
   pbehaviorInfo: 'v.pbehavior_info',
 
@@ -295,8 +298,10 @@ export const ALARM_PATTERN_FIELDS = {
   resolved: ALARM_FIELDS.resolved,
   ticket: ALARM_FIELDS.ticket,
   canceled: ALARM_FIELDS.canceled,
+  canceledInitiator: ALARM_FIELDS.canceledInitiator,
   snooze: ALARM_FIELDS.snooze,
   lastComment: ALARM_FIELDS.lastComment,
+  lastCommentInitiator: ALARM_FIELDS.lastCommentInitiator,
   longOutput: ALARM_FIELDS.longOutput,
   initialOutput: ALARM_FIELDS.initialOutput,
   initialLongOutput: ALARM_FIELDS.initialLongOutput,
@@ -305,10 +310,11 @@ export const ALARM_PATTERN_FIELDS = {
   activated: ALARM_FIELDS.activated,
   ticketValue: ALARM_FIELDS.ticketValue,
   ticketMessage: ALARM_FIELDS.ticketMessage,
+  ticketInitiator: ALARM_FIELDS.ticketInitiator,
   ticketData: ALARM_FIELDS.ticketData,
 };
 
-export const ALARM_ACK_INITIATORS = {
+export const ALARM_EVENT_INITIATORS = {
   user: 'user',
   system: 'system',
   external: 'external',
@@ -408,6 +414,7 @@ export const ALARM_FIELDS_TO_LABELS_KEYS = {
   [ALARM_FIELDS.component]: 'common.component',
   [ALARM_FIELDS.resource]: 'common.resource',
   [ALARM_FIELDS.lastComment]: 'alarm.fields.lastComment',
+  [ALARM_FIELDS.lastCommentInitiator]: 'alarm.fields.lastCommentInitiator',
   [ALARM_FIELDS.ackBy]: 'alarm.fields.ackBy',
   [ALARM_FIELDS.ackMessage]: 'alarm.fields.ackMessage',
   [ALARM_FIELDS.ackInitiator]: 'alarm.fields.ackInitiator',
@@ -439,6 +446,7 @@ export const ALARM_FIELDS_TO_LABELS_KEYS = {
   [ALARM_FIELDS.ticketAuthor]: 'alarm.fields.ticketAuthor',
   [ALARM_FIELDS.ticketMessage]: 'alarm.fields.ticketMessage',
   [ALARM_FIELDS.ticketValue]: 'alarm.fields.ticketId',
+  [ALARM_FIELDS.ticketInitiator]: 'alarm.fields.ticketInitiator',
   [ALARM_FIELDS.ticketCreatedAt]: 'alarm.fields.ticketCreatedAt',
   [ALARM_FIELDS.entityId]: 'alarm.fields.entityId',
   [ALARM_FIELDS.entityName]: 'alarm.fields.entityName',
@@ -460,6 +468,7 @@ export const ALARM_FIELDS_TO_LABELS_KEYS = {
   [ALARM_FIELDS.ticket]: 'common.ticket',
   [ALARM_FIELDS.ticketData]: 'alarm.fields.ticketData',
   [ALARM_FIELDS.canceled]: 'common.canceled',
+  [ALARM_FIELDS.canceledInitiator]: 'alarm.fields.canceledInitiator',
   [ALARM_FIELDS.snooze]: 'common.snooze',
   [ALARM_FIELDS.pbehaviorInfo]: 'pbehavior.pbehaviorInfo',
 
