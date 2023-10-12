@@ -32,6 +32,7 @@ configuration:
     api:
       bulkmaxsize: 10000
       tokensigningmethod: HS256
+      exportmongoclienttimeout: 1m
     data_storage:
       timetoexecute: ""
     file:
