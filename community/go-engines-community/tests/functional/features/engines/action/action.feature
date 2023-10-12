@@ -129,6 +129,7 @@ Feature: execute action on trigger
               {
                 "_t": "assocticket",
                 "a": "test-scenario-action-1-action-1-author test-resource-action-1-1",
+                "initiator": "system",
                 "m": "Scenario: test-scenario-action-1-name. Ticket ID: test-scenario-action-1-action-1-ticket. Ticket URL: test-scenario-action-1-action-1-ticket-url. Ticket ticket_param_1: ticket_value_1.",
                 "ticket": "test-scenario-action-1-action-1-ticket",
                 "ticket_rule_id": "test-scenario-action-1",
@@ -144,6 +145,7 @@ Feature: execute action on trigger
             "ticket": {
               "_t": "assocticket",
               "a": "test-scenario-action-1-action-1-author test-resource-action-1-1",
+              "initiator": "system",
               "m": "Scenario: test-scenario-action-1-name. Ticket ID: test-scenario-action-1-action-1-ticket. Ticket URL: test-scenario-action-1-action-1-ticket-url. Ticket ticket_param_1: ticket_value_1.",
               "ticket": "test-scenario-action-1-action-1-ticket",
               "ticket_rule_id": "test-scenario-action-1",
@@ -159,6 +161,7 @@ Feature: execute action on trigger
               "_t": "ack",
               "a": "root John Doe admin@canopsis.net",
               "user_id": "root",
+              "initiator": "system",
               "m": "test-scenario-action-1-action-2-output test-resource-action-1-1 2"
             },
             "connector": "test-connector-action-1",
@@ -173,6 +176,7 @@ Feature: execute action on trigger
               {
                 "_t": "assocticket",
                 "a": "test-scenario-action-1-action-1-author test-resource-action-1-2",
+                "initiator": "system",
                 "m": "Scenario: test-scenario-action-1-name. Ticket ID: test-scenario-action-1-action-1-ticket. Ticket URL: test-scenario-action-1-action-1-ticket-url. Ticket ticket_param_1: ticket_value_1.",
                 "ticket": "test-scenario-action-1-action-1-ticket",
                 "ticket_rule_id": "test-scenario-action-1",
@@ -188,6 +192,7 @@ Feature: execute action on trigger
             "ticket": {
               "_t": "assocticket",
               "a": "test-scenario-action-1-action-1-author test-resource-action-1-2",
+              "initiator": "system",
               "m": "Scenario: test-scenario-action-1-name. Ticket ID: test-scenario-action-1-action-1-ticket. Ticket URL: test-scenario-action-1-action-1-ticket-url. Ticket ticket_param_1: ticket_value_1.",
               "ticket": "test-scenario-action-1-action-1-ticket",
               "ticket_rule_id": "test-scenario-action-1",
@@ -203,6 +208,7 @@ Feature: execute action on trigger
               "_t": "ack",
               "a": "root John Doe admin@canopsis.net",
               "user_id": "root",
+              "initiator": "system",
               "m": "test-scenario-action-1-action-2-output test-resource-action-1-2 1"
             },
             "connector": "test-connector-action-1",
@@ -256,6 +262,7 @@ Feature: execute action on trigger
                 "_t": "assocticket",
                 "a": "test-scenario-action-1-action-1-author test-resource-action-1-1",
                 "user_id": "",
+                "initiator": "system",
                 "m": "Scenario: test-scenario-action-1-name. Ticket ID: test-scenario-action-1-action-1-ticket. Ticket URL: test-scenario-action-1-action-1-ticket-url. Ticket ticket_param_1: ticket_value_1.",
                 "ticket": "test-scenario-action-1-action-1-ticket",
                 "ticket_rule_id": "test-scenario-action-1",
@@ -271,12 +278,14 @@ Feature: execute action on trigger
                 "_t": "ack",
                 "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
+                "initiator": "system",
                 "m": "test-scenario-action-1-action-2-output test-resource-action-1-1 2"
               },
               {
                 "_t": "changestate",
                 "a": "system",
                 "user_id": "",
+                "initiator": "system",
                 "m": "test-scenario-action-1-action-3-output Test test-resource-action-1-1 2 {{ .mongoURL }}",
                 "val": 3
               }
@@ -305,6 +314,7 @@ Feature: execute action on trigger
                 "_t": "assocticket",
                 "a": "test-scenario-action-1-action-1-author test-resource-action-1-2",
                 "user_id": "",
+                "initiator": "system",
                 "m": "Scenario: test-scenario-action-1-name. Ticket ID: test-scenario-action-1-action-1-ticket. Ticket URL: test-scenario-action-1-action-1-ticket-url. Ticket ticket_param_1: ticket_value_1.",
                 "ticket": "test-scenario-action-1-action-1-ticket",
                 "ticket_rule_id": "test-scenario-action-1",
@@ -320,12 +330,14 @@ Feature: execute action on trigger
                 "_t": "ack",
                 "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
+                "initiator": "system",
                 "m": "test-scenario-action-1-action-2-output test-resource-action-1-2 1"
               },
               {
                 "_t": "changestate",
                 "a": "system",
                 "user_id": "",
+                "initiator": "system",
                 "m": "test-scenario-action-1-action-3-output Test test-resource-action-1-2 1 {{ .mongoURL }}",
                 "val": 3
               }
@@ -581,18 +593,21 @@ Feature: execute action on trigger
               {
                 "_t": "assocticket",
                 "a": "root John Doe admin@canopsis.net",
+                "initiator": "system",
                 "ticket": "test-scenario-action-2-action-1-ticket"
               }
             ],
             "ticket": {
               "_t": "assocticket",
               "a": "root John Doe admin@canopsis.net",
+              "initiator": "system",
               "ticket": "test-scenario-action-2-action-1-ticket"
             },
             "ack": {
               "_t": "ack",
               "a": "test-scenario-action-2-action-2-author test-resource-action-2",
               "user_id": "",
+              "initiator": "system",
               "m": "test-scenario-action-2-action-2-output test-resource-action-2"
             },
             "connector": "test-connector-action-2",
@@ -640,12 +655,14 @@ Feature: execute action on trigger
                 "_t": "assocticket",
                 "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
+                "initiator": "system",
                 "ticket": "test-scenario-action-2-action-1-ticket"
               },
               {
                 "_t": "ack",
                 "a": "test-scenario-action-2-action-2-author test-resource-action-2",
                 "user_id": "",
+                "initiator": "system",
                 "m": "test-scenario-action-2-action-2-output test-resource-action-2"
               }
             ],
@@ -762,18 +779,21 @@ Feature: execute action on trigger
               {
                 "_t": "assocticket",
                 "a": "system",
+                "initiator": "system",
                 "ticket": "test-scenario-action-3-ticket"
               }
             ],
             "ticket": {
               "_t": "assocticket",
               "a": "system",
+              "initiator": "system",
               "ticket": "test-scenario-action-3-ticket"
             },
             "ack": {
               "_t": "ack",
               "a": "root John Doe admin@canopsis.net",
               "user_id": "root",
+              "initiator": "system",
               "m": "test-output-action-3-test-connector-action-3"
             },
             "connector": "test-connector-action-3",
@@ -821,12 +841,14 @@ Feature: execute action on trigger
                 "_t": "assocticket",
                 "a": "system",
                 "user_id": "",
+                "initiator": "system",
                 "ticket": "test-scenario-action-3-ticket"
               },
               {
                 "_t": "ack",
                 "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
+                "initiator": "system",
                 "m": "test-output-action-3-test-connector-action-3"
               }
             ],

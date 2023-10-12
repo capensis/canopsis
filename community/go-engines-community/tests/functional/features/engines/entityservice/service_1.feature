@@ -205,18 +205,21 @@ Feature: update service on event
               {
                 "_t": "stateinc",
                 "a": "service.service",
+                "initiator": "system",
                 "m": "Depends: 1; All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
+                "initiator": "system",
                 "m": "Depends: 1; All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               },
               {
                 "_t": "stateinc",
                 "a": "service.service",
+                "initiator": "system",
                 "m": "Depends: 2; All: 2; Active: 2; Acknowledged: 0; NotAcknowledged: 2; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 3
               }
@@ -371,12 +374,14 @@ Feature: update service on event
               {
                 "_t": "stateinc",
                 "a": "service.service",
+                "initiator": "system",
                 "m": "All: 3; Active: 3; Acknowledged: 0; NotAcknowledged: 3; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 1; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 3
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
+                "initiator": "system",
                 "m": "All: 3; Active: 3; Acknowledged: 0; NotAcknowledged: 3; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 1; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               }
@@ -596,24 +601,28 @@ Feature: update service on event
               {
                 "_t": "stateinc",
                 "a": "service.service",
+                "initiator": "system",
                 "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 2
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
+                "initiator": "system",
                 "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               },
               {
                 "_t": "statedec",
                 "a": "service.service",
+                "initiator": "system",
                 "m": "All: 0; Active: 0; Acknowledged: 0; NotAcknowledged: 0; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 0
               },
               {
                 "_t": "statusdec",
                 "a": "service.service",
+                "initiator": "system",
                 "m": "All: 0; Active: 0; Acknowledged: 0; NotAcknowledged: 0; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 0
               }
@@ -811,18 +820,21 @@ Feature: update service on event
               {
                 "_t": "stateinc",
                 "a": "service.service",
+                "initiator": "system",
                 "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 2
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
+                "initiator": "system",
                 "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               },
               {
                 "_t": "stateinc",
                 "a": "service.service",
+                "initiator": "system",
                 "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 3
               }
@@ -1020,18 +1032,21 @@ Feature: update service on event
               {
                 "_t": "stateinc",
                 "a": "service.service",
+                "initiator": "system",
                 "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 2
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
+                "initiator": "system",
                 "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               },
               {
                 "_t": "statedec",
                 "a": "service.service",
+                "initiator": "system",
                 "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               }
@@ -1219,24 +1234,28 @@ Feature: update service on event
               {
                 "_t": "stateinc",
                 "a": "service.service",
+                "initiator": "system",
                 "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 2
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
+                "initiator": "system",
                 "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 1; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               },
               {
                 "_t": "statedec",
                 "a": "service.service",
+                "initiator": "system",
                 "m": "All: 0; Active: 0; Acknowledged: 0; NotAcknowledged: 0; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 0
               },
               {
                 "_t": "statusdec",
                 "a": "service.service",
+                "initiator": "system",
                 "m": "All: 0; Active: 0; Acknowledged: 0; NotAcknowledged: 0; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 0
               }
@@ -1555,12 +1574,14 @@ Feature: update service on event
               {
                 "_t": "stateinc",
                 "a": "service.service",
+                "initiator": "system",
                 "m": "Depends: 6; All: 5; Active: 5; Acknowledged: 1; NotAcknowledged: 4; AcknowledgedUnderPbh: 0; StateCritical: 2; StateMajor: 1; StateMinor: 1; StateOk: 1; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 3
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
+                "initiator": "system",
                 "m": "Depends: 6; All: 5; Active: 5; Acknowledged: 1; NotAcknowledged: 4; AcknowledgedUnderPbh: 0; StateCritical: 2; StateMajor: 1; StateMinor: 1; StateOk: 1; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               }
@@ -1768,18 +1789,21 @@ Feature: update service on event
               {
                 "_t": "stateinc",
                 "a": "service.service",
+                "initiator": "system",
                 "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
+                "initiator": "system",
                 "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 1; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               },
               {
                 "_t": "stateinc",
                 "a": "service.service",
+                "initiator": "system",
                 "m": "All: 1; Active: 1; Acknowledged: 1; NotAcknowledged: 0; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 3
               }

@@ -109,10 +109,16 @@ Feature: update alarm status on flapping rule
             "connector_name": "test-connector-name-axe-flappingrule-1",
             "resource": "test-resource-axe-flappingrule-1",
             "state": {
-              "val": 3
+              "val": 3,
+              "a": "test-connector-axe-flappingrule-1.test-connector-name-axe-flappingrule-1",
+              "initiator": "external",
+              "m": "test-output-axe-flappingrule-1"
             },
             "status": {
-              "val": 3
+              "val": 3,
+              "a": "test-connector-axe-flappingrule-1.test-connector-name-axe-flappingrule-1",
+              "initiator": "external",
+              "m": "test-output-axe-flappingrule-1"
             }
           }
         }
@@ -167,11 +173,17 @@ Feature: update alarm status on flapping rule
               },
               {
                 "_t": "stateinc",
-                "val": 3
+                "val": 3,
+                "a": "test-connector-axe-flappingrule-1.test-connector-name-axe-flappingrule-1",
+                "initiator": "external",
+                "m": "test-output-axe-flappingrule-1"
               },
               {
                 "_t": "statusinc",
-                "val": 3
+                "val": 3,
+                "a": "test-connector-axe-flappingrule-1.test-connector-name-axe-flappingrule-1",
+                "initiator": "external",
+                "m": "test-output-axe-flappingrule-1"
               }
             ],
             "meta": {
@@ -212,7 +224,11 @@ Feature: update alarm status on flapping rule
               "val": 3
             },
             "status": {
-              "val": 1
+              "val": 1,
+              "a": "system",
+              "user_id": "",
+              "initiator": "system",
+              "m": ""
             }
           }
         }
@@ -275,7 +291,11 @@ Feature: update alarm status on flapping rule
               },
               {
                 "_t": "statusdec",
-                "val": 1
+                "val": 1,
+                "a": "system",
+                "user_id": "",
+                "initiator": "system",
+                "m": ""
               }
             ],
             "meta": {
