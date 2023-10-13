@@ -3,6 +3,7 @@ package fixtures
 import (
 	"errors"
 	"math/rand"
+	"strconv"
 	"strings"
 	"time"
 
@@ -94,4 +95,14 @@ func (*Faker) GenerateExdates(count int) interface{} {
 	}
 
 	return exdates
+}
+
+func (*Faker) GenerateBookmarks(prefix string, count int) []string {
+	bookmarks := make([]string, count)
+
+	for idx := range bookmarks {
+		bookmarks[idx] = prefix + strconv.Itoa(idx)
+	}
+
+	return bookmarks
 }

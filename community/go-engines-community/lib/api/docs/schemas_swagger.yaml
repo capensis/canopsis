@@ -145,6 +145,8 @@ definitions:
         items:
           $ref: '#/definitions/alarm.AssignedInstruction'
         type: array
+      bookmark:
+        type: boolean
       children:
         type: integer
       children_instructions:
@@ -454,6 +456,8 @@ definitions:
         items:
           $ref: '#/definitions/alarm.InstructionFilterRequest'
         type: array
+      only_bookmarks:
+        type: boolean
       opened:
         type: boolean
       pbehavior_pattern:
