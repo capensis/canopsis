@@ -83,8 +83,9 @@ type TimezoneConfig struct {
 }
 
 type ApiConfig struct {
-	TokenSigningMethod jwt.SigningMethod
-	BulkMaxSize        int
+	TokenSigningMethod       jwt.SigningMethod
+	BulkMaxSize              int
+	ExportMongoClientTimeout time.Duration
 }
 
 type RemediationConfig struct {
@@ -316,8 +317,9 @@ func (p *BaseTimezoneConfigProvider) Get() TimezoneConfig {
 func NewApiConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseApiConfigProvider {
 	sectionName := "api"
 	conf := ApiConfig{
-		TokenSigningMethod: parseJwtSigningMethod(cfg.API.TokenSigningMethod, jwt.GetSigningMethod(ApiTokenSigningMethod), "TokenSigningMethod", sectionName, logger),
-		BulkMaxSize:        parseInt(cfg.API.BulkMaxSize, ApiBulkMaxSize, "BulkMaxSize", sectionName, logger),
+		TokenSigningMethod:       parseJwtSigningMethod(cfg.API.TokenSigningMethod, jwt.GetSigningMethod(ApiTokenSigningMethod), "TokenSigningMethod", sectionName, logger),
+		BulkMaxSize:              parseInt(cfg.API.BulkMaxSize, ApiBulkMaxSize, "BulkMaxSize", sectionName, logger),
+		ExportMongoClientTimeout: parseTimeDurationByStr(cfg.API.ExportMongoClientTimeout, ApiExportMongoClientTimeout, "ExportMongoClientTimeout", sectionName, logger),
 	}
 
 	return &BaseApiConfigProvider{
@@ -345,6 +347,11 @@ func (p *BaseApiConfigProvider) Update(cfg CanopsisConf) {
 	i, ok := parseUpdatedInt(cfg.API.BulkMaxSize, p.conf.BulkMaxSize, "BulkMaxSize", sectionName, p.logger)
 	if ok {
 		p.conf.BulkMaxSize = i
+	}
+
+	d, ok := parseUpdatedTimeDurationByStr(cfg.API.ExportMongoClientTimeout, p.conf.ExportMongoClientTimeout, "ExportMongoClientTimeout", sectionName, p.logger)
+	if ok {
+		p.conf.ExportMongoClientTimeout = d
 	}
 }
 

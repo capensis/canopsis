@@ -73,8 +73,9 @@ type SectionDataStorage struct {
 }
 
 type SectionApi struct {
-	TokenSigningMethod string `toml:"TokenSigningMethod"`
-	BulkMaxSize        int    `toml:"BulkMaxSize"`
+	TokenSigningMethod       string `toml:"TokenSigningMethod"`
+	BulkMaxSize              int    `toml:"BulkMaxSize"`
+	ExportMongoClientTimeout string `toml:"ExportMongoClientTimeout"`
 }
 
 type SectionLogger struct {

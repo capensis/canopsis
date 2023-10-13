@@ -56,6 +56,7 @@ type Store interface {
 
 type store struct {
 	dbClient                         mongo.DbClient
+	dbExportClient                   mongo.DbClient
 	mainDbCollection                 mongo.DbCollection
 	resolvedDbCollection             mongo.DbCollection
 	dbInstructionCollection          mongo.DbCollection
@@ -71,13 +72,15 @@ type store struct {
 }
 
 func NewStore(
-	dbClient mongo.DbClient,
+	dbClient,
+	dbExportClient mongo.DbClient,
 	linkGenerator link.Generator,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	logger zerolog.Logger,
 ) Store {
 	return &store{
 		dbClient:                         dbClient,
+		dbExportClient:                   dbExportClient,
 		mainDbCollection:                 dbClient.Collection(mongo.AlarmMongoCollection),
 		resolvedDbCollection:             dbClient.Collection(mongo.ResolvedAlarmMongoCollection),
 		dbInstructionCollection:          dbClient.Collection(mongo.InstructionMongoCollection),
@@ -558,9 +561,9 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 		return nil, err
 	}
 
-	collection := s.mainDbCollection
+	collectionName := mongo.AlarmMongoCollection
 	if r.GetOpenedFilter() == OnlyResolved {
-		collection = s.resolvedDbCollection
+		collectionName = mongo.ResolvedAlarmMongoCollection
 	}
 
 	now := types.NewCpsTime()
@@ -628,6 +631,7 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 	}
 
 	pipeline = append(pipeline, bson.M{"$project": project})
+	collection := s.dbExportClient.Collection(collectionName)
 	cursor, err := collection.Aggregate(ctx, pipeline, options.Aggregate().SetAllowDiskUse(true))
 	if err != nil {
 		return nil, err
