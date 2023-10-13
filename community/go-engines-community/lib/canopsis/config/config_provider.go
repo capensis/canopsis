@@ -125,10 +125,11 @@ type TimezoneConfig struct {
 }
 
 type ApiConfig struct {
-	TokenSigningMethod     jwt.SigningMethod
-	BulkMaxSize            int
-	AuthorScheme           []string
-	MetricsCacheExpiration time.Duration
+	TokenSigningMethod       jwt.SigningMethod
+	BulkMaxSize              int
+	ExportMongoClientTimeout time.Duration
+	AuthorScheme             []string
+	MetricsCacheExpiration   time.Duration
 }
 
 type RemediationConfig struct {
@@ -353,9 +354,10 @@ func (p *BaseTimezoneConfigProvider) Get() TimezoneConfig {
 func NewApiConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseApiConfigProvider {
 	sectionName := "api"
 	conf := ApiConfig{
-		TokenSigningMethod:     parseJwtSigningMethod(cfg.API.TokenSigningMethod, jwt.GetSigningMethod(ApiTokenSigningMethod), "TokenSigningMethod", sectionName, logger),
-		BulkMaxSize:            parseInt(cfg.API.BulkMaxSize, ApiBulkMaxSize, "BulkMaxSize", sectionName, logger),
-		MetricsCacheExpiration: parseTimeDurationByStr(cfg.API.MetricsCacheExpiration, ApiMetricsCacheExpiration, "MetricsCacheExpiration", sectionName, logger),
+		TokenSigningMethod:       parseJwtSigningMethod(cfg.API.TokenSigningMethod, jwt.GetSigningMethod(ApiTokenSigningMethod), "TokenSigningMethod", sectionName, logger),
+		BulkMaxSize:              parseInt(cfg.API.BulkMaxSize, ApiBulkMaxSize, "BulkMaxSize", sectionName, logger),
+		ExportMongoClientTimeout: parseTimeDurationByStr(cfg.API.ExportMongoClientTimeout, ApiExportMongoClientTimeout, "ExportMongoClientTimeout", sectionName, logger),
+		MetricsCacheExpiration:   parseTimeDurationByStr(cfg.API.MetricsCacheExpiration, ApiMetricsCacheExpiration, "MetricsCacheExpiration", sectionName, logger),
 	}
 
 	if len(cfg.API.AuthorScheme) == 0 {
@@ -398,6 +400,11 @@ func (p *BaseApiConfigProvider) Update(cfg CanopsisConf) {
 		p.conf.BulkMaxSize = i
 	}
 
+	d, ok := parseUpdatedTimeDurationByStr(cfg.API.ExportMongoClientTimeout, p.conf.ExportMongoClientTimeout, "ExportMongoClientTimeout", sectionName, p.logger)
+	if ok {
+		p.conf.ExportMongoClientTimeout = d
+	}
+
 	if len(cfg.API.AuthorScheme) == 0 {
 		p.logger.Error().
 			Strs("invalid", cfg.API.AuthorScheme).
@@ -410,7 +417,7 @@ func (p *BaseApiConfigProvider) Update(cfg CanopsisConf) {
 		p.conf.AuthorScheme = cfg.API.AuthorScheme
 	}
 
-	d, ok := parseUpdatedTimeDurationByStr(cfg.API.MetricsCacheExpiration, p.conf.MetricsCacheExpiration, "MetricsCacheExpiration", sectionName, p.logger)
+	d, ok = parseUpdatedTimeDurationByStr(cfg.API.MetricsCacheExpiration, p.conf.MetricsCacheExpiration, "MetricsCacheExpiration", sectionName, p.logger)
 	if ok {
 		p.conf.MetricsCacheExpiration = d
 	}
