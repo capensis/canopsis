@@ -1411,6 +1411,7 @@ Feature: Metrics should be added on alarm changes
     """
     Then the response key "data.1.data.0.value" should be greater or equal than 1
 
+  @concurrent
   Scenario: given acked alarm should add min_ack and max_ack metrics
     Given I am admin
     When I do POST /api/v4/cat/kpi-filters:

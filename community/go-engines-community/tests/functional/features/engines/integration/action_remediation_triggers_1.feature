@@ -117,17 +117,21 @@ Feature: scenarios should be triggered by remediation triggers
                 "_t": "instructionstart",
                 "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
+                "initiator": "user",
                 "m": "Instruction test-instruction-action-remediation-triggers-1-name."
               },
               {
                 "_t": "instructionfail",
                 "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
+                "initiator": "user",
                 "m": "Instruction test-instruction-action-remediation-triggers-1-name."
               },
               {
                 "_t": "ack",
                 "a": "system",
+                "user_id": "",
+                "initiator": "system",
                 "m": "test-resource-action-remediation-triggers-1-ack"
               }
             ],
@@ -255,21 +259,29 @@ Feature: scenarios should be triggered by remediation triggers
       {
         "_t": "autoinstructionstart",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-2-name."
       },
       {
         "_t": "instructionjobstart",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-2-name. Job test-job-action-remediation-triggers-1-name."
       },
       {
         "_t": "instructionjobfail",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-2-name. Job test-job-action-remediation-triggers-1-name."
       },
       {
         "_t": "autoinstructionfail",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-2-name."
       }
     ]
@@ -280,11 +292,15 @@ Feature: scenarios should be triggered by remediation triggers
       {
         "_t": "autoinstructionfail",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-2-name."
       },
       {
         "_t": "ack",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "test-resource-action-remediation-triggers-2-ack"
       }
     ]
@@ -371,6 +387,8 @@ Feature: scenarios should be triggered by remediation triggers
             "ack": {
               "_t": "ack",
               "a": "system",
+              "user_id": "",
+              "initiator": "system",
               "m": "test-resource-action-remediation-triggers-3-ack"
             }
           }
@@ -402,21 +420,29 @@ Feature: scenarios should be triggered by remediation triggers
       {
         "_t": "autoinstructionstart",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-3-name."
       },
       {
         "_t": "instructionjobstart",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-3-name. Job test-job-action-remediation-triggers-1-name."
       },
       {
         "_t": "instructionjobfail",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-3-name. Job test-job-action-remediation-triggers-1-name."
       },
       {
         "_t": "autoinstructionfail",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-3-name."
       }
     ]
@@ -427,11 +453,15 @@ Feature: scenarios should be triggered by remediation triggers
       {
         "_t": "instructionjobfail",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-3-name. Job test-job-action-remediation-triggers-1-name."
       },
       {
         "_t": "ack",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "test-resource-action-remediation-triggers-3-ack"
       }
     ]
@@ -536,6 +566,8 @@ Feature: scenarios should be triggered by remediation triggers
             "ack": {
               "_t": "ack",
               "a": "system",
+              "user_id": "",
+              "initiator": "system",
               "m": "test-resource-action-remediation-triggers-4-ack"
             }
           }
@@ -568,18 +600,21 @@ Feature: scenarios should be triggered by remediation triggers
         "_t": "instructionstart",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Instruction test-instruction-action-remediation-triggers-4-name."
       },
       {
         "_t": "instructionjobstart",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Instruction test-instruction-action-remediation-triggers-4-name. Job test-job-action-remediation-triggers-2-name."
       },
       {
         "_t": "instructionjobfail",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Instruction test-instruction-action-remediation-triggers-4-name. Job test-job-action-remediation-triggers-2-name."
       }
     ]
@@ -591,11 +626,14 @@ Feature: scenarios should be triggered by remediation triggers
         "_t": "instructionjobfail",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Instruction test-instruction-action-remediation-triggers-4-name. Job test-job-action-remediation-triggers-2-name."
       },
       {
         "_t": "ack",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "test-resource-action-remediation-triggers-4-ack"
       }
     ]
@@ -712,17 +750,21 @@ Feature: scenarios should be triggered by remediation triggers
                 "_t": "instructionstart",
                 "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
+                "initiator": "user",
                 "m": "Instruction test-instruction-action-remediation-triggers-5-name."
               },
               {
                 "_t": "instructioncomplete",
                 "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
+                "initiator": "user",
                 "m": "Instruction test-instruction-action-remediation-triggers-5-name."
               },
               {
                 "_t": "ack",
                 "a": "system",
+                "user_id": "",
+                "initiator": "system",
                 "m": "test-resource-action-remediation-triggers-5-ack"
               }
             ],
@@ -819,6 +861,8 @@ Feature: scenarios should be triggered by remediation triggers
             "ack": {
               "_t": "ack",
               "a": "system",
+              "user_id": "",
+              "initiator": "system",
               "m": "test-resource-action-remediation-triggers-6-ack"
             }
           }
@@ -850,21 +894,29 @@ Feature: scenarios should be triggered by remediation triggers
       {
         "_t": "autoinstructionstart",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-6-name."
       },
       {
         "_t": "instructionjobstart",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-6-name. Job test-job-action-remediation-triggers-3-name."
       },
       {
         "_t": "instructionjobcomplete",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-6-name. Job test-job-action-remediation-triggers-3-name."
       },
       {
         "_t": "autoinstructioncomplete",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-6-name."
       }
     ]
@@ -875,11 +927,15 @@ Feature: scenarios should be triggered by remediation triggers
       {
         "_t": "autoinstructioncomplete",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-6-name."
       },
       {
         "_t": "ack",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "test-resource-action-remediation-triggers-6-ack"
       }
     ]
@@ -1003,23 +1059,28 @@ Feature: scenarios should be triggered by remediation triggers
                 "_t": "instructionstart",
                 "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
+                "initiator": "user",
                 "m": "Instruction test-instruction-action-remediation-triggers-7-name."
               },
               {
                 "_t": "instructionjobstart",
                 "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
+                "initiator": "user",
                 "m": "Instruction test-instruction-action-remediation-triggers-7-name. Job test-job-action-remediation-triggers-3-name."
               },
               {
                 "_t": "instructionjobcomplete",
                 "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
+                "initiator": "user",
                 "m": "Instruction test-instruction-action-remediation-triggers-7-name. Job test-job-action-remediation-triggers-3-name."
               },
               {
                 "_t": "ack",
                 "a": "system",
+                "user_id": "",
+                "initiator": "system",
                 "m": "test-resource-action-remediation-triggers-7-ack"
               }
             ],
@@ -1127,11 +1188,15 @@ Feature: scenarios should be triggered by remediation triggers
       {
         "_t": "instructionjobcomplete",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-8-name. Job test-job-action-remediation-triggers-3-name."
       },
       {
         "_t": "ack",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "test-resource-action-remediation-triggers-8-ack"
       }
     ]
@@ -1230,6 +1295,8 @@ Feature: scenarios should be triggered by remediation triggers
             "ack": {
               "_t": "ack",
               "a": "system",
+              "user_id": "",
+              "initiator": "system",
               "m": "test-resource-action-remediation-triggers-9-ack"
             }
           }
@@ -1269,21 +1336,29 @@ Feature: scenarios should be triggered by remediation triggers
       {
         "_t": "autoinstructionstart",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-9-name."
       },
       {
         "_t": "instructionjobstart",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-9-name. Job test-job-action-remediation-triggers-3-name."
       },
       {
         "_t": "instructionjobcomplete",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-9-name. Job test-job-action-remediation-triggers-3-name."
       },
       {
         "_t": "autoinstructioncomplete",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-9-name."
       },
       {
@@ -1297,6 +1372,8 @@ Feature: scenarios should be triggered by remediation triggers
       {
         "_t": "ack",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "test-resource-action-remediation-triggers-9-ack"
       }
     ]
@@ -1307,11 +1384,15 @@ Feature: scenarios should be triggered by remediation triggers
       {
         "_t": "autoinstructioncomplete",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-9-name."
       },
       {
         "_t": "ack",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "test-resource-action-remediation-triggers-9-ack"
       }
     ]

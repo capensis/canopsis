@@ -1,13 +1,11 @@
 Feature: get infos dictionary
   I need to be able to get infos dictionary
 
+  @concurrent
   Scenario: given requests should return entity infos dictionary
     Given I am admin
-    When I wait the next periodical process
-    When I do GET /api/v4/cat/dynamic-infos-dictionary/keys?search=test-dynamic-infos-dictionary-key
-    Then the response code should be 200
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/cat/dynamic-infos-dictionary/keys?search=test-dynamic-infos-dictionary-key until response code is 200 and body contains:
+    """json
     {
       "data": [
         {
@@ -31,7 +29,7 @@ Feature: get infos dictionary
     When I do GET /api/v4/cat/dynamic-infos-dictionary/keys?search=test-dynamic-infos-dictionary-key-2
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -49,7 +47,7 @@ Feature: get infos dictionary
     When I do GET /api/v4/cat/dynamic-infos-dictionary/values?key=test-dynamic-infos-dictionary-key-2
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -76,7 +74,7 @@ Feature: get infos dictionary
     When I do GET /api/v4/cat/dynamic-infos-dictionary/values?key=test-dynamic-infos-dictionary-key-2&search=test-dynamic-infos-dictionary-value-5
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -94,7 +92,7 @@ Feature: get infos dictionary
     When I do GET /api/v4/cat/dynamic-infos-dictionary/keys?search=test-dynamic-infos-dictionary-should-be-ignored
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -124,7 +122,7 @@ Feature: get infos dictionary
     When I do GET /api/v4/cat/dynamic-infos-dictionary/values?key=test-dynamic-infos-dictionary-should-be-ignored-key-1
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [],
       "meta": {
@@ -138,7 +136,7 @@ Feature: get infos dictionary
     When I do GET /api/v4/cat/dynamic-infos-dictionary/values?key=test-dynamic-infos-dictionary-should-be-ignored-key-2
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [],
       "meta": {
@@ -152,7 +150,7 @@ Feature: get infos dictionary
     When I do GET /api/v4/cat/dynamic-infos-dictionary/values?key=test-dynamic-infos-dictionary-should-be-ignored-key-3
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [],
       "meta": {
@@ -166,7 +164,7 @@ Feature: get infos dictionary
     When I do GET /api/v4/cat/dynamic-infos-dictionary/values?key=test-dynamic-infos-dictionary-should-be-ignored-key-4
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [],
       "meta": {
@@ -180,7 +178,7 @@ Feature: get infos dictionary
     When I do GET /api/v4/cat/dynamic-infos-dictionary/values?key=test-dynamic-infos-dictionary-should-be-ignored-key-5
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [],
       "meta": {
@@ -192,9 +190,10 @@ Feature: get infos dictionary
     }
     """
 
+  @concurrent
   Scenario: given requests should update dynamic infos dictionary
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-dynamic-infos-dictionary-1",
@@ -207,7 +206,6 @@ Feature: get infos dictionary
       "output": "test-output-dynamic-infos-dictionary-1"
     }
     """
-    When I wait the end of event processing
     When I do POST /api/v4/cat/dynamic-infos:
     """json
     {
@@ -270,11 +268,8 @@ Feature: get infos dictionary
     }
     """
     Then the response code should be 201
-    When I wait the next periodical process
-    When I do GET /api/v4/cat/dynamic-infos-dictionary/values?key=test-dynamic-infos-1-name
-    Then the response code should be 200
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/cat/dynamic-infos-dictionary/values?key=test-dynamic-infos-1-name until response code is 200 and body contains:
+    """json
     {
       "data": [
         {
@@ -295,7 +290,7 @@ Feature: get infos dictionary
     When I do GET /api/v4/cat/dynamic-infos-dictionary/values?key=test-dynamic-infos-2-name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -340,11 +335,8 @@ Feature: get infos dictionary
     }
     """
     Then the response code should be 200
-    When I wait the next periodical process
-    When I do GET /api/v4/cat/dynamic-infos-dictionary/values?key=test-dynamic-infos-1-name
-    Then the response code should be 200
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/cat/dynamic-infos-dictionary/values?key=test-dynamic-infos-1-name until response code is 200 and body contains:
+    """json
     {
       "data": [
         {
@@ -414,11 +406,8 @@ Feature: get infos dictionary
     }
     """
     Then the response code should be 200
-    When I wait the next periodical process
-    When I do GET /api/v4/cat/dynamic-infos-dictionary/values?key=test-dynamic-infos-1-name
-    Then the response code should be 200
-    Then the response body should contain:
-    """
+    When I do GET /api/v4/cat/dynamic-infos-dictionary/values?key=test-dynamic-infos-1-name until response code is 200 and body contains:
+    """json
     {
       "data": [],
       "meta": {
@@ -432,7 +421,7 @@ Feature: get infos dictionary
     When I do GET /api/v4/cat/dynamic-infos-dictionary/values?key=test-dynamic-infos-2-name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [],
       "meta": {

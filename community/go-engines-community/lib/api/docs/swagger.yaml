@@ -367,6 +367,14 @@ paths:
         -  PERMISSIONS: `api_alarm_tag:read`
       operationId: alarm-tags-get
       parameters:
+        - name: values[]
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
         - $ref: '#/components/parameters/withFlags'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/page'
@@ -3263,7 +3271,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/colortheme.CreateRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/colortheme.EditRequest'
             examples:
               create:
                 summary: Create a color theme
@@ -3362,7 +3370,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/colortheme.UpdateRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/colortheme.EditRequest'
             examples:
               update:
                 summary: Update a color theme
@@ -6800,6 +6808,177 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /healthcheck:
+    get:
+      tags:
+        - healthcheck
+      summary: Get healthcheck status
+      description: |
+        Get healthcheck status.
+
+        -  PERMISSIONS: `api_healthcheck`
+      operationId: healthcheck-get
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/healthcheck.Info'
+  /healthcheck/engines-order:
+    get:
+      tags:
+        - healthcheck
+      summary: Get engines' order
+      description: |
+        Get engines' order.
+
+        -  PERMISSIONS: `api_healthcheck`
+      operationId: healthcheck-get-engines-order
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/healthcheck.Graph'
+  /healthcheck/parameters:
+    get:
+      tags:
+        - healthcheck
+      summary: Get healthcheck parameters
+      description: |
+        Get healthcheck parameters.
+
+        -  PERMISSIONS: `api_healthcheck`
+      operationId: healthcheck-get-parameters
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/config.HealthCheckParameters'
+    put:
+      tags:
+        - healthcheck
+      summary: Update healthcheck parameters
+      description: |
+        Update healthcheck parameters.
+
+        -  PERMISSIONS: `api_healthcheck`
+      operationId: healthcheck-update-parameters
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/config.HealthCheckParameters'
+            examples:
+              update:
+                summary: Update
+                description: Update parameters.
+                value: {
+                  "queue": {
+                    "limit": 1000,
+                    "enabled": true
+                  },
+                  "messages": {
+                    "limit": 5000,
+                    "enabled": true
+                  },
+                  "engine-fifo": {
+                    "enabled": true,
+                    "minimal": 1,
+                    "optimal": 2
+                  },
+                  "engine-pbehavior": {
+                    "enabled": true,
+                    "minimal": 1,
+                    "optimal": 2
+                  },
+                  "engine-action": {
+                    "enabled": false
+                  },
+                  "engine-che": {
+                    "enabled": true,
+                    "minimal": 1,
+                    "optimal": 1
+                  },
+                  "engine-remediation": {
+                    "enabled": true,
+                    "minimal": 1,
+                    "optimal": 1
+                  },
+                  "engine-webhook": {
+                    "enabled": true,
+                    "minimal": 1,
+                    "optimal": 4
+                  },
+                  "engine-axe": {
+                    "enabled": true,
+                    "minimal": 1,
+                    "optimal": 2
+                  },
+                  "engine-correlation": {
+                    "enabled": true,
+                    "minimal": 1,
+                    "optimal": 1
+                  },
+                  "engine-dynamic-infos": {
+                    "enabled": true,
+                    "minimal": 1,
+                    "optimal": 1
+                  }
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/config.HealthCheckParameters'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /healthcheck/live:
+    get:
+      tags:
+        - healthcheck
+      summary: Get healthcheck status code
+      description: |
+        Get healthcheck status code.
+
+        -  PERMISSIONS: `api_healthcheck`
+      operationId: healthcheck-get-live
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/healthcheck.LiveResponse'
+  /healthcheck/status:
+    get:
+      tags:
+        - healthcheck
+      summary: Get short healthcheck status
+      description: |
+        Get short healthcheck status.
+
+        -  PERMISSIONS: `api_healthcheck`
+      operationId: healthcheck-get-status
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/healthcheck.Status'
   /idle-rules:
     get:
       tags:
