@@ -1068,6 +1068,21 @@ permission:
     _id: numbers_userFilter
     name: <Current()._id>
     description: Numbers user filter
+  permission_listalarm_addBookmark:
+    <<: *permission
+    _id: listalarm_addBookmark
+    name: <Current()._id>
+    description: "List alarm add bookmark"
+  permission_listalarm_removeBookmark:
+    <<: *permission
+    _id: listalarm_removeBookmark
+    name: <Current()._id>
+    description: "List alarm remove bookmark"
+  permission_listalarm_filterByBookmark:
+    <<: *permission
+    _id: listalarm_filterByBookmark
+    name: <Current()._id>
+    description: "List alarm filter by bookmark"
 
   # API permissions
   permission_api_alarm_read:
@@ -1441,6 +1456,9 @@ role:
       "@permission_listalarm_executeInstruction": 1
       "@permission_listalarm_category": 1
       "@permission_listalarm_exportAsCsv": 1
+      "@permission_listalarm_addBookmark": 1
+      "@permission_listalarm_removeBookmark": 1
+      "@permission_listalarm_filterByBookmark": 1
       "@permission_serviceweather_entityAck": 1
       "@permission_serviceweather_entityAssocTicket": 1
       "@permission_serviceweather_entityValidate": 1
@@ -1617,6 +1635,9 @@ role_template:
       "@permission_listalarm_executeInstruction": 1
       "@permission_listalarm_category": 1
       "@permission_listalarm_exportAsCsv": 1
+      "@permission_listalarm_addBookmark": 1
+      "@permission_listalarm_removeBookmark": 1
+      "@permission_listalarm_filterByBookmark": 1
       "@permission_serviceweather_entityAck": 1
       "@permission_serviceweather_entityAssocTicket": 1
       "@permission_serviceweather_entityValidate": 1

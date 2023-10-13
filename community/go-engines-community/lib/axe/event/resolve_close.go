@@ -110,7 +110,11 @@ func processResolve(
 			notAckedMetricType = beforeAlarm.NotAckedMetricType
 		}
 
-		alarm := types.Alarm{}
+		// extend alarm struct with bookmarks to copy user's bookmarks to a resolved alarm document
+		var alarm struct {
+			types.Alarm `bson:"inline"`
+			Bookmarks   []string `bson:"bookmarks"`
+		}
 		err = alarmCollection.FindOne(ctx, bson.M{"_id": beforeAlarm.ID}).Decode(&alarm)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -134,7 +138,7 @@ func processResolve(
 		alarmChange := types.NewAlarmChange()
 		alarmChange.Type = types.AlarmChangeTypeResolve
 		result.Forward = true
-		result.Alarm = alarm
+		result.Alarm = alarm.Alarm
 		result.Entity = entity
 		result.AlarmChange = alarmChange
 

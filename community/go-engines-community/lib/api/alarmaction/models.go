@@ -63,3 +63,9 @@ type BulkCommentRequestItem struct {
 	CommentRequest
 	ID string `json:"_id" binding:"required"`
 }
+
+// alarmResolvedField is a short alarm structure for alarm bookmark APIs logic
+type alarmResolvedField struct {
+	ID       string         `bson:"_id"`
+	Resolved *types.CpsTime `bson:"resolved"`
+}
