@@ -47,7 +47,7 @@ export default {
     },
 
     isLastFailed() {
-      return this.isSuccessTicketDeclaration(last(this.tickets));
+      return !this.isSuccessTicketDeclaration(last(this.tickets));
     },
 
     icon() {
