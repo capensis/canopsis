@@ -824,6 +824,8 @@ definitions:
         $ref: '#/definitions/colortheme.Theme'
       edition:
         type: string
+      events_count_trigger_default_threshold:
+        type: integer
       file_upload_max_size:
         type: integer
       footer:
@@ -1180,6 +1182,47 @@ definitions:
         additionalProperties:
           type: string
         type: object
+    type: object
+  config.EngineParameters:
+    properties:
+      enabled:
+        type: boolean
+      minimal:
+        type: integer
+      optimal:
+        type: integer
+    type: object
+  config.HealthCheckParameters:
+    properties:
+      engine-action:
+        $ref: '#/definitions/config.EngineParameters'
+      engine-axe:
+        $ref: '#/definitions/config.EngineParameters'
+      engine-che:
+        $ref: '#/definitions/config.EngineParameters'
+      engine-correlation:
+        $ref: '#/definitions/config.EngineParameters'
+      engine-dynamic-infos:
+        $ref: '#/definitions/config.EngineParameters'
+      engine-fifo:
+        $ref: '#/definitions/config.EngineParameters'
+      engine-pbehavior:
+        $ref: '#/definitions/config.EngineParameters'
+      engine-remediation:
+        $ref: '#/definitions/config.EngineParameters'
+      engine-webhook:
+        $ref: '#/definitions/config.EngineParameters'
+      messages:
+        $ref: '#/definitions/config.LimitParameters'
+      queue:
+        $ref: '#/definitions/config.LimitParameters'
+    type: object
+  config.LimitParameters:
+    properties:
+      enabled:
+        type: boolean
+      limit:
+        type: integer
     type: object
   contextgraph.ImportJob:
     properties:
@@ -2071,7 +2114,8 @@ definitions:
       _id:
         type: string
       event:
-        additionalProperties: {}
+        additionalProperties:
+          type: any
         type: object
       message:
         type: string
@@ -2408,6 +2452,96 @@ definitions:
     - duration
     - freq_limit
     - name
+    type: object
+  healthcheck.Edge:
+    properties:
+      from:
+        type: string
+      to:
+        type: string
+    type: object
+  healthcheck.Engine:
+    properties:
+      instances:
+        type: integer
+      is_diff_instances_config:
+        type: boolean
+      is_queue_overflown:
+        type: boolean
+      is_running:
+        type: boolean
+      is_too_few_instances:
+        type: boolean
+      min_instances:
+        type: integer
+      name:
+        type: string
+      optimal_instances:
+        type: integer
+      queue_length:
+        type: integer
+      time:
+        type: integer
+    type: object
+  healthcheck.Engines:
+    properties:
+      graph:
+        $ref: '#/definitions/healthcheck.Graph'
+      parameters:
+        additionalProperties:
+          $ref: '#/definitions/healthcheck.Engine'
+        type: object
+    type: object
+  healthcheck.Graph:
+    properties:
+      edges:
+        items:
+          $ref: '#/definitions/healthcheck.Edge'
+        type: array
+      nodes:
+        items:
+          type: string
+        type: array
+    type: object
+  healthcheck.Info:
+    properties:
+      engines:
+        $ref: '#/definitions/healthcheck.Engines'
+      has_invalid_engines_order:
+        type: boolean
+      max_messages_length:
+        type: integer
+      max_queue_length:
+        type: integer
+      services:
+        items:
+          $ref: '#/definitions/healthcheck.Service'
+        type: array
+    type: object
+  healthcheck.LiveResponse:
+    properties:
+      ok:
+        type: boolean
+    type: object
+  healthcheck.Service:
+    properties:
+      is_running:
+        type: boolean
+      name:
+        type: string
+    type: object
+  healthcheck.Status:
+    properties:
+      engines:
+        items:
+          $ref: '#/definitions/healthcheck.Engine'
+        type: array
+      has_invalid_engines_order:
+        type: boolean
+      services:
+        items:
+          $ref: '#/definitions/healthcheck.Service'
+        type: array
     type: object
   idlerule.BulkDeleteRequestItem:
     properties:
@@ -4211,36 +4345,8 @@ definitions:
         minimum: 0
         type: integer
       triggers:
-        description: |-
-          Possible trigger values.
-            * `create` - Alarm creation
-            * `statedec` - Alarm state decrease
-            * `changestate` - Alarm state has been changed by "change state" action
-            * `stateinc` - Alarm state increase
-            * `changestatus` - Alarm status changes eg. flapping
-            * `ack` - Alarm has been acked
-            * `ackremove` - Alarm has been unacked
-            * `cancel` - Alarm has been cancelled
-            * `uncancel` - Alarm has been uncancelled
-            * `comment` - Alarm has been commented
-            * `declareticketwebhook` - Ticket has been declared by the webhook
-            * `assocticket` - Ticket has been associated with an alarm
-            * `snooze` - Alarm has been snoozed
-            * `unsnooze` - Alarm has been unsnoozed
-            * `pbhenter` - Alarm enters a periodic behavior
-            * `activate` - Alarm has been activated
-            * `resolve` - Alarm has been resolved
-            * `pbhleave` - Alarm leaves a periodic behavior
-            * `instructionfail` - Manual instruction has failed
-            * `autoinstructionfail` - Auto instruction has failed
-            * `instructionjobfail` - Manual or auto instruction's job is failed
-            * `instructionjobcomplete` - Manual or auto instruction's job is completed
-            * `instructioncomplete` - Manual instruction is completed
-            * `autoinstructioncomplete` - Auto instruction is completed
-            * `autoinstructionresultok` - Alarm is in OK state after all auto instructions
-            * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
         items:
-          type: string
+          $ref: '#/definitions/scenario.Trigger'
         type: array
     required:
     - _id
@@ -4276,36 +4382,8 @@ definitions:
         minimum: 0
         type: integer
       triggers:
-        description: |-
-          Possible trigger values.
-            * `create` - Alarm creation
-            * `statedec` - Alarm state decrease
-            * `changestate` - Alarm state has been changed by "change state" action
-            * `stateinc` - Alarm state increase
-            * `changestatus` - Alarm status changes eg. flapping
-            * `ack` - Alarm has been acked
-            * `ackremove` - Alarm has been unacked
-            * `cancel` - Alarm has been cancelled
-            * `uncancel` - Alarm has been uncancelled
-            * `comment` - Alarm has been commented
-            * `declareticketwebhook` - Ticket has been declared by the webhook
-            * `assocticket` - Ticket has been associated with an alarm
-            * `snooze` - Alarm has been snoozed
-            * `unsnooze` - Alarm has been unsnoozed
-            * `pbhenter` - Alarm enters a periodic behavior
-            * `activate` - Alarm has been activated
-            * `resolve` - Alarm has been resolved
-            * `pbhleave` - Alarm leaves a periodic behavior
-            * `instructionfail` - Manual instruction has failed
-            * `autoinstructionfail` - Auto instruction has failed
-            * `instructionjobfail` - Manual or auto instruction's job is failed
-            * `instructionjobcomplete` - Manual or auto instruction's job is completed
-            * `instructioncomplete` - Manual instruction is completed
-            * `autoinstructioncomplete` - Auto instruction is completed
-            * `autoinstructionresultok` - Alarm is in OK state after all auto instructions
-            * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
         items:
-          type: string
+          $ref: '#/definitions/scenario.Trigger'
         type: array
     required:
     - actions
@@ -4338,36 +4416,8 @@ definitions:
         minimum: 0
         type: integer
       triggers:
-        description: |-
-          Possible trigger values.
-            * `create` - Alarm creation
-            * `statedec` - Alarm state decrease
-            * `changestate` - Alarm state has been changed by "change state" action
-            * `stateinc` - Alarm state increase
-            * `changestatus` - Alarm status changes eg. flapping
-            * `ack` - Alarm has been acked
-            * `ackremove` - Alarm has been unacked
-            * `cancel` - Alarm has been cancelled
-            * `uncancel` - Alarm has been uncancelled
-            * `comment` - Alarm has been commented
-            * `declareticketwebhook` - Ticket has been declared by the webhook
-            * `assocticket` - Ticket has been associated with an alarm
-            * `snooze` - Alarm has been snoozed
-            * `unsnooze` - Alarm has been unsnoozed
-            * `pbhenter` - Alarm enters a periodic behavior
-            * `activate` - Alarm has been activated
-            * `resolve` - Alarm has been resolved
-            * `pbhleave` - Alarm leaves a periodic behavior
-            * `instructionfail` - Manual instruction has failed
-            * `autoinstructionfail` - Auto instruction has failed
-            * `instructionjobfail` - Manual or auto instruction's job is failed
-            * `instructionjobcomplete` - Manual or auto instruction's job is completed
-            * `instructioncomplete` - Manual instruction is completed
-            * `autoinstructioncomplete` - Auto instruction is completed
-            * `autoinstructionresultok` - Alarm is in OK state after all auto instructions
-            * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
         items:
-          type: string
+          $ref: '#/definitions/scenario.Trigger'
         type: array
     required:
     - actions
@@ -4453,10 +4503,76 @@ definitions:
         type: integer
       triggers:
         items:
-          type: string
+          $ref: '#/definitions/scenario.Trigger'
         type: array
       updated:
         type: integer
+    type: object
+  scenario.Trigger:
+    properties:
+      threshold:
+        type: integer
+      type:
+        description: |-
+          Possible trigger type values.
+            * `create` - Alarm creation
+            * `statedec` - Alarm state decrease
+            * `changestate` - Alarm state has been changed by "change state" action
+            * `stateinc` - Alarm state increase
+            * `changestatus` - Alarm status changes eg. flapping
+            * `ack` - Alarm has been acked
+            * `ackremove` - Alarm has been unacked
+            * `cancel` - Alarm has been cancelled
+            * `uncancel` - Alarm has been uncancelled
+            * `comment` - Alarm has been commented
+            * `declareticketwebhook` - Ticket has been declared by the webhook
+            * `assocticket` - Ticket has been associated with an alarm
+            * `snooze` - Alarm has been snoozed
+            * `unsnooze` - Alarm has been unsnoozed
+            * `pbhenter` - Alarm enters a periodic behavior
+            * `activate` - Alarm has been activated
+            * `resolve` - Alarm has been resolved
+            * `pbhleave` - Alarm leaves a periodic behavior
+            * `instructionfail` - Manual instruction has failed
+            * `autoinstructionfail` - Auto instruction has failed
+            * `instructionjobfail` - Manual or auto instruction's job is failed
+            * `instructionjobcomplete` - Manual or auto instruction's job is completed
+            * `instructioncomplete` - Manual instruction is completed
+            * `autoinstructioncomplete` - Auto instruction is completed
+            * `autoinstructionresultok` - Alarm is in OK state after all auto instructions
+            * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
+            * `eventscount` - Alarm check events count
+        enum:
+        - create
+        - statedec
+        - stateinc
+        - changestate
+        - changestatus
+        - ack
+        - ackremove
+        - cancel
+        - uncancel
+        - comment
+        - declareticketwebhook
+        - assocticket
+        - snooze
+        - unsnooze
+        - resolve
+        - activate
+        - pbhenter
+        - pbhleave
+        - instructionfail
+        - autoinstructionfail
+        - instructionjobfail
+        - instructionjobcomplete
+        - instructioncomplete
+        - autoinstructioncomplete
+        - autoinstructionresultok
+        - autoinstructionresultfail
+        - eventscount
+        type: string
+    required:
+    - type
     type: object
   security.AuthMethodConf:
     properties:

@@ -120,7 +120,7 @@ func NewMetaAlarmAttachStep(metaAlarm Alarm, ruleName string) AlarmStep {
 			ruleName,
 			metaAlarm.Value.DisplayName,
 			metaAlarm.EntityID),
-		"", "", "",
+		"", "", InitiatorSystem,
 	)
 	return newStep
 }
@@ -260,6 +260,7 @@ func (s AlarmSteps) UpdateStateCounter(currentStatus *AlarmStep, currentStatusId
 		// create and append new statecounter
 		newStep := AlarmStep{
 			Author:       currentStatus.Author,
+			Initiator:    currentStatus.Initiator,
 			Message:      currentStatus.Message,
 			Value:        currentStatus.Value,
 			Timestamp:    CpsTime{Time: time.Now()},
@@ -273,6 +274,7 @@ func (s AlarmSteps) UpdateStateCounter(currentStatus *AlarmStep, currentStatusId
 		// create and insert new statecounter right after status
 		newStep := AlarmStep{
 			Author:       currentStatus.Author,
+			Initiator:    currentStatus.Initiator,
 			Message:      currentStatus.Message,
 			Value:        currentStatus.Value,
 			Timestamp:    CpsTime{Time: time.Now()},

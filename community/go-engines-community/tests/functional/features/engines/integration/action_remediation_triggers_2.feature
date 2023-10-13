@@ -9,7 +9,11 @@ Feature: scenarios should be triggered by remediation triggers
     {
       "name": "test-scenario-action-remediation-triggers-second-1-name",
       "enabled": true,
-      "triggers": ["autoinstructionresultfail"],
+      "triggers": [
+        {
+          "type": "autoinstructionresultfail"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -77,6 +81,8 @@ Feature: scenarios should be triggered by remediation triggers
             "ack": {
               "_t": "ack",
               "a": "system",
+              "user_id": "",
+              "initiator": "system",
               "m": "test-resource-action-remediation-triggers-second-1-ack"
             }
           }
@@ -116,26 +122,36 @@ Feature: scenarios should be triggered by remediation triggers
       {
         "_t": "autoinstructionstart",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-second-1-name."
       },
       {
         "_t": "instructionjobstart",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-second-1-name. Job test-job-action-remediation-triggers-2-name."
       },
       {
         "_t": "instructionjobfail",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-second-1-name. Job test-job-action-remediation-triggers-2-name."
       },
       {
         "_t": "autoinstructionfail",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-second-1-name."
       },
       {
         "_t": "ack",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "test-resource-action-remediation-triggers-second-1-ack"
       }
     ]
@@ -146,11 +162,15 @@ Feature: scenarios should be triggered by remediation triggers
       {
         "_t": "autoinstructionfail",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-second-1-name."
       },
       {
         "_t": "ack",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "test-resource-action-remediation-triggers-second-1-ack"
       }
     ]
@@ -164,7 +184,11 @@ Feature: scenarios should be triggered by remediation triggers
     {
       "name": "test-scenario-action-remediation-triggers-second-2-name",
       "enabled": true,
-      "triggers": ["autoinstructionresultfail"],
+      "triggers": [
+        {
+          "type": "autoinstructionresultfail"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -232,6 +256,8 @@ Feature: scenarios should be triggered by remediation triggers
             "ack": {
               "_t": "ack",
               "a": "system",
+              "user_id": "",
+              "initiator": "system",
               "m": "test-resource-action-remediation-triggers-second-2-ack"
             }
           }
@@ -271,26 +297,36 @@ Feature: scenarios should be triggered by remediation triggers
       {
         "_t": "autoinstructionstart",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-second-2-name."
       },
       {
         "_t": "instructionjobstart",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-second-2-name. Job test-job-action-remediation-triggers-3-name."
       },
       {
         "_t": "instructionjobcomplete",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-second-2-name. Job test-job-action-remediation-triggers-3-name."
       },
       {
         "_t": "autoinstructioncomplete",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-second-2-name."
       },
       {
         "_t": "ack",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "test-resource-action-remediation-triggers-second-2-ack"
       }
     ]
@@ -301,11 +337,15 @@ Feature: scenarios should be triggered by remediation triggers
       {
         "_t": "autoinstructioncomplete",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-second-2-name."
       },
       {
         "_t": "ack",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "test-resource-action-remediation-triggers-second-2-ack"
       }
     ]
@@ -319,7 +359,11 @@ Feature: scenarios should be triggered by remediation triggers
     {
       "name": "test-scenario-action-remediation-triggers-second-3-name",
       "enabled": true,
-      "triggers": ["autoinstructionresultok"],
+      "triggers": [
+        {
+          "type": "autoinstructionresultok"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -343,7 +387,7 @@ Feature: scenarios should be triggered by remediation triggers
                 "password": "test"
               },
               "headers": {"Content-Type": "application/json"},
-              "payload": "{\"name\":\"{{ `{{ .Alarm.Value.Output }}` }}\",\"enabled\":true,\"triggers\":[\"comment\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"{{ `{{ .Entity.ID }}` }}\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"name\":\"{{ `{{ .Alarm.Value.Output }}` }}\",\"enabled\":true,\"triggers\":[{\"type\":\"comment\"}],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"{{ `{{ .Entity.ID }}` }}\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             },
             "declare_ticket": {
               "ticket_id": "_id"
@@ -481,21 +525,29 @@ Feature: scenarios should be triggered by remediation triggers
       {
         "_t": "autoinstructionstart",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-second-3-name."
       },
       {
         "_t": "instructionjobstart",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-second-3-name. Job test-job-action-remediation-triggers-3-name."
       },
       {
         "_t": "instructionjobcomplete",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-second-3-name. Job test-job-action-remediation-triggers-3-name."
       },
       {
         "_t": "autoinstructioncomplete",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-second-3-name."
       },
       {
@@ -588,7 +640,11 @@ Feature: scenarios should be triggered by remediation triggers
     {
       "name": "test-scenario-action-remediation-triggers-second-4-name",
       "enabled": true,
-      "triggers": ["autoinstructionresultok"],
+      "triggers": [
+        {
+          "type": "autoinstructionresultok"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -612,7 +668,7 @@ Feature: scenarios should be triggered by remediation triggers
                 "password": "test"
               },
               "headers": {"Content-Type": "application/json"},
-              "payload": "{\"name\":\"{{ `{{ .Alarm.Value.Output }}` }}\",\"enabled\":true,\"triggers\":[\"comment\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"{{ `{{ .Entity.ID }}` }}\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"name\":\"{{ `{{ .Alarm.Value.Output }}` }}\",\"enabled\":true,\"triggers\":[{\"type\":\"comment\"}],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"{{ `{{ .Entity.ID }}` }}\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             },
             "declare_ticket": {
               "ticket_id": "_id"
@@ -748,21 +804,29 @@ Feature: scenarios should be triggered by remediation triggers
       {
         "_t": "autoinstructionstart",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-second-4-name."
       },
       {
         "_t": "instructionjobstart",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-second-4-name. Job test-job-action-remediation-triggers-3-name."
       },
       {
         "_t": "instructionjobcomplete",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-second-4-name. Job test-job-action-remediation-triggers-3-name."
       },
       {
         "_t": "autoinstructioncomplete",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-second-4-name."
       },
       {
@@ -854,7 +918,11 @@ Feature: scenarios should be triggered by remediation triggers
     {
       "name": "test-scenario-action-remediation-triggers-second-5-name",
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -957,6 +1025,8 @@ Feature: scenarios should be triggered by remediation triggers
             "ticket": {
               "_t": "declareticket",
               "a": "system",
+              "user_id": "",
+              "initiator": "system",
               "m": "Scenario: test-scenario-action-remediation-triggers-second-5-name. Ticket ID: testticket. Ticket ticket_data: testdata."
             }
           }
@@ -1002,21 +1072,29 @@ Feature: scenarios should be triggered by remediation triggers
       {
         "_t": "autoinstructionstart",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-second-5-name."
       },
       {
         "_t": "instructionjobstart",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-second-5-name. Job test-job-action-remediation-triggers-3-name."
       },
       {
         "_t": "instructionjobcomplete",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-second-5-name. Job test-job-action-remediation-triggers-3-name."
       },
       {
         "_t": "autoinstructioncomplete",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-action-remediation-triggers-second-5-name."
       }
     ]
@@ -1035,16 +1113,22 @@ Feature: scenarios should be triggered by remediation triggers
       {
         "_t": "webhookstart",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-remediation-triggers-second-5-name"
       },
       {
         "_t": "webhookcomplete",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-remediation-triggers-second-5-name"
       },
       {
         "_t": "declareticket",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-remediation-triggers-second-5-name. Ticket ID: testticket. Ticket ticket_data: testdata."
       }
     ]

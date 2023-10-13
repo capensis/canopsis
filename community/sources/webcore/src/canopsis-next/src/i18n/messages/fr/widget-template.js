@@ -5,7 +5,7 @@ export default {
     [WIDGET_TEMPLATES_TYPES.alarmColumns]: 'Général : Colonnes des alarmes',
     [WIDGET_TEMPLATES_TYPES.entityColumns]: 'Général : Colonnes des entités',
     [WIDGET_TEMPLATES_TYPES.alarmMoreInfos]: 'Bac à alarmes : plus d\'infos',
-    [WIDGET_TEMPLATES_TYPES.alarmExportToPdf]: 'Bac à alarmes : Exporter vers un modèle PDF',
+    [WIDGET_TEMPLATES_TYPES.alarmExportToPdf]: 'Bac à alarmes : Modèle d\'export PDF',
     [WIDGET_TEMPLATES_TYPES.weatherItem]: 'Météo des services : Modèle de tuile',
     [WIDGET_TEMPLATES_TYPES.weatherModal]: 'Météo des services : Modèle de modale',
     [WIDGET_TEMPLATES_TYPES.weatherEntity]: 'Météo des services : Modèle d\'entité',

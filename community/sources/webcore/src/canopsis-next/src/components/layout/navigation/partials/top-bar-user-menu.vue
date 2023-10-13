@@ -11,25 +11,31 @@
 </template>
 
 <script>
-import { MODALS, ROUTES_NAMES } from '@/constants';
+import { MODALS, ROUTES_NAMES, USERS_PERMISSIONS } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
 import { entitiesUserMixin } from '@/mixins/entities/user';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
+import { layoutNavigationTopBarMenuMixin } from '@/mixins/layout/navigation/top-bar-menu';
 
 import TopBarProfileMenuLink from './top-bar-profile-menu-link.vue';
 
 export default {
   inject: ['$system'],
   components: { TopBarProfileMenuLink },
-  mixins: [authMixin, entitiesUserMixin, entitiesInfoMixin],
+  mixins: [
+    authMixin,
+    entitiesUserMixin,
+    entitiesInfoMixin,
+    layoutNavigationTopBarMenuMixin,
+  ],
   computed: {
     userName() {
       return this.currentUser.display_name || this.currentUser._id;
     },
 
     links() {
-      return [
+      const links = [
         {
           icon: 'person',
           title: this.$t('user.seeProfile'),
@@ -44,6 +50,7 @@ export default {
           icon: 'palette',
           title: this.$t('theme.themes'),
           route: { name: ROUTES_NAMES.profileThemes },
+          permission: USERS_PERMISSIONS.technical.profile.theme,
         },
         {
           icon: 'exit_to_app',
@@ -53,6 +60,8 @@ export default {
           handler: this.logoutHandler,
         },
       ];
+
+      return this.filterLinks(links);
     },
   },
   methods: {

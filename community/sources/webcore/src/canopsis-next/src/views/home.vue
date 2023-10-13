@@ -39,7 +39,7 @@ export default {
     },
 
     async redirectToRoleDefaultView() {
-      const { defaultview: roleDefaultView } = getFirstRoleWithDefaultView(this.currentUser);
+      const { defaultview: roleDefaultView } = getFirstRoleWithDefaultView(this.currentUser) ?? {};
 
       if (!roleDefaultView) {
         this.addRedirectInfoPopup(this.$t('home.popups.info.notSelectedRoleDefaultView'));

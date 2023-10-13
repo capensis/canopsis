@@ -290,10 +290,16 @@ Feature: abort a instruction execution
               },
               {
                 "_t": "instructionstart",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
+                "initiator": "user",
                 "m": "Instruction test-remediation-instruction-execution-abort-2-name."
               },
               {
                 "_t": "instructionpause",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
+                "initiator": "user",
                 "m": "Instruction test-remediation-instruction-execution-abort-2-name."
               },
               {
@@ -306,6 +312,9 @@ Feature: abort a instruction execution
               },
               {
                 "_t": "instructionabort",
+                "a": "system",
+                "user_id": "",
+                "initiator": "system",
                 "m": "Instruction test-remediation-instruction-execution-abort-2-name."
               }
             ]
@@ -483,10 +492,16 @@ Feature: abort a instruction execution
               },
               {
                 "_t": "instructionstart",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
+                "initiator": "user",
                 "m": "Instruction test-remediation-instruction-execution-abort-3-name."
               },
               {
                 "_t": "instructionpause",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
+                "initiator": "user",
                 "m": "Instruction test-remediation-instruction-execution-abort-3-name."
               },
               {
@@ -617,7 +632,11 @@ Feature: abort a instruction execution
       "name": "test-scenario-remediation-instruction-execution-abort-4-name",
       "priority": 10067,
       "enabled": true,
-      "triggers": ["ack"],
+      "triggers": [
+        {
+          "type": "ack"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -694,10 +713,16 @@ Feature: abort a instruction execution
               },
               {
                 "_t": "instructionstart",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
+                "initiator": "user",
                 "m": "Instruction test-remediation-instruction-execution-abort-4-name."
               },
               {
                 "_t": "instructionpause",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
+                "initiator": "user",
                 "m": "Instruction test-remediation-instruction-execution-abort-4-name."
               },
               {
@@ -713,6 +738,9 @@ Feature: abort a instruction execution
               },
               {
                 "_t": "instructionabort",
+                "a": "system",
+                "user_id": "",
+                "initiator": "system",
                 "m": "Instruction test-remediation-instruction-execution-abort-4-name."
               }
             ]

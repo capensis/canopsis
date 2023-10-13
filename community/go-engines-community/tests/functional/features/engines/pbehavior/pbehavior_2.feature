@@ -135,6 +135,7 @@ Feature: update alarm on pbehavior
                 "_t": "pbhenter",
                 "a": "system",
                 "user_id": "",
+                "initiator": "system",
                 "m": "Pbehavior test-pbehavior-second-1. Type: Engine maintenance. Reason: Test Engine."
               }
             ],
@@ -551,18 +552,21 @@ Feature: update alarm on pbehavior
                 "_t": "pbhenter",
                 "a": "system",
                 "user_id": "",
+                "initiator": "system",
                 "m": "Pbehavior test-pbehavior-second-3. Type: Engine maintenance. Reason: Test Engine."
               },
               {
                 "_t": "pbhleave",
                 "a": "system",
                 "user_id": "",
+                "initiator": "system",
                 "m": "Pbehavior test-pbehavior-second-3. Type: Engine maintenance. Reason: Test Engine."
               },
               {
                 "_t": "pbhenter",
                 "a": "system",
                 "user_id": "",
+                "initiator": "system",
                 "m": "Pbehavior test-pbehavior-second-3. Type: Engine maintenance. Reason: Test Engine."
               }
             ],
@@ -678,6 +682,7 @@ Feature: update alarm on pbehavior
                 "_t": "pbhenter",
                 "a": "system",
                 "user_id": "",
+                "initiator": "system",
                 "m": "Pbehavior test-pbehavior-second-4. Type: Engine maintenance. Reason: Test Engine."
               }
             ],

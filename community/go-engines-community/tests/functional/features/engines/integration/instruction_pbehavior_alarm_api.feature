@@ -415,7 +415,11 @@ Feature: Get alarms
         }
       ],
       "priority": 30,
-      "triggers": ["create"]
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ]
     }
     """
     Then the response code should be 201

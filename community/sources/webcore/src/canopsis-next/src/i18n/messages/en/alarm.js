@@ -181,6 +181,7 @@ export default {
     initialOutput: 'Initial output',
     initialLongOutput: 'Initial long output',
     lastComment: 'Last comment',
+    lastCommentInitiator: 'Last comment initiator',
     ackBy: 'Acked by',
     ackMessage: 'Acked message',
     ackInitiator: 'Acked initiator',
@@ -203,6 +204,7 @@ export default {
     ticketAuthor: 'Ticket submitter',
     ticketId: 'Ticket id',
     ticketMessage: 'Ticket message',
+    ticketInitiator: 'Ticket initiator',
     ticketCreatedAt: 'Ticket created at',
     ticketData: 'Ticket data',
     entityId: 'Entity ID',
@@ -219,5 +221,6 @@ export default {
     entityLastPbehaviorDate: 'Entity last pbehavior date',
     openedChildren: 'Opened consequences',
     closedChildren: 'Closed consequences',
+    canceledInitiator: 'Canceled initiator',
   },
 };

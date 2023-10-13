@@ -313,7 +313,11 @@ Feature: update an instruction statistics
     """json
     {
       "type": 1,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "name": "test-instruction-to-stats-update-2-name",
       "entity_pattern": [
         [
@@ -890,7 +894,11 @@ Feature: update an instruction statistics
     """json
     {
       "type": 1,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "name": "test-instruction-to-stats-update-4-name",
       "entity_pattern": [
         [
@@ -1315,20 +1323,14 @@ Feature: update an instruction statistics
       },
       {
         "_t": "instructionjobstart",
-        "a": "root John Doe admin@canopsis.net",
-        "user_id": "root",
         "m": "Instruction test-instruction-to-stats-update-5-name. Job test-job-to-run-manual-simplified-instruction-4-name."
       },
       {
         "_t": "instructionjobcomplete",
-        "a": "root John Doe admin@canopsis.net",
-        "user_id": "root",
         "m": "Instruction test-instruction-to-stats-update-5-name. Job test-job-to-run-manual-simplified-instruction-4-name."
       },
       {
         "_t": "instructioncomplete",
-        "a": "root John Doe admin@canopsis.net",
-        "user_id": "root",
         "m": "Instruction test-instruction-to-stats-update-5-name."
       }
     ]
@@ -1346,26 +1348,18 @@ Feature: update an instruction statistics
       },
       {
         "_t": "instructionstart",
-        "a": "root John Doe admin@canopsis.net",
-        "user_id": "root",
         "m": "Instruction test-instruction-to-stats-update-5-name."
       },
       {
         "_t": "instructionjobstart",
-        "a": "root John Doe admin@canopsis.net",
-        "user_id": "root",
         "m": "Instruction test-instruction-to-stats-update-5-name. Job test-job-to-run-manual-simplified-instruction-4-name."
       },
       {
         "_t": "instructionjobcomplete",
-        "a": "root John Doe admin@canopsis.net",
-        "user_id": "root",
         "m": "Instruction test-instruction-to-stats-update-5-name. Job test-job-to-run-manual-simplified-instruction-4-name."
       },
       {
         "_t": "instructioncomplete",
-        "a": "root John Doe admin@canopsis.net",
-        "user_id": "root",
         "m": "Instruction test-instruction-to-stats-update-5-name."
       },
       {
