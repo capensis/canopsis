@@ -27,9 +27,14 @@
  * @param {Object.<string, { name: string, alarms: string[] }>} [alarmIdsByTickets = {}]
  * @return {DeclareTicketEventForm}
  */
-export const alarmsToDeclareTicketEventForm = (alarmIdsByTickets = {}) => Object.keys(alarmIdsByTickets)
-  .reduce((acc, ticketId) => {
-    acc.alarms_by_tickets[ticketId] = [];
+export const alarmsToDeclareTicketEventForm = (alarmIdsByTickets = {}) => {
+  const alarmsInfos = Object.values(alarmIdsByTickets);
+  const ticketIds = Object.keys(alarmIdsByTickets);
+
+  const defaultAlarms = alarmsInfos.length === 1 ? alarmsInfos[0].alarms : [];
+
+  return ticketIds.reduce((acc, ticketId) => {
+    acc.alarms_by_tickets[ticketId] = [...defaultAlarms];
     acc.comments_by_tickets[ticketId] = '';
     acc.ticket_resources_by_tickets[ticketId] = false;
 
@@ -39,6 +44,7 @@ export const alarmsToDeclareTicketEventForm = (alarmIdsByTickets = {}) => Object
     comments_by_tickets: {},
     ticket_resources_by_tickets: {},
   });
+};
 
 /**
  * Convert form object to declare ticket API compatible object

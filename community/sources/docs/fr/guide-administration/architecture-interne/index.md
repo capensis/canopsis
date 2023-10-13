@@ -18,7 +18,6 @@ Vous y trouvez les principales briques logicielles de l'hyperviseur ainsi que le
 ## Documentation des différentes parties
 
 *  [Documentation interconnexions](../../interconnexions/index.md)
-*  [Documentation moteurs](../moteurs/index.md)
 *  [Documentation base de données](../../guide-de-depannage/bdd-requetes-de-base/index.md)
 *  [Documentation Web UI](../../guide-utilisation/interface/index.md)
 
@@ -27,4 +26,3 @@ Vous y trouvez les principales briques logicielles de l'hyperviseur ainsi que le
 * [Templates Golang](../../guide-utilisation/templates-go/index.md)
 * [Triggers](triggers.md)
 
-Plus de détails sur [l'enchaînement des moteurs](../moteurs/schema-enchainement-moteurs.md).

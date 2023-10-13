@@ -51,9 +51,10 @@ export const EXPLOITATION_PAGES_RULES = {
 
 export const ADMIN_PAGES_RULES = {
   remediation: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
-  healthcheck: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
+  healthcheck: { stack: CANOPSIS_STACK.go },
   kpi: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
   tag: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
+  map: { edition: CANOPSIS_EDITION.pro },
 };
 
 export const NOTIFICATIONS_PAGES_RULES = {
@@ -105,7 +106,6 @@ export const USERS_PERMISSIONS = {
     remediationStatistic: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationStatistic`,
     healthcheck: `${USER_PERMISSIONS_PREFIXES.technical.admin}_healthcheck`,
     techmetrics: `${USER_PERMISSIONS_PREFIXES.technical.admin}_techmetrics`,
-    engine: `${USER_PERMISSIONS_PREFIXES.technical.admin}_engine`,
     healthcheckStatus: `${USER_PERMISSIONS_PREFIXES.technical.admin}_healthcheckStatus`,
     kpi: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpi`,
     kpiFilters: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpiFilters`,
@@ -495,6 +495,7 @@ export const USER_PERMISSIONS_TO_PAGES_RULES = {
   [USERS_PERMISSIONS.technical.healthcheck]: ADMIN_PAGES_RULES.healthcheck,
   [USERS_PERMISSIONS.technical.kpi]: ADMIN_PAGES_RULES.kpi,
   [USERS_PERMISSIONS.technical.tag]: ADMIN_PAGES_RULES.tag,
+  [USERS_PERMISSIONS.technical.map]: ADMIN_PAGES_RULES.map,
 
   /**
    * Exploitation pages

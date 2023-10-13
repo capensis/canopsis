@@ -2,39 +2,38 @@
   v-layout(column)
     v-data-table(:headers="headers", :items="alarms", hide-actions)
       template(#items="{ item, index }")
+        td(v-if="!hideRowSelect")
+          v-checkbox(
+            :input-value="isEveryTicketsActive(item._id)",
+            color="primary",
+            hide-details,
+            @change="updateAllTickets(item._id, $event)"
+          )
         td.text-xs-left {{ item.v.connector_name }}
         td.text-xs-left {{ item.v.connector }}
         td.text-xs-left {{ item.v.component }}
         td.text-xs-left {{ item.v.resource }}
         td(v-if="!hideTickets")
-          v-layout(row, align-center)
-            declare-ticket-event-tickets-chips-field(
-              :value="activeTicketsByAlarms[item._id]",
-              :tickets="ticketsByAlarms[item._id]",
-              :disabled="disableTickets",
-              @input="updateTickets(item._id, $event)"
-            )
-            c-action-btn(
-              v-if="!hideRemove",
-              :disabled="!hasActiveTickets(item._id)",
-              type="delete",
-              @click="removeTickets(item._id)"
-            )
+          declare-ticket-event-tickets-field(
+            :value="activeTicketsByAlarms[item._id]",
+            :tickets="ticketsByAlarms[item._id]",
+            @input="updateTickets(item._id, $event)"
+          )
     v-divider
 </template>
 
 <script>
 import { difference } from 'lodash';
 
-import { filterValue } from '@/helpers/array';
+import { filterValue, mapIds } from '@/helpers/array';
 import { revertGroupBy } from '@/helpers/collection';
 
 import { formMixin } from '@/mixins/form';
 
-import DeclareTicketEventTicketsChipsField from './declare-ticket-event-tickets-chips-field.vue';
+import DeclareTicketEventTicketsField from './declare-ticket-event-tickets-field.vue';
 
 export default {
-  components: { DeclareTicketEventTicketsChipsField },
+  components: { DeclareTicketEventTicketsField },
   mixins: [formMixin],
   model: {
     prop: 'value',
@@ -57,15 +56,11 @@ export default {
       type: String,
       default: 'alarms_by_tickets',
     },
-    disableTickets: {
-      type: Boolean,
-      default: false,
-    },
-    hideRemove: {
-      type: Boolean,
-      default: false,
-    },
     hideTickets: {
+      type: Boolean,
+      default: false,
+    },
+    hideRowSelect: {
       type: Boolean,
       default: false,
     },
@@ -77,6 +72,10 @@ export default {
 
     headers() {
       return [
+        !this.hideRowSelect && {
+          sortable: false,
+          width: 80,
+        },
         {
           text: this.$t('common.connectorName'),
           sortable: false,
@@ -101,8 +100,8 @@ export default {
     },
   },
   methods: {
-    hasActiveTickets(alarmId) {
-      return !!this.activeTicketsByAlarms[alarmId]?.length;
+    isEveryTicketsActive(alarmId) {
+      return this.activeTicketsByAlarms[alarmId]?.length === this.ticketsByAlarms[alarmId]?.length;
     },
 
     updateTickets(alarmId, tickets) {
@@ -124,14 +123,8 @@ export default {
       this.updateModel(newValue);
     },
 
-    removeTickets(alarmId) {
-      const tickets = Object.entries(this.value).reduce((acc, [ticketId, alarms]) => {
-        acc[ticketId] = filterValue(alarms, alarmId);
-
-        return acc;
-      }, {});
-
-      this.updateModel(tickets);
+    updateAllTickets(alarmId, checked) {
+      this.updateTickets(alarmId, checked ? mapIds(this.ticketsByAlarms[alarmId]) : []);
     },
   },
 };

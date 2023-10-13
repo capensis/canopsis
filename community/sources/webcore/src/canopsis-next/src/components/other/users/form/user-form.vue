@@ -54,7 +54,7 @@
       div {{ $t('common.authKey') }}: {{ user.authkey }}
       c-copy-btn(
         :value="user.authkey",
-        :tooltip="$t('modals.variablesHelp.copyToClipboard')",
+        :tooltip="$t('common.copyToClipboard')",
         small,
         fab,
         left,

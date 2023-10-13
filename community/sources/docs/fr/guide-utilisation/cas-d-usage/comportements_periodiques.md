@@ -23,7 +23,7 @@ Considérons l'application `ERP` composée de différentes entités.
 
 ![Situation initiale](./img/pbh_situation_initiale.png)
 
-Vous aurez également créé une ou plusieurs raisons personnalisées par le biais de l'interface d'[administration de la planification](../../guide-administration/moteurs/moteur-pbehavior.md#administration-de-la-planification).
+Vous aurez également créé une ou plusieurs raisons personnalisées par le biais de l'interface d'[administration de la planification - lien obsolète]().
 
 ## Définition de la plage de service
 

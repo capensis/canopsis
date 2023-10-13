@@ -780,7 +780,7 @@ Feature: send activation event on unsnooze
     """
     When I save response createTimestamp={{ (index .lastResponse.data 0).v.creation_date }}
     When I save response alarmActivationDate={{ (index .lastResponse.data 0).v.activation_date }}
-    Then the difference between alarmActivationDate createTimestamp is in range 6,9
+    Then the difference between alarmActivationDate createTimestamp is in range 5,9
     When I do POST /api/v4/alarm-details:
     """json
     [

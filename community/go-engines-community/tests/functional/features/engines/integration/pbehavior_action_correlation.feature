@@ -204,8 +204,10 @@ Feature: update meta alarm on action
               },
               {
                 "_t": "pbhenter",
-                "m": "Pbehavior test-pbehavior-action-correlation-1. Type: Engine maintenance. Reason: Test Engine.",
-                "val": 0
+                "a": "system",
+                "user_id": "",
+                "initiator": "system",
+                "m": "Pbehavior test-pbehavior-action-correlation-1. Type: Engine maintenance. Reason: Test Engine."
               }
             ],
             "meta": {
