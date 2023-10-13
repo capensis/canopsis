@@ -40,12 +40,12 @@ flowchart
     C -- 1. Event --> EF
     A -- 1. Event --> EF
     OE -- 1. Event --> EF
-    EF -.2. Check lock.-> R
+    EF -.->|2. Check lock| R
     EF -- 3. Event --> ECH
     ECH -- 4. Event --> EN
     EN -- 5. Event --> EAC
     EAC -- 6. Ack event --> EF
-    EF -. 7. Fetch next event.-> R
+    EF -.->|7. Fetch next event| R
     EF -- 8. Next event--> ECH
 ```
 
@@ -61,8 +61,8 @@ flowchart
     C -- 1. Event --> EF
     A -- 1. Event --> EF
     OE -- 1. Event --> EF
-    EF -.2. Check lock.-> R
-    EF -. 3. Save event in queue.-> R
+    EF -.->|2. Check lock| R
+    EF -.->|3. Save event in queue| R
 ```
 
 ### Event enrichment flow
@@ -74,6 +74,6 @@ flowchart
     ECH[engine-che]
     DS[Data source Service now/etc.]
     C -- 1 . Event --> EF
-    EF -. 2 . Fetch external data .-> DS
+    EF -.->|2 . Fetch external data| DS
     EF -- 3 . Enriched event --> ECH
 ```
