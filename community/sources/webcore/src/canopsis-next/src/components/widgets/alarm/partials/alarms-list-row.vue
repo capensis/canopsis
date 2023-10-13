@@ -248,7 +248,7 @@ export default {
   }
 
   &__icons {
-    width: 82px;
+    width: 100px;
   }
 
   &__cell {
