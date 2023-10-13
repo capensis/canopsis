@@ -24,7 +24,7 @@ export default {
     general: 'Général',
     rules: 'Règles',
     remediation: 'Remédiation',
-    pbehavior: 'PBehavior',
+    pbehavior: 'Comportements périodiques',
   },
   permissions: {
     /**
@@ -39,107 +39,107 @@ export default {
      * Business Alarms List Permissions
      */
     [USERS_PERMISSIONS.business.alarmsList.actions.ack]: {
-      name: 'Droits sur la liste des alarmes : ack',
+      name: 'Droits sur le bac à alarmes : ack',
       description: 'Les utilisateurs disposant de cette autorisation peuvent acquitter les alarmes',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.fastAck]: {
-      name: 'Droits sur la liste des alarmes : acquittement rapide',
+      name: 'Droits sur le bac à alarmes : acquittement rapide',
       description: 'Les utilisateurs disposant de cette autorisation peuvent effectuer un acquittement rapide des alarmes',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.ackRemove]: {
-      name: 'Droits sur la liste des alarmes : annuler ack',
-      description: 'Les utilisateurs disposant de cette autorisation peuvent annuler l\'acquittement',
+      name: 'Droits sur le bac à alarmes : annuler ack',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent annuler un acquittement',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.pbehaviorAdd]: {
-      name: 'Droits sur la liste d\'alarmes : ajouter un comportement périodique',
-      description: 'Les utilisateurs disposant de cette autorisation peuvent accéder à l\'action "Comportement périodique" et modifier les comportements PB pour les alarmes',
+      name: 'Droits sur le bac à alarmes : ajouter un comportement périodique',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent accéder à l\'action "Comportement périodique" et modifier les comportements périodiques pour les alarmes',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.snooze]: {
-      name: 'Droits sur la liste des alarmes : mettre en veille l\'alarme',
+      name: 'Droits sur le bac à alarmes : mettre en veille une alarme',
       description: 'Les utilisateurs disposant de cette autorisation peuvent mettre en veille les alarmes',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.declareTicket]: {
       name: 'Droits sur liste d\'alarmes : déclarer un ticket',
-      description: 'Les utilisateurs avec cette permission peuvent faire la déclaration des tickets',
+      description: 'Les utilisateurs avec cette permission peuvent déclarer des tickets',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.associateTicket]: {
-      name: 'Droits sur liste d\'alarmes : ticket associé',
-      description: 'Les utilisateurs disposant de cette autorisation peuvent associer un ticket',
+      name: 'Droits sur liste d\'alarmes : associer un ticket',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent associer un ticket à une alarme',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.cancel]: {
-      name: 'Droits sur la liste des alarmes : annuler l\'alarme',
+      name: 'Droits sur le bac à alarmes : annuler une alarme',
       description: 'Les utilisateurs disposant de cette autorisation peuvent annuler les alarmes',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.fastCancel]: {
-      name: 'Droits sur la liste des alarmes : annulation rapide de l\'alarme',
+      name: 'Droits sur le bac à alarmes : annulation rapide d\'une alarme',
       description: 'Les utilisateurs disposant de cette autorisation peuvent effectuer une annulation rapide des alarmes',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.changeState]: {
-      name: 'Droits sur la liste des alarmes : modifier la sévérité',
-      description: 'Les utilisateurs disposant de cette autorisation peuvent modifier les sévérités des alarmes',
+      name: 'Droits sur le bac à alarmes : modifier la criticité d\'une alarme',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent modifier les criticités des alarmes',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.history]: {
-      name: 'Rights on alarm list: history',
+      name: 'Droits sur le bac à alarmes : historique',
       description: 'Les utilisateurs disposant de cette autorisation peuvent afficher l\'historique des alarmes',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup]: {
-      name: 'Droits sur la liste des alarmes : actions manuelles sur les méta-alarmes',
-      description: 'Les utilisateurs disposant de cette autorisation peuvent appliquer des règles de méta-alarmes manuelles et des alarmes de groupe',
+      name: 'Droits sur le bac à alarmes : actions manuelles sur les méta-alarmes',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent gérer des méta-alarmes manuelles',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.comment]: {
-      name: 'Droits sur la liste des alarmes : Accès à l\'action \'Commentaire\'',
+      name: 'Droits sur le bac à alarmes : commenter une alarme',
       description: 'Les utilisateurs disposant de cette autorisation peuvent commenter les alarmes',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.listFilters]: {
-      name: 'Droits sur la liste des alarmes : afficher les filtres d\'alarmes',
+      name: 'Droits sur le bac à alarmes : afficher les filtres d\'alarmes',
       description: 'Les utilisateurs disposant de cette autorisation peuvent afficher la liste des filtres disponibles dans la liste des alarmes',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.editFilter]: {
-      name: 'Droits sur la liste des alarmes : modifier les filtres d\'alarme',
+      name: 'Droits sur le bac à alarmes : modifier les filtres d\'alarme',
       description: 'Les utilisateurs disposant de cette autorisation peuvent éditer les filtres disponibles dans la liste des alarmes',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.addFilter]: {
-      name: 'Droits sur la liste des alarmes : ajouter des filtres d\'alarme',
+      name: 'Droits sur le bac à alarmes : ajouter des filtres d\'alarme',
       description: 'Les utilisateurs disposant de cette autorisation peuvent ajouter des filtres dans la liste des alarmes',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.userFilter]: {
-      name: 'Droits sur la liste des alarmes : afficher les filtres d\'alarme',
+      name: 'Droits sur le bac à alarmes : afficher les filtres d\'alarme',
       description: 'Le filtre d\'alarme est affiché pour les utilisateurs disposant de cette autorisation',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.listRemediationInstructionsFilters]: {
-      name: 'Droits sur la liste des alarmes : accès aux filtres de remédiation',
+      name: 'Droits sur le bac à alarmes : accès aux filtres de remédiation',
       description: 'Les utilisateurs disposant de cette autorisation peuvent lister les filtres de remédiation',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.editRemediationInstructionsFilter]: {
-      name: 'Droits sur la liste des alarmes : accès à l\'édition des filtres de remédiation',
+      name: 'Droits sur le bac à alarmes : accès à l\'édition des filtres de remédiation',
       description: 'Les utilisateurs disposant de cette autorisation peuvent modifier les filtres de remédiation',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.addRemediationInstructionsFilter]: {
-      name: 'Droits sur la liste des alarmes : accès à l\'ajout de filtres de remédiation',
+      name: 'Droits sur le bac à alarmes : accès à l\'ajout de filtres de remédiation',
       description: 'Les utilisateurs disposant de cette autorisation peuvent ajouter des filtres de remédiation',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.userRemediationInstructionsFilter]: {
-      name: 'Droits sur la liste des alarmes : Accès aux filtres de remédiation',
+      name: 'Droits sur le bac à alarmes : Accès aux filtres de remédiation',
       description: 'Le filtre par instructions est affiché pour les utilisateurs disposant de cette autorisation',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.links]: {
-      name: 'Droits sur la liste des alarmes : Accès aux liens',
+      name: 'Droits sur le bac à alarmes : Accès aux liens',
       description: 'Les utilisateurs disposant de cette autorisation peuvent accéder et suivre les liens dans la liste des alarmes',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.correlation]: {
-      name: 'Droits sur la liste des alarmes : Accès au regroupement des alarmes corrélées',
+      name: 'Droits sur le bac à alarmes : Accès au regroupement des alarmes corrélées',
       description: 'Les utilisateurs disposant de cette autorisation peuvent activer le regroupement des alarmes corrélées',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.executeInstruction]: {
-      name: 'Droits sur liste d\'alarmes : Accès aux exécutions d\'instructions',
-      description: 'Les utilisateurs disposant de cette autorisation peuvent exécuter des instructions pour corriger les alarmes',
+      name: 'Droits sur liste des alarmes : Accès aux exécutions de remédiation',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent exécuter des remédisation pour corriger les alarmes',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.category]: {
-      name: 'Droits sur la liste des alarmes : Filtrer par catégorie',
+      name: 'Droits sur le bac à alarmes : Filtrer par catégorie',
       description: 'Les utilisateurs disposant de cette autorisation peuvent filtrer la liste des alarmes par catégorie',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: {
-      name: 'Droits sur la liste des alarmes : Accès à l\'export des alarmes au format CSV',
+      name: 'Droits sur le bac à alarmes : Accès à l\'export des alarmes au format CSV',
       description: 'Les utilisateurs disposant de cette autorisation peuvent exporter des alarmes au format CSV',
     },
 
@@ -203,79 +203,79 @@ export default {
      * Business Service Weather Permissions
      */
     [USERS_PERMISSIONS.business.serviceWeather.actions.entityAck]: {
-      name: 'Service météo : accès à l\'action \'Acquittement\'',
+      name: 'Droits sur la météo des services : Acquitter',
       description: 'Les utilisateurs disposant de cette autorisation peuvent acquitter les alarmes',
     },
     [USERS_PERMISSIONS.business.serviceWeather.actions.entityAssocTicket]: {
-      name: 'Service météo : accès à l\'action \'Associate Ticket\'',
+      name: 'Droits sur la météo des services : Associer un ticket',
       description: 'Les utilisateurs disposant de cette autorisation peuvent associer des tickets aux alarmes',
     },
     [USERS_PERMISSIONS.business.serviceWeather.actions.entityComment]: {
-      name: 'Service météo : accès à l\'action \'Commentaire\'',
+      name: 'Droits sur la météo des services : Commenter',
       description: 'Les utilisateurs disposant de cette autorisation peuvent ajouter des commentaires',
     },
     [USERS_PERMISSIONS.business.serviceWeather.actions.entityValidate]: {
-      name: 'Service météo : accès à l\'action \'Valider\'',
+      name: 'Droits sur la météo des services : Valider (pouce en l\'air)',
       description: 'Les utilisateurs disposant de cette autorisation peuvent valider les alarmes et modifier leur état en critique',
     },
     [USERS_PERMISSIONS.business.serviceWeather.actions.entityInvalidate]: {
-      name: 'Service météo : accès à l\'action \'Invalider\'',
+      name: 'Droits sur la météo des services : Invalider (pouce en bas)',
       description: 'Les utilisateurs disposant de cette autorisation peuvent invalider les alarmes et les annuler',
     },
     [USERS_PERMISSIONS.business.serviceWeather.actions.entityPause]: {
-      name: 'Service météo : accès à l\'action \'Pause\'',
+      name: 'Droits sur la météo des services : Mettre en pause',
       description: 'Les utilisateurs disposant de cette autorisation peuvent suspendre les alarmes (définir le type de PBehavior "Pause")',
     },
     [USERS_PERMISSIONS.business.serviceWeather.actions.entityPlay]: {
-      name: 'Service météo : accès à l\'action \'Jouer\'',
+      name: 'Droits sur la météo des services : Supprimer une pause',
       description: 'Les utilisateurs disposant de cette autorisation peuvent activer les alarmes en pause (supprimer le type PBehavior "Pause")',
     },
     [USERS_PERMISSIONS.business.serviceWeather.actions.entityCancel]: {
-      name: 'Service météo : accès à l\'action \'Annuler\'',
+      name: 'Droits sur la météo des services : Annuler',
       description: 'Les utilisateurs disposant de cette autorisation peuvent annuler les alarmes',
     },
     [USERS_PERMISSIONS.business.serviceWeather.actions.entityManagePbehaviors]: {
-      name: 'Service météo : Accès à la gestion des comportements périodiques',
+      name: 'Droits sur la météo des services : Gérer les comportements périodiques',
       description: 'Les utilisateurs disposant de cette permission peuvent accéder à la liste des PBehaviors associés aux services (dans le sous-onglet des fenêtres modales des services)',
     },
     [USERS_PERMISSIONS.business.serviceWeather.actions.executeInstruction]: {
-      name: 'Météo de service : accès pour exécuter l\'instruction',
-      description: 'Les utilisateurs disposant de cette autorisation peuvent exécuter des instructions pour les alarmes',
+      name: 'Droits sur la météo des services : Déclencher une remédiation',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent exécuter des remédiations pour les alarmes',
     },
     [USERS_PERMISSIONS.business.serviceWeather.actions.entityLinks]: {
-      name: 'Service météo : Accès aux liens',
+      name: 'Droits sur la météo des services : Accès aux liens',
       description: 'Les utilisateurs disposant de cette autorisation peuvent voir les liens associés aux alarmes',
     },
     [USERS_PERMISSIONS.business.serviceWeather.actions.moreInfos]: {
-      name: 'Service météo : accès au modal \'Plus d\'infos\'',
+      name: 'Droits sur la météo des services : Accès à la fenêtre \'Plus d\'infos\'',
       description: 'Les utilisateurs disposant de cette autorisation peuvent accéder à la fenêtre modale "Plus d\'infos"',
     },
     [USERS_PERMISSIONS.business.serviceWeather.actions.alarmsList]: {
-      name: 'Service météo : Accès à \'Liste des alarmes\' modal',
+      name: 'Droits sur la météo des services : Accès à la fenêtre \'Liste des alarmes\'',
       description: 'Les utilisateurs disposant de cette autorisation peuvent ouvrir la liste des alarmes disponibles pour chaque service',
     },
     [USERS_PERMISSIONS.business.serviceWeather.actions.pbehaviorList]: {
-      name: 'Service météo : accès à la liste des comportements du service',
+      name: 'Droits sur la météo des services : Accès à la liste des comportements périodiques du service',
       description: 'Les utilisateurs disposant de cette autorisation peuvent accéder à la liste de tous les PBehaviors des services (dans le sous-onglet des fenêtres modales des entités de service)',
     },
     [USERS_PERMISSIONS.business.serviceWeather.actions.listFilters]: {
-      name: 'Droits sur le service météo : Afficher les filtres',
+      name: 'Droits sur la météo des services : Afficher les filtres',
       description: 'Les utilisateurs disposant de cette autorisation peuvent voir la liste des filtres disponibles',
     },
     [USERS_PERMISSIONS.business.serviceWeather.actions.editFilter]: {
-      name: 'Droits sur le service météo : Modifier le filtre',
+      name: 'Droits sur la météo des services : Modifier les filtres',
       description: 'Les utilisateurs disposant de cette autorisation peuvent modifier les filtres appliqués',
     },
     [USERS_PERMISSIONS.business.serviceWeather.actions.addFilter]: {
-      name: 'Droits sur le service météo : Ajouter un filtre',
+      name: 'Droits sur la météo des services : Ajouter un filtre',
       description: 'Les utilisateurs disposant de cette autorisation peuvent ajouter des filtres',
     },
     [USERS_PERMISSIONS.business.serviceWeather.actions.userFilter]: {
-      name: 'Droits sur le service météo : Afficher le filtre',
+      name: 'Droits sur la météo des services : Utiliser les filtres',
       description: 'Le filtre est affiché pour les utilisateurs disposant de cette autorisation',
     },
     [USERS_PERMISSIONS.business.serviceWeather.actions.category]: {
-      name: 'Droits sur le service météo : Filtrer par catégorie',
+      name: 'Droits sur la météo des services : Filtrer par catégorie',
       description: 'Les utilisateurs disposant de cette autorisation peuvent filtrer les services par catégorie',
     },
 
@@ -283,7 +283,7 @@ export default {
      * Business Counter Permissions
      */
     [USERS_PERMISSIONS.business.counter.actions.alarmsList]: {
-      name: 'Compteur : Accès au modal \'Liste des alarmes\'',
+      name: 'Droits sur les Compteurs : Accès à la fenêtre \'Liste des alarmes\'',
       description: 'Les utilisateurs disposant de cette autorisation peuvent voir la liste des alarmes associées aux compteurs',
     },
 
@@ -291,35 +291,35 @@ export default {
      * Business Testing Weather Permissions
      */
     [USERS_PERMISSIONS.business.testingWeather.actions.alarmsList]: {
-      name: 'Test météo : Accès à la modale \'Liste des alarmes\'',
+      name: 'Droits sur les scénarios de test : Accès à la fenêtre \'Liste des alarmes\'',
       description: 'Les utilisateurs disposant de cette autorisation peuvent voir la liste des alarmes associées aux tests météorologiques',
     },
 
     /**
-     * Business Testing Weather Permissions
+     * Mapping Permissions
      */
     [USERS_PERMISSIONS.business.map.actions.alarmsList]: {
-      name: 'Droits sur les cartes : Accès à la modale \'Liste des alarmes\'',
+      name: 'Droits sur la cartographie : Accès à la fenêtre \'Liste des alarmes\'',
       description: 'Les utilisateurs disposant de cette autorisation peuvent voir la liste des alarmes associées aux points sur les cartes',
     },
     [USERS_PERMISSIONS.business.map.actions.listFilters]: {
-      name: 'Droits sur les cartes : Afficher le filtre',
+      name: 'Droits sur la cartographie : Afficher les filtres',
       description: 'Les utilisateurs disposant de cette autorisation peuvent voir la liste des filtres disponibles',
     },
     [USERS_PERMISSIONS.business.map.actions.editFilter]: {
-      name: 'Droits sur les cartes : modifier le filtre',
+      name: 'Droits sur la cartographie : Modifier les filtres',
       description: 'Les utilisateurs disposant de cette autorisation peuvent modifier les filtres des cartes',
     },
     [USERS_PERMISSIONS.business.map.actions.addFilter]: {
-      name: 'Droits sur les cartes : Ajouter un filtre',
+      name: 'Droits sur la cartographie : Ajouter un filtre',
       description: 'Les utilisateurs disposant de cette autorisation peuvent ajouter des filtres pour les cartes',
     },
     [USERS_PERMISSIONS.business.map.actions.userFilter]: {
-      name: 'Droits sur les cartes : Afficher le filtre',
+      name: 'Droits sur la cartographie : Afficher le filtre',
       description: 'Le filtre est affiché pour les utilisateurs disposant de cette autorisation',
     },
     [USERS_PERMISSIONS.business.map.actions.category]: {
-      name: 'Droits sur les cartes : Accès à l\'action \'Catégorie\'',
+      name: 'Droits sur la cartographie : Accès à l\'action \'Catégorie\'',
       description: 'Les utilisateurs disposant de cette autorisation peuvent filtrer les points par catégories',
     },
 
@@ -327,27 +327,27 @@ export default {
      * Business Bar Chart Permissions
      */
     [USERS_PERMISSIONS.business.barChart.actions.interval]: {
-      name: 'Diagramme à barres : intervalle',
+      name: 'Droits sur les histogrammes : Intervalle',
       description: 'Les utilisateurs disposant de cette autorisation peuvent modifier les intervalles de temps pour les données affichées',
     },
     [USERS_PERMISSIONS.business.barChart.actions.sampling]: {
-      name: 'Diagramme à barres : échantillonnage',
+      name: 'Droits sur les histogrammes : Échantillonnage',
       description: 'Les utilisateurs disposant de cette autorisation peuvent modifier l\'échantillonnage des données affichées',
     },
     [USERS_PERMISSIONS.business.barChart.actions.listFilters]: {
-      name: 'Graphique à barres : afficher les filtres',
+      name: 'Droits sur les histogrammes : Afficher les filtres',
       description: 'Les utilisateurs disposant de cette autorisation peuvent voir la liste des filtres disponibles',
     },
     [USERS_PERMISSIONS.business.barChart.actions.editFilter]: {
-      name: 'Graphique à barres : modifier les filtres',
+      name: 'Droits sur les histogrammes : Modifier les filtres',
       description: 'Les utilisateurs disposant de cette autorisation peuvent modifier les filtres',
     },
     [USERS_PERMISSIONS.business.barChart.actions.addFilter]: {
-      name: 'Diagramme à barres : ajouter des filtres',
+      name: 'Droits sur les histogrammes : Ajouter des filtres',
       description: 'Les utilisateurs disposant de cette autorisation peuvent ajouter des filtres',
     },
     [USERS_PERMISSIONS.business.barChart.actions.userFilter]: {
-      name: 'Graphique à barres : afficher les filtres',
+      name: 'Droits sur les histogrammes : Afficher les filtres',
       description: 'Le filtre est affiché pour les utilisateurs disposant de cette autorisation',
     },
 
@@ -355,27 +355,27 @@ export default {
      * Business Line Chart Permissions
      */
     [USERS_PERMISSIONS.business.lineChart.actions.interval]: {
-      name: 'Graphique en courbes : intervalle',
+      name: 'Droits sur les graphiques en ligne : Intervalle',
       description: 'Les utilisateurs disposant de cette autorisation peuvent modifier',
     },
     [USERS_PERMISSIONS.business.lineChart.actions.sampling]: {
-      name: 'Graphique en courbes : échantillonnage',
+      name: 'Droits sur les graphiques en ligne : Échantillonnage',
       description: 'Les utilisateurs disposant de cette autorisation peuvent modifier l\'échantillonnage des données affichées',
     },
     [USERS_PERMISSIONS.business.lineChart.actions.listFilters]: {
-      name: 'Graphique linéaire : afficher les filtres',
+      name: 'Droits sur les graphiques en ligne : Afficher les filtres',
       description: 'Les utilisateurs disposant de cette autorisation peuvent voir la liste des filtres disponibles',
     },
     [USERS_PERMISSIONS.business.lineChart.actions.editFilter]: {
-      name: 'Graphique linéaire : modifier les filtres',
+      name: 'Droits sur les graphiques en ligne : Modifier les filtres',
       description: 'Les utilisateurs disposant de cette autorisation peuvent modifier les filtres',
     },
     [USERS_PERMISSIONS.business.lineChart.actions.addFilter]: {
-      name: 'Graphique linéaire : ajouter des filtres',
+      name: 'Droits sur les graphiques en ligne : Ajouter des filtres',
       description: 'Les utilisateurs disposant de cette autorisation peuvent ajouter des filtres',
     },
     [USERS_PERMISSIONS.business.lineChart.actions.userFilter]: {
-      name: 'Graphique en courbes : afficher les filtres',
+      name: 'Droits sur les graphiques en ligne : Afficher les filtres',
       description: 'Le filtre est affiché pour les utilisateurs disposant de cette autorisation',
     },
 
@@ -383,27 +383,27 @@ export default {
      * Business Pie Chart Permissions
      */
     [USERS_PERMISSIONS.business.pieChart.actions.interval]: {
-      name: 'Piechart : intervalle',
+      name: 'Droits sur les diagrammes circulaires : Intervalle',
       description: 'Les utilisateurs disposant de cette autorisation peuvent modifier l\'intervalle de temps pour les données affichées',
     },
     [USERS_PERMISSIONS.business.pieChart.actions.sampling]: {
-      name: 'Diagramme à secteurs : échantillonnage',
+      name: 'Droits sur les diagrammes circulaires : Échantillonnage',
       description: 'Les utilisateurs disposant de cette autorisation peuvent modifier l\'échantillonnage des données affichées',
     },
     [USERS_PERMISSIONS.business.pieChart.actions.listFilters]: {
-      name: 'Piechart : afficher les filtres',
+      name: 'Droits sur les diagrammes circulaires : Afficher les filtres',
       description: 'Les utilisateurs disposant de cette autorisation peuvent voir la liste des filtres disponibles',
     },
     [USERS_PERMISSIONS.business.pieChart.actions.editFilter]: {
-      name: 'Piechart : modifier les filtres',
+      name: 'Droits sur les diagrammes circulaires : Modifier les filtres',
       description: 'Les utilisateurs disposant de cette autorisation peuvent modifier les filtres',
     },
     [USERS_PERMISSIONS.business.pieChart.actions.addFilter]: {
-      name: 'Piechart : ajouter des filtres',
+      name: 'Droits sur les diagrammes circulaires : Ajouter des filtres',
       description: 'Les utilisateurs disposant de cette autorisation peuvent ajouter des filtres',
     },
     [USERS_PERMISSIONS.business.pieChart.actions.userFilter]: {
-      name: 'Piechart : afficher les filtres',
+      name: 'Droits sur les diagrammes circulaires : Afficher les filtres',
       description: 'Le filtre est affiché pour les utilisateurs disposant de cette autorisation',
     },
 
@@ -411,27 +411,27 @@ export default {
      * Business Numbers Permissions
      */
     [USERS_PERMISSIONS.business.numbers.actions.interval]: {
-      name: 'Nombres : intervalle',
+      name: 'Droits sur les nombres : Intervalle',
       description: 'Les utilisateurs disposant de cette autorisation peuvent modifier l\'intervalle de temps pour les données affichées',
     },
     [USERS_PERMISSIONS.business.numbers.actions.sampling]: {
-      name: 'Chiffres : échantillonnage',
+      name: 'Droits sur les nombres : Échantillonnage',
       description: 'Les utilisateurs disposant de cette autorisation peuvent modifier l\'échantillonnage des données affichées',
     },
     [USERS_PERMISSIONS.business.numbers.actions.listFilters]: {
-      name: 'Numéros : afficher les filtres',
+      name: 'Droitr sur les nombres : Afficher les filtres',
       description: 'Les utilisateurs disposant de cette autorisation peuvent voir la liste des filtres disponibles',
     },
     [USERS_PERMISSIONS.business.numbers.actions.editFilter]: {
-      name: 'Nombres : modifier les filtres',
+      name: 'Droits sur les nombres : Modifier les filtres',
       description: 'Les utilisateurs disposant de cette autorisation peuvent modifier les filtres',
     },
     [USERS_PERMISSIONS.business.numbers.actions.addFilter]: {
-      name: 'Chiffres : ajouter des filtres',
+      name: 'Droits sur les nombres : Ajouter des filtres',
       description: 'Les utilisateurs disposant de cette autorisation peuvent ajouter des filtres',
     },
     [USERS_PERMISSIONS.business.numbers.actions.userFilter]: {
-      name: 'Chiffres : afficher les filtres',
+      name: 'Droits sur les nombres : Afficher les filtres',
       description: 'Le filtre est affiché pour les utilisateurs disposant de cette autorisation',
     },
 
@@ -443,7 +443,7 @@ export default {
       description: 'Cette permission définit l\'accès à la liste des vues',
     },
     [USERS_PERMISSIONS.technical.role]: {
-      name: 'Les rôles',
+      name: 'Rôles',
       description: 'Cette autorisation définit l\'accès à la liste des rôles',
     },
     [USERS_PERMISSIONS.technical.permission]: {
@@ -451,7 +451,7 @@ export default {
       description: 'Cette autorisation définit l\'accès à la liste des droits',
     },
     [USERS_PERMISSIONS.technical.user]: {
-      name: 'Utilisatrices',
+      name: 'Utilisateurs',
       description: 'Cette autorisation définit l\'accès à la liste des utilisateurs',
     },
     [USERS_PERMISSIONS.technical.parameters]: {
@@ -471,35 +471,35 @@ export default {
       description: 'Cette autorisation définit l\'accès aux paramètres Planning et PBehavior',
     },
     [USERS_PERMISSIONS.technical.planningType]: {
-      name: 'Type de planification',
+      name: 'Planification : Types de comportements périodiques',
       description: 'Cette permission définit l\'accès aux types PBehavior',
     },
     [USERS_PERMISSIONS.technical.planningReason]: {
-      name: 'Raison de la planification',
+      name: 'Planification : Raisons',
       description: 'Cette autorisation définit l\'accès aux raisons PBehavior',
     },
     [USERS_PERMISSIONS.technical.planningExceptions]: {
-      name: 'Planification des dates d\'exceptions',
+      name: 'Planification : dates d\'exceptions',
       description: 'Cette autorisation définit l\'accès aux dates d\'exception pour PBehaviors',
     },
     [USERS_PERMISSIONS.technical.remediation]: {
       name: 'Remédiation',
-      description: 'Cette autorisation définit l\'accès au panneau d\'administration de la correction',
+      description: 'Cette autorisation définit l\'accès au panneau d\'administration de la remédiation',
     },
     [USERS_PERMISSIONS.technical.remediationInstruction]: {
-      name: 'Instruction de correction',
-      description: 'Cette autorisation définit l\'accès à la liste des Instructions',
+      name: 'Remédiation : consignes',
+      description: 'Cette autorisation définit l\'accès à la liste des consignes',
     },
     [USERS_PERMISSIONS.technical.remediationJob]: {
-      name: 'Travail de remédiation',
+      name: 'Remédiation : Jobs',
       description: 'Cette autorisation définit l\'accès à la liste des Jobs',
     },
     [USERS_PERMISSIONS.technical.remediationConfiguration]: {
-      name: 'Configuration de la correction',
-      description: 'Cette autorisation définit l\'accès à la configuration de la correction',
+      name: 'Remédiation : configuration',
+      description: 'Cette autorisation définit l\'accès à la configuration de la remédiation',
     },
     [USERS_PERMISSIONS.technical.remediationStatistic]: {
-      name: 'Statistiques de remédiation',
+      name: 'Remédiation : statistiques',
       description: 'Cette autorisation définit l\'accès aux statistiques de remédiation',
     },
     [USERS_PERMISSIONS.technical.healthcheck]: {
@@ -515,39 +515,39 @@ export default {
       description: 'Cette autorisation définit l\'accès à la configuration des moteurs',
     },
     [USERS_PERMISSIONS.technical.healthcheckStatus]: {
-      name: 'État de la vérification de l\'état',
-      description: 'L\'état de la vérification de l\'état du système est affiché dans l\'en-tête pour les utilisateurs disposant de cette autorisation',
+      name: 'Statut du bilan de santé',
+      description: 'Statut du bilan de santé dans l\'entête  pour les utilisateurs disposant de cette autorisation',
     },
     [USERS_PERMISSIONS.technical.kpi]: {
       name: 'KPI',
       description: 'Cette autorisation définit l\'accès aux métriques KPI',
     },
     [USERS_PERMISSIONS.technical.kpiFilters]: {
-      name: 'Filtres KPI',
+      name: 'KPI : filtres',
       description: 'Cette autorisation définit l\'accès aux filtres pour les métriques KPI',
     },
     [USERS_PERMISSIONS.technical.kpiRatingSettings]: {
-      name: 'Paramètres d\'évaluation des KPI',
+      name: 'KPI : rating',
       description: 'Cette autorisation définit l\'accès aux paramètres d\'évaluation des KPI',
     },
     [USERS_PERMISSIONS.technical.kpiCollectionSettings]: {
-      name: 'Paramètres de collecte de KPI',
-      description: 'Cette autorisation définit l\'accès aux paramètres de KPI Collection',
+      name: 'Paramètres de la collection KPI',
+      description: 'Cette autorisation définit l\'accès aux paramètres de la collection KPI',
     },
     [USERS_PERMISSIONS.technical.map]: {
-      name: 'Éditeur de carte',
+      name: 'Cartographie : Éditeur de carte',
       description: 'Cette permission définit l\'accès à l\'éditeur de carte',
     },
     [USERS_PERMISSIONS.technical.shareToken]: {
-      name: 'Partager le jeton',
+      name: 'Jetons partagés',
       description: 'Cette autorisation définit l\'accès aux paramètres des jetons partagés',
     },
     [USERS_PERMISSIONS.technical.widgetTemplate]: {
       name: 'Modèles de widgets',
-      description: 'Cette autorisation définit l\'accès aux modèles de widget',
+      description: 'Cette autorisation définit l\'accès aux modèles de widgets',
     },
     [USERS_PERMISSIONS.technical.maintenance]: {
-      name: 'Mode de Maintenance',
+      name: 'Mode Maintenance',
       description: 'Cette autorisation définit l\'accès au mode Maintenance',
     },
     [USERS_PERMISSIONS.technical.tag]: {
@@ -563,7 +563,7 @@ export default {
       description: 'Cette autorisation définit l\'accès aux filtres d\'événements',
     },
     [USERS_PERMISSIONS.technical.exploitation.pbehavior]: {
-      name: 'Exploitation : Pcomportements',
+      name: 'Exploitation : Comportements périodiques',
       description: 'Cette autorisation définit l\'accès aux Comportements périodiques',
     },
     [USERS_PERMISSIONS.technical.exploitation.snmpRule]: {
@@ -571,11 +571,11 @@ export default {
       description: 'Cette permission définit l\'accès aux règles SNMP',
     },
     [USERS_PERMISSIONS.technical.exploitation.dynamicInfo]: {
-      name: 'Exploitation : règles d\'information dynamiques',
+      name: 'Exploitation : Règles d\'informations dynamiques',
       description: 'Cette permission définit l\'accès à la fonctionnalité d\'infos dynamiques',
     },
     [USERS_PERMISSIONS.technical.exploitation.metaAlarmRule]: {
-      name: 'Exploitation : règles de méta-alarme',
+      name: 'Exploitation : Règles de méta-alarme',
       description: 'Cette autorisation définit l\'accès aux règles de méta-alarme et de corrélation',
     },
     [USERS_PERMISSIONS.technical.exploitation.scenario]: {
@@ -583,23 +583,23 @@ export default {
       description: 'Cette permission définit l\'accès à la fonctionnalité des scénarios',
     },
     [USERS_PERMISSIONS.technical.exploitation.idleRules]: {
-      name: 'Exploitation : règles d\'inactivité',
+      name: 'Exploitation : Règles d\'inactivité',
       description: 'Cette autorisation définit l\'accès aux règles d\'inactivité',
     },
     [USERS_PERMISSIONS.technical.exploitation.flappingRules]: {
-      name: 'Exploitation : règles de battement',
-      description: 'Cette permission définit l\'accès aux règles de battement',
+      name: 'Exploitation : Règles de bagot',
+      description: 'Cette permission définit l\'accès aux règles de bagot',
     },
     [USERS_PERMISSIONS.technical.exploitation.resolveRules]: {
-      name: 'Exploitation : résoudre les règles',
+      name: 'Exploitation : Règles de résolution',
       description: 'Cette autorisation définit l\'accès aux règles de résolution',
     },
     [USERS_PERMISSIONS.technical.exploitation.declareTicketRule]: {
-      name: 'Exploitation : Déclarer les règles du ticket',
+      name: 'Exploitation : Règles de déclaration de tickets',
       description: 'Cette autorisation définit l\'accès à la fonctionnalité de déclaration de ticket',
     },
     [USERS_PERMISSIONS.technical.exploitation.linkRule]: {
-      name: 'Exploitation : règles de génération des liens',
+      name: 'Exploitation : Règles de génération des liens',
       description: 'Cette autorisation définit l\'accès aux liens et les règles de liens',
     },
 
@@ -607,8 +607,8 @@ export default {
      * Technical Notification Permissions
      */
     [USERS_PERMISSIONS.technical.notification.instructionStats]: {
-      name: 'Notifications : statistiques des instructions',
-      description: 'Cette permission définit l\'accès aux notifications associées aux statistiques d\'instructions',
+      name: 'Notifications : Statistiques des remédiations',
+      description: 'Cette permission définit l\'accès aux notifications associées aux statistiques dre remédiation',
     },
 
     /**
@@ -619,8 +619,8 @@ export default {
       description: 'Cette autorisation définit l\'accès à la fonctionnalité des modèles partagés',
     },
     [USERS_PERMISSIONS.technical.profile.theme]: {
-      name: 'Thèmes de couleurs',
-      description: 'Cette autorisation définit l\'accès aux couleurs du thème',
+      name: 'Thèmes graphiques',
+      description: 'Cette autorisation définit l\'accès aux thèmes',
     },
 
     /**
@@ -631,7 +631,7 @@ export default {
       description: 'Accès à la route de l\'API vers les rôles, autorisations et utilisateurs CRUD',
     },
     [USERS_PERMISSIONS.api.general.appInfoRead]: {
-      name: 'Lire les informations sur l\'application',
+      name: 'Lire les informations sur l\'application (appInfo)',
       description: 'Accès à la route API pour lire les informations sur l\'application',
     },
     [USERS_PERMISSIONS.api.general.alarmRead]: {
@@ -647,7 +647,7 @@ export default {
       description: 'Accès à la route API vers les entités CRUD',
     },
     [USERS_PERMISSIONS.api.general.entityservice]: {
-      name: 'Service d\'entité',
+      name: 'Entités type service',
       description: 'Accès à la route API vers les services CRUD',
     },
     [USERS_PERMISSIONS.api.general.entitycategory]: {
@@ -667,19 +667,19 @@ export default {
       description: 'Accès à la route de l\'API vers les groupes de vues CRUD',
     },
     [USERS_PERMISSIONS.api.general.userInterfaceUpdate]: {
-      name: 'Mettre à jour l\'interface utilisateur',
+      name: 'Mettre à jour les paramètres de l\'interface utilisateur',
       description: 'Accès à la route API pour mettre à jour l\'interface utilisateur',
     },
     [USERS_PERMISSIONS.api.general.userInterfaceDelete]: {
-      name: 'Supprimer l\'interface utilisateur',
+      name: 'Supprimer les paramètres de l\'interface utilisateur',
       description: 'Accès à la route API pour supprimer l\'interface utilisateur',
     },
     [USERS_PERMISSIONS.api.general.datastorageRead]: {
-      name: 'Paramètres de stockage de données lus',
+      name: 'Paramètres de stockage de données : Lecture',
       description: 'Accès à la route API pour lire les paramètres de stockage de données',
     },
     [USERS_PERMISSIONS.api.general.datastorageUpdate]: {
-      name: 'Mise à jour des paramètres de stockage des données',
+      name: 'Paramètres de stockage de données : Mise à jour',
       description: 'Accès à la route API pour modifier les paramètres de stockage des données',
     },
     [USERS_PERMISSIONS.api.general.associativeTable]: {
@@ -687,11 +687,11 @@ export default {
       description: 'Accès à la route API avec un stockage de données associé (modèles d\'informations dynamiques, etc.)',
     },
     [USERS_PERMISSIONS.api.general.stateSettings]: {
-      name: 'Paramètres d\'état',
-      description: 'Accès aux paramètres d\'acheminement de l\'API vers l\'état',
+      name: 'Paramètres de criticités',
+      description: 'Accès aux paramètres de criticités',
     },
     [USERS_PERMISSIONS.api.general.files]: {
-      name: 'Déposer',
+      name: 'Gestion des fichiers : Déposer',
       description: 'Accès à la route API vers les fichiers CRUD',
     },
     [USERS_PERMISSIONS.api.general.healthcheck]: {
@@ -703,11 +703,11 @@ export default {
       description: 'Accès à la route de l\'API vers les métriques techniques',
     },
     [USERS_PERMISSIONS.api.general.contextgraph]: {
-      name: 'Importation de graphiques de contexte',
+      name: 'Import du context-graph',
       description: 'Accès à la route API pour l\'import du graphe de contexte',
     },
     [USERS_PERMISSIONS.api.general.broadcastMessage]: {
-      name: 'Message diffusé',
+      name: 'Diffusion de messages',
       description: 'Accès à la route API pour les messages diffusés',
     },
     [USERS_PERMISSIONS.api.general.junit]: {
@@ -743,15 +743,15 @@ export default {
       description: 'Accès à la route de l\'API pour exporter la configuration',
     },
     [USERS_PERMISSIONS.api.general.map]: {
-      name: 'Carte',
+      name: 'Cartographie',
       description: 'Accès à la route API vers les cartes CRUD',
     },
     [USERS_PERMISSIONS.api.general.shareToken]: {
-      name: 'Partager le jeton',
+      name: 'Jetons partagés',
       description: 'Accès à la route API vers les jetons partagés CRUD',
     },
     [USERS_PERMISSIONS.api.general.declareTicketExecution]: {
-      name: 'Exécuter déclarer les règles de ticket',
+      name: 'Déclaration de tickets',
       description: 'Accès à la route de l\'API pour exécuter les règles de déclaration de ticket',
     },
     [USERS_PERMISSIONS.api.general.widgetTemplate]: {
@@ -759,57 +759,57 @@ export default {
       description: 'Accès à la route API vers les modèles de widgets CRUD',
     },
     [USERS_PERMISSIONS.api.general.maintenance]: {
-      name: 'Mode de Maintenance',
+      name: 'Mode Maintenance',
       description: 'Accès à l\'API route vers le mode maintenance',
     },
     [USERS_PERMISSIONS.api.general.theme]: {
-      name: 'Thèmes',
+      name: 'Thèmes graphiques',
       description: 'Accès à l\'API route vers les thèmes',
     },
 
     [USERS_PERMISSIONS.api.rules.action]: {
       name: 'Actions',
-      description: 'Les utilisateurs disposant de cette autorisation peuvent effectuer des actions CRUD via l\'API',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent gérer les actions via l\'API',
     },
     [USERS_PERMISSIONS.api.rules.dynamicinfos]: {
       name: 'Informations dynamiques',
-      description: 'Les utilisateurs disposant de cette autorisation peuvent CRUD informations dynamiques par API',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent gérer les informations dynamiques par API',
     },
     [USERS_PERMISSIONS.api.rules.eventFilter]: {
-      name: 'Filtre d\'événement',
-      description: 'Les utilisateurs disposant de cette autorisation peuvent filtrer les événements CRUD par API',
+      name: 'Filtres d\'événement',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent gérer les filtres des événements par API',
     },
     [USERS_PERMISSIONS.api.rules.idleRule]: {
-      name: 'Règle d\'inactivité',
-      description: 'Les utilisateurs disposant de cette autorisation peuvent utiliser les règles d\'inactivité CRUD via l\'API',
+      name: 'Règles d\'inactivité',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent gérer les règles d\'inactivité via l\'API',
     },
     [USERS_PERMISSIONS.api.rules.metaalarmrule]: {
-      name: 'Règle de méta-alarme',
-      description: 'Les utilisateurs disposant de cette autorisation peuvent appliquer les règles d\'alarme de méta CRUD via l\'API',
+      name: 'Règles de méta-alarme',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent gérer les règles d\'alarme de méta via l\'API',
     },
     [USERS_PERMISSIONS.api.rules.playlist]: {
       name: 'Listes de lecture',
-      description: 'Les utilisateurs disposant de cette autorisation peuvent accéder aux listes de lecture CRUD par API',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent gérer les listes de lecture par API',
     },
     [USERS_PERMISSIONS.api.rules.flappingRule]: {
-      name: 'Règle de bagot',
-      description: 'Les utilisateurs disposant de cette autorisation peuvent appliquer les règles de bagot CRUD par API',
+      name: 'Règles de bagot',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent gérer les règles de bagot par API',
     },
     [USERS_PERMISSIONS.api.rules.resolveRule]: {
-      name: 'Résoudre la règle',
-      description: 'Les utilisateurs disposant de cette autorisation peuvent résoudre les règles CRUD par API',
+      name: 'Règles de résolution',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent gérer les règles de résolution CRUD par API',
     },
     [USERS_PERMISSIONS.api.rules.snmpRule]: {
-      name: 'Règle SNMP',
-      description: 'Les utilisateurs disposant de cette autorisation peuvent CRUD SNMP règles par API',
+      name: 'Règles SNMP',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent gérer SNMP règles par API',
     },
     [USERS_PERMISSIONS.api.rules.snmpMib]: {
       name: 'MIB SNMP',
-      description: 'Les utilisateurs disposant de cette autorisation peuvent CRUD SNMP MIB par API',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent gérer SNMP MIB par API',
     },
     [USERS_PERMISSIONS.api.rules.declareTicketRule]: {
-      name: 'Déclarer la règle de ticket',
-      description: 'Les utilisateurs disposant de cette autorisation peuvent CRUD déclarer des règles de ticket par API',
+      name: 'Règles de déclaration de tickets',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent gérer les règles de déclaration de tickets par API',
     },
     [USERS_PERMISSIONS.api.rules.linkRule]: {
       name: 'Règle de lien',
@@ -818,22 +818,22 @@ export default {
 
     [USERS_PERMISSIONS.api.remediation.instruction]: {
       name: 'Instructions',
-      description: 'Les utilisateurs disposant de cette autorisation peuvent recevoir des instructions CRUD via l\'API',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent gérer les instructions par API',
     },
     [USERS_PERMISSIONS.api.remediation.jobConfig]: {
-      name: 'Configurations de tâches',
-      description: 'Les utilisateurs disposant de cette autorisation peuvent configurer les tâches CRUD par API',
+      name: 'Configurations de remédiation',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent gérer les configurations de remédiation par API',
     },
     [USERS_PERMISSIONS.api.remediation.job]: {
-      name: 'Emplois',
-      description: 'Les utilisateurs disposant de cette autorisation peuvent effectuer des tâches CRUD via l\'API',
+      name: 'Jobs',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent gérer les jobs de remédiation par API',
     },
     [USERS_PERMISSIONS.api.remediation.execution]: {
-      name: 'Exécute les instructions',
+      name: 'Éxécuter les instructions',
       description: 'Les utilisateurs disposant de cette autorisation peuvent exécuter des instructions via l\'API',
     },
     [USERS_PERMISSIONS.api.remediation.instructionApprove]: {
-      name: 'Instruction approuver',
+      name: 'Approuver les Instructions',
       description: 'Les utilisateurs disposant de cette autorisation peuvent approuver les instructions via l\'API',
     },
     [USERS_PERMISSIONS.api.remediation.messageRateStatsRead]: {
@@ -842,20 +842,20 @@ export default {
     },
 
     [USERS_PERMISSIONS.api.pbehavior.pbehavior]: {
-      name: 'PBehaviors',
-      description: 'Les utilisateurs disposant de cette autorisation peuvent CRUD PBehavior dates des événements par API',
+      name: 'Comportements périodiques',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent gérer les comportements périodiques par API',
     },
     [USERS_PERMISSIONS.api.pbehavior.pbehaviorException]: {
-      name: 'PBehavior exceptions',
-      description: 'Les utilisateurs disposant de cette autorisation peuvent CRUD PBehavior dates d\'exceptions par API',
+      name: 'Comportements périodiques : Dates d\'exceptions',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent gérer les dates d\'exceptions par API',
     },
     [USERS_PERMISSIONS.api.pbehavior.pbehaviorReason]: {
-      name: 'Raisons comportementales',
-      description: 'Les utilisateurs disposant de cette autorisation peuvent CRUD PBehavior raisons dates par API',
+      name: 'Comportements périodiques : Raisons',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent gérer les raisons de comportements périodiques par API',
     },
     [USERS_PERMISSIONS.api.pbehavior.pbehaviorType]: {
-      name: 'Types de PBehavior',
-      description: 'Les utilisateurs disposant de cette autorisation peuvent CRUD PBehavior types dates par API',
+      name: 'Comportements périodiques : Types',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent gérer les types de comportements périodiques par API',
     },
   },
 };
