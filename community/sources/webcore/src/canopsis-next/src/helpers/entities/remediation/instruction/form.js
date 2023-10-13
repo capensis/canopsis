@@ -56,9 +56,16 @@ import { flattenErrorMap } from '@/helpers/entities/shared/form';
  */
 
 /**
+ * @typedef {Object} RemediationInstructionApprovalRequestedBy
+ * @property {string} _id
+ * @property {string} name
+ * @property {string} display_name
+ */
+
+/**
  * @typedef {RemediationInstructionApprovalUser | RemediationInstructionApprovalRole} RemediationInstructionApproval
  * @property {string} comment
- * @property {string} requested_by
+ * @property {RemediationInstructionApprovalRequestedBy} requested_by
  */
 
 /**
