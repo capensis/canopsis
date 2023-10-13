@@ -27,22 +27,24 @@
     @blur="onBlur",
     @update:searchInput="debouncedUpdateSearch"
   )
-    template(#item="{ item, tile }")
-      v-list-tile.c-lazy-search-field--tile(v-bind="tile.props", v-on="tile.on")
-        slot(name="icon", :item="item")
-        v-list-tile-content {{ getItemText(item) }}
-        span.ml-4.grey--text {{ item.type }}
+    template(#item="{ item, tile, parent }")
+      slot(name="item", :item="item", :tile="tile", :parent="parent")
+        v-list-tile.c-lazy-search-field--tile(v-bind="tile.props", v-on="tile.on")
+          slot(name="icon", :item="item")
+          v-list-tile-content {{ getItemText(item) }}
+          span.ml-4.grey--text {{ item.type }}
     template(#append-item="")
       div.c-lazy-search-field__append(ref="append")
     template(#selection="{ item, index }")
-      v-chip.c-lazy-search-field__chip(
-        v-if="isMultiply",
-        small,
-        close,
-        @input="removeItemFromArray(index)"
-      )
-        span.ellipsis {{ getItemText(item) }}
-      slot(v-else, name="selection", :item="item") {{ getItemText(item) }}
+      slot(name="selection", :item="item", :index="index")
+        v-chip.c-lazy-search-field__chip(
+          v-if="isMultiply",
+          small,
+          close,
+          @input="removeItemFromArray(index)"
+        )
+          span.ellipsis {{ getItemText(item) }}
+        slot(v-else, name="selection", :item="item") {{ getItemText(item) }}
 </template>
 
 <script>
@@ -53,8 +55,6 @@ import {
   isFunction,
   get,
 } from 'lodash';
-
-import { PAGINATION_LIMIT } from '@/config';
 
 import { formArrayMixin } from '@/mixins/form';
 
@@ -89,10 +89,6 @@ export default {
     noDataText: {
       type: String,
       required: false,
-    },
-    limit: {
-      type: Number,
-      default: PAGINATION_LIMIT,
     },
     disabled: {
       type: Boolean,

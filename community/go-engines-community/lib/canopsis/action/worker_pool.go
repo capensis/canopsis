@@ -370,6 +370,7 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 		DeclareTicket: task.Action.Parameters.DeclareTicket,
 		UserID:        additionalData.User,
 		Username:      additionalData.Author,
+		Initiator:     types.InitiatorSystem,
 		CreatedAt:     types.NewCpsTime(),
 	}
 

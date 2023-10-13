@@ -81,7 +81,7 @@ describe('alarms-list-row', () => {
           expanded: false,
         },
         widget: {},
-        columns: [],
+        headers: [],
         selectable: true,
       },
     });
@@ -117,7 +117,7 @@ describe('alarms-list-row', () => {
           expanded: false,
         },
         widget: {},
-        columns: [],
+        headers: [],
       },
     });
 
@@ -155,7 +155,7 @@ describe('alarms-list-row', () => {
       propsData: {
         row,
         widget: {},
-        columns: [{}, {}],
+        headers: [{}, {}],
         expandable: true,
         hideGroups: true,
       },
@@ -185,7 +185,7 @@ describe('alarms-list-row', () => {
       propsData: {
         row,
         widget: {},
-        columns: [{}, {}],
+        headers: [{}, {}],
         expandable: true,
       },
     });
@@ -211,7 +211,7 @@ describe('alarms-list-row', () => {
           },
           expanded: false,
         },
-        columns: [{}, {}],
+        headers: [{ value: 'value1' }, { value: 'value2' }, { value: 'actions' }],
       },
     });
 
@@ -233,7 +233,7 @@ describe('alarms-list-row', () => {
           expanded: false,
         },
         widget: {},
-        columns: [{}, {}],
+        headers: [{ value: 'value1' }, { value: 'value2' }, { value: 'actions' }],
         columnsFilters: [{}, {}],
         isTourEnabled: true,
         selectedTag: 'tag',
@@ -259,7 +259,7 @@ describe('alarms-list-row', () => {
           expanded: false,
         },
         widget: {},
-        columns: [],
+        headers: [{ value: 'actions' }],
       },
     });
 
@@ -280,7 +280,7 @@ describe('alarms-list-row', () => {
           expanded: false,
         },
         widget: {},
-        columns: [],
+        headers: [{ value: 'actions' }],
       },
     });
 
@@ -300,7 +300,7 @@ describe('alarms-list-row', () => {
           expanded: false,
         },
         widget: {},
-        columns: [],
+        headers: [{ value: 'actions' }],
         parentAlarm: {
           children_instructions: true,
         },
@@ -324,8 +324,9 @@ describe('alarms-list-row', () => {
           item: alarm,
           expanded: false,
         },
+        showInstructionIcon: true,
         widget: {},
-        columns: [],
+        headers: [{ value: 'actions' }],
         parentAlarm: {
           children_instructions: true,
           filtered_children: [alarm._id],
@@ -355,7 +356,8 @@ describe('alarms-list-row', () => {
           expanded: false,
         },
         widget: {},
-        columns: [],
+        showInstructionIcon: true,
+        headers: [{ value: 'actions' }],
       },
     });
 

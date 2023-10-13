@@ -8,7 +8,11 @@ Feature: run an auto instruction
     """json
     {
       "type": 1,
-      "triggers": ["pbhenter"],
+      "triggers": [
+        {
+          "type": "pbhenter"
+        }
+      ],
       "name": "test-instruction-instruction-action-pbehavior-1-name",
       "description": "test-instruction-instruction-action-pbehavior-1-description",
       "enabled": true,
@@ -42,7 +46,11 @@ Feature: run an auto instruction
       "name": "test-scenario-instruction-action-pbehavior-1-name",
       "priority": 10071,
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -143,26 +151,36 @@ Feature: run an auto instruction
       {
         "_t": "pbhenter",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Pbehavior instruction-action-pbehavior-1. Type: Engine maintenance. Reason: Test Engine."
       },
       {
         "_t": "autoinstructionstart",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-instruction-action-pbehavior-1-name."
       },
       {
         "_t": "instructionjobstart",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-instruction-action-pbehavior-1-name. Job test-job-to-run-auto-instruction-1-name."
       },
       {
         "_t": "instructionjobcomplete",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-instruction-action-pbehavior-1-name. Job test-job-to-run-auto-instruction-1-name."
       },
       {
         "_t": "autoinstructioncomplete",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-instruction-action-pbehavior-1-name."
       }
     ]
@@ -181,16 +199,22 @@ Feature: run an auto instruction
       {
         "_t": "pbhenter",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Pbehavior instruction-action-pbehavior-1. Type: Engine maintenance. Reason: Test Engine."
       },
       {
         "_t": "autoinstructionstart",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-instruction-action-pbehavior-1-name."
       },
       {
         "_t": "autoinstructioncomplete",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-instruction-action-pbehavior-1-name."
       }
     ]

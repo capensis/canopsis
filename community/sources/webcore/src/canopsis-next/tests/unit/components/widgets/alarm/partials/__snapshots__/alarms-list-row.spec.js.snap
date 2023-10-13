@@ -51,7 +51,9 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
     />
     <!---->
   </td>
-  <td>
+  <td
+    class="alarm-list-row__cell"
+  >
     <actions-panel-stub
       item="[object Object]"
       refreshalarmslist="[Function]"
@@ -89,7 +91,9 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with default and required p
     />
     <!---->
   </td>
-  <td>
+  <td
+    class="alarm-list-row__cell"
+  >
     <actions-panel-stub
       item="[object Object]"
       refreshalarmslist="[Function]"
@@ -123,7 +127,9 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with expand button 1`] = `
       />
     </div>
   </td>
-  <td>
+  <td
+    class="alarm-list-row__cell"
+  >
     <actions-panel-stub
       item="[object Object]"
       refreshalarmslist="[Function]"
@@ -138,8 +144,24 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with feature classes 1`] = 
 <tr
   class="alarm-list-row class-2"
 >
-  <!---->
-  <td>
+  <td
+    class="alarm-list-row__icons pr-0"
+  >
+    <div
+      class="layout row align-center justify-space-between"
+    >
+      <div
+        class="layout alarm-list-row__checkbox"
+      >
+        <!---->
+      </div>
+      <!---->
+      <!---->
+    </div>
+  </td>
+  <td
+    class="alarm-list-row__cell"
+  >
     <actions-panel-stub
       item="[object Object]"
       refreshalarmslist="[Function]"
@@ -175,7 +197,9 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with filtered children in p
       <!---->
     </div>
   </td>
-  <td>
+  <td
+    class="alarm-list-row__cell"
+  >
     <actions-panel-stub
       item="[object Object]"
       parentalarm="[object Object]"
@@ -191,28 +215,10 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with instructions 1`] = `
 <tr
   class="alarm-list-row"
 >
+  <!---->
   <td
-    class="alarm-list-row__icons pr-0"
+    class="alarm-list-row__cell"
   >
-    <div
-      class="layout row align-center justify-space-between"
-    >
-      <div
-        class="layout alarm-list-row__checkbox"
-      >
-        <!---->
-      </div>
-      <div
-        class="layout align-center justify-center"
-      >
-        <alarms-list-row-icon-stub
-          alarm="[object Object]"
-        />
-      </div>
-      <!---->
-    </div>
-  </td>
-  <td>
     <actions-panel-stub
       item="[object Object]"
       parentalarm="[object Object]"
@@ -247,7 +253,9 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with resolved alarm 1`] = `
       <!---->
     </div>
   </td>
-  <td>
+  <td
+    class="alarm-list-row__cell"
+  >
     <actions-panel-stub
       item="[object Object]"
       refreshalarmslist="[Function]"

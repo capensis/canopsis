@@ -1,7 +1,6 @@
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { createInputStub } from '@unit/stubs/input';
 
 import { COLORS } from '@/config';
 import { IDLE_RULE_TYPES } from '@/constants';
@@ -9,12 +8,12 @@ import { IDLE_RULE_TYPES } from '@/constants';
 import TagForm from '@/components/other/tag/form/tag-form.vue';
 
 const stubs = {
-  'v-text-field': createInputStub('v-text-field'),
+  'c-name-field': true,
   'c-color-picker-field': true,
   'tag-patterns-form': true,
 };
 
-const selectValueField = wrapper => wrapper.find('input.v-text-field');
+const selectValueField = wrapper => wrapper.find('c-name-field-stub');
 const selectColorPickerField = wrapper => wrapper.find('c-color-picker-field-stub');
 const selectTagPatternsForm = wrapper => wrapper.find('tag-patterns-form-stub');
 

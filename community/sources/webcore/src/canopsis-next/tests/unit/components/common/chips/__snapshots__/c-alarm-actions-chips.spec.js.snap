@@ -41,7 +41,7 @@ exports[`c-alarm-actions-chips Renders \`c-alarm-actions-chips\` with selected t
 exports[`c-alarm-actions-chips Renders \`c-alarm-actions-chips\` with selected tag and dropdown 2`] = `
 <div
   class="v-menu__content theme--light "
-  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
+  style="max-height: 400px; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
 >
   <div
     class="v-card v-sheet theme--light"
@@ -50,7 +50,7 @@ exports[`c-alarm-actions-chips Renders \`c-alarm-actions-chips\` with selected t
       class="v-card__text"
     >
       <div
-        class="layout c-alarm-actions-chips__more"
+        class="layout c-alarm-actions-chips__more wrap"
       >
         <span
           class="c-alarm-action-chip mx-0"
@@ -119,7 +119,7 @@ exports[`c-alarm-actions-chips Renders \`c-alarm-actions-chips\` without selecte
 exports[`c-alarm-actions-chips Renders \`c-alarm-actions-chips\` without selected tag and with dropdown 2`] = `
 <div
   class="v-menu__content theme--light "
-  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
+  style="max-height: 400px; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
 >
   <div
     class="v-card v-sheet theme--light"
@@ -128,7 +128,7 @@ exports[`c-alarm-actions-chips Renders \`c-alarm-actions-chips\` without selecte
       class="v-card__text"
     >
       <div
-        class="layout c-alarm-actions-chips__more"
+        class="layout c-alarm-actions-chips__more wrap"
       >
         <span
           class="c-alarm-action-chip mx-0"

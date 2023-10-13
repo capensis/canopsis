@@ -4,7 +4,7 @@ import {
   EVENT_ENTITY_TYPES,
   PATTERN_FIELD_TYPES,
   PATTERN_OPERATORS,
-  TRIGGERS,
+  TRIGGERS_TYPES,
 } from '@/constants';
 
 export default {
@@ -87,7 +87,7 @@ export default {
   apply: 'Appliquer',
   from: 'Depuis',
   to: 'Vers',
-  tags: 'Étiquettes',
+  tags: 'Tags',
   actionsLabel: 'Actions',
   noResults: 'Pas de résultats',
   result: 'Résultat',
@@ -199,6 +199,14 @@ export default {
   lastModifiedOn: 'Dernière modification le',
   lastModifiedBy: 'Dernière modification par',
   exportAsCsv: 'Exporter en csv',
+  exportToPdf: 'Exporter au format PDF',
+  exportToJson: 'Exporter au format JSON',
+  exportFieldToJson: 'Exporter {field} au format JSON',
+  exportFieldToPdfOrJson: 'Exporter {field} au format PDF ou JSON',
+  copyFieldPath: 'Copier le chemin {field}',
+  copyFieldPathOrExportFieldToPdf: 'Copiez le chemin du {field} ou exportez le {field} au format PDF',
+  copyToClipboard: 'Copier dans le presse-papier',
+  copyPathToClipboard: 'Copier le chemin dans le presse-papiers',
   criteria: 'Critères',
   ratingSettings: 'Paramètres d\'évaluation',
   pbehavior: 'Comportement périodique | Comportements périodiques',
@@ -234,7 +242,7 @@ export default {
   playlist: 'Liste de lecture | Listes de lecture',
   ctrlZoom: 'Utilisez ctrl + molette de la souris pour zoomer',
   calendar: 'Calendrier',
-  tag: 'Étiquette | Étiquettes',
+  tag: 'Tag | Tags',
   sharedTokens: 'Jetons partagés',
   notAvailable: 'Indisponible',
   addMore: 'Ajouter plus',
@@ -420,87 +428,92 @@ export default {
   },
 
   triggers: {
-    [TRIGGERS.create]: {
+    [TRIGGERS_TYPES.create]: {
       text: 'Création d\'alarme',
     },
-    [TRIGGERS.statedec]: {
+    [TRIGGERS_TYPES.statedec]: {
       text: 'Diminution de la criticité',
     },
-    [TRIGGERS.changestate]: {
+    [TRIGGERS_TYPES.changestate]: {
       text: 'Changement et verrouillage de la criticité',
     },
-    [TRIGGERS.stateinc]: {
+    [TRIGGERS_TYPES.stateinc]: {
       text: 'Augmentation de la criticité',
     },
-    [TRIGGERS.changestatus]: {
+    [TRIGGERS_TYPES.changestatus]: {
       text: 'Changement de statut (flapping, bagot, ...)',
     },
-    [TRIGGERS.ack]: {
+    [TRIGGERS_TYPES.ack]: {
       text: 'Acquittement d\'une alarme',
     },
-    [TRIGGERS.ackremove]: {
+    [TRIGGERS_TYPES.ackremove]: {
       text: 'Suppression de l\'acquittement d\'une alarme',
     },
-    [TRIGGERS.cancel]: {
+    [TRIGGERS_TYPES.cancel]: {
       text: 'Annulation d\'une alarme',
     },
-    [TRIGGERS.uncancel]: {
+    [TRIGGERS_TYPES.uncancel]: {
       text: 'Annulation de l\'annulation d\'une alarme',
       helpText: 'L\'annulation ne peut se faire que par un événement posté sur l\'API',
     },
-    [TRIGGERS.comment]: {
+    [TRIGGERS_TYPES.comment]: {
       text: 'Commentaire sur une alarme',
     },
-    [TRIGGERS.declareticket]: {
+    [TRIGGERS_TYPES.declareticket]: {
       text: 'Déclaration de ticket depuis l\'interface graphique',
     },
-    [TRIGGERS.declareticketwebhook]: {
+    [TRIGGERS_TYPES.declareticketwebhook]: {
       text: 'Déclaration de ticket depuis un webhook',
     },
-    [TRIGGERS.assocticket]: {
+    [TRIGGERS_TYPES.assocticket]: {
       text: 'Association de ticket sur une alarme',
     },
-    [TRIGGERS.snooze]: {
+    [TRIGGERS_TYPES.snooze]: {
       text: 'Mise en veille d\'une alarme',
     },
-    [TRIGGERS.unsnooze]: {
+    [TRIGGERS_TYPES.unsnooze]: {
       text: 'Sortie de veille d\'une alarme',
     },
-    [TRIGGERS.resolve]: {
+    [TRIGGERS_TYPES.resolve]: {
       text: 'Résolution d\'une alarme',
     },
-    [TRIGGERS.activate]: {
+    [TRIGGERS_TYPES.activate]: {
       text: 'Activation d\'une alarme',
     },
-    [TRIGGERS.pbhenter]: {
+    [TRIGGERS_TYPES.pbhenter]: {
       text: 'Comportement périodique démarré',
     },
-    [TRIGGERS.pbhleave]: {
+    [TRIGGERS_TYPES.pbhleave]: {
       text: 'Comportement périodique terminé',
     },
-    [TRIGGERS.instructionfail]: {
+    [TRIGGERS_TYPES.instructionfail]: {
       text: 'Consigne manuelle en erreur',
     },
-    [TRIGGERS.autoinstructionfail]: {
+    [TRIGGERS_TYPES.autoinstructionfail]: {
       text: 'Consigne automatique en erreur',
     },
-    [TRIGGERS.instructionjobfail]: {
+    [TRIGGERS_TYPES.instructionjobfail]: {
       text: 'Job de remédiation en erreur',
     },
-    [TRIGGERS.instructionjobcomplete]: {
+    [TRIGGERS_TYPES.instructionjobcomplete]: {
       text: 'Job de remédiation terminé',
     },
-    [TRIGGERS.instructioncomplete]: {
+    [TRIGGERS_TYPES.instructioncomplete]: {
       text: 'Consigne manuelle terminée',
     },
-    [TRIGGERS.autoinstructioncomplete]: {
+    [TRIGGERS_TYPES.autoinstructioncomplete]: {
       text: 'Consigne automatique terminée',
     },
-    [TRIGGERS.autoinstructionresultok]: {
+    [TRIGGERS_TYPES.autoinstructionresultok]: {
       text: 'L\'alarme est en état OK après toutes les instructions automatiques',
     },
-    [TRIGGERS.autoinstructionresultfail]: {
+    [TRIGGERS_TYPES.autoinstructionresultfail]: {
       text: 'L\'alarme n\'est pas dans l\'état OK après toutes les instructions automatiques',
+    },
+    [TRIGGERS_TYPES.eventscount]: {
+      text: 'L\'alarme a été reçue pour un certain nombre d\'événements',
+      selectedText: 'L\'alarme a été reçue {additionalValue} événements',
+      additionalFieldLabel: 'Nombre d\'événements',
     },
   },
   request: {

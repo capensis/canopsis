@@ -282,14 +282,23 @@ Feature: update connector alarm
             "data": [
               {
                 "_t": "stateinc",
+                "a": "system",
+                "user_id": "",
+                "initiator": "system",
                 "val": 3
               },
               {
                 "_t": "statusinc",
+                "a": "system",
+                "user_id": "",
+                "initiator": "system",
                 "val": 5
               },
               {
                 "_t": "pbhenter",
+                "a": "system",
+                "user_id": "",
+                "initiator": "system",
                 "m": "Pbehavior test-pbehavior-axe-idlerule-connector-2. Type: Engine maintenance. Reason: Test Engine."
               }
             ],
@@ -442,9 +451,15 @@ Feature: update connector alarm
             "connector": "service",
             "connector_name": "service",
             "state": {
+              "a": "service.service",
+              "user_id": "",
+              "initiator": "system",
               "val": 3
             },
             "status": {
+              "a": "service.service",
+              "user_id": "",
+              "initiator": "system",
               "val": 1
             }
           }
@@ -481,12 +496,16 @@ Feature: update connector alarm
               {
                 "_t": "stateinc",
                 "a": "service.service",
+                "user_id": "",
+                "initiator": "system",
                 "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 3
               },
               {
                 "_t": "statusinc",
                 "a": "service.service",
+                "user_id": "",
+                "initiator": "system",
                 "m": "All: 1; Active: 1; Acknowledged: 0; NotAcknowledged: 1; AcknowledgedUnderPbh: 0; StateCritical: 1; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[]; UnderPbehavior: 0;",
                 "val": 1
               }
@@ -538,7 +557,11 @@ Feature: update connector alarm
       "name": "test-scenario-axe-idlerule-connector-4-name",
       "priority": 10059,
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -636,19 +659,29 @@ Feature: update connector alarm
           "steps": {
             "data": [
               {
-                "_t": "stateinc"
+                "_t": "stateinc",
+                "a": "system",
+                "user_id": "",
+                "initiator": "system"
               },
               {
-                "_t": "statusinc"
+                "_t": "statusinc",
+                "a": "system",
+                "user_id": "",
+                "initiator": "system"
               },
               {
                 "_t": "assocticket",
                 "a": "system",
+                "user_id": "",
+                "initiator": "system",
                 "ticket": "test-ticket-axe-idlerule-connector-4"
               },
               {
                 "_t": "ack",
                 "a": "system",
+                "user_id": "",
+                "initiator": "system",
                 "m": "test-output-axe-idlerule-connector-4"
               }
             ],
@@ -981,7 +1014,8 @@ Feature: update connector alarm
       "connector": "test-connector-axe-idlerule-connector-7",
       "connector_name": "test-connector-name-axe-idlerule-connector-7",
       "source_type": "connector",
-      "output": "test-output-axe-idlerule-connector-7"
+      "output": "test-output-axe-idlerule-connector-7",
+      "initiator": "user"
     }
     """
     When I do GET /api/v4/alarms?search=test-connector-name-axe-idlerule-connector-7&sort_by=entity._id&sort=desc
@@ -1008,14 +1042,23 @@ Feature: update connector alarm
             "data": [
               {
                 "_t": "stateinc",
+                "a": "system",
+                "user_id": "",
+                "initiator": "system",
                 "val": 3
               },
               {
                 "_t": "statusinc",
+                "a": "system",
+                "user_id": "",
+                "initiator": "system",
                 "val": 5
               },
               {
-                "_t": "ack"
+                "_t": "ack",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
+                "initiator": "user"
               }
             ],
             "meta": {

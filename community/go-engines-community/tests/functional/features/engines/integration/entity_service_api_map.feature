@@ -2,9 +2,10 @@ Feature: Get a map's state and alarms
   I need to be able to get a map's state and alarms
   Only admin should be able to get a map's state and alarms
 
+  @concurrent
   Scenario: given tree of dependencies map should return entities
     When I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     [
       {
@@ -12,7 +13,7 @@ Feature: Get a map's state and alarms
         "connector_name": "test-connector-name-service-api-map-1",
         "source_type": "resource",
         "event_type": "check",
-        "component":  "test-component-service-api-map-1",
+        "component": "test-component-service-api-map-1",
         "resource": "test-resource-service-api-map-1-1",
         "state": 2,
         "output": "test-output-service-api-map-1"
@@ -22,7 +23,7 @@ Feature: Get a map's state and alarms
         "connector_name": "test-connector-name-service-api-map-1",
         "source_type": "resource",
         "event_type": "check",
-        "component":  "test-component-service-api-map-1",
+        "component": "test-component-service-api-map-1",
         "resource": "test-resource-service-api-map-1-2",
         "state": 1,
         "output": "test-output-service-api-map-1"
@@ -32,7 +33,7 @@ Feature: Get a map's state and alarms
         "connector_name": "test-connector-name-service-api-map-1",
         "source_type": "resource",
         "event_type": "check",
-        "component":  "test-component-service-api-map-1",
+        "component": "test-component-service-api-map-1",
         "resource": "test-resource-service-api-map-1-3",
         "state": 0,
         "output": "test-output-service-api-map-1"
@@ -42,14 +43,13 @@ Feature: Get a map's state and alarms
         "connector_name": "test-connector-name-service-api-map-1",
         "source_type": "resource",
         "event_type": "check",
-        "component":  "test-component-service-api-map-1",
+        "component": "test-component-service-api-map-1",
         "resource": "test-resource-service-api-map-1-4",
         "state": 1,
         "output": "test-output-service-api-map-1"
       }
     ]
     """
-    When I wait the end of 4 events processing
     When I do POST /api/v4/entityservices:
     """json
     {
@@ -77,7 +77,24 @@ Feature: Get a map's state and alarms
     """
     Then the response code should be 201
     When I save response serviceId1={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId1 }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId1 }}"
+      }
+    ]
+    """
     When I do POST /api/v4/entityservices:
     """json
     {
@@ -101,7 +118,24 @@ Feature: Get a map's state and alarms
     """
     Then the response code should be 201
     When I save response serviceId2={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId2 }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId2 }}"
+      }
+    ]
+    """
     When I do POST /api/v4/entityservices:
     """json
     {
@@ -128,7 +162,24 @@ Feature: Get a map's state and alarms
     """
     Then the response code should be 201
     When I save response serviceId3={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId3 }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId3 }}"
+      }
+    ]
+    """
     When I do POST /api/v4/cat/maps:
     """json
     {
@@ -279,7 +330,7 @@ Feature: Get a map's state and alarms
                 "type": "resource",
                 "category": null,
                 "connector": "test-connector-service-api-map-1/test-connector-name-service-api-map-1",
-                "component":  "test-component-service-api-map-1",
+                "component": "test-component-service-api-map-1",
                 "infos": {},
                 "impact_level": 1,
                 "impact_state": 2,
@@ -296,7 +347,7 @@ Feature: Get a map's state and alarms
                 "type": "resource",
                 "category": null,
                 "connector": "test-connector-service-api-map-1/test-connector-name-service-api-map-1",
-                "component":  "test-component-service-api-map-1",
+                "component": "test-component-service-api-map-1",
                 "infos": {},
                 "impact_level": 1,
                 "impact_state": 0,
@@ -383,7 +434,7 @@ Feature: Get a map's state and alarms
               "type": "resource",
               "category": null,
               "connector": "test-connector-service-api-map-1/test-connector-name-service-api-map-1",
-              "component":  "test-component-service-api-map-1",
+              "component": "test-component-service-api-map-1",
               "infos": {},
               "impact_level": 1,
               "impact_state": 1,
@@ -403,7 +454,7 @@ Feature: Get a map's state and alarms
               "type": "resource",
               "category": null,
               "connector": "test-connector-service-api-map-1/test-connector-name-service-api-map-1",
-              "component":  "test-component-service-api-map-1",
+              "component": "test-component-service-api-map-1",
               "infos": {},
               "impact_level": 1,
               "impact_state": 0,
@@ -419,9 +470,10 @@ Feature: Get a map's state and alarms
     }
     """
 
+  @concurrent
   Scenario: given impact chain map should return entities
     When I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     [
       {
@@ -429,7 +481,7 @@ Feature: Get a map's state and alarms
         "connector_name": "test-connector-name-service-api-map-2",
         "source_type": "resource",
         "event_type": "check",
-        "component":  "test-component-service-api-map-2",
+        "component": "test-component-service-api-map-2",
         "resource": "test-resource-service-api-map-2-1",
         "state": 2,
         "output": "test-output-service-api-map-2"
@@ -439,7 +491,7 @@ Feature: Get a map's state and alarms
         "connector_name": "test-connector-name-service-api-map-2",
         "source_type": "resource",
         "event_type": "check",
-        "component":  "test-component-service-api-map-2",
+        "component": "test-component-service-api-map-2",
         "resource": "test-resource-service-api-map-2-2",
         "state": 1,
         "output": "test-output-service-api-map-2"
@@ -449,7 +501,7 @@ Feature: Get a map's state and alarms
         "connector_name": "test-connector-name-service-api-map-2",
         "source_type": "resource",
         "event_type": "check",
-        "component":  "test-component-service-api-map-2",
+        "component": "test-component-service-api-map-2",
         "resource": "test-resource-service-api-map-2-3",
         "state": 0,
         "output": "test-output-service-api-map-2"
@@ -459,14 +511,13 @@ Feature: Get a map's state and alarms
         "connector_name": "test-connector-name-service-api-map-2",
         "source_type": "resource",
         "event_type": "check",
-        "component":  "test-component-service-api-map-2",
+        "component": "test-component-service-api-map-2",
         "resource": "test-resource-service-api-map-2-4",
         "state": 1,
         "output": "test-output-service-api-map-2"
       }
     ]
     """
-    When I wait the end of 4 events processing
     When I do POST /api/v4/entityservices:
     """json
     {
@@ -494,7 +545,24 @@ Feature: Get a map's state and alarms
     """
     Then the response code should be 201
     When I save response serviceId1={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId1 }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId1 }}"
+      }
+    ]
+    """
     When I do POST /api/v4/entityservices:
     """json
     {
@@ -518,7 +586,24 @@ Feature: Get a map's state and alarms
     """
     Then the response code should be 201
     When I save response serviceId2={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId2 }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId2 }}"
+      }
+    ]
+    """
     When I do POST /api/v4/entityservices:
     """json
     {
@@ -545,7 +630,24 @@ Feature: Get a map's state and alarms
     """
     Then the response code should be 201
     When I save response serviceId3={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId3 }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId3 }}"
+      }
+    ]
+    """
     When I do POST /api/v4/cat/maps:
     """json
     {
@@ -727,7 +829,7 @@ Feature: Get a map's state and alarms
               "type": "resource",
               "category": null,
               "connector": "test-connector-service-api-map-2/test-connector-name-service-api-map-2",
-              "component":  "test-component-service-api-map-2",
+              "component": "test-component-service-api-map-2",
               "infos": {},
               "impact_level": 1,
               "impact_state": 1,
@@ -757,7 +859,7 @@ Feature: Get a map's state and alarms
               "type": "resource",
               "category": null,
               "connector": "test-connector-service-api-map-2/test-connector-name-service-api-map-2",
-              "component":  "test-component-service-api-map-2",
+              "component": "test-component-service-api-map-2",
               "infos": {},
               "impact_level": 1,
               "impact_state": 0,
@@ -771,9 +873,10 @@ Feature: Get a map's state and alarms
     }
     """
 
+  @concurrent
   Scenario: given pinned dependency which is removed from dependencies should not return it
     When I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     [
       {
@@ -781,7 +884,7 @@ Feature: Get a map's state and alarms
         "connector_name": "test-connector-name-service-api-map-3",
         "source_type": "resource",
         "event_type": "check",
-        "component":  "test-component-service-api-map-3",
+        "component": "test-component-service-api-map-3",
         "resource": "test-resource-service-api-map-3-1",
         "state": 2,
         "output": "test-output-service-api-map-3"
@@ -791,14 +894,13 @@ Feature: Get a map's state and alarms
         "connector_name": "test-connector-name-service-api-map-3",
         "source_type": "resource",
         "event_type": "check",
-        "component":  "test-component-service-api-map-3",
+        "component": "test-component-service-api-map-3",
         "resource": "test-resource-service-api-map-3-2",
         "state": 1,
         "output": "test-output-service-api-map-3"
       }
     ]
     """
-    When I wait the end of 2 events processing
     When I do POST /api/v4/entityservices:
     """json
     {
@@ -825,7 +927,24 @@ Feature: Get a map's state and alarms
     """
     Then the response code should be 201
     When I save response serviceId={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}"
+      }
+    ]
+    """
     When I do POST /api/v4/cat/maps:
     """json
     {
@@ -900,7 +1019,24 @@ Feature: Get a map's state and alarms
     }
     """
     Then the response code should be 200
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}"
+      }
+    ]
+    """
     When I do GET /api/v4/cat/maps/{{ .mapId }}
     Then the response code should be 200
     Then the response body should contain:
@@ -953,9 +1089,10 @@ Feature: Get a map's state and alarms
     }
     """
 
+  @concurrent
   Scenario: given pinned impact which is removed from impact should not return it
     When I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     [
       {
@@ -963,7 +1100,7 @@ Feature: Get a map's state and alarms
         "connector_name": "test-connector-name-service-api-map-4",
         "source_type": "resource",
         "event_type": "check",
-        "component":  "test-component-service-api-map-4",
+        "component": "test-component-service-api-map-4",
         "resource": "test-resource-service-api-map-4-1",
         "state": 2,
         "output": "test-output-service-api-map-4"
@@ -973,14 +1110,13 @@ Feature: Get a map's state and alarms
         "connector_name": "test-connector-name-service-api-map-4",
         "source_type": "resource",
         "event_type": "check",
-        "component":  "test-component-service-api-map-4",
+        "component": "test-component-service-api-map-4",
         "resource": "test-resource-service-api-map-4-2",
         "state": 1,
         "output": "test-output-service-api-map-4"
       }
     ]
     """
-    When I wait the end of 2 events processing
     When I do POST /api/v4/entityservices:
     """json
     {
@@ -1007,7 +1143,24 @@ Feature: Get a map's state and alarms
     """
     Then the response code should be 201
     When I save response serviceId={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}"
+      }
+    ]
+    """
     When I do POST /api/v4/cat/maps:
     """json
     {
@@ -1077,7 +1230,24 @@ Feature: Get a map's state and alarms
     }
     """
     Then the response code should be 200
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}"
+      }
+    ]
+    """
     When I do GET /api/v4/cat/maps/{{ .mapId }}
     Then the response code should be 200
     Then the response body should contain:
@@ -1121,9 +1291,10 @@ Feature: Get a map's state and alarms
     }
     """
 
+  @concurrent
   Scenario: given tree of dependencies map and expanded entities should return entities
     When I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     [
       {
@@ -1131,7 +1302,7 @@ Feature: Get a map's state and alarms
         "connector_name": "test-connector-name-service-api-map-5",
         "source_type": "resource",
         "event_type": "check",
-        "component":  "test-component-service-api-map-5",
+        "component": "test-component-service-api-map-5",
         "resource": "test-resource-service-api-map-5-1",
         "state": 2,
         "output": "test-output-service-api-map-5"
@@ -1141,7 +1312,7 @@ Feature: Get a map's state and alarms
         "connector_name": "test-connector-name-service-api-map-5",
         "source_type": "resource",
         "event_type": "check",
-        "component":  "test-component-service-api-map-5",
+        "component": "test-component-service-api-map-5",
         "resource": "test-resource-service-api-map-5-2",
         "state": 1,
         "output": "test-output-service-api-map-5"
@@ -1151,14 +1322,13 @@ Feature: Get a map's state and alarms
         "connector_name": "test-connector-name-service-api-map-5",
         "source_type": "resource",
         "event_type": "check",
-        "component":  "test-component-service-api-map-5",
+        "component": "test-component-service-api-map-5",
         "resource": "test-resource-service-api-map-5-3",
         "state": 0,
         "output": "test-output-service-api-map-5"
       }
     ]
     """
-    When I wait the end of 3 events processing
     When I do POST /api/v4/entityservices:
     """json
     {
@@ -1185,7 +1355,24 @@ Feature: Get a map's state and alarms
     """
     Then the response code should be 201
     When I save response serviceId1={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId1 }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId1 }}"
+      }
+    ]
+    """
     When I do POST /api/v4/entityservices:
     """json
     {
@@ -1211,7 +1398,24 @@ Feature: Get a map's state and alarms
     """
     Then the response code should be 201
     When I save response serviceId2={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId2 }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId2 }}"
+      }
+    ]
+    """
     When I do POST /api/v4/entityservices:
     """json
     {
@@ -1238,7 +1442,24 @@ Feature: Get a map's state and alarms
     """
     Then the response code should be 201
     When I save response serviceId3={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId3 }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId3 }}"
+      }
+    ]
+    """
     When I do POST /api/v4/cat/maps:
     """json
     {
@@ -1330,7 +1551,7 @@ Feature: Get a map's state and alarms
               "type": "resource",
               "category": null,
               "connector": "test-connector-service-api-map-5/test-connector-name-service-api-map-5",
-              "component":  "test-component-service-api-map-5",
+              "component": "test-component-service-api-map-5",
               "infos": {},
               "impact_level": 1,
               "impact_state": 2,
@@ -1344,7 +1565,7 @@ Feature: Get a map's state and alarms
               "type": "resource",
               "category": null,
               "connector": "test-connector-service-api-map-5/test-connector-name-service-api-map-5",
-              "component":  "test-component-service-api-map-5",
+              "component": "test-component-service-api-map-5",
               "infos": {},
               "impact_level": 1,
               "impact_state": 1,
@@ -1360,7 +1581,7 @@ Feature: Get a map's state and alarms
               "type": "resource",
               "category": null,
               "connector": "test-connector-service-api-map-5/test-connector-name-service-api-map-5",
-              "component":  "test-component-service-api-map-5",
+              "component": "test-component-service-api-map-5",
               "infos": {},
               "impact_level": 1,
               "impact_state": 0,
@@ -1400,9 +1621,10 @@ Feature: Get a map's state and alarms
     }
     """
 
+  @concurrent
   Scenario: given impact chain map and expanded entities should return entities
     When I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     [
       {
@@ -1410,7 +1632,7 @@ Feature: Get a map's state and alarms
         "connector_name": "test-connector-name-service-api-map-6",
         "source_type": "resource",
         "event_type": "check",
-        "component":  "test-component-service-api-map-6",
+        "component": "test-component-service-api-map-6",
         "resource": "test-resource-service-api-map-6-1",
         "state": 2,
         "output": "test-output-service-api-map-6"
@@ -1420,7 +1642,7 @@ Feature: Get a map's state and alarms
         "connector_name": "test-connector-name-service-api-map-6",
         "source_type": "resource",
         "event_type": "check",
-        "component":  "test-component-service-api-map-6",
+        "component": "test-component-service-api-map-6",
         "resource": "test-resource-service-api-map-6-2",
         "state": 1,
         "output": "test-output-service-api-map-6"
@@ -1430,14 +1652,13 @@ Feature: Get a map's state and alarms
         "connector_name": "test-connector-name-service-api-map-6",
         "source_type": "resource",
         "event_type": "check",
-        "component":  "test-component-service-api-map-6",
+        "component": "test-component-service-api-map-6",
         "resource": "test-resource-service-api-map-6-3",
         "state": 0,
         "output": "test-output-service-api-map-6"
       }
     ]
     """
-    When I wait the end of 3 events processing
     When I do POST /api/v4/entityservices:
     """json
     {
@@ -1464,7 +1685,24 @@ Feature: Get a map's state and alarms
     """
     Then the response code should be 201
     When I save response serviceId1={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId1 }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId1 }}"
+      }
+    ]
+    """
     When I do POST /api/v4/entityservices:
     """json
     {
@@ -1490,7 +1728,24 @@ Feature: Get a map's state and alarms
     """
     Then the response code should be 201
     When I save response serviceId2={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId2 }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId2 }}"
+      }
+    ]
+    """
     When I do POST /api/v4/entityservices:
     """json
     {
@@ -1517,7 +1772,24 @@ Feature: Get a map's state and alarms
     """
     Then the response code should be 201
     When I save response serviceId3={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId3 }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId3 }}"
+      }
+    ]
+    """
     When I do POST /api/v4/cat/maps:
     """json
     {
@@ -1627,9 +1899,10 @@ Feature: Get a map's state and alarms
     }
     """
 
+  @concurrent
   Scenario: given tree of dependencies map and filter should return filtered entities
     When I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     [
       {
@@ -1637,7 +1910,7 @@ Feature: Get a map's state and alarms
         "connector_name": "test-connector-name-service-api-map-7",
         "source_type": "resource",
         "event_type": "check",
-        "component":  "test-component-service-api-map-7",
+        "component": "test-component-service-api-map-7",
         "resource": "test-resource-service-api-map-7-1",
         "state": 2,
         "output": "test-output-service-api-map-7"
@@ -1647,7 +1920,7 @@ Feature: Get a map's state and alarms
         "connector_name": "test-connector-name-service-api-map-7",
         "source_type": "resource",
         "event_type": "check",
-        "component":  "test-component-service-api-map-7",
+        "component": "test-component-service-api-map-7",
         "resource": "test-resource-service-api-map-7-2",
         "state": 1,
         "output": "test-output-service-api-map-7"
@@ -1657,7 +1930,7 @@ Feature: Get a map's state and alarms
         "connector_name": "test-connector-name-service-api-map-7",
         "source_type": "resource",
         "event_type": "check",
-        "component":  "test-component-service-api-map-7",
+        "component": "test-component-service-api-map-7",
         "resource": "test-resource-service-api-map-7-3",
         "state": 0,
         "output": "test-output-service-api-map-7"
@@ -1667,14 +1940,13 @@ Feature: Get a map's state and alarms
         "connector_name": "test-connector-name-service-api-map-7",
         "source_type": "resource",
         "event_type": "check",
-        "component":  "test-component-service-api-map-7",
+        "component": "test-component-service-api-map-7",
         "resource": "test-resource-service-api-map-7-4",
         "state": 0,
         "output": "test-output-service-api-map-7"
       }
     ]
     """
-    When I wait the end of 4 events processing
     When I do POST /api/v4/entityservices:
     """json
     {
@@ -1702,7 +1974,24 @@ Feature: Get a map's state and alarms
     """
     Then the response code should be 201
     When I save response serviceId1={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId1 }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId1 }}"
+      }
+    ]
+    """
     When I do POST /api/v4/entityservices:
     """json
     {
@@ -1728,7 +2017,24 @@ Feature: Get a map's state and alarms
     """
     Then the response code should be 201
     When I save response serviceId2={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId2 }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId2 }}"
+      }
+    ]
+    """
     When I do POST /api/v4/entityservices:
     """json
     {
@@ -1755,7 +2061,24 @@ Feature: Get a map's state and alarms
     """
     Then the response code should be 201
     When I save response serviceId3={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId3 }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId3 }}"
+      }
+    ]
+    """
     When I do POST /api/v4/cat/maps:
     """json
     {
@@ -1860,9 +2183,10 @@ Feature: Get a map's state and alarms
     }
     """
 
+  @concurrent
   Scenario: given impact chain map and filter should return filtered entities
     When I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     [
       {
@@ -1870,7 +2194,7 @@ Feature: Get a map's state and alarms
         "connector_name": "test-connector-name-service-api-map-8",
         "source_type": "resource",
         "event_type": "check",
-        "component":  "test-component-service-api-map-8",
+        "component": "test-component-service-api-map-8",
         "resource": "test-resource-service-api-map-8-1",
         "state": 2,
         "output": "test-output-service-api-map-8"
@@ -1880,7 +2204,7 @@ Feature: Get a map's state and alarms
         "connector_name": "test-connector-name-service-api-map-8",
         "source_type": "resource",
         "event_type": "check",
-        "component":  "test-component-service-api-map-8",
+        "component": "test-component-service-api-map-8",
         "resource": "test-resource-service-api-map-8-2",
         "state": 1,
         "output": "test-output-service-api-map-8"
@@ -1890,14 +2214,13 @@ Feature: Get a map's state and alarms
         "connector_name": "test-connector-name-service-api-map-8",
         "source_type": "resource",
         "event_type": "check",
-        "component":  "test-component-service-api-map-8",
+        "component": "test-component-service-api-map-8",
         "resource": "test-resource-service-api-map-8-3",
         "state": 0,
         "output": "test-output-service-api-map-8"
       }
     ]
     """
-    When I wait the end of 3 events processing
     When I do POST /api/v4/entityservices:
     """json
     {
@@ -1924,7 +2247,24 @@ Feature: Get a map's state and alarms
     """
     Then the response code should be 201
     When I save response serviceId1={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId1 }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId1 }}"
+      }
+    ]
+    """
     When I do POST /api/v4/entityservices:
     """json
     {
@@ -1951,7 +2291,24 @@ Feature: Get a map's state and alarms
     """
     Then the response code should be 201
     When I save response serviceId2={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId2 }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId2 }}"
+      }
+    ]
+    """
     When I do POST /api/v4/entityservices:
     """json
     {
@@ -1978,7 +2335,24 @@ Feature: Get a map's state and alarms
     """
     Then the response code should be 201
     When I save response serviceId3={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId3 }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId3 }}"
+      }
+    ]
+    """
     When I do POST /api/v4/cat/maps:
     """json
     {

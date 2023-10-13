@@ -2,15 +2,18 @@ Feature: Get a scenario
   I need to be able to read a scenario
   Only admin should be able to read a scenario
 
+  @concurrent
   Scenario: given get all request and no auth user should not allow access
     When I do GET /api/v4/scenarios
     Then the response code should be 401
 
+  @concurrent
   Scenario: given get all request and auth user by api key without permissions should not allow access
     When I am noperms
     When I do GET /api/v4/scenarios
     Then the response code should be 403
 
+  @concurrent
   Scenario: given get all request should return scenarios
     When I am admin
     When I do GET /api/v4/scenarios?search=test-scenario-to-get
@@ -92,7 +95,9 @@ Feature: Get a scenario
           "enabled": true,
           "name": "test-scenario-to-get-1-name",
           "triggers": [
-            "create"
+            {
+              "type": "create"
+            }
           ]
         },
         {
@@ -130,7 +135,9 @@ Feature: Get a scenario
           "enabled": true,
           "name": "test-scenario-to-get-2-name",
           "triggers": [
-            "create"
+            {
+              "type": "create"
+            }
           ]
         }
       ],
@@ -143,6 +150,7 @@ Feature: Get a scenario
     }
     """
 
+  @concurrent
   Scenario: given sort request should return sorted scenarios
     When I am admin
     When I do GET /api/v4/scenarios?search=test-scenario-to-get&sort_by=name&sort=desc
@@ -167,6 +175,7 @@ Feature: Get a scenario
     }
     """
 
+  @concurrent
   Scenario: given get request should return scenario
     When I am admin
     When I do GET /api/v4/scenarios/test-scenario-to-get-1
@@ -246,11 +255,14 @@ Feature: Get a scenario
       "enabled": true,
       "name": "test-scenario-to-get-1-name",
       "triggers": [
-        "create"
+        {
+          "type": "create"
+        }
       ]
     }
     """
 
+  @concurrent
   Scenario: given get request should return scenario with old patterns
     When I am admin
     When I do GET /api/v4/scenarios/test-scenario-backward-compatibility-to-get-1
@@ -268,7 +280,9 @@ Feature: Get a scenario
       "enabled": true,
       "disable_during_periods": null,
       "triggers": [
-          "create"
+        {
+          "type": "create"
+        }
       ],
       "actions": [
         {
@@ -295,6 +309,7 @@ Feature: Get a scenario
     }
     """
 
+  @concurrent
   Scenario: given invalid get request should return error
     When I am admin
     When I do GET /api/v4/scenarios/notexist

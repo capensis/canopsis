@@ -4,7 +4,7 @@ import {
   EVENT_ENTITY_TYPES,
   PATTERN_FIELD_TYPES,
   PATTERN_OPERATORS,
-  TRIGGERS,
+  TRIGGERS_TYPES,
 } from '@/constants';
 
 export default {
@@ -199,6 +199,14 @@ export default {
   lastModifiedOn: 'Last modified on',
   lastModifiedBy: 'Last modified by',
   exportAsCsv: 'Export as csv',
+  exportToPdf: 'Export to PDF',
+  exportToJson: 'Export to JSON',
+  exportFieldToJson: 'Export {field} to JSON',
+  exportFieldToPdfOrJson: 'Export {field} to PDF or JSON',
+  copyFieldPath: 'Copy {field} path',
+  copyFieldPathOrExportFieldToPdf: 'Copy {field} path or export {field} to PDF',
+  copyToClipboard: 'Copy to clipboard',
+  copyPathToClipboard: 'Copy path to clipboard',
   criteria: 'Criteria',
   ratingSettings: 'Rating settings',
   pbehavior: 'Pbehavior | Pbehaviors',
@@ -420,87 +428,92 @@ export default {
   },
 
   triggers: {
-    [TRIGGERS.create]: {
+    [TRIGGERS_TYPES.create]: {
       text: 'Alarm creation',
     },
-    [TRIGGERS.statedec]: {
+    [TRIGGERS_TYPES.statedec]: {
       text: 'Alarm state decrease',
     },
-    [TRIGGERS.changestate]: {
+    [TRIGGERS_TYPES.changestate]: {
       text: 'Alarm state has been changed by "change state" action',
     },
-    [TRIGGERS.stateinc]: {
+    [TRIGGERS_TYPES.stateinc]: {
       text: 'Alarm state increase',
     },
-    [TRIGGERS.changestatus]: {
+    [TRIGGERS_TYPES.changestatus]: {
       text: 'Alarm status changes eg. flapping',
     },
-    [TRIGGERS.ack]: {
+    [TRIGGERS_TYPES.ack]: {
       text: 'Alarm has been acked',
     },
-    [TRIGGERS.ackremove]: {
+    [TRIGGERS_TYPES.ackremove]: {
       text: 'Alarm has been unacked',
     },
-    [TRIGGERS.cancel]: {
+    [TRIGGERS_TYPES.cancel]: {
       text: 'Alarm has been cancelled',
     },
-    [TRIGGERS.uncancel]: {
+    [TRIGGERS_TYPES.uncancel]: {
       text: 'Alarm has been uncancelled',
       helpText: 'Probably legacy trigger, because there is no way to uncancel alarm when you cancel it in the UI, but it\'s possible to send an uncancel event via API',
     },
-    [TRIGGERS.comment]: {
+    [TRIGGERS_TYPES.comment]: {
       text: 'Alarm has been commented',
     },
-    [TRIGGERS.declareticket]: {
+    [TRIGGERS_TYPES.declareticket]: {
       text: 'Ticket has been declared by the UI action',
     },
-    [TRIGGERS.declareticketwebhook]: {
+    [TRIGGERS_TYPES.declareticketwebhook]: {
       text: 'Ticket has been declared by the webhook',
     },
-    [TRIGGERS.assocticket]: {
+    [TRIGGERS_TYPES.assocticket]: {
       text: 'Ticket has been associated with an alarm',
     },
-    [TRIGGERS.snooze]: {
+    [TRIGGERS_TYPES.snooze]: {
       text: 'Alarm has been snoozed',
     },
-    [TRIGGERS.unsnooze]: {
+    [TRIGGERS_TYPES.unsnooze]: {
       text: 'Alarm has been unsnoozed',
     },
-    [TRIGGERS.resolve]: {
+    [TRIGGERS_TYPES.resolve]: {
       text: 'Alarm has been resolved',
     },
-    [TRIGGERS.activate]: {
+    [TRIGGERS_TYPES.activate]: {
       text: 'Alarm has been activated',
     },
-    [TRIGGERS.pbhenter]: {
+    [TRIGGERS_TYPES.pbhenter]: {
       text: 'Alarm enters a periodic behavior',
     },
-    [TRIGGERS.pbhleave]: {
+    [TRIGGERS_TYPES.pbhleave]: {
       text: 'Alarm leaves a periodic behavior',
     },
-    [TRIGGERS.instructionfail]: {
+    [TRIGGERS_TYPES.instructionfail]: {
       text: 'Manual instruction has failed',
     },
-    [TRIGGERS.autoinstructionfail]: {
+    [TRIGGERS_TYPES.autoinstructionfail]: {
       text: 'Auto instruction has failed',
     },
-    [TRIGGERS.instructionjobfail]: {
+    [TRIGGERS_TYPES.instructionjobfail]: {
       text: 'Manual or auto instruction\'s job is failed',
     },
-    [TRIGGERS.instructionjobcomplete]: {
+    [TRIGGERS_TYPES.instructionjobcomplete]: {
       text: 'Manual or auto instruction\'s job is completed',
     },
-    [TRIGGERS.instructioncomplete]: {
+    [TRIGGERS_TYPES.instructioncomplete]: {
       text: 'Manual instruction is completed',
     },
-    [TRIGGERS.autoinstructioncomplete]: {
+    [TRIGGERS_TYPES.autoinstructioncomplete]: {
       text: 'Auto instruction is completed',
     },
-    [TRIGGERS.autoinstructionresultok]: {
+    [TRIGGERS_TYPES.autoinstructionresultok]: {
       text: 'Alarm is in OK state after all auto instructions',
     },
-    [TRIGGERS.autoinstructionresultfail]: {
+    [TRIGGERS_TYPES.autoinstructionresultfail]: {
       text: 'Alarm is in not OK state after all auto instructions',
+    },
+    [TRIGGERS_TYPES.eventscount]: {
+      text: 'Alarm has been received a number of events',
+      selectedText: 'Alarm has been received {additionalValue} events',
+      additionalFieldLabel: 'Number of events',
     },
   },
   request: {
