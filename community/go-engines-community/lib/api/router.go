@@ -319,6 +319,16 @@ func RegisterRoutes(
 				middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
 				alarmActionAPI.ChangeState,
 			)
+			alarmRouter.PUT(
+				"/:id/bookmark",
+				middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+				alarmActionAPI.AddBookmark,
+			)
+			alarmRouter.DELETE(
+				"/:id/bookmark",
+				middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+				alarmActionAPI.RemoveBookmark,
+			)
 		}
 		protected.POST(
 			"/alarm-details",

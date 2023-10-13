@@ -46,7 +46,7 @@ type Store interface {
 	Find(ctx context.Context, r ListRequestWithPagination, userId string) (*AggregationResult, error)
 	GetAssignedInstructionsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedInstruction, error)
 	GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []string, assignedInstructionsMap map[string][]AssignedInstruction) (map[string]ExecutionStatus, error)
-	Count(ctx context.Context, r FilterRequest) (*Count, error)
+	Count(ctx context.Context, r FilterRequest, userID string) (*Count, error)
 	GetByID(ctx context.Context, id, userId string, onlyParents bool) (*Alarm, error)
 	GetOpenByEntityID(ctx context.Context, id, userId string) (*Alarm, bool, error)
 	FindByService(ctx context.Context, id string, r ListByServiceRequest, userId string) (*AggregationResult, error)
@@ -117,7 +117,7 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination, userId st
 	}
 
 	now := types.NewCpsTime()
-	pipeline, err := s.getQueryBuilder().CreateListAggregationPipeline(ctx, r, now)
+	pipeline, err := s.getQueryBuilder().CreateListAggregationPipeline(ctx, r, now, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -140,7 +140,7 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination, userId st
 }
 
 func (s *store) GetByID(ctx context.Context, id, userId string, onlyParents bool) (*Alarm, error) {
-	pipeline, err := s.getQueryBuilder().CreateGetAggregationPipeline(bson.M{"_id": id}, types.NewCpsTime(), onlyParents)
+	pipeline, err := s.getQueryBuilder().CreateGetAggregationPipeline(bson.M{"_id": id}, types.NewCpsTime(), userId, onlyParents)
 	if err != nil {
 		return nil, err
 	}
@@ -196,7 +196,7 @@ func (s *store) GetOpenByEntityID(ctx context.Context, entityID, userId string) 
 	pipeline, err := s.getQueryBuilder().CreateGetAggregationPipeline(bson.M{
 		"d":          entityID,
 		"v.resolved": nil,
-	}, types.NewCpsTime(), false)
+	}, types.NewCpsTime(), userId, false)
 	if err != nil {
 		return nil, false, err
 	}
@@ -252,7 +252,7 @@ func (s *store) FindByService(ctx context.Context, id string, r ListByServiceReq
 		r.Query, r.SortRequest, FilterRequest{BaseFilterRequest: BaseFilterRequest{
 			Category: r.Category,
 			Search:   r.Search,
-		}}, now)
+		}}, now, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -293,7 +293,7 @@ func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest, u
 		ctx,
 		bson.M{"v.resolved": nil},
 		bson.M{"entity.component": component.ID},
-		r.Query, r.SortRequest, FilterRequest{}, now)
+		r.Query, r.SortRequest, FilterRequest{}, now, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -335,7 +335,7 @@ func (s *store) FindResolved(ctx context.Context, r ResolvedListRequest, userId 
 		StartFrom: r.StartFrom,
 		StartTo:   r.StartTo,
 		Opened:    &opened,
-	}}, now)
+	}}, now, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -474,7 +474,7 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userId string)
 
 		if details.IsMetaAlarm {
 			childrenPipeline, err := s.getQueryBuilder().CreateChildrenAggregationPipeline(*r.Children,
-				r.GetOpenedFilter(), details.Entity.ID, r.Search, r.SearchBy, now)
+				r.GetOpenedFilter(), details.Entity.ID, r.Search, userId, r.SearchBy, now)
 			if err != nil {
 				return nil, err
 			}
@@ -515,13 +515,13 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userId string)
 	return &details, nil
 }
 
-func (s *store) Count(ctx context.Context, r FilterRequest) (*Count, error) {
+func (s *store) Count(ctx context.Context, r FilterRequest, userID string) (*Count, error) {
 	collection := s.mainDbCollection
 	if r.GetOpenedFilter() == OnlyResolved {
 		collection = s.resolvedDbCollection
 	}
 
-	pipeline, err := s.getQueryBuilder().CreateCountAggregationPipeline(ctx, r, types.NewCpsTime())
+	pipeline, err := s.getQueryBuilder().CreateCountAggregationPipeline(ctx, r, userID, types.NewCpsTime())
 	if err != nil {
 		return nil, err
 	}
@@ -634,7 +634,7 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 			BaseFilterRequest: r.BaseFilterRequest,
 			SearchBy:          t.Fields.Fields(),
 		},
-	}, now)
+	}, now, t.User)
 	if err != nil {
 		return nil, err
 	}
