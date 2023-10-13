@@ -6,15 +6,15 @@ A simple schema which only displays direct interactions with all databases, RMQ,
 
 ```mermaid
 flowchart
-    ESE[engine-service]
+    EAC[engine-action]
     MDB[(MongoDB)]
     RMQ[(RabbitMQ)]
     TDB[(TimescaleDB)]
     R[(Redis)]
-    ESE ---|fetch scenarios| MDB
-    ESE ---|store scenario executions| R
-    ESE ---|receive/send events| RMQ
-    ESE ---|store metrics| TDB
+    EAC ---|fetch scenarios| MDB
+    EAC ---|store scenario executions| R
+    EAC ---|receive/send events| RMQ
+    EAC ---|store metrics| TDB
 ```
 
 ## Detailed schemas
@@ -37,9 +37,9 @@ flowchart
     ECH -- 3 . Event --> EAX
     EAX -- 4 . Event --> OE
     OE -- 5 . Event --> EAC
-    EAC -. 6 . Store scenario executions .-> R
-    EAC -. 7 . Update alarm .-> EAX
-    EAX -. 8 . Result alarm .-> EAC
+    EAC -.->|6 . Store scenario executions| R
+    EAC -.->|7 . Update alarm| EAX
+    EAX -.->|8 . Result alarm| EAC
 ```
 
 ### Run a scenario with pbehavior creation.
@@ -59,11 +59,11 @@ flowchart
     ECH -- 3 . Event --> EAX
     EAX -- 4 . Event --> OE
     OE -- 5 . Event --> EAC
-    EAC -. 6 . Store scenario executions .-> R
-    EAC -. 7 . Update alarm .-> EAX
-    EAX -. 8 . Create pbehavior .-> EPH
-    EPH -. 9 . Get pbehavior interval for alarm .-> EAX
-    EAX -. 10 . Result alarm .-> EAC
+    EAC -.->|6 . Store scenario executions| R
+    EAC -.->|7 . Update alarm| EAX
+    EAX -.->|8 . Create pbehavior| EPH
+    EPH -.->|9 . Get pbehavior interval for alarm| EAX
+    EAX -.->|10 . Result alarm| EAC
 ```
 
 ### Run a scenario if a service exists.
@@ -75,7 +75,6 @@ flowchart
     EF[engine-fifo]
     ECH[engine-che]
     EAX[engine-axe]
-    ESE[engine-service]
     OE[other engines]
     R[(Redis)]
     C -- 1 . Event --> EF
@@ -83,10 +82,9 @@ flowchart
     ECH -- 3 . Event --> EAX
     EAX -- 4 . Event --> OE
     OE -- 5 . Event --> EAC
-    EAC -. 6 . Store scenario executions .-> R
-    EAC -. 7 . Update alarm .-> EAX
-    EAX -. 9 . Update services .-> ESE
-    EAX -. 9 . Result alarm .-> EAC
+    EAC -.->|6 . Store scenario executions| R
+    EAC -.->|7 . Update alarm and services| EAX
+    EAX -.->|8 . Result alarm| EAC
 ```
 
 ### Run a scenario with a webhook.
