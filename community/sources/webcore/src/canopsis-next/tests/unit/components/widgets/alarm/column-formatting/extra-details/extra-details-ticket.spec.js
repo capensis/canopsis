@@ -45,28 +45,4 @@ describe('extra-details-ticket', () => {
 
     expect(document.body.innerHTML).toMatchSnapshot();
   });
-
-  it('Renders `extra-details-ticket` without value', async () => {
-    snapshotFactory({
-      propsData: {
-        tickets,
-      },
-    });
-
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
-  });
-
-  it('Renders `extra-details-ticket` with date in previous month', async () => {
-    snapshotFactory({
-      propsData: {
-        tickets,
-      },
-    });
-
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
-  });
 });
