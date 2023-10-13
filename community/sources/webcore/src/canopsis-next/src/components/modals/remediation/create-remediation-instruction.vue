@@ -91,7 +91,7 @@ export default {
 
           this.$modals.hide();
         } catch (err) {
-          this.setFormErrors(remediationInstructionErrorsToForm(err));
+          this.setFormErrors(remediationInstructionErrorsToForm(err, this.form));
         }
       }
     },
