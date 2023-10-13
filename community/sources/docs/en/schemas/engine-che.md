@@ -32,7 +32,7 @@ flowchart
     MDB[(MongoDB)]
     C -- 1 . Event --> EF
     EF -- 2 . Event --> ECH
-    ECH -. 3 . Store entity .-> MDB
+    ECH -.->|3 . Store entity| MDB
     ECH -- 4 . Event --> EN
 ```
 
@@ -48,7 +48,7 @@ flowchart
     DS[Data source Service now/etc.]
     C -- 1 . Event --> EF
     EF -- 2 . Event --> ECH
-    ECH -. 3 . Fetch external data .-> DS
-    ECH -. 4 . Store entity .-> MDB
+    ECH -.->|3 . Fetch external data| DS
+    ECH -.->|4 . Store entity| MDB
     ECH -- 5 . Enriched event --> EN
 ```
