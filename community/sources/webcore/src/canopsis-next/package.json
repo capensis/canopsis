@@ -10,8 +10,7 @@
     "e2e:consistently": "E2E_TESTS_MODE=consistently yarn e2e",
     "e2e:parallel": "E2E_TESTS_MODE=parallel yarn e2e",
     "lint:pug": "pug-lint-vue",
-    "unit": "vue-cli-service test:unit",
-    "postinstall": "git config --local core.hooksPath .git/hooks"
+    "unit": "vue-cli-service test:unit"
   },
   "dependencies": {
     "axios": "^0.18.0",
