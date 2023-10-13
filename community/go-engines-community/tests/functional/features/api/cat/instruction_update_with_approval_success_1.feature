@@ -80,7 +80,10 @@ Feature: instruction approval update
           "_id": "user-to-instruction-approve-1",
           "name": "user-to-instruction-approve-1"
         },
-        "requested_by": "manageruser"
+        "requested_by": {
+          "_id": "manageruser",
+          "name": "manageruser"
+        }
       },
       "original": {
         "_id": "test-instruction-to-update-with-approval-1",
@@ -206,7 +209,10 @@ Feature: instruction approval update
             "_id": "user-to-instruction-approve-1",
             "name": "user-to-instruction-approve-1"
           },
-          "requested_by": "manageruser"
+          "requested_by": {
+            "_id": "manageruser",
+            "name": "manageruser"
+          }
         }
       }
     }
@@ -241,7 +247,10 @@ Feature: instruction approval update
               "_id": "user-to-instruction-approve-1",
               "name": "user-to-instruction-approve-1"
             },
-            "requested_by": "manageruser"
+            "requested_by": {
+              "_id": "manageruser",
+              "name": "manageruser"
+            }
           }
         }
       ],
@@ -333,7 +342,10 @@ Feature: instruction approval update
           "_id": "role-to-instruction-approve-2",
           "name": "role-to-instruction-approve-2"
         },
-        "requested_by": "manageruser"
+        "requested_by": {
+          "_id": "manageruser",
+          "name": "manageruser"
+        }
       },
       "original": {
         "_id": "test-instruction-to-update-with-approval-2",
@@ -457,7 +469,10 @@ Feature: instruction approval update
             "_id": "role-to-instruction-approve-2",
             "name": "role-to-instruction-approve-2"
           },
-          "requested_by": "manageruser"
+          "requested_by": {
+            "_id": "manageruser",
+            "name": "manageruser"
+          }
         }
       }
     }
@@ -493,7 +508,10 @@ Feature: instruction approval update
               "_id": "role-to-instruction-approve-2",
               "name": "role-to-instruction-approve-2"
             },
-            "requested_by": "manageruser"
+            "requested_by": {
+              "_id": "manageruser",
+              "name": "manageruser"
+            }
           }
         }
       ],
@@ -598,7 +616,10 @@ Feature: instruction approval update
           "_id": "user-to-instruction-approve-1",
           "name": "user-to-instruction-approve-1"
         },
-        "requested_by": "manageruser"
+        "requested_by": {
+          "_id": "manageruser",
+          "name": "manageruser"
+        }
       }
     }
     """
@@ -721,7 +742,10 @@ Feature: instruction approval update
           "_id": "user-to-instruction-approve-1",
           "name": "user-to-instruction-approve-1"
         },
-        "requested_by": "manageruser"
+        "requested_by": {
+          "_id": "manageruser",
+          "name": "manageruser"
+        }
       },
       "original": {
         "_id": "test-instruction-to-update-with-approval-4",
@@ -802,7 +826,10 @@ Feature: instruction approval update
             "_id": "user-to-instruction-approve-1",
             "name": "user-to-instruction-approve-1"
           },
-          "requested_by": "manageruser"
+          "requested_by": {
+            "_id": "manageruser",
+            "name": "manageruser"
+          }
         }
       }
     }
@@ -905,7 +932,10 @@ Feature: instruction approval update
           "_id": "user-to-instruction-approve-1",
           "name": "user-to-instruction-approve-1"
         },
-        "requested_by": "manageruser"
+        "requested_by": {
+          "_id": "manageruser",
+          "name": "manageruser"
+        }
       },
       "original": {
         "_id": "test-instruction-to-update-with-approval-5",
@@ -989,7 +1019,10 @@ Feature: instruction approval update
             "_id": "user-to-instruction-approve-1",
             "name": "user-to-instruction-approve-1"
           },
-          "requested_by": "manageruser"
+          "requested_by": {
+            "_id": "manageruser",
+            "name": "manageruser"
+          }
         }
       }
     }
@@ -1080,7 +1113,10 @@ Feature: instruction approval update
           "_id": "user-to-instruction-approve-1",
           "name": "user-to-instruction-approve-1"
         },
-        "requested_by": "manageruser"
+        "requested_by": {
+          "_id": "manageruser",
+          "name": "manageruser"
+        }
       },
       "updated": {
         "approval": {
@@ -1089,7 +1125,10 @@ Feature: instruction approval update
             "_id": "user-to-instruction-approve-1",
             "name": "user-to-instruction-approve-1"
           },
-          "requested_by": "manageruser"
+          "requested_by": {
+            "_id": "manageruser",
+            "name": "manageruser"
+          }
         }
       }
     }
@@ -1137,7 +1176,10 @@ Feature: instruction approval update
           "_id": "user-to-instruction-approve-1",
           "name": "user-to-instruction-approve-1"
         },
-        "requested_by": "manageruser"
+        "requested_by": {
+          "_id": "manageruser",
+          "name": "manageruser"
+        }
       },
       "updated": {
         "approval": {
@@ -1146,7 +1188,10 @@ Feature: instruction approval update
             "_id": "user-to-instruction-approve-1",
             "name": "user-to-instruction-approve-1"
           },
-          "requested_by": "manageruser"
+          "requested_by": {
+            "_id": "manageruser",
+            "name": "manageruser"
+          }
         }
       }
     }
@@ -1240,7 +1285,10 @@ Feature: instruction approval update
           "_id": "role-to-instruction-approve-2",
           "name": "role-to-instruction-approve-2"
         },
-        "requested_by": "manageruser"
+        "requested_by": {
+          "_id": "manageruser",
+          "name": "manageruser"
+        }
       },
       "updated": {
         "approval": {
@@ -1249,7 +1297,10 @@ Feature: instruction approval update
             "_id": "role-to-instruction-approve-2",
             "name": "role-to-instruction-approve-2"
           },
-          "requested_by": "manageruser"
+          "requested_by": {
+            "_id": "manageruser",
+            "name": "manageruser"
+          }
         }
       }
     }
