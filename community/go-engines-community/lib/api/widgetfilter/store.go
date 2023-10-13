@@ -228,7 +228,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
-		position, err := s.getNextPosition(ctx, r.Widget, *r.WidgetPrivate, r.Author)
+		position, err := s.getNextPosition(ctx, r.Widget, *r.IsUserPreference, r.Author)
 		if err != nil {
 			return err
 		}
@@ -440,7 +440,7 @@ func (s *store) getNextPosition(ctx context.Context, widget string, isPrivate bo
 func transformEditRequestToModel(request EditRequest) view.WidgetFilter {
 	return view.WidgetFilter{
 		Title:         request.Title,
-		WidgetPrivate: *request.WidgetPrivate,
+		WidgetPrivate: *request.IsUserPreference,
 		Author:        request.Author,
 
 		AlarmPatternFields:     request.AlarmPatternFieldsRequest.ToModel(),

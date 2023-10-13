@@ -315,7 +315,7 @@ Feature: Update a widget filter
     """json
     {
       "errors": {
-        "is_user_preference": "WidgetPrivate cannot be changed"
+        "is_user_preference": "IsUserPreference cannot be changed"
       }
     }
     """
@@ -357,7 +357,7 @@ Feature: Update a widget filter
     {
       "errors": {
         "title": "Title is missing.",
-        "is_user_preference": "WidgetPrivate is missing.",
+        "is_user_preference": "IsUserPreference is missing.",
         "alarm_pattern": "AlarmPattern is missing.",
         "corporate_alarm_pattern": "CorporateAlarmPattern is missing.",
         "entity_pattern": "EntityPattern is missing.",
@@ -496,6 +496,142 @@ Feature: Update a widget filter
             "cond": {
               "type": "eq",
               "value": "test-private-widgetfilter-to-update-1-pattern"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 403
+
+  @concurrent
+  Scenario: given update owned filter request with api_private_view_groups but without api_view permissions should return ok
+    When I am test-role-to-private-views-without-view-perm
+    When I do PUT /api/v4/widget-filters/test-private-widgetfilter-to-update-3:
+    """json
+    {
+      "title": "test-private-widgetfilter-to-update-3-title",
+      "is_user_preference": false,
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-private-widgetfilter-to-update-3-pattern"
+            }
+          }
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-private-widgetfilter-to-update-3-pattern"
+            }
+          }
+        ]
+      ],
+      "pbehavior_pattern": [
+        [
+          {
+            "field": "pbehavior_info.type",
+            "cond": {
+              "type": "eq",
+              "value": "test-private-widgetfilter-to-update-3-pattern"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": {
+        "_id": "test-user-to-private-views-without-view-perm",
+        "name": "test-user-to-private-views-without-view-perm"
+      },
+      "title": "test-private-widgetfilter-to-update-3-title",
+      "is_user_preference": false,
+      "is_private": true,
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-private-widgetfilter-to-update-3-pattern"
+            }
+          }
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-private-widgetfilter-to-update-3-pattern"
+            }
+          }
+        ]
+      ],
+      "pbehavior_pattern": [
+        [
+          {
+            "field": "pbehavior_info.type",
+            "cond": {
+              "type": "eq",
+              "value": "test-private-widgetfilter-to-update-3-pattern"
+            }
+          }
+        ]
+      ]
+    }
+    """
+
+  @concurrent
+  Scenario: given update public filter request with api_private_view_groups
+    but without api_view permissions should not allow access
+    When I am test-role-to-private-views-without-view-perm
+    When I do PUT /api/v4/widget-filters/test-widgetfilter-to-update-1:
+    """json
+    {
+      "title": "test-widgetfilter-to-update-1-title",
+      "is_user_preference": false,
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-widgetfilter-to-update-1-pattern"
+            }
+          }
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-widgetfilter-to-update-1-pattern"
+            }
+          }
+        ]
+      ],
+      "pbehavior_pattern": [
+        [
+          {
+            "field": "pbehavior_info.type",
+            "cond": {
+              "type": "eq",
+              "value": "test-widgetfilter-to-update-1-pattern"
             }
           }
         ]

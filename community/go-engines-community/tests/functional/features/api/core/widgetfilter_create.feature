@@ -560,7 +560,7 @@ Feature: Create a widget filter
       "errors": {
         "title": "Title is missing.",
         "widget": "Widget is missing.",
-        "is_user_preference": "WidgetPrivate is missing.",
+        "is_user_preference": "IsUserPreference is missing.",
         "alarm_pattern": "AlarmPattern is missing.",
         "corporate_alarm_pattern": "CorporateAlarmPattern is missing.",
         "entity_pattern": "EntityPattern is missing.",
@@ -994,3 +994,189 @@ Feature: Create a widget filter
       ]
     }
     """
+
+  @concurrent
+  Scenario: given create public widgetfilter to owned private widget request
+    with api_private_view_groups but without api_view permissions should create private widgetfilter
+    When I am test-role-to-private-views-without-view-perm
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-private-widgetfilter-to-create-3-title",
+      "widget": "test-private-widget-to-private-filter-create-3",
+      "is_user_preference": false,
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-private-widgetfilter-to-create-3-pattern"
+            }
+          }
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-private-widgetfilter-to-create-3-pattern"
+            }
+          }
+        ]
+      ],
+      "pbehavior_pattern": [
+        [
+          {
+            "field": "pbehavior_info.type",
+            "cond": {
+              "type": "eq",
+              "value": "test-private-widgetfilter-to-create-3-pattern"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    Then the response body should contain:
+    """json
+    {
+      "author": {
+        "_id": "test-user-to-private-views-without-view-perm",
+        "name": "test-user-to-private-views-without-view-perm"
+      },
+      "title": "test-private-widgetfilter-to-create-3-title",
+      "is_user_preference": false,
+      "is_private": true,
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-private-widgetfilter-to-create-3-pattern"
+            }
+          }
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-private-widgetfilter-to-create-3-pattern"
+            }
+          }
+        ]
+      ],
+      "pbehavior_pattern": [
+        [
+          {
+            "field": "pbehavior_info.type",
+            "cond": {
+              "type": "eq",
+              "value": "test-private-widgetfilter-to-create-3-pattern"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    When I do GET /api/v4/widget-filters/{{ .lastResponse._id }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": {
+        "_id": "test-user-to-private-views-without-view-perm",
+        "name": "test-user-to-private-views-without-view-perm"
+      },
+      "title": "test-private-widgetfilter-to-create-3-title",
+      "is_user_preference": false,
+      "is_private": true,
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-private-widgetfilter-to-create-3-pattern"
+            }
+          }
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-private-widgetfilter-to-create-3-pattern"
+            }
+          }
+        ]
+      ],
+      "pbehavior_pattern": [
+        [
+          {
+            "field": "pbehavior_info.type",
+            "cond": {
+              "type": "eq",
+              "value": "test-private-widgetfilter-to-create-3-pattern"
+            }
+          }
+        ]
+      ]
+    }
+    """
+
+  @concurrent
+  Scenario: given create public widgetfilter to public widget request
+    with api_private_view_groups but without api_view permissions should not allow access
+    When I am test-role-to-private-views-without-view-perm
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-private-widgetfilter-to-create-3-title",
+      "widget": "test-widget-to-filter-edit",
+      "is_user_preference": false,
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-private-widgetfilter-to-create-3-pattern"
+            }
+          }
+        ]
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-private-widgetfilter-to-create-3-pattern"
+            }
+          }
+        ]
+      ],
+      "pbehavior_pattern": [
+        [
+          {
+            "field": "pbehavior_info.type",
+            "cond": {
+              "type": "eq",
+              "value": "test-private-widgetfilter-to-create-3-pattern"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 403

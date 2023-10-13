@@ -74,11 +74,16 @@ viewtabs:
     _id: test-tab-to-update-1
     view: test-view-to-tab-edit
 
-  tab_to_delete:
+  tab_to_delete_1:
     <<: *tab
-    _id: test-tab-to-delete
+    _id: test-tab-to-delete-1
     view: test-view-to-tab-edit
-  
+
+  tab_to_delete_2:
+    <<: *tab
+    _id: test-tab-to-delete-2
+    view: test-view-to-tab-edit
+
   tab_to_playlist_edit_2:
     <<: *tab
     _id: test-tab-to-playlist-edit-2
@@ -306,6 +311,12 @@ viewtabs:
     view: private-view-to-tab-get-2
     author: private-view-to-tab-get-2-author
 
+  private_tab_to_get_3:
+    <<: *private_tab
+    _id: test-private-tab-to-get-3
+    view: private-view-to-tab-get-3
+    author: test-user-to-private-views-without-view-perm
+
   private_tab_to_update_1:
     <<: *private_tab
     _id: test-private-tab-to-update-1
@@ -317,6 +328,12 @@ viewtabs:
     _id: test-private-tab-to-update-2
     view: private-view-to-tab-update-2
     author: private-view-to-tab-update-2-author
+
+  private_tab_to_update_3:
+    <<: *private_tab
+    _id: test-private-tab-to-update-3
+    view: private-view-to-tab-update-3
+    author: test-user-to-private-views-without-view-perm
 
   private_tab_to_delete_1:
     <<: *private_tab
@@ -330,6 +347,12 @@ viewtabs:
     view: private-view-to-tab-delete-2
     author: private-view-to-tab-delete-2-author
 
+  private_tab_to_delete_3:
+    <<: *private_tab
+    _id: test-private-tab-to-delete-3
+    view: private-view-to-tab-delete-3
+    author: test-user-to-private-views-without-view-perm
+
   private_tab_to_copy_1:
     <<: *private_tab
     _id: test-private-tab-to-copy-1
@@ -341,6 +364,12 @@ viewtabs:
     _id: test-private-tab-to-copy-2
     view: private-view-to-tab-copy-2
     author: private-view-to-tab-copy-2-author
+    
+  private_tab_to_copy_5:
+    <<: *private_tab
+    _id: test-private-tab-to-copy-5
+    view: private-view-to-tab-copy-5
+    author: test-user-to-private-views-without-view-perm
 
   private_tab_to_view_copy_1:
     <<: *private_tab
@@ -360,6 +389,12 @@ viewtabs:
     _id: test-private-tab-to-private-widget-create-2
     view: test-private-view-to-private-widget-create-2
     author: test-private-view-to-private-widget-create-2-author
+
+  private_tab_to_private_widget_create_3:
+    <<: *private_tab
+    _id: test-private-tab-to-private-widget-create-3
+    view: test-private-view-to-private-widget-create-3
+    author: test-user-to-private-views-without-view-perm
 
   private_tab_to_private_view_delete:
     <<: *private_tab
@@ -396,6 +431,12 @@ viewtabs:
     _id: test-private-tab-to-private-widget-copy-3
     view: test-private-view-to-private-widget-copy-3
     author: root
+    
+  private_tab_to_private_widget_copy_4:
+    <<: *private_tab
+    _id: test-private-tab-to-private-widget-copy-4
+    view: test-private-view-to-private-widget-copy-4
+    author: test-user-to-private-views-without-view-perm
 
   private_tab_to_private_filter_create-1:
     <<: *private_tab
@@ -409,6 +450,12 @@ viewtabs:
     view: test-private-view-to-private-filter-create-2
     author: test-private-view-to-private-filter-create-2-author
 
+  private_tab_to_private_filter_create-3:
+    <<: *private_tab
+    _id: test-private-tab-to-private-filter-create-3
+    view: test-private-view-to-private-filter-create-3
+    author: test-user-to-private-views-without-view-perm
+
   private_tab_to_private_filter_delete-1:
     <<: *private_tab
     _id: test-private-tab-to-private-filter-delete-1
@@ -421,6 +468,12 @@ viewtabs:
     view: test-private-view-to-private-filter-delete-2
     author: test-private-view-to-private-filter-delete-2-author
 
+  private_tab_to_private_filter_delete-3:
+    <<: *private_tab
+    _id: test-private-tab-to-private-filter-delete-3
+    view: test-private-view-to-private-filter-delete-3
+    author: test-user-to-private-views-without-view-perm
+
   private_tab_to_private_filter_update-1:
     <<: *private_tab
     _id: test-private-tab-to-private-filter-update-1
@@ -432,6 +485,12 @@ viewtabs:
     _id: test-private-tab-to-private-filter-update-2
     view: test-private-view-to-private-filter-update-2
     author: test-private-view-to-private-filter-update-2-author
+    
+  private_tab_to_private_filter_update-3:
+    <<: *private_tab
+    _id: test-private-tab-to-private-filter-update-3
+    view: test-private-view-to-private-filter-update-3
+    author: test-user-to-private-views-without-view-perm
 
   private_tab_to_private_filter_get-1:
     <<: *private_tab
@@ -445,6 +504,18 @@ viewtabs:
     view: test-private-view-to-private-filter-get-2
     author: test-private-view-to-private-filter-get-2-author
 
+  private_tab_to_private_filter_get-3:
+    <<: *private_tab
+    _id: test-private-tab-to-private-filter-get-3
+    view: test-private-view-to-private-filter-get-3
+    author: test-user-to-private-views-without-view-perm
+
+  private_tab_to_private_filter_get-4:
+    <<: *private_tab
+    _id: test-private-tab-to-private-filter-get-4
+    view: test-private-view-to-private-filter-get-4
+    author: test-user-to-private-views-without-view-perm
+
   private_tab_to_playlist_edit_1:
     <<: *private_tab
     _id: test-private-tab-to-playlist-edit-1
@@ -456,9 +527,21 @@ viewtabs:
     _id: test-private-tab-to-private-widget-update-grid-position-1
     view: test-private-view-to-private-widget-update-grid-position-1
     author: root
-
-  private_tab_to_private_filter_update_position:
+    
+  private_tab_to_private_widget_update_grid_position_2:
     <<: *private_tab
-    _id: test-private-tab-to-private-filter-update-position
-    view: test-private-view-to-private-filter-update-position
+    _id: test-private-tab-to-private-widget-update-grid-position-2
+    view: test-private-view-to-private-widget-update-grid-position-2
+    author: test-user-to-private-views-without-view-perm
+
+  private_tab_to_private_filter_update_position_1:
+    <<: *private_tab
+    _id: test-private-tab-to-private-filter-update-position-1
+    view: test-private-view-to-private-filter-update-position-1
     author: root
+
+  private_tab_to_private_filter_update_position_2:
+    <<: *private_tab
+    _id: test-private-tab-to-private-filter-update-position-2
+    view: test-private-view-to-private-filter-update-position-2
+    author: test-user-to-private-views-without-view-perm

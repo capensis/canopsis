@@ -1022,6 +1022,15 @@ role:
     permissions:
       "@permission_api_healthcheck": 1
 
+  role_to_private_views_without_view_perm:
+    <<: *role
+    _id: test-role-to-private-views-without-view-perm
+    name: <Current()._id>
+    defaultview: test-view-to-edit-user
+    description: test-role-to-private-views-without-view-perm-description
+    permissions:
+      "@permission_api_private_view_groups": 1
+
 user:
   user_admin:
     <<: *user
@@ -1482,6 +1491,13 @@ user:
     name: <Current()._id>
     roles:
       - "@role_to_private_view_delete"
+
+  user_to_private_views_without_view_perm:
+    <<: *user
+    _id: test-user-to-private-views-without-view-perm
+    name: <Current()._id>
+    roles:
+      - "@role_to_private_views_without_view_perm"
 
 role_template:
   tpl_pilot:

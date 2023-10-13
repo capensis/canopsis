@@ -92,6 +92,10 @@ views:
     <<: *view
     _id: test-view-to-delete-1
 
+  view_to_delete_2:
+    <<: *view
+    _id: test-view-to-delete-2
+
   view_to_check_access:
     <<: *view
     _id: test-view-to-check-access
@@ -388,6 +392,14 @@ views:
     group_id: test-private-viewgroup-to-get-view-3
     title: test-private-view-to-get-3-title
     author: nopermsuser
+    
+  private_view_to_get_4:
+    <<: *private_view
+    _id: test-private-view-to-get-4
+    description: test-private-view-to-get-4-description
+    group_id: test-private-viewgroup-to-get-view-4
+    title: test-private-view-to-get-4-title
+    author: test-user-to-private-views-without-view-perm
 
   private_view_to_update_1:
     <<: *private_view
@@ -419,6 +431,12 @@ views:
     author: root
     group: test-private-viewgroup-to-update-view-5
 
+  private_view_to_update_6:
+    <<: *private_view
+    _id: test-private-view-to-update-6
+    author: test-user-to-private-views-without-view-perm
+    group: test-private-viewgroup-to-update-view-6
+
   private_view_to_delete_1:
     <<: *private_view
     _id: test-private-view-to-delete-1
@@ -428,6 +446,11 @@ views:
     <<: *private_view
     _id: test-private-view-to-delete-2
     author: test-private-view-to-delete-2-author
+    
+  private_view_to_delete_3:
+    <<: *private_view
+    _id: test-private-view-to-delete-3
+    author: test-user-to-private-views-without-view-perm
 
   private_view_to_delete_linked_viewgroup:
     <<: *private_view
@@ -440,6 +463,13 @@ views:
     is_private: true
     author: root
     group_id: test-private-viewgroup-to-copy-1
+
+  private_view_to_copy_5:
+    <<: *private_view
+    _id: test-private-view-to-copy-5
+    is_private: true
+    author: test-user-to-private-views-without-view-perm
+    group_id: test-private-viewgroup-to-copy-5
 
   private_view_to_export_1:
     <<: *private_view
@@ -457,6 +487,11 @@ views:
     <<: *private_view
     _id: test-private-view-to-tab-create-2
     author: test-private-view-to-tab-create-2-root
+
+  private_view_to_tab_create_3:
+    <<: *private_view
+    _id: test-private-view-to-tab-create-3
+    author: test-user-to-private-views-without-view-perm
 
   private_view_to_tab_get_1:
     <<: *private_view
@@ -507,6 +542,11 @@ views:
     <<: *private_view
     _id: private-view-to-tab-copy-4
     author: root
+    
+  private_view_to_tab_copy_5:
+    <<: *private_view
+    _id: private-view-to-tab-copy-5
+    author: test-user-to-private-views-without-view-perm
 
   private_view_to_private_widget_copy_1:
     <<: *private_view
@@ -522,6 +562,11 @@ views:
     <<: *private_view
     _id: test-private-view-to-private-widget-copy-3
     author: root
+    
+  private_view_to_private_widget_copy_4:
+    <<: *private_view
+    _id: test-private-view-to-private-widget-copy-4
+    author: test-user-to-private-views-without-view-perm
 
   private_view_to_private_filter_create_1:
     <<: *private_view
@@ -532,6 +577,11 @@ views:
     <<: *private_view
     _id: test-private-view-to-private-filter-create-2
     author: test-private-view-to-private-filter-create-2-author
+    
+  private_view_to_private_filter_create_3:
+    <<: *private_view
+    _id: test-private-view-to-private-filter-create-3
+    author: test-user-to-private-views-without-view-perm
 
   private_view_to_private_filter_update_1:
     <<: *private_view
@@ -542,6 +592,26 @@ views:
     <<: *private_view
     _id: test-private-view-to-private-filter-update-2
     author: test-private-view-to-private-filter-update-2-author
+
+  private_view_to_private_filter_update_3:
+    <<: *private_view
+    _id: test-private-view-to-private-filter-update-3
+    author: test-user-to-private-views-without-view-perm
+
+  private_view_to_private_filter_delete_1:
+    <<: *private_view
+    _id: test-private-view-to-private-filter-delete-1
+    author: root
+
+  private_view_to_private_filter_delete_2:
+    <<: *private_view
+    _id: test-private-view-to-private-filter-delete-2
+    author: test-private-view-to-private-filter-delete-2-author
+
+  private_view_to_private_filter_delete_3:
+    <<: *private_view
+    _id: test-private-view-to-private-filter-delete-3
+    author: test-user-to-private-views-without-view-perm
     
   private_view_to_private_filter_get_1:
     <<: *private_view
@@ -553,6 +623,11 @@ views:
     _id: test-private-view-to-private-filter-get-2
     author: test-private-view-to-private-filter-get-2-author    
 
+  private_view_to_private_filter_get_4:
+    <<: *private_view
+    _id: test-private-view-to-private-filter-get-4
+    author: test-user-to-private-views-without-view-perm
+  
   private_view_to_playlist_edit_1:
     <<: *private_view
     _id: test-private-view-to-playlist-edit-1
@@ -563,12 +638,27 @@ views:
     _id: test-private-view-to-private-tab-update-position-1
     author: root
 
+  private_view_to_private_tab_update_position_2:
+    <<: *private_view
+    _id: test-private-view-to-private-tab-update-position-2
+    author: test-user-to-private-views-without-view-perm
+
   private_view_to_private_widget_update_grid_position_1:
     <<: *private_view
     _id: test-private-view-to-private-widget-update-grid-position-1
     author: root
 
-  private_view_to_private_filter_update_position:
+  private_view_to_private_widget_update_grid_position_2:
     <<: *private_view
-    _id: test-private-view-to-private-filter-update-position
+    _id: test-private-view-to-private-widget-update-grid-position-2
+    author: test-user-to-private-views-without-view-perm
+
+  private_view_to_private_filter_update_position_1:
+    <<: *private_view
+    _id: test-private-view-to-private-filter-update-position-1
     author: root
+
+  private_view_to_private_filter_update_position_2:
+    <<: *private_view
+    _id: test-private-view-to-private-filter-update-position-2
+    author: test-user-to-private-views-without-view-perm

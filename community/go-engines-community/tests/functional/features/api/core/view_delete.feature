@@ -52,7 +52,7 @@ Feature: Delete a view
     Then the response code should be 404
 
   @concurrent
-  Scenario: given delete private view request with owned private group should return ok
+  Scenario: given delete owned private view request should return ok
     When I am admin
     When I do DELETE /api/v4/views/test-private-view-to-delete-1
     Then the response code should be 204
@@ -66,7 +66,23 @@ Feature: Delete a view
     Then the response code should be 404
 
   @concurrent
-  Scenario: given delete private view request with not owned private group should return error
+  Scenario: given delete not owned private view should return error
     When I am admin
     When I do DELETE /api/v4/views/test-private-view-to-delete-2
+    Then the response code should be 403
+
+  @concurrent
+  Scenario: given delete owned private view api_private_view_groups
+    but without api_view permissions should return filters should return ok
+    When I am test-role-to-private-views-without-view-perm
+    When I do DELETE /api/v4/views/test-private-view-to-delete-3
+    Then the response code should be 204
+    When I do GET /api/v4/views/test-private-view-to-delete-3
+    Then the response code should be 404
+
+  @concurrent
+  Scenario: given delete not owned private view with api_private_view_groups
+    but without api_view permissions should return filters should return error
+    When I am test-role-to-private-views-without-view-perm
+    When I do DELETE /api/v4/views/test-view-to-delete-2
     Then the response code should be 403

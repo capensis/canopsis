@@ -300,3 +300,105 @@ Feature: Update widget grid positions
       ]
     }
     """
+
+  @concurrent
+  Scenario: given update request for private widgets with api_private_view_groups
+    but without api_view permissions should return filters should update positions
+    When I am test-role-to-private-views-without-view-perm
+    When I do POST /api/v4/widgets:
+    """json
+    {
+      "title": "test-private-widget-to-update-grid-position-2-1-title",
+      "type": "test-private-widget-to-update-grid-position-2-1-type",
+      "tab": "test-private-tab-to-private-widget-update-grid-position-2",
+      "grid_parameters": {
+        "desktop": {"x": 0, "y": 0}
+      }
+    }
+    """
+    Then the response code should be 201
+    When I save response widget1={{ .lastResponse._id }}
+    When I do POST /api/v4/widgets:
+    """json
+    {
+      "title": "test-private-widget-to-update-grid-position-2-2-title",
+      "type": "test-private-widget-to-update-grid-position-2-2-type",
+      "tab": "test-private-tab-to-private-widget-update-grid-position-2",
+      "grid_parameters": {
+        "desktop": {"x": 1, "y": 0}
+      }
+    }
+    """
+    Then the response code should be 201
+    When I save response widget2={{ .lastResponse._id }}
+    When I do POST /api/v4/widgets:
+    """json
+    {
+      "title": "test-private-widget-to-update-grid-position-2-3-title",
+      "type": "test-private-widget-to-update-grid-position-2-3-type",
+      "tab": "test-private-tab-to-private-widget-update-grid-position-2",
+      "grid_parameters": {
+        "desktop": {"x": 0, "y": 1}
+      }
+    }
+    """
+    Then the response code should be 201
+    When I save response widget3={{ .lastResponse._id }}
+    # Test created positions
+    When I do GET /api/v4/views/test-private-view-to-private-widget-update-grid-position-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "tabs": [
+        {
+          "widgets": [
+            { "_id": "{{ .widget1 }}" },
+            { "_id": "{{ .widget2 }}" },
+            { "_id": "{{ .widget3 }}" }
+          ]
+        }
+      ]
+    }
+    """
+    # Test updated positions
+    When I do PUT /api/v4/widget-grid-positions:
+    """json
+    [
+      {
+        "_id": "{{ .widget3 }}",
+        "grid_parameters": {
+          "desktop": {"x": 0, "y": 0}
+        }
+      },
+      {
+        "_id": "{{ .widget1 }}",
+        "grid_parameters": {
+          "desktop": {"x": 0, "y": 1}
+        }
+      },
+      {
+        "_id": "{{ .widget2 }}",
+        "grid_parameters": {
+          "desktop": {"x": 1, "y": 1}
+        }
+      }
+    ]
+    """
+    Then the response code should be 204
+    When I do GET /api/v4/views/test-private-view-to-private-widget-update-grid-position-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "tabs": [
+        {
+          "widgets": [
+            { "_id": "{{ .widget3 }}" },
+            { "_id": "{{ .widget1 }}" },
+            { "_id": "{{ .widget2 }}" }
+          ]
+        }
+      ]
+    }
+    """

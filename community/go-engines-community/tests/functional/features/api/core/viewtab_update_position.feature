@@ -228,3 +228,70 @@ Feature: Update view tab positions
       ]
     }
     """
+
+  @concurrent
+  Scenario: given update request for private tabs with api_private_view_groups
+    but without api_view permissions should return filters should update positions
+    When I am test-role-to-private-views-without-view-perm
+    When I do POST /api/v4/view-tabs:
+    """json
+    {
+      "title": "test-private-tab-to-update-position-2-1-title",
+      "view": "test-private-view-to-private-tab-update-position-2"
+    }
+    """
+    Then the response code should be 201
+    When I save response tab1={{ .lastResponse._id }}
+    When I do POST /api/v4/view-tabs:
+    """json
+    {
+      "title": "test-private-tab-to-update-position-2-2-title",
+      "view": "test-private-view-to-private-tab-update-position-2"
+    }
+    """
+    Then the response code should be 201
+    When I save response tab2={{ .lastResponse._id }}
+    When I do POST /api/v4/view-tabs:
+    """json
+    {
+      "title": "test-private-tab-to-update-position-2-3-title",
+      "view": "test-private-view-to-private-tab-update-position-2"
+    }
+    """
+    Then the response code should be 201
+    When I save response tab3={{ .lastResponse._id }}
+    # Test created positions
+    When I do GET /api/v4/views/test-private-view-to-private-tab-update-position-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "tabs": [
+        { "_id": "{{ .tab1 }}" },
+        { "_id": "{{ .tab2 }}" },
+        { "_id": "{{ .tab3 }}" }
+      ]
+    }
+    """
+    # Test updated positions
+    When I do PUT /api/v4/view-tab-positions:
+    """json
+    [
+      "{{ .tab3 }}",
+      "{{ .tab1 }}",
+      "{{ .tab2 }}"
+    ]
+    """
+    Then the response code should be 204
+    When I do GET /api/v4/views/test-private-view-to-private-tab-update-position-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "tabs": [
+        { "_id": "{{ .tab3 }}" },
+        { "_id": "{{ .tab1 }}" },
+        { "_id": "{{ .tab2 }}" }
+      ]
+    }
+    """

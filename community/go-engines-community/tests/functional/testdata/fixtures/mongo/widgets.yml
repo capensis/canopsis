@@ -178,9 +178,14 @@ widgets:
     tab: test-tab-to-junit-test-suites-get
     type: Junit
 
-  widget_to_delete:
+  widget_to_delete_1:
     <<: *widget
-    _id: test-widget-to-delete
+    _id: test-widget-to-delete-1
+    tab: test-tab-to-widget-edit
+
+  widget_to_delete_2:
+    <<: *widget
+    _id: test-widget-to-delete-2
     tab: test-tab-to-widget-edit
 
   widget_to_get:
@@ -469,6 +474,12 @@ widgets:
     tab: test-private-tab-to-private-widget-update-2
     author: test-private-widget-to-update-2-author
 
+  private_widget_to_update_3:
+    <<: *private_widget
+    _id: test-private-widget-to-update-3
+    tab: test-private-tab-to-private-widget-update-3
+    author: test-user-to-private-views-without-view-perm
+
   private_widget_to_delete_1:
     <<: *private_widget
     _id: test-private-widget-to-delete-1
@@ -481,6 +492,12 @@ widgets:
     tab: test-private-tab-to-private-widget-delete-2
     author: test-private-widget-to-delete-2-author
 
+  private_widget_to_delete_3:
+    <<: *private_widget
+    _id: test-private-widget-to-delete-3
+    tab: test-private-tab-to-private-widget-delete-3
+    author: test-user-to-private-views-without-view-perm
+
   private_widget_to_get_1:
     <<: *private_widget
     _id: test-private-widget-to-get-1
@@ -490,6 +507,11 @@ widgets:
     <<: *private_widget
     _id: test-private-widget-to-get-2
     author: test-private-widget-to-get-2-author
+
+  private_widget_to_get_3:
+    <<: *private_widget
+    _id: test-private-widget-to-get-3
+    author: test-user-to-private-views-without-view-perm
 
   private_widget_to_copy_1:
     <<: *private_widget
@@ -503,6 +525,12 @@ widgets:
     tab: test-private-tab-to-private-widget-copy-2
     author: test-private-view-to-private-widget-copy-2-author
 
+  private_widget_to_copy_4:
+    <<: *private_widget
+    _id: test-private-widget-to-copy-4
+    tab: test-private-tab-to-private-widget-copy-4
+    author: test-user-to-private-views-without-view-perm
+
   private_widget_to_private_filter_create_1:
     <<: *private_widget
     _id: test-private-widget-to-private-filter-create-1
@@ -514,6 +542,12 @@ widgets:
     _id: test-private-widget-to-private-filter-create-2
     tab: test-private-tab-to-private-filter-create-2
     author: test-private-view-to-private-filter-create-2-author
+
+  private_widget_to_private_filter_create_3:
+    <<: *private_widget
+    _id: test-private-widget-to-private-filter-create-3
+    tab: test-private-tab-to-private-filter-create-3
+    author: test-user-to-private-views-without-view-perm
 
   private_widget_to_private_filter_delete_1:
     <<: *private_widget
@@ -527,6 +561,12 @@ widgets:
     tab: test-private-tab-to-private-filter-delete-2
     author: test-private-view-to-private-filter-delete-2-author
 
+  private_widget_to_private_filter_delete_3:
+    <<: *private_widget
+    _id: test-private-widget-to-private-filter-delete-3
+    tab: test-private-tab-to-private-filter-delete-3
+    author: test-user-to-private-views-without-view-perm
+
   private_widget_to_private_filter_update_1:
     <<: *private_widget
     _id: test-private-widget-to-private-filter-update-1
@@ -538,6 +578,12 @@ widgets:
     _id: test-private-widget-to-private-filter-update-2
     tab: test-private-tab-to-private-filter-update-2
     author: test-private-view-to-private-filter-update-2-author
+    
+  private_widget_to_private_filter_update_3:
+    <<: *private_widget
+    _id: test-private-widget-to-private-filter-update-3
+    tab: test-private-tab-to-private-filter-update-3
+    author: test-user-to-private-views-without-view-perm
 
   private_widget_to_private_filter_get_1:
     <<: *private_widget
@@ -551,8 +597,20 @@ widgets:
     tab: test-private-tab-to-private-filter-get-2
     author: test-private-view-to-private-filter-get-2-author
 
+  private_widget_to_private_filter_get_4:
+    <<: *private_widget
+    _id: test-private-widget-to-private-filter-get-4
+    tab: test-private-tab-to-private-filter-get-4
+    author: test-user-to-private-views-without-view-perm
+
   private_widget_to_private_filter_update_position_1:
     <<: *private_widget
     _id: test-private-widget-to-private-filter-update-position-1
-    tab: test-private-tab-to-private-filter-update-position
+    tab: test-private-tab-to-private-filter-update-position-1
     author: root
+
+  private_widget_to_private_filter_update_position_2:
+    <<: *private_widget
+    _id: test-private-widget-to-private-filter-update-position-2
+    tab: test-private-tab-to-private-filter-update-position-2
+    author: test-user-to-private-views-without-view-perm
