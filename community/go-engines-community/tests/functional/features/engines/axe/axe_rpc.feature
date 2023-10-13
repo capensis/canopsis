@@ -37,6 +37,7 @@ Feature: update alarm by RPC stream
             "ack": {
               "_t": "ack",
               "a": "system",
+              "initiator": "system",
               "m": "test-output-axe-rpc-1",
               "val": 0
             },
@@ -92,6 +93,7 @@ Feature: update alarm by RPC stream
               {
                 "_t": "ack",
                 "a": "system",
+                "initiator": "system",
                 "m": "test-output-axe-rpc-1",
                 "val": 0
               }
@@ -133,11 +135,12 @@ Feature: update alarm by RPC stream
       "source_type" : "resource",
       "component" :  "test-component-axe-rpc-2",
       "resource" : "test-resource-axe-rpc-2",
-      "output" : "test-output-axe-rpc-2"
+      "output" : "test-output-axe-rpc-2",
+      "author" : "test-author-axe-rpc-2"
     }
     """
     When I call RPC to engine-axe with alarm test-resource-axe-rpc-2/test-component-axe-rpc-2:
-	"""
+	"""json
 	{
 		"event_type": "ackremove",
 		"parameters": {
@@ -205,13 +208,15 @@ Feature: update alarm by RPC stream
               },
               {
                 "_t": "ack",
-                "a": "root John Doe admin@canopsis.net",
+                "a": "test-author-axe-rpc-2",
+                "initiator": "external",
                 "m": "test-output-axe-rpc-2",
                 "val": 0
               },
               {
                 "_t": "ackremove",
                 "a": "system",
+                "initiator": "system",
                 "m": "test-output-axe-rpc-2",
                 "val": 0
               }
@@ -264,6 +269,7 @@ Feature: update alarm by RPC stream
             "canceled": {
               "_t": "cancel",
               "a": "system",
+              "initiator": "system",
               "m": "test-output-axe-rpc-3",
               "val": 0
             },
@@ -277,6 +283,7 @@ Feature: update alarm by RPC stream
             "status": {
               "_t": "statusinc",
               "a": "system",
+              "initiator": "system",
               "m": "test-output-axe-rpc-3",
               "val": 4
             }
@@ -322,12 +329,14 @@ Feature: update alarm by RPC stream
               {
                 "_t": "cancel",
                 "a": "system",
+                "initiator": "system",
                 "m": "test-output-axe-rpc-3",
                 "val": 0
               },
               {
                 "_t": "statusinc",
                 "a": "system",
+                "initiator": "system",
                 "m": "test-output-axe-rpc-3",
                 "val": 4
               }
@@ -387,6 +396,7 @@ Feature: update alarm by RPC stream
               {
                 "_t": "assocticket",
                 "a": "system",
+                "initiator": "system",
                 "m": "Ticket ID: test-ticket. Ticket URL: test-url. Ticket ticket_param_1: ticket_value_1.",
                 "ticket": "test-ticket",
                 "ticket_url": "test-url",
@@ -400,6 +410,7 @@ Feature: update alarm by RPC stream
             "ticket": {
               "_t": "assocticket",
               "a": "system",
+              "initiator": "system",
               "m": "Ticket ID: test-ticket. Ticket URL: test-url. Ticket ticket_param_1: ticket_value_1.",
               "ticket": "test-ticket",
               "ticket_url": "test-url",
@@ -461,6 +472,7 @@ Feature: update alarm by RPC stream
               {
                 "_t": "assocticket",
                 "a": "system",
+                "initiator": "system",
                 "val": 0,
                 "m": "Ticket ID: test-ticket. Ticket URL: test-url. Ticket ticket_param_1: ticket_value_1.",
                 "ticket": "test-ticket",
@@ -525,6 +537,7 @@ Feature: update alarm by RPC stream
             "state": {
               "_t": "changestate",
               "a": "system",
+              "initiator": "system",
               "m": "test-output-axe-rpc-5",
               "val": 3
             },
@@ -573,6 +586,7 @@ Feature: update alarm by RPC stream
               {
                 "_t": "changestate",
                 "a": "system",
+                "initiator": "system",
                 "m": "test-output-axe-rpc-5",
                 "val": 3
               }
@@ -629,6 +643,7 @@ Feature: update alarm by RPC stream
             "snooze": {
               "_t": "snooze",
               "a": "system",
+              "initiator": "system",
               "m": "test-output-axe-rpc-6"
             },
             "component": "test-component-axe-rpc-6",
@@ -683,6 +698,7 @@ Feature: update alarm by RPC stream
               {
                 "_t": "snooze",
                 "a": "system",
+                "initiator": "system",
                 "m": "test-output-axe-rpc-6"
               }
             ],
@@ -739,12 +755,14 @@ Feature: update alarm by RPC stream
             "state": {
               "_t": "changestate",
               "a": "system",
+              "initiator": "system",
               "m": "test-output-axe-rpc-7",
               "val": 0
             },
             "status": {
               "_t": "statusdec",
               "a": "system",
+              "initiator": "system",
               "m": "test-output-axe-rpc-7",
               "val": 0
             }
@@ -790,12 +808,14 @@ Feature: update alarm by RPC stream
               {
                 "_t": "changestate",
                 "a": "system",
+                "initiator": "system",
                 "m": "test-output-axe-rpc-7",
                 "val": 0
               },
               {
                 "_t": "statusdec",
                 "a": "system",
+                "initiator": "system",
                 "m": "test-output-axe-rpc-7",
                 "val": 0
               }
@@ -866,12 +886,14 @@ Feature: update alarm by RPC stream
             "state": {
               "_t": "changestate",
               "a": "system",
+              "initiator": "system",
               "m": "test-output-axe-rpc-8",
               "val": 0
             },
             "status": {
               "_t": "statusdec",
               "a": "system",
+              "initiator": "system",
               "m": "test-output-axe-rpc-8",
               "val": 0
             }
@@ -917,12 +939,14 @@ Feature: update alarm by RPC stream
               {
                 "_t": "changestate",
                 "a": "system",
+                "initiator": "system",
                 "m": "test-output-axe-rpc-8",
                 "val": 0
               },
               {
                 "_t": "statusdec",
                 "a": "system",
+                "initiator": "system",
                 "m": "test-output-axe-rpc-8",
                 "val": 0
               }

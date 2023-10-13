@@ -125,6 +125,8 @@ ReconnectRetries = 3
 # The dictionary is used in UI autocomplete hints for infos key and values.
 BuildEntityInfosDictionary = true
 BuildDynamicInfosDictionary = true
+# The default value for a check events count trigger threshold.
+EventsCountTriggerDefaultThreshold = 10
 
 # It's required to restart api and engines after canopsis-reconfigure updates mongodb
 # to catch up following parameters.
@@ -197,3 +199,21 @@ DumpKeepInterval = "1h"
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.template.vars]
 #Location = "FR"
+
+# It's required to restart api after canopsis-reconfigure updates mongodb to catch up following parameter.
+[HealthCheck]
+update_interval = "10s"
+
+# Following engine_order parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
+[[HealthCheck.engine_order]]
+from = "engine-fifo"
+to = "engine-che"
+[[HealthCheck.engine_order]]
+from = "engine-che"
+to = "engine-axe"
+[[HealthCheck.engine_order]]
+from = "engine-axe"
+to = "engine-action"
+[[HealthCheck.engine_order]]
+from = "engine-axe"
+to = "engine-pbehavior"

@@ -44,6 +44,7 @@ export default {
     isLDAPAuthEnabled: state => !!state.appInfo?.login?.ldapconfig?.enable,
     isCASAuthEnabled: state => !!state.appInfo?.login?.casconfig?.enable,
     isSAMLAuthEnabled: state => !!state.appInfo?.login?.saml2config?.enable,
+    eventsCountTriggerDefaultThreshold: state => state.appInfo?.events_count_trigger_default_threshold,
   },
   mutations: {
     [types.FETCH_APP_INFO](state) {

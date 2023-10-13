@@ -605,52 +605,6 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               tag="td"
             />
           </tr>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
-              >
-                <!---->
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
-              </div>
-            </td>
-            <td>
-              Filter 11
-            </td>
-            <td>
-              11/03/2021 6:29:20
-            </td>
-            <td>
-              11/03/2021 6:29:20
-            </td>
-            <td>
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  type="edit"
-                />
-                <c-action-btn-stub
-                  type="duplicate"
-                />
-                <c-action-btn-stub
-                  type="delete"
-                />
-              </div>
-            </td>
-          </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="5"
-              tag="td"
-            />
-          </tr>
         </tbody>
       </table>
     </div>
@@ -1302,45 +1256,6 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               tag="td"
             />
           </tr>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
-              >
-                <!---->
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
-              </div>
-            </td>
-            <td>
-              Filter 11
-            </td>
-            <td>
-              11/03/2021 6:29:20
-            </td>
-            <td>
-              11/03/2021 6:29:20
-            </td>
-            <td>
-              <div
-                class="layout row"
-              >
-                <!---->
-                <!---->
-                <!---->
-              </div>
-            </td>
-          </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="5"
-              tag="td"
-            />
-          </tr>
         </tbody>
       </table>
     </div>
@@ -1870,49 +1785,6 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
             </td>
             <td>
               11/03/2021 7:02:36
-            </td>
-            <td>
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  badge-value="true"
-                  type="edit"
-                />
-                <!---->
-                <!---->
-              </div>
-            </td>
-          </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="5"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
-              >
-                <!---->
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
-              </div>
-            </td>
-            <td>
-              Filter 11
-            </td>
-            <td>
-              11/03/2021 6:29:20
-            </td>
-            <td>
-              11/03/2021 6:29:20
             </td>
             <td>
               <div

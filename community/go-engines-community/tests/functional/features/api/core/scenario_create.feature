@@ -2,15 +2,18 @@ Feature: Create a scenario
   I need to be able to create a scenario
   Only admin should be able to create a scenario
 
+  @concurrent
   Scenario: given create request and no auth user should not allow access
     When I do POST /api/v4/scenarios
     Then the response code should be 401
 
+  @concurrent
   Scenario: given create request and auth user by api key without permissions should not allow access
     When I am noperms
     When I do POST /api/v4/scenarios
     Then the response code should be 403
 
+  @concurrent
   Scenario: given create request should return ok
     When I am admin
     When I do POST /api/v4/scenarios:
@@ -19,7 +22,11 @@ Feature: Create a scenario
       "_id": "test-scenario-to-create-1",
       "name": "test-scenario-to-create-1-name",
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -164,7 +171,11 @@ Feature: Create a scenario
         "name": "root"
       },
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "old_alarm_patterns": null,
@@ -327,7 +338,11 @@ Feature: Create a scenario
         "name": "root"
       },
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "old_alarm_patterns": null,
@@ -479,6 +494,7 @@ Feature: Create a scenario
     }
     """
 
+  @concurrent
   Scenario: given create delay request should return ok
     When I am admin
     When I do POST /api/v4/scenarios:
@@ -486,7 +502,11 @@ Feature: Create a scenario
     {
       "name": "test-scenario-to-create-2-name",
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "delay": {
         "value": 3,
         "unit": "s"
@@ -539,7 +559,11 @@ Feature: Create a scenario
         "name": "root"
       },
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "delay": {
         "value": 3,
         "unit": "s"
@@ -584,7 +608,8 @@ Feature: Create a scenario
       ]
     }
     """
-    
+
+  @concurrent    
   Scenario: given create request with corporate patterns in different actions should return success
     When I am admin
     When I do POST /api/v4/scenarios:
@@ -592,7 +617,11 @@ Feature: Create a scenario
     {
       "name": "test-scenario-to-create-3-name",
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "delay": {
         "value": 3,
         "unit": "s"
@@ -709,7 +738,11 @@ Feature: Create a scenario
         "name": "root"
       },
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "delay": {
         "value": 3,
         "unit": "s"
@@ -871,6 +904,7 @@ Feature: Create a scenario
     }
     """     
 
+  @concurrent
   Scenario: given create request with invalid patterns in different actions should return errors
     When I am admin
     When I do POST /api/v4/scenarios:
@@ -878,7 +912,11 @@ Feature: Create a scenario
     {
       "name": "test-scenario-to-create-4-name",
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "delay": {
         "value": 3,
         "unit": "s"
@@ -960,6 +998,7 @@ Feature: Create a scenario
     }
     """
 
+  @concurrent
   Scenario: given invalid create request should return errors
     When I am admin
     When I do POST /api/v4/scenarios:
@@ -979,6 +1018,7 @@ Feature: Create a scenario
     }
     """
 
+  @concurrent
   Scenario: given create request with already exists name should return error
     When I am admin
     When I do POST /api/v4/scenarios:
@@ -986,7 +1026,11 @@ Feature: Create a scenario
     {
       "name": "test-scenario-to-check-unique-name-name",
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -1035,6 +1079,7 @@ Feature: Create a scenario
     }
     """
 
+  @concurrent
   Scenario: given create request with invalid action should return error
     When I am admin
     When I do POST /api/v4/scenarios:
@@ -1042,7 +1087,11 @@ Feature: Create a scenario
     {
       "name": "test-scenario-to-create-4-name",
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
         }
@@ -1061,6 +1110,7 @@ Feature: Create a scenario
     }
     """
 
+  @concurrent
   Scenario: given create request with snooze action with invalid params should return error
     When I am admin
     When I do POST /api/v4/scenarios:
@@ -1068,7 +1118,11 @@ Feature: Create a scenario
     {
       "name": "test-scenario-to-create-4-name",
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -1110,6 +1164,7 @@ Feature: Create a scenario
     }
     """
 
+  @concurrent
   Scenario: given create request with assocticket action with invalid params should return error
     When I am admin
     When I do POST /api/v4/scenarios:
@@ -1117,7 +1172,11 @@ Feature: Create a scenario
     {
       "name": "test-scenario-to-create-4-name",
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -1159,6 +1218,7 @@ Feature: Create a scenario
     }
     """
 
+  @concurrent
   Scenario: given create request with changestate action with invalid params should return error
     When I am admin
     When I do POST /api/v4/scenarios:
@@ -1166,7 +1226,11 @@ Feature: Create a scenario
     {
       "name": "test-scenario-to-create-4-name",
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -1208,6 +1272,7 @@ Feature: Create a scenario
     }
     """
 
+  @concurrent
   Scenario: given create request with pbehavior action with invalid params should return error
     When I am admin
     When I do POST /api/v4/scenarios:
@@ -1215,7 +1280,11 @@ Feature: Create a scenario
     {
       "name": "test-scenario-to-create-4-name",
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -1265,6 +1334,7 @@ Feature: Create a scenario
     }
     """
 
+  @concurrent
   Scenario: given create request with webhook action with invalid params should return error
     When I am admin
     When I do POST /api/v4/scenarios:
@@ -1272,7 +1342,11 @@ Feature: Create a scenario
     {
       "name": "test-scenario-to-create-4-name",
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -1318,7 +1392,11 @@ Feature: Create a scenario
     {
       "name": "test-scenario-to-create-4-name",
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -1364,6 +1442,7 @@ Feature: Create a scenario
     }
     """
 
+  @concurrent
   Scenario: given create request with custom_id should return ok
     When I am admin
     When I do POST /api/v4/scenarios:
@@ -1372,7 +1451,11 @@ Feature: Create a scenario
       "_id": "my_scenario",
       "name": "my_scenario-name",
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -1427,6 +1510,7 @@ Feature: Create a scenario
     }
     """
 
+  @concurrent
   Scenario: given create request with custom_id should be failed, because of existing id
     When I am admin
     When I do POST /api/v4/scenarios:
@@ -1435,7 +1519,11 @@ Feature: Create a scenario
       "_id": "test-scenario-to-check-id",
       "name": "my_scenario-name",
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -1480,6 +1568,301 @@ Feature: Create a scenario
     {
       "errors": {
         "_id": "ID already exists."
+      }
+    }
+    """
+
+  @concurrent
+  Scenario: given create request with events count trigger should return ok
+    When I am admin
+    When I do POST /api/v4/scenarios:
+    """json
+    {
+      "_id": "test-scenario-to-create-5",
+      "name": "test-scenario-to-create-5-name",
+      "enabled": true,
+      "triggers": [
+        {
+          "type": "eventscount",
+          "threshold": 3
+        }
+      ],
+      "actions": [
+        {
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-scenario-to-create-5-action-1-alarm"
+                }
+              }
+            ]
+          ],
+          "type": "snooze",
+          "parameters": {
+            "author": "test-scenario-to-create-5-action-1-author",
+            "output": "test-scenario-to-create-5-action-1-output",
+            "duration": {
+              "value": 3,
+              "unit": "s"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false,
+          "comment": "test comment"
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-scenario-to-create-5",
+      "name": "test-scenario-to-create-5-name",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "enabled": true,
+      "triggers": [
+        {
+          "type": "eventscount",
+          "threshold": 3
+        }
+      ],
+      "actions": [
+        {
+          "old_alarm_patterns": null,
+          "old_entity_patterns": null,
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-scenario-to-create-5-action-1-alarm"
+                }
+              }
+            ]
+          ],
+          "type": "snooze",
+          "parameters": {
+            "author": "test-scenario-to-create-5-action-1-author",
+            "output": "test-scenario-to-create-5-action-1-output",
+            "duration": {
+              "value": 3,
+              "unit": "s"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false,
+          "comment": "test comment"
+        }
+      ]
+    }
+    """
+    When I do GET /api/v4/scenarios/test-scenario-to-create-5
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-scenario-to-create-5",
+      "name": "test-scenario-to-create-5-name",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "enabled": true,
+      "triggers": [
+        {
+          "type": "eventscount",
+          "threshold": 3
+        }
+      ],
+      "actions": [
+        {
+          "old_alarm_patterns": null,
+          "old_entity_patterns": null,
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-scenario-to-create-5-action-1-alarm"
+                }
+              }
+            ]
+          ],
+          "type": "snooze",
+          "parameters": {
+            "author": "test-scenario-to-create-5-action-1-author",
+            "output": "test-scenario-to-create-5-action-1-output",
+            "duration": {
+              "value": 3,
+              "unit": "s"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false,
+          "comment": "test comment"
+        }
+      ]
+    }
+    """
+    
+  @concurrent
+  Scenario: given create request with invalid threshold value should return errors
+    When I am admin
+    When I do POST /api/v4/scenarios:
+    """json
+    {
+      "_id": "test-scenario-to-create-6",
+      "name": "test-scenario-to-create-6-name",
+      "enabled": true,
+      "triggers": [
+        {
+          "type": "eventscount"
+        }
+      ],
+      "actions": [
+        {
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-scenario-to-create-6-action-1-alarm"
+                }
+              }
+            ]
+          ],
+          "type": "snooze",
+          "parameters": {
+            "author": "test-scenario-to-create-6-action-1-author",
+            "output": "test-scenario-to-create-6-action-1-output",
+            "duration": {
+              "value": 3,
+              "unit": "s"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false,
+          "comment": "test comment"
+        }
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "triggers.0.threshold": "Threshold is required when Type eventscount is defined."
+      }
+    }
+    """
+    When I do POST /api/v4/scenarios:
+    """json
+    {
+      "_id": "test-scenario-to-create-6",
+      "name": "test-scenario-to-create-6-name",
+      "enabled": true,
+      "triggers": [
+        {
+          "type": "eventscount",
+          "threshold": 1
+        }
+      ],
+      "actions": [
+        {
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-scenario-to-create-6-action-1-alarm"
+                }
+              }
+            ]
+          ],
+          "type": "snooze",
+          "parameters": {
+            "author": "test-scenario-to-create-6-action-1-author",
+            "output": "test-scenario-to-create-6-action-1-output",
+            "duration": {
+              "value": 3,
+              "unit": "s"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false,
+          "comment": "test comment"
+        }
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "triggers.0.threshold": "Threshold should be greater than 1."
+      }
+    }
+    """
+    When I do POST /api/v4/scenarios:
+    """json
+    {
+      "_id": "test-scenario-to-create-6",
+      "name": "test-scenario-to-create-6-name",
+      "enabled": true,
+      "triggers": [
+        {
+          "type": "create",
+          "threshold": 3
+        }
+      ],
+      "actions": [
+        {
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-scenario-to-create-6-action-1-alarm"
+                }
+              }
+            ]
+          ],
+          "type": "snooze",
+          "parameters": {
+            "author": "test-scenario-to-create-6-action-1-author",
+            "output": "test-scenario-to-create-6-action-1-output",
+            "duration": {
+              "value": 3,
+              "unit": "s"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false,
+          "comment": "test comment"
+        }
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "triggers.0.threshold": "Threshold should be empty when Type eventscount is not defined."
       }
     }
     """

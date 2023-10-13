@@ -1,26 +1,9 @@
-<template lang="pug">
-  component(
-    v-clipboard:copy="value",
-    v-clipboard:success="showSuccessPopup",
-    v-clipboard:error="showErrorPopup",
-    :is="tag"
-  )
-    slot
-</template>
-
 <script>
 export default {
   props: {
     value: {
       type: String,
       default: '',
-    },
-  },
-  computed: {
-    tag() {
-      const [slot] = this.$slots.default || [];
-
-      return slot?.tag ?? 'span';
     },
   },
   methods: {
@@ -31,6 +14,41 @@ export default {
     showErrorPopup() {
       this.$popups.error({ text: this.$t('popups.copyError') });
     },
+  },
+  render(h) {
+    const slots = this.$slots.default || [];
+    const [slot] = slots;
+
+    let tag = 'span';
+    let children = slots;
+    let attributes = {
+      directives: [{
+        name: 'clipboard',
+        rawName: 'v-clipboard:copy',
+        value: this.value,
+        arg: 'copy',
+      },
+      {
+        name: 'clipboard',
+        rawName: 'v-clipboard:success',
+        value: this.showSuccessPopup,
+        arg: 'success',
+      },
+      {
+        name: 'clipboard',
+        rawName: 'v-clipboard:error',
+        value: this.showErrorPopup,
+        arg: 'error',
+      }],
+    };
+
+    if (slots.length === 1 && slot?.tag) {
+      tag = slot?.tag;
+      attributes = { ...attributes, ...slot.data };
+      children = slot.children;
+    }
+
+    return h(tag, attributes, children);
   },
 };
 </script>

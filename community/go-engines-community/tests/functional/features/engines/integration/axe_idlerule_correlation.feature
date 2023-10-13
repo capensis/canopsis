@@ -140,14 +140,23 @@ Feature: update meta alarm on idle rule
             "data": [
               {
                 "_t": "stateinc",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system",
                 "val": 2
               },
               {
                 "_t": "statusinc",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system",
                 "val": 1
               },
               {
                 "_t": "stateinc",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system",
                 "val": 3
               }
             ],
@@ -174,14 +183,23 @@ Feature: update meta alarm on idle rule
                 "val": 1
               },
               {
-                "_t": "metaalarmattach"
+                "_t": "metaalarmattach",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system"
               },
               {
                 "_t": "stateinc",
+                "a": "system",
+                "user_id": "",
+                "initiator": "system",
                 "val": 3
               },
               {
                 "_t": "statusinc",
+                "a": "system",
+                "user_id": "",
+                "initiator": "system",
                 "val": 5
               }
             ],
@@ -239,18 +257,30 @@ Feature: update meta alarm on idle rule
             "data": [
               {
                 "_t": "stateinc",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system",
                 "val": 2
               },
               {
                 "_t": "statusinc",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system",
                 "val": 1
               },
               {
                 "_t": "stateinc",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system",
                 "val": 3
               },
               {
                 "_t": "statedec",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system",
                 "val": 2
               }
             ],
@@ -277,14 +307,23 @@ Feature: update meta alarm on idle rule
                 "val": 1
               },
               {
-                "_t": "metaalarmattach"
+                "_t": "metaalarmattach",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system"
               },
               {
                 "_t": "stateinc",
+                "a": "system",
+                "user_id": "",
+                "initiator": "system",
                 "val": 3
               },
               {
                 "_t": "statusinc",
+                "a": "system",
+                "user_id": "",
+                "initiator": "system",
                 "val": 5
               },
               {
@@ -453,14 +492,23 @@ Feature: update meta alarm on idle rule
             "data": [
               {
                 "_t": "stateinc",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system",
                 "val": 2
               },
               {
                 "_t": "statusinc",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system",
                 "val": 1
               },
               {
                 "_t": "stateinc",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system",
                 "val": 3
               }
             ],
@@ -487,10 +535,16 @@ Feature: update meta alarm on idle rule
                 "val": 1
               },
               {
-                "_t": "metaalarmattach"
+                "_t": "metaalarmattach",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system"
               },
               {
                 "_t": "changestate",
+                "a": "system",
+                "user_id": "",
+                "initiator": "system",
                 "val": 3
               }
             ],

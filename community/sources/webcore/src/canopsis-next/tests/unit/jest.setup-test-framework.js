@@ -105,4 +105,17 @@ expect.extend({
       return err.matcherResult;
     }
   },
+  toBeDispatchedWith(received, expected) {
+    try {
+      expect(received).toBeCalledWith(
+        expect.any(Object),
+        expected,
+        undefined,
+      );
+
+      return { pass: true };
+    } catch (err) {
+      return err.matcherResult;
+    }
+  },
 });

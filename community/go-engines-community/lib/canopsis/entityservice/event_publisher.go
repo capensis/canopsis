@@ -106,6 +106,7 @@ func (p *eventPublisher) publishServiceEvent(ctx context.Context, msg ChangeEnti
 		Timestamp:     types.NewCpsTime(),
 		Author:        canopsis.DefaultEventAuthor,
 		SourceType:    types.SourceTypeService,
+		Initiator:     types.InitiatorSystem,
 	}
 
 	err := p.publishEvent(ctx, event)
@@ -176,6 +177,7 @@ func (p *eventPublisher) publishBasicEntityEvent(ctx context.Context, msg Change
 
 	event.Timestamp = types.NewCpsTime()
 	event.Author = canopsis.DefaultEventAuthor
+	event.Initiator = types.InitiatorSystem
 	event.SourceType = event.DetectSourceType()
 	err = p.publishEvent(ctx, event)
 	if err != nil {
@@ -194,6 +196,7 @@ func (p *eventPublisher) publishBasicEntityEvent(ctx context.Context, msg Change
 			Timestamp:     event.Timestamp,
 			Author:        event.Author,
 			SourceType:    types.SourceTypeResource,
+			Initiator:     types.InitiatorSystem,
 		}
 
 		for _, resID := range msg.Resources {

@@ -8,7 +8,11 @@ Feature: Metrics should be added on alarm changes
     """json
     {
       "type": 1,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "name": "test-instruction-metrics-axe-second-1-name",
       "description": "test-instruction-metrics-axe-second-1-description",
       "enabled": true,
@@ -351,7 +355,11 @@ Feature: Metrics should be added on alarm changes
     """json
     {
       "type": 1,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "name": "test-instruction-metrics-axe-second-3-name",
       "description": "test-instruction-metrics-axe-second-3-description",
       "enabled": true,
@@ -937,7 +945,11 @@ Feature: Metrics should be added on alarm changes
       "name": "test-scenario-metrics-axe-second-5-1-name",
       "priority": 100110,
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -970,7 +982,11 @@ Feature: Metrics should be added on alarm changes
       "name": "test-scenario-metrics-axe-second-5-2-name",
       "priority": 100111,
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -1395,6 +1411,7 @@ Feature: Metrics should be added on alarm changes
     """
     Then the response key "data.1.data.0.value" should be greater or equal than 1
 
+  @concurrent
   Scenario: given acked alarm should add min_ack and max_ack metrics
     Given I am admin
     When I do POST /api/v4/cat/kpi-filters:

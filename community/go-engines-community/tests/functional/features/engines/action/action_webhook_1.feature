@@ -10,7 +10,11 @@ Feature: execute action on trigger
       "name": "test-scenario-action-webhook-1-name",
       "priority": 10008,
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -80,6 +84,7 @@ Feature: execute action on trigger
               {
                 "_t": "declareticket",
                 "a": "system",
+                "initiator": "system",
                 "m": "Scenario: test-scenario-action-webhook-1-name. Ticket ID: test-ticket-action-webhook-1. Ticket URL: https://test/test-ticket-action-webhook-1. Ticket name: test-ticket-action-webhook-1 test-resource-action-webhook-1.",
                 "ticket": "test-ticket-action-webhook-1",
                 "ticket_url": "https://test/test-ticket-action-webhook-1",
@@ -95,6 +100,7 @@ Feature: execute action on trigger
             "ticket": {
               "_t": "declareticket",
               "a": "system",
+              "initiator": "system",
               "m": "Scenario: test-scenario-action-webhook-1-name. Ticket ID: test-ticket-action-webhook-1. Ticket URL: https://test/test-ticket-action-webhook-1. Ticket name: test-ticket-action-webhook-1 test-resource-action-webhook-1.",
               "ticket": "test-ticket-action-webhook-1",
               "ticket_url": "https://test/test-ticket-action-webhook-1",
@@ -146,18 +152,21 @@ Feature: execute action on trigger
         "_t": "webhookstart",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-1-name"
       },
       {
         "_t": "webhookcomplete",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-1-name"
       },
       {
         "_t": "declareticket",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-1-name. Ticket ID: test-ticket-action-webhook-1. Ticket URL: https://test/test-ticket-action-webhook-1. Ticket name: test-ticket-action-webhook-1 test-resource-action-webhook-1."
       }
     ]
@@ -172,7 +181,11 @@ Feature: execute action on trigger
       "name": "test-scenario-action-webhook-2-1-name",
       "priority": 10010,
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -213,7 +226,11 @@ Feature: execute action on trigger
       "name": "test-scenario-action-webhook-2-2-name",
       "priority": 10012,
       "enabled": true,
-      "triggers": ["declareticketwebhook"],
+      "triggers": [
+        {
+          "type": "declareticketwebhook"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -302,22 +319,26 @@ Feature: execute action on trigger
       {
         "_t": "webhookstart",
         "a": "system",
-        "user_id": ""
+        "user_id": "",
+        "initiator": "system"
       },
       {
         "_t": "webhookcomplete",
         "a": "system",
-        "user_id": ""
+        "user_id": "",
+        "initiator": "system"
       },
       {
         "_t": "declareticket",
         "a": "system",
-        "user_id": ""
+        "user_id": "",
+        "initiator": "system"
       },
       {
         "_t": "ack",
         "a": "system",
-        "user_id": ""
+        "user_id": "",
+        "initiator": "system"
       }
     ]
     """
@@ -342,7 +363,11 @@ Feature: execute action on trigger
       "name": "test-scenario-action-webhook-4-name",
       "priority": 10015,
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -459,7 +484,9 @@ Feature: execute action on trigger
       "priority": 10019,
       "enabled": true,
       "triggers": [
-        "create"
+        {
+          "type": "create"
+        }
       ],
       "actions": [
         {
@@ -534,7 +561,9 @@ Feature: execute action on trigger
       "priority": 10022,
       "enabled": true,
       "triggers": [
-        "declareticketwebhook"
+        {
+          "type": "declareticketwebhook"
+        }
       ],
       "actions": [
         {
@@ -579,7 +608,9 @@ Feature: execute action on trigger
       "priority": 10024,
       "enabled": true,
       "triggers": [
-        "create"
+        {
+          "type": "create"
+        }
       ],
       "actions": [
         {
@@ -786,7 +817,11 @@ Feature: execute action on trigger
       "name": "test-scenario-action-webhook-7-name",
       "priority": 10026,
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -983,7 +1018,11 @@ Feature: execute action on trigger
       "name": "test-scenario-action-webhook-8-name",
       "priority": 10028,
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -1135,7 +1174,11 @@ Feature: execute action on trigger
       "name": "test-scenario-action-webhook-9-name",
       "priority": 10030,
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -1287,7 +1330,11 @@ Feature: execute action on trigger
       "name": "test-scenario-action-webhook-3-name",
       "priority": 10014,
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -1347,12 +1394,14 @@ Feature: execute action on trigger
             "tickets": [
               {
                 "_t": "declareticket",
-                "a": "test-scenario-action-webhook-3-action-1-author test-resource-action-webhook-3"
+                "a": "test-scenario-action-webhook-3-action-1-author test-resource-action-webhook-3",
+                "initiator": "system"
               }
             ],
             "ticket": {
               "_t": "declareticket",
-              "a": "test-scenario-action-webhook-3-action-1-author test-resource-action-webhook-3"
+              "a": "test-scenario-action-webhook-3-action-1-author test-resource-action-webhook-3",
+              "initiator": "system"
             },
             "connector": "test-connector-action-webhook-3",
             "connector_name": "test-connector-name-action-webhook-3",
@@ -1394,18 +1443,21 @@ Feature: execute action on trigger
         "_t": "webhookstart",
         "a": "test-scenario-action-webhook-3-action-1-author test-resource-action-webhook-3",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-3-name"
       },
       {
         "_t": "webhookcomplete",
         "a": "test-scenario-action-webhook-3-action-1-author test-resource-action-webhook-3",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-3-name"
       },
       {
         "_t": "declareticket",
         "a": "test-scenario-action-webhook-3-action-1-author test-resource-action-webhook-3",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-3-name. Ticket ID: test-ticket-action-webhook-3."
       }
     ]
@@ -1420,7 +1472,11 @@ Feature: execute action on trigger
       "name": "test-scenario-action-webhook-5-name",
       "priority": 10011,
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -1481,12 +1537,14 @@ Feature: execute action on trigger
             "tickets": [
               {
                 "_t": "declareticket",
-                "a": "root John Doe admin@canopsis.net"
+                "a": "root John Doe admin@canopsis.net",
+                "initiator": "system"
               }
             ],
             "ticket": {
               "_t": "declareticket",
-              "a": "root John Doe admin@canopsis.net"
+              "a": "root John Doe admin@canopsis.net",
+              "initiator": "system"
             },
             "connector": "test-connector-action-webhook-5",
             "connector_name": "test-connector-name-action-webhook-5",
@@ -1528,18 +1586,21 @@ Feature: execute action on trigger
         "_t": "webhookstart",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-5-name"
       },
       {
         "_t": "webhookcomplete",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-5-name"
       },
       {
         "_t": "declareticket",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-5-name. Ticket ID: test-ticket-action-webhook-5."
       }
     ]
