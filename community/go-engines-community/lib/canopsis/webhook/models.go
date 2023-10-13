@@ -42,6 +42,7 @@ type History struct {
 	TicketData      map[string]string             `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
 	UserID          string                        `bson:"user,omitempty" json:"user,omitempty"`
 	Username        string                        `bson:"username,omitempty" json:"username,omitempty"`
+	Initiator       string                        `bson:"initiator,omitempty" json:"initiator,omitempty"`
 	CreatedAt       types.CpsTime                 `bson:"created_at" json:"created_at"`
 	LaunchedAt      types.CpsTime                 `bson:"launched_at,omitempty" json:"launched_at,omitempty"`
 	CompletedAt     types.CpsTime                 `bson:"completed_at,omitempty" json:"completed_at,omitempty"`

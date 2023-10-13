@@ -1187,6 +1187,47 @@ definitions:
           type: string
         type: object
     type: object
+  config.EngineParameters:
+    properties:
+      enabled:
+        type: boolean
+      minimal:
+        type: integer
+      optimal:
+        type: integer
+    type: object
+  config.HealthCheckParameters:
+    properties:
+      engine-action:
+        $ref: '#/definitions/config.EngineParameters'
+      engine-axe:
+        $ref: '#/definitions/config.EngineParameters'
+      engine-che:
+        $ref: '#/definitions/config.EngineParameters'
+      engine-correlation:
+        $ref: '#/definitions/config.EngineParameters'
+      engine-dynamic-infos:
+        $ref: '#/definitions/config.EngineParameters'
+      engine-fifo:
+        $ref: '#/definitions/config.EngineParameters'
+      engine-pbehavior:
+        $ref: '#/definitions/config.EngineParameters'
+      engine-remediation:
+        $ref: '#/definitions/config.EngineParameters'
+      engine-webhook:
+        $ref: '#/definitions/config.EngineParameters'
+      messages:
+        $ref: '#/definitions/config.LimitParameters'
+      queue:
+        $ref: '#/definitions/config.LimitParameters'
+    type: object
+  config.LimitParameters:
+    properties:
+      enabled:
+        type: boolean
+      limit:
+        type: integer
+    type: object
   contextgraph.ImportJob:
     properties:
       _id:
@@ -2415,6 +2456,96 @@ definitions:
     - duration
     - freq_limit
     - name
+    type: object
+  healthcheck.Edge:
+    properties:
+      from:
+        type: string
+      to:
+        type: string
+    type: object
+  healthcheck.Engine:
+    properties:
+      instances:
+        type: integer
+      is_diff_instances_config:
+        type: boolean
+      is_queue_overflown:
+        type: boolean
+      is_running:
+        type: boolean
+      is_too_few_instances:
+        type: boolean
+      min_instances:
+        type: integer
+      name:
+        type: string
+      optimal_instances:
+        type: integer
+      queue_length:
+        type: integer
+      time:
+        type: integer
+    type: object
+  healthcheck.Engines:
+    properties:
+      graph:
+        $ref: '#/definitions/healthcheck.Graph'
+      parameters:
+        additionalProperties:
+          $ref: '#/definitions/healthcheck.Engine'
+        type: object
+    type: object
+  healthcheck.Graph:
+    properties:
+      edges:
+        items:
+          $ref: '#/definitions/healthcheck.Edge'
+        type: array
+      nodes:
+        items:
+          type: string
+        type: array
+    type: object
+  healthcheck.Info:
+    properties:
+      engines:
+        $ref: '#/definitions/healthcheck.Engines'
+      has_invalid_engines_order:
+        type: boolean
+      max_messages_length:
+        type: integer
+      max_queue_length:
+        type: integer
+      services:
+        items:
+          $ref: '#/definitions/healthcheck.Service'
+        type: array
+    type: object
+  healthcheck.LiveResponse:
+    properties:
+      ok:
+        type: boolean
+    type: object
+  healthcheck.Service:
+    properties:
+      is_running:
+        type: boolean
+      name:
+        type: string
+    type: object
+  healthcheck.Status:
+    properties:
+      engines:
+        items:
+          $ref: '#/definitions/healthcheck.Engine'
+        type: array
+      has_invalid_engines_order:
+        type: boolean
+      services:
+        items:
+          $ref: '#/definitions/healthcheck.Service'
+        type: array
     type: object
   idlerule.BulkDeleteRequestItem:
     properties:

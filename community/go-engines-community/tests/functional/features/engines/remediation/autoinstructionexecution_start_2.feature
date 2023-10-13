@@ -91,41 +91,49 @@ Feature: run an auto instruction
       {
         "_t": "autoinstructionstart",
         "a": "system",
+        "initiator": "system",
         "m": "Instruction test-instruction-to-run-auto-instruction-second-1-1-name."
       },
       {
         "_t": "instructionjobstart",
         "a": "system",
+        "initiator": "system",
         "m": "Instruction test-instruction-to-run-auto-instruction-second-1-1-name. Job test-job-to-run-auto-instruction-3-name."
       },
       {
         "_t": "instructionjobfail",
         "a": "system",
+        "initiator": "system",
         "m": "Instruction test-instruction-to-run-auto-instruction-second-1-1-name. Job test-job-to-run-auto-instruction-3-name."
       },
       {
         "_t": "autoinstructionfail",
         "a": "system",
+        "initiator": "system",
         "m": "Instruction test-instruction-to-run-auto-instruction-second-1-1-name."
       },
       {
         "_t": "autoinstructionstart",
         "a": "system",
+        "initiator": "system",
         "m": "Instruction test-instruction-to-run-auto-instruction-second-1-2-name."
       },
       {
         "_t": "instructionjobstart",
         "a": "system",
+        "initiator": "system",
         "m": "Instruction test-instruction-to-run-auto-instruction-second-1-2-name. Job test-job-to-run-auto-instruction-1-name."
       },
       {
         "_t": "instructionjobcomplete",
         "a": "system",
+        "initiator": "system",
         "m": "Instruction test-instruction-to-run-auto-instruction-second-1-2-name. Job test-job-to-run-auto-instruction-1-name."
       },
       {
         "_t": "autoinstructioncomplete",
         "a": "system",
+        "initiator": "system",
         "m": "Instruction test-instruction-to-run-auto-instruction-second-1-2-name."
       }
     ]
@@ -205,21 +213,25 @@ Feature: run an auto instruction
       {
         "_t": "autoinstructionstart",
         "a": "system",
+        "initiator": "system",
         "m": "Instruction test-instruction-to-run-auto-instruction-second-2-name."
       },
       {
         "_t": "instructionjobstart",
         "a": "system",
+        "initiator": "system",
         "m": "Instruction test-instruction-to-run-auto-instruction-second-2-name. Job test-job-to-instruction-edit-1-name."
       },
       {
         "_t": "instructionjobfail",
         "a": "system",
+        "initiator": "system",
         "m": "Instruction test-instruction-to-run-auto-instruction-second-2-name. Job test-job-to-instruction-edit-1-name."
       },
       {
         "_t": "autoinstructionfail",
         "a": "system",
+        "initiator": "system",
         "m": "Instruction test-instruction-to-run-auto-instruction-second-2-name."
       }
     ]
@@ -327,21 +339,25 @@ Feature: run an auto instruction
       {
         "_t": "autoinstructionstart",
         "a": "system",
+        "initiator": "system",
         "m": "Instruction test-instruction-to-run-auto-instruction-second-3-1-name."
       },
       {
         "_t": "instructionjobstart",
         "a": "system",
+        "initiator": "system",
         "m": "Instruction test-instruction-to-run-auto-instruction-second-3-1-name. Job test-job-to-run-auto-instruction-1-name."
       },
       {
         "_t": "instructionjobcomplete",
         "a": "system",
+        "initiator": "system",
         "m": "Instruction test-instruction-to-run-auto-instruction-second-3-1-name. Job test-job-to-run-auto-instruction-1-name."
       },
       {
         "_t": "instructionjobstart",
         "a": "system",
+        "initiator": "system",
         "m": "Instruction test-instruction-to-run-auto-instruction-second-3-1-name. Job test-job-to-run-auto-instruction-5-name."
       },
       {

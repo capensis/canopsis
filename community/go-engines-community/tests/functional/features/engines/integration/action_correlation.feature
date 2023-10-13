@@ -56,9 +56,6 @@ Feature: update meta alarm on action
     }
     """
     When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
-    When I save response metaalarmEntityID={{ (index .lastResponse.data 0).entity._id }}
-    When I save response metaAlarmConnector={{ (index .lastResponse.data 0).v.connector }}
-    When I save response metaAlarmConnectorName={{ (index .lastResponse.data 0).v.connector_name }}
     When I save response metaAlarmComponent={{ (index .lastResponse.data 0).v.component }}
     When I save response metaAlarmResource={{ (index .lastResponse.data 0).v.resource }}
     When I do POST /api/v4/scenarios:
@@ -123,25 +120,20 @@ Feature: update meta alarm on action
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I do PUT /api/v4/alarms/{{ .metaAlarmID }}/comment:
     """json
     {
-      "event_type": "comment",
-      "output": "test-output-action-correlation-1",
-      "connector": "{{ .metaAlarmConnector }}",
-      "connector_name": "{{ .metaAlarmConnectorName }}",
-      "component":  "{{ .metaAlarmComponent }}",
-      "resource": "{{ .metaAlarmResource }}",
-      "source_type": "resource"
+      "comment": "test-output-action-correlation-1"
     }
     """
+    Then the response code should be 204
     Then I wait the end of events processing which contain:
     """json
     [
       {
         "event_type": "comment",
-        "connector": "{{ .metaAlarmConnector }}",
-        "connector_name": "{{ .metaAlarmConnectorName }}",
+        "connector": "api",
+        "connector_name": "api",
         "component":  "{{ .metaAlarmComponent }}",
         "resource": "{{ .metaAlarmResource }}",
         "source_type": "resource"
@@ -242,18 +234,28 @@ Feature: update meta alarm on action
             "data": [
               {
                 "_t": "stateinc",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system",
                 "val": 2
               },
               {
                 "_t": "statusinc",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system",
                 "val": 1
               },
               {
-                "_t": "comment"
+                "_t": "comment",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
+                "initiator": "user"
               },
               {
                 "_t": "assocticket",
                 "a": "system",
+                "user_id": "",
                 "initiator": "system",
                 "m": "Scenario: test-scenario-action-correlation-1-name. Ticket ID: test-ticket-action-correlation-1. Ticket URL: test-ticket-url-action-correlation-1. Ticket ticket_param_1: ticket_value_1.",
                 "ticket": "test-ticket-action-correlation-1",
@@ -269,6 +271,8 @@ Feature: update meta alarm on action
               {
                 "_t": "ack",
                 "a": "system",
+                "user_id": "",
+                "initiator": "system",
                 "m": "test-output-action-correlation-1-engine"
               }
             ],
@@ -296,14 +300,20 @@ Feature: update meta alarm on action
               },
               {
                 "_t": "metaalarmattach",
-                "val": 0
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system"
               },
               {
-                "_t": "comment"
+                "_t": "comment",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
+                "initiator": "user"
               },
               {
                 "_t": "assocticket",
                 "a": "system",
+                "user_id": "",
                 "initiator": "system",
                 "m": "Scenario: test-scenario-action-correlation-1-name. Ticket ID: test-ticket-action-correlation-1. Ticket URL: test-ticket-url-action-correlation-1. Ticket ticket_param_1: ticket_value_1.",
                 "ticket": "test-ticket-action-correlation-1",
@@ -319,6 +329,8 @@ Feature: update meta alarm on action
               {
                 "_t": "ack",
                 "a": "system",
+                "user_id": "",
+                "initiator": "system",
                 "m": "test-output-action-correlation-1-engine"
               }
             ],
@@ -402,10 +414,6 @@ Feature: update meta alarm on action
     }
     """
     When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
-    When I save response metaalarmEntityID={{ (index .lastResponse.data 0).entity._id }}
-    When I save response metaalarmDisplayName={{ (index .lastResponse.data 0).v.display_name }}
-    When I save response metaAlarmConnector={{ (index .lastResponse.data 0).v.connector }}
-    When I save response metaAlarmConnectorName={{ (index .lastResponse.data 0).v.connector_name }}
     When I save response metaAlarmComponent={{ (index .lastResponse.data 0).v.component }}
     When I save response metaAlarmResource={{ (index .lastResponse.data 0).v.resource }}
     When I do POST /api/v4/scenarios:
@@ -453,25 +461,20 @@ Feature: update meta alarm on action
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I do PUT /api/v4/alarms/{{ .metaAlarmID }}/comment:
     """json
     {
-      "event_type": "comment",
-      "output": "test-output-action-correlation-2",
-      "connector": "{{ .metaAlarmConnector }}",
-      "connector_name": "{{ .metaAlarmConnectorName }}",
-      "component":  "{{ .metaAlarmComponent }}",
-      "resource": "{{ .metaAlarmResource }}",
-      "source_type": "resource"
+      "comment": "test-output-action-correlation-2"
     }
     """
+    Then the response code should be 204
     Then I wait the end of events processing which contain:
     """json
     [
       {
         "event_type": "comment",
-        "connector": "{{ .metaAlarmConnector }}",
-        "connector_name": "{{ .metaAlarmConnectorName }}",
+        "connector": "api",
+        "connector_name": "api",
         "component":  "{{ .metaAlarmComponent }}",
         "resource": "{{ .metaAlarmResource }}",
         "source_type": "resource"
@@ -565,6 +568,9 @@ Feature: update meta alarm on action
                   "tickets": [
                     {
                       "_t": "declareticket",
+                      "a": "system",
+                      "user_id": "",
+                      "initiator": "system",
                       "ticket": "testticket",
                       "ticket_rule_id": "test-scenario-action-correlation-2",
                       "ticket_rule_name": "Scenario: test-scenario-action-correlation-2-name",
@@ -576,6 +582,9 @@ Feature: update meta alarm on action
                   ],
                   "ticket": {
                     "_t": "declareticket",
+                    "a": "system",
+                    "user_id": "",
+                    "initiator": "system",
                     "ticket": "testticket",
                     "ticket_rule_id": "test-scenario-action-correlation-2",
                     "ticket_rule_name": "Scenario: test-scenario-action-correlation-2-name",
@@ -595,6 +604,9 @@ Feature: update meta alarm on action
                   "tickets": [
                     {
                       "_t": "declareticket",
+                      "a": "system",
+                      "user_id": "",
+                      "initiator": "system",
                       "ticket": "testticket",
                       "ticket_rule_id": "test-scenario-action-correlation-2",
                       "ticket_rule_name": "Scenario: test-scenario-action-correlation-2-name",
@@ -606,6 +618,9 @@ Feature: update meta alarm on action
                   ],
                   "ticket": {
                     "_t": "declareticket",
+                    "a": "system",
+                    "user_id": "",
+                    "initiator": "system",
                     "ticket": "testticket",
                     "ticket_rule_id": "test-scenario-action-correlation-2",
                     "ticket_rule_name": "Scenario: test-scenario-action-correlation-2-name",
@@ -625,6 +640,9 @@ Feature: update meta alarm on action
                   "tickets": [
                     {
                       "_t": "declareticket",
+                      "a": "system",
+                      "user_id": "",
+                      "initiator": "system",
                       "ticket": "testticket",
                       "ticket_rule_id": "test-scenario-action-correlation-2",
                       "ticket_rule_name": "Scenario: test-scenario-action-correlation-2-name",
@@ -636,6 +654,9 @@ Feature: update meta alarm on action
                   ],
                   "ticket": {
                     "_t": "declareticket",
+                    "a": "system",
+                    "user_id": "",
+                    "initiator": "system",
                     "ticket": "testticket",
                     "ticket_rule_id": "test-scenario-action-correlation-2",
                     "ticket_rule_name": "Scenario: test-scenario-action-correlation-2-name",
@@ -692,30 +713,42 @@ Feature: update meta alarm on action
     """json
     [
       {
-        "_t": "stateinc"
+        "_t": "stateinc",
+        "a": "engine.correlation",
+        "user_id": "",
+        "initiator": "system"
       },
       {
-        "_t": "statusinc"
+        "_t": "statusinc",
+        "a": "engine.correlation",
+        "user_id": "",
+        "initiator": "system"
       },
       {
-        "_t": "comment"
+        "_t": "comment",
+        "a": "root John Doe admin@canopsis.net",
+        "user_id": "root",
+        "initiator": "user"
       },
       {
         "_t": "webhookstart",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-correlation-2-name"
       },
       {
         "_t": "webhookcomplete",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-correlation-2-name"
       },
       {
         "_t": "declareticket",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-correlation-2-name. Ticket ID: testticket. Ticket ticket_data: testdata."
       }
     ]
@@ -732,15 +765,21 @@ Feature: update meta alarm on action
       },
       {
         "_t": "metaalarmattach",
-        "val": 0
+        "a": "engine.correlation",
+        "user_id": "",
+        "initiator": "system"
       },
       {
-        "_t": "comment"
+        "_t": "comment",
+        "a": "root John Doe admin@canopsis.net",
+        "user_id": "root",
+        "initiator": "user"
       },
       {
         "_t": "declareticket",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-correlation-2-name. Ticket ID: testticket. Ticket ticket_data: testdata."
       }
     ]
@@ -757,15 +796,21 @@ Feature: update meta alarm on action
       },
       {
         "_t": "metaalarmattach",
-        "val": 0
+        "a": "engine.correlation",
+        "user_id": "",
+        "initiator": "system"
       },
       {
-        "_t": "comment"
+        "_t": "comment",
+        "a": "root John Doe admin@canopsis.net",
+        "user_id": "root",
+        "initiator": "user"
       },
       {
         "_t": "declareticket",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-correlation-2-name. Ticket ID: testticket. Ticket ticket_data: testdata."
       }
     ]
@@ -782,16 +827,22 @@ Feature: update meta alarm on action
       },
       {
         "_t": "metaalarmattach",
-        "val": 0
+        "a": "engine.correlation",
+        "user_id": "",
+        "initiator": "system"
       },
       {
         "_t": "declareticket",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-correlation-2-name. Ticket ID: testticket. Ticket ticket_data: testdata."
       },
       {
-        "_t": "comment"
+        "_t": "comment",
+        "a": "root John Doe admin@canopsis.net",
+        "user_id": "root",
+        "initiator": "user"
       }
     ]
     """
@@ -896,7 +947,8 @@ Feature: update meta alarm on action
       "connector_name": "test-connector-name-action-correlation-4",
       "component":  "test-component-action-correlation-4",
       "resource": "test-resource-action-correlation-4",
-      "source_type": "resource"
+      "source_type": "resource",
+      "initiator": "user"
     }
     """
     When I do POST /api/v4/alarm-details:
@@ -969,14 +1021,23 @@ Feature: update meta alarm on action
             "data": [
               {
                 "_t": "stateinc",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system",
                 "val": 2
               },
               {
                 "_t": "statusinc",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system",
                 "val": 1
               },
               {
                 "_t": "stateinc",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system",
                 "val": 3
               }
             ],
@@ -1003,14 +1064,23 @@ Feature: update meta alarm on action
                 "val": 1
               },
               {
-                "_t": "metaalarmattach"
+                "_t": "metaalarmattach",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system"
               },
               {
                 "_t": "comment",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
+                "initiator": "user",
                 "m": "test-output-action-correlation-4"
               },
               {
                 "_t": "changestate",
+                "a": "system",
+                "user_id": "",
+                "initiator": "system",
                 "val": 3
               }
             ],
@@ -1084,8 +1154,6 @@ Feature: update meta alarm on action
     }
     """
     When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
-    When I save response metaAlarmConnector={{ (index .lastResponse.data 0).v.connector }}
-    When I save response metaAlarmConnectorName={{ (index .lastResponse.data 0).v.connector_name }}
     When I save response metaAlarmComponent={{ (index .lastResponse.data 0).v.component }}
     When I save response metaAlarmResource={{ (index .lastResponse.data 0).v.resource }}
     When I do POST /api/v4/scenarios:
@@ -1141,25 +1209,20 @@ Feature: update meta alarm on action
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I do PUT /api/v4/alarms/{{ .metaAlarmID }}/comment:
     """json
     {
-      "event_type": "comment",
-      "output": "test-output-action-correlation-5",
-      "connector": "{{ .metaAlarmConnector }}",
-      "connector_name": "{{ .metaAlarmConnectorName }}",
-      "component":  "{{ .metaAlarmComponent }}",
-      "resource": "{{ .metaAlarmResource }}",
-      "source_type": "resource"
+      "comment": "test-output-action-correlation-5"
     }
     """
+    Then the response code should be 204
     Then I wait the end of events processing which contain:
     """json
     [
       {
         "event_type": "comment",
-        "connector": "{{ .metaAlarmConnector }}",
-        "connector_name": "{{ .metaAlarmConnectorName }}",
+        "connector": "api",
+        "connector_name": "api",
         "component":  "{{ .metaAlarmComponent }}",
         "resource": "{{ .metaAlarmResource }}",
         "source_type": "resource"
@@ -1204,33 +1267,43 @@ Feature: update meta alarm on action
         "_t": "statusinc"
       },
       {
-        "_t": "metaalarmattach"
+        "_t": "metaalarmattach",
+        "a": "engine.correlation",
+        "user_id": "",
+        "initiator": "system"
       },
       {
-        "_t": "comment"
+        "_t": "comment",
+        "a": "root John Doe admin@canopsis.net",
+        "user_id": "root",
+        "initiator": "user"
       },
       {
         "_t": "webhookstart",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-correlation-5-name"
       },
       {
         "_t": "webhookcomplete",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-correlation-5-name"
       },
       {
         "_t": "declareticket",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-correlation-5-name. Ticket ID: testticket. Ticket ticket_data: testdata."
       },
       {
         "_t": "declareticket",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-correlation-5-name. Ticket ID: testticket. Ticket ticket_data: testdata."
       }
     ]
@@ -1294,8 +1367,6 @@ Feature: update meta alarm on action
     }
     """
     When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
-    When I save response metaAlarmConnector={{ (index .lastResponse.data 0).v.connector }}
-    When I save response metaAlarmConnectorName={{ (index .lastResponse.data 0).v.connector_name }}
     When I save response metaAlarmComponent={{ (index .lastResponse.data 0).v.component }}
     When I save response metaAlarmResource={{ (index .lastResponse.data 0).v.resource }}
     When I do POST /api/v4/scenarios:
@@ -1352,25 +1423,20 @@ Feature: update meta alarm on action
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I do PUT /api/v4/alarms/{{ .metaAlarmID }}/comment:
     """json
     {
-      "event_type": "comment",
-      "output": "test-output-action-correlation-6",
-      "connector": "{{ .metaAlarmConnector }}",
-      "connector_name": "{{ .metaAlarmConnectorName }}",
-      "component":  "{{ .metaAlarmComponent }}",
-      "resource": "{{ .metaAlarmResource }}",
-      "source_type": "resource"
+      "comment": "test-output-action-correlation-6"
     }
     """
+    Then the response code should be 204
     Then I wait the end of events processing which contain:
     """json
     [
       {
         "event_type": "comment",
-        "connector": "{{ .metaAlarmConnector }}",
-        "connector_name": "{{ .metaAlarmConnectorName }}",
+        "connector": "api",
+        "connector_name": "api",
         "component":  "{{ .metaAlarmComponent }}",
         "resource": "{{ .metaAlarmResource }}",
         "source_type": "resource"
@@ -1415,15 +1481,22 @@ Feature: update meta alarm on action
         "_t": "statusinc"
       },
       {
-        "_t": "metaalarmattach"
+        "_t": "metaalarmattach",
+        "a": "engine.correlation",
+        "user_id": "",
+        "initiator": "system"
       },
       {
-        "_t": "comment"
+        "_t": "comment",
+        "a": "root John Doe admin@canopsis.net",
+        "user_id": "root",
+        "initiator": "user"
       },
       {
         "_t": "declareticket",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-correlation-6-name. Ticket ID: testticket. Ticket ticket_data: testdata."
       }
     ]
@@ -1484,10 +1557,6 @@ Feature: update meta alarm on action
     }
     """
     When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
-    When I save response metaalarmEntityID={{ (index .lastResponse.data 0).entity._id }}
-    When I save response metaalarmDisplayName={{ (index .lastResponse.data 0).v.display_name }}
-    When I save response metaAlarmConnector={{ (index .lastResponse.data 0).v.connector }}
-    When I save response metaAlarmConnectorName={{ (index .lastResponse.data 0).v.connector_name }}
     When I save response metaAlarmComponent={{ (index .lastResponse.data 0).v.component }}
     When I save response metaAlarmResource={{ (index .lastResponse.data 0).v.resource }}
     When I do POST /api/v4/scenarios:
@@ -1534,25 +1603,20 @@ Feature: update meta alarm on action
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I do PUT /api/v4/alarms/{{ .metaAlarmID }}/comment:
     """json
     {
-      "event_type": "comment",
-      "output": "test-output-action-correlation-7",
-      "connector": "{{ .metaAlarmConnector }}",
-      "connector_name": "{{ .metaAlarmConnectorName }}",
-      "component":  "{{ .metaAlarmComponent }}",
-      "resource": "{{ .metaAlarmResource }}",
-      "source_type": "resource"
+      "comment": "test-output-action-correlation-7"
     }
     """
+    Then the response code should be 204
     Then I wait the end of events processing which contain:
     """json
     [
       {
         "event_type": "comment",
-        "connector": "{{ .metaAlarmConnector }}",
-        "connector_name": "{{ .metaAlarmConnectorName }}",
+        "connector": "api",
+        "connector_name": "api",
         "component":  "{{ .metaAlarmComponent }}",
         "resource": "{{ .metaAlarmResource }}",
         "source_type": "resource"
@@ -1668,23 +1732,29 @@ Feature: update meta alarm on action
         "_t": "statusinc"
       },
       {
-        "_t": "comment"
+        "_t": "comment",
+        "a": "root John Doe admin@canopsis.net",
+        "user_id": "root",
+        "initiator": "user"
       },
       {
         "_t": "webhookstart",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-correlation-7-name"
       },
       {
         "_t": "webhookfail",
         "a": "system",
-        "user_id": ""
+        "user_id": "",
+        "initiator": "system"
       },
       {
         "_t": "declareticketfail",
         "a": "system",
-        "user_id": ""
+        "user_id": "",
+        "initiator": "system"
       }
     ]
     """
@@ -1708,10 +1778,15 @@ Feature: update meta alarm on action
               },
               {
                 "_t": "metaalarmattach",
-                "val": 0
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system"
               },
               {
-                "_t": "comment"
+                "_t": "comment",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
+                "initiator": "user"
               }
             ],
             "meta": {
@@ -1737,10 +1812,15 @@ Feature: update meta alarm on action
               },
               {
                 "_t": "metaalarmattach",
-                "val": 0
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system"
               },
               {
-                "_t": "comment"
+                "_t": "comment",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
+                "initiator": "user"
               }
             ],
             "meta": {
@@ -1895,27 +1975,36 @@ Feature: update meta alarm on action
     """json
     [
       {
-        "_t": "stateinc"
+        "_t": "stateinc",
+        "a": "engine.correlation",
+        "user_id": "",
+        "initiator": "system"
       },
       {
-        "_t": "statusinc"
+        "_t": "statusinc",
+        "a": "engine.correlation",
+        "user_id": "",
+        "initiator": "system"
       },
       {
         "_t": "webhookstart",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-correlation-8-name"
       },
       {
         "_t": "webhookcomplete",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-correlation-8-name"
       },
       {
         "_t": "declareticket",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-correlation-8-name. Ticket ID: testticket. Ticket ticket_data: testdata."
       }
     ]
@@ -1942,12 +2031,16 @@ Feature: update meta alarm on action
         "_t": "statusinc"
       },
       {
-        "_t": "metaalarmattach"
+        "_t": "metaalarmattach",
+        "a": "engine.correlation",
+        "user_id": "",
+        "initiator": "system"
       },
       {
         "_t": "declareticket",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-correlation-8-name. Ticket ID: testticket. Ticket ticket_data: testdata."
       }
     ]

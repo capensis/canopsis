@@ -19,7 +19,6 @@ import (
 	libcontextgraphV1 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph/v1"
 	libcontextgraphV2 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph/v2"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/datastorage"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/engineinfo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitybasic"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitycategory"
@@ -31,6 +30,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/exportconfiguration"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/flappingrule"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/linkrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
@@ -70,7 +70,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	libentityservice "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
@@ -87,7 +86,7 @@ import (
 	"github.com/rs/zerolog"
 )
 
-const baseUrl = "/api/v4"
+const BaseUrl = "/api/v4"
 
 func RegisterRoutes(
 	conf config.CanopsisConf,
@@ -105,7 +104,6 @@ func RegisterRoutes(
 	pbhComputeChan chan<- []string,
 	entityPublChan chan<- libentityservice.ChangeEntityMessage,
 	entityCleanerTaskChan chan<- entity.CleanTask,
-	runInfoManager engine.RunInfoManager,
 	exportExecutor export.TaskExecutor,
 	techMetricsTaskExecutor techmetrics.TaskExecutor,
 	actionLogger logger.ActionLogger,
@@ -118,6 +116,7 @@ func RegisterRoutes(
 	metricsEntityMetaUpdater metrics.MetaUpdater,
 	metricsUserMetaUpdater metrics.MetaUpdater,
 	authorProvider author.Provider,
+	healthcheckStore healthcheck.Store,
 	logger zerolog.Logger,
 ) {
 	sessionStore := security.GetSessionStore()
@@ -151,13 +150,13 @@ func RegisterRoutes(
 		sessionProtected.GET("/logout", sessionauthApi.LogoutHandler())
 	}
 
-	unprotected := router.Group(baseUrl)
+	unprotected := router.Group(BaseUrl)
 	{
 		unprotected.POST("/login", authApi.Login)
 		unprotected.POST("/logout", authApi.Logout)
 	}
 
-	protected := router.Group(baseUrl)
+	protected := router.Group(BaseUrl)
 	{
 		protected.Use(authMiddleware...)
 
@@ -811,11 +810,6 @@ func RegisterRoutes(
 				appInfoApi.DeleteUserInterface,
 			)
 		}
-		protected.GET(
-			"/engine-runinfo",
-			middleware.Authorize(apisecurity.PermHealthcheck, model.PermissionCan, enforcer),
-			engineinfo.GetRunInfo(runInfoManager),
-		)
 
 		viewAPI := view.NewApi(view.NewStore(dbClient, viewtab.NewStore(dbClient, widget.NewStore(dbClient, authorProvider), authorProvider), authorProvider), enforcer, actionLogger)
 		viewRouter := protected.Group("/views")
@@ -1108,7 +1102,7 @@ func RegisterRoutes(
 				broadcastMessageApi.Update)
 			// can not make typical format like /api/v4/broadcast-message/active
 			// because it would be failed with conflict error apart of get /:id route
-			router.GET(baseUrl+"/active-broadcast-message", broadcastMessageApi.GetActive)
+			router.GET(BaseUrl+"/active-broadcast-message", broadcastMessageApi.GetActive)
 		}
 
 		associativeTableApi := associativetable.NewApi(
@@ -1446,6 +1440,40 @@ func RegisterRoutes(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjColorTheme, model.PermissionDelete, enforcer),
 				colorThemeApi.Delete,
+			)
+		}
+
+		healthcheckRouter := protected.Group("/healthcheck")
+		{
+			healthcheckApi := healthcheck.NewApi(healthcheckStore)
+			healthcheckRouter.GET(
+				"",
+				middleware.Authorize(apisecurity.PermHealthcheck, model.PermissionCan, enforcer),
+				healthcheckApi.Get,
+			)
+			healthcheckRouter.GET(
+				"/live",
+				healthcheckApi.IsLive,
+			)
+			healthcheckRouter.GET(
+				"/status",
+				middleware.Authorize(apisecurity.PermHealthcheck, model.PermissionCan, enforcer),
+				healthcheckApi.GetStatus,
+			)
+			healthcheckRouter.GET(
+				"/engines-order",
+				middleware.Authorize(apisecurity.PermHealthcheck, model.PermissionCan, enforcer),
+				healthcheckApi.GetEnginesOrder,
+			)
+			healthcheckRouter.GET(
+				"/parameters",
+				middleware.Authorize(apisecurity.PermHealthcheck, model.PermissionCan, enforcer),
+				healthcheckApi.GetParameters,
+			)
+			healthcheckRouter.PUT(
+				"/parameters",
+				middleware.Authorize(apisecurity.PermHealthcheck, model.PermissionCan, enforcer),
+				healthcheckApi.UpdateParameters,
 			)
 		}
 

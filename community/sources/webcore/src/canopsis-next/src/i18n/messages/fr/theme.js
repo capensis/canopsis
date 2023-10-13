@@ -10,25 +10,25 @@ export default {
   main: {
     title: 'Principaux éléments de l\'interface utilisateur',
 
-    primary: 'Couleur principale de la marque',
-    primaryHelpText: 'Couleur principale de la marque (en-tête Canopsis)',
+    primary: 'Couleur principale du produit',
+    primaryHelpText: 'Couleur principale du produit (en-tête Canopsis)',
 
-    secondary: 'Couleur de marque secondaire',
-    secondaryHelpText: 'Couleur de marque supplémentaire (pour les panneaux développés, les menus, etc.)',
+    secondary: 'Couleur secondaire du produit',
+    secondaryHelpText: 'Couleur secondaire (pour les panneaux développés, les menus, etc.)',
 
     accent: 'Couleur neutre des boutons',
     accentHelpText: 'Couleur des boutons neutres (suivant/précédent, etc.)',
 
-    error: 'Couleur d\'erreur',
-    errorHelpText: 'Couleur des messages d\'erreur, des boutons d\'action négative, etc.',
+    error: 'Couleur relative aux erreurs',
+    errorHelpText: 'Couleur des messages d\'erreur, des boutons d\'action en échec, etc.',
 
-    info: 'Couleur des informations',
-    infoHelpText: 'Couleur pour les messages et notifications neutres',
+    info: 'Couleur relatives aux informations',
+    infoHelpText: 'Couleur pour les messages et notifications informatifs',
 
-    success: 'Succès/couleur positive',
-    successHelpText: 'Couleur pour les messages et notifications positifs/succès',
+    success: 'Couleur relative aux Succès',
+    successHelpText: 'Couleur pour les messages et notifications en succès',
 
-    warning: 'Couleur d\'avertissement',
+    warning: 'Couleur relative aux avertissements',
     warningHelpText: 'Couleur des messages d\'avertissement et des notifications',
 
     background: 'Couleur de fond principale',
@@ -41,40 +41,40 @@ export default {
 
     sizes: {
       [THEME_FONT_SIZES.small]: 'Petite',
-      [THEME_FONT_SIZES.medium]: 'Moyen',
+      [THEME_FONT_SIZES.medium]: 'Moyenne',
       [THEME_FONT_SIZES.large]: 'Grande',
     },
   },
   table: {
-    title: 'Paramètres du tableau',
+    title: 'Paramètres du bac à alarmes',
 
-    background: 'Couleur d’arrière-plan du tableau',
-    backgroundHelpText: 'Couleur BG pour le tableau de la liste des alarmes',
+    background: 'Couleur d\'arrière-plan du bac',
+    backgroundHelpText: 'Couleur d\'arrière plan pour le bac à alarmes',
 
-    rowColor: 'Couleur des lignes du tableau',
-    rowColorHelpText: 'Couleur BG pour chaque ligne du tableau',
+    rowColor: 'Couleur des lignes du bac',
+    rowColorHelpText: 'Couleur des lignes du tableau',
 
-    shiftRowEnable: 'Décaler les couleurs d’arrière-plan du tableau',
-    shiftRowEnableHelpText: 'Sélecteur pour activer/désactiver les changements de couleur pour les lignes du tableau',
+    shiftRowEnable: 'Alterner les couleurs d’arrière-plan du bac',
+    shiftRowEnableHelpText: 'Sélecteur pour activer/désactiver les changements de couleur pour les lignes du bac',
 
-    shiftRowColor: 'Couleur d’arrière-plan de la deuxième ligne du tableau',
+    shiftRowColor: 'Couleur de la deuxième ligne du bac',
     shiftRowColorHelpText: 'Lorsqu\'elle est activée, les couleurs des lignes changent (une couleur de ligne sur deux est différente)',
 
     hoverRowEnable: 'Changer la couleur de la ligne au survol',
-    hoverRowEnableHelpText: 'Sélecteur pour activer/désactiver le changement de couleur des lignes du tableau en survol',
+    hoverRowEnableHelpText: 'Sélecteur pour activer/désactiver le changement de couleur des lignes du bac au survol',
 
-    hoverRowColor: 'Couleur des lignes du tableau au survol',
+    hoverRowColor: 'Couleur des lignes du bac au survol',
   },
   state: {
-    title: 'Couleurs de gravité',
+    title: 'Couleurs de criticités',
 
     ok: 'Ok',
     okHelpText: 'Indication de couleur pour l\'état OK',
 
-    minor: 'Mineur',
+    minor: 'Mineure',
     minorHelpText: 'Indication de couleur pour l\'état mineur',
 
-    major: 'Majeur',
+    major: 'Majeure',
     majorHelpText: 'Indication de couleur pour l\'état majeur',
 
     critical: 'Critique',

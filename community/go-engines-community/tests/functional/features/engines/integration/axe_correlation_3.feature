@@ -85,10 +85,16 @@ Feature: create and update meta alarm
             "display_name": "test-metaAlarm-axe-correlation-third-1",
             "state": {
               "_t": "stateinc",
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 2
             },
             "status": {
               "_t": "statusinc",
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 1
             }
           }
@@ -108,25 +114,20 @@ Feature: create and update meta alarm
     }
     """
     When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
-    When I send an event:
+    When I do PUT /api/v4/alarms/{{ .metaAlarmID }}/ack:
     """json
     {
-      "connector": "{{ .metaAlarmConnector }}",
-      "connector_name": "{{ .metaAlarmConnectorName }}",
-      "source_type": "resource",
-      "event_type": "ack",
-      "component": "{{ .metaAlarmComponent }}",
-      "resource": "{{ .metaAlarmResource }}",
-      "output": "test-ack-19"
+      "comment": "test-ack-comment-axe-correlation-third-1"
     }
     """
+    Then the response code should be 204
     Then I wait the end of events processing which contain:
     """json
     [
       {
         "event_type": "ack",
-        "connector": "{{ .metaAlarmConnector }}",
-        "connector_name": "{{ .metaAlarmConnectorName }}",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .metaAlarmComponent }}",
         "resource": "{{ .metaAlarmResource }}",
         "source_type": "resource"
@@ -149,25 +150,20 @@ Feature: create and update meta alarm
       }
     ]
     """
-    When I send an event:
+    When I do PUT /api/v4/alarms/{{ .metaAlarmID }}/assocticket:
     """json
     {
-      "connector": "{{ .metaAlarmConnector }}",
-      "connector_name": "{{ .metaAlarmConnectorName }}",
-      "source_type": "resource",
-      "event_type": "assocticket",
-      "component": "{{ .metaAlarmComponent }}",
-      "resource": "{{ .metaAlarmResource }}",
-      "ticket": "ticket-19"
+      "ticket": "test-ticket-axe-correlation-third-1"
     }
     """
+    Then the response code should be 204
     Then I wait the end of events processing which contain:
     """json
     [
       {
         "event_type": "assocticket",
-        "connector": "{{ .metaAlarmConnector }}",
-        "connector_name": "{{ .metaAlarmConnectorName }}",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .metaAlarmComponent }}",
         "resource": "{{ .metaAlarmResource }}",
         "source_type": "resource"
@@ -190,25 +186,20 @@ Feature: create and update meta alarm
       }
     ]
     """
-    When I send an event:
+    When I do PUT /api/v4/alarms/{{ .metaAlarmID }}/comment:
     """json
     {
-      "connector": "{{ .metaAlarmConnector }}",
-      "connector_name": "{{ .metaAlarmConnectorName }}",
-      "source_type": "resource",
-      "event_type": "comment",
-      "component": "{{ .metaAlarmComponent }}",
-      "resource": "{{ .metaAlarmResource }}",
-      "output": "comment-19"
+      "comment": "test-comment-axe-correlation-third-1"
     }
     """
+    Then the response code should be 204
     Then I wait the end of events processing which contain:
     """json
     [
       {
         "event_type": "comment",
-        "connector": "{{ .metaAlarmConnector }}",
-        "connector_name": "{{ .metaAlarmConnectorName }}",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .metaAlarmComponent }}",
         "resource": "{{ .metaAlarmResource }}",
         "source_type": "resource"
@@ -231,25 +222,24 @@ Feature: create and update meta alarm
       }
     ]
     """
-    When I send an event:
+    When I do PUT /api/v4/alarms/{{ .metaAlarmID }}/snooze:
     """json
     {
-      "connector": "{{ .metaAlarmConnector }}",
-      "connector_name": "{{ .metaAlarmConnectorName }}",
-      "source_type": "resource",
-      "event_type": "snooze",
-      "component": "{{ .metaAlarmComponent }}",
-      "resource": "{{ .metaAlarmResource }}",
-      "duration": 3600
+      "duration": {
+        "value": 1,
+        "unit": "h"
+      },
+      "comment": "test-snooze-comment-axe-correlation-third-1"
     }
     """
+    Then the response code should be 204
     Then I wait the end of events processing which contain:
     """json
     [
       {
         "event_type": "snooze",
-        "connector": "{{ .metaAlarmConnector }}",
-        "connector_name": "{{ .metaAlarmConnectorName }}",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .metaAlarmComponent }}",
         "resource": "{{ .metaAlarmResource }}",
         "source_type": "resource"
@@ -347,18 +337,27 @@ Feature: create and update meta alarm
                   "parents": ["{{ .metaAlarmEntityID }}"],
                   "ack": {
                     "a": "root John Doe admin@canopsis.net",
-                    "m": "test-ack-19"
+                    "user_id": "root",
+                    "initiator": "user",
+                    "m": "test-ack-comment-axe-correlation-third-1"
                   },
                   "ticket": {
                     "a": "root John Doe admin@canopsis.net",
-                    "m": "Ticket ID: ticket-19."
+                    "user_id": "root",
+                    "initiator": "user",
+                    "m": "Ticket ID: test-ticket-axe-correlation-third-1."
                   },
                   "last_comment": {
                     "a": "root John Doe admin@canopsis.net",
-                    "m": "comment-19"
+                    "user_id": "root",
+                    "initiator": "user",
+                    "m": "test-comment-axe-correlation-third-1"
                   },
                   "snooze": {
-                    "a": "root John Doe admin@canopsis.net"
+                    "a": "root John Doe admin@canopsis.net",
+                    "user_id": "root",
+                    "initiator": "user",
+                    "m": "test-snooze-comment-axe-correlation-third-1"
                   }
                 }
               },
@@ -371,18 +370,27 @@ Feature: create and update meta alarm
                   "parents": ["{{ .metaAlarmEntityID }}"],
                   "ack": {
                     "a": "root John Doe admin@canopsis.net",
-                    "m": "test-ack-19"
+                    "user_id": "root",
+                    "initiator": "user",
+                    "m": "test-ack-comment-axe-correlation-third-1"
                   },
                   "ticket": {
                     "a": "root John Doe admin@canopsis.net",
-                    "m": "Ticket ID: ticket-19."
+                    "user_id": "root",
+                    "initiator": "user",
+                    "m": "Ticket ID: test-ticket-axe-correlation-third-1."
                   },
                   "last_comment": {
                     "a": "root John Doe admin@canopsis.net",
-                    "m": "comment-19"
+                    "user_id": "root",
+                    "initiator": "user",
+                    "m": "test-comment-axe-correlation-third-1"
                   },
                   "snooze": {
-                    "a": "root John Doe admin@canopsis.net"
+                    "a": "root John Doe admin@canopsis.net",
+                    "user_id": "root",
+                    "initiator": "user",
+                    "m": "test-snooze-comment-axe-correlation-third-1"
                   }
                 }
               },
@@ -395,18 +403,27 @@ Feature: create and update meta alarm
                   "parents": ["{{ .metaAlarmEntityID }}"],
                   "ack": {
                     "a": "root John Doe admin@canopsis.net",
-                    "m": "test-ack-19"
+                    "user_id": "root",
+                    "initiator": "user",
+                    "m": "test-ack-comment-axe-correlation-third-1"
                   },
                   "ticket": {
                     "a": "root John Doe admin@canopsis.net",
-                    "m": "Ticket ID: ticket-19."
+                    "user_id": "root",
+                    "initiator": "user",
+                    "m": "Ticket ID: test-ticket-axe-correlation-third-1."
                   },
                   "last_comment": {
                     "a": "root John Doe admin@canopsis.net",
-                    "m": "comment-19"
+                    "user_id": "root",
+                    "initiator": "user",
+                    "m": "test-comment-axe-correlation-third-1"
                   },
                   "snooze": {
-                    "a": "root John Doe admin@canopsis.net"
+                    "a": "root John Doe admin@canopsis.net",
+                    "user_id": "root",
+                    "initiator": "user",
+                    "m": "test-snooze-comment-axe-correlation-third-1"
                   }
                 }
               }

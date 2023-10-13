@@ -67,20 +67,16 @@ describe('groups-side-bar', () => {
 
     await flushPromises();
 
-    expect(fetchGroupsList).toBeCalledWith(
-      expect.any(Object),
-      {
-        params: {
-          limit: MAX_LIMIT,
-          page: 1,
-          with_views: true,
-          with_tabs: true,
-          with_widgets: true,
-          with_flags: true,
-        },
+    expect(fetchGroupsList).toBeDispatchedWith({
+      params: {
+        limit: MAX_LIMIT,
+        page: 1,
+        with_views: true,
+        with_tabs: true,
+        with_widgets: true,
+        with_flags: true,
       },
-      undefined,
-    );
+    });
   });
 
   it('Change groups order after trigger submit button', async () => {
@@ -127,16 +123,12 @@ describe('groups-side-bar', () => {
 
     await flushPromises();
 
-    expect(updateViewsPositions).toBeCalledWith(
-      expect.any(Object),
-      {
-        data: updatedGroups.map(group => ({
-          _id: group._id,
-          views: group.views.map(view => view._id),
-        })),
-      },
-      undefined,
-    );
+    expect(updateViewsPositions).toBeDispatchedWith({
+      data: updatedGroups.map(group => ({
+        _id: group._id,
+        views: group.views.map(view => view._id),
+      })),
+    });
     expect(fetchGroupsList).toBeCalled();
 
     expect($popups.success).toBeCalledWith({ text: 'The groups was reordered' });

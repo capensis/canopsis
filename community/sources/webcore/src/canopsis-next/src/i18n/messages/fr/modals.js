@@ -205,7 +205,6 @@ export default {
   },
   variablesHelp: {
     variables: 'Variables',
-    copyToClipboard: 'Copier dans le presse-papier',
   },
   service: {
     refreshEntities: 'Rafraîchir la liste des entités',
@@ -970,17 +969,17 @@ export default {
   },
   confirmationLeaveMaintenance: {
     title: 'Quitter le mode maintenance',
-    text: 'Êtes-vous sûr de vouloir quitter le mode maintenance ?\\nTous les utilisateurs pourront se connecter au système après avoir quitté.',
+    text: 'Êtes-vous sûr de vouloir quitter le mode maintenance ?\nTous les utilisateurs pourront à nouveau se connecter à Canopsis.',
   },
   createTag: {
     create: {
-      title: 'Créer une balise',
+      title: 'Créer un tag',
     },
     edit: {
-      title: 'Modifier une balise',
+      title: 'Modifier un tag',
     },
     duplicate: {
-      title: 'Dupliquer une balise',
+      title: 'Dupliquer un tag',
     },
   },
   createTheme: {
