@@ -54,8 +54,8 @@
         :select-all="selectable",
         :loading="loading || columnsFiltersPending",
         :expand="expandable",
-        :dense="isMediumHeight",
-        :ultra-dense="isSmallHeight",
+        :dense="isMediumDense",
+        :ultra-dense="isSmallDense",
         header-key="value",
         item-key="_id",
         hide-actions,
@@ -95,8 +95,8 @@
             :refresh-alarms-list="refreshAlarmsList",
             :selecting="selecting",
             :selected-tag="selectedTag",
-            :medium="isMediumHeight",
-            :small="isSmallHeight",
+            :medium="isMediumDense",
+            :small="isSmallDense",
             :resizing="resizingMode",
             :search="search",
             :wrap-actions="resizableColumn",
@@ -340,7 +340,7 @@ export default {
         /**
          * We need it for the expand panel open button
          */
-        headers.unshift({ sortable: false, width: 82 });
+        headers.unshift({ sortable: false, width: 100 });
       }
 
       return this.draggableColumn
@@ -392,7 +392,7 @@ export default {
       /**
        * left expand/instruction icon/select actions width
        */
-      return this.isMediumHeight || this.isSmallHeight ? 82 : 100;
+      return this.isMediumDense || this.isSmallDense ? 100 : 120;
     },
 
     vDataTableStyle() {
@@ -423,11 +423,11 @@ export default {
       return {};
     },
 
-    isMediumHeight() {
+    isMediumDense() {
       return this.dense === ALARM_DENSE_TYPES.medium;
     },
 
-    isSmallHeight() {
+    isSmallDense() {
       return this.dense === ALARM_DENSE_TYPES.small;
     },
 
@@ -735,14 +735,14 @@ export default {
   }
 
   th:not([role='columnheader']) {
-    width: 100px;
+    width: 120px;
   }
 
   .v-datatable--dense,
   .v-datatable--ultra-dense {
     thead {
       th:not([role='columnheader']) {
-        width: 82px;
+        width: 100px;
       }
     }
   }

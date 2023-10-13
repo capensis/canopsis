@@ -29,8 +29,14 @@ export default {
   noAlarmFound: 'No alarms is found according to the patterns defined',
   associateTicketResources: 'Associate ticket for resources',
   followLink: 'Follow the link "{title}"',
+  hasBookmark: 'Alarm has bookmark',
+  filterByBookmark: 'Filter by bookmark',
   popups: {
     exportFailed: 'Failed to export alarms list in CSV format',
+    addBookmarkSuccess: 'Bookmark was added',
+    addBookmarkFailed: 'Something went wrong. Bookmark wasn\'t added',
+    removeBookmarkSuccess: 'Bookmark was removed',
+    removeBookmarkFailed: 'Something went wrong. Bookmark wasn\'t removed',
   },
   actions: {
     titles: {
@@ -52,6 +58,8 @@ export default {
       removeAlarmsFromAutoMetaAlarm: 'Unlink alarm from meta alarm',
       comment: 'Comment',
       exportPdf: 'Export alarm to PDF file',
+      addBookmark: 'Add bookmark',
+      removeBookmark: 'Remove bookmark',
     },
     iconsTitles: {
       ack: 'Ack',

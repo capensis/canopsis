@@ -142,6 +142,18 @@ export default {
       name: 'Droits sur le bac à alarmes : Accès à l\'export des alarmes au format CSV',
       description: 'Les utilisateurs disposant de cette autorisation peuvent exporter des alarmes au format CSV',
     },
+    [USERS_PERMISSIONS.business.alarmsList.actions.addBookmark]: {
+      name: 'Droits sur la liste des alarmes : Accès à l\'ajout de favoris aux alarmes',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent ajouter un signet à l\'alarme',
+    },
+    [USERS_PERMISSIONS.business.alarmsList.actions.removeBookmark]: {
+      name: 'Droits sur la liste des alarmes : Accès à la suppression du signet de l\'alarme',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent supprimer le signet de l\'alarme',
+    },
+    [USERS_PERMISSIONS.business.alarmsList.actions.filterByBookmark]: {
+      name: 'Droits sur la liste des alarmes : Accès au filtrage des alarmes uniquement par favoris',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent filtrer les alarmes uniquement en fonction des signets',
+    },
 
     /**
      * Business Context Explorer Permissions
