@@ -142,6 +142,18 @@ export default {
       name: 'Rights on alarm list: Access to exporting alarms as CSV',
       description: 'Users with this permission can export alarms to CSV',
     },
+    [USERS_PERMISSIONS.business.alarmsList.actions.addBookmark]: {
+      name: 'Rights on alarm list: Access to adding bookmark to alarms',
+      description: 'Users with this permission can add bookmark to alarm',
+    },
+    [USERS_PERMISSIONS.business.alarmsList.actions.removeBookmark]: {
+      name: 'Rights on alarm list: Access to removing bookmark from alarm',
+      description: 'Users with this permission can remove bookmark from alarm',
+    },
+    [USERS_PERMISSIONS.business.alarmsList.actions.filterByBookmark]: {
+      name: 'Rights on alarm list: Access to filter alarms by only bookmarks',
+      description: 'Users with this permission can filter alarms by only bookmarks',
+    },
 
     /**
      * Business Context Explorer Permissions
