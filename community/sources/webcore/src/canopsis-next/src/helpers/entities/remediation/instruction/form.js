@@ -9,6 +9,7 @@ import {
 
 import { uuid } from '@/helpers/uuid';
 import { durationToForm } from '@/helpers/date/duration';
+import { flattenErrorMap } from '@/helpers/entities/shared/form';
 
 /**
  * @typedef {
@@ -351,7 +352,7 @@ export const formToRemediationInstruction = (form) => {
  * @param {RemediationInstructionForm} form
  * @return {FlattenErrors}
  */
-export const remediationInstructionErrorsToForm = (errors, form) => form(errors, (errorsObject) => {
+export const remediationInstructionErrorsToForm = (errors, form) => flattenErrorMap(errors, (errorsObject) => {
   const { jobs, ...errorMessages } = errorsObject;
 
   if (jobs) {
