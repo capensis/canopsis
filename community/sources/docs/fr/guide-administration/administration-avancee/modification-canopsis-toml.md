@@ -149,14 +149,13 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 
 ### Section [Canopsis.api]
 
-| Attribut            | Exemple de valeur  | Description                           |
-| :------------------ | :------------------| :------------------------------------ |
-| TokenExpiration     | "24h"              | Durée de validité d'un token d'authentification |
-| TokenSigningMethod  | "HS256"            | Méthode de signature d'un token d'authentification |
-| BulkMaxSize         | 1000               | Taille maximum d'un batch de changement de données en base |
-| ExportBulkize       | 5000               | Nombre maximum d'alarmes d'un batch pour l'export. Ce paramètre doit être diminué si les alarmes que vous souhaitez exporter sont volumineuses |
-| AuthorScheme        | ["$username"]      | Permet de définir la manière de représenter l'auteur d'une action dans Canopsis. Ex : `["$username", " ", "$firstname", " ", "$lastname", " ", "$email", " ", "$_id"] ` |
-
+| Attribut                 | Exemple de valeur  | Description                           |
+| :----------------------- | :------------------| :------------------------------------ |
+| TokenSigningMethod       | "HS256"            | Méthode de signature d'un token d'authentification |
+| BulkMaxSize              | 1000               | Taille maximum d'un batch (api endpoint) de changement en données en base |
+| ExportMongoClientTimeout | "1m"               | Durée maximum d'un export au format CSV |
+| AuthorScheme             | ["$username"]      | Permet de définir la manière de représenter l'auteur d'une action dans Canopsis. Ex : `["$username", " ", "$firstname", " ", "$lastname", " ", "$email", " ", "$_id"] ` |
+| MetricsCacheExpiration   | "24h"              | Durée de validité du cache des API liées aux métriques |
 
 ### Section [Canopsis.logger]
 
