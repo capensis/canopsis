@@ -1098,3 +1098,120 @@ Feature: Copy a view
       ]
     }
     """
+
+  @concurrent
+  Scenario: given copy owned private view request to owned private viewgroup with api_private_view_groups
+    but without api_view permissions should create private view
+    When I am test-role-to-private-views-without-view-perm
+    When I do POST /api/v4/view-copy/test-private-view-to-copy-5:
+    """json
+    {
+      "description": "test-private-view-to-copy-5-description-updated",
+      "enabled": true,
+      "group": "test-private-viewgroup-to-copy-5",
+      "title": "test-private-view-to-copy-5-title-updated",
+      "periodic_refresh": {
+        "enabled": true,
+        "value": 600,
+        "unit": "m"
+      },
+      "tags": [
+        "test-private-view-to-copy-5-tag-updated"
+      ]
+    }
+    """
+    Then the response code should be 201
+    Then the response body should contain:
+    """json
+    {
+      "author": {
+        "_id": "test-user-to-private-views-without-view-perm",
+        "name": "test-user-to-private-views-without-view-perm"
+      },
+      "is_private": true,
+      "group": {
+        "_id": "test-private-viewgroup-to-copy-5",
+        "author": {
+          "_id": "test-user-to-private-views-without-view-perm",
+          "name": "test-user-to-private-views-without-view-perm"
+        },
+        "title": "test-private-viewgroup-to-copy-5-title"
+      },
+      "title": "test-private-view-to-copy-5-title-updated"
+    }
+    """
+    When I do GET /api/v4/views/{{ .lastResponse._id }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": {
+        "_id": "test-user-to-private-views-without-view-perm",
+        "name": "test-user-to-private-views-without-view-perm"
+      },
+      "is_private": true,
+      "group": {
+        "_id": "test-private-viewgroup-to-copy-5",
+        "author": {
+          "_id": "test-user-to-private-views-without-view-perm",
+          "name": "test-user-to-private-views-without-view-perm"
+        },
+        "title": "test-private-viewgroup-to-copy-5-title"
+      },
+      "title": "test-private-view-to-copy-5-title-updated"
+    }
+    """
+    Then the response key "_id" should not be "test-private-view-to-copy-5"    
+    Then I save response viewId={{ .lastResponse._id }}
+    When I do GET /api/v4/view-groups?search=test-private-viewgroup-to-copy-5&with_views=true&with_private=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "views": [
+            {
+              "_id": "test-private-view-to-copy-5",
+              "is_private": true
+            },
+            {
+              "_id": "{{ .viewId }}",
+              "is_private": true
+            }
+          ]
+        }
+      ]
+    }
+    """
+    
+  @concurrent
+  Scenario: given copy owned private view request to public viewgroup with api_private_view_groups
+    but without api_view permissions should return error
+    When I am test-role-to-private-views-without-view-perm
+    When I do POST /api/v4/view-copy/test-private-view-to-copy-5:
+    """json
+    {
+      "description": "test-private-view-to-copy-5-description-updated",
+      "enabled": true,
+      "group": "test-viewgroup-to-view-copy-1",
+      "title": "test-private-view-to-copy-5-title-updated",
+      "periodic_refresh": {
+        "enabled": true,
+        "value": 600,
+        "unit": "m"
+      },
+      "tags": [
+        "test-private-view-to-copy-5-tag-updated"
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "group": "Group is public."
+      }
+    }
+    """

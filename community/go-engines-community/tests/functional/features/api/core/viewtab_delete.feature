@@ -5,9 +5,9 @@ Feature: Delete a view tab
   @concurrent
   Scenario: given delete request should delete tab
     When I am admin
-    When I do DELETE /api/v4/view-tabs/test-tab-to-delete
+    When I do DELETE /api/v4/view-tabs/test-tab-to-delete-1
     Then the response code should be 204
-    When I do GET /api/v4/view-tabs/test-tab-to-delete
+    When I do GET /api/v4/view-tabs/test-tab-to-delete-1
     Then the response code should be 404
 
   @concurrent
@@ -57,4 +57,20 @@ Feature: Delete a view tab
   Scenario: given delete request with not owned private viewtab should return not allow access error
     When I am admin
     When I do DELETE /api/v4/view-tabs/test-private-tab-to-delete-2
+    Then the response code should be 403
+
+  @concurrent
+  Scenario: given delete request with owned private viewtab with api_private_view_groups
+    but without api_view permissions should return filters should return ok
+    When I am test-role-to-private-views-without-view-perm
+    When I do DELETE /api/v4/view-tabs/test-private-tab-to-delete-3
+    Then the response code should be 204
+    When I do GET /api/v4/view-tabs/test-private-tab-to-delete-3
+    Then the response code should be 404
+
+  @concurrent
+  Scenario: given delete request with public viewtab with api_private_view_groups
+    but without api_view permissions should return filters should not allow access
+    When I am test-role-to-private-views-without-view-perm
+    When I do DELETE /api/v4/view-tabs/test-tab-to-delete-2
     Then the response code should be 403

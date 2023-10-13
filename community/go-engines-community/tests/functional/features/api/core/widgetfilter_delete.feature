@@ -60,3 +60,19 @@ Feature: Delete a widget filter
     When I am admin
     When I do DELETE /api/v4/widget-filters/test-private-widgetfilter-to-delete-2
     Then the response code should be 403
+
+  @concurrent
+  Scenario: given delete owned private filter request with api_private_view_groups
+    but without api_view permissions should return ok
+    When I am test-role-to-private-views-without-view-perm
+    When I do DELETE /api/v4/widget-filters/test-private-widgetfilter-to-delete-3
+    Then the response code should be 204
+    When I do GET /api/v4/widget-filters/test-private-widgetfilter-to-delete-3
+    Then the response code should be 403
+
+  @concurrent
+  Scenario: given delete public filter request with api_private_view_groups
+    but without api_view permissions should not allow access
+    When I am test-role-to-private-views-without-view-perm
+    When I do DELETE /api/v4/widget-filters/test-widgetfilter-to-delete-5
+    Then the response code should be 403

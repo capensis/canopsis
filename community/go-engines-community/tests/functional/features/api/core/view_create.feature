@@ -376,3 +376,135 @@ Feature: Create a view
       }
     }
     """
+
+  @concurrent
+  Scenario: given create request for private group with api_private_view_groups
+    but without api_view permissions should return filters should create a private view
+    When I am test-role-to-private-views-without-view-perm
+    When I do POST /api/v4/views:
+    """json
+    {
+      "enabled": true,
+      "title": "test-view-to-create-6-title",
+      "description": "test-view-to-create-6-description",
+      "group": "test-private-viewgroup-to-create-view-3",
+      "tags": ["test-view-to-create-6-tag"],
+      "periodic_refresh": {
+        "enabled": true,
+        "value": 600,
+        "unit": "m"
+      }
+    }
+    """
+    Then the response code should be 201
+    Then the response body should contain:
+    """json
+    {
+      "author": {
+        "_id": "test-user-to-private-views-without-view-perm",
+        "name": "test-user-to-private-views-without-view-perm"
+      },
+      "description": "test-view-to-create-6-description",
+      "enabled": true,
+      "is_private": true,
+      "group": {
+        "_id": "test-private-viewgroup-to-create-view-3",
+        "author": {
+          "_id": "test-user-to-private-views-without-view-perm",
+          "name": "test-user-to-private-views-without-view-perm"
+        },
+        "title": "test-private-viewgroup-to-create-view-3-title"
+      },
+      "title": "test-view-to-create-6-title",
+      "periodic_refresh": {
+        "enabled": true,
+        "value": 600,
+        "unit": "m"
+      },
+      "tags": [
+        "test-view-to-create-6-tag"
+      ],
+      "tabs": [
+        {
+          "author": {
+            "_id": "test-user-to-private-views-without-view-perm",
+            "name": "test-user-to-private-views-without-view-perm"
+          },
+          "title": "Default",
+          "is_private": true,
+          "widgets": []
+        }
+      ]
+    }
+    """
+    When I do GET /api/v4/views/{{ .lastResponse._id}}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": {
+        "_id": "test-user-to-private-views-without-view-perm",
+        "name": "test-user-to-private-views-without-view-perm"
+      },
+      "description": "test-view-to-create-6-description",
+      "enabled": true,
+      "is_private": true,
+      "group": {
+        "_id": "test-private-viewgroup-to-create-view-3",
+        "author": {
+          "_id": "test-user-to-private-views-without-view-perm",
+          "name": "test-user-to-private-views-without-view-perm"
+        },
+        "title": "test-private-viewgroup-to-create-view-3-title"
+      },
+      "title": "test-view-to-create-6-title",
+      "periodic_refresh": {
+        "enabled": true,
+        "value": 600,
+        "unit": "m"
+      },
+      "tags": [
+        "test-view-to-create-6-tag"
+      ],
+      "tabs": [
+        {
+          "author": {
+            "_id": "test-user-to-private-views-without-view-perm",
+            "name": "test-user-to-private-views-without-view-perm"
+          },
+          "title": "Default",
+          "is_private": true,
+          "widgets": []
+        }
+      ]
+    }
+    """
+
+  @concurrent
+  Scenario: given create request for public group with api_private_view_groups
+    but without api_view permissions should return filters should return error
+    When I am test-role-to-private-views-without-view-perm
+    When I do POST /api/v4/views:
+    """json
+    {
+      "enabled": true,
+      "title": "test-view-to-create-7-title",
+      "description": "test-view-to-create-7-description",
+      "group": "test-viewgroup-to-view-edit",
+      "tags": ["test-view-to-create-7-tag"],
+      "periodic_refresh": {
+        "enabled": true,
+        "value": 700,
+        "unit": "m"
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "group": "Group is public."
+      }
+    }
+    """

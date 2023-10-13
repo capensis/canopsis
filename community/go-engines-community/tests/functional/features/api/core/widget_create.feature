@@ -1063,3 +1063,288 @@ Feature: Create a widget
       }
     }
     """
+
+  @concurrent
+  Scenario: given create request with owned private tab with api_private_view_groups
+    but without api_view permissions should return filters should create private widget 
+    When I am test-role-to-private-views-without-view-perm
+    When I do POST /api/v4/widgets:
+    """json
+    {
+      "title": "test-private-widget-to-create-3-title",
+      "tab": "test-private-tab-to-private-widget-create-3",
+      "type": "test-private-widget-to-create-3-type",
+      "grid_parameters": {
+        "desktop": {"x": 0, "y": 0}
+      },
+      "parameters": {
+        "mainFilter": "test-private-widgetfilter-to-private-widget-create-3-2",
+        "test-private-widget-to-create-3-param-str": "teststr",
+        "test-private-widget-to-create-3-param-int": 2,
+        "test-private-widget-to-create-3-param-bool": true,
+        "test-private-widget-to-create-3-param-arr": ["teststr1", "teststr2"],
+        "test-private-widget-to-create-3-param-map": {"testkey": "teststr"}
+      },
+      "filters": [
+        {
+          "_id": "test-private-widgetfilter-to-private-widget-create-3-1",
+          "title": "test-private-widgetfilter-to-private-widget-create-3-1-title",
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-private-widgetfilter-to-private-widget-create-3-1-pattern"
+                }
+              }
+            ]
+          ],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-private-widgetfilter-to-private-widget-create-3-1-pattern"
+                }
+              }
+            ]
+          ],
+          "pbehavior_pattern": [
+            [
+              {
+                "field": "pbehavior_info.type",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-private-widgetfilter-to-private-widget-create-3-1-pattern"
+                }
+              }
+            ]
+          ]
+        },
+        {
+          "_id": "test-private-widgetfilter-to-private-widget-create-3-2",
+          "title": "test-private-widgetfilter-to-private-widget-create-3-2-title",
+          "corporate_alarm_pattern": "test-pattern-to-widget-edit-1"
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    Then the response body should contain:
+    """json
+    {
+      "title": "test-private-widget-to-create-3-title",
+      "type": "test-private-widget-to-create-3-type",
+      "is_private": true,
+      "grid_parameters": {
+        "desktop": {"x": 0, "y": 0}
+      },
+      "parameters": {
+        "test-private-widget-to-create-3-param-str": "teststr",
+        "test-private-widget-to-create-3-param-int": 2,
+        "test-private-widget-to-create-3-param-bool": true,
+        "test-private-widget-to-create-3-param-arr": ["teststr1", "teststr2"],
+        "test-private-widget-to-create-3-param-map": {"testkey": "teststr"}
+      },
+      "author": {
+        "_id": "test-user-to-private-views-without-view-perm",
+        "name": "test-user-to-private-views-without-view-perm"
+      },
+      "filters": [
+        {
+          "title": "test-private-widgetfilter-to-private-widget-create-3-1-title",
+          "is_private": true,
+          "is_user_preference": false,
+          "author": {
+            "_id": "test-user-to-private-views-without-view-perm",
+            "name": "test-user-to-private-views-without-view-perm"
+          },
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-private-widgetfilter-to-private-widget-create-3-1-pattern"
+                }
+              }
+            ]
+          ],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-private-widgetfilter-to-private-widget-create-3-1-pattern"
+                }
+              }
+            ]
+          ],
+          "pbehavior_pattern": [
+            [
+              {
+                "field": "pbehavior_info.type",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-private-widgetfilter-to-private-widget-create-3-1-pattern"
+                }
+              }
+            ]
+          ]
+        },
+        {
+          "title": "test-private-widgetfilter-to-private-widget-create-3-2-title",
+          "is_private": true,
+          "is_user_preference": false,
+          "author": {
+            "_id": "test-user-to-private-views-without-view-perm",
+            "name": "test-user-to-private-views-without-view-perm"
+          },
+          "corporate_alarm_pattern": "test-pattern-to-widget-edit-1",
+          "corporate_alarm_pattern_title": "test-pattern-to-widget-edit-1-title",
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pattern-to-widget-edit-1-pattern"
+                }
+              }
+            ]
+          ]
+        }
+      ]
+    }
+    """
+    When I save response widgetID={{ .lastResponse._id }}
+    When I save response mainFilterID={{ (index .lastResponse.filters 1)._id }}
+    Then the response key "parameters.mainFilter" should not be "test-private-widgetfilter-to-private-widget-create-3-2"
+    When I do GET /api/v4/widgets/{{ .widgetID }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "title": "test-private-widget-to-create-3-title",
+      "type": "test-private-widget-to-create-3-type",
+      "is_private": true,
+      "grid_parameters": {
+        "desktop": {"x": 0, "y": 0}
+      },
+      "parameters": {
+        "mainFilter": "{{ .mainFilterID }}",
+        "test-private-widget-to-create-3-param-str": "teststr",
+        "test-private-widget-to-create-3-param-int": 2,
+        "test-private-widget-to-create-3-param-bool": true,
+        "test-private-widget-to-create-3-param-arr": ["teststr1", "teststr2"],
+        "test-private-widget-to-create-3-param-map": {"testkey": "teststr"}
+      },
+      "author": {
+        "_id": "test-user-to-private-views-without-view-perm",
+        "name": "test-user-to-private-views-without-view-perm"
+      },
+      "filters": [
+        {
+          "title": "test-private-widgetfilter-to-private-widget-create-3-1-title",
+          "is_private": true,
+          "is_user_preference": false,
+          "author": {
+            "_id": "test-user-to-private-views-without-view-perm",
+            "name": "test-user-to-private-views-without-view-perm"
+          },
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-private-widgetfilter-to-private-widget-create-3-1-pattern"
+                }
+              }
+            ]
+          ],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-private-widgetfilter-to-private-widget-create-3-1-pattern"
+                }
+              }
+            ]
+          ],
+          "pbehavior_pattern": [
+            [
+              {
+                "field": "pbehavior_info.type",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-private-widgetfilter-to-private-widget-create-3-1-pattern"
+                }
+              }
+            ]
+          ]
+        },
+        {
+          "title": "test-private-widgetfilter-to-private-widget-create-3-2-title",
+          "is_private": true,
+          "is_user_preference": false,
+          "author": {
+            "_id": "test-user-to-private-views-without-view-perm",
+            "name": "test-user-to-private-views-without-view-perm"
+          },
+          "corporate_alarm_pattern": "test-pattern-to-widget-edit-1",
+          "corporate_alarm_pattern_title": "test-pattern-to-widget-edit-1-title",
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pattern-to-widget-edit-1-pattern"
+                }
+              }
+            ]
+          ]
+        }
+      ]
+    }
+    """
+
+  @concurrent
+  Scenario: given create widget with public tab request with api_private_view_groups
+    but without api_view permissions should return filters should return error
+    When I am test-role-to-private-views-without-view-perm
+    When I do POST /api/v4/widgets:
+    """json
+    {
+      "title": "test-widget-to-create-1-title",
+      "tab": "test-tab-to-widget-edit",
+      "type": "test-widget-to-create-1-type",
+      "grid_parameters": {
+        "desktop": {"x": 0, "y": 0}
+      },
+      "parameters": {
+        "mainFilter": "test-widgetfilter-to-widget-create-1-2",
+        "test-widget-to-create-1-param-str": "teststr",
+        "test-widget-to-create-1-param-int": 2,
+        "test-widget-to-create-1-param-bool": true,
+        "test-widget-to-create-1-param-arr": ["teststr1", "teststr2"],
+        "test-widget-to-create-1-param-map": {"testkey": "teststr"}
+      },
+      "filters": []
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "tab": "Can't modify a tab."
+      }
+    }
+    """

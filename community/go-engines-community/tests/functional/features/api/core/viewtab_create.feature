@@ -166,3 +166,61 @@ Feature: Create a view tab
       }
     }
     """
+
+  @concurrent
+  Scenario: given create request with owned private view with api_private_view_groups
+    but without api_view permissions should return filters should create private tab
+    When I am test-role-to-private-views-without-view-perm
+    When I do POST /api/v4/view-tabs:
+    """json
+    {
+      "title": "test-tab-to-create-4-title",
+      "view": "test-private-view-to-tab-create-3"
+    }
+    """
+    Then the response code should be 201
+    Then the response body should contain:
+    """json
+    {
+      "title": "test-tab-to-create-4-title",
+      "author": {
+        "_id": "test-user-to-private-views-without-view-perm",
+        "name": "test-user-to-private-views-without-view-perm"
+      },
+      "is_private": true
+    }
+    """
+    When I do GET /api/v4/view-tabs/{{ .lastResponse._id}}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "title": "test-tab-to-create-4-title",
+      "author": {
+        "_id": "test-user-to-private-views-without-view-perm",
+        "name": "test-user-to-private-views-without-view-perm"
+      },
+      "is_private": true
+    }
+    """
+
+  @concurrent
+  Scenario: given create request with public view with api_private_view_groups
+    but without api_view permissions should return filters should return error
+    When I am test-role-to-private-views-without-view-perm
+    When I do POST /api/v4/view-tabs:
+    """json
+    {
+      "title": "test-tab-to-create-4-title",
+      "view": "test-view-to-tab-edit"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "view": "Can't modify a view."
+      }
+    }
+    """

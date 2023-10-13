@@ -877,3 +877,80 @@ Feature: Copy a view tab
       ]
     }
     """
+
+  @concurrent
+  Scenario: given copy private tab request to a private view with api_private_view_groups
+    but without api_view permissions should return filters should copy private tab
+    When I am test-role-to-private-views-without-view-perm
+    When I do POST /api/v4/view-tab-copy/test-private-tab-to-copy-5:
+    """json
+    {
+      "title": "test-private-tab-to-copy-5-title-updated",
+      "view": "private-view-to-tab-copy-5"
+    }
+    """
+    Then the response code should be 201
+    Then the response body should contain:
+    """json
+    {
+      "title": "test-private-tab-to-copy-5-title-updated",
+      "author": {
+        "_id": "test-user-to-private-views-without-view-perm",
+        "name": "test-user-to-private-views-without-view-perm"
+      },
+      "is_private": true
+    }
+    """
+    When I save response viewTabID={{ .lastResponse._id }}
+    When I do GET /api/v4/view-tabs/{{ .viewTabID }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "title": "test-private-tab-to-copy-5-title-updated",
+      "author": {
+        "_id": "test-user-to-private-views-without-view-perm",
+        "name": "test-user-to-private-views-without-view-perm"
+      },
+      "is_private": true
+    }
+    """ 
+    When I do GET /api/v4/views/private-view-to-tab-copy-5
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "private-view-to-tab-copy-5",
+      "tabs": [
+        {
+          "_id": "test-private-tab-to-copy-5",
+          "is_private": true
+        },
+        {
+          "_id": "{{ .viewTabID }}",
+          "is_private": true
+        }
+      ]
+    }
+    """
+
+  @concurrent
+  Scenario: given copy private tab request to a public view with api_private_view_groups
+    but without api_view permissions should return filters should copy private tab
+    When I am test-role-to-private-views-without-view-perm
+    When I do POST /api/v4/view-tab-copy/test-private-tab-to-copy-5:
+    """json
+    {
+      "title": "test-private-tab-to-copy-5-title-updated",
+      "view": "test-view-to-tab-copy-1"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "view": "Can't modify a view."
+      }
+    }
+    """

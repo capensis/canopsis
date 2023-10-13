@@ -498,3 +498,105 @@ Feature: Update widget filter positions
       ]
     }
     """
+
+  @concurrent
+  Scenario: given update filters for private widget request with api_private_view_groups
+    but without api_view permissions should update positions
+    When I am test-role-to-private-views-without-view-perm
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-private-widgetfilter-to-update-position-2-1-title",
+      "widget": "test-private-widget-to-private-filter-update-position-2",
+      "is_user_preference": false,
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-private-widgetfilter-to-update-position-2-1-pattern"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response filter1={{ .lastResponse._id }}
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-private-widgetfilter-to-update-position-2-2-title",
+      "widget": "test-private-widget-to-private-filter-update-position-2",
+      "is_user_preference": false,
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-private-widgetfilter-to-update-position-2-2-pattern"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response filter2={{ .lastResponse._id }}
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-private-widgetfilter-to-update-position-2-3-title",
+      "widget": "test-private-widget-to-private-filter-update-position-2",
+      "is_user_preference": false,
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-private-widgetfilter-to-update-position-2-3-pattern"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response filter3={{ .lastResponse._id }}
+    When I do GET /api/v4/widgets/test-private-widget-to-private-filter-update-position-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "filters": [
+        { "_id": "{{ .filter1 }}" },
+        { "_id": "{{ .filter2 }}" },
+        { "_id": "{{ .filter3 }}" }
+      ]
+    }
+    """
+    # Test updated positions
+    When I do PUT /api/v4/widget-filter-positions:
+    """json
+    [
+      "{{ .filter3 }}",
+      "{{ .filter1 }}",
+      "{{ .filter2 }}"
+    ]
+    """
+    Then the response code should be 204
+    When I do GET /api/v4/widgets/test-private-widget-to-private-filter-update-position-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "filters": [
+        { "_id": "{{ .filter3 }}" },
+        { "_id": "{{ .filter1 }}" },
+        { "_id": "{{ .filter2 }}" }
+      ]
+    }
+    """

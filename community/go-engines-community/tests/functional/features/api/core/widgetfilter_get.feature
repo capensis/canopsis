@@ -556,3 +556,100 @@ Feature: Get a widget filter
     """
     When I do GET /api/v4/widget-filters?widget=test-private-widget-to-private-filter-get-2
     Then the response code should be 403
+
+  @concurrent
+  Scenario: given get owned filters request with api_private_view_groups
+    but without api_view permissions should return filters
+    When I am test-role-to-private-views-without-view-perm
+    When I do GET /api/v4/widget-filters?widget=test-private-widget-to-private-filter-get-4&private=false
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-private-widgetfilter-to-get-4",
+          "is_user_preference": false,
+          "is_private": true
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/widget-filters?widget=test-private-widget-to-private-filter-get-4&private=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-private-widgetfilter-to-get-5",
+          "is_user_preference": true,
+          "is_private": true
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/widget-filters?widget=test-private-widget-to-private-filter-get-4
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-private-widgetfilter-to-get-4",
+          "is_user_preference": false,
+          "is_private": true
+        },
+        {
+          "_id": "test-private-widgetfilter-to-get-5",
+          "is_user_preference": true,
+          "is_private": true
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I do GET /api/v4/widget-filters/test-private-widgetfilter-to-get-4
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-private-widgetfilter-to-get-4",
+      "is_user_preference": false,
+      "is_private": true
+    }
+    """
+    When I do GET /api/v4/widget-filters/test-private-widgetfilter-to-get-5
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-private-widgetfilter-to-get-5",
+      "is_user_preference": true,
+      "is_private": true
+    }
+    """
+
+  @concurrent
+  Scenario: given get public filters request with api_private_view_groups
+    but without api_view permissions should not allow access
+    When I am test-role-to-private-views-without-view-perm
+    When I do GET /api/v4/widget-filters?widget=test-widget-to-filter-get
+    Then the response code should be 403
