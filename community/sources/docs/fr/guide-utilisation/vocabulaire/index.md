@@ -6,7 +6,7 @@ Une *alarme* est le résultat du traitement des [évènements](#evenement) par u
 
 Une alarme est liée à une [entité](#entite) de type [composant](#composant), [ressource](#ressource) ou [service](#service). La combinaison d'un [connecteur](#connecteur), d'un [nom de connecteur](#nom-de-connecteur), d'un composant et d'une ressource crée une alarme unique. Si l'un de ces éléments change, une alarme différente est créée.
 
-Une alarme peut connaître de multiples changements de [criticité](#criticite), [priorité](#priorite) et de [statut](#statut), et subir une suite d'actions (acquittement, mise en veille, changement de criticité, annulation, etc.), [utilisateurs](../interface/widgets/bac-a-alarmes/actions.md) ou [automatiques](../../guide-administration/moteurs/moteur-action.md). L'ensemble de ces changements et de ces actions constitue le *cycle d'alarme*.
+Une alarme peut connaître de multiples changements de [criticité](#criticite), [priorité](#priorite) et de [statut](#statut), et subir une suite d'actions (acquittement, mise en veille, changement de criticité, annulation, etc.), [utilisateurs](../interface/widgets/bac-a-alarmes/actions.md) ou [automatiques](../menu-exploitation/scenarios/). L'ensemble de ces changements et de ces actions constitue le *cycle d'alarme*.
 
 Les alarmes peuvent être affichées à l'aide d'un [widget Bac à alarmes](../interface/widgets/bac-a-alarmes/index.md).
 
@@ -52,9 +52,9 @@ L'*enrichissement* est l'action d'ajouter des informations supplémentaires à u
 
 On peut enrichir :
 
-* Un [évènement](#evenement) via l'[event-filter du moteur `engine-che`](../../guide-administration/moteurs/moteur-che-event_filter.md).
-* Une [entité](#entite) via l'[event-filter du moteur `engine-che`](../../guide-administration/moteurs/moteur-che-event_filter.md#set_entity_info_from_template), l'[Explorateur de contexte](../interface/widgets/contexte/index.md) ou les [drivers](../../interconnexions/index.md#drivers).
-* Une [alarme](#alarme) via le [moteur `engine-dynamic-infos`](../../guide-administration/moteurs/moteur-dynamic-infos.md).
+* Un [évènement](#evenement) via l'[event-filter du moteur `engine-che`](../menu-exploitation/filtres-evenements/).
+* Une [entité](#entite) via l'[event-filter du moteur `engine-che`](../menu-exploitation/filtres-evenements), l'[Explorateur de contexte](../interface/widgets/contexte/index.md) ou les [drivers](../../interconnexions/index.md#drivers).
+* Une [alarme](#alarme) via le [moteur `engine-dynamic-infos`](../menu-exploitation/informations-dynamiques/).
 
 ## Entité
 
@@ -94,8 +94,6 @@ La [*météo des services* est un widget](../interface/widgets/meteo-des-service
 ## Moteur
 
 Un *moteur* Canopsis consomme les [évènements](#evenement) entrants pour les traiter, puis les acheminer vers les moteurs suivants. Ils effectuent également une tâche périodique au [battement](#battement) et consomment leurs enregistrements en base de données lorsqu'ils sont disponibles.
-
-Vous pouvez consulter [plus d'informations sur les moteurs](../../guide-administration/moteurs/index.md) dans le Guide d'administration.
 
 ## Nom de connecteur
 

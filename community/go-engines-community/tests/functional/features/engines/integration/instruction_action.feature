@@ -147,26 +147,36 @@ Feature: run an auto instruction
       {
         "_t": "changestate",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "val": 3
       },
       {
         "_t": "autoinstructionstart",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-instruction-action-1-name."
       },
       {
         "_t": "instructionjobstart",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-instruction-action-1-name. Job test-job-to-run-auto-instruction-1-name."
       },
       {
         "_t": "instructionjobcomplete",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-instruction-action-1-name. Job test-job-to-run-auto-instruction-1-name."
       },
       {
         "_t": "autoinstructioncomplete",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-instruction-action-1-name."
       }
     ]
@@ -185,16 +195,22 @@ Feature: run an auto instruction
       {
         "_t": "changestate",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "val": 3
       },
       {
         "_t": "autoinstructionstart",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-instruction-action-1-name."
       },
       {
         "_t": "autoinstructioncomplete",
         "a": "system",
+        "user_id": "",
+        "initiator": "system",
         "m": "Instruction test-instruction-instruction-action-1-name."
       }
     ]

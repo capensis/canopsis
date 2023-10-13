@@ -1,6 +1,7 @@
 Feature: add infos to alarm
   I need to be able to add infos to alarm
 
+  @concurrent
   Scenario: given dynamic infos should update new alarm
     Given I am admin
     When I do POST /api/v4/cat/dynamic-infos:
@@ -37,7 +38,7 @@ Feature: add infos to alarm
     """
     When I save response ruleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-dynamicinfos-1",
@@ -51,7 +52,6 @@ Feature: add infos to alarm
       "customer": "test-customer-dynamicinfos-1"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?filters[]=test-widgetfilter-dynamic-infos-1
     Then the response code should be 200
     Then the response body should contain:
@@ -86,9 +86,10 @@ Feature: add infos to alarm
     }
     """
 
+  @concurrent
   Scenario: given new dynamic infos should update existed alarm
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-dynamicinfos-2",
@@ -102,7 +103,6 @@ Feature: add infos to alarm
       "customer": "test-customer-dynamicinfos-2"
     }
     """
-    When I wait the end of event processing
     When I do POST /api/v4/cat/dynamic-infos:
     """json
     {
@@ -168,9 +168,10 @@ Feature: add infos to alarm
     }
     """
 
+  @concurrent
   Scenario: given new dynamic infos with event in template should not update new alarm
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-dynamicinfos-3",
@@ -184,7 +185,6 @@ Feature: add infos to alarm
       "customer": "test-customer-dynamicinfos-3"
     }
     """
-    When I wait the end of event processing
     When I do POST /api/v4/cat/dynamic-infos:
     """json
     {
@@ -243,6 +243,7 @@ Feature: add infos to alarm
     }
     """
 
+  @concurrent
   Scenario: given updated dynamic infos should update infos in alarm
     Given I am admin
     When I do POST /api/v4/cat/dynamic-infos:
@@ -273,7 +274,7 @@ Feature: add infos to alarm
     Then the response code should be 201
     When I save response ruleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-dynamicinfos-4",
@@ -287,7 +288,6 @@ Feature: add infos to alarm
       "customer": "test-customer-dynamicinfos-4"
     }
     """
-    When I wait the end of event processing
     When I do PUT /api/v4/cat/dynamic-infos/{{ .ruleID }}:
     """json
     {
@@ -352,6 +352,7 @@ Feature: add infos to alarm
     }
     """
 
+  @concurrent
   Scenario: given updated dynamic infos should remove infos from alarm
     Given I am admin
     When I do POST /api/v4/cat/dynamic-infos:
@@ -382,7 +383,7 @@ Feature: add infos to alarm
     Then the response code should be 201
     When I save response ruleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-dynamicinfos-5",
@@ -396,7 +397,6 @@ Feature: add infos to alarm
       "customer": "test-customer-dynamicinfos-5"
     }
     """
-    When I wait the end of event processing
     When I do PUT /api/v4/cat/dynamic-infos/{{ .ruleID }}:
     """json
     {
@@ -451,6 +451,7 @@ Feature: add infos to alarm
     }
     """
 
+  @concurrent
   Scenario: given removed dynamic infos should remove infos from alarm
     Given I am admin
     When I do POST /api/v4/cat/dynamic-infos:
@@ -481,7 +482,7 @@ Feature: add infos to alarm
     Then the response code should be 201
     When I save response ruleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-dynamicinfos-6",
@@ -495,7 +496,6 @@ Feature: add infos to alarm
       "customer": "test-customer-dynamicinfos-6"
     }
     """
-    When I wait the end of event processing
     When I do DELETE /api/v4/cat/dynamic-infos/{{ .ruleID }}
     Then the response code should be 204
     When I do GET /api/v4/alarms?filters[]=test-widgetfilter-dynamic-infos-6 until response code is 200 and body contains:
@@ -520,6 +520,7 @@ Feature: add infos to alarm
     }
     """
 
+  @concurrent
   Scenario: given disabled dynamic infos should remove infos from alarm
     Given I am admin
     When I do POST /api/v4/cat/dynamic-infos:
@@ -550,7 +551,7 @@ Feature: add infos to alarm
     Then the response code should be 201
     When I save response ruleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-dynamicinfos-7",
@@ -564,7 +565,6 @@ Feature: add infos to alarm
       "customer": "test-customer-dynamicinfos-7"
     }
     """
-    When I wait the end of event processing
     When I do PUT /api/v4/cat/dynamic-infos/{{ .ruleID }}:
     """json
     {
