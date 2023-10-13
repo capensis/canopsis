@@ -56,7 +56,10 @@ Feature: instruction approval update
           "_id": "user-to-instruction-approve-1",
           "name": "user-to-instruction-approve-1"
         },
-        "requested_by": "manageruser"
+        "requested_by": {
+          "_id": "manageruser",
+          "name": "manageruser"
+        }
       },
       "original": {
         "_id": "test-instruction-to-update-with-approval-second-1",
@@ -317,7 +320,10 @@ Feature: instruction approval update
           "_id": "user-to-instruction-approve-1",
           "name": "user-to-instruction-approve-1"
         },
-        "requested_by": "manageruser"
+        "requested_by": {
+          "_id": "manageruser",
+          "name": "manageruser"
+        }
       },
       "original": {
         "old_alarm_patterns": [
@@ -382,7 +388,10 @@ Feature: instruction approval update
             "_id": "user-to-instruction-approve-1",
             "name": "user-to-instruction-approve-1"
           },
-          "requested_by": "manageruser"
+          "requested_by": {
+            "_id": "manageruser",
+            "name": "manageruser"
+          }
         }
       }
     }

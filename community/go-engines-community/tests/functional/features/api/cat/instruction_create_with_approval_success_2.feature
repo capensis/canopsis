@@ -79,7 +79,10 @@ Feature: instruction approval creation
           "_id": "role-to-instruction-approve-2",
           "name": "role-to-instruction-approve-2"
         },
-        "requested_by": "root"
+        "requested_by": {
+          "_id": "root",
+          "name": "root"
+        }
       }
     }
     """
@@ -162,7 +165,10 @@ Feature: instruction approval creation
           "_id": "user-to-instruction-approve-2",
           "name": "user-to-instruction-approve-2"
         },
-        "requested_by": "root"
+        "requested_by": {
+          "_id": "root",
+          "name": "root"
+        }
       }
     }
     """
@@ -242,7 +248,10 @@ Feature: instruction approval creation
           "_id": "role-to-instruction-approve-2",
           "name": "role-to-instruction-approve-2"
         },
-        "requested_by": "root"
+        "requested_by": {
+          "_id": "root",
+          "name": "root"
+        }
       }
     }
     """
@@ -725,7 +734,10 @@ Feature: instruction approval creation
           "_id": "user-to-instruction-approve-1",
           "name": "user-to-instruction-approve-1"
         },
-        "requested_by": "root"
+        "requested_by": {
+          "_id": "root",
+          "name": "root"
+        }
       }
     }
     """
@@ -801,7 +813,10 @@ Feature: instruction approval creation
               "_id": "user-to-instruction-approve-1",
               "name": "user-to-instruction-approve-1"
             },
-            "requested_by": "root"
+            "requested_by": {
+              "_id": "root",
+              "name": "root"
+            }
           }
         }
       ],
@@ -885,7 +900,10 @@ Feature: instruction approval creation
             "_id": "user-to-instruction-approve-1",
             "name": "user-to-instruction-approve-1"
           },
-          "requested_by": "root"
+          "requested_by": {
+            "_id": "root",
+            "name": "root"
+          }
         }
       },
       "approval": {
@@ -894,7 +912,10 @@ Feature: instruction approval creation
           "_id": "user-to-instruction-approve-1",
           "name": "user-to-instruction-approve-1"
         },
-        "requested_by": "root"
+        "requested_by": {
+          "_id": "root",
+          "name": "root"
+        }
       }
     }
     """
