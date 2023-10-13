@@ -704,6 +704,7 @@ role:
       "@permission_api_acl": 15
       "@permission_api_action": 15
       "@permission_api_alarm_read": 1
+      "@permission_api_alarm_update": 1
       "@permission_api_entity": 15
       "@permission_api_entityservice": 15
       "@permission_api_event": 1
