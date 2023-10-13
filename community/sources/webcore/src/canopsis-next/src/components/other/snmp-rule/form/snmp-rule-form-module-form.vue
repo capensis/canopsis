@@ -19,7 +19,7 @@
           @change="selectModule"
         )
       v-flex.pl-1(xs6)
-        v-select.pt-0(
+        v-autocomplete.pt-0(
           v-validate="'required'",
           :value="form.mib",
           :items="moduleMibs",
@@ -29,14 +29,15 @@
           item-text="name",
           item-value="_id",
           name="mib",
+          hide-no-data,
           hide-details,
           return-object,
-          @input="selectMib"
+          @change="selectMib"
         )
 </template>
 
 <script>
-import { find } from 'lodash';
+import { find, sortBy } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import { MAX_LIMIT } from '@/constants';
@@ -98,7 +99,7 @@ export default {
         },
       });
 
-      this.modules = data;
+      this.modules = sortBy(data, 'moduleName');
       this.modulesPending = false;
     },
 
@@ -115,7 +116,7 @@ export default {
         },
       });
 
-      this.moduleMibs = data;
+      this.moduleMibs = sortBy(data, 'name');
       this.moduleMibsPending = false;
 
       if (this.form.mib?.name) {

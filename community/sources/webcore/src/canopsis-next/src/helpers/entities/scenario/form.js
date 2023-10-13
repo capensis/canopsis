@@ -8,13 +8,19 @@ import { getLocaleTimezone } from '@/helpers/date/date';
 import { flattenErrorMap } from '@/helpers/entities/shared/form';
 
 /**
+ * @typedef {Object} Trigger
+ * @property {string} type
+ * @property {number} [threshold]
+ */
+
+/**
  * @typedef {Object} Scenario
  * @property {string} name
  * @property {string} author
  * @property {number} priority
  * @property {boolean} enabled
  * @property {Duration} delay
- * @property {string[]} triggers
+ * @property {Trigger[]} triggers
  * @property {DisableDuringPeriods[]} disable_during_periods
  * @property {Action[]} actions
  */
@@ -27,10 +33,10 @@ import { flattenErrorMap } from '@/helpers/entities/shared/form';
 /**
  * Check trigger is deprecated
  *
- * @param {string} trigger
+ * @param {string} type
  * @returns {boolean}
  */
-export const isDeprecatedTrigger = trigger => DEPRECATED_TRIGGERS.includes(trigger);
+export const isDeprecatedTrigger = type => DEPRECATED_TRIGGERS.includes(type);
 /**
  * Convert scenario to form
  *

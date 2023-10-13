@@ -37,6 +37,7 @@ export const entitiesInfoMixin = {
       remediationJobConfigTypes: 'remediationJobConfigTypes',
       maintenance: 'maintenance',
       defaultColorTheme: 'defaultColorTheme',
+      eventsCountTriggerDefaultThreshold: 'eventsCountTriggerDefaultThreshold',
     }),
 
     isProVersion() {

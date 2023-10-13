@@ -24,7 +24,7 @@ Ce document ne prend en compte que Canopsis Community et Canopsis Pro : tout d�
 
 Vous devez [réaliser une sauvegarde](../../guide-administration/administration-avancee/actions-base-donnees.md#sauvegarde) de votre base de données existante. Réalisez aussi une sauvegarde de tout fichier de configuration que vous auriez personnalisé (soit à l'aide d'un volume de configuration ajouté dans Docker Compose, soit en faisant une sauvegarde de `/opt/canopsis/etc` dans un environnement par paquets). Si vous utilisez des machines virtuelles, vous êtes fortement incités à y réaliser des *snapshots* de votre environnement v3 au complet.
 
-Fonctionnellement, vous ne devez plus dépendre d'un [ancien moteur Canopsis](../../guide-administration/moteurs/index.md#liste-des-anciens-moteurs-non-supportes) : la procédure qui suit les désactive obligatoirement, et plus aucun support n'est assuré pour les environnements v4 où ces moteurs seraient encore activés.
+Fonctionnellement, vous ne devez plus dépendre d'un [ancien moteur Canopsis - lien obsolète]() : la procédure qui suit les désactive obligatoirement, et plus aucun support n'est assuré pour les environnements v4 où ces moteurs seraient encore activés.
 
 !!! note
     Ainsi, à titre d'exemple, si vous utilisiez encore des règles d'event-filter Python, ces règles doivent au préalable avoir déjà toutes été migrées au format des event-filters Go, avant de migrer vers Canopsis v4.

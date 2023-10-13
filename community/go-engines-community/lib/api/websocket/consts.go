@@ -6,4 +6,8 @@ const (
 
 	RoomAlarmsGroup       = "alarms/"
 	RoomAlarmDetailsGroup = "alarm-details/"
+
+	RoomHealthcheck       = "healthcheck"
+	RoomHealthcheckStatus = "healthcheck-status"
+	RoomMessageRates      = "message-rates"
 )

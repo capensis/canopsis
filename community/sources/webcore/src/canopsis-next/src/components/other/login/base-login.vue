@@ -14,8 +14,8 @@
               type="submit",
               color="primary"
             ) {{ $t('common.connect') }}
-            v-flex(v-if="serverErrorMessage", xs9)
-              c-alert.py-1.my-0.font-weight-bold(type="error") {{ serverErrorMessage }}
+            v-flex(xs9)
+              c-alert.py-1.my-0.font-weight-bold(:value="!!serverErrorMessage", type="error") {{ serverErrorMessage }}
           template(v-if="footer")
             v-divider.my-2
             v-layout
@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { ROUTES_NAMES, ROUTES } from '@/constants';
+import { ROUTES_NAMES, ROUTES, RESPONSE_STATUSES } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
@@ -78,7 +78,7 @@ export default {
           this.$router.push({ name: ROUTES_NAMES.home });
         }
       } catch (err) {
-        if (err?.status === 503) {
+        if (err?.status === RESPONSE_STATUSES.serviceUnavailable) {
           this.serverErrorMessage = this.$t('login.errors.underMaintenance');
         } else {
           this.serverErrorMessage = this.$t('login.errors.incorrectEmailOrPassword');

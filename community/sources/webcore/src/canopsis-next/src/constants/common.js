@@ -14,7 +14,6 @@ export const ROUTES_NAMES = {
   adminPlanning: 'admin-planning-administration',
   adminRemediation: 'admin-remediation-administration',
   adminHealthcheck: 'admin-healthcheck',
-  adminEngines: 'admin-engines',
   adminKPI: 'admin-kpi',
   adminMaps: 'admin-maps',
   adminTags: 'admin-tags',
@@ -51,7 +50,6 @@ export const ROUTES = {
   adminPlanning: '/admin/planning',
   adminRemediation: '/admin/remediation',
   adminHealthcheck: '/admin/healthcheck',
-  adminEngines: '/admin/engines',
   adminKPI: '/admin/kpi',
   adminMaps: '/admin/maps',
   adminTags: '/admin/tags',
@@ -114,8 +112,6 @@ export const DAYS_IN_MONTH = 30;
 export const MONTHS_IN_YEAR = 12;
 
 export const DAYS_IN_WEEK = 7;
-
-export const EXCLUDED_SERVER_ERROR_STATUSES = [401, 403];
 
 export const CANOPSIS_DOCUMENTATION = 'https://doc.canopsis.net';
 
@@ -308,7 +304,7 @@ export const DEFAULT_COLUMN_TEMPLATE_VALUE = '{{ value }}';
 
 export const VALIDATION_DELAY = 300;
 
-export const TRIGGERS = {
+export const TRIGGERS_TYPES = {
   create: 'create',
   stateinc: 'stateinc',
   statedec: 'statedec',
@@ -336,23 +332,24 @@ export const TRIGGERS = {
   autoinstructioncomplete: 'autoinstructioncomplete',
   autoinstructionresultok: 'autoinstructionresultok',
   autoinstructionresultfail: 'autoinstructionresultfail',
+  eventscount: 'eventscount',
 };
 
 export const PRO_TRIGGERS = [
-  TRIGGERS.declareticket,
-  TRIGGERS.declareticketwebhook,
-  TRIGGERS.instructionfail,
-  TRIGGERS.autoinstructionfail,
-  TRIGGERS.instructionjobcomplete,
-  TRIGGERS.instructionjobfail,
-  TRIGGERS.instructioncomplete,
-  TRIGGERS.autoinstructioncomplete,
-  TRIGGERS.autoinstructionresultok,
-  TRIGGERS.autoinstructionresultfail,
+  TRIGGERS_TYPES.declareticket,
+  TRIGGERS_TYPES.declareticketwebhook,
+  TRIGGERS_TYPES.instructionfail,
+  TRIGGERS_TYPES.autoinstructionfail,
+  TRIGGERS_TYPES.instructionjobcomplete,
+  TRIGGERS_TYPES.instructionjobfail,
+  TRIGGERS_TYPES.instructioncomplete,
+  TRIGGERS_TYPES.autoinstructioncomplete,
+  TRIGGERS_TYPES.autoinstructionresultok,
+  TRIGGERS_TYPES.autoinstructionresultfail,
 ];
 
 export const DEPRECATED_TRIGGERS = [
-  TRIGGERS.declareticket,
+  TRIGGERS_TYPES.declareticket,
 ];
 
 export const HEADERS = {
@@ -369,3 +366,26 @@ export const CONTENT_TYPES = {
 export const MAX_SEARCH_ITEMS = 8;
 
 export const LOGIN_APP_INFO_POLLING_DELAY = 5000;
+
+export const RESPONSE_STATUSES = {
+  badRequest: 400,
+  unauthorized: 401,
+  notFound: 404,
+  forbidden: 403,
+  timeout: 408,
+
+  internalServerError: 500,
+  badGateway: 502,
+  serviceUnavailable: 503,
+};
+
+export const LOGOUT_RESPONSE_STATUSES = [
+  RESPONSE_STATUSES.unauthorized,
+  RESPONSE_STATUSES.badGateway,
+  RESPONSE_STATUSES.serviceUnavailable,
+];
+
+export const EXCLUDED_SERVER_ERROR_STATUSES = [
+  RESPONSE_STATUSES.unauthorized,
+  RESPONSE_STATUSES.forbidden,
+];

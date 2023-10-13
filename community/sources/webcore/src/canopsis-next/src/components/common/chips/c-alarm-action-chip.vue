@@ -1,6 +1,6 @@
 <template lang="pug">
   v-chip.c-alarm-action-chip(
-    :class="{ 'c-alarm-action-chip--closable': closable, 'c-alarm-action-chip--small': small }",
+    :class="chipClass",
     :color="color",
     small,
     @click="$emit('click')"
@@ -30,6 +30,14 @@ export default {
       default: false,
     },
   },
+  computed: {
+    chipClass() {
+      return {
+        'c-alarm-action-chip--closable': this.closable,
+        'c-alarm-action-chip--small': this.small,
+      };
+    },
+  },
 };
 </script>
 
@@ -44,11 +52,13 @@ export default {
     white-space: initial;
     word-wrap: break-word;
     max-width: 100%;
+    overflow: hidden;
   }
 
   .v-chip__content {
     height: unset !important;
     cursor: pointer;
+    max-width: 100%;
   }
 
   &--closable {
