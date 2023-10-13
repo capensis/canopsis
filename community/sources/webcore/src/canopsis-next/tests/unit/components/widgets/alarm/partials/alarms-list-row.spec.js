@@ -9,7 +9,8 @@ import AlarmsListRow from '@/components/widgets/alarm/partials/alarms-list-row.v
 
 const stubs = {
   'v-checkbox-functional': true,
-  'alarms-list-row-icon': true,
+  'alarms-list-row-instructions-icon': true,
+  'alarms-list-row-bookmark-icon': true,
   'alarms-expand-panel-btn': true,
   'alarm-column-value': true,
   'actions-panel': true,
@@ -331,6 +332,27 @@ describe('alarms-list-row', () => {
           children_instructions: true,
           filtered_children: [alarm._id],
         },
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `alarms-list-row` with bookmarked alarm', () => {
+    const alarm = {
+      _id: 'alarm-id',
+      bookmark: true,
+      v: {
+        status: {},
+      },
+    };
+    const wrapper = snapshotFactory({
+      propsData: {
+        row: {
+          item: alarm,
+        },
+        widget: {},
+        headers: [{ value: 'actions' }],
       },
     });
 

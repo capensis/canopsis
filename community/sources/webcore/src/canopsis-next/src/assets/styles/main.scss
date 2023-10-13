@@ -88,6 +88,10 @@ html {
   &-move {
     cursor: move !important;
   }
+
+  &-default {
+    cursor: default !important;
+  }
 }
 
 .pre {
