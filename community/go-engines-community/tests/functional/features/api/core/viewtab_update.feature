@@ -122,3 +122,39 @@ Feature: Update a view tab
     }
     """
     Then the response code should be 403
+
+  @concurrent
+  Scenario: given update owned private viewtab request with api_private_view_groups
+    but without api_view permissions should return filters should be ok
+    When I am test-role-to-private-views-without-view-perm
+    Then I do PUT /api/v4/view-tabs/test-private-tab-to-update-3:
+    """json
+    {
+      "title": "test-private-tab-to-update-3-title-updated"
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-private-tab-to-update-3",
+      "title": "test-private-tab-to-update-3-title-updated",
+      "author": {
+        "_id": "test-user-to-private-views-without-view-perm",
+        "name": "test-user-to-private-views-without-view-perm"
+      },
+      "is_private": true
+    }
+    """
+
+  @concurrent
+  Scenario: given update public viewtab request with api_private_view_groups
+    but without api_view permissions should return filters should not allow access
+    When I am test-role-to-private-views-without-view-perm
+    Then I do PUT /api/v4/view-tabs/test-tab-to-update-1:
+    """json
+    {
+      "title": "test-private-tab-to-update-3-title-updated"
+    }
+    """
+    Then the response code should be 403

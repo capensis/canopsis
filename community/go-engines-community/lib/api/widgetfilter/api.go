@@ -126,30 +126,29 @@ func (a *api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	if request.WidgetPrivate != nil {
-		if !*request.WidgetPrivate {
-			ok, err := a.enforcer.Enforce(userId, apisecurity.ObjView, model.PermissionUpdate)
-			if err != nil {
-				panic(err)
-			}
+	var granted bool
+	perm := model.PermissionUpdate
+	if *request.IsUserPreference {
+		perm = model.PermissionRead
+	}
 
-			if !ok {
-				c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
-				return
-			}
-		}
+	granted, request.IsPrivate, err = a.checkAccessByWidget(c, request.Widget, userId, perm)
+	if err != nil {
+		panic(err)
+	}
 
-		var granted bool
-		if *request.WidgetPrivate {
-			granted, request.IsPrivate, err = a.checkAccessByWidget(c, request.Widget, userId, model.PermissionRead)
-		} else {
-			granted, request.IsPrivate, err = a.checkAccessByWidget(c, request.Widget, userId, model.PermissionUpdate)
-		}
+	if !granted {
+		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+		return
+	}
+
+	if !*request.IsUserPreference && !request.IsPrivate {
+		ok, err := a.enforcer.Enforce(userId, apisecurity.ObjView, model.PermissionUpdate)
 		if err != nil {
 			panic(err)
 		}
 
-		if !granted {
+		if !ok {
 			c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
 			return
 		}
@@ -196,30 +195,29 @@ func (a *api) Update(c *gin.Context) {
 		panic(err)
 	}
 
-	if request.WidgetPrivate != nil {
-		if !*request.WidgetPrivate {
-			ok, err := a.enforcer.Enforce(userId, apisecurity.ObjView, model.PermissionUpdate)
-			if err != nil {
-				panic(err)
-			}
+	var granted bool
+	perm := model.PermissionUpdate
+	if *request.IsUserPreference {
+		perm = model.PermissionRead
+	}
 
-			if !ok {
-				c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
-				return
-			}
-		}
+	granted, request.IsPrivate, err = a.checkAccess(c, request.ID, userId, perm)
+	if err != nil {
+		panic(err)
+	}
 
-		var granted bool
-		if *request.WidgetPrivate {
-			granted, request.IsPrivate, err = a.checkAccess(c, request.ID, userId, model.PermissionRead)
-		} else {
-			granted, request.IsPrivate, err = a.checkAccess(c, request.ID, userId, model.PermissionUpdate)
-		}
+	if !granted {
+		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+		return
+	}
+
+	if !*request.IsUserPreference && !request.IsPrivate {
+		ok, err := a.enforcer.Enforce(userId, apisecurity.ObjView, model.PermissionUpdate)
 		if err != nil {
 			panic(err)
 		}
 
-		if !granted {
+		if !ok {
 			c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
 			return
 		}
@@ -234,8 +232,8 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	if filter.WidgetPrivate != *request.WidgetPrivate {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.ValidationErrorResponse{Errors: map[string]string{"is_user_preference": "WidgetPrivate cannot be changed"}})
+	if filter.IsUserPreference != *request.IsUserPreference {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.ValidationErrorResponse{Errors: map[string]string{"is_user_preference": "IsUserPreference cannot be changed"}})
 		return
 	}
 
@@ -274,7 +272,22 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	if !filter.WidgetPrivate {
+	perm := model.PermissionUpdate
+	if filter.IsUserPreference {
+		perm = model.PermissionRead
+	}
+
+	granted, isPrivate, err := a.checkAccess(c, id, userId, perm)
+	if err != nil {
+		panic(err)
+	}
+
+	if !granted {
+		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+		return
+	}
+
+	if !filter.IsUserPreference && !isPrivate {
 		ok, err := a.enforcer.Enforce(userId, apisecurity.ObjView, model.PermissionUpdate)
 		if err != nil {
 			panic(err)
@@ -284,21 +297,6 @@ func (a *api) Delete(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
 			return
 		}
-	}
-
-	var granted bool
-	if filter.WidgetPrivate {
-		granted, _, err = a.checkAccess(c, id, userId, model.PermissionRead)
-	} else {
-		granted, _, err = a.checkAccess(c, id, userId, model.PermissionUpdate)
-	}
-	if err != nil {
-		panic(err)
-	}
-
-	if !granted {
-		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
-		return
 	}
 
 	ok, err := a.store.Delete(c, id, userId)
@@ -347,8 +345,23 @@ func (a *api) UpdatePositions(c *gin.Context) {
 		return
 	}
 
-	isPrivate := firstFilter.WidgetPrivate
-	if !isPrivate {
+	isUserPreference := firstFilter.IsUserPreference
+	perm := model.PermissionUpdate
+	if isUserPreference {
+		perm = model.PermissionRead
+	}
+
+	granted, isPrivate, err := a.checkAccess(c, firstItem, userId, perm)
+	if err != nil {
+		panic(err)
+	}
+
+	if !granted {
+		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+		return
+	}
+
+	if !isUserPreference && !isPrivate {
 		ok, err := a.enforcer.Enforce(userId, apisecurity.ObjView, model.PermissionUpdate)
 		if err != nil {
 			panic(err)
@@ -360,22 +373,7 @@ func (a *api) UpdatePositions(c *gin.Context) {
 		}
 	}
 
-	perm := model.PermissionUpdate
-	if isPrivate {
-		perm = model.PermissionRead
-	}
-
-	granted, _, err := a.checkAccess(c, firstItem, userId, perm)
-	if err != nil {
-		panic(err)
-	}
-
-	if !granted {
-		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
-		return
-	}
-
-	ok, err := a.store.UpdatePositions(c, request.Items, firstFilter.Widget, userId, isPrivate)
+	ok, err := a.store.UpdatePositions(c, request.Items, firstFilter.Widget, userId, isUserPreference)
 	if err != nil {
 		valErr := ValidationErr{}
 		if errors.As(err, &valErr) {
@@ -428,7 +426,7 @@ func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) er
 	request.AlarmPatternFieldsRequest, err = a.transformer.TransformAlarmPatternFieldsRequest(
 		ctx,
 		request.AlarmPatternFieldsRequest,
-		*request.WidgetPrivate,
+		*request.IsUserPreference,
 		request.Author,
 	)
 	if err != nil {
@@ -437,7 +435,7 @@ func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) er
 	request.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(
 		ctx,
 		request.EntityPatternFieldsRequest,
-		*request.WidgetPrivate,
+		*request.IsUserPreference,
 		request.Author,
 	)
 	if err != nil {
@@ -446,7 +444,7 @@ func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) er
 	request.PbehaviorPatternFieldsRequest, err = a.transformer.TransformPbehaviorPatternFieldsRequest(
 		ctx,
 		request.PbehaviorPatternFieldsRequest,
-		*request.WidgetPrivate,
+		*request.IsUserPreference,
 		request.Author,
 	)
 	if err != nil {

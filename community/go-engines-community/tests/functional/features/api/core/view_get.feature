@@ -272,3 +272,38 @@ Feature: Get a view
     When I am admin
     When I do GET /api/v4/views/test-view-not-found
     Then the response code should be 404
+
+  @concurrent
+  Scenario: given get private view request should with api_private_view_groups
+    but without api_view permissions should return filters should return ok
+    When I am test-role-to-private-views-without-view-perm
+    When I do GET /api/v4/views/test-private-view-to-get-4
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-private-view-to-get-4",
+      "title": "test-private-view-to-get-4-title",
+      "is_private": true,
+      "group": {
+        "_id": "test-private-viewgroup-to-get-view-4",
+        "title": "test-private-viewgroup-to-get-view-4-title",
+        "author": {
+          "_id": "test-user-to-private-views-without-view-perm",
+          "name": "test-user-to-private-views-without-view-perm"
+        }
+      },
+      "author": {
+        "_id": "test-user-to-private-views-without-view-perm",
+        "name": "test-user-to-private-views-without-view-perm"
+      },
+      "is_private": true
+    }
+    """
+
+  @concurrent
+  Scenario: given get public view request should with api_private_view_groups
+    but without api_view permissions should return filters should not allow access
+    When I am test-role-to-private-views-without-view-perm
+    When I do GET /api/v4/views/test-view-to-get-1
+    Then the response code should be 403
