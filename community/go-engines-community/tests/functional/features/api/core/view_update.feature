@@ -398,3 +398,75 @@ Feature: Update a view
       }
     }
     """
+
+  @concurrent
+  Scenario: given update owned private view request with api_private_view_groups
+    but without api_view permissions should return ok
+    When I am test-role-to-private-views-without-view-perm
+    When I do PUT /api/v4/views/test-private-view-to-update-6:
+    """json
+    {
+      "enabled": true,
+      "title": "test-private-view-to-update-6-title-updated",
+      "description": "test-private-view-to-update-6-description-updated",
+      "group": "test-private-viewgroup-to-update-view-6",
+      "tags": ["test-private-view-to-update-6-tag-updated"],
+      "periodic_refresh": {
+        "enabled": true,
+        "value": 10,
+        "unit": "m"
+      }
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-private-view-to-update-6",
+      "author": {
+        "_id": "test-user-to-private-views-without-view-perm",
+        "name": "test-user-to-private-views-without-view-perm"
+      },
+      "description": "test-private-view-to-update-6-description-updated",
+      "enabled": true,
+      "is_private": true,
+      "group": {
+        "_id": "test-private-viewgroup-to-update-view-6",
+        "author": {
+          "_id": "test-user-to-private-views-without-view-perm",
+          "name": "test-user-to-private-views-without-view-perm"
+        },
+        "title": "test-private-viewgroup-to-update-view-6-title"
+      },
+      "title": "test-private-view-to-update-6-title-updated",
+      "periodic_refresh": {
+        "enabled": true,
+        "value": 10,
+        "unit": "m"
+      },
+      "tags": [
+        "test-private-view-to-update-6-tag-updated"
+      ]
+    }
+    """
+
+  @concurrent
+  Scenario: given update public view request with api_private_view_groups
+    but without api_view permissions should not allow access
+    When I am test-role-to-private-views-without-view-perm
+    Then I do PUT /api/v4/views/test-view-to-update-1:
+    """json
+    {
+      "enabled": true,
+      "title": "test-view-to-update-1-title-updated",
+      "description": "test-view-to-update-1-description-updated",
+      "group": "test-viewgroup-to-view-edit",
+      "tags": ["test-view-to-update-1-tag-updated"],
+      "periodic_refresh": {
+        "enabled": true,
+        "value": 10,
+        "unit": "m"
+      }
+    }
+    """
+    Then the response code should be 403

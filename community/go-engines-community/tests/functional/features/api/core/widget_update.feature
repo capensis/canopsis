@@ -544,3 +544,161 @@ Feature: Update a widget
     }
     """
     Then the response code should be 403
+
+  @concurrent
+  Scenario: given update owned private widget request with api_private_view_groups
+    but without api_view permissions should return filters should update private widget
+    When I am test-role-to-private-views-without-view-perm
+    Then I do PUT /api/v4/widgets/test-private-widget-to-update-3:
+    """json
+    {
+      "title": "test-private-widget-to-update-title-updated",
+      "type": "test-private-widget-to-update-type",
+      "grid_parameters": {
+        "desktop": {"x": 0, "y": 0}
+      },
+      "parameters": {
+        "mainFilter": "test-private-widgetfilter-to-private-widget-update-3-3",
+        "test-private-widget-to-update-param-str": "teststr",
+        "test-private-widget-to-update-param-int": 2,
+        "test-private-widget-to-update-param-bool": true,
+        "test-private-widget-to-update-param-arr": ["teststr1", "teststr2"],
+        "test-private-widget-to-update-param-map": {"testkey": "teststr"}
+      },
+      "filters": [
+        {
+          "_id": "test-private-widgetfilter-to-private-widget-update-3-3",
+          "title": "test-private-widgetfilter-to-private-widget-update-3-3-title",
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-private-widgetfilter-to-private-widget-update-3-3-pattern"
+                }
+              }
+            ]
+          ],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-private-widgetfilter-to-private-widget-update-3-3-pattern"
+                }
+              }
+            ]
+          ],
+          "pbehavior_pattern": [
+            [
+              {
+                "field": "pbehavior_info.type",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-private-widgetfilter-to-private-widget-update-3-3-pattern"
+                }
+              }
+            ]
+          ]
+        }
+      ]
+    }
+    """
+    Then the response code should be 200
+    When I save response mainFilterID={{ (index .lastResponse.filters 0)._id }}
+    Then the response key "parameters.mainFilter" should not be "test-private-widgetfilter-to-private-widget-update-3-3"
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-private-widget-to-update-3",
+      "title": "test-private-widget-to-update-title-updated",
+      "type": "test-private-widget-to-update-type",
+      "grid_parameters": {
+        "desktop": {"x": 0, "y": 0}
+      },
+      "parameters": {
+        "mainFilter": "{{ .mainFilterID }}",
+        "test-private-widget-to-update-param-str": "teststr",
+        "test-private-widget-to-update-param-int": 2,
+        "test-private-widget-to-update-param-bool": true,
+        "test-private-widget-to-update-param-arr": ["teststr1", "teststr2"],
+        "test-private-widget-to-update-param-map": {"testkey": "teststr"}
+      },
+      "author": {
+        "_id": "test-user-to-private-views-without-view-perm",
+        "name": "test-user-to-private-views-without-view-perm"
+      },
+      "is_private": true,
+      "filters": [
+        {
+          "title": "test-private-widgetfilter-to-private-widget-update-3-3-title",
+          "is_private": true,
+          "is_user_preference": false,
+          "author": {
+            "_id": "test-user-to-private-views-without-view-perm",
+            "name": "test-user-to-private-views-without-view-perm"
+          },
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-private-widgetfilter-to-private-widget-update-3-3-pattern"
+                }
+              }
+            ]
+          ],
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-private-widgetfilter-to-private-widget-update-3-3-pattern"
+                }
+              }
+            ]
+          ],
+          "pbehavior_pattern": [
+            [
+              {
+                "field": "pbehavior_info.type",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-private-widgetfilter-to-private-widget-update-3-3-pattern"
+                }
+              }
+            ]
+          ]
+        }
+      ]
+    }
+    """
+
+  @concurrent
+  Scenario: given update public widget request with api_private_view_groups
+    but without api_view permissions should return filters should not allow access
+    When I am test-role-to-private-views-without-view-perm
+    Then I do PUT /api/v4/widgets/test-widget-to-update:
+    """json
+    {
+      "title": "test-widget-to-update-title-updated",
+      "type": "test-widget-to-update-type",
+      "grid_parameters": {
+        "desktop": {"x": 0, "y": 0}
+      },
+      "parameters": {
+        "mainFilter": "test-widgetfilter-to-widget-update-3-3",
+        "test-widget-to-update-param-str": "teststr",
+        "test-widget-to-update-param-int": 2,
+        "test-widget-to-update-param-bool": true,
+        "test-widget-to-update-param-arr": ["teststr1", "teststr2"],
+        "test-widget-to-update-param-map": {"testkey": "teststr"}
+      },
+      "filters": []
+    }
+    """
+    Then the response code should be 403

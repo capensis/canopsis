@@ -14,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
@@ -38,7 +39,7 @@ type Store interface {
 	Import(ctx context.Context, r ImportRequest, userId string) error
 }
 
-func NewStore(dbClient mongo.DbClient, tabStore viewtab.Store, authorProvider author.Provider) Store {
+func NewStore(dbClient mongo.DbClient, tabStore viewtab.Store, authorProvider author.Provider, enforcer security.Enforcer) Store {
 	return &store{
 		client:                dbClient,
 		collection:            dbClient.Collection(mongo.ViewMongoCollection),
@@ -55,6 +56,7 @@ func NewStore(dbClient mongo.DbClient, tabStore viewtab.Store, authorProvider au
 		defaultSortBy:         "position",
 
 		tabStore: tabStore,
+		enforcer: enforcer,
 	}
 }
 
@@ -74,6 +76,7 @@ type store struct {
 	defaultSortBy         string
 
 	tabStore viewtab.Store
+	enforcer security.Enforcer
 }
 
 func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
@@ -112,6 +115,18 @@ func (s *store) Insert(ctx context.Context, r EditRequest, withDefaultTab bool) 
 
 		if group.IsPrivate && group.Author != r.Author {
 			return common.NewValidationError("group", "Group is private.")
+		}
+
+		if !group.IsPrivate {
+			// check the api_view create permission here, because user might not have it while having private views permission.
+			ok, err := s.enforcer.Enforce(r.Author, apisecurity.ObjView, model.PermissionCreate)
+			if err != nil {
+				panic(err)
+			}
+
+			if !ok {
+				return common.NewValidationError("group", "Group is public.")
+			}
 		}
 
 		position, err := s.getNextPosition(ctx)

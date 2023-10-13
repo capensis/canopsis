@@ -889,3 +889,114 @@ Feature: Copy a widget
       ]
     }
     """
+
+  @concurrent
+  Scenario: given copy private widget to owned private tab request with api_private_view_groups
+    but without api_view permissions should return filters should copy private widget
+    When I am test-role-to-private-views-without-view-perm
+    When I do POST /api/v4/widget-copy/test-private-widget-to-copy-4:
+    """json
+    {
+      "tab": "test-private-tab-to-private-widget-copy-4",
+      "title": "test-private-widget-to-copy-4-title-updated",
+      "type": "test-private-widget-to-copy-4-type-updated",
+      "grid_parameters": {
+        "desktop": {"x": 0, "y": 1}
+      },
+      "parameters": {
+        "test-private-widget-to-copy-4-parameter-1": {
+          "test-private-widget-to-copy-4-parameter-1-subparameter": "test-private-widget-to-copy-4-parameter-1-subvalue"
+        },
+        "test-private-widget-to-copy-4-parameter-2": [
+          {
+            "test-private-widget-to-copy-4-parameter-2-subparameter": "test-private-widget-to-copy-4-parameter-2-subvalue"
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 201
+    Then the response body should contain:
+    """json
+    {
+      "title": "test-private-widget-to-copy-4-title-updated",
+      "author": {
+        "_id": "test-user-to-private-views-without-view-perm",
+        "name": "test-user-to-private-views-without-view-perm"
+      },
+      "is_private": true
+    }
+    """
+    When I do GET /api/v4/widgets/{{ .lastResponse._id}}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "title": "test-private-widget-to-copy-4-title-updated",
+      "author": {
+        "_id": "test-user-to-private-views-without-view-perm",
+        "name": "test-user-to-private-views-without-view-perm"
+      },
+      "is_private": true
+    }
+    """
+    Then the response key "_id" should not be "test-private-widget-to-copy-4"
+    When I do GET /api/v4/views/test-private-view-to-private-widget-copy-4
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-private-view-to-private-widget-copy-4",
+      "tabs": [
+        {
+          "_id": "test-private-tab-to-private-widget-copy-4",
+          "is_private": true,
+          "widgets": [
+            {
+              "_id": "test-private-widget-to-copy-4",
+              "is_private": true
+            },
+            {
+              "title": "test-private-widget-to-copy-4-title-updated",
+              "is_private": true
+            }
+          ]
+        }
+      ]
+    }
+    """
+
+  @concurrent
+  Scenario: given copy private widget to public tab request with api_private_view_groups
+    but without api_view permissions should return filters should return error
+    When I am test-role-to-private-views-without-view-perm
+    When I do POST /api/v4/widget-copy/test-private-widget-to-copy-4:
+    """json
+    {
+      "tab": "test-tab-to-widget-copy-2",
+      "title": "test-private-widget-to-copy-4-title-updated",
+      "type": "test-private-widget-to-copy-4-type-updated",
+      "grid_parameters": {
+        "desktop": {"x": 0, "y": 1}
+      },
+      "parameters": {
+        "test-private-widget-to-copy-4-parameter-1": {
+          "test-private-widget-to-copy-4-parameter-1-subparameter": "test-private-widget-to-copy-4-parameter-1-subvalue"
+        },
+        "test-private-widget-to-copy-4-parameter-2": [
+          {
+            "test-private-widget-to-copy-4-parameter-2-subparameter": "test-private-widget-to-copy-4-parameter-2-subvalue"
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "tab": "Can't modify a tab."
+      }
+    }
+    """

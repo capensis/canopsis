@@ -176,3 +176,24 @@ Feature: Get a view tab
     When I am admin
     When I do GET /api/v4/view-tabs/test-private-tab-to-get-2
     Then the response code should be 403
+
+  @concurrent
+  Scenario: given get owned private tab request with api_private_view_groups
+    but without api_view permissions should return filters should not ok
+    When I am test-role-to-private-views-without-view-perm
+    When I do GET /api/v4/view-tabs/test-private-tab-to-get-3
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-private-tab-to-get-3",
+      "is_private": true
+    }
+    """
+
+  @concurrent
+  Scenario: given get public tab request with api_private_view_groups
+    but without api_view permissions should return filters should not allow access
+    When I am test-role-to-private-views-without-view-perm
+    When I do GET /api/v4/view-tabs/test-tab-to-get
+    Then the response code should be 403
