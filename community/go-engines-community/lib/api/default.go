@@ -154,6 +154,12 @@ func Default(
 		logger.Info().Msg("Non-unique names for services ENABLED")
 	}
 
+	dbExportClient, err := mongo.NewClientWithOptions(ctx, 0, 0, 0,
+		p.ApiConfigProvider.Get().ExportMongoClientTimeout, logger)
+	if err != nil {
+		return nil, nil, fmt.Errorf("cannot connect to mongodb: %w", err)
+	}
+
 	proxyAccessConfig, err := proxy.LoadAccessConfig(flags.ConfigDir)
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot load access config: %w", err)
@@ -211,7 +217,7 @@ func Default(
 		exportExecutor = export.NewTaskExecutor(dbClient, p.TimezoneConfigProvider, logger)
 	}
 
-	alarmStore := alarmapi.NewStore(dbClient, linkGenerator, p.TimezoneConfigProvider,
+	alarmStore := alarmapi.NewStore(dbClient, dbExportClient, linkGenerator, p.TimezoneConfigProvider,
 		author.NewProvider(dbClient, p.ApiConfigProvider), json.NewDecoder(), logger)
 	websocketStore := websocket.NewStore(dbClient, flags.IntegrationPeriodicalWaitTime)
 	websocketHub, err := newWebsocketHub(enforcer, security.GetTokenProviders(), flags.IntegrationPeriodicalWaitTime,
@@ -253,6 +259,10 @@ func Default(
 			close(broadcastMessageChan)
 
 			err := dbClient.Disconnect(ctx)
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close mongo connection")
+			}
+			err = dbExportClient.Disconnect(ctx)
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close mongo connection")
 			}
@@ -317,6 +327,7 @@ func Default(
 			enforcer,
 			linkGenerator,
 			dbClient,
+			dbExportClient,
 			pgPoolProvider,
 			amqpChannel,
 			p.ApiConfigProvider,
