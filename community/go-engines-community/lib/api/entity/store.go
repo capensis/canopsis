@@ -26,14 +26,16 @@ type Store interface {
 
 type store struct {
 	db                     mongo.DbClient
+	dbExport               mongo.DbClient
 	mainCollection         mongo.DbCollection
 	archivedCollection     mongo.DbCollection
 	timezoneConfigProvider config.TimezoneConfigProvider
 }
 
-func NewStore(db mongo.DbClient, timezoneConfigProvider config.TimezoneConfigProvider) Store {
+func NewStore(db, dbExport mongo.DbClient, timezoneConfigProvider config.TimezoneConfigProvider) Store {
 	return &store{
 		db:                     db,
+		dbExport:               dbExport,
 		mainCollection:         db.Collection(mongo.EntityMongoCollection),
 		archivedCollection:     db.Collection(mongo.ArchivedEntitiesMongoCollection),
 		timezoneConfigProvider: timezoneConfigProvider,
@@ -369,8 +371,8 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 		}
 	}
 	pipeline = append(pipeline, bson.M{"$project": project})
-
-	cursor, err := s.mainCollection.Aggregate(ctx, pipeline, options.Aggregate().SetAllowDiskUse(true))
+	collection := s.dbExport.Collection(mongo.EntityMongoCollection)
+	cursor, err := collection.Aggregate(ctx, pipeline, options.Aggregate().SetAllowDiskUse(true))
 	if err != nil {
 		return nil, err
 	}
