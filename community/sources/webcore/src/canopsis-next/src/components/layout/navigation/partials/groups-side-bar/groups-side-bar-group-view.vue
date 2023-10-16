@@ -10,7 +10,7 @@
       :is-editing="isNavigationEditingMode",
       :is-order-changed="isGroupsOrderChanged",
       :is-view-active="isViewActive",
-      :editable="hasViewEditButtonAccess",
+      :editable="isViewPrivate || hasViewEditButtonAccess",
       allow-editing,
       @duplicate="showDuplicateViewModal",
       @change="showEditViewModal"
@@ -34,6 +34,10 @@ export default {
   computed: {
     isViewActive() {
       return this.$route?.params?.id === this.view._id;
+    },
+
+    isViewPrivate() {
+      return this.view.is_private;
     },
 
     routerLinkEvents() {
