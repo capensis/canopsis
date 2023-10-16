@@ -43,6 +43,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    permission: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
@@ -68,7 +72,13 @@ export default {
     async fetchList() {
       this.pending = true;
 
-      const { data: items } = await this.fetchUsersListWithoutStore({ params: { limit: MAX_LIMIT } });
+      const params = { limit: MAX_LIMIT };
+
+      if (this.permission) {
+        params.permission = this.permission;
+      }
+
+      const { data: items } = await this.fetchUsersListWithoutStore({ params });
 
       this.items = items;
       this.pending = false;
