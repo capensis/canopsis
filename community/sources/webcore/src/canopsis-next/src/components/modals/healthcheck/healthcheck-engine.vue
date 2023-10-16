@@ -5,7 +5,7 @@
     template(#text="")
       healthcheck-engine-information(:engine="engine", :max-queue-length="maxQueueLength")
     template(#actions="")
-      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.ok') }}
+      v-btn(depressed, text, @click="$modals.hide") {{ $t('common.ok') }}
 </template>
 
 <script>

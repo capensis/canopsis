@@ -10,14 +10,14 @@
         name="username",
         autofocus,
         clearable,
-        outline
+        outlined
       )
     v-flex
       c-password-field(
         v-field.mutate="form.password",
         required,
         clearable,
-        outline
+        outlined
       )
 </template>
 

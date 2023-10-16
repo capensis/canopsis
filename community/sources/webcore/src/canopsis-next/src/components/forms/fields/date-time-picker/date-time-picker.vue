@@ -25,7 +25,7 @@
     slot(name="footer")
       v-divider
       v-layout.mt-1(justify-space-around)
-        v-btn(depressed, flat, @click="$listeners.close") {{ $t('common.cancel') }}
+        v-btn(depressed, text, @click="$listeners.close") {{ $t('common.cancel') }}
         v-btn.primary(@click="submit") {{ $t('common.apply') }}
 </template>
 

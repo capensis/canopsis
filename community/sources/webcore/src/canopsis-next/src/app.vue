@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-app#app(:dark="system.dark")
+  v-app#app
     c-progress-overlay(
       :pending="wholePending",
       :transition="false",
@@ -7,7 +7,7 @@
     )
     v-layout(v-if="!wholePending")
       the-navigation#main-navigation(v-if="currentUser && shownHeader")
-      v-content#main-content
+      v-main#main-content
         active-broadcast-message
         router-view(:key="routeViewKey")
     the-sidebar

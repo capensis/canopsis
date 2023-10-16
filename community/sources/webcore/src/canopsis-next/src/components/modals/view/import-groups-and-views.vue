@@ -27,7 +27,7 @@
             @change:group="changeCurrentGroupHandler"
           )
     template(#actions="")
-      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+      v-btn(depressed, text, @click="$modals.hide") {{ $t('common.cancel') }}
       v-btn.primary(
         :loading="submitting",
         type="submit",

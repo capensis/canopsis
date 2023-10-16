@@ -19,7 +19,7 @@
             required
           )
       template(#actions="")
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-btn(depressed, text, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(:disabled="isDisabled", type="submit") {{ $t('common.submit') }}
 </template>
 

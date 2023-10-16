@@ -3,7 +3,6 @@
     v-flex(xs12)
       v-alert(
         v-if="!groups.length",
-        :value="true",
         type="info"
       ) {{ disabled || readonly ? $t('pattern.noDataDisabled') : $t('pattern.noData') }}
     v-layout(v-for="(group, index) in groups", :key="group.key", wrap, row)

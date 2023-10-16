@@ -6,7 +6,7 @@
       template(#text="")
         pbehavior-exception-form(v-model="form", with-type)
       template(#actions="")
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-btn(depressed, text, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(:disabled="isDisabled", type="submit") {{ $t('common.submit') }}
 </template>
 

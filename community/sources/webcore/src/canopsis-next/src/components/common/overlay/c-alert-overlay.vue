@@ -4,7 +4,7 @@
       div.overlay(:class="backgroundColor", :style="{ opacity: opacity }")
       div.content
         slot
-          v-alert(type="error", :value="true") {{ errorMessage }}
+          v-alert(type="error") {{ errorMessage }}
 </template>
 
 <script>
