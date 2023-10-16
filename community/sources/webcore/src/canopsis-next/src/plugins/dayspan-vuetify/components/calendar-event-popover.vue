@@ -1,9 +1,10 @@
-<template lang="pug">
-  v-card.ds-calendar-event-popover-card
-    slot(
-      v-if="calendar",
+<template>
+  <v-card class="ds-calendar-event-popover-card">
+    <slot
+      v-if="calendar"
       v-bind="{ calendarEvent: calendarEventForSlot, calendar, edit, add, close, readOnly }"
-    )
+    />
+  </v-card>
 </template>
 
 <script>

@@ -1,16 +1,21 @@
-<template lang="pug">
-  v-card.card-with-see-alarms-btn(
-    v-on="$listeners",
-    :class="itemClasses",
-    tile,
-    dark
-  )
-    slot
-    v-btn.card-with-see-alarms-btn__btn(
-      v-if="showButton",
-      flat,
+<template>
+  <v-card
+    class="card-with-see-alarms-btn"
+    v-on="$listeners"
+    :class="itemClasses"
+    tile="tile"
+    dark="dark"
+  >
+    <slot />
+    <v-btn
+      class="card-with-see-alarms-btn__btn"
+      v-if="showButton"
+      text
       @click.stop="$emit('show:alarms')"
-    ) {{ $t('common.seeAlarms') }}
+    >
+      {{ $t('common.seeAlarms') }}
+    </v-btn>
+  </v-card>
 </template>
 
 <script>

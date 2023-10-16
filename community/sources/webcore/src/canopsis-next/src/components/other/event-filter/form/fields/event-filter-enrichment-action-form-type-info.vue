@@ -1,13 +1,26 @@
-<template lang="pug">
-  div
-    v-layout(row, align-center)
-      span {{ message }}
-      v-btn(icon, small, @click="toggleDescriptionOpened")
-        v-icon help
-    v-expand-transition(v-if="opened")
-      v-layout(column)
-        div.pre-wrap {{ description }}
-        img(:src="image", @click="showImageViewerModal")
+<template>
+  <div>
+    <v-layout align-center="align-center">
+      <span>{{ message }}</span>
+      <v-btn
+        icon="icon"
+        small="small"
+        @click="toggleDescriptionOpened"
+      >
+        <v-icon>help</v-icon>
+      </v-btn>
+    </v-layout>
+    <v-expand-transition v-if="opened">
+      <v-layout column="column">
+        <div class="pre-wrap">
+          {{ description }}
+        </div><img
+          :src="image"
+          @click="showImageViewerModal"
+        >
+      </v-layout>
+    </v-expand-transition>
+  </div>
 </template>
 
 <script>

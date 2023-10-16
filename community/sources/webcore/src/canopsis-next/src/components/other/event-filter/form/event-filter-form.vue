@@ -1,41 +1,68 @@
-<template lang="pug">
-  div
-    v-layout(row)
-      v-flex(xs8)
-        c-id-field.mr-3(
-          v-field="form._id",
-          :disabled="isDisabledIdField",
+<template>
+  <div>
+    <v-layout>
+      <v-flex xs8="xs8">
+        <c-id-field
+          class="mr-3"
+          v-field="form._id"
+          :disabled="isDisabledIdField"
           :help-text="$t('eventFilter.idHelp')"
-        )
-      v-flex(xs4)
-        c-event-filter-type-field.ml-3(v-field="form.type")
-    c-description-field(v-field="form.description", required)
-    v-layout(row, justify-space-between)
-      c-enabled-field(v-field="form.enabled")
-      c-priority-field(v-field="form.priority")
-    c-information-block(:title="$t('eventFilter.duringPeriod')")
-      event-filter-drop-intervals-field(v-field="form")
-    pbehavior-recurrence-rule-field.mb-3(v-field="form")
-    c-patterns-field(v-field="form.patterns", with-entity, with-event, some-required, entity-counters-type)
-
-    template(v-if="hasAdditionalOptions")
-      v-divider.my-3
-      c-information-block(
-        :title="isEnrichmentType ? $t('eventFilter.enrichmentOptions') : $t('eventFilter.changeEntityOptions')"
-      )
-        c-collapse-panel.mb-2(:title="$t('externalData.title')")
-          external-data-form(v-field="form.external_data", :variables="externalDataVariables")
-
-        event-filter-enrichment-form(
-          v-if="isEnrichmentType",
-          v-field="form",
+        />
+      </v-flex>
+      <v-flex xs4="xs4">
+        <c-event-filter-type-field
+          class="ml-3"
+          v-field="form.type"
+        />
+      </v-flex>
+    </v-layout>
+    <c-description-field
+      v-field="form.description"
+      required="required"
+    />
+    <v-layout justify-space-between="justify-space-between">
+      <c-enabled-field v-field="form.enabled" />
+      <c-priority-field v-field="form.priority" />
+    </v-layout>
+    <c-information-block :title="$t('eventFilter.duringPeriod')">
+      <event-filter-drop-intervals-field v-field="form" />
+    </c-information-block>
+    <pbehavior-recurrence-rule-field
+      class="mb-3"
+      v-field="form"
+    />
+    <c-patterns-field
+      v-field="form.patterns"
+      with-entity="with-entity"
+      with-event="with-event"
+      some-required="some-required"
+      entity-counters-type="entity-counters-type"
+    />
+    <template v-if="hasAdditionalOptions">
+      <v-divider class="my-3" />
+      <c-information-block :title="isEnrichmentType ? $t('eventFilter.enrichmentOptions') : $t('eventFilter.changeEntityOptions')">
+        <c-collapse-panel
+          class="mb-2"
+          :title="$t('externalData.title')"
+        >
+          <external-data-form
+            v-field="form.external_data"
+            :variables="externalDataVariables"
+          />
+        </c-collapse-panel>
+        <event-filter-enrichment-form
+          v-if="isEnrichmentType"
+          v-field="form"
           :template-variables="actionsDataVariables"
-        )
-        event-filter-change-entity-form(
-          v-else-if="isChangeEntityType",
-          v-field="form.config",
+        />
+        <event-filter-change-entity-form
+          v-else-if="isChangeEntityType"
+          v-field="form.config"
           :variables="actionsDataVariables"
-        )
+        />
+      </c-information-block>
+    </template>
+  </div>
 </template>
 
 <script>

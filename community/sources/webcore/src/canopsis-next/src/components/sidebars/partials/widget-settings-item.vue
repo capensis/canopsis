@@ -1,14 +1,24 @@
-<template lang="pug">
-  v-list-group
-    template(#activator="")
-      v-list-tile.widget-settings-item-title
-        v-layout(:class="validationHeaderClass", align-center)
-          slot(name="title") {{ title }}
-          span.font-italic.caption.ml-1(v-if="optional || subTitle")
-            span(v-if="optional") ({{ $t('common.optional') }})
-            span(v-if="subTitle") {{ subTitle }}
-    v-container
-      slot
+<template>
+  <v-list-group>
+    <template #activator="">
+      <v-list-item class="widget-settings-item-title">
+        <v-layout
+          :class="validationHeaderClass"
+          align-center="align-center"
+        >
+          <slot name="title">
+            {{ title }}
+          </slot><span
+            class="font-italic text-caption ml-1"
+            v-if="optional || subTitle"
+          ><span v-if="optional">({{ $t('common.optional') }})</span><span v-if="subTitle">{{ subTitle }}</span></span>
+        </v-layout>
+      </v-list-item>
+    </template>
+    <v-container>
+      <slot />
+    </v-container>
+  </v-list-group>
 </template>
 
 <script>

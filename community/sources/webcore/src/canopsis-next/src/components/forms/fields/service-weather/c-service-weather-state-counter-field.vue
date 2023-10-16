@@ -1,18 +1,18 @@
-<template lang="pug">
-  v-select(
-    v-field="value",
-    v-validate="rules",
-    :label="$t('common.state')",
-    :items="availableCounters",
-    :name="name",
-    :error-messages="errors.collect(name)",
-    :item-disabled="isItemDisabled",
-    :disabled="disabled",
-    chips,
-    deletable-chips,
-    small-chips,
-    multiple
-  )
+<template>
+  <v-select
+    v-field="value"
+    v-validate="rules"
+    :label="$t('common.state')"
+    :items="availableCounters"
+    :name="name"
+    :error-messages="errors.collect(name)"
+    :item-disabled="isItemDisabled"
+    :disabled="disabled"
+    chips="chips"
+    deletable-chips="deletable-chips"
+    small-chips="small-chips"
+    multiple="multiple"
+  />
 </template>
 
 <script>

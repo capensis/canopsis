@@ -1,36 +1,55 @@
-<template lang="pug">
-  v-menu(
-    :content-class="contentClass",
-    :disabled="!hasPopover",
-    v-model="menu",
+<template>
+  <v-menu
+    :content-class="contentClass"
+    :disabled="!hasPopover"
+    v-model="menu"
     v-bind="popoverProps"
-  )
-    template(#activator="{ on }")
-      div.ds-calendar-event(v-on="on", :style="style", :class="classWithKey")
-        div.ds-calendar-event-span(
-          @click="editCheck",
-          @mouseenter="mouseEnterEvent",
-          @mouseleave="mouseLeaveEvent",
-          @mousedown="mouseDownEvent",
+  >
+    <template #activator="{ on }">
+      <div
+        class="ds-calendar-event"
+        v-on="on"
+        :style="style"
+        :class="classWithKey"
+      >
+        <div
+          class="ds-calendar-event-span"
+          @click="editCheck"
+          @mouseenter="mouseEnterEvent"
+          @mouseleave="mouseLeaveEvent"
+          @mousedown="mouseDownEvent"
           @mouseup="mouseUpEvent"
-        )
-          span(v-if="showName")
-            slot(name="eventTimeTitle", v-bind="{ calendarEvent, details }")
-              v-icon.ds-ev-icon(
-                v-if="hasIcon",
-                size="14",
+        >
+          <span v-if="showName">
+            <slot
+              name="eventTimeTitle"
+              v-bind="{ calendarEvent, details }"
+            >
+              <v-icon
+                class="ds-ev-icon"
+                v-if="hasIcon"
+                size="14"
                 :style="{ color: details.forecolor }"
-              ) {{ details.icon }}
-              strong.ds-ev-title {{ details.title }}
-              span.ds-ev-description {{ details.description }}
-          span(v-else)
-            slot(name="eventTimeEmpty", v-bind="{ calendarEvent, details }")
-        div.ds-calendar-event-time-resize(v-show="canResize", @mousedown="resizeStartHandler")
-    slot(
-      name="eventPopover",
-      v-if="isShownPopover",
+              >{{ details.icon }}</v-icon><strong class="ds-ev-title">{{ details.title }}</strong><span class="ds-ev-description">{{ details.description }}</span>
+            </slot></span><span v-else>
+            <slot
+              name="eventTimeEmpty"
+              v-bind="{ calendarEvent, details }"
+            /></span>
+        </div>
+        <div
+          class="ds-calendar-event-time-resize"
+          v-show="canResize"
+          @mousedown="resizeStartHandler"
+        />
+      </div>
+    </template>
+    <slot
+      name="eventPopover"
+      v-if="isShownPopover"
       v-bind="{ calendarEvent, calendar, edit, details, close: closePopover }"
-    )
+    />
+  </v-menu>
 </template>
 
 <script>

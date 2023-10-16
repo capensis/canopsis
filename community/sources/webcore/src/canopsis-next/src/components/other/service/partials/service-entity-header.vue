@@ -1,36 +1,67 @@
-<template lang="pug">
-  v-layout(justify-space-between, align-center)
-    v-flex(@click.stop="")
-      v-checkbox.ma-0.pa-0(
-        :input-value="selected",
-        :disabled="!selectable",
-        color="white",
-        hide-details,
+<template>
+  <v-layout
+    justify-space-between="justify-space-between"
+    align-center="align-center"
+  >
+    <v-flex @click.stop="">
+      <v-checkbox
+        class="ma-0 pa-0"
+        :input-value="selected"
+        :disabled="!selectable"
+        color="white"
+        hide-details="hide-details"
         @change="$emit('update:selected', $event)"
-      )
-    v-flex.pa-2
-      v-icon(color="white", small) {{ entity.icon }}
-    v-flex.pl-1.white--text.subheading(xs12)
-      v-layout(align-center)
-        div.mr-1.entity-name {{ entityName }}
-        v-btn.mx-1(
-          v-for="icon in extraIcons",
-          :key="icon.icon",
-          :color="icon.color",
-          small,
-          dark,
-          icon
-        )
-          v-icon(small) {{ icon.icon }}
-        c-no-events-icon(:value="entity.idle_since", color="white", top)
-        div(@click.stop="")
-          v-alert.entity-alert.ma-0.px-2.py-1(
-            v-if="lastActionUnavailable",
-            :value="lastActionUnavailable",
-            color="black",
-            dismissible,
+      />
+    </v-flex>
+    <v-flex class="pa-2">
+      <v-icon
+        color="white"
+        small="small"
+      >
+        {{ entity.icon }}
+      </v-icon>
+    </v-flex>
+    <v-flex
+      class="pl-1 white--text subheading"
+      xs12="xs12"
+    >
+      <v-layout align-center="align-center">
+        <div class="mr-1 entity-name">
+          {{ entityName }}
+        </div>
+        <v-btn
+          class="mx-1"
+          v-for="icon in extraIcons"
+          :key="icon.icon"
+          :color="icon.color"
+          small="small"
+          dark="dark"
+          icon="icon"
+        >
+          <v-icon small="small">
+            {{ icon.icon }}
+          </v-icon>
+        </v-btn>
+        <c-no-events-icon
+          :value="entity.idle_since"
+          color="white"
+          top="top"
+        />
+        <div @click.stop="">
+          <v-alert
+            class="entity-alert ma-0 px-2 py-1"
+            v-if="lastActionUnavailable"
+            :value="lastActionUnavailable"
+            color="black"
+            dismissible="dismissible"
             @input="hideAlert"
-          ) {{ $t('serviceWeather.cannotBeApplied') }}
+          >
+            {{ $t('serviceWeather.cannotBeApplied') }}
+          </v-alert>
+        </div>
+      </v-layout>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

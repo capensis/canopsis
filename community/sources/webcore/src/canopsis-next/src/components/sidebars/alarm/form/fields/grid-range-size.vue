@@ -1,18 +1,22 @@
-<template lang="pug">
-  v-list-group
-    template(#activator="")
-      v-list-tile
-        div {{ title }}
-    v-container
-      v-range-slider(
-        v-field="value",
-        :min="min",
-        :max="max",
-        :step="step",
-        ticks="always",
-        always-dirty,
-        thumb-label
-      )
+<template>
+  <v-list-group>
+    <template #activator="">
+      <v-list-item>
+        <div>{{ title }}</div>
+      </v-list-item>
+    </template>
+    <v-container>
+      <v-range-slider
+        v-field="value"
+        :min="min"
+        :max="max"
+        :step="step"
+        ticks="always"
+        always-dirty="always-dirty"
+        thumb-label="thumb-label"
+      />
+    </v-container>
+  </v-list-group>
 </template>
 
 <script>

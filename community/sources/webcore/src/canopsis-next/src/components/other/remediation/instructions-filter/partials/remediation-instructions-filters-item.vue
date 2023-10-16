@@ -1,18 +1,32 @@
-<template lang="pug">
-  div.instruction-filter
-    v-chip.white--text(
-      v-on="chipListeners",
-      :color="chipColor",
-      :close-icon="chipCloseIcon",
-      :close="closable",
-      label
-    )
-      span.instruction-filter__text
-        v-icon(color="white", small) assignment
-        v-icon.pl-1(v-if="filter.locked", color="white", small) lock
-        strong.pl-2.text-uppercase {{ conditionTypeMessage }}
-        span.pl-1(v-if="!isAll") {{ typesAndInstructionsMessage }}
-        strong.pl-1.text-uppercase(v-if="hasRunning") {{ $t('remediation.instructionsFilter.inProgress') }}
+<template>
+  <div class="instruction-filter">
+    <v-chip
+      class="white--text"
+      v-on="chipListeners"
+      :color="chipColor"
+      :close-icon="chipCloseIcon"
+      :close="closable"
+      label="label"
+    >
+      <span class="instruction-filter__text">
+        <v-icon
+          color="white"
+          small="small"
+        >assignment</v-icon>
+        <v-icon
+          class="pl-1"
+          v-if="filter.locked"
+          color="white"
+          small="small"
+        >lock</v-icon><strong class="pl-2 text-uppercase">{{ conditionTypeMessage }}</strong><span
+          class="pl-1"
+          v-if="!isAll"
+        >{{ typesAndInstructionsMessage }}</span><strong
+          class="pl-1 text-uppercase"
+          v-if="hasRunning"
+        >{{ $t('remediation.instructionsFilter.inProgress') }}</strong></span>
+    </v-chip>
+  </div>
 </template>
 
 <script>

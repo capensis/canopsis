@@ -1,33 +1,42 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :headers="headers",
-    :items="preparedBroadcastMessages",
-    :loading="pending",
-    :total-items="totalItems",
-    :pagination="pagination",
-    advanced-pagination,
-    search,
+<template>
+  <c-advanced-data-table
+    :headers="headers"
+    :items="preparedBroadcastMessages"
+    :loading="pending"
+    :total-items="totalItems"
+    :pagination="pagination"
+    advanced-pagination="advanced-pagination"
+    search="search"
     @update:pagination="$emit('update:pagination', $event)"
-  )
-    template(#items="{ item }")
-      tr
-        td {{ $t(`broadcastMessage.statuses.${item.status}`) }}
-        td.broadcast-message-cell
-          broadcast-message(:message="item.message", :color="item.color")
-        td {{ item.start | date }}
-        td {{ item.end | date }}
-        td
-          v-layout(row)
-            c-action-btn(
-              v-if="hasUpdateAnyBroadcastMessageAccess",
-              type="edit",
+  >
+    <template #items="{ item }">
+      <tr>
+        <td>{{ $t(`broadcastMessage.statuses.${item.status}`) }}</td>
+        <td class="broadcast-message-cell">
+          <broadcast-message
+            :message="item.message"
+            :color="item.color"
+          />
+        </td>
+        <td>{{ item.start | date }}</td>
+        <td>{{ item.end | date }}</td>
+        <td>
+          <v-layout>
+            <c-action-btn
+              v-if="hasUpdateAnyBroadcastMessageAccess"
+              type="edit"
               @click="$emit('edit', item)"
-            )
-            c-action-btn(
-              v-if="hasDeleteAnyBroadcastMessageAccess",
-              type="delete",
+            />
+            <c-action-btn
+              v-if="hasDeleteAnyBroadcastMessageAccess"
+              type="delete"
               @click="$emit('remove', item._id)"
-            )
+            />
+          </v-layout>
+        </td>
+      </tr>
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>

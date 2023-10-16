@@ -1,14 +1,15 @@
-<template lang="pug">
-  v-layout(column)
-    span.pl-4.subheading {{ $t('kpi.ratingSettings.helpInformation') }}
-    kpi-rating-settings-list(
-      :pagination.sync="pagination",
-      :rating-settings="ratingSettings",
-      :pending="ratingSettingsPending",
-      :total-items="ratingSettingsMeta.total_count",
-      :updatable="hasUpdateAnyKpiRatingSettingsAccess",
+<template>
+  <v-layout column="column">
+    <span class="pl-4 subheading">{{ $t('kpi.ratingSettings.helpInformation') }}</span>
+    <kpi-rating-settings-list
+      :pagination.sync="pagination"
+      :rating-settings="ratingSettings"
+      :pending="ratingSettingsPending"
+      :total-items="ratingSettingsMeta.total_count"
+      :updatable="hasUpdateAnyKpiRatingSettingsAccess"
       @change-selected="changeSelectedRatingSettings"
-    )
+    />
+  </v-layout>
 </template>
 
 <script>

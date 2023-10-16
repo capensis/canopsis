@@ -1,5 +1,9 @@
-<template lang="pug">
-  v-tour(:name="tourName", :steps="tourSteps", :callbacks="tourCallbacks")
+<template>
+  <v-tour
+    :name="tourName"
+    :steps="tourSteps"
+    :callbacks="tourCallbacks"
+  />
 </template>
 
 <script>

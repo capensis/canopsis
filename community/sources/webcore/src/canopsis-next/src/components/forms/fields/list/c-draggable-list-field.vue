@@ -1,20 +1,21 @@
-<template lang="pug">
-  draggable(
-    :value="value",
-    :group="group",
-    :tag="component",
-    :animation="animation",
-    :disabled="disabled",
-    :handle="handle",
-    :ghost-class="ghostClass",
-    :drag-class="dragClass",
-    :chosen-class="dragClass",
-    :component-data="componentData",
-    @change="updateOrdering",
-    @start="$emit('start', $event)",
+<template>
+  <draggable
+    :value="value"
+    :group="group"
+    :tag="component"
+    :animation="animation"
+    :disabled="disabled"
+    :handle="handle"
+    :ghost-class="ghostClass"
+    :drag-class="dragClass"
+    :chosen-class="dragClass"
+    :component-data="componentData"
+    @change="updateOrdering"
+    @start="$emit('start', $event)"
     @end="$emit('end', $event)"
-  )
-    slot
+  >
+    <slot />
+  </draggable>
 </template>
 
 <script>

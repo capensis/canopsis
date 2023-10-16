@@ -1,46 +1,54 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :headers="headers",
-    :items="rules",
-    :loading="pending",
-    :total-items="totalItems",
-    :pagination="pagination",
-    :select-all="removable",
-    expand,
-    search,
-    advanced-pagination,
+<template>
+  <c-advanced-data-table
+    :headers="headers"
+    :items="rules"
+    :loading="pending"
+    :total-items="totalItems"
+    :pagination="pagination"
+    :select-all="removable"
+    expand="expand"
+    search="search"
+    advanced-pagination="advanced-pagination"
     @update:pagination="$emit('update:pagination', $event)"
-  )
-    template(#mass-actions="{ selected }")
-      c-action-btn(
-        v-if="removable",
-        type="delete",
+  >
+    <template #mass-actions="{ selected }">
+      <c-action-btn
+        v-if="removable"
+        type="delete"
         @click="$emit('remove-selected', selected)"
-      )
-    template(#duration="{ item }")
-      span {{ item.duration | duration }}
-    template(#priority="{ item }") {{ item.priority || '-' }}
-    template(#actions="{ item }")
-      v-layout(row)
-        c-action-btn(
-          v-if="updatable",
-          :badge-value="isOldPattern(item)",
-          :badge-tooltip="$t('pattern.oldPatternTooltip')",
-          type="edit",
+      />
+    </template>
+    <template #duration="{ item }">
+      <span>{{ item.duration | duration }}</span>
+    </template>
+    <template #priority="{ item }">
+      {{ item.priority || '-' }}
+    </template>
+    <template #actions="{ item }">
+      <v-layout>
+        <c-action-btn
+          v-if="updatable"
+          :badge-value="isOldPattern(item)"
+          :badge-tooltip="$t('pattern.oldPatternTooltip')"
+          type="edit"
           @click="$emit('edit', item)"
-        )
-        c-action-btn(
-          v-if="duplicable",
-          type="duplicate",
+        />
+        <c-action-btn
+          v-if="duplicable"
+          type="duplicate"
           @click="$emit('duplicate', item)"
-        )
-        c-action-btn(
-          v-if="removable",
-          type="delete",
+        />
+        <c-action-btn
+          v-if="removable"
+          type="delete"
           @click="$emit('remove', item._id)"
-        )
-    template(#expand="{ item }")
-      alarm-status-rules-list-expand-item(:rule="item")
+        />
+      </v-layout>
+    </template>
+    <template #expand="{ item }">
+      <alarm-status-rules-list-expand-item :rule="item" />
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>

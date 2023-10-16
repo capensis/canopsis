@@ -1,29 +1,32 @@
-<template lang="pug">
-  v-menu(
-    v-model="opened",
-    :close-on-content-click="false",
-    content-class="date-time-picker",
-    transition="slide-y-transition",
-    max-width="290",
-    right,
-    lazy-with-unmount,
-    lazy
-  )
-    template(#activator="{ on }")
-      v-btn(
-        v-on="on",
-        color="secondary",
-        icon,
-        fab,
-        small
-      )
-        v-icon calendar_today
-    date-time-picker(
-      v-field="value",
-      :label="label",
-      :round-hours="roundHours",
+<template>
+  <v-menu
+    v-model="opened"
+    :close-on-content-click="false"
+    content-class="date-time-picker"
+    transition="slide-y-transition"
+    max-width="290"
+    right="right"
+    lazy-with-unmount="lazy-with-unmount"
+    lazy="lazy"
+  >
+    <template #activator="{ on }">
+      <v-btn
+        v-on="on"
+        color="secondary"
+        icon="icon"
+        fab="fab"
+        small="small"
+      >
+        <v-icon>calendar_today</v-icon>
+      </v-btn>
+    </template>
+    <date-time-picker
+      v-field="value"
+      :label="label"
+      :round-hours="roundHours"
       @close="close"
-    )
+    />
+  </v-menu>
 </template>
 
 <script>

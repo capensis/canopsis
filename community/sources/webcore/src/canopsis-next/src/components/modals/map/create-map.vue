@@ -1,21 +1,36 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ $t('modals.createMap.title') }}
-      template(#text="")
-        v-layout(column)
-          v-flex.my-1.cursor-pointer(
-            v-for="type in availableTypes",
-            :key="type",
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close="close">
+      <template #title="">
+        <span>{{ $t('modals.createMap.title') }}</span>
+      </template>
+      <template #text="">
+        <v-layout column="column">
+          <v-flex
+            class="my-1 cursor-pointer"
+            v-for="type in availableTypes"
+            :key="type"
             @click="selectType(type)"
-          )
-            v-card
-              v-card-title.py-3(primary-title)
-                v-layout
-                  div.subheading {{ $t(`map.types.${type}`) }}
-                  v-spacer
-                  v-icon {{ getIconByType(type) }}
+          >
+            <v-card>
+              <v-card-title
+                class="py-3"
+                primary-title="primary-title"
+              >
+                <v-layout>
+                  <div class="subheading">
+                    {{ $t(`map.types.${type}`) }}
+                  </div>
+                  <v-spacer />
+                  <v-icon>{{ getIconByType(type) }}</v-icon>
+                </v-layout>
+              </v-card-title>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>

@@ -1,59 +1,76 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :headers="headers",
-    :items="scenarios",
-    :loading="pending",
-    :total-items="totalItems",
-    :pagination="pagination",
-    :select-all="removable",
-    expand,
-    search,
-    advanced-pagination,
+<template>
+  <c-advanced-data-table
+    :headers="headers"
+    :items="scenarios"
+    :loading="pending"
+    :total-items="totalItems"
+    :pagination="pagination"
+    :select-all="removable"
+    expand="expand"
+    search="search"
+    advanced-pagination="advanced-pagination"
     @update:pagination="$emit('update:pagination', $event)"
-  )
-    template(#mass-actions="{ selected }")
-      c-action-btn(
-        v-if="removable",
-        type="delete",
+  >
+    <template #mass-actions="{ selected }">
+      <c-action-btn
+        v-if="removable"
+        type="delete"
         @click="$emit('remove-selected', selected)"
-      )
-    template(#headerCell="{ header }")
-      span.pre-line.header-text {{ header.text }}
-    template(#delay="{ item }")
-      span {{ item.delay | duration }}
-    template(#priority="{ item }") {{ item.priority || '-' }}
-    template(#enabled="{ item }")
-      c-help-icon(
-        v-if="hasDeprecatedTrigger(item)",
-        :text="$t('scenario.errors.deprecatedTriggerExist')",
-        color="error",
-        icon="error",
-        top
-      )
-      c-enabled(v-else, :value="item.enabled")
-    template(#created="{ item }") {{ item.created | date }}
-    template(#updated="{ item }") {{ item.updated | date }}
-    template(#actions="{ item }")
-      v-layout(row)
-        c-action-btn(
-          v-if="updatable",
-          :badge-value="isOldPattern(item)",
-          :badge-tooltip="$t('pattern.oldPatternTooltip')",
-          type="edit",
+      />
+    </template>
+    <template #headerCell="{ header }">
+      <span class="pre-line header-text">{{ header.text }}</span>
+    </template>
+    <template #delay="{ item }">
+      <span>{{ item.delay | duration }}</span>
+    </template>
+    <template #priority="{ item }">
+      {{ item.priority || '-' }}
+    </template>
+    <template #enabled="{ item }">
+      <c-help-icon
+        v-if="hasDeprecatedTrigger(item)"
+        :text="$t('scenario.errors.deprecatedTriggerExist')"
+        color="error"
+        icon="error"
+        top="top"
+      />
+      <c-enabled
+        v-else
+        :value="item.enabled"
+      />
+    </template>
+    <template #created="{ item }">
+      {{ item.created | date }}
+    </template>
+    <template #updated="{ item }">
+      {{ item.updated | date }}
+    </template>
+    <template #actions="{ item }">
+      <v-layout>
+        <c-action-btn
+          v-if="updatable"
+          :badge-value="isOldPattern(item)"
+          :badge-tooltip="$t('pattern.oldPatternTooltip')"
+          type="edit"
           @click="$emit('edit', item)"
-        )
-        c-action-btn(
-          v-if="duplicable",
-          type="duplicate",
+        />
+        <c-action-btn
+          v-if="duplicable"
+          type="duplicate"
           @click="$emit('duplicate', item)"
-        )
-        c-action-btn(
-          v-if="removable",
-          type="delete",
+        />
+        <c-action-btn
+          v-if="removable"
+          type="delete"
           @click="$emit('remove', item._id)"
-        )
-    template(#expand="{ item }")
-      scenarios-list-expand-item(:scenario="item")
+        />
+      </v-layout>
+    </template>
+    <template #expand="{ item }">
+      <scenarios-list-expand-item :scenario="item" />
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>

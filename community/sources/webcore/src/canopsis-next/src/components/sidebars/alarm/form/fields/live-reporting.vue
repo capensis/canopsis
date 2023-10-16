@@ -1,14 +1,18 @@
-<template lang="pug">
-  settings-button-field(
-    :is-empty="isValueEmpty",
-    addable,
-    removable,
-    @create="showEditLiveReportingModal",
-    @edit="showEditLiveReportingModal",
+<template>
+  <settings-button-field
+    :is-empty="isValueEmpty"
+    addable="addable"
+    removable="removable"
+    @create="showEditLiveReportingModal"
+    @edit="showEditLiveReportingModal"
     @delete="removeLiveReporting"
-  )
-    template(#title="")
-      div.subheading {{ $t('settings.liveReporting.title') }}
+  >
+    <template #title="">
+      <div class="subheading">
+        {{ $t('settings.liveReporting.title') }}
+      </div>
+    </template>
+  </settings-button-field>
 </template>
 
 <script>

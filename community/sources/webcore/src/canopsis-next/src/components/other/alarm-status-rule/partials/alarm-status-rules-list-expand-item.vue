@@ -1,23 +1,46 @@
-<template lang="pug">
-  v-tabs(color="secondary lighten-1", slider-color="primary", dark, centered)
-    v-tab {{ $t('common.description') }}
-    v-tab-item
-      v-layout.py-3(row)
-        v-textarea.my-2.mx-4.pa-0(
-          :value="rule.description",
-          readonly,
-          auto-grow,
-          outline,
-          hide-details,
-          dark
-        )
-    v-tab {{ $tc('common.pattern', 2) }}
-    v-tab-item
-      v-layout.py-3
-        v-flex(xs12, md8, offset-md2)
-          v-card
-            v-card-text
-              alarm-status-rule-patterns-form(:form="patterns", readonly)
+<template>
+  <v-tabs
+    color="secondary lighten-1"
+    slider-color="primary"
+    dark="dark"
+    centered="centered"
+  >
+    <v-tab>{{ $t('common.description') }}</v-tab>
+    <v-tab-item>
+      <v-layout
+        class="py-3"
+      >
+        <v-textarea
+          class="my-2 mx-4 pa-0"
+          :value="rule.description"
+          readonly="readonly"
+          auto-grow="auto-grow"
+          outlined
+          hide-details="hide-details"
+          dark="dark"
+        />
+      </v-layout>
+    </v-tab-item>
+    <v-tab>{{ $tc('common.pattern', 2) }}</v-tab>
+    <v-tab-item>
+      <v-layout class="py-3">
+        <v-flex
+          xs12="xs12"
+          md8="md8"
+          offset-md2="offset-md2"
+        >
+          <v-card>
+            <v-card-text>
+              <alarm-status-rule-patterns-form
+                :form="patterns"
+                readonly="readonly"
+              />
+            </v-card-text>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-tab-item>
+  </v-tabs>
 </template>
 
 <script>

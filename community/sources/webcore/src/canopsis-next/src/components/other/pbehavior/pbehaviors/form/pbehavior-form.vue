@@ -1,37 +1,70 @@
-<template lang="pug">
-  v-tabs(slider-color="primary", centered, fixed-tabs)
-    v-tab(:class="{ 'error--text': hasGeneralError }") {{ $t('common.general') }}
-    v-tab-item
-      v-layout.py-3(column)
-        pbehavior-general-form(
-          ref="general",
-          v-field="form",
-          :no-enabled="noEnabled",
+<template>
+  <v-tabs
+    slider-color="primary"
+    centered="centered"
+    fixed-tabs="fixed-tabs"
+  >
+    <v-tab :class="{ 'error--text': hasGeneralError }">
+      {{ $t('common.general') }}
+    </v-tab>
+    <v-tab-item>
+      <v-layout
+        class="py-3"
+        column="column"
+      >
+        <pbehavior-general-form
+          ref="general"
+          v-field="form"
+          :no-enabled="noEnabled"
           :with-start-on-trigger="withStartOnTrigger"
-        )
-        c-enabled-color-picker-field(
-          v-field="form.color",
-          :label="$t('modals.createPbehavior.steps.color.label')",
-          row
-        )
-        c-collapse-panel.mb-2(:title="$t('recurrenceRule.title')")
-          recurrence-rule-form(v-field="form.rrule", :start="form.tstart")
-          pbehavior-recurrence-rule-exceptions-field.mt-2(
-            v-field="form.exdates",
-            :exceptions="form.exceptions",
-            with-exdate-type,
+        />
+        <c-enabled-color-picker-field
+          v-field="form.color"
+          :label="$t('modals.createPbehavior.steps.color.label')"
+          row="row"
+        />
+        <c-collapse-panel
+          class="mb-2"
+          :title="$t('recurrenceRule.title')"
+        >
+          <recurrence-rule-form
+            v-field="form.rrule"
+            :start="form.tstart"
+          />
+          <pbehavior-recurrence-rule-exceptions-field
+            class="mt-2"
+            v-field="form.exdates"
+            :exceptions="form.exceptions"
+            with-exdate-type="with-exdate-type"
             @update:exceptions="updateExceptions"
-          )
-        c-collapse-panel.mt-2(v-if="!noComments", :title="$tc('common.comment', 2)")
-          pbehavior-comments-field(v-field="form.comments")
-    v-tab(:class="{ 'error--text': hasPatternsError }") {{ $tc('common.pattern', 2) }}
-    v-tab-item
-      v-layout.py-3(row, justify-center)
-        v-flex(xs12)
-          pbehavior-patterns-form(
-            ref="patterns",
+          />
+        </c-collapse-panel>
+        <c-collapse-panel
+          class="mt-2"
+          v-if="!noComments"
+          :title="$tc('common.comment', 2)"
+        >
+          <pbehavior-comments-field v-field="form.comments" />
+        </c-collapse-panel>
+      </v-layout>
+    </v-tab-item>
+    <v-tab :class="{ 'error--text': hasPatternsError }">
+      {{ $tc('common.pattern', 2) }}
+    </v-tab>
+    <v-tab-item>
+      <v-layout
+        class="py-3"
+        justify-center="justify-center"
+      >
+        <v-flex xs12="xs12">
+          <pbehavior-patterns-form
+            ref="patterns"
             v-field="form.patterns"
-          )
+          />
+        </v-flex>
+      </v-layout>
+    </v-tab-item>
+  </v-tabs>
 </template>
 
 <script>

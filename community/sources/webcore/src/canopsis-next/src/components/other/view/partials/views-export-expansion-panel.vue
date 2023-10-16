@@ -1,33 +1,50 @@
-<template lang="pug">
-  v-expansion-panel(:value="openedPanels", readonly, hide-actions, expand, dark, focusable)
-    group-panel(
-      v-for="group in groups",
-      :group="group",
-      :key="group._id",
-      hide-actions
-    )
-      template(#title)
-        v-checkbox.group-checkbox.mt-0.pt-0(
-          :input-value="selected.groups",
-          :value="group._id",
-          color="primary",
+<template>
+  <v-expansion-panel
+    :value="openedPanels"
+    readonly="readonly"
+    hide-actions="hide-actions"
+    expand="expand"
+    dark="dark"
+    focusable="focusable"
+  >
+    <group-panel
+      v-for="group in groups"
+      :group="group"
+      :key="group._id"
+      hide-actions="hide-actions"
+    >
+      <template #title>
+        <v-checkbox
+          class="group-checkbox mt-0 pt-0"
+          :input-value="selected.groups"
+          :value="group._id"
+          color="primary"
           @change="changeGroup(group, $event)"
-        )
-        span.group-title {{ group.title }}
-      group-view-panel(
-        v-for="view in group.views",
-        :key="view._id",
+        /><span class="group-title">{{ group.title }}</span>
+      </template>
+      <group-view-panel
+        v-for="view in group.views"
+        :key="view._id"
         :view="view"
-      )
-        template(#title)
-          v-layout(align-center, row, justify-space-between)
-            v-checkbox(
-              v-field="selected.views",
-              :value="view._id",
+      >
+        <template #title>
+          <v-layout
+            align-center="align-center"
+            justify-space-between="justify-space-between"
+          >
+            <v-checkbox
+              v-field="selected.views"
+              :value="view._id"
               color="primary"
-            )
-            span.ellipsis {{ view.title }}
-              span.ml-1(v-show="view.description") ({{ view.description }})
+            /><span class="text-truncate">{{ view.title }}<span
+              class="ml-1"
+              v-show="view.description"
+            >({{ view.description }})</span></span>
+          </v-layout>
+        </template>
+      </group-view-panel>
+    </group-panel>
+  </v-expansion-panel>
 </template>
 
 <script>

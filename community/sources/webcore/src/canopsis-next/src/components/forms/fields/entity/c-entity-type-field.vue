@@ -1,13 +1,13 @@
-<template lang="pug">
-  v-select(
-    v-field="value",
-    v-validate="'required'",
-    :items="actionTypes",
-    :error-messages="errors.collect(name)",
-    :label="label || $t('common.type')",
-    :disabled="disabled",
+<template>
+  <v-select
+    v-field="value"
+    v-validate="'required'"
+    :items="actionTypes"
+    :error-messages="errors.collect(name)"
+    :label="label || $t('common.type')"
+    :disabled="disabled"
     :name="name"
-  )
+  />
 </template>
 
 <script>

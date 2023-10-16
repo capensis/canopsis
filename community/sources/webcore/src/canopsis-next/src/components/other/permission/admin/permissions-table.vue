@@ -1,19 +1,21 @@
-<template lang="pug">
-  v-data-table(
-    :items="permissions",
-    :headers="headers",
-    item-key="_id",
-    expand,
-    hide-actions
-  )
-    template(#items="{ item }")
-      permission-row(
-        :permission="item",
-        :roles="roles",
-        :changed-roles="changedRoles",
-        :disabled="disabled",
+<template>
+  <v-data-table
+    :items="permissions"
+    :headers="headers"
+    item-key="_id"
+    show-expand
+    hide-default-footer
+  >
+    <template #items="{ item }">
+      <permission-row
+        :permission="item"
+        :roles="roles"
+        :changed-roles="changedRoles"
+        :disabled="disabled"
         @change="$listeners.change"
-      )
+      />
+    </template>
+  </v-data-table>
 </template>
 
 <script>

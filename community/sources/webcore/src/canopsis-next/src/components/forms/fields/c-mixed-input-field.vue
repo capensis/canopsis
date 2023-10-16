@@ -1,10 +1,11 @@
-<template lang="pug">
-  component.c-mixed-input-field(
-    :is="inputComponent.is",
-    v-validate="rules",
-    v-bind="inputComponent.bind",
+<template>
+  <component
+    class="c-mixed-input-field"
+    :is="inputComponent.is"
+    v-validate="rules"
+    v-bind="inputComponent.bind"
     v-on="inputComponent.on"
-  )
+  />
 </template>
 
 <script>

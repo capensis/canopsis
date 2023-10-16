@@ -1,50 +1,76 @@
-<template lang="pug">
-  v-layout(column)
-    v-layout(row, justify-end)
-      c-action-fab-btn.ma-0(
-        v-if="addable",
-        :tooltip="$t('modals.createPbehavior.create.title')",
-        icon="add",
-        color="primary",
-        small,
-        left,
+<template>
+  <v-layout column="column">
+    <v-layout justify-end="justify-end">
+      <c-action-fab-btn
+        class="ma-0"
+        v-if="addable"
+        :tooltip="$t('modals.createPbehavior.create.title')"
+        icon="add"
+        color="primary"
+        small="small"
+        left="left"
         @click="showCreatePbehaviorModal"
-      )
-      c-action-fab-btn.ma-0(
-        :tooltip="$t('modals.pbehaviorsCalendar.title')",
-        icon="calendar_today",
-        color="secondary",
-        small,
-        left,
+      />
+      <c-action-fab-btn
+        class="ma-0"
+        :tooltip="$t('modals.pbehaviorsCalendar.title')"
+        icon="calendar_today"
+        color="secondary"
+        small="small"
+        left="left"
         @click="showPbehaviorsCalendarModal"
-      )
-    c-advanced-data-table.ma-0(
-      :items="pbehaviors",
-      :headers="headers",
-      :loading="pending",
+      />
+    </v-layout>
+    <c-advanced-data-table
+      class="ma-0"
+      :items="pbehaviors"
+      :headers="headers"
+      :loading="pending"
       :dense="dense"
-    )
-      template(#enabled="{ item }")
-        c-enabled(:value="item.enabled")
-      template(#tstart="{ item }") {{ formatIntervalDate(item, 'tstart') }}
-      template(#tstop="{ item }") {{ formatIntervalDate(item, 'tstop') }}
-      template(#rrule_end="{ item }") {{ formatRruleEndDate(item) }}
-      template(#rrule="{ item }")
-        v-icon {{ item.rrule ? 'check' : 'clear' }}
-      template(#icon="{ item }")
-        v-icon(color="primary") {{ item.type.icon_name }}
-      template(#status="{ item }")
-        v-icon(:color="item.is_active_status ? 'primary' : 'error'") $vuetify.icons.settings_sync
-      template(#actions="{ item }")
-        v-layout(row)
-          c-action-btn(
-            v-if="updatable",
-            :disabled="!item.editable",
-            :tooltip="item.editable ? $t('common.edit') : $t('pbehavior.notEditable')",
-            type="edit",
+    >
+      <template #enabled="{ item }">
+        <c-enabled :value="item.enabled" />
+      </template>
+      <template #tstart="{ item }">
+        {{ formatIntervalDate(item, 'tstart') }}
+      </template>
+      <template #tstop="{ item }">
+        {{ formatIntervalDate(item, 'tstop') }}
+      </template>
+      <template #rrule_end="{ item }">
+        {{ formatRruleEndDate(item) }}
+      </template>
+      <template #rrule="{ item }">
+        <v-icon>{{ item.rrule ? 'check' : 'clear' }}</v-icon>
+      </template>
+      <template #icon="{ item }">
+        <v-icon color="primary">
+          {{ item.type.icon_name }}
+        </v-icon>
+      </template>
+      <template #status="{ item }">
+        <v-icon :color="item.is_active_status ? 'primary' : 'error'">
+          $vuetify.icons.settings_sync
+        </v-icon>
+      </template>
+      <template #actions="{ item }">
+        <v-layout>
+          <c-action-btn
+            v-if="updatable"
+            :disabled="!item.editable"
+            :tooltip="item.editable ? $t('common.edit') : $t('pbehavior.notEditable')"
+            type="edit"
             @click="showEditPbehaviorModal(item)"
-          )
-          c-action-btn(v-if="removable", type="delete", @click="showDeletePbehaviorModal(item._id)")
+          />
+          <c-action-btn
+            v-if="removable"
+            type="delete"
+            @click="showDeletePbehaviorModal(item._id)"
+          />
+        </v-layout>
+      </template>
+    </c-advanced-data-table>
+  </v-layout>
 </template>
 
 <script>

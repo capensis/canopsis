@@ -1,30 +1,36 @@
-<template lang="pug">
-  v-menu(
-    v-model="menu",
-    :activator="activator",
-    :close-on-content-click="false",
-    nudge-width="200",
-    max-width="500",
-    transition="fade-transition",
-    ignore-click-upper-outside,
-    offset-overflow,
-    offset-x
-  )
-    v-card
-      v-card-text
-        v-layout(
-          v-for="(event, index) in includedEvents",
-          :key="`popover-event-${index}`",
-          row,
-          wrap
-        )
-          v-flex(xs12)
-            div.ds-calendar-event-popover-item(
-              :style="{ backgroundColor: getStyleColor(event) }",
+<template>
+  <v-menu
+    v-model="menu"
+    :activator="activator"
+    :close-on-content-click="false"
+    nudge-width="200"
+    max-width="500"
+    transition="fade-transition"
+    ignore-click-upper-outside="ignore-click-upper-outside"
+    offset-overflow="offset-overflow"
+    offset-x="offset-x"
+  >
+    <v-card>
+      <v-card-text>
+        <v-layout
+          v-for="(event, index) in includedEvents"
+          :key="`popover-event-${index}`"
+          wrap="wrap"
+        >
+          <v-flex xs12="xs12">
+            <div
+              class="ds-calendar-event-popover-item"
+              :style="{ backgroundColor: getStyleColor(event) }"
               @click="$emit('event-click', event)"
-            )
-              strong {{ event.data.title }}
-              p {{ event.data.description }}
+            >
+              <strong>{{ event.data.title }}</strong>
+              <p>{{ event.data.description }}</p>
+            </div>
+          </v-flex>
+        </v-layout>
+      </v-card-text>
+    </v-card>
+  </v-menu>
 </template>
 
 <script>

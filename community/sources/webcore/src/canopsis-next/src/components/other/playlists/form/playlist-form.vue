@@ -1,19 +1,54 @@
-<template lang="pug">
-  div
-    c-name-field(v-field="form.name", required)
-    c-duration-field(v-field="form.interval")
-    v-layout(row)
-      c-enabled-field(v-field="form.enabled")
-      c-enabled-field(v-field="form.fullscreen", :label="$t('common.fullscreen')")
-    v-btn.secondary.ml-0(@click="showManageTabsModal") {{ $t('modals.createPlaylist.manageTabs') }}
-    v-layout.py-4(row)
-      v-layout(v-if="tabsPending", justify-center)
-        v-progress-circular(color="primary", indeterminate)
-      v-flex(v-else, xs12)
-        v-flex.text-xs-center.mb-2 {{ $t('common.result') }}
-        draggable-playlist-tabs(v-field="form.tabs_list")
-    v-layout
-      v-alert(:value="errors.has('tabs')", type="error") {{ $t('modals.createPlaylist.errors.emptyTabs') }}
+<template>
+  <div>
+    <c-name-field
+      v-field="form.name"
+      required="required"
+    />
+    <c-duration-field v-field="form.interval" />
+    <v-layout>
+      <c-enabled-field v-field="form.enabled" />
+      <c-enabled-field
+        v-field="form.fullscreen"
+        :label="$t('common.fullscreen')"
+      />
+    </v-layout>
+    <v-btn
+      class="secondary ml-0"
+      @click="showManageTabsModal"
+    >
+      {{ $t('modals.createPlaylist.manageTabs') }}
+    </v-btn>
+    <v-layout
+      class="py-4"
+    >
+      <v-layout
+        v-if="tabsPending"
+        justify-center="justify-center"
+      >
+        <v-progress-circular
+          color="primary"
+          indeterminate="indeterminate"
+        />
+      </v-layout>
+      <v-flex
+        v-else
+        xs12="xs12"
+      >
+        <v-flex class="text-center mb-2">
+          {{ $t('common.result') }}
+        </v-flex>
+        <draggable-playlist-tabs v-field="form.tabs_list" />
+      </v-flex>
+    </v-layout>
+    <v-layout>
+      <v-alert
+        :value="errors.has('tabs')"
+        type="error"
+      >
+        {{ $t('modals.createPlaylist.errors.emptyTabs') }}
+      </v-alert>
+    </v-layout>
+  </div>
 </template>
 
 <script>

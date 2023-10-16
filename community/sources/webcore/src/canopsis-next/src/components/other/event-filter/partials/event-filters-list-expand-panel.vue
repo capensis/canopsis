@@ -1,41 +1,115 @@
-<template lang="pug">
-  v-tabs(color="secondary lighten-1", slider-color="primary", dark, centered)
-    v-tab {{ $t('common.summary') }}
-    v-tab-item
-      v-layout.py-3.secondary.lighten-2(row, justify-center)
-        v-flex(xs11)
-          v-card
-            v-card-text
-              v-flex(xs12, md8, offset-md2, lg6, offset-lg3)
-                event-filters-rule-summary(:event-filter="eventFilter")
-    v-tab {{ $tc('common.pattern', 2) }}
-    v-tab-item(lazy)
-      v-layout.pa-3.secondary.lighten-2(row, justify-center)
-        v-flex(xs10)
-          v-card
-            v-card-text
-              c-patterns-field(:value="patterns", readonly, with-entity, with-event)
-    template(v-if="isEnrichment")
-      v-tab {{ $tc('common.action', 2) }}
-      v-tab-item
-        v-layout.py-3.secondary.lighten-2(row, justify-center)
-          v-flex(xs11)
-            v-data-table(:items="eventFilter.config.actions", :headers="headers")
-              template(#items="{ item }")
-                td(v-for="{ value } in headers", :key="value") {{ item[value] }}
-      v-tab(:disabled="!externalDataForm.length") {{ $t('externalData.title') }}
-      v-tab-item
-        v-layout.py-3.secondary.lighten-2(row, justify-center)
-          v-flex(xs11)
-            external-data-form(:form="externalDataForm", disabled)
-    template(v-if="eventFilter.failures_count")
-      v-tab {{ $tc('common.error', 2) }}
-      v-tab-item(lazy)
-        v-layout.py-3.secondary.lighten-2(row, justify-center)
-          v-flex(xs11)
-            v-card
-              v-card-text
-                event-filter-failures(:event-filter="eventFilter", @refresh="$emit('refresh')")
+<template>
+  <v-tabs
+    color="secondary lighten-1"
+    slider-color="primary"
+    dark="dark"
+    centered="centered"
+  >
+    <v-tab>{{ $t('common.summary') }}</v-tab>
+    <v-tab-item>
+      <v-layout
+        class="py-3 secondary lighten-2"
+        justify-center="justify-center"
+      >
+        <v-flex xs11="xs11">
+          <v-card>
+            <v-card-text>
+              <v-flex
+                xs12="xs12"
+                md8="md8"
+                offset-md2="offset-md2"
+                lg6="lg6"
+                offset-lg3="offset-lg3"
+              >
+                <event-filters-rule-summary :event-filter="eventFilter" />
+              </v-flex>
+            </v-card-text>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-tab-item>
+    <v-tab>{{ $tc('common.pattern', 2) }}</v-tab>
+    <v-tab-item>
+      <v-layout
+        class="pa-3 secondary lighten-2"
+        justify-center="justify-center"
+      >
+        <v-flex xs10="xs10">
+          <v-card>
+            <v-card-text>
+              <c-patterns-field
+                :value="patterns"
+                readonly="readonly"
+                with-entity="with-entity"
+                with-event="with-event"
+              />
+            </v-card-text>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-tab-item>
+    <template v-if="isEnrichment">
+      <v-tab>{{ $tc('common.action', 2) }}</v-tab>
+      <v-tab-item>
+        <v-layout
+          class="py-3 secondary lighten-2"
+          justify-center="justify-center"
+        >
+          <v-flex xs11="xs11">
+            <v-data-table
+              :items="eventFilter.config.actions"
+              :headers="headers"
+            >
+              <template #items="{ item }">
+                <td
+                  v-for="{ value } in headers"
+                  :key="value"
+                >
+                  {{ item[value] }}
+                </td>
+              </template>
+            </v-data-table>
+          </v-flex>
+        </v-layout>
+      </v-tab-item>
+      <v-tab :disabled="!externalDataForm.length">
+        {{ $t('externalData.title') }}
+      </v-tab>
+      <v-tab-item>
+        <v-layout
+          class="py-3 secondary lighten-2"
+          justify-center="justify-center"
+        >
+          <v-flex xs11="xs11">
+            <external-data-form
+              :form="externalDataForm"
+              disabled="disabled"
+            />
+          </v-flex>
+        </v-layout>
+      </v-tab-item>
+    </template>
+    <template v-if="eventFilter.failures_count">
+      <v-tab>{{ $tc('common.error', 2) }}</v-tab>
+      <v-tab-item>
+        <v-layout
+          class="py-3 secondary lighten-2"
+          justify-center="justify-center"
+        >
+          <v-flex xs11="xs11">
+            <v-card>
+              <v-card-text>
+                <event-filter-failures
+                  :event-filter="eventFilter"
+                  @refresh="$emit('refresh')"
+                />
+              </v-card-text>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-tab-item>
+    </template>
+  </v-tabs>
 </template>
 
 <script>

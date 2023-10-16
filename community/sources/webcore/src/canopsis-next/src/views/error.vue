@@ -1,9 +1,18 @@
-<template lang="pug">
-  v-layout.error-page__wrapper(align-center)
-    v-layout(column, align-center)
-      img(src="@/assets/canopsis-green.png")
-      span.subheading.pt-4 {{ $t('errors.default') }}
-      span.subheading(v-if="message") {{ message }}
+<template>
+  <v-layout
+    class="error-page__wrapper"
+    align-center="align-center"
+  >
+    <v-layout
+      column="column"
+      align-center="align-center"
+    >
+      <img src="@/assets/canopsis-green.png"><span class="subheading pt-4">{{ $t('errors.default') }}</span><span
+        class="subheading"
+        v-if="message"
+      >{{ message }}</span>
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>

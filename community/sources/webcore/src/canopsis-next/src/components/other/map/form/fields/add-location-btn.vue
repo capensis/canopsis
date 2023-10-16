@@ -1,8 +1,21 @@
-<template lang="pug">
-  v-btn-toggle(:value="value", @change="inputHandler")
-    v-btn.ma-0(:value="true", light, flat, large, block)
-      v-icon(left) add_location
-      span {{ $t('map.addPoint') }}
+<template>
+  <v-btn-toggle
+    :value="value"
+    @change="inputHandler"
+  >
+    <v-btn
+      class="ma-0"
+      :value="true"
+      light="light"
+      text
+      large="large"
+      block="block"
+    >
+      <v-icon left="left">
+        add_location
+      </v-icon><span>{{ $t('map.addPoint') }}</span>
+    </v-btn>
+  </v-btn-toggle>
 </template>
 
 <script>

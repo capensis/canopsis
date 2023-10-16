@@ -1,13 +1,14 @@
-<template lang="pug">
-  td
-    v-checkbox-functional(
-      v-for="(checkbox, index) in checkboxes",
-      v-bind="checkbox.bind",
-      v-on="checkbox.on",
-      :key="index",
-      :disabled="disabled || disabledForRole",
-      hide-details
-    )
+<template>
+  <td>
+    <v-checkbox-functional
+      v-for="(checkbox, index) in checkboxes"
+      v-bind="checkbox.bind"
+      v-on="checkbox.on"
+      :key="index"
+      :disabled="disabled || disabledForRole"
+      hide-details="hide-details"
+    />
+  </td>
 </template>
 
 <script>

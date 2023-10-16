@@ -1,15 +1,44 @@
-<template lang="pug">
-  div
-    h2.text-xs-center.display-1.font-weight-medium.mt-3.mb-2
-      slot {{ $t(`pageHeaders.${name}.title`) }}
-      v-btn.mr-0(v-if="hasMessage", icon, @click="toggleMessageVisibility")
-        v-icon(color="info") help_outline
-    v-expand-transition
-      div(v-if="hasMessage && shownMessage")
-        v-layout.pb-2(justify-center)
-          c-compiled-template.subheading.page-header__message.pre-wrap(:template="message")
-        v-layout.pb-2(v-show="!messageWasHidden", justify-center)
-          v-btn(color="primary", @click="hideMessage") {{ $t('pageHeaders.hideMessage') }}
+<template>
+  <div>
+    <h2 class="text-center text-h4 font-weight-medium mt-3 mb-2">
+      <slot>{{ $t(`pageHeaders.${name}.title`) }}</slot>
+      <v-btn
+        class="mr-0"
+        v-if="hasMessage"
+        icon="icon"
+        @click="toggleMessageVisibility"
+      >
+        <v-icon color="info">
+          help_outline
+        </v-icon>
+      </v-btn>
+    </h2>
+    <v-expand-transition>
+      <div v-if="hasMessage && shownMessage">
+        <v-layout
+          class="pb-2"
+          justify-center="justify-center"
+        >
+          <c-compiled-template
+            class="subheading page-header__message pre-wrap"
+            :template="message"
+          />
+        </v-layout>
+        <v-layout
+          class="pb-2"
+          v-show="!messageWasHidden"
+          justify-center="justify-center"
+        >
+          <v-btn
+            color="primary"
+            @click="hideMessage"
+          >
+            {{ $t('pageHeaders.hideMessage') }}
+          </v-btn>
+        </v-layout>
+      </div>
+    </v-expand-transition>
+  </div>
 </template>
 
 <script>

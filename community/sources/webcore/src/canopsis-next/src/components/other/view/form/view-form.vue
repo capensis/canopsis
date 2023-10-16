@@ -1,47 +1,52 @@
-<template lang="pug">
-  v-layout(column)
-    c-name-field(
-      v-field="form.title",
-      :label="$t('common.title')",
-      name="title",
-      required
-    )
-    v-text-field(
-      v-field="form.description",
-      :label="$t('common.description')",
+<template>
+  <v-layout column="column">
+    <c-name-field
+      v-field="form.title"
+      :label="$t('common.title')"
+      name="title"
+      required="required"
+    />
+    <v-text-field
+      v-field="form.description"
+      :label="$t('common.description')"
       name="description"
-    )
-    c-enabled-field(v-field="form.enabled")
-    periodic-refresh-field(
-      v-field="form.periodic_refresh",
+    />
+    <c-enabled-field v-field="form.enabled" />
+    <periodic-refresh-field
+      v-field="form.periodic_refresh"
       :label="$t('modals.view.fields.periodicRefresh')"
-    )
-    v-combobox(
-      v-field="form.tags",
-      :label="$t('modals.view.fields.groupTags')",
-      append-icon="",
-      tags,
-      clearable,
-      multiple,
-      chips,
-      deletable-chips
-    )
-    v-combobox(
-      v-field="form.group",
-      v-validate="'required'",
-      :items="groups",
-      :label="$t('modals.view.fields.groupIds')",
-      :error-messages="errors.collect('group')",
-      item-text="title",
-      item-value="_id",
-      name="group",
-      return-object,
-      blur-on-create
-    )
-      template(#no-data="")
-        v-list-tile
-          v-list-tile-content
-            v-list-tile-title(v-html="$t('modals.view.noData')")
+    />
+    <v-combobox
+      v-field="form.tags"
+      :label="$t('modals.view.fields.groupTags')"
+      append-icon=""
+      tags="tags"
+      clearable="clearable"
+      multiple="multiple"
+      chips="chips"
+      deletable-chips="deletable-chips"
+    />
+    <v-combobox
+      v-field="form.group"
+      v-validate="'required'"
+      :items="groups"
+      :label="$t('modals.view.fields.groupIds')"
+      :error-messages="errors.collect('group')"
+      item-text="title"
+      item-value="_id"
+      name="group"
+      return-object="return-object"
+      blur-on-create="blur-on-create"
+    >
+      <template #no-data="">
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title v-html="$t('modals.view.noData')" />
+          </v-list-item-content>
+        </v-list-item>
+      </template>
+    </v-combobox>
+  </v-layout>
 </template>
 
 <script>

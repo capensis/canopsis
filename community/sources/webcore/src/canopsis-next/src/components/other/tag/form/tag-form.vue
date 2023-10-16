@@ -1,14 +1,18 @@
-<template lang="pug">
-  v-layout(column)
-    c-name-field(
-      v-field="form.value",
-      :disabled="isImported",
-      :max-length="maxTagNameLength",
-      name="value",
-      required
-    )
-    c-color-picker-field(v-field="form.color")
-    tag-patterns-form(v-if="!isImported", v-field="form.patterns")
+<template>
+  <v-layout column="column">
+    <c-name-field
+      v-field="form.value"
+      :disabled="isImported"
+      :max-length="maxTagNameLength"
+      name="value"
+      required="required"
+    />
+    <c-color-picker-field v-field="form.color" />
+    <tag-patterns-form
+      v-if="!isImported"
+      v-field="form.patterns"
+    />
+  </v-layout>
 </template>
 
 <script>

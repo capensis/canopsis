@@ -1,5 +1,5 @@
-<template lang="pug">
-  shared-actions-panel(:actions="actions")
+<template>
+  <shared-actions-panel :actions="actions" />
 </template>
 
 <script>

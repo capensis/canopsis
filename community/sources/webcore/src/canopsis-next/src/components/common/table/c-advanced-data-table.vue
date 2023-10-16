@@ -1,89 +1,171 @@
-<template lang="pug">
-  div.c-advanced-data-table
-    v-layout(row, wrap, v-bind="toolbarProps")
-      v-flex(v-if="shownSearch", xs4)
-        c-search-field(
-          v-if="search",
-          :value="pagination.search",
-          @submit="updateSearchHandler",
+<template>
+  <div class="c-advanced-data-table">
+    <v-layout
+      wrap="wrap"
+      v-bind="toolbarProps"
+    >
+      <v-flex
+        v-if="shownSearch"
+        xs4="xs4"
+      >
+        <c-search-field
+          v-if="search"
+          :value="pagination.search"
+          @submit="updateSearchHandler"
           @clear="clearSearchHandler"
-        )
-        c-advanced-search-field(
-          v-else,
-          :query="pagination",
-          :columns="headers",
-          :tooltip="searchTooltip",
+        />
+        <c-advanced-search-field
+          v-else
+          :query="pagination"
+          :columns="headers"
+          :tooltip="searchTooltip"
           @update:query="updatePagination"
-        )
-      slot(
-        name="toolbar",
-        :selected="selected",
-        :updateSearch="updateSearchHandler",
-        :clearSearch="clearSearchHandler"
-      )
-      v-flex(v-if="hasMassActionsSlot", xs12)
-        v-expand-transition
-          v-layout.px-3.mt-1(v-if="selected.length")
-            slot(
-              name="mass-actions",
-              :selected="selected",
-              :count="selected.length",
+        />
+      </v-flex>
+      <slot
+        name="toolbar"
+        :selected="selected"
+        :update-search="updateSearchHandler"
+        :clear-search="clearSearchHandler"
+      />
+      <v-flex
+        v-if="hasMassActionsSlot"
+        xs12="xs12"
+      >
+        <v-expand-transition>
+          <v-layout
+            class="px-3 mt-1"
+            v-if="selected.length"
+          >
+            <slot
+              name="mass-actions"
+              :selected="selected"
+              :count="selected.length"
               :clear-selected="clearSelected"
-            )
-    v-data-table(
-      v-model="selected",
-      :headers="headersWithExpand",
-      :items="visibleItems",
-      :loading="loading",
-      :total-items="totalItems",
-      :no-data-text="noDataText",
-      :pagination="pagination",
-      :header-text="headerText",
-      :rows-per-page-items="rowsPerPageItems",
-      :item-key="itemKey",
-      :select-all="selectAll",
-      :expand="expand",
-      :is-disabled-item="isDisabledItem",
-      :hide-actions="hideActions || advancedPagination || noPagination",
-      :multi-sort="multiSort",
-      :table-class="tableClass",
-      :disable-initial-sort="disableInitialSort",
-      :dense="dense",
+            />
+          </v-layout>
+        </v-expand-transition>
+      </v-flex>
+    </v-layout>
+    <v-data-table
+      v-model="selected"
+      :headers="headersWithExpand"
+      :items="visibleItems"
+      :loading="loading"
+      :server-items-length="totalItems"
+      :no-data-text="noDataText"
+      :options="pagination"
+      :header-text="headerText"
+      :rows-per-page-items="rowsPerPageItems"
+      :item-key="itemKey"
+      :show-select="selectAll"
+      :show-expand="expand"
+      :is-disabled-item="isDisabledItem"
+      :hide-default-footer="hideActions || advancedPagination || noPagination"
+      :multi-sort="multiSort"
+      :table-class="tableClass"
+      :sort-by="disableInitialSort"
+      :dense="dense"
       @update:pagination="updatePagination"
-    )
-      template(#items="props")
-        slot(v-bind="getItemsProps(props)", name="items")
-          tr(:key="props.item[itemKey] || props.index")
-            td(v-if="selectAll || expand", @click.stop="")
-              v-layout.c-checkbox-wrapper(row, justify-start)
-                slot(v-if="selectAll", v-bind="getItemsProps(props)", name="item-select")
-                  v-checkbox-functional(
-                    v-if="!isDisabledItem(props.item)",
-                    v-model="props.selected",
-                    primary,
-                    hide-details
-                  )
-                  v-checkbox-functional(v-else, primary, disabled, hide-details)
-                slot(v-if="expand && isExpandableItem(props.item)", v-bind="getItemsProps(props)", name="item-expand")
-                  c-expand-btn.ml-2(:expanded="props.expanded", @expand="props.expanded = !props.expanded")
-            td(v-for="header in headers", :key="header.value")
-              slot(:name="header.value", v-bind="getItemsProps(props)") {{ props.item | get(header.value) }}
-      template(v-if="hasExpandSlot", #expand="props")
-        div.secondary.lighten-2(v-if="isExpandableItem(props.item)")
-          slot(v-bind="props", name="expand")
-      template(#headerCell="props")
-        slot(name="headerCell", v-bind="props") {{ props.header[headerText] }}
-      template(#progress="props")
-        slot(name="progress", v-bind="props")
-    c-table-pagination(
-      v-if="!noPagination && pagination && advancedPagination",
-      :total-items="totalItems",
-      :rows-per-page-items="rowsPerPageItems",
-      :rows-per-page="pagination.rowsPerPage",
-      :page="pagination.page",
-      @update:page="updatePage",
+    >
+      <template #items="props">
+        <slot
+          v-bind="getItemsProps(props)"
+          name="items"
+        >
+          <tr :key="props.item[itemKey] || props.index">
+            <td
+              v-if="selectAll || expand"
+              @click.stop=""
+            >
+              <v-layout
+                class="c-checkbox-wrapper"
+                justify-start="justify-start"
+              >
+                <slot
+                  v-if="selectAll"
+                  v-bind="getItemsProps(props)"
+                  name="item-select"
+                >
+                  <v-checkbox-functional
+                    v-if="!isDisabledItem(props.item)"
+                    v-model="props.selected"
+                    primary="primary"
+                    hide-details="hide-details"
+                  />
+                  <v-checkbox-functional
+                    v-else
+                    primary="primary"
+                    disabled="disabled"
+                    hide-details="hide-details"
+                  />
+                </slot>
+                <slot
+                  v-if="expand && isExpandableItem(props.item)"
+                  v-bind="getItemsProps(props)"
+                  name="item-expand"
+                >
+                  <c-expand-btn
+                    class="ml-2"
+                    :expanded="props.expanded"
+                    @expand="props.expanded = !props.expanded"
+                  />
+                </slot>
+              </v-layout>
+            </td>
+            <td
+              v-for="header in headers"
+              :key="header.value"
+            >
+              <slot
+                :name="header.value"
+                v-bind="getItemsProps(props)"
+              >
+                {{ props.item | get(header.value) }}
+              </slot>
+            </td>
+          </tr>
+        </slot>
+      </template>
+      <template
+        v-if="hasExpandSlot"
+        #expand="props"
+      >
+        <div
+          class="secondary lighten-2"
+          v-if="isExpandableItem(props.item)"
+        >
+          <slot
+            v-bind="props"
+            name="expand"
+          />
+        </div>
+      </template>
+      <template #headerCell="props">
+        <slot
+          name="headerCell"
+          v-bind="props"
+        >
+          {{ props.header[headerText] }}
+        </slot>
+      </template>
+      <template #progress="props">
+        <slot
+          name="progress"
+          v-bind="props"
+        />
+      </template>
+    </v-data-table>
+    <c-table-pagination
+      v-if="!noPagination && pagination && advancedPagination"
+      :total-items="totalItems"
+      :rows-per-page-items="rowsPerPageItems"
+      :rows-per-page="pagination.rowsPerPage"
+      :page="pagination.page"
+      @update:page="updatePage"
       @update:rows-per-page="updateRecordsPerPage"
-    )
+    />
+  </div>
 </template>
 
 <script>

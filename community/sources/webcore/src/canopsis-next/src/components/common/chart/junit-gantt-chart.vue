@@ -1,23 +1,31 @@
-<template lang="pug">
-  div
-    v-layout.position-relative(justify-center)
-      horizontal-bar(
-        ref="horizontalBar",
-        :labels="labels",
-        :datasets="datasets",
-        :options="options",
-        :width="width",
+<template>
+  <div>
+    <v-layout
+      class="position-relative"
+      justify-center="justify-center"
+    >
+      <horizontal-bar
+        ref="horizontalBar"
+        :labels="labels"
+        :datasets="datasets"
+        :options="options"
+        :width="width"
         :height="height"
-      )
-      div.v-tooltip__content.menuable__content__active(ref="tooltip")
-    c-table-pagination(
-      :total-items="totalItems",
-      :rows-per-page="query.rowsPerPage",
-      :rows-per-page-items="rowsPerPageItems",
-      :page="query.page",
-      @update:page="updatePage",
+      />
+      <div
+        class="v-tooltip__content menuable__content__active"
+        ref="tooltip"
+      />
+    </v-layout>
+    <c-table-pagination
+      :total-items="totalItems"
+      :rows-per-page="query.rowsPerPage"
+      :rows-per-page-items="rowsPerPageItems"
+      :page="query.page"
+      @update:page="updatePage"
       @update:rows-per-page="updateRowsPerPage"
-    )
+    />
+  </div>
 </template>
 
 <script>
