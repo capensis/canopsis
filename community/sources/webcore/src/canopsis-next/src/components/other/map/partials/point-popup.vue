@@ -8,14 +8,14 @@
       :style="{ backgroundColor: color }"
     >
       <v-layout
-        justify-space-between="justify-space-between"
-        align-center="align-center"
+        justify-space-between
+        align-center
       >
         <h4>{{ title }}</h4>
         <v-btn
           class="ma-0 ml-3"
-          icon="icon"
-          small="small"
+          icon
+          small
           @click="close"
         >
           <v-icon color="white">
@@ -32,9 +32,12 @@
       />
       <v-layout
         v-else
-        column="column"
+        column
       >
-        <span v-if="point.entity">{{ $tc('common.entity') }}: {{ point.entity.name }}</span><span v-if="point.map">{{ $tc('common.map') }}: {{ point.map.name }}</span>
+        <span v-if="point.entity">
+          {{ $tc('common.entity') }}: {{ point.entity.name }}
+        </span>
+        <span v-if="point.map">{{ $tc('common.map') }}: {{ point.map.name }}</span>
       </v-layout>
     </v-card-text>
     <v-layout
@@ -45,7 +48,7 @@
         class="ma-0"
         v-if="hasAlarmsListAccess && point.entity"
         text
-        block="block"
+        block
         @click.stop="$emit('show:alarms')"
       >
         {{ $t('common.seeAlarms') }}
@@ -54,12 +57,13 @@
         class="ma-0"
         v-if="point.map"
         text
-        block="block"
+        block
         @click.stop="$emit('show:map')"
       >
-        <v-icon left="left">
+        <v-icon left>
           link
-        </v-icon><span class="text-none"> {{ point.map.name }}</span>
+        </v-icon>
+        <span class="text-none"> {{ point.map.name }}</span>
       </v-btn>
     </v-layout>
   </v-card>
@@ -75,10 +79,7 @@ import { getEntityColor } from '@/helpers/entities/entity/color';
 
 import { authMixin } from '@/mixins/auth';
 
-import MermaidPointMarker from './mermaid-point-marker.vue';
-
 export default {
-  components: { MermaidPointMarker },
   mixins: [authMixin],
   props: {
     point: {

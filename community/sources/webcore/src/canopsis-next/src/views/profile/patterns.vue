@@ -1,14 +1,14 @@
 <template>
   <div>
     <c-page-header>{{ $t('pattern.patterns') }}</c-page-header>
-    <v-layout wrap="wrap">
-      <v-flex xs12="xs12">
+    <v-layout wrap>
+      <v-flex xs12>
         <v-card class="ma-2">
           <v-tabs
             v-if="hasReadAnyCorporatePatternAccess"
             v-model="activeTab"
             slider-color="primary"
-            fixed-tabs="fixed-tabs"
+            fixed-tabs
           >
             <v-tab :href="`#${$constants.PATTERN_TABS.patterns}`">
               {{ $t('pattern.myPatterns') }}
@@ -48,24 +48,24 @@
         :tooltip="createPbehaviorTitle"
         icon="pause"
         color="grey darken-1"
-        top="top"
-        small="small"
+        top
+        small
         @click.stop="showCreatePbehaviorPatternModal"
       />
       <c-action-fab-btn
         :tooltip="createEntityTitle"
         icon="perm_identity"
         color="blue"
-        top="top"
-        small="small"
+        top
+        small
         @click.stop="showCreateEntityPatternModal"
       />
       <c-action-fab-btn
         :tooltip="createAlarmTitle"
         icon="notification_important"
         color="error"
-        top="top"
-        small="small"
+        top
+        small
         @click.stop="showCreateAlarmPatternModal"
       />
     </c-fab-expand-btn>

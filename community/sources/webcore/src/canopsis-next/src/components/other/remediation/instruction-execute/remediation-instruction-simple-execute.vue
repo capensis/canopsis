@@ -1,8 +1,8 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-layout
       class="mb-4"
-      align-center="align-center"
+      align-center
     >
       <span class="subheading mr-5">{{ $t('remediation.instructionExecute.jobs.title') }}</span>
       <v-btn
@@ -12,14 +12,15 @@
         @click="$emit('run:jobs')"
       >
         <span>{{ $t('remediation.instructionExecute.runJobs') }}</span>
-        <v-icon right="right">
+        <v-icon right>
           arrow_right
         </v-icon>
       </v-btn>
       <template v-if="isJobsFinished">
         <v-icon :color="statusIcon.color">
           {{ statusIcon.name }}
-        </v-icon><span class="ml-2">{{ statusIcon.text }}</span>
+        </v-icon>
+        <span class="ml-2">{{ statusIcon.text }}</span>
       </template>
     </v-layout>
     <remediation-instruction-execute-jobs-table :jobs="jobs" />

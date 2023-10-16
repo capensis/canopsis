@@ -2,7 +2,7 @@
   <view-tab-widgets
     v-if="activeTab"
     :tab="activeTab"
-    kiosk="kiosk"
+    kiosk
   />
 </template>
 

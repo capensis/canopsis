@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-information-block
       :title="$t('storageSetting.healthCheck.title')"
       help-icon-color="info"

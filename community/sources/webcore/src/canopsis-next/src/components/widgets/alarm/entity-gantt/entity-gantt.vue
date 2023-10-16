@@ -1,5 +1,5 @@
 <template>
-  <v-layout justify-center="justify-center">
+  <v-layout justify-center>
     <c-progress-overlay :pending="pending" />
     <junit-gantt-chart
       :items="ganttIntervals"

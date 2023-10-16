@@ -1,9 +1,9 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-layout
       class="mt-3"
     >
-      <v-flex xs12="xs12">
+      <v-flex xs12>
         <slot
           name="no-data"
           v-if="!exdates.length"

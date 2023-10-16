@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-information-block-row
       :label="$t('common.description')"
       :width="labelWidth"
@@ -72,7 +72,7 @@
       v-if="hasExdatesOrExceptions"
       :exdates="exdates"
       :exceptions="exceptions"
-      disabled="disabled"
+      disabled
     />
   </v-layout>
 </template>

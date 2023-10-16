@@ -9,7 +9,7 @@
     </template>
     <v-list
       class="px-2 py-0 background darken-1"
-      expand="expand"
+      expand
     >
       <slot />
     </v-list>

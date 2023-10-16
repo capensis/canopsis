@@ -9,8 +9,8 @@
       :padding="padding"
       :color="color"
       :corner-radius="cornerRadius"
-      resizable="resizable"
-      aspect-ratio="aspect-ratio"
+      resizable
+      aspect-ratio
       @update="onRectUpdate"
     />
     <rect-connectors

@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-alert
       v-if="!headers.length"
       type="info"
@@ -9,8 +9,8 @@
     <v-layout
       v-for="(item, index) in headers"
       :key="item.key"
-      align-center="align-center"
-      justify-space-between="justify-space-between"
+      align-center
+      justify-space-between
     >
       <request-header-field
         v-field="headers[index]"
@@ -27,7 +27,7 @@
     </v-layout>
     <v-flex
       v-if="!disabled"
-      xs12="xs12"
+      xs12
     >
       <v-layout>
         <v-btn

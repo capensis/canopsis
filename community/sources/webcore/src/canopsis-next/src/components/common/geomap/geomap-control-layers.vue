@@ -16,14 +16,14 @@
         <v-divider />
         <v-layout
           class="pa-2"
-          column="column"
+          column
         >
           <v-radio-group
             class="ma-0"
             :value="activeLayer"
             color="primary"
-            column="column"
-            hide-details="hide-details"
+            column
+            hide-details
             @change="enableLayer"
           >
             <v-radio
@@ -42,7 +42,7 @@
               :key="overlay.name"
               :input-value="isLayerActive(overlay.layer)"
               :label="overlay.name"
-              hide-details="hide-details"
+              hide-details
               @change="enableOverlay(overlay, $event)"
             />
           </template>

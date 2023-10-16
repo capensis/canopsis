@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <field-title
       v-field="form.title"
       :required="requiredTitle"
@@ -18,8 +18,8 @@
         v-field="form.parameters.metrics"
         :parameters="availableParameters"
         :only-external="onlyExternal"
-        with-external="with-external"
-        with-aggregate-function="with-aggregate-function"
+        with-external
+        with-aggregate-function
       />
     </widget-settings-group>
     <widget-settings-group :title="$t('settings.advancedSettings')">
@@ -34,10 +34,10 @@
       <field-filters
         v-if="withFilters"
         :filters="form.filters"
-        addable="addable"
-        editable="editable"
-        with-entity="with-entity"
-        hide-selector="hide-selector"
+        addable
+        editable
+        with-entity
+        hide-selector
         @update:filters="updateFilters"
       />
       <field-switcher

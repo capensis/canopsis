@@ -1,20 +1,20 @@
 <template>
   <v-tabs
     slider-color="primary"
-    centered="centered"
+    centered
   >
     <v-tab>{{ $t('entity.form') }}</v-tab>
     <v-tab-item>
       <v-layout
         class="mt-3"
-        column="column"
+        column
       >
         <c-name-field
           v-field="form.name"
-          disabled="disabled"
+          disabled
         />
         <c-description-field v-field="form.description" />
-        <v-layout justify-space-between="justify-space-between">
+        <v-layout justify-space-between>
           <v-flex xs3="xs3">
             <c-enabled-field v-field="form.enabled" />
           </v-flex>
@@ -26,7 +26,7 @@
               >
                 <c-impact-level-field
                   v-field="form.impact_level"
-                  required="required"
+                  required
                 />
               </v-flex>
               <v-flex
@@ -36,14 +36,14 @@
                 <c-entity-state-field
                   v-field="form.sli_avail_state"
                   :label="$t('entity.availabilityState')"
-                  required="required"
+                  required
                 />
               </v-flex>
               <v-flex xs6="xs6">
                 <c-entity-type-field
                   v-field="form.type"
-                  required="required"
-                  disabled="disabled"
+                  required
+                  disabled
                 />
               </v-flex>
             </v-layout>
@@ -51,7 +51,7 @@
         </v-layout>
         <c-coordinates-field
           v-field="form.coordinates"
-          row="row"
+          row
         />
       </v-layout>
     </v-tab-item>

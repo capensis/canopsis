@@ -1,7 +1,7 @@
 <template>
   <modal-wrapper
     :title-color="color"
-    close="close"
+    close
   >
     <template #title="">
       <span>{{ service.name }}</span>
@@ -10,7 +10,7 @@
       <v-tabs
         class="position-relative"
         slider-color="primary"
-        fixed-tabs="fixed-tabs"
+        fixed-tabs
       >
         <v-tab>{{ $t('common.service') }}</v-tab>
         <v-tab-item>
@@ -30,11 +30,11 @@
         <v-tab-item>
           <pbehaviors-simple-list
             :entity="service"
-            with-active-status="with-active-status"
-            addable="addable"
-            updatable="updatable"
-            removable="removable"
-            dense="dense"
+            with-active-status
+            addable
+            updatable
+            removable
+            dense
           />
         </v-tab-item>
       </v-tabs>
@@ -42,7 +42,7 @@
     <template #actions="">
       <v-tooltip
         class="mx-2"
-        top="top"
+        top
       >
         <template #activator="{ on }">
           <v-btn
@@ -52,11 +52,12 @@
           >
             <v-icon>refresh</v-icon>
           </v-btn>
-        </template><span>{{ $t('modals.service.refreshEntities') }}</span>
+        </template>
+        <span>{{ $t('modals.service.refreshEntities') }}</span>
       </v-tooltip>
       <v-btn
-        depressed="depressed"
-        text="text"
+        depressed
+        text
         @click="$modals.hide"
       >
         {{ $t('common.close') }}

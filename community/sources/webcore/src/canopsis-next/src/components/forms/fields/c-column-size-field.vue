@@ -5,9 +5,9 @@
     :class="{ 'c-column-size-field--mobile': mobile }"
     :name="name"
     color="primary"
-    hide-details="hide-details"
-    mandatory="mandatory"
-    row="row"
+    hide-details
+    mandatory
+    row
   >
     <v-radio
       class="ma-0"

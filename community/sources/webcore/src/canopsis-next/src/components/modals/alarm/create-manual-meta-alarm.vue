@@ -1,6 +1,6 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close="close">
+    <modal-wrapper close>
       <template #title="">
         <span>{{ $t('modals.createManualMetaAlarm.title') }}</span>
       </template>
@@ -14,14 +14,14 @@
           <v-divider class="my-3" />
         </v-layout>
         <v-layout>
-          <v-flex xs12="xs12">
+          <v-flex xs12>
             <manual-meta-alarm-form v-model="form" />
           </v-flex>
         </v-layout>
       </template>
       <template #actions="">
         <v-btn
-          depressed="depressed"
+          depressed
           text
           @click="$modals.hide"
         >

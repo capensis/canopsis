@@ -8,7 +8,7 @@
     />
     <v-layout
       v-else
-      justify-center="justify-center"
+      justify-center
     >
       <v-icon color="info">
         infos

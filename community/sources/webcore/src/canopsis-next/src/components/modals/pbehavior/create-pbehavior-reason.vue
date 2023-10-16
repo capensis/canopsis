@@ -1,6 +1,6 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close="close">
+    <modal-wrapper close>
       <template #title="">
         <span>{{ $t('modals.createPbehaviorReason.title') }}</span>
       </template>
@@ -9,8 +9,8 @@
       </template>
       <template #actions="">
         <v-btn
-          depressed="depressed"
-          text="text"
+          depressed
+          text
           @click="$modals.hide"
         >
           {{ $t('common.cancel') }}

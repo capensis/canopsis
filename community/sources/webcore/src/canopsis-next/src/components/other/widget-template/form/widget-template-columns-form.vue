@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-text-field
       v-field="form.title"
       v-validate="'required'"
@@ -7,7 +7,7 @@
       :error-messages="errors.collect('title')"
       name="title"
     /><span class="text-body-2 my-2">{{ $tc('common.column', 2) }}</span>
-    <v-flex xs12="xs12">
+    <v-flex xs12>
       <v-alert
         :value="!form.columns.length"
         color="info"
@@ -18,9 +18,9 @@
     <c-columns-field
       v-field="form.columns"
       :type="entityType"
-      with-color-indicator="with-color-indicator"
-      with-template="with-template"
-      with-html="with-html"
+      with-color-indicator
+      with-template
+      with-html
       @input="validateRequiredRule"
     />
   </v-layout>

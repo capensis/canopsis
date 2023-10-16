@@ -2,7 +2,7 @@
   <div>
     <v-layout
       class="position-relative"
-      justify-center="justify-center"
+      justify-center
     >
       <horizontal-bar
         ref="horizontalBar"

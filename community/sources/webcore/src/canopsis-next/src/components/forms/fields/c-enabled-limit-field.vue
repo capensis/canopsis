@@ -1,8 +1,8 @@
 <template>
-  <v-layout wrap="wrap">
+  <v-layout wrap>
     <v-flex xs5="xs5">
       <v-checkbox
-        v-validate="v-validate"
+        v-validate
         v-field="value.enabled"
         :label="label"
         :error-messages="errors.collect(enabledFieldName)"
@@ -15,7 +15,7 @@
             :text="helpText"
             max-width="300"
             color="info"
-            top="top"
+            top
           />
         </template>
       </v-checkbox>

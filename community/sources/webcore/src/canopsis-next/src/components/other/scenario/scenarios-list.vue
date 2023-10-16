@@ -6,9 +6,9 @@
     :total-items="totalItems"
     :pagination="pagination"
     :select-all="removable"
-    expand="expand"
-    search="search"
-    advanced-pagination="advanced-pagination"
+    expand
+    search
+    advanced-pagination
     @update:pagination="$emit('update:pagination', $event)"
   >
     <template #mass-actions="{ selected }">
@@ -33,7 +33,7 @@
         :text="$t('scenario.errors.deprecatedTriggerExist')"
         color="error"
         icon="error"
-        top="top"
+        top
       />
       <c-enabled
         v-else

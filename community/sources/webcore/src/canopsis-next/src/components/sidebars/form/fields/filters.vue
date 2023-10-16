@@ -1,12 +1,12 @@
 <template>
   <widget-settings-item :title="$t('settings.filters')">
-    <v-layout column="column">
+    <v-layout column>
       <filter-selector
         v-if="!hideSelector"
         v-field="value"
         :label="$t('filter.selector.defaultFilter')"
         :filters="filters"
-        hide-multiply="hide-multiply"
+        hide-multiply
       />
       <field-filters-list
         v-bind="listProps"

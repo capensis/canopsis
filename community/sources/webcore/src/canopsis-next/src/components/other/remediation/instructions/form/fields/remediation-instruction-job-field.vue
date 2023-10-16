@@ -1,6 +1,6 @@
 <template>
-  <v-layout column="column">
-    <v-layout align-center="align-center">
+  <v-layout column>
+    <v-layout align-center>
       <v-flex
         class="pr-2"
         xs1="xs1"
@@ -24,11 +24,11 @@
           :disabled="disabled"
           item-text="name"
           item-value="_id"
-          return-object="return-object"
+          return-object
         />
       </v-flex>
       <v-flex xs1="xs1">
-        <v-layout justify-center="justify-center">
+        <v-layout justify-center>
           <c-action-btn
             v-if="!disabled"
             type="delete"

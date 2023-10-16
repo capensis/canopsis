@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-select
       v-field="form.column"
       v-validate="'required'"

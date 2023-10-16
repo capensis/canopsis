@@ -7,8 +7,8 @@
     :readonly="readonly"
     :entity-counters-type="isEntityType"
     :both-counters="!isEntityType"
-    some-required="some-required"
-    with-entity="with-entity"
+    some-required
+    with-entity
   />
 </template>
 

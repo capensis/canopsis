@@ -5,8 +5,8 @@
     :key="tabsKey"
     color="secondary lighten-1"
     slider-color="primary"
-    dark="dark"
-    centered="centered"
+    dark
+    centered
   >
     <v-tab
       v-if="hasMoreInfos"
@@ -90,7 +90,7 @@
               <v-progress-linear
                 :active="pending"
                 :height="3"
-                indeterminate="indeterminate"
+                indeterminate
               />
               <v-card-text>
                 <alarms-time-line
@@ -195,8 +195,8 @@
                 <service-dependencies
                   :root="dependency"
                   :columns="widget.parameters.serviceDependenciesColumns"
-                  include-root="include-root"
-                  openable-root="openable-root"
+                  include-root
+                  openable-root
                 />
               </v-card-text>
             </v-card>
@@ -216,9 +216,9 @@
                 <service-dependencies
                   :root="dependency"
                   :columns="widget.parameters.serviceDependenciesColumns"
-                  include-root="include-root"
-                  impact="impact"
-                  openable-root="openable-root"
+                  include-root
+                  impact
+                  openable-root
                 />
               </v-card-text>
             </v-card>

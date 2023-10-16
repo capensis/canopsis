@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-enabled-field
       class="mt-0"
       v-field="value.forward_author"

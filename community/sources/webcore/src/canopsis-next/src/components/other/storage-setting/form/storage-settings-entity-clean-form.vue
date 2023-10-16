@@ -12,7 +12,7 @@
         :history="history"
         archived-count-message-key="storageSetting.history.entity.archivedCount"
         deleted-count-message-key="storageSetting.history.entity.deletedCount"
-        hide-archived="hide-archived"
+        hide-archived
       />
     </template>
     <v-flex>

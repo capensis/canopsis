@@ -3,8 +3,8 @@
     class="card-with-see-alarms-btn"
     v-on="$listeners"
     :class="itemClasses"
-    tile="tile"
-    dark="dark"
+    tile
+    dark
   >
     <slot />
     <v-btn

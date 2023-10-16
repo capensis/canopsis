@@ -1,11 +1,11 @@
 <template>
   <v-container
     class="pa-3"
-    fluid="fluid"
+    fluid
   >
     <v-layout
-      align-center="align-center"
-      justify-space-between="justify-space-between"
+      align-center
+      justify-space-between
     >
       <v-flex xs11="xs11">
         <div class="subheading">
@@ -17,7 +17,7 @@
           class="ma-0 pa-0"
           :input-value="value"
           color="primary"
-          hide-details="hide-details"
+          hide-details
           @change="$emit('input', $event)"
         />
       </v-layout>

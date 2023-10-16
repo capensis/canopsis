@@ -1,10 +1,10 @@
 <template>
   <v-container
     class="pa-0"
-    fluid="fluid"
-    grid-list-sm="grid-list-sm"
+    fluid
+    grid-list-sm
   >
-    <v-layout wrap="wrap">
+    <v-layout wrap>
       <v-flex
         v-for="video in videoSources"
         :key="video"
@@ -12,7 +12,7 @@
       >
         <video
           class="d-block"
-          controls="controls"
+          controls
           :src="video"
           width="100%"
         >

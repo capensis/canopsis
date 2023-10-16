@@ -1,14 +1,14 @@
 <template>
   <v-tabs
     color="secondary lighten-1"
-    dark="dark"
-    centered="centered"
+    dark
+    centered
     slider-color="primary"
   >
     <v-tab>{{ $tc('common.information') }}</v-tab>
     <v-tab-item>
       <v-layout class="pa-3">
-        <v-flex xs12="xs12">
+        <v-flex xs12>
           <v-card class="pa-3">
             <v-layout>
               <v-flex

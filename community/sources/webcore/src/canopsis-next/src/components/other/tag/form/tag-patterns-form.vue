@@ -5,9 +5,9 @@
     :alarm-attributes="alarmAttributes"
     :entity-attributes="entityAttributes"
     :readonly="readonly"
-    with-alarm="with-alarm"
-    with-entity="with-entity"
-    some-required="some-required"
+    with-alarm
+    with-entity
+    some-required
   />
 </template>
 

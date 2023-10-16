@@ -1,7 +1,7 @@
 <template>
   <v-layout
-    wrap="wrap"
-    align-center="align-center"
+    wrap
+    align-center
   >
     <v-flex xs11="xs11">
       <v-chip
@@ -22,7 +22,7 @@
         :tooltip="$t('common.deleteAll')"
         type="delete"
         color="red"
-        small="small"
+        small
         @click="clear"
       />
     </v-flex>

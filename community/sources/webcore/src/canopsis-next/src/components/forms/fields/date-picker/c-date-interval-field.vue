@@ -8,7 +8,7 @@
       :label="$t('common.from')"
       :disabled="disabled"
       :allowed-dates="isAllowedFromDate"
-      hide-details="hide-details"
+      hide-details
     >
       <template #append="">
         <v-icon>calendar_today</v-icon>
@@ -20,7 +20,7 @@
       :disabled="disabled"
       :allowed-dates="isAllowedToDate"
       :content-class="{ 'ml-4': !column }"
-      hide-details="hide-details"
+      hide-details
     >
       <template #append="">
         <v-icon>calendar_today</v-icon>

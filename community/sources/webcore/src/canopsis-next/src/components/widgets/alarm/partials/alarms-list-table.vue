@@ -9,7 +9,7 @@
         class="alarms-list-table__top-pagination px-4 position-relative"
         v-if="shownTopPagination"
         ref="actions"
-        align-center="align-center"
+        align-center
       >
         <v-flex
           class="alarms-list-table__top-pagination--left"
@@ -17,8 +17,8 @@
           xs6="xs6"
         >
           <v-layout
-            align-center="align-center"
-            justify-start="justify-start"
+            align-center
+            justify-start
           >
             <c-density-btn-toggle
               v-if="densable"
@@ -88,7 +88,7 @@
         header-key="value"
         item-key="_id"
         hide-default-footer
-        multi-sort="multi-sort"
+        multi-sort
         @update:pagination="updatePaginationHandler"
       >
         <template #progress="">
@@ -96,7 +96,7 @@
             <v-progress-linear
               color="primary"
               height="2"
-              indeterminate="indeterminate"
+              indeterminate
             />
           </v-fade-transition>
         </template>
@@ -112,7 +112,8 @@
               class="alarms-list-table__dragging-handler"
               v-if="draggingMode"
               @click.stop=""
-            /><span
+            />
+            <span
               class="alarms-list-table__resize-handler"
               v-if="resizingMode"
               @mousedown.stop.prevent="startColumnResize(header.value)"

@@ -5,17 +5,17 @@
     content-class="date-time-picker"
     transition="slide-y-transition"
     max-width="290"
-    right="right"
-    lazy-with-unmount="lazy-with-unmount"
-    lazy="lazy"
+    right
+    lazy-with-unmount
+    lazy
   >
     <template #activator="{ on }">
       <v-btn
         v-on="on"
         color="secondary"
-        icon="icon"
-        fab="fab"
-        small="small"
+        icon
+        fab
+        small
       >
         <v-icon>calendar_today</v-icon>
       </v-btn>

@@ -1,8 +1,8 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-flex
       v-if="!steps.length"
-      xs12="xs12"
+      xs12
     >
       <v-alert type="info">
         {{ $t('remediation.instruction.emptySteps') }}
@@ -24,7 +24,7 @@
         />
       </template>
     </c-card-iterator-field>
-    <v-layout align-center="align-center">
+    <v-layout align-center>
       <v-btn
         class="ml-0"
         :color="hasStepsErrors ? 'error' : 'primary'"
@@ -33,10 +33,13 @@
         @click="addStep"
       >
         {{ $t('remediation.instruction.addStep') }}
-      </v-btn><span
+      </v-btn>
+      <span
         class="error--text"
         v-show="hasStepsErrors"
-      >{{ $t('remediation.instruction.errors.stepRequired') }}</span>
+      >
+        {{ $t('remediation.instruction.errors.stepRequired') }}
+      </span>
     </v-layout>
   </v-layout>
 </template>

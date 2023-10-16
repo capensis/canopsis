@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-textarea
       v-field="value.output"
       :label="$t('scenario.output')"
@@ -8,7 +8,7 @@
         <c-help-icon
           :text="$t('scenario.outputHelp')"
           icon="help"
-          left="left"
+          left
         />
       </template>
     </v-textarea>

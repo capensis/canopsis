@@ -8,7 +8,7 @@
       <span class="c-horizontal-time-line__day">{{ group.day }}</span>
       <v-divider
         class="grey mr-2"
-        vertical="vertical"
+        vertical
       />
       <div class="c-horizontal-time-line__cards">
         <template v-for="(step, stepIndex) in group.steps">

@@ -1,18 +1,18 @@
 <template>
   <v-container
     class="pa-3"
-    fluid="fluid"
+    fluid
   >
     <v-layout
-      align-center="align-center"
-      justify-space-between="justify-space-between"
+      align-center
+      justify-space-between
     >
       <slot name="title" />
-      <v-layout justify-end="justify-end">
+      <v-layout justify-end>
         <v-btn
           class="primary"
           v-if="isEmpty && addable"
-          small="small"
+          small
           @click="$emit('create', $event)"
         >
           <span>{{ $t('common.create') }}</span>
@@ -20,7 +20,7 @@
         <template v-else>
           <v-btn
             class="primary"
-            small="small"
+            small
             @click="$emit('edit', $event)"
           >
             <span>{{ $t('common.edit') }}</span>
@@ -28,7 +28,7 @@
           <v-btn
             class="error"
             v-if="removable"
-            small="small"
+            small
             @click="$emit('delete', $event)"
           >
             <v-icon>delete</v-icon>

@@ -29,25 +29,26 @@
     v-else
     v-field="value"
     :name="name"
-    mandatory="mandatory"
+    mandatory
   >
     <v-tooltip
       v-for="type in types"
       :key="type.value"
-      top="top"
+      top
     >
       <template #activator="{ on }">
         <v-btn
           v-on="on"
           :value="type.value"
-          small="small"
+          small
           text
         >
-          <v-icon small="small">
+          <v-icon small>
             {{ type.icon }}
           </v-icon>
         </v-btn>
-      </template><span>{{ type.text }}</span>
+      </template>
+      <span>{{ type.text }}</span>
     </v-tooltip>
   </v-btn-toggle>
 </template>

@@ -30,7 +30,7 @@
         <v-card-actions key="actions">
           <v-layout
             class="py-1"
-            justify-end="justify-end"
+            justify-end
           >
             <slot name="actions" />
           </v-layout>

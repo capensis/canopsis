@@ -2,7 +2,7 @@
   <div class="pa-2">
     <v-layout
       class="mx-1"
-      wrap="wrap"
+      wrap
     >
       <v-flex
         v-if="hasAccessToCategory"
@@ -15,7 +15,7 @@
         />
       </v-flex>
       <v-flex xs5="xs5">
-        <v-layout align-center="align-center">
+        <v-layout align-center>
           <template v-if="hasAccessToUserFilter">
             <filter-selector
               :label="$t('settings.selectAFilter')"
@@ -32,10 +32,10 @@
               :addable="hasAccessToAddFilter"
               :editable="hasAccessToEditFilter"
               :entity-types="[$constants.ENTITY_TYPES.service]"
-              with-entity="with-entity"
-              with-service-weather="with-service-weather"
-              private="private"
-              entity-counters-type="entity-counters-type"
+              with-entity
+              with-service-weather
+              private
+              entity-counters-type
             />
           </template>
           <c-enabled-field
@@ -55,25 +55,25 @@
       <v-progress-linear
         class="progress-linear-absolute--top"
         height="2"
-        indeterminate="indeterminate"
+        indeterminate
       />
     </v-fade-transition>
     <v-layout
       class="fill-height"
       key="content"
-      wrap="wrap"
+      wrap
     >
       <v-alert
         v-if="hasNoData && servicesError"
         type="error"
       >
-        <v-layout align-center="align-center">
+        <v-layout align-center>
           <div class="mr-4">
             {{ $t('errors.default') }}
           </div>
           <c-help-icon
             icon="help"
-            top="top"
+            top
           >
             <div v-if="servicesError.name">
               {{ $t('common.name') }}: {{ servicesError.name }}

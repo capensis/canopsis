@@ -9,8 +9,8 @@
       slot="activator"
       :value="value"
       :small="small"
-      fab="fab"
-      dark="dark"
+      fab
+      dark
       @click.stop="toggleFullScreen"
     >
       <v-icon>fullscreen</v-icon>

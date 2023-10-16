@@ -5,20 +5,21 @@
     :loading="pending"
     :pagination.sync="pagination"
     :total-items="totalItems"
-    advanced-pagination="advanced-pagination"
-    expand="expand"
+    advanced-pagination
+    expand
   >
     <template #status="{ item }">
       <v-tooltip
         :disabled="!item.message"
-        bottom="bottom"
+        bottom
       >
         <template #activator="{ on }">
           <c-test-suite-chip
             v-on="on"
             :value="item.status"
           />
-        </template><span>{{ item.message }}</span>
+        </template>
+        <span>{{ item.message }}</span>
       </v-tooltip>
     </template>
     <template #time="{ item }">

@@ -11,12 +11,12 @@
     :has-more="hasMoreTags"
     item-text="value"
     item-value="value"
-    hide-details="hide-details"
-    multiple="multiple"
-    chips="chips"
-    dense="dense"
-    clearable="clearable"
-    autocomplete="autocomplete"
+    hide-details
+    multiple
+    chips
+    dense
+    clearable
+    autocomplete
     @fetch="fetchTags"
     @fetch:more="fetchMoreTags"
     @update:search="updateSearch"
@@ -26,8 +26,8 @@
         class="c-alarm-tag-field__tag"
         :color="item.color"
         :title="item.value"
-        closable="closable"
-        ellipsis="ellipsis"
+        closable
+        ellipsis
         @close="removeItemFromArray(index)"
       >
         {{ item.value }}

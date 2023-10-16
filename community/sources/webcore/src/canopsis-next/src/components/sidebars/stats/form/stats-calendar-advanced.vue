@@ -4,17 +4,17 @@
       v-field="form.parameters.mainFilter"
       :filters="form.filters"
       :widget-id="widget._id"
-      addable="addable"
-      editable="editable"
-      with-alarm="with-alarm"
-      with-entity="with-entity"
-      with-pbehavior="with-pbehavior"
+      addable
+      editable
+      with-alarm
+      with-entity
+      with-pbehavior
       @update:filters="updateField('filters', $event)"
     />
     <field-filters
       :filters="value.filters"
-      addable="addable"
-      editable="editable"
+      addable
+      editable
       @update:filters="updateField('filters', $event)"
     />
     <v-divider />
@@ -30,7 +30,7 @@
     <field-levels-colors-selector
       v-field="value.criticityLevelsColors"
       color-type="hex"
-      hide-suffix="hide-suffix"
+      hide-suffix
     />
   </widget-settings-group>
 </template>

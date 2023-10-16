@@ -2,18 +2,18 @@
   <v-tabs
     color="secondary lighten-1"
     slider-color="primary"
-    dark="dark"
-    centered="centered"
+    dark
+    centered
   >
     <v-tab>{{ $tc('common.information') }}</v-tab>
     <v-tab-item>
       <v-layout class="pa-3">
-        <v-flex xs12="xs12">
+        <v-flex xs12>
           <v-card class="pa-3">
-            <v-layout column="column">
+            <v-layout column>
               <draggable-playlist-tabs
                 :tabs="availableTabs"
-                disabled="disabled"
+                disabled
               />
             </v-layout>
           </v-card>

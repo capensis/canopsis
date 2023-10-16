@@ -1,7 +1,7 @@
 <template>
   <v-layout
     class="kpi-widget-filters"
-    wrap="wrap"
+    wrap
   >
     <c-quick-date-interval-field
       class="kpi-widget-filters__interval"
@@ -9,7 +9,7 @@
       :interval="interval"
       :min="minIntervalDate"
       :quick-ranges="quickRanges"
-      short="short"
+      short
       @input="$emit('update:interval', $event)"
     />
     <c-sampling-field
@@ -20,7 +20,7 @@
     />
     <v-layout
       v-if="showFilter"
-      align-end="align-end"
+      align-end
     >
       <filter-selector
         class="kpi-widget-filters__filter-selector mr-4"
@@ -30,8 +30,8 @@
         :locked-value="lockedFilter"
         :value="filters"
         :disabled="filterDisabled"
-        clearable="clearable"
-        hide-details="hide-details"
+        clearable
+        hide-details
         @input="$emit('update:filters', $event)"
       />
       <filters-list-btn
@@ -39,8 +39,8 @@
         :widget-id="widgetId"
         :addable="filterAddable"
         :editable="filterEditable"
-        private="private"
-        with-entity="with-entity"
+        private
+        with-entity
       />
     </v-layout>
   </v-layout>

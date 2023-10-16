@@ -15,12 +15,12 @@
       <field-filters
         :filters.sync="form.filters"
         :widget-id="widget._id"
-        addable="addable"
-        editable="editable"
-        with-alarm="with-alarm"
-        with-entity="with-entity"
-        with-pbehavior="with-pbehavior"
-        hide-selector="hide-selector"
+        addable
+        editable
+        with-alarm
+        with-entity
+        with-pbehavior
+        hide-selector
       />
       <v-divider />
       <field-opened-resolved-filter v-field="form.parameters.opened" />
@@ -35,7 +35,7 @@
       <field-levels-colors-selector
         v-field="form.parameters.criticityLevelsColors"
         color-type="hex"
-        hide-suffix="hide-suffix"
+        hide-suffix
       />
     </widget-settings-group>
     <v-divider />

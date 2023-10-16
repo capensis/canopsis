@@ -1,7 +1,7 @@
 <template>
   <widget-settings-item
     :title="title"
-    optional="optional"
+    optional
   >
     <c-number-field v-field="value" />
   </widget-settings-item>

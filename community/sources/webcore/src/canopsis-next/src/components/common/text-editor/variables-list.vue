@@ -1,7 +1,7 @@
 <template>
   <v-list
     class="pa-0"
-    dense="dense"
+    dense
   >
     <v-list-item
       v-for="variable in variables"
@@ -12,7 +12,7 @@
     >
       <v-list-item-content>
         <v-list-item-title>
-          <v-layout justify-space-between="justify-space-between">
+          <v-layout justify-space-between>
             {{ variable.text }}<span
               class="ml-4 grey--text lighten-1"
               v-if="showValue"
@@ -30,8 +30,8 @@
       :position-x="subVariablesPosition.x"
       :position-y="subVariablesPosition.y"
       :z-index="zIndex"
-      offset-x="offset-x"
-      right="right"
+      offset-x
+      right
     >
       <variables-list
         :variables="parentVariable.variables"

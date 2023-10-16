@@ -4,7 +4,7 @@
     v-field="value"
     :items="weekDays"
     :label="$t('recurrenceRule.byweekday')"
-    multiple="multiple"
+    multiple
   />
   <v-select
     v-else

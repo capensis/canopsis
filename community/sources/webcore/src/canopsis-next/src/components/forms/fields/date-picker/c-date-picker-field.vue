@@ -6,8 +6,8 @@
     content-class="date-picker"
     transition="slide-y-transition"
     max-width="290px"
-    right="right"
-    lazy="lazy"
+    right
+    lazy
   >
     <template #activator="{ on }">
       <v-text-field

@@ -20,7 +20,7 @@
         class="mx-3"
         v-model="isMultiple"
         :label="$t('filter.selector.fields.mixFilters')"
-        hide-details="hide-details"
+        hide-details
       />
       <v-divider class="mt-3" />
     </template>
@@ -28,28 +28,29 @@
       <v-tooltip
         v-for="lockedItem in lockedItems"
         :key="getItemValue(lockedItem)"
-        top="top"
+        top
       >
         <template #activator="{ on }">
           <v-chip
             v-on="on"
-            small="small"
+            small
           >
             <span>{{ getItemText(lockedItem) }}</span>
             <v-icon
               class="ml-2"
-              small="small"
+              small
             >
               lock
             </v-icon>
           </v-chip>
-        </template><span>{{ $t('settings.lockedFilter') }}</span>
+        </template>
+        <span>{{ $t('settings.lockedFilter') }}</span>
       </v-tooltip>
       <v-chip
         v-for="(item, index) in items"
         :key="getItemValue(item)"
         :close="isChipRemovable"
-        small="small"
+        small
         @input="removeFilter(index)"
       >
         {{ getItemText(item) }}
@@ -73,10 +74,10 @@
             <v-badge
               :value="isOldPattern(item)"
               color="error"
-              overlap="overlap"
+              overlap
             >
               <template #badge="">
-                <v-tooltip top="top">
+                <v-tooltip top>
                   <template #activator="{ on: badgeTooltipOn }">
                     <v-icon
                       v-on="badgeTooltipOn"
@@ -84,13 +85,14 @@
                     >
                       priority_high
                     </v-icon>
-                  </template><span>{{ $t('pattern.oldPatternTooltip') }}</span>
+                  </template>
+                  <span>{{ $t('pattern.oldPatternTooltip') }}</span>
                 </v-tooltip>
               </template>
               <v-icon
                 class="ml-2"
                 :color="tile.props.value ? parent.color : ''"
-                small="small"
+                small
               >
                 {{ getItemIcon(item) }}
               </v-icon>

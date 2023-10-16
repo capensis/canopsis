@@ -1,5 +1,5 @@
 <template>
-  <v-layout align-center="align-center">
+  <v-layout align-center>
     <v-flex xs6="xs6">
       <c-number-field
         v-field="value.interval"

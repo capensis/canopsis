@@ -7,7 +7,7 @@
     />
     <v-btn
       class="ma-1 images-viewer__close-btn"
-      icon="icon"
+      icon
       @click="$modals.hide"
     >
       <v-icon color="white">

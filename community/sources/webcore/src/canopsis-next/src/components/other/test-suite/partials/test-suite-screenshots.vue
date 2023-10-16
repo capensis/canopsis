@@ -1,10 +1,10 @@
 <template>
   <v-container
     class="pa-0"
-    fluid="fluid"
-    grid-list-sm="grid-list-sm"
+    fluid
+    grid-list-sm
   >
-    <v-layout wrap="wrap">
+    <v-layout wrap>
       <v-flex
         xs4="xs4"
         v-for="image in images"

@@ -1,11 +1,11 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close="close">
+    <modal-wrapper close>
       <template #title="">
         <span>{{ $t('modals.createCommentEvent.title') }}</span>
       </template>
       <template #text="">
-        <v-layout column="column">
+        <v-layout column>
           <template v-if="items.length">
             <alarm-general-table :items="items" />
             <v-divider class="my-3" />
@@ -14,13 +14,13 @@
             v-model="form.comment"
             :label="$tc('common.comment')"
             name="comment"
-            required="required"
+            required
           />
         </v-layout>
       </template>
       <template #actions="">
         <v-btn
-          depressed="depressed"
+          depressed
           text
           @click="$modals.hide"
         >

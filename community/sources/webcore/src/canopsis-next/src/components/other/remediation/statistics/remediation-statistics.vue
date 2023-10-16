@@ -11,7 +11,7 @@
       :sampling="pagination.sampling"
       :min-date="minDate"
       :downloading="downloading"
-      responsive="responsive"
+      responsive
       @export:csv="exportRemediationStatisticsAsCsv"
       @export:png="exportRemediationStatisticsAsPng"
     />

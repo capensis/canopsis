@@ -1,6 +1,6 @@
 <template>
-  <v-layout wrap="wrap">
-    <v-flex xs12="xs12">
+  <v-layout wrap>
+    <v-flex xs12>
       <v-textarea
         v-validate=""
         v-on="listeners"
@@ -20,14 +20,14 @@
           <c-help-icon
             icon="help"
             :text="helpText"
-            left="left"
+            left
           />
         </template>
       </v-textarea>
     </v-flex>
     <v-flex
       v-if="!validateOnBlur && !readonly"
-      xs12="xs12"
+      xs12
     >
       <v-btn
         class="ml-0"

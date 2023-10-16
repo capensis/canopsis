@@ -1,14 +1,14 @@
 <template>
   <tr>
     <td class="pa-0">
-      <v-layout align-center="align-center">
+      <v-layout align-center>
         <v-btn
           class="primary"
           v-if="executable"
           :disabled="isRunningJob || isFailedJob"
           rounded
-          small="small"
-          block="block"
+          small
+          block
           @click="$emit('execute-job', job)"
         >
           {{ job.name }}
@@ -20,15 +20,15 @@
           v-if="isFailedJob || isCompletedJob"
           :disabled="!hasStatusMessage"
           max-width="400"
-          right="right"
+          right
         >
           <template #activator="{ on }">
             <v-btn
               class="mr-1"
               v-on="on"
               :loading="outputPending"
-              icon="icon"
-              small="small"
+              icon
+              small
               @click="toggleExpanded"
             >
               <v-icon :color="isFailedJob ? 'error' : 'success'">
@@ -47,20 +47,21 @@
         </v-tooltip>
         <v-tooltip
           v-if="cancelable && isRunningJob && hasJobsInQueue"
-          top="top"
+          top
         >
           <template #activator="{ on }">
             <v-btn
               class="error ml-2"
               v-on="on"
               rounded
-              small="small"
-              block="block"
+              small
+              block
               @click="$emit('cancel-job-execution', job)"
             >
               {{ $t('common.cancel') }}
             </v-btn>
-          </template><span>{{ queueNumberTooltip }}</span>
+          </template>
+          <span>{{ queueNumberTooltip }}</span>
         </v-tooltip>
       </v-layout>
     </td>

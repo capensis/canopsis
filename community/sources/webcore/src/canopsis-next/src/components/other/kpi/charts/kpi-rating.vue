@@ -10,7 +10,7 @@
       :metric="pagination.metric"
       :downloading="downloading"
       :min-date="minDate"
-      responsive="responsive"
+      responsive
       @export:csv="exportMetricsAsCsv"
       @export:png="exportMetricsAsPng"
     />

@@ -4,6 +4,7 @@
     :height="$config.TOP_BAR_HEIGHT"
     dense
     fixed
+    app
   >
     <v-app-bar-nav-icon
       class="ml-2 white--text"

@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <state-setting-information-row
       :label="$t('stateSetting.criterion')"
       :value="label"

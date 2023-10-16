@@ -2,12 +2,14 @@
   <v-card>
     <v-card-title class="primary white--text">
       <v-layout
-        justify-space-between="justify-space-between"
-        align-center="align-center"
+        justify-space-between
+        align-center
       >
-        <h3>{{ $t('common.login') }}</h3><img
+        <h3>{{ $t('common.login') }}</h3>
+        <img
           class="secondaryLogo"
           src="@/assets/canopsis.png"
+          alt=""
         >
       </v-layout>
     </v-card-title>
@@ -21,8 +23,8 @@
         <v-flex>
           <v-layout
             class="mb-1"
-            justify-space-between="justify-space-between"
-            align-center="align-center"
+            justify-space-between
+            align-center
           >
             <v-btn
               class="ma-0"

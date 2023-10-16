@@ -2,7 +2,7 @@
   <v-form @submit.prevent="submit">
     <modal-wrapper
       :close="close"
-      minimize="minimize"
+      minimize
     >
       <template #title="">
         <span>{{ config.assignedInstruction.name }}</span>
@@ -22,11 +22,11 @@
           />
           <v-layout
             v-else
-            justify-center="justify-center"
+            justify-center
           >
             <v-progress-circular
               color="primary"
-              indeterminate="indeterminate"
+              indeterminate
             />
           </v-layout>
         </v-fade-transition>

@@ -2,16 +2,16 @@
   <v-tabs
     color="secondary lighten-1"
     slider-color="primary"
-    dark="dark"
-    centered="centered"
+    dark
+    centered
   >
     <v-tab>{{ $t('common.description') }}</v-tab>
     <v-tab-item>
       <v-layout
         class="pa-3 secondary lighten-2"
-        column="column"
+        column
       >
-        <v-flex xs12="xs12">
+        <v-flex xs12>
           <v-card>
             <v-card-text>
               <pre>{{ pbehaviorType.description }}</pre>
@@ -24,9 +24,9 @@
     <v-tab-item>
       <v-layout
         class="pa-3 secondary lighten-2"
-        column="column"
+        column
       >
-        <v-flex xs12="xs12">
+        <v-flex xs12>
           <v-card>
             <v-card-text>
               <pre>{{ pbehaviorType.type }}</pre>

@@ -1,10 +1,10 @@
 <template>
   <modal-wrapper
-    close="close"
-    minimize="minimize"
+    close
+    minimize
   >
     <template #title="">
-      <v-layout align-center="align-center">
+      <v-layout align-center>
         <span>{{ title }}</span>
         <declare-ticket-rule-execution-status
           class="ml-2 declare-ticket-rule-execute-status"
@@ -19,26 +19,26 @@
     <template #text="">
       <v-layout
         v-if="pending"
-        justify-center="justify-center"
+        justify-center
       >
         <v-progress-circular
           color="primary"
-          indeterminate="indeterminate"
+          indeterminate
         />
       </v-layout>
       <template v-else-if="config.singleMode">
         <v-layout
           class="declare-ticket-rule-execute-status__executions"
-          column="column"
+          column
         >
           <declare-ticket-rule-executions-group
             v-for="(executions, ruleName) of alarmExecutionsByTicketName"
             :key="ruleName"
             :executions="executions"
             :rule-name="ruleName"
-            is-one-execution="is-one-execution"
-            show-status="show-status"
-            show-rule-name="show-rule-name"
+            is-one-execution
+            show-status
+            show-rule-name
           />
         </v-layout>
       </template>
@@ -52,8 +52,8 @@
     </template>
     <template #actions="">
       <v-btn
-        depressed="depressed"
-        text="text"
+        depressed
+        text
         @click="$modals.hide"
       >
         {{ $t('common.close') }}

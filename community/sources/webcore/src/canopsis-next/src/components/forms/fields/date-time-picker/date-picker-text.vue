@@ -4,8 +4,8 @@
     :value="value | date(format)"
     :label="label"
     :hide-details="hideDetails"
-    disabled="disabled"
-    readonly="readonly"
+    disabled
+    readonly
   />
 </template>
 

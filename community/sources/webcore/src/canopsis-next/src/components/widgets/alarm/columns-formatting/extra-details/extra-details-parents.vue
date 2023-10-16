@@ -2,7 +2,7 @@
   <div>
     <v-tooltip
       class="c-extra-details"
-      top="top"
+      top
     >
       <template #activator="{ on }">
         <span
@@ -11,12 +11,12 @@
         >
           <v-icon
             color="white"
-            small="small"
+            small
           >{{ icon }}</v-icon></span>
       </template>
       <div class="text-md-center">
         <strong>{{ $t('alarm.actions.iconsTitles.grouping') }}</strong>
-        <v-layout column="column">
+        <v-layout column>
           <div>{{ $tc('common.rule', rules.length) }}&nbsp;:</div>
           <div
             class="rule-name"

@@ -1,13 +1,13 @@
 <template>
   <v-layout
     class="theme-form"
-    column="column"
+    column
   >
     <c-name-field v-field="form.name" />
     <c-information-block :title="$t('theme.main.title')">
       <v-layout
         class="theme-form__colors"
-        column="column"
+        column
       >
         <theme-color-picker-field
           v-field="form.colors.main.primary"
@@ -63,7 +63,7 @@
     <c-information-block :title="$t('theme.fontSize.title')">
       <v-layout
         class="theme-form__colors"
-        column="column"
+        column
       >
         <theme-color-font-size-field v-field="form.font_size" />
       </v-layout>
@@ -71,7 +71,7 @@
     <c-information-block :title="$t('theme.table.title')">
       <v-layout
         class="theme-form__colors"
-        column="column"
+        column
       >
         <theme-color-picker-field
           v-field="form.colors.table.background"
@@ -106,7 +106,7 @@
     <c-information-block :title="$t('theme.state.title')">
       <v-layout
         class="theme-form__colors"
-        column="column"
+        column
       >
         <theme-color-picker-field
           v-field="form.colors.state.ok"

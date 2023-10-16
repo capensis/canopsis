@@ -1,8 +1,8 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-name-field
       v-field="form.name"
-      required="required"
+      required
     />
     <mermaid-editor v-field="form.parameters" />
   </v-layout>

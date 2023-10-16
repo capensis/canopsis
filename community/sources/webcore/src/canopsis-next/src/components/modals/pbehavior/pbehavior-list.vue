@@ -1,5 +1,5 @@
 <template>
-  <modal-wrapper close="close">
+  <modal-wrapper close>
     <template #title="">
       <span>{{ $t('common.pbehaviorList') }}</span>
     </template>
@@ -7,7 +7,7 @@
       <c-advanced-data-table
         :headers="headers"
         :items="filteredPbehaviors"
-        expand="expand"
+        expand
       >
         <template #enabled="{ item }">
           <c-enabled :value="item.enabled" />
@@ -44,21 +44,21 @@
           <pbehaviors-list-expand-item :pbehavior="item" />
         </template>
       </c-advanced-data-table>
-      <v-layout justify-end="justify-end">
+      <v-layout justify-end>
         <c-action-fab-btn
           :tooltip="$t('modals.pbehaviorsCalendar.title')"
           icon="calendar_today"
           color="secondary"
-          small="small"
-          left="left"
+          small
+          left
           @click="showPbehaviorsCalendarModal"
         />
         <v-btn
           v-if="showAddButton"
           color="primary"
-          icon="icon"
-          fab="fab"
-          small="small"
+          icon
+          fab
+          small
           @click="showCreatePbehaviorModal"
         >
           <v-icon>add</v-icon>

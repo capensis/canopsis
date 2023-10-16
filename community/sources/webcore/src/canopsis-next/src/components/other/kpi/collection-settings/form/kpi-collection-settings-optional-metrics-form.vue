@@ -1,7 +1,7 @@
 <template>
   <v-list
     class="kpi-collection-settings-metrics-form"
-    subheader="subheader"
+    subheader
   >
     <v-subheader>{{ $t('kpi.collectionSetting.optionalMetrics') }}</v-subheader>
     <v-list-item>

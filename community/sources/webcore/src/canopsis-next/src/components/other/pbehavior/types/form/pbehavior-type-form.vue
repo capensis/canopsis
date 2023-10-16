@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-name-field
       v-field="form.name"
       :disabled="onlyColor"
@@ -12,7 +12,7 @@
       :disabled="onlyColor"
       name="description"
     />
-    <v-layout justify-space-between="justify-space-between">
+    <v-layout justify-space-between>
       <v-flex xs6="xs6">
         <pbehavior-type-default-type-field
           class="mr-2"
@@ -30,7 +30,7 @@
           v-field="form.priority"
           :disabled="onlyColor"
           :loading="pendingPriority"
-          required="required"
+          required
         />
       </v-flex>
     </v-layout>
@@ -39,7 +39,7 @@
       :label="$t('modals.createPbehaviorType.fields.iconName')"
       :hint="$t('modals.createPbehaviorType.iconNameHint')"
       :disabled="onlyColor"
-      required="required"
+      required
     >
       <template #no-data="">
         <v-list-item>
@@ -51,7 +51,7 @@
     </c-icon-field>
     <v-flex
       class="mt-2"
-      xs12="xs12"
+      xs12
     >
       <v-alert
         :value="onlyColor"
@@ -67,7 +67,7 @@
     <c-color-picker-field
       class="mt-2"
       v-field="form.color"
-      required="required"
+      required
       @input="setColorWasChanged"
     />
   </v-layout>

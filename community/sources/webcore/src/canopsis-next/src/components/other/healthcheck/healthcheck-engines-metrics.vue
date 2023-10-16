@@ -35,7 +35,7 @@
           <v-progress-circular
             v-if="exporting"
             color="primary"
-            indeterminate="indeterminate"
+            indeterminate
           /><span v-else>{{ item.duration | duration }}</span>
         </td>
       </template>

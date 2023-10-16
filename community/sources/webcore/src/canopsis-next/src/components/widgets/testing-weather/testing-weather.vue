@@ -8,13 +8,13 @@
       <v-progress-linear
         class="progress-linear-absolute--top"
         height="2"
-        indeterminate="indeterminate"
+        indeterminate
       />
     </v-fade-transition>
     <v-layout
       class="fill-height"
       key="content"
-      wrap="wrap"
+      wrap
     >
       <template v-if="testSuites.length">
         <v-flex

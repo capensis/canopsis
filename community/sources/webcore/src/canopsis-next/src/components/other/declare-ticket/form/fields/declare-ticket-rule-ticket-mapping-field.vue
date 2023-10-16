@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-information-block
       :title="$t('declareTicket.ticketUrlAndId')"
       :help-text="ticketUrlHelpText"

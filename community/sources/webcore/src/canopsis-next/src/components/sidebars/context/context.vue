@@ -29,7 +29,7 @@
         :templates-pending="widgetTemplatesPending"
         :label="$t('settings.treeOfDependenciesColumnNames')"
         :type="$constants.ENTITIES_TYPES.entity"
-        with-color-indicator="with-color-indicator"
+        with-color-indicator
         @update:template="updateServiceDependenciesColumnsTemplate"
       />
       <v-divider />
@@ -60,10 +60,10 @@
           :widget-id="widget._id"
           :addable="hasAccessToAddFilter"
           :editable="hasAccessToEditFilter"
-          with-alarm="with-alarm"
-          with-entity="with-entity"
-          with-pbehavior="with-pbehavior"
-          entity-counters-type="entity-counters-type"
+          with-alarm
+          with-entity
+          with-pbehavior
+          entity-counters-type
         />
         <v-divider />
       </template>

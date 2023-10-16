@@ -1,7 +1,7 @@
 <template>
   <div>
     <snmp-rule-form-field-title :label="$t('snmpRule.oid')" />
-    <v-layout wrap="wrap">
+    <v-layout wrap>
       <v-flex
         class="pr-1"
         xs6="xs6"
@@ -18,8 +18,8 @@
           item-text="moduleName"
           item-value="_id"
           name="moduleName"
-          hide-no-data="hide-no-data"
-          hide-details="hide-details"
+          hide-no-data
+          hide-details
           @change="selectModule"
         />
       </v-flex>
@@ -38,9 +38,9 @@
           item-text="name"
           item-value="_id"
           name="mib"
-          hide-no-data="hide-no-data"
-          hide-details="hide-details"
-          return-object="return-object"
+          hide-no-data
+          hide-details
+          return-object
           @change="selectMib"
         />
       </v-flex>

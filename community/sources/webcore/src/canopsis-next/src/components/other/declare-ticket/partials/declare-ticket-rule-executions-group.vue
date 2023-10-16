@@ -1,16 +1,16 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-layout
       class="mb-4"
       v-if="showStatus"
-      align-center="align-center"
+      align-center
     >
       <v-chip
         class="mr-2"
         v-if="showRuleName"
         color="primary"
         text-color="white"
-        small="small"
+        small
       >
         {{ ruleName }}
       </v-chip><span class="subheading mr-5">{{ $t('declareTicket.webhookStatus') }}:</span>

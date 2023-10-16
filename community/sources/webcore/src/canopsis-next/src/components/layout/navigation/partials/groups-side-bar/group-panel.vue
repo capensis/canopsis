@@ -1,14 +1,17 @@
 <template>
-  <v-expansion-panel-content
-    class="secondary group-item"
+  <v-expansion-panel
+    class="secondary group-panel"
     :hide-actions="hideActions"
-    :class="{ editing: isEditing }"
+    :class="{ 'group-panel--editing': isEditing }"
+    :rounded="false"
   >
-    <template #header="">
-      <div class="panel-header">
+    <v-expansion-panel-header>
+      <div class="group-panel__title">
         <slot name="title">
-          <span>{{ group.title }}</span>
+          {{ group.title }}
         </slot>
+      </div>
+      <div class="group-panel__actions">
         <v-btn
           v-show="isEditing"
           :disabled="orderChanged"
@@ -22,57 +25,80 @@
           </v-icon>
         </v-btn>
       </div>
-    </template>
-    <slot />
-  </v-expansion-panel-content>
+    </v-expansion-panel-header>
+    <v-expansion-panel-content class="group-item__content">
+      <slot />
+    </v-expansion-panel-content>
+  </v-expansion-panel>
 </template>
 
-<script>
-export default {
-  props: {
-    isEditing: {
-      type: Boolean,
-      default: false,
-    },
-    group: {
-      type: Object,
-      required: true,
-    },
-    orderChanged: {
-      type: Boolean,
-      default: false,
-    },
-    hideActions: {
-      type: Boolean,
-      default: false,
-    },
+<script setup>
+defineProps({
+  isEditing: {
+    type: Boolean,
+    default: false,
   },
-  methods: {
-    handleChange() {
-      this.$emit('change');
-    },
+  group: {
+    type: Object,
+    required: true,
   },
-};
+  orderChanged: {
+    type: Boolean,
+    default: false,
+  },
+  hideActions: {
+    type: Boolean,
+    default: false,
+  },
+});
+const emit = defineEmits(['change']);
+
+const handleChange = () => emit('change');
 </script>
 
 <style lang="scss" scoped>
-  .panel-header {
-    max-width: 88%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+.group-panel {
+  & ::v-deep .v-expansion-panel-header {
+    height: 48px;
+    min-height: 48px;
+  }
 
-    span {
-      max-width: 100%;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      display: inline-block;
-      vertical-align: middle;
+  & ::v-deep .v-expansion-panel-content__wrap {
+    padding: 0;
+  }
 
-      .editing & {
-        max-width: 73%;
+  & ::v-deep .v-expansion-panel-content .v-card {
+    border-radius: 0;
+    box-shadow: 0 0 0 0 rgba(0,0,0,.2), 0 0 0 0 rgba(0,0,0,.14), 0 0 0 0 rgba(0,0,0,.12) !important;
+  }
+
+  &__actions {
+    flex-shrink: 0;
+  }
+
+  &__title {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: inline-block;
+  }
+
+  &.editing {
+    & ::v-deep .v-expansion-panel-header {
+      cursor: move;
+    }
+
+    .views-panel.empty {
+      &:after {
+        content: '';
+        display: block;
+        height: 48px;
+        border: 4px dashed #4f6479;
+        border-radius: 5px;
+        position: relative;
       }
     }
   }
+}
 </style>

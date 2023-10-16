@@ -1,11 +1,11 @@
 <template>
-  <v-layout align-center="align-center">
+  <v-layout align-center>
     <template v-if="splitted">
       <v-btn
         class="ml-0"
         :disabled="disabled"
         key="splitted"
-        small="small"
+        small
         @click="showColorPickerModal"
       >
         {{ label }}

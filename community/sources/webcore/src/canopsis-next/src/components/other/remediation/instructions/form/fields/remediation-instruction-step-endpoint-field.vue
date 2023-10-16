@@ -1,7 +1,7 @@
 <template>
   <v-layout
     class="mt-2"
-    column="column"
+    column
   >
     <v-layout class="py-1">
       <v-flex
@@ -10,7 +10,7 @@
       >
         <c-draggable-step-number
           :color="draggableStepNumberColor"
-          disabled="disabled"
+          disabled
         >
           {{ $t('remediation.instruction.endpointAvatar') }}
         </c-draggable-step-number>
@@ -34,7 +34,7 @@
                 <c-help-icon
                   :text="$t('remediation.instruction.tooltips.endpoint')"
                   icon="help"
-                  left="left"
+                  left
                 />
               </template>
             </v-text-field>

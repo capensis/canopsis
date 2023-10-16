@@ -1,10 +1,10 @@
 <template>
   <pbehavior-form
     v-field="value"
-    no-pattern="no-pattern"
-    no-enabled="no-enabled"
-    no-comments="no-comments"
-    with-start-on-trigger="with-start-on-trigger"
+    no-pattern
+    no-enabled
+    no-comments
+    with-start-on-trigger
   />
 </template>
 

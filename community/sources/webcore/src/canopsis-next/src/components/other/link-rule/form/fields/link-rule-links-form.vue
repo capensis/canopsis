@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-alert
       :value="!links.length && !errors.has('links')"
       type="info"

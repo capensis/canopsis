@@ -6,8 +6,8 @@
     <v-radio-group
       class="justify-center"
       v-field="impact"
-      row="row"
-      hide-details="hide-details"
+      row
+      hide-details
     >
       <v-radio
         :value="false"

@@ -19,10 +19,12 @@
             v-bind="buttonProps"
             :input-value="isVSpeedDialOpen"
           >
-            <v-icon>settings</v-icon>
-            <v-icon>close</v-icon>
+            <v-icon>
+              {{ isVSpeedDialOpen ? 'settings' : 'close' }}
+            </v-icon>
           </v-btn>
-        </template><span>{{ $t('layout.sideBar.buttons.settings') }}</span>
+        </template>
+        <span>{{ $t('layout.sideBar.buttons.settings') }}</span>
       </v-tooltip>
     </template>
     <v-tooltip
@@ -43,13 +45,11 @@
           @click.stop="$emit('toggleEditingMode')"
         >
           <v-icon dark>
-            edit
-          </v-icon>
-          <v-icon dark>
-            done
+            {{ isNavigationEditingMode ? 'edit' : 'done' }}
           </v-icon>
         </v-btn>
-      </template><span>{{ $t('layout.sideBar.buttons.edit') }}</span>
+      </template>
+      <span>{{ $t('layout.sideBar.buttons.edit') }}</span>
     </v-tooltip>
     <v-tooltip
       v-if="hasCreateAnyViewAccess"
@@ -71,7 +71,8 @@
             add
           </v-icon>
         </v-btn>
-      </template><span>{{ $t('layout.sideBar.buttons.create') }}</span>
+      </template>
+      <span>{{ $t('layout.sideBar.buttons.create') }}</span>
     </v-tooltip>
   </v-speed-dial>
 </template>

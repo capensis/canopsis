@@ -2,24 +2,24 @@
   <v-layout>
     <v-flex
       class="manage-playlist-tabs mr-2"
-      xs12="xs12"
+      xs12
     >
       <v-flex class="text-center mb-2">
         {{ $t('modals.createPlaylist.groups') }}
       </v-flex>
       <v-expansion-panel
-        readonly="readonly"
-        hide-actions="hide-actions"
-        expand="expand"
-        dark="dark"
-        focusable="focusable"
+        readonly
+        hide-actions
+        expand
+        dark
+        focusable
         :value="openedPanels"
       >
         <group-panel
           v-for="group in groups"
           :group="group"
           :key="group._id"
-          hide-actions="hide-actions"
+          hide-actions
         >
           <template #title="">
             <v-checkbox
@@ -29,26 +29,27 @@
               :disabled="isDisabledGroup(group)"
               color="primary"
               @change="selectGroupHandler(group, $event)"
-            /><span class="group-title">{{ group.title }}</span>
+            />
+            <span class="group-title">{{ group.title }}</span>
           </template>
           <v-expansion-panel
             class="tabs-panel"
             v-for="view in group.views"
             :key="view._id"
             :value="getPanelValueFromArray(view.tabs)"
-            readonly="readonly"
-            hide-actions="hide-actions"
-            expand="expand"
-            dark="dark"
-            focusable="focusable"
+            readonly
+            hide-actions
+            expand
+            dark
+            focusable
           >
-            <v-expansion-panel-content hide-actions="hide-actions">
+            <v-expansion-panel-content hide-actions>
               <template #header="">
                 <group-view-panel :view="view">
                   <template #title="">
                     <v-layout
-                      align-center="align-center"
-                      justify-space-between="justify-space-between"
+                      align-center
+                      justify-space-between
                     >
                       <v-checkbox
                         class="group-checkbox mt-0 pt-0"
@@ -57,10 +58,15 @@
                         :disabled="isDisabledView(view)"
                         color="primary"
                         @change="selectViewHandler(view, $event)"
-                      /><span class="text-truncate">{{ view.title }}<span
-                        class="ml-1"
-                        v-show="view.description"
-                      >({{ view.description }})</span></span>
+                      />
+                      <span class="text-truncate">{{ view.title }}
+                        <span
+                          class="ml-1"
+                          v-show="view.description"
+                        >
+                          ({{ view.description }})
+                        </span>
+                      </span>
                     </v-layout>
                   </template>
                 </group-view-panel>
@@ -69,12 +75,12 @@
                 v-for="tab in view.tabs"
                 :key="tab._id"
                 :tab="tab"
-                hide-actions="hide-actions"
+                hide-actions
               >
                 <template #title="">
                   <v-layout
                     class="ml-5"
-                    align-center="align-center"
+                    align-center
                   >
                     <v-checkbox
                       class="tab-checkbox group-checkbox"
@@ -82,7 +88,8 @@
                       :value="tab._id"
                       color="primary"
                       @change="selectTabHandler(tab, $event)"
-                    /><span>{{ tab.title }}</span>
+                    />
+                    <span>{{ tab.title }}</span>
                   </v-layout>
                 </template>
               </tab-panel-content>

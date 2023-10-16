@@ -9,8 +9,8 @@
           class="mt-0"
           v-field="value"
           name="opened"
-          hide-details="hide-details"
-          mandatory="mandatory"
+          hide-details
+          mandatory
         >
           <v-radio
             v-for="type in types"

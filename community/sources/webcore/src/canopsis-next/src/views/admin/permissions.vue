@@ -6,17 +6,17 @@
         <v-layout
           class="progress"
           v-show="pending"
-          column="column"
+          column
         >
           <v-progress-circular
-            indeterminate="indeterminate"
+            indeterminate
             color="primary"
           />
         </v-layout>
       </v-fade-transition>
       <v-tabs
         v-if="hasReadAnyRoleAccess"
-        fixed-tabs="fixed-tabs"
+        fixed-tabs
         slider-color="primary"
       >
         <template v-for="(groupPermissions, groupKey) in preparedPermissionsGroups">

@@ -4,8 +4,8 @@
     :position-x="positionX"
     :position-y="positionY"
     :close-on-content-click="false"
-    ignore-click-outside="ignore-click-outside"
-    absolute="absolute"
+    ignore-click-outside
+    absolute
   >
     <point-form-dialog
       v-on="$listeners"

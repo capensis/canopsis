@@ -1,7 +1,7 @@
 <template>
   <widget-settings-item>
     <template #title="">
-      <v-layout align-center="align-center">
+      <v-layout align-center>
         <span>{{ title }}</span>
         <v-icon class="ml-2">
           {{ sizeIcon }}

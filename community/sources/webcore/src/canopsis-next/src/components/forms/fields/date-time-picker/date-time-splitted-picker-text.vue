@@ -1,14 +1,14 @@
 <template>
   <v-layout
     class="date-time-splitted-field"
-    column="column"
+    column
   >
     <v-layout :reverse="reverse">
       <v-flex class="date-time-splitted-field__date">
         <date-picker-text
           :value="value | date('vuetifyDatePicker', null)"
           :label="!reverse || fullDay ? label : ''"
-          hide-details="hide-details"
+          hide-details
         />
       </v-flex>
       <time-picker-text
@@ -16,7 +16,7 @@
         v-if="!fullDay"
         :value="value | date('timePicker', null)"
         :label="reverse ? label : ''"
-        hide-details="hide-details"
+        hide-details
       />
     </v-layout>
   </v-layout>

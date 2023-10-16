@@ -14,7 +14,7 @@
       <c-help-icon
         :text="helpText"
         icon="help"
-        left="left"
+        left
       />
     </template>
   </v-textarea>

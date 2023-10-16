@@ -5,8 +5,8 @@
     :loading="pending"
     :total-items="totalItems"
     :pagination="pagination"
-    advanced-pagination="advanced-pagination"
-    search="search"
+    advanced-pagination
+    search
     @update:pagination="$emit('update:pagination', $event)"
   >
     <template #items="{ item }">

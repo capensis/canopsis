@@ -1,7 +1,7 @@
 <template>
   <v-layout
-    wrap="wrap"
-    align-center="align-center"
+    wrap
+    align-center
   >
     <remediation-instructions-filters-list
       :filters="lockedFilters"
@@ -16,20 +16,21 @@
     />
     <v-tooltip
       v-if="addable"
-      bottom="bottom"
+      bottom
     >
       <template #activator="{ on }">
         <v-btn
           class="mx-1 my-0"
           v-on="on"
-          icon="icon"
+          icon
           @click="showCreateFilterModal"
         >
           <v-icon :color="buttonIconColor">
             assignment
           </v-icon>
         </v-btn>
-      </template><span>{{ $t('remediation.instructionsFilter.button') }}</span>
+      </template>
+      <span>{{ $t('remediation.instructionsFilter.button') }}</span>
     </v-tooltip>
   </v-layout>
 </template>

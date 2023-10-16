@@ -7,7 +7,7 @@
     :query.sync="query"
     :expandable="!resolved"
     :hide-pagination="!resolved"
-    hide-actions="hide-actions"
+    hide-actions
   />
 </template>
 

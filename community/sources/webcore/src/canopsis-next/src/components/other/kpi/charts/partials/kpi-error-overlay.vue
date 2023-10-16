@@ -1,8 +1,8 @@
 <template>
   <v-layout
     class="overlay"
-    align-center="align-center"
-    justify-center="justify-center"
+    align-center
+    justify-center
   >
     <span class="error--text">{{ $t('kpi.noData') }}</span>
   </v-layout>

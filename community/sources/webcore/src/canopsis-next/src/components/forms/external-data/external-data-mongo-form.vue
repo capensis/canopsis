@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-text-field
       v-field="form.collection"
       v-validate="'required'"
@@ -29,7 +29,7 @@
           :name="sortFieldName"
           :error-messages="errors.collect(sortFieldName)"
           :disabled="disabled"
-          clearable="clearable"
+          clearable
         />
       </v-flex>
     </v-layout>

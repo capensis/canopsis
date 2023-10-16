@@ -1,13 +1,13 @@
 <template>
   <c-clickable-tooltip
     class="c-extra-details"
-    top="top"
+    top
   >
     <template #activator="">
       <span class="c-extra-details__badge purple lighten-2">
         <v-icon
           color="white"
-          small="small"
+          small
         >{{ icon }}</v-icon></span>
     </template>
     <div class="text-md-center">

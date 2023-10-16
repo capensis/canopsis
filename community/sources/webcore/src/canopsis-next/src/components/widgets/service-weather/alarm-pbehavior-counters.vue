@@ -1,12 +1,12 @@
 <template>
   <v-layout
     class="alarm-counters"
-    column="column"
+    column
   >
     <v-tooltip
       v-for="counter in preparedCounters.selected"
       :key="counter.key"
-      top="top"
+      top
     >
       <template #activator="{ on }">
         <alarm-counter
@@ -14,11 +14,12 @@
           :count="counter.count"
           :icon="counter.icon"
         />
-      </template><span>{{ counter.name }}</span>
+      </template>
+      <span>{{ counter.name }}</span>
     </v-tooltip>
     <v-tooltip
       v-if="otherCountersValue"
-      top="top"
+      top
     >
       <template #activator="{ on }">
         <alarm-counter

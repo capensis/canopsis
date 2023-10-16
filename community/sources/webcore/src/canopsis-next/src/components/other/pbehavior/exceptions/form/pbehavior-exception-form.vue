@@ -1,8 +1,8 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-name-field
       v-field="form.name"
-      required="required"
+      required
     />
     <v-text-field
       v-field="form.description"
@@ -13,7 +13,7 @@
     />
     <pbehavior-exceptions-field
       v-field="form.exdates"
-      with-exdate-type="with-exdate-type"
+      with-exdate-type
     >
       <template #no-data="">
         <c-alert type="info">

@@ -3,7 +3,7 @@
     <v-fade-transition mode="out-in">
       <c-progress-overlay
         v-if="pending"
-        pending="pending"
+        pending
       />
       <div
         class="playlist"
@@ -19,8 +19,8 @@
               <span class="playlist__timer white--text mr-2">{{ time | duration }}</span>
               <v-btn
                 :disabled="!activeTab"
-                dark="dark"
-                icon="icon"
+                dark
+                icon
                 @click="prevTab"
               >
                 <v-icon>skip_previous</v-icon>
@@ -28,8 +28,8 @@
               <v-btn
                 v-if="pausing || !played"
                 :disabled="!activeTab"
-                dark="dark"
-                icon="icon"
+                dark
+                icon
                 @click="play"
               >
                 <v-icon>play_arrow</v-icon>
@@ -37,16 +37,16 @@
               <v-btn
                 v-else
                 :disabled="!activeTab"
-                dark="dark"
-                icon="icon"
+                dark
+                icon
                 @click="pause"
               >
                 <v-icon>pause</v-icon>
               </v-btn>
               <v-btn
                 :disabled="!activeTab"
-                dark="dark"
-                icon="icon"
+                dark
+                icon
                 @click="nextTab"
               >
                 <v-icon>skip_next</v-icon>
@@ -72,10 +72,10 @@
           >
             <v-btn
               color="primary"
-              large="large"
+              large
               @click="play"
             >
-              <v-icon large="large">
+              <v-icon large>
                 play_arrow
               </v-icon>
             </v-btn>

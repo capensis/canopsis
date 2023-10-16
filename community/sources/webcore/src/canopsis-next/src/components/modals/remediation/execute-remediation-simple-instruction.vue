@@ -1,7 +1,7 @@
 <template>
   <modal-wrapper
     :close="closeModal"
-    minimize="minimize"
+    minimize
   >
     <template #title="">
       <span>{{ config.assignedInstruction.name }}</span>
@@ -10,11 +10,11 @@
       <v-fade-transition>
         <v-layout
           v-if="pending"
-          justify-center="justify-center"
+          justify-center
         >
           <v-progress-circular
             color="primary"
-            indeterminate="indeterminate"
+            indeterminate
           />
         </v-layout>
         <remediation-instruction-simple-execute
@@ -27,7 +27,7 @@
     </template>
     <template #actions="">
       <v-btn
-        depressed="depressed"
+        depressed
         text
         @click="closeModal"
       >

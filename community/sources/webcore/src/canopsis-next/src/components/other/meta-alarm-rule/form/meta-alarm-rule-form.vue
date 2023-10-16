@@ -7,7 +7,7 @@
     />
     <c-name-field
       v-field="form.name"
-      required="required"
+      required
     />
     <c-description-field
       v-field="form.output_template"

@@ -1,8 +1,8 @@
 <template>
   <v-card>
     <v-card-text>
-      <v-layout column="column">
-        <v-layout align-center="align-center">
+      <v-layout column>
+        <v-layout align-center>
           <v-text-field
             class="mr-2"
             v-field="form.reference"
@@ -16,7 +16,7 @@
               <c-help-icon
                 :text="$t('externalData.tooltips.reference')"
                 icon="help"
-                left="left"
+                left
               />
             </template>
           </v-text-field>
@@ -30,7 +30,7 @@
           <v-btn
             class="mr-0"
             v-if="!disabled"
-            icon="icon"
+            icon
             @click="remove"
           >
             <v-icon color="error">

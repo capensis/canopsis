@@ -2,7 +2,7 @@
   <c-zoom-overlay>
     <v-layout
       class="geomap-editor"
-      column="column"
+      column
     >
       <geomap
         class="geomap-editor__map mb-2"
@@ -28,7 +28,7 @@
         />
         <geomap-control position="topleft">
           <v-tooltip
-            right="right"
+            right
             max-width="unset"
             min-width="max-content"
           >
@@ -38,13 +38,14 @@
                 v-on="on"
                 :class="{ 'lighten-4': !addOnClick }"
                 :disabled="shown"
-                icon="icon"
-                dark="dark"
+                icon
+                dark
                 @click="toggleAddingMode"
               >
                 <v-icon>add_location</v-icon>
               </v-btn>
-            </template><span>{{ $t('map.toggleAddingPointMode') }}</span>
+            </template>
+            <span>{{ $t('map.toggleAddingPointMode') }}</span>
           </v-tooltip>
         </geomap-control>
         <geomap-control position="bottomright">
@@ -53,7 +54,7 @@
             size="32"
             color="secondary"
             icon="help"
-            top="top"
+            top
           />
         </geomap-control>
         <geomap-tile-layer
@@ -61,7 +62,7 @@
           :url="$config.OPEN_STREET_LAYER_URL"
           :visible="true"
           layer-type="base"
-          no-wrap="no-wrap"
+          no-wrap
         />
         <geomap-cluster-group
           ref="pointsFeatureGroup"
@@ -76,7 +77,6 @@
             :draggable="!data.is_entity_coordinates && !shown"
             @dragend="finishMovingMarker"
             @dblclick="openEditPointForm(data)"
-            @click=""
           >
             <geomap-icon :icon-anchor="icon.anchor">
               <point-icon
@@ -106,7 +106,7 @@
           :position-y="clientY"
           :editing="!!editingPoint"
           :exists-entities="existsEntities"
-          coordinates="coordinates"
+          coordinates
           @cancel="closePointDialog"
           @submit="submitPointDialog"
           @remove="showRemovePointModal"

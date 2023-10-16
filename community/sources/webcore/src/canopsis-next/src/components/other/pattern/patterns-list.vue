@@ -5,9 +5,9 @@
     :loading="pending"
     :total-items="totalItems"
     :pagination="pagination"
-    select-all="select-all"
-    search="search"
-    advanced-pagination="advanced-pagination"
+    select-all
+    search
+    advanced-pagination
     @update:pagination="$emit('update:pagination', $event)"
   >
     <template #mass-actions="{ selected }">

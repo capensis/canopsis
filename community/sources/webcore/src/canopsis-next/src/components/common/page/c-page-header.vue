@@ -5,7 +5,7 @@
       <v-btn
         class="mr-0"
         v-if="hasMessage"
-        icon="icon"
+        icon
         @click="toggleMessageVisibility"
       >
         <v-icon color="info">
@@ -17,7 +17,7 @@
       <div v-if="hasMessage && shownMessage">
         <v-layout
           class="pb-2"
-          justify-center="justify-center"
+          justify-center
         >
           <c-compiled-template
             class="subheading page-header__message pre-wrap"
@@ -27,7 +27,7 @@
         <v-layout
           class="pb-2"
           v-show="!messageWasHidden"
-          justify-center="justify-center"
+          justify-center
         >
           <v-btn
             color="primary"

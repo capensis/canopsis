@@ -1,8 +1,8 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-tooltip
       v-if="!hideAckResources"
-      top="top"
+      top
     >
       <template #activator="{ on }">
         <v-checkbox
@@ -11,7 +11,8 @@
           :label="$t('alarm.ackResources')"
           color="primary"
         />
-      </template><span>{{ $t('alarm.ackResourcesQuestion') }}</span>
+      </template>
+      <span>{{ $t('alarm.ackResourcesQuestion') }}</span>
     </v-tooltip>
     <c-description-field
       v-field="form.comment"

@@ -5,7 +5,7 @@
       :text="$t('alarm.tooltips.priority')"
       icon-class="priority-help-icon ml-1"
       size="16"
-      top="top"
+      top
     /></span>
 </template>
 

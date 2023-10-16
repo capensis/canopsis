@@ -1,11 +1,11 @@
 <template>
   <div class="alarms-timeline-steps">
     <ul
-      v-for="(steps, day) in groupedSteps"
+      v-for="(groupSteps, day) in groupedSteps"
       :key="day"
     >
       <li
-        v-for="(step, index) in steps"
+        v-for="(step, index) in groupSteps"
         :key="index"
       >
         <div

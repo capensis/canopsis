@@ -5,10 +5,10 @@
     :loading="pending"
     :headers="headers"
     :total-items="totalItems"
-    search="search"
-    advanced-pagination="advanced-pagination"
-    hide-actions="hide-actions"
-    expand="expand"
+    search
+    advanced-pagination
+    hide-actions
+    expand
     @update:pagination="$emit('update:pagination', $event)"
   >
     <template #created="{ item }">

@@ -13,7 +13,7 @@
       </c-draggable-step-number>
     </v-flex>
     <v-flex xs11="xs11">
-      <v-layout justify-space-between="justify-space-between">
+      <v-layout justify-space-between>
         <v-flex xs11="xs11">
           <v-layout>
             <c-expand-btn
@@ -22,7 +22,7 @@
               v-model="expanded"
               :color="!expanded && hasChildrenError ? 'error' : ''"
             />
-            <v-layout column="column">
+            <v-layout column>
               <v-text-field
                 v-field="operation.name"
                 v-validate="'required'"
@@ -35,7 +35,7 @@
               <v-expand-transition mode="out-in">
                 <v-layout
                   v-if="expanded"
-                  column="column"
+                  column
                 >
                   <remediation-instruction-time-to-complete-field
                     v-field="operation.time_to_complete"
@@ -47,7 +47,7 @@
                     :value="operation.description"
                     :label="$t('common.description')"
                     :disabled="disabled"
-                    hide-details="hide-details"
+                    hide-details
                   />
                   <text-editor-field
                     v-else
@@ -69,13 +69,15 @@
               </v-expand-transition>
             </v-layout>
           </v-layout>
-        </v-flex><span>
+        </v-flex>
+        <span>
           <c-action-btn
             class="mt-1"
             v-if="!disabled"
             type="delete"
             @click="$emit('remove')"
-          /></span>
+          />
+        </span>
       </v-layout>
     </v-flex>
   </v-layout>

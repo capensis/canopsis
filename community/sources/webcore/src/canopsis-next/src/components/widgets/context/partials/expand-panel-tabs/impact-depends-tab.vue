@@ -4,7 +4,7 @@
       class="ma-0"
       :active="pending"
       height="2"
-      indeterminate="indeterminate"
+      indeterminate
     />
     <div class="pa-3">
       <v-layout>

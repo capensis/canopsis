@@ -6,13 +6,13 @@
         v-bind="{ setToday, todayDate, calendar }"
       >
         <v-flex>
-          <v-tooltip bottom="bottom">
+          <v-tooltip bottom>
             <template #activator="{ on }">
               <v-btn
                 class="ds-skinny-button ds-calendar-app-action"
                 v-on="on"
                 :icon="$vuetify.breakpoint.smAndDown"
-                depressed="depressed"
+                depressed
                 @click="setToday"
               >
                 <span v-if="$vuetify.breakpoint.mdAndUp">{{ labels.today }}</span>
@@ -20,7 +20,8 @@
                   {{ labels.todayIcon }}
                 </v-icon>
               </v-btn>
-            </template><span>{{ todayDate }}</span>
+            </template>
+            <span>{{ todayDate }}</span>
           </v-tooltip>
         </v-flex>
       </slot>
@@ -29,35 +30,37 @@
         v-bind="{ prev, prevLabel, next, nextLabel, summary, calendar }"
       >
         <v-flex class="text-sm-center">
-          <v-tooltip bottom="bottom">
+          <v-tooltip bottom>
             <template #activator="{ on }">
               <v-btn
                 class="mx-2 ds-calendar-app-action"
                 v-on="on"
-                icon="icon"
-                depressed="depressed"
+                icon
+                depressed
                 @click="prev"
               >
                 <v-icon>keyboard_arrow_left</v-icon>
               </v-btn>
-            </template><span>{{ prevLabel }}</span>
+            </template>
+            <span>{{ prevLabel }}</span>
           </v-tooltip>
           <calendar-app-period-picker
             :calendar="calendar"
             @change="selectPeriod"
           />
-          <v-tooltip bottom="bottom">
+          <v-tooltip bottom>
             <template #activator="{ on }">
               <v-btn
                 class="mx-2 ds-calendar-app-action"
                 v-on="on"
-                icon="icon"
-                depressed="depressed"
+                icon
+                depressed
                 @click="next"
               >
                 <v-icon>keyboard_arrow_right</v-icon>
               </v-btn>
-            </template><span>{{ nextLabel }}</span>
+            </template>
+            <span>{{ nextLabel }}</span>
           </v-tooltip>
         </v-flex>
       </slot>

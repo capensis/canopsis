@@ -2,7 +2,7 @@
   <widget-settings-item :title="$t('settings.mainParameter.title')">
     <c-progress-overlay
       :pending="pending"
-      transition="transition"
+      transition
     />
     <v-radio-group
       v-field="form.criteria"
@@ -24,7 +24,7 @@
           v-if="tooltip"
           :text="tooltip"
           icon="help"
-          top="top"
+          top
         />
       </v-layout>
     </v-radio-group>
@@ -33,15 +33,15 @@
         v-field="form.columnName"
         :label="$t('settings.columnName')"
         name="columnName"
-        required="required"
+        required
       />
       <field-filters-list
         v-field="form.patterns"
         name="patterns"
-        with-entity="with-entity"
-        addable="addable"
-        editable="editable"
-        required="required"
+        with-entity
+        addable
+        editable
+        required
       />
     </template>
   </widget-settings-item>

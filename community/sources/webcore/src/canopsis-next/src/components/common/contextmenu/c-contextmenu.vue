@@ -6,10 +6,10 @@
       :position-x="position.x"
       :position-y="position.y"
       :close-on-content-click="false"
-      ignore-click-upper-outside="ignore-click-upper-outside"
-      offset-overflow="offset-overflow"
-      offset-x="offset-x"
-      absolute="absolute"
+      ignore-click-upper-outside
+      offset-overflow
+      offset-x
+      absolute
     >
       <slot
         name="menu"

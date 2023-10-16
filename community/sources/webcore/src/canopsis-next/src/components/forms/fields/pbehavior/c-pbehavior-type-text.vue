@@ -10,7 +10,7 @@
     :small-chips="chips"
     item-text="name"
     item-value="_id"
-    disabled="disabled"
+    disabled
   />
 </template>
 

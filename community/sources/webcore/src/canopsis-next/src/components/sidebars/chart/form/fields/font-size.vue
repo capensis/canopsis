@@ -4,7 +4,7 @@
       class="pt-0 mt-0"
       v-model="enabled"
       :name="name"
-      hide-details="hide-details"
+      hide-details
     >
       <v-radio
         :value="false"
@@ -20,7 +20,7 @@
     <c-number-field
       v-if="enabled"
       v-field="value"
-      required="required"
+      required
     />
   </widget-settings-item>
 </template>

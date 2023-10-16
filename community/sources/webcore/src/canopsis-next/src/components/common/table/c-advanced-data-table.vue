@@ -1,7 +1,7 @@
 <template>
   <div class="c-advanced-data-table">
     <v-layout
-      wrap="wrap"
+      wrap
       v-bind="toolbarProps"
     >
       <v-flex
@@ -30,7 +30,7 @@
       />
       <v-flex
         v-if="hasMassActionsSlot"
-        xs12="xs12"
+        xs12
       >
         <v-expand-transition>
           <v-layout
@@ -80,7 +80,7 @@
             >
               <v-layout
                 class="c-checkbox-wrapper"
-                justify-start="justify-start"
+                justify-start
               >
                 <slot
                   v-if="selectAll"
@@ -90,14 +90,14 @@
                   <v-checkbox-functional
                     v-if="!isDisabledItem(props.item)"
                     v-model="props.selected"
-                    primary="primary"
-                    hide-details="hide-details"
+                    primary
+                    hide-details
                   />
                   <v-checkbox-functional
                     v-else
-                    primary="primary"
-                    disabled="disabled"
-                    hide-details="hide-details"
+                    primary
+                    disabled
+                    hide-details
                   />
                 </slot>
                 <slot

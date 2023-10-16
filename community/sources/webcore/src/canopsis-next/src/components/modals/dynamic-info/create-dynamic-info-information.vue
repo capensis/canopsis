@@ -1,6 +1,6 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close="close">
+    <modal-wrapper close>
       <template #title="">
         <span>{{ $t('modals.createDynamicInfoInformation.create.title') }}</span>
       </template>
@@ -11,20 +11,20 @@
             v-validate="nameRules"
             :label="$t('common.name')"
             :error-messages="errors.collect('name')"
-            name="name"
+            name
           />
           <c-mixed-field
             v-model="form.value"
             :label="$t('common.value')"
             name="value"
-            required="required"
+            required
           />
         </div>
       </template>
       <template #actions="">
         <v-btn
-          depressed="depressed"
-          text="text"
+          depressed
+          text
           @click="$modals.hide"
         >
           {{ $t('common.cancel') }}

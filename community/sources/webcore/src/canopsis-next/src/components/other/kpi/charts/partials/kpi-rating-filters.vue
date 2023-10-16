@@ -2,7 +2,7 @@
   <div class="kpi-rating-toolbar">
     <v-layout
       class="ml-4 my-4"
-      wrap="wrap"
+      wrap
     >
       <c-quick-date-interval-field
         class="mr-4"
@@ -18,14 +18,14 @@
       <kpi-rating-criteria-field
         class="mr-4 kpi-rating-toolbar__criteria"
         :value="query.criteria"
-        mandatory="mandatory"
+        mandatory
         @input="updateCriteria"
       />
       <kpi-rating-metric-field
         class="mr-4 kpi-rating-toolbar__metric"
         v-field="query.metric"
         :type="criteriaType"
-        hide-details="hide-details"
+        hide-details
       />
       <c-records-per-page-field v-field="query.rowsPerPage" />
     </v-layout>

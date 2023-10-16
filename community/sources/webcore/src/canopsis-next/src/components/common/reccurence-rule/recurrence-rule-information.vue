@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-information-block-row :label="$t('common.recurrence')">
       <span class="c-word-break-all">{{ recurrenceRuleString }}</span>
     </c-information-block-row>

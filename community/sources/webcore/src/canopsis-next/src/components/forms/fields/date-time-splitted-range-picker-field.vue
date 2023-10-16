@@ -27,7 +27,7 @@
           :name="`${name}_end`"
           :min="endMin"
           :max="endMax"
-          reverse="reverse"
+          reverse
           @input="$emit('update:end', $event)"
         />
       </v-flex>

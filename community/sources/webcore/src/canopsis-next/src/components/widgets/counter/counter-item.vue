@@ -4,20 +4,20 @@
     :class="itemClasses"
     :style="itemStyle"
     :show-button="hasAlarmsListAccess"
-    tile="tile"
+    tile
     @show:alarms="showAlarmListModal"
   >
     <v-btn
       class="counter-item__help-btn ma-0"
       v-if="hasVariablesHelpAccess"
-      icon="icon"
-      small="small"
+      icon
+      small
       @click.stop="showVariablesHelpModal"
     >
       <v-icon>help</v-icon>
     </v-btn>
     <div>
-      <v-layout justify-start="justify-start">
+      <v-layout justify-start>
         <v-icon
           class="px-3 py-2"
           size="2em"

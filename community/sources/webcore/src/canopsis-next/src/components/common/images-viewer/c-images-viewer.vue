@@ -2,7 +2,7 @@
   <label>
     <v-layout
       class="images-viewer white"
-      align-center="align-center"
+      align-center
     >
       <v-window v-model="activeImageIndex">
         <v-window-item
@@ -15,7 +15,10 @@
           <div
             class="images-viewer__img-title white--text ml-1"
             v-if="image.name"
-          >{{ image.name }}</div><img
+          >
+            {{ image.name }}
+          </div>
+          <img
             class="images-viewer__img"
             :src="image.src"
             :alt="image.name"
@@ -25,20 +28,20 @@
       <v-layout
         class="images-viewer__actions"
         v-if="images.length"
-        justify-space-between="justify-space-between"
-        reverse="reverse"
+        justify-space-between
+        reverse
       >
         <v-btn
-          icon="icon"
-          text="text"
+          icon
+          text
           color="white"
           @click="nextImage"
         >
           <v-icon :size="32">chevron_right</v-icon>
         </v-btn>
         <v-btn
-          icon="icon"
-          text="text"
+          icon
+          text
           color="white"
           @click="prevImage"
         >
@@ -48,8 +51,12 @@
       <v-layout
         class="images-viewer__image-count"
         v-if="images.length"
-        justify-space-between="justify-space-between"
-      ><span class="white--text pl-1">{{ activeImageIndex + 1 }}/{{ images.length }}</span></v-layout>
+        justify-space-between
+      >
+        <span class="white--text pl-1">
+          {{ activeImageIndex + 1 }}/{{ images.length }}
+        </span>
+      </v-layout>
     </v-layout>
   </label>
 </template>

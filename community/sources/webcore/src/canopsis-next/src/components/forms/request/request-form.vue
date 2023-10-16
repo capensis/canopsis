@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <request-url-field
       v-if="!hideUrl"
       v-field="form"
@@ -18,7 +18,7 @@
             v-field="form.timeout"
             :disabled="disabled"
             :units-label="$t('common.unit')"
-            clearable="clearable"
+            clearable
           />
         </c-information-block>
       </v-flex>
@@ -35,7 +35,7 @@
       v-field="form.skip_verify"
       :label="$t('common.request.skipVerify')"
       :disabled="disabled"
-      hide-details="hide-details"
+      hide-details
     />
     <request-auth-field
       v-field="form.auth"

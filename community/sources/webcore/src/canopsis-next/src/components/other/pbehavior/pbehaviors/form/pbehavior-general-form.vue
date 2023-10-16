@@ -1,40 +1,40 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-enabled-field
       v-if="!noEnabled"
       v-field="form.enabled"
-      hide-details="hide-details"
+      hide-details
     />
     <c-name-field
       v-field="form.name"
-      required="required"
+      required
     />
     <v-flex
       class="mt-3"
-      xs12="xs12"
+      xs12
     >
       <c-enabled-field
         class="mt-0 mb-1"
         v-if="withStartOnTrigger"
         :value="form.start_on_trigger"
         :label="$t('modals.createPbehavior.steps.general.fields.startOnTrigger')"
-        hide-details="hide-details"
+        hide-details
         @input="updateStartOnTrigger"
       />
       <c-duration-field
         v-if="form.start_on_trigger"
         v-field="form.duration"
-        required="required"
+        required
       />
       <template v-else>
-        <v-layout align-center="align-center">
+        <v-layout align-center>
           <v-flex xs3="xs3">
             <v-checkbox
               class="mt-0"
               v-model="fullDay"
               :label="$t('modals.createPbehavior.steps.general.fields.fullDay')"
               color="primary"
-              hide-details="hide-details"
+              hide-details
             />
           </v-flex>
           <v-flex
@@ -46,7 +46,7 @@
               v-model="noEnding"
               :label="$t('modals.createPbehavior.steps.general.fields.noEnding')"
               color="primary"
-              hide-details="hide-details"
+              hide-details
             />
           </v-flex>
           <v-flex xs6="xs6">
@@ -72,16 +72,16 @@
           <c-pbehavior-reason-field
             class="mr-2"
             v-field="form.reason"
-            required="required"
-            return-object="return-object"
+            required
+            return-object
           />
         </v-flex>
         <v-flex xs6="xs6">
           <c-pbehavior-type-field
             class="ml-2"
             v-field="form.type"
-            required="required"
-            return-object="return-object"
+            required
+            return-object
           />
         </v-flex>
       </v-layout>

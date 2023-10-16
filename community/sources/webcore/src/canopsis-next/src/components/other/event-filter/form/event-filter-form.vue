@@ -18,9 +18,9 @@
     </v-layout>
     <c-description-field
       v-field="form.description"
-      required="required"
+      required
     />
-    <v-layout justify-space-between="justify-space-between">
+    <v-layout justify-space-between>
       <c-enabled-field v-field="form.enabled" />
       <c-priority-field v-field="form.priority" />
     </v-layout>
@@ -33,10 +33,10 @@
     />
     <c-patterns-field
       v-field="form.patterns"
-      with-entity="with-entity"
-      with-event="with-event"
-      some-required="some-required"
-      entity-counters-type="entity-counters-type"
+      with-entity
+      with-event
+      some-required
+      entity-counters-type
     />
     <template v-if="hasAdditionalOptions">
       <v-divider class="my-3" />

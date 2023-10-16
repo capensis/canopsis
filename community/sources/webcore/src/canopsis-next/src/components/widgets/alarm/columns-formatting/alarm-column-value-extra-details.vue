@@ -1,7 +1,7 @@
 <template>
   <v-layout
     class="alarm-column-value-extra-details"
-    wrap="wrap"
+    wrap
   >
     <extra-details-ack
       v-if="alarm.v.ack"

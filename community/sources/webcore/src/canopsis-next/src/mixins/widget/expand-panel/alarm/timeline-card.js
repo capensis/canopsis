@@ -31,7 +31,7 @@ export const widgetExpandPanelAlarmTimelineCard = {
     states() {
       const { val: states } = this.step;
       const prefix = 'state:';
-      console.log(states);
+
       return Object.keys(states).reduce((acc, key) => {
         if (key.startsWith(prefix)) {
           const stateValue = parseInt(key.replace(prefix, ''), 10);

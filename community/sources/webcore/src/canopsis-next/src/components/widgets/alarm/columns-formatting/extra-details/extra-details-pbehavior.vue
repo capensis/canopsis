@@ -2,7 +2,7 @@
   <div>
     <v-tooltip
       class="c-extra-details"
-      top="top"
+      top
     >
       <template #activator="{ on }">
         <span
@@ -12,7 +12,7 @@
         >
           <v-icon
             :color="iconColor"
-            small="small"
+            small
           >{{ pbehaviorInfo.icon_name }}</v-icon></span>
       </template>
       <div>
