@@ -34,13 +34,13 @@
     v-fade-transition(v-if="servicesPending", key="progress", mode="out-in")
       v-progress-linear.progress-linear-absolute--top(height="2", indeterminate)
     v-layout.fill-height(key="content", wrap)
-      v-alert(v-if="hasNoData && servicesError", :value="true", type="error")
+      v-alert(v-if="hasNoData && servicesError", type="error")
         v-layout(align-center)
           div.mr-4 {{ $t('errors.default') }}
           c-help-icon(icon="help", top)
             div(v-if="servicesError.name") {{ $t('common.name') }}: {{ servicesError.name }}
             div(v-if="servicesError.description") {{ $t('common.description') }}: {{ servicesError.description }}
-      v-alert(v-else-if="hasNoData", :value="true", type="info") {{ $t('common.noData') }}
+      v-alert(v-else-if="hasNoData", type="info") {{ $t('common.noData') }}
       template(v-else)
         v-flex(
           v-for="service in services",

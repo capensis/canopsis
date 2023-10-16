@@ -31,7 +31,7 @@
           v-btn.secondary(v-on="on", @click="refresh")
             v-icon refresh
         span {{ $t('modals.service.refreshEntities') }}
-      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.close') }}
+      v-btn(depressed, text, @click="$modals.hide") {{ $t('common.close') }}
 </template>
 
 <script>

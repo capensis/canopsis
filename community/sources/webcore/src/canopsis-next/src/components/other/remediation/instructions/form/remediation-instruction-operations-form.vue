@@ -2,7 +2,7 @@
   v-layout.mt-2(column)
     v-layout(row)
       v-flex(v-if="!operations.length", xs11)
-        v-alert(:value="true", type="info") {{ $t('remediation.instruction.emptyOperations') }}
+        v-alert(type="info") {{ $t('remediation.instruction.emptyOperations') }}
     c-draggable-list-field(
       v-field="operations",
       :disabled="disabled",

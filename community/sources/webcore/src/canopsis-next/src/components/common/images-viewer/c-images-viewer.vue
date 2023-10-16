@@ -11,9 +11,9 @@
           div.images-viewer__img-title.white--text.ml-1(v-if="image.name") {{ image.name }}
           img.images-viewer__img(:src="image.src", :alt="image.name")
       v-layout.images-viewer__actions(v-if="images.length", row, justify-space-between, reverse)
-        v-btn(icon, flat, color="white", @click="nextImage")
+        v-btn(icon, text, color="white", @click="nextImage")
           v-icon(:size="32") chevron_right
-        v-btn(icon, flat, color="white", @click="prevImage")
+        v-btn(icon, text, color="white", @click="prevImage")
           v-icon(:size="32") chevron_left
       v-layout.images-viewer__image-count(v-if="images.length", row, justify-space-between)
         span.white--text.pl-1 {{ activeImageIndex + 1 }}/{{ images.length }}

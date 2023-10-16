@@ -6,7 +6,7 @@
       template(#text="")
         event-filter-form(v-model="form", :is-disabled-id-field="config.isDisabledIdField")
       template(#actions="")
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-btn(depressed, text, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn(
           v-if="hasVariablesFields",
           :loading="checking",

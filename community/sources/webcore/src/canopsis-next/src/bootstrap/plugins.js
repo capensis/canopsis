@@ -8,9 +8,8 @@ import 'vue-tour/dist/vue-tour.css';
 import 'dayspan-vuetify/dist/lib/dayspan-vuetify.min.css';
 
 import { MODALS } from '@/constants';
-import { DEFAULT_THEME_COLORS, MEDIA_QUERIES_BREAKPOINTS } from '@/config';
+import { MEDIA_QUERIES_BREAKPOINTS } from '@/config';
 
-import Vuetify from '@/plugins/vuetify';
 import ValidatorPlugin from '@/plugins/validator';
 import ModalsPlugin from '@/plugins/modals';
 import PopupsPlugin from '@/plugins/popups';
@@ -28,7 +27,6 @@ import i18n from '@/i18n';
 import Filters from '@/filters';
 
 import { setSeveralFields } from '@/helpers/immutable';
-import { themePropertiesToCSSVariables } from '@/helpers/entities/theme/entity';
 
 import * as modalsComponents from '@/components/modals';
 import * as sidebarsComponents from '@/components/sidebars';
@@ -40,9 +38,6 @@ import * as sidebarsComponents from '@/components/sidebars';
 export const bootstrapApplicationPlugins = (Vue) => {
   Vue.use(PortalVue);
   Vue.use(Filters);
-  Vue.use(Vuetify, {
-    theme: themePropertiesToCSSVariables(DEFAULT_THEME_COLORS),
-  });
 
   Vue.use(VueFullScreen);
   Vue.use(DaySpanVuetifyPlugin, {

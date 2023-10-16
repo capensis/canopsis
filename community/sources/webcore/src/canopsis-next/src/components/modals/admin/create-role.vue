@@ -6,7 +6,7 @@
       template(#text="")
         role-form(v-model="form", :with-template="config.withTemplate")
       template(#actions="")
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-btn(depressed, text, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary.white--text(
           :disabled="isDisabled",
           type="submit"

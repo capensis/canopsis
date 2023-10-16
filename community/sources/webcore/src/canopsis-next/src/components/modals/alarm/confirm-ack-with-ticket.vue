@@ -3,7 +3,7 @@
     template(#title="")
       span {{ $t('common.confirmation') }}
     template(#text="")
-      v-alert(:value="true", type="info") {{ $t('modals.confirmAckWithTicket.infoMessage') }}
+      v-alert(type="info") {{ $t('modals.confirmAckWithTicket.infoMessage') }}
     template(#actions="")
       v-btn(
         depressed,

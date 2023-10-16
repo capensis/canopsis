@@ -6,7 +6,7 @@
       template(#text="")
         remediation-configuration-form(v-model="form")
       template(#actions="")
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-btn(depressed, text, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
           :disabled="isDisabled",
           :loading="submitting",

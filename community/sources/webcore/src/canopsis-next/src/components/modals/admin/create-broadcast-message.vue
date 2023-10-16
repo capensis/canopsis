@@ -8,7 +8,7 @@
           broadcast-message(:message="message", :color="form.color")
           broadcast-message-form.pa-3(v-model="form")
       template(#actions="")
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-btn(depressed, text, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary.white--text(
           :disabled="isDisabled",
           type="submit"

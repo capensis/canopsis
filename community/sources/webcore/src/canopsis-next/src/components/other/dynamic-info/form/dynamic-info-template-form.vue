@@ -10,7 +10,7 @@
     h3 {{ $t('modals.createDynamicInfoTemplate.fields.names') }}
     dynamic-info-template-names-field(v-field="template.names")
       template(#no-data="")
-        v-alert(:value="true", type="info") {{ $t('modals.createDynamicInfoTemplate.emptyNames') }}
+        v-alert(type="info") {{ $t('modals.createDynamicInfoTemplate.emptyNames') }}
 </template>
 
 <script>

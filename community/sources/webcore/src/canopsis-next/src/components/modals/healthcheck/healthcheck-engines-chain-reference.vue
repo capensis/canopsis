@@ -13,7 +13,7 @@
             :engines-parameters="enginesParameters"
           )
     template(#actions="")
-      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.ok') }}
+      v-btn(depressed, text, @click="$modals.hide") {{ $t('common.ok') }}
 </template>
 
 <script>

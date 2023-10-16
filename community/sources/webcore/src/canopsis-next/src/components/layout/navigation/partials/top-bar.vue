@@ -1,11 +1,10 @@
 <template lang="pug">
-  v-toolbar.top-bar.primary(
+  v-app-bar.top-bar.primary(
     :height="$config.TOP_BAR_HEIGHT",
     dense,
-    fixed,
-    app
+    fixed
   )
-    v-toolbar-side-icon.ml-2.white--text(
+    v-app-bar-nav-icon.ml-2.white--text(
       v-if="isShownGroupsSideBar && !$route.meta.simpleNavigation",
       @click="$emit('toggleSideBar')"
     )

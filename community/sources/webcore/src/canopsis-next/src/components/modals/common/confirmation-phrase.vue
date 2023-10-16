@@ -4,7 +4,7 @@
       template(#title="")
         span {{ config.title }}
       template(#text="")
-        v-alert(:value="true", color="warning", icon="info")
+        v-alert(color="warning", icon="info")
           span.pre-line(v-html="config.text")
         div.my-3
           p.mb-2 {{ config.phraseText }}
