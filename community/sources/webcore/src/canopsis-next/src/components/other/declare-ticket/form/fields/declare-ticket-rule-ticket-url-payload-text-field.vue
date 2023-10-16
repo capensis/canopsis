@@ -11,7 +11,7 @@
         :text="$t('declareTicket.responseFieldHelpText', { field: $t('declareTicket.ticketURL') })"
         icon="help"
         color="grey darken-1"
-        left="left"
+        left
       />
     </template>
   </c-payload-text-field>

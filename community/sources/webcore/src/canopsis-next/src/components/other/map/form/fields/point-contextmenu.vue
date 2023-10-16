@@ -4,10 +4,10 @@
     :position-x="positionX"
     :position-y="positionY"
     :close-on-content-click="false"
-    absolute="absolute"
+    absolute
     @input="$emit('close')"
   >
-    <v-list dense="dense">
+    <v-list dense>
       <v-list-item
         v-for="item in items"
         :key="item.event"

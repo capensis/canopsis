@@ -8,7 +8,7 @@
       v-model="form"
       :no-pattern="!!entityPattern"
     />
-    <v-layout justify-end="justify-end">
+    <v-layout justify-end>
       <v-btn
         class="error"
         v-show="pbehavior"
@@ -19,7 +19,7 @@
       </v-btn>
       <v-btn
         class="mr-0 mb-0"
-        depressed="depressed"
+        depressed
         text
         @click="cancel"
       >

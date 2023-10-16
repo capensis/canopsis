@@ -9,7 +9,7 @@
       <c-density-btn-toggle
         v-field="value"
         :name="name"
-        column="column"
+        column
       />
     </v-container>
   </v-list-group>

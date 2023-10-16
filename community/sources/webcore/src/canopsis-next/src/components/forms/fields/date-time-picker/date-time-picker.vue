@@ -9,8 +9,8 @@
     <div class="date-time-picker__body">
       <v-layout
         class="py-2"
-        align-center="align-center"
-        justify-center="justify-center"
+        align-center
+        justify-center
       >
         <v-flex class="v-date-time-picker__subtitle-wrapper">
           <span
@@ -32,7 +32,7 @@
           :locale="$i18n.locale"
           :value="dateString"
           color="primary"
-          no-title="no-title"
+          no-title
           @input="updateDate"
         />
       </div>
@@ -41,11 +41,11 @@
       <v-divider />
       <v-layout
         class="mt-1"
-        justify-space-around="justify-space-around"
+        justify-space-around
       >
         <v-btn
-          depressed="depressed"
-          text="text"
+          depressed
+          text
           @click="$listeners.close"
         >
           {{ $t('common.cancel') }}

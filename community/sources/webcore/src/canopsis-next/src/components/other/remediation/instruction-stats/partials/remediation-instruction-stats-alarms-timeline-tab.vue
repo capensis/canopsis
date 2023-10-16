@@ -5,15 +5,15 @@
     :loading="pending"
     :pagination.sync="pagination"
     :total-items="totalItems"
-    search="search"
-    advanced-pagination="advanced-pagination"
+    search
+    advanced-pagination
   >
     <template #toolbar="">
-      <v-layout align-center="align-center">
+      <v-layout align-center>
         <c-enabled-field
           v-model="showFailed"
           :label="$t('remediation.instructionStat.showFailedExecutions')"
-          hide-details="hide-details"
+          hide-details
         />
       </v-layout>
     </template>

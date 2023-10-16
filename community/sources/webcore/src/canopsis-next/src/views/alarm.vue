@@ -5,9 +5,9 @@
     :columns="columns"
     :loading="pending"
     :total-items="alarmItems.length"
-    expandable="expandable"
-    hide-pagination="hide-pagination"
-    has-columns="has-columns"
+    expandable
+    hide-pagination
+    has-columns
   />
 </template>
 

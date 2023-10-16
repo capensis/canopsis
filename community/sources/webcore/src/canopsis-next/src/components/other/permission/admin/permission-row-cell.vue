@@ -6,7 +6,7 @@
       v-on="checkbox.on"
       :key="index"
       :disabled="disabled || disabledForRole"
-      hide-details="hide-details"
+      hide-details
     />
   </td>
 </template>

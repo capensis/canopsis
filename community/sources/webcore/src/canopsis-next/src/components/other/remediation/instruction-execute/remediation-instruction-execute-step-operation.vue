@@ -4,7 +4,7 @@
       class="mt-3"
       xs1="xs1"
     >
-      <v-layout justify-center="justify-center">
+      <v-layout justify-center>
         <v-avatar
           class="white--text"
           color="primary"
@@ -19,8 +19,8 @@
         <v-text-field
           :value="operation.name"
           :label="$t('common.name')"
-          readonly="readonly"
-          hide-details="hide-details"
+          readonly
+          hide-details
           filled
         />
       </v-layout>
@@ -33,32 +33,32 @@
       <v-expand-transition>
         <v-layout
           v-if="isShownDetails"
-          column="column"
+          column
         >
           <text-editor-blurred
             :value="operation.description"
             :label="$t('common.description')"
-            hide-details="hide-details"
+            hide-details
           />
           <v-layout
             class="mt-4"
           >
             <span class="subheading">{{ $t('remediation.instructionExecute.jobs.title') }}</span>
           </v-layout>
-          <v-layout column="column">
+          <v-layout column>
             <remediation-instruction-execute-assigned-jobs-table
               class="mt-4"
               v-if="operation.jobs.length"
               :jobs="operation.jobs"
-              executable="executable"
-              cancelable="cancelable"
+              executable
+              cancelable
               @execute-job="executeJob"
               @cancel-job-execution="cancelJobExecution"
             />
           </v-layout>
           <v-layout
             class="mb-2"
-            justify-end="justify-end"
+            justify-end
           >
             <v-btn
               class="accent"

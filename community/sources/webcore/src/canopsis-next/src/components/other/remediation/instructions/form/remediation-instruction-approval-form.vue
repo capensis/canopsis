@@ -1,11 +1,11 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-checkbox
       v-field="approval.need_approve"
       :label="$t('remediation.instruction.requestApproval')"
       :disabled="disabled"
       color="primary"
-      hide-details="hide-details"
+      hide-details
     />
     <template v-if="approval.need_approve">
       <v-layout
@@ -15,7 +15,7 @@
       </v-layout>
       <v-layout
         v-else
-        align-center="align-center"
+        align-center
       >
         <v-flex xs6="xs6">
           <remediation-instruction-approval-type-field
@@ -29,7 +29,7 @@
             v-field="approval.role"
             :required="isRoleType"
             :name="roleFieldName"
-            autocomplete="autocomplete"
+            autocomplete
           />
           <c-user-picker-field
             v-show="!isRoleType"
@@ -37,7 +37,7 @@
             :required="!isRoleType"
             :name="userFieldName"
             :label="$tc('common.user')"
-            return-object="return-object"
+            return-object
           />
         </v-flex>
       </v-layout>

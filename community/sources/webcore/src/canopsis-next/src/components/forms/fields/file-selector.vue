@@ -8,12 +8,12 @@
       >
         {{ file.name }}
         <v-btn
-          icon="icon"
+          icon
           text
-          small="small"
+          small
           @click="removeFileFromSelections(file.name)"
         >
-          <v-icon small="small">
+          <v-icon small>
             close
           </v-icon>
         </v-btn>

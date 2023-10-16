@@ -1,12 +1,12 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <role-template-field
       v-if="withTemplate"
       v-field="form.permissions"
     />
     <c-name-field
       v-field="form.name"
-      required="required"
+      required
     />
     <v-text-field
       v-field="form.description"
@@ -27,7 +27,7 @@
           >
             <c-duration-field
               v-field="form.auth_config.inactivity_interval"
-              long="long"
+              long
             />
           </c-information-block>
           <c-information-block
@@ -37,7 +37,7 @@
           >
             <c-duration-field
               v-field="form.auth_config.expiration_interval"
-              long="long"
+              long
             />
           </c-information-block>
         </v-layout>

@@ -4,7 +4,7 @@
       <v-list-item>{{ $t('settings.remediationInstructionsFilters') }}</v-list-item>
     </template>
     <v-container>
-      <v-layout wrap="wrap">
+      <v-layout wrap>
         <remediation-instructions-filters-list
           v-field="filters"
           :editable="editable"
@@ -13,7 +13,7 @@
       </v-layout>
       <v-layout
         v-if="addable"
-        wrap="wrap"
+        wrap
       >
         <v-btn
           class="ml-1"

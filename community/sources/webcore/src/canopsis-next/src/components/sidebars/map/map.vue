@@ -26,9 +26,9 @@
           :widget-id="widget._id"
           :addable="hasAccessToAddFilter"
           :editable="hasAccessToEditFilter"
-          with-alarm="with-alarm"
-          with-entity="with-entity"
-          with-pbehavior="with-pbehavior"
+          with-alarm
+          with-entity
+          with-pbehavior
         />
         <v-divider />
       </template>
@@ -45,8 +45,8 @@
         :templates-pending="widgetTemplatesPending"
         :label="$t('settings.alarmsColumns')"
         :type="$constants.ENTITIES_TYPES.alarm"
-        with-template="with-template"
-        with-html="with-html"
+        with-template
+        with-html
         @update:template="updateAlarmsColumnsTemplate"
       />
       <v-divider />
@@ -57,7 +57,7 @@
         :templates-pending="widgetTemplatesPending"
         :label="$t('settings.entitiesColumns')"
         :type="$constants.ENTITIES_TYPES.entity"
-        with-color-indicator="with-color-indicator"
+        with-color-indicator
         @update:template="updateEntitiesColumnsTemplate"
       />
     </widget-settings-group>

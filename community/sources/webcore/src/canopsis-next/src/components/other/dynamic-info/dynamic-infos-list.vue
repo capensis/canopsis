@@ -7,10 +7,10 @@
     :total-items="totalItems"
     :search-tooltip="$t('dynamicInfo.advancedSearch')"
     :select-all="removable"
-    advanced-search="advanced-search"
-    advanced-pagination="advanced-pagination"
-    hide-actions="hide-actions"
-    expand="expand"
+    advanced-search
+    advanced-pagination
+    hide-actions
+    expand
     @update:pagination="$emit('update:pagination', $event)"
   >
     <template #mass-actions="{ selected }">

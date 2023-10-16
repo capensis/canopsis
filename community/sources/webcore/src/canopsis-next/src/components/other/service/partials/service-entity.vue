@@ -28,7 +28,7 @@
               ref="tabs"
               v-model="activeTab"
               slider-color="primary"
-              fixed-tabs="fixed-tabs"
+              fixed-tabs
             >
               <v-tab>{{ $t('modals.service.entity.tabs.info') }}</v-tab>
               <v-tab-item>
@@ -55,10 +55,10 @@
                 <v-tab-item>
                   <pbehaviors-simple-list
                     :entity="entity"
-                    removable="removable"
-                    updatable="updatable"
-                    dense="dense"
-                    with-active-status="with-active-status"
+                    removable
+                    updatable
+                    dense
+                    with-active-status
                   />
                 </v-tab-item>
               </template>

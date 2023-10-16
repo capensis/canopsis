@@ -12,7 +12,7 @@
         v-if="oldMode"
         v-field="value"
         :name="name"
-        required="required"
+        required
       />
       <c-entity-state-field
         v-else

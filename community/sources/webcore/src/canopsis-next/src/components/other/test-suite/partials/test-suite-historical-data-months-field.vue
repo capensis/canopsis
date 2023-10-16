@@ -8,7 +8,7 @@
     <v-radio-group
       v-if="value"
       v-field="value"
-      row="row"
+      row
     >
       <v-radio
         v-for="item in preparedItems"

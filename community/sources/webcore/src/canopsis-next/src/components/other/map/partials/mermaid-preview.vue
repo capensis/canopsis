@@ -1,7 +1,7 @@
 <template>
   <c-zoom-overlay
-    skip-alt="skip-alt"
-    skip-shift="skip-shift"
+    skip-alt
+    skip-shift
   >
     <panzoom
       class="mermaid-preview"

@@ -7,7 +7,7 @@
     :loading="pending"
     item-value="type"
     item-text="name"
-    return-object="return-object"
+    return-object
     @input="updateValue"
   />
 </template>

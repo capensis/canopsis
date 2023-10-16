@@ -1,7 +1,7 @@
 <template>
   <v-layout
     class="py-2"
-    column="column"
+    column
   >
     <kpi-widget-filters
       class="px-3"
@@ -24,7 +24,7 @@
     />
     <v-layout
       class="pa-3"
-      column="column"
+      column
     >
       <chart-loader
         v-if="aggregatedMetricsPending"

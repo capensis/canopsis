@@ -7,8 +7,8 @@
     :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES"
     :total-items="totalItems"
     :select-all="removable"
-    advanced-pagination="advanced-pagination"
-    search="search"
+    advanced-pagination
+    search
     @update:pagination="$emit('update:pagination', $event)"
   >
     <template #mass-actions="{ selected }">

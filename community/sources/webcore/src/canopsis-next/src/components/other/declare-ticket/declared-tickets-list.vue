@@ -2,8 +2,8 @@
   <c-advanced-data-table
     :headers="headers"
     :items="tickets"
-    hide-actions="hide-actions"
-    disable-initial-sort="disable-initial-sort"
+    hide-actions
+    disable-initial-sort
   >
     <template #ticket_url="{ item }">
       <template v-if="item.ticket_url">
@@ -20,13 +20,13 @@
     <template #_t="{ item }">
       <c-help-icon
         v-bind="getIconProps(item)"
-        top="top"
+        top
       />
     </template>
     <template #metaalarm="{ item }">
       <v-icon
         v-if="item.ticket_meta_alarm_id === parentAlarmId"
-        top="top"
+        top
       >
         low_priority
       </v-icon>

@@ -4,14 +4,14 @@
       v-model="activeTab"
       color="secondary lighten-1"
       slider-color="primary"
-      dark="dark"
-      centered="centered"
+      dark
+      centered
     >
       <v-tab>{{ $t('common.summary') }}</v-tab>
       <v-tab>{{ $tc('common.pattern', 2) }}</v-tab>
     </v-tabs>
     <v-layout class="pa-3 secondary lighten-2">
-      <v-flex xs12="xs12">
+      <v-flex xs12>
         <v-card class="pa-3">
           <v-tabs-items
             class="pt-2"
@@ -33,7 +33,7 @@
                 <idle-rule-patterns-form
                   :form="patterns"
                   :is-entity-type="isEntityType"
-                  readonly="readonly"
+                  readonly
                 />
               </v-flex>
             </v-tab-item>

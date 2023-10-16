@@ -4,7 +4,7 @@
       v-field="form.with"
       :label="$t('remediation.instructionsFilter.filterByInstructions')"
       name="with"
-      hide-details="hide-details"
+      hide-details
     >
       <v-radio
         :label="$t('remediation.instructionsFilter.with')"
@@ -56,16 +56,16 @@
       item-text="name"
       item-value="_id"
       name="instructions"
-      multiple="multiple"
-      clearable="clearable"
-      return-object="return-object"
+      multiple
+      clearable
+      return-object
       @change="changeInstructions"
     >
       <template #append-outer="">
         <c-help-icon
           :text="$t('remediation.instructionsFilter.selectedInstructionsHelp')"
           icon="help"
-          left="left"
+          left
         />
       </template>
     </v-select>
@@ -73,7 +73,7 @@
       v-field="form.running"
       :label="$t('remediation.instructionsFilter.alarmsListDisplay')"
       name="with"
-      hide-details="hide-details"
+      hide-details
     >
       <v-radio
         :label="$t('remediation.instructionsFilter.allAlarms')"

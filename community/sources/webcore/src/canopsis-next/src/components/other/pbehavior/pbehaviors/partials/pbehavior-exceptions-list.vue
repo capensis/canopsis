@@ -4,8 +4,8 @@
     hide-default-footer
   >
     <template #item="{ item, index }">
-      <v-layout column="column">
-        <v-layout align-center="align-center">
+      <v-layout column>
+        <v-layout align-center>
           <h4>{{ item.name }}</h4>
           <c-action-btn
             type="delete"
@@ -16,14 +16,14 @@
           :items="item.exdates"
           :headers="exdatesHeaders"
         >
-          <template #begin="{ item }">
-            {{ item.begin | date }}
+          <template #begin="{ item: exdate }">
+            {{ exdate.begin | date }}
           </template>
-          <template #end="{ item }">
-            {{ item.end | date }}
+          <template #end="{ item: exdate }">
+            {{ exdate.end | date }}
           </template>
-          <template #type="{ item }">
-            {{ item.type.name }}
+          <template #type="{ item: exdate }">
+            {{ exdate.type.name }}
           </template>
         </c-advanced-data-table>
       </v-layout>

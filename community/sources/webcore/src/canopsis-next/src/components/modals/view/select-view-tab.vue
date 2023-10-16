@@ -1,5 +1,5 @@
 <template>
-  <modal-wrapper close="close">
+  <modal-wrapper close>
     <template #title="">
       <span>{{ $t('modals.selectViewTab.title') }}</span>
     </template>
@@ -7,33 +7,33 @@
       <v-fade-transition>
         <v-layout
           v-if="pending"
-          justify-center="justify-center"
+          justify-center
         >
           <v-progress-circular
             color="primary"
-            indeterminate="indeterminate"
+            indeterminate
           />
         </v-layout>
         <v-layout v-else>
-          <v-expansion-panel dark="dark">
+          <v-expansion-panel dark>
             <v-expansion-panel-content
               class="secondary"
               v-for="group in groups"
               :key="group._id"
-              ripple="ripple"
+              ripple
             >
               <template #header="">
                 <div>{{ group.title }}</div>
               </template>
               <v-expansion-panel
                 class="px-2"
-                dark="dark"
+                dark
               >
                 <v-expansion-panel-content
                   class="secondary lighten-1"
                   v-for="view in group.views"
                   :key="view._id"
-                  ripple="ripple"
+                  ripple
                 >
                   <template #header="">
                     <div>{{ view.title }}</div>
@@ -43,7 +43,7 @@
                       class="secondary lighten-2"
                       v-for="tab in view.tabs"
                       :key="tab._id"
-                      ripple="ripple"
+                      ripple
                       @click="selectTab(tab._id, view._id)"
                     >
                       <v-list-item-title class="text-body-1 pl-4">

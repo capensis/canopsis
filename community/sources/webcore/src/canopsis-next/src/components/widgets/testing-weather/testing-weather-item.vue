@@ -3,7 +3,7 @@
     class="white--text cursor-pointer ma-1"
     :style="{ backgroundColor: color }"
     :show-button="hasAlarmsListAccess"
-    tile="tile"
+    tile
     @click="showTestSuiteInformationModal"
     @show:alarms="showAlarmListModal"
   >
@@ -16,22 +16,23 @@
         </h3>
         <v-divider
           class="white"
-          light="light"
+          light
         />
         <v-layout
           class="pt-1"
-          justify-start="justify-start"
+          justify-start
         >
           <v-flex xs6="xs6">
             <v-layout
               class="fill-height"
-              column="column"
-              justify-space-between="justify-space-between"
+              column
+              justify-space-between
             >
               <c-mini-bar-chart
                 :history="testSuite.mini_chart"
                 :unit="$constants.TIME_UNITS.second"
-              /><span class="pre-wrap">{{ testSuite.timestamp | date('testSuiteFormat') }}</span>
+              />
+              <span class="pre-wrap">{{ testSuite.timestamp | date('testSuiteFormat') }}</span>
             </v-layout>
           </v-flex>
           <v-flex xs6="xs6">

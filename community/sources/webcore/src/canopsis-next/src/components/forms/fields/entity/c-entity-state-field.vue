@@ -7,7 +7,7 @@
     :disabled="disabled"
     :name="name"
     :error-messages="errors.collect(name)"
-    hide-details="hide-details"
+    hide-details
   />
 </template>
 

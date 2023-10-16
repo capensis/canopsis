@@ -1,8 +1,8 @@
 <template>
-  <v-layout wrap="wrap">
+  <v-layout wrap>
     <v-flex
       v-show="title"
-      xs12="xs12"
+      xs12
     >
       <v-layout>
         <h4 class="subheading grey--text text--darken-2">
@@ -13,12 +13,12 @@
           :text="helpText"
           icon-class="ml-2 storage-help-tooltip"
           max-width="250"
-          top="top"
+          top
         />
       </v-layout>
     </v-flex>
-    <v-flex xs12="xs12">
-      <v-layout column="column">
+    <v-flex xs12>
+      <v-layout column>
         <v-text-field
           v-field="value"
           v-validate="rules"

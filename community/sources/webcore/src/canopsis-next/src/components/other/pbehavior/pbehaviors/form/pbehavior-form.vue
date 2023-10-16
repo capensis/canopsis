@@ -1,8 +1,8 @@
 <template>
   <v-tabs
     slider-color="primary"
-    centered="centered"
-    fixed-tabs="fixed-tabs"
+    centered
+    fixed-tabs
   >
     <v-tab :class="{ 'error--text': hasGeneralError }">
       {{ $t('common.general') }}
@@ -10,7 +10,7 @@
     <v-tab-item>
       <v-layout
         class="py-3"
-        column="column"
+        column
       >
         <pbehavior-general-form
           ref="general"
@@ -21,7 +21,6 @@
         <c-enabled-color-picker-field
           v-field="form.color"
           :label="$t('modals.createPbehavior.steps.color.label')"
-          row="row"
         />
         <c-collapse-panel
           class="mb-2"
@@ -35,7 +34,7 @@
             class="mt-2"
             v-field="form.exdates"
             :exceptions="form.exceptions"
-            with-exdate-type="with-exdate-type"
+            with-exdate-type
             @update:exceptions="updateExceptions"
           />
         </c-collapse-panel>
@@ -54,9 +53,9 @@
     <v-tab-item>
       <v-layout
         class="py-3"
-        justify-center="justify-center"
+        justify-center
       >
-        <v-flex xs12="xs12">
+        <v-flex xs12>
           <pbehavior-patterns-form
             ref="patterns"
             v-field="form.patterns"

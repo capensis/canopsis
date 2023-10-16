@@ -1,8 +1,8 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-name-field
       v-field="form.name"
-      required="required"
+      required
     />
     <v-layout>
       <v-flex
@@ -18,7 +18,7 @@
           name="type"
           item-text="name"
           item-value="name"
-          return-object="return-object"
+          return-object
           @input="updateType"
         />
       </v-flex>

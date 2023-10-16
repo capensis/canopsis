@@ -1,5 +1,5 @@
 <template>
-  <modal-wrapper close="close">
+  <modal-wrapper close>
     <template
       v-if="!config.hideTitle"
       #title=""
@@ -14,8 +14,8 @@
     </template>
     <template #actions="">
       <v-layout
-        wrap="wrap"
-        justify-center="justify-center"
+        wrap
+        justify-center
       >
         <v-btn
           :outlined="$system.dark"

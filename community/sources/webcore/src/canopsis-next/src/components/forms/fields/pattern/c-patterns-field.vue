@@ -1,7 +1,7 @@
 <template>
   <v-layout
     class="c-patterns-field"
-    column="column"
+    column
   >
     <c-collapse-panel
       v-if="withAlarm"
@@ -16,7 +16,7 @@
         :name="alarmFieldName"
         :attributes="alarmAttributes"
         :counter="counters.alarm_pattern"
-        with-type="with-type"
+        with-type
         @input="errors.remove(alarmFieldName)"
       />
     </c-collapse-panel>
@@ -34,7 +34,7 @@
         :attributes="entityAttributes"
         :entity-types="entityTypes"
         :counter="counters.entity_pattern"
-        with-type="with-type"
+        with-type
         @input="errors.remove(entityFieldName)"
       />
     </c-collapse-panel>
@@ -50,7 +50,7 @@
         :readonly="readonly"
         :name="pbehaviorFieldName"
         :counter="counters.pbehavior_pattern"
-        with-type="with-type"
+        with-type
         @input="errors.remove(pbehaviorFieldName)"
       />
     </c-collapse-panel>
@@ -81,7 +81,7 @@
         :readonly="readonly"
         :name="totalEntityFieldName"
         :counter="counters.total_entity_pattern"
-        with-type="with-type"
+        with-type
         @input="errors.remove(totalEntityFieldName)"
       />
     </c-collapse-panel>
@@ -107,8 +107,8 @@
       <span>{{ $t('pattern.errors.countOverLimit', { count: allCount }) }}</span>
     </c-alert>
     <v-layout
-      justify-end="justify-end"
-      align-center="align-center"
+      justify-end
+      align-center
     >
       <pattern-count-message
         :error="hasError"
@@ -118,7 +118,7 @@
         <v-btn
           v-if="entityCountersType"
           text
-          small="small"
+          small
           @click="showPatternEntities"
         >
           {{ $t('common.seeEntities') }}
@@ -126,7 +126,7 @@
         <v-btn
           v-else
           text
-          small="small"
+          small
           @click="showPatternAlarms"
         >
           {{ $t('common.seeAlarms') }}

@@ -1,15 +1,15 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-name-field
       v-field="form.name"
-      required="required"
+      required
     />
     <c-duration-field
       v-field="form.delay"
       :label="$t('common.delay')"
       :units-label="$t('common.unit')"
       name="delay"
-      clearable="clearable"
+      clearable
     />
     <c-enabled-field v-field="form.enabled" />
     <c-triggers-field

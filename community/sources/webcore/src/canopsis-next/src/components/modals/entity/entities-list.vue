@@ -1,5 +1,5 @@
 <template>
-  <modal-wrapper close="close">
+  <modal-wrapper close>
     <template #title="">
       <span>{{ title }}</span>
     </template>
@@ -11,7 +11,7 @@
         :meta="meta"
         :loading="pending"
         :query.sync="query"
-        selectable="selectable"
+        selectable
       />
     </template>
   </modal-wrapper>

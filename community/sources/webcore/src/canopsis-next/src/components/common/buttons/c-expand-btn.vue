@@ -2,8 +2,8 @@
   <v-btn
     class="ma-0"
     :loading="loading"
-    icon="icon"
-    small="small"
+    icon
+    small
     @click="$emit('expand', !expanded)"
   >
     <v-icon :color="color">

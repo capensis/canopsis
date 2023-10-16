@@ -1,7 +1,7 @@
 <template>
   <v-layout
-    justify-center="justify-center"
-    column="column"
+    justify-center
+    column
   >
     <template v-if="!withoutInfosAttributes">
       <c-alarm-infos-attribute-field
@@ -17,8 +17,8 @@
         :items="infosItems"
         :pending="infosPending"
         :name="`${name}.column`"
-        combobox="combobox"
-        column="column"
+        combobox
+        column
       />
     </template>
     <template v-if="isLinks">
@@ -32,7 +32,7 @@
         v-field="column.onlyIcon"
         :label="$t('settings.columns.onlyIcon')"
         color="primary"
-        hide-details="hide-details"
+        hide-details
       />
       <c-number-field
         v-if="column.onlyIcon"
@@ -42,7 +42,7 @@
         <template #append="">
           <c-help-icon
             :text="$t('settings.columns.linksInRowCountTooltip')"
-            left="left"
+            left
           />
         </template>
       </c-number-field>
@@ -52,7 +52,7 @@
       v-model="customLabel"
       :label="$t('settings.columns.customLabel')"
       color="primary"
-      hide-details="hide-details"
+      hide-details
       @change="updateCustomLabel"
     />
     <v-text-field
@@ -65,20 +65,20 @@
     />
     <v-layout
       v-if="withTemplate"
-      align-center="align-center"
+      align-center
     >
       <v-switch
         class="pa-0 my-2"
         :label="$t('settings.columns.withTemplate')"
         :input-value="!!column.template"
         color="primary"
-        hide-details="hide-details"
+        hide-details
         @change="switchChangeTemplate($event)"
       />
       <v-btn
         class="primary"
         v-if="column.template"
-        small="small"
+        small
         @click="showEditTemplateModal"
       >
         <span>{{ $t('common.edit') }}</span>
@@ -91,7 +91,7 @@
       :label="$t('settings.columns.isHtml')"
       :disabled="!!column.template"
       color="primary"
-      hide-details="hide-details"
+      hide-details
     />
     <v-switch
       class="pa-0 my-2"
@@ -100,7 +100,7 @@
       :input-value="!!column.colorIndicator"
       :disabled="!!column.template"
       color="primary"
-      hide-details="hide-details"
+      hide-details
       @change="switchChangeColorIndicator($event)"
     />
     <v-layout

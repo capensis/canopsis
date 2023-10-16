@@ -47,10 +47,10 @@
     />
     <v-tabs
       v-model="activeTab"
-      centered="centered"
+      centered
       slider-color="primary"
       color="transparent"
-      fixed-tabs="fixed-tabs"
+      fixed-tabs
     >
       <v-tab :class="{ 'error--text': hasGeneralError }">
         {{ $t('common.general') }}

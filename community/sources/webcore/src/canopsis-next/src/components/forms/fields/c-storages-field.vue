@@ -1,8 +1,8 @@
 <template>
-  <v-layout wrap="wrap">
+  <v-layout wrap>
     <v-flex
       v-show="label"
-      xs12="xs12"
+      xs12
     >
       <v-layout>
         <h4 class="subheading grey--text text--darken-2">
@@ -12,12 +12,12 @@
           v-if="helpText"
           :text="helpText"
           icon-class="ml-2 storage-help-tooltip"
-          right="right"
+          right
         />
       </v-layout>
     </v-flex>
-    <v-flex xs12="xs12">
-      <v-layout column="column">
+    <v-flex xs12>
+      <v-layout column>
         <c-storage-field
           v-for="(storage, index) in storages"
           :key="storage.key"
@@ -28,7 +28,7 @@
         />
       </v-layout>
     </v-flex>
-    <v-flex xs12="xs12">
+    <v-flex xs12>
       <v-layout>
         <v-btn
           class="ml-0"

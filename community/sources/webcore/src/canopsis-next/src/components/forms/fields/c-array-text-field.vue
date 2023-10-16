@@ -3,7 +3,7 @@
     <v-layout
       v-for="(value, index) in values"
       :key="index"
-      align-center="align-center"
+      align-center
     >
       <v-flex>
         <v-text-field

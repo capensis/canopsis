@@ -4,7 +4,7 @@
       <v-list-item class="widget-settings-item-title">
         <v-layout
           :class="validationHeaderClass"
-          align-center="align-center"
+          align-center
         >
           <slot name="title">
             {{ title }}

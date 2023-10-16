@@ -11,9 +11,8 @@
     :item-value="itemValue"
     :disabled="disabled"
     :no-data-text="$t('alarm.noAlarmFound')"
-    name="alarms"
-    clearable="clearable"
-    autocomplete="autocomplete"
+    clearable
+    autocomplete
     @fetch="fetchAlarms"
     @fetch:more="fetchMoreAlarms"
     @update:search="updateSearch"

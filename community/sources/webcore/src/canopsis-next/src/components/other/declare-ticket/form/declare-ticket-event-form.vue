@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <declare-ticket-event-alarms-tickets-field
       v-field="form.alarms_by_tickets"
       :alarms="alarms"

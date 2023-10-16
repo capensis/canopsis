@@ -1,18 +1,18 @@
 <template>
   <v-container
     class="pa-3"
-    fluid="fluid"
+    fluid
   >
     <v-layout
-      align-center="align-center"
-      justify-space-between="justify-space-between"
+      align-center
+      justify-space-between
     >
       <div class="subheading">
         {{ title }}
       </div>
       <v-btn
         class="primary"
-        small="small"
+        small
         @click="showTextEditorModal"
       >
         {{ $t('common.show') }}/{{ $t('common.edit') }}

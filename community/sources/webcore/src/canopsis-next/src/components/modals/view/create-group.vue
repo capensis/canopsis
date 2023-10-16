@@ -1,6 +1,6 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close="close">
+    <modal-wrapper close>
       <template #title="">
         <span>{{ title }}</span>
       </template>
@@ -16,7 +16,7 @@
       <template #actions="">
         <v-btn
           @click="$modals.hide"
-          depressed="depressed"
+          depressed
           text
         >
           {{ $t('common.cancel') }}
@@ -32,7 +32,7 @@
         <v-tooltip
           v-if="group && hasDeleteAnyViewAccess"
           :disabled="group.deletable"
-          top="top"
+          top
         >
           <template #activator="{ on }">
             <div
@@ -49,7 +49,8 @@
                 {{ $t('common.delete') }}
               </v-btn>
             </div>
-          </template><span>{{ $t('modals.group.errors.isNotEmpty') }}</span>
+          </template>
+          <span>{{ $t('modals.group.errors.isNotEmpty') }}</span>
         </v-tooltip>
       </template>
     </modal-wrapper>

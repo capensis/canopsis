@@ -1,15 +1,15 @@
 <template>
-  <modal-wrapper close="close">
+  <modal-wrapper close>
     <template #title="">
       <span>{{ $t('modals.dynamicInfoTemplatesList.title') }}</span>
     </template>
     <template #text="">
       <div>
-        <v-layout justify-end="justify-end">
+        <v-layout justify-end>
           <v-btn
             class="primary"
-            fab="fab"
-            small="small"
+            fab
+            small
             text
             @click="showAddTemplateModal"
           >

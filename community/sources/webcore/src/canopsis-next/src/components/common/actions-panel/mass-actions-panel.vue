@@ -16,15 +16,15 @@
     </mq-layout>
     <mq-layout :mq="['m', 't']">
       <v-menu
-        bottom="bottom"
-        left="left"
+        bottom
+        left
         @click.native.stop=""
       >
         <template #activator="{ on }">
           <v-btn
             class="ma-0"
             v-on="on"
-            icon="icon"
+            icon
           >
             <v-icon>more_vert</v-icon>
           </v-btn>
@@ -41,14 +41,17 @@
                 class="pr-3"
                 :color="action.iconColor"
                 :disabled="action.disabled"
-                left="left"
-                small="small"
+                left
+                small
               >
                 {{ action.icon }}
-              </v-icon><span
+              </v-icon>
+              <span
                 class="text-body-1"
                 :class="action.cssClass"
-              >{{ action.title }}</span>
+              >
+                {{ action.title }}
+              </span>
             </v-list-item-title>
           </v-list-item>
         </v-list>

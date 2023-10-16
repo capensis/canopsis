@@ -14,7 +14,7 @@
       <v-btn
         v-if="counter && counter.count"
         text
-        small="small"
+        small
         @click="showPatternAlarms"
       >
         {{ $t('common.seeAlarms') }}

@@ -2,17 +2,17 @@
   <v-layout
     class="text-pairs"
     :class="{ 'text-pairs__disabled': disabled }"
-    wrap="wrap"
+    wrap
   >
     <v-flex
       v-show="title"
-      xs12="xs12"
+      xs12
     >
       <h4 class="ml-1">
         {{ title }}
       </h4>
     </v-flex>
-    <v-flex xs12="xs12">
+    <v-flex xs12>
       <slot
         v-if="!items.length"
         name="no-data"
@@ -41,7 +41,7 @@
     </v-flex>
     <v-flex
       v-if="!disabled"
-      xs12="xs12"
+      xs12
     >
       <v-layout>
         <v-btn

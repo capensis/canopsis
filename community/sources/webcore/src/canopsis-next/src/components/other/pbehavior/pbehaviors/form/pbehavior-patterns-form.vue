@@ -3,9 +3,9 @@
     v-field="form"
     :entity-attributes="entityAttributes"
     :readonly="readonly"
-    with-entity="with-entity"
-    required="required"
-    entity-counters-type="entity-counters-type"
+    with-entity
+    required
+    entity-counters-type
   />
 </template>
 

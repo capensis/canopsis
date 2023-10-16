@@ -41,8 +41,8 @@
       :y="shape.y + shape.height + textOffsetY"
       :x="shape.x + shape.width / 2"
       :editable="editing"
-      align-center="align-center"
-      justify-center="justify-center"
+      align-center
+      justify-center
       @blur="disableEditingMode"
     />
   </g>

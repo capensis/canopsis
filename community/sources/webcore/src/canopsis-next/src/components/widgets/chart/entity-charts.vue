@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <entity-chart-widget
       v-for="(chart, index) in filteredCharts"
       :key="index"

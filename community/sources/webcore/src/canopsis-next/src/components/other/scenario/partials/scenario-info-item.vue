@@ -4,9 +4,10 @@
       <v-icon>{{ icon }}</v-icon>
     </v-list-item-avatar>
     <v-list-item-content>
-      <v-layout align-center="align-center">
+      <v-layout align-center>
         <div class="subheading">
-          <span class="font-weight-bold">{{ label }}</span><span v-if="value">: {{ value }}</span>
+          <span class="font-weight-bold">{{ label }}</span>
+          <span v-if="value">: {{ value }}</span>
         </div>
       </v-layout>
     </v-list-item-content>

@@ -7,12 +7,12 @@
     <v-divider />
     <field-filters
       :filters.sync="form.filters"
-      addable="addable"
-      editable="editable"
-      with-alarm="with-alarm"
-      with-entity="with-entity"
-      with-pbehavior="with-pbehavior"
-      hide-selector="hide-selector"
+      addable
+      editable
+      with-alarm
+      with-entity
+      with-pbehavior
+      hide-selector
     />
     <v-divider />
     <field-opened-resolved-filter v-model="form.parameters.opened" />
@@ -32,13 +32,13 @@
       <field-grid-size
         v-model="form.parameters.columnMobile"
         :title="$t('settings.columnMobile')"
-        mobile="mobile"
+        mobile
       />
       <v-divider />
       <field-grid-size
         v-model="form.parameters.columnTablet"
         :title="$t('settings.columnTablet')"
-        tablet="tablet"
+        tablet
       />
       <v-divider />
       <field-grid-size

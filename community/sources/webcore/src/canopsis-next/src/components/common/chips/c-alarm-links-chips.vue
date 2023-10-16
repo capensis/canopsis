@@ -8,31 +8,32 @@
     item-text="text"
     item-value="url"
     item-class="c-alarm-links-chips__chip"
-    return-object="return-object"
+    return-object
     @select="select"
     @activate="activate"
   >
     <template #item="{ item }">
       <v-tooltip
         v-if="onlyIcon"
-        top="top"
-        custom-activator="custom-activator"
+        top
+        custom-activator
       >
         <template #activator="{ on }">
           <v-icon
             v-on="on"
             color="white"
-            small="small"
+            small
           >
             {{ item.icon }}
           </v-icon>
-        </template><span>{{ item.text }}</span>
+        </template>
+        <span>{{ item.text }}</span>
       </v-tooltip>
       <template v-else>
         <v-icon
           class="mr-1"
           color="white"
-          small="small"
+          small
         >
           {{ item.icon }}
         </v-icon><span>{{ item.text }}</span>

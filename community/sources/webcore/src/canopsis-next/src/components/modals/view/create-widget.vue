@@ -1,10 +1,10 @@
 <template>
-  <modal-wrapper close="close">
+  <modal-wrapper close>
     <template #title="">
       <span>{{ $t('modals.createWidget.title') }}</span>
     </template>
     <template #text="">
-      <v-layout column="column">
+      <v-layout column>
         <v-card
           class="my-1 cursor-pointer"
           v-for="{ type, text, icon, on, children } in availableTypes"
@@ -13,17 +13,17 @@
         >
           <v-menu
             :disabled="!children"
-            top="top"
-            offset-y="offset-y"
+            top
+            offset-y
           >
             <template #activator="{ on: menuOn }">
               <v-card-title
                 v-on="menuOn"
-                primary-title="primary-title"
+                primary-title
               >
                 <v-layout
-                  wrap="wrap"
-                  justify-between="justify-between"
+                  wrap
+                  justify-between
                 >
                   <v-flex xs11="xs11">
                     <div class="subheading">

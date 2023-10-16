@@ -1,12 +1,12 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <p class="font-italic grey--text my-3">
       {{ $t('linkRule.sourceCodeAlert') }}
     </p>
     <java-script-code-editor
       class="java-script-code-editor"
       v-field="value"
-      resettable="resettable"
+      resettable
     />
   </v-layout>
 </template>

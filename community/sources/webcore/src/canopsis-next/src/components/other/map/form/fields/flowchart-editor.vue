@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <flowchart
       class="flowchart-map-editor mb-2"
       :shapes="form.shapes"
@@ -26,7 +26,7 @@
         icon-class="flowchart-map-editor__help-icon"
         color="secondary"
         icon="help"
-        top="top"
+        top
       />
     </flowchart>
     <v-messages

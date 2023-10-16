@@ -13,7 +13,7 @@
     :row-height="lineHeight"
     :style="textareaStyle"
     :error="!!linesErrors.length"
-    auto-grow="auto-grow"
+    auto-grow
     @blur="handleBlur"
     @input="debouncedOnSelectionChange"
   >
@@ -29,37 +29,51 @@
           :value="variablesMenuValue"
           :position-x="variablesMenuPosition.x"
           :position-y="variablesMenuPosition.y"
-          ignore-click-outside="ignore-click-outside"
-          show-value="show-value"
+          ignore-click-outside
+          show-value
           @input="pasteVariable"
-        /><span
+        />
+        <span
           class="c-payload-textarea-field__lines"
           :style="linesStyle"
-        ><span
-          class="c-payload-textarea-field__line"
-          v-for="(line, index) in lines"
-          :key="index"
-          :style="lineStyle"
-        ><span
-           class="c-payload-textarea-field__fake-line"
-           v-if="selectedVariable && index === selectedVariable.index"
-         >{{ line.text.slice(0, selectedVariable.start) }}<span
-           class="c-payload-textarea-field__highlight"
-           ref="variable"
-         >{{ line.text.slice(selectedVariable.start, selectedVariable.end) }}</span></span>
-          <v-tooltip
-            v-if="line.error"
-            top="top"
+        >
+          <span
+            class="c-payload-textarea-field__line"
+            v-for="(line, index) in lines"
+            :key="index"
+            :style="lineStyle"
           >
-            <template #activator="{ on }">
-              <v-icon
-                class="c-payload-textarea-field__warning-icon"
-                v-on="on"
-                :size="lineHeight"
-                color="error"
-              >warning</v-icon>
-            </template><span>{{ line.error.message }}</span>
-          </v-tooltip>{{ line.text }}</span></span>
+            <span
+              class="c-payload-textarea-field__fake-line"
+              v-if="selectedVariable && index === selectedVariable.index"
+            >
+              {{ line.text.slice(0, selectedVariable.start) }}
+              <span
+                class="c-payload-textarea-field__highlight"
+                ref="variable"
+              >
+                {{ line.text.slice(selectedVariable.start, selectedVariable.end) }}
+              </span>
+            </span>
+            <v-tooltip
+              v-if="line.error"
+              top
+            >
+              <template #activator="{ on }">
+                <v-icon
+                  class="c-payload-textarea-field__warning-icon"
+                  v-on="on"
+                  :size="lineHeight"
+                  color="error"
+                >
+                  warning
+                </v-icon>
+              </template>
+              <span>{{ line.error.message }}</span>
+            </v-tooltip>
+            {{ line.text }}
+          </span>
+        </span>
       </div>
     </template>
   </v-textarea>

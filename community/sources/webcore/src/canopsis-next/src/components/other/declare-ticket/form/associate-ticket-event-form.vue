@@ -13,7 +13,7 @@
         <declare-ticket-rule-ticket-id-field
           v-field="form.ticket_id"
           :name="ticketIdFieldName"
-          required="required"
+          required
         />
       </v-flex>
       <v-flex xs6="xs6">

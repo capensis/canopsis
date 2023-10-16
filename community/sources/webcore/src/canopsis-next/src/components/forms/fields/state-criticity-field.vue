@@ -6,11 +6,11 @@
       @change="$emit('input', $event)"
     >
       <v-btn
-        v-for="{ color, value, text } in availableStates"
-        :key="value"
-        :value="value"
+        v-for="{ color, state, text } in availableStates"
+        :key="state"
+        :value="state"
         :style="{ backgroundColor: color }"
-        depressed="depressed"
+        depressed
       >
         {{ text }}
       </v-btn>
@@ -42,7 +42,7 @@ export default {
     availableStates() {
       return Object.entries(this.stateValues).map(([key, state]) => ({
         text: this.$t(`modals.createChangeStateEvent.states.${key}`),
-        value: state,
+        state,
         color: getEntityStateColor(state),
       }));
     },

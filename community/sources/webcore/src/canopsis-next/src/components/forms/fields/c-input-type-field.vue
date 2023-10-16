@@ -9,13 +9,13 @@
     :flat="flat"
     :error="hasError"
     :name="name"
-    hide-details="hide-details"
-    dense="dense"
+    hide-details
+    dense
   >
-    <template #selection="{ parent, item, index }">
+    <template #selection="{ item }">
       <v-icon
         class="c-input-type-field__icon"
-        small="small"
+        small
       >
         {{ getInputTypeIcon(item.value) }}
       </v-icon>
@@ -24,7 +24,7 @@
       <v-list-item-avatar class="c-input-type-field__avatar">
         <v-icon
           class="c-input-type-field__icon"
-          small="small"
+          small
         >
           {{ getInputTypeIcon(item.value) }}
         </v-icon>

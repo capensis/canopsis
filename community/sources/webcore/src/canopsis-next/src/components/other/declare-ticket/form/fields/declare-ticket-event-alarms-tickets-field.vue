@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-data-table
       :headers="headers"
       :items="alarms"
@@ -10,7 +10,7 @@
           <v-checkbox
             :input-value="isEveryTicketsActive(item._id)"
             color="primary"
-            hide-details="hide-details"
+            hide-details
             @change="updateAllTickets(item._id, $event)"
           />
         </td>

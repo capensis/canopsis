@@ -1,7 +1,7 @@
 <template>
   <modal-wrapper
     :title-color="color"
-    close="close"
+    close
   >
     <template #title="">
       <span>{{ testSuite.name }}</span>
@@ -9,11 +9,11 @@
     <template #text="">
       <v-layout
         v-if="testSuiteHistoryPending"
-        justify-center="justify-center"
+        justify-center
       >
         <v-progress-circular
           color="primary"
-          indeterminate="indeterminate"
+          indeterminate
         />
       </v-layout>
       <test-suite-history
@@ -23,8 +23,8 @@
     </template>
     <template #actions="">
       <v-btn
-        depressed="depressed"
-        text="text"
+        depressed
+        text
         @click="$modals.hide"
       >
         {{ $t('common.cancel') }}

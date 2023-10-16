@@ -7,7 +7,7 @@
       icon="$vuetify.icons.restart_alt"
       color="white"
       btn-color="grey darken-1"
-      left="left"
+      left
       @click="reset"
     />
     <div

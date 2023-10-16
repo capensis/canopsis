@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <request-information-content :text="data.request" />
     <request-information-content
       class="mt-4"

@@ -1,7 +1,7 @@
 <template>
   <v-layout
-    justify-space-between="justify-space-between"
-    align-center="align-center"
+    justify-space-between
+    align-center
   >
     <v-flex
       class="pr-2"
@@ -28,7 +28,7 @@
         :variables="urlVariables"
         :disabled="disabled"
         :error-messages="errors.collect(urlFieldName)"
-        required="required"
+        required
       >
         <template
           v-if="helpText"
@@ -38,7 +38,7 @@
             :text="helpText"
             icon="help"
             color="grey darken-1"
-            left="left"
+            left
           />
         </template>
       </c-payload-text-field>

@@ -1,5 +1,5 @@
 <template>
-  <modal-wrapper close="close">
+  <modal-wrapper close>
     <template #title="">
       <span>{{ config.title }}</span>
     </template>
@@ -7,13 +7,13 @@
       <c-information-block :title="$t('view.sharedViewUrl')">
         <v-text-field
           :value="config.url"
-          readonly="readonly"
+          readonly
         >
           <template #append="">
             <c-copy-btn
               :value="config.url"
               :tooltip="$t('common.copyLink')"
-              top="top"
+              top
               @success="showCopySuccessPopup"
               @error="showCopyErrorPopup"
             />
@@ -23,8 +23,8 @@
     </template>
     <template #actions="">
       <v-btn
-        depressed="depressed"
-        text="text"
+        depressed
+        text
         @click="$modals.hide"
       >
         {{ $t('common.close') }}

@@ -2,21 +2,21 @@
   <v-navigation-drawer
     class="flowchart-sidebar"
     width="100%"
-    permanent="permanent"
-    touchless="touchless"
+    permanent
+    touchless
   >
     <v-expansion-panel
       color="grey"
-      expand="expand"
+      expand
     >
-      <v-layout column="column">
+      <v-layout column>
         <slot name="prepend" />
         <flowchart-color-field
           class="flowchart-sidebar__additional-item px-4"
           :value="backgroundColor"
           :label="$t('flowchart.backgroundColor')"
           :palette="backgroundColors"
-          hide-checkbox="hide-checkbox"
+          hide-checkbox
           @input="$emit('update:backgroundColor', $event)"
         />
       </v-layout>
@@ -25,19 +25,19 @@
           <span class="v-label">{{ $tc('flowchart.shape', 2) }}</span>
         </template>
         <v-divider />
-        <v-layout wrap="wrap">
+        <v-layout wrap>
           <v-tooltip
             v-for="(button, index) in buttons"
             :key="index"
             z-index="230"
-            top="top"
+            top
           >
             <template #activator="{ on }">
               <v-btn
                 class="ma-0 pa-0 flowchart-sidebar__button"
                 v-on="on"
                 text
-                large="large"
+                large
                 @click="button.action"
               >
                 <component
@@ -45,28 +45,30 @@
                   :is="button.icon"
                 />
               </v-btn>
-            </template><span>{{ button.label }}</span>
+            </template>
+            <span>{{ button.label }}</span>
           </v-tooltip>
           <file-selector
             ref="fileSelector"
-            hide-details="hide-details"
+            hide-details
             @change="addImage"
           >
             <template #activator="{ on }">
               <v-tooltip
                 z-index="230"
-                top="top"
+                top
               >
                 <template #activator="{ on: tooltipOn }">
                   <v-btn
                     class="ma-0 pa-0 flowchart-sidebar__button"
                     v-on="{ ...on, ...tooltipOn }"
                     text
-                    large="large"
+                    large
                   >
                     <image-shape-icon class="grey--text text--darken-3" />
                   </v-btn>
-                </template><span>{{ $t('flowchart.shapes.image') }}</span>
+                </template>
+                <span>{{ $t('flowchart.shapes.image') }}</span>
               </v-tooltip>
             </template>
           </file-selector>
@@ -80,7 +82,7 @@
         <v-layout
           v-for="group in iconGroups"
           :key="group.name"
-          wrap="wrap"
+          wrap
         >
           <v-btn
             class="flowchart-sidebar__button-icon ma-0"
@@ -94,7 +96,7 @@
               v-html="icon"
             />
           </v-btn>
-          <v-flex xs12="xs12">
+          <v-flex xs12>
             <v-divider />
           </v-flex>
         </v-layout>

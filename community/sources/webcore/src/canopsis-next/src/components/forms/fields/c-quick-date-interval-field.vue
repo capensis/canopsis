@@ -5,7 +5,7 @@
   >
     <template v-if="short">
       <v-menu
-        offset-y="offset-y"
+        offset-y
         :close-on-content-click="false"
       >
         <template #activator="{ on }">
@@ -13,8 +13,8 @@
             v-on="on"
             :value="shortValue"
             :label="$t('common.interval')"
-            readonly="readonly"
-            hide-details="hide-details"
+            readonly
+            hide-details
           />
         </template>
         <v-card width="400px">
@@ -27,7 +27,7 @@
                   :disabled="disabled"
                   :is-allowed-from-date="isAllowedFromDate"
                   :is-allowed-to-date="isAllowedToDate"
-                  column="column"
+                  column
                   @input="updateModel($event)"
                 />
                 <c-quick-date-interval-type-field
@@ -35,8 +35,8 @@
                   :value="range"
                   :ranges="availableQuickRanges"
                   :disabled="disabled"
-                  hide-details="hide-details"
-                  return-object="return-object"
+                  hide-details
+                  return-object
                   @input="updateIntervalRange"
                 />
               </v-layout>
@@ -58,8 +58,8 @@
           :value="range"
           :ranges="availableQuickRanges"
           :disabled="disabled"
-          hide-details="hide-details"
-          return-object="return-object"
+          hide-details
+          return-object
           @input="updateIntervalRange"
         />
       </div>

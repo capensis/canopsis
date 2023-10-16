@@ -1,8 +1,8 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-name-field
       v-field="form.name"
-      required="required"
+      required
     />
     <v-sheet>
       <cluster-graph-editor v-field="form.parameters" />

@@ -8,7 +8,7 @@
     <template #default="{ item }">
       <v-tooltip
         :disabled="!item.tooltip"
-        bottom="bottom"
+        bottom
       >
         <template #activator="{ on }">
           <c-engine-chip
@@ -18,7 +18,8 @@
           >
             {{ item.label }}
           </c-engine-chip>
-        </template><span>{{ item.tooltip }}</span>
+        </template>
+        <span>{{ item.tooltip }}</span>
       </v-tooltip>
     </template>
   </c-responsive-list>

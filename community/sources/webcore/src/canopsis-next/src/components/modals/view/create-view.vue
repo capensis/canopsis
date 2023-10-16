@@ -1,6 +1,6 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close="close">
+    <modal-wrapper close>
       <template #title="">
         <span>{{ title }}</span>
       </template>
@@ -8,15 +8,15 @@
         <v-fade-transition>
           <v-layout
             v-if="pending"
-            justify-center="justify-center"
+            justify-center
           >
             <v-progress-circular
               color="primary"
-              indeterminate="indeterminate"
+              indeterminate
             />
           </v-layout>
           <v-layout v-else>
-            <v-flex xs12="xs12">
+            <v-flex xs12>
               <v-alert
                 :value="duplicate"
                 type="info"
@@ -33,8 +33,8 @@
       </template>
       <template #actions="">
         <v-btn
-          depressed="depressed"
-          text="text"
+          depressed
+          text
           @click="$modals.hide"
         >
           {{ $t('common.cancel') }}

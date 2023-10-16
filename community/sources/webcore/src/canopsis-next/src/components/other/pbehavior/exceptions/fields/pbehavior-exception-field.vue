@@ -1,9 +1,9 @@
 <template>
   <v-layout
     class="pbehavior-exception-field"
-    column="column"
+    column
   >
-    <v-layout justify-space-between="justify-space-between">
+    <v-layout justify-space-between>
       <v-flex
         class="pbehavior-exception-field__interval"
         xs6="xs6"
@@ -41,7 +41,7 @@
           :required="!disabled"
           :name="typeName"
           :disabled="disabled"
-          return-object="return-object"
+          return-object
         />
         <c-pbehavior-type-text
           v-else
@@ -55,8 +55,8 @@
         <v-btn
           class="btn--editing"
           :input-value="editing"
-          icon="icon"
-          fab="fab"
+          icon
+          fab
           @click="toggleEditing"
         >
           <v-icon>edit</v-icon>
@@ -67,7 +67,7 @@
         <v-btn
           class="mx-0"
           color="error"
-          icon="icon"
+          icon
           @click="$emit('delete')"
         >
           <v-icon>delete</v-icon>
@@ -81,7 +81,7 @@
         :label="$t('modals.createPbehavior.steps.general.fields.fullDay')"
         :disabled="disabled || !editing"
         color="primary"
-        hide-details="hide-details"
+        hide-details
       />
     </v-layout>
   </v-layout>

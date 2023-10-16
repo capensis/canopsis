@@ -13,7 +13,7 @@
           class="mt-0"
           v-field="form.enabled"
           :disabled="disabledCommon"
-          hide-details="hide-details"
+          hide-details
         />
       </v-flex>
     </v-layout>
@@ -30,8 +30,8 @@
       name="description"
     />
     <v-layout
-      justify-space-between="justify-space-between"
-      align-center="align-center"
+      justify-space-between
+      align-center
     >
       <v-flex xs7="xs7">
         <c-duration-field
@@ -40,7 +40,7 @@
           :units-label="$t('common.unit')"
           :disabled="disabled"
           name="timeout_after_execution"
-          required="required"
+          required
         />
       </v-flex>
       <v-flex

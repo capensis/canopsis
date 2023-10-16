@@ -1,6 +1,6 @@
 <template>
-  <v-layout column="column">
-    <v-flex xs12="xs12">
+  <v-layout column>
+    <v-flex xs12>
       <v-alert
         v-if="!groups.length"
         type="info"
@@ -11,9 +11,9 @@
     <v-layout
       v-for="(group, index) in groups"
       :key="group.key"
-      wrap="wrap"
+      wrap
     >
-      <v-flex xs12="xs12">
+      <v-flex xs12>
         <pattern-group-field
           v-field="groups[index]"
           :attributes="attributes"
@@ -24,14 +24,14 @@
       </v-flex>
       <v-layout
         v-show="index !== groups.length - 1"
-        justify-center="justify-center"
+        justify-center
       >
         <c-pattern-operator-chip>{{ $t('common.or') }}</c-pattern-operator-chip>
       </v-layout>
     </v-layout>
     <v-layout
       v-if="!readonly"
-      align-center="align-center"
+      align-center
     >
       <v-btn
         class="ml-0"

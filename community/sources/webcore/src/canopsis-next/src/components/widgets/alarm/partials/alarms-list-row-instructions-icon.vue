@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip top="top">
+  <v-tooltip top>
     <template #activator="{ on }">
       <v-icon
         class="instruction-icon"

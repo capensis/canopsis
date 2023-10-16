@@ -1,8 +1,8 @@
 <template>
   <div>
     <snmp-rule-form-field-title label="state" />
-    <v-layout wrap="wrap">
-      <v-flex xs12="xs12">
+    <v-layout wrap>
+      <v-flex xs12>
         <v-switch
           :input-value="form.type"
           :false-value="$constants.SNMP_STATE_TYPES.simple"
@@ -13,25 +13,25 @@
         />
       </v-flex>
     </v-layout>
-    <v-divider light="light" />
+    <v-divider light />
     <template v-if="isTemplate">
       <snmp-rule-form-module-mib-objects-form
         v-field="form.stateoid"
         :items="items"
         :label="$t('snmpRule.defineVar')"
       />
-      <v-layout wrap="wrap">
-        <v-flex xs12="xs12">
+      <v-layout wrap>
+        <v-flex xs12>
           <v-layout
             v-for="{ value, color, key, text } in availableStates"
             :key="value"
-            wrap="wrap"
-            align-center="align-center"
+            wrap
+            align-center
           >
             <v-flex xs2="xs2">
               <v-chip
                 :style="{ backgroundColor: color }"
-                label="label"
+                label
               >
                 <strong class="state-title">{{ text }}</strong>
               </v-chip>
@@ -49,9 +49,9 @@
     <template v-else>
       <v-layout
         class="mt-3"
-        wrap="wrap"
+        wrap
       >
-        <v-flex xs12="xs12">
+        <v-flex xs12>
           <state-criticity-field v-field="form.state" />
         </v-flex>
       </v-layout>

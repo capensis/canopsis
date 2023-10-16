@@ -4,7 +4,7 @@
     <c-duration-field
       v-field="value.duration"
       :name="`${name}.duration`"
-      required="required"
+      required
     />
   </div>
 </template>

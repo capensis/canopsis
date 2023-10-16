@@ -22,8 +22,8 @@
     :combobox="!autocomplete"
     :return-object="returnObject"
     :no-data-text="noDataText"
-    no-filter="no-filter"
-    dense="dense"
+    no-filter
+    dense
     @focus="onFocus"
     @blur="onBlur"
     @update:searchInput="debouncedUpdateSearch"
@@ -44,7 +44,10 @@
             name="icon"
             :item="item"
           />
-          <v-list-item-content>{{ getItemText(item) }}</v-list-item-content><span class="ml-4 grey--text">{{ item.type }}</span>
+          <v-list-item-content>
+            {{ getItemText(item) }}
+          </v-list-item-content>
+          <span class="ml-4 grey--text">{{ item.type }}</span>
         </v-list-item>
       </slot>
     </template>
@@ -63,8 +66,8 @@
         <v-chip
           class="c-lazy-search-field__chip"
           v-if="isMultiply"
-          small="small"
-          close="close"
+          small
+          close
           @input="removeItemFromArray(index)"
         >
           <span class="text-truncate">{{ getItemText(item) }}</span>

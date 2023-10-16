@@ -9,7 +9,7 @@
       <v-progress-circular
         :color="color"
         :size="size"
-        indeterminate="indeterminate"
+        indeterminate
       />
     </v-layout>
   </v-fade-transition>
@@ -22,7 +22,7 @@
     <v-progress-circular
       :color="color"
       :size="size"
-      indeterminate="indeterminate"
+      indeterminate
     />
   </v-layout>
 </template>

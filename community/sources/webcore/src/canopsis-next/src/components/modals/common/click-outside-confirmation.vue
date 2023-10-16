@@ -8,7 +8,7 @@
     </template>
     <template #actions="">
       <v-btn
-        depressed="depressed"
+        depressed
         text
         @click="$modals.hide"
       >

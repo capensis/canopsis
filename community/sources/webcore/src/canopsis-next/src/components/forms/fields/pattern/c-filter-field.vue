@@ -8,8 +8,8 @@
     :name="name"
     item-text="name"
     item-value="_id"
-    hide-details="hide-details"
-    clearable="clearable"
+    hide-details
+    clearable
   >
     <template #item="{ item, tile }">
       <v-list-item
@@ -21,10 +21,10 @@
             <v-badge
               :value="isOldPattern(item)"
               color="error"
-              overlap="overlap"
+              overlap
             >
               <template #badge="">
-                <v-tooltip top="top">
+                <v-tooltip top>
                   <template #activator="{ on: badgeTooltipOn }">
                     <v-icon
                       v-on="badgeTooltipOn"
@@ -32,9 +32,11 @@
                     >
                       priority_high
                     </v-icon>
-                  </template><span>{{ $t('pattern.oldPatternTooltip') }}</span>
+                  </template>
+                  <span>{{ $t('pattern.oldPatternTooltip') }}</span>
                 </v-tooltip>
-              </template><span>{{ item.name }}</span>
+              </template>
+              <span>{{ item.name }}</span>
             </v-badge>
           </v-list-item-title>
         </v-list-item-content>

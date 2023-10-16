@@ -6,18 +6,18 @@
       :color="chipColor"
       :close-icon="chipCloseIcon"
       :close="closable"
-      label="label"
+      label
     >
       <span class="instruction-filter__text">
         <v-icon
           color="white"
-          small="small"
+          small
         >assignment</v-icon>
         <v-icon
           class="pl-1"
           v-if="filter.locked"
           color="white"
-          small="small"
+          small
         >lock</v-icon><strong class="pl-2 text-uppercase">{{ conditionTypeMessage }}</strong><span
           class="pl-1"
           v-if="!isAll"

@@ -8,9 +8,9 @@
     :select-all="removable"
     :is-disabled-item="isDisabledTag"
     :is-expandable-item="isCreatedTag"
-    advanced-pagination="advanced-pagination"
-    expand="expand"
-    search="search"
+    advanced-pagination
+    expand
+    search
     @update:pagination="$emit('update:pagination', $event)"
   >
     <template #mass-actions="{ selected }">

@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-combobox
       v-model="rule"
       v-validate="'required'"
@@ -11,7 +11,7 @@
       :loading="pending"
       item-text="name"
       item-value="_id"
-      return-object="return-object"
+      return-object
     />
     <v-combobox
       v-field="value.dictionary"

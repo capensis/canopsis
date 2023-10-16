@@ -1,6 +1,6 @@
 <template>
-  <v-layout column="column">
-    <v-layout wrap="wrap">
+  <v-layout column>
+    <v-layout wrap>
       <v-flex xs4="xs4">
         <c-search-field v-model="searchingText" />
       </v-flex>

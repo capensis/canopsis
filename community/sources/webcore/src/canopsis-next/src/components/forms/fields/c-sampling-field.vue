@@ -5,7 +5,7 @@
     :disabled="disabled"
     :label="label || $t('common.sampling')"
     :name="name"
-    hide-details="hide-details"
+    hide-details
   >
     <template #selection="{ item }">
       <span class="text-capitalize">{{ item.text }}</span>

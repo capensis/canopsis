@@ -5,9 +5,9 @@
     :loading="pending"
     :total-items="totalItems"
     :pagination="pagination"
-    advanced-pagination="advanced-pagination"
-    expand="expand"
-    search="search"
+    advanced-pagination
+    expand
+    search
     @update:pagination="$emit('update:pagination', $event)"
   >
     <template #fullscreen="{ item }">
@@ -25,7 +25,7 @@
           <v-btn
             class="mx-1 ma-0"
             :to="getPlaylistRouteById(item._id, true)"
-            icon="icon"
+            icon
           >
             <v-icon>play_arrow</v-icon>
           </v-btn>

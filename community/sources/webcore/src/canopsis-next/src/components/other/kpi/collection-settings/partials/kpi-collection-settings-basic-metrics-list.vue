@@ -1,5 +1,5 @@
 <template>
-  <v-list subheader="subheader">
+  <v-list subheader>
     <v-subheader>{{ $t('kpi.collectionSetting.basicMetrics') }}</v-subheader>
     <v-list-item
       v-for="basicMetric in basicMetrics"

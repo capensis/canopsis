@@ -1,5 +1,5 @@
 <template>
-  <v-layout wrap="wrap">
+  <v-layout wrap>
     <v-flex xs3="xs3">
       <event-filter-failure-type-field
         :value="query.type"
@@ -8,7 +8,7 @@
     </v-flex>
     <v-flex
       v-if="eventFilter.unread_failures_count"
-      xs12="xs12"
+      xs12
     >
       <v-btn
         class="mx-0"
@@ -16,12 +16,12 @@
         color="primary"
         @click="markNewFailuresAsRead"
       >
-        <v-icon left="left">
+        <v-icon left>
           done_all
         </v-icon><span>{{ $t('eventFilter.markAsRead') }}</span>
       </v-btn>
     </v-flex>
-    <v-flex xs12="xs12">
+    <v-flex xs12>
       <event-filter-failures-list
         :failures="eventFilterFailures"
         :pagination.sync="pagination"

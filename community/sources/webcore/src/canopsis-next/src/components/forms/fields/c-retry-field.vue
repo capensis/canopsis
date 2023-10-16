@@ -20,7 +20,7 @@
         :required="isRequired"
         :name="name"
         :disabled="isDurationDisabled"
-        clearable="clearable"
+        clearable
         @input="updateDelay"
       />
     </v-flex>

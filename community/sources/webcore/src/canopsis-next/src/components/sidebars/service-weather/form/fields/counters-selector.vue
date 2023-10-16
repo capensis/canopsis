@@ -1,23 +1,23 @@
 <template>
   <widget-settings-item :title="$t('settings.counters')">
-    <v-layout column="column">
+    <v-layout column>
       <c-enabled-field
         v-field="value.pbehavior_enabled"
         :label="$t('settings.pbehaviorCounters')"
-        hide-details="hide-details"
+        hide-details
       />
       <c-pbehavior-type-field
         v-field="value.pbehavior_types"
         :required="value.pbehavior_enabled"
         :disabled="!value.pbehavior_enabled"
         :max="$constants.PBEHAVIOR_COUNTERS_LIMIT"
-        chips="chips"
-        multiple="multiple"
+        chips
+        multiple
       />
       <c-enabled-field
         v-field="value.state_enabled"
         :label="$t('settings.entityStateCounters')"
-        hide-details="hide-details"
+        hide-details
       />
       <c-service-weather-state-counter-field
         v-field="value.state_types"

@@ -1,17 +1,17 @@
 <template>
   <v-expansion-panel
     :value="openedPanels"
-    readonly="readonly"
-    hide-actions="hide-actions"
-    expand="expand"
-    dark="dark"
-    focusable="focusable"
+    readonly
+    hide-actions
+    expand
+    dark
+    focusable
   >
     <group-panel
       v-for="group in groups"
       :group="group"
       :key="group._id"
-      hide-actions="hide-actions"
+      hide-actions
     >
       <template #title>
         <v-checkbox
@@ -29,8 +29,8 @@
       >
         <template #title>
           <v-layout
-            align-center="align-center"
-            justify-space-between="justify-space-between"
+            align-center
+            justify-space-between
           >
             <v-checkbox
               v-field="selected.views"

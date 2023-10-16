@@ -1,7 +1,7 @@
 <template>
   <v-layout
-    align-center="align-center"
-    justify-space-around="justify-space-around"
+    align-center
+    justify-space-around
   >
     <span class="handler">
       <v-icon

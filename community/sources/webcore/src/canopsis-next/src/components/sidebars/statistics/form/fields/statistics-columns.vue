@@ -8,11 +8,11 @@
     </c-alert>
     <c-progress-overlay
       :pending="pending"
-      transition="transition"
+      transition
     />
     <c-movable-card-iterator-field
       v-field="columns"
-      addable="addable"
+      addable
       @add="add"
     >
       <template #item="{ item, index }">

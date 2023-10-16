@@ -7,8 +7,8 @@
       <template #text="">
         <v-radio-group
           v-model="type"
-          hide-details="hide-details"
-          mandatory="mandatory"
+          hide-details
+          mandatory
         >
           <v-radio
             :value="$constants.PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES.selected"
@@ -24,8 +24,8 @@
       </template>
       <template #actions="">
         <v-btn
-          depressed="depressed"
-          text="text"
+          depressed
+          text
           @click="cancel"
         >
           {{ $t('common.cancel') }}

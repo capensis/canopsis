@@ -4,8 +4,8 @@
     :value="value"
     :label="label"
     placeholder="−−:−−"
-    hide-details="hide-details"
-    disabled="disabled"
+    hide-details
+    disabled
   />
 </template>
 

@@ -4,7 +4,7 @@
       class="pt-0 mt-0"
       v-field="value"
       :name="name"
-      hide-details="hide-details"
+      hide-details
     >
       <v-radio
         :value="false"

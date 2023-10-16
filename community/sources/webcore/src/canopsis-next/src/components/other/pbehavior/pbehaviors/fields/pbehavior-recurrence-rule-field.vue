@@ -9,19 +9,20 @@
     </v-btn>
     <template v-if="hasRecurrenceRule">
       <v-tooltip
-        fixed="fixed"
-        top="top"
+        fixed
+        top
       >
         <template #activator="{ on }">
           <v-btn
             v-on="on"
-            icon="icon"
+            icon
           >
             <v-icon color="grey darken-1">
               info
             </v-icon>
           </v-btn>
-        </template><span>{{ form.rrule }}</span>
+        </template>
+        <span>{{ form.rrule }}</span>
       </v-tooltip>
       <c-action-btn
         type="delete"

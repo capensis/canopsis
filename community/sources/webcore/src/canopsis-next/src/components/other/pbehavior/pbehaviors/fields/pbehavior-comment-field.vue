@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-layout align-center="align-center">
+    <v-layout align-center>
       <v-textarea
         v-field="comment.message"
         v-validate="rules"

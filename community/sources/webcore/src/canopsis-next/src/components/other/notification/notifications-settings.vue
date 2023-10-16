@@ -1,12 +1,12 @@
 <template>
   <v-layout
     class="my-2"
-    justify-center="justify-center"
+    justify-center
   >
     <v-progress-circular
       v-if="!form"
       color="primary"
-      indeterminate="indeterminate"
+      indeterminate
     />
     <v-flex
       v-else
@@ -18,7 +18,7 @@
         <v-divider class="mt-3" />
         <v-layout
           class="mt-3"
-          justify-end="justify-end"
+          justify-end
         >
           <v-btn
             class="primary mr-0"

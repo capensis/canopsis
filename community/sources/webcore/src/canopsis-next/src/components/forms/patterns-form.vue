@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-text-field
       v-if="withTitle"
       v-field="form.title"
@@ -20,7 +20,7 @@
       :entity-attributes="entityAttributes"
       :entity-types="entityTypes"
       :entity-counters-type="entityCountersType"
-      some-required="some-required"
+      some-required
     />
   </v-layout>
 </template>

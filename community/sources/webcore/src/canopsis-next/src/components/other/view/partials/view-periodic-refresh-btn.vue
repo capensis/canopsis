@@ -1,13 +1,13 @@
 <template>
-  <v-tooltip top="top">
+  <v-tooltip top>
     <template #activator="{ on }">
       <v-btn
         v-on="on"
         :input-value="isPeriodicRefreshEnabled"
         :loading="pending"
         color="secondary"
-        fab="fab"
-        dark="dark"
+        fab
+        dark
         @click.stop="refreshHandler"
       >
         <v-icon v-if="!isPeriodicRefreshEnabled">
@@ -21,12 +21,13 @@
           :width="2"
           :value="periodicRefreshProgressValue"
           color="white"
-          button="button"
+          button
         >
           <span class="refresh-btn">{{ periodicRefreshProgress | maxDurationByUnit }}</span>
         </v-progress-circular>
       </v-btn>
-    </template><span>{{ tooltipContent }}</span>
+    </template>
+    <span>{{ tooltipContent }}</span>
   </v-tooltip>
 </template>
 

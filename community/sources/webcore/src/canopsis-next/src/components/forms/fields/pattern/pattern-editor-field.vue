@@ -1,20 +1,20 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-pattern-field
       class="mb-2"
       v-if="!patterns.old_mongo_query && withType"
       :value="patterns.id"
       :type="type"
       :disabled="disabled || readonly"
-      return-object="return-object"
-      required="required"
+      return-object
+      required
       @input="updatePattern"
     />
     <v-tabs
       v-if="!withType || patterns.id"
       v-model="activeTab"
       slider-color="primary"
-      centered="centered"
+      centered
     >
       <v-tab
         :disabled="!isSimpleTab && hasJsonError"
@@ -25,8 +25,8 @@
       <v-tab-item :value="$constants.PATTERN_EDITOR_TABS.simple">
         <v-layout
           v-if="patterns.old_mongo_query"
-          justify-center="justify-center"
-          wrap="wrap"
+          justify-center
+          wrap
         >
           <v-flex
             class="pt-2"
@@ -39,9 +39,9 @@
           <v-flex
             class="pt-2"
             v-if="!readonly && !disabled"
-            xs12="xs12"
+            xs12
           >
-            <v-layout justify-center="justify-center">
+            <v-layout justify-center>
               <v-btn
                 color="primary"
                 @click="discardPattern"
@@ -68,13 +68,13 @@
       </v-tab>
       <v-tab-item
         :value="$constants.PATTERN_EDITOR_TABS.advanced"
-        lazy="lazy"
+        lazy
       >
         <c-json-field
           v-if="patterns.old_mongo_query"
           :value="patterns.old_mongo_query"
           :label="$t('pattern.advancedEditor')"
-          readonly="readonly"
+          readonly
           rows="10"
         />
         <pattern-advanced-editor-field
@@ -89,8 +89,8 @@
     </v-tabs>
     <template v-if="!readonly && !patterns.old_mongo_query">
       <v-layout
-        align-center="align-center"
-        justify-end="justify-end"
+        align-center
+        justify-end
       >
         <v-btn
           class="mr-0"
@@ -103,8 +103,8 @@
         </v-btn>
         <v-layout
           v-if="checked"
-          align-center="align-center"
-          justify-end="justify-end"
+          align-center
+          justify-end
         >
           <pattern-count-message
             :error="count === 0"

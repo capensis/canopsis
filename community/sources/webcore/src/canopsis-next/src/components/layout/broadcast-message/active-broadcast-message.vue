@@ -15,10 +15,10 @@
           color="white"
           outlined
           rounded
-          small="small"
+          small
           @click="showEditBroadcastMessageModal(activeMessage)"
         >
-          <v-icon small="small">
+          <v-icon small>
             edit
           </v-icon>
         </v-btn>
@@ -27,10 +27,10 @@
           color="white"
           outlined
           rounded
-          small="small"
+          small
           @click="showConfirmationLeaveMaintenanceMode"
         >
-          <v-icon small="small">
+          <v-icon small>
             logout
           </v-icon>
         </v-btn>

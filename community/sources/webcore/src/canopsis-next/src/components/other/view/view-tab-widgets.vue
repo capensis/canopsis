@@ -10,7 +10,7 @@
       <window-size-field
         v-model="size"
         color="white"
-        light="light"
+        light
       />
     </portal>
     <grid-layout

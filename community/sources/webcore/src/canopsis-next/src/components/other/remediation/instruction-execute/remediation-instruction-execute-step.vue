@@ -6,8 +6,8 @@
     >
       <v-layout
         class="fill-height"
-        align-center="align-center"
-        column="column"
+        align-center
+        column
       >
         <v-avatar
           class="white--text"
@@ -15,7 +15,8 @@
           size="32"
         >
           {{ stepNumber }}
-        </v-avatar><span
+        </v-avatar>
+        <span
           class="step-line primary mt-3"
           v-if="!isLastStep"
         />
@@ -26,8 +27,8 @@
         <v-text-field
           :value="step.name"
           :label="$t('common.name')"
-          readonly="readonly"
-          hide-details="hide-details"
+          readonly
+          hide-details
           filled
         />
       </v-layout>

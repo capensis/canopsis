@@ -6,7 +6,7 @@
     :loading="pending"
     item-text="name"
     item-value="_id"
-    hide-details="hide-details"
+    hide-details
   />
 </template>
 

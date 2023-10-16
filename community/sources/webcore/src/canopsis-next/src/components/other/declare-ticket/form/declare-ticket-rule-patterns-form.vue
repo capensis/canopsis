@@ -4,11 +4,11 @@
     :alarm-attributes="alarmAttributes"
     :entity-attributes="entityAttributes"
     :readonly="readonly"
-    some-required="some-required"
-    with-pbehavior="with-pbehavior"
-    with-alarm="with-alarm"
-    with-entity="with-entity"
-    both-counters="both-counters"
+    some-required
+    with-pbehavior
+    with-alarm
+    with-entity
+    both-counters
   />
 </template>
 

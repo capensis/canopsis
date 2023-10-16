@@ -1,5 +1,5 @@
 <template>
-  <modal-wrapper close="close">
+  <modal-wrapper close>
     <template #title="">
       <span>{{ $t('modals.selectView.title') }}</span>
     </template>
@@ -7,20 +7,20 @@
       <v-fade-transition>
         <v-layout
           v-if="pending"
-          justify-center="justify-center"
+          justify-center
         >
           <v-progress-circular
             color="primary"
-            indeterminate="indeterminate"
+            indeterminate
           />
         </v-layout>
         <v-layout v-else>
-          <v-expansion-panel dark="dark">
+          <v-expansion-panel dark>
             <v-expansion-panel-content
               class="secondary"
               v-for="group in groups"
               :key="group._id"
-              ripple="ripple"
+              ripple
             >
               <template #header="">
                 <div>{{ group.title }}</div>
@@ -30,7 +30,7 @@
                   class="secondary lighten-1"
                   v-for="view in group.views"
                   :key="view._id"
-                  ripple="ripple"
+                  ripple
                   @click="selectView(view._id)"
                 >
                   <v-list-item-title class="text-body-1">

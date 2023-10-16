@@ -1,8 +1,8 @@
 <template>
-  <v-layout wrap="wrap">
+  <v-layout wrap>
     <v-flex xs3="xs3">
       <v-checkbox
-        v-validate="v-validate"
+        v-validate
         v-field="value.enabled"
         :label="label"
         :error-messages="errors.collect(enabledFieldName)"
@@ -11,8 +11,8 @@
       />
     </v-flex>
     <v-flex xs4="xs4">
-      <v-layout column="column">
-        <v-layout align-center="align-center">
+      <v-layout column>
+        <v-layout align-center>
           <v-flex
             :class="{ 'text--disabled': !value.enabled }"
             xs6="xs6"
@@ -32,7 +32,7 @@
             />
           </v-flex>
         </v-layout>
-        <v-layout align-center="align-center">
+        <v-layout align-center>
           <v-flex
             :class="{ 'text--disabled': !value.enabled }"
             xs6="xs6"

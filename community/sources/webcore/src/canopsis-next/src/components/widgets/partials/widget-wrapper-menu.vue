@@ -1,18 +1,18 @@
 <template>
-  <v-menu offset-y="offset-y">
+  <v-menu offset-y>
     <template #activator="{ on }">
       <v-btn
         class="ma-0"
         v-on="on"
-        icon="icon"
-        small="small"
+        icon
+        small
       >
-        <v-icon small="small">
+        <v-icon small>
           more_horiz
         </v-icon>
       </v-btn>
     </template>
-    <v-list dense="dense">
+    <v-list dense>
       <v-list-item @click="showSettings">
         <div>{{ $t('common.edit') }}</div>
       </v-list-item>

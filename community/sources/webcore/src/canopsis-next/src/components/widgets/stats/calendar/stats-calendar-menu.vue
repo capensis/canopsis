@@ -6,18 +6,18 @@
     nudge-width="200"
     max-width="500"
     transition="fade-transition"
-    ignore-click-upper-outside="ignore-click-upper-outside"
-    offset-overflow="offset-overflow"
-    offset-x="offset-x"
+    ignore-click-upper-outside
+    offset-overflow
+    offset-x
   >
     <v-card>
       <v-card-text>
         <v-layout
           v-for="(event, index) in includedEvents"
           :key="`popover-event-${index}`"
-          wrap="wrap"
+          wrap
         >
-          <v-flex xs12="xs12">
+          <v-flex xs12>
             <div
               class="ds-calendar-event-popover-item"
               :style="{ backgroundColor: getStyleColor(event) }"

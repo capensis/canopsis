@@ -3,7 +3,7 @@
     <rating-field
       class="justify-center"
       v-field="form.rating"
-      hover="hover"
+      hover
     />
     <v-textarea
       v-field="form.comment"

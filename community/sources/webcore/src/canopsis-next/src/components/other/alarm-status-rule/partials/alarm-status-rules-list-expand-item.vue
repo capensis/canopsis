@@ -2,8 +2,8 @@
   <v-tabs
     color="secondary lighten-1"
     slider-color="primary"
-    dark="dark"
-    centered="centered"
+    dark
+    centered
   >
     <v-tab>{{ $t('common.description') }}</v-tab>
     <v-tab-item>
@@ -13,11 +13,11 @@
         <v-textarea
           class="my-2 mx-4 pa-0"
           :value="rule.description"
-          readonly="readonly"
-          auto-grow="auto-grow"
+          readonly
+          auto-grow
           outlined
-          hide-details="hide-details"
-          dark="dark"
+          hide-details
+          dark
         />
       </v-layout>
     </v-tab-item>
@@ -25,7 +25,7 @@
     <v-tab-item>
       <v-layout class="py-3">
         <v-flex
-          xs12="xs12"
+          xs12
           md8="md8"
           offset-md2="offset-md2"
         >
@@ -33,7 +33,7 @@
             <v-card-text>
               <alarm-status-rule-patterns-form
                 :form="patterns"
-                readonly="readonly"
+                readonly
               />
             </v-card-text>
           </v-card>

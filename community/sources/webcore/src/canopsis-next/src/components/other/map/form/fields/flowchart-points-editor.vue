@@ -1,6 +1,7 @@
 <template>
   <g class="flowchart-points-editor">
     <component
+      is="foreignObject"
       class="flowchart-points-editor__point"
       v-for="{ point, x, y } in nonShapesIcons"
       :key="point._id"
@@ -8,7 +9,6 @@
       :y="y"
       :width="iconSize"
       :height="iconSize"
-      is="foreignObject"
       @click.stop=""
       @contextmenu.stop.prevent="handleEditContextmenu($event, point)"
       @dblclick.stop="openEditPointByClick($event, point)"
@@ -20,6 +20,7 @@
       />
     </component>
     <component
+      is="foreignObject"
       class="flowchart-points-editor__point"
       v-for="{ point, x, y } in shapesIcons"
       :key="point._id"
@@ -27,7 +28,6 @@
       :width="iconSize"
       :x="x"
       :y="y"
-      is="foreignObject"
       @mouseup.prevent.stop=""
       @mousedown.prevent.stop=""
       @click.stop=""
@@ -77,7 +77,6 @@ import { formMixin } from '@/mixins/form';
 import { mapFlowchartPointsMixin } from '@/mixins/map/map-flowchart-points-mixin';
 
 import PointIcon from '@/components/other/map/partials/point-icon.vue';
-import PointFormDialog from '@/components/other/map/form/fields/point-form-dialog.vue';
 
 import PointFormDialogMenu from './point-form-dialog-menu.vue';
 import FlowchartPointContextmenu from './flowchart-point-contextmenu.vue';
@@ -87,7 +86,6 @@ export default {
   components: {
     PointFormDialogMenu,
     FlowchartPointContextmenu,
-    PointFormDialog,
     PointIcon,
   },
   mixins: [formMixin, mapFlowchartPointsMixin],

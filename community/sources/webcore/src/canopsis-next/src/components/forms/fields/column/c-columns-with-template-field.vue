@@ -1,13 +1,14 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-select
       :value="template"
       :items="templatesWithCustom"
       :label="$t('common.template')"
       :loading="templatesPending"
-      return-object="return-object"
+      return-object
       @input="updateTemplate"
-    /><span class="text-body-2 my-2">{{ $tc('common.column', 2) }}</span>
+    />
+    <span class="text-body-2 my-2">{{ $tc('common.column', 2) }}</span>
     <c-columns-field
       :columns="columns"
       :with-template="withTemplate"
@@ -26,10 +27,7 @@ import { CUSTOM_WIDGET_TEMPLATE } from '@/constants';
 
 import { formBaseMixin } from '@/mixins/form';
 
-import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
-
 export default {
-  components: { WidgetSettingsItem },
   mixins: [formBaseMixin],
   model: {
     prop: 'columns',

@@ -2,7 +2,7 @@
   <div>
     <v-layout>
       <v-flex xs6="xs6">
-        <v-layout column="column">
+        <v-layout column>
           <date-time-picker-text-field
             v-field="value.tstart"
             v-validate="tstartRules"
@@ -30,13 +30,13 @@
         <c-quick-date-interval-type-field
           v-model="range"
           :ranges="quickRanges"
-          return-object="return-object"
+          return-object
         />
         <v-select
           v-field="value.time_field"
           :items="intervalFields"
           :label="$t('quickRanges.timeField')"
-          clearable="clearable"
+          clearable
         />
       </v-flex>
     </v-layout>

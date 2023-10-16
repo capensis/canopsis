@@ -5,15 +5,15 @@
     v-model="opened"
     :close-on-content-click="false"
     :open-on-click="false"
-    offset-x="offset-x"
-    lazy-with-unmount="lazy-with-unmount"
-    lazy="lazy"
+    offset-x
+    lazy-with-unmount
+    lazy
   >
     <template #activator="{ on }">
       <v-layout
         v-on="on"
-        d-inline-flex="d-inline-flex"
-        align-center="align-center"
+        d-inline-flex
+        align-center
       >
         <c-compiled-template
           v-if="column.isHtml"
@@ -28,11 +28,11 @@
         <v-btn
           class="ma-0 alarms-column-cell__show-info-btn"
           :class="{ 'alarms-column-cell__show-info-btn--small': small }"
-          icon="icon"
-          small="small"
+          icon
+          small
           @click.stop="showInfoPopup"
         >
-          <v-icon small="small">
+          <v-icon small>
             info
           </v-icon>
         </v-btn>

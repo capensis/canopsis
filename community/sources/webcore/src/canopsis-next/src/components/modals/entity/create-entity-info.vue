@@ -1,6 +1,6 @@
 <template>
   <v-form @submit.stop.prevent="submit">
-    <modal-wrapper close="close">
+    <modal-wrapper close>
       <template #title="">
         <span>{{ title }}</span>
       </template>
@@ -14,7 +14,7 @@
       <template #actions="">
         <v-btn
           @click="$modals.hide"
-          depressed="depressed"
+          depressed
           text
         >
           {{ $t('common.cancel') }}

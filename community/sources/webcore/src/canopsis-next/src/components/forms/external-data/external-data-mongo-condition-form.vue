@@ -28,25 +28,25 @@
       class="pl-2"
       xs5="xs5"
     >
-      <v-layout align-center="align-center">
+      <v-layout align-center>
         <c-payload-text-field
           v-field="condition.value"
           :label="$t('common.value')"
           :disabled="disabled"
           :variables="variables"
           :name="valueFieldName"
-          clearable="clearable"
+          clearable
         />
         <v-btn
           v-if="!disabled"
           :disabled="disabledRemove"
-          icon="icon"
-          small="small"
+          icon
+          small
           @click="removeCondition"
         >
           <v-icon
             color="error"
-            small="small"
+            small
           >
             delete
           </v-icon>

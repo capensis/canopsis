@@ -3,8 +3,8 @@
     class="mt-0"
     v-field="value"
     :label="label"
-    hide-details="hide-details"
-    mandatory="mandatory"
+    hide-details
+    mandatory
     color="primary"
   >
     <v-radio

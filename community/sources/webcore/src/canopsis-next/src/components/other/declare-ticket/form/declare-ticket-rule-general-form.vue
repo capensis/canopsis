@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-layout>
       <v-flex xs6="xs6">
         <c-enabled-field v-field="form.enabled" />
@@ -21,7 +21,7 @@
       >
         <c-name-field
           v-field="form.name"
-          required="required"
+          required
         />
       </v-flex>
       <v-flex xs4="xs4">

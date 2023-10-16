@@ -7,7 +7,7 @@
     <v-layout
       v-for="(name, index) in names"
       :key="name.key"
-      justify-space-between="justify-space-between"
+      justify-space-between
     >
       <v-flex xs11="xs11">
         <v-text-field
@@ -21,7 +21,7 @@
       <v-flex xs1="xs1">
         <v-btn
           color="error"
-          icon="icon"
+          icon
           @click="removeItemFromArray(index)"
         >
           <v-icon>delete</v-icon>

@@ -2,7 +2,7 @@
   <div>
     <c-name-field
       v-field="form.name"
-      required="required"
+      required
     />
     <c-duration-field v-field="form.interval" />
     <v-layout>
@@ -23,16 +23,16 @@
     >
       <v-layout
         v-if="tabsPending"
-        justify-center="justify-center"
+        justify-center
       >
         <v-progress-circular
           color="primary"
-          indeterminate="indeterminate"
+          indeterminate
         />
       </v-layout>
       <v-flex
         v-else
-        xs12="xs12"
+        xs12
       >
         <v-flex class="text-center mb-2">
           {{ $t('common.result') }}

@@ -20,17 +20,22 @@
           <div
             class="v-input--selection-controls__ripple primary--text"
             v-ripple="{ center: true }"
-          /><i
+          />
+          <i
             class="v-icon material-icons"
             :class="[{ 'primary--text': inputValue }, themeClasses]"
-          >{{ inputValue ? 'check_box' : 'check_box_outline_blank' }}</i>
+          >
+            {{ inputValue ? 'check_box' : 'check_box_outline_blank' }}
+          </i>
         </div>
         <label
           class="v-label"
           v-show="label !== ''"
           :class="themeClasses"
           @click="change"
-        >{{ label }}</label>
+        >
+          {{ label }}
+        </label>
       </div>
     </div>
   </div>

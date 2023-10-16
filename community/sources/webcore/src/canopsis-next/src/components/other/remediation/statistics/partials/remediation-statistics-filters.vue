@@ -1,7 +1,7 @@
 <template>
   <v-layout
     class="remediation-statistics-filters my-4"
-    wrap="wrap"
+    wrap
   >
     <c-quick-date-interval-field
       class="mr-4"

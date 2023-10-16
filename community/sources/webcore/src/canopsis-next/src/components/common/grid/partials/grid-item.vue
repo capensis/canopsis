@@ -15,7 +15,7 @@
       v-if="!disabled"
       v-on="resizeHandlerOn"
     >
-      <v-icon small="small">
+      <v-icon small>
         $vuetify.icons.resize_right
       </v-icon>
     </div>

@@ -4,7 +4,7 @@
       <pattern-operator-information>{{ $t('common.and') }}</pattern-operator-information>
     </v-flex>
     <v-flex xs11="xs11">
-      <v-layout column="column">
+      <v-layout column>
         <pattern-rules-field
           :rules="group.rules"
           :attributes="attributes"

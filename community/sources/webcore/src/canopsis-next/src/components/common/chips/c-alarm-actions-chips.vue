@@ -3,8 +3,8 @@
     class="c-alarm-actions-chips"
     :key="wrapperKey"
     :class="{ 'c-alarm-actions-chips--small': small }"
-    wrap="wrap"
-    align-center="align-center"
+    wrap
+    align-center
   >
     <c-alarm-action-chip
       class="ma-0"
@@ -28,8 +28,8 @@
       v-if="dropDownItems.length"
       key="more"
       max-height="400px"
-      bottom="bottom"
-      left="left"
+      bottom
+      left
       @input="$emit('activate')"
     >
       <template #activator="{ on }">
@@ -37,7 +37,7 @@
           class="c-alarm-actions-chips__more-btn ma-0"
           v-on="on"
           color="grey"
-          icon="icon"
+          icon
         >
           <v-icon
             color="white"
@@ -52,7 +52,7 @@
           <v-layout
             class="c-alarm-actions-chips__more"
             :class="{ 'c-alarm-actions-chips--small': small }"
-            wrap="wrap"
+            wrap
           >
             <c-alarm-action-chip
               class="mx-0"

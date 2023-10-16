@@ -8,9 +8,9 @@
       v-field="value"
       :label="$t('settings.elementsPerPage')"
       :items="$config.PAGINATION_PER_PAGE_VALUES"
-      hide-details="hide-details"
-      single-line="single-line"
-      dense="dense"
+      hide-details
+      single-line
+      dense
     />
   </widget-settings-item>
 </template>

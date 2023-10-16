@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-id-field
       v-field="form._id"
       :disabled="onlyUserPrefs || !isNew"
@@ -9,7 +9,7 @@
       :label="$t('common.username')"
       :disabled="onlyUserPrefs"
       autocomplete="new-password"
-      required="required"
+      required
     />
     <v-text-field
       v-field="form.firstname"
@@ -39,9 +39,9 @@
       v-field="form.roles"
       :disabled="onlyUserPrefs"
       :label="$tc('common.role', 2)"
-      required="required"
-      multiple="multiple"
-      chips="chips"
+      required
+      multiple
+      chips
     />
     <c-language-field
       v-field="form.ui_language"
@@ -56,15 +56,15 @@
     <c-theme-field v-field="form.ui_theme" />
     <v-layout
       v-if="!isNew"
-      align-center="align-center"
+      align-center
     >
       <div>{{ $t('common.authKey') }}: {{ user.authkey }}</div>
       <c-copy-btn
         :value="user.authkey"
         :tooltip="$t('common.copyToClipboard')"
-        small="small"
-        fab="fab"
-        left="left"
+        small
+        fab
+        left
         @success="showCopyAuthKeySuccessPopup"
         @error="showCopyAuthKeyErrorPopup"
       />

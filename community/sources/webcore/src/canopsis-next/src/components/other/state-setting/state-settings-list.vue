@@ -4,8 +4,8 @@
     :headers="headers"
     :loading="pending"
     :total-items="stateSettings.length"
-    no-pagination="no-pagination"
-    expand="expand"
+    no-pagination
+    expand
   >
     <template #method="{ item }">
       {{ $t(`stateSetting.methods.${item.method}`) }}

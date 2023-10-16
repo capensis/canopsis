@@ -4,7 +4,7 @@
       <v-expansion-panel-content
         class="grey darken-2 white--text"
         :class="{ error: errors.length }"
-        lazy="lazy"
+        lazy
       >
         <template #header="">
           <div class="white--text">

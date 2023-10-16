@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-draggable-list-field
       v-field="actions"
       handle=".action-drag-handler"

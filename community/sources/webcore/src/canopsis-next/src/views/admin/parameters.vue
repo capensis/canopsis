@@ -1,12 +1,12 @@
 <template>
   <v-container>
-    <v-layout wrap="wrap">
-      <v-flex xs12="xs12">
+    <v-layout wrap>
+      <v-flex xs12>
         <v-card class="ma-2">
           <v-tabs
             v-model="activeTab"
             slider-color="primary"
-            fixed-tabs="fixed-tabs"
+            fixed-tabs
           >
             <v-tab :href="`#${$constants.PARAMETERS_TABS.parameters}`">
               {{ $t('parameters.tabs.parameters') }}

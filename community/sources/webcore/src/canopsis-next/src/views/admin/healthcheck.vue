@@ -8,7 +8,7 @@
     >
       <v-chip
         color="error"
-        dark="dark"
+        dark
       >
         <span class="subheading">{{ $t('healthcheck.systemStatusChipError') }}</span>
       </v-chip>
@@ -17,7 +17,7 @@
       <v-tabs
         v-model="activeTab"
         slider-color="primary"
-        centered="centered"
+        centered
       >
         <v-tab>{{ $t('common.systemStatus') }}</v-tab>
         <v-tab>{{ $tc('common.graph', 2) }}</v-tab>
@@ -39,7 +39,7 @@
             :engines-parameters="enginesParameters"
             :has-invalid-engines-order="hasInvalidEnginesOrder"
             :max-queue-length="maxQueueLength"
-            show-description="show-description"
+            show-description
           />
           <h2
             class="my-4 text-h5 text-center"

@@ -5,8 +5,8 @@
         v-field="form.active_on_pbh"
         :label="$t('remediation.pattern.tabs.pbehaviorTypes.fields.activeOnTypes')"
         :is-item-disabled="isActiveItemDisabled"
-        chips="chips"
-        multiple="multiple"
+        chips
+        multiple
       />
     </v-layout>
     <v-layout>
@@ -14,8 +14,8 @@
         v-field="form.disabled_on_pbh"
         :label="$t('remediation.pattern.tabs.pbehaviorTypes.fields.disabledOnTypes')"
         :is-item-disabled="isDisabledItemDisabled"
-        chips="chips"
-        multiple="multiple"
+        chips
+        multiple
       />
     </v-layout>
   </div>

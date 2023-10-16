@@ -1,7 +1,7 @@
 <template>
   <v-select
     class="role-template-field"
-    v-validate="v-validate"
+    v-validate
     :value="value"
     :label="label || $t('role.selectTemplate')"
     :loading="pending"
@@ -11,12 +11,12 @@
     :disabled="disabled"
     item-text="name"
     item-value="permissions"
-    return-object="return-object"
-    clearable="clearable"
+    return-object
+    clearable
     @input="updatePermissions"
   >
     <template #item="{ item }">
-      <v-layout justify-space-between="justify-space-between">
+      <v-layout justify-space-between>
         {{ item.name }}<span class="role-template-field__item-description">{{ item.description }}</span>
       </v-layout>
     </template>

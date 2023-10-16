@@ -15,10 +15,10 @@
           :entity-types="entityTypes"
           :item-disabled="isItemDisabled"
           :item-text="getItemText"
-          required="required"
-          return-object="return-object"
-          clearable="clearable"
-          autocomplete="autocomplete"
+          required
+          return-object
+          clearable
+          autocomplete
           @input="updateEntity($event, index)"
         />
         <v-expand-transition>
@@ -30,15 +30,15 @@
             :label="$t('modals.createTreeOfDependenciesMap.pinnedEntities')"
             :item-text="getItemText"
             item-value="_id"
-            deletable-chips="deletable-chips"
-            chips="chips"
-            multiple="multiple"
+            deletable-chips
+            chips
+            multiple
             @change="updatePinned($event, index)"
           />
         </v-expand-transition>
       </v-card-text>
       <v-card-actions>
-        <v-layout justify-end="justify-end">
+        <v-layout justify-end>
           <c-action-btn
             :disabled="entities.length === 1"
             type="delete"

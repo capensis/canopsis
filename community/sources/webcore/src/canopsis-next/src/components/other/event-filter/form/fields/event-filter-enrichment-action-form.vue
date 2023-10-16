@@ -1,11 +1,11 @@
 <template>
   <v-card>
     <v-card-text>
-      <v-layout align-start="align-start">
+      <v-layout align-start>
         <v-icon class="draggable ml-0 mr-3 mt-3 action-drag-handler">
           drag_indicator
         </v-icon>
-        <v-layout column="column">
+        <v-layout column>
           <v-layout>
             <v-select
               v-field="form.type"
@@ -14,7 +14,7 @@
             />
             <v-btn
               class="mr-0"
-              icon="icon"
+              icon
               @click="remove"
             >
               <v-icon color="error">
@@ -38,7 +38,7 @@
               <c-name-field
                 v-field="form.name"
                 key="name"
-                required="required"
+                required
               />
             </v-flex>
             <v-flex xs7="xs7">
@@ -50,8 +50,8 @@
                 :variables="variables"
                 :name="valueFieldName"
                 key="from"
-                required="required"
-                clearable="clearable"
+                required
+                clearable
               />
               <v-combobox
                 class="ml-2"

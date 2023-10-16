@@ -12,8 +12,8 @@
         :max="max"
         :step="step"
         ticks="always"
-        always-dirty="always-dirty"
-        thumb-label="thumb-label"
+        always-dirty
+        thumb-label
       />
     </v-container>
   </v-list-group>

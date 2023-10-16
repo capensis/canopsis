@@ -1,12 +1,12 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-checkbox
       v-for="chip in chips"
       :key="chip.value"
       :input-value="chip.active"
       :label="chip.text"
       color="primary"
-      hide-details="hide-details"
+      hide-details
       @change="updateActive(chip.value)"
     />
   </v-layout>

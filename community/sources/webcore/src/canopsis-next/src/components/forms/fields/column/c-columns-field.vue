@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-draggable-list-field
       v-field="columns"
       :class="{ empty: isColumnsEmpty }"
@@ -21,20 +21,21 @@
         @remove="remove(index)"
       />
     </c-draggable-list-field>
-    <v-layout justify-end="justify-end">
-      <v-tooltip left="left">
+    <v-layout justify-end>
+      <v-tooltip left>
         <template #activator="{ on }">
           <v-btn
             class="mr-2 mx-0"
             v-on="on"
             color="primary"
-            icon="icon"
-            large="large"
+            icon
+            large
             @click.prevent="add"
           >
             <v-icon>add</v-icon>
           </v-btn>
-        </template><span>{{ $t('common.add') }}</span>
+        </template>
+        <span>{{ $t('common.add') }}</span>
       </v-tooltip>
     </v-layout>
   </v-layout>

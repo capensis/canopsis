@@ -8,7 +8,7 @@
         class="ma-0"
         :disabled="item.last"
         :loading="item.last && pending"
-        small="small"
+        small
         text
         @click="$emit('click', item)"
       >

@@ -2,13 +2,13 @@
   <v-form @submit.prevent="submit">
     <modal-wrapper
       text-class="pa-0"
-      close="close"
+      close
     >
       <template #title="">
         <span>{{ title }}</span>
       </template>
       <template #text="">
-        <v-layout column="column">
+        <v-layout column>
           <broadcast-message
             :message="message"
             :color="form.color"
@@ -21,8 +21,8 @@
       </template>
       <template #actions="">
         <v-btn
-          depressed="depressed"
-          text="text"
+          depressed
+          text
           @click="$modals.hide"
         >
           {{ $t('common.cancel') }}

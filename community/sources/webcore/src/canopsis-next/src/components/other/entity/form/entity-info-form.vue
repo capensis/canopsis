@@ -1,11 +1,11 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-text-field
       v-field="form.name"
       v-validate="nameRules"
       :label="$t('common.name')"
       :error-messages="errors.collect('name')"
-      name="name"
+      name
     />
     <v-text-field
       v-field="form.description"
@@ -17,7 +17,7 @@
     <c-mixed-field
       v-field="form.value"
       :label="$t('common.value')"
-      required="required"
+      required
     />
   </v-layout>
 </template>

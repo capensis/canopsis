@@ -18,18 +18,18 @@
     </div>
     <v-menu
       v-if="shownMenu"
-      bottom="bottom"
-      offset-y="offset-y"
+      bottom
+      offset-y
     >
       <template #activator="{ on }">
         <v-btn
           class="ma-1"
           v-on="on"
-          icon="icon"
-          small="small"
+          icon
+          small
         >
           <v-icon
-            small="small"
+            small
             color="white"
           >
             more_vert

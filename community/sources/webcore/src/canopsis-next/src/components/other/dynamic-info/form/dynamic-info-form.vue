@@ -2,7 +2,7 @@
   <v-stepper
     class="dynamic-info-form"
     v-model="stepper"
-    non-linear="non-linear"
+    non-linear
   >
     <v-stepper-header>
       <v-stepper-step
@@ -10,7 +10,7 @@
         :complete="stepper > steps.GENERAL"
         :step="steps.GENERAL"
         :rules="[() => !hasGeneralFormAnyError]"
-        editable="editable"
+        editable
       >
         {{ $t('common.general') }}
         <small v-if="hasGeneralFormAnyError">{{ $t('modals.createDynamicInfo.errors.invalid') }}</small>
@@ -21,7 +21,7 @@
         :complete="stepper > steps.INFOS"
         :step="steps.INFOS"
         :rules="[() => !hasInfosFormAnyError]"
-        editable="editable"
+        editable
       >
         {{ $t('modals.createDynamicInfo.steps.infos.title') }}
         <small v-if="hasInfosFormAnyError">{{ $t('modals.createDynamicInfo.errors.invalid') }}</small>
@@ -32,7 +32,7 @@
         :complete="stepper > steps.PATTERNS"
         :step="steps.PATTERNS"
         :rules="[() => !hasPatternsFormAnyError]"
-        editable="editable"
+        editable
       >
         {{ $t('modals.createDynamicInfo.steps.patterns.title') }}
         <small v-if="hasPatternsFormAnyError">{{ $t('modals.createDynamicInfo.errors.invalid') }}</small>

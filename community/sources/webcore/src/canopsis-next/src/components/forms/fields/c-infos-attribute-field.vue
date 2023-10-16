@@ -1,8 +1,5 @@
 <template>
-  <v-layout
-    :row="row"
-    :column="column"
-  >
+  <v-layout :column="column">
     <v-flex :xs6="row">
       <v-combobox
         v-if="combobox"

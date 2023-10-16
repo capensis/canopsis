@@ -3,7 +3,7 @@
     <v-layout
       class="d-inline-flex"
       v-if="serviceEntities.length"
-      align-center="align-center"
+      align-center
     >
       <v-checkbox-functional
         class="ml-3 pa-0"

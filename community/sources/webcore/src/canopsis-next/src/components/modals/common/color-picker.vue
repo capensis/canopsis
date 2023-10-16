@@ -1,5 +1,5 @@
 <template>
-  <modal-wrapper close="close">
+  <modal-wrapper close>
     <template #title="">
       <span>{{ title }}</span>
     </template>
@@ -16,7 +16,7 @@
     <template #actions="">
       <v-btn
         data-test="colorPickerCancelButton"
-        depressed="depressed"
+        depressed
         text
         @click="$modals.hide"
       >

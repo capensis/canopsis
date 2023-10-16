@@ -6,7 +6,7 @@
     :meta="meta"
     :query.sync="query"
     :columns="columns"
-    selectable="selectable"
+    selectable
   >
     <template #toolbar="">
       <v-flex>

@@ -6,9 +6,9 @@
     :entity-attributes="entityAttributes"
     :with-total-entity="withTotalEntity"
     :some-required="someRequired"
-    with-alarm="with-alarm"
-    with-entity="with-entity"
-    both-counters="both-counters"
+    with-alarm
+    with-entity
+    both-counters
   />
 </template>
 

@@ -5,8 +5,8 @@
       :max="max"
       :min="min"
       ticks="always"
-      always-dirty="always-dirty"
-      thumb-label="thumb-label"
+      always-dirty
+      thumb-label
     />
   </widget-settings-item>
 </template>

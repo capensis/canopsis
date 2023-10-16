@@ -4,7 +4,7 @@
       <v-list-item>{{ $t('settings.columnsSettings.title') }}</v-list-item>
     </template>
     <v-container>
-      <v-layout column="column">
+      <v-layout column>
         <c-enabled-field
           v-field="value.draggable"
           :label="$t('settings.columnsSettings.dragging')"
@@ -19,7 +19,7 @@
           v-field="value.cells_content_behavior"
           :label="$t('settings.columnsSettings.cellsContentBehavior')"
           name="opened"
-          hide-details="hide-details"
+          hide-details
         >
           <v-radio
             v-for="type in types"

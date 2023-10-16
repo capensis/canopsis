@@ -3,7 +3,7 @@
     class="c-alarm-action-chip"
     :class="chipClass"
     :color="color"
-    small="small"
+    small
     @click="$emit('click')"
   >
     <span class="c-alarm-action-chip__text white--text">

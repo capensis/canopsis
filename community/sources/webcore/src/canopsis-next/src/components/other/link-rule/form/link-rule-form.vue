@@ -2,8 +2,8 @@
   <v-tabs
     slider-color="primary"
     color="transparent"
-    fixed-tabs="fixed-tabs"
-    centered="centered"
+    fixed-tabs
+    centered
   >
     <v-tab :class="{ 'error--text': hasGeneralError }">
       {{ $t('common.general') }}

@@ -13,7 +13,7 @@
         :text="$t('declareTicket.responseFieldHelpText', { field: $t('declareTicket.ticketID') })"
         icon="help"
         color="grey darken-1"
-        left="left"
+        left
       />
     </template>
   </v-text-field>

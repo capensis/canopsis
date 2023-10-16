@@ -17,8 +17,8 @@
     <c-zoom-overlay
       class="flowchart__editor"
       :class="{ 'flowchart__editor--readonly': readonly }"
-      skip-alt="skip-alt"
-      skip-shift="skip-shift"
+      skip-alt
+      skip-shift
     >
       <flowchart-editor
         v-field="shapes"

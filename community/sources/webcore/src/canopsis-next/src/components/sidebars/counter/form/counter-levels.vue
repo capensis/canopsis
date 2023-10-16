@@ -6,9 +6,9 @@
         v-field="form.counter"
         :label="$t('settings.counterLevels.fields.counter')"
         :items="availableCounters"
-        hide-details="hide-details"
-        single-line="single-line"
-        dense="dense"
+        hide-details
+        single-line
+        dense
       />
     </widget-settings-item>
     <v-divider />
@@ -17,7 +17,7 @@
     <field-levels-colors-selector
       v-field="form.colors"
       color-type="hex"
-      hide-suffix="hide-suffix"
+      hide-suffix
     />
   </widget-settings-group>
 </template>

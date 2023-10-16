@@ -4,7 +4,7 @@
     <c-alarm-action-chip
       v-if="selectedTag"
       :color="getTagColor(selectedTag)"
-      closable="closable"
+      closable
       @close="$emit('clear')"
     >{{ selectedTag }}</c-alarm-action-chip></span>
 </template>

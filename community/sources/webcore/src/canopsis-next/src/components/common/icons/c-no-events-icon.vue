@@ -16,7 +16,8 @@
       >
         sync_problem
       </v-icon>
-    </template><span>{{ message }}</span>
+    </template>
+    <span>{{ message }}</span>
   </v-tooltip>
 </template>
 

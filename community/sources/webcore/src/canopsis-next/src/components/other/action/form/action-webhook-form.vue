@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <request-form
       v-field="webhook.request"
       :name="`${name}.request`"
@@ -8,11 +8,11 @@
       :url-variables="payloadVariables"
     />
     <declare-ticket-rule-ticket-mapping-field v-field="webhook.declare_ticket" />
-    <v-layout justify-end="justify-end">
+    <v-layout justify-end>
       <v-btn
         :loading="checking"
         color="orange"
-        dark="dark"
+        dark
         @click="validateTemplateVariables"
       >
         {{ $t('declareTicket.checkSyntax') }}

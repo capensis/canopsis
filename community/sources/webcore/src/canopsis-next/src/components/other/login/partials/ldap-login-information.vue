@@ -1,10 +1,10 @@
 <template>
   <c-help-icon
     icon="help"
-    right="right"
+    right
   >
-    <v-layout wrap="wrap">
-      <v-flex xs12="xs12">
+    <v-layout wrap>
+      <v-flex xs12>
         {{ $t('login.connectionProtocols') }}
       </v-flex>
       <ul>

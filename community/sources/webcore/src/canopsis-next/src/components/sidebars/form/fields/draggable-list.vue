@@ -6,7 +6,7 @@
     <v-layout
       v-for="(item, index) in items"
       :key="item[itemKey]"
-      align-center="align-center"
+      align-center
     >
       <v-flex xs1="xs1">
         <v-icon

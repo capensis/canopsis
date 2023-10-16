@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-information-block-row
       :label="$t('testSuite.xmlFeed')"
       :value="testSuite.xml_feed"
@@ -21,7 +21,7 @@
     <v-layout
       class="mt-4"
     >
-      <v-layout column="column">
+      <v-layout column>
         <c-information-block-row
           :label="$t('testSuite.totalTests')"
           :value="testSuite.total"

@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <template v-if="hasMessages">
       <test-suite-message-panel
         class="mb-2"

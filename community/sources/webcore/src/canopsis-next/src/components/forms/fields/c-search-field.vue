@@ -1,7 +1,7 @@
 <template>
   <v-layout
     class="c-search-field"
-    align-end="align-end"
+    align-end
   >
     <v-combobox
       v-if="combobox"
@@ -13,9 +13,9 @@
       append-icon=""
       item-text="search"
       item-value="search"
-      hide-details="hide-details"
-      hide-no-data="hide-no-data"
-      single-line="single-line"
+      hide-details
+      hide-no-data
+      single-line
       @input="submit"
     >
       <template #item="{ item }">
@@ -28,13 +28,13 @@
           <v-layout>
             <v-btn
               class="ma-0"
-              small="small"
-              icon="icon"
+              small
+              icon
               @click.stop="$emit('remove', item.search)"
             >
               <v-icon
                 color="grey"
-                small="small"
+                small
               >
                 delete
               </v-icon>
@@ -42,13 +42,13 @@
             <v-btn
               class="ma-0"
               :class="{ 'c-search-field__item__pinned': item.pinned }"
-              small="small"
-              icon="icon"
+              small
+              icon
               @click.stop="$emit('toggle-pin', item.search)"
             >
               <v-icon
                 :color="item.pinned ? 'inherit' : 'grey'"
-                small="small"
+                small
               >
                 $vuetify.icons.push_pin
               </v-icon>
@@ -61,8 +61,8 @@
       v-else
       v-model="localValue"
       :label="$t('common.search')"
-      hide-details="hide-details"
-      single-line="single-line"
+      hide-details
+      single-line
       @keydown.enter.prevent="submit"
     />
     <c-action-btn

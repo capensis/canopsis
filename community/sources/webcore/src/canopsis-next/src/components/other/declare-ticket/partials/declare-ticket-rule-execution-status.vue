@@ -5,14 +5,14 @@
       :color="color"
       width="3"
       size="22"
-      indeterminate="indeterminate"
+      indeterminate
     />
     <c-help-icon
       v-else
       :icon="statusIcon.name"
       :color="statusIcon.color"
       :text="statusIcon.text"
-      top="top"
+      top
     /></span>
 </template>
 

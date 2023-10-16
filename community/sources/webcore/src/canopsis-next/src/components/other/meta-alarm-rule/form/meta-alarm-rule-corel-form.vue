@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-text-field
       v-field.number="config.corel_id"
       v-validate="'required'"
@@ -11,7 +11,7 @@
         <c-help-icon
           :text="$t('metaAlarmRule.corelIdHelp')"
           icon="help"
-          left="left"
+          left
         />
       </template>
     </v-text-field>
@@ -26,7 +26,7 @@
         <c-help-icon
           :text="$t('metaAlarmRule.corelStatusHelp')"
           icon="help"
-          left="left"
+          left
         />
       </template>
     </v-text-field>
@@ -49,7 +49,7 @@
       :label="$t('metaAlarmRule.thresholdCount')"
       :min="0"
       name="thresholdCount"
-      required="required"
+      required
     />
   </v-layout>
 </template>

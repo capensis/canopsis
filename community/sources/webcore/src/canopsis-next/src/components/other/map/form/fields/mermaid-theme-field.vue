@@ -7,8 +7,8 @@
     :error-messages="errors.collect(name)"
     :label="$t('mermaid.theme')"
     :name="name"
-    hide-details="hide-details"
-    light="light"
+    hide-details
+    light
   />
 </template>
 

@@ -2,15 +2,15 @@
   <v-layout
     class="text-fields"
     :class="{ 'text-fields__disabled': disabled }"
-    wrap="wrap"
+    wrap
   >
     <v-flex
       v-show="title"
-      xs12="xs12"
+      xs12
     >
       <h4>{{ title }}</h4>
     </v-flex>
-    <v-flex xs12="xs12">
+    <v-flex xs12>
       <slot
         v-if="!items.length"
         name="no-data"
@@ -19,10 +19,10 @@
         class="text-field"
         v-for="(item, index) in items"
         :key="item[itemKey]"
-        justify-space-between="justify-space-between"
-        align-center="align-center"
+        justify-space-between
+        align-center
       >
-        <v-flex xs12="xs12">
+        <v-flex xs12>
           <v-text-field
             v-if="!mixed"
             v-validate="validationRules"
@@ -47,7 +47,7 @@
         <div class="text-fields__delete-button">
           <v-btn
             v-if="!disabled"
-            icon="icon"
+            icon
             @click="removeItemFromArray(index)"
           >
             <v-icon color="error">
@@ -59,7 +59,7 @@
     </v-flex>
     <v-flex
       v-if="!disabled"
-      xs12="xs12"
+      xs12
     >
       <v-layout>
         <v-btn

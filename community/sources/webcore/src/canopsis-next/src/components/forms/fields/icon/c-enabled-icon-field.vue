@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-enabled-field
       v-model="enabled"
       :label="label"
@@ -11,7 +11,7 @@
       v-field="icon"
       :label="$t('common.icon')"
       :name="name"
-      required="required"
+      required
     />
   </v-layout>
 </template>

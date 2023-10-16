@@ -1,19 +1,19 @@
 <template>
   <v-container
     class="pa-3"
-    fluid="fluid"
+    fluid
   >
     <v-layout
-      align-center="align-center"
-      justify-space-between="justify-space-between"
+      align-center
+      justify-space-between
     >
       <div class="subheading">
         {{ $t('settings.infoPopup.title') }}
       </div>
-      <v-layout justify-end="justify-end">
+      <v-layout justify-end>
         <v-btn
           class="primary"
-          small="small"
+          small
           @click="edit"
         >
           {{ $t('common.create') }}/{{ $t('common.edit') }}

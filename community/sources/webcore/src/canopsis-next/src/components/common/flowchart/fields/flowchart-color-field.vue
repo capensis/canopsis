@@ -1,8 +1,8 @@
 <template>
   <v-layout
     class="flowchart-color-field"
-    justify-space-between="justify-space-between"
-    align-center="align-center"
+    justify-space-between
+    align-center
   >
     <v-checkbox
       class="mt-0"
@@ -10,7 +10,7 @@
       :input-value="isFilled"
       :label="label || $t('flowchart.color')"
       color="primary"
-      hide-details="hide-details"
+      hide-details
       @change="updateIsFilled"
     /><span
       class="v-label"
@@ -23,8 +23,8 @@
       <v-btn
         class="flowchart-color-field__button ma-0 pa-0"
         :style="style"
-        small="small"
-        block="block"
+        small
+        block
         @click="showColorPickerModal"
       />
     </v-flex>

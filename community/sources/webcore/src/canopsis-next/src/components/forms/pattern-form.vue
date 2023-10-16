@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-text-field
       v-field="form.title"
       v-validate="titleRules"

@@ -3,7 +3,7 @@
     v-field="value"
     :items="months"
     :label="$t('recurrenceRule.bymonth')"
-    multiple="multiple"
+    multiple
   />
 </template>
 

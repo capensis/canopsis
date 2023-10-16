@@ -1,7 +1,7 @@
 <template>
   <v-layout
     class="c-alarm-metric-preset-field"
-    column="column"
+    column
   >
     <c-alarm-external-metric-parameters-field
       v-if="preset.external || preset.auto"
@@ -9,7 +9,7 @@
       :label="preset.auto ? $t('kpi.addMetricMask') : $t('kpi.selectMetric')"
       :addable="preset.auto"
       :name="`${name}.metric`"
-      required="required"
+      required
       @input="updateMetric"
     />
     <c-alarm-metric-parameters-field
@@ -19,7 +19,7 @@
       :parameters="parameters"
       :disabled-parameters="disabledParameters"
       :name="`${name}.metric`"
-      required="required"
+      required
       @input="updateMetric"
     />
     <c-name-field
@@ -31,8 +31,8 @@
     <template v-if="preset.metric">
       <v-layout
         v-if="withColor && !preset.auto"
-        align-center="align-center"
-        justify-space-between="justify-space-between"
+        align-center
+        justify-space-between
       >
         <v-switch
           :label="$t('kpi.customColor')"

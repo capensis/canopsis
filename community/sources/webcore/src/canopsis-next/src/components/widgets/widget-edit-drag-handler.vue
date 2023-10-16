@@ -5,31 +5,35 @@
   >
     <v-layout
       class="widget-edit-drag-handler__controls pr-1"
-      justify-end="justify-end"
-      align-center="align-center"
+      justify-end
+      align-center
     >
       <span @pointerdown.stop="">
-        <v-tooltip bottom="bottom">
+        <v-tooltip bottom>
           <template #activator="{ on }">
             <v-btn
               class="ma-0 mr-1"
               v-on="on"
               :color="autoHeight ? 'grey lighten-1' : 'transparent'"
-              icon="icon"
-              small="small"
+              icon
+              small
               @click="$emit('toggle')"
             >
               <v-icon
                 :color="autoHeight ? 'black' : 'grey darken-1'"
-                small="small"
-              >lock</v-icon>
+                small
+              >
+                lock
+              </v-icon>
             </v-btn>
-          </template><span>{{ $t('view.autoHeightButton') }}</span>
+          </template>
+          <span>{{ $t('view.autoHeightButton') }}</span>
         </v-tooltip>
         <widget-wrapper-menu
           :widget="widget"
           :tab="tab"
-        /></span>
+        />
+      </span>
     </v-layout>
   </div>
 </template>

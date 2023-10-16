@@ -1,5 +1,5 @@
 <template>
-  <modal-wrapper close="close">
+  <modal-wrapper close>
     <template #title="">
       <span>{{ $t('modals.importExportViews.title') }}</span>
     </template>
@@ -14,9 +14,9 @@
           </v-flex>
           <draggable-groups
             v-model="importedGroups"
-            pull="pull"
-            view-pull="view-pull"
-            view-put="view-put"
+            pull
+            view-pull
+            view-put
             @change:group="changeImportedGroupHandler"
           />
         </v-flex>
@@ -29,12 +29,12 @@
           </v-flex>
           <draggable-group-views
             v-model="importedViews"
-            pull="pull"
+            pull
           />
         </v-flex>
         <v-divider
           class="ml-1 mr-1 secondary"
-          vertical="vertical"
+          vertical
         />
         <v-flex xs4="xs4">
           <v-flex class="text-center mb-2">
@@ -42,9 +42,9 @@
           </v-flex>
           <draggable-groups
             v-model="currentGroups"
-            put="put"
-            pull="pull"
-            view-put="view-put"
+            put
+            pull
+            view-put
             @change:group="changeCurrentGroupHandler"
           />
         </v-flex>
@@ -52,8 +52,8 @@
     </template>
     <template #actions="">
       <v-btn
-        depressed="depressed"
-        text="text"
+        depressed
+        text
         @click="$modals.hide"
       >
         {{ $t('common.cancel') }}

@@ -1,10 +1,10 @@
 <template>
-  <v-tooltip top="top">
+  <v-tooltip top>
     <template #activator="{ on }">
       <v-layout
         class="alarm-counters fill-height"
         v-on="on"
-        column="column"
+        column
       >
         <alarm-counter
           v-for="counter in preparedCounters"
@@ -15,7 +15,7 @@
         />
       </v-layout>
     </template>
-    <v-layout column="column">
+    <v-layout column>
       <span
         v-for="(counter, index) in preparedCounters"
         :key="counter.name"

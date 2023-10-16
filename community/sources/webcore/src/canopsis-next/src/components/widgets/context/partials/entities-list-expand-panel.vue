@@ -2,15 +2,15 @@
   <v-tabs
     color="secondary lighten-1"
     slider-color="primary"
-    dark="dark"
-    centered="centered"
+    dark
+    centered
   >
     <v-tab>{{ $tc('common.pbehavior', 2) }}</v-tab>
     <v-tab-item>
       <v-layout
         class="pa-3"
       >
-        <v-flex xs12="xs12">
+        <v-flex xs12>
           <v-card>
             <v-card-text>
               <pbehaviors-simple-list
@@ -34,7 +34,7 @@
       <v-layout
         class="pa-3"
       >
-        <v-flex xs12="xs12">
+        <v-flex xs12>
           <v-card>
             <v-card-text>
               <infos-tab
@@ -52,7 +52,7 @@
         <v-layout
           class="pa-3"
         >
-          <v-flex xs12="xs12">
+          <v-flex xs12>
             <v-card>
               <v-card-text>
                 <entity-charts
@@ -72,7 +72,7 @@
         <v-layout
           class="pa-3"
         >
-          <v-flex xs12="xs12">
+          <v-flex xs12>
             <v-card>
               <v-card-text>
                 <tree-of-dependencies-tab
@@ -90,7 +90,7 @@
       <v-layout
         class="pa-3"
       >
-        <v-flex xs12="xs12">
+        <v-flex xs12>
           <v-card>
             <v-card-text class="pa-0">
               <impact-chain-dependencies-tab
@@ -107,7 +107,7 @@
       <v-layout
         class="pa-3"
       >
-        <v-flex xs12="xs12">
+        <v-flex xs12>
           <v-card>
             <v-card-text>
               <entity-alarms-list-table
@@ -124,13 +124,13 @@
       <v-layout
         class="pa-3"
       >
-        <v-flex xs12="xs12">
+        <v-flex xs12>
           <v-card>
             <v-card-text>
               <entity-alarms-list-table
                 :entity="item"
                 :columns="resolvedAlarmsColumns"
-                resolved="resolved"
+                resolved
               />
             </v-card-text>
           </v-card>

@@ -5,7 +5,7 @@
       :key="categoryName"
     >
       <span class="category mr-2">{{ categoryName }}</span>
-      <v-divider light="light" />
+      <v-divider light />
       <div
         v-for="(link, index) in categoryLinks"
         :key="index"

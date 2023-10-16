@@ -1,11 +1,11 @@
 <template>
   <v-layout
     class="declare-ticket-test-query"
-    column="column"
+    column
   >
     <v-layout
-      align-center="align-center"
-      justify-space-between="justify-space-between"
+      align-center
+      justify-space-between
     >
       <v-flex xs10="xs10">
         <c-alarm-field
@@ -28,11 +28,11 @@
     <v-expand-transition>
       <v-layout
         v-if="executionStatus"
-        column="column"
+        column
       >
         <v-layout
           class="mb-4"
-          align-center="align-center"
+          align-center
         >
           <span class="subheading mr-5">{{ $t('declareTicket.webhookStatus') }}:</span>
           <declare-ticket-rule-execution-status

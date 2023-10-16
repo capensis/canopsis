@@ -12,7 +12,7 @@
     :error="error"
     placeholder="−−:−−"
     append-icon=""
-    hide-details="hide-details"
+    hide-details
     @change="change"
   />
 </template>

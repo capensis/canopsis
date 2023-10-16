@@ -1,6 +1,6 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close="close">
+    <modal-wrapper close>
       <template #title="">
         <span>{{ $t('modals.remediationInstructionApproval.title') }}</span>
       </template>
@@ -8,16 +8,16 @@
         <v-fade-transition>
           <v-layout
             v-if="!remediationInstructionApproval"
-            justify-center="justify-center"
+            justify-center
           >
             <v-progress-circular
               color="primary"
-              indeterminate="indeterminate"
+              indeterminate
             />
           </v-layout>
           <v-layout
             v-else
-            column="column"
+            column
           >
             <remediation-instruction-approval-alert :approval="remediationInstructionApproval.approval" />
             <remediation-instruction-approval-tabs
@@ -29,7 +29,7 @@
       </template>
       <template #actions="">
         <v-btn
-          depressed="depressed"
+          depressed
           text
           @click="$modals.hide"
         >
@@ -39,7 +39,7 @@
           class="warning"
           :disabled="isDisabled || !remediationInstructionApproval"
           :loading="submitting"
-          depressed="depressed"
+          depressed
           text
           @click="dismiss"
         >

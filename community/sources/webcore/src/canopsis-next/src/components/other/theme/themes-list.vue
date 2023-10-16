@@ -7,8 +7,8 @@
     :pagination="pagination"
     :select-all="removable"
     :is-disabled-item="isDisabledMap"
-    advanced-pagination="advanced-pagination"
-    search="search"
+    advanced-pagination
+    search
     @update:pagination="$emit('update:pagination', $event)"
   >
     <template #mass-actions="{ selected }">

@@ -35,11 +35,14 @@
               </v-icon>
               <strong class="ds-ev-title">{{ details.title }}</strong>
               <span class="ds-ev-description">{{ details.description }}</span>
-            </slot></span><span v-else>
+            </slot>
+          </span>
+          <span v-else>
             <slot
               name="eventTimeEmpty"
               v-bind="{ calendarEvent, details }"
-            /></span>
+            />
+          </span>
         </div>
         <div
           class="ds-calendar-event-time-resize"

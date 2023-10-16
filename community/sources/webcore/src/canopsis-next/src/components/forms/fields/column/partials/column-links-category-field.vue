@@ -7,7 +7,7 @@
     :loading="pending"
     item-text="value"
     item-value="value"
-    clearable="clearable"
+    clearable
   />
 </template>
 

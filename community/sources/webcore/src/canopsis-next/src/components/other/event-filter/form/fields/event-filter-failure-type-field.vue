@@ -7,7 +7,7 @@
     :name="name"
     item-text="text"
     item-value="value"
-    clearable="clearable"
+    clearable
   />
 </template>
 

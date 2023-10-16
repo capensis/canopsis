@@ -2,7 +2,7 @@
   <service-dependencies
     :root="entity"
     :columns="columns"
-    openable-root="openable-root"
+    openable-root
   />
 </template>
 

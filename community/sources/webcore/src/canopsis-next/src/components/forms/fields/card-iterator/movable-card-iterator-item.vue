@@ -2,20 +2,20 @@
   <v-card>
     <v-layout
       class="pt-2"
-      justify-space-between="justify-space-between"
+      justify-space-between
     >
       <v-flex xs5="xs5">
         <span class="pl-2">
           <v-btn
             :disabled="disabledUp"
-            icon="icon"
+            icon
             @click.prevent="$emit('up')"
           >
             <v-icon>arrow_upward</v-icon>
           </v-btn>
           <v-btn
             :disabled="disabledDown"
-            icon="icon"
+            icon
             @click.prevent="$emit('down')"
           >
             <v-icon>arrow_downward</v-icon>
@@ -26,7 +26,7 @@
         xs3="xs3"
       >
         <v-btn
-          icon="icon"
+          icon
           @click.prevent="$emit('remove')"
         >
           <v-icon color="error">
@@ -37,8 +37,8 @@
     </v-layout>
     <v-layout
       class="px-3 pb-3"
-      justify-center="justify-center"
-      column="column"
+      justify-center
+      column
     >
       <slot />
     </v-layout>

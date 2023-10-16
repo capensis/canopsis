@@ -10,31 +10,32 @@
     <template #expand="{ item }">
       <v-tooltip
         v-if="item.loadMore"
-        right="right"
+        right
       >
         <template #activator="{ on }">
           <v-btn
             v-on="on"
             :loading="pendingByIds[item.parentId]"
-            icon="icon"
+            icon
             @click="loadMore(item.parentId)"
           >
             <v-icon>more_horiz</v-icon>
           </v-btn>
-        </template><span>{{ $t('common.loadMore') }}</span>
+        </template>
+        <span>{{ $t('common.loadMore') }}</span>
       </v-tooltip>
       <v-btn
         v-else
         :color="getEntityColor(item.entity)"
-        icon="icon"
-        dark="dark"
+        icon
+        dark
         @click="showTreeOfDependenciesModal(item)"
       >
         <v-icon>{{ getIconByEntity(item.entity) }}</v-icon>
       </v-btn>
       <v-tooltip
         v-if="item.cycle"
-        top="top"
+        top
       >
         <template #activator="{ on }">
           <v-icon
@@ -44,7 +45,8 @@
           >
             autorenew
           </v-icon>
-        </template><span>{{ $t('common.cycleDependency') }}</span>
+        </template>
+        <span>{{ $t('common.cycleDependency') }}</span>
       </v-tooltip>
     </template>
     <template #expand-append="{ item }">
@@ -71,7 +73,7 @@
           <c-no-events-icon
             v-if="!index"
             :value="item.entity | get('idle_since')"
-            top="top"
+            top
           />
           <service-dependencies-entity-cell
             v-else-if="item.entity"

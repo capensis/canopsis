@@ -1,6 +1,6 @@
 <template>
   <div class="recurrence-rule-form">
-    <v-layout column="column">
+    <v-layout column>
       <v-layout>
         <v-flex
           class="pr-2"
@@ -41,20 +41,20 @@
         <template #actions="">
           <v-icon>$vuetify.icons.expand</v-icon>
         </template>
-        <v-layout wrap="wrap">
+        <v-layout wrap>
           <v-flex xs6="xs6">
             <recurrence-rule-weekday-field v-model="form.wkst" />
           </v-flex>
           <v-flex
             v-if="!isYearlyFrequency"
-            xs12="xs12"
+            xs12
           >
             <recurrence-rule-weekday-field
               v-model="form.byweekday"
-              chips="chips"
+              chips
             />
           </v-flex>
-          <v-flex xs12="xs12">
+          <v-flex xs12>
             <recurrence-rule-month-field v-model="form.bymonth" />
           </v-flex>
           <v-flex

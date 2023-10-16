@@ -1,7 +1,7 @@
 <template>
   <v-layout
-    justify-space-between="justify-space-between"
-    align-center="align-center"
+    justify-space-between
+    align-center
   >
     <v-label>{{ label }}</v-label>
     <v-flex xs3="xs3">
@@ -9,7 +9,7 @@
         class="mt-0 pt-0"
         v-field="value"
         :items="numbers"
-        hide-details="hide-details"
+        hide-details
       />
     </v-flex>
   </v-layout>

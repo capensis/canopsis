@@ -6,7 +6,7 @@
     :meta="contextEntitiesMeta"
     :query.sync="query"
     :columns="widget.parameters.widgetColumns"
-    selectable="selectable"
+    selectable
   >
     <template #toolbar="">
       <v-flex>
@@ -26,7 +26,7 @@
       <v-flex>
         <v-layout
           v-if="hasAccessToUserFilter"
-          align-center="align-center"
+          align-center
         >
           <filter-selector
             :label="$t('settings.selectAFilter')"
@@ -42,11 +42,11 @@
             :widget-id="widget._id"
             :addable="hasAccessToAddFilter"
             :editable="hasAccessToEditFilter"
-            private="private"
-            with-alarm="with-alarm"
-            with-entity="with-entity"
-            with-pbehavior="with-pbehavior"
-            entity-counters-type="entity-counters-type"
+            private
+            with-alarm
+            with-entity
+            with-pbehavior
+            entity-counters-type
           />
         </v-layout>
       </v-flex>

@@ -1,5 +1,5 @@
 <template>
-  <modal-wrapper close="close">
+  <modal-wrapper close>
     <template #title="">
       <span>{{ title }}</span>
     </template>
@@ -9,7 +9,7 @@
         :columns="config.columns"
         :impact="config.impact"
         :openable-root="config.openableRoot"
-        include-root="include-root"
+        include-root
       />
     </template>
   </modal-wrapper>

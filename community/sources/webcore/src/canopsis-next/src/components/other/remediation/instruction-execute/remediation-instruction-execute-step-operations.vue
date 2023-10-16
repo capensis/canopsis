@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <remediation-instruction-execute-step-operation
       v-for="(operation, index) in operations"
       :key="operation.operation_id"

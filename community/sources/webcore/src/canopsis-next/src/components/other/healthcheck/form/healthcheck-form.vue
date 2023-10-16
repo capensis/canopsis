@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-information-block :title="$t('healthcheck.queueLimit')">
       <template #subtitle="">
         {{ $t('healthcheck.notifyUsersQueueLimit') }}

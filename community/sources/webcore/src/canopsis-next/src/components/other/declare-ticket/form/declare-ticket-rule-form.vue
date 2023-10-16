@@ -2,8 +2,8 @@
   <v-tabs
     slider-color="primary"
     color="transparent"
-    fixed-tabs="fixed-tabs"
-    centered="centered"
+    fixed-tabs
+    centered
   >
     <v-tab :class="{ 'error--text': hasGeneralError }">
       {{ $t('common.general') }}
@@ -26,7 +26,7 @@
       />
     </v-tab-item>
     <v-tab>{{ $t('declareTicket.testQuery') }}</v-tab>
-    <v-tab-item lazy="lazy">
+    <v-tab-item lazy>
       <v-layout>
         <v-flex
           offset-xs1="offset-xs1"

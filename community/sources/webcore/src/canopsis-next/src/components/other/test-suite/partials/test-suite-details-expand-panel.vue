@@ -1,16 +1,16 @@
 <template>
   <v-tabs
     color="secondary lighten-1"
-    dark="dark"
-    centered="centered"
+    dark
+    centered
     slider-color="primary"
   >
     <v-tab>{{ $tc('common.information') }}</v-tab>
     <v-tab-item>
       <v-layout class="pa-3">
-        <v-flex xs12="xs12">
+        <v-flex xs12>
           <v-card class="pa-3">
-            <v-layout column="column">
+            <v-layout column>
               <v-flex offset-xs2="offset-xs2">
                 <c-information-block-row
                   :label="$t('common.name')"
@@ -58,7 +58,7 @@
       <v-tab>{{ $t('testSuite.tabs.screenshots') }}</v-tab>
       <v-tab-item>
         <v-layout class="pa-3">
-          <v-flex xs12="xs12">
+          <v-flex xs12>
             <v-card class="pa-3">
               <test-suite-screenshots :screenshots="testSuiteDetail.screenshots" />
             </v-card>
@@ -70,7 +70,7 @@
       <v-tab>{{ $t('testSuite.tabs.videos') }}</v-tab>
       <v-tab-item>
         <v-layout class="pa-3">
-          <v-flex xs12="xs12">
+          <v-flex xs12>
             <v-card class="pa-3">
               <test-suite-videos :videos="testSuiteDetail.videos" />
             </v-card>

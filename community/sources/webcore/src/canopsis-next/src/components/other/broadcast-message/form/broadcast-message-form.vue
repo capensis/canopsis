@@ -1,14 +1,14 @@
 <template>
   <div>
     <v-layout>
-      <v-flex xs12="xs12">
+      <v-flex xs12>
         <text-editor-field
           v-field="form.message"
           v-validate="'required'"
           :label="$t('common.message')"
           :error-messages="errors.collect('message')"
           name="message"
-          public="public"
+          public
         />
       </v-flex>
     </v-layout>

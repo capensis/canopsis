@@ -3,8 +3,8 @@
     <v-layout
       class="pa-2"
       v-if="actions.length"
-      align-center="align-center"
-      wrap="wrap"
+      align-center
+      wrap
     >
       <div>{{ $t('common.actionsLabel') }}:</div>
       <service-entity-actions

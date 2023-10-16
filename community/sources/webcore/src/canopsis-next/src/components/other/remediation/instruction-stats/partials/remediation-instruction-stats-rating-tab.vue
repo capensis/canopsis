@@ -5,7 +5,7 @@
     :loading="pending"
     :pagination.sync="pagination"
     :total-items="totalItems"
-    advanced-pagination="advanced-pagination"
+    advanced-pagination
   >
     <template #created="{ item }">
       {{ item.created | date }}
@@ -13,7 +13,7 @@
     <template #rating="{ item }">
       <rating-field
         :value="item.rating"
-        readonly="readonly"
+        readonly
       />
     </template>
   </c-advanced-data-table>

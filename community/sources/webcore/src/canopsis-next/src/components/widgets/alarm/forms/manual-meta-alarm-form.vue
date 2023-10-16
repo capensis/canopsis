@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-combobox
       v-field="form.metaAlarm"
       v-validate="'required'"
@@ -10,8 +10,8 @@
       item-value="_id"
       item-text="name"
       name="manualMetaAlarm"
-      return-object="return-object"
-      blur-on-create="blur-on-create"
+      return-object
+      blur-on-create
     >
       <template #no-data="">
         <v-list-item>

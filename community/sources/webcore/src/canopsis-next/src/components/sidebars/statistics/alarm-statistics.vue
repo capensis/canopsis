@@ -1,7 +1,7 @@
 <template>
   <widget-settings
     :submitting="submitting"
-    divider="divider"
+    divider
     @submit="submit"
   >
     <statistics-form

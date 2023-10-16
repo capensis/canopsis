@@ -1,17 +1,17 @@
 <template>
   <v-tabs
     color="secondary lighten-1"
-    dark="dark"
-    centered="centered"
+    dark
+    centered
     slider-color="primary"
   >
     <v-tab>{{ $t('common.description') }}</v-tab>
     <v-tab-item>
       <v-layout
         class="pa-3 secondary lighten-2"
-        column="column"
+        column
       >
-        <v-flex xs12="xs12">
+        <v-flex xs12>
           <v-card>
             <v-card-text>
               <pre>{{ pbehaviorReason.description }}</pre>

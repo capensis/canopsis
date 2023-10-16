@@ -4,9 +4,9 @@
     :position-x="positionX"
     :position-y="positionY"
     :close-on-content-click="false"
-    ignore-click-outside="ignore-click-outside"
-    absolute="absolute"
-    top="top"
+    ignore-click-outside
+    absolute
+    top
   >
     <point-popup
       v-on="$listeners"

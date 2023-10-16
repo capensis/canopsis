@@ -1,5 +1,5 @@
 <template>
-  <v-layout align-center="align-center">
+  <v-layout align-center>
     <v-layout>
       <v-flex
         class="mr-3"

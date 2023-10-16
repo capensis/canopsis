@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-layout
       class="mermaid-editor mb-2"
       :style="editorStyles"
@@ -13,8 +13,8 @@
       <v-flex class="mermaid-editor__content">
         <v-layout
           class="mermaid-editor__toolbar px-2"
-          align-center="align-center"
-          justify-end="justify-end"
+          align-center
+          justify-end
         >
           <add-location-btn
             class="mr-2"

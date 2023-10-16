@@ -1,15 +1,16 @@
 <template>
   <v-layout
     v-on="$listeners"
-    justify-space-around="justify-space-around"
-    align-center="align-center"
+    justify-space-around
+    align-center
   >
     <v-icon
       :style="{ color, caretColor: color }"
       size="18"
     >
       {{ icon }}
-    </v-icon><span class="text-caption">{{ count }}</span>
+    </v-icon>
+    <span class="text-caption">{{ count }}</span>
   </v-layout>
 </template>
 

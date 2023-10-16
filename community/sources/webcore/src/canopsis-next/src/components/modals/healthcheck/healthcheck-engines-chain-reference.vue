@@ -1,7 +1,7 @@
 <template>
   <modal-wrapper
     class="fill-height"
-    close="close"
+    close
   >
     <template #title="">
       <span>{{ title }}</span>
@@ -13,11 +13,11 @@
       <v-fade-transition>
         <v-layout
           v-if="pending"
-          justify-center="justify-center"
+          justify-center
         >
           <v-progress-circular
             color="primary"
-            indeterminate="indeterminate"
+            indeterminate
           />
         </v-layout>
         <div
@@ -33,8 +33,8 @@
     </template>
     <template #actions="">
       <v-btn
-        depressed="depressed"
-        text="text"
+        depressed
+        text
         @click="$modals.hide"
       >
         {{ $t('common.ok') }}

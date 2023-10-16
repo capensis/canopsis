@@ -9,12 +9,12 @@
   >
     <v-tooltip
       v-if="tooltip"
-      bottom="bottom"
+      bottom
     >
       <template #activator="{ on }">
         <v-btn
           v-on="on"
-          icon="icon"
+          icon
         >
           <v-icon>help_outline</v-icon>
         </v-btn>

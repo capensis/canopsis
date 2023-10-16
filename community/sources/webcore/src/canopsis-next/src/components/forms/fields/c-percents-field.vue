@@ -6,7 +6,7 @@
     :max="max"
     :min="min"
     prefix="%"
-    required="required"
+    required
   />
 </template>
 

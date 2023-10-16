@@ -1,16 +1,16 @@
 <template>
   <v-tooltip
     class="view-editing-btn"
-    left="left"
+    left
   >
     <v-btn
       class="view-editing-btn__button"
       slot="activator"
       :input-value="editing"
       :loading="editingProcess"
-      fab="fab"
-      dark="dark"
-      small="small"
+      fab
+      dark
+      small
       @click.stop="toggleEditing"
     >
       <v-icon>edit</v-icon>

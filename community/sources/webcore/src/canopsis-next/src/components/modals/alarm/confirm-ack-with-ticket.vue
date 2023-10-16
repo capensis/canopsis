@@ -1,5 +1,5 @@
 <template>
-  <modal-wrapper close="close">
+  <modal-wrapper close>
     <template #title="">
       <span>{{ $t('common.confirmation') }}</span>
     </template>
@@ -10,7 +10,7 @@
     </template>
     <template #actions="">
       <v-btn
-        depressed="depressed"
+        depressed
         text
         @click="$modals.hide"
       >

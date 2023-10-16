@@ -2,7 +2,7 @@
   <widget-settings-group :title="$tc('common.chart', 2)">
     <v-layout
       class="pa-3"
-      column="column"
+      column
     >
       <field-draggable-list
         v-field="charts"
@@ -10,14 +10,14 @@
         @remove="showRemoveChartModal"
       >
         <template #title="{ item }">
-          <v-layout align-center="align-center">
-            <v-icon large="large">
+          <v-layout align-center>
+            <v-icon large>
               {{ $constants.WIDGET_ICONS[item.type] }}
             </v-icon><span class="ml-3">{{ item.title }}</span>
           </v-layout>
         </template>
       </field-draggable-list>
-      <v-menu bottom="bottom">
+      <v-menu bottom>
         <template #activator="{ on }">
           <v-flex>
             <v-btn

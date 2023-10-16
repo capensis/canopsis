@@ -1,11 +1,11 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-name-field
       v-field="form.value"
       :disabled="isImported"
       :max-length="maxTagNameLength"
       name="value"
-      required="required"
+      required
     />
     <c-color-picker-field v-field="form.color" />
     <tag-patterns-form

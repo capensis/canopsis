@@ -5,7 +5,7 @@
     v-on="alertListeners"
     :type="type"
     transition="fade-transition"
-    dismissible="dismissible"
+    dismissible
   >
     <div
       class="progress"

@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <span class="pl-4 subheading">{{ $t('kpi.ratingSettings.helpInformation') }}</span>
     <kpi-rating-settings-list
       :pagination.sync="pagination"

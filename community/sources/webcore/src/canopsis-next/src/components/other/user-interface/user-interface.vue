@@ -2,11 +2,11 @@
   <v-layout
     class="my-2"
     v-if="!form"
-    justify-center="justify-center"
+    justify-center
   >
     <v-progress-circular
       color="primary"
-      indeterminate="indeterminate"
+      indeterminate
     />
   </v-layout>
   <v-flex v-else>
@@ -26,7 +26,7 @@
         <v-divider class="mt-3" />
         <v-layout
           class="mt-3"
-          justify-end="justify-end"
+          justify-end
         >
           <v-btn
             text

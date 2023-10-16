@@ -1,18 +1,18 @@
 <template>
   <div class="fab">
-    <v-layout column="column">
+    <v-layout column>
       <c-refresh-btn @click="$listeners.refresh" />
       <slot name="additional" />
       <v-tooltip
         v-if="hasAccess && $listeners.create"
-        left="left"
+        left
       >
         <template #activator="{ on }">
           <v-btn
             v-on="on"
             :dark="dark"
             color="primary"
-            fab="fab"
+            fab
             @click.stop="$listeners.create"
           >
             <v-icon>add</v-icon>

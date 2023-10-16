@@ -6,13 +6,13 @@
     />
     <c-name-field
       v-field="form.name"
-      required="required"
+      required
     />
     <c-enabled-field v-field="form.enabled" />
     <c-disable-during-periods-field v-field="form.disable_during_periods" />
     <c-description-field
       v-field="form.description"
-      required="required"
+      required
     />
   </div>
 </template>

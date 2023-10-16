@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-collapse-panel
       class="mb-2"
       :title="$t('eventFilter.editActions')"

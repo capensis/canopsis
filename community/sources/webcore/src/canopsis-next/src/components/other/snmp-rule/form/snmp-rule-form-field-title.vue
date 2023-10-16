@@ -1,11 +1,11 @@
 <template>
   <v-layout
     class="mt-3"
-    wrap="wrap"
+    wrap
   >
     <v-flex
       v-show="label"
-      xs12="xs12"
+      xs12
     >
       <div class="text-body-2">
         {{ label }}

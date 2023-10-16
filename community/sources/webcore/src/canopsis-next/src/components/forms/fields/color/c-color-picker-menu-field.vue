@@ -3,11 +3,11 @@
     :close-on-content-click="false"
     :disabled="disabled"
     content-class="c-color-picker-menu-field__dropdown"
-    bottom="bottom"
-    left="left"
-    lazy-with-unmount="lazy-with-unmount"
-    lazy="lazy"
-    offset-x="offset-x"
+    bottom
+    left
+    lazy-with-unmount
+    lazy
+    offset-x
   >
     <template #activator="{ on }">
       <v-btn
@@ -15,7 +15,7 @@
         v-on="on"
         :style="style"
         :disabled="disabled"
-        block="block"
+        block
       />
     </template>
     <c-color-chrome-picker-field v-model="colorObject" />

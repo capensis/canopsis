@@ -1,13 +1,13 @@
 <template>
   <v-layout
     class="mb-3"
-    align-top="align-top"
+    align-top
   >
     <v-flex xs5="xs5">
       <c-enabled-field
         v-field="periodicRefresh.enabled"
         :label="label"
-        hide-details="hide-details"
+        hide-details
         @input="validateDuration"
       />
     </v-flex>

@@ -2,7 +2,7 @@
   <c-collapse-panel
     :title="title"
     :color="color"
-    lazy="lazy"
+    lazy
   >
     <test-suite-tabs :test-suite-id="testSuite._id" />
   </c-collapse-panel>

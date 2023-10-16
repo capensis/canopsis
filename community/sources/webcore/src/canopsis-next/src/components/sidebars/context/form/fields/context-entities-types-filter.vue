@@ -7,7 +7,7 @@
       :value="entityType.value"
       :key="entityType.value"
       color="primary"
-      hide-details="hide-details"
+      hide-details
       @change="$listeners.input"
     />
   </widget-settings-item>

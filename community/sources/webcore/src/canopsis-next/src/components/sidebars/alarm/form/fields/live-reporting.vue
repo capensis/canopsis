@@ -1,8 +1,8 @@
 <template>
   <settings-button-field
     :is-empty="isValueEmpty"
-    addable="addable"
-    removable="removable"
+    addable
+    removable
     @create="showEditLiveReportingModal"
     @edit="showEditLiveReportingModal"
     @delete="removeLiveReporting"

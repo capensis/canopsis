@@ -21,7 +21,7 @@
           ref="networkGraph"
           :options="options"
           :node-html-label-options="nodeHtmlLabelsOptions"
-          ctrl-wheel-zoom="ctrl-wheel-zoom"
+          ctrl-wheel-zoom
         />
       </c-zoom-overlay>
     </v-flex>

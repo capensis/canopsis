@@ -3,6 +3,6 @@
     :opacity="1"
     color="white"
     background-color="transparent"
-    pending="pending"
+    pending
   />
 </template>

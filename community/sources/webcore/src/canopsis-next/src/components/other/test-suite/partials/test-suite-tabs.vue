@@ -1,6 +1,6 @@
 <template>
   <v-tabs
-    centered="centered"
+    centered
     slider-color="primary"
   >
     <v-tab>{{ $t('common.summary') }}</v-tab>

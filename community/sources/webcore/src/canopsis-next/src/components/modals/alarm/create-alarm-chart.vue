@@ -1,25 +1,25 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close="close">
+    <modal-wrapper close>
       <template #title="">
         <span>{{ title }}</span>
       </template>
       <template #text="">
         <v-list
           class="widget-settings widget-settings--divider widget-settings__list py-0"
-          expand="expand"
+          expand
         >
           <component
             v-model="form"
             :is="formComponent"
             :only-external="onlyExternal"
-            required-title="required-title"
+            required-title
           />
         </v-list>
       </template>
       <template #actions="">
         <v-btn
-          depressed="depressed"
+          depressed
           text
           @click="$modals.hide"
         >

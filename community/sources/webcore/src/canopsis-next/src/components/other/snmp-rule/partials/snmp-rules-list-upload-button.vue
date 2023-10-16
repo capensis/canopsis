@@ -1,28 +1,29 @@
 <template>
   <file-selector
     ref="fileSelector"
-    multiple="multiple"
-    hide-details="hide-details"
+    multiple
+    hide-details
     @change="changeFiles"
   >
     <template #activator="{ on: fileSelectorOn }">
       <v-tooltip
-        top="top"
-        custom-activator="custom-activator"
+        top
+        custom-activator
       >
         <template #activator="{}">
           <v-btn
             v-on="fileSelectorOn"
             :loading="pending"
             color="indigo"
-            icon="icon"
-            small="small"
-            dark="dark"
-            fab="fab"
+            icon
+            small
+            dark
+            fab
           >
             <v-icon>cloud_upload</v-icon>
           </v-btn>
-        </template><span>{{ $t('snmpRule.uploadMib') }}</span>
+        </template>
+        <span>{{ $t('snmpRule.uploadMib') }}</span>
       </v-tooltip>
     </template>
   </file-selector>

@@ -12,10 +12,10 @@
         :history="history"
         archived-count-message-key="storageSetting.history.entity.archivedCount"
         deleted-count-message-key="storageSetting.history.entity.deletedCount"
-        hide-deleted="hide-deleted"
+        hide-deleted
       />
     </template>
-    <v-layout align-center="align-center">
+    <v-layout align-center>
       <v-flex xs5="xs5">
         <span class="v-label text--secondary">{{ $t('storageSetting.entityUnlinked.archiveBefore') }}</span>
       </v-flex>

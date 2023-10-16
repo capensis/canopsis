@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip top="top">
+  <v-tooltip top>
     <template #activator="{ on }">
       <v-icon
         class="cursor-default"
@@ -8,6 +8,7 @@
       >
         bookmark
       </v-icon>
-    </template><span>{{ $t('alarm.hasBookmark') }}</span>
+    </template>
+    <span>{{ $t('alarm.hasBookmark') }}</span>
   </v-tooltip>
 </template>

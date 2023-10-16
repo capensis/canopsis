@@ -5,7 +5,7 @@
   >
     <v-layout
       :wrap="wrap"
-      align-center="align-center"
+      align-center
     >
       <c-action-btn
         v-for="(action, index) in preparedActions.inline"
@@ -18,18 +18,19 @@
         :badge-value="action.badgeValue"
         :badge-tooltip="action.badgeTooltip"
         @click="action.method"
-      /><span v-if="preparedActions.dropDown.length">
+      />
+      <span v-if="preparedActions.dropDown.length">
         <v-menu
           key="dropdown-menu"
-          bottom="bottom"
-          left="left"
+          bottom
+          left
           @click.native.stop=""
         >
           <template #activator="{ on }">
             <v-btn
               class="ma-0"
               v-on="on"
-              icon="icon"
+              icon
             >
               <v-icon>more_vert</v-icon>
             </v-btn>
@@ -41,28 +42,37 @@
               :disabled="action.disabled || action.loading"
               @click.stop="action.method"
             >
-              <v-list-item-title><span class="mr-4">
-                <v-progress-circular
-                  v-if="action.loading"
-                  :color="action.iconColor"
-                  :size="16"
-                  :width="2"
-                  indeterminate="indeterminate"
-                />
-                <v-icon
-                  class="ma-0 pa-0"
-                  v-else
-                  :color="action.iconColor"
-                  :disabled="action.disabled"
-                  left="left"
-                  small="small"
-                >{{ action.icon }}</v-icon></span><span
-                class="text-body-1"
-                :class="action.cssClass"
-              >{{ action.title }}</span></v-list-item-title>
+              <v-list-item-title>
+                <span class="mr-4">
+                  <v-progress-circular
+                    v-if="action.loading"
+                    :color="action.iconColor"
+                    :size="16"
+                    :width="2"
+                    indeterminate
+                  />
+                  <v-icon
+                    class="ma-0 pa-0"
+                    v-else
+                    :color="action.iconColor"
+                    :disabled="action.disabled"
+                    left
+                    small
+                  >
+                    {{ action.icon }}
+                  </v-icon>
+                </span>
+                <span
+                  class="text-body-1"
+                  :class="action.cssClass"
+                >
+                  {{ action.title }}
+                </span>
+              </v-list-item-title>
             </v-list-item>
           </v-list>
-        </v-menu></span>
+        </v-menu>
+      </span>
     </v-layout>
   </div>
 </template>

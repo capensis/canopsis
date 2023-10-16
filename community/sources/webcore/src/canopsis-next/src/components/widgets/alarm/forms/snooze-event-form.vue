@@ -1,8 +1,8 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-duration-field
       v-field="form.duration"
-      required="required"
+      required
     />
     <c-description-field
       v-field="form.comment"

@@ -33,7 +33,10 @@
           <td>{{ $t('alarm.timeLine.stateCounter.stateDecreased') }} :</td>
           <td>{{ step.val.statedec }}</td>
         </tr>
-        <tr v-for="state in states">
+        <tr
+          v-for="state in states"
+          :key="state"
+        >
           <td>{{ $t('common.state') }} {{ state.text }} :</td>
           <td>{{ state.value }}</td>
         </tr>

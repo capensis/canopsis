@@ -1,5 +1,5 @@
 <template>
-  <modal-wrapper close="close">
+  <modal-wrapper close>
     <template #title="">
       <span>{{ title }}</span>
     </template>
@@ -12,8 +12,8 @@
         :loading="pending"
         :query.sync="query"
         :refresh-alarms-list="fetchList"
-        selectable="selectable"
-        expandable="expandable"
+        selectable
+        expandable
       />
     </template>
   </modal-wrapper>

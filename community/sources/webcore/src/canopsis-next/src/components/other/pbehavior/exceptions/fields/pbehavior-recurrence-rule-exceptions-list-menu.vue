@@ -1,5 +1,5 @@
 <template>
-  <v-menu offset-y="offset-y">
+  <v-menu offset-y>
     <template #activator="{ on }">
       <v-btn
         class="mr-0"
@@ -11,7 +11,7 @@
         {{ $t('pbehavior.exceptions.choose') }}
       </v-btn>
     </template>
-    <v-list dense="dense">
+    <v-list dense>
       <v-list-item
         v-for="exception in availableExceptions"
         :key="exception._id"

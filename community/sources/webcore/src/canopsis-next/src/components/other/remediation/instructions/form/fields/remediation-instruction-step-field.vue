@@ -2,7 +2,7 @@
   <c-card-iterator-item
     class="remediation-instruction-step-field"
     :item-number="stepNumber"
-    offset-left="offset-left"
+    offset-left
     @remove="remove"
   >
     <template #header="">
@@ -28,7 +28,7 @@
             class="remediation-instruction-step-field__time-to-complete"
             :value="timeToComplete | duration('refreshFieldFormat')"
             :label="$t('remediation.instruction.timeToComplete')"
-            readonly="readonly"
+            readonly
           />
         </v-flex>
       </v-layout>

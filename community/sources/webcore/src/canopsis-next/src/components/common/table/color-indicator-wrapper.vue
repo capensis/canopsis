@@ -1,7 +1,7 @@
 <template>
   <v-tooltip
     :disabled="!text"
-    right="right"
+    right
   >
     <template #activator="{ on }">
       <div
@@ -12,7 +12,8 @@
       >
         <slot>{{ value }}</slot>
       </div>
-    </template><span>{{ text }}</span>
+    </template>
+    <span>{{ text }}</span>
   </v-tooltip>
 </template>
 

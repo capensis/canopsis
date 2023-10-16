@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-card
       :color="backgroundColor"
       :style="{ color, fontSize: `${fontSize}px` }"
@@ -7,8 +7,8 @@
     >
       <v-card-text>
         <v-layout
-          justify-space-between="justify-space-between"
-          align-center="align-center"
+          justify-space-between
+          align-center
         >
           <span>{{ $t('theme.exampleText') }}</span>
           <v-icon :color="color">

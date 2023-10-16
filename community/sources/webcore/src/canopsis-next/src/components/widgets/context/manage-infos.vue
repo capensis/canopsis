@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-layout justify-end="justify-end">
+    <v-layout justify-end>
       <c-action-btn
         :tooltip="$t('entity.addInformation')"
         icon="add"

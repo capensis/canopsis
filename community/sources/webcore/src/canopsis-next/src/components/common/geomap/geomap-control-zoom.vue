@@ -1,10 +1,10 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-btn
       class="secondary ma-0 mb-1"
       :disabled="disabled || zoomInDisabled"
-      icon="icon"
-      dark="dark"
+      icon
+      dark
       @click="zoomIn"
     >
       <v-icon>add</v-icon>
@@ -12,8 +12,8 @@
     <v-btn
       class="secondary ma-0 mb-1"
       :disabled="disabled || zoomOutDisabled"
-      dark="dark"
-      icon="icon"
+      dark
+      icon
       @click="zoomOut"
     >
       <v-icon>remove</v-icon>

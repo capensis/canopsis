@@ -3,8 +3,8 @@
     <template v-if="widget.title || editing">
       <v-card-title class="widget-title pa-2">
         <v-layout
-          justify-space-between="justify-space-between"
-          align-center="align-center"
+          justify-space-between
+          align-center
         >
           <v-flex>
             <h4 class="ml-2 font-weight-regular">

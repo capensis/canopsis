@@ -1,7 +1,7 @@
 <template>
   <v-layout
     :class="classes"
-    align-center="align-center"
+    align-center
   >
     <c-alarm-chip
       :value="stateId"

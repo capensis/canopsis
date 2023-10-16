@@ -1,15 +1,15 @@
 <template>
   <v-layout
     class="kpi-widget"
-    column="column"
-    align-center="align-center"
+    column
+    align-center
   >
     <h4 class="kpi-widget__title">
       {{ title }}
     </h4>
     <v-layout
       class="kpi-widget__list"
-      wrap="wrap"
+      wrap
     >
       <numbers-metrics-item
         v-for="metric in metrics"
@@ -21,21 +21,22 @@
     </v-layout>
     <v-layout
       class="kpi-widget__actions mt-4"
-      justify-end="justify-end"
+      justify-end
     >
       <v-btn
         class="ma-0"
         :loading="downloading"
         color="primary"
-        small="small"
+        small
         @click="$emit('export:csv')"
       >
         <v-icon
-          small="small"
-          left="left"
+          small
+          left
         >
           file_download
-        </v-icon><span>{{ $t('common.exportAsCsv') }}</span>
+        </v-icon>
+        <span>{{ $t('common.exportAsCsv') }}</span>
       </v-btn>
     </v-layout>
   </v-layout>

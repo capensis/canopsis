@@ -5,7 +5,7 @@
   >
     <v-layout
       class="ml-4 mb-4"
-      align-center="align-center"
+      align-center
     >
       <c-quick-date-interval-field
         :interval="pagination.interval"
@@ -24,28 +24,28 @@
         <template #actions="{ chart }">
           <v-layout
             class="mt-4"
-            justify-end="justify-end"
+            justify-end
           >
             <v-btn
               class="ma-0"
               color="primary"
               @click="exportChart(chart)"
             >
-              <v-icon left="left">
+              <v-icon left>
                 file_download
               </v-icon><span>{{ $t('common.downloadAsPng') }}</span>
             </v-btn>
             <div class="healthcheck-history__zoom">
               <v-btn
-                fab="fab"
-                small="small"
+                fab
+                small
                 @click="zoomIn(chart)"
               >
                 <v-icon>add</v-icon>
               </v-btn>
               <v-btn
-                fab="fab"
-                small="small"
+                fab
+                small
                 @click="zoomOut(chart)"
               >
                 <v-icon>remove</v-icon>

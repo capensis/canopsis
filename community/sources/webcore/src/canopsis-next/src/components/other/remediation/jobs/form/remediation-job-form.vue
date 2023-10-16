@@ -1,19 +1,19 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-enabled-field
       v-field="form.multiple_executions"
       :label="$t('remediation.job.multipleExecutions')"
     />
     <c-name-field
       v-field="form.name"
-      required="required"
+      required
     />
     <remediation-job-configuration-field v-field="form.config" />
     <c-id-field
       v-field="form.job_id"
       :label="$t('remediation.job.jobId')"
       name="job_id"
-      required="required"
+      required
     />
     <v-layout>
       <v-flex
@@ -29,7 +29,7 @@
         <c-duration-field
           v-field="form.retry_interval"
           :label="$t('remediation.job.retryInterval')"
-          clearable="clearable"
+          clearable
         />
       </v-flex>
     </v-layout>
@@ -51,13 +51,13 @@
           :label="$t('common.payload')"
           :help-text="$t('remediation.job.payloadHelp')"
           name="payload"
-          variables="variables"
+          variables
         />
         <c-action-btn
           :tooltip="$t('remediation.job.deletePayload')"
           icon="delete"
           color="error"
-          bottom="bottom"
+          bottom
           @click="removePayload"
         />
       </template>
@@ -69,7 +69,7 @@
       :text-label="$t('common.field')"
       :value-label="$t('common.value')"
       name="query"
-      text-required="text-required"
+      text-required
     />
   </v-layout>
 </template>

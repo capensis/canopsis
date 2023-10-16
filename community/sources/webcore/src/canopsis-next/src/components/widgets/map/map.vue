@@ -2,7 +2,7 @@
   <div class="pa-2">
     <v-layout
       class="mx-1"
-      wrap="wrap"
+      wrap
     >
       <v-flex
         v-if="hasAccessToCategory"
@@ -18,7 +18,7 @@
         v-if="hasAccessToUserFilter"
         xs4="xs4"
       >
-        <v-layout align-center="align-center">
+        <v-layout align-center>
           <filter-selector
             :label="$t('settings.selectAFilter')"
             :filters="userPreference.filters"
@@ -33,9 +33,9 @@
             :widget-id="widget._id"
             :addable="hasAccessToAddFilter"
             :editable="hasAccessToEditFilter"
-            with-entity="with-entity"
-            with-service-weather="with-service-weather"
-            private="private"
+            with-entity
+            with-service-weather
+            private
           />
         </v-layout>
       </v-flex>
@@ -49,7 +49,7 @@
         <v-progress-linear
           class="progress-linear-absolute--top"
           height="2"
-          indeterminate="indeterminate"
+          indeterminate
         />
       </v-fade-transition>
     </template>
@@ -57,11 +57,11 @@
       <v-layout
         class="pa-4"
         v-if="pending"
-        justify-center="justify-center"
+        justify-center
       >
         <v-progress-circular
           color="primary"
-          indeterminate="indeterminate"
+          indeterminate
         />
       </v-layout>
     </template>
@@ -81,7 +81,7 @@
       :popup-template="widget.parameters.entity_info_template"
       :color-indicator="widget.parameters.color_indicator"
       :pbehavior-enabled="widget.parameters.entities_under_pbehavior_enabled"
-      popup-actions="popup-actions"
+      popup-actions
       @show:map="showMap"
       @show:alarms="showAlarmListModal"
     />

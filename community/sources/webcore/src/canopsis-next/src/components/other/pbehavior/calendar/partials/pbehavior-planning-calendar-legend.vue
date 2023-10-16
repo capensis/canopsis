@@ -4,16 +4,16 @@
     :nudge-width="500"
     :close-on-content-click="false"
     origin="left"
-    left="left"
-    offset-x="offset-x"
-    offset-overflow="offset-overflow"
+    left
+    offset-x
+    offset-overflow
   >
     <template #activator="{ on }">
-      <v-tooltip top="top">
+      <v-tooltip top>
         <template #activator="{ on: tooltipOn }">
           <v-btn
             v-on="{ ...tooltipOn, ...on }"
-            icon="icon"
+            icon
           >
             <v-icon>info</v-icon>
           </v-btn>
@@ -36,16 +36,19 @@
               <v-icon
                 class="px-1"
                 color="white"
-                small="small"
+                small
               >
                 {{ type.icon_name }}
               </v-icon><strong class="ds-ev-title">{{ type.name }}</strong>
             </div>
           </div>
-        </template><span
+        </template>
+        <span
           class="subheading"
           v-else
-        >{{ $t('calendar.pbehaviorPlanningLegend.noData') }}</span>
+        >
+          {{ $t('calendar.pbehaviorPlanningLegend.noData') }}
+        </span>
       </v-card-text>
     </v-card>
   </v-menu>

@@ -11,8 +11,8 @@
         :class="{ single: !hasMultipleFilters }"
         :calendar="calendar"
         :events="events"
-        fluid="fluid"
-        read-only="read-only"
+        fluid
+        read-only
         @change="changeCalendar"
         @edit="eventClick"
       />

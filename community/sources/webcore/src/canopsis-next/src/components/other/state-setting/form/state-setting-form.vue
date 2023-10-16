@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-layout>
       <v-flex xs4="xs4">
         <state-setting-method-field v-field="form.method" />
@@ -7,7 +7,7 @@
     </v-layout>
     <v-layout
       v-if="isWorstOfShareMethod"
-      column="column"
+      column
     >
       <v-layout>
         <h4 class="subheading font-weight-bold">
@@ -17,7 +17,7 @@
           :text="$t('stateSetting.worstHelpText')"
           icon-class="ml-2"
           max-width="220"
-          right="right"
+          right
         />
       </v-layout>
       <state-setting-threshold-field

@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-entity-field
       :value="form.entity"
       :label="$t('map.defineEntity')"
@@ -8,8 +8,8 @@
       :entity-types="entityTypes"
       :item-disabled="isEntityExist"
       :item-text="getItemText"
-      return-object="return-object"
-      autocomplete="autocomplete"
+      return-object
+      autocomplete
       @input="updateEntity"
     >
       <template
@@ -37,7 +37,7 @@
       v-show="isLinked"
       v-field="form.map"
       :required="isLinked"
-      hide-details="hide-details"
+      hide-details
     />
   </v-layout>
 </template>

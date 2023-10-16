@@ -1,10 +1,10 @@
 <template>
   <div>
     <v-layout
-      justify-space-between="justify-space-between"
-      align-center="align-center"
+      justify-space-between
+      align-center
     >
-      <v-layout justify-center="justify-center">
+      <v-layout justify-center>
         <span class="text-h6">{{ $t('common.periods') }}</span>
       </v-layout>
       <c-action-btn
@@ -35,7 +35,7 @@
                 v-show="pending"
                 :height="3"
                 color="primary"
-                indeterminate="indeterminate"
+                indeterminate
               />
             </v-fade-transition>
           </v-flex>

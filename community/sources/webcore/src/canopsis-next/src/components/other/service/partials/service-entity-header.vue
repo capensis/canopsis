@@ -1,7 +1,7 @@
 <template>
   <v-layout
-    justify-space-between="justify-space-between"
-    align-center="align-center"
+    justify-space-between
+    align-center
   >
     <v-flex @click.stop="">
       <v-checkbox
@@ -9,23 +9,23 @@
         :input-value="selected"
         :disabled="!selectable"
         color="white"
-        hide-details="hide-details"
+        hide-details
         @change="$emit('update:selected', $event)"
       />
     </v-flex>
     <v-flex class="pa-2">
       <v-icon
         color="white"
-        small="small"
+        small
       >
         {{ entity.icon }}
       </v-icon>
     </v-flex>
     <v-flex
       class="pl-1 white--text subheading"
-      xs12="xs12"
+      xs12
     >
-      <v-layout align-center="align-center">
+      <v-layout align-center>
         <div class="mr-1 entity-name">
           {{ entityName }}
         </div>
@@ -34,18 +34,18 @@
           v-for="icon in extraIcons"
           :key="icon.icon"
           :color="icon.color"
-          small="small"
-          dark="dark"
-          icon="icon"
+          small
+          dark
+          icon
         >
-          <v-icon small="small">
+          <v-icon small>
             {{ icon.icon }}
           </v-icon>
         </v-btn>
         <c-no-events-icon
           :value="entity.idle_since"
           color="white"
-          top="top"
+          top
         />
         <div @click.stop="">
           <v-alert
@@ -53,7 +53,7 @@
             v-if="lastActionUnavailable"
             :value="lastActionUnavailable"
             color="black"
-            dismissible="dismissible"
+            dismissible
             @input="hideAlert"
           >
             {{ $t('serviceWeather.cannotBeApplied') }}

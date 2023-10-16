@@ -12,8 +12,8 @@
           <v-btn
             :input-value="opened"
             color="primary"
-            dark="dark"
-            fab="fab"
+            dark
+            fab
           >
             <v-icon>menu</v-icon>
             <v-icon>close</v-icon>
@@ -27,31 +27,31 @@
         <view-fullscreen-btn
           :value="fullscreen"
           :toggle-full-screen="toggleFullScreen"
-          left-tooltip="left-tooltip"
-          small="small"
+          left-tooltip
+          small
         />
         <view-editing-btn v-if="updatable" />
-        <v-tooltip left="left">
+        <v-tooltip left>
           <v-btn
             class="view-fab-btns__add-widget-btn"
             slot="activator"
             v-if="updatable"
-            fab="fab"
-            dark="dark"
-            small="small"
+            fab
+            dark
+            small
             @click.stop="showCreateWidgetModal"
           >
             <v-icon>add</v-icon>
           </v-btn><span>{{ $t('common.addWidget') }}</span>
         </v-tooltip>
-        <v-tooltip left="left">
+        <v-tooltip left>
           <v-btn
             slot="activator"
             v-if="updatable"
             color="green"
-            fab="fab"
-            dark="dark"
-            small="small"
+            fab
+            dark
+            small
             @click.stop="showCreateTabModal"
           >
             <v-icon>add</v-icon>

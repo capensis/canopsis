@@ -1,11 +1,11 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close="close">
+    <modal-wrapper close>
       <template #title="">
         <span>{{ $t('modals.createAckEvent.title') }}</span>
       </template>
       <template #text="">
-        <v-layout column="column">
+        <v-layout column>
           <alarm-general-table
             v-if="config.items"
             :items="config.items"
@@ -20,8 +20,8 @@
             v-model="actionType"
             :label="$t('alarm.actionsRequired')"
             name="actionType"
-            hide-details="hide-details"
-            column="column"
+            hide-details
+            column
           >
             <v-radio
               v-for="type in actionTypes"
@@ -35,7 +35,7 @@
       </template>
       <template #actions="">
         <v-btn
-          depressed="depressed"
+          depressed
           text
           @click="$modals.hide"
         >

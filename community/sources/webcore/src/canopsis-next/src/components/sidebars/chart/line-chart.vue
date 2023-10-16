@@ -1,13 +1,13 @@
 <template>
   <widget-settings
     :submitting="submitting"
-    divider="divider"
+    divider
     @submit="submit"
   >
     <line-chart-widget-form
       v-model="form"
       :with-filters="hasAccessToListFilters"
-      with-periodic-refresh="with-periodic-refresh"
+      with-periodic-refresh
     />
   </widget-settings>
 </template>

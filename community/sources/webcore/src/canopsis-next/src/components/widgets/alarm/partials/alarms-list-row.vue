@@ -9,8 +9,8 @@
       v-if="hasRowActions"
     >
       <v-layout
-        align-center="align-center"
-        justify-space-between="justify-space-between"
+        align-center
+        justify-space-between
       >
         <v-layout class="alarm-list-row__checkbox">
           <template v-if="selectable">
@@ -18,35 +18,36 @@
               class="ma-0"
               v-if="isAlarmSelectable"
               v-field="selected"
-              hide-details="hide-details"
+              hide-details
             />
             <v-checkbox-functional
               v-else
-              disabled="disabled"
-              hide-details="hide-details"
+              disabled
+              hide-details
             />
           </template>
         </v-layout>
         <v-layout
           v-if="hasAlarmInstruction"
-          align-center="align-center"
+          align-center
         >
           <alarms-list-row-instructions-icon :alarm="alarm" />
         </v-layout>
         <v-layout
           v-if="hasBookmark"
-          align-center="align-center"
+          align-center
         >
           <alarms-list-row-bookmark-icon />
         </v-layout>
         <alarms-expand-panel-btn
           v-if="expandable"
-          v-model="row.expanded"
+          :value="row.expanded"
           :alarm="alarm"
           :widget="widget"
           :is-tour-enabled="isTourEnabled"
           :small="small"
           :search="search"
+          @input="updateExpanded"
         />
       </v-layout>
     </td>
@@ -73,7 +74,8 @@
         :small="small"
         @activate="activateRow"
         @select:tag="$emit('select:tag', $event)"
-      /><span
+      />
+      <span
         class="alarms-list-table__resize-handler"
         v-if="resizing"
         @mousedown.prevent="$emit('start:resize', header.value)"
@@ -267,6 +269,11 @@ export default {
 
     activateRow(value) {
       this.active = value;
+    },
+
+    updateExpanded(value) {
+      // eslint-disable-next-line vue/no-mutating-props
+      this.row.expanded = value;
     },
   },
 };

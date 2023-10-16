@@ -6,7 +6,7 @@
     :pagination.sync="pagination"
     :total-items="meta.total_count"
     item-key="_id"
-    search="search"
+    search
   />
 </template>
 

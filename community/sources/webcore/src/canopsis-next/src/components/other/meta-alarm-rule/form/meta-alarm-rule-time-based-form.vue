@@ -1,10 +1,10 @@
 <template>
   <v-layout>
-    <v-flex xs12="xs12">
+    <v-flex xs12>
       <c-duration-field
         v-field="timebased.time_interval"
         :label="$t('metaAlarmRule.timeInterval')"
-        required="required"
+        required
       />
     </v-flex>
   </v-layout>

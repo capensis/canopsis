@@ -1,11 +1,11 @@
 <template>
   <v-layout
     class="geomap-map-form"
-    column="column"
+    column
   >
     <c-name-field
       v-field="form.name"
-      required="required"
+      required
     />
     <flowchart-editor v-field="form.parameters" />
   </v-layout>

@@ -5,7 +5,8 @@
         class="mr-2"
         :expanded="expanded"
         @expand="$emit('expand')"
-      /><span>{{ group.name }}</span>
+      />
+      <span>{{ group.name }}</span>
     </td>
     <permission-group-row-cell
       v-for="role in roles"

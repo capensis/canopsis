@@ -1,7 +1,7 @@
 <template>
   <v-layout
     class="pattern-operator-information"
-    align-center="align-center"
+    align-center
   >
     <c-pattern-operator-chip class="mr-4">
       <slot />

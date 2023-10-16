@@ -3,8 +3,8 @@
     v-field="form"
     :entity-attributes="entityAttributes"
     :readonly="readonly"
-    required="required"
-    with-entity="with-entity"
+    required
+    with-entity
   />
 </template>
 

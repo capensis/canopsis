@@ -1,14 +1,14 @@
 <template>
   <v-menu
-    offset-y="offset-y"
+    offset-y
     @click.prevent.stop=""
   >
     <template #activator="{ on }">
       <v-btn
         v-on="on"
-        depressed="depressed"
-        small="small"
-        light="light"
+        depressed
+        small
+        light
       >
         <v-icon>{{ icon }}</v-icon>
       </v-btn>

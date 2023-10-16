@@ -14,7 +14,7 @@
     :small-chips="chips"
     item-text="name"
     item-value="_id"
-    return-object="return-object"
+    return-object
   />
 </template>
 

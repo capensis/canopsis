@@ -11,7 +11,7 @@
       :downloading="downloading"
       :min-date="minDate"
       :interval="interval"
-      responsive="responsive"
+      responsive
       @export:csv="exportMetricsAsCsv"
       @export:png="exportMetricsAsPng"
       @zoom="updateQueryField('interval', $event)"

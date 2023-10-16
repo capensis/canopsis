@@ -1,18 +1,20 @@
 <template>
   <v-layout
     class="theme-color-picker-field"
-    justify-space-between="justify-space-between"
-    align-center="align-center"
+    justify-space-between
+    align-center
   >
-    <v-layout align-center="align-center">
+    <v-layout align-center>
       <label
         class="theme-color-picker-field__label mr-2"
         :class="{ 'theme-color-picker-field__label--disabled': disabled }"
-      >{{ label }}</label>
+      >
+        {{ label }}
+      </label>
       <c-help-icon
         v-if="helpText"
         :text="helpText"
-        top="top"
+        top
       />
     </v-layout>
     <c-color-picker-menu-field

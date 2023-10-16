@@ -6,14 +6,14 @@
     <v-card width="400">
       <v-card-title class="primary pa-2 white--text">
         <v-layout
-          justify-space-between="justify-space-between"
-          align-center="align-center"
+          justify-space-between
+          align-center
         >
           <h4>{{ title }}</h4>
           <v-btn
             class="ma-0 ml-3"
-            icon="icon"
-            small="small"
+            icon
+            small
             @click="close"
           >
             <v-icon color="white">
@@ -30,10 +30,10 @@
           @fly:coordinates="$emit('fly:coordinates', $event)"
         />
       </v-card-text>
-      <v-layout justify-end="justify-end">
+      <v-layout justify-end>
         <v-btn
           :disabled="submitting"
-          depressed="depressed"
+          depressed
           text
           @click="close"
         >
@@ -44,7 +44,7 @@
           :disabled="submitting"
           :outlined="$system.dark"
           color="error"
-          depressed="depressed"
+          depressed
           text
           @click.stop="$emit('remove')"
         >

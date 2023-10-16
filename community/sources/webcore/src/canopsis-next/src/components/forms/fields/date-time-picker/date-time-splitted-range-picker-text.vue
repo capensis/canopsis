@@ -18,7 +18,7 @@
           :value="end"
           :full-day="fullDay"
           :label="endLabel"
-          reverse="reverse"
+          reverse
         />
       </v-flex>
     </template>

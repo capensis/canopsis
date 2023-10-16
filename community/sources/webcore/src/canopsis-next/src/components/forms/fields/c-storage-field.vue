@@ -5,8 +5,8 @@
         class="mt-0 pt-0"
         :value="value"
         :disabled="disabled"
-        readonly="readonly"
-        hide-details="hide-details"
+        readonly
+        hide-details
       />
       <c-action-btn
         :disabled="disabled"

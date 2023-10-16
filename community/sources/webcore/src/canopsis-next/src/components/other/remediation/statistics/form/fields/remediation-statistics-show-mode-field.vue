@@ -3,7 +3,7 @@
     v-field="value"
     :items="showingTypes"
     :label="$t('common.show')"
-    hide-details="hide-details"
+    hide-details
   />
 </template>
 

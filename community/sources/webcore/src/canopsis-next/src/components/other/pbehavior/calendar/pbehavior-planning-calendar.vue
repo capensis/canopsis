@@ -3,17 +3,17 @@
     :calendar="calendar"
     :config="calendarConfig"
     :read-only="readOnly"
-    fluid="fluid"
-    fill-height="fill-height"
-    current-time-for-today="current-time-for-today"
-    remove-events-before-move="remove-events-before-move"
+    fluid
+    fill-height
+    current-time-for-today
+    remove-events-before-move
     @change="changeCalendarHandler"
     @changed="changedEventHandler"
     @added="applyEventChangesHandler"
     @moved="changedEventHandler"
     @resized="changedEventHandler"
   >
-    <template #calendarAppLoader="props">
+    <template #calendarAppLoader="">
       <c-progress-overlay
         class="calendar-progress"
         :pending="pending"

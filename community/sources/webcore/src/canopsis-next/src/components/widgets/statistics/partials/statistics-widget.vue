@@ -1,7 +1,7 @@
 <template>
   <v-layout
     class="py-2"
-    column="column"
+    column
   >
     <kpi-widget-filters
       class="mx-3"
@@ -23,22 +23,22 @@
     />
     <v-layout
       class="kpi-widget pa-3"
-      column="column"
-      align-center="align-center"
+      column
+      align-center
     >
       <h4 class="kpi-widget__title">
         {{ widget.parameters.table_title }}
       </h4>
       <c-progress-overlay
         :pending="mainRatingSettingsPending"
-        transition="transition"
+        transition
       />
       <c-advanced-data-table
         class="kpi-widget__table pre-line"
         :items="preparedGroupMetrics"
         :loading="groupMetricsPending"
         :headers="headers"
-        no-pagination="no-pagination"
+        no-pagination
       />
     </v-layout>
   </v-layout>

@@ -12,8 +12,8 @@
       :value-label="$t('declareTicket.responseField')"
       :name="name"
       :disabled="disabled"
-      text-required="text-required"
-      value-required="value-required"
+      text-required
+      value-required
     >
       <template #append-value="{ item }">
         <c-help-icon
@@ -21,7 +21,7 @@
           :text="$t('declareTicket.responseFieldHelpText', { field: item.text })"
           icon="help"
           color="grey darken-1"
-          left="left"
+          left
         />
       </template>
     </c-text-pairs-field>

@@ -2,7 +2,7 @@
   <div class="kpi-alarms-toolbar">
     <v-layout
       class="ml-4 my-4"
-      wrap="wrap"
+      wrap
     >
       <c-quick-date-interval-field
         class="mr-4"
@@ -22,7 +22,7 @@
       <c-alarm-metric-parameters-field
         class="kpi-alarms-toolbar__parameters"
         v-field="query.parameters"
-        hide-details="hide-details"
+        hide-details
       />
     </v-layout>
   </div>

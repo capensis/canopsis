@@ -6,37 +6,39 @@
     transition="scale-transition"
   >
     <template #activator="">
-      <v-tooltip top="top">
+      <v-tooltip top>
         <template #activator="{ on }">
           <v-btn
             class="primary"
             v-on="on"
             :input-value="isVSpeedDialOpen"
-            dark="dark"
-            fab="fab"
-            small="small"
+            dark
+            fab
+            small
           >
             <v-icon>add</v-icon>
             <v-icon>close</v-icon>
           </v-btn>
-        </template><span>{{ $t('context.fab.common') }}</span>
+        </template>
+        <span>{{ $t('context.fab.common') }}</span>
       </v-tooltip>
     </template>
-    <v-tooltip bottom="bottom">
+    <v-tooltip bottom>
       <template #activator="{ on }">
         <v-btn
           v-on="on"
           color="indigo"
-          fab="fab"
-          dark="dark"
-          small="small"
+          fab
+          dark
+          small
           @click.prevent.stop="showCreateServiceModal"
         >
           <v-icon size="24">
             $vuetify.icons.engineering
           </v-icon>
         </v-btn>
-      </template><span>{{ $t('context.fab.addService') }}</span>
+      </template>
+      <span>{{ $t('context.fab.addService') }}</span>
     </v-tooltip>
   </v-speed-dial>
 </template>

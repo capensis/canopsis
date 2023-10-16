@@ -7,7 +7,7 @@
     <v-divider />
     <field-periodic-refresh
       v-model="form.parameters"
-      with-live-watching="with-live-watching"
+      with-live-watching
     />
     <v-divider />
     <widget-settings-group :title="$t('settings.advancedSettings')">
@@ -24,9 +24,9 @@
         :templates-pending="widgetTemplatesPending"
         :label="$t('settings.columnNames')"
         :type="$constants.ENTITIES_TYPES.alarm"
-        with-template="with-template"
-        with-html="with-html"
-        with-color-indicator="with-color-indicator"
+        with-template
+        with-html
+        with-color-indicator
         @update:template="updateWidgetColumnsTemplate"
       />
       <v-divider />
@@ -39,8 +39,8 @@
         :templates-pending="widgetTemplatesPending"
         :label="$t('settings.groupColumnNames')"
         :type="$constants.ENTITIES_TYPES.alarm"
-        with-html="with-html"
-        with-color-indicator="with-color-indicator"
+        with-html
+        with-color-indicator
         @update:template="updateWidgetGroupColumnsTemplate"
       />
       <v-divider />
@@ -51,7 +51,7 @@
         :templates-pending="widgetTemplatesPending"
         :label="$t('settings.trackColumnNames')"
         :type="$constants.ENTITIES_TYPES.entity"
-        with-color-indicator="with-color-indicator"
+        with-color-indicator
         @update:template="updateServiceDependenciesColumnsTemplate"
       />
       <v-divider />
@@ -68,9 +68,9 @@
           :widget-id="widget._id"
           :addable="hasAccessToAddFilter"
           :editable="hasAccessToEditFilter"
-          with-alarm="with-alarm"
-          with-entity="with-entity"
-          with-pbehavior="with-pbehavior"
+          with-alarm
+          with-entity
+          with-pbehavior
         />
         <v-divider />
       </template>
@@ -100,8 +100,8 @@
         :title="$t('settings.moreInfosModal')"
         :variables="alarmVariables"
         :templates="alarmMoreInfosWidgetTemplates"
-        addable="addable"
-        removable="removable"
+        addable
+        removable
         @input="updateMoreInfo"
       />
       <v-divider />
@@ -113,8 +113,8 @@
         :default-value="defaultExportPdfTemplateValue"
         :dialog-props="{ maxWidth: 1070 }"
         :templates="alarmExportToPdfWidgetTemplates"
-        addable="addable"
-        removable="removable"
+        addable
+        removable
         @input="updateExportPdf"
       />
       <v-divider />
@@ -177,8 +177,8 @@
         :type="$constants.ENTITIES_TYPES.alarm"
         :templates="alarmColumnsWidgetTemplates"
         :templates-pending="widgetTemplatesPending"
-        datetime-format="datetime-format"
-        with-instructions="with-instructions"
+        datetime-format
+        with-instructions
       />
       <v-divider />
       <field-switcher

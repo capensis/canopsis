@@ -1,6 +1,6 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close="close">
+    <modal-wrapper close>
       <template #title="">
         <span>{{ $t('common.filters') }}</span>
       </template>
@@ -13,7 +13,7 @@
       <template #actions="">
         <v-btn
           :disabled="submitting"
-          depressed="depressed"
+          depressed
           text
           @click="$modals.hide"
         >

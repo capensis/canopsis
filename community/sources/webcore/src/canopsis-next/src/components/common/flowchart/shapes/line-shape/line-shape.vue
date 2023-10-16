@@ -24,8 +24,8 @@
       :y="labelPosition.y - shape.textProperties.fontSize / 2"
       :x="labelPosition.x"
       :editable="editing"
-      align-center="align-center"
-      justify-center="justify-center"
+      align-center
+      justify-center
       @blur="disableEditingMode"
     />
   </g>

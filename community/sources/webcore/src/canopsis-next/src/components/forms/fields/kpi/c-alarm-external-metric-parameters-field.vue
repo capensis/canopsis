@@ -20,11 +20,12 @@
     >
       <v-icon class="mr-2">
         language
-      </v-icon><span>{{ item }}</span>
+      </v-icon>
+      <span>{{ item }}</span>
     </template>
     <template
       v-if="!addable"
-      #icon="{ item }"
+      #icon=""
     >
       <v-icon class="mr-2">
         language

@@ -4,12 +4,12 @@
       v-field="form.comment"
       :label="$tc('common.comment')"
       name="comment"
-      required="required"
+      required
     />
     <c-pbehavior-reason-field
       v-field="form.reason"
-      required="required"
-      return-object="return-object"
+      required
+      return-object
     />
   </div>
 </template>

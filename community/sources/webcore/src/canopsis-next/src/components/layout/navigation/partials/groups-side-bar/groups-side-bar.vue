@@ -24,23 +24,22 @@
             indeterminate
           />
         </v-layout>
-        <v-expansion-panels v-else>
-          <c-draggable-list-field
-            class="groups-panel"
-            v-model="mutatedGroups"
-            :class="{ ordering: isGroupsOrderChanged }"
-            :component-data="{ props: { expand: true, dark: true, focusable: true } }"
-            :disabled="!isNavigationEditingMode"
-            component="v-expansion-panel"
-          >
-            <groups-side-bar-group
-              v-for="(group, index) in mutatedGroups"
-              :key="group._id"
-              :group.sync="mutatedGroups[index]"
-              :is-groups-order-changed="isGroupsOrderChanged"
-            />
-          </c-draggable-list-field>
-        </v-expansion-panels>
+        <c-draggable-list-field
+          v-else
+          class="groups-panel"
+          v-model="mutatedGroups"
+          :class="{ ordering: isGroupsOrderChanged }"
+          :component-data="{ props: expansionPanelsProps }"
+          :disabled="!isNavigationEditingMode"
+          component="v-expansion-panels"
+        >
+          <groups-side-bar-group
+            v-for="(group, index) in mutatedGroups"
+            :key="group._id"
+            :group.sync="mutatedGroups[index]"
+            :is-groups-order-changed="isGroupsOrderChanged"
+          />
+        </c-draggable-list-field>
       </template>
       <v-divider />
       <v-fade-transition>
@@ -136,6 +135,16 @@ export default {
           this.$emit('input', value);
         }
       },
+    },
+
+    expansionPanelsProps() {
+      return {
+        multiple: true,
+        dark: true,
+        accordion: true,
+        flat: true,
+        tile: true,
+      };
     },
 
     isGroupsOrderChanged() {

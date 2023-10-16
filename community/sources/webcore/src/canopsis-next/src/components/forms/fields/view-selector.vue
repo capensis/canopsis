@@ -1,9 +1,9 @@
 <template>
-  <v-layout align-center="align-center">
+  <v-layout align-center>
     <v-btn
       class="ml-0"
       color="secondary"
-      small="small"
+      small
       @click="showViewSelectModal"
     >
       {{ $t('user.selectDefaultView') }}
@@ -11,7 +11,7 @@
     <div>{{ defaultViewTitle }}</div>
     <v-btn
       v-if="value"
-      icon="icon"
+      icon
       @click="clearDefaultView"
     >
       <v-icon color="error">
