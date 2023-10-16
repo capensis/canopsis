@@ -303,6 +303,11 @@ permission:
     _id: api_maintenance
     name: <Current()._id>
     description: Trigger maintenance mode
+  permission_api_private_view_groups:
+    <<: *permission
+    _id: api_private_view_groups
+    name: <Current()._id>
+    description: Create private view groups
 
   permission_to_get_1:
     <<: *permission
@@ -367,14 +372,24 @@ permission:
     _id: test-view-to-delete-1
     name: <Current()._id>
 
-  permission_view_to_delete_2:
+  permission_view_to_update-1:
     <<: *permission_rw
-    _id: test-view-to-delete-2
+    _id: test-view-to-update-1
     name: <Current()._id>
 
-  permission_view_to_update:
+  permission_view_to_update-2:
     <<: *permission_rw
-    _id: test-view-to-update
+    _id: test-view-to-update-2
+    name: <Current()._id>
+
+  permission_view_to_update-3:
+    <<: *permission_rw
+    _id: test-view-to-update-3
+    name: <Current()._id>
+
+  permission_view_to_update-4:
+    <<: *permission_rw
+    _id: test-view-to-update-4
     name: <Current()._id>
 
   permission_view_to_check_access:
@@ -400,6 +415,11 @@ permission:
   permission_view_to_viewgroup_get_3:
     <<: *permission_rw
     _id: test-view-to-viewgroup-get-3
+    name: <Current()._id>
+
+  permission_view_viewgroup_to_private_get_2:
+    <<: *permission_rw
+    _id: test-view-viewgroup-to-private-get-2
     name: <Current()._id>
 
   permission_playlist_to_check_access:
@@ -528,6 +548,11 @@ permission:
     _id: test-view-to-copy-2
     name: <Current()._id>
 
+  permission_view_to_copy_3:
+    <<: *permission_rw
+    _id: test-view-to-copy-3
+    name: <Current()._id>
+
   permission_view_to_tab_copy_1:
     <<: *permission_rw
     _id: test-view-to-tab-copy-1
@@ -546,6 +571,11 @@ permission:
   permission_view_to_widget_copy_2:
     <<: *permission_rw
     _id: test-view-to-widget-copy-2
+    name: <Current()._id>
+
+  permission_view_to_widget_copy_4:
+    <<: *permission_rw
+    _id: test-view-to-widget-copy-4
     name: <Current()._id>
 
   permission_view_to_filter_edit:
@@ -645,8 +675,8 @@ role:
       "@permission_playlist_to_update": 2
       "@permission_view_to_copy_1": 4
       "@permission_view_to_copy_2": 6
+      "@permission_view_to_copy_3": 6
       "@permission_view_to_delete_1": 1
-      "@permission_view_to_delete_2": 1
       "@permission_view_to_export_1": 4
       "@permission_view_to_export_2": 4
       "@permission_view_to_get_1": 4
@@ -655,15 +685,20 @@ role:
       "@permission_view_to_import_2_2": 6
       "@permission_view_to_junit_edit_dir_param": 7
       "@permission_playlist_to_edit": 4
-      "@permission_view_to_tab_copy_1": 4
+      "@permission_view_to_tab_copy_1": 6
       "@permission_view_to_tab_copy_2": 6
       "@permission_view_to_tab_edit": 6
-      "@permission_view_to_update": 2
+      "@permission_view_to_update-1": 2
+      "@permission_view_to_update-2": 2
+      "@permission_view_to_update-3": 2
+      "@permission_view_to_update-4": 2
       "@permission_view_to_viewgroup_get_1": 7
       "@permission_view_to_viewgroup_get_2": 7
       "@permission_view_to_viewgroup_get_3": 0
+      "@permission_view_viewgroup_to_private_get_2": 7
       "@permission_view_to_widget_copy_1": 4
       "@permission_view_to_widget_copy_2": 6
+      "@permission_view_to_widget_copy_4": 6
       "@permission_view_to_widget_edit": 6
       "@permission_view_to_filter_edit": 6
       "@permission_view_to_alarm_get": 6
@@ -672,6 +707,7 @@ role:
       "@permission_view_to_weather_get": 6
       "@permission_api_maintenance": 1
       "@permission_api_color_theme": 15
+      "@permission_api_private_view_groups": 1
 
   role_noperms:
     <<: *role
@@ -720,6 +756,9 @@ role:
       "@permission_api_playlist": 4
       "@permission_api_viewgroup": 4
       "@permission_api_share_token": 15
+      "@permission_api_view": 15
+      "@permission_view_to_widget_edit": 6
+      "@permission_view_viewgroup_to_private_get_2": 7
 
   role_to_check_unique_name:
     <<: *role
@@ -922,6 +961,45 @@ role:
     permissions:
       "@permission_api_view": 15
 
+  role_to_view_get:
+    <<: *role
+    _id: test-role-to-view-get
+    name: <Current()._id>
+    description: test-role-to-view-get-description
+    permissions:
+      "@permission_api_view": 15
+      "@permission_view_to_get_1": 15
+      "@permission_view_to_get_2": 15
+
+  role_to_private_view_update:
+    <<: *role
+    _id: test-role-to-private-view-update
+    name: <Current()._id>
+    description: test-role-to-private-view-update-description
+
+  role_to_private_view_delete:
+    <<: *role
+    _id: test-role-to-private-view-delete
+    name: <Current()._id>
+    description: test-role-to-private-view-delete-description
+
+  role_to_view_copy:
+    <<: *role
+    _id: test-role-to-view-copy
+    name: <Current()._id>
+    description: test-role-to-view-copy-description
+    permissions:
+      "@permission_api_view": 15
+      "@permission_api_acl": 15
+      "@permission_api_viewgroup": 15
+
+  role_to_viewgroup_private_get:
+    <<: *role
+    _id: test-role-to-viewgroup-private-get
+    name: <Current()._id>
+    permissions:
+      "@permission_api_viewgroup": 15
+
   role_to_widget_filter_edit_1:
     <<: *role
     _id: test-role-to-widget-filter-edit-1
@@ -944,6 +1022,15 @@ role:
     name: <Current()._id>
     permissions:
       "@permission_api_healthcheck": 1
+
+  role_to_private_views_without_view_perm:
+    <<: *role
+    _id: test-role-to-private-views-without-view-perm
+    name: <Current()._id>
+    defaultview: test-view-to-edit-user
+    description: test-role-to-private-views-without-view-perm-description
+    permissions:
+      "@permission_api_private_view_groups": 1
 
 user:
   user_admin:
@@ -1213,6 +1300,27 @@ user:
     roles:
       - "@role_to_view_edit"
 
+  user_to_view_get:
+    <<: *user
+    _id: test-user-to-view-get
+    name: <Current()._id>
+    roles:
+      - "@role_to_view_get"
+
+  user_to_view_copy:
+    <<: *user
+    _id: test-user-to-view-copy
+    name: <Current()._id>
+    roles:
+      - "@role_to_view_copy"
+
+  user_to_viewgroup_private_get:
+    <<: *user
+    _id: test-user-to-viewgroup-private-get
+    name: <Current()._id>
+    roles:
+      - "@role_to_viewgroup_private_get"
+
   user_to_widget_filter_edit_1:
     <<: *user
     _id: test-user-to-widget-filter-edit-1
@@ -1370,6 +1478,27 @@ user:
     roles:
       - "@role_noperms"
     ui_theme: "canopsis_dark"
+
+  user_to_private_view_update:
+    <<: *user
+    _id: test-user-to-private-view-update
+    name: <Current()._id>
+    roles:
+      - "@role_to_private_view_update"
+
+  user_to_private_view_delete:
+    <<: *user
+    _id: test-user-to-private-view-delete
+    name: <Current()._id>
+    roles:
+      - "@role_to_private_view_delete"
+
+  user_to_private_views_without_view_perm:
+    <<: *user
+    _id: test-user-to-private-views-without-view-perm
+    name: <Current()._id>
+    roles:
+      - "@role_to_private_views_without_view_perm"
 
 role_template:
   tpl_pilot:

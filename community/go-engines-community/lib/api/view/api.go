@@ -4,20 +4,22 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
-	"net/http"
-	"time"
 )
 
 type API interface {
-	common.CrudAPI
+	Create(c *gin.Context)
+	Get(c *gin.Context)
+	Update(c *gin.Context)
+	Delete(c *gin.Context)
 	Copy(c *gin.Context)
 	UpdatePositions(c *gin.Context)
 	Import(c *gin.Context)
@@ -42,49 +44,14 @@ func NewApi(
 	}
 }
 
-// List
-// @Success 200 {object} common.PaginatedListResponse{data=[]Response}
-func (a *api) List(c *gin.Context) {
-	var r ListRequest
-	r.Query = pagination.GetDefaultQuery()
-
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
-		return
-	}
-
-	authorizedIds, ok := c.Get(middleware.AuthorizedIds)
-	if ok {
-		r.Ids = authorizedIds.([]string)
-	}
-
-	views := &AggregationResult{}
-	var err error
-
-	if len(r.Ids) > 0 {
-		views, err = a.store.Find(c.Request.Context(), r)
-	}
-
-	if err != nil {
-		panic(err)
-	}
-
-	res, err := common.NewPaginatedResponse(r.Query, views)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
-	c.JSON(http.StatusOK, res)
-}
-
 // Get
 // @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
-	view, err := a.store.GetOneBy(c.Request.Context(), c.Param("id"))
+	view, err := a.store.GetOneBy(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
+
 	if view == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
@@ -103,13 +70,18 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	userID := c.MustGet(auth.UserKey).(string)
-	view, err := a.store.Insert(c.Request.Context(), request, true)
+	view, err := a.store.Insert(c, request, true)
 	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+
 		panic(err)
 	}
 
-	err = a.actionLogger.Action(context.Background(), userID, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionCreate,
 		ValueType: logger.ValueTypeView,
 		ValueID:   view.ID,
@@ -134,8 +106,14 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	view, err := a.store.Update(c.Request.Context(), request)
+	view, err := a.store.Update(c, request)
 	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+
 		panic(err)
 	}
 
@@ -158,8 +136,8 @@ func (a *api) Update(c *gin.Context) {
 
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, err := a.store.Delete(c.Request.Context(), id)
 
+	ok, err := a.store.Delete(c, id)
 	if err != nil {
 		panic(err)
 	}
@@ -186,16 +164,19 @@ func (a *api) Delete(c *gin.Context) {
 // @Success 201 {object} Response
 func (a *api) Copy(c *gin.Context) {
 	request := EditRequest{}
-
 	if err := c.ShouldBind(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
 	}
 
-	userId := c.MustGet(auth.UserKey).(string)
-	id := c.Param("id")
-	view, err := a.store.Copy(c.Request.Context(), id, request)
+	view, err := a.store.Copy(c, c.Param("id"), request)
 	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+
 		panic(err)
 	}
 
@@ -204,7 +185,7 @@ func (a *api) Copy(c *gin.Context) {
 		return
 	}
 
-	err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
 		Action:    logger.ActionCreate,
 		ValueType: logger.ValueTypeView,
 		ValueID:   view.ID,
@@ -240,7 +221,7 @@ func (a *api) UpdatePositions(c *gin.Context) {
 		}
 	}
 
-	ok, err := a.store.UpdatePositions(c.Request.Context(), request)
+	ok, err := a.store.UpdatePositions(c, request)
 	if err != nil {
 		panic(err)
 	}
@@ -283,7 +264,7 @@ func (a *api) Import(c *gin.Context) {
 		}
 	}
 
-	err := a.store.Import(c.Request.Context(), request, userId)
+	err := a.store.Import(c, request, userId)
 	if err != nil {
 		valError := ValidationError{}
 		if errors.As(err, &valError) {
@@ -335,7 +316,7 @@ func (a *api) Export(c *gin.Context) {
 		}
 	}
 
-	response, err := a.store.Export(c.Request.Context(), request)
+	response, err := a.store.Export(c, request)
 	if err != nil {
 		valError := ValidationError{}
 		if errors.As(err, &valError) {

@@ -12131,7 +12131,7 @@ paths:
       description: |
         Copy view.
         
-        -  PERMISSIONS: `api_view:create` `api_view:read` `{id}:read`
+        -  PERMISSIONS: `api_view:create` `api_view:read` `{id}:read` or `api_private_view_groups:can`
       operationId: views-copy
       parameters:
         - name: id
@@ -12232,7 +12232,7 @@ paths:
       description: |
         Get paginated list of view groups.
         
-        -  PERMISSIONS: `api_viewgroup:read`
+        -  PERMISSIONS: `api_viewgroup:read` or `api_private_view_groups:can`
       operationId: viewgroups-find-all
       parameters:
         - name: with_flags
@@ -12671,7 +12671,7 @@ paths:
       description: |
         Copy view tab.
         
-        -  PERMISSIONS: `api_view:update` `api_view:read` `{view_id}:read`
+        -  PERMISSIONS: `api_view:update` `{view_id}:read` or `api_private_view_groups:can`
       operationId: viewtabs-copy
       parameters:
         - name: id
@@ -12722,7 +12722,7 @@ paths:
       description: |
         Update view tabs positions.
         
-        -  PERMISSIONS: `api_view:update` `{view_id}:update`
+        -  PERMISSIONS: `api_view:update` `{view_id}:update` or `api_private_view_groups:can`
       operationId: viewtabs-update-positions
       requestBody:
         description: body
@@ -12764,7 +12764,7 @@ paths:
       description: |
         Create view tab.
         
-        -  PERMISSIONS: `api_view:update` `{view_id}:update`
+        -  PERMISSIONS: `api_view:update` `{view_id}:update` or `api_private_view_groups:can`
       operationId: viewtabs-create
       requestBody:
         description: body
@@ -12802,7 +12802,7 @@ paths:
       description: |
         Get view tab by id.
         
-        -  PERMISSIONS: `api_view:read` `{view_id}:read`
+        -  PERMISSIONS: `api_view:read` `{view_id}:read` or `api_private_view_groups:can`
       operationId: viewtabs-get-by-id
       parameters:
         - name: id
@@ -12831,7 +12831,7 @@ paths:
       description: |
         Update view tab by id.
         
-        -  PERMISSIONS: `api_view:update` `{view_id}:update`
+        -  PERMISSIONS: `api_view:update` `{view_id}:update` or `api_private_view_groups:can`
       operationId: viewtabs-update-by-id
       parameters:
         - name: id
@@ -12851,8 +12851,7 @@ paths:
                 summary: Update
                 description: Update a tab.
                 value: {
-                  "title": "Alarms",
-                  "view": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2"
+                  "title": "Alarms"
                 }
         required: true
       responses:
@@ -12881,7 +12880,7 @@ paths:
       description: |
         Delete view tab by id.
         
-        -  PERMISSIONS: `api_view:update` `{view_id}:update`
+        -  PERMISSIONS: `api_view:update` `{view_id}:update` or `api_private_view_groups:can`
       operationId: viewtabs-delete-by-id
       parameters:
         - name: id
@@ -12907,7 +12906,7 @@ paths:
       description: |
         Get paginated list of views.
         
-        -  PERMISSIONS: `api_view:read` `{id}:read`
+        -  PERMISSIONS: `api_view:read` `{id}:read` or `api_private_view_groups:can`
       operationId: views-find-all
       parameters:
         - $ref: '#/components/parameters/page'
@@ -12940,7 +12939,7 @@ paths:
       description: |
         Create view.
         
-        -  PERMISSIONS: `api_view:create`
+        -  PERMISSIONS: `api_view:create` or `api_private_view_groups:can`
       operationId: views-create
       requestBody:
         description: body
@@ -12988,7 +12987,7 @@ paths:
       description: |
         Get view by id.
         
-        -  PERMISSIONS: `api_view:read` `{id}:read`
+        -  PERMISSIONS: `api_view:read` `{id}:read` or `api_private_view_groups:can`
       operationId: views-get-by-id
       parameters:
         - name: id
@@ -13017,7 +13016,7 @@ paths:
       description: |
         Update view by id.
         
-        -  PERMISSIONS: `api_view:update` `{id}:update`
+        -  PERMISSIONS: `api_view:update` `{id}:update` or `api_private_view_groups:can`
       operationId: views-update-by-id
       parameters:
         - name: id
@@ -13077,7 +13076,7 @@ paths:
       description: |
         Delete view by id.
         
-        -  PERMISSIONS: `api_view:delete` `{id}:delete`
+        -  PERMISSIONS: `api_view:delete` `{id}:delete` or `api_private_view_groups:can`
       operationId: views-delete-by-id
       parameters:
         - name: id
@@ -13224,7 +13223,7 @@ paths:
       description: |
         Copy widget.
         
-        -  PERMISSIONS: `api_view:update` `api_view:read` `{view_id}:read`
+        -  PERMISSIONS: `api_view:update` `{view_id}:read` or `api_private_view_groups:can`
       operationId: widgets-copy
       parameters:
         - name: id
@@ -13343,7 +13342,7 @@ paths:
       description: |
         Get paginated list of widget filters.
         
-        -  PERMISSIONS: `api_view:read`
+        -  PERMISSIONS: `api_view:read` or `api_private_view_groups:can`
       operationId: widgetfilters-find-all
       parameters:
         - name: private
@@ -13384,7 +13383,7 @@ paths:
       description: |
         Create widget filter.
         
-        -  PERMISSIONS: `api_view:read`
+        -  PERMISSIONS: `api_view:read` or `api_private_view_groups:can`
       operationId: widgetfilters-create
       requestBody:
         description: body
@@ -13399,7 +13398,7 @@ paths:
                 value: {
                   "title": "Filter",
                   "widget": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2",
-                  "is_private": true,
+                  "is_user_preference": true,
                   "alarm_pattern": [
                     [
                       {
@@ -13467,7 +13466,7 @@ paths:
       description: |
         Get widget filter by id.
         
-        -  PERMISSIONS: `api_view:read`
+        -  PERMISSIONS: `api_view:read` or `api_private_view_groups:can`
       operationId: widgetfilters-get-by-id
       parameters:
         - name: id
@@ -13496,7 +13495,7 @@ paths:
       description: |
         Update widget filter by id.
         
-        -  PERMISSIONS: `api_view:read`
+        -  PERMISSIONS: `api_view:read` or `api_private_view_groups:can`
       operationId: widgetfilters-update-by-id
       parameters:
         - name: id
@@ -13517,8 +13516,7 @@ paths:
                 description: Update a filter.
                 value: {
                   "title": "Filter",
-                  "widget": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2",
-                  "is_private": true,
+                  "is_user_preference": true,
                   "alarm_pattern": [
                     [
                       {
@@ -13580,7 +13578,7 @@ paths:
       description: |
         Delete widget filter by id.
         
-        -  PERMISSIONS: `api_view:read`
+        -  PERMISSIONS: `api_view:read` or `api_private_view_groups:can`
       operationId: widgetfilters-delete-by-id
       parameters:
         - name: id
@@ -13606,7 +13604,7 @@ paths:
       description: |
         Update widget filters positions.
         
-        -  PERMISSIONS: `api_view:read` `{view_id}:read`
+        -  PERMISSIONS: `api_view:read` `{view_id}:read` or `api_private_view_groups:can`
       operationId: widgetfilters-update-positions
       requestBody:
         description: body
@@ -13648,7 +13646,7 @@ paths:
       description: |
         Update widgets grid positions.
         
-        -  PERMISSIONS: `api_view:update` `{view_id}:update`
+        -  PERMISSIONS: `api_view:update` `{view_id}:update` or `api_private_view_groups:can`
       operationId: widgets-update-grid-positions
       requestBody:
         description: body
@@ -13926,7 +13924,7 @@ paths:
       description: |
         Create widget.
         
-        -  PERMISSIONS: `api_view:update` `{view_id}:update`
+        -  PERMISSIONS: `api_view:update` `{view_id}:update` or `api_private_view_groups:can`
       operationId: widgets-create
       requestBody:
         description: body
@@ -14074,7 +14072,7 @@ paths:
       description: |
         Get widget by id.
         
-        -  PERMISSIONS: `api_view:read` `{view_id}:read`
+        -  PERMISSIONS: `api_view:read` `{view_id}:read` or `api_private_view_groups:can`
       operationId: widgets-get-by-id
       parameters:
         - name: id
@@ -14103,7 +14101,7 @@ paths:
       description: |
         Update widget by id.
         
-        -  PERMISSIONS: `api_view:update` `{view_id}:update`
+        -  PERMISSIONS: `api_view:update` `{view_id}:update` or `api_private_view_groups:can`
       operationId: widgets-update-by-id
       parameters:
         - name: id
@@ -14123,7 +14121,6 @@ paths:
                 summary: Update
                 description: Update a widget.
                 value: {
-                  "tab": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2",
                   "title": "Opened",
                   "type": "AlarmsList",
                   "grid_parameters": {
@@ -14221,7 +14218,7 @@ paths:
       description: |
         Delete widget by id.
         
-        -  PERMISSIONS: `api_view:update` `{view_id}:update`
+        -  PERMISSIONS: `api_view:update` `{view_id}:update` or `api_private_view_groups:can`
       operationId: widgets-delete-by-id
       parameters:
         - name: id

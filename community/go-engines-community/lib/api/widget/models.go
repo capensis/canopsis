@@ -10,8 +10,6 @@ import (
 )
 
 type EditRequest struct {
-	ID             string                 `json:"-"`
-	Tab            string                 `json:"tab" binding:"required"`
 	Title          string                 `json:"title" binding:"max=255"`
 	Type           string                 `json:"type" binding:"required,max=255"`
 	GridParameters map[string]interface{} `json:"grid_parameters"`
@@ -19,6 +17,16 @@ type EditRequest struct {
 	Author         string                 `json:"author" swaggerignore:"true"`
 
 	Filters []FilterRequest `json:"filters" binding:"dive"`
+}
+
+type CreateRequest struct {
+	EditRequest
+	Tab string `json:"tab" binding:"required"`
+}
+
+type UpdateRequest struct {
+	EditRequest
+	ID string `json:"-"`
 }
 
 type FilterRequest struct {
@@ -55,4 +63,6 @@ type Response struct {
 	Updated        *types.CpsTime         `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
 
 	Filters []widgetfilter.Response `bson:"filters" json:"filters"`
+
+	IsPrivate bool `bson:"is_private" json:"is_private"`
 }

@@ -2,6 +2,7 @@ Feature: Update an playlist
   I need to be able to update an playlist
   Only admin should be able to update an playlist
 
+  @concurrent
   Scenario: given update request should update playlist
     When I am admin
     Then I do PUT /api/v4/playlists/test-playlist-to-update:
@@ -67,6 +68,7 @@ Feature: Update an playlist
     }
     """
 
+  @concurrent
   Scenario: given update request with already exists name should return error
     When I am admin
     Then I do PUT /api/v4/playlists/test-playlist-to-update:
@@ -85,23 +87,27 @@ Feature: Update an playlist
     }
     """
 
+  @concurrent
   Scenario: given get request and no auth user should not allow access
     When I do PUT /api/v4/playlists/notexist
     Then the response code should be 401
 
+  @concurrent
   Scenario: given get request and auth user by api key without permissions should not allow access
     When I am noperms
     When I do PUT /api/v4/playlists/notexist
     Then the response code should be 403
 
+  @concurrent
   Scenario: given get request and auth user without view permission should not allow access
     When I am admin
     When I do PUT /api/v4/playlists/test-view-to-check-access
     Then the response code should be 403
 
+  @concurrent
   Scenario: given invalid update request should return errors
     When I am admin
-    When I do PUT /api/v4/playlists/test-view-to-update:
+    When I do PUT /api/v4/playlists/test-playlist-to-update:
     """json
     {
     }
@@ -121,6 +127,7 @@ Feature: Update an playlist
     }
     """
 
+  @concurrent
   Scenario: given invalid update request should return errors
     When I am admin
     When I do PUT /api/v4/playlists/test-view-to-update:
@@ -152,7 +159,28 @@ Feature: Update an playlist
     """
     Then the response code should be 403
 
+  @concurrent
   Scenario: given update request with not exist id should return not allow access error
     When I am admin
     When I do PUT /api/v4/playlists/notexist
+    Then the response code should be 403
+
+  @concurrent
+  Scenario: given update request with private tab should not allow access
+    When I am admin
+    Then I do PUT /api/v4/playlists/test-playlist-to-update:
+    """json
+    {
+      "fullscreen": false,
+      "name": "test-playlist-to-update-name-updated",
+      "tabs_list": [
+        "test-private-tab-to-playlist-edit-1"
+      ],
+      "interval": {
+        "value": 120,
+        "unit": "m"
+      },
+      "enabled": false
+    }
+    """
     Then the response code should be 403
