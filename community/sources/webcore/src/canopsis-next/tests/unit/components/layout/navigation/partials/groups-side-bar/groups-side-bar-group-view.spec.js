@@ -48,6 +48,7 @@ describe('groups-side-bar-group-view', () => {
         title: `Duplicate the view - ${view.title}`,
         duplicate: true,
         submittable: false,
+        duplicableToAll: false,
         view: {
           ...view,
           name: '',
