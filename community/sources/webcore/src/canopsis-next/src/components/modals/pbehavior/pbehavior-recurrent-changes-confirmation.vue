@@ -20,7 +20,7 @@
             color="primary"
           )
       template(#actions="")
-        v-btn(depressed, flat, @click="cancel") {{ $t('common.cancel') }}
+        v-btn(depressed, text, @click="cancel") {{ $t('common.cancel') }}
         v-btn.primary(type="submit") {{ $t('common.submit') }}
 </template>
 

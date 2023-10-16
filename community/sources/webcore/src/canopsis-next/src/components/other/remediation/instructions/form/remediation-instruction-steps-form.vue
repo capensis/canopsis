@@ -1,7 +1,7 @@
 <template lang="pug">
   v-layout(column)
     v-flex(v-if="!steps.length", xs12)
-      v-alert(:value="true", type="info") {{ $t('remediation.instruction.emptySteps') }}
+      v-alert(type="info") {{ $t('remediation.instruction.emptySteps') }}
     c-card-iterator-field.mb-2(
       v-field="steps",
       item-key="key",

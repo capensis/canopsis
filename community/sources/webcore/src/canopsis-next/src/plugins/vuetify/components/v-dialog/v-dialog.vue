@@ -1,6 +1,6 @@
 <script>
 import VDialog from 'vuetify/es5/components/VDialog';
-import ThemeProvider from 'vuetify/es5/util/ThemeProvider';
+import ThemeProvider from 'vuetify/es5/components/VThemeProvider';
 import { getZIndex, convertToUnit } from 'vuetify/es5/util/helpers';
 
 import overlayableMixin from '../../mixins/overlayable';

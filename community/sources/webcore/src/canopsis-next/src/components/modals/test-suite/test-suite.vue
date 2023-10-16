@@ -7,7 +7,7 @@
         v-progress-circular(color="primary", indeterminate)
       test-suite-history(v-else, :test-suite-history="testSuiteHistory")
     template(#actions="")
-      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+      v-btn(depressed, text, @click="$modals.hide") {{ $t('common.cancel') }}
 </template>
 
 <script>
