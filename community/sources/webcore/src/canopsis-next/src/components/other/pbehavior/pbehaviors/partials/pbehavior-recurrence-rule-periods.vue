@@ -47,11 +47,13 @@
             </v-card>
           </v-flex>
         </template>
-        <v-flex #no-data="">
-          <v-card>
-            <v-card-title>{{ $t('common.noData') }}</v-card-title>
-          </v-card>
-        </v-flex>
+        <template #no-data="">
+          <v-flex>
+            <v-card>
+              <v-card-title>{{ $t('common.noData') }}</v-card-title>
+            </v-card>
+          </v-flex>
+        </template>
       </v-data-iterator>
     </v-layout>
   </div>

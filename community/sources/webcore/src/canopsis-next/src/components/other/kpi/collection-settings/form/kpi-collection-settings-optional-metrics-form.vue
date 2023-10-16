@@ -11,7 +11,9 @@
           color="primary"
         >
           <template #label="">
-            <span class="kpi-collection-settings-metrics-form__label ml-4">{{ $t('kpi.collectionSetting.manualInstructions') }}</span>
+            <span class="kpi-collection-settings-metrics-form__label ml-4">
+              {{ $t('kpi.collectionSetting.manualInstructions') }}
+            </span>
           </template>
         </v-checkbox>
       </v-list-item-action>
@@ -23,7 +25,9 @@
           color="primary"
         >
           <template #label="">
-            <span class="kpi-collection-settings-metrics-form__label ml-4">{{ $t('kpi.collectionSetting.notAckedMetrics') }}</span>
+            <span class="kpi-collection-settings-metrics-form__label ml-4">
+              {{ $t('kpi.collectionSetting.notAckedMetrics') }}
+            </span>
           </template>
         </v-checkbox>
       </v-list-item-action>

@@ -12,7 +12,7 @@
       name="description"
     />
     <pbehavior-exceptions-field
-      v-model="form.exdates"
+      v-field="form.exdates"
       with-exdate-type="with-exdate-type"
     >
       <template #no-data="">

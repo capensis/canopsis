@@ -56,22 +56,11 @@ import { MODALS } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
 
-import GroupViewPanel from '@/components/layout/navigation/partials/groups-side-bar/group-view-panel.vue';
-import GroupPanel from '@/components/layout/navigation/partials/groups-side-bar/group-panel.vue';
-import GroupsSideBarGroup from '@/components/layout/navigation/partials/groups-side-bar/groups-side-bar-group.vue';
 import DraggablePlaylistTabs from '@/components/other/playlists/form/fields/draggable-playlist-tabs.vue';
-
-import TabPanelContent from '../partials/tab-panel-content.vue';
 
 export default {
   inject: ['$validator'],
-  components: {
-    DraggablePlaylistTabs,
-    TabPanelContent,
-    GroupViewPanel,
-    GroupPanel,
-    GroupsSideBarGroup,
-  },
+  components: { DraggablePlaylistTabs },
   mixins: [formMixin],
   model: {
     prop: 'form',

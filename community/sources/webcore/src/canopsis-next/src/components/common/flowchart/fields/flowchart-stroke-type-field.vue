@@ -16,6 +16,7 @@
           #[slotName]="{ item }"
         >
           <svg
+            :key="slotName"
             width="50"
             height="4"
           >

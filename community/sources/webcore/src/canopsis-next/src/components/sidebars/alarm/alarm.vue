@@ -236,13 +236,11 @@ import WidgetSettings from '../partials/widget-settings.vue';
 import FieldTitle from '../form/fields/title.vue';
 import FieldDefaultSortColumn from '../form/fields/default-sort-column.vue';
 import FieldColumns from '../form/fields/columns.vue';
-import FieldTextEditor from '../form/fields/text-editor.vue';
 import FieldPeriodicRefresh from '../form/fields/periodic-refresh.vue';
 import FieldDefaultElementsPerPage from '../form/fields/default-elements-per-page.vue';
 import FieldFilters from '../form/fields/filters.vue';
 import FieldTextEditorWithTemplate from '../form/fields/text-editor-with-template.vue';
 import FieldSwitcher from '../form/fields/switcher.vue';
-import FieldNumber from '../form/fields/number.vue';
 import ExportCsvForm from '../form/export-csv.vue';
 import ChartsForm from '../chart/form/charts-form.vue';
 
@@ -271,7 +269,6 @@ export default {
     FieldDefaultElementsPerPage,
     FieldOpenedResolvedFilter,
     FieldFilters,
-    FieldTextEditor,
     FieldTextEditorWithTemplate,
     FieldSwitcher,
     FieldFastActionOutput,
@@ -279,7 +276,6 @@ export default {
     FieldRemediationInstructionsFilters,
     FieldInfoPopup,
     FieldDensity,
-    FieldNumber,
     ExportCsvForm,
     ChartsForm,
     FieldResizeColumnBehavior,

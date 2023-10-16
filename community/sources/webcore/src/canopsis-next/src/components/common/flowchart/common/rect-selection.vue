@@ -13,6 +13,7 @@
     />
     <circle
       v-for="circle in resizeCircles"
+      :key="circle.direction"
       :cx="circle.x"
       :cy="circle.y"
       :fill="color"

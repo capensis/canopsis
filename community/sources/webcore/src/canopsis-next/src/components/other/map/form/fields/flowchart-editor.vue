@@ -9,7 +9,7 @@
       @input="updateShapes"
       @update:backgroundColor="updateBackgroundColor"
     >
-      <template #sidebar-prepend="{ data }">
+      <template #sidebar-prepend>
         <add-location-btn v-model="addOnClick" />
         <v-divider />
       </template>

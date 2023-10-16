@@ -23,6 +23,7 @@
           v-else
           v-bind="component.bind"
           v-on="component.on"
+          :is="component.is"
         />
         <v-btn
           class="ma-0 alarms-column-cell__show-info-btn"
@@ -51,6 +52,7 @@
     v-else
     v-bind="component.bind"
     v-on="component.on"
+    :is="component.is"
   />
 </template>
 

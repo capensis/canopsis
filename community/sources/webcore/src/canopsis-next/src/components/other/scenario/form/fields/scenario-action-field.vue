@@ -76,9 +76,9 @@
       </v-tab-item>
       <v-tab-item>
         <scenario-action-patterns-form
+          v-field="action.patterns"
           class="mt-4"
           ref="patterns"
-          v-model="action.patterns"
           :name="name"
         />
       </v-tab-item>

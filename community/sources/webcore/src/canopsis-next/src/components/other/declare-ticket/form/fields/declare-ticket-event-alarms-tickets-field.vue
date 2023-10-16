@@ -5,7 +5,7 @@
       :items="alarms"
       hide-default-footer
     >
-      <template #items="{ item, index }">
+      <template #items="{ item }">
         <td v-if="!hideRowSelect">
           <v-checkbox
             :input-value="isEveryTicketsActive(item._id)"

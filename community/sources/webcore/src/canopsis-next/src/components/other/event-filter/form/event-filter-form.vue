@@ -40,7 +40,9 @@
     />
     <template v-if="hasAdditionalOptions">
       <v-divider class="my-3" />
-      <c-information-block :title="isEnrichmentType ? $t('eventFilter.enrichmentOptions') : $t('eventFilter.changeEntityOptions')">
+      <c-information-block
+        :title="isEnrichmentType ? $t('eventFilter.enrichmentOptions') : $t('eventFilter.changeEntityOptions')"
+      >
         <c-collapse-panel
           class="mb-2"
           :title="$t('externalData.title')"
@@ -73,7 +75,6 @@ import {
   isChangeEntityEventFilterRuleType,
 } from '@/helpers/entities/event-filter/rule/entity';
 
-import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
 import PbehaviorRecurrenceRuleField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-recurrence-rule-field.vue';
 import ExternalDataForm from '@/components/forms/external-data/external-data-form.vue';
 
@@ -86,7 +87,6 @@ export default {
   components: {
     ExternalDataForm,
     EventFilterDropIntervalsField,
-    DateTimePickerField,
     PbehaviorRecurrenceRuleField,
     EventFilterEnrichmentForm,
     EventFilterChangeEntityForm,

@@ -5,7 +5,7 @@
     v-model="menu"
     v-bind="popoverProps"
   >
-    <template #activator="{ on }">
+    <template #activator>
       <div
         class="ds-calendar-event-menu"
         :class="classWithKey"
@@ -14,8 +14,8 @@
           class="ds-calendar-event"
           :style="style"
           @click.stop="editCheck"
-          @mouseenter="mouseEnterEvent"
-          @mouseleave="mouseLeaveEvent"
+          @focusin="mouseEnterEvent"
+          @focusout="mouseLeaveEvent"
           @mousedown="mouseDownEvent"
           @mouseup="mouseUpEvent"
         >
@@ -29,7 +29,12 @@
                 v-if="hasIcon"
                 size="14"
                 :style="{ color: details.forecolor }"
-              >{{ details.icon }}</v-icon><span v-if="hasPrefix">{{ getPrefix }}</span><strong class="ds-ev-title">{{ details.title }}</strong><span class="ds-ev-description">{{ details.description }}</span>
+              >
+                {{ details.icon }}
+              </v-icon>
+              <span v-if="hasPrefix">{{ getPrefix }}</span>
+              <strong class="ds-ev-title">{{ details.title }}</strong>
+              <span class="ds-ev-description">{{ details.description }}</span>
             </slot></span><span v-else>
             <slot
               name="eventEmpty"

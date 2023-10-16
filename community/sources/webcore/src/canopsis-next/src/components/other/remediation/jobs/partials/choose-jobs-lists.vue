@@ -27,7 +27,7 @@
         <v-icon>add</v-icon>
       </v-btn>
     </template>
-    <template #mass-actions="{ selected, item, count }">
+    <template #mass-actions="{ selected, count }">
       <v-btn
         class="ma-2"
         outlined

@@ -38,8 +38,6 @@ import { formArrayMixin } from '@/mixins/form';
 import { validationAttachRequiredMixin } from '@/mixins/form/validation-attach-required';
 
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
-import CEnabledField from '@/components/forms/fields/c-enabled-field.vue';
-import KpiRatingMetricField from '@/components/other/kpi/charts/form/fields/kpi-rating-metric-field.vue';
 
 import StatisticsColumn from './statistics-column.vue';
 
@@ -49,8 +47,6 @@ export default {
   inject: ['$validator'],
   components: {
     WidgetSettingsItem,
-    CEnabledField,
-    KpiRatingMetricField,
     StatisticsColumn,
   },
   mixins: [formArrayMixin, validationAttachRequiredMixin],

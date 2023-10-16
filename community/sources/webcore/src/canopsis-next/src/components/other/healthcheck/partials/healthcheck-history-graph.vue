@@ -1,7 +1,7 @@
 <template>
   <div
     class="healthcheck-history"
-    @touchend.stop="@touchend.stop"
+    @touchend.stop=""
   >
     <v-layout
       class="ml-4 mb-4"

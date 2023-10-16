@@ -140,7 +140,6 @@ import FieldTitle from '../form/fields/title.vue';
 import FieldPeriodicRefresh from '../form/fields/periodic-refresh.vue';
 import FieldFilters from '../form/fields/filters.vue';
 import FieldColumns from '../form/fields/columns.vue';
-import FieldDefaultSortColumn from '../form/fields/default-sort-column.vue';
 import FieldTextEditorWithTemplate from '../form/fields/text-editor-with-template.vue';
 import FieldGridSize from '../form/fields/grid-size.vue';
 import FieldSlider from '../form/fields/slider.vue';
@@ -166,7 +165,6 @@ export default {
     FieldPeriodicRefresh,
     FieldFilters,
     FieldColumns,
-    FieldDefaultSortColumn,
     FieldTextEditorWithTemplate,
     FieldGridSize,
     FieldSlider,
