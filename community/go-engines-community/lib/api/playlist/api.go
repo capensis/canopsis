@@ -2,6 +2,8 @@ package playlist
 
 import (
 	"context"
+	"net/http"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
@@ -11,7 +13,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 type api struct {
@@ -51,7 +52,7 @@ func (a *api) List(c *gin.Context) {
 		r.Ids = ids.([]string)
 	}
 
-	playlists, err := a.store.Find(c.Request.Context(), r)
+	playlists, err := a.store.Find(c, r)
 	if err != nil {
 		panic(err)
 	}
@@ -68,7 +69,7 @@ func (a *api) List(c *gin.Context) {
 // Get
 // @Success 200 {object} Playlist
 func (a *api) Get(c *gin.Context) {
-	playlist, err := a.store.GetById(c.Request.Context(), c.Param("id"))
+	playlist, err := a.store.GetById(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -91,7 +92,7 @@ func (a *api) Create(c *gin.Context) {
 	}
 
 	userId := c.MustGet(auth.UserKey).(string)
-	ok, err := a.checkAccess(c.Request.Context(), request.TabsList, userId)
+	ok, err := a.checkAccess(c, request.TabsList, userId)
 	if err != nil {
 		panic(err)
 	}
@@ -100,7 +101,7 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	playlist, err := a.store.Insert(c.Request.Context(), userId, request)
+	playlist, err := a.store.Insert(c, userId, request)
 	if err != nil {
 		panic(err)
 	}
@@ -131,7 +132,7 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	userId := c.MustGet(auth.UserKey).(string)
-	ok, err := a.checkAccess(c.Request.Context(), request.TabsList, userId)
+	ok, err := a.checkAccess(c, request.TabsList, userId)
 	if err != nil {
 		panic(err)
 	}
@@ -140,7 +141,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	playlist, err := a.store.Update(c.Request.Context(), request)
+	playlist, err := a.store.Update(c, request)
 	if err != nil {
 		panic(err)
 	}
@@ -164,7 +165,7 @@ func (a *api) Update(c *gin.Context) {
 
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, err := a.store.Delete(c.Request.Context(), id)
+	ok, err := a.store.Delete(c, id)
 	if err != nil {
 		panic(err)
 	}
