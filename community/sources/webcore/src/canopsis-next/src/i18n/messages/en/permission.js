@@ -454,6 +454,10 @@ export default {
       name: 'Views',
       description: 'This permission defines the access to the list of views',
     },
+    [USERS_PERMISSIONS.technical.privateView]: {
+      name: 'Private views',
+      description: 'This permission defines the access to the list of private views',
+    },
     [USERS_PERMISSIONS.technical.role]: {
       name: 'Roles',
       description: 'This permission defines the access to the list of roles',
@@ -677,6 +681,10 @@ export default {
     [USERS_PERMISSIONS.api.general.viewgroup]: {
       name: 'View groups',
       description: 'Access to API route to CRUD view groups',
+    },
+    [USERS_PERMISSIONS.api.general.privateViewGroups]: {
+      name: 'Private view groups',
+      description: 'Access to API route to CRUD private view groups',
     },
     [USERS_PERMISSIONS.api.general.userInterfaceUpdate]: {
       name: 'Update user interface',

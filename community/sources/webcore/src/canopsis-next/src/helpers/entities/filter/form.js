@@ -27,7 +27,7 @@ import { formGroupsToPatternRules, patternToForm } from '@/helpers/entities/patt
  * @typedef {FilterPatterns} Filter
  * @property {string} title
  * @property {string} author
- * @property {boolean} is_private
+ * @property {boolean} is_user_preference
  */
 
 /**
@@ -89,7 +89,7 @@ export const filterPatternsToForm = (
 export const filterToForm = (filter = {}, fields, oldFields) => ({
   title: filter.title ?? '',
   old_mongo_query: filter.old_mongo_query,
-  is_private: filter.is_private ?? false,
+  is_user_preference: filter.is_user_preference ?? false,
   ...filterPatternsToForm(filter, fields, oldFields),
 });
 
@@ -137,6 +137,6 @@ export const formFilterToPatterns = (
  */
 export const formToFilter = (form, fields, corporate) => ({
   title: form.title,
-  is_private: form.is_private,
+  is_user_preference: form.is_user_preference,
   ...formFilterToPatterns(form, fields, corporate),
 });
