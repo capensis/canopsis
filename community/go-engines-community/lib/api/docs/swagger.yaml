@@ -12454,7 +12454,7 @@ paths:
       description: |
         Copy view tab.
         
-        -  PERMISSIONS: `api_view:update` or `api_private_view_groups:can` or `api_private_view_groups:can`
+        -  PERMISSIONS: `api_view:update` `{view_id}:read` or `api_private_view_groups:can`
       operationId: viewtabs-copy
       parameters:
         - name: id
