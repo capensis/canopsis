@@ -1,6 +1,6 @@
 <template lang="pug">
   v-speed-dial(
-    v-if="hasCreateAnyViewAccess || hasUpdateAnyViewAccess || hasDeleteAnyViewAccess",
+    v-if="hasAccessToPrivateView || hasCreateAnyViewAccess || hasUpdateAnyViewAccess || hasDeleteAnyViewAccess",
     v-model="isVSpeedDialOpen",
     v-bind="wrapperProps",
     transition="slide-y-reverse-transition"
@@ -22,7 +22,7 @@
             v-icon close
         span {{ $t('layout.sideBar.buttons.settings') }}
     v-tooltip(
-      v-if="hasUpdateAnyViewAccess || hasDeleteAnyViewAccess",
+      v-if="hasAccessToPrivateView || hasUpdateAnyViewAccess || hasDeleteAnyViewAccess",
       :right="tooltipRight",
       :left="tooltipLeft",
       z-index="10",
@@ -60,7 +60,7 @@
           v-icon(dark) add
       span {{ $t('layout.sideBar.buttons.createView') }}
     v-tooltip(
-      v-if="hasAccessToPrivateView && hasCreateAnyViewAccess",
+      v-if="hasAccessToPrivateView",
       :right="tooltipRight",
       :left="tooltipLeft",
       z-index="10",

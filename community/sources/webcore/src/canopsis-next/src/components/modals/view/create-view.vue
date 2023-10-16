@@ -5,7 +5,11 @@
         span {{ title }}
       template(#text="")
         c-alert(:value="duplicate", type="info") {{ $t('modals.view.duplicate.infoMessage') }}
-        view-form(v-model="form", :groups="availableGroups", :duplicate-private="isInitialViewPrivate && duplicate")
+        view-form(
+          v-model="form",
+          :groups="availableGroups",
+          :duplicate-private="isInitialViewPrivate && config.duplicableToAll"
+        )
       template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
@@ -91,7 +95,7 @@ export default {
     },
 
     availableGroups() {
-      if (this.duplicate) {
+      if (this.duplicableToAll) {
         return this.groups;
       }
 

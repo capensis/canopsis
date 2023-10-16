@@ -37,15 +37,15 @@ export default {
     },
 
     hasUpdateViewAccess() {
-      return (this.view.is_private || this.checkUpdateAccess(this.view._id)) && this.hasUpdateAnyViewAccess;
+      return this.checkUpdateAccess(this.view._id) && this.hasUpdateAnyViewAccess;
     },
 
     hasDeleteViewAccess() {
-      return (this.view.is_private || this.checkDeleteAccess(this.view._id)) && this.hasUpdateAnyViewAccess;
+      return this.checkDeleteAccess(this.view._id) && this.hasUpdateAnyViewAccess;
     },
 
     hasViewEditButtonAccess() {
-      return (this.hasUpdateViewAccess || this.hasDeleteViewAccess) && this.isNavigationEditingMode;
+      return this.hasDeleteViewAccess && this.isNavigationEditingMode;
     },
   },
   methods: {
@@ -79,13 +79,14 @@ export default {
         config: {
           title: this.$t('modals.view.duplicate.title', { viewTitle: this.view.title }),
           duplicate: true,
+          duplicableToAll: this.hasCreateAnyViewAccess,
           view: {
             ...this.view,
 
             name: '',
             title: '',
           },
-          submittable: this.hasCreateAnyViewAccess,
+          submittable: this.view.is_private || this.hasCreateAnyViewAccess,
           action: async (data) => {
             await this.copyViewWithPopup({ id: this.view._id, data });
 
