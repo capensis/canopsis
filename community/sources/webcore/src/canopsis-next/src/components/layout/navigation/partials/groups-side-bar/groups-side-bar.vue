@@ -1,45 +1,77 @@
-<template lang="pug">
-  div
-    v-navigation-drawer.side-bar.secondary(
-      v-model="isOpen",
-      :width="$config.SIDE_BAR_WIDTH",
-      :class="{ editing: isNavigationEditingMode }",
-      :ignore-click-outside="isGroupsOrderChanged || hasMaximizedModal",
+<template>
+  <div>
+    <v-navigation-drawer
+      class="side-bar secondary"
+      v-model="isOpen"
+      :width="$config.SIDE_BAR_WIDTH"
+      :class="{ editing: isNavigationEditingMode }"
+      :ignore-click-outside="isGroupsOrderChanged || hasMaximizedModal"
       app
-    )
-      div.brand.ma-0.secondary.lighten-1
-        app-logo.logo
-        logged-users-count
-        app-version.version
-      template(v-if="hasReadAnyViewAccess")
-        v-layout.pa-2(v-if="!mutatedGroups.length && groupsPending", row, justify-center)
-          v-progress-circular(color="primary", indeterminate)
-        c-draggable-list-field.groups-panel(
-          v-else,
-          v-model="mutatedGroups",
-          :class="{ ordering: isGroupsOrderChanged }",
-          :component-data="{ props: { expand: true, dark: true, focusable: true } }",
-          :disabled="!isNavigationEditingMode",
-          component="v-expansion-panel"
-        )
-          groups-side-bar-group(
-            v-for="(group, index) in mutatedGroups",
-            :key="group._id",
-            :group.sync="mutatedGroups[index]",
-            :is-groups-order-changed="isGroupsOrderChanged"
-          )
-      v-divider
-      v-fade-transition
-        div.v-overlay.v-overlay--active(v-show="isGroupsOrderChanged")
-          v-btn.primary(@click="submit") {{ $t('common.submit') }}
-          v-btn(@click="resetMutatedGroups") {{ $t('common.cancel') }}
-      groups-side-bar-playlists
-      groups-settings-button(
-        tooltip-right,
+    >
+      <div class="brand ma-0 secondary lighten-1">
+        <app-logo class="logo" />
+        <logged-users-count />
+        <app-version class="version" />
+      </div>
+      <template v-if="hasReadAnyViewAccess">
+        <v-layout
+          class="pa-2"
+          v-if="!mutatedGroups.length && groupsPending"
+          justify-center
+        >
+          <v-progress-circular
+            color="primary"
+            indeterminate
+          />
+        </v-layout>
+        <v-expansion-panels v-else>
+          <c-draggable-list-field
+            class="groups-panel"
+            v-model="mutatedGroups"
+            :class="{ ordering: isGroupsOrderChanged }"
+            :component-data="{ props: { expand: true, dark: true, focusable: true } }"
+            :disabled="!isNavigationEditingMode"
+            component="v-expansion-panel"
+          >
+            <groups-side-bar-group
+              v-for="(group, index) in mutatedGroups"
+              :key="group._id"
+              :group.sync="mutatedGroups[index]"
+              :is-groups-order-changed="isGroupsOrderChanged"
+            />
+          </c-draggable-list-field>
+        </v-expansion-panels>
+      </template>
+      <v-divider />
+      <v-fade-transition>
+        <div
+          class="v-overlay v-overlay--active"
+          v-show="isGroupsOrderChanged"
+        >
+          <v-btn
+            class="primary"
+            @click="submit"
+          >
+            {{ $t('common.submit') }}
+          </v-btn>
+          <v-btn @click="resetMutatedGroups">
+            {{ $t('common.cancel') }}
+          </v-btn>
+        </div>
+      </v-fade-transition>
+      <groups-side-bar-playlists />
+      <groups-settings-button
+        tooltip-right
         @toggleEditingMode="toggleNavigationEditingMode"
-      )
-    v-fade-transition
-      div.v-overlay.v-overlay--active.content-overlay(v-show="isGroupsOrderChanged")
+      />
+    </v-navigation-drawer>
+    <v-fade-transition>
+      <div
+        class="v-overlay v-overlay--active content-overlay"
+        v-show="isGroupsOrderChanged"
+      />
+    </v-fade-transition>
+  </div>
 </template>
 
 <script>

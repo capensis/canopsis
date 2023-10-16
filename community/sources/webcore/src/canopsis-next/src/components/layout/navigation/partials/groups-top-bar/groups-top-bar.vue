@@ -1,19 +1,27 @@
-<template lang="pug">
-  v-layout.secondary.groups-wrapper
-    v-tabs(ref="tabs", color="secondary", show-arrows, dark)
-      template(v-if="hasReadAnyViewAccess")
-        groups-top-bar-group(
-          v-for="group in availableGroups",
-          :key="group._id",
+<template>
+  <v-layout class="secondary groups-wrapper">
+    <v-tabs
+      ref="tabs"
+      color="secondary"
+      show-arrows
+      dark
+    >
+      <template v-if="hasReadAnyViewAccess">
+        <groups-top-bar-group
+          v-for="group in availableGroups"
+          :key="group._id"
           :group="group"
-        )
-      groups-top-bar-playlists
-    groups-settings-button(
-      tooltipLeft,
-      :wrapperProps="{ direction: 'bottom', absolute: true, right: true, bottom: true }",
-      :buttonProps="{ fab: true, dark: true, small: true }",
+        />
+      </template>
+      <groups-top-bar-playlists />
+    </v-tabs>
+    <groups-settings-button
+      tooltip-left="tooltipLeft"
+      :wrapper-props="{ direction: 'bottom', absolute: true, right: true, bottom: true }"
+      :button-props="{ fab: true, dark: true, small: true }"
       @toggleEditingMode="toggleEditingMode"
-    )
+    />
+  </v-layout>
 </template>
 
 <script>
