@@ -12,31 +12,30 @@
         logged-users-count
         app-version.version
       section.side-bar__links
-        template(v-if="hasReadAnyViewAccess")
-          v-layout.pa-2(v-if="!mutatedGroups.length && groupsPending", row, justify-center)
-            v-progress-circular(color="primary", indeterminate)
-          c-draggable-list-field.groups-panel(
-            v-else,
-            v-model="mutatedGroups",
-            :class="{ 'groups-panel--ordering': isGroupsOrderChanged }",
-            :component-data="{ props: { expand: true, dark: true, focusable: true } }",
-            :disabled="!isNavigationEditingMode",
-            draggable=".groups-panel__item--public",
-            component="v-expansion-panel"
+        v-layout.pa-2(v-if="!mutatedGroups.length && groupsPending", row, justify-center)
+          v-progress-circular(color="primary", indeterminate)
+        c-draggable-list-field.groups-panel(
+          v-else,
+          v-model="mutatedGroups",
+          :class="{ 'groups-panel--ordering': isGroupsOrderChanged }",
+          :component-data="{ props: { expand: true, dark: true, focusable: true } }",
+          :disabled="!isNavigationEditingMode",
+          draggable=".groups-panel__item--public",
+          component="v-expansion-panel"
+        )
+          groups-side-bar-group.groups-panel__item--public(
+            v-for="(group, index) in mutatedGroups",
+            :key="group._id",
+            :group.sync="mutatedGroups[index]",
+            :is-groups-order-changed="isGroupsOrderChanged"
           )
-            groups-side-bar-group.groups-panel__item--public(
-              v-for="(group, index) in mutatedGroups",
-              :key="group._id",
-              :group.sync="mutatedGroups[index]",
+          template(v-if="hasAccessToPrivateView", #footer="")
+            groups-side-bar-group(
+              v-for="privateGroup in privateGroups",
+              :key="privateGroup._id",
+              :group="privateGroup",
               :is-groups-order-changed="isGroupsOrderChanged"
             )
-            template(v-if="hasAccessToPrivateView", #footer="")
-              groups-side-bar-group(
-                v-for="privateGroup in privateGroups",
-                :key="privateGroup._id",
-                :group="privateGroup",
-                :is-groups-order-changed="isGroupsOrderChanged"
-              )
         v-divider
         groups-side-bar-playlists
       groups-settings-button(
