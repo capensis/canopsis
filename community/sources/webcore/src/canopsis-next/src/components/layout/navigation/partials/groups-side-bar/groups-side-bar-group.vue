@@ -1,23 +1,26 @@
-<template lang="pug">
-  group-panel(
-    :group="group",
-    :order-changed="isGroupsOrderChanged",
-    :is-editing="isNavigationEditingMode",
+<template>
+  <group-panel
+    :group="group"
+    :order-changed="isGroupsOrderChanged"
+    :is-editing="isNavigationEditingMode"
     @change="showEditGroupModal"
-  )
-    c-draggable-list-field.views-panel.secondary.lighten-1(
-      :class="{ empty: isGroupEmpty }",
-      :value="group.views",
-      :disabled="!isNavigationEditingMode",
-      group="views",
+  >
+    <c-draggable-list-field
+      class="views-panel secondary lighten-1"
+      :class="{ empty: isGroupEmpty }"
+      :value="group.views"
+      :disabled="!isNavigationEditingMode"
+      group="views"
       @input="changeViewsOrdering"
-    )
-      groups-side-bar-group-view(
-        v-for="view in group.views",
-        :key="view._id",
-        :view="view",
+    >
+      <groups-side-bar-group-view
+        v-for="view in group.views"
+        :key="view._id"
+        :view="view"
         :is-groups-order-changed="isGroupsOrderChanged"
-      )
+      />
+    </c-draggable-list-field>
+  </group-panel>
 </template>
 
 <script>

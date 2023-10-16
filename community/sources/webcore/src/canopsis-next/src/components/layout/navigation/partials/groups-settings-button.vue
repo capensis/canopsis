@@ -1,64 +1,79 @@
-<template lang="pug">
-  v-speed-dial(
-    v-if="hasCreateAnyViewAccess || hasUpdateAnyViewAccess || hasDeleteAnyViewAccess",
-    v-model="isVSpeedDialOpen",
-    v-bind="wrapperProps",
+<template>
+  <v-speed-dial
+    v-if="hasCreateAnyViewAccess || hasUpdateAnyViewAccess || hasDeleteAnyViewAccess"
+    v-model="isVSpeedDialOpen"
+    v-bind="wrapperProps"
     transition="slide-y-reverse-transition"
-  )
-    template(#activator="")
-      v-tooltip(
-        :right="tooltipRight",
-        :left="tooltipLeft",
-        z-index="10",
+  >
+    <template #activator="">
+      <v-tooltip
+        :right="tooltipRight"
+        :left="tooltipLeft"
+        z-index="10"
         custom-activator
-      )
-        template(#activator="{ on }")
-          v-btn.primary(
-            v-on="on",
-            v-bind="buttonProps",
+      >
+        <template #activator="{ on }">
+          <v-btn
+            class="primary"
+            v-on="on"
+            v-bind="buttonProps"
             :input-value="isVSpeedDialOpen"
-          )
-            v-icon settings
-            v-icon close
-        span {{ $t('layout.sideBar.buttons.settings') }}
-    v-tooltip(
-      v-if="hasUpdateAnyViewAccess || hasDeleteAnyViewAccess",
-      :right="tooltipRight",
-      :left="tooltipLeft",
-      z-index="10",
+          >
+            <v-icon>settings</v-icon>
+            <v-icon>close</v-icon>
+          </v-btn>
+        </template><span>{{ $t('layout.sideBar.buttons.settings') }}</span>
+      </v-tooltip>
+    </template>
+    <v-tooltip
+      v-if="hasUpdateAnyViewAccess || hasDeleteAnyViewAccess"
+      :right="tooltipRight"
+      :left="tooltipLeft"
+      z-index="10"
       custom-activator
-    )
-      template(#activator="{ on }")
-        v-btn(
-          v-on="on",
-          :input-value="isNavigationEditingMode",
-          color="blue darken-4",
-          small,
-          dark,
-          fab,
+    >
+      <template #activator="{ on }">
+        <v-btn
+          v-on="on"
+          :input-value="isNavigationEditingMode"
+          color="blue darken-4"
+          small
+          dark
+          fab
           @click.stop="$emit('toggleEditingMode')"
-        )
-          v-icon(dark) edit
-          v-icon(dark) done
-      span {{ $t('layout.sideBar.buttons.edit') }}
-    v-tooltip(
-      v-if="hasCreateAnyViewAccess",
-      :right="tooltipRight",
-      :left="tooltipLeft",
-      z-index="10",
+        >
+          <v-icon dark>
+            edit
+          </v-icon>
+          <v-icon dark>
+            done
+          </v-icon>
+        </v-btn>
+      </template><span>{{ $t('layout.sideBar.buttons.edit') }}</span>
+    </v-tooltip>
+    <v-tooltip
+      v-if="hasCreateAnyViewAccess"
+      :right="tooltipRight"
+      :left="tooltipLeft"
+      z-index="10"
       custom-activator
-    )
-      template(#activator="{ on }")
-        v-btn(
-          v-on="on",
-          color="green darken-4",
-          small,
-          dark,
-          fab,
+    >
+      <template #activator="{ on }">
+        <v-btn
+          v-on="on"
+          color="green darken-4"
+          small
+          dark
+          fab
           @click.stop="showCreateViewModal"
-        )
-          v-icon(dark) add
-      span {{ $t('layout.sideBar.buttons.create') }}
+        >
+          <v-icon dark>
+            add
+          </v-icon>
+        </v-btn>
+      </template><span>{{ $t('layout.sideBar.buttons.create') }}</span>
+    </v-tooltip>
+  </v-speed-dial>
 </template>
 
 <script>

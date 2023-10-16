@@ -1,22 +1,30 @@
-<template lang="pug">
-  v-expansion-panel-content.secondary.group-item(
-    :hide-actions="hideActions",
+<template>
+  <v-expansion-panel-content
+    class="secondary group-item"
+    :hide-actions="hideActions"
     :class="{ editing: isEditing }"
-  )
-    template(#header="")
-      div.panel-header
-        slot(name="title")
-          span {{ group.title }}
-        v-btn(
-          v-show="isEditing",
-          :disabled="orderChanged",
-          depressed,
-          small,
-          icon,
+  >
+    <template #header="">
+      <div class="panel-header">
+        <slot name="title">
+          <span>{{ group.title }}</span>
+        </slot>
+        <v-btn
+          v-show="isEditing"
+          :disabled="orderChanged"
+          depressed
+          small
+          icon
           @click.stop="handleChange"
-        )
-          v-icon(small) edit
-    slot
+        >
+          <v-icon small>
+            edit
+          </v-icon>
+        </v-btn>
+      </div>
+    </template>
+    <slot />
+  </v-expansion-panel-content>
 </template>
 
 <script>
