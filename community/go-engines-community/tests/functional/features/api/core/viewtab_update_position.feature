@@ -2,6 +2,7 @@ Feature: Update view tab positions
   I need to be able to view tab positions
   Only admin should be able to view tab positions
 
+  @concurrent
   Scenario: given update request should return ok
     When I am test-role-to-tab-update-position
     When I do POST /api/v4/view-tabs:
@@ -67,15 +68,18 @@ Feature: Update view tab positions
     }
     """
 
+  @concurrent
   Scenario: given update request and no auth user should not allow access
     When I do PUT /api/v4/view-tab-positions
     Then the response code should be 401
 
+  @concurrent
   Scenario: given update request and auth user without view permission should not allow access
     When I am noperms
     When I do PUT /api/v4/view-tab-positions
     Then the response code should be 403
 
+  @concurrent
   Scenario: given invalid request should return error
     When I am test-role-to-tab-update-position
     When I do PUT /api/v4/view-tab-positions:
@@ -158,3 +162,136 @@ Feature: Update view tab positions
     ]
     """
     Then the response code should be 403
+
+  @concurrent
+  Scenario: given update request for private tabs should update positions
+    When I am admin
+    When I do POST /api/v4/view-tabs:
+    """json
+    {
+      "title": "test-private-tab-to-update-position-1-1-title",
+      "view": "test-private-view-to-private-tab-update-position-1"
+    }
+    """
+    Then the response code should be 201
+    When I save response tab1={{ .lastResponse._id }}
+    When I do POST /api/v4/view-tabs:
+    """json
+    {
+      "title": "test-private-tab-to-update-position-1-2-title",
+      "view": "test-private-view-to-private-tab-update-position-1"
+    }
+    """
+    Then the response code should be 201
+    When I save response tab2={{ .lastResponse._id }}
+    When I do POST /api/v4/view-tabs:
+    """json
+    {
+      "title": "test-private-tab-to-update-position-1-3-title",
+      "view": "test-private-view-to-private-tab-update-position-1"
+    }
+    """
+    Then the response code should be 201
+    When I save response tab3={{ .lastResponse._id }}
+    # Test created positions
+    When I do GET /api/v4/views/test-private-view-to-private-tab-update-position-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "tabs": [
+        { "_id": "{{ .tab1 }}" },
+        { "_id": "{{ .tab2 }}" },
+        { "_id": "{{ .tab3 }}" }
+      ]
+    }
+    """
+    # Test updated positions
+    When I do PUT /api/v4/view-tab-positions:
+    """json
+    [
+      "{{ .tab3 }}",
+      "{{ .tab1 }}",
+      "{{ .tab2 }}"
+    ]
+    """
+    Then the response code should be 204
+    When I do GET /api/v4/views/test-private-view-to-private-tab-update-position-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "tabs": [
+        { "_id": "{{ .tab3 }}" },
+        { "_id": "{{ .tab1 }}" },
+        { "_id": "{{ .tab2 }}" }
+      ]
+    }
+    """
+
+  @concurrent
+  Scenario: given update request for private tabs with api_private_view_groups
+    but without api_view permissions should return filters should update positions
+    When I am test-role-to-private-views-without-view-perm
+    When I do POST /api/v4/view-tabs:
+    """json
+    {
+      "title": "test-private-tab-to-update-position-2-1-title",
+      "view": "test-private-view-to-private-tab-update-position-2"
+    }
+    """
+    Then the response code should be 201
+    When I save response tab1={{ .lastResponse._id }}
+    When I do POST /api/v4/view-tabs:
+    """json
+    {
+      "title": "test-private-tab-to-update-position-2-2-title",
+      "view": "test-private-view-to-private-tab-update-position-2"
+    }
+    """
+    Then the response code should be 201
+    When I save response tab2={{ .lastResponse._id }}
+    When I do POST /api/v4/view-tabs:
+    """json
+    {
+      "title": "test-private-tab-to-update-position-2-3-title",
+      "view": "test-private-view-to-private-tab-update-position-2"
+    }
+    """
+    Then the response code should be 201
+    When I save response tab3={{ .lastResponse._id }}
+    # Test created positions
+    When I do GET /api/v4/views/test-private-view-to-private-tab-update-position-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "tabs": [
+        { "_id": "{{ .tab1 }}" },
+        { "_id": "{{ .tab2 }}" },
+        { "_id": "{{ .tab3 }}" }
+      ]
+    }
+    """
+    # Test updated positions
+    When I do PUT /api/v4/view-tab-positions:
+    """json
+    [
+      "{{ .tab3 }}",
+      "{{ .tab1 }}",
+      "{{ .tab2 }}"
+    ]
+    """
+    Then the response code should be 204
+    When I do GET /api/v4/views/test-private-view-to-private-tab-update-position-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "tabs": [
+        { "_id": "{{ .tab3 }}" },
+        { "_id": "{{ .tab1 }}" },
+        { "_id": "{{ .tab2 }}" }
+      ]
+    }
+    """

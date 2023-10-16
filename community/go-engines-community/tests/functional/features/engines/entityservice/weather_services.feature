@@ -84,7 +84,7 @@ Feature: update service weather on event
     {
       "title": "test-widgetfilter-service-weather-1",
       "widget": "test-widget-to-weather-get",
-      "is_private": true,
+      "is_user_preference": true,
       "entity_pattern": [
         [
           {
@@ -306,7 +306,7 @@ Feature: update service weather on event
     {
       "title": "test-widgetfilter-service-weather-1",
       "widget": "test-widget-to-weather-get",
-      "is_private": true,
+      "is_user_preference": true,
       "entity_pattern": [
         [
           {
@@ -456,7 +456,7 @@ Feature: update service weather on event
     {
       "title": "test-widgetfilter-service-weather-1",
       "widget": "test-widget-to-weather-get",
-      "is_private": true,
+      "is_user_preference": true,
       "entity_pattern": [
         [
           {
@@ -705,7 +705,7 @@ Feature: update service weather on event
     {
       "title": "test-widgetfilter-service-weather-1",
       "widget": "test-widget-to-weather-get",
-      "is_private": true,
+      "is_user_preference": true,
       "entity_pattern": [
         [
           {
@@ -855,7 +855,7 @@ Feature: update service weather on event
     {
       "title": "test-widgetfilter-service-weather-1",
       "widget": "test-widget-to-weather-get",
-      "is_private": true,
+      "is_user_preference": true,
       "entity_pattern": [
         [
           {
@@ -1078,7 +1078,7 @@ Feature: update service weather on event
     {
       "title": "test-widgetfilter-service-weather-1",
       "widget": "test-widget-to-weather-get",
-      "is_private": true,
+      "is_user_preference": true,
       "entity_pattern": [
         [
           {
@@ -1130,7 +1130,7 @@ Feature: update service weather on event
     {
       "title": "test-widgetfilter-service-weather-1",
       "widget": "test-widget-to-weather-get",
-      "is_private": true,
+      "is_user_preference": true,
       "entity_pattern": [
         [
           {
