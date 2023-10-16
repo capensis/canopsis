@@ -675,7 +675,7 @@ export default {
   },
   remediationInstructionApproval: {
     title: 'Approbation des consignes',
-    requested: 'demandé pour approbation',
+    requested: 'vous a sollicité pour une pour approbation',
     tabs: {
       updated: 'Mise à jour',
       original: 'Original',
