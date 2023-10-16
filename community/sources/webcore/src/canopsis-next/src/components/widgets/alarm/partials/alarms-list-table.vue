@@ -1,132 +1,178 @@
-<template lang="pug">
-  v-flex(
-    v-on="wrapperListeners",
+<template>
+  <v-flex
+    v-on="wrapperListeners"
     v-resize="changeHeaderPositionOnResize"
-  )
-    c-empty-data-table-columns(v-if="!columns.length")
-    div(v-else)
-      v-layout.alarms-list-table__top-pagination.px-4.position-relative(
-        v-if="shownTopPagination",
-        ref="actions",
-        row,
-        align-center
-      )
-        v-flex.alarms-list-table__top-pagination--left(v-if="densable || !hideActions", xs6)
-          v-layout(row, align-center, justify-start)
-            c-density-btn-toggle(v-if="densable", :value="dense", @change="$emit('update:dense', $event)")
-            v-fade-transition(v-if="!hideActions")
-              v-flex.px-1(v-show="unresolvedSelected.length")
-                mass-actions-panel(
-                  :items="unresolvedSelected",
-                  :widget="widget",
-                  :refresh-alarms-list="refreshAlarmsList",
+  >
+    <c-empty-data-table-columns v-if="!columns.length" />
+    <div v-else>
+      <v-layout
+        class="alarms-list-table__top-pagination px-4 position-relative"
+        v-if="shownTopPagination"
+        ref="actions"
+        align-center="align-center"
+      >
+        <v-flex
+          class="alarms-list-table__top-pagination--left"
+          v-if="densable || !hideActions"
+          xs6="xs6"
+        >
+          <v-layout
+            align-center="align-center"
+            justify-start="justify-start"
+          >
+            <c-density-btn-toggle
+              v-if="densable"
+              :value="dense"
+              @change="$emit('update:dense', $event)"
+            />
+            <v-fade-transition v-if="!hideActions">
+              <v-flex
+                class="px-1"
+                v-show="unresolvedSelected.length"
+              >
+                <mass-actions-panel
+                  :items="unresolvedSelected"
+                  :widget="widget"
+                  :refresh-alarms-list="refreshAlarmsList"
                   @clear:items="clearSelected"
-                )
-        v-flex.alarms-list-table__top-pagination--center-absolute(v-if="!hidePagination", xs4)
-          c-pagination(
-            :page="pagination.page",
-            :limit="pagination.limit",
-            :total="totalItems",
-            type="top",
+                />
+              </v-flex>
+            </v-fade-transition>
+          </v-layout>
+        </v-flex>
+        <v-flex
+          class="alarms-list-table__top-pagination--center-absolute"
+          v-if="!hidePagination"
+          xs4="xs4"
+        >
+          <c-pagination
+            :page="pagination.page"
+            :limit="pagination.limit"
+            :total="totalItems"
+            type="top"
             @input="updateQueryPage"
-          )
-        v-flex.alarms-list-table__top-pagination--right-absolute(v-if="resizableColumn || draggableColumn")
-          c-action-btn(
-            v-if="isColumnsChanging",
-            :tooltip="$t('alarm.tooltips.resetChangeColumns')",
-            icon="$vuetify.icons.restart_alt",
+          />
+        </v-flex>
+        <v-flex
+          class="alarms-list-table__top-pagination--right-absolute"
+          v-if="resizableColumn || draggableColumn"
+        >
+          <c-action-btn
+            v-if="isColumnsChanging"
+            :tooltip="$t('alarm.tooltips.resetChangeColumns')"
+            icon="$vuetify.icons.restart_alt"
             @click="resetColumnsSettings"
-          )
-          c-action-btn(
-            :icon="isColumnsChanging ? 'lock_open' : 'lock_outline'",
-            :tooltip="$t(`alarm.tooltips.${isColumnsChanging ? 'finishChangeColumns' : 'startChangeColumns'}`)",
+          />
+          <c-action-btn
+            :icon="isColumnsChanging ? 'lock_open' : 'lock_outline'"
+            :tooltip="$t(`alarm.tooltips.${isColumnsChanging ? 'finishChangeColumns' : 'startChangeColumns'}`)"
             @click="toggleColumnEditingMode"
-          )
-      v-data-table.alarms-list-table(
-        ref="dataTable",
-        v-model="selected",
-        :class="vDataTableClass",
-        :style="vDataTableStyle",
-        :items="alarms",
-        :headers="headersWithWidth",
-        :total-items="totalItems",
-        :pagination="pagination",
-        :select-all="selectable",
-        :loading="loading || columnsFiltersPending",
-        :expand="expandable",
-        :dense="isMediumDense",
-        :ultra-dense="isSmallDense",
-        header-key="value",
-        item-key="_id",
-        hide-actions,
-        multi-sort,
+          />
+        </v-flex>
+      </v-layout>
+      <v-data-table
+        class="alarms-list-table"
+        ref="dataTable"
+        v-model="selected"
+        :class="vDataTableClass"
+        :style="vDataTableStyle"
+        :items="alarms"
+        :headers="headersWithWidth"
+        :server-items-length="totalItems"
+        :options="pagination"
+        :show-select="selectable"
+        :loading="loading || columnsFiltersPending"
+        :show-expand="expandable"
+        :dense="isMediumDense"
+        :ultra-dense="isSmallDense"
+        header-key="value"
+        item-key="_id"
+        hide-default-footer
+        multi-sort="multi-sort"
         @update:pagination="updatePaginationHandler"
-      )
-        template(#progress="")
-          v-fade-transition
-            v-progress-linear(color="primary", height="2", indeterminate)
-        template(#headerCell="{ header, index }")
-          alarm-header-cell(
-            :header="header",
-            :selected-tag="selectedTag",
-            :resizing="resizingMode",
+      >
+        <template #progress="">
+          <v-fade-transition>
+            <v-progress-linear
+              color="primary"
+              height="2"
+              indeterminate="indeterminate"
+            />
+          </v-fade-transition>
+        </template>
+        <template #headerCell="{ header, index }">
+          <alarm-header-cell
+            :header="header"
+            :selected-tag="selectedTag"
+            :resizing="resizingMode"
             @clear:tag="$emit('clear:tag')"
-          )
-          template
-            span.alarms-list-table__dragging-handler(v-if="draggingMode", @click.stop="")
-            span.alarms-list-table__resize-handler(
-              v-if="resizingMode",
-              @mousedown.stop.prevent="startColumnResize(header.value)",
+          />
+          <template>
+            <span
+              class="alarms-list-table__dragging-handler"
+              v-if="draggingMode"
               @click.stop=""
-            )
-        template(#items="props")
-          alarms-list-row(
-            v-model="props.selected",
-            v-on="rowListeners",
-            :ref="`row${props.item._id}`",
-            :key="props.item._id",
-            :selectable="selectable",
-            :expandable="expandable",
-            :row="props",
-            :widget="widget",
-            :headers="headers",
-            :parent-alarm="parentAlarm",
-            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(props.index)",
-            :refresh-alarms-list="refreshAlarmsList",
-            :selecting="selecting",
-            :selected-tag="selectedTag",
-            :medium="isMediumDense",
-            :small="isSmallDense",
-            :resizing="resizingMode",
-            :search="search",
-            :wrap-actions="resizableColumn",
-            :show-instruction-icon="hasInstructionsAlarms",
-            @start:resize="startColumnResize",
+            /><span
+              class="alarms-list-table__resize-handler"
+              v-if="resizingMode"
+              @mousedown.stop.prevent="startColumnResize(header.value)"
+              @click.stop=""
+            />
+          </template>
+        </template>
+        <template #items="props">
+          <alarms-list-row
+            v-model="props.selected"
+            v-on="rowListeners"
+            :ref="`row${props.item._id}`"
+            :key="props.item._id"
+            :selectable="selectable"
+            :expandable="expandable"
+            :row="props"
+            :widget="widget"
+            :headers="headers"
+            :parent-alarm="parentAlarm"
+            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(props.index)"
+            :refresh-alarms-list="refreshAlarmsList"
+            :selecting="selecting"
+            :selected-tag="selectedTag"
+            :medium="isMediumDense"
+            :small="isSmallDense"
+            :resizing="resizingMode"
+            :search="search"
+            :wrap-actions="resizableColumn"
+            :show-instruction-icon="hasInstructionsAlarms"
+            @start:resize="startColumnResize"
             @select:tag="$emit('select:tag', $event)"
-          )
-        template(#expand="{ item, index }")
-          alarms-expand-panel(
-            :alarm="item",
-            :parent-alarm-id="parentAlarmId",
-            :widget="widget",
-            :search="search",
-            :hide-children="hideChildren",
-            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(index)",
+          />
+        </template>
+        <template #expand="{ item, index }">
+          <alarms-expand-panel
+            :alarm="item"
+            :parent-alarm-id="parentAlarmId"
+            :widget="widget"
+            :search="search"
+            :hide-children="hideChildren"
+            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(index)"
             @select:tag="$emit('select:tag', $event)"
-          )
-    c-table-pagination(
-      v-if="!hidePagination",
-      :total-items="totalItems",
-      :rows-per-page="pagination.limit",
-      :page="pagination.page",
-      @update:page="updateQueryPage",
+          />
+        </template>
+      </v-data-table>
+    </div>
+    <c-table-pagination
+      v-if="!hidePagination"
+      :total-items="totalItems"
+      :rows-per-page="pagination.limit"
+      :page="pagination.page"
+      @update:page="updateQueryPage"
       @update:rows-per-page="updateRecordsPerPage"
-    )
-    component(
-      v-bind="additionalComponent.props",
-      v-on="additionalComponent.on",
+    />
+    <component
+      v-bind="additionalComponent.props"
+      v-on="additionalComponent.on"
       :is="additionalComponent.is"
-    )
+    />
+  </v-flex>
 </template>
 
 <script>

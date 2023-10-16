@@ -1,20 +1,28 @@
-<template lang="pug">
-  v-tabs.mt-3(slider-color="primary", fixed-tabs)
-    template(v-if="updated")
-      v-tab {{ $t('modals.remediationInstructionApproval.tabs.updated') }}
-      v-tab-item.pt-3
-        remediation-instruction-form(
-          :form="updatedForm",
-          disabled-common,
-          disabled
-        )
-    v-tab {{ $t('modals.remediationInstructionApproval.tabs.original') }}
-    v-tab-item.pt-3
-      remediation-instruction-form(
-        :form="originalForm",
-        disabled-common,
-        disabled
-      )
+<template>
+  <v-tabs
+    class="mt-3"
+    slider-color="primary"
+    fixed-tabs="fixed-tabs"
+  >
+    <template v-if="updated">
+      <v-tab>{{ $t('modals.remediationInstructionApproval.tabs.updated') }}</v-tab>
+      <v-tab-item class="pt-3">
+        <remediation-instruction-form
+          :form="updatedForm"
+          disabled-common="disabled-common"
+          disabled="disabled"
+        />
+      </v-tab-item>
+    </template>
+    <v-tab>{{ $t('modals.remediationInstructionApproval.tabs.original') }}</v-tab>
+    <v-tab-item class="pt-3">
+      <remediation-instruction-form
+        :form="originalForm"
+        disabled-common="disabled-common"
+        disabled="disabled"
+      />
+    </v-tab-item>
+  </v-tabs>
 </template>
 
 <script>

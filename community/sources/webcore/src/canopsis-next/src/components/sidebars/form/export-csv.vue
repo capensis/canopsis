@@ -1,29 +1,33 @@
-<template lang="pug">
-  widget-settings-item(:title="$t('settings.exportCsv.title')")
-    v-select(
-      v-field="form.exportCsvSeparator",
-      :items="separators",
+<template>
+  <widget-settings-item :title="$t('settings.exportCsv.title')">
+    <v-select
+      v-field="form.exportCsvSeparator"
+      :items="separators"
       :label="$t('settings.exportCsv.fields.separator')"
-    )
-    v-select(
-      v-if="datetimeFormat",
-      v-field="form.exportCsvDatetimeFormat",
-      :items="formats",
+    />
+    <v-select
+      v-if="datetimeFormat"
+      v-field="form.exportCsvDatetimeFormat"
+      :items="formats"
       :label="$t('settings.exportCsv.fields.datetimeFormat')"
-    )
-    v-layout(column)
-      h4.subheading.my-4 {{ $t('settings.exportColumnNames') }}
-      c-columns-with-template-field(
-        v-field="form.widgetExportColumns",
-        :template="form.widgetExportColumnsTemplate",
-        :templates="templates",
-        :templates-pending="templatesPending",
-        :label="$t('settings.exportColumnNames')",
-        :type="type",
-        :with-instructions="withInstructions",
-        without-infos-attributes,
+    />
+    <v-layout column="column">
+      <h4 class="subheading my-4">
+        {{ $t('settings.exportColumnNames') }}
+      </h4>
+      <c-columns-with-template-field
+        v-field="form.widgetExportColumns"
+        :template="form.widgetExportColumnsTemplate"
+        :templates="templates"
+        :templates-pending="templatesPending"
+        :label="$t('settings.exportColumnNames')"
+        :type="type"
+        :with-instructions="withInstructions"
+        without-infos-attributes="without-infos-attributes"
         @update:template="updateTemplate"
-      )
+      />
+    </v-layout>
+  </widget-settings-item>
 </template>
 
 <script>

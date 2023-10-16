@@ -1,13 +1,20 @@
-<template lang="pug">
-  div.view-wrapper
-    v-fade-transition
-      view-tabs-wrapper(
-        v-if="isViewTabsReady",
-        :editing="editing",
+<template>
+  <div class="view-wrapper">
+    <v-fade-transition>
+      <view-tabs-wrapper
+        v-if="isViewTabsReady"
+        :editing="editing"
         :updatable="hasUpdateAccess"
-      )
-    v-fade-transition
-      view-fab-btns(v-if="view", :active-tab="activeTab", :updatable="hasUpdateAccess")
+      />
+    </v-fade-transition>
+    <v-fade-transition>
+      <view-fab-btns
+        v-if="view"
+        :active-tab="activeTab"
+        :updatable="hasUpdateAccess"
+      />
+    </v-fade-transition>
+  </div>
 </template>
 
 <script>

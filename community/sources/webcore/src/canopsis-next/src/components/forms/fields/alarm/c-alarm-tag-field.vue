@@ -1,38 +1,56 @@
-<template lang="pug">
-  c-lazy-search-field.c-alarm-tag-field(
-    v-field="value",
-    :items="alarmTags",
-    :label="label || $tc('common.tag')",
-    :loading="pending",
-    :disabled="disabled",
-    :name="name",
-    :menu-props="{ contentClass: 'c-alarm-tag-field__list' }",
-    :has-more="hasMoreTags",
-    item-text="value",
-    item-value="value",
-    hide-details,
-    multiple,
-    chips,
-    dense,
-    clearable,
-    autocomplete,
-    @fetch="fetchTags",
-    @fetch:more="fetchMoreTags",
+<template>
+  <c-lazy-search-field
+    class="c-alarm-tag-field"
+    v-field="value"
+    :items="alarmTags"
+    :label="label || $tc('common.tag')"
+    :loading="pending"
+    :disabled="disabled"
+    :name="name"
+    :menu-props="{ contentClass: 'c-alarm-tag-field__list' }"
+    :has-more="hasMoreTags"
+    item-text="value"
+    item-value="value"
+    hide-details="hide-details"
+    multiple="multiple"
+    chips="chips"
+    dense="dense"
+    clearable="clearable"
+    autocomplete="autocomplete"
+    @fetch="fetchTags"
+    @fetch:more="fetchMoreTags"
     @update:search="updateSearch"
-  )
-    template(#selection="{ item, index }")
-      c-alarm-action-chip.c-alarm-tag-field__tag(
-        :color="item.color",
-        :title="item.value",
-        closable,
-        ellipsis,
+  >
+    <template #selection="{ item, index }">
+      <c-alarm-action-chip
+        class="c-alarm-tag-field__tag"
+        :color="item.color"
+        :title="item.value"
+        closable="closable"
+        ellipsis="ellipsis"
         @close="removeItemFromArray(index)"
-      ) {{ item.value }}
-    template(#item="{ item, tile, parent }")
-      v-list-tile.c-alarm-tag-field__list-item(v-bind="tile.props", v-on="tile.on")
-        v-list-tile-action
-          v-checkbox(:input-value="tile.props.value", :color="parent.color")
-        v-list-tile-content.c-word-break-all {{ item.value }}
+      >
+        {{ item.value }}
+      </c-alarm-action-chip>
+    </template>
+    <template #item="{ item, tile, parent }">
+      <v-list-item
+        class="c-alarm-tag-field__list-item"
+        v-bind="tile.props"
+        v-on="tile.on"
+      >
+        <v-list-item-action>
+          <v-checkbox
+            :input-value="tile.props.value"
+            :color="parent.color"
+          />
+        </v-list-item-action>
+        <v-list-item-content class="c-word-break-all">
+          {{ item.value }}
+        </v-list-item-content>
+      </v-list-item>
+    </template>
+  </c-lazy-search-field>
 </template>
 
 <script>

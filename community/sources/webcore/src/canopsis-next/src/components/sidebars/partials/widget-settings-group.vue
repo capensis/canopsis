@@ -1,10 +1,19 @@
-<template lang="pug">
-  v-list-group.widget-settings-group
-    template(#activator="")
-      v-list-tile
-        div(:class="validationHeaderClass") {{ title }}
-    v-list.px-2.py-0.background.darken-1(expand)
-      slot
+<template>
+  <v-list-group class="widget-settings-group">
+    <template #activator="">
+      <v-list-item>
+        <div :class="validationHeaderClass">
+          {{ title }}
+        </div>
+      </v-list-item>
+    </template>
+    <v-list
+      class="px-2 py-0 background darken-1"
+      expand="expand"
+    >
+      <slot />
+    </v-list>
+  </v-list-group>
 </template>
 
 <script>

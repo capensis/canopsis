@@ -1,22 +1,40 @@
-<template lang="pug">
-  v-form.pa-3.pbehavior-form(v-click-outside.zIndex="clickOutsideDirective", @submit.prevent="submitHandler")
-    pbehavior-form(v-model="form", :no-pattern="!!entityPattern")
-    v-layout(row, justify-end)
-      v-btn.error(
-        v-show="pbehavior",
-        :outline="$system.dark",
+<template>
+  <v-form
+    class="pa-3 pbehavior-form"
+    v-click-outside.zIndex="clickOutsideDirective"
+    @submit.prevent="submitHandler"
+  >
+    <pbehavior-form
+      v-model="form"
+      :no-pattern="!!entityPattern"
+    />
+    <v-layout justify-end="justify-end">
+      <v-btn
+        class="error"
+        v-show="pbehavior"
+        :outlined="$system.dark"
         @click="remove"
-      ) {{ $t('common.delete') }}
-      v-btn.mr-0.mb-0(
-        depressed,
-        flat,
+      >
+        {{ $t('common.delete') }}
+      </v-btn>
+      <v-btn
+        class="mr-0 mb-0"
+        depressed="depressed"
+        text
         @click="cancel"
-      ) {{ $t('common.cancel') }}
-      v-btn.mr-0.mb-0(
-        :disabled="errors.any()",
-        color="primary",
+      >
+        {{ $t('common.cancel') }}
+      </v-btn>
+      <v-btn
+        class="mr-0 mb-0"
+        :disabled="errors.any()"
+        color="primary"
         type="submit"
-      ) {{ $t('common.submit') }}
+      >
+        {{ $t('common.submit') }}
+      </v-btn>
+    </v-layout>
+  </v-form>
 </template>
 
 <script>

@@ -1,12 +1,13 @@
-<template lang="pug">
-  td
-    v-checkbox(
-      v-bind="checkbox.bind",
-      v-on="checkbox.on",
-      :disabled="disabled || disabledForRole",
-      color="primary",
-      hideDetails
-    )
+<template>
+  <td>
+    <v-checkbox
+      v-bind="checkbox.bind"
+      v-on="checkbox.on"
+      :disabled="disabled || disabledForRole"
+      color="primary"
+      hide-details="hideDetails"
+    />
+  </td>
 </template>
 
 <script>

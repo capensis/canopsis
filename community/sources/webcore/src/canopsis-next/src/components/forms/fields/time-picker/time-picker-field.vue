@@ -1,19 +1,20 @@
-<template lang="pug">
-  v-combobox.time-picker__select(
-    ref="combobox",
-    :value="value",
-    :items="items",
-    :menu-props="menuProps",
-    :return-object="false",
-    :filter="filter",
-    :label="label",
-    :disabled="disabled",
-    :error="error",
-    placeholder="−−:−−",
-    append-icon="",
-    hide-details,
+<template>
+  <v-combobox
+    class="time-picker__select"
+    ref="combobox"
+    :value="value"
+    :items="items"
+    :menu-props="menuProps"
+    :return-object="false"
+    :filter="filter"
+    :label="label"
+    :disabled="disabled"
+    :error="error"
+    placeholder="−−:−−"
+    append-icon=""
+    hide-details="hide-details"
     @change="change"
-  )
+  />
 </template>
 
 <script>

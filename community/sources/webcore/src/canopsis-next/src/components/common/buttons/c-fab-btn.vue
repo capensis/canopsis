@@ -1,19 +1,27 @@
-<template lang="pug">
-  div.fab
-    v-layout(column)
-      c-refresh-btn(@click="$listeners.refresh")
-      slot(name="additional")
-      v-tooltip(v-if="hasAccess && $listeners.create", left)
-        template(#activator="{ on }")
-          v-btn(
-            v-on="on",
-            :dark="dark",
-            color="primary",
-            fab,
+<template>
+  <div class="fab">
+    <v-layout column="column">
+      <c-refresh-btn @click="$listeners.refresh" />
+      <slot name="additional" />
+      <v-tooltip
+        v-if="hasAccess && $listeners.create"
+        left="left"
+      >
+        <template #activator="{ on }">
+          <v-btn
+            v-on="on"
+            :dark="dark"
+            color="primary"
+            fab="fab"
             @click.stop="$listeners.create"
-          )
-            v-icon add
-        slot
+          >
+            <v-icon>add</v-icon>
+          </v-btn>
+        </template>
+        <slot />
+      </v-tooltip>
+    </v-layout>
+  </div>
 </template>
 
 <script>

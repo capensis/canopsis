@@ -1,14 +1,29 @@
-<template lang="pug">
-  v-layout(column)
-    v-layout.mb-4(row, align-center)
-      span.subheading.mr-5 {{ $t('remediation.instructionExecute.jobs.title') }}
-      v-btn.primary.ma-0(v-if="!isJobsFinished", :loading="executed", @click="$emit('run:jobs')")
-        span {{ $t('remediation.instructionExecute.runJobs') }}
-        v-icon(right) arrow_right
-      template(v-if="isJobsFinished")
-        v-icon(:color="statusIcon.color") {{ statusIcon.name }}
-        span.ml-2 {{ statusIcon.text }}
-    remediation-instruction-execute-jobs-table(:jobs="jobs")
+<template>
+  <v-layout column="column">
+    <v-layout
+      class="mb-4"
+      align-center="align-center"
+    >
+      <span class="subheading mr-5">{{ $t('remediation.instructionExecute.jobs.title') }}</span>
+      <v-btn
+        class="primary ma-0"
+        v-if="!isJobsFinished"
+        :loading="executed"
+        @click="$emit('run:jobs')"
+      >
+        <span>{{ $t('remediation.instructionExecute.runJobs') }}</span>
+        <v-icon right="right">
+          arrow_right
+        </v-icon>
+      </v-btn>
+      <template v-if="isJobsFinished">
+        <v-icon :color="statusIcon.color">
+          {{ statusIcon.name }}
+        </v-icon><span class="ml-2">{{ statusIcon.text }}</span>
+      </template>
+    </v-layout>
+    <remediation-instruction-execute-jobs-table :jobs="jobs" />
+  </v-layout>
 </template>
 
 <script>

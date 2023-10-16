@@ -1,28 +1,61 @@
-<template lang="pug">
-  div.healthcheck-history(@touchend.stop)
-    v-layout.ml-4.mb-4(align-center)
-      c-quick-date-interval-field(
-        :interval="pagination.interval",
-        :min="deletedBefore",
+<template>
+  <div
+    class="healthcheck-history"
+    @touchend.stop="@touchend.stop"
+  >
+    <v-layout
+      class="ml-4 mb-4"
+      align-center="align-center"
+    >
+      <c-quick-date-interval-field
+        :interval="pagination.interval"
+        :min="deletedBefore"
         @input="updateInterval"
-      )
-    div.healthcheck-history__graph
-      limited-time-line-chart.text--primary(
-        ref="chart",
-        :datasets="datasets",
-        :options="historyChartOptions",
+      />
+    </v-layout>
+    <div class="healthcheck-history__graph">
+      <limited-time-line-chart
+        class="text--primary"
+        ref="chart"
+        :datasets="datasets"
+        :options="historyChartOptions"
         :dark="$system.dark"
-      )
-        template(#actions="{ chart }")
-          v-layout.mt-4(justify-end)
-            v-btn.ma-0(color="primary", @click="exportChart(chart)")
-              v-icon(left) file_download
-              span {{ $t('common.downloadAsPng') }}
-            div.healthcheck-history__zoom
-              v-btn(fab, small, @click="zoomIn(chart)")
-                v-icon add
-              v-btn(fab, small, @click="zoomOut(chart)")
-                v-icon remove
+      >
+        <template #actions="{ chart }">
+          <v-layout
+            class="mt-4"
+            justify-end="justify-end"
+          >
+            <v-btn
+              class="ma-0"
+              color="primary"
+              @click="exportChart(chart)"
+            >
+              <v-icon left="left">
+                file_download
+              </v-icon><span>{{ $t('common.downloadAsPng') }}</span>
+            </v-btn>
+            <div class="healthcheck-history__zoom">
+              <v-btn
+                fab="fab"
+                small="small"
+                @click="zoomIn(chart)"
+              >
+                <v-icon>add</v-icon>
+              </v-btn>
+              <v-btn
+                fab="fab"
+                small="small"
+                @click="zoomOut(chart)"
+              >
+                <v-icon>remove</v-icon>
+              </v-btn>
+            </div>
+          </v-layout>
+        </template>
+      </limited-time-line-chart>
+    </div>
+  </div>
 </template>
 
 <script>

@@ -1,27 +1,30 @@
-<template lang="pug">
-  div
-    v-layout.calender-wrapper
-      c-progress-overlay(:pending="pending")
-      c-alert-overlay(
-        :value="hasError",
+<template>
+  <div>
+    <v-layout class="calender-wrapper">
+      <c-progress-overlay :pending="pending" />
+      <c-alert-overlay
+        :value="hasError"
         :message="serverErrorMessage"
-      )
-      ds-calendar-app.stats-calendar-app(
-        :class="{ single: !hasMultipleFilters }",
-        :calendar="calendar",
-        :events="events",
-        fluid,
-        read-only,
-        @change="changeCalendar",
+      />
+      <ds-calendar-app
+        class="stats-calendar-app"
+        :class="{ single: !hasMultipleFilters }"
+        :calendar="calendar"
+        :events="events"
+        fluid="fluid"
+        read-only="read-only"
+        @change="changeCalendar"
         @edit="eventClick"
-      )
-      stats-calendar-menu(
-        v-if="hasMenu",
-        :activator="menuActivator",
-        :calendarEvent="menuCalendarEvent",
-        @event-click="menuEventClick",
+      />
+      <stats-calendar-menu
+        v-if="hasMenu"
+        :activator="menuActivator"
+        :calendar-event="menuCalendarEvent"
+        @event-click="menuEventClick"
         @closed="closedMenu"
-      )
+      />
+    </v-layout>
+  </div>
 </template>
 
 <script>

@@ -1,14 +1,28 @@
-<template lang="pug">
-  div.v-chip-group
-    v-item-group(v-model="selected", :multiple="multiple")
-      v-subheader(v-show="label") {{ label }}
-      v-item(v-for="item in items", :key="item[itemValue]")
-        template(#default="{ active, toggle }")
-          v-chip(
-            :selected="active",
-            :outline="outline",
+<template>
+  <div class="v-chip-group">
+    <v-item-group
+      v-model="selected"
+      :multiple="multiple"
+    >
+      <v-subheader v-show="label">
+        {{ label }}
+      </v-subheader>
+      <v-item
+        v-for="item in items"
+        :key="item[itemValue]"
+      >
+        <template #default="{ active, toggle }">
+          <v-chip
+            :value="active"
+            :outlined="outline"
             @click="toggle"
-          ) {{ item[itemText] }}
+          >
+            {{ item[itemText] }}
+          </v-chip>
+        </template>
+      </v-item>
+    </v-item-group>
+  </div>
 </template>
 
 <script>

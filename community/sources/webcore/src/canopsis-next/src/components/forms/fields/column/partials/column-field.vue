@@ -1,44 +1,61 @@
-<template lang="pug">
-  v-card
-    v-card-text
-      v-layout(row, align-center)
-        span.handler.mr-1
-          v-icon.draggable(:class="dragHandleClass") drag_indicator
-        c-expand-btn.mr-1(
-          v-model="expanded",
+<template>
+  <v-card>
+    <v-card-text>
+      <v-layout align-center="align-center">
+        <span class="handler mr-1">
+          <v-icon
+            class="draggable"
+            :class="dragHandleClass"
+          >drag_indicator</v-icon></span>
+        <c-expand-btn
+          class="mr-1"
+          v-model="expanded"
           :color="hasChildrenError ? 'error' : ''"
-        )
-        v-select(
-          v-validate="'required'",
-          :value="column.column",
-          :items="availableColumns",
-          :label="$tc('common.column', 1)",
-          :error-messages="errors.collect(`${name}.column`)",
-          :name="`${name}.column`",
+        />
+        <v-select
+          v-validate="'required'"
+          :value="column.column"
+          :items="availableColumns"
+          :label="$tc('common.column', 1)"
+          :error-messages="errors.collect(`${name}.column`)"
+          :name="`${name}.column`"
           @change="changeColumn"
-        )
-        v-tooltip(left)
-          template(#activator="{ on }")
-            v-btn.mr-0(
-              v-on="on",
-              small,
-              flat,
-              icon,
+        />
+        <v-tooltip left="left">
+          <template #activator="{ on }">
+            <v-btn
+              class="mr-0"
+              v-on="on"
+              small="small"
+              text
+              icon="icon"
               @click="$emit('remove')"
-            )
-              v-icon(color="error", small) close
-          span {{ $t('common.delete') }}
-      v-expand-transition(mode="out-in")
-        column-field-expand-panel.pl-1(
-          v-show="expanded",
-          v-field="column",
-          :name="name",
-          :with-html="withHtml",
-          :with-template="withTemplate",
-          :with-color-indicator="withColorIndicator",
-          :with-instructions="withInstructions",
+            >
+              <v-icon
+                color="error"
+                small="small"
+              >
+                close
+              </v-icon>
+            </v-btn>
+          </template><span>{{ $t('common.delete') }}</span>
+        </v-tooltip>
+      </v-layout>
+      <v-expand-transition mode="out-in">
+        <column-field-expand-panel
+          class="pl-1"
+          v-show="expanded"
+          v-field="column"
+          :name="name"
+          :with-html="withHtml"
+          :with-template="withTemplate"
+          :with-color-indicator="withColorIndicator"
+          :with-instructions="withInstructions"
           :without-infos-attributes="withoutInfosAttributes"
-        )
+        />
+      </v-expand-transition>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script>

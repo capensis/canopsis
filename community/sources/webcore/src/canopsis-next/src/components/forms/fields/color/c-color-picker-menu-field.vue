@@ -1,23 +1,26 @@
-<template lang="pug">
-  v-menu(
-    :close-on-content-click="false",
-    :disabled="disabled",
-    content-class="c-color-picker-menu-field__dropdown",
-    bottom,
-    left,
-    lazy-with-unmount,
-    lazy,
-    offset-x
-  )
-    template(#activator="{ on }")
-      v-btn.c-color-picker-menu-field__button.ma-0.pa-0(
-        v-on="on",
-        :style="style",
-        :disabled="disabled",
-        block
-      )
-    c-color-chrome-picker-field(v-model="colorObject")
-    c-color-compact-picker-field(v-model="colorObject")
+<template>
+  <v-menu
+    :close-on-content-click="false"
+    :disabled="disabled"
+    content-class="c-color-picker-menu-field__dropdown"
+    bottom="bottom"
+    left="left"
+    lazy-with-unmount="lazy-with-unmount"
+    lazy="lazy"
+    offset-x="offset-x"
+  >
+    <template #activator="{ on }">
+      <v-btn
+        class="c-color-picker-menu-field__button ma-0 pa-0"
+        v-on="on"
+        :style="style"
+        :disabled="disabled"
+        block="block"
+      />
+    </template>
+    <c-color-chrome-picker-field v-model="colorObject" />
+    <c-color-compact-picker-field v-model="colorObject" />
+  </v-menu>
 </template>
 
 <script>

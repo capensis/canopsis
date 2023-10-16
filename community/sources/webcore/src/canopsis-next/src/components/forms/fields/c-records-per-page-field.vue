@@ -1,12 +1,13 @@
-<template lang="pug">
-  v-select.select(
-    :items="items",
-    :value="value",
-    @input="$emit('input', $event)",
-    hide-details,
-    single-line,
-    dense
-  )
+<template>
+  <v-select
+    class="select"
+    :items="items"
+    :value="value"
+    @input="$emit('input', $event)"
+    hide-details="hide-details"
+    single-line="single-line"
+    dense="dense"
+  />
 </template>
 
 <script>

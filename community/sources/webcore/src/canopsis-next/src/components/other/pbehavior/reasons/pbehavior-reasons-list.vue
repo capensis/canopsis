@@ -1,40 +1,45 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :headers="headers",
-    :items="pbehaviorReasons",
-    :loading="pending",
-    :total-items="totalItems",
-    :pagination="pagination",
-    :is-disabled-item="isDisabledReason",
-    select-all,
-    expand,
-    search,
-    advanced-pagination,
+<template>
+  <c-advanced-data-table
+    :headers="headers"
+    :items="pbehaviorReasons"
+    :loading="pending"
+    :total-items="totalItems"
+    :pagination="pagination"
+    :is-disabled-item="isDisabledReason"
+    select-all="select-all"
+    expand="expand"
+    search="search"
+    advanced-pagination="advanced-pagination"
     @update:pagination="$emit('update:pagination', $event)"
-  )
-    template(#mass-actions="{ selected }")
-      c-action-btn(
-        v-if="hasDeleteAnyPbehaviorReasonAccess",
-        type="delete",
+  >
+    <template #mass-actions="{ selected }">
+      <c-action-btn
+        v-if="hasDeleteAnyPbehaviorReasonAccess"
+        type="delete"
         @click="$emit('remove-selected', selected)"
-      )
-    template(#hidden="{ item }")
-      c-enabled(:value="item.hidden")
-    template(#actions="{ item }")
-      c-action-btn(
-        v-if="hasUpdateAnyPbehaviorReasonAccess",
-        type="edit",
+      />
+    </template>
+    <template #hidden="{ item }">
+      <c-enabled :value="item.hidden" />
+    </template>
+    <template #actions="{ item }">
+      <c-action-btn
+        v-if="hasUpdateAnyPbehaviorReasonAccess"
+        type="edit"
         @click="$emit('edit', item)"
-      )
-      c-action-btn(
-        v-if="hasDeleteAnyPbehaviorReasonAccess",
-        :tooltip="item.deletable ? $t('common.delete') : $t('pbehavior.reasons.usingReason')",
-        :disabled="!item.deletable",
-        type="delete",
+      />
+      <c-action-btn
+        v-if="hasDeleteAnyPbehaviorReasonAccess"
+        :tooltip="item.deletable ? $t('common.delete') : $t('pbehavior.reasons.usingReason')"
+        :disabled="!item.deletable"
+        type="delete"
         @click="$emit('remove', item._id)"
-      )
-    template(#expand="{ item }")
-      pbehavior-reasons-list-expand-panel(:pbehavior-reason="item")
+      />
+    </template>
+    <template #expand="{ item }">
+      <pbehavior-reasons-list-expand-panel :pbehavior-reason="item" />
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>

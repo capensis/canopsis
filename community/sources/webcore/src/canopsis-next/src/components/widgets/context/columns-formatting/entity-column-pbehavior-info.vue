@@ -1,8 +1,17 @@
-<template lang="pug">
-  v-tooltip(v-if="pbehaviorInfo && icon", top)
-    template(#activator="{ on }")
-      v-icon(v-on="on", color="primary") {{ icon }}
-    span {{ pbehaviorInfo.name }}
+<template>
+  <v-tooltip
+    v-if="pbehaviorInfo && icon"
+    top="top"
+  >
+    <template #activator="{ on }">
+      <v-icon
+        v-on="on"
+        color="primary"
+      >
+        {{ icon }}
+      </v-icon>
+    </template><span>{{ pbehaviorInfo.name }}</span>
+  </v-tooltip>
 </template>
 
 <script>

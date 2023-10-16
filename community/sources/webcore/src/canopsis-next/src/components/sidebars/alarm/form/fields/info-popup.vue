@@ -1,12 +1,26 @@
-<template lang="pug">
-  v-container.pa-3(fluid)
-    v-layout(align-center, justify-space-between)
-      div.subheading {{ $t('settings.infoPopup.title') }}
-      v-layout(justify-end)
-        v-btn.primary(
-          small,
+<template>
+  <v-container
+    class="pa-3"
+    fluid="fluid"
+  >
+    <v-layout
+      align-center="align-center"
+      justify-space-between="justify-space-between"
+    >
+      <div class="subheading">
+        {{ $t('settings.infoPopup.title') }}
+      </div>
+      <v-layout justify-end="justify-end">
+        <v-btn
+          class="primary"
+          small="small"
           @click="edit"
-        ) {{ $t('common.create') }}/{{ $t('common.edit') }}
+        >
+          {{ $t('common.create') }}/{{ $t('common.edit') }}
+        </v-btn>
+      </v-layout>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>

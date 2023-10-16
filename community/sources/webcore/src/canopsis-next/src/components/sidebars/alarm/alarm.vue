@@ -1,204 +1,217 @@
-<template lang="pug">
-  widget-settings(:submitting="submitting", @submit="submit")
-    field-title(v-model="form.title")
-    v-divider
-    field-periodic-refresh(v-model="form.parameters", with-live-watching)
-    v-divider
-    widget-settings-group(:title="$t('settings.advancedSettings')")
-      field-default-sort-column(
-        v-model="form.parameters.sort",
-        :columns="sortablePreparedWidgetColumns",
+<template>
+  <widget-settings
+    :submitting="submitting"
+    @submit="submit"
+  >
+    <field-title v-model="form.title" />
+    <v-divider />
+    <field-periodic-refresh
+      v-model="form.parameters"
+      with-live-watching="with-live-watching"
+    />
+    <v-divider />
+    <widget-settings-group :title="$t('settings.advancedSettings')">
+      <field-default-sort-column
+        v-model="form.parameters.sort"
+        :columns="sortablePreparedWidgetColumns"
         :columns-label="$t('settings.columnName')"
-      )
-      v-divider
-      field-columns(
-        v-model="form.parameters.widgetColumns",
-        :template="form.parameters.widgetColumnsTemplate",
-        :templates="alarmColumnsWidgetTemplates",
-        :templates-pending="widgetTemplatesPending",
-        :label="$t('settings.columnNames')",
-        :type="$constants.ENTITIES_TYPES.alarm",
-        with-template,
-        with-html,
-        with-color-indicator,
+      />
+      <v-divider />
+      <field-columns
+        v-model="form.parameters.widgetColumns"
+        :template="form.parameters.widgetColumnsTemplate"
+        :templates="alarmColumnsWidgetTemplates"
+        :templates-pending="widgetTemplatesPending"
+        :label="$t('settings.columnNames')"
+        :type="$constants.ENTITIES_TYPES.alarm"
+        with-template="with-template"
+        with-html="with-html"
+        with-color-indicator="with-color-indicator"
         @update:template="updateWidgetColumnsTemplate"
-      )
-      v-divider
-      field-resize-column-behavior(v-model="form.parameters.columns")
-      v-divider
-      field-columns(
-        v-model="form.parameters.widgetGroupColumns",
-        :template="form.parameters.widgetGroupColumnsTemplate",
-        :templates="alarmColumnsWidgetTemplates",
-        :templates-pending="widgetTemplatesPending",
-        :label="$t('settings.groupColumnNames')",
-        :type="$constants.ENTITIES_TYPES.alarm",
-        with-html,
-        with-color-indicator,
+      />
+      <v-divider />
+      <field-resize-column-behavior v-model="form.parameters.columns" />
+      <v-divider />
+      <field-columns
+        v-model="form.parameters.widgetGroupColumns"
+        :template="form.parameters.widgetGroupColumnsTemplate"
+        :templates="alarmColumnsWidgetTemplates"
+        :templates-pending="widgetTemplatesPending"
+        :label="$t('settings.groupColumnNames')"
+        :type="$constants.ENTITIES_TYPES.alarm"
+        with-html="with-html"
+        with-color-indicator="with-color-indicator"
         @update:template="updateWidgetGroupColumnsTemplate"
-      )
-      v-divider
-      field-columns(
-        v-model="form.parameters.serviceDependenciesColumns",
-        :template="form.parameters.serviceDependenciesColumnsTemplate",
-        :templates="entityColumnsWidgetTemplates",
-        :templates-pending="widgetTemplatesPending",
-        :label="$t('settings.trackColumnNames')",
-        :type="$constants.ENTITIES_TYPES.entity",
-        with-color-indicator,
+      />
+      <v-divider />
+      <field-columns
+        v-model="form.parameters.serviceDependenciesColumns"
+        :template="form.parameters.serviceDependenciesColumnsTemplate"
+        :templates="entityColumnsWidgetTemplates"
+        :templates-pending="widgetTemplatesPending"
+        :label="$t('settings.trackColumnNames')"
+        :type="$constants.ENTITIES_TYPES.entity"
+        with-color-indicator="with-color-indicator"
         @update:template="updateServiceDependenciesColumnsTemplate"
-      )
-      v-divider
-      field-default-elements-per-page(v-model="form.parameters.itemsPerPage")
-      v-divider
-      field-density(v-model="form.parameters.dense")
-      v-divider
-      field-opened-resolved-filter(v-model="form.parameters.opened")
-      v-divider
-      template(v-if="hasAccessToListFilters")
-        field-filters(
-          v-model="form.parameters.mainFilter",
-          :filters.sync="form.filters",
-          :widget-id="widget._id",
-          :addable="hasAccessToAddFilter",
-          :editable="hasAccessToEditFilter",
-          with-alarm,
-          with-entity,
-          with-pbehavior
-        )
-        v-divider
-      template(v-if="hasAccessToListRemediationInstructionsFilters")
-        field-remediation-instructions-filters(
-          v-model="form.parameters.remediationInstructionsFilters",
-          :addable="hasAccessToAddRemediationInstructionsFilter",
+      />
+      <v-divider />
+      <field-default-elements-per-page v-model="form.parameters.itemsPerPage" />
+      <v-divider />
+      <field-density v-model="form.parameters.dense" />
+      <v-divider />
+      <field-opened-resolved-filter v-model="form.parameters.opened" />
+      <v-divider />
+      <template v-if="hasAccessToListFilters">
+        <field-filters
+          v-model="form.parameters.mainFilter"
+          :filters.sync="form.filters"
+          :widget-id="widget._id"
+          :addable="hasAccessToAddFilter"
+          :editable="hasAccessToEditFilter"
+          with-alarm="with-alarm"
+          with-entity="with-entity"
+          with-pbehavior="with-pbehavior"
+        />
+        <v-divider />
+      </template>
+      <template v-if="hasAccessToListRemediationInstructionsFilters">
+        <field-remediation-instructions-filters
+          v-model="form.parameters.remediationInstructionsFilters"
+          :addable="hasAccessToAddRemediationInstructionsFilter"
           :editable="hasAccessToEditRemediationInstructionsFilter"
-        )
-        v-divider
-      field-switcher(
-        v-model="form.parameters.clearFilterDisabled",
+        />
+        <v-divider />
+      </template>
+      <field-switcher
+        v-model="form.parameters.clearFilterDisabled"
         :title="$t('settings.clearFilterDisabled')"
-      )
-      v-divider
-      field-live-reporting(v-model="form.parameters.liveReporting")
-      v-divider
-      field-info-popup(
-        v-model="form.parameters.infoPopups",
+      />
+      <v-divider />
+      <field-live-reporting v-model="form.parameters.liveReporting" />
+      <v-divider />
+      <field-info-popup
+        v-model="form.parameters.infoPopups"
         :columns="preparedWidgetColumns"
-      )
-      v-divider
-      field-text-editor-with-template(
-        :value="form.parameters.moreInfoTemplate",
-        :template="form.parameters.moreInfoTemplateTemplate",
-        :title="$t('settings.moreInfosModal')",
-        :variables="alarmVariables",
-        :templates="alarmMoreInfosWidgetTemplates",
-        addable,
-        removable,
+      />
+      <v-divider />
+      <field-text-editor-with-template
+        :value="form.parameters.moreInfoTemplate"
+        :template="form.parameters.moreInfoTemplateTemplate"
+        :title="$t('settings.moreInfosModal')"
+        :variables="alarmVariables"
+        :templates="alarmMoreInfosWidgetTemplates"
+        addable="addable"
+        removable="removable"
         @input="updateMoreInfo"
-      )
-      v-divider
-      field-text-editor-with-template(
-        :value="form.parameters.exportPdfTemplate",
-        :template="form.parameters.exportPdfTemplateTemplate",
-        :title="$t('settings.exportPdfTemplate')",
-        :variables="exportPdfAlarmVariables",
-        :default-value="defaultExportPdfTemplateValue",
-        :dialog-props="{ maxWidth: 1070 }",
-        :templates="alarmExportToPdfWidgetTemplates",
-        addable,
-        removable,
+      />
+      <v-divider />
+      <field-text-editor-with-template
+        :value="form.parameters.exportPdfTemplate"
+        :template="form.parameters.exportPdfTemplateTemplate"
+        :title="$t('settings.exportPdfTemplate')"
+        :variables="exportPdfAlarmVariables"
+        :default-value="defaultExportPdfTemplateValue"
+        :dialog-props="{ maxWidth: 1070 }"
+        :templates="alarmExportToPdfWidgetTemplates"
+        addable="addable"
+        removable="removable"
         @input="updateExportPdf"
-      )
-      v-divider
-      field-grid-range-size(
-        v-model="form.parameters.expandGridRangeSize",
+      />
+      <v-divider />
+      <field-grid-range-size
+        v-model="form.parameters.expandGridRangeSize"
         :title="$t('settings.expandGridRangeSize')"
-      )
-      v-divider
-      field-switcher(
-        v-model="form.parameters.isHtmlEnabledOnTimeLine",
+      />
+      <v-divider />
+      <field-switcher
+        v-model="form.parameters.isHtmlEnabledOnTimeLine"
         :title="$t('settings.isHtmlEnabledOnTimeLine')"
-      )
-      v-divider
-      widget-settings-group(:title="$t('common.ack')")
-        field-switcher(
-          v-model="form.parameters.isAckNoteRequired",
+      />
+      <v-divider />
+      <widget-settings-group :title="$t('common.ack')">
+        <field-switcher
+          v-model="form.parameters.isAckNoteRequired"
           :title="$t('settings.isAckNoteRequired')"
-        )
-        v-divider
-        field-switcher(
-          v-model="form.parameters.isMultiAckEnabled",
+        />
+        <v-divider />
+        <field-switcher
+          v-model="form.parameters.isMultiAckEnabled"
           :title="$t('settings.isMultiAckEnabled')"
-        )
-        v-divider
-        field-fast-action-output(
-          v-model="form.parameters.fastAckOutput",
+        />
+        <v-divider />
+        <field-fast-action-output
+          v-model="form.parameters.fastAckOutput"
           :label="$t('settings.fastAckOutput')"
-        )
-      v-divider
-      widget-settings-group(:title="$t('common.cancel')")
-        field-fast-action-output(
-          v-model="form.parameters.fastCancelOutput",
+        />
+      </widget-settings-group>
+      <v-divider />
+      <widget-settings-group :title="$t('common.cancel')">
+        <field-fast-action-output
+          v-model="form.parameters.fastCancelOutput"
           :label="$t('settings.fastCancelOutput')"
-        )
-      v-divider
-      field-switcher(
-        v-model="form.parameters.isSnoozeNoteRequired",
+        />
+      </widget-settings-group>
+      <v-divider />
+      <field-switcher
+        v-model="form.parameters.isSnoozeNoteRequired"
         :title="$t('settings.isSnoozeNoteRequired')"
-      )
-      v-divider
-      field-switcher(
-        v-model="form.parameters.isRemoveAlarmsFromMetaAlarmCommentRequired",
+      />
+      <v-divider />
+      <field-switcher
+        v-model="form.parameters.isRemoveAlarmsFromMetaAlarmCommentRequired"
         :title="$t('settings.isRemoveAlarmsFromMetaAlarmCommentRequired')"
-      )
-      v-divider
-      field-switcher(
-        v-model="form.parameters.isUncancelAlarmsCommentRequired",
+      />
+      <v-divider />
+      <field-switcher
+        v-model="form.parameters.isUncancelAlarmsCommentRequired"
         :title="$t('settings.isUncancelAlarmsCommentRequired')"
-      )
-      v-divider
-      field-switcher(
-        v-model="form.parameters.isMultiDeclareTicketEnabled",
+      />
+      <v-divider />
+      <field-switcher
+        v-model="form.parameters.isMultiDeclareTicketEnabled"
         :title="$t('settings.isMultiDeclareTicketEnabled')"
-      )
-      v-divider
-      export-csv-form(
-        v-model="form.parameters",
-        :type="$constants.ENTITIES_TYPES.alarm",
-        :templates="alarmColumnsWidgetTemplates",
-        :templates-pending="widgetTemplatesPending",
-        datetime-format,
-        with-instructions
-      )
-      v-divider
-      field-switcher(
-        v-model="form.parameters.sticky_header",
+      />
+      <v-divider />
+      <export-csv-form
+        v-model="form.parameters"
+        :type="$constants.ENTITIES_TYPES.alarm"
+        :templates="alarmColumnsWidgetTemplates"
+        :templates-pending="widgetTemplatesPending"
+        datetime-format="datetime-format"
+        with-instructions="with-instructions"
+      />
+      <v-divider />
+      <field-switcher
+        v-model="form.parameters.sticky_header"
         :title="$t('settings.stickyHeader')"
-      )
-      v-divider
-      widget-settings-group(:title="$t('settings.kioskMode')")
-        field-switcher(
-          v-model="form.parameters.kiosk.hideActions",
+      />
+      <v-divider />
+      <widget-settings-group :title="$t('settings.kioskMode')">
+        <field-switcher
+          v-model="form.parameters.kiosk.hideActions"
           :title="$t('settings.kiosk.hideActions')"
-        )
-        v-divider
-        field-switcher(
-          v-model="form.parameters.kiosk.hideMassSelection",
+        />
+        <v-divider />
+        <field-switcher
+          v-model="form.parameters.kiosk.hideMassSelection"
           :title="$t('settings.kiosk.hideMassSelection')"
-        )
-        v-divider
-        field-switcher(
-          v-model="form.parameters.kiosk.hideToolbar",
+        />
+        <v-divider />
+        <field-switcher
+          v-model="form.parameters.kiosk.hideToolbar"
           :title="$t('settings.kiosk.hideToolbar')"
-        )
-      v-divider
-      field-switcher(
-        v-model="form.parameters.isActionsAllowWithOkState",
+        />
+      </widget-settings-group>
+      <v-divider />
+      <field-switcher
+        v-model="form.parameters.isActionsAllowWithOkState"
         :title="$t('settings.isActionsAllowWithOkState')"
-      )
-    v-divider
-    charts-form(v-model="form.parameters.charts")
-    v-divider
+      />
+    </widget-settings-group>
+    <v-divider />
+    <charts-form v-model="form.parameters.charts" />
+    <v-divider />
+  </widget-settings>
 </template>
 
 <script>

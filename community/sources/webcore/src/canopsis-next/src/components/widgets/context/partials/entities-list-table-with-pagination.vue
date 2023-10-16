@@ -1,59 +1,77 @@
-<template lang="pug">
-  div
-    c-empty-data-table-columns(v-if="!columns.length")
-    c-advanced-data-table(
-      v-else,
-      :items="entities",
-      :headers="headers",
-      :loading="pending || columnsFiltersPending",
-      :total-items="meta.total_count",
-      :pagination.sync="pagination",
-      :toolbar-props="toolbarProps",
-      :select-all="selectable",
-      expand,
-      no-pagination
-    )
-      template(#toolbar="")
-        slot(name="toolbar")
-        v-flex(v-if="columns.length", xs12)
-          v-layout(row, wrap, align-center)
-            c-pagination(
-              :page="query.page",
-              :limit="query.limit",
-              :total="meta.total_count",
-              type="top",
+<template>
+  <div>
+    <c-empty-data-table-columns v-if="!columns.length" />
+    <c-advanced-data-table
+      v-else
+      :items="entities"
+      :headers="headers"
+      :loading="pending || columnsFiltersPending"
+      :total-items="meta.total_count"
+      :pagination.sync="pagination"
+      :toolbar-props="toolbarProps"
+      :select-all="selectable"
+      expand="expand"
+      no-pagination="no-pagination"
+    >
+      <template #toolbar="">
+        <slot name="toolbar" />
+        <v-flex
+          v-if="columns.length"
+          xs12="xs12"
+        >
+          <v-layout
+            wrap="wrap"
+            align-center="align-center"
+          >
+            <c-pagination
+              :page="query.page"
+              :limit="query.limit"
+              :total="meta.total_count"
+              type="top"
               @input="updateQueryPage"
-            )
-      template(v-for="column in columns", #[column.value]="{ item }")
-        entity-column-cell(
-          :entity="item",
-          :column="column",
+            />
+          </v-layout>
+        </v-flex>
+      </template>
+      <template
+        v-for="column in columns"
+        #[column.value]="{ item }"
+      >
+        <entity-column-cell
+          :entity="item"
+          :column="column"
           :columns-filters="columnsFilters"
-        )
-      template(#actions="{ item }")
-        actions-panel(:item="item")
-      template(#expand="{ item }")
-        entities-list-expand-panel(
-          :item="item",
-          :columns-filters="columnsFilters",
-          :service-dependencies-columns="widget.parameters.serviceDependenciesColumns",
-          :resolved-alarms-columns="widget.parameters.resolvedAlarmsColumns",
-          :active-alarms-columns="widget.parameters.activeAlarmsColumns",
+        />
+      </template>
+      <template #actions="{ item }">
+        <actions-panel :item="item" />
+      </template>
+      <template #expand="{ item }">
+        <entities-list-expand-panel
+          :item="item"
+          :columns-filters="columnsFilters"
+          :service-dependencies-columns="widget.parameters.serviceDependenciesColumns"
+          :resolved-alarms-columns="widget.parameters.resolvedAlarmsColumns"
+          :active-alarms-columns="widget.parameters.activeAlarmsColumns"
           :charts="widget.parameters.charts"
-        )
-      template(#mass-actions="{ selected, clearSelected }")
-        mass-actions-panel.ml-3(
-          :items="selected",
+        />
+      </template>
+      <template #mass-actions="{ selected, clearSelected }">
+        <mass-actions-panel
+          class="ml-3"
+          :items="selected"
           @clear:items="clearSelected"
-        )
-
-    c-table-pagination(
-      :total-items="meta.total_count",
-      :rows-per-page="query.limit",
-      :page="query.page",
-      @update:page="updateQueryPage",
+        />
+      </template>
+    </c-advanced-data-table>
+    <c-table-pagination
+      :total-items="meta.total_count"
+      :rows-per-page="query.limit"
+      :page="query.page"
+      @update:page="updateQueryPage"
       @update:rows-per-page="updateRecordsPerPage"
-    )
+    />
+  </div>
 </template>
 
 <script>

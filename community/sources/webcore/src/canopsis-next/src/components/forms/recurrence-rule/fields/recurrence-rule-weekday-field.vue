@@ -1,17 +1,17 @@
-<template lang="pug">
-  v-chip-group(
-    v-if="chips",
-    v-field="value",
-    :items="weekDays",
-    :label="$t('recurrenceRule.byweekday')",
-    multiple
-  )
-  v-select(
-    v-else,
-    v-field="value",
-    :label="$t('recurrenceRule.wkst')",
+<template>
+  <v-chip-group
+    v-if="chips"
+    v-field="value"
     :items="weekDays"
-  )
+    :label="$t('recurrenceRule.byweekday')"
+    multiple="multiple"
+  />
+  <v-select
+    v-else
+    v-field="value"
+    :label="$t('recurrenceRule.wkst')"
+    :items="weekDays"
+  />
 </template>
 
 <script>

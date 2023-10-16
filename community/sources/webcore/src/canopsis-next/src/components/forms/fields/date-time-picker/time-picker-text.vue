@@ -1,11 +1,12 @@
-<template lang="pug">
-  v-text-field.time-picker__select(
-    :value="value",
-    :label="label",
-    placeholder="−−:−−",
-    hide-details,
-    disabled
-  )
+<template>
+  <v-text-field
+    class="time-picker__select"
+    :value="value"
+    :label="label"
+    placeholder="−−:−−"
+    hide-details="hide-details"
+    disabled="disabled"
+  />
 </template>
 
 <script>

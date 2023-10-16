@@ -1,10 +1,10 @@
-<template lang="pug">
-  v-chip-group(
-    v-field="value",
-    :items="months",
-    :label="$t('recurrenceRule.bymonth')",
-    multiple
-  )
+<template>
+  <v-chip-group
+    v-field="value"
+    :items="months"
+    :label="$t('recurrenceRule.bymonth')"
+    multiple="multiple"
+  />
 </template>
 
 <script>

@@ -1,14 +1,14 @@
-<template lang="pug">
-  c-patterns-field(
-    v-field="patterns",
-    :name="name",
-    :alarm-attributes="alarmAttributes",
-    :entity-attributes="entityAttributes",
-    some-required,
-    with-alarm,
-    with-entity,
-    both-counters
-  )
+<template>
+  <c-patterns-field
+    v-field="patterns"
+    :name="name"
+    :alarm-attributes="alarmAttributes"
+    :entity-attributes="entityAttributes"
+    some-required="some-required"
+    with-alarm="with-alarm"
+    with-entity="with-entity"
+    both-counters="both-counters"
+  />
 </template>
 
 <script>

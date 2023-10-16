@@ -1,13 +1,28 @@
-<template lang="pug">
-  v-tabs(color="secondary lighten-1", dark, centered, slider-color="primary")
-    v-tab {{ $tc('common.information') }}
-    v-tab-item
-      v-layout.pa-3
-        v-flex(xs12)
-          v-card.pa-3
-            v-layout
-              v-flex(offset-xs1, xs10)
-                state-setting-information(:state-setting="stateSetting")
+<template>
+  <v-tabs
+    color="secondary lighten-1"
+    dark="dark"
+    centered="centered"
+    slider-color="primary"
+  >
+    <v-tab>{{ $tc('common.information') }}</v-tab>
+    <v-tab-item>
+      <v-layout class="pa-3">
+        <v-flex xs12="xs12">
+          <v-card class="pa-3">
+            <v-layout>
+              <v-flex
+                offset-xs1="offset-xs1"
+                xs10="xs10"
+              >
+                <state-setting-information :state-setting="stateSetting" />
+              </v-flex>
+            </v-layout>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-tab-item>
+  </v-tabs>
 </template>
 
 <script>

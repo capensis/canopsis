@@ -1,31 +1,32 @@
-<template lang="pug">
-  v-layout(column)
-    v-combobox(
-      v-model="rule",
-      v-validate="'required'",
-      :items="rules",
-      :disabled="disabled",
-      :label="label || $tc('common.rule')",
-      :name="ruleName",
-      :error-messages="errors.collect(ruleName)",
-      :loading="pending",
-      item-text="name",
-      item-value="_id",
-      return-object
-    )
-    v-combobox(
-      v-field="value.dictionary",
-      v-validate="'required'",
-      :items="infosName",
-      :disabled="disabled",
-      :label="label || $t('common.dictionary')",
-      :return-object="false",
-      :name="dictionaryName",
-      :error-messages="errors.collect(dictionaryName)",
-      :loading="pending",
-      item-text="value",
+<template>
+  <v-layout column="column">
+    <v-combobox
+      v-model="rule"
+      v-validate="'required'"
+      :items="rules"
+      :disabled="disabled"
+      :label="label || $tc('common.rule')"
+      :name="ruleName"
+      :error-messages="errors.collect(ruleName)"
+      :loading="pending"
+      item-text="name"
+      item-value="_id"
+      return-object="return-object"
+    />
+    <v-combobox
+      v-field="value.dictionary"
+      v-validate="'required'"
+      :items="infosName"
+      :disabled="disabled"
+      :label="label || $t('common.dictionary')"
+      :return-object="false"
+      :name="dictionaryName"
+      :error-messages="errors.collect(dictionaryName)"
+      :loading="pending"
+      item-text="value"
       item-value="value"
-    )
+    />
+  </v-layout>
 </template>
 
 <script>

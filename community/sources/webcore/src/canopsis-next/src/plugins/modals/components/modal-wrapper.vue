@@ -1,7 +1,11 @@
-<template lang="pug">
-  v-dialog(v-model="isOpen", v-bind="dialogProps")
-    // @slot use this slot default
-    slot
+<template>
+  <v-dialog
+    v-model="isOpen"
+    v-bind="dialogProps"
+  >
+    <!-- @slot use this slot default-->
+    <slot />
+  </v-dialog>
 </template>
 
 <script>

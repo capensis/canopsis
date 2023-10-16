@@ -1,12 +1,16 @@
-<template lang="pug">
-  widget-settings-item(:title="label || $t('common.title')", :optional="!required")
-    v-text-field(
-      v-field="value",
-      v-validate="rules",
-      :placeholder="placeholder || $t('settings.widgetTitle')",
-      :name="name",
+<template>
+  <widget-settings-item
+    :title="label || $t('common.title')"
+    :optional="!required"
+  >
+    <v-text-field
+      v-field="value"
+      v-validate="rules"
+      :placeholder="placeholder || $t('settings.widgetTitle')"
+      :name="name"
       :error-messages="errors.collect(name)"
-    )
+    />
+  </widget-settings-item>
 </template>
 
 <script>

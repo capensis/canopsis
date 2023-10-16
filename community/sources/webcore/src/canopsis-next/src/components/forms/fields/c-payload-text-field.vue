@@ -1,30 +1,33 @@
-<template lang="pug">
-  v-combobox(
-    ref="field",
-    v-validate="rules",
-    :value="value",
-    :search-input="value",
-    :label="label || $t('common.payload')",
-    :items="availableVariables",
-    :disabled="disabled",
-    :return-object="false",
-    :menu-props="{ value: !!variables.length && variablesShown }",
-    :error-messages="errorMessages",
-    :clearable="clearable",
-    :name="name",
-    no-filter,
-    @blur="handleBlur",
+<template>
+  <v-combobox
+    ref="field"
+    v-validate="rules"
+    :value="value"
+    :search-input="value"
+    :label="label || $t('common.payload')"
+    :items="availableVariables"
+    :disabled="disabled"
+    :return-object="false"
+    :menu-props="{ value: !!variables.length && variablesShown }"
+    :error-messages="errorMessages"
+    :clearable="clearable"
+    :name="name"
+    no-filter="no-filter"
+    @blur="handleBlur"
     @update:searchInput="onSearchInputChange"
-  )
-    template(#append="")
-      slot(name="append")
-    template(#item="{ item, tile }")
-      v-list-tile(
-        v-bind="{ ...tile.props, value: item.value === variablesMenuValue }",
+  >
+    <template #append="">
+      <slot name="append" />
+    </template>
+    <template #item="{ item, tile }">
+      <v-list-item
+        v-bind="{ ...tile.props, value: item.value === variablesMenuValue }"
         @click="pasteVariable(item.value)"
-      )
-        v-list-tile-content {{ item.text }}
-        span.ml-4.grey--text {{ item.value }}
+      >
+        <v-list-item-content>{{ item.text }}</v-list-item-content><span class="ml-4 grey--text">{{ item.value }}</span>
+      </v-list-item>
+    </template>
+  </v-combobox>
 </template>
 
 <script>

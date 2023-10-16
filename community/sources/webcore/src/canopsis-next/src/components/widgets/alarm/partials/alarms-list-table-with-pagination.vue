@@ -1,23 +1,23 @@
-<template lang="pug">
-  alarms-list-table(
-    :widget="widget",
-    :alarms="alarms",
-    :total-items="meta.total_count",
-    :pagination.sync="pagination",
-    :columns="columns",
-    :loading="loading",
-    :parent-alarm="parentAlarm",
-    :is-tour-enabled="isTourEnabled",
-    :hide-children="hideChildren",
-    :sticky-header="stickyHeader",
-    :refresh-alarms-list="refreshAlarmsList",
-    :selectable="selectable",
-    :expandable="expandable",
-    :hide-actions="hideActions",
-    :hide-pagination="hidePagination",
-    @update:page="updateQueryPage",
+<template>
+  <alarms-list-table
+    :widget="widget"
+    :alarms="alarms"
+    :total-items="meta.total_count"
+    :pagination.sync="pagination"
+    :columns="columns"
+    :loading="loading"
+    :parent-alarm="parentAlarm"
+    :is-tour-enabled="isTourEnabled"
+    :hide-children="hideChildren"
+    :sticky-header="stickyHeader"
+    :refresh-alarms-list="refreshAlarmsList"
+    :selectable="selectable"
+    :expandable="expandable"
+    :hide-actions="hideActions"
+    :hide-pagination="hidePagination"
+    @update:page="updateQueryPage"
     @update:rows-per-page="updateRecordsPerPage"
-  )
+  />
 </template>
 
 <script>

@@ -1,24 +1,24 @@
-<template lang="pug">
-  v-layout(column)
-    v-select(
-      :value="template",
-      :items="templatesWithCustom",
-      :label="$t('common.template')",
-      :loading="templatesPending",
-      return-object,
+<template>
+  <v-layout column="column">
+    <v-select
+      :value="template"
+      :items="templatesWithCustom"
+      :label="$t('common.template')"
+      :loading="templatesPending"
+      return-object="return-object"
       @input="updateTemplate"
-    )
-    span.body-2.my-2 {{ $tc('common.column', 2) }}
-    c-columns-field(
-      :columns="columns",
-      :with-template="withTemplate",
-      :with-html="withHtml",
-      :with-color-indicator="withColorIndicator",
-      :with-instructions="withInstructions",
-      :without-infos-attributes="withoutInfosAttributes",
-      :type="type",
+    /><span class="text-body-2 my-2">{{ $tc('common.column', 2) }}</span>
+    <c-columns-field
+      :columns="columns"
+      :with-template="withTemplate"
+      :with-html="withHtml"
+      :with-color-indicator="withColorIndicator"
+      :with-instructions="withInstructions"
+      :without-infos-attributes="withoutInfosAttributes"
+      :type="type"
       @input="updateColumns"
-    )
+    />
+  </v-layout>
 </template>
 
 <script>

@@ -1,38 +1,63 @@
-<template lang="pug">
-  v-card.subheading
-    v-card-text
-      v-layout(row, wrap)
-        v-flex(xs1)
-          v-avatar.white--text.mr-2(color="primary", size="32") {{ actionNumber }}
-          c-expand-btn(v-model="expanded")
-        v-flex(xs11)
-          scenario-info-item.scenario-info-type.px-2(
-            :label="$t('common.type')",
-            :value="action.type",
-            hide-icon
-          )
-          v-expand-transition(mode="out-in")
-            v-layout.px-2(v-if="expanded", column)
-              v-tabs(
-                v-model="activeTab",
-                slider-color="primary",
-                color="transparent",
-                centered,
-                fixed-tabs
-              )
-                v-tab {{ $t('common.general') }}
-                v-tab {{ $t('scenario.tabs.pattern') }}
-              v-divider
-              v-tabs-items.pt-2(v-model="activeTab")
-                v-tab-item
-                  scenario-action-card-general-tab(:action="action")
-                v-tab-item
-                  c-patterns-field(
-                    :value="patterns",
-                    with-alarm,
-                    with-entity,
-                    readonly
-                  )
+<template>
+  <v-card class="subheading">
+    <v-card-text>
+      <v-layout wrap="wrap">
+        <v-flex xs1="xs1">
+          <v-avatar
+            class="white--text mr-2"
+            color="primary"
+            size="32"
+          >
+            {{ actionNumber }}
+          </v-avatar>
+          <c-expand-btn v-model="expanded" />
+        </v-flex>
+        <v-flex xs11="xs11">
+          <scenario-info-item
+            class="scenario-info-type px-2"
+            :label="$t('common.type')"
+            :value="action.type"
+            hide-icon="hide-icon"
+          />
+          <v-expand-transition mode="out-in">
+            <v-layout
+              class="px-2"
+              v-if="expanded"
+              column="column"
+            >
+              <v-tabs
+                v-model="activeTab"
+                slider-color="primary"
+                color="transparent"
+                centered="centered"
+                fixed-tabs="fixed-tabs"
+              >
+                <v-tab>{{ $t('common.general') }}</v-tab>
+                <v-tab>{{ $t('scenario.tabs.pattern') }}</v-tab>
+              </v-tabs>
+              <v-divider />
+              <v-tabs-items
+                class="pt-2"
+                v-model="activeTab"
+              >
+                <v-tab-item>
+                  <scenario-action-card-general-tab :action="action" />
+                </v-tab-item>
+                <v-tab-item>
+                  <c-patterns-field
+                    :value="patterns"
+                    with-alarm="with-alarm"
+                    with-entity="with-entity"
+                    readonly="readonly"
+                  />
+                </v-tab-item>
+              </v-tabs-items>
+            </v-layout>
+          </v-expand-transition>
+        </v-flex>
+      </v-layout>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script>

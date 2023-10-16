@@ -1,24 +1,49 @@
-<template lang="pug">
-  modal-wrapper(close)
-    template(#title="")
-      span {{ $t('modals.selectView.title') }}
-    template(#text="")
-      v-fade-transition
-        v-layout(v-if="pending", justify-center)
-          v-progress-circular(color="primary", indeterminate)
-        v-layout(v-else)
-          v-expansion-panel(dark)
-            v-expansion-panel-content.secondary(v-for="group in groups", :key="group._id", ripple)
-              template(#header="")
-                div {{ group.title }}
-              v-list.py-0.px-2.secondary
-                v-list-tile.secondary.lighten-1(
-                  v-for="view in group.views",
-                  :key="view._id",
-                  ripple,
+<template>
+  <modal-wrapper close="close">
+    <template #title="">
+      <span>{{ $t('modals.selectView.title') }}</span>
+    </template>
+    <template #text="">
+      <v-fade-transition>
+        <v-layout
+          v-if="pending"
+          justify-center="justify-center"
+        >
+          <v-progress-circular
+            color="primary"
+            indeterminate="indeterminate"
+          />
+        </v-layout>
+        <v-layout v-else>
+          <v-expansion-panel dark="dark">
+            <v-expansion-panel-content
+              class="secondary"
+              v-for="group in groups"
+              :key="group._id"
+              ripple="ripple"
+            >
+              <template #header="">
+                <div>{{ group.title }}</div>
+              </template>
+              <v-list class="py-0 px-2 secondary">
+                <v-list-item
+                  class="secondary lighten-1"
+                  v-for="view in group.views"
+                  :key="view._id"
+                  ripple="ripple"
                   @click="selectView(view._id)"
-                )
-                  v-list-tile-title.body-1 {{ view.title }}
+                >
+                  <v-list-item-title class="text-body-1">
+                    {{ view.title }}
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-layout>
+      </v-fade-transition>
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>

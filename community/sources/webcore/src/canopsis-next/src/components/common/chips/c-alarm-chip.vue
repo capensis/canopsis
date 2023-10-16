@@ -1,9 +1,21 @@
-<template lang="pug">
-  div.chip-container(:class="{ 'chip-container--small': small }")
-    v-badge(:value="!!badgeValue", color="secondary", overlap)
-      template(#badge="")
-        span.px-1 {{ badgeValue }}
-      span.chip(:style="{ backgroundColor: style.color }") {{ style.text }}
+<template>
+  <div
+    class="chip-container"
+    :class="{ 'chip-container--small': small }"
+  >
+    <v-badge
+      :value="!!badgeValue"
+      color="secondary"
+      overlap="overlap"
+    >
+      <template #badge="">
+        <span class="px-1">{{ badgeValue }}</span>
+      </template><span
+        class="chip"
+        :style="{ backgroundColor: style.color }"
+      >{{ style.text }}</span>
+    </v-badge>
+  </div>
 </template>
 
 <script>

@@ -1,12 +1,30 @@
-<template lang="pug">
-  v-tabs(color="secondary lighten-1", slider-color="primary", dark, centered)
-    v-tab {{ $tc('common.pattern', 2) }}
-    v-tab-item(lazy)
-      v-layout.py-3
-        v-flex(xs12, md8, offset-md2)
-          v-card
-            v-card-text
-              tag-patterns-form(:form="patterns", readonly)
+<template>
+  <v-tabs
+    color="secondary lighten-1"
+    slider-color="primary"
+    dark="dark"
+    centered="centered"
+  >
+    <v-tab>{{ $tc('common.pattern', 2) }}</v-tab>
+    <v-tab-item lazy="lazy">
+      <v-layout class="py-3">
+        <v-flex
+          xs12="xs12"
+          md8="md8"
+          offset-md2="offset-md2"
+        >
+          <v-card>
+            <v-card-text>
+              <tag-patterns-form
+                :form="patterns"
+                readonly="readonly"
+              />
+            </v-card-text>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-tab-item>
+  </v-tabs>
 </template>
 
 <script>

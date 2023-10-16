@@ -1,31 +1,45 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ title }}
-      template(#text="")
-        c-patterns-field(
-          v-model="form",
-          :alarm-attributes="alarmAttributes",
-          :entity-attributes="entityAttributes",
-          with-alarm,
-          with-entity,
-          both-counters
-        )
-        c-collapse-panel.mt-3(:title="$t('remediation.pattern.tabs.pbehaviorTypes.title')")
-          remediation-patterns-pbehavior-types-form(v-model="form")
-      template(#actions="")
-        v-btn(
-          :disabled="submitting",
-          depressed,
-          flat,
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close="close">
+      <template #title="">
+        <span>{{ title }}</span>
+      </template>
+      <template #text="">
+        <c-patterns-field
+          v-model="form"
+          :alarm-attributes="alarmAttributes"
+          :entity-attributes="entityAttributes"
+          with-alarm="with-alarm"
+          with-entity="with-entity"
+          both-counters="both-counters"
+        />
+        <c-collapse-panel
+          class="mt-3"
+          :title="$t('remediation.pattern.tabs.pbehaviorTypes.title')"
+        >
+          <remediation-patterns-pbehavior-types-form v-model="form" />
+        </c-collapse-panel>
+      </template>
+      <template #actions="">
+        <v-btn
+          :disabled="submitting"
+          depressed="depressed"
+          text
           @click="$modals.hide"
-        ) {{ $t('common.cancel') }}
-        v-btn.primary(
-          :disabled="isDisabled",
-          :loading="submitting",
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          class="primary"
+          :disabled="isDisabled"
+          :loading="submitting"
           type="submit"
-        ) {{ $t('common.submit') }}
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>

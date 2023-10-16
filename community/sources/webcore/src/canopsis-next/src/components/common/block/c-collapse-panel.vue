@@ -1,19 +1,32 @@
-<template lang="pug">
-  v-expansion-panel.c-collapse-panel(:style="panelStyle")
-    v-expansion-panel-content(
-      :class="panelContentClass",
-      :style="panelContentStyle",
+<template>
+  <v-expansion-panel
+    class="c-collapse-panel"
+    :style="panelStyle"
+  >
+    <v-expansion-panel-content
+      :class="panelContentClass"
+      :style="panelContentStyle"
       :lazy="lazy"
-    )
-      template(#actions="")
-        slot(name="actions")
-          v-icon(color="white") {{ icon }}
-      template(#header="")
-        slot(name="header")
-          span.white--text {{ title }}
-      v-card
-        v-card-text
-          slot
+    >
+      <template #actions="">
+        <slot name="actions">
+          <v-icon color="white">
+            {{ icon }}
+          </v-icon>
+        </slot>
+      </template>
+      <template #header="">
+        <slot name="header">
+          <span class="white--text">{{ title }}</span>
+        </slot>
+      </template>
+      <v-card>
+        <v-card-text>
+          <slot />
+        </v-card-text>
+      </v-card>
+    </v-expansion-panel-content>
+  </v-expansion-panel>
 </template>
 
 <script>

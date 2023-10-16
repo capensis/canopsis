@@ -1,17 +1,28 @@
-<template lang="pug">
-  v-tooltip.view-fullscreen-btn(:left="leftTooltip", :top="topTooltip")
-    v-btn.view-fullscreen-btn__button(
-      slot="activator",
-      :value="value",
-      :small="small",
-      fab,
-      dark,
+<template>
+  <v-tooltip
+    class="view-fullscreen-btn"
+    :left="leftTooltip"
+    :top="topTooltip"
+  >
+    <v-btn
+      class="view-fullscreen-btn__button"
+      slot="activator"
+      :value="value"
+      :small="small"
+      fab="fab"
+      dark="dark"
       @click.stop="toggleFullScreen"
-    )
-      v-icon fullscreen
-      v-icon fullscreen_exit
-    div {{ $t('view.fullScreen') }}
-      div.font-italic.caption.ml-1 ({{ $t('view.fullScreenShortcut') }})
+    >
+      <v-icon>fullscreen</v-icon>
+      <v-icon>fullscreen_exit</v-icon>
+    </v-btn>
+    <div>
+      {{ $t('view.fullScreen') }}
+      <div class="font-italic text-caption ml-1">
+        ({{ $t('view.fullScreenShortcut') }})
+      </div>
+    </div>
+  </v-tooltip>
 </template>
 
 <script>

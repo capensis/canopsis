@@ -1,19 +1,28 @@
-<template lang="pug">
-  v-tooltip.view-editing-btn(left)
-    v-btn.view-editing-btn__button(
-      slot="activator",
-      :input-value="editing",
-      :loading="editingProcess",
-      fab,
-      dark,
-      small,
+<template>
+  <v-tooltip
+    class="view-editing-btn"
+    left="left"
+  >
+    <v-btn
+      class="view-editing-btn__button"
+      slot="activator"
+      :input-value="editing"
+      :loading="editingProcess"
+      fab="fab"
+      dark="dark"
+      small="small"
       @click.stop="toggleEditing"
-    )
-      v-icon edit
-      v-icon done
-    div
-      div {{ $t('common.toggleEditView') }}  (ctrl + e / command + e)
-      div.font-italic {{ $t('common.toggleEditViewSubtitle') }}
+    >
+      <v-icon>edit</v-icon>
+      <v-icon>done</v-icon>
+    </v-btn>
+    <div>
+      <div>{{ $t('common.toggleEditView') }}  (ctrl + e / command + e)</div>
+      <div class="font-italic">
+        {{ $t('common.toggleEditViewSubtitle') }}
+      </div>
+    </div>
+  </v-tooltip>
 </template>
 
 <script>

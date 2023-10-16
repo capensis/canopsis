@@ -1,10 +1,18 @@
-<template lang="pug">
-  v-list-group
-    template(#activator="")
-      v-list-tile
-        div {{ $t('settings.density.title') }}
-    v-container
-      c-density-btn-toggle(v-field="value", :name="name", column)
+<template>
+  <v-list-group>
+    <template #activator="">
+      <v-list-item>
+        <div>{{ $t('settings.density.title') }}</div>
+      </v-list-item>
+    </template>
+    <v-container>
+      <c-density-btn-toggle
+        v-field="value"
+        :name="name"
+        column="column"
+      />
+    </v-container>
+  </v-list-group>
 </template>
 
 <script>

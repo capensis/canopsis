@@ -1,31 +1,46 @@
-<template lang="pug">
-  v-autocomplete(
-    v-field="value",
-    :items="filters",
-    :label="label || $t('common.filters')",
-    :loading="filtersPending",
-    :disabled="disabled",
-    :name="name",
-    item-text="name",
-    item-value="_id",
-    hide-details,
-    clearable
-  )
-    template(#item="{ item, tile }")
-      v-list-tile(v-bind="tile.props", v-on="tile.on")
-        v-list-tile-content
-          v-list-tile-title.v-list-badge__tile__title
-            v-badge(
-              :value="isOldPattern(item)",
-              color="error",
-              overlap
-            )
-              template(#badge="")
-                v-tooltip(top)
-                  template(#activator="{ on: badgeTooltipOn }")
-                    v-icon(v-on="badgeTooltipOn", color="white") priority_high
-                  span {{ $t('pattern.oldPatternTooltip') }}
-              span {{ item.name }}
+<template>
+  <v-autocomplete
+    v-field="value"
+    :items="filters"
+    :label="label || $t('common.filters')"
+    :loading="filtersPending"
+    :disabled="disabled"
+    :name="name"
+    item-text="name"
+    item-value="_id"
+    hide-details="hide-details"
+    clearable="clearable"
+  >
+    <template #item="{ item, tile }">
+      <v-list-item
+        v-bind="tile.props"
+        v-on="tile.on"
+      >
+        <v-list-item-content>
+          <v-list-item-title class="v-list-badge__tile__title">
+            <v-badge
+              :value="isOldPattern(item)"
+              color="error"
+              overlap="overlap"
+            >
+              <template #badge="">
+                <v-tooltip top="top">
+                  <template #activator="{ on: badgeTooltipOn }">
+                    <v-icon
+                      v-on="badgeTooltipOn"
+                      color="white"
+                    >
+                      priority_high
+                    </v-icon>
+                  </template><span>{{ $t('pattern.oldPatternTooltip') }}</span>
+                </v-tooltip>
+              </template><span>{{ item.name }}</span>
+            </v-badge>
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    </template>
+  </v-autocomplete>
 </template>
 
 <script>

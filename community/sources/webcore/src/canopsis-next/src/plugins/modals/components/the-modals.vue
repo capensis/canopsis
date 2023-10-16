@@ -1,10 +1,14 @@
-<template lang="pug">
-  div.modals-wrapper(:class="{ 'modals-wrapper--active': modals.length > 0 }")
-    modal-base(
-      v-for="modal in modals",
-      :key="modal.id",
+<template>
+  <div
+    class="modals-wrapper"
+    :class="{ 'modals-wrapper--active': modals.length > 0 }"
+  >
+    <modal-base
+      v-for="modal in modals"
+      :key="modal.id"
       :modal="modal"
-    )
+    />
+  </div>
 </template>
 
 <script>

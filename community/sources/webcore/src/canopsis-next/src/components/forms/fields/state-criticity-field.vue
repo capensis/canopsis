@@ -1,17 +1,21 @@
-<template lang="pug">
-  v-layout(row)
-    v-btn-toggle(
-      :value="value",
-      :mandatory="mandatory",
+<template>
+  <v-layout>
+    <v-btn-toggle
+      :value="value"
+      :mandatory="mandatory"
       @change="$emit('input', $event)"
-    )
-      v-btn(
-        v-for="{ color, value, text } in availableStates",
-        :key="value",
-        :value="value",
-        :style="{ backgroundColor: color }",
-        depressed
-      ) {{ text }}
+    >
+      <v-btn
+        v-for="{ color, value, text } in availableStates"
+        :key="value"
+        :value="value"
+        :style="{ backgroundColor: color }"
+        depressed="depressed"
+      >
+        {{ text }}
+      </v-btn>
+    </v-btn-toggle>
+  </v-layout>
 </template>
 
 <script>

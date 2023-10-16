@@ -1,21 +1,22 @@
-<template lang="pug">
-  v-menu(
-    :value="visible",
-    :position-x="positionX",
-    :position-y="positionY",
-    :close-on-content-click="false",
-    :ignore-click-outside="ignoreClickOutside",
-    max-height="300",
-    ref="menu",
+<template>
+  <v-menu
+    :value="visible"
+    :position-x="positionX"
+    :position-y="positionY"
+    :close-on-content-click="false"
+    :ignore-click-outside="ignoreClickOutside"
+    max-height="300"
+    ref="menu"
     @input="$emit('close')"
-  )
-    variables-list(
-      :variables="variables",
-      :value="value",
-      :z-index="submenuZIndex",
-      :show-value="showValue",
+  >
+    <variables-list
+      :variables="variables"
+      :value="value"
+      :z-index="submenuZIndex"
+      :show-value="showValue"
       @input="$emit('input', $event)"
-    )
+    />
+  </v-menu>
 </template>
 
 <script>

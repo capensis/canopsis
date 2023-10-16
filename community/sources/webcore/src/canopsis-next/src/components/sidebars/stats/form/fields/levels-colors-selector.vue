@@ -1,17 +1,20 @@
-<template lang="pug">
-  widget-settings-item(:title="$t('settings.colorsSelector.title')")
-    v-layout(wrap)
-      v-flex(
-        v-for="level in $constants.STATS_CRITICITY",
-        :key="level",
-        xs12
-      )
-        c-color-picker-field(
-          v-field="levelsColors[level]",
-          :label="getButtonText(level)",
-          :type="colorType",
-          splitted
-        )
+<template>
+  <widget-settings-item :title="$t('settings.colorsSelector.title')">
+    <v-layout wrap="wrap">
+      <v-flex
+        v-for="level in $constants.STATS_CRITICITY"
+        :key="level"
+        xs12="xs12"
+      >
+        <c-color-picker-field
+          v-field="levelsColors[level]"
+          :label="getButtonText(level)"
+          :type="colorType"
+          splitted="splitted"
+        />
+      </v-flex>
+    </v-layout>
+  </widget-settings-item>
 </template>
 
 <script>

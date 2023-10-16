@@ -1,14 +1,14 @@
-<template lang="pug">
-  filters-list(
-    v-field="filters",
-    :addable="addable",
-    :editable="editable",
-    :name="name",
-    :required="required",
-    @add="showCreateFilterModal",
-    @edit="showEditFilterModal",
+<template>
+  <filters-list
+    v-field="filters"
+    :addable="addable"
+    :editable="editable"
+    :name="name"
+    :required="required"
+    @add="showCreateFilterModal"
+    @edit="showEditFilterModal"
     @delete="showDeleteFilterModal"
-  )
+  />
 </template>
 
 <script>

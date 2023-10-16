@@ -1,12 +1,13 @@
-<template lang="pug">
-  v-layout(justify-center)
-    c-progress-overlay(:pending="pending")
-    junit-gantt-chart(
-      :items="ganttIntervals",
-      :total-items="meta.total_count",
-      :query.sync="query",
+<template>
+  <v-layout justify-center="justify-center">
+    <c-progress-overlay :pending="pending" />
+    <junit-gantt-chart
+      :items="ganttIntervals"
+      :total-items="meta.total_count"
+      :query.sync="query"
       :width="840"
-    )
+    />
+  </v-layout>
 </template>
 
 <script>

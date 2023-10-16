@@ -1,15 +1,16 @@
-<template lang="pug">
-  v-tooltip(left)
-    v-btn(
-      slot="activator",
-      color="secondary lighten-2",
-      fab,
-      dark,
-      small,
+<template>
+  <v-tooltip left="left">
+    <v-btn
+      slot="activator"
+      color="secondary lighten-2"
+      fab="fab"
+      dark="dark"
+      small="small"
       @click.stop="showCreateShareTokenModal"
-    )
-      v-icon share
-    span {{ $t('common.shareLink') }}
+    >
+      <v-icon>share</v-icon>
+    </v-btn><span>{{ $t('common.shareLink') }}</span>
+  </v-tooltip>
 </template>
 
 <script>

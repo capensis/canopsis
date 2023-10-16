@@ -1,38 +1,56 @@
-<template lang="pug">
-  v-layout(column)
-    v-layout.mt-3(row, align-end)
-      v-flex(xs6)
-        div.subheading {{ $t('linkRule.type') }}
-        v-radio-group(
-          :value="form.type",
-          row,
-          mandatory,
+<template>
+  <v-layout column="column">
+    <v-layout
+      class="mt-3"
+      align-end="align-end"
+    >
+      <v-flex xs6="xs6">
+        <div class="subheading">
+          {{ $t('linkRule.type') }}
+        </div>
+        <v-radio-group
+          :value="form.type"
+          row="row"
+          mandatory="mandatory"
           @change="updateType"
-        )
-          v-radio(
-            v-for="type in types",
-            :value="type.value",
-            :label="type.label",
-            :key="type.value",
+        >
+          <v-radio
+            v-for="type in types"
+            :value="type.value"
+            :label="type.label"
+            :key="type.value"
             color="primary"
-          )
-      v-flex(xs6)
-        c-enabled-field(v-field="form.enabled")
-    c-name-field.mb-3(v-field="form.name", required)
-    c-patterns-field(
-      v-field="form.patterns",
-      :alarm-attributes="alarmPatternAttributes",
-      :entity-attributes="entityPatternAttributes",
-      :with-alarm="isAlarmType",
-      some-required,
-      with-entity
-    )
-    c-collapse-panel.my-3(:title="$t('externalData.title')")
-      external-data-form(
-        v-field="form.external_data",
-        :types="externalDataTypes",
+          />
+        </v-radio-group>
+      </v-flex>
+      <v-flex xs6="xs6">
+        <c-enabled-field v-field="form.enabled" />
+      </v-flex>
+    </v-layout>
+    <c-name-field
+      class="mb-3"
+      v-field="form.name"
+      required="required"
+    />
+    <c-patterns-field
+      v-field="form.patterns"
+      :alarm-attributes="alarmPatternAttributes"
+      :entity-attributes="entityPatternAttributes"
+      :with-alarm="isAlarmType"
+      some-required="some-required"
+      with-entity="with-entity"
+    />
+    <c-collapse-panel
+      class="my-3"
+      :title="$t('externalData.title')"
+    >
+      <external-data-form
+        v-field="form.external_data"
+        :types="externalDataTypes"
         :variables="externalDataPayloadVariables"
-      )
+      />
+    </c-collapse-panel>
+  </v-layout>
 </template>
 
 <script>

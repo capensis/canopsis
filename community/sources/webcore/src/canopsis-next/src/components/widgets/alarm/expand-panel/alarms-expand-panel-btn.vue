@@ -1,10 +1,11 @@
-<template lang="pug">
-  c-expand-btn.alarms-expand-panel-btn(
-    :class="expandButtonClass",
-    :expanded="expanded",
-    :loading="pending",
+<template>
+  <c-expand-btn
+    class="alarms-expand-panel-btn"
+    :class="expandButtonClass"
+    :expanded="expanded"
+    :loading="pending"
     @expand="showExpandPanel"
-  )
+  />
 </template>
 
 <script>

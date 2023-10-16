@@ -1,15 +1,28 @@
-<template lang="pug">
-  v-container.pa-3(fluid)
-    v-layout(align-center, justify-space-between)
-      v-flex(xs11)
-        div.subheading {{ title }}
-      v-layout
-        v-switch.ma-0.pa-0(
-          :input-value="value",
-          color="primary",
-          hide-details,
+<template>
+  <v-container
+    class="pa-3"
+    fluid="fluid"
+  >
+    <v-layout
+      align-center="align-center"
+      justify-space-between="justify-space-between"
+    >
+      <v-flex xs11="xs11">
+        <div class="subheading">
+          {{ title }}
+        </div>
+      </v-flex>
+      <v-layout>
+        <v-switch
+          class="ma-0 pa-0"
+          :input-value="value"
+          color="primary"
+          hide-details="hide-details"
           @change="$emit('input', $event)"
-        )
+        />
+      </v-layout>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>

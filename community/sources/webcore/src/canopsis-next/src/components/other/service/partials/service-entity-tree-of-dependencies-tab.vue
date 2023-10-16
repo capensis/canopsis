@@ -1,9 +1,9 @@
-<template lang="pug">
-  service-dependencies(
-    :root="entity",
-    :columns="columns",
-    openable-root
-  )
+<template>
+  <service-dependencies
+    :root="entity"
+    :columns="columns"
+    openable-root="openable-root"
+  />
 </template>
 
 <script>

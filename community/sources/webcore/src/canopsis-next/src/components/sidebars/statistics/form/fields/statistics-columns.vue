@@ -1,18 +1,30 @@
-<template lang="pug">
-  widget-settings-item(:title="$tc('common.column', 2)")
-    c-alert(
-      :value="!columns.length",
+<template>
+  <widget-settings-item :title="$tc('common.column', 2)">
+    <c-alert
+      :value="!columns.length"
       :type="errors.has(name) ? 'error' : 'info'"
-    ) {{ $t('widgetTemplate.errors.columnsRequired') }}
-    c-progress-overlay(:pending="pending", transition)
-    c-movable-card-iterator-field(v-field="columns", addable, @add="add")
-      template(#item="{ item, index }")
-        statistics-column(
-          v-field="columns[index]",
-          :type="type",
-          :name="item.key",
+    >
+      {{ $t('widgetTemplate.errors.columnsRequired') }}
+    </c-alert>
+    <c-progress-overlay
+      :pending="pending"
+      transition="transition"
+    />
+    <c-movable-card-iterator-field
+      v-field="columns"
+      addable="addable"
+      @add="add"
+    >
+      <template #item="{ item, index }">
+        <statistics-column
+          v-field="columns[index]"
+          :type="type"
+          :name="item.key"
           :rating-settings="ratingSettings"
-        )
+        />
+      </template>
+    </c-movable-card-iterator-field>
+  </widget-settings-item>
 </template>
 
 <script>

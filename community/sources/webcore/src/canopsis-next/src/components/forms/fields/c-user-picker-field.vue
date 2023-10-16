@@ -1,16 +1,16 @@
-<template lang="pug">
-  v-autocomplete(
-    v-field="value",
-    v-validate="rules",
-    :items="items",
-    :label="label",
-    :loading="pending",
-    :name="name",
-    :error-messages="errors.collect(name)",
-    :return-object="returnObject",
-    item-text="name",
+<template>
+  <v-autocomplete
+    v-field="value"
+    v-validate="rules"
+    :items="items"
+    :label="label"
+    :loading="pending"
+    :name="name"
+    :error-messages="errors.collect(name)"
+    :return-object="returnObject"
+    item-text="name"
     item-value="_id"
-  )
+  />
 </template>
 
 <script>

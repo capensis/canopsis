@@ -1,23 +1,39 @@
-<template lang="pug">
-  div
-    view-tabs.tabs-absolute(
-      v-if="view && isTabsChanged",
-      :tabs.sync="tabs",
-      :changed="isTabsChanged",
+<template>
+  <div>
+    <view-tabs
+      class="tabs-absolute"
+      v-if="view && isTabsChanged"
+      :tabs.sync="tabs"
+      :changed="isTabsChanged"
       :updatable="updatable"
-    )
-    v-fade-transition
-      div.v-overlay.v-overlay--active(v-show="view && isTabsChanged")
-        v-btn(color="primary", @click="submit") {{ $t('common.submit') }}
-        v-btn(@click="cancel") {{ $t('common.cancel') }}
-    view-tabs(
-      :tabs.sync="tabs",
-      :changed="isTabsChanged",
-      :editing="editing",
+    />
+    <v-fade-transition>
+      <div
+        class="v-overlay v-overlay--active"
+        v-show="view && isTabsChanged"
+      >
+        <v-btn
+          color="primary"
+          @click="submit"
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+        <v-btn @click="cancel">
+          {{ $t('common.cancel') }}
+        </v-btn>
+      </div>
+    </v-fade-transition>
+    <view-tabs
+      :tabs.sync="tabs"
+      :changed="isTabsChanged"
+      :editing="editing"
       :updatable="updatable"
-    )
-      template(#default="props")
-        view-tab-widgets(v-bind="props")
+    >
+      <template #default="props">
+        <view-tab-widgets v-bind="props" />
+      </template>
+    </view-tabs>
+  </div>
 </template>
 
 <script>

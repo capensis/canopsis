@@ -1,34 +1,65 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ title }}
-      template(#text="")
-        v-fade-transition
-          v-layout(v-if="pending", justify-center)
-            v-progress-circular(color="primary", indeterminate)
-          v-layout(v-else)
-            v-flex(xs12)
-              v-alert(:value="duplicate", type="info") {{ $t('modals.view.duplicate.infoMessage') }}
-              view-form(
-                v-model="form",
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close="close">
+      <template #title="">
+        <span>{{ title }}</span>
+      </template>
+      <template #text="">
+        <v-fade-transition>
+          <v-layout
+            v-if="pending"
+            justify-center="justify-center"
+          >
+            <v-progress-circular
+              color="primary"
+              indeterminate="indeterminate"
+            />
+          </v-layout>
+          <v-layout v-else>
+            <v-flex xs12="xs12">
+              <v-alert
+                :value="duplicate"
+                type="info"
+              >
+                {{ $t('modals.view.duplicate.infoMessage') }}
+              </v-alert>
+              <view-form
+                v-model="form"
                 :groups="groups"
-              )
-      template(#actions="")
-        v-btn(depressed, text, @click="$modals.hide") {{ $t('common.cancel') }}
-        v-btn.primary(
-          v-if="hasUpdateViewAccess",
-          :disabled="isDisabled",
-          :loading="submitting",
+              />
+            </v-flex>
+          </v-layout>
+        </v-fade-transition>
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed="depressed"
+          text="text"
+          @click="$modals.hide"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          class="primary"
+          v-if="hasUpdateViewAccess"
+          :disabled="isDisabled"
+          :loading="submitting"
           type="submit"
-        ) {{ $t('common.submit') }}
-        v-btn(
-          v-if="view && hasDeleteViewAccess && !duplicate",
-          :disabled="submitting",
-          :outline="$system.dark",
-          color="error",
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+        <v-btn
+          v-if="view && hasDeleteViewAccess && !duplicate"
+          :disabled="submitting"
+          :outlined="$system.dark"
+          color="error"
           @click="remove"
-        ) {{ $t('common.delete') }}
+        >
+          {{ $t('common.delete') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>

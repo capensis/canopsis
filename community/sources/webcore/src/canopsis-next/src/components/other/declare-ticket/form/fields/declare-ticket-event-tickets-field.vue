@@ -1,14 +1,15 @@
-<template lang="pug">
-  v-layout(column)
-    v-checkbox(
-      v-for="chip in chips",
-      :key="chip.value",
-      :input-value="chip.active",
-      :label="chip.text",
-      color="primary",
-      hide-details,
+<template>
+  <v-layout column="column">
+    <v-checkbox
+      v-for="chip in chips"
+      :key="chip.value"
+      :input-value="chip.active"
+      :label="chip.text"
+      color="primary"
+      hide-details="hide-details"
       @change="updateActive(chip.value)"
-    )
+    />
+  </v-layout>
 </template>
 
 <script>

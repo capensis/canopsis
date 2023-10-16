@@ -1,11 +1,16 @@
-<template lang="pug">
-  widget-settings(:submitting="submitting", divider, @submit="submit")
-    numbers-widget-form(
-      v-model="form",
-      :with-filters="hasAccessToListFilters",
-      with-periodic-refresh,
-      with-preset
-    )
+<template>
+  <widget-settings
+    :submitting="submitting"
+    divider="divider"
+    @submit="submit"
+  >
+    <numbers-widget-form
+      v-model="form"
+      :with-filters="hasAccessToListFilters"
+      with-periodic-refresh="with-periodic-refresh"
+      with-preset="with-preset"
+    />
+  </widget-settings>
 </template>
 
 <script>

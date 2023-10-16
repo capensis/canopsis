@@ -1,40 +1,45 @@
-<template lang="pug">
-  widget-settings(:submitting="submitting", @submit="submit")
-    field-title(v-model="form.title")
-    v-divider
-    alarms-list-modal-form(
-      v-model="form.parameters.alarmsList",
-      :templates="preparedWidgetTemplates",
+<template>
+  <widget-settings
+    :submitting="submitting"
+    @submit="submit"
+  >
+    <field-title v-model="form.title" />
+    <v-divider />
+    <alarms-list-modal-form
+      v-model="form.parameters.alarmsList"
+      :templates="preparedWidgetTemplates"
       :templates-pending="widgetTemplatesPending"
-    )
-    v-divider
-    widget-settings-group(:title="$t('settings.advancedSettings')")
-      field-filters(
-        :filters.sync="form.filters",
-        :widget-id="widget._id",
-        addable,
-        editable,
-        with-alarm,
-        with-entity,
-        with-pbehavior,
-        hide-selector
-      )
-      v-divider
-      field-opened-resolved-filter(v-field="form.parameters.opened")
-      v-divider
-      field-switcher(
-        v-field="form.parameters.considerPbehaviors",
+    />
+    <v-divider />
+    <widget-settings-group :title="$t('settings.advancedSettings')">
+      <field-filters
+        :filters.sync="form.filters"
+        :widget-id="widget._id"
+        addable="addable"
+        editable="editable"
+        with-alarm="with-alarm"
+        with-entity="with-entity"
+        with-pbehavior="with-pbehavior"
+        hide-selector="hide-selector"
+      />
+      <v-divider />
+      <field-opened-resolved-filter v-field="form.parameters.opened" />
+      <v-divider />
+      <field-switcher
+        v-field="form.parameters.considerPbehaviors"
         :title="$t('settings.considerPbehaviors.title')"
-      )
-      v-divider
-      field-criticity-levels(v-field="form.parameters.criticityLevels")
-      v-divider
-      field-levels-colors-selector(
-        v-field="form.parameters.criticityLevelsColors",
-        color-type="hex",
-        hide-suffix
-      )
-    v-divider
+      />
+      <v-divider />
+      <field-criticity-levels v-field="form.parameters.criticityLevels" />
+      <v-divider />
+      <field-levels-colors-selector
+        v-field="form.parameters.criticityLevelsColors"
+        color-type="hex"
+        hide-suffix="hide-suffix"
+      />
+    </widget-settings-group>
+    <v-divider />
+  </widget-settings>
 </template>
 
 <script>

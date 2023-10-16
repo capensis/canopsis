@@ -1,28 +1,51 @@
-<template lang="pug">
-  v-layout(column)
-    v-flex(xs12)
-      v-alert(
-        v-if="!groups.length",
+<template>
+  <v-layout column="column">
+    <v-flex xs12="xs12">
+      <v-alert
+        v-if="!groups.length"
         type="info"
-      ) {{ disabled || readonly ? $t('pattern.noDataDisabled') : $t('pattern.noData') }}
-    v-layout(v-for="(group, index) in groups", :key="group.key", wrap, row)
-      v-flex(xs12)
-        pattern-group-field(
-          v-field="groups[index]",
-          :attributes="attributes",
-          :disabled="disabled",
-          :readonly="readonly",
+      >
+        {{ disabled || readonly ? $t('pattern.noDataDisabled') : $t('pattern.noData') }}
+      </v-alert>
+    </v-flex>
+    <v-layout
+      v-for="(group, index) in groups"
+      :key="group.key"
+      wrap="wrap"
+    >
+      <v-flex xs12="xs12">
+        <pattern-group-field
+          v-field="groups[index]"
+          :attributes="attributes"
+          :disabled="disabled"
+          :readonly="readonly"
           @remove="removeItemFromArray(index)"
-        )
-      v-layout(v-show="index !== groups.length - 1", justify-center)
-        c-pattern-operator-chip {{ $t('common.or') }}
-    v-layout(v-if="!readonly", row, align-center)
-      v-btn.ml-0(
-        :color="hasGroupsErrors ? 'error' : 'primary'",
-        :disabled="disabled",
+        />
+      </v-flex>
+      <v-layout
+        v-show="index !== groups.length - 1"
+        justify-center="justify-center"
+      >
+        <c-pattern-operator-chip>{{ $t('common.or') }}</c-pattern-operator-chip>
+      </v-layout>
+    </v-layout>
+    <v-layout
+      v-if="!readonly"
+      align-center="align-center"
+    >
+      <v-btn
+        class="ml-0"
+        :color="hasGroupsErrors ? 'error' : 'primary'"
+        :disabled="disabled"
         @click="addFilterGroup"
-      ) {{ $t('pattern.addGroup') }}
-      span.error--text(v-show="hasGroupsErrors") {{ $t('pattern.errors.groupRequired') }}
+      >
+        {{ $t('pattern.addGroup') }}
+      </v-btn><span
+        class="error--text"
+        v-show="hasGroupsErrors"
+      >{{ $t('pattern.errors.groupRequired') }}</span>
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>

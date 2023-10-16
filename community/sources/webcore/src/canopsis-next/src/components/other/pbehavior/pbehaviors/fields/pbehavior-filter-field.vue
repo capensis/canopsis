@@ -1,19 +1,36 @@
-<template lang="pug">
-  v-flex
-    v-btn.ml-0.btn-filter(
-      :color="hasErrors ? 'error' : 'primary'",
+<template>
+  <v-flex>
+    <v-btn
+      class="ml-0 btn-filter"
+      :color="hasErrors ? 'error' : 'primary'"
       @click="showCreateFilterModal"
-    ) {{ hasPattern ? $t('pbehavior.buttons.editFilter') : $t('pbehavior.buttons.addFilter') }}
-    v-tooltip(v-if="hasPattern", fixed, top)
-      template(#activator="{ on }")
-        v-btn(v-on="on", icon)
-          v-icon(color="grey darken-1") info
-      span.pre {{ entityPattern | json }}
-    v-alert(
-      :value="hasErrors",
-      type="error",
+    >
+      {{ hasPattern ? $t('pbehavior.buttons.editFilter') : $t('pbehavior.buttons.addFilter') }}
+    </v-btn>
+    <v-tooltip
+      v-if="hasPattern"
+      fixed="fixed"
+      top="top"
+    >
+      <template #activator="{ on }">
+        <v-btn
+          v-on="on"
+          icon="icon"
+        >
+          <v-icon color="grey darken-1">
+            info
+          </v-icon>
+        </v-btn>
+      </template><span class="pre">{{ entityPattern | json }}</span>
+    </v-tooltip>
+    <v-alert
+      :value="hasErrors"
+      type="error"
       transition="fade-transition"
-    ) {{ errors.first(patternsFieldName) }}
+    >
+      {{ errors.first(patternsFieldName) }}
+    </v-alert>
+  </v-flex>
 </template>
 
 <script>

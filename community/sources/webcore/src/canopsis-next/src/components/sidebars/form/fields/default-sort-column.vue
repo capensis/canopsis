@@ -1,19 +1,24 @@
-<template lang="pug">
-  v-list-group
-    template(#activator="")
-      v-list-tile {{ $t('settings.defaultSortColumn') }}
-    v-container
-      v-layout(row)
-        v-select(
-          v-field="value.column",
-          :items="columns",
+<template>
+  <v-list-group>
+    <template #activator="">
+      <v-list-item>{{ $t('settings.defaultSortColumn') }}</v-list-item>
+    </template>
+    <v-container>
+      <v-layout>
+        <v-select
+          v-field="value.column"
+          :items="columns"
           :label="columnsLabel"
-        )
-      v-layout(row)
-        v-select(
-          v-field="value.order",
+        />
+      </v-layout>
+      <v-layout>
+        <v-select
+          v-field="value.order"
           :items="orders"
-        )
+        />
+      </v-layout>
+    </v-container>
+  </v-list-group>
 </template>
 
 <script>

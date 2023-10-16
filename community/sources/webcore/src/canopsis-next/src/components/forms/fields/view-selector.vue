@@ -1,17 +1,24 @@
-<template lang="pug">
-  v-layout(align-center)
-    v-btn.ml-0(
-      color="secondary",
-      small,
+<template>
+  <v-layout align-center="align-center">
+    <v-btn
+      class="ml-0"
+      color="secondary"
+      small="small"
       @click="showViewSelectModal"
-    ) {{ $t('user.selectDefaultView') }}
-    div {{ defaultViewTitle }}
-    v-btn(
-      v-if="value",
-      icon,
+    >
+      {{ $t('user.selectDefaultView') }}
+    </v-btn>
+    <div>{{ defaultViewTitle }}</div>
+    <v-btn
+      v-if="value"
+      icon="icon"
       @click="clearDefaultView"
-    )
-      v-icon(color="error") clear
+    >
+      <v-icon color="error">
+        clear
+      </v-icon>
+    </v-btn>
+  </v-layout>
 </template>
 
 <script>

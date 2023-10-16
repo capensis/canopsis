@@ -1,15 +1,30 @@
-<template lang="pug">
-  span.c-horizontal-time-line-card
-    v-tooltip(:disabled="!step.m", top)
-      template(#activator="{ on }")
-        v-layout(v-on="on", align-center, column)
-          c-alarm-chip(v-if="isStepTypeState", :value="step.val")
-          v-icon(v-else, :style="{ color: style.icon }") {{ style.icon }}
-          span.c-horizontal-time-line-card__time {{ step.t | date('time') }}
-      div.pre-line
-        div
-          strong {{ stepTitle }}
-        c-compiled-template(:template="step.m")
+<template>
+  <span class="c-horizontal-time-line-card">
+    <v-tooltip
+      :disabled="!step.m"
+      top="top"
+    >
+      <template #activator="{ on }">
+        <v-layout
+          v-on="on"
+          align-center="align-center"
+          column="column"
+        >
+          <c-alarm-chip
+            v-if="isStepTypeState"
+            :value="step.val"
+          />
+          <v-icon
+            v-else
+            :style="{ color: style.icon }"
+          >{{ style.icon }}</v-icon><span class="c-horizontal-time-line-card__time">{{ step.t | date('time') }}</span>
+        </v-layout>
+      </template>
+      <div class="pre-line">
+        <div><strong>{{ stepTitle }}</strong></div>
+        <c-compiled-template :template="step.m" />
+      </div>
+    </v-tooltip></span>
 </template>
 
 <script>

@@ -1,13 +1,14 @@
-<template lang="pug">
-  network-graph.healthcheck-network-graph(
-    ref="networkGraph",
-    :options="options",
-    :node-html-label-options="nodeHtmlLabelsOptions",
-    :tooltip-options="tooltipOptions",
-    @node:tap="nodeTapHandler",
-    @node:mouseover="nodeMouseoverHandler",
+<template>
+  <network-graph
+    class="healthcheck-network-graph"
+    ref="networkGraph"
+    :options="options"
+    :node-html-label-options="nodeHtmlLabelsOptions"
+    :tooltip-options="tooltipOptions"
+    @node:tap="nodeTapHandler"
+    @node:mouseover="nodeMouseoverHandler"
     @node:mouseout="nodeMouseoutHandler"
-  )
+  />
 </template>
 
 <script>

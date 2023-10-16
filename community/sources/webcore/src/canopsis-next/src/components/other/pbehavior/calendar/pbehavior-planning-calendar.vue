@@ -1,42 +1,54 @@
-<template lang="pug">
-  ds-calendar-app(
-    :calendar="calendar",
-    :config="calendarConfig",
-    :read-only="readOnly",
-    fluid,
-    fill-height,
-    current-time-for-today,
-    remove-events-before-move,
-    @change="changeCalendarHandler",
-    @changed="changedEventHandler",
-    @added="applyEventChangesHandler",
-    @moved="changedEventHandler",
+<template>
+  <ds-calendar-app
+    :calendar="calendar"
+    :config="calendarConfig"
+    :read-only="readOnly"
+    fluid="fluid"
+    fill-height="fill-height"
+    current-time-for-today="current-time-for-today"
+    remove-events-before-move="remove-events-before-move"
+    @change="changeCalendarHandler"
+    @changed="changedEventHandler"
+    @added="applyEventChangesHandler"
+    @moved="changedEventHandler"
     @resized="changedEventHandler"
-  )
-    template(#calendarAppLoader="props")
-      c-progress-overlay.calendar-progress(:pending="pending")
-    template(#eventPopover="props")
-      ds-calendar-event-popover(v-bind="props")
-        template(#default="{ calendarEvent, close, edit }")
-          pbehavior-create-event(
-            :calendar-event="calendarEvent",
-            :entity-pattern="entityPattern",
-            @close="close",
-            @submit="edit",
+  >
+    <template #calendarAppLoader="props">
+      <c-progress-overlay
+        class="calendar-progress"
+        :pending="pending"
+      />
+    </template>
+    <template #eventPopover="props">
+      <ds-calendar-event-popover v-bind="props">
+        <template #default="{ calendarEvent, close, edit }">
+          <pbehavior-create-event
+            :calendar-event="calendarEvent"
+            :entity-pattern="entityPattern"
+            @close="close"
+            @submit="edit"
             @remove="removePbehavior"
-          )
-    template(#eventCreatePopover="props")
-      ds-calendar-event-popover(v-bind="props")
-        template(#default="{ calendarEvent, close, add }")
-          pbehavior-create-event(
-            :calendar-event="calendarEvent",
-            :entity-pattern="entityPattern",
-            @close="close",
-            @submit="add",
+          />
+        </template>
+      </ds-calendar-event-popover>
+    </template>
+    <template #eventCreatePopover="props">
+      <ds-calendar-event-popover v-bind="props">
+        <template #default="{ calendarEvent, close, add }">
+          <pbehavior-create-event
+            :calendar-event="calendarEvent"
+            :entity-pattern="entityPattern"
+            @close="close"
+            @submit="add"
             @remove="removePbehavior"
-          )
-    template(#menuRight="")
-      pbehavior-planning-calendar-legend(:exception-types="exceptionTypes")
+          />
+        </template>
+      </ds-calendar-event-popover>
+    </template>
+    <template #menuRight="">
+      <pbehavior-planning-calendar-legend :exception-types="exceptionTypes" />
+    </template>
+  </ds-calendar-app>
 </template>
 
 <script>

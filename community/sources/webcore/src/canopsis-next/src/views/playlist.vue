@@ -1,34 +1,95 @@
-<template lang="pug">
-  div
-    v-fade-transition(mode="out-in")
-      c-progress-overlay(v-if="pending", pending)
-      div.playlist(v-else-if="playlist")
-        c-page-header {{ playlist.name }}
-        portal(:to="$constants.PORTALS_NAMES.additionalTopBarItems")
-          v-fade-transition
-            v-toolbar-items.playlist__actions.mr-2(v-if="!pending")
-              span.playlist__timer.white--text.mr-2 {{ time | duration }}
-              v-btn(:disabled="!activeTab", dark, icon, @click="prevTab")
-                v-icon skip_previous
-              v-btn(v-if="pausing || !played", :disabled="!activeTab", dark, icon, @click="play")
-                v-icon play_arrow
-              v-btn(v-else, :disabled="!activeTab", dark, icon, @click="pause")
-                v-icon pause
-              v-btn(:disabled="!activeTab", dark, icon, @click="nextTab")
-                v-icon skip_next
-              c-action-btn(
-                :disabled="!activeTab",
-                :tooltip="$t('playlist.player.tooltips.fullscreen')",
-                icon="fullscreen",
-                color="white",
+<template>
+  <div>
+    <v-fade-transition mode="out-in">
+      <c-progress-overlay
+        v-if="pending"
+        pending="pending"
+      />
+      <div
+        class="playlist"
+        v-else-if="playlist"
+      >
+        <c-page-header>{{ playlist.name }}</c-page-header>
+        <portal :to="$constants.PORTALS_NAMES.additionalTopBarItems">
+          <v-fade-transition>
+            <v-toolbar-items
+              class="playlist__actions mr-2"
+              v-if="!pending"
+            >
+              <span class="playlist__timer white--text mr-2">{{ time | duration }}</span>
+              <v-btn
+                :disabled="!activeTab"
+                dark="dark"
+                icon="icon"
+                @click="prevTab"
+              >
+                <v-icon>skip_previous</v-icon>
+              </v-btn>
+              <v-btn
+                v-if="pausing || !played"
+                :disabled="!activeTab"
+                dark="dark"
+                icon="icon"
+                @click="play"
+              >
+                <v-icon>play_arrow</v-icon>
+              </v-btn>
+              <v-btn
+                v-else
+                :disabled="!activeTab"
+                dark="dark"
+                icon="icon"
+                @click="pause"
+              >
+                <v-icon>pause</v-icon>
+              </v-btn>
+              <v-btn
+                :disabled="!activeTab"
+                dark="dark"
+                icon="icon"
+                @click="nextTab"
+              >
+                <v-icon>skip_next</v-icon>
+              </v-btn>
+              <c-action-btn
+                :disabled="!activeTab"
+                :tooltip="$t('playlist.player.tooltips.fullscreen')"
+                icon="fullscreen"
+                color="white"
                 @click="toggleFullScreenMode"
-              )
-        div.position-relative.playlist__tabs-wrapper(ref="playlistTabsWrapper", v-if="activeTab")
-          div.playlist__play-button-wrapper(v-if="!played")
-            v-btn(color="primary", large, @click="play")
-              v-icon(large) play_arrow
-          v-fade-transition(mode="out-in")
-            view-tab-widgets(:tab="activeTab", :key="activeTab._id")
+              />
+            </v-toolbar-items>
+          </v-fade-transition>
+        </portal>
+        <div
+          class="position-relative playlist__tabs-wrapper"
+          ref="playlistTabsWrapper"
+          v-if="activeTab"
+        >
+          <div
+            class="playlist__play-button-wrapper"
+            v-if="!played"
+          >
+            <v-btn
+              color="primary"
+              large="large"
+              @click="play"
+            >
+              <v-icon large="large">
+                play_arrow
+              </v-icon>
+            </v-btn>
+          </div>
+          <v-fade-transition mode="out-in">
+            <view-tab-widgets
+              :tab="activeTab"
+              :key="activeTab._id"
+            />
+          </v-fade-transition>
+        </div>
+      </div>
+    </v-fade-transition>
+  </div>
 </template>
 
 <script>

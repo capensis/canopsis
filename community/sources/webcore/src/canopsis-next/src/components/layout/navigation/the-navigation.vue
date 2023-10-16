@@ -1,7 +1,11 @@
-<template lang="pug">
-  div
-    top-bar(@toggleSideBar="toggleSideBar")
-    groups-side-bar(v-if="isShownGroupsSideBar", v-model="isOpen")
+<template>
+  <div>
+    <top-bar @toggleSideBar="toggleSideBar" />
+    <groups-side-bar
+      v-if="isShownGroupsSideBar"
+      v-model="isOpen"
+    />
+  </div>
 </template>
 
 <script>

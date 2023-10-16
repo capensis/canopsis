@@ -1,6 +1,10 @@
-<template lang="pug">
-  div
-    component(v-field="value", v-bind="props")
+<template>
+  <div>
+    <component
+      v-field="value"
+      v-bind="props"
+    />
+  </div>
 </template>
 
 <script>

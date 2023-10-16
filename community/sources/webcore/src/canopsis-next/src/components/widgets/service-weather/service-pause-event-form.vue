@@ -1,12 +1,17 @@
-<template lang="pug">
-  div
-    c-description-field(
-      v-field="form.comment",
-      :label="$tc('common.comment')",
-      name="comment",
-      required
-    )
-    c-pbehavior-reason-field(v-field="form.reason", required, return-object)
+<template>
+  <div>
+    <c-description-field
+      v-field="form.comment"
+      :label="$tc('common.comment')"
+      name="comment"
+      required="required"
+    />
+    <c-pbehavior-reason-field
+      v-field="form.reason"
+      required="required"
+      return-object="return-object"
+    />
+  </div>
 </template>
 
 <script>

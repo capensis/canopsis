@@ -1,15 +1,15 @@
-<template lang="pug">
-  c-number-field(
-    v-field.number="value",
-    :label="label || $t('common.impactLevel')",
-    :placeholder="placeholder",
-    :single-line="singleLine",
-    :disabled="disabled",
-    :name="name",
-    :max="max",
-    :min="min",
+<template>
+  <c-number-field
+    v-field.number="value"
+    :label="label || $t('common.impactLevel')"
+    :placeholder="placeholder"
+    :single-line="singleLine"
+    :disabled="disabled"
+    :name="name"
+    :max="max"
+    :min="min"
     :required="required"
-  )
+  />
 </template>
 
 <script>

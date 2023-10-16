@@ -1,47 +1,68 @@
-<template lang="pug">
-  v-textarea.c-payload-textarea-field(
-    ref="field",
-    v-validate="rules",
-    v-field="value",
-    :label="label",
-    :name="name",
-    :rows="rows",
-    :readonly="readonly",
-    :disabled="disabled",
-    :error-messages="payloadErrors.inline",
-    :row-height="lineHeight",
-    :style="textareaStyle",
-    :error="!!linesErrors.length",
-    auto-grow,
-    @blur="handleBlur",
+<template>
+  <v-textarea
+    class="c-payload-textarea-field"
+    ref="field"
+    v-validate="rules"
+    v-field="value"
+    :label="label"
+    :name="name"
+    :rows="rows"
+    :readonly="readonly"
+    :disabled="disabled"
+    :error-messages="payloadErrors.inline"
+    :row-height="lineHeight"
+    :style="textareaStyle"
+    :error="!!linesErrors.length"
+    auto-grow="auto-grow"
+    @blur="handleBlur"
     @input="debouncedOnSelectionChange"
-  )
-    template(#prepend-inner="")
-      div(:style="{ width: errorsOffsetPixel }")
-    template(#append="")
-      div.c-payload-textarea-field__append
-        variables-menu(
-          v-if="variables",
-          :variables="availableVariables",
-          :visible="variablesShown",
-          :value="variablesMenuValue",
-          :position-x="variablesMenuPosition.x",
-          :position-y="variablesMenuPosition.y",
-          ignore-click-outside,
-          show-value,
+  >
+    <template #prepend-inner="">
+      <div :style="{ width: errorsOffsetPixel }" />
+    </template>
+    <template #append="">
+      <div class="c-payload-textarea-field__append">
+        <variables-menu
+          v-if="variables"
+          :variables="availableVariables"
+          :visible="variablesShown"
+          :value="variablesMenuValue"
+          :position-x="variablesMenuPosition.x"
+          :position-y="variablesMenuPosition.y"
+          ignore-click-outside="ignore-click-outside"
+          show-value="show-value"
           @input="pasteVariable"
-        )
-        span.c-payload-textarea-field__lines(:style="linesStyle")
-          span.c-payload-textarea-field__line(v-for="(line, index) in lines", :key="index", :style="lineStyle")
-            span.c-payload-textarea-field__fake-line(v-if="selectedVariable && index === selectedVariable.index")
-              | {{ line.text.slice(0, selectedVariable.start) }}
-              span.c-payload-textarea-field__highlight(ref="variable")
-                | {{ line.text.slice(selectedVariable.start, selectedVariable.end) }}
-            v-tooltip(v-if="line.error", top)
-              template(#activator="{ on }")
-                v-icon.c-payload-textarea-field__warning-icon(v-on="on", :size="lineHeight", color="error") warning
-              span {{ line.error.message }}
-            | {{ line.text }}
+        /><span
+          class="c-payload-textarea-field__lines"
+          :style="linesStyle"
+        ><span
+          class="c-payload-textarea-field__line"
+          v-for="(line, index) in lines"
+          :key="index"
+          :style="lineStyle"
+        ><span
+           class="c-payload-textarea-field__fake-line"
+           v-if="selectedVariable && index === selectedVariable.index"
+         >{{ line.text.slice(0, selectedVariable.start) }}<span
+           class="c-payload-textarea-field__highlight"
+           ref="variable"
+         >{{ line.text.slice(selectedVariable.start, selectedVariable.end) }}</span></span>
+          <v-tooltip
+            v-if="line.error"
+            top="top"
+          >
+            <template #activator="{ on }">
+              <v-icon
+                class="c-payload-textarea-field__warning-icon"
+                v-on="on"
+                :size="lineHeight"
+                color="error"
+              >warning</v-icon>
+            </template><span>{{ line.error.message }}</span>
+          </v-tooltip>{{ line.text }}</span></span>
+      </div>
+    </template>
+  </v-textarea>
 </template>
 
 <script>

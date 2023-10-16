@@ -1,29 +1,33 @@
-<template lang="pug">
-  v-data-table(
-    :items="groups",
-    :headers="headers",
-    item-key="name",
-    expand,
-    hide-actions
-  )
-    template(#items="props")
-      permission-group-row(
-        :expanded="props.expanded",
-        :group="props.item",
-        :roles="roles",
-        :changed-roles="changedRoles",
-        :disabled="disabled",
-        @change="$listeners.change",
-        @expand="props.expanded = !props.expanded"
-      )
-    template(#expand="{ item }")
-      permissions-table.expand-permissions-table(
-        :permissions="item.permissions",
-        :roles="roles",
-        :changed-roles="changedRoles",
-        :disabled="disabled",
+<template>
+  <v-data-table
+    :items="groups"
+    :headers="headers"
+    item-key="name"
+    show-expand
+    hide-default-footer
+  >
+    <template #items="props">
+      <permission-group-row
+        :expanded="props.expanded"
+        :group="props.item"
+        :roles="roles"
+        :changed-roles="changedRoles"
+        :disabled="disabled"
         @change="$listeners.change"
-      )
+        @expand="props.expanded = !props.expanded"
+      />
+    </template>
+    <template #expand="{ item }">
+      <permissions-table
+        class="expand-permissions-table"
+        :permissions="item.permissions"
+        :roles="roles"
+        :changed-roles="changedRoles"
+        :disabled="disabled"
+        @change="$listeners.change"
+      />
+    </template>
+  </v-data-table>
 </template>
 
 <script>

@@ -1,52 +1,53 @@
-<template lang="pug">
-  widget-settings-group(:title="$t(`settings.titles.${$constants.SIDE_BARS.alarmSettings}`)")
-    field-default-sort-column(
-      v-model="form.sort",
-      :columns="sortablePreparedWidgetColumns",
+<template>
+  <widget-settings-group :title="$t(`settings.titles.${$constants.SIDE_BARS.alarmSettings}`)">
+    <field-default-sort-column
+      v-model="form.sort"
+      :columns="sortablePreparedWidgetColumns"
       :columns-label="$t('settings.columnName')"
-    )
-    v-divider
-    field-columns(
-      v-field="form.widgetColumns",
-      :template="form.widgetColumnsTemplate",
-      :templates="alarmColumnsWidgetTemplates",
-      :templates-pending="templatesPending",
-      :label="$t('settings.columnNames')",
-      :type="$constants.ENTITIES_TYPES.alarm",
-      with-html,
-      with-template,
-      with-color-indicator,
+    />
+    <v-divider />
+    <field-columns
+      v-field="form.widgetColumns"
+      :template="form.widgetColumnsTemplate"
+      :templates="alarmColumnsWidgetTemplates"
+      :templates-pending="templatesPending"
+      :label="$t('settings.columnNames')"
+      :type="$constants.ENTITIES_TYPES.alarm"
+      with-html="with-html"
+      with-template="with-template"
+      with-color-indicator="with-color-indicator"
       @update:template="updateColumnsTemplate"
-    )
-    v-divider
-    field-default-elements-per-page(v-field="form.itemsPerPage")
-    v-divider
-    field-info-popup(
-      v-field="form.infoPopups",
+    />
+    <v-divider />
+    <field-default-elements-per-page v-field="form.itemsPerPage" />
+    <v-divider />
+    <field-info-popup
+      v-field="form.infoPopups"
       :columns="form.widgetColumns"
-    )
-    v-divider
-    field-text-editor-with-template(
-      :value="form.moreInfoTemplate",
-      :template="form.moreInfoTemplateTemplate",
-      :title="$t('settings.moreInfosModal')",
-      :variables="alarmVariables",
-      :templates="alarmMoreInfosWidgetTemplates",
+    />
+    <v-divider />
+    <field-text-editor-with-template
+      :value="form.moreInfoTemplate"
+      :template="form.moreInfoTemplateTemplate"
+      :title="$t('settings.moreInfosModal')"
+      :variables="alarmVariables"
+      :templates="alarmMoreInfosWidgetTemplates"
       @input="updateMoreInfo"
-    )
-    v-divider
-    field-text-editor-with-template(
-      :value="form.exportPdfTemplate",
-      :template="form.exportPdfTemplateTemplate",
-      :title="$t('settings.exportPdfTemplate')",
-      :variables="exportPdfAlarmVariables",
-      :default-value="defaultExportPdfTemplateValue",
-      :dialog-props="{ maxWidth: 1070 }",
-      :templates="alarmExportToPdfTemplates",
-      addable,
-      removable,
+    />
+    <v-divider />
+    <field-text-editor-with-template
+      :value="form.exportPdfTemplate"
+      :template="form.exportPdfTemplateTemplate"
+      :title="$t('settings.exportPdfTemplate')"
+      :variables="exportPdfAlarmVariables"
+      :default-value="defaultExportPdfTemplateValue"
+      :dialog-props="{ maxWidth: 1070 }"
+      :templates="alarmExportToPdfTemplates"
+      addable="addable"
+      removable="removable"
       @input="updateExportPdf"
-    )
+    />
+  </widget-settings-group>
 </template>
 
 <script>

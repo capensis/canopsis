@@ -1,15 +1,28 @@
-<template lang="pug">
-  widget-settings-item(:title="$t('settings.chart.preset')")
-    v-select(
-      v-model="preset",
-      :items="presetsWithCustom",
+<template>
+  <widget-settings-item :title="$t('settings.chart.preset')">
+    <v-select
+      v-model="preset"
+      :items="presetsWithCustom"
       :label="$t('settings.chart.preset')"
-    )
-      template(#item="{ item, tile, parent }")
-        v-list-tile(v-bind="tile.props", v-on="tile.on")
-          v-list-tile-content {{ item.text }}
-          v-list-tile-action(v-if="item.helpText")
-            c-help-icon(:text="item.helpText", icon="help", size="20", left)
+    >
+      <template #item="{ item, tile, parent }">
+        <v-list-item
+          v-bind="tile.props"
+          v-on="tile.on"
+        >
+          <v-list-item-content>{{ item.text }}</v-list-item-content>
+          <v-list-item-action v-if="item.helpText">
+            <c-help-icon
+              :text="item.helpText"
+              icon="help"
+              size="20"
+              left="left"
+            />
+          </v-list-item-action>
+        </v-list-item>
+      </template>
+    </v-select>
+  </widget-settings-item>
 </template>
 
 <script>

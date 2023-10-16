@@ -1,15 +1,17 @@
-<template lang="pug">
-  ds-calendar-app(
-    :calendar="calendar",
-    :pending="pending",
-    read-only,
-    fluid,
-    fill-height,
-    current-time-for-today,
+<template>
+  <ds-calendar-app
+    :calendar="calendar"
+    :pending="pending"
+    read-only="read-only"
+    fluid="fluid"
+    fill-height="fill-height"
+    current-time-for-today="current-time-for-today"
     @change="fetchEvents"
-  )
-    template(#calendarAppLoader="")
-      c-progress-overlay(:pending="pending")
+  >
+    <template #calendarAppLoader="">
+      <c-progress-overlay :pending="pending" />
+    </template>
+  </ds-calendar-app>
 </template>
 
 <script>

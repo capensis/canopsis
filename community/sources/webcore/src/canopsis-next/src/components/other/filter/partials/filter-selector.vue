@@ -1,68 +1,105 @@
-<template lang="pug">
-  v-select.filter-selector(
-    v-field="value",
-    :items="preparedFilters",
-    :label="label",
-    :disabled="disabled",
-    :always-dirty="!!lockedItems.length",
-    :item-text="itemText",
-    :item-value="itemValue",
-    :item-disabled="isFilterItemDisabled",
-    :multiple="isMultiple",
+<template>
+  <v-select
+    class="filter-selector"
+    v-field="value"
+    :items="preparedFilters"
+    :label="label"
+    :disabled="disabled"
+    :always-dirty="!!lockedItems.length"
+    :item-text="itemText"
+    :item-value="itemValue"
+    :item-disabled="isFilterItemDisabled"
+    :multiple="isMultiple"
     :hide-details="hideDetails"
-  )
-    template(v-if="!hideMultiply", #prepend-item="")
-      c-enabled-field.mx-3(
-        v-model="isMultiple",
-        :label="$t('filter.selector.fields.mixFilters')",
-        hide-details
-      )
-      v-divider.mt-3
-
-    template(#selections="{ items }")
-      v-tooltip(
-        v-for="lockedItem in lockedItems",
-        :key="getItemValue(lockedItem)",
-        top
-      )
-        template(#activator="{ on }")
-          v-chip(v-on="on", small)
-            span {{ getItemText(lockedItem) }}
-            v-icon.ml-2(small) lock
-        span {{ $t('settings.lockedFilter') }}
-      v-chip(
-        v-for="(item, index) in items",
-        :key="getItemValue(item)",
-        :close="isChipRemovable",
-        small,
+  >
+    <template
+      v-if="!hideMultiply"
+      #prepend-item=""
+    >
+      <c-enabled-field
+        class="mx-3"
+        v-model="isMultiple"
+        :label="$t('filter.selector.fields.mixFilters')"
+        hide-details="hide-details"
+      />
+      <v-divider class="mt-3" />
+    </template>
+    <template #selections="{ items }">
+      <v-tooltip
+        v-for="lockedItem in lockedItems"
+        :key="getItemValue(lockedItem)"
+        top="top"
+      >
+        <template #activator="{ on }">
+          <v-chip
+            v-on="on"
+            small="small"
+          >
+            <span>{{ getItemText(lockedItem) }}</span>
+            <v-icon
+              class="ml-2"
+              small="small"
+            >
+              lock
+            </v-icon>
+          </v-chip>
+        </template><span>{{ $t('settings.lockedFilter') }}</span>
+      </v-tooltip>
+      <v-chip
+        v-for="(item, index) in items"
+        :key="getItemValue(item)"
+        :close="isChipRemovable"
+        small="small"
         @input="removeFilter(index)"
-      ) {{ getItemText(item) }}
-
-    template(#item="{ parent, item, tile }")
-      v-list-tile(v-bind="tile.props", v-on="tile.on")
-        v-list-tile-action(v-if="isMultiple")
-          v-checkbox(
-            :input-value="item.active || tile.props.value",
-            :color="parent.color",
+      >
+        {{ getItemText(item) }}
+      </v-chip>
+    </template>
+    <template #item="{ parent, item, tile }">
+      <v-list-item
+        v-bind="tile.props"
+        v-on="tile.on"
+      >
+        <v-list-item-action v-if="isMultiple">
+          <v-checkbox
+            :input-value="item.active || tile.props.value"
+            :color="parent.color"
             :disabled="tile.props.disabled"
-          )
-        v-list-tile-content
-          v-list-tile-title.v-list-badge__tile__title
-            span {{ item.title }}
-            v-badge(
-              :value="isOldPattern(item)",
-              color="error",
-              overlap
-            )
-              template(#badge="")
-                v-tooltip(top)
-                  template(#activator="{ on: badgeTooltipOn }")
-                    v-icon(v-on="badgeTooltipOn", color="white") priority_high
-                  span {{ $t('pattern.oldPatternTooltip') }}
-              v-icon.ml-2(
-                :color="tile.props.value ? parent.color : ''",
-                small
-              ) {{ getItemIcon(item) }}
+          />
+        </v-list-item-action>
+        <v-list-item-content>
+          <v-list-item-title class="v-list-badge__tile__title">
+            <span>{{ item.title }}</span>
+            <v-badge
+              :value="isOldPattern(item)"
+              color="error"
+              overlap="overlap"
+            >
+              <template #badge="">
+                <v-tooltip top="top">
+                  <template #activator="{ on: badgeTooltipOn }">
+                    <v-icon
+                      v-on="badgeTooltipOn"
+                      color="white"
+                    >
+                      priority_high
+                    </v-icon>
+                  </template><span>{{ $t('pattern.oldPatternTooltip') }}</span>
+                </v-tooltip>
+              </template>
+              <v-icon
+                class="ml-2"
+                :color="tile.props.value ? parent.color : ''"
+                small="small"
+              >
+                {{ getItemIcon(item) }}
+              </v-icon>
+            </v-badge>
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    </template>
+  </v-select>
 </template>
 
 <script>

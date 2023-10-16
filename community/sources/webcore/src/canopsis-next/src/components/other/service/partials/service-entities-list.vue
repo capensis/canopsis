@@ -1,33 +1,49 @@
-<template lang="pug">
-  div
-    v-layout.d-inline-flex(v-if="serviceEntities.length", align-center, row)
-      v-checkbox-functional.ml-3.pa-0(v-model="isAllSelected", :disabled="!entitiesWithActions.length")
-      service-entity-actions(
-        v-if="selectedEntities.length",
-        :actions="actions",
-        :entity="service",
+<template>
+  <div>
+    <v-layout
+      class="d-inline-flex"
+      v-if="serviceEntities.length"
+      align-center="align-center"
+    >
+      <v-checkbox-functional
+        class="ml-3 pa-0"
+        v-model="isAllSelected"
+        :disabled="!entitiesWithActions.length"
+      />
+      <service-entity-actions
+        v-if="selectedEntities.length"
+        :actions="actions"
+        :entity="service"
         @apply="applyActionForSelected"
-      )
-    div.mt-2(v-for="serviceEntity in serviceEntities", :key="serviceEntity.key")
-      service-entity(
-        :service-id="service._id",
-        :entity="serviceEntity",
-        :last-action-unavailable="hasActionError(serviceEntity)",
-        :entity-name-field="entityNameField",
-        :widget-parameters="widgetParameters",
-        :selected="isEntitySelected(serviceEntity)",
-        @update:selected="updateSelected(serviceEntity, $event)",
-        @remove:unavailable="removeEntityFromUnavailable(serviceEntity)",
+      />
+    </v-layout>
+    <div
+      class="mt-2"
+      v-for="serviceEntity in serviceEntities"
+      :key="serviceEntity.key"
+    >
+      <service-entity
+        :service-id="service._id"
+        :entity="serviceEntity"
+        :last-action-unavailable="hasActionError(serviceEntity)"
+        :entity-name-field="entityNameField"
+        :widget-parameters="widgetParameters"
+        :selected="isEntitySelected(serviceEntity)"
+        @update:selected="updateSelected(serviceEntity, $event)"
+        @remove:unavailable="removeEntityFromUnavailable(serviceEntity)"
         @refresh="$listeners.refresh"
-      )
-    c-table-pagination.mt-1(
-      v-if="totalItems > pagination.rowsPerPage",
-      :total-items="totalItems",
-      :rows-per-page="pagination.rowsPerPage",
-      :page="pagination.page",
-      @update:page="updatePage",
+      />
+    </div>
+    <c-table-pagination
+      class="mt-1"
+      v-if="totalItems > pagination.rowsPerPage"
+      :total-items="totalItems"
+      :rows-per-page="pagination.rowsPerPage"
+      :page="pagination.page"
+      @update:page="updatePage"
       @update:rows-per-page="updateRecordsPerPage"
-    )
+    />
+  </div>
 </template>
 
 <script>

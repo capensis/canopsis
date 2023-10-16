@@ -1,12 +1,13 @@
-<template lang="pug">
-  div.permissions-table-wrapper
-    permissions-groups-table(
-      :groups="permissions",
-      :roles="roles",
-      :changed-roles="changedRoles",
-      :disabled="disabled",
+<template>
+  <div class="permissions-table-wrapper">
+    <permissions-groups-table
+      :groups="permissions"
+      :roles="roles"
+      :changed-roles="changedRoles"
+      :disabled="disabled"
       @change="$listeners.change"
-    )
+    />
+  </div>
 </template>
 
 <script>

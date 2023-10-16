@@ -1,34 +1,40 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :headers="headers",
-    :items="patterns",
-    :loading="pending",
-    :total-items="totalItems",
-    :pagination="pagination",
-    select-all,
-    search,
-    advanced-pagination,
+<template>
+  <c-advanced-data-table
+    :headers="headers"
+    :items="patterns"
+    :loading="pending"
+    :total-items="totalItems"
+    :pagination="pagination"
+    select-all="select-all"
+    search="search"
+    advanced-pagination="advanced-pagination"
     @update:pagination="$emit('update:pagination', $event)"
-  )
-    template(#mass-actions="{ selected }")
-      c-action-btn(
-        type="delete",
+  >
+    <template #mass-actions="{ selected }">
+      <c-action-btn
+        type="delete"
         @click="$emit('remove-selected', selected)"
-      )
-    template(#type="{ item }")
-      span {{ $t(`pattern.types.${item.type}`) }}
-    template(#updated="{ item }")
-      span {{ item.updated | date }}
-    template(#actions="{ item }")
-      v-layout(row)
-        c-action-btn(
-          type="edit",
+      />
+    </template>
+    <template #type="{ item }">
+      <span>{{ $t(`pattern.types.${item.type}`) }}</span>
+    </template>
+    <template #updated="{ item }">
+      <span>{{ item.updated | date }}</span>
+    </template>
+    <template #actions="{ item }">
+      <v-layout>
+        <c-action-btn
+          type="edit"
           @click="$emit('edit', item)"
-        )
-        c-action-btn(
-          type="delete",
+        />
+        <c-action-btn
+          type="delete"
           @click="$emit('remove', item._id)"
-        )
+        />
+      </v-layout>
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>

@@ -1,29 +1,63 @@
-<template lang="pug">
-  div.modal-title-buttons(:class="{ 'close': close, 'minimize': minimize }")
-    div.modal-title-button__wrapper(v-if="minimize")
-      v-tooltip(v-if="!$modal.minimized", left)
-        template(#activator="{ on }")
-          v-btn.v-btn--minimize.my-0(
-            v-on="on",
-            icon,
+<template>
+  <div
+    class="modal-title-buttons"
+    :class="{ 'close': close, 'minimize': minimize }"
+  >
+    <div
+      class="modal-title-button__wrapper"
+      v-if="minimize"
+    >
+      <v-tooltip
+        v-if="!$modal.minimized"
+        left="left"
+      >
+        <template #activator="{ on }">
+          <v-btn
+            class="v-btn--minimize my-0"
+            v-on="on"
+            icon="icon"
             @click="$modals.minimize({ id: $modal.id })"
-          )
-            v-icon(color="white", large) minimize
-        span {{ $t('modals.common.titleButtons.minimizeTooltip') }}
-      v-btn.my-0(
-        v-else,
-        icon,
-        small,
+          >
+            <v-icon
+              color="white"
+              large="large"
+            >
+              minimize
+            </v-icon>
+          </v-btn>
+        </template><span>{{ $t('modals.common.titleButtons.minimizeTooltip') }}</span>
+      </v-tooltip>
+      <v-btn
+        class="my-0"
+        v-else
+        icon="icon"
+        small="small"
         @click="$modals.maximize({ id: $modal.id })"
-      )
-        v-icon(color="white") maximize
-    div.modal-title-button__wrapper(v-if="close")
-      v-btn.ma-0(
-        :small="$modal.minimized",
-        icon,
+      >
+        <v-icon color="white">
+          maximize
+        </v-icon>
+      </v-btn>
+    </div>
+    <div
+      class="modal-title-button__wrapper"
+      v-if="close"
+    >
+      <v-btn
+        class="ma-0"
+        :small="$modal.minimized"
+        icon="icon"
         @click="closeHandler"
-      )
-        v-icon(color="white", :large="!$modal.minimized") close
+      >
+        <v-icon
+          color="white"
+          :large="!$modal.minimized"
+        >
+          close
+        </v-icon>
+      </v-btn>
+    </div>
+  </div>
 </template>
 
 <script>
