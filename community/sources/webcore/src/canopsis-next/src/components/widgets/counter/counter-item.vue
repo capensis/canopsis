@@ -23,6 +23,7 @@
 </template>
 
 <script>
+import { omit } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 import VRuntimeTemplate from 'v-runtime-template';
 
@@ -134,6 +135,8 @@ export default {
       widget.parameters = {
         ...widget.parameters,
         ...this.widget.parameters.alarmsList,
+
+        opened: this.widget.parameters.opened,
       };
 
       this.$modals.show({
@@ -142,7 +145,12 @@ export default {
           widget,
           title: this.$t('modals.alarmsList.prefixTitle', { prefix: this.counter.filter?.title }),
           fetchList: params => this.fetchAlarmsListWithoutStore({
-            params: { ...this.query, ...params, filters: [this.counter.filter?._id] },
+            params: {
+              ...this.query,
+              ...omit(params, ['tstart', 'tstop']),
+
+              filters: [this.counter.filter?._id],
+            },
           }),
         },
       });
