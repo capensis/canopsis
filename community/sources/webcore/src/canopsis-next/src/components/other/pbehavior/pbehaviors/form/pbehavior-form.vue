@@ -74,7 +74,6 @@ import RecurrenceRuleForm from '@/components/forms/recurrence-rule/recurrence-ru
 import PbehaviorRecurrenceRuleExceptionsField from '@/components/other/pbehavior/exceptions/fields/pbehavior-recurrence-rule-exceptions-field.vue';
 
 import PbehaviorCommentsField from '../fields/pbehavior-comments-field.vue';
-import PbehaviorFilterField from '../fields/pbehavior-filter-field.vue';
 
 import PbehaviorGeneralForm from './pbehavior-general-form.vue';
 import PbehaviorPatternsForm from './pbehavior-patterns-form.vue';
@@ -84,7 +83,6 @@ export default {
   components: {
     RecurrenceRuleForm,
     PbehaviorRecurrenceRuleExceptionsField,
-    PbehaviorFilterField,
     PbehaviorGeneralForm,
     PbehaviorCommentsField,
     PbehaviorPatternsForm,

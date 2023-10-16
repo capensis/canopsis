@@ -1,6 +1,6 @@
 <template>
   <component
-    is="foreignObject"
+    :is="'foreignObject'"
     pointer-events="none"
     style="overflow: visible;"
   >

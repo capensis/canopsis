@@ -58,7 +58,6 @@ import WidgetSettings from '../partials/widget-settings.vue';
 import WidgetSettingsGroup from '../partials/widget-settings-group.vue';
 import FieldOpenedResolvedFilter from '../alarm/form/fields/opened-resolved-filter.vue';
 
-import StatsCalendarAdvancedForm from './form/stats-calendar-advanced.vue';
 import FieldCriticityLevels from './form/fields/criticity-levels.vue';
 import FieldLevelsColorsSelector from './form/fields/levels-colors-selector.vue';
 
@@ -77,7 +76,6 @@ export default {
     FieldCriticityLevels,
     FieldLevelsColorsSelector,
     AlarmsListModalForm,
-    StatsCalendarAdvancedForm,
   },
   mixins: [
     widgetSettingsMixin,

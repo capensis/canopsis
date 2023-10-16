@@ -4,7 +4,7 @@
     :items="alarmExecutions"
     hide-default-footer
   >
-    <template #items="{ item, index }">
+    <template #items="{ item }">
       <td class="text-left pre-wrap">
         {{ item.alarm.v.connector_name }}
       </td>
@@ -39,12 +39,10 @@ import {
   isDeclareTicketExecutionSucceeded,
 } from '@/helpers/entities/declare-ticket/rule/form';
 
-import ProgressCell from '@/components/common/table/progress-cell.vue';
-
 import DeclareTicketRuleExecutionStatus from './declare-ticket-rule-execution-status.vue';
 
 export default {
-  components: { DeclareTicketRuleExecutionStatus, ProgressCell },
+  components: { DeclareTicketRuleExecutionStatus },
   props: {
     alarmExecutions: {
       type: Array,

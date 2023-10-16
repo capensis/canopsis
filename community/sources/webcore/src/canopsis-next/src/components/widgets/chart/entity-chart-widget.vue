@@ -24,6 +24,7 @@
       <component
         v-if="hasMetrics"
         v-bind="component"
+        :is="component.is"
         @export:png="exportMetricsAsPng"
         @export:csv="exportMetricsAsCsv"
       />

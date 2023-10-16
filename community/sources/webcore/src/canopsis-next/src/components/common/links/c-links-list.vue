@@ -1,10 +1,10 @@
 <template>
   <div class="mt-1">
     <div
-      v-for="(categoryLinks, category) in preparedLinks"
-      :key="category"
+      v-for="(categoryLinks, categoryName) in preparedLinks"
+      :key="categoryName"
     >
-      <span class="category mr-2">{{ category }}</span>
+      <span class="category mr-2">{{ categoryName }}</span>
       <v-divider light="light" />
       <div
         v-for="(link, index) in categoryLinks"

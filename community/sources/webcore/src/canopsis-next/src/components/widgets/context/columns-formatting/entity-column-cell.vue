@@ -1,5 +1,8 @@
 <template>
-  <div v-bind="component.bind" />
+  <div
+    v-bind="component.bind"
+    :is="component.bind.is"
+  />
 </template>
 
 <script>

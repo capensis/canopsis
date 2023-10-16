@@ -3,6 +3,7 @@
     <component
       v-field="value"
       v-bind="props"
+      :is="props.is"
     />
   </div>
 </template>

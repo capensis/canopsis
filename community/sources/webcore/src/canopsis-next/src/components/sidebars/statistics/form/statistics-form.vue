@@ -7,7 +7,7 @@
       :type="type"
     />
     <field-statistics-columns
-      v-model="form.parameters.widgetColumns"
+      v-field="form.parameters.widgetColumns"
       :type="type"
     />
     <widget-settings-group :title="$t('settings.advancedSettings')">

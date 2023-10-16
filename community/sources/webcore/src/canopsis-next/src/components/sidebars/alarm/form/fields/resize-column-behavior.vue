@@ -6,11 +6,11 @@
     <v-container>
       <v-layout column="column">
         <c-enabled-field
-          v-model="value.draggable"
+          v-field="value.draggable"
           :label="$t('settings.columnsSettings.dragging')"
         />
         <c-enabled-field
-          v-model="value.resizable"
+          v-field="value.resizable"
           :label="$t('settings.columnsSettings.resizing')"
         />
         <v-radio-group
