@@ -2,123 +2,13 @@ Feature: instruction approval update
   I need to be able to update an instruction with approval
 
   @concurrent
-  Scenario: Only the user from approval should be able to dismiss
+  Scenario: PUT a valid instruction with approval with username request should return ok and valid approval response for auto instructions
     When I am manager
     When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-1:
     """json
     {
       "name": "test-instruction-to-update-with-approval-second-1-name",
       "description": "test-instruction-to-update-with-approval-second-1-description",
-      "enabled": true,
-      "timeout_after_execution": {
-        "value": 10,
-        "unit": "m"
-      },
-      "steps": [
-        {
-          "name": "test-instruction-to-update-with-approval-second-1-step-1-name",
-          "operations": [
-            {
-              "name": "test-instruction-to-update-with-approval-second-1-step-1-operation-1-name",
-              "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-update-with-approval-second-1-step-1-operation-1-description",
-              "jobs": [
-                "test-job-to-instruction-edit-1"
-              ]
-            }
-          ],
-          "stop_on_fail": true,
-          "endpoint": "new endpoint 3"
-        }
-      ],
-      "approval": {
-        "user": "user-to-instruction-approve-2",
-        "comment": "test comment"
-      }
-    }
-    """
-    Then the response code should be 200
-    When I am manager
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-1/approval:
-    """json
-    {
-      "approve": false
-    }
-    """
-    Then the response code should be 403
-    Then the response body should be:
-    """json
-    {
-      "error": "user is not assigned to approval"
-    }
-    """
-    When I am role-to-instruction-approve-2
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-1/approval:
-    """json
-    {
-      "approve": false
-    }
-    """
-    Then the response code should be 200
-    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-1/approval
-    Then the response code should be 404
-    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-1
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "_id": "test-instruction-to-update-with-approval-second-1",
-      "type": 0,
-      "status": 0,
-      "name": "test-instruction-to-update-with-approval-second-1-name",
-      "description": "test-instruction-to-update-with-approval-second-1-description",
-      "author": {
-        "_id": "root",
-        "name": "root"
-      },
-      "enabled": true,
-      "steps": [
-        {
-          "name": "test-instruction-to-update-with-approval-second-1-step-1-name",
-          "operations": [
-            {
-              "name": "test-instruction-to-update-with-approval-second-1-step-1-operation-1-name",
-              "time_to_complete": {
-                "value": 1,
-                "unit": "s"
-              },
-              "description": "test-instruction-to-update-with-approval-second-1-step-1-operation-1-description"
-            }
-          ],
-          "stop_on_fail": true,
-          "endpoint": "test-instruction-to-update-with-approval-second-1-step-1-endpoint"
-        }
-      ]
-    }
-    """
-    When I do GET /api/v4/cat/instruction-stats?search=test-instruction-to-update-with-approval-second-1&from=1000000000&to=2000000000
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "data": [
-        {
-          "last_executed_on": 1596712203,
-          "avg_complete_time": 10,
-          "rating": 3.5
-        }
-      ]
-    }
-    """
-
-  @concurrent
-  Scenario: PUT a valid instruction with approval with username request should return ok and valid approval response for auto instructions
-    When I am manager
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-2:
-    """json
-    {
-      "name": "test-instruction-to-update-with-approval-second-2-name",
-      "description": "test-instruction-to-update-with-approval-second-2-description",
       "enabled": true,
       "triggers": [
         {
@@ -146,7 +36,7 @@ Feature: instruction approval update
     }
     """
     Then the response code should be 200
-    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-2/approval
+    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-1/approval
     Then the response code should be 403
     Then the response body should be:
     """json
@@ -155,7 +45,7 @@ Feature: instruction approval update
     }
     """
     When I am role-to-instruction-approve-1
-    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-2/approval
+    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-1/approval
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -166,14 +56,17 @@ Feature: instruction approval update
           "_id": "user-to-instruction-approve-1",
           "name": "user-to-instruction-approve-1"
         },
-        "requested_by": "manageruser"
+        "requested_by": {
+          "_id": "manageruser",
+          "name": "manageruser"
+        }
       },
       "original": {
-        "_id": "test-instruction-to-update-with-approval-second-2",
+        "_id": "test-instruction-to-update-with-approval-second-1",
         "type": 1,
         "status": 0,
-        "name": "test-instruction-to-update-with-approval-second-2-name",
-        "description": "test-instruction-to-update-with-approval-second-2-description",
+        "name": "test-instruction-to-update-with-approval-second-1-name",
+        "description": "test-instruction-to-update-with-approval-second-1-description",
         "author": {
           "_id": "root",
           "name": "root"
@@ -220,8 +113,8 @@ Feature: instruction approval update
       "updated": {
         "type": 1,
         "status": 2,
-        "name": "test-instruction-to-update-with-approval-second-2-name",
-        "description": "test-instruction-to-update-with-approval-second-2-description",
+        "name": "test-instruction-to-update-with-approval-second-1-name",
+        "description": "test-instruction-to-update-with-approval-second-1-description",
         "author": {
           "_id": "manageruser",
           "name": "manageruser"
@@ -289,21 +182,21 @@ Feature: instruction approval update
       }
     }
     """
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-2/approval:
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-1/approval:
     """json
     {
       "approve": true
     }
     """
-    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-2
+    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-1
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "type": 1,
       "status": 0,
-      "name": "test-instruction-to-update-with-approval-second-2-name",
-      "description": "test-instruction-to-update-with-approval-second-2-description",
+      "name": "test-instruction-to-update-with-approval-second-1-name",
+      "description": "test-instruction-to-update-with-approval-second-1-description",
       "author": {
         "_id": "manageruser",
         "name": "manageruser"
@@ -370,7 +263,7 @@ Feature: instruction approval update
       ]
     }
     """
-    When I do GET /api/v4/cat/instruction-stats?search=test-instruction-to-update-with-approval-second-2&from=1000000000&to=2000000000
+    When I do GET /api/v4/cat/instruction-stats?search=test-instruction-to-update-with-approval-second-1&from=1000000000&to=2000000000
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -388,11 +281,11 @@ Feature: instruction approval update
   @concurrent
   Scenario: given update request for a instruction with old patterns should return ok
     When I am manager
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-3:
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-2:
     """json
     {
-      "name": "test-instruction-to-update-with-approval-second-3-name-updated",
-      "description": "test-instruction-to-update-with-approval-second-3-description-updated",
+      "name": "test-instruction-to-update-with-approval-second-2-name-updated",
+      "description": "test-instruction-to-update-with-approval-second-2-description-updated",
       "enabled": true,
       "triggers": [
         {
@@ -416,7 +309,7 @@ Feature: instruction approval update
     """
     Then the response code should be 200
     When I am role-to-instruction-approve-1
-    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-3/approval
+    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-2/approval
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -427,25 +320,28 @@ Feature: instruction approval update
           "_id": "user-to-instruction-approve-1",
           "name": "user-to-instruction-approve-1"
         },
-        "requested_by": "manageruser"
+        "requested_by": {
+          "_id": "manageruser",
+          "name": "manageruser"
+        }
       },
       "original": {
         "old_alarm_patterns": [
           {
-            "_id": "test-instruction-to-update-with-approval-second-3-pattern"
+            "_id": "test-instruction-to-update-with-approval-second-2-pattern"
           }
         ],
         "old_entity_patterns": [
           {
-            "name": "test-instruction-to-update-with-approval-second-3-pattern"
+            "name": "test-instruction-to-update-with-approval-second-2-pattern"
           }
         ]
       },
       "updated": {
         "type": 1,
         "status": 2,
-        "name": "test-instruction-to-update-with-approval-second-3-name-updated",
-        "description": "test-instruction-to-update-with-approval-second-3-description-updated",
+        "name": "test-instruction-to-update-with-approval-second-2-name-updated",
+        "description": "test-instruction-to-update-with-approval-second-2-description-updated",
         "author": {
           "_id": "manageruser",
           "name": "manageruser"
@@ -453,12 +349,12 @@ Feature: instruction approval update
         "enabled": true,
         "old_alarm_patterns": [
           {
-            "_id": "test-instruction-to-update-with-approval-second-3-pattern"
+            "_id": "test-instruction-to-update-with-approval-second-2-pattern"
           }
         ],
         "old_entity_patterns": [
           {
-            "name": "test-instruction-to-update-with-approval-second-3-pattern"
+            "name": "test-instruction-to-update-with-approval-second-2-pattern"
           }
         ],
         "jobs": [
@@ -492,27 +388,30 @@ Feature: instruction approval update
             "_id": "user-to-instruction-approve-1",
             "name": "user-to-instruction-approve-1"
           },
-          "requested_by": "manageruser"
+          "requested_by": {
+            "_id": "manageruser",
+            "name": "manageruser"
+          }
         }
       }
     }
     """
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-3/approval:
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-2/approval:
     """json
     {
       "approve": true
     }
     """
     Then the response code should be 200
-    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-3
+    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-2
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "type": 1,
       "status": 0,
-      "name": "test-instruction-to-update-with-approval-second-3-name-updated",
-      "description": "test-instruction-to-update-with-approval-second-3-description-updated",
+      "name": "test-instruction-to-update-with-approval-second-2-name-updated",
+      "description": "test-instruction-to-update-with-approval-second-2-description-updated",
       "author": {
         "_id": "manageruser",
         "name": "manageruser"
@@ -521,12 +420,12 @@ Feature: instruction approval update
       "enabled": true,
       "old_alarm_patterns": [
         {
-          "_id": "test-instruction-to-update-with-approval-second-3-pattern"
+          "_id": "test-instruction-to-update-with-approval-second-2-pattern"
         }
       ],
       "old_entity_patterns": [
         {
-          "name": "test-instruction-to-update-with-approval-second-3-pattern"
+          "name": "test-instruction-to-update-with-approval-second-2-pattern"
         }
       ],
       "timeout_after_execution": {
@@ -566,11 +465,11 @@ Feature: instruction approval update
     }
     """
     When I am manager
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-3:
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-2:
     """json
     {
-      "name": "test-instruction-to-update-with-approval-second-3-name-updated",
-      "description": "test-instruction-to-update-with-approval-second-3-description-updated",
+      "name": "test-instruction-to-update-with-approval-second-2-name-updated",
+      "description": "test-instruction-to-update-with-approval-second-2-description-updated",
       "enabled": true,
       "triggers": [
         {
@@ -583,7 +482,7 @@ Feature: instruction approval update
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-instruction-to-update-with-approval-second-3-pattern-updated"
+              "value": "test-instruction-to-update-with-approval-second-2-pattern-updated"
             }
           }
         ]
@@ -605,22 +504,22 @@ Feature: instruction approval update
     """
     Then the response code should be 200
     When I am role-to-instruction-approve-1
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-3/approval:
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-2/approval:
     """json
     {
       "approve": true
     }
     """
     Then the response code should be 200
-    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-3
+    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-2
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "type": 1,
       "status": 0,
-      "name": "test-instruction-to-update-with-approval-second-3-name-updated",
-      "description": "test-instruction-to-update-with-approval-second-3-description-updated",
+      "name": "test-instruction-to-update-with-approval-second-2-name-updated",
+      "description": "test-instruction-to-update-with-approval-second-2-description-updated",
       "author": {
         "_id": "manageruser",
         "name": "manageruser"
@@ -629,7 +528,7 @@ Feature: instruction approval update
       "enabled": true,
       "old_alarm_patterns": [
         {
-          "_id": "test-instruction-to-update-with-approval-second-3-pattern"
+          "_id": "test-instruction-to-update-with-approval-second-2-pattern"
         }
       ],
       "old_entity_patterns": null,
@@ -639,7 +538,7 @@ Feature: instruction approval update
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-instruction-to-update-with-approval-second-3-pattern-updated"
+              "value": "test-instruction-to-update-with-approval-second-2-pattern-updated"
             }
           }
         ]
@@ -681,11 +580,11 @@ Feature: instruction approval update
     }
     """
     When I am manager
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-3:
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-2:
     """json
     {
-      "name": "test-instruction-to-update-with-approval-second-3-name-updated",
-      "description": "test-instruction-to-update-with-approval-second-3-description-updated",
+      "name": "test-instruction-to-update-with-approval-second-2-name-updated",
+      "description": "test-instruction-to-update-with-approval-second-2-description-updated",
       "enabled": true,
       "triggers": [
         {
@@ -698,7 +597,7 @@ Feature: instruction approval update
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-instruction-to-update-with-approval-second-3-pattern-updated"
+              "value": "test-instruction-to-update-with-approval-second-2-pattern-updated"
             }
           }
         ]
@@ -709,7 +608,7 @@ Feature: instruction approval update
             "field": "v.component",
             "cond": {
               "type": "eq",
-              "value": "test-instruction-to-update-with-approval-second-3-pattern-updated"
+              "value": "test-instruction-to-update-with-approval-second-2-pattern-updated"
             }
           }
         ]
@@ -731,22 +630,22 @@ Feature: instruction approval update
     """
     Then the response code should be 200
     When I am role-to-instruction-approve-1
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-3/approval:
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-2/approval:
     """json
     {
       "approve": true
     }
     """
     Then the response code should be 200
-    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-3
+    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-2
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "type": 1,
       "status": 0,
-      "name": "test-instruction-to-update-with-approval-second-3-name-updated",
-      "description": "test-instruction-to-update-with-approval-second-3-description-updated",
+      "name": "test-instruction-to-update-with-approval-second-2-name-updated",
+      "description": "test-instruction-to-update-with-approval-second-2-description-updated",
       "author": {
         "_id": "manageruser",
         "name": "manageruser"
@@ -761,7 +660,7 @@ Feature: instruction approval update
             "field": "v.component",
             "cond": {
               "type": "eq",
-              "value": "test-instruction-to-update-with-approval-second-3-pattern-updated"
+              "value": "test-instruction-to-update-with-approval-second-2-pattern-updated"
             }
           }
         ]
@@ -772,7 +671,7 @@ Feature: instruction approval update
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-instruction-to-update-with-approval-second-3-pattern-updated"
+              "value": "test-instruction-to-update-with-approval-second-2-pattern-updated"
             }
           }
         ]
