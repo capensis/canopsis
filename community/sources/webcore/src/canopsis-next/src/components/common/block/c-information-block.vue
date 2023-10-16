@@ -1,7 +1,7 @@
 <template>
   <v-layout
     class="c-information-block"
-    column="column"
+    column
   >
     <v-layout
       v-if="title || helpText"
@@ -16,7 +16,7 @@
         :color="helpIconColor"
         icon-class="ml-2"
         max-width="300"
-        top="top"
+        top
       />
     </v-layout>
     <v-layout

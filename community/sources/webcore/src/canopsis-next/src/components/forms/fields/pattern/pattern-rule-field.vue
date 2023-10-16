@@ -14,7 +14,7 @@
             :items="attributes"
             :name="name"
             :disabled="disabled"
-            required="required"
+            required
           />
         </v-flex>
         <v-flex
@@ -28,7 +28,7 @@
             :name="name"
             :disabled="disabled"
             :combobox="isInfosRule"
-            row="row"
+            row
           />
         </v-flex>
         <v-flex
@@ -103,7 +103,7 @@
               :operators="operators"
               :disabled="disabled"
               :name="operatorFieldName"
-              required="required"
+              required
             />
           </v-flex>
           <v-flex

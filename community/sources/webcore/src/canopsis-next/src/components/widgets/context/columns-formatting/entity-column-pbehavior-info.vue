@@ -1,7 +1,7 @@
 <template>
   <v-tooltip
     v-if="pbehaviorInfo && icon"
-    top="top"
+    top
   >
     <template #activator="{ on }">
       <v-icon
@@ -10,7 +10,8 @@
       >
         {{ icon }}
       </v-icon>
-    </template><span>{{ pbehaviorInfo.name }}</span>
+    </template>
+    <span>{{ pbehaviorInfo.name }}</span>
   </v-tooltip>
 </template>
 

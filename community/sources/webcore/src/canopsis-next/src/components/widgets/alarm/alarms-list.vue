@@ -3,9 +3,9 @@
     <v-layout
       v-if="!hideToolbar"
       :class="{ 'mb-4': !dense }"
-      wrap="wrap"
-      justify-space-between="justify-space-between"
-      align-end="align-end"
+      wrap
+      justify-space-between
+      align-end
     >
       <v-flex>
         <c-advanced-search-field
@@ -13,7 +13,7 @@
           :columns="widget.parameters.widgetColumns"
           :tooltip="$t('alarm.advancedSearch')"
           :items="searches"
-          combobox="combobox"
+          combobox
           @submit="updateSearchesInUserPreferences"
           @toggle-pin="togglePinSearchInUserPreferences"
           @remove="removeSearchFromUserPreferences"
@@ -23,7 +23,7 @@
         <c-entity-category-field
           class="mr-3 mt-0"
           :category="query.category"
-          hide-details="hide-details"
+          hide-details
           @input="updateCategory"
         />
       </v-flex>
@@ -33,14 +33,14 @@
           :value="query.correlation"
           :label="$t('common.correlation')"
           color="primary"
-          hide-details="hide-details"
+          hide-details
           @change="updateCorrelation"
         />
       </v-flex>
       <v-flex>
         <v-layout
           v-if="hasAccessToUserFilter"
-          align-end="align-end"
+          align-end
         >
           <filter-selector
             :label="$t('settings.selectAFilter')"
@@ -50,7 +50,7 @@
             :value="mainFilter"
             :disabled="!hasAccessToListFilters"
             :clearable="!widget.parameters.clearFilterDisabled"
-            hide-details="hide-details"
+            hide-details
             @input="updateSelectedFilter"
           />
           <filters-list-btn
@@ -58,10 +58,10 @@
             :widget-id="widget._id"
             :addable="hasAccessToAddFilter"
             :editable="hasAccessToEditFilter"
-            private="private"
-            with-alarm="with-alarm"
-            with-entity="with-entity"
-            with-pbehavior="with-pbehavior"
+            private
+            with-alarm
+            with-entity
+            with-pbehavior
           />
         </v-layout>
       </v-flex>
@@ -71,7 +71,7 @@
           :value="query.only_bookmarks"
           :label="$t('alarm.filterByBookmark')"
           color="primary"
-          hide-details="hide-details"
+          hide-details
           @change="updateOnlyBookmarks"
         />
       </v-flex>
@@ -88,8 +88,8 @@
         <v-chip
           class="primary white--text"
           v-if="activeRange"
-          close="close"
-          label="label"
+          close
+          label
           @input="removeHistoryFilter"
         >
           {{ $t(`quickRanges.types.${activeRange.value}`) }}
@@ -132,8 +132,8 @@
       :draggable-column="draggableColumn"
       :cells-content-behavior="cellsContentBehavior"
       :columns-settings="columnsSettings"
-      expandable="expandable"
-      densable="densable"
+      expandable
+      densable
       @select:tag="selectTag"
       @update:dense="updateDense"
       @update:page="updateQueryPage"

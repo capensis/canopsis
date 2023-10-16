@@ -2,13 +2,13 @@
   <span class="c-horizontal-time-line-card">
     <v-tooltip
       :disabled="!step.m"
-      top="top"
+      top
     >
       <template #activator="{ on }">
         <v-layout
           v-on="on"
-          align-center="align-center"
-          column="column"
+          align-center
+          column
         >
           <c-alarm-chip
             v-if="isStepTypeState"
@@ -17,7 +17,10 @@
           <v-icon
             v-else
             :style="{ color: style.icon }"
-          >{{ style.icon }}</v-icon><span class="c-horizontal-time-line-card__time">{{ step.t | date('time') }}</span>
+          >
+            {{ style.icon }}
+          </v-icon>
+          <span class="c-horizontal-time-line-card__time">{{ step.t | date('time') }}</span>
         </v-layout>
       </template>
       <div class="pre-line">

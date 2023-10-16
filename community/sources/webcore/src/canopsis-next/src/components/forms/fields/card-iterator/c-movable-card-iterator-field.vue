@@ -20,7 +20,7 @@
       </template>
     </movable-card-iterator-item>
     <slot name="append" />
-    <v-layout wrap="wrap">
+    <v-layout wrap>
       <v-btn
         class="mr-2 mx-0"
         v-if="addable"

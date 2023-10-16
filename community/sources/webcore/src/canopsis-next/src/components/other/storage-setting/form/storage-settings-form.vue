@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <storage-settings-alarm-form
       v-field="form.alarm"
       :history="history.alarm"

@@ -1,13 +1,13 @@
 <template>
   <div>
     <c-page-header />
-    <v-layout wrap="wrap">
-      <v-flex xs12="xs12">
+    <v-layout wrap>
+      <v-flex xs12>
         <v-card class="ma-4 mt-0">
           <v-tabs
             v-model="activeTab"
             slider-color="primary"
-            fixed-tabs="fixed-tabs"
+            fixed-tabs
           >
             <template v-if="hasReadAnyRemediationInstructionAccess">
               <v-tab :href="`#${$constants.REMEDIATION_TABS.instructions}`">

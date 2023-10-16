@@ -3,25 +3,25 @@
     class="secondary lighten-2 py-3"
   >
     <v-flex
-      xs12="xs12"
+      xs12
       sm8="sm8"
       offset-sm2="offset-sm2"
     >
       <v-card>
         <v-card-text>
           <v-layout
-            wrap="wrap"
-            justify-center="justify-center"
-            align-center="align-center"
+            wrap
+            justify-center
+            align-center
           >
-            <v-flex xs12="xs12">
+            <v-flex xs12>
               <scenario-info-item
                 :label="$t('common.author')"
                 :value="scenario.author.display_name"
                 icon="person"
               />
             </v-flex>
-            <v-flex xs12="xs12">
+            <v-flex xs12>
               <scenario-info-item
                 :label="$tc('common.trigger', 2)"
                 :value="preparedTriggers"
@@ -30,7 +30,7 @@
             </v-flex>
             <v-flex
               v-if="hasDisableDuringPeriods"
-              xs12="xs12"
+              xs12
             >
               <scenario-info-item
                 :label="$t('common.disableDuringPeriods')"
@@ -42,7 +42,7 @@
               class="mt-2"
               v-for="(action, index) in scenario.actions"
               :key="index"
-              xs12="xs12"
+              xs12
             >
               <scenario-action-card
                 :action="action"

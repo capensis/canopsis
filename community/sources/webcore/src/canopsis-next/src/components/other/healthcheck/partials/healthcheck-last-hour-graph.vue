@@ -8,14 +8,14 @@
     <template #actions="{ chart }">
       <v-layout
         class="mt-4"
-        justify-end="justify-end"
+        justify-end
       >
         <v-btn
           class="ma-0"
           color="primary"
           @click="exportChart(chart)"
         >
-          <v-icon left="left">
+          <v-icon left>
             file_download
           </v-icon><span>{{ $t('common.downloadAsPng') }}</span>
         </v-btn>

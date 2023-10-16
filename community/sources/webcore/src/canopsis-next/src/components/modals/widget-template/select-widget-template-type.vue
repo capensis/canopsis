@@ -1,20 +1,20 @@
 <template>
-  <modal-wrapper close="close">
+  <modal-wrapper close>
     <template #title="">
       <span>{{ $t('modals.selectWidgetTemplateType.title') }}</span>
     </template>
     <template #text="">
-      <v-layout column="column">
+      <v-layout column>
         <v-card
           class="my-1 cursor-pointer"
           v-for="{ value, text, icon } in availableTypes"
           :key="value"
           @click="selectType(value)"
         >
-          <v-card-title primary-title="primary-title">
+          <v-card-title primary-title>
             <v-layout
-              wrap="wrap"
-              justify-between="justify-between"
+              wrap
+              justify-between
             >
               <v-flex xs11="xs11">
                 <div class="subheading">

@@ -1,21 +1,22 @@
 <template>
-  <modal-wrapper close="close">
+  <modal-wrapper close>
     <template #title="">
       <span>{{ $t('modals.variablesHelp.variables') }}</span>
     </template>
     <template #text="">
       <v-layout
         v-if="config.exportEntity"
-        justify-end="justify-end"
+        justify-end
       >
         <v-btn
           color="primary"
-          small="small"
+          small
           @click="exportOriginal"
         >
-          <v-icon left="left">
+          <v-icon left>
             file_download
-          </v-icon><span>{{ $t('common.exportToJson') }}</span>
+          </v-icon>
+          <span>{{ $t('common.exportToJson') }}</span>
         </v-btn>
       </v-layout>
       <v-treeview
@@ -32,39 +33,46 @@
         </template>
         <template #label="{ item, leaf }">
           <div>
-            {{ item.name }}<span
+            {{ item.name }}
+            <span
               class="pl-1"
               v-if="leaf"
             >:
               <c-ellipsis
                 class="pl-1 d-inline-block text--secondary text-body-1 pre-wrap"
                 :text="String(item.value)"
-              /></span><span
+              />
+            </span>
+            <span
               class="pl-1"
               v-else-if="!leaf && !(item.children && item.children.length)"
             >:
-              <div class="pl-1 d-inline-block text--secondary text-body-1 font-italic">{{ $t('common.emptyObject') }}</div></span>
+              <div class="pl-1 d-inline-block text--secondary text-body-1 font-italic">
+                {{ $t('common.emptyObject') }}
+              </div>
+            </span>
           </div>
         </template>
         <template #append="{ leaf, item }">
           <v-menu
-            bottom="bottom"
-            left="left"
-            offset-y="offset-y"
+            bottom
+            left
+            offset-y
           >
             <template #activator="{ on }">
-              <v-tooltip left="left">
+              <v-tooltip left>
                 <template #activator="{ on: tooltipOn }">
                   <v-btn
                     v-on="{ ...tooltipOn, ...on }"
-                    icon="icon"
+                    icon
                   >
                     <v-icon>{{ leaf ? 'content_copy' : 'save_alt' }}</v-icon>
                   </v-btn>
-                </template><span>{{ getTooltipContent(leaf, item) }}</span>
+                </template>
+                <span>{{ getTooltipContent(leaf, item) }}</span>
               </v-tooltip>
             </template>
-            <v-list dense="dense">
+            <v-list dense>
               <v-list-item
                 v-if="leaf"
                 @click="copyPathToClipboard(item.path)"

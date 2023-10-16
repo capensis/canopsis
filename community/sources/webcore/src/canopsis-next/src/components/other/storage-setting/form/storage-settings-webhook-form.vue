@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-information-block
       :title="$t('storageSetting.webhook.title')"
       :help-text="$t('storageSetting.webhook.titleHelp')"
@@ -26,7 +26,7 @@
           <c-help-icon
             :text="$t('storageSetting.webhook.logCredentialsHelpText')"
             color="info"
-            top="top"
+            top
           />
         </template>
       </c-enabled-field>

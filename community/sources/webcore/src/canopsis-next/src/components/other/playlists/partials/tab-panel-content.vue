@@ -1,14 +1,14 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-layout
       class="secondary lighten-2 tab-panel-item"
-      align-center="align-center"
+      align-center
     >
       <slot name="title">
         <span class="white--text">{{ tab.title }}</span>
       </slot>
     </v-layout>
-    <v-divider dark="dark" />
+    <v-divider dark />
   </v-layout>
 </template>
 

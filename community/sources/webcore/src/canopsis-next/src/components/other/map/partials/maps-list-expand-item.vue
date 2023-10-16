@@ -2,20 +2,20 @@
   <v-tabs
     color="secondary lighten-1"
     slider-color="primary"
-    dark="dark"
-    centered="centered"
+    dark
+    centered
   >
     <v-tab>{{ $t(`map.types.${map.type}`) }}</v-tab>
     <v-tab-item>
       <v-layout class="pa-3">
         <v-layout
           v-if="!mapDetails"
-          justify-center="justify-center"
+          justify-center
         >
           <v-progress-circular
             class="pa-4"
             color="white"
-            indeterminate="indeterminate"
+            indeterminate
           />
         </v-layout>
         <component

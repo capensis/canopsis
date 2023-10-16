@@ -1,7 +1,7 @@
 <template>
   <v-layout
     class="panzoom"
-    justify-center="justify-center"
+    justify-center
     @mousewheel="handleScale"
     @mousemove="handleMove"
   >
@@ -10,13 +10,13 @@
     </div>
     <v-layout
       class="panzoom__top-left-actions"
-      column="column"
+      column
     >
       <v-btn
         class="secondary ma-0 mb-1"
         :disabled="scale === maxZoom"
-        icon="icon"
-        dark="dark"
+        icon
+        dark
         @click="handleScaleIn"
       >
         <v-icon>add</v-icon>
@@ -24,8 +24,8 @@
       <v-btn
         class="secondary ma-0"
         :disabled="scale === minZoom"
-        dark="dark"
-        icon="icon"
+        dark
+        icon
         @click="handleScaleOut"
       >
         <v-icon>remove</v-icon>
@@ -34,9 +34,9 @@
     <v-layout
       class="panzoom__bottom-right-actions"
       v-if="helpText"
-      column="column"
+      column
     >
-      <v-tooltip top="top">
+      <v-tooltip top>
         <template #activator="{ on }">
           <v-icon
             class="panzoom__help-icon"

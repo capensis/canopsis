@@ -1,21 +1,21 @@
 <template>
-  <v-card dark="dark">
+  <v-card dark>
     <v-card-title class="primary pa-2 white--text">
       <v-layout
-        justify-space-between="justify-space-between"
-        align-center="align-center"
+        justify-space-between
+        align-center
       >
         <h4>{{ $t('alarm.infoPopup') }}</h4>
         <v-btn
           class="ma-0 ml-3"
           color="white"
-          icon="icon"
-          small="small"
+          icon
+          small
           @click="$emit('close')"
         >
           <v-icon
             color="error"
-            small="small"
+            small
           >
             close
           </v-icon>

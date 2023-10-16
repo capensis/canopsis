@@ -11,7 +11,7 @@
         v-clipboard:error="onErrorCopied"
         :small="small"
         :fab="fab"
-        icon="icon"
+        icon
       >
         <v-icon
           :color="color"

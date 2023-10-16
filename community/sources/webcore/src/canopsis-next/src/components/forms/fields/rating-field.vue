@@ -5,8 +5,8 @@
     :readonly="readonly"
     :hover="hover"
     background-color="primary"
-    medium="medium"
-    half-increments="half-increments"
+    medium
+    half-increments
     @input="$emit('input', $event)"
   />
 </template>

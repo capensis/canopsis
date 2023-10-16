@@ -2,9 +2,9 @@
   <v-btn-toggle
     class="window-size transparent"
     v-field="value"
-    mandatory="mandatory"
-    light="light"
-    dense="dense"
+    mandatory
+    light
+    dense
   >
     <v-btn
       v-for="size in availableSizes"
@@ -13,7 +13,7 @@
       :value="size.value"
       :dark="dark"
       :light="light"
-      icon="icon"
+      icon
     >
       <v-icon :color="color">
         {{ size.icon }}

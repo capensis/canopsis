@@ -1,7 +1,7 @@
 <template>
   <v-layout
     class="date-time-splitted-field"
-    column="column"
+    column
   >
     <v-layout :reverse="reverse">
       <v-flex class="date-time-splitted-field__date">
@@ -13,7 +13,7 @@
           :disabled="disabled"
           :min="min"
           :max="max"
-          hide-details="hide-details"
+          hide-details
           @input="updateDate"
         />
       </v-flex>
@@ -24,7 +24,7 @@
         :label="reverse ? label : ''"
         :error="errors.has(name)"
         :disabled="disabled"
-        hide-details="hide-details"
+        hide-details
         @input="updateTime"
       />
     </v-layout>

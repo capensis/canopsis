@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-layout>
       <v-text-field
         v-field="form.app_title"
@@ -35,7 +35,7 @@
             :text="$t('userInterface.tooltips.maxMatchedItems')"
             color="grey darken-1"
             icon="help"
-            left="left"
+            left
           />
         </template>
       </c-number-field>
@@ -52,7 +52,7 @@
             :text="$t('userInterface.tooltips.checkCountRequestTimeout')"
             color="grey darken-1"
             icon="help"
-            left="left"
+            left
           />
         </template>
       </c-number-field>
@@ -60,7 +60,7 @@
     <v-layout>
       <c-timezone-field
         v-field="form.timezone"
-        disabled="disabled"
+        disabled
       />
     </v-layout>
     <v-layout>
@@ -81,7 +81,7 @@
           v-field="form.footer"
           :label="$t('userInterface.footer')"
           :config="textEditorConfig"
-          public="public"
+          public
         />
       </v-flex>
     </v-layout>
@@ -93,7 +93,7 @@
           v-field="form.login_page_description"
           :label="$t('userInterface.description')"
           :config="textEditorConfig"
-          public="public"
+          public
         />
       </v-flex>
     </v-layout>
@@ -111,7 +111,7 @@
             :disabled="disabled"
             accept="image/*"
             name="logo"
-            with-files-list="with-files-list"
+            with-files-list
             @change="changeLogoFile"
           />
         </v-layout>

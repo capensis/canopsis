@@ -7,8 +7,8 @@
       :total-items="totalItems"
       :pagination="pagination"
       :select-all="removable"
-      search="search"
-      advanced-pagination="advanced-pagination"
+      search
+      advanced-pagination
       @update:pagination="$emit('update:pagination', $event)"
     >
       <template #mass-actions="{ selected }">
@@ -27,13 +27,14 @@
       <template #status="{ item }">
         <v-tooltip
           v-if="item.approval"
-          bottom="bottom"
+          bottom
         >
           <template #activator>
             <v-icon color="black">
               query_builder
             </v-icon>
-          </template><span>{{ $t('remediation.instruction.approvalPending') }}</span>
+          </template>
+          <span>{{ $t('remediation.instruction.approvalPending') }}</span>
         </v-tooltip>
         <v-icon
           v-else
@@ -52,7 +53,7 @@
         {{ item.last_executed_on | date }}
       </template>
       <template #actions="{ item }">
-        <v-layout justify-end="justify-end">
+        <v-layout justify-end>
           <c-action-btn
             v-if="item.approval && isApprovalForCurrentUser(item.approval)"
             :tooltip="$t('remediation.instruction.needApprove')"

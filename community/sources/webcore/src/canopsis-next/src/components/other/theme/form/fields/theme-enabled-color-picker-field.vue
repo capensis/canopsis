@@ -2,7 +2,7 @@
   <v-layout
     class="theme-enabled-color-picker-field"
     :class="{ 'theme-enabled-color-picker-field--disabled': !value.enabled }"
-    column="column"
+    column
   >
     <c-enabled-field
       class="mt-0"
@@ -13,7 +13,7 @@
         <c-help-icon
           v-if="enableHelpText"
           :text="enableHelpText"
-          top="top"
+          top
         />
       </template>
     </c-enabled-field>

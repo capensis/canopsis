@@ -1,10 +1,10 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-select
       :value="form.template"
       :items="templatesWithCustom"
       :label="$t('common.template')"
-      return-object="return-object"
+      return-object
       @input="updateTemplate"
     />
     <text-editor-field

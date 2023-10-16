@@ -18,7 +18,7 @@
         :name="$t('map.layers.openStreetMap')"
         :url="$config.OPEN_STREET_LAYER_URL"
         layer-type="base"
-        no-wrap="no-wrap"
+        no-wrap
       />
       <geomap-control position="bottomright">
         <c-help-icon
@@ -26,18 +26,18 @@
           size="32"
           color="secondary"
           icon="help"
-          top="top"
+          top
         />
       </geomap-control>
       <geomap-cluster-group
-        v-for="{ markers, name, style } in layers"
+        v-for="{ markers: layerMarkers, name, style } in layers"
         :key="name"
         :name="name"
         :cluster-style="style"
         layer-type="overlay"
       >
         <geomap-marker
-          v-for="{ coordinates, id, data, icon } in markers"
+          v-for="{ coordinates, id, data, icon } in layerMarkers"
           :key="id"
           :lat-lng="coordinates"
           @click="openMarkerPopup(data, $event)"
@@ -87,7 +87,6 @@ import GeomapControlLayers from '@/components/common/geomap/geomap-control-layer
 import GeomapClusterGroup from '@/components/common/geomap/geomap-cluster-group.vue';
 import GeomapMarker from '@/components/common/geomap/geomap-marker.vue';
 import GeomapIcon from '@/components/common/geomap/geomap-icon.vue';
-import GeomapTooltip from '@/components/common/geomap/geomap-tooltip.vue';
 import GeomapControl from '@/components/common/geomap/geomap-control.vue';
 
 import PointIcon from './point-icon.vue';
@@ -103,7 +102,6 @@ export default {
     GeomapClusterGroup,
     GeomapMarker,
     GeomapIcon,
-    GeomapTooltip,
     GeomapControl,
     PointIcon,
   },

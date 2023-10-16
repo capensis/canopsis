@@ -1,12 +1,12 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-name-field
       v-field="form.name"
-      required="required"
+      required
     />
     <c-duration-field
       v-field="form.duration"
-      required="required"
+      required
     />
     <c-priority-field v-field="form.priority" />
     <c-number-field
@@ -18,7 +18,7 @@
     />
     <c-description-field
       v-field="form.description"
-      required="required"
+      required
     />
     <alarm-status-rule-patterns-form
       class="mt-2"

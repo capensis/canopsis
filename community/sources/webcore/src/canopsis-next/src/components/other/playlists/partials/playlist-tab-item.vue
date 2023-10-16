@@ -1,7 +1,7 @@
 <template>
   <v-layout
     class="tab-panel-content"
-    xs12="xs12"
+    xs12
   >
     <v-flex
       class="tab-content-block secondary pa-2 white--text"

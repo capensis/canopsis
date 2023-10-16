@@ -7,17 +7,17 @@
     <v-progress-linear
       class="progress-linear-absolute--top"
       height="2"
-      indeterminate="indeterminate"
+      indeterminate
     />
   </v-fade-transition>
   <v-layout
     class="pa-4"
     v-else
-    justify-center="justify-center"
+    justify-center
   >
     <v-progress-circular
       color="primary"
-      indeterminate="indeterminate"
+      indeterminate
     />
   </v-layout>
 </template>

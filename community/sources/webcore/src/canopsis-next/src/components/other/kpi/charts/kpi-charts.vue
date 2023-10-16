@@ -1,8 +1,8 @@
 <template>
   <v-layout
     class="pa-4"
-    column="column"
-    align-center="align-center"
+    column
+    align-center
   >
     <div class="kpi-charts">
       <c-information-block

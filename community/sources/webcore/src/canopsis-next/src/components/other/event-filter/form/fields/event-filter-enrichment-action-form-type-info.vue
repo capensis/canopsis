@@ -1,21 +1,23 @@
 <template>
   <div>
-    <v-layout align-center="align-center">
+    <v-layout align-center>
       <span>{{ message }}</span>
       <v-btn
-        icon="icon"
-        small="small"
+        icon
+        small
         @click="toggleDescriptionOpened"
       >
         <v-icon>help</v-icon>
       </v-btn>
     </v-layout>
     <v-expand-transition v-if="opened">
-      <v-layout column="column">
+      <v-layout column>
         <div class="pre-wrap">
           {{ description }}
-        </div><img
+        </div>
+        <img
           :src="image"
+          alt=""
           @click="showImageViewerModal"
         >
       </v-layout>

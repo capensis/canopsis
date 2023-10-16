@@ -1,6 +1,5 @@
 <template>
   <v-layout
-    :row="row"
     :column="column"
   >
     <c-enabled-field
@@ -40,10 +39,6 @@ export default {
     name: {
       type: String,
       default: 'color',
-    },
-    row: {
-      type: Boolean,
-      default: false,
     },
     column: {
       type: Boolean,

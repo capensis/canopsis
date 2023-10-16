@@ -1,12 +1,12 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <kpi-rating-metric-field
       v-field="column.metric"
       :metrics="availableMetrics"
       :type="type"
       :label="$tc('common.column')"
       :name="`${name}.column`"
-      required="required"
+      required
     />
     <c-enabled-field
       class="pa-0 my-2"
@@ -35,7 +35,7 @@
       :name="`${name}.infos`"
       item-text="label"
       item-value="id"
-      required="required"
+      required
     />
   </v-layout>
 </template>

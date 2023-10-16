@@ -2,14 +2,14 @@
   <v-tabs
     color="secondary lighten-1"
     slider-color="primary"
-    dark="dark"
-    centered="centered"
+    dark
+    centered
   >
     <v-tab>{{ $tc('common.pattern', 2) }}</v-tab>
-    <v-tab-item lazy="lazy">
+    <v-tab-item lazy>
       <v-layout class="py-3">
         <v-flex
-          xs12="xs12"
+          xs12
           md8="md8"
           offset-md2="offset-md2"
         >
@@ -17,7 +17,7 @@
             <v-card-text>
               <tag-patterns-form
                 :form="patterns"
-                readonly="readonly"
+                readonly
               />
             </v-card-text>
           </v-card>

@@ -6,12 +6,12 @@
     <v-btn
       class="ma-0"
       :value="true"
-      light="light"
+      light
       text
-      large="large"
-      block="block"
+      large
+      block
     >
-      <v-icon left="left">
+      <v-icon left>
         add_location
       </v-icon><span>{{ $t('map.addPoint') }}</span>
     </v-btn>

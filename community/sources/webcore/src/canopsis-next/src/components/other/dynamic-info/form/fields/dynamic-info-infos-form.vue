@@ -6,11 +6,11 @@
     >
       {{ errorMessages }}
     </v-alert>
-    <v-layout justify-end="justify-end">
+    <v-layout justify-end>
       <v-btn
         class="primary"
-        fab="fab"
-        small="small"
+        fab
+        small
         text
         @click="showAddInfoModal"
       >

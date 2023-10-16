@@ -1,7 +1,7 @@
 <template>
   <v-layout
     class="scenario-action-card-general-tab"
-    wrap="wrap"
+    wrap
   >
     <v-flex
       class="mt-1"

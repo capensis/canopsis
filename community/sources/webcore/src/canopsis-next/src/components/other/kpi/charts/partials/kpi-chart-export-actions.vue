@@ -1,35 +1,37 @@
 <template>
   <v-layout
     class="kpi-chart-export-actions"
-    justify-end="justify-end"
-    wrap="wrap"
+    justify-end
+    wrap
   >
     <v-btn
       class="ma-0"
       :loading="downloading"
       color="primary"
-      small="small"
+      small
       @click="$emit('export:csv')"
     >
       <v-icon
-        small="small"
-        left="left"
+        small
+        left
       >
         file_download
-      </v-icon><span>{{ $t('common.exportAsCsv') }}</span>
+      </v-icon>
+      <span>{{ $t('common.exportAsCsv') }}</span>
     </v-btn>
     <v-btn
       class="ma-0"
       color="primary"
-      small="small"
+      small
       @click="exportChartAsPng"
     >
       <v-icon
-        small="small"
-        left="left"
+        small
+        left
       >
         file_download
-      </v-icon><span>{{ $t('common.downloadAsPng') }}</span>
+      </v-icon>
+      <span>{{ $t('common.downloadAsPng') }}</span>
     </v-btn>
   </v-layout>
 </template>

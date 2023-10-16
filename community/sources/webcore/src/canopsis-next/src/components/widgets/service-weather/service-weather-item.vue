@@ -9,12 +9,12 @@
   >
     <v-layout
       class="fill-height service-weather-item__content"
-      justify-space-between="justify-space-between"
+      justify-space-between
     >
       <v-flex class="position-relative fill-height">
         <v-layout
           :class="{ 'blinking': isBlinking }"
-          justify-start="justify-start"
+          justify-start
         >
           <c-compiled-template
             class="service-weather-item__template pa-3"
@@ -24,12 +24,12 @@
         </v-layout>
         <v-layout
           class="service-weather-item__toolbar pt-1 pr-1"
-          align-center="align-center"
+          align-center
         >
           <c-no-events-icon
             :value="service.idle_since"
             :color="color"
-            top="top"
+            top
           />
           <impact-state-indicator
             class="mr-1"

@@ -1,8 +1,8 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-name-field
       v-field="form.name"
-      required="required"
+      required
     />
     <v-layout>
       <v-flex
@@ -11,8 +11,8 @@
       >
         <c-entity-category-field
           v-field="form.category"
-          addable="addable"
-          required="required"
+          addable
+          required
         />
       </v-flex>
       <v-flex
@@ -22,19 +22,19 @@
         <c-entity-state-field
           v-field="form.sli_avail_state"
           :label="$t('service.availabilityState')"
-          required="required"
+          required
         />
       </v-flex>
       <v-flex xs2="xs2">
         <c-impact-level-field
           v-field="form.impact_level"
-          required="required"
+          required
         />
       </v-flex>
     </v-layout>
     <c-coordinates-field
       v-field="form.coordinates"
-      row="row"
+      row
     />
     <text-editor-field
       v-validate="'required'"
@@ -47,7 +47,7 @@
     <c-enabled-field v-field="form.enabled" />
     <v-tabs
       slider-color="primary"
-      centered="centered"
+      centered
     >
       <v-tab :class="{ 'error--text': errors.has('entity_patterns') }">
         {{ $t('common.entityPatterns') }}
@@ -57,8 +57,8 @@
           class="mt-2"
           v-field="form.patterns"
           :entity-attributes="entityAttributes"
-          with-entity="with-entity"
-          entity-counters-type="entity-counters-type"
+          with-entity
+          entity-counters-type
         />
       </v-tab-item>
       <v-tab

@@ -1,8 +1,8 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-layout
       class="mt-3"
-      align-end="align-end"
+      align-end
     >
       <v-flex xs6="xs6">
         <div class="subheading">
@@ -10,8 +10,8 @@
         </div>
         <v-radio-group
           :value="form.type"
-          row="row"
-          mandatory="mandatory"
+          row
+          mandatory
           @change="updateType"
         >
           <v-radio
@@ -30,15 +30,15 @@
     <c-name-field
       class="mb-3"
       v-field="form.name"
-      required="required"
+      required
     />
     <c-patterns-field
       v-field="form.patterns"
       :alarm-attributes="alarmPatternAttributes"
       :entity-attributes="entityPatternAttributes"
       :with-alarm="isAlarmType"
-      some-required="some-required"
-      with-entity="with-entity"
+      some-required
+      with-entity
     />
     <c-collapse-panel
       class="my-3"

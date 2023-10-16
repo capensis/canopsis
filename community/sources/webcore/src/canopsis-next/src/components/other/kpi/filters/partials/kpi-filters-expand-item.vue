@@ -4,13 +4,13 @@
       v-model="activeTab"
       color="secondary lighten-1"
       slider-color="primary"
-      dark="dark"
-      centered="centered"
+      dark
+      centered
     >
       <v-tab>{{ $tc('common.pattern', 2) }}</v-tab>
     </v-tabs>
     <v-layout class="pa-3">
-      <v-flex xs12="xs12">
+      <v-flex xs12>
         <v-card class="pa-3">
           <v-tabs-items
             class="pt-2"
@@ -18,13 +18,13 @@
           >
             <v-tab-item>
               <v-flex
-                xs12="xs12"
+                xs12
                 lg10="lg10"
                 offset-lg1="offset-lg1"
               >
                 <kpi-filter-patterns-form
                   :form="patterns"
-                  readonly="readonly"
+                  readonly
                 />
               </v-flex>
             </v-tab-item>

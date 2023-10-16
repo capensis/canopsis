@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <idle-rules-summary-row
       :label="$t('common.id')"
       :value="idleRule._id"

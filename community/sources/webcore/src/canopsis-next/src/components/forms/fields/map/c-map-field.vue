@@ -11,7 +11,7 @@
     :hide-details="hideDetails"
     item-text="name"
     item-value="_id"
-    clearable="clearable"
+    clearable
   />
 </template>
 

@@ -5,8 +5,8 @@
     :label="$t('common.criteria')"
     item-text="label"
     item-value="id"
-    hide-details="hide-details"
-    return-object="return-object"
+    hide-details
+    return-object
   />
 </template>
 

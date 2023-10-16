@@ -8,10 +8,10 @@
     :error-messages="errors.collect(name)"
     :item-disabled="isItemDisabled"
     :disabled="disabled"
-    chips="chips"
-    deletable-chips="deletable-chips"
-    small-chips="small-chips"
-    multiple="multiple"
+    chips
+    deletable-chips
+    small-chips
+    multiple
   />
 </template>
 

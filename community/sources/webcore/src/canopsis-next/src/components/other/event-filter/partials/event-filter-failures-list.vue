@@ -6,8 +6,8 @@
     :total-items="totalItems"
     :pagination="pagination"
     :is-expandable-item="hasEvent"
-    expand="expand"
-    advanced-pagination="advanced-pagination"
+    expand
+    advanced-pagination
     @update:pagination="$emit('update:pagination', $event)"
   >
     <template #status="{ item }">

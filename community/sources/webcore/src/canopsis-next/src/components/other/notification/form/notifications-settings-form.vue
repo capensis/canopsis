@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <h4 class="subheading">
       {{ $t('notificationSetting.instruction.header') }}
     </h4>
@@ -9,7 +9,7 @@
       :disabled="!form.instruction.rate_frequency.value"
       :label="$t('notificationSetting.instruction.rate')"
       color="primary"
-      hide-details="hide-details"
+      hide-details
     />
     <v-layout>
       <v-flex
@@ -24,7 +24,7 @@
           :disabled="!form.instruction.rate"
           :required="form.instruction.rate"
           :label="$t('notificationSetting.instruction.duration')"
-          long="long"
+          long
         />
       </v-flex>
     </v-layout>

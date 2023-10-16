@@ -3,7 +3,7 @@
     <flowchart
       :shapes="shapes"
       :background-color="map.parameters.background_color"
-      readonly="readonly"
+      readonly
     >
       <template #layers="{ data }">
         <flowchart-points-preview
@@ -23,7 +23,7 @@
       icon-class="map-preview__help-icon"
       color="secondary"
       icon="help"
-      top="top"
+      top
     />
   </div>
 </template>

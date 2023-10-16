@@ -13,9 +13,9 @@
       :templates-pending="templatesPending"
       :label="$t('settings.columnNames')"
       :type="$constants.ENTITIES_TYPES.alarm"
-      with-html="with-html"
-      with-template="with-template"
-      with-color-indicator="with-color-indicator"
+      with-html
+      with-template
+      with-color-indicator
       @update:template="updateColumnsTemplate"
     />
     <v-divider />
@@ -43,8 +43,8 @@
       :default-value="defaultExportPdfTemplateValue"
       :dialog-props="{ maxWidth: 1070 }"
       :templates="alarmExportToPdfTemplates"
-      addable="addable"
-      removable="removable"
+      addable
+      removable
       @input="updateExportPdf"
     />
   </widget-settings-group>

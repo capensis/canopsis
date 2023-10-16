@@ -10,18 +10,18 @@
       :pagination.sync="pagination"
       :toolbar-props="toolbarProps"
       :select-all="selectable"
-      expand="expand"
-      no-pagination="no-pagination"
+      expand
+      no-pagination
     >
       <template #toolbar="">
         <slot name="toolbar" />
         <v-flex
           v-if="columns.length"
-          xs12="xs12"
+          xs12
         >
           <v-layout
-            wrap="wrap"
-            align-center="align-center"
+            wrap
+            align-center
           >
             <c-pagination
               :page="query.page"

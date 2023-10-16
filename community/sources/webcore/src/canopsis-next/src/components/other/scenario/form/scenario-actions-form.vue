@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-alert
       v-show="!actions.length"
       type="info"
@@ -22,7 +22,7 @@
         />
       </template>
     </c-card-iterator-field>
-    <v-layout align-center="align-center">
+    <v-layout align-center>
       <v-btn
         class="ml-0"
         :color="hasActionsErrors ? 'error' : 'primary'"
@@ -30,10 +30,13 @@
         @click="addAction"
       >
         {{ $t('scenario.addAction') }}
-      </v-btn><span
+      </v-btn>
+      <span
         class="error--text"
         v-show="hasActionsErrors"
-      >{{ $t('scenario.errors.actionRequired') }}</span>
+      >
+        {{ $t('scenario.errors.actionRequired') }}
+      </span>
     </v-layout>
   </v-layout>
 </template>

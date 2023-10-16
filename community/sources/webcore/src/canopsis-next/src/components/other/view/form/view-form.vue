@@ -1,10 +1,10 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-name-field
       v-field="form.title"
       :label="$t('common.title')"
       name="title"
-      required="required"
+      required
     />
     <v-text-field
       v-field="form.description"
@@ -20,11 +20,11 @@
       v-field="form.tags"
       :label="$t('modals.view.fields.groupTags')"
       append-icon=""
-      tags="tags"
-      clearable="clearable"
-      multiple="multiple"
-      chips="chips"
-      deletable-chips="deletable-chips"
+      tags
+      clearable
+      multiple
+      chips
+      deletable-chips
     />
     <v-combobox
       v-field="form.group"
@@ -35,8 +35,8 @@
       item-text="title"
       item-value="_id"
       name="group"
-      return-object="return-object"
-      blur-on-create="blur-on-create"
+      return-object
+      blur-on-create
     >
       <template #no-data="">
         <v-list-item>

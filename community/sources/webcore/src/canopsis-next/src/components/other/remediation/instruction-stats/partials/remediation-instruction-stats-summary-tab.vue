@@ -1,7 +1,7 @@
 <template>
   <v-layout
     class="remediation-instruction-stats-summary"
-    column="column"
+    column
   >
     <remediation-instruction-stats-summary-row
       :label="$t('common.created')"

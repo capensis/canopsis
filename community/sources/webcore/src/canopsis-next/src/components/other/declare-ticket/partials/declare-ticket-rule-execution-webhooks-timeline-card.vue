@@ -1,8 +1,8 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-layout
       class="mb-2"
-      align-center="align-center"
+      align-center
     >
       <c-expand-btn
         v-if="expandable"
@@ -17,7 +17,7 @@
     <v-expand-transition>
       <v-card
         v-show="expanded"
-        light="light"
+        light
       >
         <v-card-text>
           <c-request-text-information

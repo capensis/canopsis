@@ -1,8 +1,8 @@
 <template>
   <div class="c-card-iterator-item">
     <v-layout
-      align-center="align-center"
-      justify-space-between="justify-space-between"
+      align-center
+      justify-space-between
     >
       <v-layout class="c-card-iterator-item__actions pr-2">
         <c-draggable-step-number
@@ -24,7 +24,7 @@
         class="c-card-iterator-item__content"
         v-show="expanded"
         :class="{ 'c-card-iterator-item__content--offset': offsetLeft }"
-        column="column"
+        column
       >
         <slot />
       </v-layout>

@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-information-block
       v-if="!singleMode"
       :title="$t('declareTicket.applyRules')"
@@ -9,7 +9,7 @@
         :alarms="alarms"
         :tickets-by-alarms="ticketsByAlarms"
         :hide-ticket-resource="hideTicketResource"
-        hide-row-select="hide-row-select"
+        hide-row-select
         @input="updateCommonValue"
       />
     </c-information-block>
@@ -25,7 +25,7 @@
             :indeterminate="group.someEnabled"
             :label="group.name"
             color="primary"
-            hide-details="hide-details"
+            hide-details
             @change="updateEnabledTickets(group.ticketId)"
           />
         </v-layout>
@@ -34,7 +34,7 @@
           :alarms="group.alarms"
           :tickets-by-alarms="group.ticketsByAlarms"
           :hide-ticket-resource="hideTicketResource"
-          hide-tickets="hide-tickets"
+          hide-tickets
           @input="updateGroup(group.ticketId, $event)"
         />
       </c-information-block>
@@ -44,8 +44,8 @@
       >
         <declare-ticket-event-alarms-tickets-field
           :alarms="alarmsWithoutTickets"
-          hide-tickets="hide-tickets"
-          hide-row-select="hide-row-select"
+          hide-tickets
+          hide-row-select
         />
       </c-information-block>
     </template>

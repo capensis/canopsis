@@ -7,8 +7,8 @@
         :name="durationFieldName"
         :disabled="disabled"
         :min="min"
-        required="required"
-        box="box"
+        required
+        box
       />
     </v-flex>
     <v-flex
@@ -23,7 +23,7 @@
         :items="availableUnits"
         :name="unitFieldName"
         :disabled="disabled"
-        hide-details="hide-details"
+        hide-details
       />
     </v-flex>
   </v-layout>

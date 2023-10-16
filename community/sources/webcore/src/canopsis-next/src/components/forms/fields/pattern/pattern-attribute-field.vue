@@ -8,8 +8,8 @@
     :label="label || $tc('common.searchBy')"
     :name="name"
     item-disabled="options.disabled"
-    ellipsis="ellipsis"
-    autocomplete="autocomplete"
+    ellipsis
+    autocomplete
   />
 </template>
 

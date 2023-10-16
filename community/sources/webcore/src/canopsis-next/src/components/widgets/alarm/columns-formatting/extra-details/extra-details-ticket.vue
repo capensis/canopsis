@@ -2,14 +2,14 @@
   <div>
     <v-tooltip
       class="c-extra-details extra-details-ticket"
-      top="top"
+      top
     >
       <template #activator="{ on }">
         <v-badge
           class="time-line-flag"
           :value="isLastFailed"
           color="transparent"
-          overlap="overlap"
+          overlap
         >
           <template #badge="">
             <v-icon
@@ -19,19 +19,20 @@
             >
               error
             </v-icon>
-          </template><span
+          </template>
+          <span
             class="c-extra-details__badge blue"
             v-on="on"
           >
             <v-icon
               color="white"
-              small="small"
+              small
             >{{ icon }}</v-icon></span>
         </v-badge>
       </template>
       <v-layout
         class="extra-details-ticket__list"
-        column="column"
+        column
       >
         <div
           class="text-md-center"

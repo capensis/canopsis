@@ -1,17 +1,17 @@
 <template>
   <v-tabs
     color="secondary lighten-1"
-    dark="dark"
-    centered="centered"
+    dark
+    centered
     slider-color="primary"
   >
     <v-tab>{{ $t('common.description') }}</v-tab>
     <v-tab-item>
       <v-layout
         class="pa-3 secondary lighten-2"
-        column="column"
+        column
       >
-        <v-flex xs12="xs12">
+        <v-flex xs12>
           <v-card>
             <v-card-text>
               <pre>{{ pbehaviorException.description }}</pre>
@@ -24,15 +24,15 @@
     <v-tab-item>
       <v-layout
         class="pa-3 secondary lighten-2"
-        column="column"
+        column
       >
-        <v-flex xs12="xs12">
+        <v-flex xs12>
           <v-card>
             <v-card-text>
               <pbehavior-exceptions-field
                 :exdates="preparedPbehaviorExceptionExdates"
-                with-exdate-type="with-exdate-type"
-                disabled="disabled"
+                with-exdate-type
+                disabled
               />
             </v-card-text>
           </v-card>

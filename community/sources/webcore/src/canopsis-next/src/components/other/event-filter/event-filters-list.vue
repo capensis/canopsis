@@ -6,9 +6,9 @@
     :total-items="totalItems"
     :pagination="pagination"
     :select-all="removable"
-    advanced-pagination="advanced-pagination"
-    search="search"
-    expand="expand"
+    advanced-pagination
+    search
+    expand
     @update:pagination="$emit('update:pagination', $event)"
   >
     <template #mass-actions="{ selected }">

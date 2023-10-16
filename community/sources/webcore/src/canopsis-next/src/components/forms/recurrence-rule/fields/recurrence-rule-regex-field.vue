@@ -5,14 +5,14 @@
     v-bind="$attrs"
     :error-messages="errors.collect(name)"
     :name="name"
-    persistent-hint="persistent-hint"
+    persistent-hint
   >
     <template #append="">
       <c-help-icon
         v-if="helpText"
         icon="help"
         :text="helpText"
-        left="left"
+        left
         max-width="250"
       />
     </template>

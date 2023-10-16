@@ -6,14 +6,17 @@
     <v-badge
       :value="!!badgeValue"
       color="secondary"
-      overlap="overlap"
+      overlap
     >
       <template #badge="">
         <span class="px-1">{{ badgeValue }}</span>
-      </template><span
+      </template>
+      <span
         class="chip"
         :style="{ backgroundColor: style.color }"
-      >{{ style.text }}</span>
+      >
+        {{ style.text }}
+      </span>
     </v-badge>
   </div>
 </template>

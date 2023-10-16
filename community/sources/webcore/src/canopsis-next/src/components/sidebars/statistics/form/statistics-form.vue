@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <field-title v-field="form.title" />
     <field-periodic-refresh v-field="form.parameters" />
     <field-main-parameter
@@ -24,7 +24,7 @@
         :widget-id="widget._id"
         :addable="filterAddable"
         :editable="filterEditable"
-        with-entity="with-entity"
+        with-entity
         @update:filters="updateField('filters', $event)"
       />
     </widget-settings-group>

@@ -4,8 +4,8 @@
     v-field="value"
     :label="label"
     :disabled="disabled"
-    hide-details="hide-details"
-    mandatory="mandatory"
+    hide-details
+    mandatory
   >
     <v-radio
       v-for="type in types"

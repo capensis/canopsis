@@ -8,7 +8,7 @@
     :name="name"
     :error-messages="errors.collect(name)"
     :disabled="disabled"
-    persistent-hint="persistent-hint"
+    persistent-hint
   >
     <template #selection="{ item }">
       <v-icon>{{ item }}</v-icon><span class="ml-2">{{ item }}</span>

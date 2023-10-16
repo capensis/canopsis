@@ -4,7 +4,7 @@
     <v-layout
       v-if="selectedModuleMib"
     >
-      <v-flex xs12="xs12">
+      <v-flex xs12>
         <v-alert
           class="mt-3"
           :value="selectedModuleMib.description"
@@ -18,25 +18,25 @@
       v-field="form.output"
       :items="selectedModuleMibObjects"
       :label="$t('snmpRule.output')"
-      large="large"
+      large
     />
     <snmp-rule-form-module-mib-objects-form
       v-field="form.component"
       :items="selectedModuleMibObjects"
       :label="$t('snmpRule.component')"
-      large="large"
+      large
     />
     <snmp-rule-form-module-mib-objects-form
       v-field="form.resource"
       :items="selectedModuleMibObjects"
       :label="$t('snmpRule.resource')"
-      large="large"
+      large
     />
     <snmp-rule-form-module-mib-objects-form
       v-field="form.connector_name"
       :items="selectedModuleMibObjects"
       :label="$t('snmpRule.connectorName')"
-      large="large"
+      large
     />
     <snmp-rule-form-state-form
       v-field="form.state"

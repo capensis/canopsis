@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-flex class="mt-1">
       <v-text-field
         v-field.mutate="form.username"
@@ -8,17 +8,17 @@
         :error-messages="errors.collect('username')"
         color="primary"
         name="username"
-        autofocus="autofocus"
-        clearable="clearable"
-        outlined="outlined"
+        autofocus
+        clearable
+        outlined
       />
     </v-flex>
     <v-flex>
       <c-password-field
         v-field.mutate="form.password"
-        required="required"
-        clearable="clearable"
-        outlined="outlined"
+        required
+        clearable
+        outlined
       />
     </v-flex>
   </v-layout>

@@ -1,14 +1,14 @@
 <template>
   <c-action-btn
     v-bind="$attrs"
-    custom-tooltip-activator="custom-tooltip-activator"
+    custom-tooltip-activator
   >
     <template #button="">
       <v-btn
         :color="color"
         :small="small"
-        fab="fab"
-        dark="dark"
+        fab
+        dark
         @click.stop="$listeners.click"
       >
         <v-icon>{{ icon }}</v-icon>

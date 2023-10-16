@@ -7,7 +7,7 @@
     :inline-count="inlineCount"
     item-text="text"
     item-value="text"
-    row="row"
+    row
   />
 </template>
 

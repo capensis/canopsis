@@ -1,6 +1,6 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close="close">
+    <modal-wrapper close>
       <template #title="">
         <span>{{ title }}</span>
       </template>
@@ -9,9 +9,9 @@
           v-model="form"
           :alarm-attributes="alarmAttributes"
           :entity-attributes="entityAttributes"
-          with-alarm="with-alarm"
-          with-entity="with-entity"
-          both-counters="both-counters"
+          with-alarm
+          with-entity
+          both-counters
         />
         <c-collapse-panel
           class="mt-3"
@@ -23,7 +23,7 @@
       <template #actions="">
         <v-btn
           :disabled="submitting"
-          depressed="depressed"
+          depressed
           text
           @click="$modals.hide"
         >

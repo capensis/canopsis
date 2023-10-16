@@ -1,7 +1,7 @@
 <template>
   <v-layout
     class="kpi-sli-toolbar ml-4 my-4"
-    wrap="wrap"
+    wrap
   >
     <c-quick-date-interval-field
       class="mr-4"

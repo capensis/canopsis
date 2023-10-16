@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <field-title
       v-field="form.title"
       :required="requiredTitle"
@@ -18,7 +18,7 @@
         v-field="form.parameters.metrics"
         :parameters="availableParameters"
         :min="2"
-        with-color="with-color"
+        with-color
       />
       <field-pie-show-mode v-field="form.parameters.show_mode" />
     </widget-settings-group>
@@ -34,10 +34,10 @@
       <field-filters
         v-if="withFilters"
         :filters="form.filters"
-        addable="addable"
-        editable="editable"
-        with-entity="with-entity"
-        hide-selector="hide-selector"
+        addable
+        editable
+        with-entity
+        hide-selector
         @update:filters="updateFilters"
       />
     </widget-settings-group>

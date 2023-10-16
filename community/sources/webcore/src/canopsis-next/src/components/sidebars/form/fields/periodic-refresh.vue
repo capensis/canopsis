@@ -1,7 +1,7 @@
 <template>
   <widget-settings-item
     :title="$t('settings.periodicRefresh')"
-    optional="optional"
+    optional
   >
     <periodic-refresh-field
       v-field="form.periodic_refresh"

@@ -2,10 +2,10 @@
   <v-layout
     class="numbers-metrics-item"
     :style="itemStyle"
-    column="column"
-    align-center="align-center"
+    column
+    align-center
   >
-    <v-layout align-center="align-center">
+    <v-layout align-center>
       <div class="numbers-metrics-item__value">
         {{ value }}
       </div>
@@ -15,7 +15,7 @@
         :icon-class="{ 'numbers-metrics-item__trend': true, 'numbers-metrics-item__trend--up': trendUp }"
         icon="arrow_downward"
         size="0.75em"
-        top="top"
+        top
       />
     </v-layout>
     <div class="numbers-metrics-item__title">

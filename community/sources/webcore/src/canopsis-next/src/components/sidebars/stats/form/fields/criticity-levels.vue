@@ -1,10 +1,10 @@
 <template>
   <widget-settings-item :title="$t('settings.criticityLevels')">
-    <v-layout wrap="wrap">
-      <v-flex xs12="xs12">
+    <v-layout wrap>
+      <v-flex xs12>
         <v-layout
-          align-center="align-center"
-          justify-space-around="justify-space-around"
+          align-center
+          justify-space-around
         >
           <div>{{ $t('settings.colorsSelector.statsCriticity.minor') }} :</div>
           <v-flex xs3="xs3">
@@ -12,15 +12,15 @@
               v-field="levels.minor"
               :min="0"
               name="minor"
-              required="required"
+              required
             />
           </v-flex>
         </v-layout>
       </v-flex>
-      <v-flex xs12="xs12">
+      <v-flex xs12>
         <v-layout
-          align-center="align-center"
-          justify-space-around="justify-space-around"
+          align-center
+          justify-space-around
         >
           <div>{{ $t('settings.colorsSelector.statsCriticity.major') }} :</div>
           <v-flex xs3="xs3">
@@ -28,15 +28,15 @@
               v-field="levels.major"
               :min="levels.minor + 1"
               name="major"
-              required="required"
+              required
             />
           </v-flex>
         </v-layout>
       </v-flex>
-      <v-flex xs12="xs12">
+      <v-flex xs12>
         <v-layout
-          align-center="align-center"
-          justify-space-around="justify-space-around"
+          align-center
+          justify-space-around
         >
           <div>{{ $t('settings.colorsSelector.statsCriticity.critical') }} :</div>
           <v-flex xs3="xs3">
@@ -44,7 +44,7 @@
               v-field="levels.critical"
               :min="levels.major + 1"
               name="critical"
-              required="required"
+              required
             />
           </v-flex>
         </v-layout>

@@ -1,11 +1,11 @@
 <template>
   <v-layout
     class="my-2"
-    wrap="wrap"
+    wrap
   >
     <v-flex
       class="pb-2"
-      xs12="xs12"
+      xs12
     >
       <span class="subheading font-weight-bold">{{ $tc('remediation.instruction.job', 2) }}:</span>
     </v-flex>

@@ -34,7 +34,7 @@
         :disabled="disabled"
         :variables="headersVariables"
         :name="valueFieldName"
-        required="required"
+        required
       />
     </v-flex>
   </v-layout>

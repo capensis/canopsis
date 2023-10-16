@@ -9,29 +9,30 @@
     >
       <v-tooltip
         v-if="!$modal.minimized"
-        left="left"
+        left
       >
         <template #activator="{ on }">
           <v-btn
             class="v-btn--minimize my-0"
             v-on="on"
-            icon="icon"
+            icon
             @click="$modals.minimize({ id: $modal.id })"
           >
             <v-icon
               color="white"
-              large="large"
+              large
             >
               minimize
             </v-icon>
           </v-btn>
-        </template><span>{{ $t('modals.common.titleButtons.minimizeTooltip') }}</span>
+        </template>
+        <span>{{ $t('modals.common.titleButtons.minimizeTooltip') }}</span>
       </v-tooltip>
       <v-btn
         class="my-0"
         v-else
-        icon="icon"
-        small="small"
+        icon
+        small
         @click="$modals.maximize({ id: $modal.id })"
       >
         <v-icon color="white">
@@ -46,7 +47,7 @@
       <v-btn
         class="ma-0"
         :small="$modal.minimized"
-        icon="icon"
+        icon
         @click="closeHandler"
       >
         <v-icon

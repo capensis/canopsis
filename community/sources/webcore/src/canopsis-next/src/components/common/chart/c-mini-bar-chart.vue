@@ -9,11 +9,14 @@
         :title="bar.title"
         :class="color"
       />
-    </div><span
+    </div>
+    <span
       class="ml-1 font-weight-bold"
       v-if="lastHistory"
       :class="`${color}--text`"
-    >{{ lastHistory | fixed(digits) }}{{ unit }}</span>
+    >
+      {{ lastHistory | fixed(digits) }}{{ unit }}
+    </span>
   </div>
 </template>
 

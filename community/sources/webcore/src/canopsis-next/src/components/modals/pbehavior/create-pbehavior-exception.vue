@@ -1,19 +1,19 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close="close">
+    <modal-wrapper close>
       <template #title="">
         <span>{{ $t('modals.createPbehaviorException.title') }}</span>
       </template>
       <template #text="">
         <pbehavior-exception-form
           v-model="form"
-          with-type="with-type"
+          with-type
         />
       </template>
       <template #actions="">
         <v-btn
-          depressed="depressed"
-          text="text"
+          depressed
+          text
           @click="$modals.hide"
         >
           {{ $t('common.cancel') }}

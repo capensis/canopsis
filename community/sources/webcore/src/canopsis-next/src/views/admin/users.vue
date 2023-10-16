@@ -5,7 +5,7 @@
       <v-tabs
         v-model="activeTab"
         slider-color="primary"
-        centered="centered"
+        centered
       >
         <v-tab
           v-if="hasReadAnyUserAccess"

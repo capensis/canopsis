@@ -36,8 +36,8 @@
     </ul>
     <v-layout
       v-else
-      align-center="align-center"
-      justify-center="justify-center"
+      align-center
+      justify-center
     >
       <span class="text--secondary">{{ $t('common.paginationItems', { first, last, total }) }}</span>
       <v-pagination

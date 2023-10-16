@@ -7,13 +7,13 @@
       :total-items="totalItems"
       :pagination="pagination"
       table-class="c-remediation-instruction-stats__table"
-      expand="expand"
-      search="search"
-      advanced-pagination="advanced-pagination"
+      expand
+      search
+      advanced-pagination
       @update:pagination="$emit('update:pagination', $event)"
     >
       <template #toolbar="">
-        <v-layout align-center="align-center">
+        <v-layout align-center>
           <c-quick-date-interval-field
             :interval="pagination.interval"
             :accumulated-before="accumulatedBefore"
@@ -45,11 +45,11 @@
       <template #rating="{ item }">
         <rating-field
           :value="item.rating"
-          readonly="readonly"
+          readonly
         />
       </template>
       <template #actions="{ item }">
-        <v-layout justify-end="justify-end">
+        <v-layout justify-end>
           <c-action-btn
             v-if="item.rate_notify"
             :tooltip="$t('remediation.instructionStat.actions.needRate')"

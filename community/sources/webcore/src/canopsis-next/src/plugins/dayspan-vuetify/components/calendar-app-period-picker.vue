@@ -7,7 +7,7 @@
         v-model="week"
         :items="weeks"
         :menu-props="menuProps"
-        hide-details="hide-details"
+        hide-details
       />
       <template v-else>
         <v-select
@@ -16,14 +16,14 @@
           v-model="day"
           :items="days"
           :menu-props="menuProps"
-          hide-details="hide-details"
+          hide-details
         />
         <v-select
           class="ds-calendar-app-period-picker__month"
           v-model="month"
           :items="months"
           :menu-props="menuProps"
-          hide-details="hide-details"
+          hide-details
         />
       </template>
     </template>
@@ -32,7 +32,7 @@
       v-model="year"
       :items="years"
       :menu-props="menuProps"
-      hide-details="hide-details"
+      hide-details
     /></span>
 </template>
 

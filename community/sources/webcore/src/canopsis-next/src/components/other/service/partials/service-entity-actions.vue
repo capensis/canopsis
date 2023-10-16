@@ -1,9 +1,9 @@
 <template>
-  <v-layout wrap="wrap">
+  <v-layout wrap>
     <v-tooltip
       v-for="action in actions"
       :key="action.type"
-      top="top"
+      top
     >
       <template #activator="{ on }">
         <span v-on="on">
@@ -18,14 +18,15 @@
             v-else
             :disabled="action.disabled"
             :loading="action.loading"
-            depressed="depressed"
-            small="small"
-            light="light"
+            depressed
+            small
+            light
             @click.stop="$emit('apply', action)"
           >
             <v-icon>{{ action.icon }}</v-icon>
           </v-btn></span>
-      </template><span>{{ $t(`serviceWeather.actions.${action.type}`) }}</span>
+      </template>
+      <span>{{ $t(`serviceWeather.actions.${action.type}`) }}</span>
     </v-tooltip>
   </v-layout>
 </template>

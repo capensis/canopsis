@@ -6,7 +6,7 @@
         ref="networkGraph"
         :options="options"
         :node-html-label-options="nodeHtmlLabelsOptions"
-        ctrl-wheel-zoom="ctrl-wheel-zoom"
+        ctrl-wheel-zoom
       />
     </c-zoom-overlay>
     <c-help-icon
@@ -15,7 +15,7 @@
       icon-class="map-preview__help-icon"
       color="secondary"
       icon="help"
-      top="top"
+      top
     />
   </div>
 </template>

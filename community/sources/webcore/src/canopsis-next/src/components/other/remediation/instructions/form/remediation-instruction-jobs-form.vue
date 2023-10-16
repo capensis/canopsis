@@ -1,12 +1,12 @@
 <template>
   <v-layout
     class="mt-2"
-    column="column"
+    column
   >
     <v-layout>
       <v-flex
         v-if="!jobs.length"
-        xs12="xs12"
+        xs12
       >
         <v-alert type="info">
           {{ $t('remediation.instruction.emptyJobs') }}
@@ -41,7 +41,7 @@
         </v-card-text>
       </v-card>
     </c-draggable-list-field>
-    <v-layout align-center="align-center">
+    <v-layout align-center>
       <v-btn
         class="ml-0"
         :color="hasJobsErrors ? 'error' : 'primary'"
@@ -50,10 +50,13 @@
         @click="addJob"
       >
         {{ $t('remediation.instruction.addJob') }}
-      </v-btn><span
+      </v-btn>
+      <span
         class="error--text"
         v-show="hasJobsErrors"
-      >{{ $t('remediation.instruction.errors.jobRequired') }}</span>
+      >
+        {{ $t('remediation.instruction.errors.jobRequired') }}
+      </span>
     </v-layout>
   </v-layout>
 </template>

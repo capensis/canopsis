@@ -16,7 +16,7 @@
       :close-delay="transitionDelay"
       :open-delay="transitionDelay"
       :activator="$refs.activator"
-      ignore-content-leave="ignore-content-leave"
+      ignore-content-leave
     >
       <span
         @focusin="showTooltip"

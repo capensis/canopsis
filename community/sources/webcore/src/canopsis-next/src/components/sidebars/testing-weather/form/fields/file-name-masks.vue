@@ -1,7 +1,7 @@
 <template>
   <widget-settings-item
     :title="$t('settings.filenameRecognition')"
-    optional="optional"
+    optional
   >
     <c-file-name-mask-field
       v-field="value.screenshot_filemask"
@@ -9,7 +9,7 @@
       :help-text="$t('settings.screenshotMask.helpText')"
       :placeholder="$constants.TEST_CASE_FILE_MASK"
       name="screenshot_filemask"
-      required="required"
+      required
     />
     <c-file-name-mask-field
       v-field="value.video_filemask"
@@ -17,7 +17,7 @@
       :help-text="$t('settings.videoMask.helpText')"
       :placeholder="$constants.TEST_CASE_FILE_MASK"
       name="video_filemask"
-      required="required"
+      required
     />
     <c-file-name-mask-field
       v-field="value.report_fileregexp"

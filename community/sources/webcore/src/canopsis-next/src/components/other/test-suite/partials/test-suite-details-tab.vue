@@ -1,6 +1,6 @@
 <template>
   <v-layout>
-    <v-flex xs12="xs12">
+    <v-flex xs12>
       <test-suite-details :test-suite="testSuite" />
     </v-flex>
   </v-layout>

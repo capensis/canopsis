@@ -26,7 +26,8 @@
               priority_high
             </v-icon>
           </v-btn>
-        </template><span>{{ $t('modals.webSocketError.title') }}</span>
+        </template>
+        <span>{{ $t('modals.webSocketError.title') }}</span>
       </v-tooltip>
     </div>
   </v-toolbar-title>

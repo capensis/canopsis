@@ -12,7 +12,7 @@
     :error-messages="errorMessages"
     :clearable="clearable"
     :name="name"
-    no-filter="no-filter"
+    no-filter
     @blur="handleBlur"
     @update:searchInput="onSearchInputChange"
   >

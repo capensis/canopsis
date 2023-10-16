@@ -2,8 +2,8 @@
   <v-tabs
     color="secondary lighten-1"
     slider-color="primary"
-    dark="dark"
-    centered="centered"
+    dark
+    centered
   >
     <v-tab>{{ $tc('common.pattern', 2) }}</v-tab>
     <v-tab-item>
@@ -11,7 +11,7 @@
         class="py-3"
       >
         <v-flex
-          xs12="xs12"
+          xs12
           sm10="sm10"
           offset-sm1="offset-sm1"
         >
@@ -19,7 +19,7 @@
             <v-card-text>
               <pbehavior-patterns-form
                 :form="patterns"
-                readonly="readonly"
+                readonly
               />
             </v-card-text>
           </v-card>
@@ -32,7 +32,7 @@
         class="py-3"
       >
         <v-flex
-          xs12="xs12"
+          xs12
           sm10="sm10"
           offset-sm1="offset-sm1"
         >
@@ -50,7 +50,7 @@
         class="py-3"
       >
         <v-flex
-          xs12="xs12"
+          xs12
           sm10="sm10"
           offset-sm1="offset-sm1"
         >
@@ -69,7 +69,7 @@
           class="py-3"
         >
           <v-flex
-            xs12="xs12"
+            xs12
             sm10="sm10"
             offset-sm1="offset-sm1"
           >

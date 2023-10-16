@@ -4,18 +4,18 @@
     :ignore-click-outside="hasMaximizedModal"
     :custom-close-conditional="closeCondition"
     :width="450"
-    right="right"
-    fixed="fixed"
-    temporary="temporary"
+    right
+    fixed
+    temporary
   >
     <div v-if="title">
       <v-toolbar color="secondary">
-        <v-layout align-center="align-center">
+        <v-layout align-center>
           <v-flex class="white--text subheading">
             {{ title }}
           </v-flex>
           <v-btn
-            icon="icon"
+            icon
             @click.stop="closeHandler"
           >
             <v-icon color="white">

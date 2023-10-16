@@ -1,14 +1,14 @@
 <template>
-  <v-card flat="flat">
+  <v-card flat>
     <v-card-text>
-      <v-layout align-center="align-center">
+      <v-layout align-center>
         <span>{{ $t('eventFilter.event') }}:</span>
         <c-copy-btn
           :value="eventString"
           :tooltip="$t('eventFilter.copyEventToClipboard')"
-          left="left"
-          small="small"
-          icon-small="icon-small"
+          left
+          small
+          icon-small
           @success="onSuccessCopied"
           @error="onErrorCopied"
         />

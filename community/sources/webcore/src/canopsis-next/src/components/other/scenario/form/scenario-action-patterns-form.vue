@@ -4,10 +4,10 @@
     :name="name"
     :alarm-attributes="alarmAttributes"
     :entity-attributes="entityAttributes"
-    some-required="some-required"
-    with-alarm="with-alarm"
-    with-entity="with-entity"
-    both-counters="both-counters"
+    some-required
+    with-alarm
+    with-entity
+    both-counters
   />
 </template>
 

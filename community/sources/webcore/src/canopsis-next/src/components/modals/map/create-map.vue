@@ -1,11 +1,11 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close="close">
+    <modal-wrapper close>
       <template #title="">
         <span>{{ $t('modals.createMap.title') }}</span>
       </template>
       <template #text="">
-        <v-layout column="column">
+        <v-layout column>
           <v-flex
             class="my-1 cursor-pointer"
             v-for="type in availableTypes"
@@ -15,7 +15,7 @@
             <v-card>
               <v-card-title
                 class="py-3"
-                primary-title="primary-title"
+                primary-title
               >
                 <v-layout>
                   <div class="subheading">

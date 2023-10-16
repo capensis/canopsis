@@ -17,24 +17,25 @@
       </v-flex>
       <v-flex xs2="xs2">
         <v-layout
-          column="column"
-          justify-center="justify-center"
-          fill-height="fill-height"
+          column
+          justify-center
+          fill-height
         >
           <v-btn
             :disabled="selectedEmpty"
             color="primary"
             @click="exportViews"
           >
-            <v-icon left="left">
+            <v-icon left>
               file_upload
-            </v-icon><span>{{ $t('common.export') }}</span>
+            </v-icon>
+            <span>{{ $t('common.export') }}</span>
           </v-btn>
           <file-selector
             class="ma-2 view-import-selector"
             ref="fileSelector"
-            multiple="multiple"
-            hide-details="hide-details"
+            multiple
+            hide-details
             @change="importViews"
           >
             <template #activator="{ on, ...attrs }">
@@ -44,9 +45,10 @@
                 v-on="on"
                 color="primary"
               >
-                <v-icon left="left">
+                <v-icon left>
                   file_download
-                </v-icon><span>{{ $t('common.import') }}</span>
+                </v-icon>
+                <span>{{ $t('common.import') }}</span>
               </v-btn>
             </template>
           </file-selector>

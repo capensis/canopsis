@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <field-title
       v-field="form.title"
       :required="requiredTitle"
@@ -17,9 +17,9 @@
       <field-alarm-metric-presets
         v-field="form.parameters.metrics"
         :only-external="onlyExternal"
-        with-color="with-color"
-        with-external="with-external"
-        only-group="only-group"
+        with-color
+        with-external
+        only-group
       />
       <field-bar-graph-type v-field="form.parameters.stacked" />
     </widget-settings-group>
@@ -34,10 +34,10 @@
       <field-filters
         v-if="withFilters"
         :filters="form.filters"
-        addable="addable"
-        editable="editable"
-        with-entity="with-entity"
-        hide-selector="hide-selector"
+        addable
+        editable
+        with-entity
+        hide-selector
         @update:filters="updateFilters"
       />
       <field-switcher

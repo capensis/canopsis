@@ -5,7 +5,7 @@
     :loading="pending"
     :pagination.sync="pagination"
     :total-items="totalItems"
-    advanced-pagination="advanced-pagination"
+    advanced-pagination
   >
     <template #headerCell="{ header }">
       <span class="c-table-header__text--multiline">{{ header.text }}</span>

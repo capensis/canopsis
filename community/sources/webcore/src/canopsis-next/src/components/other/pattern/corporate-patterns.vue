@@ -4,7 +4,7 @@
     :patterns="corporatePatterns"
     :total-items="corporatePatternsMeta.total_count"
     :pending="corporatePatternsPending"
-    corporate="corporate"
+    corporate
     @edit="$listeners.edit"
     @remove="$listeners.remove"
     @remove-selected="$listeners['remove-selected']"

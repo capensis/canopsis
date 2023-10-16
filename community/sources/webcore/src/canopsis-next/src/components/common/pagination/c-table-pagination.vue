@@ -1,7 +1,7 @@
 <template>
   <v-layout
     v-show="totalItems"
-    align-center="align-center"
+    align-center
   >
     <v-flex xs10="xs10">
       <c-pagination
@@ -17,7 +17,7 @@
         class="pa-0"
         :value="rowsPerPage"
         :items="rowsPerPageItems"
-        hide-details="hide-details"
+        hide-details
         @input="$emit('update:rows-per-page', $event)"
       />
     </v-flex>

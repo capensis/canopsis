@@ -1,36 +1,36 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper close="close">
+    <modal-wrapper close>
       <template #title="">
         <span>{{ $t('modals.infoPopupSetting.title') }}</span>
       </template>
       <template #text="">
-        <v-layout justify-end="justify-end">
+        <v-layout justify-end>
           <v-btn
-            icon="icon"
-            fab="fab"
-            small="small"
+            icon
+            fab
+            small
             color="secondary"
             @click="addPopup"
           >
             <v-icon>add</v-icon>
           </v-btn>
         </v-layout>
-        <v-layout column="column">
+        <v-layout column>
           <v-card
             class="my-1"
             v-for="(popup, index) in form.popups"
             :key="index"
             color="secondary white--text"
-            flat="flat"
+            flat
           >
             <v-card-title>
-              <v-layout justify-space-between="justify-space-between">
+              <v-layout justify-space-between>
                 <div>{{ $t('modals.infoPopupSetting.column') }}: {{ popup.column }}</div>
                 <div>
                   <v-btn
-                    icon="icon"
-                    small="small"
+                    icon
+                    small
                     @click="deletePopup(index)"
                   >
                     <v-icon color="error">
@@ -38,8 +38,8 @@
                     </v-icon>
                   </v-btn>
                   <v-btn
-                    icon="icon"
-                    small="small"
+                    icon
+                    small
                     @click="editPopup(index, popup)"
                   >
                     <v-icon color="primary">
@@ -53,8 +53,8 @@
               <p>{{ $t('common.template') }}:</p>
               <v-textarea
                 :value="popup.template"
-                disabled="disabled"
-                dark="dark"
+                disabled
+                dark
               />
             </v-card-text>
           </v-card>
@@ -62,7 +62,7 @@
       </template>
       <template #actions="">
         <v-btn
-          depressed="depressed"
+          depressed
           text
           @click="$modals.hide"
         >

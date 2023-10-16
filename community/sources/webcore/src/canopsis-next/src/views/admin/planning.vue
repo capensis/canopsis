@@ -1,12 +1,12 @@
 <template>
   <v-container>
     <c-page-header />
-    <v-layout wrap="wrap">
-      <v-flex xs12="xs12">
+    <v-layout wrap>
+      <v-flex xs12>
         <v-card class="ma-2">
           <v-tabs
             v-model="activeTab"
-            fixed-tabs="fixed-tabs"
+            fixed-tabs
             slider-color="primary"
           >
             <template v-if="hasReadAnyPbehaviorTypeAccess">
@@ -52,16 +52,16 @@
         :tooltip="$t('modals.importPbehaviorException.title')"
         color="indigo"
         icon="upload_file"
-        small="small"
-        top="top"
+        small
+        top
         @click="showImportExceptionsModal"
       />
       <c-action-fab-btn
         :tooltip="$t('modals.createPbehaviorException.title')"
         color="deep-purple"
         icon="event"
-        small="small"
-        top="top"
+        small
+        top
         @click="showCreateExceptionModal"
       />
     </c-fab-expand-btn>

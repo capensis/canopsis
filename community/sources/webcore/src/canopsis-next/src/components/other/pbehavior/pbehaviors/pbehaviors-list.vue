@@ -7,9 +7,9 @@
     :total-items="totalItems"
     :search-tooltip="$t('pbehavior.searchHelp')"
     :select-all="removable || enablable || disablable"
-    advanced-search="advanced-search"
-    advanced-pagination="advanced-pagination"
-    expand="expand"
+    advanced-search
+    advanced-pagination
+    expand
     @update:pagination="$emit('update:pagination', $event)"
   >
     <template #mass-actions="{ selected, clearSelected }">

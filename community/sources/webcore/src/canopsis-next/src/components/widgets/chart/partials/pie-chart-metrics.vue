@@ -1,8 +1,8 @@
 <template>
   <v-layout
     class="kpi-widget"
-    column="column"
-    align-center="align-center"
+    column
+    align-center
   >
     <h4 class="kpi-widget__title">
       {{ title }}

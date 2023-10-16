@@ -8,7 +8,7 @@
     :hide-slider="changed"
     color="secondary lighten-2"
     slider-color="primary"
-    dark="dark"
+    dark
   >
     <c-draggable-list-field
       class="d-flex"
@@ -26,38 +26,38 @@
         :key="tab._id"
         :disabled="changed"
         :to="getTabHrefById(tab._id)"
-        exact="exact"
-        ripple="ripple"
+        exact
+        ripple
       >
         <span>{{ tab.title }}</span>
         <template v-if="updatable && editing">
           <v-btn
-            small="small"
+            small
             text
-            icon="icon"
+            icon
             @click.prevent="showUpdateTabModal(tab)"
           >
-            <v-icon small="small">
+            <v-icon small>
               edit
             </v-icon>
           </v-btn>
           <v-btn
-            small="small"
+            small
             text
-            icon="icon"
+            icon
             @click.prevent="showSelectViewModal(tab)"
           >
-            <v-icon small="small">
+            <v-icon small>
               file_copy
             </v-icon>
           </v-btn>
           <v-btn
-            small="small"
+            small
             text
-            icon="icon"
+            icon
             @click.prevent="showDeleteTabModal(tab)"
           >
-            <v-icon small="small">
+            <v-icon small>
               delete
             </v-icon>
           </v-btn>
@@ -65,7 +65,7 @@
       </v-tab>
     </c-draggable-list-field>
     <template v-if="$scopedSlots.default">
-      <v-tabs-items touchless="touchless">
+      <v-tabs-items touchless>
         <v-tab-item
           v-for="tab in tabs"
           :key="tab._id"

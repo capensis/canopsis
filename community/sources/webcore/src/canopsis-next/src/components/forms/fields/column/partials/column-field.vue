@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-text>
-      <v-layout align-center="align-center">
+      <v-layout align-center>
         <span class="handler mr-1">
           <v-icon
             class="draggable"
@@ -21,24 +21,25 @@
           :name="`${name}.column`"
           @change="changeColumn"
         />
-        <v-tooltip left="left">
+        <v-tooltip left>
           <template #activator="{ on }">
             <v-btn
               class="mr-0"
               v-on="on"
-              small="small"
+              small
               text
-              icon="icon"
+              icon
               @click="$emit('remove')"
             >
               <v-icon
                 color="error"
-                small="small"
+                small
               >
                 close
               </v-icon>
             </v-btn>
-          </template><span>{{ $t('common.delete') }}</span>
+          </template>
+          <span>{{ $t('common.delete') }}</span>
         </v-tooltip>
       </v-layout>
       <v-expand-transition mode="out-in">

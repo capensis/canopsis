@@ -5,18 +5,18 @@
       <v-layout
         class="pa-4"
         v-if="pending"
-        justify-center="justify-center"
+        justify-center
       >
         <v-progress-circular
           color="primary"
-          indeterminate="indeterminate"
+          indeterminate
         />
       </v-layout>
       <template v-else>
         <v-tabs
           v-model="activeTab"
           slider-color="primary"
-          centered="centered"
+          centered
         >
           <v-tab :href="`#${$constants.KPI_TABS.graphs}`">
             {{ $tc('common.graph', 2) }}
@@ -60,7 +60,7 @@
             <v-tab-item :value="$constants.KPI_TABS.collectionSettings">
               <v-layout>
                 <v-flex
-                  xs12="xs12"
+                  xs12
                   offset-md1="offset-md1"
                   md10="md10"
                   offset-lg2="offset-lg2"

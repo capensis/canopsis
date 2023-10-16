@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <template v-if="!isEntityType">
       <idle-rule-alarm-type-field
         class="mb-2"
@@ -9,18 +9,18 @@
     </template>
     <c-name-field
       v-field="form.name"
-      required="required"
+      required
     />
     <c-description-field
       v-field="form.description"
-      required="required"
+      required
     />
-    <v-layout justify-space-between="justify-space-between">
+    <v-layout justify-space-between>
       <v-flex xs7="xs7">
         <c-duration-field
           v-field="form.duration"
           :label="$t('idleRules.timeRangeAwaiting')"
-          required="required"
+          required
         />
       </v-flex>
       <v-flex xs3="xs3">

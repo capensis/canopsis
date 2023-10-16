@@ -9,15 +9,15 @@
     :name="name"
     item-value="type"
     item-disabled="deprecated"
-    multiple="multiple"
-    chips="chips"
-    return-object="return-object"
+    multiple
+    chips
+    return-object
     @change="changeValue"
   >
     <template #selection="{ item, index }">
       <v-tooltip
         :disabled="!item.deprecated"
-        top="top"
+        top
       >
         <template #activator="{ on }">
           <v-chip
@@ -28,7 +28,8 @@
           >
             {{ getSelectedText(item) }}
           </v-chip>
-        </template><span>{{ $t('common.deprecatedTrigger') }}</span>
+        </template>
+        <span>{{ $t('common.deprecatedTrigger') }}</span>
       </v-tooltip>
     </template>
     <template #item="{ item, tile, parent }">
@@ -42,14 +43,14 @@
             class="ma-0"
             :input-value="tile.props.value"
             :color="parent.color"
-            hide-details="hide-details"
+            hide-details
           />
         </v-list-item-action>
         <v-list-item-content>
           <v-layout
             class="fill-width"
-            align-center="align-center"
-            justify-space-between="justify-space-between"
+            align-center
+            justify-space-between
           >
             <v-flex>{{ item.text }}</v-flex>
             <component
@@ -68,7 +69,7 @@
             :text="item.helpText"
             color="info"
             size="20"
-            top="top"
+            top
           />
         </v-list-item-action>
       </v-list-item>

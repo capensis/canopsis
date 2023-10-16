@@ -2,9 +2,9 @@
   <v-radio-group
     class="mt-0 row"
     v-field="type"
-    hide-details="hide-details"
-    mandatory="mandatory"
-    row="row"
+    hide-details
+    mandatory
+    row
   >
     <v-radio
       :label="$tc('common.role')"

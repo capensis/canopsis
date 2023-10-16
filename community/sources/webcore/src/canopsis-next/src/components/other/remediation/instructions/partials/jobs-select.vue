@@ -3,7 +3,7 @@
     :entities="jobs"
     :label="$tc('remediation.instruction.job', 2)"
     content-key="name"
-    clearable="clearable"
+    clearable
     @remove="removeJob"
     @clear="clear"
   >

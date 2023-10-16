@@ -4,9 +4,9 @@
     :items="items"
     :value="value"
     @input="$emit('input', $event)"
-    hide-details="hide-details"
-    single-line="single-line"
-    dense="dense"
+    hide-details
+    single-line
+    dense
   />
 </template>
 

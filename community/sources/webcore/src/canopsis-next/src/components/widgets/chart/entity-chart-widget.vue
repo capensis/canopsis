@@ -1,21 +1,21 @@
 <template>
   <v-layout
     class="py-2"
-    column="column"
+    column
   >
     <kpi-widget-filters
       class="mx-3"
       :interval="query.interval"
       :min-interval-date="minAvailableDate"
       :sampling="query.sampling"
-      show-interval="show-interval"
-      show-sampling="show-sampling"
+      show-interval
+      show-sampling
       @update:sampling="updateQueryField('sampling', $event)"
       @update:interval="updateQueryField('interval', $event)"
     />
     <v-layout
       class="pa-3"
-      column="column"
+      column
     >
       <chart-loader
         v-if="pending"

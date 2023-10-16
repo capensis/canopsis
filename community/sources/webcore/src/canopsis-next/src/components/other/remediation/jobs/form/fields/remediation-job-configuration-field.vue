@@ -8,7 +8,7 @@
       :error-messages="errors.collect('configuration')"
       :loading="pending"
       name="configuration"
-      return-object="return-object"
+      return-object
       item-text="name"
       item-value="_id"
     />

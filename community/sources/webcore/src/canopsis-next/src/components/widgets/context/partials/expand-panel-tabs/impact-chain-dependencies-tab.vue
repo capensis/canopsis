@@ -3,8 +3,8 @@
     class="pa-3"
     :root="item"
     :columns="columns"
-    impact="impact"
-    openable-root="openable-root"
+    impact
+    openable-root
   />
 </template>
 

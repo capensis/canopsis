@@ -2,20 +2,20 @@
   <v-tabs
     color="secondary lighten-1"
     slider-color="primary"
-    dark="dark"
-    centered="centered"
+    dark
+    centered
   >
     <v-tab>{{ $t('common.summary') }}</v-tab>
     <v-tab-item>
       <v-layout
         class="py-3 secondary lighten-2"
-        justify-center="justify-center"
+        justify-center
       >
         <v-flex xs11="xs11">
           <v-card>
             <v-card-text>
               <v-flex
-                xs12="xs12"
+                xs12
                 md8="md8"
                 offset-md2="offset-md2"
                 lg6="lg6"
@@ -32,16 +32,16 @@
     <v-tab-item>
       <v-layout
         class="pa-3 secondary lighten-2"
-        justify-center="justify-center"
+        justify-center
       >
         <v-flex xs10="xs10">
           <v-card>
             <v-card-text>
               <c-patterns-field
                 :value="patterns"
-                readonly="readonly"
-                with-entity="with-entity"
-                with-event="with-event"
+                readonly
+                with-entity
+                with-event
               />
             </v-card-text>
           </v-card>
@@ -53,7 +53,7 @@
       <v-tab-item>
         <v-layout
           class="py-3 secondary lighten-2"
-          justify-center="justify-center"
+          justify-center
         >
           <v-flex xs11="xs11">
             <v-data-table
@@ -78,12 +78,12 @@
       <v-tab-item>
         <v-layout
           class="py-3 secondary lighten-2"
-          justify-center="justify-center"
+          justify-center
         >
           <v-flex xs11="xs11">
             <external-data-form
               :form="externalDataForm"
-              disabled="disabled"
+              disabled
             />
           </v-flex>
         </v-layout>
@@ -94,7 +94,7 @@
       <v-tab-item>
         <v-layout
           class="py-3 secondary lighten-2"
-          justify-center="justify-center"
+          justify-center
         >
           <v-flex xs11="xs11">
             <v-card>

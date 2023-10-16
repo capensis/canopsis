@@ -1,6 +1,6 @@
 <template>
   <widget-settings-item :title="$t('settings.actionRequiredSettings.title')">
-    <v-layout column="column">
+    <v-layout column>
       <c-enabled-field
         v-field="value.is_blinking"
         :label="$t('settings.actionRequiredSettings.isBlinking')"
@@ -8,7 +8,7 @@
       <c-enabled-color-picker-field
         v-field="value.color"
         :label="$t('settings.actionRequiredSettings.customColor')"
-        column="column"
+        column
       />
       <c-enabled-icon-field
         v-field="value.icon_name"

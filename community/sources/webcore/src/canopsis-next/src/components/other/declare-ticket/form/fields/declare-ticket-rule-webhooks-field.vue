@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <c-alert
       v-if="!webhooks.length"
       type="info"
@@ -24,7 +24,7 @@
         />
       </template>
     </c-card-iterator-field>
-    <v-layout align-center="align-center">
+    <v-layout align-center>
       <v-btn
         class="ml-0"
         :color="hasWebhooksErrors ? 'error' : 'primary'"

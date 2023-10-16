@@ -15,9 +15,9 @@
         :addable="hasAccessToAddFilter"
         :editable="hasAccessToEditFilter"
         :entity-types="[$constants.ENTITY_TYPES.service]"
-        with-entity="with-entity"
-        with-service-weather="with-service-weather"
-        entity-counters-type="entity-counters-type"
+        with-entity
+        with-service-weather
+        entity-counters-type
       />
       <v-divider />
     </template>
@@ -41,7 +41,7 @@
       :templates-pending="widgetTemplatesPending"
       :label="$t('settings.treeOfDependenciesColumnNames')"
       :type="$constants.ENTITIES_TYPES.entity"
-      with-color-indicator="with-color-indicator"
+      with-color-indicator
       @input="updateWidgetColumnsTemplate"
     />
     <v-divider />
@@ -86,13 +86,13 @@
       <field-grid-size
         v-model="form.parameters.columnMobile"
         :title="$t('settings.columnMobile')"
-        mobile="mobile"
+        mobile
       />
       <v-divider />
       <field-grid-size
         v-model="form.parameters.columnTablet"
         :title="$t('settings.columnTablet')"
-        tablet="tablet"
+        tablet
       />
       <v-divider />
       <field-grid-size

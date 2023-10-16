@@ -1,13 +1,13 @@
 <template>
   <div>
     <snmp-rule-form-field :label="label" />
-    <v-layout wrap="wrap">
-      <v-flex xs12="xs12">
+    <v-layout wrap>
+      <v-flex xs12>
         <v-menu
           :items="items"
           max-height="200"
-          full-width="full-width"
-          offset-y="offset-y"
+          full-width
+          offset-y
         >
           <template #activator="{ on }">
             <v-text-field
@@ -15,7 +15,7 @@
               v-on="on"
               v-field="form.value"
               :label="$t('snmpRule.moduleMibObjects')"
-              hide-details="hide-details"
+              hide-details
             >
               <template
                 v-if="large"
@@ -23,7 +23,7 @@
               >
                 <v-btn
                   :class="{ active: isVisible }"
-                  icon="icon"
+                  icon
                   @click.stop="toggleVisibility"
                 >
                   <v-icon>attach_file</v-icon>
@@ -45,17 +45,17 @@
       <v-expand-transition v-if="large">
         <v-flex
           v-show="isVisible"
-          xs12="xs12"
+          xs12
         >
           <v-text-field
             v-field="form.regex"
             :label="$t('snmpRule.regex')"
-            hide-details="hide-details"
+            hide-details
           />
           <v-text-field
             v-field="form.formatter"
             :label="$t('snmpRule.formatter')"
-            hide-details="hide-details"
+            hide-details
           />
         </v-flex>
       </v-expand-transition>

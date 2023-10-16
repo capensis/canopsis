@@ -8,16 +8,16 @@
       :tooltip="$t('modals.createUser.create.title')"
       color="indigo"
       icon="people"
-      small="small"
-      top="top"
+      small
+      top
       @click="showCreateUserModal"
     />
     <c-action-fab-btn
       :tooltip="$t('modals.createRole.create.title')"
       color="deep-purple"
       icon="supervised_user_circle"
-      small="small"
-      top="top"
+      small
+      top
       @click="showCreateRoleModal"
     />
   </c-fab-expand-btn>

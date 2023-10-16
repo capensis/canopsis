@@ -2,10 +2,10 @@
   <ds-calendar-app
     :calendar="calendar"
     :pending="pending"
-    read-only="read-only"
-    fluid="fluid"
-    fill-height="fill-height"
-    current-time-for-today="current-time-for-today"
+    read-only
+    fluid
+    fill-height
+    current-time-for-today
     @change="fetchEvents"
   >
     <template #calendarAppLoader="">

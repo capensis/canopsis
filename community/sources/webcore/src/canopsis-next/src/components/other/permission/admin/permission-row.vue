@@ -1,14 +1,14 @@
 <template>
   <tr>
     <td>
-      <v-layout align-center="align-center">
+      <v-layout align-center>
         <span class="mr-1">{{ permission.name }}</span>
         <c-help-icon
           v-if="permission.description"
           :text="permission.description"
           icon="help"
           size="18"
-          top="top"
+          top
         />
       </v-layout>
     </td>

@@ -11,7 +11,7 @@
       :items="formats"
       :label="$t('settings.exportCsv.fields.datetimeFormat')"
     />
-    <v-layout column="column">
+    <v-layout column>
       <h4 class="subheading my-4">
         {{ $t('settings.exportColumnNames') }}
       </h4>
@@ -23,7 +23,7 @@
         :label="$t('settings.exportColumnNames')"
         :type="type"
         :with-instructions="withInstructions"
-        without-infos-attributes="without-infos-attributes"
+        without-infos-attributes
         @update:template="updateTemplate"
       />
     </v-layout>

@@ -4,8 +4,8 @@
       v-model="activeTab"
       color="secondary lighten-1"
       slider-color="primary"
-      dark="dark"
-      centered="centered"
+      dark
+      centered
     >
       <v-tab>{{ $t('common.summary') }}</v-tab>
       <v-tab>{{ $t('common.statistics') }}</v-tab>
@@ -15,7 +15,7 @@
       <v-tab>{{ $tc('common.rating') }}</v-tab>
     </v-tabs>
     <v-layout class="pa-3 secondary lighten-2">
-      <v-flex xs12="xs12">
+      <v-flex xs12>
         <v-card class="pa-3">
           <v-tabs-items
             class="pt-2"
@@ -42,7 +42,7 @@
             </v-tab-item>
             <v-tab-item
               v-if="remediationInstructionStatsItem.has_executions"
-              lazy="lazy"
+              lazy
             >
               <remediation-instruction-stats-alarms-timeline-tab
                 :remediation-instruction="remediationInstruction"

@@ -4,11 +4,11 @@
     :value="idleSince"
     :size="iconSize"
     color="error"
-    top="top"
+    top
   />
   <v-tooltip
     v-else
-    top="top"
+    top
   >
     <template #activator="{ on }">
       <v-icon
@@ -19,7 +19,8 @@
       >
         {{ status.icon }}
       </v-icon>
-    </template><span>{{ $t(`common.statusTypes.${statusValue}`) }}</span>
+    </template>
+    <span>{{ $t(`common.statusTypes.${statusValue}`) }}</span>
   </v-tooltip>
 </template>
 

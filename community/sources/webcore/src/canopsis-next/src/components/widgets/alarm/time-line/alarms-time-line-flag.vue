@@ -3,7 +3,7 @@
     class="time-line-flag"
     :value="isActiveBadge"
     color="transparent"
-    overlap="overlap"
+    overlap
   >
     <template #badge="">
       <v-icon

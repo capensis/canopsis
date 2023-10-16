@@ -10,8 +10,8 @@
     :return-object="returnObject"
     item-text="title"
     item-value="_id"
-    dense="dense"
-    hide-details="hide-details"
+    dense
+    hide-details
   >
     <template #item="{ item, tile }">
       <v-list-item

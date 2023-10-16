@@ -1,7 +1,7 @@
 <template>
   <v-card class="subheading">
     <v-card-text>
-      <v-layout wrap="wrap">
+      <v-layout wrap>
         <v-flex xs1="xs1">
           <v-avatar
             class="white--text mr-2"
@@ -17,20 +17,20 @@
             class="scenario-info-type px-2"
             :label="$t('common.type')"
             :value="action.type"
-            hide-icon="hide-icon"
+            hide-icon
           />
           <v-expand-transition mode="out-in">
             <v-layout
               class="px-2"
               v-if="expanded"
-              column="column"
+              column
             >
               <v-tabs
                 v-model="activeTab"
                 slider-color="primary"
                 color="transparent"
-                centered="centered"
-                fixed-tabs="fixed-tabs"
+                centered
+                fixed-tabs
               >
                 <v-tab>{{ $t('common.general') }}</v-tab>
                 <v-tab>{{ $t('scenario.tabs.pattern') }}</v-tab>
@@ -46,9 +46,9 @@
                 <v-tab-item>
                   <c-patterns-field
                     :value="patterns"
-                    with-alarm="with-alarm"
-                    with-entity="with-entity"
-                    readonly="readonly"
+                    with-alarm
+                    with-entity
+                    readonly
                   />
                 </v-tab-item>
               </v-tabs-items>

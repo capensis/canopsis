@@ -6,13 +6,13 @@
     :headers="headers"
     :total-items="totalItems"
     item-key="id"
-    search="search"
-    advanced-pagination="advanced-pagination"
-    hide-actions="hide-actions"
+    search
+    advanced-pagination
+    hide-actions
     @update:pagination="$emit('update:pagination', $event)"
   >
     <template #toolbar="">
-      <v-flex xs12="xs12">
+      <v-flex xs12>
         <v-expand-transition>
           <v-layout
             class="ml-3"
@@ -36,11 +36,11 @@
       </v-flex>
     </template>
     <template #enabled="{ item }">
-      <v-layout align-center="align-center">
+      <v-layout align-center>
         <v-checkbox-functional
           :input-value="isEnabledRatingSetting(item)"
           :disabled="!updatable"
-          hide-details="hide-details"
+          hide-details
           @change="enableRatingSetting(item, $event)"
         />
       </v-layout>

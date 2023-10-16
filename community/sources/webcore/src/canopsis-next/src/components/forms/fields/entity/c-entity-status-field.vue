@@ -5,7 +5,7 @@
     :disabled="disabled"
     :label="label || $t('common.status')"
     :name="name"
-    hide-details="hide-details"
+    hide-details
   />
 </template>
 

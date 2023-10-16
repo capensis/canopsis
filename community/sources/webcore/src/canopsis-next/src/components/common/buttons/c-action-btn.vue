@@ -16,7 +16,7 @@
           class="c-action-btn__badge"
           v-if="badgeValue"
           :color="badgeColor"
-          overlap="overlap"
+          overlap
         >
           <template #badge="">
             <v-tooltip
@@ -39,7 +39,8 @@
                     {{ badgeIcon }}
                   </v-icon>
                 </slot>
-              </template><span>{{ badgeTooltip }}</span>
+              </template>
+              <span>{{ badgeTooltip }}</span>
             </v-tooltip>
           </template>
           <v-btn
@@ -49,7 +50,7 @@
             :loading="loading"
             :small="small"
             :color="btnColor"
-            icon="icon"
+            icon
             @click.stop.prevent="$listeners.click"
           >
             <v-icon :color="preparedProps.color">
@@ -65,7 +66,7 @@
           :loading="loading"
           :small="small"
           :color="btnColor"
-          icon="icon"
+          icon
           @click.stop.prevent="$listeners.click"
         >
           <v-icon :color="preparedProps.color">
@@ -73,7 +74,8 @@
           </v-icon>
         </v-btn>
       </slot>
-    </template><span>{{ preparedProps.tooltip }}</span>
+    </template>
+    <span>{{ preparedProps.tooltip }}</span>
   </v-tooltip>
 </template>
 

@@ -12,7 +12,7 @@
         :history="history"
         archived-count-message-key="storageSetting.history.entity.archivedCount"
         deleted-count-message-key="storageSetting.history.entity.deletedCount"
-        hide-deleted="hide-deleted"
+        hide-deleted
       />
     </template>
     <v-checkbox
@@ -25,7 +25,7 @@
           :text="$t('storageSetting.entity.archiveDependenciesHelp')"
           color="info"
           max-width="300"
-          top="top"
+          top
         />
       </template>
     </v-checkbox>

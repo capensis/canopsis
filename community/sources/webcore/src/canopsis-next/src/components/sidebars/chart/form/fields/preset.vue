@@ -5,7 +5,7 @@
       :items="presetsWithCustom"
       :label="$t('settings.chart.preset')"
     >
-      <template #item="{ item, tile, parent }">
+      <template #item="{ item, tile }">
         <v-list-item
           v-bind="tile.props"
           v-on="tile.on"
@@ -16,7 +16,7 @@
               :text="item.helpText"
               icon="help"
               size="20"
-              left="left"
+              left
             />
           </v-list-item-action>
         </v-list-item>

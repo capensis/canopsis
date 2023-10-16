@@ -1,10 +1,10 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-layout
       v-for="(rule, index) in rules"
       :key="rule.key"
-      justify-space-between="justify-space-between"
-      align-center="align-center"
+      justify-space-between
+      align-center
     >
       <v-flex>
         <pattern-rule-field
@@ -24,7 +24,7 @@
     </v-layout>
     <v-layout
       v-if="!readonly"
-      align-center="align-center"
+      align-center
     >
       <v-btn
         class="ml-0"

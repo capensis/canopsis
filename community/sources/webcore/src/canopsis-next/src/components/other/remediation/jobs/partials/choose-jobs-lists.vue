@@ -6,8 +6,8 @@
     :total-items="totalItems"
     :is-disabled-item="isSelectedJob"
     :pagination.sync="pagination"
-    select-all="select-all"
-    advanced-pagination="advanced-pagination"
+    select-all
+    advanced-pagination
   >
     <template #toolbar="{ clearSearch, updateSearch }">
       <v-layout>
@@ -20,8 +20,8 @@
     <template #actions="{ disabled, item }">
       <v-btn
         :disabled="disabled"
-        icon="icon"
-        small="small"
+        icon
+        small
         @click="$emit('select', [item])"
       >
         <v-icon>add</v-icon>

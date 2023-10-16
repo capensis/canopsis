@@ -17,16 +17,16 @@
       :name="requestFormName"
       :headers-variables="payloadVariables"
       :payload-variables="payloadVariables"
-      hide-url="hide-url"
+      hide-url
     />
     <declare-ticket-rule-ticket-mapping-field
       class="mb-2"
       v-field="value.declare_ticket"
       :name="`${name}.declare_ticket`"
       :is-declare-ticket-exist="isDeclareTicketExist"
-      hide-empty-response="hide-empty-response"
-      ticket-id-required="ticket-id-required"
-      only-one-ticket-id="only-one-ticket-id"
+      hide-empty-response
+      ticket-id-required
+      only-one-ticket-id
     />
     <c-workflow-field
       v-field="value.stop_on_fail"

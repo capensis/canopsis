@@ -4,7 +4,7 @@
     :label="$t('common.disableDuringPeriods')"
     :items="duringItems"
     :name="name"
-    multiple="multiple"
+    multiple
   />
 </template>
 

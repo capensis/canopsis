@@ -7,9 +7,9 @@
     content-class="date-time-picker"
     transition="slide-y-transition"
     max-width="290px"
-    right="right"
-    lazy-with-unmount="lazy-with-unmount"
-    lazy="lazy"
+    right
+    lazy-with-unmount
+    lazy
   >
     <template #activator="{ on }">
       <div v-on="on">
@@ -19,7 +19,7 @@
           :value="dateTextValue"
           :append-icon="clearable ? 'close' : ''"
           :disabled="disabled"
-          readonly="readonly"
+          readonly
           @click:append="clear"
         />
       </div>

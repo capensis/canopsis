@@ -1,7 +1,7 @@
 <template>
   <v-layout
     class="py-4"
-    column="column"
+    column
   >
     <state-setting-information-row
       :label="$t('common.name')"

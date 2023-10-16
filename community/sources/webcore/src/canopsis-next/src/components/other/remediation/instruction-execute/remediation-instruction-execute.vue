@@ -3,7 +3,7 @@
     <v-text-field
       :value="instructionExecution.description"
       :label="$t('common.description')"
-      readonly="readonly"
+      readonly
       filled
     />
     <remediation-instruction-execute-steps

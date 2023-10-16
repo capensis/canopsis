@@ -4,7 +4,7 @@
     <v-progress-circular
       class="ml-2"
       v-else
-      indeterminate="indeterminate"
+      indeterminate
       color="primary"
       width="3"
       size="25"

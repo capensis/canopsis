@@ -13,7 +13,7 @@
     :clearable="!required"
     item-text="name"
     item-value="_id"
-    return-object="return-object"
+    return-object
     @keydown.enter.prevent="createCategory"
   >
     <template
@@ -28,7 +28,7 @@
         :label="$t('service.createCategory')"
         :error-messages="errors.collect(newCategoryFieldName)"
         :name="newCategoryFieldName"
-        hide-details="hide-details"
+        hide-details
         @keyup.enter="createCategory"
         @blur="clearCategory"
       >
@@ -36,7 +36,7 @@
           <c-help-icon
             icon="help"
             :text="$t('service.createCategoryHelp')"
-            left="left"
+            left
           />
         </template>
       </v-text-field>

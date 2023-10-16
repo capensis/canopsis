@@ -5,12 +5,12 @@
     :position-y="pageY"
     :close-on-content-click="false"
     :disabled="disabled"
-    ignore-click-upper-outside="ignore-click-upper-outside"
-    offset-overflow="offset-overflow"
-    offset-x="offset-x"
-    absolute="absolute"
+    ignore-click-upper-outside
+    offset-overflow
+    offset-x
+    absolute
   >
-    <v-list dense="dense">
+    <v-list dense>
       <v-list-item
         v-for="action in availableActions"
         :key="action.text"

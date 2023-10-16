@@ -1,7 +1,7 @@
 <template>
   <widget-settings-item
     :title="title"
-    optional="optional"
+    optional
   >
     <c-storages-field
       v-field="storages"

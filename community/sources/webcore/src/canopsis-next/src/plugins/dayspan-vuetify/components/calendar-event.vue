@@ -35,11 +35,14 @@
               <span v-if="hasPrefix">{{ getPrefix }}</span>
               <strong class="ds-ev-title">{{ details.title }}</strong>
               <span class="ds-ev-description">{{ details.description }}</span>
-            </slot></span><span v-else>
+            </slot>
+          </span>
+          <span v-else>
             <slot
               name="eventEmpty"
               v-bind="{ calendarEvent, details }"
-            >&nbsp;</slot></span>
+            />
+          </span>
           <div
             class="ds-calendar-event-resize"
             v-show="canResize"

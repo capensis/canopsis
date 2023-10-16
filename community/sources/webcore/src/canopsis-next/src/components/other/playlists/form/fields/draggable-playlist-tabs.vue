@@ -1,5 +1,5 @@
 <template>
-  <v-layout column="column">
+  <v-layout column>
     <v-layout>
       <v-flex
         class="text-center font-weight-bold"
@@ -20,7 +20,7 @@
         {{ $tc('common.tab') }}
       </v-flex>
     </v-layout>
-    <v-layout column="column">
+    <v-layout column>
       <c-draggable-list-field
         class="tabs-draggable-panel secondary lighten-1"
         v-field="tabs"

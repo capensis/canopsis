@@ -1,21 +1,21 @@
 <template>
   <v-card>
     <v-card-text>
-      <v-layout column="column">
-        <v-layout align-center="align-center">
+      <v-layout column>
+        <v-layout align-center>
           <c-name-field
             class="mr-2"
             v-field="form.label"
             :label="$t('common.label')"
             :name="labelFieldName"
-            required="required"
+            required
           />
           <c-action-btn
             type="delete"
             @click="remove"
           />
         </v-layout>
-        <v-layout align-center="align-center">
+        <v-layout align-center>
           <v-flex
             class="pr-2"
             xs8="xs8"
@@ -30,7 +30,7 @@
               v-field="form.icon_name"
               :label="$t('common.icon')"
               :name="iconFieldName"
-              required="required"
+              required
             />
           </v-flex>
         </v-layout>
@@ -38,7 +38,7 @@
           <c-enabled-field
             v-field="form.single"
             :label="$t('linkRule.single')"
-            hide-details="hide-details"
+            hide-details
           />
           <c-enabled-field
             v-field="form.hide_in_menu"
@@ -50,7 +50,7 @@
           :label="$t('common.url')"
           :variables="urlVariables"
           :name="form.key"
-          required="required"
+          required
         />
         <v-radio-group
           v-field="form.action"

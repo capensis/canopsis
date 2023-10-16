@@ -1,7 +1,7 @@
 <template>
   <v-layout
     class="mt-2"
-    column="column"
+    column
   >
     <v-layout>
       <v-flex
@@ -34,7 +34,7 @@
         @remove="removeOperation(index)"
       />
     </c-draggable-list-field>
-    <v-layout align-center="align-center">
+    <v-layout align-center>
       <v-btn
         class="ml-0"
         :color="hasOperationsErrors ? 'error' : 'primary'"
@@ -43,10 +43,13 @@
         @click="addOperation"
       >
         {{ $t('remediation.instruction.addOperation') }}
-      </v-btn><span
+      </v-btn>
+      <span
         class="error--text"
         v-show="hasOperationsErrors"
-      >{{ $t('remediation.instruction.errors.operationRequired') }}</span>
+      >
+        {{ $t('remediation.instruction.errors.operationRequired') }}
+      </span>
     </v-layout>
   </v-layout>
 </template>

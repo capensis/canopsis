@@ -6,7 +6,7 @@
   >
     <v-list
       class="widget-settings__list py-0 mb-2"
-      expand="expand"
+      expand
     >
       <slot />
     </v-list>
