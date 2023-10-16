@@ -850,6 +850,8 @@ definitions:
         $ref: '#/definitions/appinfo.PopupTimeout'
       remediation:
         $ref: '#/definitions/appinfo.RemediationConf'
+      required_instruction_approve:
+        type: boolean
       show_header_on_kiosk_mode:
         type: boolean
       stack:
@@ -922,6 +924,8 @@ definitions:
         type: integer
       popup_timeout:
         $ref: '#/definitions/appinfo.PopupTimeout'
+      required_instruction_approve:
+        type: boolean
       show_header_on_kiosk_mode:
         type: boolean
     type: object
