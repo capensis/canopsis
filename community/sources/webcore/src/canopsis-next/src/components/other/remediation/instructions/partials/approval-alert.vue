@@ -3,7 +3,7 @@
     v-card-text.approval-alert-text
       v-icon.notification-icon(color="error") notification_important
       v-layout(row)
-        strong {{ approval.requested_by }}
+        strong {{ approval.requested_by.name }}
         span.ml-1 {{ $t('modals.remediationInstructionApproval.requested') }}
       v-layout.mt-3(row)
         span.grey--text.text--darken-2 {{ $tc('common.comment', 1) }}:
