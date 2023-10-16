@@ -2,6 +2,7 @@ Feature: Delete a view group
   I need to be able to delete a view group
   Only admin should be able to delete a view group
 
+  @concurrent
   Scenario: given delete request should delete view group
     When I am admin
     When I do DELETE /api/v4/view-groups/test-viewgroup-to-delete
@@ -9,6 +10,7 @@ Feature: Delete a view group
     When I do GET /api/v4/view-groups/test-viewgroup-to-delete
     Then the response code should be 404
 
+  @concurrent
   Scenario: given request to delete linked group should return error
     When I am admin
     When I do DELETE /api/v4/view-groups/test-viewgroup-to-delete-linked-to-view
@@ -20,15 +22,18 @@ Feature: Delete a view group
     }
     """
 
+  @concurrent
   Scenario: given delete request and no auth user should not allow access
     When I do DELETE /api/v4/view-groups/test-viewgroup-to-delete
     Then the response code should be 401
 
+  @concurrent
   Scenario: given delete request and auth user by api key without permissions should not allow access
     When I am noperms
     When I do DELETE /api/v4/view-groups/test-viewgroup-to-delete
     Then the response code should be 403
 
+  @concurrent
   Scenario: given delete request with not exist id should return not found error
     When I am admin
     When I do DELETE /api/v4/view-groups/test-viewgroup-not-found
