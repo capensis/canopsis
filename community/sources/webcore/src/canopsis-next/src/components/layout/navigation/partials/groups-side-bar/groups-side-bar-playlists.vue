@@ -1,21 +1,40 @@
-<template lang="pug">
-  v-expansion-panel.sidebar-playlists(v-if="availablePlaylists.length", expand, focusable, dark)
-    v-expansion-panel-content.secondary.lighten-1
-      template(#header="")
-        div.panel-header
-          span {{ $t(`pageHeaders.${$constants.USERS_PERMISSIONS.technical.playlist}.title`) }}
-      router-link(
-        v-for="playlist in availablePlaylists",
-        :key="playlist._id",
-        :title="playlist.name",
+<template>
+  <v-expansion-panel
+    class="sidebar-playlists"
+    v-if="availablePlaylists.length"
+    expand
+    focusable
+    dark
+  >
+    <v-expansion-panel-content class="secondary lighten-1">
+      <template #header="">
+        <div class="panel-header">
+          <span>{{ $t(`pageHeaders.${$constants.USERS_PERMISSIONS.technical.playlist}.title`) }}</span>
+        </div>
+      </template>
+      <router-link
+        v-for="playlist in availablePlaylists"
+        :key="playlist._id"
+        :title="playlist.name"
         :to="{ name: $constants.ROUTES_NAMES.playlist, params: { id: playlist._id } }"
-      )
-        v-card.secondary.lighten-2.sidebar-playlists__button
-          v-card-text
-            v-layout(align-center, justify-space-between)
-              v-flex
-                v-layout(align-center)
-                  span.ellipsis.pl-3 {{ playlist.name }}
+      >
+        <v-card class="secondary lighten-2 sidebar-playlists__button">
+          <v-card-text>
+            <v-layout
+              align-center
+              justify-space-between
+            >
+              <v-flex>
+                <v-layout align-center>
+                  <span class="text-truncate pl-3">{{ playlist.name }}</span>
+                </v-layout>
+              </v-flex>
+            </v-layout>
+          </v-card-text>
+        </v-card>
+      </router-link>
+    </v-expansion-panel-content>
+  </v-expansion-panel>
 </template>
 
 <script>

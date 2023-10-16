@@ -2,7 +2,8 @@
   "root": true,
   "extends": [
     "plugin:vue/strongly-recommended",
-    "@vue/airbnb"
+    "@vue/airbnb",
+    "plugin:vuetify/base"
   ],
 
   "parserOptions": {
