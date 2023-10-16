@@ -1,80 +1,136 @@
-<template lang="pug">
-  v-layout(column)
-    c-pattern-field.mb-2(
-      v-if="!patterns.old_mongo_query && withType",
-      :value="patterns.id",
-      :type="type",
-      :disabled="disabled || readonly",
-      return-object,
-      required,
+<template>
+  <v-layout column="column">
+    <c-pattern-field
+      class="mb-2"
+      v-if="!patterns.old_mongo_query && withType"
+      :value="patterns.id"
+      :type="type"
+      :disabled="disabled || readonly"
+      return-object="return-object"
+      required="required"
       @input="updatePattern"
-    )
-
-    v-tabs(
-      v-if="!withType || patterns.id",
-      v-model="activeTab",
-      slider-color="primary",
-      centered
-    )
-      v-tab(
-        :disabled="!isSimpleTab && hasJsonError",
+    />
+    <v-tabs
+      v-if="!withType || patterns.id"
+      v-model="activeTab"
+      slider-color="primary"
+      centered="centered"
+    >
+      <v-tab
+        :disabled="!isSimpleTab && hasJsonError"
         :href="`#${$constants.PATTERN_EDITOR_TABS.simple}`"
-      ) {{ $t('pattern.simpleEditor') }}
-      v-tab-item(:value="$constants.PATTERN_EDITOR_TABS.simple")
-        v-layout(v-if="patterns.old_mongo_query", justify-center, wrap)
-          v-flex.pt-2(xs8)
-            div.error--text.text-xs-center {{ $t('pattern.errors.oldPattern') }}
-          v-flex.pt-2(v-if="!readonly && !disabled", xs12)
-            v-layout(justify-center)
-              v-btn(color="primary", @click="discardPattern") {{ $t('pattern.discard') }}
-        pattern-groups-field.mt-2(
-          v-else,
-          v-field="patterns.groups",
-          :disabled="formDisabled",
-          :readonly="readonly",
-          :name="patternGroupsFieldName",
-          :type="type",
-          :required="required",
+      >
+        {{ $t('pattern.simpleEditor') }}
+      </v-tab>
+      <v-tab-item :value="$constants.PATTERN_EDITOR_TABS.simple">
+        <v-layout
+          v-if="patterns.old_mongo_query"
+          justify-center="justify-center"
+          wrap="wrap"
+        >
+          <v-flex
+            class="pt-2"
+            xs8="xs8"
+          >
+            <div class="error--text text-center">
+              {{ $t('pattern.errors.oldPattern') }}
+            </div>
+          </v-flex>
+          <v-flex
+            class="pt-2"
+            v-if="!readonly && !disabled"
+            xs12="xs12"
+          >
+            <v-layout justify-center="justify-center">
+              <v-btn
+                color="primary"
+                @click="discardPattern"
+              >
+                {{ $t('pattern.discard') }}
+              </v-btn>
+            </v-layout>
+          </v-flex>
+        </v-layout>
+        <pattern-groups-field
+          class="mt-2"
+          v-else
+          v-field="patterns.groups"
+          :disabled="formDisabled"
+          :readonly="readonly"
+          :name="patternGroupsFieldName"
+          :type="type"
+          :required="required"
           :attributes="attributes"
-        )
-
-      v-tab(:href="`#${$constants.PATTERN_EDITOR_TABS.advanced}`") {{ $t('pattern.advancedEditor') }}
-      v-tab-item(:value="$constants.PATTERN_EDITOR_TABS.advanced", lazy)
-        c-json-field(
-          v-if="patterns.old_mongo_query",
-          :value="patterns.old_mongo_query",
-          :label="$t('pattern.advancedEditor')",
-          readonly,
+        />
+      </v-tab-item>
+      <v-tab :href="`#${$constants.PATTERN_EDITOR_TABS.advanced}`">
+        {{ $t('pattern.advancedEditor') }}
+      </v-tab>
+      <v-tab-item
+        :value="$constants.PATTERN_EDITOR_TABS.advanced"
+        lazy="lazy"
+      >
+        <c-json-field
+          v-if="patterns.old_mongo_query"
+          :value="patterns.old_mongo_query"
+          :label="$t('pattern.advancedEditor')"
+          readonly="readonly"
           rows="10"
-        )
-        pattern-advanced-editor-field(
-          v-else,
-          :value="patternsJson",
-          :disabled="readonly || disabled || !isCustomPattern",
-          :attributes="attributes",
-          :name="patternJsonFieldName",
+        />
+        <pattern-advanced-editor-field
+          v-else
+          :value="patternsJson"
+          :disabled="readonly || disabled || !isCustomPattern"
+          :attributes="attributes"
+          :name="patternJsonFieldName"
           @input="updateGroupsFromPatterns"
-        )
-
-    template(v-if="!readonly && !patterns.old_mongo_query")
-      v-layout(row, align-center, justify-end)
-        v-btn.mr-0(
-          v-if="withType && !isCustomPattern",
-          :disabled="disabled",
-          color="primary",
+        />
+      </v-tab-item>
+    </v-tabs>
+    <template v-if="!readonly && !patterns.old_mongo_query">
+      <v-layout
+        align-center="align-center"
+        justify-end="justify-end"
+      >
+        <v-btn
+          class="mr-0"
+          v-if="withType && !isCustomPattern"
+          :disabled="disabled"
+          color="primary"
           @click="updatePatternToCustom"
-        ) {{ $t('common.edit') }}
-        v-layout(v-if="checked", align-center, justify-end)
-          pattern-count-message(:error="count === 0", :message="$tc('common.itemFound', count, { count })")
-          slot(name="append-count")
-      v-flex
-        v-alert.pre-wrap(v-if="errorMessage", value="true") {{ errorMessage }}
-        v-alert(
-          :value="overLimit",
-          type="warning",
+        >
+          {{ $t('common.edit') }}
+        </v-btn>
+        <v-layout
+          v-if="checked"
+          align-center="align-center"
+          justify-end="justify-end"
+        >
+          <pattern-count-message
+            :error="count === 0"
+            :message="$tc('common.itemFound', count, { count })"
+          />
+          <slot name="append-count" />
+        </v-layout>
+      </v-layout>
+      <v-flex>
+        <v-alert
+          class="pre-wrap"
+          v-if="errorMessage"
+          value="true"
+        >
+          {{ errorMessage }}
+        </v-alert>
+        <v-alert
+          :value="overLimit"
+          type="warning"
           transition="fade-transition"
-        )
-          span {{ $t('pattern.errors.countOverLimit', { count }) }}
+        >
+          <span>{{ $t('pattern.errors.countOverLimit', { count }) }}</span>
+        </v-alert>
+      </v-flex>
+    </template>
+  </v-layout>
 </template>
 
 <script>

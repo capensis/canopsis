@@ -1,17 +1,22 @@
-<template lang="pug">
-  v-chip.c-alarm-action-chip(
-    :class="chipClass",
-    :color="color",
-    small,
+<template>
+  <v-chip
+    class="c-alarm-action-chip"
+    :class="chipClass"
+    :color="color"
+    small="small"
     @click="$emit('click')"
-  )
-    span.c-alarm-action-chip__text.white--text
-      slot
-    v-icon.cursor-pointer.ml-2(
-      v-if="closable",
-      color="white",
+  >
+    <span class="c-alarm-action-chip__text white--text">
+      <slot /></span>
+    <v-icon
+      class="cursor-pointer ml-2"
+      v-if="closable"
+      color="white"
       @click.stop="$emit('close')"
-    ) cancel
+    >
+      cancel
+    </v-icon>
+  </v-chip>
 </template>
 
 <script>

@@ -1,19 +1,30 @@
-<template lang="pug">
-  v-list-group
-    template(#activator="")
-      v-list-tile {{ $t('settings.remediationInstructionsFilters') }}
-    v-container
-      v-layout(row, wrap)
-        remediation-instructions-filters-list(
-          v-field="filters",
-          :editable="editable",
+<template>
+  <v-list-group>
+    <template #activator="">
+      <v-list-item>{{ $t('settings.remediationInstructionsFilters') }}</v-list-item>
+    </template>
+    <v-container>
+      <v-layout wrap="wrap">
+        <remediation-instructions-filters-list
+          v-field="filters"
+          :editable="editable"
           :closable="editable"
-        )
-      v-layout(v-if="addable", row, wrap)
-        v-btn.ml-1(
-          color="primary",
+        />
+      </v-layout>
+      <v-layout
+        v-if="addable"
+        wrap="wrap"
+      >
+        <v-btn
+          class="ml-1"
+          color="primary"
           @click="showCreateInstructionsFilterModal"
-        ) {{ $t('common.add') }}
+        >
+          {{ $t('common.add') }}
+        </v-btn>
+      </v-layout>
+    </v-container>
+  </v-list-group>
 </template>
 
 <script>

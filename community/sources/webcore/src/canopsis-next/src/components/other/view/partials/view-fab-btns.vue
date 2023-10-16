@@ -1,53 +1,65 @@
-<template lang="pug">
-  div.view-fab-btns.fab
-    v-layout(row)
-      view-scroll-top-btn
-      view-periodic-refresh-btn
-      v-speed-dial(
-        v-model="opened",
-        direction="top",
+<template>
+  <div class="view-fab-btns fab">
+    <v-layout>
+      <view-scroll-top-btn />
+      <view-periodic-refresh-btn />
+      <v-speed-dial
+        v-model="opened"
+        direction="top"
         transition="slide-y-reverse-transition"
-      )
-        template(#activator="")
-          v-btn(
-            :input-value="opened",
-            color="primary",
-            dark,
-            fab
-          )
-            v-icon menu
-            v-icon close
-        view-share-link-btn(v-if="hasCreateAnyShareTokenAccess", :view="view", :tab="activeTab")
-        view-fullscreen-btn(
-          :value="fullscreen",
-          :toggle-full-screen="toggleFullScreen",
-          left-tooltip,
-          small
-        )
-        view-editing-btn(v-if="updatable")
-        v-tooltip(left)
-          v-btn.view-fab-btns__add-widget-btn(
-            slot="activator",
-            v-if="updatable",
-            fab,
-            dark,
-            small,
+      >
+        <template #activator="">
+          <v-btn
+            :input-value="opened"
+            color="primary"
+            dark="dark"
+            fab="fab"
+          >
+            <v-icon>menu</v-icon>
+            <v-icon>close</v-icon>
+          </v-btn>
+        </template>
+        <view-share-link-btn
+          v-if="hasCreateAnyShareTokenAccess"
+          :view="view"
+          :tab="activeTab"
+        />
+        <view-fullscreen-btn
+          :value="fullscreen"
+          :toggle-full-screen="toggleFullScreen"
+          left-tooltip="left-tooltip"
+          small="small"
+        />
+        <view-editing-btn v-if="updatable" />
+        <v-tooltip left="left">
+          <v-btn
+            class="view-fab-btns__add-widget-btn"
+            slot="activator"
+            v-if="updatable"
+            fab="fab"
+            dark="dark"
+            small="small"
             @click.stop="showCreateWidgetModal"
-          )
-            v-icon add
-          span {{ $t('common.addWidget') }}
-        v-tooltip(left)
-          v-btn(
-            slot="activator",
-            v-if="updatable",
-            color="green",
-            fab,
-            dark,
-            small,
+          >
+            <v-icon>add</v-icon>
+          </v-btn><span>{{ $t('common.addWidget') }}</span>
+        </v-tooltip>
+        <v-tooltip left="left">
+          <v-btn
+            slot="activator"
+            v-if="updatable"
+            color="green"
+            fab="fab"
+            dark="dark"
+            small="small"
             @click.stop="showCreateTabModal"
-          )
-            v-icon add
-          span {{ $t('common.addTab') }}
+          >
+            <v-icon>add</v-icon>
+          </v-btn><span>{{ $t('common.addTab') }}</span>
+        </v-tooltip>
+      </v-speed-dial>
+    </v-layout>
+  </div>
 </template>
 
 <script>

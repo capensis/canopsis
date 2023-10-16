@@ -1,14 +1,14 @@
-<template lang="pug">
-  ds-calendar-app(
-    :calendar="calendar",
-    :events="events",
-    :pending="pending",
-    read-only,
-    fluid,
-    fill-height,
-    current-time-for-today,
+<template>
+  <ds-calendar-app
+    :calendar="calendar"
+    :events="events"
+    :pending="pending"
+    read-only="read-only"
+    fluid="fluid"
+    fill-height="fill-height"
+    current-time-for-today="current-time-for-today"
     @change="fetchTimespans"
-  )
+  />
 </template>
 
 <script>

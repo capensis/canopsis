@@ -1,36 +1,43 @@
-<template lang="pug">
-  v-layout(column)
-    c-draggable-list-field(
-      v-field="columns",
-      :class="{ empty: isColumnsEmpty }",
+<template>
+  <v-layout column="column">
+    <c-draggable-list-field
+      v-field="columns"
+      :class="{ empty: isColumnsEmpty }"
       :handle="`.${dragItemHandleClass}`"
-    )
-      column-field.mb-3(
-        v-for="(column, index) in columns",
-        v-field="columns[index]",
-        :key="column.key",
-        :name="column.key",
-        :type="type",
-        :drag-handle-class="dragItemHandleClass",
-        :with-html="withHtml",
-        :with-template="withTemplate",
-        :with-color-indicator="withColorIndicator",
-        :with-instructions="withInstructions",
-        :without-infos-attributes="withoutInfosAttributes",
+    >
+      <column-field
+        class="mb-3"
+        v-for="(column, index) in columns"
+        v-field="columns[index]"
+        :key="column.key"
+        :name="column.key"
+        :type="type"
+        :drag-handle-class="dragItemHandleClass"
+        :with-html="withHtml"
+        :with-template="withTemplate"
+        :with-color-indicator="withColorIndicator"
+        :with-instructions="withInstructions"
+        :without-infos-attributes="withoutInfosAttributes"
         @remove="remove(index)"
-      )
-    v-layout(justify-end)
-      v-tooltip(left)
-        template(#activator="{ on }")
-          v-btn.mr-2.mx-0(
-            v-on="on",
-            color="primary",
-            icon,
-            large,
+      />
+    </c-draggable-list-field>
+    <v-layout justify-end="justify-end">
+      <v-tooltip left="left">
+        <template #activator="{ on }">
+          <v-btn
+            class="mr-2 mx-0"
+            v-on="on"
+            color="primary"
+            icon="icon"
+            large="large"
             @click.prevent="add"
-          )
-            v-icon add
-        span {{ $t('common.add') }}
+          >
+            <v-icon>add</v-icon>
+          </v-btn>
+        </template><span>{{ $t('common.add') }}</span>
+      </v-tooltip>
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>

@@ -1,28 +1,35 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :headers="headers",
-    :items="widgetTemplates",
-    :loading="pending",
-    :total-items="totalItems",
-    :pagination="pagination",
-    advanced-pagination,
-    search,
+<template>
+  <c-advanced-data-table
+    :headers="headers"
+    :items="widgetTemplates"
+    :loading="pending"
+    :total-items="totalItems"
+    :pagination="pagination"
+    advanced-pagination="advanced-pagination"
+    search="search"
     @update:pagination="$emit('update:pagination', $event)"
-  )
-    template(#updated="{ item }") {{ item.updated | date }}
-    template(#type="{ item }") {{ $t(`widgetTemplate.types.${item.type}`) }}
-    template(#actions="{ item }")
-      v-layout(row)
-        c-action-btn(
-          v-if="updatable",
-          type="edit",
+  >
+    <template #updated="{ item }">
+      {{ item.updated | date }}
+    </template>
+    <template #type="{ item }">
+      {{ $t(`widgetTemplate.types.${item.type}`) }}
+    </template>
+    <template #actions="{ item }">
+      <v-layout>
+        <c-action-btn
+          v-if="updatable"
+          type="edit"
           @click.stop="$emit('edit', item)"
-        )
-        c-action-btn(
-          v-if="removable",
-          type="delete",
+        />
+        <c-action-btn
+          v-if="removable"
+          type="delete"
           @click.stop="$emit('remove', item._id)"
-        )
+        />
+      </v-layout>
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>

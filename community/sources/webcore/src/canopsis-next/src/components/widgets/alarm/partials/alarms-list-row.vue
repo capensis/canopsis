@@ -1,49 +1,86 @@
-<template lang="pug">
-  tr.alarm-list-row(v-on="listeners", :class="classes")
-    td.alarm-list-row__icons.pr-0(v-if="hasRowActions")
-      v-layout(row, align-center, justify-space-between)
-        v-layout.alarm-list-row__checkbox
-          template(v-if="selectable")
-            v-checkbox-functional.ma-0(v-if="isAlarmSelectable", v-field="selected", hide-details)
-            v-checkbox-functional(v-else, disabled, hide-details)
-        v-layout(v-if="hasAlarmInstruction", align-center)
-          alarms-list-row-instructions-icon(:alarm="alarm")
-        v-layout(v-if="hasBookmark", align-center)
-          alarms-list-row-bookmark-icon
-        alarms-expand-panel-btn(
-          v-if="expandable",
-          v-model="row.expanded",
-          :alarm="alarm",
-          :widget="widget",
-          :is-tour-enabled="isTourEnabled",
-          :small="small",
+<template>
+  <tr
+    class="alarm-list-row"
+    v-on="listeners"
+    :class="classes"
+  >
+    <td
+      class="alarm-list-row__icons pr-0"
+      v-if="hasRowActions"
+    >
+      <v-layout
+        align-center="align-center"
+        justify-space-between="justify-space-between"
+      >
+        <v-layout class="alarm-list-row__checkbox">
+          <template v-if="selectable">
+            <v-checkbox-functional
+              class="ma-0"
+              v-if="isAlarmSelectable"
+              v-field="selected"
+              hide-details="hide-details"
+            />
+            <v-checkbox-functional
+              v-else
+              disabled="disabled"
+              hide-details="hide-details"
+            />
+          </template>
+        </v-layout>
+        <v-layout
+          v-if="hasAlarmInstruction"
+          align-center="align-center"
+        >
+          <alarms-list-row-instructions-icon :alarm="alarm" />
+        </v-layout>
+        <v-layout
+          v-if="hasBookmark"
+          align-center="align-center"
+        >
+          <alarms-list-row-bookmark-icon />
+        </v-layout>
+        <alarms-expand-panel-btn
+          v-if="expandable"
+          v-model="row.expanded"
+          :alarm="alarm"
+          :widget="widget"
+          :is-tour-enabled="isTourEnabled"
+          :small="small"
           :search="search"
-        )
-    td.alarm-list-row__cell(v-for="header in availableHeaders", :key="header.value")
-      actions-panel(
-        v-if="header.value === 'actions'",
-        :item="alarm",
-        :widget="widget",
-        :parent-alarm="parentAlarm",
-        :refresh-alarms-list="refreshAlarmsList",
-        :small="small",
+        />
+      </v-layout>
+    </td>
+    <td
+      class="alarm-list-row__cell"
+      v-for="header in availableHeaders"
+      :key="header.value"
+    >
+      <actions-panel
+        v-if="header.value === 'actions'"
+        :item="alarm"
+        :widget="widget"
+        :parent-alarm="parentAlarm"
+        :refresh-alarms-list="refreshAlarmsList"
+        :small="small"
         :wrap="wrapActions"
-      )
-      alarm-column-value(
-        v-else,
-        :alarm="alarm",
-        :widget="widget",
-        :column="header",
-        :selected-tag="selectedTag",
-        :small="small",
-        @activate="activateRow",
+      />
+      <alarm-column-value
+        v-else
+        :alarm="alarm"
+        :widget="widget"
+        :column="header"
+        :selected-tag="selectedTag"
+        :small="small"
+        @activate="activateRow"
         @select:tag="$emit('select:tag', $event)"
-      )
-      span.alarms-list-table__resize-handler(
-        v-if="resizing",
-        @mousedown.prevent="$emit('start:resize', header.value)",
+      /><span
+        class="alarms-list-table__resize-handler"
+        v-if="resizing"
+        @mousedown.prevent="$emit('start:resize', header.value)"
         @click.stop=""
-      )
+      />
+    </td>
+  </tr>
 </template>
 
 <script>

@@ -1,37 +1,38 @@
-<template lang="pug">
-  widget-settings-group(:title="$t('settings.advancedSettings')")
-    field-filters(
-      v-field="form.parameters.mainFilter",
-      :filters="form.filters",
-      :widget-id="widget._id",
-      addable,
-      editable,
-      with-alarm,
-      with-entity,
-      with-pbehavior,
+<template>
+  <widget-settings-group :title="$t('settings.advancedSettings')">
+    <field-filters
+      v-field="form.parameters.mainFilter"
+      :filters="form.filters"
+      :widget-id="widget._id"
+      addable="addable"
+      editable="editable"
+      with-alarm="with-alarm"
+      with-entity="with-entity"
+      with-pbehavior="with-pbehavior"
       @update:filters="updateField('filters', $event)"
-    )
-    field-filters(
-      :filters="value.filters",
-      addable,
-      editable,
+    />
+    <field-filters
+      :filters="value.filters"
+      addable="addable"
+      editable="editable"
       @update:filters="updateField('filters', $event)"
-    )
-    v-divider
-    field-opened-resolved-filter(v-field="value.opened")
-    v-divider
-    field-switcher(
-      v-field="value.considerPbehaviors",
+    />
+    <v-divider />
+    <field-opened-resolved-filter v-field="value.opened" />
+    <v-divider />
+    <field-switcher
+      v-field="value.considerPbehaviors"
       :title="$t('settings.considerPbehaviors.title')"
-    )
-    v-divider
-    field-criticity-levels(v-field="value.criticityLevels")
-    v-divider
-    field-levels-colors-selector(
-      v-field="value.criticityLevelsColors",
-      color-type="hex",
-      hide-suffix
-    )
+    />
+    <v-divider />
+    <field-criticity-levels v-field="value.criticityLevels" />
+    <v-divider />
+    <field-levels-colors-selector
+      v-field="value.criticityLevelsColors"
+      color-type="hex"
+      hide-suffix="hide-suffix"
+    />
+  </widget-settings-group>
 </template>
 
 <script>

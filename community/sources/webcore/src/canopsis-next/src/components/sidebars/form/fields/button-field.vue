@@ -1,15 +1,42 @@
-<template lang="pug">
-  v-container.pa-3(fluid)
-    v-layout(align-center, justify-space-between)
-      slot(name="title")
-      v-layout(justify-end)
-        v-btn.primary(v-if="isEmpty && addable", small, @click="$emit('create', $event)")
-          span {{ $t('common.create') }}
-        template(v-else)
-          v-btn.primary(small, @click="$emit('edit', $event)")
-            span {{ $t('common.edit') }}
-          v-btn.error(v-if="removable", small, @click="$emit('delete', $event)")
-            v-icon delete
+<template>
+  <v-container
+    class="pa-3"
+    fluid="fluid"
+  >
+    <v-layout
+      align-center="align-center"
+      justify-space-between="justify-space-between"
+    >
+      <slot name="title" />
+      <v-layout justify-end="justify-end">
+        <v-btn
+          class="primary"
+          v-if="isEmpty && addable"
+          small="small"
+          @click="$emit('create', $event)"
+        >
+          <span>{{ $t('common.create') }}</span>
+        </v-btn>
+        <template v-else>
+          <v-btn
+            class="primary"
+            small="small"
+            @click="$emit('edit', $event)"
+          >
+            <span>{{ $t('common.edit') }}</span>
+          </v-btn>
+          <v-btn
+            class="error"
+            v-if="removable"
+            small="small"
+            @click="$emit('delete', $event)"
+          >
+            <v-icon>delete</v-icon>
+          </v-btn>
+        </template>
+      </v-layout>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>

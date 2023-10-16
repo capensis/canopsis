@@ -1,15 +1,25 @@
-<template lang="pug">
-  v-btn-toggle.window-size.transparent(v-field="value", mandatory, light, dense)
-    v-btn(
-      v-for="size in availableSizes",
-      :ripple="false",
-      :key="size.value",
-      :value="size.value",
-      :dark="dark",
-      :light="light",
-      icon
-    )
-      v-icon(:color="color") {{ size.icon }}
+<template>
+  <v-btn-toggle
+    class="window-size transparent"
+    v-field="value"
+    mandatory="mandatory"
+    light="light"
+    dense="dense"
+  >
+    <v-btn
+      v-for="size in availableSizes"
+      :ripple="false"
+      :key="size.value"
+      :value="size.value"
+      :dark="dark"
+      :light="light"
+      icon="icon"
+    >
+      <v-icon :color="color">
+        {{ size.icon }}
+      </v-icon>
+    </v-btn>
+  </v-btn-toggle>
 </template>
 
 <script>

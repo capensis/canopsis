@@ -1,6 +1,9 @@
-<template lang="pug">
-  div(v-if="!pendingDefaultView")
-    div#brand Canopsis Next
+<template>
+  <div v-if="!pendingDefaultView">
+    <div id="brand">
+      Canopsis Next
+    </div>
+  </div>
 </template>
 
 <script>

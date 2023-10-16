@@ -1,7 +1,10 @@
-<template lang="pug">
-  component(v-bind="wrapperProps")
-    c-alarm-chip(v-if="isStateColumn", :value="item.entity.state")
-    span(v-else) {{ item | get(column.value) }}
+<template>
+  <component v-bind="wrapperProps">
+    <c-alarm-chip
+      v-if="isStateColumn"
+      :value="item.entity.state"
+    /><span v-else>{{ item | get(column.value) }}</span>
+  </component>
 </template>
 
 <script>

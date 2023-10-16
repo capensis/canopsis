@@ -1,25 +1,37 @@
-<template lang="pug">
-  v-layout(column)
-    c-information-block(
-      :title="$t('storageSetting.webhook.title')",
-      :help-text="$t('storageSetting.webhook.titleHelp')",
+<template>
+  <v-layout column="column">
+    <c-information-block
+      :title="$t('storageSetting.webhook.title')"
+      :help-text="$t('storageSetting.webhook.titleHelp')"
       help-icon-color="info"
-    )
-      template(v-if="history", #subtitle="")
-        storage-settings-history-message(:history="history")
-      c-enabled-duration-field(
-        v-field="form.delete_after",
-        :label="$t('storageSetting.webhook.deleteAfter')",
-        :help-text="$t('storageSetting.webhook.deleteAfterHelpText')",
+    >
+      <template
+        v-if="history"
+        #subtitle=""
+      >
+        <storage-settings-history-message :history="history" />
+      </template>
+      <c-enabled-duration-field
+        v-field="form.delete_after"
+        :label="$t('storageSetting.webhook.deleteAfter')"
+        :help-text="$t('storageSetting.webhook.deleteAfterHelpText')"
         :name="webhookDeleteAfterFieldName"
-      )
-      c-enabled-field(
-        v-field="form.log_credentials",
-        :label="$t('storageSetting.webhook.logCredentials')",
+      />
+      <c-enabled-field
+        v-field="form.log_credentials"
+        :label="$t('storageSetting.webhook.logCredentials')"
         :name="webhookLogCredentialsFieldName"
-      )
-        template(#append="")
-          c-help-icon(:text="$t('storageSetting.webhook.logCredentialsHelpText')", color="info", top)
+      >
+        <template #append="">
+          <c-help-icon
+            :text="$t('storageSetting.webhook.logCredentialsHelpText')"
+            color="info"
+            top="top"
+          />
+        </template>
+      </c-enabled-field>
+    </c-information-block>
+  </v-layout>
 </template>
 
 <script>

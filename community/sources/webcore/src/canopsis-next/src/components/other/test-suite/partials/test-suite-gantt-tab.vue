@@ -1,14 +1,15 @@
-<template lang="pug">
-  div.position-relative
-    c-progress-overlay(:pending="pending")
-    test-suite-historical-data-months-field(v-model="query.months")
-    junit-gantt-chart(
-      :items="ganttIntervals",
-      :historical="historical",
-      :total-items="meta.total_count",
-      :query.sync="query",
+<template>
+  <div class="position-relative">
+    <c-progress-overlay :pending="pending" />
+    <test-suite-historical-data-months-field v-model="query.months" />
+    <junit-gantt-chart
+      :items="ganttIntervals"
+      :historical="historical"
+      :total-items="meta.total_count"
+      :query.sync="query"
       :width="840"
-    )
+    />
+  </div>
 </template>
 
 <script>

@@ -1,24 +1,25 @@
-<template lang="pug">
-  v-layout(column)
-    v-text-field(
-      v-field="form.name",
-      v-validate="nameRules",
-      :label="$t('common.name')",
-      :error-messages="errors.collect('name')",
+<template>
+  <v-layout column="column">
+    <v-text-field
+      v-field="form.name"
+      v-validate="nameRules"
+      :label="$t('common.name')"
+      :error-messages="errors.collect('name')"
       name="name"
-    )
-    v-text-field(
-      v-field="form.description",
-      v-validate="descriptionRules",
-      :label="$t('common.description')",
-      :error-messages="errors.collect('description')",
+    />
+    <v-text-field
+      v-field="form.description"
+      v-validate="descriptionRules"
+      :label="$t('common.description')"
+      :error-messages="errors.collect('description')"
       name="description"
-    )
-    c-mixed-field(
-      v-field="form.value",
-      :label="$t('common.value')",
-      required
-    )
+    />
+    <c-mixed-field
+      v-field="form.value"
+      :label="$t('common.value')"
+      required="required"
+    />
+  </v-layout>
 </template>
 
 <script>

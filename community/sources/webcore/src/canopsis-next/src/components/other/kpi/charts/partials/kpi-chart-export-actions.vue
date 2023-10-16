@@ -1,11 +1,37 @@
-<template lang="pug">
-  v-layout.kpi-chart-export-actions(justify-end, wrap)
-    v-btn.ma-0(:loading="downloading", color="primary", small, @click="$emit('export:csv')")
-      v-icon(small, left) file_download
-      span {{ $t('common.exportAsCsv') }}
-    v-btn.ma-0(color="primary", small, @click="exportChartAsPng")
-      v-icon(small, left) file_download
-      span {{ $t('common.downloadAsPng') }}
+<template>
+  <v-layout
+    class="kpi-chart-export-actions"
+    justify-end="justify-end"
+    wrap="wrap"
+  >
+    <v-btn
+      class="ma-0"
+      :loading="downloading"
+      color="primary"
+      small="small"
+      @click="$emit('export:csv')"
+    >
+      <v-icon
+        small="small"
+        left="left"
+      >
+        file_download
+      </v-icon><span>{{ $t('common.exportAsCsv') }}</span>
+    </v-btn>
+    <v-btn
+      class="ma-0"
+      color="primary"
+      small="small"
+      @click="exportChartAsPng"
+    >
+      <v-icon
+        small="small"
+        left="left"
+      >
+        file_download
+      </v-icon><span>{{ $t('common.downloadAsPng') }}</span>
+    </v-btn>
+  </v-layout>
 </template>
 
 <script>

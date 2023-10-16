@@ -1,20 +1,23 @@
-<template lang="pug">
-  div.tree-of-dependencies__preview
-    c-zoom-overlay
-      network-graph.fill-height.black--text(
-        ref="networkGraph",
-        :options="options",
-        :node-html-label-options="nodeHtmlLabelsOptions",
-        ctrl-wheel-zoom
-      )
-    c-help-icon(
-      :text="$t('treeOfDependencies.panzoom.helpText')",
-      size="32",
-      icon-class="map-preview__help-icon",
-      color="secondary",
-      icon="help",
-      top
-    )
+<template>
+  <div class="tree-of-dependencies__preview">
+    <c-zoom-overlay>
+      <network-graph
+        class="fill-height black--text"
+        ref="networkGraph"
+        :options="options"
+        :node-html-label-options="nodeHtmlLabelsOptions"
+        ctrl-wheel-zoom="ctrl-wheel-zoom"
+      />
+    </c-zoom-overlay>
+    <c-help-icon
+      :text="$t('treeOfDependencies.panzoom.helpText')"
+      size="32"
+      icon-class="map-preview__help-icon"
+      color="secondary"
+      icon="help"
+      top="top"
+    />
+  </div>
 </template>
 
 <script>

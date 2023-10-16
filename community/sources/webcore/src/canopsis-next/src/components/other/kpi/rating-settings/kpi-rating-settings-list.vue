@@ -1,38 +1,51 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :pagination="pagination",
-    :items="ratingSettings",
-    :loading="pending",
-    :headers="headers",
-    :total-items="totalItems",
-    item-key="id",
-    search,
-    advanced-pagination,
-    hide-actions,
+<template>
+  <c-advanced-data-table
+    :pagination="pagination"
+    :items="ratingSettings"
+    :loading="pending"
+    :headers="headers"
+    :total-items="totalItems"
+    item-key="id"
+    search="search"
+    advanced-pagination="advanced-pagination"
+    hide-actions="hide-actions"
     @update:pagination="$emit('update:pagination', $event)"
-  )
-    template(#toolbar="")
-      v-flex(xs12)
-        v-expand-transition
-          v-layout.ml-3(v-if="changedIds.length")
-            v-btn(
-              outline,
-              color="primary",
+  >
+    <template #toolbar="">
+      <v-flex xs12="xs12">
+        <v-expand-transition>
+          <v-layout
+            class="ml-3"
+            v-if="changedIds.length"
+          >
+            <v-btn
+              outlined
+              color="primary"
               @click="resetEnabledRatingSettings"
-            ) {{ $t('common.cancel') }}
-            v-btn(
-              color="primary",
+            >
+              {{ $t('common.cancel') }}
+            </v-btn>
+            <v-btn
+              color="primary"
               @click="submit"
-            ) {{ $t('common.submit') }}
-
-    template(#enabled="{ item }")
-      v-layout(row, align-center)
-        v-checkbox-functional(
-          :input-value="isEnabledRatingSetting(item)",
-          :disabled="!updatable",
-          hide-details,
+            >
+              {{ $t('common.submit') }}
+            </v-btn>
+          </v-layout>
+        </v-expand-transition>
+      </v-flex>
+    </template>
+    <template #enabled="{ item }">
+      <v-layout align-center="align-center">
+        <v-checkbox-functional
+          :input-value="isEnabledRatingSetting(item)"
+          :disabled="!updatable"
+          hide-details="hide-details"
           @change="enableRatingSetting(item, $event)"
-        )
+        />
+      </v-layout>
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>

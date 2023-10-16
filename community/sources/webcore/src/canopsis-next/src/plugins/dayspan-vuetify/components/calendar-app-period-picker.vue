@@ -1,33 +1,39 @@
-<template lang="pug">
-  span.ds-calendar-app-period-picker
-    template(v-if="!isYearType")
-      v-select.ds-calendar-app-period-picker__week(
-        v-if="isWeekType",
-        v-model="week",
-        :items="weeks",
-        :menu-props="menuProps",
-        hide-details
-      )
-      template(v-else)
-        v-select.ds-calendar-app-period-picker__day(
-          v-if="!isMonthType",
-          v-model="day",
-          :items="days",
-          :menu-props="menuProps",
-          hide-details
-        )
-        v-select.ds-calendar-app-period-picker__month(
-          v-model="month",
-          :items="months",
-          :menu-props="menuProps",
-          hide-details
-        )
-    v-select.ds-calendar-app-period-picker__year(
-      v-model="year",
-      :items="years",
-      :menu-props="menuProps",
-      hide-details
-    )
+<template>
+  <span class="ds-calendar-app-period-picker">
+    <template v-if="!isYearType">
+      <v-select
+        class="ds-calendar-app-period-picker__week"
+        v-if="isWeekType"
+        v-model="week"
+        :items="weeks"
+        :menu-props="menuProps"
+        hide-details="hide-details"
+      />
+      <template v-else>
+        <v-select
+          class="ds-calendar-app-period-picker__day"
+          v-if="!isMonthType"
+          v-model="day"
+          :items="days"
+          :menu-props="menuProps"
+          hide-details="hide-details"
+        />
+        <v-select
+          class="ds-calendar-app-period-picker__month"
+          v-model="month"
+          :items="months"
+          :menu-props="menuProps"
+          hide-details="hide-details"
+        />
+      </template>
+    </template>
+    <v-select
+      class="ds-calendar-app-period-picker__year"
+      v-model="year"
+      :items="years"
+      :menu-props="menuProps"
+      hide-details="hide-details"
+    /></span>
 </template>
 
 <script>

@@ -1,17 +1,28 @@
-<template lang="pug">
-  v-list-group
-    template(#activator="")
-      v-list-tile {{ $t('settings.filterOnOpenResolved') }}
-    v-container
-      v-layout
-        v-radio-group.mt-0(v-field="value", name="opened", hide-details, mandatory)
-          v-radio(
-            v-for="type in types",
-            :key="type.value",
-            :label="type.label",
-            :value="type.value",
+<template>
+  <v-list-group>
+    <template #activator="">
+      <v-list-item>{{ $t('settings.filterOnOpenResolved') }}</v-list-item>
+    </template>
+    <v-container>
+      <v-layout>
+        <v-radio-group
+          class="mt-0"
+          v-field="value"
+          name="opened"
+          hide-details="hide-details"
+          mandatory="mandatory"
+        >
+          <v-radio
+            v-for="type in types"
+            :key="type.value"
+            :label="type.label"
+            :value="type.value"
             color="primary"
-          )
+          />
+        </v-radio-group>
+      </v-layout>
+    </v-container>
+  </v-list-group>
 </template>
 
 <script>

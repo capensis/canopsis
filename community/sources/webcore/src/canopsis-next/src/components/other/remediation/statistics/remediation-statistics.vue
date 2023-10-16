@@ -1,17 +1,21 @@
-<template lang="pug">
-  div.position-relative
-    c-progress-overlay(:pending="remediationMetricsPending")
-    remediation-statistics-filters(v-model="pagination", :min-date="minDate")
-    remediation-statistics-chart(
-      :metrics="metrics",
-      :data-type="pagination.type",
-      :sampling="pagination.sampling",
-      :min-date="minDate",
-      :downloading="downloading",
-      responsive,
-      @export:csv="exportRemediationStatisticsAsCsv",
+<template>
+  <div class="position-relative">
+    <c-progress-overlay :pending="remediationMetricsPending" />
+    <remediation-statistics-filters
+      v-model="pagination"
+      :min-date="minDate"
+    />
+    <remediation-statistics-chart
+      :metrics="metrics"
+      :data-type="pagination.type"
+      :sampling="pagination.sampling"
+      :min-date="minDate"
+      :downloading="downloading"
+      responsive="responsive"
+      @export:csv="exportRemediationStatisticsAsCsv"
       @export:png="exportRemediationStatisticsAsPng"
-    )
+    />
+  </div>
 </template>
 
 <script>

@@ -1,6 +1,7 @@
-<template lang="pug">
-  div(style="display: none;")
-    slot(v-if="ready")
+<template>
+  <div style="display: none;">
+    <slot v-if="ready" />
+  </div>
 </template>
 
 <script>

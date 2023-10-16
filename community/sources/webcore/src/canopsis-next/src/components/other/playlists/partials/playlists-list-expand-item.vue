@@ -1,12 +1,26 @@
-<template lang="pug">
-  v-tabs(color="secondary lighten-1", slider-color="primary", dark, centered)
-    v-tab {{ $tc('common.information') }}
-    v-tab-item
-      v-layout.pa-3
-        v-flex(xs12)
-          v-card.pa-3
-            v-layout(column)
-              draggable-playlist-tabs(:tabs="availableTabs", disabled)
+<template>
+  <v-tabs
+    color="secondary lighten-1"
+    slider-color="primary"
+    dark="dark"
+    centered="centered"
+  >
+    <v-tab>{{ $tc('common.information') }}</v-tab>
+    <v-tab-item>
+      <v-layout class="pa-3">
+        <v-flex xs12="xs12">
+          <v-card class="pa-3">
+            <v-layout column="column">
+              <draggable-playlist-tabs
+                :tabs="availableTabs"
+                disabled="disabled"
+              />
+            </v-layout>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-tab-item>
+  </v-tabs>
 </template>
 
 <script>

@@ -1,14 +1,15 @@
-<template lang="pug">
-  v-select.my-0(
-    v-field="value",
-    v-validate="'required'",
-    :items="themes",
-    :error-messages="errors.collect(name)",
-    :label="$t('mermaid.theme')",
-    :name="name",
-    hide-details,
-    light
-  )
+<template>
+  <v-select
+    class="my-0"
+    v-field="value"
+    v-validate="'required'"
+    :items="themes"
+    :error-messages="errors.collect(name)"
+    :label="$t('mermaid.theme')"
+    :name="name"
+    hide-details="hide-details"
+    light="light"
+  />
 </template>
 
 <script>

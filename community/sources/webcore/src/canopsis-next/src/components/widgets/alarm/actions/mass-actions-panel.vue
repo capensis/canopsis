@@ -1,5 +1,5 @@
-<template lang="pug">
-  shared-mass-actions-panel(:actions="preparedActions")
+<template>
+  <shared-mass-actions-panel :actions="preparedActions" />
 </template>
 
 <script>

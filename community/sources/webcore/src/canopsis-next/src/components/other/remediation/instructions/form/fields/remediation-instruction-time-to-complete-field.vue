@@ -1,25 +1,32 @@
-<template lang="pug">
-  v-layout
-    v-flex(xs8)
-      c-number-field(
-        v-field="duration.value",
-        :label="$t('remediation.instruction.timeToComplete')",
-        :name="durationFieldName",
-        :disabled="disabled",
-        :min="min",
-        required,
-        box
-      )
-    v-flex.pl-3(xs4)
-      v-select.time-complete-unit(
-        v-field="duration.unit",
-        v-validate="'required'",
-        :label="$t('common.unit')",
-        :items="availableUnits",
-        :name="unitFieldName",
-        :disabled="disabled",
-        hide-details
-      )
+<template>
+  <v-layout>
+    <v-flex xs8="xs8">
+      <c-number-field
+        v-field="duration.value"
+        :label="$t('remediation.instruction.timeToComplete')"
+        :name="durationFieldName"
+        :disabled="disabled"
+        :min="min"
+        required="required"
+        box="box"
+      />
+    </v-flex>
+    <v-flex
+      class="pl-3"
+      xs4="xs4"
+    >
+      <v-select
+        class="time-complete-unit"
+        v-field="duration.unit"
+        v-validate="'required'"
+        :label="$t('common.unit')"
+        :items="availableUnits"
+        :name="unitFieldName"
+        :disabled="disabled"
+        hide-details="hide-details"
+      />
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

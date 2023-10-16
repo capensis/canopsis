@@ -1,50 +1,80 @@
-<template lang="pug">
-  div
-    v-layout(row)
-      v-flex(xs3)
-        c-instruction-type-field.mb-2(
-          v-field="form.type",
+<template>
+  <div>
+    <v-layout>
+      <v-flex xs3="xs3">
+        <c-instruction-type-field
+          class="mb-2"
+          v-field="form.type"
           :disabled="disabled || !isNew"
-        )
-      v-flex
-        c-enabled-field.mt-0(
-          v-field="form.enabled",
-          :disabled="disabledCommon",
-          hide-details
-        )
-    c-name-field(v-field="form.name", :disabled="disabledCommon")
-    v-text-field(
-      v-field="form.description",
-      v-validate="'required'",
-      :label="$t('common.description')",
-      :error-messages="errors.collect('description')",
-      :disabled="disabledCommon",
+        />
+      </v-flex>
+      <v-flex>
+        <c-enabled-field
+          class="mt-0"
+          v-field="form.enabled"
+          :disabled="disabledCommon"
+          hide-details="hide-details"
+        />
+      </v-flex>
+    </v-layout>
+    <c-name-field
+      v-field="form.name"
+      :disabled="disabledCommon"
+    />
+    <v-text-field
+      v-field="form.description"
+      v-validate="'required'"
+      :label="$t('common.description')"
+      :error-messages="errors.collect('description')"
+      :disabled="disabledCommon"
       name="description"
-    )
-    v-layout(row, justify-space-between, align-center)
-      v-flex(xs7)
-        c-duration-field(
-          v-field="form.timeout_after_execution",
-          :label="$t('remediation.instruction.timeoutAfterExecution')",
-          :units-label="$t('common.unit')",
-          :disabled="disabled",
-          name="timeout_after_execution",
-          required
-        )
-      v-flex.ml-2(v-if="isAutoType", xs3)
-        c-priority-field(v-field="form.priority", :disabled="disabled")
-    c-triggers-field(
-      v-if="isAutoType",
-      v-field="form.triggers",
+    />
+    <v-layout
+      justify-space-between="justify-space-between"
+      align-center="align-center"
+    >
+      <v-flex xs7="xs7">
+        <c-duration-field
+          v-field="form.timeout_after_execution"
+          :label="$t('remediation.instruction.timeoutAfterExecution')"
+          :units-label="$t('common.unit')"
+          :disabled="disabled"
+          name="timeout_after_execution"
+          required="required"
+        />
+      </v-flex>
+      <v-flex
+        class="ml-2"
+        v-if="isAutoType"
+        xs3="xs3"
+      >
+        <c-priority-field
+          v-field="form.priority"
+          :disabled="disabled"
+        />
+      </v-flex>
+    </v-layout>
+    <c-triggers-field
+      v-if="isAutoType"
+      v-field="form.triggers"
       :triggers="availableTriggers"
-    )
-    remediation-instruction-jobs-form(
-      v-if="isAutoType || isManualSimplified",
-      v-field="form.jobs",
+    />
+    <remediation-instruction-jobs-form
+      v-if="isAutoType || isManualSimplified"
+      v-field="form.jobs"
       :disabled="disabled"
-    )
-    remediation-instruction-steps-form(v-else, v-field="form.steps", :disabled="disabled")
-    remediation-instruction-approval-form(v-if="!disabledCommon", v-field="form.approval", :disabled="disabled")
+    />
+    <remediation-instruction-steps-form
+      v-else
+      v-field="form.steps"
+      :disabled="disabled"
+    />
+    <remediation-instruction-approval-form
+      v-if="!disabledCommon"
+      v-field="form.approval"
+      :disabled="disabled"
+    />
+  </div>
 </template>
 
 <script>

@@ -1,34 +1,68 @@
-<template lang="pug">
-  v-card.point-popup(width="400")
-    v-card-title.pa-2.white--text(:style="{ backgroundColor: color }")
-      v-layout(justify-space-between, align-center)
-        h4 {{ title }}
-        v-btn.ma-0.ml-3(icon, small, @click="close")
-          v-icon(color="white") close
-    v-card-text
-      c-compiled-template(
-        v-if="point.entity && template",
-        :template="template",
+<template>
+  <v-card
+    class="point-popup"
+    width="400"
+  >
+    <v-card-title
+      class="pa-2 white--text"
+      :style="{ backgroundColor: color }"
+    >
+      <v-layout
+        justify-space-between="justify-space-between"
+        align-center="align-center"
+      >
+        <h4>{{ title }}</h4>
+        <v-btn
+          class="ma-0 ml-3"
+          icon="icon"
+          small="small"
+          @click="close"
+        >
+          <v-icon color="white">
+            close
+          </v-icon>
+        </v-btn>
+      </v-layout>
+    </v-card-title>
+    <v-card-text>
+      <c-compiled-template
+        v-if="point.entity && template"
+        :template="template"
         :context="templateContext"
-      )
-      v-layout(v-else, column)
-        span(v-if="point.entity") {{ $tc('common.entity') }}: {{ point.entity.name }}
-        span(v-if="point.map") {{ $tc('common.map') }}: {{ point.map.name }}
-    v-layout.ma-0.background.darken-1(v-if="actions")
-      v-btn.ma-0(
-        v-if="hasAlarmsListAccess && point.entity",
-        flat,
-        block,
+      />
+      <v-layout
+        v-else
+        column="column"
+      >
+        <span v-if="point.entity">{{ $tc('common.entity') }}: {{ point.entity.name }}</span><span v-if="point.map">{{ $tc('common.map') }}: {{ point.map.name }}</span>
+      </v-layout>
+    </v-card-text>
+    <v-layout
+      class="ma-0 background darken-1"
+      v-if="actions"
+    >
+      <v-btn
+        class="ma-0"
+        v-if="hasAlarmsListAccess && point.entity"
+        text
+        block="block"
         @click.stop="$emit('show:alarms')"
-      ) {{ $t('common.seeAlarms') }}
-      v-btn.ma-0(
-        v-if="point.map",
-        flat,
-        block,
+      >
+        {{ $t('common.seeAlarms') }}
+      </v-btn>
+      <v-btn
+        class="ma-0"
+        v-if="point.map"
+        text
+        block="block"
         @click.stop="$emit('show:map')"
-      )
-        v-icon(left) link
-        span.text-none  {{ point.map.name }}
+      >
+        <v-icon left="left">
+          link
+        </v-icon><span class="text-none"> {{ point.map.name }}</span>
+      </v-btn>
+    </v-layout>
+  </v-card>
 </template>
 
 <script>

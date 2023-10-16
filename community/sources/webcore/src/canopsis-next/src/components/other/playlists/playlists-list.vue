@@ -1,48 +1,62 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :headers="headers",
-    :items="playlists",
-    :loading="pending",
-    :total-items="totalItems",
-    :pagination="pagination",
-    advanced-pagination,
-    expand,
-    search,
+<template>
+  <c-advanced-data-table
+    :headers="headers"
+    :items="playlists"
+    :loading="pending"
+    :total-items="totalItems"
+    :pagination="pagination"
+    advanced-pagination="advanced-pagination"
+    expand="expand"
+    search="search"
     @update:pagination="$emit('update:pagination', $event)"
-  )
-    template(#fullscreen="{ item }")
-      c-enabled(:value="item.fullscreen")
-    template(#interval="{ item }") {{ item.interval | duration }}
-    template(#enabled="{ item }")
-      c-enabled(:value="item.enabled")
-    template(#actions="{ item }")
-      c-action-btn(:tooltip="$t('common.play')")
-        template(#button="")
-          v-btn.mx-1.ma-0(:to="getPlaylistRouteById(item._id, true)", icon)
-            v-icon play_arrow
-      c-copy-btn(
-        :value="getPlaylistRouteFullUrlById(item._id)",
-        :tooltip="$t('common.copyLink')",
-        @success="onSuccessCopied",
+  >
+    <template #fullscreen="{ item }">
+      <c-enabled :value="item.fullscreen" />
+    </template>
+    <template #interval="{ item }">
+      {{ item.interval | duration }}
+    </template>
+    <template #enabled="{ item }">
+      <c-enabled :value="item.enabled" />
+    </template>
+    <template #actions="{ item }">
+      <c-action-btn :tooltip="$t('common.play')">
+        <template #button="">
+          <v-btn
+            class="mx-1 ma-0"
+            :to="getPlaylistRouteById(item._id, true)"
+            icon="icon"
+          >
+            <v-icon>play_arrow</v-icon>
+          </v-btn>
+        </template>
+      </c-action-btn>
+      <c-copy-btn
+        :value="getPlaylistRouteFullUrlById(item._id)"
+        :tooltip="$t('common.copyLink')"
+        @success="onSuccessCopied"
         @error="onErrorCopied"
-      )
-      c-action-btn(
-        v-if="duplicable",
-        type="duplicate",
+      />
+      <c-action-btn
+        v-if="duplicable"
+        type="duplicate"
         @click="$emit('duplicate', item)"
-      )
-      c-action-btn(
-        v-if="updatable",
-        type="edit",
+      />
+      <c-action-btn
+        v-if="updatable"
+        type="edit"
         @click="$emit('edit', item)"
-      )
-      c-action-btn(
-        v-if="removable",
-        type="delete",
+      />
+      <c-action-btn
+        v-if="removable"
+        type="delete"
         @click="$emit('remove', item._id)"
-      )
-    template(#expand="{ item }")
-      playlist-list-expand-item(:playlist="item")
+      />
+    </template>
+    <template #expand="{ item }">
+      <playlist-list-expand-item :playlist="item" />
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>

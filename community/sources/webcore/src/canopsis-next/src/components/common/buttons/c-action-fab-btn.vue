@@ -1,8 +1,20 @@
-<template lang="pug">
-  c-action-btn(v-bind="$attrs", custom-tooltip-activator)
-    template(#button="")
-      v-btn(:color="color", :small="small", fab, dark, @click.stop="$listeners.click")
-        v-icon {{ icon }}
+<template>
+  <c-action-btn
+    v-bind="$attrs"
+    custom-tooltip-activator="custom-tooltip-activator"
+  >
+    <template #button="">
+      <v-btn
+        :color="color"
+        :small="small"
+        fab="fab"
+        dark="dark"
+        @click.stop="$listeners.click"
+      >
+        <v-icon>{{ icon }}</v-icon>
+      </v-btn>
+    </template>
+  </c-action-btn>
 </template>
 
 <script>

@@ -1,37 +1,88 @@
-<template lang="pug">
-  v-tabs(color="secondary lighten-1", slider-color="primary", dark, centered)
-    v-tab {{ $tc('common.pattern', 2) }}
-    v-tab-item
-      v-layout.py-3(row)
-        v-flex(xs12, sm10, offset-sm1)
-          v-card
-            v-card-text
-              pbehavior-patterns-form(:form="patterns", readonly)
-
-    v-tab {{ $tc('common.entity', 2) }}
-    v-tab-item(lazy)
-      v-layout.py-3(row)
-        v-flex(xs12, sm10, offset-sm1)
-          v-card
-            v-card-text
-              pbehavior-entities(:pbehavior="pbehavior")
-
-    v-tab {{ $tc('common.comment', 2) }}
-    v-tab-item(lazy)
-      v-layout.py-3(row)
-        v-flex(xs12, sm10, offset-sm1)
-          v-card
-            v-card-text.pa-0
-              pbehavior-comments(:comments="pbehavior.comments")
-
-    template(v-if="pbehavior.rrule")
-      v-tab {{ $t('common.recurrence') }}
-      v-tab-item(lazy)
-        v-layout.py-3(row)
-          v-flex(xs12, sm10, offset-sm1)
-            v-card
-              v-card-text
-                pbehavior-recurrence-rule(:pbehavior="pbehavior")
+<template>
+  <v-tabs
+    color="secondary lighten-1"
+    slider-color="primary"
+    dark="dark"
+    centered="centered"
+  >
+    <v-tab>{{ $tc('common.pattern', 2) }}</v-tab>
+    <v-tab-item>
+      <v-layout
+        class="py-3"
+      >
+        <v-flex
+          xs12="xs12"
+          sm10="sm10"
+          offset-sm1="offset-sm1"
+        >
+          <v-card>
+            <v-card-text>
+              <pbehavior-patterns-form
+                :form="patterns"
+                readonly="readonly"
+              />
+            </v-card-text>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-tab-item>
+    <v-tab>{{ $tc('common.entity', 2) }}</v-tab>
+    <v-tab-item>
+      <v-layout
+        class="py-3"
+      >
+        <v-flex
+          xs12="xs12"
+          sm10="sm10"
+          offset-sm1="offset-sm1"
+        >
+          <v-card>
+            <v-card-text>
+              <pbehavior-entities :pbehavior="pbehavior" />
+            </v-card-text>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-tab-item>
+    <v-tab>{{ $tc('common.comment', 2) }}</v-tab>
+    <v-tab-item>
+      <v-layout
+        class="py-3"
+      >
+        <v-flex
+          xs12="xs12"
+          sm10="sm10"
+          offset-sm1="offset-sm1"
+        >
+          <v-card>
+            <v-card-text class="pa-0">
+              <pbehavior-comments :comments="pbehavior.comments" />
+            </v-card-text>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-tab-item>
+    <template v-if="pbehavior.rrule">
+      <v-tab>{{ $t('common.recurrence') }}</v-tab>
+      <v-tab-item>
+        <v-layout
+          class="py-3"
+        >
+          <v-flex
+            xs12="xs12"
+            sm10="sm10"
+            offset-sm1="offset-sm1"
+          >
+            <v-card>
+              <v-card-text>
+                <pbehavior-recurrence-rule :pbehavior="pbehavior" />
+              </v-card-text>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-tab-item>
+    </template>
+  </v-tabs>
 </template>
 
 <script>

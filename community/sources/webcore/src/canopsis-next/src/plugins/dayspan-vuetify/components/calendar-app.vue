@@ -1,92 +1,165 @@
-<template lang="pug">
-  div.ds-expand.ds-calendar-app
-    v-layout.pa-3
-      slot(name="today", v-bind="{ setToday, todayDate, calendar }")
-        v-flex
-          v-tooltip(bottom)
-            template(#activator="{ on }")
-              v-btn.ds-skinny-button.ds-calendar-app-action(
-                v-on="on",
-                :icon="$vuetify.breakpoint.smAndDown",
-                depressed,
+<template>
+  <div class="ds-expand ds-calendar-app">
+    <v-layout class="pa-3">
+      <slot
+        name="today"
+        v-bind="{ setToday, todayDate, calendar }"
+      >
+        <v-flex>
+          <v-tooltip bottom="bottom">
+            <template #activator="{ on }">
+              <v-btn
+                class="ds-skinny-button ds-calendar-app-action"
+                v-on="on"
+                :icon="$vuetify.breakpoint.smAndDown"
+                depressed="depressed"
                 @click="setToday"
-              )
-                span(v-if="$vuetify.breakpoint.mdAndUp") {{ labels.today }}
-                v-icon(v-else) {{ labels.todayIcon }}
-            span {{ todayDate }}
-      slot(name="pagination", v-bind="{ prev, prevLabel, next, nextLabel, summary, calendar }")
-        v-flex.text-sm-center
-          v-tooltip(bottom)
-            template(#activator="{ on }")
-              v-btn.mx-2.ds-calendar-app-action(
-                v-on="on",
-                icon,
-                depressed,
+              >
+                <span v-if="$vuetify.breakpoint.mdAndUp">{{ labels.today }}</span>
+                <v-icon v-else>
+                  {{ labels.todayIcon }}
+                </v-icon>
+              </v-btn>
+            </template><span>{{ todayDate }}</span>
+          </v-tooltip>
+        </v-flex>
+      </slot>
+      <slot
+        name="pagination"
+        v-bind="{ prev, prevLabel, next, nextLabel, summary, calendar }"
+      >
+        <v-flex class="text-sm-center">
+          <v-tooltip bottom="bottom">
+            <template #activator="{ on }">
+              <v-btn
+                class="mx-2 ds-calendar-app-action"
+                v-on="on"
+                icon="icon"
+                depressed="depressed"
                 @click="prev"
-              )
-                v-icon keyboard_arrow_left
-            span {{ prevLabel }}
-          calendar-app-period-picker(:calendar="calendar", @change="selectPeriod")
-          v-tooltip(bottom)
-            template(#activator="{ on }")
-              v-btn.mx-2.ds-calendar-app-action(
-                v-on="on",
-                icon,
-                depressed,
+              >
+                <v-icon>keyboard_arrow_left</v-icon>
+              </v-btn>
+            </template><span>{{ prevLabel }}</span>
+          </v-tooltip>
+          <calendar-app-period-picker
+            :calendar="calendar"
+            @change="selectPeriod"
+          />
+          <v-tooltip bottom="bottom">
+            <template #activator="{ on }">
+              <v-btn
+                class="mx-2 ds-calendar-app-action"
+                v-on="on"
+                icon="icon"
+                depressed="depressed"
                 @click="next"
-              )
-                v-icon keyboard_arrow_right
-            span {{ nextLabel }}
-      slot(name="view", v-bind="{ currentType, types }")
-        v-flex.text-sm-right
-          v-menu
-            template(#activator="{ on }")
-              v-btn.ds-calendar-app-action(v-on="on", flat) {{ currentType.label }}
-                v-icon arrow_drop_down
-            v-list
-              v-list-tile(
-                v-for="type in types",
-                :key="type.id",
+              >
+                <v-icon>keyboard_arrow_right</v-icon>
+              </v-btn>
+            </template><span>{{ nextLabel }}</span>
+          </v-tooltip>
+        </v-flex>
+      </slot>
+      <slot
+        name="view"
+        v-bind="{ currentType, types }"
+      >
+        <v-flex class="text-sm-right">
+          <v-menu>
+            <template #activator="{ on }">
+              <v-btn
+                class="ds-calendar-app-action"
+                v-on="on"
+                text
+              >
+                {{ currentType.label }}
+                <v-icon>arrow_drop_down</v-icon>
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-item
+                v-for="type in types"
+                :key="type.id"
                 @click="currentType = type"
-              )
-                v-list-tile-content
-                  v-list-tile-title {{ type.label }}
-      slot(name="menuRight")
-    div.ds-expand
-      v-container.ds-calendar-container(
-        :fluid="fluid",
+              >
+                <v-list-item-content>
+                  <v-list-item-title>{{ type.label }}</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </v-flex>
+      </slot>
+      <slot name="menuRight" />
+    </v-layout>
+    <div class="ds-expand">
+      <v-container
+        class="ds-calendar-container"
+        :fluid="fluid"
         :fill-height="fillHeight"
-      )
-        slot(name="calendarAppLoader")
-        ds-gestures(
-          @swipeleft="next",
+      >
+        <slot name="calendarAppLoader" />
+        <ds-gestures
+          @swipeleft="next"
           @swiperight="prev"
-        )
-          div.ds-expand(v-if="currentType.schedule")
-            slot(name="calendarAppAgenda", v-bind="{ $scopedSlots, $listeners, calendar, viewDay }")
-              ds-agenda(
-                v-bind="{ $scopedSlots }",
-                v-on="$listeners",
-                :calendar="calendar",
-                :read-only="readOnly",
+        >
+          <div
+            class="ds-expand"
+            v-if="currentType.schedule"
+          >
+            <slot
+              name="calendarAppAgenda"
+              v-bind="{ $scopedSlots, $listeners, calendar, viewDay }"
+            >
+              <ds-agenda
+                v-bind="{ $scopedSlots }"
+                v-on="$listeners"
+                :calendar="calendar"
+                :read-only="readOnly"
                 @view-day="viewDay"
-              )
-          div.ds-expand(v-else)
-            slot(name="calendarAppCalendar", v-bind="{ $scopedSlots, $listeners, calendar, viewDay }")
-              ds-calendar(
-                ref="calendar",
-                v-bind="{ $scopedSlots }",
-                v-on="$listeners",
-                :calendar="calendar",
-                :read-only="readOnly",
-                :current-time-for-today="currentTimeForToday",
+              />
+            </slot>
+          </div>
+          <div
+            class="ds-expand"
+            v-else
+          >
+            <slot
+              name="calendarAppCalendar"
+              v-bind="{ $scopedSlots, $listeners, calendar, viewDay }"
+            >
+              <ds-calendar
+                ref="calendar"
+                v-bind="{ $scopedSlots }"
+                v-on="$listeners"
+                :calendar="calendar"
+                :read-only="readOnly"
+                :current-time-for-today="currentTimeForToday"
                 @view-day="viewDay"
-              )
-
-        slot(name="calendarAppEventDialog", v-bind="{ $scopedSlots, $listeners, calendar, eventFinish }")
-        slot(name="calendarAppOptions", v-bind="{ optionsVisible, optionsDialog, options, chooseOption }")
-        slot(name="calendarAppPrompt", v-bind="{ promptVisible, promptDialog, promptQuestion, choosePrompt }")
-        slot(name="containerInside", v-bind="{ events, calendar }")
+              />
+            </slot>
+          </div>
+        </ds-gestures>
+        <slot
+          name="calendarAppEventDialog"
+          v-bind="{ $scopedSlots, $listeners, calendar, eventFinish }"
+        />
+        <slot
+          name="calendarAppOptions"
+          v-bind="{ optionsVisible, optionsDialog, options, chooseOption }"
+        />
+        <slot
+          name="calendarAppPrompt"
+          v-bind="{ promptVisible, promptDialog, promptQuestion, choosePrompt }"
+        />
+        <slot
+          name="containerInside"
+          v-bind="{ events, calendar }"
+        />
+      </v-container>
+    </div>
+  </div>
 </template>
 
 <script>

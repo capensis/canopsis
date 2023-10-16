@@ -1,11 +1,15 @@
-<template lang="pug">
-  v-btn.ma-0(
-    :loading="loading",
-    icon,
-    small,
+<template>
+  <v-btn
+    class="ma-0"
+    :loading="loading"
+    icon="icon"
+    small="small"
     @click="$emit('expand', !expanded)"
-  )
-    v-icon(:color="color") {{ expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
+  >
+    <v-icon :color="color">
+      {{ expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
+    </v-icon>
+  </v-btn>
 </template>
 
 <script>

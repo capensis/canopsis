@@ -1,21 +1,37 @@
-<template lang="pug">
-  v-layout(row, wrap)
-    v-flex(v-show="title", xs12)
-      v-layout
-        h4.subheading.grey--text.text--darken-2 {{ title }}
-        c-help-icon(v-if="helpText", :text="helpText", icon-class="ml-2 storage-help-tooltip", max-width="250", top)
-    v-flex(xs12)
-      v-layout(column)
-        v-text-field(
-          v-field="value",
-          v-validate="rules",
-          :value="value",
-          :label="label",
-          :placeholder="placeholder",
-          :error-messages="errors.collect(name)",
-          :disabled="disabled",
+<template>
+  <v-layout wrap="wrap">
+    <v-flex
+      v-show="title"
+      xs12="xs12"
+    >
+      <v-layout>
+        <h4 class="subheading grey--text text--darken-2">
+          {{ title }}
+        </h4>
+        <c-help-icon
+          v-if="helpText"
+          :text="helpText"
+          icon-class="ml-2 storage-help-tooltip"
+          max-width="250"
+          top="top"
+        />
+      </v-layout>
+    </v-flex>
+    <v-flex xs12="xs12">
+      <v-layout column="column">
+        <v-text-field
+          v-field="value"
+          v-validate="rules"
+          :value="value"
+          :label="label"
+          :placeholder="placeholder"
+          :error-messages="errors.collect(name)"
+          :disabled="disabled"
           :name="name"
-        )
+        />
+      </v-layout>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

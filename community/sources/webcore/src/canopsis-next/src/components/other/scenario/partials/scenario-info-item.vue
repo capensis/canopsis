@@ -1,12 +1,16 @@
-<template lang="pug">
-  v-list-tile.subheading
-    v-list-tile-avatar(v-if="!hideIcon")
-      v-icon {{ icon }}
-    v-list-tile-content
-      v-layout(align-center)
-        div.subheading
-          span.font-weight-bold {{ label }}
-          span(v-if="value") : {{ value }}
+<template>
+  <v-list-item class="subheading">
+    <v-list-item-avatar v-if="!hideIcon">
+      <v-icon>{{ icon }}</v-icon>
+    </v-list-item-avatar>
+    <v-list-item-content>
+      <v-layout align-center="align-center">
+        <div class="subheading">
+          <span class="font-weight-bold">{{ label }}</span><span v-if="value">: {{ value }}</span>
+        </div>
+      </v-layout>
+    </v-list-item-content>
+  </v-list-item>
 </template>
 
 <script>

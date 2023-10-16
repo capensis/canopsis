@@ -1,9 +1,11 @@
-<template lang="pug">
-  component(
-    v-on="component.on",
-    v-bind="component.bind",
+<template>
+  <component
+    v-on="component.on"
+    v-bind="component.bind"
     :is="component.is"
-  ) {{ component.text }}
+  >
+    {{ component.text }}
+  </component>
 </template>
 
 <script>

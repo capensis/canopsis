@@ -1,37 +1,65 @@
-<template lang="pug">
-  modal-wrapper(close, minimize)
-    template(#title="")
-      v-layout(align-center)
-        span {{ title }}
-        declare-ticket-rule-execution-status.ml-2.declare-ticket-rule-execute-status(
-          v-if="modal.minimized",
-          :running="isAllExecutionsRunning",
-          :success="isAllExecutionsSucceeded",
-          :fail-reason="failReason",
+<template>
+  <modal-wrapper
+    close="close"
+    minimize="minimize"
+  >
+    <template #title="">
+      <v-layout align-center="align-center">
+        <span>{{ title }}</span>
+        <declare-ticket-rule-execution-status
+          class="ml-2 declare-ticket-rule-execute-status"
+          v-if="modal.minimized"
+          :running="isAllExecutionsRunning"
+          :success="isAllExecutionsSucceeded"
+          :fail-reason="failReason"
           color="white"
-        )
-    template(#text="")
-      v-layout(v-if="pending", justify-center)
-        v-progress-circular(color="primary", indeterminate)
-      template(v-else-if="config.singleMode")
-        v-layout.declare-ticket-rule-execute-status__executions(column)
-          declare-ticket-rule-executions-group(
-            v-for="(executions, ruleName) of alarmExecutionsByTicketName",
-            :key="ruleName",
-            :executions="executions",
-            :rule-name="ruleName",
-            is-one-execution,
-            show-status,
-            show-rule-name
-          )
-      template(v-else)
-        declare-ticket-rule-executions-group(
-          :executions="alarmExecutions",
-          :is-one-execution="isOneTicket",
+        />
+      </v-layout>
+    </template>
+    <template #text="">
+      <v-layout
+        v-if="pending"
+        justify-center="justify-center"
+      >
+        <v-progress-circular
+          color="primary"
+          indeterminate="indeterminate"
+        />
+      </v-layout>
+      <template v-else-if="config.singleMode">
+        <v-layout
+          class="declare-ticket-rule-execute-status__executions"
+          column="column"
+        >
+          <declare-ticket-rule-executions-group
+            v-for="(executions, ruleName) of alarmExecutionsByTicketName"
+            :key="ruleName"
+            :executions="executions"
+            :rule-name="ruleName"
+            is-one-execution="is-one-execution"
+            show-status="show-status"
+            show-rule-name="show-rule-name"
+          />
+        </v-layout>
+      </template>
+      <template v-else>
+        <declare-ticket-rule-executions-group
+          :executions="alarmExecutions"
+          :is-one-execution="isOneTicket"
           :show-status="isOneTicket"
-        )
-    template(#actions="")
-      v-btn(depressed, text, @click="$modals.hide") {{ $t('common.close') }}
+        />
+      </template>
+    </template>
+    <template #actions="">
+      <v-btn
+        depressed="depressed"
+        text="text"
+        @click="$modals.hide"
+      >
+        {{ $t('common.close') }}
+      </v-btn>
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>

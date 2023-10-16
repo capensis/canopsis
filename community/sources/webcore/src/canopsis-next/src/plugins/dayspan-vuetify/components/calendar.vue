@@ -1,67 +1,83 @@
-<template lang="pug">
-  div.ds-calendar(:class="{ editing, adding, moving, resizing }")
-    div.ds-month-view.ds-year-view(v-if="isYear")
-      ds-weeks-view.ds-expand(
-        v-bind="{ $scopedSlots }",
-        v-on="$listeners",
-        :calendar="calendar",
-        :placeholder="placeholder",
-        :placeholder-for-create="placeholderForCreate",
-        @edit-event="editHandler",
-        @add-event="addHandler",
-        @mouse-move-day="mouseMoveDay",
-        @mouse-down-day="startAddDay",
-        @mouse-up-day="mouseUp",
-        @mouse-up-event="mouseUp",
-        @mouse-down-event="startMove",
-        @mouse-start-resize="startResize",
-        @mouse-start-edit="startEditing",
-        @mouse-end-edit="endEditing",
+<template>
+  <div
+    class="ds-calendar"
+    :class="{ editing, adding, moving, resizing }"
+  >
+    <div
+      class="ds-month-view ds-year-view"
+      v-if="isYear"
+    >
+      <ds-weeks-view
+        class="ds-expand"
+        v-bind="{ $scopedSlots }"
+        v-on="$listeners"
+        :calendar="calendar"
+        :placeholder="placeholder"
+        :placeholder-for-create="placeholderForCreate"
+        @edit-event="editHandler"
+        @add-event="addHandler"
+        @mouse-move-day="mouseMoveDay"
+        @mouse-down-day="startAddDay"
+        @mouse-up-day="mouseUp"
+        @mouse-up-event="mouseUp"
+        @mouse-down-event="startMove"
+        @mouse-start-resize="startResize"
+        @mouse-start-edit="startEditing"
+        @mouse-end-edit="endEditing"
         @clear-placeholder="clearPlaceholder"
-      )
-
-    div.ds-month-view(v-if="isMonth")
-      ds-weeks-view.ds-expand(
-        v-bind="{ $scopedSlots }",
-        v-on="$listeners",
-        :calendar="calendar",
-        :placeholder="placeholder",
-        :placeholder-for-create="placeholderForCreate",
-        @edit-event="editHandler",
-        @add-event="addHandler",
-        @mouse-move-day="mouseMoveDay",
-        @mouse-down-day="startAddDay",
-        @mouse-up-day="mouseUp",
-        @mouse-up-event="mouseUp",
-        @mouse-down-event="startMove",
-        @mouse-start-resize="startResize",
-        @mouse-start-edit="startEditing",
-        @mouse-end-edit="endEditing",
+      />
+    </div>
+    <div
+      class="ds-month-view"
+      v-if="isMonth"
+    >
+      <ds-weeks-view
+        class="ds-expand"
+        v-bind="{ $scopedSlots }"
+        v-on="$listeners"
+        :calendar="calendar"
+        :placeholder="placeholder"
+        :placeholder-for-create="placeholderForCreate"
+        @edit-event="editHandler"
+        @add-event="addHandler"
+        @mouse-move-day="mouseMoveDay"
+        @mouse-down-day="startAddDay"
+        @mouse-up-day="mouseUp"
+        @mouse-up-event="mouseUp"
+        @mouse-down-event="startMove"
+        @mouse-start-resize="startResize"
+        @mouse-start-edit="startEditing"
+        @mouse-end-edit="endEditing"
         @clear-placeholder="clearPlaceholder"
-      )
-
-    div.ds-week-view(v-if="isWeek || isDay")
-      ds-days-view(
-        v-bind="{ $scopedSlots }",
-        v-on="$listeners",
-        :calendar="calendar",
-        :placeholder="placeholder",
-        :placeholder-for-create="placeholderForCreate",
-        @edit-event="editHandler",
-        @add-event="addHandler",
-        @mouse-move="mouseMove",
-        @mouse-down="startAdd",
-        @mouse-up="mouseUp",
-        @mouse-down-event="startMove",
-        @mouse-move-day="mouseMoveDay",
-        @mouse-down-day="startAddDay",
-        @mouse-up-day="mouseUp",
-        @mouse-up-event="mouseUp",
-        @mouse-start-resize="startResize",
-        @mouse-start-edit="startEditing",
-        @mouse-end-edit="endEditing",
+      />
+    </div>
+    <div
+      class="ds-week-view"
+      v-if="isWeek || isDay"
+    >
+      <ds-days-view
+        v-bind="{ $scopedSlots }"
+        v-on="$listeners"
+        :calendar="calendar"
+        :placeholder="placeholder"
+        :placeholder-for-create="placeholderForCreate"
+        @edit-event="editHandler"
+        @add-event="addHandler"
+        @mouse-move="mouseMove"
+        @mouse-down="startAdd"
+        @mouse-up="mouseUp"
+        @mouse-down-event="startMove"
+        @mouse-move-day="mouseMoveDay"
+        @mouse-down-day="startAddDay"
+        @mouse-up-day="mouseUp"
+        @mouse-up-event="mouseUp"
+        @mouse-start-resize="startResize"
+        @mouse-start-edit="startEditing"
+        @mouse-end-edit="endEditing"
         @clear-placeholder="clearPlaceholder"
-      )
+      />
+    </div>
+  </div>
 </template>
 
 <script>

@@ -1,51 +1,61 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :pagination="pagination",
-    :items="dynamicInfos",
-    :loading="pending",
-    :headers="headers",
-    :total-items="totalItems",
-    :search-tooltip="$t('dynamicInfo.advancedSearch')",
-    :select-all="removable",
-    advanced-search,
-    advanced-pagination,
-    hide-actions,
-    expand,
+<template>
+  <c-advanced-data-table
+    :pagination="pagination"
+    :items="dynamicInfos"
+    :loading="pending"
+    :headers="headers"
+    :total-items="totalItems"
+    :search-tooltip="$t('dynamicInfo.advancedSearch')"
+    :select-all="removable"
+    advanced-search="advanced-search"
+    advanced-pagination="advanced-pagination"
+    hide-actions="hide-actions"
+    expand="expand"
     @update:pagination="$emit('update:pagination', $event)"
-  )
-    template(#mass-actions="{ selected }")
-      c-action-btn(
-        v-if="removable",
-        type="delete",
+  >
+    <template #mass-actions="{ selected }">
+      <c-action-btn
+        v-if="removable"
+        type="delete"
         @click="$emit('remove-selected', selected)"
-      )
-    template(#created="{ item }") {{ item.created | date }}
-    template(#updated="{ item }") {{ item.updated | date }}
-    template(#enabled="{ item }")
-      c-enabled(:value="item.enabled")
-    template(#actions="{ item }")
-      v-layout(row)
-        c-action-btn(
-          v-if="updatable",
-          :badge-value="isOldPattern(item)",
-          :badge-tooltip="$t('pattern.oldPatternTooltip')",
-          type="edit",
+      />
+    </template>
+    <template #created="{ item }">
+      {{ item.created | date }}
+    </template>
+    <template #updated="{ item }">
+      {{ item.updated | date }}
+    </template>
+    <template #enabled="{ item }">
+      <c-enabled :value="item.enabled" />
+    </template>
+    <template #actions="{ item }">
+      <v-layout>
+        <c-action-btn
+          v-if="updatable"
+          :badge-value="isOldPattern(item)"
+          :badge-tooltip="$t('pattern.oldPatternTooltip')"
+          type="edit"
           @click="$emit('edit', item)"
-        )
-        c-action-btn(
-          v-if="duplicable",
-          type="duplicate",
+        />
+        <c-action-btn
+          v-if="duplicable"
+          type="duplicate"
           @click="$emit('duplicate', item)"
-        )
-        c-action-btn(
-          v-if="removable",
-          type="delete",
+        />
+        <c-action-btn
+          v-if="removable"
+          type="delete"
           @click="$emit('remove', item._id)"
-        )
-        pbehaviors-create-action-btn(:entity-id="item._id")
-        pbehaviors-list-action-btn(:entity-id="item._id")
-    template(#expand="{ item }")
-      dynamic-infos-list-expand-item(:info="item")
+        />
+        <pbehaviors-create-action-btn :entity-id="item._id" />
+        <pbehaviors-list-action-btn :entity-id="item._id" />
+      </v-layout>
+    </template>
+    <template #expand="{ item }">
+      <dynamic-infos-list-expand-item :info="item" />
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>

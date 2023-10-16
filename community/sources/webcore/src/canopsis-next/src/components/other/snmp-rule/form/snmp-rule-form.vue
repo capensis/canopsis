@@ -1,40 +1,48 @@
-<template lang="pug">
-  div
-    snmp-rule-form-module-form(v-field="form.oid")
-    v-layout(v-if="selectedModuleMib", row)
-      v-flex(xs12)
-        v-alert.mt-3(
-          :value="selectedModuleMib.description",
+<template>
+  <div>
+    <snmp-rule-form-module-form v-field="form.oid" />
+    <v-layout
+      v-if="selectedModuleMib"
+    >
+      <v-flex xs12="xs12">
+        <v-alert
+          class="mt-3"
+          :value="selectedModuleMib.description"
           color="grey darken-1"
-        ) {{ selectedModuleMib.description }}
-    snmp-rule-form-module-mib-objects-form(
-      v-field="form.output",
-      :items="selectedModuleMibObjects",
-      :label="$t('snmpRule.output')",
-      large
-    )
-    snmp-rule-form-module-mib-objects-form(
-      v-field="form.component",
-      :items="selectedModuleMibObjects",
-      :label="$t('snmpRule.component')",
-      large
-    )
-    snmp-rule-form-module-mib-objects-form(
-      v-field="form.resource",
-      :items="selectedModuleMibObjects",
-      :label="$t('snmpRule.resource')",
-      large
-    )
-    snmp-rule-form-module-mib-objects-form(
-      v-field="form.connector_name",
-      :items="selectedModuleMibObjects",
-      :label="$t('snmpRule.connectorName')",
-      large
-    )
-    snmp-rule-form-state-form(
-      v-field="form.state",
+        >
+          {{ selectedModuleMib.description }}
+        </v-alert>
+      </v-flex>
+    </v-layout>
+    <snmp-rule-form-module-mib-objects-form
+      v-field="form.output"
       :items="selectedModuleMibObjects"
-    )
+      :label="$t('snmpRule.output')"
+      large="large"
+    />
+    <snmp-rule-form-module-mib-objects-form
+      v-field="form.component"
+      :items="selectedModuleMibObjects"
+      :label="$t('snmpRule.component')"
+      large="large"
+    />
+    <snmp-rule-form-module-mib-objects-form
+      v-field="form.resource"
+      :items="selectedModuleMibObjects"
+      :label="$t('snmpRule.resource')"
+      large="large"
+    />
+    <snmp-rule-form-module-mib-objects-form
+      v-field="form.connector_name"
+      :items="selectedModuleMibObjects"
+      :label="$t('snmpRule.connectorName')"
+      large="large"
+    />
+    <snmp-rule-form-state-form
+      v-field="form.state"
+      :items="selectedModuleMibObjects"
+    />
+  </div>
 </template>
 
 <script>

@@ -1,48 +1,81 @@
-<template lang="pug">
-  v-tabs.view-tabs(
-    ref="tabs",
-    :key="vTabsKey",
-    :value="$route.fullPath",
-    :class="{ hidden: tabs.length < 2 && !editing, 'tabs-editing': editing }",
-    :hide-slider="changed",
-    color="secondary lighten-2",
-    slider-color="primary",
-    dark
-  )
-    c-draggable-list-field.d-flex(
-      v-if="tabs.length",
-      :value="tabs",
-      :disabled="!editing",
-      drag-class="draggable-item--dragging",
-      chosen-class="draggable-item--chosen",
-      @end="onDragEnd",
+<template>
+  <v-tabs
+    class="view-tabs"
+    ref="tabs"
+    :key="vTabsKey"
+    :value="$route.fullPath"
+    :class="{ hidden: tabs.length &lt; 2 && !editing, 'tabs-editing': editing }"
+    :hide-slider="changed"
+    color="secondary lighten-2"
+    slider-color="primary"
+    dark="dark"
+  >
+    <c-draggable-list-field
+      class="d-flex"
+      v-if="tabs.length"
+      :value="tabs"
+      :disabled="!editing"
+      drag-class="draggable-item--dragging"
+      chosen-class="draggable-item--chosen"
+      @end="onDragEnd"
       @input="$emit('update:tabs', $event)"
-    )
-      v-tab.draggable-item(
-        v-for="tab in tabs",
-        :key="tab._id",
-        :disabled="changed",
-        :to="getTabHrefById(tab._id)",
-        exact,
-        ripple
-      )
-        span {{ tab.title }}
-        template(v-if="updatable && editing")
-          v-btn(small, flat, icon, @click.prevent="showUpdateTabModal(tab)")
-            v-icon(small) edit
-          v-btn(small, flat, icon, @click.prevent="showSelectViewModal(tab)")
-            v-icon(small) file_copy
-          v-btn(small, flat, icon, @click.prevent="showDeleteTabModal(tab)")
-            v-icon(small) delete
-    template(v-if="$scopedSlots.default")
-      v-tabs-items(touchless)
-        v-tab-item(
-          v-for="tab in tabs",
-          :key="tab._id",
-          :value="getTabHrefById(tab._id)",
-          lazy
-        )
-          slot(:tab="tab")
+    >
+      <v-tab
+        class="draggable-item"
+        v-for="tab in tabs"
+        :key="tab._id"
+        :disabled="changed"
+        :to="getTabHrefById(tab._id)"
+        exact="exact"
+        ripple="ripple"
+      >
+        <span>{{ tab.title }}</span>
+        <template v-if="updatable && editing">
+          <v-btn
+            small="small"
+            text
+            icon="icon"
+            @click.prevent="showUpdateTabModal(tab)"
+          >
+            <v-icon small="small">
+              edit
+            </v-icon>
+          </v-btn>
+          <v-btn
+            small="small"
+            text
+            icon="icon"
+            @click.prevent="showSelectViewModal(tab)"
+          >
+            <v-icon small="small">
+              file_copy
+            </v-icon>
+          </v-btn>
+          <v-btn
+            small="small"
+            text
+            icon="icon"
+            @click.prevent="showDeleteTabModal(tab)"
+          >
+            <v-icon small="small">
+              delete
+            </v-icon>
+          </v-btn>
+        </template>
+      </v-tab>
+    </c-draggable-list-field>
+    <template v-if="$scopedSlots.default">
+      <v-tabs-items touchless="touchless">
+        <v-tab-item
+          v-for="tab in tabs"
+          :key="tab._id"
+          :value="getTabHrefById(tab._id)"
+        >
+          <slot :tab="tab" />
+        </v-tab-item>
+      </v-tabs-items>
+    </template>
+  </v-tabs>
 </template>
 
 <script>

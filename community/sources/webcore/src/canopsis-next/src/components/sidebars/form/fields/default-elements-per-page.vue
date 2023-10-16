@@ -1,13 +1,18 @@
-<template lang="pug">
-  widget-settings-item(:title="$t('settings.defaultNumberOfElementsPerPage')", :sub-title="subTitle")
-    v-select.select(
-      v-field="value",
-      :label="$t('settings.elementsPerPage')",
-      :items="$config.PAGINATION_PER_PAGE_VALUES",
-      hide-details,
-      single-line,
-      dense
-    )
+<template>
+  <widget-settings-item
+    :title="$t('settings.defaultNumberOfElementsPerPage')"
+    :sub-title="subTitle"
+  >
+    <v-select
+      class="select"
+      v-field="value"
+      :label="$t('settings.elementsPerPage')"
+      :items="$config.PAGINATION_PER_PAGE_VALUES"
+      hide-details="hide-details"
+      single-line="single-line"
+      dense="dense"
+    />
+  </widget-settings-item>
 </template>
 
 <script>

@@ -1,7 +1,13 @@
-<template lang="pug">
-  div.v-table__overflow
-    table.v-datatable.v-table.theme--light
-      tbody
-        tr
-          td.text-xs-center {{ $t('common.noColumns') }}
+<template>
+  <div class="v-table__overflow">
+    <table class="v-datatable v-table theme--light">
+      <tbody>
+        <tr>
+          <td class="text-center">
+            {{ $t('common.noColumns') }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>

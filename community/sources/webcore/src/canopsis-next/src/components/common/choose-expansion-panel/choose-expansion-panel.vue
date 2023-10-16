@@ -1,22 +1,39 @@
-<template lang="pug">
-  div.choose-expansion-panel
-    v-expansion-panel.my-1
-      v-expansion-panel-content.grey.darken-2.white--text(:class="{ error: errors.length }", lazy)
-        template(#header="")
-          div.white--text {{ label }}
-        v-card.pt-1
-          v-alert.pa-2.mx-2(type="error", :value="!!errors.length") {{ errors.join(' ') }}
-          chips-list(
-            :entities="entities",
-            :disabled-entities="disabledEntities",
-            :existing-entities="existingEntities",
-            :content-key="contentKey",
-            :item-key="itemKey",
-            :clearable="clearable",
-            @remove="$listeners.remove",
+<template>
+  <div class="choose-expansion-panel">
+    <v-expansion-panel class="my-1">
+      <v-expansion-panel-content
+        class="grey darken-2 white--text"
+        :class="{ error: errors.length }"
+        lazy="lazy"
+      >
+        <template #header="">
+          <div class="white--text">
+            {{ label }}
+          </div>
+        </template>
+        <v-card class="pt-1">
+          <v-alert
+            class="pa-2 mx-2"
+            type="error"
+            :value="!!errors.length"
+          >
+            {{ errors.join(' ') }}
+          </v-alert>
+          <chips-list
+            :entities="entities"
+            :disabled-entities="disabledEntities"
+            :existing-entities="existingEntities"
+            :content-key="contentKey"
+            :item-key="itemKey"
+            :clearable="clearable"
+            @remove="$listeners.remove"
             @clear="$listeners.clear"
-          )
-          slot
+          />
+          <slot />
+        </v-card>
+      </v-expansion-panel-content>
+    </v-expansion-panel>
+  </div>
 </template>
 
 <script>
