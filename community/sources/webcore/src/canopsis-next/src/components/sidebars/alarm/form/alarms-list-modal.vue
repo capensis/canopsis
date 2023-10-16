@@ -1,7 +1,7 @@
 <template>
   <widget-settings-group :title="$t(`settings.titles.${$constants.SIDE_BARS.alarmSettings}`)">
     <field-default-sort-column
-      v-model="form.sort"
+      v-field="form.sort"
       :columns="sortablePreparedWidgetColumns"
       :columns-label="$t('settings.columnName')"
     />
@@ -63,7 +63,6 @@ import { alarmVariablesMixin } from '@/mixins/widget/variables/alarm';
 
 import FieldDefaultSortColumn from '@/components/sidebars/form/fields/default-sort-column.vue';
 import FieldColumns from '@/components/sidebars/form/fields/columns.vue';
-import FieldTextEditor from '@/components/sidebars/form/fields/text-editor.vue';
 import FieldInfoPopup from '@/components/sidebars/alarm/form/fields/info-popup.vue';
 import FieldTextEditorWithTemplate from '@/components/sidebars/form/fields/text-editor-with-template.vue';
 import FieldDefaultElementsPerPage from '@/components/sidebars/form/fields/default-elements-per-page.vue';
@@ -77,7 +76,6 @@ export default {
     FieldDefaultSortColumn,
     FieldColumns,
     FieldInfoPopup,
-    FieldTextEditor,
     FieldTextEditorWithTemplate,
     FieldDefaultElementsPerPage,
   },

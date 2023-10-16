@@ -1,7 +1,6 @@
 <template>
   <v-flex
     class="pa-4"
-    v-else
     md10="md10"
     offset-md1="offset-md1"
     lg8="lg8"

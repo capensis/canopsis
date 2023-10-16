@@ -100,7 +100,7 @@
             />
           </v-fade-transition>
         </template>
-        <template #headerCell="{ header, index }">
+        <template #headerCell="{ header }">
           <alarm-header-cell
             :header="header"
             :selected-tag="selectedTag"

@@ -1,15 +1,15 @@
 <template>
   <v-layout column="column">
     <v-text-field
-      class="mb-2"
       v-field="form.title"
       v-validate="'required'"
       :label="$t('common.name')"
       :error-messages="errors.collect('title')"
+      class="mb-2"
       name="title"
     />
     <text-editor-field
-      v-model="form.content"
+      v-field="form.content"
       v-validate="'required'"
       :error-messages="errors.collect('content')"
       :variables="variables"

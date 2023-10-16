@@ -97,7 +97,6 @@
 <script>
 import GroupViewPanel from '@/components/layout/navigation/partials/groups-side-bar/group-view-panel.vue';
 import GroupPanel from '@/components/layout/navigation/partials/groups-side-bar/group-panel.vue';
-import GroupsSideBarGroup from '@/components/layout/navigation/partials/groups-side-bar/groups-side-bar-group.vue';
 
 import TabPanelContent from '../partials/tab-panel-content.vue';
 
@@ -106,7 +105,6 @@ export default {
     TabPanelContent,
     GroupViewPanel,
     GroupPanel,
-    GroupsSideBarGroup,
   },
   model: {
     prop: 'selectedTabs',

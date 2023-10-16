@@ -38,6 +38,7 @@
         #[column.value]="{ item }"
       >
         <entity-column-cell
+          :key="column.value"
           :entity="item"
           :column="column"
           :columns-filters="columnsFilters"
@@ -82,11 +83,7 @@ import { SORT_ORDERS } from '@/constants';
 import { authMixin } from '@/mixins/auth';
 import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
 
-import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
-import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
-
 import EntityColumnCell from '../columns-formatting/entity-column-cell.vue';
-import ContextFab from '../actions/context-fab.vue';
 import ActionsPanel from '../actions/actions-panel.vue';
 import MassActionsPanel from '../actions/mass-actions-panel.vue';
 
@@ -94,10 +91,7 @@ import EntitiesListExpandPanel from './entities-list-expand-panel.vue';
 
 export default {
   components: {
-    FilterSelector,
-    FiltersListBtn,
     EntitiesListExpandPanel,
-    ContextFab,
     EntityColumnCell,
     ActionsPanel,
     MassActionsPanel,

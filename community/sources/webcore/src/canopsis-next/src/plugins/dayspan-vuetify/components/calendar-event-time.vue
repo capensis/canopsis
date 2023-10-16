@@ -15,8 +15,8 @@
         <div
           class="ds-calendar-event-span"
           @click="editCheck"
-          @mouseenter="mouseEnterEvent"
-          @mouseleave="mouseLeaveEvent"
+          @focusin="mouseEnterEvent"
+          @focusout="mouseLeaveEvent"
           @mousedown="mouseDownEvent"
           @mouseup="mouseUpEvent"
         >
@@ -30,7 +30,11 @@
                 v-if="hasIcon"
                 size="14"
                 :style="{ color: details.forecolor }"
-              >{{ details.icon }}</v-icon><strong class="ds-ev-title">{{ details.title }}</strong><span class="ds-ev-description">{{ details.description }}</span>
+              >
+                {{ details.icon }}
+              </v-icon>
+              <strong class="ds-ev-title">{{ details.title }}</strong>
+              <span class="ds-ev-description">{{ details.description }}</span>
             </slot></span><span v-else>
             <slot
               name="eventTimeEmpty"

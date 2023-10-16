@@ -35,12 +35,10 @@ import { EXPORT_CSV_SEPARATORS, EXPORT_CSV_DATETIME_FORMATS } from '@/constants'
 
 import { formBaseMixin } from '@/mixins/form';
 
-import FieldColumns from '@/components/sidebars/form/fields/columns.vue';
-
 import WidgetSettingsItem from '../partials/widget-settings-item.vue';
 
 export default {
-  components: { WidgetSettingsItem, FieldColumns },
+  components: { WidgetSettingsItem },
   mixins: [formBaseMixin],
   model: {
     prop: 'form',

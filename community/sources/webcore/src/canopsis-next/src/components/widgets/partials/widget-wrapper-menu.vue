@@ -23,7 +23,7 @@
         v-clipboard:copy="widget._id"
         v-clipboard:success="addWidgetIdCopiedSuccessPopup"
         v-clipboard:error="addWidgetIdCopiedErrorPopup"
-        @click=""
+        @click.stop=""
       >
         <div>{{ $t('view.copyWidgetId') }}</div>
       </v-list-item>

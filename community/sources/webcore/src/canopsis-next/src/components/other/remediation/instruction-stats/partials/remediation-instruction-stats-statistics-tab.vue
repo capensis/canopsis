@@ -17,7 +17,8 @@
       <span>{{ item.execution_count }}</span>
     </template>
     <template #avg_complete_time="{ item }">
-      <span v-if="item.execution_count">{{ item.avg_complete_time | duration }}</span><span v-else>{{ $t('common.notAvailable') }}</span>
+      <span v-if="item.execution_count">{{ item.avg_complete_time | duration }}</span>
+      <span v-else>{{ $t('common.notAvailable') }}</span>
     </template>
     <template #alarm_states="{ item }">
       <affect-alarm-states

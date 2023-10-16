@@ -14,6 +14,7 @@ import ServiceEntitiesList from './service-entities-list.vue';
 
 export default {
   components: {
+    // eslint-disable-next-line vue/no-unused-components
     ServiceEntitiesList,
   },
   props: {

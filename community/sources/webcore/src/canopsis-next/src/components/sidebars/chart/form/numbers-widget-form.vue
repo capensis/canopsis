@@ -59,7 +59,6 @@ import FieldPeriodicRefresh from '@/components/sidebars/form/fields/periodic-ref
 import FieldQuickDateIntervalType from '@/components/sidebars/form/fields/quick-date-interval-type.vue';
 import FieldPreset from '@/components/sidebars/chart/form/fields/preset.vue';
 import FieldAlarmMetricPresets from '@/components/sidebars/chart/form/fields/alarm-metric-presets.vue';
-import FieldBarGraphType from '@/components/sidebars/chart/form/fields/bar-graph-type.vue';
 import FieldSampling from '@/components/sidebars/chart/form/fields/sampling.vue';
 import FieldFilters from '@/components/sidebars/form/fields/filters.vue';
 import FieldSwitcher from '@/components/sidebars/form/fields/switcher.vue';
@@ -73,7 +72,6 @@ export default {
     FieldQuickDateIntervalType,
     FieldPreset,
     FieldAlarmMetricPresets,
-    FieldBarGraphType,
     FieldSampling,
     FieldFilters,
     FieldSwitcher,
