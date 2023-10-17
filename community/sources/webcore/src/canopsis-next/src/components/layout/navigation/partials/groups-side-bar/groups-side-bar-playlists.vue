@@ -22,7 +22,7 @@
             class="secondary lighten-2 groups-side-bar-playlists__button"
             flat
           >
-            <v-card-text>
+            <div class="pa-4">
               <v-layout
                 align-center
                 justify-space-between
@@ -33,7 +33,7 @@
                   </v-layout>
                 </v-flex>
               </v-layout>
-            </v-card-text>
+            </div>
           </v-card>
         </router-link>
       </v-expansion-panel-content>

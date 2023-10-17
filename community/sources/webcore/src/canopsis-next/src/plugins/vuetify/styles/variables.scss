@@ -1,0 +1,98 @@
+@import "~vuetify/src/styles/settings/_colors.scss";
+
+$default-font-size: 14px;
+
+@function unit($value) {
+  @return $value / ($value * 0 + 1);
+}
+
+@function rem($value) {
+  @return #{unit($value) / unit($default-font-size)}rem;
+}
+
+// Font sizes
+$font-size-root: var(--v-font-size-root, $default-font-size);
+
+$expansion-panel-header-font-size: $font-size-root;
+
+$alert-font-size: $font-size-root;
+$alert-prominent-icon-font-size: rem(16px);
+
+$badge-font-size: rem(14px);
+
+$breadcrumbs-item-font-size: rem(14px);
+$breadcrumbs-item-large-font-size: rem(16px);
+
+$time-picker-ampm-title-font-size: rem(16px);
+$time-picker-number-font-size: rem(16px);
+
+$calendar-daily-weekday-font-size: rem(11px);
+$calendar-daily-day-font-size: rem(40px);
+$calendar-daily-interval-gutter-font-size: rem(10px);
+$calendar-weekly-weekday-font-size: rem(11px);
+$calendar-weekly-day-label-font-size: rem(12px);
+$calendar-event-font-size: rem(12px);
+
+// Light backgrounds
+$text-light: (
+  primary: var(--v-text-light-primary, rgba(map-get($shades, 'black'), 0.87)),
+  secondary: var(--v-text-light-secondary, rgba(map-get($shades, 'black'), 0.6)),
+  disabled: var(--v-text-light-disabled, rgba(map-get($shades, 'black'), 0.38))
+);
+$icons-light: (
+  active: map-get($text-light, 'secondary'),
+  inactive: map-get($text-light, 'disabled'),
+);
+$buttons-light: (
+  disabled: var(--v-button-light-disabled, rgba(map-get($shades, 'black'), 0.26)),
+  focused: var(--v-button-light-focused, rgba(map-get($shades, 'black'), 0.12)),
+);
+$stepper-light: (
+  active: var(--v-stepper-active, rgba(map-get($shades, 'white'), 1)),
+  completed: var(--v-stepper-completed, rgba(map-get($shades, 'black'), 0.87)),
+  hover: var(--v-stepper-hover, rgba(map-get($shades, 'black'), 0.54)),
+);
+
+$material-light: (
+  'bg-color': var(--v-application-background-base, map-get($shades, 'white')),
+  'background': var(--v-application-background-base, map-get($shades, 'white')),
+  'cards': var(--v-background-base, map-get($shades, 'white')),
+  text: $text-light,
+  icons: $icons-light,
+  buttons: $buttons-light,
+  stepper: $stepper-light,
+  chips: var(--v-text-light-primary, #e0e0e0),
+  tabs: var(--v-text-light-primary, rgba(0, 0, 0, 0.54))
+);
+
+// Dark backgrounds
+$text-dark: (
+  primary: var(--v-text-dark-primary, map-get($shades, 'white')),
+  secondary: var(--v-text-dark-secondary, rgba(map-get($shades, 'white'), 0.7)),
+  disabled: var(--v-text-dark-disabled, rgba(map-get($shades, 'white'), 0.5))
+);
+$icons-dark: (
+  active: map-get($text-dark, 'secondary'),
+  inactive: map-get($text-dark, 'disabled'),
+);
+$buttons-dark: (
+  disabled: var(--v-button-dark-disabled, rgba(map-get($shades, 'white'), 0.3)),
+  focused: var(--v-button-dark-focused, rgba(map-get($shades, 'white'), 0.12)),
+);
+$stepper-dark: (
+  active: var(--v-stepper-active, rgba(map-get($shades, 'white'), 1)),
+  completed: var(--v-stepper-completed, rgba(map-get($shades, 'white'), 0.87)),
+  hover: var(--v-stepper-hover, rgba(map-get($shades, 'white'), 0.75)),
+);
+
+$material-dark: (
+  'bg-color': var(--v-application-background-base, #303030),
+  'background': var(--v-application-background-base, #121212),
+  'cards': var(--v-background-base, #1E1E1E),
+  text: $text-dark,
+  icons: $icons-dark,
+  buttons: $buttons-dark,
+  stepper: $stepper-dark,
+  chips: var(--v-text-dark-primary, #555),
+  tabs: var(--v-text-dark-primary, rgba(map-get($shades, 'white'), 0.6))
+)
