@@ -439,9 +439,9 @@ func (s *store) getNextPosition(ctx context.Context, widget string, isPrivate bo
 
 func transformEditRequestToModel(request EditRequest) view.WidgetFilter {
 	return view.WidgetFilter{
-		Title:         request.Title,
-		WidgetPrivate: *request.IsUserPreference,
-		Author:        request.Author,
+		Title:            request.Title,
+		IsUserPreference: *request.IsUserPreference,
+		Author:           request.Author,
 
 		AlarmPatternFields:     request.AlarmPatternFieldsRequest.ToModel(),
 		EntityPatternFields:    request.EntityPatternFieldsRequest.ToModel(),
