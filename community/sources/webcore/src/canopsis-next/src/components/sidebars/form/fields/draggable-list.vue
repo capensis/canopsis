@@ -8,7 +8,7 @@
       :key="item[itemKey]"
       align-center
     >
-      <v-flex xs1="xs1">
+      <v-flex xs1>
         <v-icon
           class="draggable"
           :class="handleClass"
@@ -16,7 +16,7 @@
           drag_indicator
         </v-icon>
       </v-flex>
-      <v-flex xs8="xs8">
+      <v-flex xs8>
         <slot
           name="title"
           :item="item"
@@ -25,7 +25,7 @@
           <span>{{ item[itemText] }}</span>
         </slot>
       </v-flex>
-      <v-flex xs3="xs3">
+      <v-flex xs3>
         <c-action-btn
           type="edit"
           @click="edit(item, index)"

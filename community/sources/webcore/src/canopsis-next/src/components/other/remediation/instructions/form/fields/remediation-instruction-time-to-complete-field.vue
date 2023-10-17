@@ -1,6 +1,6 @@
 <template>
   <v-layout>
-    <v-flex xs8="xs8">
+    <v-flex xs8>
       <c-number-field
         v-field="duration.value"
         :label="$t('remediation.instruction.timeToComplete')"
@@ -13,7 +13,7 @@
     </v-flex>
     <v-flex
       class="pl-3"
-      xs4="xs4"
+      xs4
     >
       <v-select
         class="time-complete-unit"

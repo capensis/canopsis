@@ -4,7 +4,7 @@
       class="mt-3"
       align-end
     >
-      <v-flex xs6="xs6">
+      <v-flex xs6>
         <div class="subheading">
           {{ $t('linkRule.type') }}
         </div>
@@ -23,7 +23,7 @@
           />
         </v-radio-group>
       </v-flex>
-      <v-flex xs6="xs6">
+      <v-flex xs6>
         <c-enabled-field v-field="form.enabled" />
       </v-flex>
     </v-layout>

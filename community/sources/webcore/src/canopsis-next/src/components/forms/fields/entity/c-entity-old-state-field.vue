@@ -1,13 +1,13 @@
 <template>
   <v-layout>
-    <v-flex xs6="xs6">
+    <v-flex xs6>
       <c-enabled-field
         v-model="oldMode"
         :label="$t('common.numberField')"
         @input="updateOldMode"
       />
     </v-flex>
-    <v-flex xs6="xs6">
+    <v-flex xs6>
       <c-number-field
         v-if="oldMode"
         v-field="value"

@@ -14,11 +14,11 @@
     <v-layout>
       <v-flex
         class="subheading mt-3"
-        xs2="xs2"
+        xs2
       >
         {{ $t('notificationSetting.instruction.rateFrequency') }}
       </v-flex>
-      <v-flex xs3="xs3">
+      <v-flex xs3>
         <c-duration-field
           v-field="form.instruction.rate_frequency"
           :disabled="!form.instruction.rate"

@@ -6,7 +6,7 @@
     <v-layout justify-space-between>
       <v-flex
         class="pbehavior-exception-field__interval"
-        xs6="xs6"
+        xs6
       >
         <date-time-splitted-range-picker-field
           v-if="editing"

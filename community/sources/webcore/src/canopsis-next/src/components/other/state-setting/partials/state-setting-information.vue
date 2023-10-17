@@ -15,19 +15,19 @@
       class="mt-2"
       v-if="isWorstOfShareMethod"
     >
-      <v-flex xs4="xs4">
+      <v-flex xs4>
         <state-setting-threshold
           :label="$t('common.skipped')"
           :threshold="stateSetting.junit_thresholds.skipped"
         />
       </v-flex>
-      <v-flex xs4="xs4">
+      <v-flex xs4>
         <state-setting-threshold
           :label="$tc('common.error', 2)"
           :threshold="stateSetting.junit_thresholds.errors"
         />
       </v-flex>
-      <v-flex xs4="xs4">
+      <v-flex xs4>
         <state-setting-threshold
           :label="$t('common.failures')"
           :threshold="stateSetting.junit_thresholds.failures"

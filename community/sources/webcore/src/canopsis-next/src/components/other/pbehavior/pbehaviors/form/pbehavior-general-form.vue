@@ -28,7 +28,7 @@
       />
       <template v-else>
         <v-layout align-center>
-          <v-flex xs3="xs3">
+          <v-flex xs3>
             <v-checkbox
               class="mt-0"
               v-model="fullDay"
@@ -39,7 +39,7 @@
           </v-flex>
           <v-flex
             v-if="hasPauseType"
-            xs3="xs3"
+            xs3
           >
             <v-checkbox
               class="mt-0"
@@ -49,7 +49,7 @@
               hide-details
             />
           </v-flex>
-          <v-flex xs6="xs6">
+          <v-flex xs6>
             <date-time-splitted-range-picker-field
               :start="form.tstart"
               :end="form.tstop"
@@ -68,7 +68,7 @@
         </v-layout>
       </template>
       <v-layout>
-        <v-flex xs6="xs6">
+        <v-flex xs6>
           <c-pbehavior-reason-field
             class="mr-2"
             v-field="form.reason"
@@ -76,7 +76,7 @@
             return-object
           />
         </v-flex>
-        <v-flex xs6="xs6">
+        <v-flex xs6>
           <c-pbehavior-type-field
             class="ml-2"
             v-field="form.type"

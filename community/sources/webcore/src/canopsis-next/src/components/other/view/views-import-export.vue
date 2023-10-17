@@ -3,7 +3,7 @@
     <v-layout>
       <v-flex
         class="export-views-block mr-0 ma-4"
-        xs6="xs6"
+        xs6
       >
         <v-checkbox
           v-model="isAllSelected"
@@ -15,7 +15,7 @@
           :groups="groups"
         />
       </v-flex>
-      <v-flex xs2="xs2">
+      <v-flex xs2>
         <v-layout
           column
           justify-center

@@ -22,7 +22,7 @@
           class="pt-1"
           justify-start
         >
-          <v-flex xs6="xs6">
+          <v-flex xs6>
             <v-layout
               class="fill-height"
               column
@@ -35,7 +35,7 @@
               <span class="pre-wrap">{{ testSuite.timestamp | date('testSuiteFormat') }}</span>
             </v-layout>
           </v-flex>
-          <v-flex xs6="xs6">
+          <v-flex xs6>
             <test-suite-statistics :test-suite="testSuite" />
           </v-flex>
         </v-layout>

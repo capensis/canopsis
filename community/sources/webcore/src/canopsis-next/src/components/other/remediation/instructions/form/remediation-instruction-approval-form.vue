@@ -17,13 +17,13 @@
         v-else
         align-center
       >
-        <v-flex xs6="xs6">
+        <v-flex xs6>
           <remediation-instruction-approval-type-field
             v-field="approval.type"
             @input="resetErrors"
           />
         </v-flex>
-        <v-flex xs5="xs5">
+        <v-flex xs5>
           <c-role-field
             v-show="isRoleType"
             v-field="approval.role"

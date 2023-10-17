@@ -2,7 +2,7 @@
   <v-layout>
     <v-flex
       :xs5="isAnyInfosRule"
-      xs4="xs4"
+      xs4
     >
       <v-layout>
         <v-flex
@@ -20,7 +20,7 @@
         <v-flex
           class="pl-3"
           v-if="isAnyInfosRule"
-          xs8="xs8"
+          xs8
         >
           <c-infos-attribute-field
             v-field="rule"
@@ -34,7 +34,7 @@
         <v-flex
           class="pl-3"
           v-else-if="isObjectRule"
-          xs6="xs6"
+          xs6
         >
           <v-text-field
             v-field="rule.dictionary"
@@ -50,13 +50,13 @@
     <v-flex
       v-if="rule.attribute"
       :xs8="!isAnyInfosRule"
-      xs7="xs7"
+      xs7
     >
       <v-layout>
         <template v-if="isDateRule">
           <v-flex
             class="pl-3"
-            xs5="xs5"
+            xs5
           >
             <c-quick-date-interval-type-field
               v-field="rule.range.type"
@@ -68,7 +68,7 @@
           <v-flex
             class="pl-3"
             v-if="isCustomRange"
-            xs7="xs7"
+            xs7
           >
             <c-date-time-interval-field
               v-field="rule.range"
@@ -81,7 +81,7 @@
           <v-flex
             class="pl-3"
             v-if="isInfosValueField"
-            xs1="xs1"
+            xs1
           >
             <c-input-type-field
               :value="inputType"
@@ -96,7 +96,7 @@
             class="pl-3"
             v-if="shownOperatorField"
             :xs6="!isAnyInfosRule"
-            xs4="xs4"
+            xs4
           >
             <pattern-operator-field
               v-field="rule.operator"
@@ -110,7 +110,7 @@
             class="pl-3"
             v-if="rule.operator && operatorHasValue"
             :xs7="isAnyInfosRule"
-            xs6="xs6"
+            xs6
           >
             <component
               v-bind="valueComponent.props"

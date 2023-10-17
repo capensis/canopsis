@@ -47,7 +47,7 @@
           :count="testSuite.skipped"
         />
       </v-layout>
-      <v-flex xs4="xs4">
+      <v-flex xs4>
         <test-suite-status-pie-chart :statuses="testSuiteStatuses" />
       </v-flex>
     </v-layout>

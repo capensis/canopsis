@@ -7,7 +7,7 @@
     <v-layout>
       <v-flex
         class="pr-3"
-        xs6="xs6"
+        xs6
       >
         <v-select
           v-validate="'required'"
@@ -22,7 +22,7 @@
           @input="updateType"
         />
       </v-flex>
-      <v-flex xs6="xs6">
+      <v-flex xs6>
         <v-text-field
           v-field="form.host"
           v-validate="'required|url'"

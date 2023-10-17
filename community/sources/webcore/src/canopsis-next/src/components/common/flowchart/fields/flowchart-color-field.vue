@@ -21,7 +21,7 @@
     </span>
     <v-flex
       v-show="isFilled || hideCheckbox"
-      xs3="xs3"
+      xs3
     >
       <v-btn
         class="flowchart-color-field__button ma-0 pa-0"

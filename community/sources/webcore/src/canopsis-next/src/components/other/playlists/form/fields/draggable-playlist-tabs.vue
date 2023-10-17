@@ -3,19 +3,19 @@
     <v-layout>
       <v-flex
         class="text-center font-weight-bold"
-        xs4="xs4"
+        xs4
       >
         {{ $tc('common.group') }}
       </v-flex>
       <v-flex
         class="text-center font-weight-bold"
-        xs4="xs4"
+        xs4
       >
         {{ $tc('common.view') }}
       </v-flex>
       <v-flex
         class="text-center font-weight-bold"
-        xs4="xs4"
+        xs4
       >
         {{ $tc('common.tab') }}
       </v-flex>

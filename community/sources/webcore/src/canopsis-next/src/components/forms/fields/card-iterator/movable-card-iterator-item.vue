@@ -4,7 +4,7 @@
       class="pt-2"
       justify-space-between
     >
-      <v-flex xs5="xs5">
+      <v-flex xs5>
         <span class="pl-2">
           <v-btn
             :disabled="disabledUp"
@@ -24,7 +24,7 @@
       </v-flex>
       <v-flex
         class="text-right pr-2"
-        xs3="xs3"
+        xs3
       >
         <v-btn
           icon

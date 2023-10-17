@@ -1,10 +1,10 @@
 <template>
   <v-form @submit.prevent="submit">
     <v-layout>
-      <v-flex xs6="xs6">
+      <v-flex xs6>
         <kpi-collection-settings-basic-metrics-list />
       </v-flex>
-      <v-flex xs6="xs6">
+      <v-flex xs6>
         <kpi-collection-settings-optional-metrics-form
           v-if="form"
           v-model="form"

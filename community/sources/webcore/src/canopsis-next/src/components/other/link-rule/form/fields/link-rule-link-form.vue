@@ -18,14 +18,14 @@
         <v-layout align-center>
           <v-flex
             class="pr-2"
-            xs8="xs8"
+            xs8
           >
             <v-text-field
               v-field="form.category"
               :label="$t('common.category')"
             />
           </v-flex>
-          <v-flex xs4="xs4">
+          <v-flex xs4>
             <c-icon-field
               v-field="form.icon_name"
               :label="$t('common.icon')"

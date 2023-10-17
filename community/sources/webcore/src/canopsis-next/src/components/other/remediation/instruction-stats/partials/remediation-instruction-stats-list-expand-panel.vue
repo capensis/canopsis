@@ -23,16 +23,16 @@
           >
             <v-tab-item>
               <v-flex
-                offset-xs2="offset-xs2"
-                xs8="xs8"
+                offset-xs2
+                xs8
               >
                 <remediation-instruction-stats-summary-tab :remediation-instruction="remediationInstruction" />
               </v-flex>
             </v-tab-item>
             <v-tab-item>
               <v-flex
-                offset-xs2="offset-xs2"
-                xs8="xs8"
+                offset-xs2
+                xs8
               >
                 <remediation-instruction-stats-statistics-tab
                   :remediation-instruction="remediationInstruction"
@@ -51,8 +51,8 @@
             </v-tab-item>
             <v-tab-item>
               <v-flex
-                offset-xs2="offset-xs2"
-                xs8="xs8"
+                offset-xs2
+                xs8
               >
                 <remediation-instruction-stats-rating-tab
                   :remediation-instruction="remediationInstruction"

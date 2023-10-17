@@ -3,7 +3,7 @@
     class="mb-3"
     align-top
   >
-    <v-flex xs5="xs5">
+    <v-flex xs5>
       <c-enabled-field
         v-field="periodicRefresh.enabled"
         :label="label"
@@ -11,7 +11,7 @@
         @input="validateDuration"
       />
     </v-flex>
-    <v-flex xs7="xs7">
+    <v-flex xs7>
       <c-duration-field
         v-field="periodicRefresh"
         :disabled="!periodicRefresh.enabled"

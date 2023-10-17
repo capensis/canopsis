@@ -1,10 +1,10 @@
 <template>
   <v-flex
     class="pa-4"
-    md10="md10"
-    offset-md1="offset-md1"
-    lg8="lg8"
-    offset-lg2="offset-lg2"
+    md10
+    offset-md1
+    lg8
+    offset-lg2
   >
     <c-information-block
       class="mb-5"

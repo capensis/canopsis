@@ -2,7 +2,7 @@
   <v-layout>
     <v-flex
       class="mt-3"
-      xs1="xs1"
+      xs1
     >
       <c-draggable-step-number
         drag-class="operation-drag-handler"
@@ -12,9 +12,9 @@
         {{ operationNumber }}
       </c-draggable-step-number>
     </v-flex>
-    <v-flex xs11="xs11">
+    <v-flex xs11>
       <v-layout justify-space-between>
-        <v-flex xs11="xs11">
+        <v-flex xs11>
           <v-layout>
             <c-expand-btn
               class="operation-expand"

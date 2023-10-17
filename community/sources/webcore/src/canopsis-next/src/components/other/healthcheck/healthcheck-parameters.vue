@@ -11,12 +11,12 @@
   </v-layout>
   <v-flex
     v-else
-    xs10="xs10"
-    offset-xs1="offset-xs1"
-    md8="md8"
-    offset-md2="offset-md2"
-    lg6="lg6"
-    offset-lg3="offset-lg3"
+    xs10
+    offset-xs1
+    md8
+    offset-md2
+    lg6
+    offset-lg3
   >
     <v-form @submit.prevent="submit">
       <healthcheck-form v-model="form" />

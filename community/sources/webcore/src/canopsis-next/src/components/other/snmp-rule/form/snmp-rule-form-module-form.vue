@@ -4,7 +4,7 @@
     <v-layout wrap>
       <v-flex
         class="pr-1"
-        xs6="xs6"
+        xs6
       >
         <v-autocomplete
           class="pt-0"
@@ -25,7 +25,7 @@
       </v-flex>
       <v-flex
         class="pl-1"
-        xs6="xs6"
+        xs6
       >
         <v-autocomplete
           class="pt-0"

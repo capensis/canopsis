@@ -4,7 +4,7 @@
       <v-layout>
         <v-flex
           class="pr-2"
-          xs6="xs6"
+          xs6
         >
           <recurrence-rule-frequency-field
             :value="form.freq"
@@ -22,7 +22,7 @@
         </v-flex>
         <v-flex
           class="pl-2"
-          xs6="xs6"
+          xs6
         >
           <recurrence-rule-end-field
             v-if="isFrequencyEnabled"
@@ -42,7 +42,7 @@
           <v-icon>$vuetify.icons.expand</v-icon>
         </template>
         <v-layout wrap>
-          <v-flex xs6="xs6">
+          <v-flex xs6>
             <recurrence-rule-weekday-field v-model="form.wkst" />
           </v-flex>
           <v-flex
@@ -61,7 +61,7 @@
             v-for="(field, index) in advancedFields"
             :key="field"
             :class="`${index % 2 ? 'pl' : 'pr'}-2`"
-            xs6="xs6"
+            xs6
           >
             <recurrence-rule-regex-field
               v-model="form[field]"

@@ -9,7 +9,7 @@
       :disabled="disabled"
     />
     <v-layout>
-      <v-flex xs6="xs6">
+      <v-flex xs6>
         <v-text-field
           v-field="form.sort_by"
           :label="$t('externalData.fields.sortBy')"
@@ -20,7 +20,7 @@
       </v-flex>
       <v-flex
         class="ml-3"
-        xs6="xs6"
+        xs6
       >
         <v-select
           v-field="form.sort"

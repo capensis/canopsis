@@ -3,7 +3,7 @@
     wrap
     align-center
   >
-    <v-flex xs11="xs11">
+    <v-flex xs11>
       <v-chip
         v-for="entity in entities"
         :key="getEntityKey(entity)"
@@ -16,7 +16,7 @@
     </v-flex>
     <v-flex
       v-if="clearable && removableEntities.length"
-      xs1="xs1"
+      xs1
     >
       <c-action-btn
         :tooltip="$t('common.deleteAll')"
