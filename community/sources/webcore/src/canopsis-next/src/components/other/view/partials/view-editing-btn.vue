@@ -3,19 +3,25 @@
     class="view-editing-btn"
     left
   >
-    <v-btn
-      class="view-editing-btn__button"
-      slot="activator"
-      :input-value="editing"
-      :loading="editingProcess"
-      fab
-      dark
-      small
-      @click.stop="toggleEditing"
-    >
-      <v-icon>edit</v-icon>
-      <v-icon>done</v-icon>
-    </v-btn>
+    <template #activator="{ on }">
+      <v-btn
+        v-on="on"
+        :input-value="editing"
+        :loading="editingProcess"
+        class="view-editing-btn__button"
+        fab
+        dark
+        small
+        @click.stop="toggleEditing"
+      >
+        <v-icon small>
+          edit
+        </v-icon>
+        <v-icon small>
+          done
+        </v-icon>
+      </v-btn>
+    </template>
     <div>
       <div>{{ $t('common.toggleEditView') }}  (ctrl + e / command + e)</div>
       <div class="font-italic">

@@ -1,15 +1,17 @@
 <template>
   <v-tooltip left>
-    <v-btn
-      slot="activator"
-      color="secondary lighten-2"
-      fab
-      dark
-      small
-      @click.stop="showCreateShareTokenModal"
-    >
-      <v-icon>share</v-icon>
-    </v-btn>
+    <template #activator="{ on }">
+      <v-btn
+        v-on="on"
+        color="secondary lighten-2"
+        fab
+        dark
+        small
+        @click.stop="showCreateShareTokenModal"
+      >
+        <v-icon small>share</v-icon>
+      </v-btn>
+    </template>
     <span>{{ $t('common.shareLink') }}</span>
   </v-tooltip>
 </template>

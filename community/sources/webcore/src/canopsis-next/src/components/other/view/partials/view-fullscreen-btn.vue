@@ -4,18 +4,20 @@
     :left="leftTooltip"
     :top="topTooltip"
   >
-    <v-btn
-      class="view-fullscreen-btn__button"
-      slot="activator"
-      :value="value"
-      :small="small"
-      fab
-      dark
-      @click.stop="toggleFullScreen"
-    >
-      <v-icon>fullscreen</v-icon>
-      <v-icon>fullscreen_exit</v-icon>
-    </v-btn>
+    <template #activator="{ on }">
+      <v-btn
+        v-on="on"
+        :value="value"
+        class="view-fullscreen-btn__button"
+        small
+        fab
+        dark
+        @click.stop="toggleFullScreen"
+      >
+        <v-icon small>fullscreen</v-icon>
+        <v-icon small>fullscreen_exit</v-icon>
+      </v-btn>
+    </template>
     <div>
       {{ $t('view.fullScreen') }}
       <div class="font-italic text-caption ml-1">

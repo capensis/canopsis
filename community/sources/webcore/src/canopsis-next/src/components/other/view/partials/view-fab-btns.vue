@@ -1,16 +1,19 @@
 <template>
-  <div class="view-fab-btns fab">
+  <div class="view-fab-btns fab ma-2">
     <v-layout>
-      <view-scroll-top-btn />
-      <view-periodic-refresh-btn />
-      <v-speed-dial
-        v-model="opened"
+      <v-flex class="mr-3">
+        <view-scroll-top-btn />
+      </v-flex>
+      <v-flex class="mr-3">
+        <view-periodic-refresh-btn />
+      </v-flex>
+      <c-speed-dial
         direction="top"
         transition="slide-y-reverse-transition"
       >
-        <template #activator="">
+        <template #activator="{ bind }">
           <v-btn
-            :input-value="opened"
+            v-bind="bind"
             color="primary"
             dark
             fab
@@ -28,38 +31,41 @@
           :value="fullscreen"
           :toggle-full-screen="toggleFullScreen"
           left-tooltip
-          small
         />
         <view-editing-btn v-if="updatable" />
         <v-tooltip left>
-          <v-btn
-            class="view-fab-btns__add-widget-btn"
-            slot="activator"
-            v-if="updatable"
-            fab
-            dark
-            small
-            @click.stop="showCreateWidgetModal"
-          >
-            <v-icon>add</v-icon>
-          </v-btn>
+          <template #activator="{ on }">
+            <v-btn
+              v-if="updatable"
+              v-on="on"
+              class="view-fab-btns__add-widget-btn"
+              fab
+              dark
+              small
+              @click.stop="showCreateWidgetModal"
+            >
+              <v-icon small>add</v-icon>
+            </v-btn>
+          </template>
           <span>{{ $t('common.addWidget') }}</span>
         </v-tooltip>
         <v-tooltip left>
-          <v-btn
-            slot="activator"
-            v-if="updatable"
-            color="green"
-            fab
-            dark
-            small
-            @click.stop="showCreateTabModal"
-          >
-            <v-icon>add</v-icon>
-          </v-btn>
+          <template #activator="{ on }">
+            <v-btn
+              v-if="updatable"
+              v-on="on"
+              color="green"
+              fab
+              dark
+              small
+              @click.stop="showCreateTabModal"
+            >
+              <v-icon small>add</v-icon>
+            </v-btn>
+          </template>
           <span>{{ $t('common.addTab') }}</span>
         </v-tooltip>
-      </v-speed-dial>
+      </c-speed-dial>
     </v-layout>
   </div>
 </template>

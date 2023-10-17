@@ -52,7 +52,6 @@
         :tooltip="$t('modals.importPbehaviorException.title')"
         color="indigo"
         icon="upload_file"
-        small
         top
         @click="showImportExceptionsModal"
       />
@@ -60,7 +59,6 @@
         :tooltip="$t('modals.createPbehaviorException.title')"
         color="deep-purple"
         icon="event"
-        small
         top
         @click="showCreateExceptionModal"
       />

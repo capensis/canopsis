@@ -7,7 +7,6 @@
         :tooltip="$t('modals.createPbehavior.create.title')"
         icon="add"
         color="primary"
-        small
         left
         @click="showCreatePbehaviorModal"
       />
@@ -16,7 +15,6 @@
         :tooltip="$t('modals.pbehaviorsCalendar.title')"
         icon="calendar_today"
         color="secondary"
-        small
         left
         @click="showPbehaviorsCalendarModal"
       />
