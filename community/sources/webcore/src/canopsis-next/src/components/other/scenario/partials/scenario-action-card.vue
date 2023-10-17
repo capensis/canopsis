@@ -2,7 +2,7 @@
   <v-card class="subheading">
     <v-card-text>
       <v-layout wrap>
-        <v-flex xs1="xs1">
+        <v-flex xs1>
           <v-avatar
             class="white--text mr-2"
             color="primary"
@@ -12,7 +12,7 @@
           </v-avatar>
           <c-expand-btn v-model="expanded" />
         </v-flex>
-        <v-flex xs11="xs11">
+        <v-flex xs11>
           <scenario-info-item
             class="scenario-info-type px-2"
             :label="$t('common.type')"

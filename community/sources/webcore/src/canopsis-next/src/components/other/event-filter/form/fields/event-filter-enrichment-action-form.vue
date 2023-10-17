@@ -34,14 +34,14 @@
             key="description"
           />
           <v-layout>
-            <v-flex xs5="xs5">
+            <v-flex xs5>
               <c-name-field
                 v-field="form.name"
                 key="name"
                 required
               />
             </v-flex>
-            <v-flex xs7="xs7">
+            <v-flex xs7>
               <c-payload-text-field
                 class="ml-2"
                 v-if="isStringTemplateValueType"

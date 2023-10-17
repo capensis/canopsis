@@ -16,10 +16,10 @@
       />
     </template>
     <v-layout align-center>
-      <v-flex xs5="xs5">
+      <v-flex xs5>
         <span class="v-label text--secondary">{{ $t('storageSetting.entityUnlinked.archiveBefore') }}</span>
       </v-flex>
-      <v-flex xs4="xs4">
+      <v-flex xs4>
         <c-duration-field
           v-field="form.archive_before"
           :units-label="$t('common.unit')"

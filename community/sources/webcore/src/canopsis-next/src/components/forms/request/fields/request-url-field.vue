@@ -5,7 +5,7 @@
   >
     <v-flex
       class="pr-2"
-      xs6="xs6"
+      xs6
     >
       <v-select
         v-field="request.method"
@@ -19,7 +19,7 @@
     </v-flex>
     <v-flex
       class="pl-2"
-      xs6="xs6"
+      xs6
     >
       <c-payload-text-field
         v-field="request.url"

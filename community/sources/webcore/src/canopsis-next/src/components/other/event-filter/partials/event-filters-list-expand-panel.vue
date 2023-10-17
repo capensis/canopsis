@@ -11,15 +11,15 @@
         class="py-3 secondary lighten-2"
         justify-center
       >
-        <v-flex xs11="xs11">
+        <v-flex xs11>
           <v-card>
             <v-card-text>
               <v-flex
                 xs12
-                md8="md8"
-                offset-md2="offset-md2"
-                lg6="lg6"
-                offset-lg3="offset-lg3"
+                md8
+                offset-md2
+                lg6
+                offset-lg3
               >
                 <event-filters-rule-summary :event-filter="eventFilter" />
               </v-flex>
@@ -34,7 +34,7 @@
         class="pa-3 secondary lighten-2"
         justify-center
       >
-        <v-flex xs10="xs10">
+        <v-flex xs10>
           <v-card>
             <v-card-text>
               <c-patterns-field
@@ -55,7 +55,7 @@
           class="py-3 secondary lighten-2"
           justify-center
         >
-          <v-flex xs11="xs11">
+          <v-flex xs11>
             <v-data-table
               :items="eventFilter.config.actions"
               :headers="headers"
@@ -80,7 +80,7 @@
           class="py-3 secondary lighten-2"
           justify-center
         >
-          <v-flex xs11="xs11">
+          <v-flex xs11>
             <external-data-form
               :form="externalDataForm"
               disabled
@@ -96,7 +96,7 @@
           class="py-3 secondary lighten-2"
           justify-center
         >
-          <v-flex xs11="xs11">
+          <v-flex xs11>
             <v-card>
               <v-card-text>
                 <event-filter-failures

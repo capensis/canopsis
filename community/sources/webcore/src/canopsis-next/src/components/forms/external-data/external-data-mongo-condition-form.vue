@@ -2,7 +2,7 @@
   <v-layout>
     <v-flex
       class="pr-2"
-      xs3="xs3"
+      xs3
     >
       <v-select
         v-field="condition.type"
@@ -13,7 +13,7 @@
     </v-flex>
     <v-flex
       class="px-2"
-      xs4="xs4"
+      xs4
     >
       <v-text-field
         v-field="condition.attribute"
@@ -26,7 +26,7 @@
     </v-flex>
     <v-flex
       class="pl-2"
-      xs5="xs5"
+      xs5
     >
       <v-layout align-center>
         <c-payload-text-field

@@ -1,6 +1,6 @@
 <template>
   <v-layout>
-    <v-flex xs4="xs4">
+    <v-flex xs4>
       <c-enabled-field
         v-field="value.enabled"
         :label="$t('scenario.withAuth')"
@@ -10,7 +10,7 @@
     <template v-if="value.enabled">
       <v-flex
         class="mr-3"
-        xs4="xs4"
+        xs4
       >
         <c-name-field
           v-field="value.username"
@@ -19,7 +19,7 @@
           :disabled="disabled"
         />
       </v-flex>
-      <v-flex xs4="xs4">
+      <v-flex xs4>
         <c-password-field
           v-field="value.password"
           :name="`${name}.password`"

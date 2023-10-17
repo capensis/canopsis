@@ -3,7 +3,7 @@
     <v-layout align-center>
       <v-flex
         class="pr-2"
-        xs1="xs1"
+        xs1
       >
         <c-draggable-step-number
           drag-class="job-drag-handler"
@@ -13,7 +13,7 @@
           {{ jobNumber }}
         </c-draggable-step-number>
       </v-flex>
-      <v-flex xs10="xs10">
+      <v-flex xs10>
         <v-autocomplete
           v-field="job.job"
           v-validate="'required'"
@@ -27,7 +27,7 @@
           return-object
         />
       </v-flex>
-      <v-flex xs1="xs1">
+      <v-flex xs1>
         <v-layout justify-center>
           <c-action-btn
             v-if="!disabled"
@@ -38,8 +38,8 @@
       </v-flex>
     </v-layout>
     <v-flex
-      offset-xs1="offset-xs1"
-      xs11="xs11"
+      offset-xs1
+      xs11
     >
       <c-workflow-field
         v-field="job.stop_on_fail"

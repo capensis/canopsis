@@ -1,8 +1,8 @@
 <template>
   <v-layout>
     <v-flex
-      offset-xs3="offset-xs3"
-      xs6="xs6"
+      offset-xs3
+      xs6
     >
       <recurrence-rule-information :rrule="pbehavior.rrule" />
       <pbehavior-recurrence-rule-periods

@@ -6,7 +6,7 @@
   >
     <v-layout wrap>
       <v-flex
-        xs4="xs4"
+        xs4
         v-for="image in images"
         :key="image.src"
       >

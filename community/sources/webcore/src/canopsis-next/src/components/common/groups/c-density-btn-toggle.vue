@@ -10,14 +10,14 @@
       v-for="type in types"
       :key="type.value"
     >
-      <v-flex xs6="xs6">
+      <v-flex xs6>
         <v-radio
           :value="type.value"
           :label="type.text"
           color="primary"
         />
       </v-flex>
-      <v-flex xs6="xs6">
+      <v-flex xs6>
         <v-icon class="density__icon">
           {{ type.icon }}
         </v-icon>

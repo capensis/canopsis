@@ -9,7 +9,7 @@
       :key="name.key"
       justify-space-between
     >
-      <v-flex xs11="xs11">
+      <v-flex xs11>
         <v-text-field
           v-field="names[index].value"
           v-validate="'required'"
@@ -18,7 +18,7 @@
           :placeholder="$t('common.name')"
         />
       </v-flex>
-      <v-flex xs1="xs1">
+      <v-flex xs1>
         <v-btn
           color="error"
           icon

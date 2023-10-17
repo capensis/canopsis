@@ -13,7 +13,7 @@
         {{ $t('declareTicket.webhookTicketDeclarationExist') }}
       </c-alert>
       <v-layout>
-        <v-flex xs6="xs6">
+        <v-flex xs6>
           <c-enabled-field
             v-field="value.enabled"
             :disabled="isDeclareTicketExist"
@@ -21,7 +21,7 @@
         </v-flex>
         <v-flex
           v-if="value.enabled"
-          xs6="xs6"
+          xs6
         >
           <c-enabled-field
             v-field="value.is_regexp"

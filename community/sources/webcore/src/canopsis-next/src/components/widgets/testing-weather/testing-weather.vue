@@ -20,9 +20,9 @@
         <v-flex
           v-for="testSuite in testSuites"
           :key="testSuite._id"
-          xs6="xs6"
-          md4="md4"
-          lg3="lg3"
+          xs6
+          md4
+          lg3
         >
           <testing-weather-item
             :test-suite="testSuite"

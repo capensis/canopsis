@@ -7,7 +7,7 @@
     <v-layout>
       <v-flex
         class="pr-3"
-        xs6="xs6"
+        xs6
       >
         <c-entity-category-field
           v-field="form.category"
@@ -17,7 +17,7 @@
       </v-flex>
       <v-flex
         class="pr-3"
-        xs4="xs4"
+        xs4
       >
         <c-entity-state-field
           v-field="form.sli_avail_state"
@@ -25,7 +25,7 @@
           required
         />
       </v-flex>
-      <v-flex xs2="xs2">
+      <v-flex xs2>
         <c-impact-level-field
           v-field="form.impact_level"
           required

@@ -26,8 +26,8 @@
       <v-layout class="py-3">
         <v-flex
           xs12
-          md8="md8"
-          offset-md2="offset-md2"
+          md8
+          offset-md2
         >
           <v-card>
             <v-card-text>

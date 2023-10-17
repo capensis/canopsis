@@ -3,7 +3,7 @@
     v-show="totalItems"
     align-center
   >
-    <v-flex xs10="xs10">
+    <v-flex xs10>
       <c-pagination
         :page="page"
         :limit="rowsPerPage"
@@ -12,7 +12,7 @@
       />
     </v-flex>
     <v-spacer />
-    <v-flex xs2="xs2">
+    <v-flex xs2>
       <c-records-per-page-field
         class="pa-0"
         :value="rowsPerPage"

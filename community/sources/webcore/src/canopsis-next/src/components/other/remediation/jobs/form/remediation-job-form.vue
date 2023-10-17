@@ -18,14 +18,14 @@
     <v-layout>
       <v-flex
         class="pr-3"
-        xs6="xs6"
+        xs6
       >
         <c-number-field
           v-field="form.retry_amount"
           :label="$t('remediation.job.retryAmount')"
         />
       </v-flex>
-      <v-flex xs6="xs6">
+      <v-flex xs6>
         <c-duration-field
           v-field="form.retry_interval"
           :label="$t('remediation.job.retryInterval')"

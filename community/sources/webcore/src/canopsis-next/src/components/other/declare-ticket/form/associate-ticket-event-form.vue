@@ -8,7 +8,7 @@
     <v-layout>
       <v-flex
         class="mr-3"
-        xs6="xs6"
+        xs6
       >
         <declare-ticket-rule-ticket-id-field
           v-field="form.ticket_id"
@@ -16,7 +16,7 @@
           required
         />
       </v-flex>
-      <v-flex xs6="xs6">
+      <v-flex xs6>
         <declare-ticket-rule-ticket-url-text-field
           v-field="form.ticket_url"
           :name="ticketUrlFieldName"

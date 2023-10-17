@@ -11,7 +11,7 @@
     <v-layout>
       <v-flex
         class="mr-3"
-        xs6="xs6"
+        xs6
       >
         <c-information-block :title="$t('common.request.timeoutSettings')">
           <c-duration-field
@@ -22,7 +22,7 @@
           />
         </c-information-block>
       </v-flex>
-      <v-flex xs6="xs6">
+      <v-flex xs6>
         <c-information-block :title="$t('common.request.repeatRequest')">
           <c-retry-field
             v-field="form"

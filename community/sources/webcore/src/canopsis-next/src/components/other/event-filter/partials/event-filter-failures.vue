@@ -1,6 +1,6 @@
 <template>
   <v-layout wrap>
-    <v-flex xs3="xs3">
+    <v-flex xs3>
       <event-filter-failure-type-field
         :value="query.type"
         @input="updateQueryField('type', $event)"
