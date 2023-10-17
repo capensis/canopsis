@@ -1,17 +1,16 @@
 <template>
-  <v-speed-dial
+  <c-speed-dial
     class="d-inline-block"
-    v-model="isVSpeedDialOpen"
     direction="bottom"
     transition="scale-transition"
   >
-    <template #activator="">
+    <template #activator="{ bind: speedDialBind }">
       <v-tooltip top>
-        <template #activator="{ on }">
+        <template #activator="{ on: tooltipOn }">
           <v-btn
+            v-bind="speedDialBind"
+            v-on="tooltipOn"
             class="primary"
-            v-on="on"
-            :input-value="isVSpeedDialOpen"
             dark
             fab
             small
@@ -40,7 +39,7 @@
       </template>
       <span>{{ $t('context.fab.addService') }}</span>
     </v-tooltip>
-  </v-speed-dial>
+  </c-speed-dial>
 </template>
 
 <script>

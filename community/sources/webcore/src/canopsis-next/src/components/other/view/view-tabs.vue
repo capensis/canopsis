@@ -65,7 +65,7 @@
       </v-tab>
     </c-draggable-list-field>
     <template v-if="$scopedSlots.default">
-      <v-tabs-items touchless>
+      <v-tabs-items :value="$route.fullPath" touchless>
         <v-tab-item
           v-for="tab in tabs"
           :key="tab._id"

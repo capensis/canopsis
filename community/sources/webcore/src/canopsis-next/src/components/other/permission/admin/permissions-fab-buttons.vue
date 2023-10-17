@@ -8,7 +8,6 @@
       :tooltip="$t('modals.createUser.create.title')"
       color="indigo"
       icon="people"
-      small
       top
       @click="showCreateUserModal"
     />
@@ -16,7 +15,6 @@
       :tooltip="$t('modals.createRole.create.title')"
       color="deep-purple"
       icon="supervised_user_circle"
-      small
       top
       @click="showCreateRoleModal"
     />

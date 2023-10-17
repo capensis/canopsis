@@ -16,8 +16,8 @@
       </v-fade-transition>
       <v-tabs
         v-if="hasReadAnyRoleAccess"
-        fixed-tabs
         slider-color="primary"
+        fixed-tabs
       >
         <template v-for="(groupPermissions, groupKey) in preparedPermissionsGroups">
           <v-tab :key="`tab-${groupKey}`">

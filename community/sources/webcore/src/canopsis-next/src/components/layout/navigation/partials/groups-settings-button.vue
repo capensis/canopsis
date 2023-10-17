@@ -1,27 +1,23 @@
 <template>
-  <v-speed-dial
+  <c-speed-dial
     v-if="hasCreateAnyViewAccess || hasUpdateAnyViewAccess || hasDeleteAnyViewAccess"
-    v-model="isVSpeedDialOpen"
     v-bind="wrapperProps"
     transition="slide-y-reverse-transition"
   >
-    <template #activator="">
+    <template #activator="{ bind: speedDialBind }">
       <v-tooltip
         :right="tooltipRight"
         :left="tooltipLeft"
         z-index="10"
-        custom-activator
       >
-        <template #activator="{ on }">
+        <template #activator="{ on: tooltipOn }">
           <v-btn
             class="primary"
-            v-on="on"
-            v-bind="buttonProps"
-            :input-value="isVSpeedDialOpen"
+            v-on="tooltipOn"
+            v-bind="{ ...speedDialBind, ...buttonProps }"
           >
-            <v-icon>
-              {{ isVSpeedDialOpen ? 'settings' : 'close' }}
-            </v-icon>
+            <v-icon>settings</v-icon>
+            <v-icon>close</v-icon>
           </v-btn>
         </template>
         <span>{{ $t('layout.sideBar.buttons.settings') }}</span>
@@ -32,7 +28,6 @@
       :right="tooltipRight"
       :left="tooltipLeft"
       z-index="10"
-      custom-activator
     >
       <template #activator="{ on }">
         <v-btn
@@ -44,8 +39,17 @@
           fab
           @click.stop="$emit('toggleEditingMode')"
         >
-          <v-icon dark>
-            {{ isNavigationEditingMode ? 'edit' : 'done' }}
+          <v-icon
+            dark
+            small
+          >
+            edit
+          </v-icon>
+          <v-icon
+            dark
+            small
+          >
+            edit
           </v-icon>
         </v-btn>
       </template>
@@ -56,7 +60,6 @@
       :right="tooltipRight"
       :left="tooltipLeft"
       z-index="10"
-      custom-activator
     >
       <template #activator="{ on }">
         <v-btn
@@ -67,14 +70,17 @@
           fab
           @click.stop="showCreateViewModal"
         >
-          <v-icon dark>
+          <v-icon
+            dark
+            small
+          >
             add
           </v-icon>
         </v-btn>
       </template>
       <span>{{ $t('layout.sideBar.buttons.create') }}</span>
     </v-tooltip>
-  </v-speed-dial>
+  </c-speed-dial>
 </template>
 
 <script>

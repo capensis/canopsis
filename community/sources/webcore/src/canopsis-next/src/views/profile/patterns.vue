@@ -49,7 +49,6 @@
         icon="pause"
         color="grey darken-1"
         top
-        small
         @click.stop="showCreatePbehaviorPatternModal"
       />
       <c-action-fab-btn
@@ -57,7 +56,6 @@
         icon="perm_identity"
         color="blue"
         top
-        small
         @click.stop="showCreateEntityPatternModal"
       />
       <c-action-fab-btn
@@ -65,7 +63,6 @@
         icon="notification_important"
         color="error"
         top
-        small
         @click.stop="showCreateAlarmPatternModal"
       />
     </c-fab-expand-btn>

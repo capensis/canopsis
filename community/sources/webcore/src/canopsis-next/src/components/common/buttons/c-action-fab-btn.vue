@@ -1,17 +1,16 @@
 <template>
-  <c-action-btn
-    v-bind="$attrs"
-    custom-tooltip-activator
-  >
+  <c-action-btn v-bind="$attrs">
     <template #button="">
       <v-btn
         :color="color"
-        :small="small"
+        small
         fab
         dark
         @click.stop="$listeners.click"
       >
-        <v-icon>{{ icon }}</v-icon>
+        <v-icon small>
+          {{ icon }}
+        </v-icon>
       </v-btn>
     </template>
   </c-action-btn>
@@ -28,10 +27,6 @@ export default {
     color: {
       type: String,
       default: '',
-    },
-    small: {
-      type: Boolean,
-      default: false,
     },
   },
 };

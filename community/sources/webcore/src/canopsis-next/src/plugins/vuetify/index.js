@@ -1,4 +1,6 @@
-import Vuetify from 'vuetify';
+import Vuetify from 'vuetify/lib';
+import * as VuetifyComponents from 'vuetify/lib/components';
+import * as VuetifyDirectives from 'vuetify/lib/directives';
 
 import icons from './components/icons';
 // import ClickOutside from './directives/click-outside';
@@ -16,13 +18,22 @@ import icons from './components/icons';
 // import VChipGroup from './components/v-chip-group/v-chip-group.vue';
 // import VChip from './components/v-chip/v-chip.vue';
 // import VCheckboxFunctional from './components/v-checkbox-functional/v-checkbox-functional.vue';
-
-import 'vuetify/dist/vuetify.min.css';
+import VSpeedDial from './components/v-speed-dial/v-speed-dial.vue';
 
 // import './styles/vuetify.styl';
 
 export const createVuetify = (Vue, options) => {
-  Vue.use(Vuetify);
+  Vue.use(Vuetify, {
+    components: {
+      ...VuetifyComponents,
+
+      VSpeedDial,
+    },
+
+    directives: {
+      ...VuetifyDirectives,
+    },
+  });
 
   // Vue.component('v-checkbox-functional', VCheckboxFunctional);
   // Vue.component('v-chip', VChip);
