@@ -31,7 +31,9 @@
         :key="playlist._id"
         :to="{ name: $constants.ROUTES_NAMES.playlist, params: { id: playlist._id } }"
       >
-        <v-list-item-title><span>{{ playlist.name }}</span></v-list-item-title>
+        <v-list-item-title>
+          <span>{{ playlist.name }}</span>
+        </v-list-item-title>
       </v-list-item>
     </v-list>
   </v-menu>

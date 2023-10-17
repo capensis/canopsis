@@ -6,7 +6,10 @@
       :color="getTagColor(selectedTag)"
       closable
       @close="$emit('clear')"
-    >{{ selectedTag }}</c-alarm-action-chip></span>
+    >
+      {{ selectedTag }}
+    </c-alarm-action-chip>
+  </span>
 </template>
 
 <script>

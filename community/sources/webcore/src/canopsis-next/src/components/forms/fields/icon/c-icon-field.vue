@@ -11,10 +11,12 @@
     persistent-hint
   >
     <template #selection="{ item }">
-      <v-icon>{{ item }}</v-icon><span class="ml-2">{{ item }}</span>
+      <v-icon>{{ item }}</v-icon>
+      <span class="ml-2">{{ item }}</span>
     </template>
     <template #item="{ item }">
-      <v-icon>{{ item }}</v-icon><span class="ml-2">{{ item }}</span>
+      <v-icon>{{ item }}</v-icon>
+      <span class="ml-2">{{ item }}</span>
     </template>
     <template #no-data="">
       <slot name="no-data" />

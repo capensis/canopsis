@@ -33,10 +33,13 @@
         @click="addWebhook"
       >
         {{ $t('declareTicket.addWebhook') }}
-      </v-btn><span
+      </v-btn>
+      <span
         class="error--text"
         v-show="hasWebhooksErrors"
-      >{{ $t('declareTicket.errors.webhookRequired') }}</span>
+      >
+        {{ $t('declareTicket.errors.webhookRequired') }}
+      </span>
     </v-layout>
   </v-layout>
 </template>

@@ -6,7 +6,8 @@
       :label="$t('common.name')"
       :error-messages="errors.collect('title')"
       name="title"
-    /><span class="text-body-2 my-2">{{ $tc('common.column', 2) }}</span>
+    />
+    <span class="text-body-2 my-2">{{ $tc('common.column', 2) }}</span>
     <v-flex xs12>
       <v-alert
         :value="!form.columns.length"

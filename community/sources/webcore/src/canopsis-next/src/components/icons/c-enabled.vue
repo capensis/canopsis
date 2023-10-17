@@ -3,11 +3,16 @@
     <v-icon
       v-if="value"
       color="primary"
-    >check_circle</v-icon>
+    >
+      check_circle
+    </v-icon>
     <v-icon
       v-else
       color="error"
-    >cancel</v-icon></span>
+    >
+      cancel
+    </v-icon>
+  </span>
 </template>
 
 <script>

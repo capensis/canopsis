@@ -16,11 +16,14 @@
             :value="link.url"
           >
             {{ link.label }}
-          </c-copy-wrapper><a
+          </c-copy-wrapper>
+          <a
             v-else
             :href="link.url"
             target="_blank"
-          >{{ link.label }}</a>
+          >
+            {{ link.label }}
+          </a>
         </div>
       </div>
     </div>

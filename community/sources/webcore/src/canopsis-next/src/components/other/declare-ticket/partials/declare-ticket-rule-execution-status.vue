@@ -13,7 +13,8 @@
       :color="statusIcon.color"
       :text="statusIcon.text"
       top
-    /></span>
+    />
+  </span>
 </template>
 
 <script>

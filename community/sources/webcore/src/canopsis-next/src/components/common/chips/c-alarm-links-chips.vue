@@ -36,7 +36,8 @@
           small
         >
           {{ item.icon }}
-        </v-icon><span>{{ item.text }}</span>
+        </v-icon>
+        <span>{{ item.text }}</span>
       </template>
     </template>
   </c-alarm-actions-chips>

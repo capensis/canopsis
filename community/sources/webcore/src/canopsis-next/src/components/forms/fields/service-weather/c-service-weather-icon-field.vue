@@ -9,10 +9,12 @@
     item-value="icon"
   >
     <template #selection="{ item }">
-      <v-icon>{{ item.icon }}</v-icon><span class="ml-2">{{ item.text }}</span>
+      <v-icon>{{ item.icon }}</v-icon>
+      <span class="ml-2">{{ item.text }}</span>
     </template>
     <template #item="{ item }">
-      <v-icon>{{ item.icon }}</v-icon><span class="ml-2">{{ item.text }}</span>
+      <v-icon>{{ item.icon }}</v-icon>
+      <span class="ml-2">{{ item.text }}</span>
     </template>
   </v-select>
 </template>

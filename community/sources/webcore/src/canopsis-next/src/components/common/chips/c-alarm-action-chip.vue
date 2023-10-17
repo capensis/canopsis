@@ -7,7 +7,8 @@
     @click="$emit('click')"
   >
     <span class="c-alarm-action-chip__text white--text">
-      <slot /></span>
+      <slot />
+    </span>
     <v-icon
       class="cursor-pointer ml-2"
       v-if="closable"

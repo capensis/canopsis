@@ -13,7 +13,8 @@
     >
       <v-icon left>
         add_location
-      </v-icon><span>{{ $t('map.addPoint') }}</span>
+      </v-icon>
+      <span>{{ $t('map.addPoint') }}</span>
     </v-btn>
   </v-btn-toggle>
 </template>

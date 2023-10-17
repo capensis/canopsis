@@ -24,7 +24,8 @@
       v-if="$slots.subtitle"
     >
       <span class="text--secondary">
-        <slot name="subtitle" /></span>
+        <slot name="subtitle" />
+      </span>
     </v-layout>
     <slot />
   </v-layout>

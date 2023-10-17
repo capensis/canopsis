@@ -9,7 +9,8 @@
       @click.stop="showCreateShareTokenModal"
     >
       <v-icon>share</v-icon>
-    </v-btn><span>{{ $t('common.shareLink') }}</span>
+    </v-btn>
+    <span>{{ $t('common.shareLink') }}</span>
   </v-tooltip>
 </template>
 

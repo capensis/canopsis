@@ -12,10 +12,13 @@
       color="primary"
       hide-details
       @change="updateIsFilled"
-    /><span
+    />
+    <span
       class="v-label"
       v-else
-    >{{ label }}</span>
+    >
+      {{ label }}
+    </span>
     <v-flex
       v-show="isFilled || hideCheckbox"
       xs3="xs3"

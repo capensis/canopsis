@@ -12,19 +12,31 @@
         <v-icon
           color="white"
           small
-        >assignment</v-icon>
+        >
+          assignment
+        </v-icon>
         <v-icon
           class="pl-1"
           v-if="filter.locked"
           color="white"
           small
-        >lock</v-icon><strong class="pl-2 text-uppercase">{{ conditionTypeMessage }}</strong><span
+        >
+          lock
+        </v-icon>
+        <strong class="pl-2 text-uppercase">{{ conditionTypeMessage }}</strong>
+        <span
           class="pl-1"
           v-if="!isAll"
-        >{{ typesAndInstructionsMessage }}</span><strong
+        >
+          {{ typesAndInstructionsMessage }}
+        </span>
+        <strong
           class="pl-1 text-uppercase"
           v-if="hasRunning"
-        >{{ $t('remediation.instructionsFilter.inProgress') }}</strong></span>
+        >
+          {{ $t('remediation.instructionsFilter.inProgress') }}
+        </strong>
+      </span>
     </v-chip>
   </div>
 </template>

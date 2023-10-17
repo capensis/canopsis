@@ -19,7 +19,8 @@
             @click.prevent="$emit('down')"
           >
             <v-icon>arrow_downward</v-icon>
-          </v-btn></span>
+          </v-btn>
+        </span>
       </v-flex>
       <v-flex
         class="text-right pr-2"

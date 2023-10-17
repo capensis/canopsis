@@ -23,7 +23,8 @@
           <c-request-text-information
             v-if="response"
             :value="response"
-          /><span v-else>{{ $t('declareTicket.noResponse') }}</span>
+          />
+          <span v-else>{{ $t('declareTicket.noResponse') }}</span>
         </v-card-text>
       </v-card>
     </v-expand-transition>

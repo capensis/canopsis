@@ -42,7 +42,8 @@
             @click.stop="showCreateWidgetModal"
           >
             <v-icon>add</v-icon>
-          </v-btn><span>{{ $t('common.addWidget') }}</span>
+          </v-btn>
+          <span>{{ $t('common.addWidget') }}</span>
         </v-tooltip>
         <v-tooltip left>
           <v-btn
@@ -55,7 +56,8 @@
             @click.stop="showCreateTabModal"
           >
             <v-icon>add</v-icon>
-          </v-btn><span>{{ $t('common.addTab') }}</span>
+          </v-btn>
+          <span>{{ $t('common.addTab') }}</span>
         </v-tooltip>
       </v-speed-dial>
     </v-layout>

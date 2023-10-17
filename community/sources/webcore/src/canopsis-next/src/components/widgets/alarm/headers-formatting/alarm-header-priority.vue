@@ -6,7 +6,8 @@
       icon-class="priority-help-icon ml-1"
       size="16"
       top
-    /></span>
+    />
+  </span>
 </template>
 
 <style lang="scss" scoped>

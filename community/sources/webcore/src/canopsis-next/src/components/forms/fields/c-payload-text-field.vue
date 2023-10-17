@@ -24,7 +24,8 @@
         v-bind="{ ...tile.props, value: item.value === variablesMenuValue }"
         @click="pasteVariable(item.value)"
       >
-        <v-list-item-content>{{ item.text }}</v-list-item-content><span class="ml-4 grey--text">{{ item.value }}</span>
+        <v-list-item-content>{{ item.text }}</v-list-item-content>
+        <span class="ml-4 grey--text">{{ item.value }}</span>
       </v-list-item>
     </template>
   </v-combobox>

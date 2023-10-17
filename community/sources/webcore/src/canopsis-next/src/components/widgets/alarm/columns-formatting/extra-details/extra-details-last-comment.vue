@@ -8,7 +8,10 @@
         <v-icon
           color="white"
           small
-        >{{ icon }}</v-icon></span>
+        >
+          {{ icon }}
+        </v-icon>
+      </span>
     </template>
     <div class="text-md-center">
       <strong>{{ $t('alarm.actions.iconsTitles.comment') }}</strong>

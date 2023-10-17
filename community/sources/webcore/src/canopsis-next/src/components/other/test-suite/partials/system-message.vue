@@ -2,7 +2,8 @@
   <div class="system-message">
     <v-layout align-center>
       <span class="mr-1">
-        <slot name="label">{{ label }}</slot></span>
+        <slot name="label">{{ label }}</slot>
+      </span>
       <c-copy-btn
         :value="value"
         :tooltip="$t('testSuite.copyMessage')"
@@ -16,7 +17,8 @@
       />
     </v-layout>
     <pre class="pre-wrap system-message__text">
-      <slot>{{ value }}</slot></pre>
+      <slot>{{ value }}</slot>
+    </pre>
   </div>
 </template>
 

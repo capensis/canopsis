@@ -20,7 +20,8 @@
           :value="group._id"
           color="primary"
           @change="changeGroup(group, $event)"
-        /><span class="group-title">{{ group.title }}</span>
+        />
+        <span class="group-title">{{ group.title }}</span>
       </template>
       <group-view-panel
         v-for="view in group.views"
@@ -36,10 +37,15 @@
               v-field="selected.views"
               :value="view._id"
               color="primary"
-            /><span class="text-truncate">{{ view.title }}<span
-              class="ml-1"
-              v-show="view.description"
-            >({{ view.description }})</span></span>
+            />
+            <span class="text-truncate">{{ view.title }}
+              <span
+                class="ml-1"
+                v-show="view.description"
+              >
+                ({{ view.description }})
+              </span>
+            </span>
           </v-layout>
         </template>
       </group-view-panel>

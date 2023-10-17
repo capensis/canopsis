@@ -33,7 +33,8 @@
       :items="years"
       :menu-props="menuProps"
       hide-details
-    /></span>
+    />
+  </span>
 </template>
 
 <script>

@@ -3,7 +3,8 @@
     class="c-state-count-changes-chip"
     :style="style"
   >
-    <slot /></span>
+    <slot />
+  </span>
 </template>
 
 <script>

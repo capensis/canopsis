@@ -19,15 +19,21 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
-    </v-menu><span
+    </v-menu>
+    <span
       class="request-information-content-row__key"
       @contextmenu.prevent="openContextmenu"
-    >{{ row.name }}</span>
+    >
+      {{ row.name }}
+    </span>
     <template v-if="hasRowValue">
-      <span>:&nbsp;</span><span
+      :&nbsp;
+      <span
         class="request-information-content-row__value"
         @contextmenu.prevent="openContextmenu"
-      >{{ parsedValue }}</span>
+      >
+        {{ parsedValue }}
+      </span>
     </template>
   </div>
 </template>

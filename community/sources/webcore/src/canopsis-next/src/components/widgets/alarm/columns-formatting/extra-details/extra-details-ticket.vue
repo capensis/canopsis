@@ -27,7 +27,10 @@
             <v-icon
               color="white"
               small
-            >{{ icon }}</v-icon></span>
+            >
+              {{ icon }}
+            </v-icon>
+          </span>
         </v-badge>
       </template>
       <v-layout
