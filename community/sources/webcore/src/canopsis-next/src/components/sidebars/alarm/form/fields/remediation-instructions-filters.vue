@@ -1,30 +1,25 @@
 <template>
-  <v-list-group>
-    <template #activator="">
-      <v-list-item>{{ $t('settings.remediationInstructionsFilters') }}</v-list-item>
-    </template>
-    <v-container>
-      <v-layout wrap>
-        <remediation-instructions-filters-list
-          v-field="filters"
-          :editable="editable"
-          :closable="editable"
-        />
-      </v-layout>
-      <v-layout
-        v-if="addable"
-        wrap
+  <widget-settings-item :title="$t('settings.remediationInstructionsFilters')">
+    <v-layout wrap>
+      <remediation-instructions-filters-list
+        v-field="filters"
+        :editable="editable"
+        :closable="editable"
+      />
+    </v-layout>
+    <v-layout
+      v-if="addable"
+      wrap
+    >
+      <v-btn
+        class="ml-1"
+        color="primary"
+        @click="showCreateInstructionsFilterModal"
       >
-        <v-btn
-          class="ml-1"
-          color="primary"
-          @click="showCreateInstructionsFilterModal"
-        >
-          {{ $t('common.add') }}
-        </v-btn>
-      </v-layout>
-    </v-container>
-  </v-list-group>
+        {{ $t('common.add') }}
+      </v-btn>
+    </v-layout>
+  </widget-settings-item>
 </template>
 
 <script>
@@ -35,9 +30,10 @@ import { uid } from '@/helpers/uid';
 import { formArrayMixin } from '@/mixins/form';
 
 import RemediationInstructionsFiltersList from '@/components/other/remediation/instructions-filter/remediation-instructions-filters-list.vue';
+import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
 export default {
-  components: { RemediationInstructionsFiltersList },
+  components: { WidgetSettingsItem, RemediationInstructionsFiltersList },
   mixins: [formArrayMixin],
   model: {
     prop: 'filters',

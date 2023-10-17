@@ -1,10 +1,9 @@
 <template>
-  <v-list-group>
+  <v-list-group color="">
     <template #activator="">
-      <v-list-item class="widget-settings-item-title">
-        <v-layout
+      <v-list-item-content class="widget-settings-item-title">
+        <v-list-item-title
           :class="validationHeaderClass"
-          align-center
         >
           <slot name="title">
             {{ title }}
@@ -16,8 +15,8 @@
             <span v-if="optional">({{ $t('common.optional') }})</span>
             <span v-if="subTitle">{{ subTitle }}</span>
           </span>
-        </v-layout>
-      </v-list-item>
+        </v-list-item-title>
+      </v-list-item-content>
     </template>
     <v-container>
       <slot />

@@ -9,11 +9,11 @@
     temporary
   >
     <div v-if="title">
-      <v-toolbar color="secondary">
-        <v-layout align-center>
-          <v-flex class="white--text subheading">
+      <v-list color="secondary">
+        <v-list-item>
+          <v-list-item-title class="white--text subheading">
             {{ title }}
-          </v-flex>
+          </v-list-item-title>
           <v-btn
             icon
             @click.stop="closeHandler"
@@ -22,8 +22,8 @@
               close
             </v-icon>
           </v-btn>
-        </v-layout>
-      </v-toolbar>
+        </v-list-item>
+      </v-list>
       <v-divider />
     </div>
     <slot />

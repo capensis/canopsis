@@ -1,32 +1,22 @@
 <template>
-  <v-container
-    class="pa-3"
-    fluid
-  >
-    <v-layout
-      align-center
-      justify-space-between
-    >
-      <v-flex xs11>
-        <div class="subheading">
-          {{ title }}
-        </div>
-      </v-flex>
-      <v-layout>
-        <v-switch
-          class="ma-0 pa-0"
-          :input-value="value"
-          color="primary"
-          hide-details
-          @change="$emit('input', $event)"
-        />
-      </v-layout>
-    </v-layout>
-  </v-container>
+  <widget-settings-flat-item :title="title">
+    <template #actions>
+      <v-switch
+        class="ma-0 pa-0"
+        :input-value="value"
+        color="primary"
+        hide-details
+        @change="$emit('input', $event)"
+      />
+    </template>
+  </widget-settings-flat-item>
 </template>
 
 <script>
+import WidgetSettingsFlatItem from '@/components/sidebars/partials/widget-settings-flat-item.vue';
+
 export default {
+  components: { WidgetSettingsFlatItem },
   props: {
     title: {
       type: String,

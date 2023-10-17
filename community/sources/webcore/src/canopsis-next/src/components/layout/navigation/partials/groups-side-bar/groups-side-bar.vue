@@ -8,12 +8,14 @@
       :ignore-click-outside="isGroupsOrderChanged || hasMaximizedModal"
       app
     >
-      <div class="brand ma-0 secondary lighten-1">
-        <app-logo class="logo" />
-        <logged-users-count />
-        <app-version class="version" />
-      </div>
-      <template v-if="hasReadAnyViewAccess">
+      <template #prepend>
+        <div class="side-bar__brand ma-0 secondary lighten-1">
+          <app-logo class="logo" />
+          <logged-users-count />
+          <app-version class="version" />
+        </div>
+      </template>
+      <section class="side-bar__links">
         <v-layout
           class="pa-2"
           v-if="!mutatedGroups.length && groupsPending"
@@ -28,7 +30,7 @@
           v-else
           class="groups-panel"
           v-model="mutatedGroups"
-          :class="{ ordering: isGroupsOrderChanged }"
+          :class="{ 'groups-panel--ordering': isGroupsOrderChanged }"
           :component-data="{ props: expansionPanelsProps }"
           :disabled="!isNavigationEditingMode"
           component="v-expansion-panels"
@@ -40,35 +42,34 @@
             :is-groups-order-changed="isGroupsOrderChanged"
           />
         </c-draggable-list-field>
-      </template>
-      <v-divider />
-      <v-fade-transition>
-        <div
-          class="v-overlay v-overlay--active"
-          v-show="isGroupsOrderChanged"
-        >
-          <v-btn
-            class="primary"
-            @click="submit"
-          >
-            {{ $t('common.submit') }}
-          </v-btn>
-          <v-btn @click="resetMutatedGroups">
-            {{ $t('common.cancel') }}
-          </v-btn>
-        </div>
-      </v-fade-transition>
-      <groups-side-bar-playlists />
+        <v-divider />
+        <groups-side-bar-playlists />
+      </section>
       <groups-settings-button
         tooltip-right
         @toggleEditingMode="toggleNavigationEditingMode"
       />
     </v-navigation-drawer>
     <v-fade-transition>
-      <div
-        class="v-overlay v-overlay--active content-overlay"
-        v-show="isGroupsOrderChanged"
-      />
+      <v-overlay
+        class="side-bar__overlay"
+        :value="isGroupsOrderChanged"
+        z-index="10"
+      >
+        <v-btn
+          class="primary ma-2"
+          @click="submit"
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+        <v-btn
+          class="ma-2"
+          light
+          @click="resetMutatedGroups"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+      </v-overlay>
     </v-fade-transition>
   </div>
 </template>
@@ -208,47 +209,59 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .content-overlay {
-    z-index: 6;
-  }
-
   .groups-panel {
     position: relative;
     box-shadow: none;
 
-    &.ordering {
+    &--ordering {
       position: absolute;
-      z-index: 9;
-    }
-
-    .editing &:after {
-      content: '';
-      position: absolute;
-      top: 100%;
-      width: 100%;
-      height: 48px;
+      z-index: 11;
     }
   }
 
   .side-bar {
     position: fixed;
-    height: 100vh;
     overflow-y: auto;
 
-    &.editing {
-      z-index: 9;
+    .v-navigation-drawer__content {
+      display: flex;
+      flex-direction: column;
+      justify-content: stretch;
     }
-  }
 
-  .brand {
-    max-height: 48px;
-    position: relative;
-    display: flex;
-    justify-content: center;
-    padding: 0.5em 0;
+    &__brand {
+      max-height: 48px;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      flex-shrink: 0;
+      padding: 0.5em 0;
 
-    & ::v-deep .logged-users-count {
-      right: 0;
+      & ::v-deep .logged-users-count {
+        right: 0;
+      }
+    }
+
+    &__links {
+      overflow: auto;
+      padding-bottom: 100px;
+    }
+
+    &__overlay {
+      align-items: flex-start;
+      justify-content: flex-start;
+    }
+
+    &--editing {
+      z-index: 9;
+
+      .groups-panel:after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        width: 100%;
+        height: 48px;
+      }
     }
   }
 

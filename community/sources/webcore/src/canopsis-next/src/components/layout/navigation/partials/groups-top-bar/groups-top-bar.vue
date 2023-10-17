@@ -2,7 +2,7 @@
   <v-layout class="secondary groups-wrapper">
     <v-tabs
       ref="tabs"
-      color="secondary"
+      background-color="secondary"
       show-arrows
       dark
     >

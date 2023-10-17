@@ -1,18 +1,13 @@
 <template>
   <settings-button-field
+    :title="title"
     :is-empty="isValueEmpty"
     :addable="addable"
     :removable="removable"
     @create="showTextEditorWithTemplateModal"
     @edit="showTextEditorWithTemplateModal"
     @delete="showRemoveTextConfirmationModal"
-  >
-    <template #title="">
-      <div class="subheading">
-        {{ title }}
-      </div>
-    </template>
-  </settings-button-field>
+  />
 </template>
 
 <script>
