@@ -152,8 +152,7 @@ export default {
     usingJob: 'La tâche ne peut être supprimée, car elle est en cours d\'utilisation',
     query: 'Requête',
     multipleExecutions: 'Autoriser l\'exécution parallèle',
-    retryAmount: 'Nombre de tentatives',
-    retryInterval: 'Intervalle de relance',
+    jobWaitInterval: 'Intervalle d\'attente des tâches',
     addPayload: 'Ajouter un payload',
     deletePayload: 'Supprimer le payload',
     payloadHelp: '<p>Les variables accessibles sont: <strong>.Alarm</strong> et <strong>.Entity</strong></p>'

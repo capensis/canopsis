@@ -152,8 +152,7 @@ export default {
     usingJob: 'Cannot be deleted since it is in use',
     query: 'Query',
     multipleExecutions: 'Allow parallel execution',
-    retryAmount: 'Retry amount',
-    retryInterval: 'Retry interval',
+    jobWaitInterval: 'Job wait interval',
     addPayload: 'Add payload',
     deletePayload: 'Delete payload',
     payloadHelp: '<p>The accessible variables are: <strong>.Alarm</strong> and <strong>.Entity</strong></p>'
