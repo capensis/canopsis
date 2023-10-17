@@ -15,14 +15,14 @@
         />
         <c-description-field v-field="form.description" />
         <v-layout justify-space-between>
-          <v-flex xs3="xs3">
+          <v-flex xs3>
             <c-enabled-field v-field="form.enabled" />
           </v-flex>
-          <v-flex xs9="xs9">
+          <v-flex xs9>
             <v-layout>
               <v-flex
                 class="pr-3"
-                xs3="xs3"
+                xs3
               >
                 <c-impact-level-field
                   v-field="form.impact_level"
@@ -31,7 +31,7 @@
               </v-flex>
               <v-flex
                 class="pr-3"
-                xs3="xs3"
+                xs3
               >
                 <c-entity-state-field
                   v-field="form.sli_avail_state"
@@ -39,7 +39,7 @@
                   required
                 />
               </v-flex>
-              <v-flex xs6="xs6">
+              <v-flex xs6>
                 <c-entity-type-field
                   v-field="form.type"
                   required

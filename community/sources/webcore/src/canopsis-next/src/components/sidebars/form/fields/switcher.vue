@@ -7,7 +7,7 @@
       align-center
       justify-space-between
     >
-      <v-flex xs11="xs11">
+      <v-flex xs11>
         <div class="subheading">
           {{ title }}
         </div>

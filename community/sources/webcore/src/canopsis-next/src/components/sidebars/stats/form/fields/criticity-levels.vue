@@ -7,7 +7,7 @@
           justify-space-around
         >
           <div>{{ $t('settings.colorsSelector.statsCriticity.minor') }} :</div>
-          <v-flex xs3="xs3">
+          <v-flex xs3>
             <c-number-field
               v-field="levels.minor"
               :min="0"
@@ -23,7 +23,7 @@
           justify-space-around
         >
           <div>{{ $t('settings.colorsSelector.statsCriticity.major') }} :</div>
-          <v-flex xs3="xs3">
+          <v-flex xs3>
             <c-number-field
               v-field="levels.major"
               :min="levels.minor + 1"
@@ -39,7 +39,7 @@
           justify-space-around
         >
           <div>{{ $t('settings.colorsSelector.statsCriticity.critical') }} :</div>
-          <v-flex xs3="xs3">
+          <v-flex xs3>
             <c-number-field
               v-field="levels.critical"
               :min="levels.major + 1"

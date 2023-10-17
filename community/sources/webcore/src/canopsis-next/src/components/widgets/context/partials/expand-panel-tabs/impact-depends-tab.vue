@@ -8,7 +8,7 @@
     />
     <div class="pa-3">
       <v-layout>
-        <v-flex xs6="xs6">
+        <v-flex xs6>
           <h3 class="text-h5 text-center my-1 white--text">
             {{ $t('context.impacts') }}
           </h3>
@@ -35,7 +35,7 @@
             </v-card>
           </v-container>
         </v-flex>
-        <v-flex xs6="xs6">
+        <v-flex xs6>
           <h3 class="text-h5 text-center my-1 white--text">
             {{ $t('context.dependencies') }}
           </h3>

@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-layout>
-      <v-flex xs8="xs8">
+      <v-flex xs8>
         <c-id-field
           class="mr-3"
           v-field="form._id"
@@ -9,7 +9,7 @@
           :help-text="$t('eventFilter.idHelp')"
         />
       </v-flex>
-      <v-flex xs4="xs4">
+      <v-flex xs4>
         <c-event-filter-type-field
           class="ml-3"
           v-field="form.type"

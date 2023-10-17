@@ -1,7 +1,7 @@
 <template>
   <v-layout column>
     <v-layout>
-      <v-flex xs4="xs4">
+      <v-flex xs4>
         <state-setting-method-field v-field="form.method" />
       </v-flex>
     </v-layout>

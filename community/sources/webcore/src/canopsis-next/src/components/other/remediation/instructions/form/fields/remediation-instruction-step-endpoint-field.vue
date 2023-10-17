@@ -6,7 +6,7 @@
     <v-layout class="py-1">
       <v-flex
         class="mt-3"
-        xs1="xs1"
+        xs1
       >
         <c-draggable-step-number
           :color="draggableStepNumberColor"
@@ -15,11 +15,11 @@
           {{ $t('remediation.instruction.endpointAvatar') }}
         </c-draggable-step-number>
       </v-flex>
-      <v-flex xs11="xs11">
+      <v-flex xs11>
         <v-layout>
           <v-flex
             class="px-1"
-            xs11="xs11"
+            xs11
           >
             <v-text-field
               v-field="value"
@@ -39,7 +39,7 @@
               </template>
             </v-text-field>
           </v-flex>
-          <v-flex xs1="xs1" />
+          <v-flex xs1 />
         </v-layout>
       </v-flex>
     </v-layout>

@@ -1,6 +1,6 @@
 <template>
   <v-layout>
-    <v-flex xs6="xs6">
+    <v-flex xs6>
       <v-select
         v-field="threshold.threshold_type"
         v-validate="'required'"
@@ -14,7 +14,7 @@
     </v-flex>
     <v-flex
       class="ml-3"
-      xs6="xs6"
+      xs6
     >
       <c-number-field
         v-if="isThresholdCountType"

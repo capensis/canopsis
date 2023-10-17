@@ -3,7 +3,7 @@
     <v-flex class="pa-2 mr-2">
       <pattern-operator-information>{{ $t('common.and') }}</pattern-operator-information>
     </v-flex>
-    <v-flex xs11="xs11">
+    <v-flex xs11>
       <v-layout column>
         <pattern-rules-field
           :rules="group.rules"

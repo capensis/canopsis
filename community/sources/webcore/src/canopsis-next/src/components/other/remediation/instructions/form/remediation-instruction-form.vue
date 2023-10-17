@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-layout>
-      <v-flex xs3="xs3">
+      <v-flex xs3>
         <c-instruction-type-field
           class="mb-2"
           v-field="form.type"
@@ -33,7 +33,7 @@
       justify-space-between
       align-center
     >
-      <v-flex xs7="xs7">
+      <v-flex xs7>
         <c-duration-field
           v-field="form.timeout_after_execution"
           :label="$t('remediation.instruction.timeoutAfterExecution')"
@@ -46,7 +46,7 @@
       <v-flex
         class="ml-2"
         v-if="isAutoType"
-        xs3="xs3"
+        xs3
       >
         <c-priority-field
           v-field="form.priority"

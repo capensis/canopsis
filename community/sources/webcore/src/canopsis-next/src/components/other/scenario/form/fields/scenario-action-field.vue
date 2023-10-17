@@ -10,7 +10,7 @@
       />
     </template>
     <v-layout>
-      <v-flex xs6="xs6">
+      <v-flex xs6>
         <c-enabled-field
           v-field="action.emit_trigger"
           :label="$t('common.emitTrigger')"
@@ -22,7 +22,7 @@
       </v-flex>
       <v-flex
         v-if="isWebhookActionType"
-        xs6="xs6"
+        xs6
       >
         <c-enabled-field
           v-model="parameters.skip_for_child"

@@ -2,7 +2,7 @@
   <v-layout>
     <v-flex
       class="mt-3"
-      xs1="xs1"
+      xs1
     >
       <v-layout
         class="fill-height"
@@ -22,7 +22,7 @@
         />
       </v-layout>
     </v-flex>
-    <v-flex xs11="xs11">
+    <v-flex xs11>
       <v-layout>
         <v-text-field
           :value="step.name"

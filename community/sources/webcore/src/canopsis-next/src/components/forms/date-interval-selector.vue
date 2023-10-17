@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-layout>
-      <v-flex xs6="xs6">
+      <v-flex xs6>
         <v-layout column>
           <date-time-picker-text-field
             v-field="value.tstart"
@@ -25,7 +25,7 @@
       </v-flex>
       <v-flex
         class="pl-1"
-        xs6="xs6"
+        xs6
       >
         <c-quick-date-interval-type-field
           v-model="range"

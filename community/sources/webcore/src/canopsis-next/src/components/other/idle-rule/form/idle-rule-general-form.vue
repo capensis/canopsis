@@ -16,14 +16,14 @@
       required
     />
     <v-layout justify-space-between>
-      <v-flex xs7="xs7">
+      <v-flex xs7>
         <c-duration-field
           v-field="form.duration"
           :label="$t('idleRules.timeRangeAwaiting')"
           required
         />
       </v-flex>
-      <v-flex xs3="xs3">
+      <v-flex xs3>
         <c-priority-field v-field="form.priority" />
       </v-flex>
     </v-layout>

@@ -1,6 +1,6 @@
 <template>
   <v-layout align-center>
-    <v-flex xs6="xs6">
+    <v-flex xs6>
       <c-number-field
         v-field="value.interval"
         :label="$t('recurrenceRule.repeatEvery')"
@@ -11,7 +11,7 @@
     <v-flex
       class="pl-2"
       v-if="value.interval"
-      xs6="xs6"
+      xs6
     >
       {{ intervalTimeString }}
     </v-flex>

@@ -1,6 +1,6 @@
 <template>
   <v-layout wrap>
-    <v-flex xs5="xs5">
+    <v-flex xs5>
       <v-checkbox
         v-validate
         v-field="value.enabled"
@@ -20,7 +20,7 @@
         </template>
       </v-checkbox>
     </v-flex>
-    <v-flex xs2="xs2">
+    <v-flex xs2>
       <c-number-field
         v-field="value.limit"
         :label="fieldLabel"
@@ -30,7 +30,7 @@
         :min="min"
       />
     </v-flex>
-    <v-flex xs9="xs9">
+    <v-flex xs9>
       <v-messages
         :value="errors.collect(name)"
         color="error"

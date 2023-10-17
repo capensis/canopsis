@@ -1,12 +1,12 @@
 <template>
   <v-layout>
-    <v-flex xs6="xs6">
+    <v-flex xs6>
       <c-enabled-field
         v-field="form.template"
         :label="$t('declareTicket.allowTicketURLTemplate')"
       />
     </v-flex>
-    <v-flex xs6="xs6">
+    <v-flex xs6>
       <declare-ticket-rule-ticket-url-payload-text-field
         v-if="form.template"
         v-field="form.value"

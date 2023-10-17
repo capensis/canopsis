@@ -10,8 +10,8 @@
       <v-layout class="py-3 secondary lighten-2">
         <v-flex
           xs12
-          md8="md8"
-          offset-md2="offset-md2"
+          md8
+          offset-md2
         >
           <v-card>
             <v-card-text>
@@ -37,8 +37,8 @@
       <v-layout class="py-3 secondary lighten-2">
         <v-flex
           xs12
-          md8="md8"
-          offset-md2="offset-md2"
+          md8
+          offset-md2
         >
           <v-card>
             <v-card-text>

@@ -29,8 +29,8 @@
     <v-tab-item lazy>
       <v-layout>
         <v-flex
-          offset-xs1="offset-xs1"
-          xs10="xs10"
+          offset-xs1
+          xs10
         >
           <declare-ticket-rule-test-query
             class="mt-2"

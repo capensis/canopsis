@@ -11,7 +11,7 @@
         <v-flex xs12>
           <v-card class="pa-3">
             <v-layout column>
-              <v-flex offset-xs2="offset-xs2">
+              <v-flex offset-xs2>
                 <c-information-block-row
                   :label="$t('common.name')"
                   :value="testSuiteDetail.name"

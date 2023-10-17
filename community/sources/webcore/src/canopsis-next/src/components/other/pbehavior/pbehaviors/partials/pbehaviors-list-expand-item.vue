@@ -12,8 +12,8 @@
       >
         <v-flex
           xs12
-          sm10="sm10"
-          offset-sm1="offset-sm1"
+          sm10
+          offset-sm1
         >
           <v-card>
             <v-card-text>
@@ -33,8 +33,8 @@
       >
         <v-flex
           xs12
-          sm10="sm10"
-          offset-sm1="offset-sm1"
+          sm10
+          offset-sm1
         >
           <v-card>
             <v-card-text>
@@ -51,8 +51,8 @@
       >
         <v-flex
           xs12
-          sm10="sm10"
-          offset-sm1="offset-sm1"
+          sm10
+          offset-sm1
         >
           <v-card>
             <v-card-text class="pa-0">
@@ -70,8 +70,8 @@
         >
           <v-flex
             xs12
-            sm10="sm10"
-            offset-sm1="offset-sm1"
+            sm10
+            offset-sm1
           >
             <v-card>
               <v-card-text>

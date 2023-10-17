@@ -1,6 +1,6 @@
 <template>
   <v-layout wrap>
-    <v-flex xs3="xs3">
+    <v-flex xs3>
       <v-checkbox
         v-validate
         v-field="value.enabled"
@@ -10,16 +10,16 @@
         color="primary"
       />
     </v-flex>
-    <v-flex xs4="xs4">
+    <v-flex xs4>
       <v-layout column>
         <v-layout align-center>
           <v-flex
             :class="{ 'text--disabled': !value.enabled }"
-            xs6="xs6"
+            xs6
           >
             {{ $t('common.minimal') }}
           </v-flex>
-          <v-flex xs6="xs6">
+          <v-flex xs6>
             <c-number-field
               v-field="value.minimal"
               :error-messages="getErrorMessages(minimalFieldName)"
@@ -35,11 +35,11 @@
         <v-layout align-center>
           <v-flex
             :class="{ 'text--disabled': !value.enabled }"
-            xs6="xs6"
+            xs6
           >
             {{ $t('common.optimal') }}
           </v-flex>
-          <v-flex xs6="xs6">
+          <v-flex xs6>
             <c-number-field
               class="mt-0"
               v-field="value.optimal"
@@ -54,7 +54,7 @@
         </v-layout>
       </v-layout>
     </v-flex>
-    <v-flex xs9="xs9">
+    <v-flex xs9>
       <v-messages
         :value="errors.collect(name)"
         color="error"

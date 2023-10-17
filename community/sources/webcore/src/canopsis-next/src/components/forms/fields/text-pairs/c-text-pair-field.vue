@@ -3,7 +3,7 @@
     <v-layout>
       <v-flex
         class="mr-3"
-        xs6="xs6"
+        xs6
       >
         <v-text-field
           v-field="item[itemText]"
@@ -14,7 +14,7 @@
           :error-messages="errors.collect(textFieldName)"
         />
       </v-flex>
-      <v-flex xs6="xs6">
+      <v-flex xs6>
         <v-text-field
           v-field="item[itemValue]"
           v-validate="valueValidationRules"

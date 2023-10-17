@@ -8,7 +8,7 @@
       <v-flex
         v-for="video in videoSources"
         :key="video"
-        xs6="xs6"
+        xs6
       >
         <video
           class="d-block"

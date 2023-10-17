@@ -1,6 +1,6 @@
 <template>
   <v-layout>
-    <v-flex xs4="xs4">
+    <v-flex xs4>
       <h5 class="subheading font-weight-bold">
         {{ $t('stateSetting.criterion') }}: {{ label }}
       </h5>

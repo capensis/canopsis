@@ -6,7 +6,7 @@
     >
       <v-flex
         v-if="shownSearch"
-        xs4="xs4"
+        xs4
       >
         <c-search-field
           v-if="search"

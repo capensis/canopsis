@@ -26,8 +26,8 @@
     />
     <v-layout>
       <v-flex
-        md3="md3"
-        xs6="xs6"
+        md3
+        xs6
       >
         <v-checkbox
           :input-value="form.auto"

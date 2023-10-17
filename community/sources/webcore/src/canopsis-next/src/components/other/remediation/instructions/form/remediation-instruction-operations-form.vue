@@ -6,7 +6,7 @@
     <v-layout>
       <v-flex
         v-if="!operations.length"
-        xs11="xs11"
+        xs11
       >
         <v-alert type="info">
           {{ $t('remediation.instruction.emptyOperations') }}

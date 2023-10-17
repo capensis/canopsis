@@ -61,10 +61,10 @@
               <v-layout>
                 <v-flex
                   xs12
-                  offset-md1="offset-md1"
-                  md10="md10"
-                  offset-lg2="offset-lg2"
-                  lg8="lg8"
+                  offset-md1
+                  md10
+                  offset-lg2
+                  lg8
                 >
                   <kpi-collection-settings />
                 </v-flex>

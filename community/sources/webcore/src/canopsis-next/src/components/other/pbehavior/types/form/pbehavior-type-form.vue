@@ -13,7 +13,7 @@
       name="description"
     />
     <v-layout justify-space-between>
-      <v-flex xs6="xs6">
+      <v-flex xs6>
         <pbehavior-type-default-type-field
           class="mr-2"
           :value="form.type"
@@ -24,7 +24,7 @@
       </v-flex>
       <v-flex
         class="ml-2"
-        xs6="xs6"
+        xs6
       >
         <c-priority-field
           v-field="form.priority"

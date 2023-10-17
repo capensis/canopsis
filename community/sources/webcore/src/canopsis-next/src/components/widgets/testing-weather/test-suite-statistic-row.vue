@@ -1,11 +1,11 @@
 <template>
   <v-layout>
-    <v-flex xs6="xs6">
+    <v-flex xs6>
       {{ count }}
     </v-flex>
     <v-flex
       class="text-lowercase"
-      xs6="xs6"
+      xs6
     >
       {{ label }}
     </v-flex>

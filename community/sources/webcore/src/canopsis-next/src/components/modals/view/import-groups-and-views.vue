@@ -7,7 +7,7 @@
       <v-layout>
         <v-flex
           class="pl-1 pr-1"
-          xs4="xs4"
+          xs4
         >
           <v-flex class="text-center mb-2">
             {{ $t('modals.importExportViews.groups') }}
@@ -22,7 +22,7 @@
         </v-flex>
         <v-flex
           class="pl-1"
-          xs4="xs4"
+          xs4
         >
           <v-flex class="text-center mb-2">
             {{ $t('modals.importExportViews.views') }}
@@ -36,7 +36,7 @@
           class="ml-1 mr-1 secondary"
           vertical
         />
-        <v-flex xs4="xs4">
+        <v-flex xs4>
           <v-flex class="text-center mb-2">
             {{ $t('common.result') }}
           </v-flex>

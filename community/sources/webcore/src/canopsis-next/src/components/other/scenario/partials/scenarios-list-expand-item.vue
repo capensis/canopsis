@@ -4,8 +4,8 @@
   >
     <v-flex
       xs12
-      sm8="sm8"
-      offset-sm2="offset-sm2"
+      sm8
+      offset-sm2
     >
       <v-card>
         <v-card-text>

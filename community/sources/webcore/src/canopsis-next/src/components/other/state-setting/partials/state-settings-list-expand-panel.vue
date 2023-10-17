@@ -12,8 +12,8 @@
           <v-card class="pa-3">
             <v-layout>
               <v-flex
-                offset-xs1="offset-xs1"
-                xs10="xs10"
+                offset-xs1
+                xs10
               >
                 <state-setting-information :state-setting="stateSetting" />
               </v-flex>

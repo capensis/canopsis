@@ -9,7 +9,7 @@
       <v-layout
         class="mt-3"
       >
-        <v-flex xs9="xs9">
+        <v-flex xs9>
           <v-text-field
             v-field="step.name"
             v-validate="'required'"
@@ -22,7 +22,7 @@
         </v-flex>
         <v-flex
           class="pl-2"
-          xs3="xs3"
+          xs3
         >
           <v-text-field
             class="remediation-instruction-step-field__time-to-complete"

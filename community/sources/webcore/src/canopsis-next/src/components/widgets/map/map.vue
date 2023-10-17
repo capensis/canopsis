@@ -6,7 +6,7 @@
     >
       <v-flex
         v-if="hasAccessToCategory"
-        xs3="xs3"
+        xs3
       >
         <c-entity-category-field
           class="mr-3"
@@ -16,7 +16,7 @@
       </v-flex>
       <v-flex
         v-if="hasAccessToUserFilter"
-        xs4="xs4"
+        xs4
       >
         <v-layout align-center>
           <filter-selector

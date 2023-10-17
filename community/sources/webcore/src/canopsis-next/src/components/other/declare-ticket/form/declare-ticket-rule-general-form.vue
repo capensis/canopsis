@@ -1,10 +1,10 @@
 <template>
   <v-layout column>
     <v-layout>
-      <v-flex xs6="xs6">
+      <v-flex xs6>
         <c-enabled-field v-field="form.enabled" />
       </v-flex>
-      <v-flex xs6="xs6">
+      <v-flex xs6>
         <c-enabled-field
           v-field="form.emit_trigger"
           :label="$t('common.emitTrigger')"
@@ -17,14 +17,14 @@
     >
       <v-flex
         class="mr-3"
-        xs8="xs8"
+        xs8
       >
         <c-name-field
           v-field="form.name"
           required
         />
       </v-flex>
-      <v-flex xs4="xs4">
+      <v-flex xs4>
         <c-name-field
           v-field="form.system_name"
           :label="$t('common.systemName')"

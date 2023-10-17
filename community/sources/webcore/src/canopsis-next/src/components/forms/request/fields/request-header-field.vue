@@ -2,7 +2,7 @@
   <v-layout>
     <v-flex
       class="mr-3"
-      xs6="xs6"
+      xs6
     >
       <v-combobox
         v-field="header.text"
@@ -14,7 +14,7 @@
         :name="textFieldName"
       />
     </v-flex>
-    <v-flex xs6="xs6">
+    <v-flex xs6>
       <v-combobox
         v-if="valueHints"
         v-field="header.value"

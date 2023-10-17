@@ -2,11 +2,11 @@
   <v-layout>
     <v-flex
       class="mt-2"
-      xs4="xs4"
+      xs4
     >
       {{ label }}
     </v-flex>
-    <v-flex xs4="xs4">
+    <v-flex xs4>
       <c-number-field
         class="ma-1 pa-0"
         v-if="isNumberType"

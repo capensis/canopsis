@@ -19,8 +19,8 @@
             <v-tab-item>
               <v-flex
                 xs12
-                lg10="lg10"
-                offset-lg1="offset-lg1"
+                lg10
+                offset-lg1
               >
                 <kpi-filter-patterns-form
                   :form="patterns"

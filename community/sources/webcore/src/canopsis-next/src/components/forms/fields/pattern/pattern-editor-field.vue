@@ -30,7 +30,7 @@
         >
           <v-flex
             class="pt-2"
-            xs8="xs8"
+            xs8
           >
             <div class="error--text text-center">
               {{ $t('pattern.errors.oldPattern') }}

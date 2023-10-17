@@ -7,7 +7,7 @@
       align-center
       justify-space-between
     >
-      <v-flex xs10="xs10">
+      <v-flex xs10>
         <c-alarm-field
           v-model="alarm"
           :disabled="pending || isExecutionRunning"

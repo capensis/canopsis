@@ -1,6 +1,6 @@
 <template>
   <v-layout wrap>
-    <v-flex xs5="xs5">
+    <v-flex xs5>
       <v-checkbox
         v-validate
         v-field="duration.enabled"
@@ -20,7 +20,7 @@
         </template>
       </v-checkbox>
     </v-flex>
-    <v-flex xs4="xs4">
+    <v-flex xs4>
       <c-duration-field
         v-field="duration"
         :units-label="$t('common.unit')"
@@ -30,7 +30,7 @@
         :name="name"
       />
     </v-flex>
-    <v-flex xs9="xs9">
+    <v-flex xs9>
       <v-messages
         :value="errors.collect(name)"
         color="error"

@@ -1,7 +1,7 @@
 <template>
   <c-information-block-row :label="label">
     <v-layout>
-      <v-flex xs2="xs2">
+      <v-flex xs2>
         {{ count }}
       </v-flex>
       <v-flex v-if="testsStatusPercent">

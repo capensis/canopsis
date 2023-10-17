@@ -1,7 +1,7 @@
 <template>
   <v-layout column>
     <v-layout wrap>
-      <v-flex xs4="xs4">
+      <v-flex xs4>
         <c-search-field v-model="searchingText" />
       </v-flex>
     </v-layout>

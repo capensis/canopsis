@@ -19,16 +19,16 @@
           >
             <v-tab-item>
               <v-flex
-                offset-xs2="offset-xs2"
-                xs8="xs8"
+                offset-xs2
+                xs8
               >
                 <idle-rules-summary-tab :idle-rule="idleRule" />
               </v-flex>
             </v-tab-item>
             <v-tab-item>
               <v-flex
-                offset-xs2="offset-xs2"
-                xs8="xs8"
+                offset-xs2
+                xs8
               >
                 <idle-rule-patterns-form
                   :form="patterns"

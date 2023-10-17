@@ -28,7 +28,7 @@
             wrap
             align-center
           >
-            <v-flex xs2="xs2">
+            <v-flex xs2>
               <v-chip
                 :style="{ backgroundColor: color }"
                 label
@@ -36,7 +36,7 @@
                 <strong class="state-title">{{ text }}</strong>
               </v-chip>
             </v-flex>
-            <v-flex xs10="xs10">
+            <v-flex xs10>
               <v-text-field
                 v-field="form[key]"
                 :placeholder="$t('snmpRule.writeTemplate')"

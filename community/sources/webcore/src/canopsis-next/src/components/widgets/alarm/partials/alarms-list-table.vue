@@ -14,7 +14,7 @@
         <v-flex
           class="alarms-list-table__top-pagination--left"
           v-if="densable || !hideActions"
-          xs6="xs6"
+          xs6
         >
           <v-layout
             align-center
@@ -43,7 +43,7 @@
         <v-flex
           class="alarms-list-table__top-pagination--center-absolute"
           v-if="!hidePagination"
-          xs4="xs4"
+          xs4
         >
           <c-pagination
             :page="pagination.page"

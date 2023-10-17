@@ -2,7 +2,7 @@
   <v-layout>
     <v-flex
       class="pr-3"
-      xs4="xs4"
+      xs4
     >
       <c-number-field
         v-field="value.retry_count"
@@ -13,7 +13,7 @@
         :disabled="disabled"
       />
     </v-flex>
-    <v-flex xs8="xs8">
+    <v-flex xs8>
       <c-duration-field
         :duration="value.retry_delay"
         :units-label="$t('common.unit')"

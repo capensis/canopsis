@@ -4,7 +4,7 @@
     align-center
   >
     <v-label>{{ label }}</v-label>
-    <v-flex xs3="xs3">
+    <v-flex xs3>
       <v-select
         class="mt-0 pt-0"
         v-field="value"

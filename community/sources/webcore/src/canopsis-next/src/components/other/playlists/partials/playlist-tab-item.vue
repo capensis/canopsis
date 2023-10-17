@@ -5,19 +5,19 @@
   >
     <v-flex
       class="tab-content-block secondary pa-2 white--text"
-      xs4="xs4"
+      xs4
     >
       {{ group.title }}
     </v-flex>
     <v-flex
       class="tab-content-block secondary lighten-1 pa-2 white--text"
-      xs4="xs4"
+      xs4
     >
       {{ view.title }}
     </v-flex>
     <v-flex
       class="tab-content-block pa-2 white--text"
-      xs4="xs4"
+      xs4
     >
       {{ tab.title }}
     </v-flex>

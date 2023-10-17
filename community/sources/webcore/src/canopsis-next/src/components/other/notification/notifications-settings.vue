@@ -10,8 +10,8 @@
     />
     <v-flex
       v-else
-      offset-xs1="offset-xs1"
-      md10="md10"
+      offset-xs1
+      md10
     >
       <v-form @submit.prevent="submit">
         <notifications-settings-form v-model="form" />
