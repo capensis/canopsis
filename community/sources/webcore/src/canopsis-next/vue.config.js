@@ -1,10 +1,24 @@
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
+const sass = require('sass');
 
 const updateFieldDirective = require('./tools/update-field-directive');
 
 module.exports = {
   publicPath: '/',
   lintOnSave: false,
+  transpileDependencies: ['vuetify'],
+  css: {
+    loaderOptions: {
+      sass: {
+        implementation: sass,
+        additionalData: '@import \'@/plugins/vuetify/styles/variables.scss\'',
+      },
+      scss: {
+        implementation: sass,
+        additionalData: '@import \'@/plugins/vuetify/styles/variables.scss\';',
+      },
+    },
+  },
   chainWebpack: (config) => {
     config.resolve.alias.store.set('vue$', 'vue/dist/vue.common.js');
     config.resolve.alias.store.set('handlebars', 'handlebars/dist/handlebars.js');

@@ -82,6 +82,7 @@ const handleChange = () => emit('change');
     white-space: nowrap;
     text-overflow: ellipsis;
     display: inline-block;
+    padding: 5px 0;
   }
 
   &.editing {

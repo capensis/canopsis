@@ -49,7 +49,7 @@
             dark
             small
           >
-            edit
+            done
           </v-icon>
         </v-btn>
       </template>
