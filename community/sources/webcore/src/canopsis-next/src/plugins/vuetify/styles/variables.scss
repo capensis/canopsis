@@ -33,6 +33,35 @@ $calendar-weekly-weekday-font-size: rem(11px);
 $calendar-weekly-day-label-font-size: rem(12px);
 $calendar-event-font-size: rem(12px);
 
+$card-title-font-size: rem(16px);
+$list-item-title-font-size: rem(16px);
+
+$btn-letter-spacing: normal;
+$btn-border-radius: 0;
+$btn-font-sizes: (
+  'x-small': .625rem,
+  'small': .75rem,
+  'default': rem(14px),
+  'large': .875rem,
+  'x-large': 1rem
+);
+
+$tabs-bar-background-color: 'background';
+
+$dialog-card-text-padding: 16px;
+
+$card-title-font-weight: 400;
+$card-border-radius: 0;
+
+$headings: (
+  caption: (
+    'size': rem(12px),
+    'line-height': rem(18px)
+  )
+);
+
+$container-padding-x: 24px;
+
 // Light backgrounds
 $text-light: (
   primary: var(--v-text-light-primary, rgba(map-get($shades, 'black'), 0.87)),
