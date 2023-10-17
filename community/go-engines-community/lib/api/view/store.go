@@ -737,10 +737,10 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userId string) erro
 
 										filterId := utils.NewID()
 										newWidgetFilters = append(newWidgetFilters, view.WidgetFilter{
-											ID:            filterId,
-											Title:         filter.Title,
-											Widget:        widgetId,
-											WidgetPrivate: false,
+											ID:               filterId,
+											Title:            filter.Title,
+											Widget:           widgetId,
+											IsUserPreference: false,
 											AlarmPatternFields: savedpattern.AlarmPatternFields{
 												AlarmPattern: filter.AlarmPattern,
 											},
