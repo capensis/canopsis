@@ -1,18 +1,13 @@
 <template>
   <settings-button-field
+    :title="$t('settings.liveReporting.title')"
     :is-empty="isValueEmpty"
     addable
     removable
     @create="showEditLiveReportingModal"
     @edit="showEditLiveReportingModal"
     @delete="removeLiveReporting"
-  >
-    <template #title="">
-      <div class="subheading">
-        {{ $t('settings.liveReporting.title') }}
-      </div>
-    </template>
-  </settings-button-field>
+  />
 </template>
 
 <script>

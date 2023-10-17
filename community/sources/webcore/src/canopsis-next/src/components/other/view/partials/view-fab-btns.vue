@@ -44,7 +44,9 @@
               small
               @click.stop="showCreateWidgetModal"
             >
-              <v-icon small>add</v-icon>
+              <v-icon small>
+                add
+              </v-icon>
             </v-btn>
           </template>
           <span>{{ $t('common.addWidget') }}</span>
@@ -60,7 +62,9 @@
               small
               @click.stop="showCreateTabModal"
             >
-              <v-icon small>add</v-icon>
+              <v-icon small>
+                add
+              </v-icon>
             </v-btn>
           </template>
           <span>{{ $t('common.addTab') }}</span>

@@ -1,24 +1,20 @@
 <template>
-  <v-list-group>
-    <template #activator="">
-      <v-list-item>
-        <div>{{ $t('settings.density.title') }}</div>
-      </v-list-item>
-    </template>
-    <v-container>
-      <c-density-btn-toggle
-        v-field="value"
-        :name="name"
-        column
-      />
-    </v-container>
-  </v-list-group>
+  <widget-settings-item :title="$t('settings.density.title')">
+    <c-density-btn-toggle
+      v-field="value"
+      :name="name"
+      column
+    />
+  </widget-settings-item>
 </template>
 
 <script>
 import { ALARM_DENSE_TYPES } from '@/constants';
 
+import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
+
 export default {
+  components: { WidgetSettingsItem },
   props: {
     value: {
       type: Number,

@@ -50,7 +50,7 @@ export default {
   }
 
   &--divider {
-    .v-list__group:not(:last-of-type) {
+    .v-list-group:not(:last-of-type) {
       border-bottom: var(--item-divider-border);
     }
   }

@@ -14,8 +14,12 @@
         dark
         @click.stop="toggleFullScreen"
       >
-        <v-icon small>fullscreen</v-icon>
-        <v-icon small>fullscreen_exit</v-icon>
+        <v-icon small>
+          fullscreen
+        </v-icon>
+        <v-icon small>
+          fullscreen_exit
+        </v-icon>
       </v-btn>
     </template>
     <div>

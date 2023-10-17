@@ -16,8 +16,12 @@
             v-on="tooltipOn"
             v-bind="{ ...speedDialBind, ...buttonProps }"
           >
-            <v-icon>settings</v-icon>
-            <v-icon>close</v-icon>
+            <v-icon :small="buttonProps.small">
+              settings
+            </v-icon>
+            <v-icon :small="buttonProps.small">
+              close
+            </v-icon>
           </v-btn>
         </template>
         <span>{{ $t('layout.sideBar.buttons.settings') }}</span>

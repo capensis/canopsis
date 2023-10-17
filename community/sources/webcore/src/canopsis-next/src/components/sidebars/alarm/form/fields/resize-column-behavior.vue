@@ -1,43 +1,41 @@
 <template>
-  <v-list-group>
-    <template #activator="">
-      <v-list-item>{{ $t('settings.columnsSettings.title') }}</v-list-item>
-    </template>
-    <v-container>
-      <v-layout column>
-        <c-enabled-field
-          v-field="value.draggable"
-          :label="$t('settings.columnsSettings.dragging')"
+  <widget-settings-item :title="$t('settings.columnsSettings.title')">
+    <v-layout column>
+      <c-enabled-field
+        v-field="value.draggable"
+        :label="$t('settings.columnsSettings.dragging')"
+      />
+      <c-enabled-field
+        v-field="value.resizable"
+        :label="$t('settings.columnsSettings.resizing')"
+      />
+      <v-radio-group
+        class="mt-0"
+        v-if="value.resizable"
+        v-field="value.cells_content_behavior"
+        :label="$t('settings.columnsSettings.cellsContentBehavior')"
+        name="opened"
+        hide-details
+      >
+        <v-radio
+          v-for="type in types"
+          :key="type.value"
+          :label="type.label"
+          :value="type.value"
+          color="primary"
         />
-        <c-enabled-field
-          v-field="value.resizable"
-          :label="$t('settings.columnsSettings.resizing')"
-        />
-        <v-radio-group
-          class="mt-0"
-          v-if="value.resizable"
-          v-field="value.cells_content_behavior"
-          :label="$t('settings.columnsSettings.cellsContentBehavior')"
-          name="opened"
-          hide-details
-        >
-          <v-radio
-            v-for="type in types"
-            :key="type.value"
-            :label="type.label"
-            :value="type.value"
-            color="primary"
-          />
-        </v-radio-group>
-      </v-layout>
-    </v-container>
-  </v-list-group>
+      </v-radio-group>
+    </v-layout>
+  </widget-settings-item>
 </template>
 
 <script>
 import { ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS } from '@/constants';
 
+import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
+
 export default {
+  components: { WidgetSettingsItem },
   props: {
     value: {
       type: Object,

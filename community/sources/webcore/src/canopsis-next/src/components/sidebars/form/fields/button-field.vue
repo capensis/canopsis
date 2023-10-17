@@ -1,13 +1,6 @@
 <template>
-  <v-container
-    class="pa-3"
-    fluid
-  >
-    <v-layout
-      align-center
-      justify-space-between
-    >
-      <slot name="title" />
+  <widget-settings-flat-item :title="title">
+    <template #actions>
       <v-layout justify-end>
         <v-btn
           class="primary"
@@ -35,13 +28,20 @@
           </v-btn>
         </template>
       </v-layout>
-    </v-layout>
-  </v-container>
+    </template>
+  </widget-settings-flat-item>
 </template>
 
 <script>
+import WidgetSettingsFlatItem from '@/components/sidebars/partials/widget-settings-flat-item.vue';
+
 export default {
+  components: { WidgetSettingsFlatItem },
   props: {
+    title: {
+      type: String,
+      required: true,
+    },
     isEmpty: {
       type: Boolean,
       default: true,

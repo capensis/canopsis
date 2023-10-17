@@ -60,6 +60,7 @@ export default {
 <style lang="scss">
 .group-item {
   &__dropdown-btn {
+    margin: 6px;
     text-transform: none;
   }
 }
