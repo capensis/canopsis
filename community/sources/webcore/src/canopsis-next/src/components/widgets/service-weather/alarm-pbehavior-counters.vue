@@ -32,7 +32,8 @@
         v-for="otherCounter in preparedCounters.other"
         :key="otherCounter.key"
       >
-        <strong>{{ otherCounter.name }}</strong><span>: {{ otherCounter.count }}</span>
+        <strong>{{ otherCounter.name }}</strong>
+        <span>: {{ otherCounter.count }}</span>
       </div>
     </v-tooltip>
   </v-layout>

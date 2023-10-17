@@ -27,7 +27,8 @@
         <div><strong>{{ stepTitle }}</strong></div>
         <c-compiled-template :template="step.m" />
       </div>
-    </v-tooltip></span>
+    </v-tooltip>
+  </span>
 </template>
 
 <script>

@@ -2,7 +2,7 @@
   <text-editor
     v-field="value"
     :label="label"
-    :public="public"
+    :public="isPublic"
     :buttons="buttons"
     :config="config"
     :extra-buttons="extraButtons"
@@ -79,6 +79,11 @@ export default {
     variables: {
       type: Array,
       required: false,
+    },
+  },
+  computed: {
+    isPublic() {
+      return this.public;
     },
   },
 };

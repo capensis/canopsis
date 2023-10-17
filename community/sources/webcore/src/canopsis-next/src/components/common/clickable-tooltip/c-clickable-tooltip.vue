@@ -22,7 +22,8 @@
         @focusin="showTooltip"
         @focusout="hideTooltip"
       >
-        <slot /></span>
+        <slot />
+      </span>
     </v-tooltip>
   </div>
 </template>

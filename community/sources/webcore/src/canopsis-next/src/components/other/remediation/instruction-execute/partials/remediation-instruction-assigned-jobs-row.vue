@@ -12,10 +12,13 @@
           @click="$emit('execute-job', job)"
         >
           {{ job.name }}
-        </v-btn><span
+        </v-btn>
+        <span
           class="text-body-1"
           v-else
-        >{{ job.name }}</span>
+        >
+          {{ job.name }}
+        </span>
         <v-tooltip
           v-if="isFailedJob || isCompletedJob"
           :disabled="!hasStatusMessage"

@@ -7,7 +7,10 @@
     <v-icon
       :size="icon.size || size"
       :color="icon.color"
-    >{{ icon.name }}</v-icon></span>
+    >
+      {{ icon.name }}
+    </v-icon>
+  </span>
 </template>
 
 <script>

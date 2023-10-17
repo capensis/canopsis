@@ -9,7 +9,8 @@
       >
         {{ iconName }}
       </v-icon>
-    </template><span
+    </template>
+    <span
       class="pre-wrap"
       v-html="iconTooltip"
     />

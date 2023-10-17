@@ -40,10 +40,13 @@
         @click="addFilterGroup"
       >
         {{ $t('pattern.addGroup') }}
-      </v-btn><span
+      </v-btn>
+      <span
         class="error--text"
         v-show="hasGroupsErrors"
-      >{{ $t('pattern.errors.groupRequired') }}</span>
+      >
+        {{ $t('pattern.errors.groupRequired') }}
+      </span>
     </v-layout>
   </v-layout>
 </template>

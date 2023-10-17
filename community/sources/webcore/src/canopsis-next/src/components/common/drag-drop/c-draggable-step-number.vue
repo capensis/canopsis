@@ -8,7 +8,10 @@
         class="draggable"
         v-show="!disabled"
         :class="dragClass"
-      >drag_indicator</v-icon></span>
+      >
+        drag_indicator
+      </v-icon>
+    </span>
     <v-avatar
       class="white--text"
       :color="color"

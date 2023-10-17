@@ -34,10 +34,13 @@
         @click="addFilterRule"
       >
         {{ $t('pattern.addRule') }}
-      </v-btn><span
+      </v-btn>
+      <span
         class="error--text"
         v-show="hasRulesErrors"
-      >{{ $t('pattern.errors.existExcluded') }}</span>
+      >
+        {{ $t('pattern.errors.existExcluded') }}
+      </span>
     </v-layout>
   </v-layout>
 </template>

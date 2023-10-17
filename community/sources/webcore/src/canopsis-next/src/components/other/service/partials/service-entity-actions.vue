@@ -24,7 +24,8 @@
             @click.stop="$emit('apply', action)"
           >
             <v-icon>{{ action.icon }}</v-icon>
-          </v-btn></span>
+          </v-btn>
+        </span>
       </template>
       <span>{{ $t(`serviceWeather.actions.${action.type}`) }}</span>
     </v-tooltip>

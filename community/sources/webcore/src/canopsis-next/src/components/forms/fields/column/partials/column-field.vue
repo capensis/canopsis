@@ -6,7 +6,10 @@
           <v-icon
             class="draggable"
             :class="dragHandleClass"
-          >drag_indicator</v-icon></span>
+          >
+            drag_indicator
+          </v-icon>
+        </span>
         <c-expand-btn
           class="mr-1"
           v-model="expanded"

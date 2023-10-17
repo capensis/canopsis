@@ -8,10 +8,14 @@
         >
           <slot name="title">
             {{ title }}
-          </slot><span
+          </slot>
+          <span
             class="font-italic text-caption ml-1"
             v-if="optional || subTitle"
-          ><span v-if="optional">({{ $t('common.optional') }})</span><span v-if="subTitle">{{ subTitle }}</span></span>
+          >
+            <span v-if="optional">({{ $t('common.optional') }})</span>
+            <span v-if="subTitle">{{ subTitle }}</span>
+          </span>
         </v-layout>
       </v-list-item>
     </template>

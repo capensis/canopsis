@@ -17,7 +17,8 @@
         >
           <v-icon left>
             file_download
-          </v-icon><span>{{ $t('common.downloadAsPng') }}</span>
+          </v-icon>
+          <span>{{ $t('common.downloadAsPng') }}</span>
         </v-btn>
       </v-layout>
     </template>

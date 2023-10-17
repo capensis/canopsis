@@ -39,7 +39,8 @@
                 small
               >
                 {{ type.icon_name }}
-              </v-icon><strong class="ds-ev-title">{{ type.name }}</strong>
+              </v-icon>
+              <strong class="ds-ev-title">{{ type.name }}</strong>
             </div>
           </div>
         </template>

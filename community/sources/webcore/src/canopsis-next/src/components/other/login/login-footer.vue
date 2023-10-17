@@ -3,17 +3,27 @@
     <a
       :href="$constants.CANOPSIS_DOCUMENTATION"
       target="_blank"
-    >{{ $t('login.documentation') }}</a><a
+    >
+      {{ $t('login.documentation') }}</a>
+    <a
       :href="$constants.CANOPSIS_WEBSITE"
       target="_blank"
-    >{{ $t('login.website') }}</a><a
+    >
+      {{ $t('login.website') }}
+    </a>
+    <a
       :href="$constants.CANOPSIS_FORUM"
       target="_blank"
-    >{{ $t('login.forum') }}</a><a
+    >
+      {{ $t('login.forum') }}
+    </a>
+    <a
       class="version"
       :href="changeLogHref"
       target="_blank"
-    >{{ version }}</a>
+    >
+      {{ version }}
+    </a>
   </div>
 </template>
 
