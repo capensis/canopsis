@@ -49,7 +49,6 @@
           :tooltip="$t('modals.pbehaviorsCalendar.title')"
           icon="calendar_today"
           color="secondary"
-          small
           left
           @click="showPbehaviorsCalendarModal"
         />

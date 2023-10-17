@@ -1,16 +1,17 @@
 <template>
-  <div class="fab">
+  <div class="fab ma-2">
     <v-layout column>
-      <c-refresh-btn @click="$emit('refresh')" />
-      <v-speed-dial
+      <v-flex class="mb-3">
+        <c-refresh-btn @click="$emit('refresh')" />
+      </v-flex>
+      <c-speed-dial
         v-if="hasAccess"
-        v-model="fab"
         :transition="transition"
         direction="left"
       >
-        <template #activator="">
+        <template #activator="{ bind }">
           <v-btn
-            v-model="fab"
+            v-bind="bind"
             color="primary"
             fab
           >
@@ -21,7 +22,7 @@
           </v-btn>
         </template>
         <slot />
-      </v-speed-dial>
+      </c-speed-dial>
     </v-layout>
   </div>
 </template>
