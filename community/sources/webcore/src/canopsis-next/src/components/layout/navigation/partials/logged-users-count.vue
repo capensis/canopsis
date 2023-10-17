@@ -78,13 +78,19 @@ export default {
 <style lang="scss">
 .logged-users-count {
   position: absolute;
+  margin: 6px;
   top: 0;
 
   .v-badge__badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     top: 2px;
     right: 2px;
     height: 17px;
+    min-height: 17px;
     width: 17px;
+    min-width: 17px;
     font-size: 12px;
   }
 }
