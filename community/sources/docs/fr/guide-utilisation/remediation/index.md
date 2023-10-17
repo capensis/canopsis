@@ -64,7 +64,8 @@ Les ordonnanceurs de tâches compatibles avec les jobs de remédiation sont :
 
 1. [Rundeck](https://www.rundeck.com/)
 2. [AWX](https://www.ansible.com/products/awx-project)
-2. [Jenkins](https://www.jenkins.io/)
+3. [Jenkins](https://www.jenkins.io/)
+4. [Visual TOM](https://absyss.fr/produits/visual-tom/)
 
 ## Exécution d'une remédiation
 
@@ -78,16 +79,30 @@ Du point de vue « pilotage », voici comment exécuter une consigne.
 
 ![Exécuter](./img/remediation_consigne_executer.png)
 
-* Évaluer la consigne
+A ce stade, si la consigne est de type "Manuel", le formulaire d'exécution vous proposera d'exécuter toutes les opérations indiquées dans la consignes y compris les jobs associés.
+
+![Formulaire1](./img/remediation_consigne_formulaire1.png)
+
+Si la consigne est de type "Manuel Simplifié", seule l'exécution des jobs vous sera proposée.
+
+![Formulaire2](./img/remediation_consigne_formulaire2.png)
+
+* Évaluation des consignes
 
 Vous avez la possibilité d'évaluer la consigne que vous venez d'exécuter.
 Ces évaluations seront comptabilisées et transmises aux administrateurs.
+
+Pour cela, RDV dans menu `Notifications-> Évaluation des consignes`
 
 ![Évaluer](./img/remediation_consigne_evaluation.png)
 
 * Filtrer les alarmes avec ou sans consignes
 
 ![Filtrer](./img/remediation_consigne_filtres.png)
+
+## Status des remédiations
+
+
 
 ## La suite
 
