@@ -11,6 +11,7 @@ import (
 )
 
 var ErrNotFoundRoom = errors.New("no room")
+var ErrNotFoundRoomInGroup = errors.New("no group room")
 
 // Authorizer is used to implement websocket room authentication and authorization.
 type Authorizer interface {
@@ -175,7 +176,7 @@ func (a *authorizer) authorizeGroupRoom(ctx context.Context, userId, room string
 				return false, err
 			}
 			if !ok {
-				return false, ErrNotFoundRoom
+				return false, ErrNotFoundRoomInGroup
 			}
 		}
 
