@@ -1,6 +1,7 @@
 <template>
   <span class="c-circle-badge">
-    <slot /></span>
+    <slot />
+  </span>
 </template>
 
 <style lang="scss">

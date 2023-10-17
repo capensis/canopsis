@@ -33,7 +33,8 @@
             >
               <v-icon left>
                 file_download
-              </v-icon><span>{{ $t('common.downloadAsPng') }}</span>
+              </v-icon>
+              <span>{{ $t('common.downloadAsPng') }}</span>
             </v-btn>
             <div class="healthcheck-history__zoom">
               <v-btn

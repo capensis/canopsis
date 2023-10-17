@@ -1,7 +1,9 @@
 <template>
   <v-list-group>
     <template #activator="">
-      <v-list-item><span :class="validationHeaderClass">{{ $tc('common.map') }}</span></v-list-item>
+      <v-list-item>
+        <span :class="validationHeaderClass">{{ $tc('common.map') }}</span>
+      </v-list-item>
     </template>
     <v-container>
       <c-map-field

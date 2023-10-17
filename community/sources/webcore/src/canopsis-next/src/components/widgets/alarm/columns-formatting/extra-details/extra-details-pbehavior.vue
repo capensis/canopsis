@@ -13,7 +13,10 @@
           <v-icon
             :color="iconColor"
             small
-          >{{ pbehaviorInfo.icon_name }}</v-icon></span>
+          >
+            {{ pbehaviorInfo.icon_name }}
+          </v-icon>
+        </span>
       </template>
       <div>
         <strong>{{ $t('alarm.actions.iconsTitles.pbehaviors') }}</strong>

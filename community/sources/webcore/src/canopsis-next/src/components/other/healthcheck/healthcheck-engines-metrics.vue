@@ -36,7 +36,8 @@
             v-if="exporting"
             color="primary"
             indeterminate
-          /><span v-else>{{ item.duration | duration }}</span>
+          />
+          <span v-else>{{ item.duration | duration }}</span>
         </td>
       </template>
       <td>

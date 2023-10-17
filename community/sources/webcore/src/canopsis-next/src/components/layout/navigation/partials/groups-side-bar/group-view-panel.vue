@@ -11,7 +11,8 @@
               class="pl-2"
               :class="{ ellipsis: ellipsis }"
             >
-              <slot name="title">{{ view.title }}</slot></span>
+              <slot name="title">{{ view.title }}</slot>
+            </span>
           </v-layout>
         </v-flex>
         <v-flex>

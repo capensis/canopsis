@@ -18,7 +18,8 @@
       >
         <v-icon left>
           done_all
-        </v-icon><span>{{ $t('eventFilter.markAsRead') }}</span>
+        </v-icon>
+        <span>{{ $t('eventFilter.markAsRead') }}</span>
       </v-btn>
     </v-flex>
     <v-flex xs12>

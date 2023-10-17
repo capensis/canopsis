@@ -56,7 +56,7 @@
       :no-data-text="noDataText"
       :options="pagination"
       :header-text="headerText"
-      :rows-per-page-items="rowsPerPageItems"
+      :footer-props="{ itemsPerPageOptions: rowsPerPageItems }"
       :item-key="itemKey"
       :show-select="selectAll"
       :show-expand="expand"

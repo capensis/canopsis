@@ -11,7 +11,8 @@
           v-if="isValidTicketUrl(item.ticket_url)"
           :href="item.ticket_url"
           target="_blank"
-        >{{ item.ticket_url }}</a><span v-else>{{ item.ticket_url }}</span>
+        >{{ item.ticket_url }}</a>
+        <span v-else>{{ item.ticket_url }}</span>
       </template>
     </template>
     <template #t="{ item }">
