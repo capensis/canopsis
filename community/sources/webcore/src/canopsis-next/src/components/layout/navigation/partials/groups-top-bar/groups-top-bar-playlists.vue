@@ -52,7 +52,6 @@ export default {
 <style lang="scss" scoped>
 .groups-top-bar-playlist {
   &__dropdown-btn {
-    margin: 6px;
     text-transform: none;
   }
 }
