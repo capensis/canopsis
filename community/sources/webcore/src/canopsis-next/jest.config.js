@@ -25,11 +25,11 @@ module.exports = {
     '^.+\\.(jpg|jpeg|png)$': '<rootDir>/tests/unit/jest.assets.js',
   },
   transformIgnorePatterns: [
-    '<rootDir>/node_modules/(?!(vue-tour|monaco-editor|dayspan-vuetify/src)/.*)',
+    '<rootDir>/node_modules/(?!(vue-tour|monaco-editor|dayspan-vuetify/src|vuetify/lib)/.*)',
   ],
   moduleNameMapper: {
     '^.+\\.styl(us)?$': '<rootDir>/tests/unit/mocks/styleMock.js',
-    '^.+\\.css$': '<rootDir>/tests/unit/mocks/styleMock.js',
+    '^.+\\.(scss|sass|css)$': '<rootDir>/tests/unit/mocks/styleMock.js',
     '^@unit/(.*)$': '<rootDir>/tests/unit/$1',
     '^@/(.*)$': '<rootDir>/src/$1',
     '^vue$': 'vue/dist/vue.common.dev.js',
