@@ -3447,3 +3447,73 @@ default_entities:
       test-info-to-alarm-link-get-1:
         name: test-info-to-alarm-link-get-1
         value: test-resource-to-alarm-link-get-2-info-1-val
+
+  entity_alarm_bookmark_1_1:
+    <<: *resource
+    _id: test-resource-alarm-bookmark-1-1/test-component-alarm-bookmark-1
+    name: test-resource-alarm-bookmark-1-1
+
+  entity_alarm_bookmark_1_2:
+    <<: *resource
+    _id: test-resource-alarm-bookmark-1-2/test-component-alarm-bookmark-1
+    name: test-resource-alarm-bookmark-1-2
+
+  entity_alarm_bookmark_2_1:
+    <<: *resource
+    _id: test-resource-alarm-bookmark-2-1/test-component-alarm-bookmark-2
+    name: test-resource-alarm-bookmark-2-1
+
+  entity_alarm_bookmark_2_2:
+    <<: *resource
+    _id: test-resource-alarm-bookmark-2-2/test-component-alarm-bookmark-2
+    name: test-resource-alarm-bookmark-2-2
+
+  entity_alarm_bookmark_3_1:
+    <<: *resource
+    _id: test-resource-alarm-bookmark-3-1/test-component-alarm-bookmark-3
+    name: test-resource-alarm-bookmark-3-1
+
+  entity_alarm_bookmark_3_2:
+    <<: *resource
+    _id: test-resource-alarm-bookmark-3-2/test-component-alarm-bookmark-3
+    name: test-resource-alarm-bookmark-3-2
+
+  entity_alarm_bookmark_4_1:
+    <<: *resource
+    _id: test-resource-alarm-bookmark-4-1/test-component-alarm-bookmark-4
+    name: test-resource-alarm-bookmark-4-1
+
+  entity_alarm_bookmark_4_2:
+    <<: *resource
+    _id: test-resource-alarm-bookmark-4-2/test-component-alarm-bookmark-4
+    name: test-resource-alarm-bookmark-4-2
+
+  entity_alarm_bookmark_5_1:
+    <<: *resource
+    _id: test-resource-alarm-bookmark-5-1/test-component-alarm-bookmark-5
+    name: test-resource-alarm-bookmark-5-1
+
+  entity_alarm_bookmark_5_2:
+    <<: *resource
+    _id: test-resource-alarm-bookmark-5-2/test-component-alarm-bookmark-5
+    name: test-resource-alarm-bookmark-5-2
+
+  entity_alarm_bookmark_6_1:
+    <<: *resource
+    _id: test-resource-alarm-bookmark-6-1/test-component-alarm-bookmark-6
+    name: test-resource-alarm-bookmark-6-1
+
+  entity_alarm_bookmark_6_2:
+    <<: *resource
+    _id: test-resource-alarm-bookmark-6-2/test-component-alarm-bookmark-6
+    name: test-resource-alarm-bookmark-6-2
+    
+  entity_alarm_bookmark_7_1:
+    <<: *resource
+    _id: test-resource-alarm-bookmark-7-1/test-component-alarm-bookmark-7
+    name: test-resource-alarm-bookmark-7-1
+
+  entity_alarm_bookmark_7_2:
+    <<: *resource
+    _id: test-resource-alarm-bookmark-7-2/test-component-alarm-bookmark-7
+    name: test-resource-alarm-bookmark-7-2    

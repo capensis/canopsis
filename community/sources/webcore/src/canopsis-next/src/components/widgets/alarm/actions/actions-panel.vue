@@ -137,6 +137,10 @@ export default {
       return isAutoMetaAlarmRuleType(this.parentAlarm?.meta_alarm_rule?.type);
     },
 
+    hasBookmark() {
+      return !!this.item.bookmark;
+    },
+
     visibleLinks() {
       return harmonizeLinks(this.item.links).filter(link => !link.hide_in_menu);
     },
@@ -264,6 +268,22 @@ export default {
           },
         );
       }
+
+      actions.push(
+        this.hasBookmark
+          ? {
+            type: ALARM_LIST_ACTIONS_TYPES.removeBookmark,
+            icon: '$vuetify.icons.bookmark_remove',
+            title: this.$t('alarm.actions.titles.removeBookmark'),
+            method: this.removeBookmark,
+          }
+          : {
+            type: ALARM_LIST_ACTIONS_TYPES.addBookmark,
+            icon: '$vuetify.icons.bookmark_add',
+            title: this.$t('alarm.actions.titles.addBookmark'),
+            method: this.addBookmark,
+          },
+      );
 
       if (this.isAlarmOpenedOrActionAllowedWithStateOk) {
         actions.push(
@@ -409,7 +429,7 @@ export default {
   },
   methods: {
     afterSubmit() {
-      this.refreshAlarmsList();
+      return this.refreshAlarmsList();
     },
 
     showCreateChangeStateEventModal() {
@@ -498,6 +518,14 @@ export default {
           onExecute: refreshAlarm,
         },
       });
+    },
+
+    async addBookmark() {
+      return this.addBookmarkByAlarm(this.item);
+    },
+
+    async removeBookmark() {
+      return this.removeBookmarkByAlarm(this.item);
     },
   },
 };

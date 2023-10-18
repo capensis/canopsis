@@ -15,6 +15,36 @@ import (
 	"github.com/rs/zerolog"
 )
 
+func BenchmarkStore_Find_GivenRequestWithBookmarksFilterWithoutUser(b *testing.B) {
+	benchmarkStoreFind(b, "./testdata/fixtures/bookmarks_filter.yml", alarm.ListRequestWithPagination{
+		Query: pagination.Query{
+			Page:     1,
+			Limit:    100,
+			Paginate: true,
+		},
+		ListRequest: alarm.ListRequest{
+			FilterRequest: alarm.FilterRequest{
+				BaseFilterRequest: alarm.BaseFilterRequest{},
+			},
+		},
+	}, "")
+}
+
+func BenchmarkStore_Find_GivenRequestWithBookmarksFilterWithUser(b *testing.B) {
+	benchmarkStoreFind(b, "./testdata/fixtures/bookmarks_filter.yml", alarm.ListRequestWithPagination{
+		Query: pagination.Query{
+			Page:     1,
+			Limit:    100,
+			Paginate: true,
+		},
+		ListRequest: alarm.ListRequest{
+			FilterRequest: alarm.FilterRequest{
+				BaseFilterRequest: alarm.BaseFilterRequest{},
+			},
+		},
+	}, "user_500")
+}
+
 func BenchmarkStore_Find_GivenRequestWithIncludeInstructionsFilter(b *testing.B) {
 	benchmarkStoreFind(b, "./testdata/fixtures/include_instructions_filter.yml", alarm.ListRequestWithPagination{
 		Query: pagination.Query{
@@ -33,7 +63,7 @@ func BenchmarkStore_Find_GivenRequestWithIncludeInstructionsFilter(b *testing.B)
 				},
 			},
 		},
-	})
+	}, "test")
 }
 
 func BenchmarkStore_Find_GivenRequestWithExcludeInstructionsFilter(b *testing.B) {
@@ -54,10 +84,10 @@ func BenchmarkStore_Find_GivenRequestWithExcludeInstructionsFilter(b *testing.B)
 				},
 			},
 		},
-	})
+	}, "test")
 }
 
-func benchmarkStoreFind(b *testing.B, fixturesPath string, request alarm.ListRequestWithPagination) {
+func benchmarkStoreFind(b *testing.B, fixturesPath string, request alarm.ListRequestWithPagination, userID string) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	dbClient, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
@@ -83,7 +113,7 @@ func benchmarkStoreFind(b *testing.B, fixturesPath string, request alarm.ListReq
 			b.Errorf("unexpected error %v", err)
 		}
 	})
-	userId := "test"
+
 	authorProvider := author.NewProvider(dbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	s := alarm.NewStore(dbClient, dbClient, nil, config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()),
 		authorProvider, json.NewDecoder(), zerolog.Nop())
@@ -91,7 +121,7 @@ func benchmarkStoreFind(b *testing.B, fixturesPath string, request alarm.ListReq
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		_, err := s.Find(ctx, request, userId)
+		_, err := s.Find(ctx, request, userID)
 		if err != nil {
 			b.Fatalf("unexpected error %v", err)
 		}

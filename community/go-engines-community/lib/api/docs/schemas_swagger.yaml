@@ -145,6 +145,8 @@ definitions:
         items:
           $ref: '#/definitions/alarm.AssignedInstruction'
         type: array
+      bookmark:
+        type: boolean
       children:
         type: integer
       children_instructions:
@@ -454,6 +456,8 @@ definitions:
         items:
           $ref: '#/definitions/alarm.InstructionFilterRequest'
         type: array
+      only_bookmarks:
+        type: boolean
       opened:
         type: boolean
       pbehavior_pattern:
@@ -846,6 +850,8 @@ definitions:
         $ref: '#/definitions/appinfo.PopupTimeout'
       remediation:
         $ref: '#/definitions/appinfo.RemediationConf'
+      required_instruction_approve:
+        type: boolean
       show_header_on_kiosk_mode:
         type: boolean
       stack:
@@ -918,6 +924,8 @@ definitions:
         type: integer
       popup_timeout:
         $ref: '#/definitions/appinfo.PopupTimeout'
+      required_instruction_approve:
+        type: boolean
       show_header_on_kiosk_mode:
         type: boolean
     type: object
@@ -5377,6 +5385,8 @@ definitions:
         type: boolean
       group:
         $ref: '#/definitions/view.ViewGroup'
+      is_private:
+        type: boolean
       periodic_refresh:
         $ref: '#/definitions/types.DurationWithEnabled'
       tabs:
@@ -5445,6 +5455,8 @@ definitions:
         type: integer
       deletable:
         type: boolean
+      is_private:
+        type: boolean
       title:
         type: string
       updated:
@@ -5459,11 +5471,8 @@ definitions:
       title:
         maxLength: 255
         type: string
-      view:
-        type: string
     required:
     - title
-    - view
     type: object
   viewtab.Response:
     properties:
@@ -5473,6 +5482,8 @@ definitions:
         $ref: '#/definitions/author.Author'
       created:
         type: integer
+      is_private:
+        type: boolean
       title:
         type: string
       updated:
@@ -5501,8 +5512,6 @@ definitions:
         type: object
       parameters:
         $ref: '#/definitions/view.Parameters'
-      tab:
-        type: string
       title:
         maxLength: 255
         type: string
@@ -5510,7 +5519,6 @@ definitions:
         maxLength: 255
         type: string
     required:
-    - tab
     - type
     type: object
   widget.FilterRequest:
@@ -5568,6 +5576,8 @@ definitions:
       grid_parameters:
         additionalProperties: true
         type: object
+      is_private:
+        type: boolean
       parameters:
         $ref: '#/definitions/view.Parameters'
       title:
@@ -5597,8 +5607,6 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
-      is_private:
-        type: boolean
       pbehavior_pattern:
         items:
           items:
@@ -5614,12 +5622,11 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
-      widget:
-        type: string
+      is_user_preference:
+        type: boolean
     required:
-    - is_private
     - title
-    - widget
+    - is_user_preference
     type: object
   widgetfilter.OldMongoQuery:
     additionalProperties: true
@@ -5676,6 +5683,8 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+      is_user_preference:
+        type: boolean
     type: object
   widgettemplate.EditRequest:
     properties:

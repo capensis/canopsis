@@ -133,8 +133,9 @@ type CanopsisConf struct {
 type UserInterfaceConf struct {
 	IsAllowChangeSeverityToInfo bool `bson:"allow_change_severity_to_info"`
 	// MaxMatchedItems need to warn user when number of items that match patterns is above this value
-	MaxMatchedItems          int `bson:"max_matched_items"`
-	CheckCountRequestTimeout int `bson:"check_count_request_timeout"`
+	MaxMatchedItems            int  `bson:"max_matched_items"`
+	CheckCountRequestTimeout   int  `bson:"check_count_request_timeout"`
+	RequiredInstructionApprove bool `bson:"required_instruction_approve"`
 }
 
 type VersionConf struct {

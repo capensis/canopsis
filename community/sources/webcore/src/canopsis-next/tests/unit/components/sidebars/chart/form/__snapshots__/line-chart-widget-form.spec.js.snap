@@ -25,7 +25,7 @@ exports[`line-chart-widget-form Renders \`line-chart-widget-form\` widget settin
   >
     <field-title-stub
       label="Header"
-      name="title"
+      name="chart_title"
       placeholder="Header title"
       value="Chart title"
     />
@@ -72,7 +72,7 @@ exports[`line-chart-widget-form Renders \`line-chart-widget-form\` widget settin
   >
     <field-title-stub
       label="Header"
-      name="title"
+      name="chart_title"
       placeholder="Header title"
       value=""
     />

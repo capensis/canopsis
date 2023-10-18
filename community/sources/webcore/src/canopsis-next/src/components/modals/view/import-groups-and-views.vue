@@ -99,7 +99,7 @@ export default {
 
       this.importedViews = prepareImportedViews(importedViews);
       this.importedGroups = prepareImportedGroups(importedGroups);
-      this.currentGroups = prepareCurrentGroupsForImporting(this.groups);
+      this.currentGroups = prepareCurrentGroupsForImporting(this.groups.filter(group => !group.is_private));
     },
 
     async submit() {

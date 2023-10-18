@@ -10,14 +10,12 @@
       required
     )
     v-layout(row)
-      v-flex.pr-3(xs6)
-        c-number-field(v-field="form.retry_amount", :label="$t('remediation.job.retryAmount')")
-      v-flex(xs6)
-        c-duration-field(
-          v-field="form.retry_interval",
-          :label="$t('remediation.job.retryInterval')",
-          clearable
-        )
+      c-enabled-duration-field(
+        v-field="form.job_wait_interval",
+        :label="$t('remediation.job.jobWaitInterval')",
+        :units="jobWaitIntervalUnits",
+        name="job_wait_interval"
+      )
     v-layout(v-if="withPayload", row)
       v-btn.ml-0(
         v-if="!form.payload",
@@ -52,6 +50,8 @@
 </template>
 
 <script>
+import { TIME_UNITS } from '@/constants';
+
 import { formMixin } from '@/mixins/form';
 
 import RemediationJobConfigurationField from './fields/remediation-job-configuration-field.vue';
@@ -78,6 +78,16 @@ export default {
     withQuery: {
       type: Boolean,
       default: false,
+    },
+  },
+  computed: {
+    jobWaitIntervalUnits() {
+      return [
+        TIME_UNITS.second,
+        TIME_UNITS.minute,
+        TIME_UNITS.hour,
+        TIME_UNITS.day,
+      ];
     },
   },
   methods: {

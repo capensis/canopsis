@@ -143,6 +143,9 @@ export const ALARM_LIST_ACTIONS_TYPES = {
   userRemediationInstructionsFilter: 'userRemediationInstructionsFilter',
 
   executeInstruction: 'executeInstruction',
+
+  addBookmark: 'addBookmark',
+  removeBookmark: 'removeBookmark',
 };
 
 export const META_ALARMS_RULE_TYPES = {
