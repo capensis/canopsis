@@ -17,12 +17,13 @@
     </template>
     <v-checkbox
       v-field="form.with_dependencies"
-      :label="$t('storageSetting.entity.archiveDependencies')"
       color="primary"
     >
-      <template #append="">
+      <template #label="">
+        {{ $t('storageSetting.entity.archiveDependencies') }}
         <c-help-icon
           :text="$t('storageSetting.entity.archiveDependenciesHelp')"
+          icon-class="ml-2"
           color="info"
           max-width="300"
           top

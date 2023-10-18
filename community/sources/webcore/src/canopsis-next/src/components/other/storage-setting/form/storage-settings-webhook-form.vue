@@ -19,12 +19,13 @@
       />
       <c-enabled-field
         v-field="form.log_credentials"
-        :label="$t('storageSetting.webhook.logCredentials')"
         :name="webhookLogCredentialsFieldName"
       >
-        <template #append="">
+        <template #label="">
+          {{ $t('storageSetting.webhook.logCredentials') }}
           <c-help-icon
             :text="$t('storageSetting.webhook.logCredentialsHelpText')"
+            icon-class="ml-2"
             color="info"
             top
           />
