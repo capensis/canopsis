@@ -61,7 +61,6 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
       <!---->
       <alarms-expand-panel-btn-stub
         alarm="[object Object]"
-        istourenabled="true"
         search=""
         widget="[object Object]"
       />
