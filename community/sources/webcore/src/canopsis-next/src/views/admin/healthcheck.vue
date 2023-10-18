@@ -10,7 +10,7 @@
         color="error"
         dark
       >
-        <span class="subheading">{{ $t('healthcheck.systemStatusChipError') }}</span>
+        <span class="text-subtitle-1">{{ $t('healthcheck.systemStatusChipError') }}</span>
       </v-chip>
     </div>
     <v-sheet>

@@ -12,7 +12,7 @@
       :label="$t('settings.exportCsv.fields.datetimeFormat')"
     />
     <v-layout column>
-      <h4 class="subheading my-4">
+      <h4 class="text-subtitle-1 my-4">
         {{ $t('settings.exportColumnNames') }}
       </h4>
       <c-columns-with-template-field

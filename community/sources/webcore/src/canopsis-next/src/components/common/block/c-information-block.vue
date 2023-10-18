@@ -6,7 +6,7 @@
     <v-layout
       v-if="title || helpText"
     >
-      <div class="subheading font-weight-bold">
+      <div class="text-subtitle-1 font-weight-bold">
         {{ title }}
       </div>
       <c-help-icon

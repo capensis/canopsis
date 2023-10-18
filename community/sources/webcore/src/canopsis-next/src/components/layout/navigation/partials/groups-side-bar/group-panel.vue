@@ -63,10 +63,6 @@ const handleChange = () => emit('change');
     min-height: 48px;
   }
 
-  & ::v-deep .v-expansion-panel-content__wrap {
-    padding: 0;
-  }
-
   & ::v-deep .v-expansion-panel-content .v-card {
     border-radius: 0;
     box-shadow: 0 0 0 0 rgba(0,0,0,.2), 0 0 0 0 rgba(0,0,0,.14), 0 0 0 0 rgba(0,0,0,.12) !important;

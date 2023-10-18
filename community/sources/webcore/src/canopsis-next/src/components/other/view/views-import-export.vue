@@ -2,7 +2,7 @@
   <div>
     <v-layout>
       <v-flex
-        class="export-views-block mr-0 ma-4"
+        class="export-views-block ma-6"
         xs6
       >
         <v-checkbox
@@ -32,7 +32,7 @@
             <span>{{ $t('common.export') }}</span>
           </v-btn>
           <file-selector
-            class="ma-2 view-import-selector"
+            class="my-2 view-import-selector"
             ref="fileSelector"
             multiple
             hide-details

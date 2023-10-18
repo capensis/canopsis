@@ -1,32 +1,35 @@
 <template>
-  <v-expansion-panel
+  <v-expansion-panels
     class="c-collapse-panel"
+    accordion
     :style="panelStyle"
   >
-    <v-expansion-panel-content
-      :class="panelContentClass"
-      :style="panelContentStyle"
-      :lazy="lazy"
-    >
-      <template #actions="">
-        <slot name="actions">
-          <v-icon color="white">
-            {{ icon }}
-          </v-icon>
-        </slot>
-      </template>
-      <template #header="">
+    <v-expansion-panel>
+      <v-expansion-panel-header :color="color">
         <slot name="header">
           <span class="white--text">{{ title }}</span>
         </slot>
-      </template>
-      <v-card>
-        <v-card-text>
-          <slot />
-        </v-card-text>
-      </v-card>
-    </v-expansion-panel-content>
-  </v-expansion-panel>
+        <template #actions="">
+          <slot name="actions">
+            <v-icon color="white">
+              {{ icon }}
+            </v-icon>
+          </slot>
+        </template>
+      </v-expansion-panel-header>
+      <v-expansion-panel-content
+        :class="panelContentClass"
+        :style="panelContentStyle"
+        :lazy="lazy"
+      >
+        <v-card>
+          <v-card-text>
+            <slot />
+          </v-card-text>
+        </v-card>
+      </v-expansion-panel-content>
+    </v-expansion-panel>
+  </v-expansion-panels>
 </template>
 
 <script>
@@ -73,7 +76,7 @@ export default {
     },
 
     panelContentClass() {
-      return { error: this.hasError };
+      return ['c-collapse-panel__content', { error: this.hasError }];
     },
 
     panelContentStyle() {
