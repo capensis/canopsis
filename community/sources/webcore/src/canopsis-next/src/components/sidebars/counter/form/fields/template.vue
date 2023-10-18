@@ -7,7 +7,7 @@
       align-center
       justify-space-between
     >
-      <div class="subheading">
+      <div class="text-subtitle-1">
         {{ title }}
       </div>
       <v-btn

@@ -64,10 +64,6 @@ export default {
     height: 48px;
     min-height: 48px;
   }
-
-  & ::v-deep .v-expansion-panel-content__wrap {
-    padding: 0;
-  }
 }
 
 a {

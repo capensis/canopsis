@@ -11,7 +11,7 @@
     <div v-if="title">
       <v-list color="secondary">
         <v-list-item>
-          <v-list-item-title class="white--text subheading">
+          <v-list-item-title class="white--text text-subtitle-1">
             {{ title }}
           </v-list-item-title>
           <v-btn

@@ -1,6 +1,6 @@
 <template>
   <v-layout column>
-    <h4 class="subheading">
+    <h4 class="text-subtitle-1">
       {{ $t('notificationSetting.instruction.header') }}
     </h4>
     <v-checkbox
@@ -13,7 +13,7 @@
     />
     <v-layout>
       <v-flex
-        class="subheading mt-3"
+        class="text-subtitle-1 mt-3"
         xs2
       >
         {{ $t('notificationSetting.instruction.rateFrequency') }}

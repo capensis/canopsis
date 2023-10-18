@@ -3,7 +3,7 @@
     class="pt-2"
   >
     <v-flex :style="labelStyles">
-      <h4 class="subheading font-weight-bold">
+      <h4 class="text-subtitle-1 font-weight-bold">
         {{ label }}
       </h4>
     </v-flex>

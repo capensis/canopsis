@@ -26,7 +26,7 @@
                   justify-between
                 >
                   <v-flex xs11>
-                    <div class="subheading">
+                    <div class="text-subtitle-1">
                       {{ text }}
                     </div>
                   </v-flex>

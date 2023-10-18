@@ -45,7 +45,7 @@
           </div>
         </template>
         <span
-          class="subheading"
+          class="text-subtitle-1"
           v-else
         >
           {{ $t('calendar.pbehaviorPlanningLegend.noData') }}

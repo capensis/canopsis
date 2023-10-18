@@ -45,7 +45,7 @@
                   :file-name="testSuiteDetail.file || testSuiteDetail.name"
                 >
                   <template #label="">
-                    <span class="font-weight-bold subheading">{{ $t('testSuite.failureMessage') }}</span>
+                    <span class="font-weight-bold text-subtitle-1">{{ $t('testSuite.failureMessage') }}</span>
                   </template>
                 </system-message>
               </v-flex>

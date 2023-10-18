@@ -5,7 +5,7 @@
     active-class=""
     @click="handleClick"
   >
-    <v-list-item-avatar>
+    <v-list-item-avatar class="my-0">
       <v-icon :color="link.color">
         {{ link.icon }}
       </v-icon>

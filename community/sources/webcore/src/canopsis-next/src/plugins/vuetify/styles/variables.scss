@@ -34,6 +34,11 @@ $calendar-weekly-day-label-font-size: rem(12px);
 $calendar-event-font-size: rem(12px);
 
 $card-title-font-size: rem(16px);
+$card-subtitle-padding: rem(16px);
+$card-adjacent-sibling-text-padding-top: $card-subtitle-padding;
+
+$pagination-item-font-size: rem(14px);
+
 $list-item-title-font-size: rem(16px);
 
 $btn-letter-spacing: normal;
@@ -46,14 +51,71 @@ $btn-font-sizes: (
   'x-large': 1rem
 );
 
-$tabs-bar-background-color: 'background';
+$tabs-bar-background-color: 'surface';
 
 $dialog-card-text-padding: 16px;
 
 $card-title-font-weight: 400;
 $card-border-radius: 0;
 
+$expansion-panel-content-padding: 0;
+$expansion-panel-header-min-height: 48px;
+$expansion-panel-active-header-min-height: $expansion-panel-header-min-height;
+
+$menu-content-border-radius: 0;
+
 $headings: (
+  'h1': (
+    'size': rem(112px),
+    'weight': 300,
+    'line-height': 1,
+    'letter-spacing': -.04em
+  ),
+  'h2': (
+    'size': rem(56px),
+    'weight': 400,
+    'line-height': 1.35,
+    'letter-spacing': -.02em
+  ),
+  'h3': (
+    'size': rem(45px),
+    'weight': 400,
+    'line-height': rem(48px),
+    'letter-spacing': normal
+  ),
+  'h4': (
+    'size': rem(34px),
+    'weight': 400,
+    'line-height': rem(40px),
+    'letter-spacing': normal
+  ),
+  'h5': (
+    'size': rem(24px),
+    'weight': 400,
+    'line-height': rem(32px),
+    'letter-spacing': normal
+  ),
+  'h6': (
+    'size': rem(20px),
+    'weight': 500,
+    'line-height': 1,
+    'letter-spacing': .02em
+  ),
+  'body-1': (
+    'size': rem(14px),
+    'weight': 500,
+    'line-height': rem(25px),
+  ),
+  'body-2': (
+    'size': rem(14px),
+    'weight': 500,
+    'line-height': rem(25px),
+  ),
+  'subtitle-1': (
+    'size': rem(16px),
+    'weight': 400,
+    'line-height': rem(24px),
+  ),
   caption: (
     'size': rem(12px),
     'line-height': rem(18px)

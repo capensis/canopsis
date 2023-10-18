@@ -16,7 +16,7 @@
     <v-list class="py-0">
       <template v-for="(group, index) in administrationGroupedLinks">
         <v-subheader
-          class="subheading"
+          class="text-subtitle-1"
           :key="`${group.title}-title`"
           @click.stop=""
         >

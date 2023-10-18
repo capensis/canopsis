@@ -20,7 +20,7 @@
           justify-center
         >
           <c-compiled-template
-            class="subheading page-header__message pre-wrap"
+            class="text-subtitle-1 page-header__message pre-wrap"
             :template="message"
           />
         </v-layout>

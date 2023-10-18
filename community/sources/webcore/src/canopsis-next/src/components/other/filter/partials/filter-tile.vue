@@ -1,18 +1,16 @@
 <template>
   <v-list-item class="pa-0">
     <v-layout align-center>
-      <v-flex xs12>
-        <v-layout align-center>
-          <v-icon
-            class="draggable ml-0 mr-3 action-drag-handler"
-            v-if="editable"
-            small
-          >
-            drag_indicator
-          </v-icon>
-          <v-list-item-content>{{ filter.title }}</v-list-item-content>
-        </v-layout>
-      </v-flex>
+      <v-layout align-center>
+        <v-icon
+          class="draggable ml-0 mr-3 action-drag-handler"
+          v-if="editable"
+          small
+        >
+          drag_indicator
+        </v-icon>
+        <v-list-item-content>{{ filter.title }}</v-list-item-content>
+      </v-layout>
       <v-list-item-action v-if="editable">
         <v-layout align-center>
           <c-action-btn

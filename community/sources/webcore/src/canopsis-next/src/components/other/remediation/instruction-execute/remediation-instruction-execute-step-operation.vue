@@ -43,7 +43,7 @@
           <v-layout
             class="mt-4"
           >
-            <span class="subheading">{{ $t('remediation.instructionExecute.jobs.title') }}</span>
+            <span class="text-subtitle-1">{{ $t('remediation.instructionExecute.jobs.title') }}</span>
           </v-layout>
           <v-layout column>
             <remediation-instruction-execute-assigned-jobs-table

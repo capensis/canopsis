@@ -10,7 +10,7 @@
       column
     >
       <v-layout>
-        <h4 class="subheading font-weight-bold">
+        <h4 class="text-subtitle-1 font-weight-bold">
           {{ $t('stateSetting.worstLabel') }}
         </h4>
         <c-help-icon

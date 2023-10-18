@@ -256,7 +256,7 @@ export default {
           halign: 'right',
           valignBox: 'top',
           halignBox: 'right',
-          tpl: data => `<div class="subheading">${this.getNodeName(data.id)}</div>`,
+          tpl: data => `<div class="subtitle-1">${this.getNodeName(data.id)}</div>`,
         },
         {
           query: '.service-title--bottom',
@@ -264,7 +264,7 @@ export default {
           halign: 'center',
           valignBox: 'bottom',
           halignBox: 'center',
-          tpl: data => `<div class="subheading">${this.getNodeName(data.id)}</div>`,
+          tpl: data => `<div class="subtitle-1">${this.getNodeName(data.id)}</div>`,
         },
         {
           query: `node[id="${HEALTHCHECK_SERVICES_NAMES.rabbit}"]`,
@@ -272,7 +272,7 @@ export default {
           halign: 'left',
           valignBox: 'bottom',
           halignBox: 'left',
-          tpl: data => `<div class="subheading">${this.getNodeName(data.id)}</div>`,
+          tpl: data => `<div class="subtitle-1">${this.getNodeName(data.id)}</div>`,
         },
         {
           query: '.service-node--without-node',
@@ -584,7 +584,7 @@ export default {
       is_queue_overflown: isQueueOverflown,
       is_unknown: isUnknown,
     }) {
-      const elements = [`<div class="subheading">${this.getNodeName(id)}</div>`];
+      const elements = [`<div class="subtitle-1">${this.getNodeName(id)}</div>`];
 
       const getInfoDiv = (message, hasError) => `<div class="body-1 grey--text darken-3 ${hasError ? 'error--text' : ''}">${message}</div>`;
 

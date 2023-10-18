@@ -1,9 +1,10 @@
 <template>
-  <v-expansion-panel
+  <v-expansion-panels
     :value="openedPanels"
+    accordion
     readonly
     hide-actions
-    expand
+    multiple
     dark
     focusable
   >
@@ -14,14 +15,16 @@
       hide-actions
     >
       <template #title>
-        <v-checkbox
-          class="group-checkbox mt-0 pt-0"
-          :input-value="selected.groups"
-          :value="group._id"
-          color="primary"
-          @change="changeGroup(group, $event)"
-        />
-        <span class="group-title">{{ group.title }}</span>
+        <v-layout align-center>
+          <v-checkbox
+            class="group-checkbox mt-0 pt-0"
+            :input-value="selected.groups"
+            :value="group._id"
+            :label="group.title"
+            color="primary"
+            @change="changeGroup(group, $event)"
+          />
+        </v-layout>
       </template>
       <group-view-panel
         v-for="view in group.views"
@@ -37,20 +40,24 @@
               v-field="selected.views"
               :value="view._id"
               color="primary"
-            />
-            <span class="text-truncate">{{ view.title }}
-              <span
-                class="ml-1"
-                v-show="view.description"
-              >
-                ({{ view.description }})
-              </span>
-            </span>
+            >
+              <template #label>
+                <span class="text-truncate">
+                  {{ view.title }}
+                  <span
+                    class="ml-1"
+                    v-show="view.description"
+                  >
+                    ({{ view.description }})
+                  </span>
+                </span>
+              </template>
+            </v-checkbox>
           </v-layout>
         </template>
       </group-view-panel>
     </group-panel>
-  </v-expansion-panel>
+  </v-expansion-panels>
 </template>
 
 <script>
@@ -80,7 +87,7 @@ export default {
   },
   computed: {
     openedPanels() {
-      return new Array(this.groups.length).fill(true);
+      return new Array(this.groups.length).fill(true).map((_, index) => index);
     },
   },
   methods: {

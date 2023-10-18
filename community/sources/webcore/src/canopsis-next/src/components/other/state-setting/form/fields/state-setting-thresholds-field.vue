@@ -1,7 +1,7 @@
 <template>
   <v-layout>
     <v-flex xs4>
-      <h5 class="subheading font-weight-bold">
+      <h5 class="text-subtitle-1 font-weight-bold">
         {{ $t('stateSetting.criterion') }}: {{ label }}
       </h5>
       <state-setting-thresholds-type-field

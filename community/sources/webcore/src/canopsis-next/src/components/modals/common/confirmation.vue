@@ -10,7 +10,7 @@
       v-if="config.text"
       #text=""
     >
-      <span class="subheading pre-wrap">{{ config.text }}</span>
+      <span class="text-subtitle-1 pre-wrap">{{ config.text }}</span>
     </template>
     <template #actions="">
       <v-layout

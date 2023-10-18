@@ -5,7 +5,7 @@
       xs12
     >
       <v-layout>
-        <h4 class="subheading grey--text text--darken-2">
+        <h4 class="text-subtitle-1 grey--text text--darken-2">
           {{ label }}
         </h4>
         <c-help-icon
