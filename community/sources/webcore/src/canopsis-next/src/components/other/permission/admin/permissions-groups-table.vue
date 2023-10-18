@@ -2,24 +2,26 @@
   <v-data-table
     :items="groups"
     :headers="headers"
+    :expanded.sync="expanded"
     item-key="name"
-    show-expand
     hide-default-footer
   >
-    <template #items="props">
+    <template #item="props">
       <permission-group-row
-        :expanded="props.expanded"
+        :expanded="props.isExpanded"
         :group="props.item"
         :roles="roles"
         :changed-roles="changedRoles"
         :disabled="disabled"
         @change="$listeners.change"
-        @expand="props.expanded = !props.expanded"
+        @expand="props.expand"
       />
     </template>
-    <template #expand="{ item }">
+    <template #expanded-item="{ item }">
       <permissions-table
+        :key="`expanded-${item.name}`"
         class="expand-permissions-table"
+        v-show="expanded.find(({ name }) => item.name === name)"
         :permissions="item.permissions"
         :roles="roles"
         :changed-roles="changedRoles"
@@ -34,6 +36,9 @@
 import PermissionsTable from './permissions-table.vue';
 import PermissionGroupRow from './permission-group-row.vue';
 
+/**
+ * @TODO: use group instead of expand
+ */
 export default {
   components: {
     PermissionsTable,
@@ -57,6 +62,11 @@ export default {
       default: false,
     },
   },
+  data() {
+    return {
+      expanded: [],
+    };
+  },
   computed: {
     headers() {
       return [
@@ -72,16 +82,15 @@ export default {
 <style lang="scss" scoped>
   $titleLeftPadding: 36px;
 
-  .expand-permissions-table ::v-deep .v-table__overflow {
+  .expand-permissions-table ::v-deep .v-data-table__wrapper {
     tr td {
       &:first-child {
         padding-left: $titleLeftPadding;
       }
     }
 
-    thead tr {
-      height: 0;
-      visibility: hidden;
+    .v-data-table-header {
+      display: none;
 
       th {
         position: relative;

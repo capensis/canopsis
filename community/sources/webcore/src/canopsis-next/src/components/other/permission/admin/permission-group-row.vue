@@ -4,7 +4,7 @@
       <c-expand-btn
         class="mr-2"
         :expanded="expanded"
-        @expand="$emit('expand')"
+        @expand="$emit('expand', !expanded)"
       />
       <span>{{ group.name }}</span>
     </td>
