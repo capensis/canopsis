@@ -9,12 +9,10 @@
   )
     v-tab(
       v-if="hasMoreInfos",
-      :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.moreInfos}`",
-      :class="moreInfosTabClass"
+      :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.moreInfos}`"
       ) {{ $t('alarm.tabs.moreInfos') }}
     v-tab(
-      :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.timeLine}`",
-      :class="timeLineTabClass"
+      :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.timeLine}`"
     ) {{ $t('alarm.tabs.timeLine') }}
     v-tab(
       v-if="hasWidgetCharts",
@@ -141,10 +139,9 @@
 <script>
 import { isEqual, map } from 'lodash';
 
-import { ENTITY_TYPES, GRID_SIZES, TOURS, JUNIT_ALARM_CONNECTOR } from '@/constants';
+import { ENTITY_TYPES, GRID_SIZES, JUNIT_ALARM_CONNECTOR } from '@/constants';
 
 import { uid } from '@/helpers/uid';
-import { getStepClass } from '@/helpers/tour';
 import { alarmToServiceDependency } from '@/helpers/entities/service-dependencies/list';
 import { convertAlarmDetailsQueryToRequest } from '@/helpers/entities/alarm/query';
 import { convertWidgetChartsToPerfDataQuery } from '@/helpers/entities/metric/query';
@@ -197,10 +194,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    isTourEnabled: {
-      type: Boolean,
-      default: false,
-    },
     search: {
       type: String,
       default: '',
@@ -213,22 +206,6 @@ export default {
     };
   },
   computed: {
-    moreInfosTabClass() {
-      if (this.isTourEnabled) {
-        return getStepClass(TOURS.alarmsExpandPanel, 2);
-      }
-
-      return '';
-    },
-
-    timeLineTabClass() {
-      if (this.isTourEnabled) {
-        return getStepClass(TOURS.alarmsExpandPanel, 3);
-      }
-
-      return '';
-    },
-
     cardFlexClass() {
       const { expandGridRangeSize: [start, end] = [GRID_SIZES.min, GRID_SIZES.max] } = this.widget.parameters;
 
@@ -247,7 +224,7 @@ export default {
     },
 
     hasMoreInfos() {
-      return this.widget.parameters.moreInfoTemplate ?? this.isTourEnabled;
+      return this.widget.parameters.moreInfoTemplate;
     },
 
     hasChildren() {
@@ -319,10 +296,6 @@ export default {
           search_by: map(columns, 'value'),
         };
       },
-    },
-
-    isTourEnabled() {
-      this.refreshTabs();
     },
 
     query(query, oldQuery) {

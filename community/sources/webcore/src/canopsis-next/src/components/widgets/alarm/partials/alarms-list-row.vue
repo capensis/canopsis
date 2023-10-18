@@ -15,7 +15,6 @@
           v-model="row.expanded",
           :alarm="alarm",
           :widget="widget",
-          :is-tour-enabled="isTourEnabled",
           :small="small",
           :search="search"
         )
@@ -104,10 +103,6 @@ export default {
     columnsFilters: {
       type: Array,
       default: () => [],
-    },
-    isTourEnabled: {
-      type: Boolean,
-      default: false,
     },
     parentAlarm: {
       type: Object,
