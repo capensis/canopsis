@@ -22,7 +22,7 @@
       </v-icon>
     </v-flex>
     <v-flex
-      class="pl-1 white--text subheading"
+      class="pl-1 white--text text-subtitle-1"
       xs12
     >
       <v-layout align-center>

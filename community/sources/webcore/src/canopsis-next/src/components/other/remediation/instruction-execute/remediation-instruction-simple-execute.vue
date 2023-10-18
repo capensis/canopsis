@@ -4,7 +4,7 @@
       class="mb-4"
       align-center
     >
-      <span class="subheading mr-5">{{ $t('remediation.instructionExecute.jobs.title') }}</span>
+      <span class="text-subtitle-1 mr-5">{{ $t('remediation.instructionExecute.jobs.title') }}</span>
       <v-btn
         class="primary ma-0"
         v-if="!isJobsFinished"

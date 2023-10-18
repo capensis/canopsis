@@ -5,7 +5,7 @@
       align-end
     >
       <v-flex xs6>
-        <div class="subheading">
+        <div class="text-subtitle-1">
           {{ $t('linkRule.type') }}
         </div>
         <v-radio-group

@@ -1,5 +1,5 @@
 <template>
-  <v-card class="subheading">
+  <v-card class="text-subtitle-1">
     <v-card-text>
       <v-layout wrap>
         <v-flex xs1>

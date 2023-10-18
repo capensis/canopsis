@@ -6,7 +6,7 @@
     :value="$route.fullPath"
     :class="{ hidden: tabs.length &lt; 2 && !editing, 'tabs-editing': editing }"
     :hide-slider="changed"
-    color="secondary lighten-2"
+    background-color="secondary lighten-2"
     slider-color="primary"
     dark
   >
@@ -241,7 +241,7 @@ export default {
 
 <style lang="scss" scoped>
   .view-tabs.hidden {
-    & ::v-deep > .v-tabs__bar {
+    & ::v-deep > .v-tabs-bar {
       display: none;
     }
   }

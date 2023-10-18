@@ -1,11 +1,11 @@
 <template>
-  <v-list-item class="subheading">
+  <v-list-item class="text-subtitle-1">
     <v-list-item-avatar v-if="!hideIcon">
       <v-icon>{{ icon }}</v-icon>
     </v-list-item-avatar>
     <v-list-item-content>
       <v-layout align-center>
-        <div class="subheading">
+        <div class="text-subtitle-1">
           <span class="font-weight-bold">{{ label }}</span>
           <span v-if="value">: {{ value }}</span>
         </div>

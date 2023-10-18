@@ -14,7 +14,7 @@
       >
         {{ ruleName }}
       </v-chip>
-      <span class="subheading mr-5">{{ $t('declareTicket.webhookStatus') }}:</span>
+      <span class="text-subtitle-1 mr-5">{{ $t('declareTicket.webhookStatus') }}:</span>
       <declare-ticket-rule-execution-status
         :running="isExecutionsRunning"
         :success="isExecutionsSucceeded"

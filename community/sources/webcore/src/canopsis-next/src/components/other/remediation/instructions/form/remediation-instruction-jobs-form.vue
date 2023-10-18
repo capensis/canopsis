@@ -13,7 +13,7 @@
         </v-alert>
       </v-flex>
     </v-layout>
-    <h3 class="subheading font-weight-bold">
+    <h3 class="text-subtitle-1 font-weight-bold">
       {{ $t('remediation.instruction.listJobs') }}
     </h3>
     <c-draggable-list-field

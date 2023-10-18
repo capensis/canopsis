@@ -18,7 +18,7 @@
                 primary-title
               >
                 <v-layout>
-                  <div class="subheading">
+                  <div class="text-subtitle-1">
                     {{ $t(`map.types.${type}`) }}
                   </div>
                   <v-spacer />
