@@ -2,11 +2,11 @@
   <v-data-table
     :items="permissions"
     :headers="headers"
+    :items-per-page="-1"
     item-key="_id"
-    show-expand
     hide-default-footer
   >
-    <template #items="{ item }">
+    <template #item="{ item }">
       <permission-row
         :permission="item"
         :roles="roles"

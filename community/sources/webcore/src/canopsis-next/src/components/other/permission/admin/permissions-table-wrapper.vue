@@ -43,8 +43,8 @@ export default {
   $cellPadding: 8px 8px;
 
   .permissions-table-wrapper ::v-deep {
-    .v-table__overflow {
-      overflow: visible;
+    .v-data-table__wrapper {
+      overflow: unset !important;
 
       td, th {
         padding: $cellPadding;

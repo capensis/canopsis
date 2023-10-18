@@ -9,6 +9,9 @@ export default {
       default: false,
     },
   },
+  /**
+   * We've made click-outside optional
+   */
   render(h) {
     let children = [];
     const directives = this.hideOnClickOutside ? [{

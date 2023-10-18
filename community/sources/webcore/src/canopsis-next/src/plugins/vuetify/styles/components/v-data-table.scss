@@ -1,0 +1,18 @@
+.v-data-table__expanded {
+  &__content {
+    transition: height .3s cubic-bezier(.25, .8, .5, 1);
+    box-shadow: none!important;
+  }
+
+  &__col {
+    padding: 0!important;
+    height: 0!important;
+    border: none!important;
+  }
+
+  &__row {
+    border: none!important;
+    height: 0;
+    padding: 0;
+  }
+}
