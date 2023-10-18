@@ -633,6 +633,21 @@ permission:
     _id: listalarm_userFilter
     name: <Current()._id>
     description: "Rights on listalarm: User filter"
+  permission_listalarm_addBookmark:
+    <<: *permission
+    _id: listalarm_addBookmark
+    name: <Current()._id>
+    description: "Rights on listalarm: Access to 'Add bookmark' action"
+  permission_listalarm_filterByBookmark:
+    <<: *permission
+    _id: listalarm_filterByBookmark
+    name: <Current()._id>
+    description: "Rights on listalarm: Access to 'Filter by bookmark' action"
+  permission_listalarm_removeBookmark:
+    <<: *permission
+    _id: listalarm_removeBookmark
+    name: <Current()._id>
+    description: "Rights on listalarm: Access to 'Remove bookmark' action"
   permission_listalarm_listRemediationInstructionsFilters:
     <<: *permission
     _id: listalarm_listRemediationInstructionsFilters
@@ -1583,8 +1598,8 @@ role:
 role_template:
   tpl_pilot:
     <<: *role_tpl
-    name: pilot
-    description: Pilots of the operations centers
+    name: Pilotes
+    description: Profil de pilotage
     permissions:
       # UI permissions
       "@permission_listalarm_ack": 1
@@ -1607,6 +1622,9 @@ role_template:
       "@permission_listalarm_listFilters": 1
       "@permission_listalarm_editFilter": 1
       "@permission_listalarm_addFilter": 1
+      "@permission_listalarm_addBookmark": 1
+      "@permission_listalarm_filterByBookmark": 1
+      "@permission_listalarm_removeBookmark": 1
       "@permission_listalarm_userFilter": 1
       "@permission_listalarm_listRemediationInstructionsFilters": 1
       "@permission_listalarm_editRemediationInstructionsFilter": 1
@@ -1698,26 +1716,27 @@ role_template:
       # API permissions
       "@permission_api_alarm_read": 1
       "@permission_api_alarm_update": 1
-      "@permission_api_playlist": 1
-      "@permission_api_entitycategory": 1
-      "@permission_api_viewgroup": 1
-      "@permission_api_view": 1
+      "@permission_api_broadcast_message": 4
+      "@permission_api_color_theme": 4
+      "@permission_api_playlist": 4
+      "@permission_api_entitycategory": 4
+      "@permission_api_entityservice": 4
+      "@permission_api_viewgroup": 4
+      "@permission_api_view": 4
       "@permission_api_pbehavior": 15
-      "@permission_api_pbehaviortype": 1
-      "@permission_api_pbehaviorreason": 1
-      "@permission_api_pbehaviorexception": 1
+      "@permission_api_pbehaviortype": 4
+      "@permission_api_pbehaviorreason": 4
+      "@permission_api_pbehaviorexception": 4
       "@permission_api_event": 1
       "@permission_api_execution": 1
-      "@permission_api_file": 1
-      "@permission_api_entity": 1
-      "@permission_api_associative_table": 1
-      "@permission_api_junit": 1
-      "@permission_api_map": 1
+      "@permission_api_file": 4
+      "@permission_api_entity": 4
+      "@permission_api_associative_table": 4
+      "@permission_api_junit": 4
+      "@permission_api_map": 2
       "@permission_api_declare_ticket_execution": 1
-      # Views permissions
-      "@permission_view_open_alarms": 1
-      "@permission_view_resolved_alarms": 1
-      "@permission_view_context_explorer": 1
+      "@permission_api_alarm_tag": 4
+      "@permission_api_share_token": 4
 
 user:
   user_admin:
