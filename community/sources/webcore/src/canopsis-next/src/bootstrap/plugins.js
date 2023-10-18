@@ -4,7 +4,6 @@ import VueClipboard from 'vue-clipboard2';
 import PortalVue from 'portal-vue';
 import frDaySpanVuetifyMessages from 'dayspan-vuetify/src/locales/fr';
 
-import 'vue-tour/dist/vue-tour.css';
 import 'dayspan-vuetify/dist/lib/dayspan-vuetify.min.css';
 
 import { MODALS } from '@/constants';
@@ -17,7 +16,6 @@ import PopupsPlugin from '@/plugins/popups';
 import SidebarPlugin from '@/plugins/sidebar';
 import SetSeveralPlugin from '@/plugins/set-several';
 import UpdateFieldPlugin from '@/plugins/update-field';
-import ToursPlugin from '@/plugins/tours';
 import SocketPlugin from '@/plugins/socket';
 import DaySpanVuetifyPlugin from '@/plugins/dayspan-vuetify';
 
@@ -184,6 +182,5 @@ export const bootstrapApplicationPlugins = (Vue) => {
   });
   Vue.use(SetSeveralPlugin);
   Vue.use(UpdateFieldPlugin);
-  Vue.use(ToursPlugin);
   Vue.use(SocketPlugin);
 };
