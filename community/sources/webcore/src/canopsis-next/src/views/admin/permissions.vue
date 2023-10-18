@@ -40,7 +40,8 @@
       v-show="hasChanges"
     >
       <v-btn
-        class="primary ml-3"
+        class="ml-3"
+        color="primary"
         @click="submit"
       >
         {{ $t('common.submit') }}
@@ -364,6 +365,11 @@ export default {
   .submit-button {
     position: sticky;
     bottom: 10px;
+    pointer-events: none;
+
+    button {
+      pointer-events: all;
+    }
   }
 
   .admin-rights ::v-deep {
