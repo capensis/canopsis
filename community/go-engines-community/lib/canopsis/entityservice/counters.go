@@ -153,13 +153,31 @@ func GetServiceIDsFromEvent(event types.Event, serviceIDs []string) ([]string, [
 	for _, id := range serviceIDs {
 		services[id] = true
 	}
+
+	k := 0
 	for _, id := range removedFromServices {
+		if changedServices[id] {
+			continue
+		}
+
 		changedServices[id] = true
-	}
-	for _, id := range addedToServices {
-		changedServices[id] = true
+		removedFromServices[k] = id
+		k++
 	}
 
+	removedFromServices = removedFromServices[:k]
+	k = 0
+	for _, id := range addedToServices {
+		if changedServices[id] {
+			continue
+		}
+
+		changedServices[id] = true
+		addedToServices[k] = id
+		k++
+	}
+
+	addedToServices = addedToServices[:k]
 	var unchangedServices []string
 	if event.Entity != nil {
 		for _, impact := range event.Entity.Impacts {
