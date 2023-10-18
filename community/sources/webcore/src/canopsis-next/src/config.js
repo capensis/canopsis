@@ -287,6 +287,9 @@ export const API_ROUTES = {
     bulkDeclareTicket: '/api/v4/cat/bulk/declare-ticket-executions',
   },
   tags: '/api/v4/cat/tags',
+  privateView: {
+    groups: '/api/v4/cat/private-view-groups',
+  },
 };
 
 export const COLORS = {

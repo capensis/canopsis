@@ -33,7 +33,6 @@ const stubs = {
   'c-pagination': true,
   'c-density-btn-toggle': true,
   'c-table-pagination': true,
-  'alarms-expand-panel-tour': true,
   'mass-actions-panel': true,
   'alarms-list-table': {
     template: `
@@ -56,11 +55,10 @@ const snapshotStubs = {
   'alarms-list-table': true,
   'c-table-pagination': true,
   'c-density-btn-toggle': true,
-  'alarms-expand-panel-tour': true,
   'mass-actions-panel': true,
 };
 
-const selectCorrelationField = wrapper => wrapper.find('v-switch-stub');
+const selectVSwitch = wrapper => wrapper.find('v-switch-stub');
 const selectFilterSelectorField = wrapper => wrapper.find('filter-selector-stub');
 const selectCategoryField = wrapper => wrapper.find('c-entity-category-field-stub');
 const selectExportButton = wrapper => wrapper.findAll('c-action-btn-stub').at(1);
@@ -68,7 +66,6 @@ const selectLiveReportingButton = wrapper => wrapper.findAll('c-action-btn-stub'
 const selectInstructionsFiltersField = wrapper => wrapper.find('alarms-list-remediation-instructions-filters-stub');
 const selectRemoveHistoryButton = wrapper => wrapper.find('v-chip-stub');
 const selectAlarmsListTable = wrapper => wrapper.find('.alarms-list-table');
-const selectAlarmsExpandPanelTour = wrapper => wrapper.find('alarms-expand-panel-tour-stub');
 
 describe('alarms-list', () => {
   const $popups = mockPopups();
@@ -89,6 +86,7 @@ describe('alarms-list', () => {
   const userPreferences = {
     content: {
       isCorrelationEnabled: false,
+      onlyBookmarks: false,
       itemsPerPage: 13,
       category: 'category-id',
     },
@@ -112,6 +110,7 @@ describe('alarms-list', () => {
     filters: [],
     active_columns: widget.parameters.widgetColumns.map(v => v.value),
     correlation: userPreferences.content.isCorrelationEnabled,
+    only_bookmarks: userPreferences.content.onlyBookmarks,
     category: userPreferences.content.category,
     limit: userPreferences.content.itemsPerPage,
     tstart: QUICK_RANGES.last1Year.start,
@@ -388,7 +387,7 @@ describe('alarms-list', () => {
 
     updateQuery.mockClear();
 
-    const correlationField = selectCorrelationField(wrapper);
+    const correlationField = selectVSwitch(wrapper);
 
     correlationField.vm.$emit('change', !userPreferences.content.isCorrelationEnabled);
 
@@ -415,6 +414,68 @@ describe('alarms-list', () => {
 
           page: 1,
           correlation: !userPreferences.content.isCorrelationEnabled,
+        },
+      },
+      undefined,
+    );
+  });
+
+  it('Only bookmark updated after trigger filter by bookmark field', async () => {
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        alarmModule,
+        sideBarModule,
+        infoModule,
+        queryModule,
+        viewModule,
+        userPreferenceModule,
+        alarmTagModule,
+        {
+          ...authModule,
+          getters: {
+            currentUser: {},
+            currentUserPermissionsById: {
+              [USERS_PERMISSIONS.business.alarmsList.actions.filterByBookmark]: { actions: [] },
+            },
+          },
+        },
+      ]),
+      propsData: {
+        widget,
+      },
+    });
+
+    await flushPromises();
+
+    updateQuery.mockClear();
+
+    const filterByBookmarkField = selectVSwitch(wrapper);
+
+    filterByBookmarkField.vm.$emit('change', !userPreferences.content.onlyBookmarks);
+
+    await flushPromises();
+
+    expect(updateUserPreference).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        data: {
+          content: {
+            ...userPreferences.content,
+            onlyBookmarks: !userPreferences.content.onlyBookmarks,
+          },
+        },
+      },
+      undefined,
+    );
+    expect(updateQuery).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        id: widget._id,
+        query: {
+          ...defaultQuery,
+
+          page: 1,
+          only_bookmarks: !userPreferences.content.onlyBookmarks,
         },
       },
       undefined,
@@ -927,6 +988,7 @@ describe('alarms-list', () => {
           search: defaultQuery.search,
           category: defaultQuery.category,
           correlation: defaultQuery.correlation,
+          only_bookmarks: defaultQuery.only_bookmarks,
           opened: defaultQuery.opened,
           tstart: nowSubtractOneYearUnix,
           tstop: 1386370800,
@@ -1017,6 +1079,7 @@ describe('alarms-list', () => {
           search: defaultQuery.search,
           category: defaultQuery.category,
           correlation: defaultQuery.correlation,
+          only_bookmarks: defaultQuery.only_bookmarks,
           opened: defaultQuery.opened,
           tstart: nowSubtractOneYearUnix,
           tstop: 1386370800,
@@ -1082,6 +1145,7 @@ describe('alarms-list', () => {
           search: defaultQuery.search,
           category: defaultQuery.category,
           correlation: defaultQuery.correlation,
+          only_bookmarks: defaultQuery.only_bookmarks,
           opened: defaultQuery.opened,
           tstart: nowSubtractOneYearUnix,
           tstop: 1386370800,
@@ -1333,73 +1397,6 @@ describe('alarms-list', () => {
     });
 
     jest.useRealTimers();
-  });
-
-  it('First alarm expanded after click on the prev step with first step', async () => {
-    const wrapper = factory({
-      store,
-      propsData: {
-        widget,
-      },
-    });
-
-    const alarmsExpandPanelTour = selectAlarmsExpandPanelTour(wrapper);
-
-    alarmsExpandPanelTour.vm.callbacks.onPreviousStep(1);
-  });
-
-  it('First alarm not expanded after click on the next step with already expanded alarm', async () => {
-    const expanded = {
-      [alarms[0]._id]: true,
-    };
-    const wrapper = factory({
-      store,
-      stubs: {
-        ...stubs,
-        'alarms-list-table': {
-          template: '<div />',
-          data: () => ({
-            expanded,
-          }),
-        },
-      },
-      propsData: {
-        widget,
-      },
-    });
-
-    const alarmsExpandPanelTour = selectAlarmsExpandPanelTour(wrapper);
-
-    alarmsExpandPanelTour.vm.callbacks.onNextStep();
-
-    expect(expanded).toBe(expanded);
-  });
-
-  it('First alarm not expanded after click on the prev step with second step', async () => {
-    const expanded = {};
-    const wrapper = factory({
-      store,
-      stubs: {
-        ...stubs,
-        'alarms-list-table': {
-          template: '<div />',
-          data: () => ({
-            expanded,
-          }),
-        },
-      },
-      propsData: {
-        widget,
-      },
-    });
-
-    const alarmsExpandPanelTour = selectAlarmsExpandPanelTour(wrapper);
-
-    alarmsExpandPanelTour.vm.callbacks.onPreviousStep(2);
-
-    expect(expanded).toEqual({
-      [alarms[0]._id]: true,
-    });
   });
 
   it('Alarms not fetched after change query without columns', async () => {
@@ -1695,7 +1692,7 @@ describe('alarms-list', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `alarms-list` with default props and user filter permission', async () => {
+  it('Renders `alarms-list` with default props and user filter permission and correlation and bookmark', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         widget,
@@ -1714,6 +1711,8 @@ describe('alarms-list', () => {
             currentUser: {},
             currentUserPermissionsById: {
               [USERS_PERMISSIONS.business.alarmsList.actions.userFilter]: { actions: [] },
+              [USERS_PERMISSIONS.business.alarmsList.actions.correlation]: { actions: [] },
+              [USERS_PERMISSIONS.business.alarmsList.actions.filterByBookmark]: { actions: [] },
             },
           },
         },

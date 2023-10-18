@@ -26,6 +26,7 @@ export const entitiesInfoMixin = {
       language: 'language',
       allowChangeSeverityToInfo: 'allowChangeSeverityToInfo',
       showHeaderOnKioskMode: 'showHeaderOnKioskMode',
+      requiredInstructionApprove: 'requiredInstructionApprove',
       isLDAPAuthEnabled: 'isLDAPAuthEnabled',
       isCASAuthEnabled: 'isCASAuthEnabled',
       isSAMLAuthEnabled: 'isSAMLAuthEnabled',

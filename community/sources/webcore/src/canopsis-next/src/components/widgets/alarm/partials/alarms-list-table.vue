@@ -54,8 +54,8 @@
         :select-all="selectable",
         :loading="loading || columnsFiltersPending",
         :expand="expandable",
-        :dense="isMediumHeight",
-        :ultra-dense="isSmallHeight",
+        :dense="isMediumDense",
+        :ultra-dense="isSmallDense",
         header-key="value",
         item-key="_id",
         hide-actions,
@@ -91,12 +91,11 @@
             :widget="widget",
             :headers="headers",
             :parent-alarm="parentAlarm",
-            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(props.index)",
             :refresh-alarms-list="refreshAlarmsList",
             :selecting="selecting",
             :selected-tag="selectedTag",
-            :medium="isMediumHeight",
-            :small="isSmallHeight",
+            :medium="isMediumDense",
+            :small="isSmallDense",
             :resizing="resizingMode",
             :search="search",
             :wrap-actions="resizableColumn",
@@ -111,7 +110,6 @@
             :widget="widget",
             :search="search",
             :hide-children="hideChildren",
-            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(index)",
             @select:tag="$emit('select:tag', $event)"
           )
     c-table-pagination(
@@ -194,10 +192,6 @@ export default {
     columns: {
       type: Array,
       default: () => [],
-    },
-    isTourEnabled: {
-      type: Boolean,
-      default: false,
     },
     loading: {
       type: Boolean,
@@ -340,7 +334,7 @@ export default {
         /**
          * We need it for the expand panel open button
          */
-        headers.unshift({ sortable: false, width: 82 });
+        headers.unshift({ sortable: false, width: 100 });
       }
 
       return this.draggableColumn
@@ -392,7 +386,7 @@ export default {
       /**
        * left expand/instruction icon/select actions width
        */
-      return this.isMediumHeight || this.isSmallHeight ? 82 : 100;
+      return this.isMediumDense || this.isSmallDense ? 100 : 120;
     },
 
     vDataTableStyle() {
@@ -423,11 +417,11 @@ export default {
       return {};
     },
 
-    isMediumHeight() {
+    isMediumDense() {
       return this.dense === ALARM_DENSE_TYPES.medium;
     },
 
-    isSmallHeight() {
+    isSmallDense() {
       return this.dense === ALARM_DENSE_TYPES.small;
     },
 
@@ -521,10 +515,6 @@ export default {
       if (this.selecting) {
         this.calculateRowsPositions();
       }
-    },
-
-    checkIsTourEnabledForAlarmByIndex(index) {
-      return this.isTourEnabled && index === 0;
     },
 
     updatePaginationHandler(data) {
@@ -735,14 +725,14 @@ export default {
   }
 
   th:not([role='columnheader']) {
-    width: 100px;
+    width: 120px;
   }
 
   .v-datatable--dense,
   .v-datatable--ultra-dense {
     thead {
       th:not([role='columnheader']) {
-        width: 82px;
+        width: 100px;
       }
     }
   }

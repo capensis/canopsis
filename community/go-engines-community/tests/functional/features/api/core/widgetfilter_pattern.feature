@@ -9,7 +9,7 @@ Feature: Get a widget filter
     {
       "title": "test-widgetfilter-to-pattern-1-title",
       "widget": "test-widget-to-filter-edit",
-      "is_private": false,
+      "is_user_preference": false,
       "corporate_alarm_pattern": "test-pattern-to-filter-pattern-1",
       "corporate_entity_pattern": "test-pattern-to-filter-pattern-2",
       "corporate_pbehavior_pattern": "test-pattern-to-filter-pattern-3"

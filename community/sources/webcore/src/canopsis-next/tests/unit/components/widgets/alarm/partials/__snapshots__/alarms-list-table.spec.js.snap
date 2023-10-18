@@ -146,7 +146,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               columnsfilters=""
               expandable="true"
               headers="[object Object]"
-              istourenabled="true"
               medium="true"
               parentalarm="[object Object]"
               refreshalarmslist="[Function]"
@@ -743,7 +742,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                 data-value=""
                 role="columnheader"
                 scope="col"
-                width="82"
+                width="100"
               >
                 <alarm-header-cell-stub
                   header="[object Object]"

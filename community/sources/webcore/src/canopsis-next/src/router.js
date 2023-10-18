@@ -69,9 +69,6 @@ const routes = [
     component: View,
     meta: {
       requiresLogin: true,
-      requiresPermission: {
-        id: route => route.params.id,
-      },
     },
     props: route => ({ id: route.params.id }),
   },
