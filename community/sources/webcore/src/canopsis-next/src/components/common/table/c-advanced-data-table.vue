@@ -62,13 +62,11 @@
       :show-expand="expand"
       :is-disabled-item="isDisabledItem"
       :hide-default-footer="hideActions || advancedPagination || noPagination"
-      :multi-sort="multiSort"
       :table-class="tableClass"
-      :sort-by="disableInitialSort"
       :dense="dense"
-      @update:pagination="updatePagination"
+      @update:options="updatePagination"
     >
-      <template #items="props">
+      <template #item="props">
         <slot
           v-bind="getItemsProps(props)"
           name="items"
@@ -129,7 +127,7 @@
       </template>
       <template
         v-if="hasExpandSlot"
-        #expand="props"
+        #expanded-item="props"
       >
         <div
           class="secondary lighten-2"
@@ -141,13 +139,20 @@
           />
         </div>
       </template>
-      <template #headerCell="props">
+      <template #header="props">
         <slot
-          name="headerCell"
+          name="header"
           v-bind="props"
-        >
-          {{ props.header[headerText] }}
-        </slot>
+        />
+      </template>
+      <template
+        v-for="header in headerScopedSlots"
+        #[header]="props"
+      >
+        <slot
+          :name="header"
+          v-bind="props"
+        />
       </template>
       <template #progress="props">
         <slot
@@ -261,17 +266,9 @@ export default {
       type: Object,
       required: false,
     },
-    multiSort: {
-      type: Boolean,
-      default: false,
-    },
     tableClass: {
       type: String,
       required: false,
-    },
-    disableInitialSort: {
-      type: Boolean,
-      default: false,
     },
     dense: {
       type: Boolean,
@@ -284,6 +281,10 @@ export default {
     };
   },
   computed: {
+    headerScopedSlots() {
+      return Object.keys(this.$scopedSlots ?? {}).filter(name => name.startsWith('header.'));
+    },
+
     selected: {
       get() {
         return this.selectedItems.filter(item => !this.isDisabledItem(item));
