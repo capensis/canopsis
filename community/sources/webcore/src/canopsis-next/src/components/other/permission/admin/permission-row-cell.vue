@@ -1,6 +1,7 @@
 <template>
   <td>
-    <v-checkbox-functional
+    <v-checkbox
+      class="ma-0 pa-0"
       v-for="(checkbox, index) in checkboxes"
       v-bind="checkbox.bind"
       v-on="checkbox.on"
