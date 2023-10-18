@@ -11,7 +11,7 @@ import {
   createMetaAlarmModule,
   createMockedStoreModules,
 } from '@unit/utils/store';
-import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
+import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import {
   ALARM_LIST_ACTIONS_TYPES,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
@@ -66,6 +66,7 @@ describe('actions-panel', () => {
   const timestamp = 1386435600000;
   mockDateNow(timestamp);
   const $modals = mockModals();
+  const $popups = mockPopups();
 
   const { authModule } = createAuthModule();
   const authModuleWithAccess = {
@@ -88,6 +89,8 @@ describe('actions-panel', () => {
     bulkCreateAlarmCommentEvent,
     bulkCreateAlarmCancelEvent,
     bulkCreateAlarmChangestateEvent,
+    addBookmarkToAlarm,
+    removeBookmarkFromAlarm,
   } = createAlarmModule();
   const { manualMetaAlarmModule, removeAlarmsFromManualMetaAlarm } = createManualMetaAlarmModule();
   const { metaAlarmModule, removeAlarmsFromMetaAlarm } = createMetaAlarmModule();
@@ -1245,6 +1248,76 @@ describe('actions-panel', () => {
 
     featureHasSpy.mockClear();
     featureGetSpy.mockClear();
+  });
+
+  it('Add bookmark request was sent after trigger add bookmark', async () => {
+    const widgetData = {
+      _id: Faker.datatype.string(),
+      parameters: {},
+    };
+
+    const wrapper = factory({
+      mocks: {
+        $popups,
+      },
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        alarmModule,
+        manualMetaAlarmModule,
+      ]),
+      propsData: {
+        item: alarm,
+        widget: widgetData,
+        refreshAlarmsList,
+      },
+    });
+
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.addBookmark).trigger('click');
+
+    await flushPromises();
+
+    expect(addBookmarkToAlarm).toBeCalledWith(
+      expect.any(Object),
+      { id: alarm._id },
+      undefined,
+    );
+
+    expect(refreshAlarmsList).toBeCalledTimes(1);
+  });
+
+  it('Remove bookmark request was sent after trigger remove bookmark', async () => {
+    const widgetData = {
+      _id: Faker.datatype.string(),
+      parameters: {},
+    };
+
+    const wrapper = factory({
+      mocks: {
+        $popups,
+      },
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        alarmModule,
+        manualMetaAlarmModule,
+      ]),
+      propsData: {
+        item: { ...alarm, bookmark: true },
+        widget: widgetData,
+        refreshAlarmsList,
+      },
+    });
+
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.removeBookmark).trigger('click');
+
+    await flushPromises();
+
+    expect(removeBookmarkFromAlarm).toBeCalledWith(
+      expect.any(Object),
+      { id: alarm._id },
+      undefined,
+    );
+
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   it('Renders `actions-panel` with manual instruction in running', () => {

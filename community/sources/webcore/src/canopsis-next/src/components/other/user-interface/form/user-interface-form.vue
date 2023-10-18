@@ -52,15 +52,18 @@
     v-layout(row)
       c-timezone-field(v-field="form.timezone", disabled)
     v-layout(row)
-      v-switch(
+      c-enabled-field(
         v-field="form.allow_change_severity_to_info",
-        :label="$t('userInterface.allowChangeSeverityToInfo')",
-        color="primary"
+        :label="$t('userInterface.allowChangeSeverityToInfo')"
       )
-      v-switch(
+      c-enabled-field(
         v-field="form.show_header_on_kiosk_mode",
-        :label="$t('userInterface.showHeaderOnKioskMode')",
-        color="primary"
+        :label="$t('userInterface.showHeaderOnKioskMode')"
+      )
+    v-layout(row)
+      c-enabled-field(
+        v-field="form.required_instruction_approve",
+        :label="$t('userInterface.requiredInstructionApprove')"
       )
     v-layout(row)
       v-flex

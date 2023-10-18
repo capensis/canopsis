@@ -119,10 +119,6 @@ export const CANOPSIS_WEBSITE = 'https://www.capensis.fr/canopsis/';
 
 export const CANOPSIS_FORUM = 'https://community.capensis.org/';
 
-export const TOURS = {
-  alarmsExpandPanel: 'alarmsExpandPanel',
-};
-
 export const QUICK_RANGES = {
   last15Minutes: {
     value: 'last15Minutes',

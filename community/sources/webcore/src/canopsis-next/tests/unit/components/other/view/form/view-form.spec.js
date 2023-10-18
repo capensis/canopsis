@@ -7,9 +7,12 @@ import { randomPeriodicRefresh } from '@unit/utils/duration';
 import ViewForm from '@/components/other/view/form/view-form.vue';
 
 const snapshotStubs = {
+  'view-duplicate-private-field': true,
   'c-name-field': true,
   'c-enabled-field': true,
   'periodic-refresh-field': true,
+  'view-tags-field': true,
+  'view-group-field': true,
 };
 const stubs = {
   ...snapshotStubs,
@@ -20,8 +23,8 @@ const selectTitleField = wrapper => wrapper.find('c-name-field-stub');
 const selectDescriptionField = wrapper => wrapper.find('input.v-text-field');
 const selectEnabledField = wrapper => wrapper.find('c-enabled-field-stub');
 const selectPeriodicRefreshField = wrapper => wrapper.find('periodic-refresh-field-stub');
-const selectTagsField = wrapper => wrapper.find('v-combobox-stub[tags]');
-const selectGroupField = wrapper => wrapper.find('v-combobox-stub[name="group"]');
+const selectTagsField = wrapper => wrapper.find('view-tags-field-stub');
+const selectGroupField = wrapper => wrapper.find('view-group-field-stub');
 
 describe('view-form', () => {
   const factory = generateShallowRenderer(ViewForm, { stubs });
