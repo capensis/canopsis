@@ -95,7 +95,6 @@
       :total-items="alarmsMeta.total_count",
       :pagination.sync="pagination",
       :loading="alarmsPending",
-      :is-tour-enabled="isTourEnabled",
       :hide-children="!query.correlation",
       :columns="widget.parameters.widgetColumns",
       :sticky-header="widget.parameters.sticky_header",
@@ -118,13 +117,12 @@
       @update:columns-settings="updateColumnsSettings",
       @clear:tag="clearTag"
     )
-    alarms-expand-panel-tour(v-if="isTourEnabled", :callbacks="tourCallbacks")
 </template>
 
 <script>
 import { omit, pick, isObject, isEqual } from 'lodash';
 
-import { MODALS, TOURS, USERS_PERMISSIONS } from '@/constants';
+import { MODALS, USERS_PERMISSIONS } from '@/constants';
 
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 import { getAlarmListExportDownloadFileUrl } from '@/helpers/entities/alarm/url';
@@ -152,7 +150,6 @@ import FilterSelector from '@/components/other/filter/partials/filter-selector.v
 import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
 
 import AlarmsListTable from './partials/alarms-list-table.vue';
-import AlarmsExpandPanelTour from './expand-panel/alarms-expand-panel-tour.vue';
 import AlarmsListRemediationInstructionsFilters from './partials/alarms-list-remediation-instructions-filters.vue';
 
 /**
@@ -169,7 +166,6 @@ export default {
     FilterSelector,
     FiltersListBtn,
     AlarmsListTable,
-    AlarmsExpandPanelTour,
     AlarmsListRemediationInstructionsFilters,
   },
   mixins: [
@@ -221,18 +217,6 @@ export default {
     };
   },
   computed: {
-    tourCallbacks() {
-      return {
-        onPreviousStep: this.onTourPreviousStep,
-        onNextStep: this.onTourNextStep,
-      };
-    },
-
-    isTourEnabled() {
-      return this.checkIsTourEnabled(TOURS.alarmsExpandPanel)
-        && !!this.alarms.length;
-    },
-
     activeRange() {
       const { tstart, tstop } = this.query;
 
@@ -358,20 +342,6 @@ export default {
       if (!this.firstAlarmExpanded) {
         this.$set(this.$refs.alarmsTable.expanded, this.alarms[0]._id, true);
       }
-    },
-
-    onTourPreviousStep(currentStep) {
-      if (currentStep !== 1) {
-        this.expandFirstAlarm();
-      }
-
-      return this.$nextTick();
-    },
-
-    onTourNextStep() {
-      this.expandFirstAlarm();
-
-      return this.$nextTick();
     },
 
     removeHistoryFilter() {

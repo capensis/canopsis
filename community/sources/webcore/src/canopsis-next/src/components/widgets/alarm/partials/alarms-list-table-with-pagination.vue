@@ -7,7 +7,6 @@
     :columns="columns",
     :loading="loading",
     :parent-alarm="parentAlarm",
-    :is-tour-enabled="isTourEnabled",
     :hide-children="hideChildren",
     :sticky-header="stickyHeader",
     :refresh-alarms-list="refreshAlarmsList",
@@ -58,10 +57,6 @@ export default {
       default: null,
     },
     loading: {
-      type: Boolean,
-      default: false,
-    },
-    isTourEnabled: {
       type: Boolean,
       default: false,
     },
