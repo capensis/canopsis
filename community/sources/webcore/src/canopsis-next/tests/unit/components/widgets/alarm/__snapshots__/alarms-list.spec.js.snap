@@ -99,7 +99,6 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
     draggableclass="alarms-list-table__draggable-column"
     expandable="true"
     hidechildren="true"
-    istourenabled="true"
     mincolumnwidth="10"
     pagination="[object Object]"
     refreshalarmslist="[Function]"
@@ -109,9 +108,6 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
     selectedtag=""
     totalitems="10"
     widget="[object Object]"
-  />
-  <alarms-expand-panel-tour-stub
-    callbacks="[object Object]"
   />
 </div>
 `;
@@ -202,7 +198,6 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
     draggableclass="alarms-list-table__draggable-column"
     expandable="true"
     hidechildren="true"
-    istourenabled="true"
     mincolumnwidth="10"
     pagination="[object Object]"
     refreshalarmslist="[Function]"
@@ -212,9 +207,6 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
     selectedtag=""
     totalitems="10"
     widget="[object Object]"
-  />
-  <alarms-expand-panel-tour-stub
-    callbacks="[object Object]"
   />
 </div>
 `;
@@ -353,7 +345,6 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
     draggableclass="alarms-list-table__draggable-column"
     expandable="true"
     hidechildren="true"
-    istourenabled="true"
     mincolumnwidth="10"
     pagination="[object Object]"
     refreshalarmslist="[Function]"
@@ -363,9 +354,6 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
     selectedtag=""
     totalitems="10"
     widget="[object Object]"
-  />
-  <alarms-expand-panel-tour-stub
-    callbacks="[object Object]"
   />
 </div>
 `;

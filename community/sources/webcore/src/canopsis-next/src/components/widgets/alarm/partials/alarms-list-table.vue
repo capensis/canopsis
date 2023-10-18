@@ -91,7 +91,6 @@
             :widget="widget",
             :headers="headers",
             :parent-alarm="parentAlarm",
-            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(props.index)",
             :refresh-alarms-list="refreshAlarmsList",
             :selecting="selecting",
             :selected-tag="selectedTag",
@@ -111,7 +110,6 @@
             :widget="widget",
             :search="search",
             :hide-children="hideChildren",
-            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(index)",
             @select:tag="$emit('select:tag', $event)"
           )
     c-table-pagination(
@@ -194,10 +192,6 @@ export default {
     columns: {
       type: Array,
       default: () => [],
-    },
-    isTourEnabled: {
-      type: Boolean,
-      default: false,
     },
     loading: {
       type: Boolean,
@@ -521,10 +515,6 @@ export default {
       if (this.selecting) {
         this.calculateRowsPositions();
       }
-    },
-
-    checkIsTourEnabledForAlarmByIndex(index) {
-      return this.isTourEnabled && index === 0;
     },
 
     updatePaginationHandler(data) {
