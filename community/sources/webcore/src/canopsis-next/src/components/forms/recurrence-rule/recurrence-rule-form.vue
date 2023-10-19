@@ -176,14 +176,15 @@ export default {
     },
 
     updateFrequency(frequency) {
+      if (!frequency) {
+        this.resetForm();
+        return;
+      }
+
       this.form.freq = frequency;
 
       if (!this.isWeeklyFrequency && this.form.byweekday) {
         this.form.byweekday = [];
-      }
-
-      if (!frequency) {
-        this.resetForm();
       }
     },
 
