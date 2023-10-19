@@ -168,11 +168,22 @@ export default {
     this.changeRecurrenceRuleOption();
   },
   methods: {
+    resetForm() {
+      const recurrenceRule = new RRule();
+
+      this.recurrenceRuleObject = recurrenceRule;
+      this.form = recurrenceRuleToFormOptions(recurrenceRule.origOptions);
+    },
+
     updateFrequency(frequency) {
       this.form.freq = frequency;
 
       if (!this.isWeeklyFrequency && this.form.byweekday) {
         this.form.byweekday = [];
+      }
+
+      if (!frequency) {
+        this.resetForm();
       }
     },
 
