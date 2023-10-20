@@ -638,6 +638,21 @@ permission:
     _id: listalarm_userFilter
     name: <Current()._id>
     description: "Rights on listalarm: User filter"
+  permission_listalarm_addBookmark:
+    <<: *permission
+    _id: listalarm_addBookmark
+    name: <Current()._id>
+    description: "Rights on listalarm: Access to 'Add bookmark' action"
+  permission_listalarm_filterByBookmark:
+    <<: *permission
+    _id: listalarm_filterByBookmark
+    name: <Current()._id>
+    description: "Rights on listalarm: Access to 'Filter by bookmark' action"
+  permission_listalarm_removeBookmark:
+    <<: *permission
+    _id: listalarm_removeBookmark
+    name: <Current()._id>
+    description: "Rights on listalarm: Access to 'Remove bookmark' action"
   permission_listalarm_listRemediationInstructionsFilters:
     <<: *permission
     _id: listalarm_listRemediationInstructionsFilters
@@ -1073,21 +1088,6 @@ permission:
     _id: numbers_userFilter
     name: <Current()._id>
     description: Numbers user filter
-  permission_listalarm_addBookmark:
-    <<: *permission
-    _id: listalarm_addBookmark
-    name: <Current()._id>
-    description: "List alarm add bookmark"
-  permission_listalarm_removeBookmark:
-    <<: *permission
-    _id: listalarm_removeBookmark
-    name: <Current()._id>
-    description: "List alarm remove bookmark"
-  permission_listalarm_filterByBookmark:
-    <<: *permission
-    _id: listalarm_filterByBookmark
-    name: <Current()._id>
-    description: "List alarm filter by bookmark"
   permission_models_maintenance:
     <<: *permission
     _id: models_maintenance
@@ -1097,7 +1097,7 @@ permission:
     <<: *permission_crud
     _id: models_profile_color_theme
     name: <Current()._id>
-    description: Color theme
+    description: "List alarm remove bookmark"
 
   # API permissions
   permission_api_alarm_read:
@@ -1660,6 +1660,9 @@ role_template:
       "@permission_listalarm_listFilters": 1
       "@permission_listalarm_editFilter": 1
       "@permission_listalarm_addFilter": 1
+      "@permission_listalarm_addBookmark": 1
+      "@permission_listalarm_filterByBookmark": 1
+      "@permission_listalarm_removeBookmark": 1
       "@permission_listalarm_userFilter": 1
       "@permission_listalarm_listRemediationInstructionsFilters": 1
       "@permission_listalarm_editRemediationInstructionsFilter": 1
@@ -1670,9 +1673,6 @@ role_template:
       "@permission_listalarm_executeInstruction": 1
       "@permission_listalarm_category": 1
       "@permission_listalarm_exportAsCsv": 1
-      "@permission_listalarm_addBookmark": 1
-      "@permission_listalarm_removeBookmark": 1
-      "@permission_listalarm_filterByBookmark": 1
       "@permission_serviceweather_entityAck": 1
       "@permission_serviceweather_entityAssocTicket": 1
       "@permission_serviceweather_entityValidate": 1
