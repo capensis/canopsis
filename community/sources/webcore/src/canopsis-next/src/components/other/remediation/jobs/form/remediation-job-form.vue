@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { TIME_UNITS } from '@/constants';
+import { AVAILABLE_TIME_UNITS } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
 
@@ -83,10 +83,10 @@ export default {
   computed: {
     jobWaitIntervalUnits() {
       return [
-        TIME_UNITS.second,
-        TIME_UNITS.minute,
-        TIME_UNITS.hour,
-        TIME_UNITS.day,
+        AVAILABLE_TIME_UNITS.second,
+        AVAILABLE_TIME_UNITS.minute,
+        AVAILABLE_TIME_UNITS.hour,
+        AVAILABLE_TIME_UNITS.day,
       ];
     },
   },
