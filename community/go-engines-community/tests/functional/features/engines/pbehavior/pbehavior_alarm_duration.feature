@@ -10,6 +10,7 @@ Feature: update alarm on pbehavior
       "event_type": "check",
       "state": 1,
       "output": "test-output-pbehavior-alarm-duration-1",
+      "timestamp": {{ nowAdd "-10s" }},
       "connector": "test-connector-pbehavior-alarm-duration-1",
       "connector_name": "test-connector-name-pbehavior-alarm-duration-1",
       "component": "test-component-pbehavior-alarm-duration-1",
@@ -65,8 +66,10 @@ Feature: update alarm on pbehavior
     When I do GET /api/v4/alarms?search=test-resource-pbehavior-alarm-duration-1
     Then the response code should be 200
     When I save response pbhInactiveDuration={{ ( index .lastResponse.data 0 ).v.pbh_inactive_duration }}
-    When I save response expectedPbhInactiveDuration=2
-    Then "pbhInactiveDuration" >= "expectedPbhInactiveDuration"
+    When I save response minExpectedPbhInactiveDuration=2
+    When I save response maxExpectedPbhInactiveDuration=7
+    Then "pbhInactiveDuration" >= "minExpectedPbhInactiveDuration"
+    Then "pbhInactiveDuration" <= "maxExpectedPbhInactiveDuration"
 
   @concurrent
   Scenario: given active pbehavior should not update alarm pbehavior duration
@@ -77,6 +80,7 @@ Feature: update alarm on pbehavior
       "event_type": "check",
       "state": 1,
       "output": "test-output-pbehavior-alarm-duration-2",
+      "timestamp": {{ nowAdd "-10s" }},
       "connector": "test-connector-pbehavior-alarm-duration-2",
       "connector_name": "test-connector-name-pbehavior-alarm-duration-2",
       "component": "test-component-pbehavior-alarm-duration-2",
@@ -156,6 +160,7 @@ Feature: update alarm on pbehavior
       "event_type": "check",
       "state": 1,
       "output": "test-output-pbehavior-alarm-duration-3",
+      "timestamp": {{ nowAdd "-10s" }},
       "connector": "test-connector-pbehavior-alarm-duration-3",
       "connector_name": "test-connector-name-pbehavior-alarm-duration-3",
       "component": "test-component-pbehavior-alarm-duration-3",
@@ -227,10 +232,14 @@ Feature: update alarm on pbehavior
     Then the response code should be 200
     When I save response pbhInactiveDuration={{ ( index .lastResponse.data 0 ).v.pbh_inactive_duration }}
     When I save response activeDuration={{ ( index .lastResponse.data 0 ).v.active_duration }}
-    When I save response expectedPbhInactiveDuration=2
-    When I save response expectedActiveDuration=2
-    Then "pbhInactiveDuration" >= "expectedPbhInactiveDuration"
-    Then "activeDuration" <= "expectedActiveDuration"
+    When I save response minExpectedPbhInactiveDuration=2
+    When I save response maxExpectedPbhInactiveDuration=5
+    When I save response minExpectedActiveDuration=0
+    When I save response maxExpectedActiveDuration=2
+    Then "pbhInactiveDuration" >= "minExpectedPbhInactiveDuration"
+    Then "pbhInactiveDuration" <= "maxExpectedPbhInactiveDuration"
+    Then "activeDuration" >= "minExpectedActiveDuration"
+    Then "activeDuration" <= "maxExpectedActiveDuration"
 
   @concurrent
   Scenario: given entity with pbehavior info and new alarm should update alarm pbehavior duration on resolve
@@ -241,6 +250,7 @@ Feature: update alarm on pbehavior
       "event_type": "check",
       "state": 0,
       "output": "test-output-pbehavior-alarm-duration-4",
+      "timestamp": {{ nowAdd "-15s" }},
       "connector": "test-connector-pbehavior-alarm-duration-4",
       "connector_name": "test-connector-name-pbehavior-alarm-duration-4",
       "component": "test-component-pbehavior-alarm-duration-4",
@@ -290,6 +300,7 @@ Feature: update alarm on pbehavior
       "event_type": "check",
       "state": 1,
       "output": "test-output-pbehavior-alarm-duration-4",
+      "timestamp": {{ nowAdd "-10s" }},
       "connector": "test-connector-pbehavior-alarm-duration-4",
       "connector_name": "test-connector-name-pbehavior-alarm-duration-4",
       "component": "test-component-pbehavior-alarm-duration-4",
@@ -339,8 +350,10 @@ Feature: update alarm on pbehavior
     }
     """
     When I save response pbhInactiveDuration={{ ( index .lastResponse.data 0 ).v.pbh_inactive_duration }}
-    When I save response expectedPbhInactiveDuration=2
-    Then "pbhInactiveDuration" >= "expectedPbhInactiveDuration"
+    When I save response minExpectedPbhInactiveDuration=2
+    When I save response maxExpectedPbhInactiveDuration=5
+    Then "pbhInactiveDuration" >= "minExpectedPbhInactiveDuration"
+    Then "pbhInactiveDuration" <= "maxExpectedPbhInactiveDuration"
 
   @concurrent
   Scenario: given entity with pbehavior info and new alarm should update alarm pbehavior duration on pbhleave
@@ -351,6 +364,7 @@ Feature: update alarm on pbehavior
       "event_type": "check",
       "state": 0,
       "output": "test-output-pbehavior-alarm-duration-5",
+      "timestamp": {{ nowAdd "-15s" }},
       "connector": "test-connector-pbehavior-alarm-duration-5",
       "connector_name": "test-connector-name-pbehavior-alarm-duration-5",
       "component": "test-component-pbehavior-alarm-duration-5",
@@ -400,6 +414,7 @@ Feature: update alarm on pbehavior
       "event_type": "check",
       "state": 1,
       "output": "test-output-pbehavior-alarm-duration-5",
+      "timestamp": {{ nowAdd "-10s" }},
       "connector": "test-connector-pbehavior-alarm-duration-5",
       "connector_name": "test-connector-name-pbehavior-alarm-duration-5",
       "component": "test-component-pbehavior-alarm-duration-5",
@@ -447,7 +462,11 @@ Feature: update alarm on pbehavior
     Then the response code should be 200
     When I save response pbhInactiveDuration={{ ( index .lastResponse.data 0 ).v.pbh_inactive_duration }}
     When I save response activeDuration={{ ( index .lastResponse.data 0 ).v.active_duration }}
-    When I save response expectedPbhInactiveDuration=1
-    When I save response expectedActiveDuration=2
-    Then "pbhInactiveDuration" >= "expectedPbhInactiveDuration"
-    Then "activeDuration" >= "expectedActiveDuration"
+    When I save response minExpectedPbhInactiveDuration=1
+    When I save response maxExpectedPbhInactiveDuration=4
+    When I save response minExpectedActiveDuration=2
+    When I save response maxExpectedActiveDuration=5
+    Then "pbhInactiveDuration" >= "minExpectedPbhInactiveDuration"
+    Then "pbhInactiveDuration" <= "maxExpectedPbhInactiveDuration"
+    Then "activeDuration" >= "minExpectedActiveDuration"
+    Then "activeDuration" <= "maxExpectedActiveDuration"
