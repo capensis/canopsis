@@ -15,11 +15,9 @@
     l'architecture technique et de la configuration à réaliser pour exécuter des
     jobs dans les ordonnanceurs supportés.
 
+[TOC]
 
 ### Introduction
-
-!!! Note
-    Disponible à partir de Canopsis 4.0.0
 
 Cette documentation vous permet de mettre en œuvre une remédiation de bout en bout.
 
@@ -103,8 +101,8 @@ Puis, ajouter l'**Étape 2**
 ![Ajout consigne details3](./img/consignes_creer_05.png)
 
 !!! Note
-    Veuillez noter que les templates des opérations peuvent utiliser des
-    [variables de payload][templates-payload].
+    Veuillez noter que les textes associés aux opérations peuvent utiliser des
+    [variables][templates-payload] au travers de template.
 
     Ainsi vous disposez principalement des variables `.Alarm` et `.Entity`.
 
@@ -114,51 +112,58 @@ Une fois créée, votre consigne sera affichée dans la liste des consignes.
 
 [templates-payload]: ../../templates-go/
 
+
+| Type de consigne | Description |
+| ---------------- | ----------- |
+| Manuel           | L'exécution de la remédiation est à l'initiative du pilote à partir d'un bac à alarmes. Le système lui présente toutes les opérations à effectuer. Ces opérations peuvent inclure des [jobs](#taches) |
+| Automatique      | L'exécution de la remédiation est déclenchée par un [trigger](#declenchement-dune-consigne-et-activation-dune-alarme). Le pilote ne peut que constater le résultat de la remédiation |
+| Manuel simplifié | L'exécution de la remédiation est à l'initiative du pilote à partir d'un bac à alarmes. Ces remédiations sont uniquement une succession de jobs, sans opération manuelle à exécuter |
+
 ### Déclenchement d'une consigne et activation d'une alarme
 
 L'option [ActivateAlarmAfterAutoRemediation](../../../guide-administration/administration-avancee/modification-canopsis-toml/#section-canopsisalarm) permet de décaler l'activation de l'alarme une fois la remédiation automatique terminée.
 
 ??? note "Schémas de fonctionnement"
 
-    === "Option ActivateAlarmAfterAutoRemediation désactivée"
+    **"Option ActivateAlarmAfterAutoRemediation désactivée"**
+    
+    ```mermaid
+    flowchart TD
+        A[Création d'une alarme] --> B[snooze]
+        A --> C[Début de comportement périodique]
+        D --> G[unsnooze]
+        D --> H[Fin de comportement périodique]
+        A --> I[Remédiation automatique au moment de la création]
+        B --> D[Ne pas activer l'alarme]
+        C --> D
+        G --> F{L'alarme est-elle snoozée ??\nOU\nen comportement périodique?\n}
+        F -->|Oui| D
+        F -->|Non| E[Activer l'alarme]
+        H --> F
+        I --> E
+    ```
 
-        ```mermaid
-        flowchart TD
-            A[Création d'une alarme] --> B[snooze]
-            A --> C[Début de comportement périodique]
-            D --> G[unsnooze]
-            D --> H[Fin de comportement périodique]
-            A --> I[Remédiation automatique au moment de la création]
-            B --> D[Ne pas activer l'alarme]
-            C --> D
-            G --> F{L'alarme est-elle snoozée ??\nOU\nen comportement périodique?\n}
-            F -->|Oui| D
-            F -->|Non| E[Activer l'alarme]
-            H --> F
-            I --> E
-        ```
+    **"Option ActivateAlarmAfterAutoRemediation activée"**
+    
+    ```mermaid
+    flowchart TD
+        A[Création d'une alarme] --> B[snooze]
+        A --> C[Début de comportement périodique]
+        D --> G[unsnooze]
+        D --> H[Fin de comportement périodique]
+        D --> J[Remédiation automatique au moment\nde la création terminée]
+        A --> I[Remédiation automatique au moment de la créatio]
+        B --> D[Ne pas activer l'alarme]
+        C --> D
+        G --> F{L'alarme est-elle snoozée ?\nOU\nen comportement périodique ?\nOU\nRemediation automatique au moment\nde la création en cours}
+        F -->|Oui| D
+        F -->|Non| E[Activer l'alarme]
+        H --> F
+        I --> D
+        J --> F
+    ```
 
-    === "Option ActivateAlarmAfterAutoRemediation activée"
-
-        ```mermaid
-        flowchart TD
-            A[Création d'une alarme] --> B[snooze]
-            A --> C[Début de comportement périodique]
-            D --> G[unsnooze]
-            D --> H[Fin de comportement périodique]
-            D --> J[Remédiation automatique au moment\nde la création terminée]
-            A --> I[Remédiation automatique au moment de la créatio]
-            B --> D[Ne pas activer l'alarme]
-            C --> D
-            G --> F{L'alarme est-elle snoozée ?\nOU\nen comportement périodique ?\nOU\nRemediation automatique au moment\nde la création en cours}
-            F -->|Oui| D
-            F -->|Non| E[Activer l'alarme]
-            H --> F
-            I --> D
-            J --> F
-        ```
-
-Par ailleurs, les remédiations automatiques peuvent à présent être déclenchées sur
+Par ailleurs, les remédiations automatiques peuvent à présent [être déclenchées](../../../guide-administration/architecture-interne/triggers/#triggers-go) sur
 
 * Création d'une alarme
 * Activation d'une alarme
@@ -210,13 +215,13 @@ En cliquant sur le « + » en bas à droite, vous accéderez au formulaire sui
 Explications sur les champs demandés :
 
 * Nom : nom de la configuration qui sera utilisée dans la définition du job
-* Type : `Rundeck` ou `Awx` fonction de votre ordonnanceur
+* Type : `Rundeck`, `Awx`, `Jenkins`, ou encore `Visual Tom` fonction de votre ordonnanceur
 * Hôte : adresse HTTP de votre ordonnanceur
 * Jeton d'autorisation : jeton lié à votre utilisateur déclaré dans
 l'ordonnanceur
 
 !!! Note
-    La configuration de cette liaison entre Canopsis et Rundeck ou AWX est
+    La configuration de cette liaison entre Canopsis et l'ordonnanceur est
     expliquée plus en détails dans le
     [guide d'administration de la remédiation][admin-remed].
 
@@ -241,7 +246,7 @@ Explications sur les champs demandés :
 l'exécution du job
 
 !!! Note
-    L'association de job Rundeck ou AWX est illustrée dans le
+    L'association de job est illustrée dans le
     [guide d'administration de la remédiation][admin-remed].
 
 #### Payload
@@ -254,7 +259,7 @@ exécution et ainsi passer des paramètres utiles à l'ordonnanceur de tâches.
 1. `.Alarm`
 2. `.Entity`
 
-L'utilisation des payloads dans Rundeck et AWX est développée dans le
+L'utilisation des payloads dans les ordonnanceurs est développée dans le
 [guide d'administration de la remédiation][admin-remed-payloads].
 
 
