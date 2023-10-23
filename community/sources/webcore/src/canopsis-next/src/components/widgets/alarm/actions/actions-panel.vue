@@ -206,7 +206,7 @@ export default {
         assigned_declare_ticket_rules: assignedDeclareTicketRules = [],
       } = this.item;
 
-      if (!this.item.v?.tickets?.length || this.widget.parameters.isMultiDeclareTicketEnabled) {
+      if (!this.item.v?.ticket || this.widget.parameters.isMultiDeclareTicketEnabled) {
         actions.unshift({
           type: ALARM_LIST_ACTIONS_TYPES.associateTicket,
           icon: getEntityEventIcon(EVENT_ENTITY_TYPES.assocTicket),
