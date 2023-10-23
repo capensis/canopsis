@@ -36,8 +36,8 @@ Feature: Get alarms
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceId }}",
         "source_type": "service"
       },
@@ -308,8 +308,8 @@ Feature: Get alarms
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceId }}",
         "source_type": "service"
       },
@@ -438,8 +438,8 @@ Feature: Get alarms
     """json
     {
       "event_type": "entityupdated",
-      "connector": "test-connector-to-alarm-service-get-2",
-      "connector_name": "test-connector-name-to-alarm-service-get-2",
+      "connector": "api",
+      "connector_name": "api",
       "component": "test-component-to-alarm-service-get-2-1",
       "resource": "test-resource-to-alarm-service-get-2-3",
       "source_type": "resource"
@@ -460,8 +460,8 @@ Feature: Get alarms
     [
       {
         "event_type": "entityupdated",
-        "connector": "test-connector-to-alarm-service-get-2",
-        "connector_name": "test-connector-name-to-alarm-service-get-2",
+        "connector": "api",
+        "connector_name": "api",
         "component": "test-component-to-alarm-service-get-2-2",
         "resource": "test-resource-to-alarm-service-get-2-4",
         "source_type": "resource"
@@ -563,8 +563,8 @@ Feature: Get alarms
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceId }}",
         "source_type": "service"
       },
