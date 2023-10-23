@@ -1,0 +1,5 @@
+.v-tabs-items {
+  &.theme--light, &.theme--dark {
+    background-color: unset;
+  }
+}

@@ -6,58 +6,67 @@
           <v-tabs
             v-model="activeTab"
             slider-color="primary"
-            fixed-tabs
+            transition="slide-y"
+            vertical
           >
             <v-tab :href="`#${$constants.PARAMETERS_TABS.parameters}`">
               {{ $t('parameters.tabs.parameters') }}
             </v-tab>
-            <v-tab-item :value="$constants.PARAMETERS_TABS.parameters">
-              <v-card-text>
-                <user-interface :disabled="!hasUpdateParametersAccess" />
-              </v-card-text>
-            </v-tab-item>
             <v-tab :href="`#${$constants.PARAMETERS_TABS.viewExportImport}`">
               {{ $t('parameters.tabs.importExportViews') }}
             </v-tab>
-            <v-tab-item :value="$constants.PARAMETERS_TABS.viewExportImport">
-              <views-import-export />
-            </v-tab-item>
             <v-tab :href="`#${$constants.PARAMETERS_TABS.stateSettings}`">
               {{ $t('parameters.tabs.stateSettings') }}
             </v-tab>
-            <v-tab-item :value="$constants.PARAMETERS_TABS.stateSettings">
-              <v-card-text>
-                <state-settings />
-              </v-card-text>
-            </v-tab-item>
             <template v-if="isProVersion">
               <v-tab :href="`#${$constants.PARAMETERS_TABS.notificationSettings}`">
                 {{ $t('parameters.tabs.notificationsSettings') }}
               </v-tab>
-              <v-tab-item :value="$constants.PARAMETERS_TABS.notificationSettings">
-                <v-card-text>
-                  <notifications-settings />
-                </v-card-text>
-              </v-tab-item>
               <v-tab :href="`#${$constants.PARAMETERS_TABS.storageSettings}`">
                 {{ $t('parameters.tabs.storageSettings') }}
               </v-tab>
-              <v-tab-item :value="$constants.PARAMETERS_TABS.storageSettings">
+            </template>
+            <v-tab
+              v-if="hasReadAnyWidgetTemplateAccess"
+              :href="`#${$constants.PARAMETERS_TABS.widgetTemplates}`"
+            >
+              {{ $t('parameters.tabs.widgetTemplates') }}
+            </v-tab>
+            <v-tabs-items v-model="activeTab">
+              <v-tab-item :value="$constants.PARAMETERS_TABS.parameters">
                 <v-card-text>
-                  <storage-settings />
+                  <user-interface :disabled="!hasUpdateParametersAccess" />
                 </v-card-text>
               </v-tab-item>
-            </template>
-            <template v-if="hasReadAnyWidgetTemplateAccess">
-              <v-tab :href="`#${$constants.PARAMETERS_TABS.widgetTemplates}`">
-                {{ $t('parameters.tabs.widgetTemplates') }}
-              </v-tab>
-              <v-tab-item :value="$constants.PARAMETERS_TABS.widgetTemplates">
+              <v-tab-item :value="$constants.PARAMETERS_TABS.viewExportImport">
+                <views-import-export />
+              </v-tab-item>
+              <v-tab-item :value="$constants.PARAMETERS_TABS.stateSettings">
+                <v-card-text>
+                  <state-settings />
+                </v-card-text>
+              </v-tab-item>
+              <template v-if="isProVersion">
+                <v-tab-item :value="$constants.PARAMETERS_TABS.notificationSettings">
+                  <v-card-text>
+                    <notifications-settings />
+                  </v-card-text>
+                </v-tab-item>
+                <v-tab-item :value="$constants.PARAMETERS_TABS.storageSettings">
+                  <v-card-text>
+                    <storage-settings />
+                  </v-card-text>
+                </v-tab-item>
+              </template>
+              <v-tab-item
+                v-if="hasReadAnyWidgetTemplateAccess"
+                :value="$constants.PARAMETERS_TABS.widgetTemplates"
+              >
                 <v-card-text>
                   <widget-templates />
                 </v-card-text>
               </v-tab-item>
-            </template>
+            </v-tabs-items>
           </v-tabs>
         </v-card>
       </v-flex>
