@@ -49,7 +49,7 @@
     </v-layout>
     <v-data-table
       v-model="selected"
-      :headers="headersWithExpand"
+      :headers="headers"
       :items="visibleItems"
       :loading="loading"
       :server-items-length="totalItems"
@@ -85,13 +85,13 @@
                   v-bind="getItemsProps(props)"
                   name="item-select"
                 >
-                  <v-checkbox-functional
+                  <v-simple-checkbox
                     v-if="!isDisabledItem(props.item)"
                     v-model="props.selected"
                     primary
                     hide-details
                   />
-                  <v-checkbox-functional
+                  <v-simple-checkbox
                     v-else
                     primary
                     disabled
@@ -105,8 +105,8 @@
                 >
                   <c-expand-btn
                     class="ml-2"
-                    :expanded="props.expanded"
-                    @expand="props.expanded = !props.expanded"
+                    :expanded="props.isExpanded"
+                    @expand="props.expand"
                   />
                 </slot>
               </v-layout>
@@ -298,14 +298,6 @@ export default {
       return this.pagination?.rowsPerPage ? this.items.slice(0, this.pagination?.rowsPerPage) : this.items;
     },
 
-    headersWithExpand() {
-      if (this.expand && !this.selectAll) {
-        return [{ sortable: false, width: 20 }, ...this.headers];
-      }
-
-      return this.headers;
-    },
-
     hasExpandSlot() {
       return this.$slots.expand || this.$scopedSlots.expand;
     },
@@ -361,7 +353,7 @@ export default {
         disabled: this.isDisabledItem(state.item),
         expanded: state.expanded,
         select: value => state.selected = value || !state.selected,
-        expand: value => state.expanded = value || !state.expanded,
+        expand: state.expand,
       };
     },
   },

@@ -14,13 +14,13 @@
       >
         <v-layout class="alarm-list-row__checkbox">
           <template v-if="selectable">
-            <v-checkbox-functional
+            <v-simple-checkbox
               class="ma-0"
               v-if="isAlarmSelectable"
               v-field="selected"
               hide-details
             />
-            <v-checkbox-functional
+            <v-simple-checkbox
               v-else
               disabled
               hide-details
