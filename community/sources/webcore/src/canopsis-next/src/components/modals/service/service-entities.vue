@@ -10,7 +10,7 @@
       <v-tabs
         class="position-relative"
         slider-color="primary"
-        fixed-tabs
+        centered
       >
         <v-tab>{{ $t('common.service') }}</v-tab>
         <v-tab-item>

@@ -51,7 +51,7 @@ export default {
     bottom: 0;
     width: 100%;
     font-size: .6em;
-    height: var(--see-alarms-btn-height);
+    height: var(--see-alarms-btn-height) !important;
     margin: 0;
     background-color: rgba(0, 0, 0, .2);
 

@@ -7,7 +7,7 @@ import ActionsPanel from '@/components/common/actions-panel/actions-panel.vue';
 
 const stubs = {
   'c-action-btn': createButtonStub('c-action-btn'),
-  'v-list-tile': createButtonStub('v-list-tile'),
+  'v-list-item': createButtonStub('v-list-item'),
 };
 
 const snapshotStubs = {
@@ -64,7 +64,7 @@ describe('actions-panel', () => {
 
     await flushPromises();
 
-    const dropdownActionElements = wrapper.findAll('v-menu-stub .v-list-tile');
+    const dropdownActionElements = wrapper.findAll('v-menu-stub .v-list-item');
 
     expect(dropdownActionElements).toHaveLength(actions.length - inlineCount);
 
