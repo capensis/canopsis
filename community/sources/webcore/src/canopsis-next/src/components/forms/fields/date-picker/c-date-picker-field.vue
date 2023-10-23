@@ -7,7 +7,6 @@
     transition="slide-y-transition"
     max-width="290px"
     right
-    lazy
   >
     <template #activator="{ on }">
       <v-text-field

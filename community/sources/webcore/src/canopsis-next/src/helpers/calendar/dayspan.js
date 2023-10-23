@@ -167,5 +167,5 @@ export function getSpanForTimestamps({
  * @return {string}
  */
 export function getMenuClassByCalendarEvent(calendarEvent) {
-  return `ds-calendar-event-menu_${get(calendarEvent, 'event.id', 'placeholder')}`;
+  return `ds-calendar-event-menu_${get(calendarEvent, 'id', 'placeholder')}`;
 }

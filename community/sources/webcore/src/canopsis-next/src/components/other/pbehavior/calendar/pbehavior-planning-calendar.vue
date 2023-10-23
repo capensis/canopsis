@@ -1,69 +1,85 @@
 <template>
-  <ds-calendar-app
-    :calendar="calendar"
-    :config="calendarConfig"
-    :read-only="readOnly"
-    fluid
-    fill-height
-    current-time-for-today
-    remove-events-before-move
-    @change="changeCalendarHandler"
-    @changed="changedEventHandler"
-    @added="applyEventChangesHandler"
-    @moved="changedEventHandler"
-    @resized="changedEventHandler"
-  >
-    <template #calendarAppLoader="">
-      <c-progress-overlay
-        class="calendar-progress"
-        :pending="pending"
-      />
-    </template>
-    <template #eventPopover="props">
-      <ds-calendar-event-popover v-bind="props">
-        <template #default="{ calendarEvent, close, edit }">
+  <div class="fill-height">
+    <c-calendar
+      ref="calendar"
+      :events="events"
+      :config="calendarConfig"
+      :read-only="readOnly"
+      fluid
+      fill-height
+      current-time-for-today
+      remove-events-before-move
+      @changed="changedEventHandler"
+      @added="applyEventChangesHandler"
+      @moved="changedEventHandler"
+      @resized="changedEventHandler"
+      @change="fetchEvents"
+      @click:event="showEventDetails"
+    >
+      <template #loader="">
+        <c-progress-overlay
+          class="calendar-progress"
+          :pending="pending"
+        />
+      </template>
+      <template #eventPopover="props">
+        <ds-calendar-event-popover v-bind="props">
+          <template #default="{ calendarEvent, close, edit }">
+            <pbehavior-create-event
+              :calendar-event="calendarEvent"
+              :entity-pattern="entityPattern"
+              @close="close"
+              @submit="edit"
+              @remove="removePbehavior"
+            />
+          </template>
+        </ds-calendar-event-popover>
+      </template>
+      <template #menu-right="">
+        <pbehavior-planning-calendar-legend :exception-types="exceptionTypes" />
+      </template>
+    </c-calendar>
+
+    <v-menu
+      v-if="selectedOpen"
+      :value="true"
+      :close-on-content-click="false"
+      :activator="selectedElement"
+      ignore-click-outside
+      content-class="pbehavior-calendar-event-popover__wrapper"
+    >
+      <v-card>
+        <v-card-text>
           <pbehavior-create-event
-            :calendar-event="calendarEvent"
+            :event="selectedEvent"
             :entity-pattern="entityPattern"
-            @close="close"
-            @submit="edit"
+            @close="closeEventDetails"
+            @submit="applyEventChangesHandler"
             @remove="removePbehavior"
           />
-        </template>
-      </ds-calendar-event-popover>
-    </template>
-    <template #eventCreatePopover="props">
-      <ds-calendar-event-popover v-bind="props">
-        <template #default="{ calendarEvent, close, add }">
-          <pbehavior-create-event
-            :calendar-event="calendarEvent"
-            :entity-pattern="entityPattern"
-            @close="close"
-            @submit="add"
-            @remove="removePbehavior"
-          />
-        </template>
-      </ds-calendar-event-popover>
-    </template>
-    <template #menuRight="">
-      <pbehavior-planning-calendar-legend :exception-types="exceptionTypes" />
-    </template>
-  </ds-calendar-app>
+        </v-card-text>
+      </v-card>
+    </v-menu>
+  </div>
 </template>
 
 <script>
 import { get, omit, uniqBy } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
-import { Calendar, Op } from 'dayspan';
+import { Op } from 'dayspan';
 
 import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
 import { CSS_COLORS_VARS } from '@/config';
 
 import { uid } from '@/helpers/uid';
 import { getMostReadableTextColor } from '@/helpers/color';
-import { getScheduleForSpan, getSpanForTimestamps } from '@/helpers/calendar/dayspan';
+import { getSpanForTimestamps } from '@/helpers/calendar/dayspan';
 import { pbehaviorToTimespanRequest } from '@/helpers/entities/pbehavior/timespans/form';
-import { convertDateToTimestampByTimezone, convertDateToMoment } from '@/helpers/date/date';
+import {
+  convertDateToTimestampByTimezone,
+  convertDateToDateObjectByTimezone,
+  convertDateToDateObject,
+} from '@/helpers/date/date';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { entitiesPbehaviorTimespansMixin } from '@/mixins/entities/pbehavior/timespans';
@@ -114,17 +130,15 @@ export default {
     },
   },
   data() {
-    const calendar = Calendar.months();
-
-    calendar.set({ listTimes: false });
-
     return {
-      calendar,
-
       pending: false,
       exceptionTypes: [],
       events: [],
       defaultTypes: [],
+
+      selectedElement: null,
+      selectedOpen: false,
+      selectedEvent: null,
     };
   },
   computed: {
@@ -182,12 +196,11 @@ export default {
     pbehaviorsById: {
       immediate: true,
       handler() {
-        this.setCalendarView();
+        this.$nextTick(this.setCalendarView);
       },
     },
   },
   mounted() {
-    this.fetchEvents();
     this.fetchDefaultTypes();
   },
   methods: {
@@ -203,13 +216,31 @@ export default {
 
       if (startTimestamps.length) {
         const startTimestamp = Math.min.apply(null, startTimestamps);
-        const calendarStart = convertDateToMoment(startTimestamp);
-        const { filled: { start } } = this.calendar;
+        const startDate = convertDateToDateObject(startTimestamp);
 
-        if (start.date.isAfter(calendarStart)) {
-          this.calendar.set({ around: calendarStart });
+        if (this.$refs.calendar.focus.getTime() > startDate.getTime()) {
+          this.$refs.calendar.setFocusDate(startDate);
         }
       }
+    },
+
+    showEventDetails({ nativeEvent, event }) {
+      if (this.selectedOpen) {
+        return;
+      }
+
+      this.selectedEvent = event;
+      this.selectedElement = nativeEvent.target;
+
+      this.selectedOpen = true;
+
+      nativeEvent.stopPropagation();
+    },
+
+    closeEventDetails() {
+      this.selectedOpen = false;
+      this.selectedElement = null;
+      this.selectedEvent = null;
     },
 
     /**
@@ -217,10 +248,11 @@ export default {
      *
      * @returns {Promise<void>}
      */
-    async fetchEvents() {
+    async fetchEvents({ start, end }) {
       this.pending = true;
 
-      const promises = this.allPbehaviorsAvailable.map(pbehavior => this.fetchEventsForPbehavior(pbehavior));
+      const promises = this.allPbehaviorsAvailable
+        .map(pbehavior => this.fetchEventsForPbehavior(pbehavior, { start, end }));
 
       await Promise.all(promises);
 
@@ -233,9 +265,9 @@ export default {
      * @param {Object} pbehavior
      * @returns {AxiosPromise<any>}
      */
-    fetchTimespansForPbehavior(pbehavior) {
-      const from = convertDateToTimestampByTimezone(this.calendar.filled.start.date, this.$system.timezone);
-      const to = convertDateToTimestampByTimezone(this.calendar.filled.end.date, this.$system.timezone);
+    fetchTimespansForPbehavior(pbehavior, { start, end }) {
+      const from = convertDateToTimestampByTimezone(start, this.$system.timezone);
+      const to = convertDateToTimestampByTimezone(end, this.$system.timezone);
 
       const timespan = pbehaviorToTimespanRequest({
         pbehavior,
@@ -264,28 +296,29 @@ export default {
          * If there is `type` field in timespan it means that timespan is exception date with a `type`
          */
         const color = pbehavior.color || type.color || pbehavior.type?.color || CSS_COLORS_VARS.secondary;
-        const forecolor = getMostReadableTextColor(color, { level: 'AA', size: 'large' });
+        const iconColor = getMostReadableTextColor(color, { level: 'AA', size: 'large' });
 
-        const daySpan = getSpanForTimestamps({
-          start: timespan.from,
-          end: timespan.to,
-          timezone: this.$system.timezone,
-        });
-        const schedule = getScheduleForSpan(daySpan);
+        const start = convertDateToDateObjectByTimezone(timespan.from, this.$system.timezone);
+        const end = convertDateToDateObjectByTimezone(timespan.to, this.$system.timezone);
 
         return {
           id: `${pbehavior._id}-${index}`,
+          pbehavior,
+          color,
+          iconColor,
+          start,
+          end,
+          icon: type.icon_name,
+          name: pbehavior.name,
           data: {
             ...this.$dayspan.getDefaultEventDetails(),
 
             pbehavior,
             color,
-            forecolor,
             icon: type.icon_name,
             title: pbehavior.name,
             withoutResize: !pbehavior.tstop,
           },
-          schedule,
         };
       });
     },
@@ -296,8 +329,8 @@ export default {
      * @param {Object} pbehavior
      * @returns {Promise<void>}
      */
-    async fetchEventsForPbehavior(pbehavior) {
-      const timespans = await this.fetchTimespansForPbehavior(pbehavior);
+    async fetchEventsForPbehavior(pbehavior, { start, end }) {
+      const timespans = await this.fetchTimespansForPbehavior(pbehavior, { start, end });
 
       const events = this.convertTimespansToEvents({
         pbehavior,
@@ -311,22 +344,6 @@ export default {
         ...this.events.filter(event => get(event.data, 'pbehavior._id') !== pbehavior._id),
         ...events,
       ];
-
-      return this.applyEvents();
-    },
-
-    async applyEvents() {
-      if (this.events) {
-        this.calendar.removeEvents(null, true);
-        await this.calendar.addEventsAsync(this.events);
-      }
-    },
-
-    /**
-     * Calendar change handler
-     */
-    changeCalendarHandler() {
-      this.fetchEvents();
     },
 
     /**
@@ -349,8 +366,6 @@ export default {
       }
 
       this.events = this.events.filter(event => get(event.data, 'pbehavior._id') !== pbehavior._id);
-
-      return this.applyEvents();
     },
 
     /**

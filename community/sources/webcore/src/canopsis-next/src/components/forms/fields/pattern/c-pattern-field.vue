@@ -13,10 +13,10 @@
     dense
     hide-details
   >
-    <template #item="{ item, tile }">
+    <template #item="{ item, attrs, on }">
       <v-list-item
-        v-bind="tile.props"
-        v-on="tile.on"
+        v-bind="attrs"
+        v-on="on"
       >
         <v-list-item-content>{{ item.title }}</v-list-item-content>
         <v-icon

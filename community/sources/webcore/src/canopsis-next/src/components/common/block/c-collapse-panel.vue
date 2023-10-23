@@ -20,7 +20,6 @@
       <v-expansion-panel-content
         :class="panelContentClass"
         :style="panelContentStyle"
-        :lazy="lazy"
       >
         <v-card>
           <v-card-text>
@@ -60,10 +59,6 @@ export default {
     icon: {
       type: String,
       default: '$vuetify.icons.expand',
-    },
-    lazy: {
-      type: Boolean,
-      default: false,
     },
     error: {
       type: Boolean,

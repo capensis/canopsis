@@ -68,7 +68,7 @@
       :dense="dense"
       @update:pagination="updatePagination"
     >
-      <template #items="props">
+      <template #item="props">
         <slot
           v-bind="getItemsProps(props)"
           name="items"

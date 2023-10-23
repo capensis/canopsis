@@ -2,7 +2,7 @@ import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import PointContextmenu from '@/components/other/map/form/fields/point-contextmenu.vue';
 
-const selectListTiles = wrapper => wrapper.findAll('v-list-tile-stub');
+const selectListTiles = wrapper => wrapper.findAll('v-list-item-stub');
 const selectListTileByIndex = (wrapper, index) => selectListTiles(wrapper).at(index);
 
 describe('mermaid-contextmenu', () => {

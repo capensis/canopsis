@@ -31,18 +31,18 @@ function defaultConditionalWithZIndex(e, el) {
   return targetZIndex < contentZIndex;
 }
 
-function checkIsActive(e, binding) {
+function checkIsActive(e, el, binding) {
   const { closeConditional } = binding.args ? binding.args : binding.value;
 
   const defaultCond = get(binding, 'modifiers.zIndex') ? defaultConditionalWithZIndex : defaultConditional;
 
   const isActive = closeConditional || defaultCond;
 
-  return isActive(e);
+  return isActive(e, el);
 }
 
 function checkEvent(e, el, binding) {
-  if (!e || checkIsActive(e, binding) === false) return false;
+  if (!e || checkIsActive(e, el, binding) === false) return false;
 
   const root = attachedRoot(el);
 
@@ -64,8 +64,10 @@ function checkEvent(e, el, binding) {
 
   elements.push(el);
 
-  return !elements.some(element => element.contains(e.target))
-    || (zIndex && !defaultConditionalWithZIndex(e.target, el));
+  const isElementsContainsTarget = elements.some(element => element.contains(e.target));
+  const isClickUnder = zIndex ? !defaultConditionalWithZIndex(e, el) : true;
+
+  return !isElementsContainsTarget && !isClickUnder;
 }
 
 /**
@@ -91,7 +93,7 @@ function directive(e, el, binding) {
 
   if (clickOutside.lastMousedownWasOutside && checkEvent(e, el, binding)) {
     setTimeout(() => {
-      if (checkIsActive(e, binding) && handler) {
+      if (checkIsActive(e, el, binding) && handler) {
         handler(e);
       }
     }, 0);
