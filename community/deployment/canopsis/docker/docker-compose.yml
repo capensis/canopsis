@@ -160,11 +160,11 @@ services:
 
   axe:
     <<: *app_service_base
-    image: ${DOCKER_REPOSITORY}${CPS_EDITION}/engine-axe:${CANOPSIS_IMAGE_TAG}
+    image: ${DOCKER_REPOSITORY}${PRO_BASE_PATH}engine-axe:${CANOPSIS_IMAGE_TAG}
 
   che:
     <<: *app_service_base
-    image: ${DOCKER_REPOSITORY}${CPS_EDITION}/engine-che:${CANOPSIS_IMAGE_TAG}
+    image: ${DOCKER_REPOSITORY}${PRO_BASE_PATH}engine-che:${CANOPSIS_IMAGE_TAG}
 
   fifo:
     <<: *app_service_base
@@ -185,7 +185,7 @@ services:
 
   api:
     <<: *app_service_base
-    image: ${DOCKER_REPOSITORY}${CPS_EDITION}/canopsis-api-${CPS_EDITION}:${CANOPSIS_IMAGE_TAG}
+    image: ${DOCKER_REPOSITORY}${PRO_BASE_PATH}canopsis-api-${CPS_EDITION}:${CANOPSIS_IMAGE_TAG}
     volumes:
       - junitsharedata:/tmp/canopsis/junit
       - uploadfiles:/opt/canopsis/var/lib/upload-files
