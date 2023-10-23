@@ -1,6 +1,6 @@
 # Guide de migration vers Canopsis 23.10.0
 
-Ce guide donne des instructions vous permettant de mettre à jour Canopsis 23.04 (dernière version disponible) vers [la version 23.10.0](../23.10.0.md).
+Ce guide donne les instructions vous permettant de mettre à jour Canopsis 23.04 (dernière version disponible) vers [la version 23.10.0](../23.10.0.md).
 
 ## Prérequis
 
@@ -44,13 +44,76 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
     systemctl stop redis
     ```
 
+## Conversion de MongoDB noeud unique en MongoDB replicaset
+
+Canopsis 23.10 IMPOSE à présent d'utiliser MongoDB en [replicaset](https://www.mongodb.com/docs/manual/replication/).  
+Si votre installation utilise un noeud unique MongoDB, vous devez le migrer vers un replicaset.  
+
+La procédure suivante propose les étapes suivantes : 
+
+1. Réalisation d'un `dump` MongoDB
+1. Suppression du volume accueillant les données MongoDB
+1. Démarrage de MongoDB en mode replicaset
+1. Import du dump précédemment réalisé
+
+=== "Docker Compose"
+
+    Démarrez le conteneur `mongodb` :
+
+    ```sh
+    CPS_EDITION=pro docker compose start mongodb
+    ```
+
+    Réalisez un dump dans le conteneur puis rappatriez-le :
+
+    ```sh
+    CPS_EDITION=pro docker compose exec mongodb mongodump --uri $CPS_MONGO_URL --gzip --archive="/tmp/backup_mongodb_canopsis_23.04.gz"
+    CPS_EDITION=pro docker compose cp mongodb:/tmp/backup_mongodb_canopsis_23.04.gz /tmp
+    CPS_EDITION=pro docker compose stop mongodb
+    ```
+
+    * Supprimez le volume associé au conteneur MongoDB
+
+    **On repère le conteneur qui utilise le volume et on le supprime**
+
+    ```sh
+    docker ps -a|grep mongodb
+    ```
+    
+    **On utilise l'identifiant renvoyé et on exécute la commande de suppression du conteneur**
+
+    ```sh
+    docker rm 208fdd8ce5f3
+    ```
+
+    **Enfin, on identifie le volume et on le supprime**
+
+    ```sh
+    docker volume inspect canopsis-pro_mongodbdata
+    docker volume rm canopsis-pro_mongodbdata
+    ```
+
+
+
+=== "Paquets RHEL 8"
+
+
+
 ### Mise à jour Canopsis
 
 !!! information "Information"
 
-    Canopsis 23.04 est livré avec un nouveau jeu de configurations de référence.
+    Canopsis 23.10 est livré avec un nouveau jeu de configurations de référence.
     Vous devez télécharger ces configurations et y reporter vos personnalisations.  
 
+
+!!! warning "Avertissement"
+
+    Les changements notables les plus importants sont :  
+
+    * Suppression du moteur `engine-service`. Les calculs effectués par ce moteur sont à présent répartis entre `engine-che` et `engine-axe`.
+    * Suppression du paramètre `EnableLastEventDate` du fichier canopsis.toml. Ce paramètre est désormais appliqué quoi qu'il arrive.
+    * Les paramètres `launch_job_retries_*` et  `wait_job_complete_retries_*` de la section [Remédiation](../../../guide-administration/administration-avancee/modification-canopsis-toml/#section-remediation) n'existent plus.
 
 === "Docker Compose"
 
@@ -66,7 +129,7 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
 
     Si vous êtes utilisateur de l'édition `pro`, voici les étapes à suivre.
 
-    Télécharger le paquet de la version 23.10.0 (canopsis-pro-docker-compose-23.10.0.tar.gz) disponible à cette adresse [https://git.canopsis.net/sources/canopsis-pro-sources/-/releases](https://git.canopsis.net/sources/canopsis-pro-sources/-/releases).
+    Télécharger le paquet de la version 23.10.0 (canopsis-pro-docker-compose-23.10.0.tar.gz) disponible à cette adresse [https://git.canopsis.net/canopsis/canopsis-pro/-/releases](https://git.canopsis.net/canopsis/canopsis-pro/-/releases).
 
     ```sh
     export CPS_EDITION=pro
@@ -80,16 +143,44 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
 
     À venir
 
+### Lancement de MongoDB en mode Replicaset
+
+=== "Docker Compose"
+
+    Démarrez les conteneurs `mongodb-rs-init` et `mongodb` :
+
+    ```sh
+    CPS_EDITION=pro docker compose up -d mongodb-rs-init
+    ```
+   
+    À ce stade, MongoDB est démarré en Replicaset. Il reste à importer le dump réalisé précédemment :
+
+    ```sh
+    CPS_EDITION=pro docker compose cp /tmp/backup_mongodb_canopsis_23.04.gz mongodb:/tmp
+    CPS_EDITION=pro docker compose exec mongodb mongorestore --uri $CPS_MONGO_URL --drop --gzip --db canopsis --archive=/tmp/backup_mongodb_canopsis_23.04.gz
+    ```
+
+=== "Paquets RHEL 8"
+
+
 ### Mise à jour de RabbitMQ
 
 Dans cette version de Canopsis, le bus rabbitMQ passe à la version 3.12.x.  
 
+Par ailleurs, Les exchanges suivants doivent être supprimés car ils ne sont plus utilisés par Canopsis :
+
+* canopsis.incidents
+* canopsis.alerts
+* canopsis
+
+Vous pouvez effectuer cette opération en utilisant l'interface graphique de management de RabbitMQ.
+
+
 === "Docker Compose"
 
-    Passage en version 3.12 puis lancement du conteneur `rabbitmq` :
+    Il suffit de démarrer le conteneur
 
     ```sh
-    sed -i "s/RABBITMQ_TAG=.*-management$/RABBITMQ_TAG=3.12-management/g" .env
     CPS_EDITION=pro docker compose up -d rabbitmq
     ```
 
@@ -103,6 +194,8 @@ Dans cette version de Canopsis, le bus rabbitMQ passe à la version 3.12.x.
     ```
 
 ### Remise à 0 du cache Redis
+
+TODO : A REVOIR CAR PROBLEME D'AUTH
 
 Dans cette version de Canopsis, le cache de Canopsis doit repartir à 0.
 
@@ -243,37 +336,5 @@ Enfin, il vous reste à mettre à jour et à démarrer tous les composants appli
 
 Par ailleurs, le mécanisme de bilan de santé intégré à Canopsis ne doit pas présenter d'erreur.  
 
-![Healthcheck](./img/23.04.0-healthcheck.png)
+![Healthcheck](./img/23.10.0-healthcheck.png)
 
-
-
-
-
-
-# A documenter
-
-## Supprimer les exchanges inutiles
-
-Les exchanges suivants doivent être supprimés car ils ne sont plus utilisés par Canopsis :
-
-* canopsis.incidents
-* canopsis.alerts
-* canopsis
-
-https://git.canopsis.net/canopsis/canopsis-pro/-/issues/4992
-
-
-## Supression du moteur service
-
-## Mongo passe en replicaset
-
-https://git.canopsis.net/canopsis/canopsis-pro/-/issues/5042
-
-Ne pas utiliser l'URI avec le replciaset
-
-## Suppression du paramètre EnableLastEventDate
-
-https://git.canopsis.net/canopsis/canopsis-pro/-/issues/5027
-
-## Paramètres remédiation
-https://git.canopsis.net/canopsis/canopsis-pro/-/merge_requests/2961/
