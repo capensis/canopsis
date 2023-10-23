@@ -33,8 +33,8 @@ Feature: update service weather on event
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceId }}",
         "source_type": "service"
       },
@@ -190,8 +190,8 @@ Feature: update service weather on event
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceId }}",
         "source_type": "service"
       },
@@ -405,8 +405,8 @@ Feature: update service weather on event
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceId }}",
         "source_type": "service"
       },
@@ -560,8 +560,8 @@ Feature: update service weather on event
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceId }}",
         "source_type": "service"
       },
@@ -804,8 +804,8 @@ Feature: update service weather on event
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceId }}",
         "source_type": "service"
       },
@@ -980,8 +980,8 @@ Feature: update service weather on event
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceId1 }}",
         "source_type": "service"
       },
@@ -994,8 +994,8 @@ Feature: update service weather on event
       },
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceId2 }}",
         "source_type": "service"
       },

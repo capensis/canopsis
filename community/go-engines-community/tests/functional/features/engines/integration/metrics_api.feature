@@ -144,8 +144,6 @@ Feature: Entities and users should be synchronized in metrics db
     """json
     {
       "event_type": "entityupdated",
-      "connector": "test-connector-metrics-api-1",
-      "connector_name": "test-connector-name-metrics-api-1",
       "component": "test-component-metrics-api-1",
       "resource": "test-resource-metrics-api-1",
       "source_type": "resource"
@@ -429,8 +427,6 @@ Feature: Entities and users should be synchronized in metrics db
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -571,8 +567,6 @@ Feature: Entities and users should be synchronized in metrics db
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -669,8 +663,6 @@ Feature: Entities and users should be synchronized in metrics db
     """json
     {
       "event_type": "entityupdated",
-      "connector": "service",
-      "connector_name": "service",
       "component": "{{ .serviceID }}"
     }
     """
@@ -781,8 +773,6 @@ Feature: Entities and users should be synchronized in metrics db
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -859,8 +849,6 @@ Feature: Entities and users should be synchronized in metrics db
     """json
     {
       "event_type": "recomputeentityservice",
-      "connector": "service",
-      "connector_name": "service",
       "component": "{{ .serviceID }}",
       "source_type": "service"
     }
