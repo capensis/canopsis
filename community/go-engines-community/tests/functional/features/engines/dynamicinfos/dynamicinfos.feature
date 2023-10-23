@@ -542,7 +542,7 @@ Feature: add infos to alarm
       "infos": [
         {
           "name": "test-dynamicinfos-infos-7-name",
-          "value": "Alarm field: {{ `{{ .Alarm.Value.Connector }}` }}; Entity field: {{ `{{ .Entity.ID }}` }}; Event field: {{ `{{ .Event.ExtraInfos.customer }}` }}"
+          "value": "Alarm field: {{ `{{ .Alarm.Value.Connector }}` }}; Entity field: {{ `{{ .Entity.ID }}` }}; Event field: {{ `{{ index .Event.ExtraInfos \"customer\" }}` }}"
         }
       ],
       "enabled": true
@@ -584,7 +584,7 @@ Feature: add infos to alarm
       "infos": [
         {
           "name": "test-dynamicinfos-infos-7-name",
-          "value": "Alarm field: {{ `{{ .Alarm.Value.Connector }}` }}; Entity field: {{ `{{ .Entity.ID }}` }}; Event field: {{ `{{ .Event.ExtraInfos.customer }}` }}"
+          "value": "Alarm field: {{ `{{ .Alarm.Value.Connector }}` }}; Entity field: {{ `{{ .Entity.ID }}` }}; Event field: {{ `{{ index .Event.ExtraInfos \"customer\" }}` }}"
         }
       ],
       "enabled": false
