@@ -33,15 +33,15 @@
         {{ item.value }}
       </c-alarm-action-chip>
     </template>
-    <template #item="{ item, tile, parent }">
+    <template #item="{ item, attrs, on, parent }">
       <v-list-item
         class="c-alarm-tag-field__list-item"
-        v-bind="tile.props"
-        v-on="tile.on"
+        v-bind="attrs"
+        v-on="on"
       >
         <v-list-item-action>
           <v-checkbox
-            :input-value="tile.props.value"
+            :input-value="attrs.value"
             :color="parent.color"
           />
         </v-list-item-action>

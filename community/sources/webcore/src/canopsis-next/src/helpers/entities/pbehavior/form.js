@@ -303,33 +303,33 @@ export const formToPbehavior = (form, timezone = getLocaleTimezone()) => ({
  * @return {PbehaviorForm}
  */
 export const calendarEventToPbehaviorForm = (
-  calendarEvent,
+  event,
   entityPattern,
   timezone = getLocaleTimezone(),
 ) => {
   const {
     start,
     end,
-    schedule,
-    data: { pbehavior, cachedForm = {} },
-  } = calendarEvent;
+    data: { cachedForm = {} },
+    pbehavior,
+  } = event;
 
   const form = {
     ...pbehaviorToForm(pbehavior, entityPattern, timezone),
     ...cachedForm,
   };
 
-  form.tstart = start.date.toDate();
+  form.tstart = start;
 
   if (!pbehavior || pbehavior.tstop) {
-    if (schedule.durationUnit === 'days') {
+    if (event.durationUnit === 'days') {
       if (end.date.diff(start.date, 'hours') <= 24) {
         form.tstop = start.date.clone().endOf('day').toDate();
       } else {
         form.tstop = end.date.clone().subtract(1, 'millisecond').toDate();
       }
     } else {
-      form.tstop = end.date.toDate();
+      form.tstop = end;
     }
   }
 
