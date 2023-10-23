@@ -53,6 +53,15 @@ template:
     author: root,
     created: <NowUnix()>
   }
+  - &job_dummy_succeeded_after_retry {
+    _id: <UUID()>,
+    name: <UniqueName()>,
+    multiple_executions: false,
+    config: test-job-config-to-run-auto-instruction,
+    external_id: test-job-succeeded-after-retry,
+    author: root,
+    created: <NowUnix()>
+  }
 
 job:
   job_to_get_1:
@@ -214,6 +223,26 @@ job:
     _id: test-job-to-run-auto-instruction-9
     name: test-job-to-run-auto-instruction-9-name
     payload: '{"test-job-to-run-auto-instruction-9-key": "test-job-to-run-auto-instruction-9-val"}'
+
+  job_to_run_auto_instruction_10:
+    <<: *job_dummy_succeeded_after_retry
+    _id: test-job-to-run-auto-instruction-10
+    name: test-job-to-run-auto-instruction-10-name
+    job_wait_interval:
+      value: 10
+      unit: s
+    payload: '{"test-job-to-run-auto-instruction-10-key": "test-job-to-run-auto-instruction-10-val"}'
+
+  job_to_run_auto_instruction_11:
+    <<: *job
+    _id: test-job-to-run-auto-instruction-11
+    name: test-job-to-run-auto-instruction-11-name
+    config: test-job-config-to-run-auto-instruction-2
+    external_id: test-job-succeeded-after-retry
+    job_wait_interval:
+      value: 15
+      unit: s
+    payload: '{"test-job-to-run-auto-instruction-11-key": "test-job-to-run-auto-instruction-11-val"}'
 
   job_to_metrics_axe:
     <<: *job_dummy_long_succeeded

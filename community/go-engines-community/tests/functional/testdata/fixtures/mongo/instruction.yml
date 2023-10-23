@@ -1067,6 +1067,24 @@ instruction:
       unit: s
       value: 1
 
+  instruction_to_run_auto_instruction_second_4:
+    <<: *instruction_auto
+    name: test-instruction-to-run-auto-instruction-second-4-name
+    description: test-instruction-to-run-auto-instruction-second-4-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-auto-instruction-second-4
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-10
+        stop_on_fail: false
+      - job: test-job-to-run-auto-instruction-11
+    timeout_after_execution:
+      unit: s
+      value: 1
+
   instruction_without_patterns:
     <<: *instruction_auto
     _id: test-instruction-without-patterns
