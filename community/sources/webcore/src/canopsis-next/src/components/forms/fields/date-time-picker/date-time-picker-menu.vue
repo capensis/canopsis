@@ -7,7 +7,6 @@
     max-width="290"
     right
     lazy-with-unmount
-    lazy
   >
     <template #activator="{ on }">
       <v-btn

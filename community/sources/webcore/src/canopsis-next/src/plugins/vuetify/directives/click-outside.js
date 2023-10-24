@@ -65,9 +65,9 @@ function checkEvent(e, el, binding) {
   elements.push(el);
 
   const isElementsContainsTarget = elements.some(element => element.contains(e.target));
-  const isClickUnder = zIndex ? !defaultConditionalWithZIndex(e, el) : true;
+  const isClickUnder = zIndex ? defaultConditionalWithZIndex(e, el) : true;
 
-  return !isElementsContainsTarget && !isClickUnder;
+  return !isElementsContainsTarget && isClickUnder;
 }
 
 /**
@@ -78,12 +78,14 @@ function checkEvent(e, el, binding) {
  * @param el
  * @param binding
  */
-function directive(e, el, binding) {
+function directive(e, el, binding, vnode) {
   // eslint-disable-next-line no-underscore-dangle
   const clickOutside = el._clickOutside;
+  // eslint-disable-next-line no-underscore-dangle
+  const nodeClickOutside = clickOutside[vnode.context._uid];
 
   // eslint-disable-next-line no-underscore-dangle
-  const delayAfterRegistered = Date.now() - clickOutside._outsideRegistredAt;
+  const delayAfterRegistered = Date.now() - nodeClickOutside._outsideRegistredAt;
 
   if (delayAfterRegistered < MIN_CLICK_OUTSIDE_DELAY_AFTER_REGISTERED) {
     return;
@@ -103,7 +105,7 @@ function directive(e, el, binding) {
 /* eslint-disable no-underscore-dangle, no-param-reassign */
 export default {
   inserted(el, binding, vnode) {
-    const onClick = e => directive(e, el, binding);
+    const onClick = e => directive(e, el, binding, vnode);
     const onMousedown = (e) => {
       el._clickOutside.lastMousedownWasOutside = checkEvent(
         e,

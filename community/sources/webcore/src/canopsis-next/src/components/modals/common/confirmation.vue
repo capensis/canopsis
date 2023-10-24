@@ -25,7 +25,8 @@
           {{ $t('common.no') }}
         </v-btn>
         <v-btn
-          class="primary"
+          class="ml-2"
+          color="primary"
           :loading="submitting"
           :disabled="isDisabled"
           @click.prevent="submit"

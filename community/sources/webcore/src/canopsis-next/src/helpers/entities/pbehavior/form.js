@@ -1,6 +1,4 @@
-import Vue from 'vue';
 import { cloneDeep, isObject, omit } from 'lodash';
-import { CalendarEvent, DaySpan, Op, Schedule } from 'dayspan';
 
 import { COLORS } from '@/config';
 import {
@@ -297,7 +295,7 @@ export const formToPbehavior = (form, timezone = getLocaleTimezone()) => ({
 /**
  * Convert calendar event to pbehavior form data
  *
- * @param {CalendarEvent} calendarEvent
+ * @param {Object} event
  * @param {Array} entityPattern
  * @param {string} [timezone = getLocaleTimezone()]
  * @return {PbehaviorForm}
@@ -340,34 +338,16 @@ export const calendarEventToPbehaviorForm = (
  * Convert form to calendar event.
  *
  * @param {PbehaviorForm} form
- * @param {CalendarEvent} calendarEvent
+ * @param {Object} event
  * @param {string} timezone
  * @return {CalendarEvent}
  */
-export const formToCalendarEvent = (form, calendarEvent, timezone) => {
-  const span = new DaySpan(calendarEvent.start, calendarEvent.end);
+export const formToCalendarEvent = (form, event, timezone) => ({
+  ...event,
+  color: form.color,
 
-  const schedule = calendarEvent.fullDay
-    ? Schedule.forDay(span.start, span.days(Op.UP))
-    : Schedule.forSpan(span);
-
-  const details = {
-    ...calendarEvent.data,
-
-    pbehavior: formToPbehavior(form, timezone),
-  };
-
-  const event = Vue.$dayspan.createEvent(details, schedule);
-
-  event.id = calendarEvent.event.id;
-
-  return new CalendarEvent(
-    calendarEvent.id,
-    event,
-    schedule.getSingleEventSpan(),
-    calendarEvent.day,
-  );
-};
+  pbehavior: formToPbehavior(form, timezone),
+});
 
 /**
  * Convert pbehavior to request data.

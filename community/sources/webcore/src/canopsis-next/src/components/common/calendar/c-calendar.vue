@@ -26,15 +26,17 @@
     <v-calendar
       ref="calendar"
       v-bind="$attrs"
+      v-on="calendarListeners"
+      class="c-calendar__calendar"
       :value="focus"
-      :events="events"
+      :events="availableEvents"
       :type="type"
-      @click:event="$emit('click:event', $event)"
-      @input="setCalendarFocus"
-      @change="updateRange"
     >
-      <template #event="{ event }">
-        <v-layout align-center>
+      <template #event="{ event, start, end }">
+        <v-layout
+          class="pl-1"
+          align-center
+        >
           <v-icon
             v-if="event.icon"
             :color="event.iconColor"
@@ -43,7 +45,11 @@
           >
             {{ event.icon }}
           </v-icon>
-          {{ event.name }}
+          <span v-if="start">{{ event.name }}</span>
+          <div
+            v-if="end"
+            :class="['c-calendar__event-drag-bottom', { 'c-calendar__event-drag-bottom--right': isMonthType }]"
+          />
         </v-layout>
       </template>
     </v-calendar>
@@ -51,6 +57,25 @@
     <div class="c-calendar__loader">
       <slot name="loader" />
     </div>
+
+    <v-menu
+      :value="popoverOpen"
+      :close-on-content-click="false"
+      :close-on-click="false"
+      :position-x="positionX"
+      :position-y="positionY"
+      content-class="c-calendar__popover-wrapper"
+    >
+      <v-card v-if="popoverOpen">
+        <v-card-text>
+          <slot
+            name="form-event"
+            :close="closeCreateEventPopover"
+            :event="newEvent || popoverEvent"
+          />
+        </v-card-text>
+      </v-card>
+    </v-menu>
   </v-layout>
 </template>
 
@@ -76,14 +101,68 @@ export default {
     return {
       type: CALENDAR_TYPES.month,
       focus: new Date(),
+      filled: {
+        start: null,
+        stop: null,
+      },
+
+      newEvent: null,
+
+      creating: false,
+
+      popoverOpen: false,
+      popoverEvent: null,
+      positionY: null,
+      positionX: null,
     };
+  },
+  computed: {
+    isMonthType() {
+      return this.type === CALENDAR_TYPES.month;
+    },
+
+    availableEvents() {
+      return this.newEvent
+        ? [...this.events, this.newEvent]
+        : this.events;
+    },
+
+    calendarListeners() {
+      const listeners = {
+        input: this.setCalendarFocus,
+        change: this.updateRange,
+
+        'click:event': this.showEventDetails,
+
+        'mousedown:time': this.startCreateEvent,
+        'mousedown:day': this.startCreateEvent,
+        'mousedown:event': this.startDragEvent,
+
+        'mouseup:event': this.finishDragEvent,
+      };
+
+      if (this.creating) {
+        listeners['mouseup:time'] = this.finishCreateEvent;
+        listeners['mouseup:day'] = this.finishCreateEvent;
+
+        listeners['mousemove:day'] = this.handleMouseMove;
+        listeners['mousemove:time'] = this.handleMouseMove;
+      }
+
+      return listeners;
+    },
+  },
+  mounted() {
+    this.$refs.calendar.checkChange();
   },
   methods: {
     updateRange({ start, end }) {
-      this.$emit('change', {
+      this.filled = {
         start: convertDateToDateObject(start.date),
         end: convertDateToDateObject(end.date),
-      });
+      };
+
+      this.$emit('change');
     },
 
     setFocusDate(date) {
@@ -105,6 +184,84 @@ export default {
     next() {
       this.$refs.calendar.next();
     },
+
+    showCreateEventPopover(event, target) {
+      const { top, left, width } = target.getBoundingClientRect();
+      this.popoverEvent = event;
+
+      this.positionX = left + width / 2;
+      this.positionY = top;
+
+      this.popoverOpen = true;
+    },
+
+    closeCreateEventPopover() {
+      this.popoverOpen = false;
+      this.popoverEvent = null;
+      this.newEvent = null;
+    },
+
+    showEventDetails({ nativeEvent, event }) {
+      if (this.$listeners['click:event']) {
+        this.$emit('click:event');
+        return;
+      }
+
+      this.showCreateEventPopover(event, nativeEvent.target);
+
+      nativeEvent.stopPropagation();
+    },
+
+    getDateByEvent(event) {
+      const date = new Date(event.year, event.month - 1, event.day);
+
+      if (event.time) {
+        date.setHours(event.hour);
+        date.setMinutes(event.minute);
+      }
+
+      return date;
+    },
+
+    handleMouseMove(event) {
+      if (this.creating) {
+        this.newEvent.end = this.getDateByEvent(event);
+      }
+    },
+
+    startCreateEvent(event) {
+      const start = this.getDateByEvent(event);
+      const end = new Date(start.getTime());
+
+      if (event.time) {
+        end.setMinutes(start.getMinutes() + 15);
+      }
+
+      this.newEvent = {
+        name: this.$t('calendar.noTitle'),
+        start,
+        end,
+        timed: !!event.time,
+        data: {},
+      };
+      this.creating = true;
+    },
+
+    finishCreateEvent(event, nativeEvent) {
+      this.newEvent.end = this.getDateByEvent(event);
+
+      this.showCreateEventPopover(this.newEvent, nativeEvent.target);
+
+      this.creating = false;
+    },
+
+    startDragEvent(event, nativeEvent) {
+      nativeEvent.stopPropagation();
+    },
+
+    finishDragEvent(...args) {
+      console.error(...args);
+    },
   },
 };
 </script>
@@ -112,5 +269,50 @@ export default {
 <style lang="scss">
 .c-calendar {
   position: relative;
+
+  &__calendar {
+    .v-calendar-weekly__week {
+      min-height: 140px;
+    }
+  }
+
+  &__event-drag-bottom {
+    position: absolute;
+    cursor: ns-resize;
+    opacity: 0;
+    transition: .3s cubic-bezier(.25, .8, .5,1);
+
+    &:hover {
+      opacity: 1;
+    }
+
+    &:not(&--right) {
+      cursor: ns-resize;
+      left: 0;
+      right: 0;
+      bottom: 4px;
+      height: 4px;
+      border-top: 1px solid white;
+      border-bottom: 1px solid white;
+    }
+
+    &--right {
+      cursor: ew-resize;
+      right: 4px;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      border-left: 1px solid white;
+      border-right: 1px solid white;
+    }
+  }
+
+  &__popover-wrapper {
+    max-height: 95%;
+    max-width: 95% !important;
+    width: 980px !important;
+    top: 50% !important;
+    transform: translate3d(0, -50%, 0);
+  }
 }
 </style>
