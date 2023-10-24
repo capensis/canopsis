@@ -2,12 +2,17 @@
   <v-layout
     :column="column"
   >
-    <c-enabled-field
-      v-model="enabled"
-      :label="label"
-      color="primary"
-      @input="updateColor"
-    />
+    <v-flex
+      :xs12="column"
+      xs6
+    >
+      <c-enabled-field
+        v-model="enabled"
+        :label="label"
+        color="primary"
+        @input="updateColor"
+      />
+    </v-flex>
     <c-color-picker-field
       v-field="color"
       :disabled="!enabled"

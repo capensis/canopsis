@@ -2,19 +2,12 @@
   <div class="fill-height">
     <c-calendar
       ref="calendar"
+      color="primary"
       :events="events"
-      :config="calendarConfig"
-      :read-only="readOnly"
-      fluid
-      fill-height
-      current-time-for-today
-      remove-events-before-move
       @changed="changedEventHandler"
-      @added="applyEventChangesHandler"
       @moved="changedEventHandler"
       @resized="changedEventHandler"
       @change="fetchEvents"
-      @click:event="showEventDetails"
     >
       <template #loader="">
         <c-progress-overlay
@@ -22,44 +15,20 @@
           :pending="pending"
         />
       </template>
-      <template #eventPopover="props">
-        <ds-calendar-event-popover v-bind="props">
-          <template #default="{ calendarEvent, close, edit }">
-            <pbehavior-create-event
-              :calendar-event="calendarEvent"
-              :entity-pattern="entityPattern"
-              @close="close"
-              @submit="edit"
-              @remove="removePbehavior"
-            />
-          </template>
-        </ds-calendar-event-popover>
+
+      <template #form-event="{ event, close }">
+        <pbehavior-create-event
+          :event="event"
+          @close="close"
+          @submit="addEventWithClose($event, close)"
+          @remove="removePbehavior"
+        />
       </template>
+
       <template #menu-right="">
         <pbehavior-planning-calendar-legend :exception-types="exceptionTypes" />
       </template>
     </c-calendar>
-
-    <v-menu
-      v-if="selectedOpen"
-      :value="true"
-      :close-on-content-click="false"
-      :activator="selectedElement"
-      ignore-click-outside
-      content-class="pbehavior-calendar-event-popover__wrapper"
-    >
-      <v-card>
-        <v-card-text>
-          <pbehavior-create-event
-            :event="selectedEvent"
-            :entity-pattern="entityPattern"
-            @close="closeEventDetails"
-            @submit="applyEventChangesHandler"
-            @remove="removePbehavior"
-          />
-        </v-card-text>
-      </v-card>
-    </v-menu>
   </div>
 </template>
 
@@ -135,50 +104,9 @@ export default {
       exceptionTypes: [],
       events: [],
       defaultTypes: [],
-
-      selectedElement: null,
-      selectedOpen: false,
-      selectedEvent: null,
     };
   },
   computed: {
-    calendarConfig() {
-      return {
-        dsCalendarEventTime: {
-          popoverProps: {
-            openOnHover: false,
-            ignoreClickOutside: true,
-            ignoreClickUpperOutside: true,
-            contentClass: 'pbehavior-calendar-event-popover__wrapper',
-          },
-        },
-        dsCalendarEvent: {
-          popoverProps: {
-            openOnHover: false,
-            ignoreClickOutside: true,
-            ignoreClickUpperOutside: true,
-            contentClass: 'pbehavior-calendar-event-popover__wrapper',
-          },
-        },
-        dsCalendarEventPlaceholder: {
-          popoverProps: {
-            openOnHover: false,
-            ignoreClickOutside: true,
-            ignoreClickUpperOutside: true,
-            contentClass: 'pbehavior-calendar-event-popover__wrapper',
-          },
-        },
-        dsCalendarEventTimePlaceholder: {
-          popoverProps: {
-            openOnHover: false,
-            ignoreClickOutside: true,
-            ignoreClickUpperOutside: true,
-            contentClass: 'pbehavior-calendar-event-popover__wrapper',
-          },
-        },
-      };
-    },
-
     allPbehaviorsById() {
       return {
         ...this.pbehaviorsById,
@@ -201,6 +129,7 @@ export default {
     },
   },
   mounted() {
+    this.fetchEvents();
     this.fetchDefaultTypes();
   },
   methods: {
@@ -224,35 +153,16 @@ export default {
       }
     },
 
-    showEventDetails({ nativeEvent, event }) {
-      if (this.selectedOpen) {
-        return;
-      }
-
-      this.selectedEvent = event;
-      this.selectedElement = nativeEvent.target;
-
-      this.selectedOpen = true;
-
-      nativeEvent.stopPropagation();
-    },
-
-    closeEventDetails() {
-      this.selectedOpen = false;
-      this.selectedElement = null;
-      this.selectedEvent = null;
-    },
-
     /**
      * Fetch timespans and convert that into events for every pbehavior from data
      *
      * @returns {Promise<void>}
      */
-    async fetchEvents({ start, end }) {
+    async fetchEvents() {
       this.pending = true;
 
       const promises = this.allPbehaviorsAvailable
-        .map(pbehavior => this.fetchEventsForPbehavior(pbehavior, { start, end }));
+        .map(pbehavior => this.fetchEventsForPbehavior(pbehavior));
 
       await Promise.all(promises);
 
@@ -265,7 +175,9 @@ export default {
      * @param {Object} pbehavior
      * @returns {AxiosPromise<any>}
      */
-    fetchTimespansForPbehavior(pbehavior, { start, end }) {
+    fetchTimespansForPbehavior(pbehavior) {
+      const { start, end } = this.$refs.calendar.filled;
+
       const from = convertDateToTimestampByTimezone(start, this.$system.timezone);
       const to = convertDateToTimestampByTimezone(end, this.$system.timezone);
 
@@ -329,8 +241,8 @@ export default {
      * @param {Object} pbehavior
      * @returns {Promise<void>}
      */
-    async fetchEventsForPbehavior(pbehavior, { start, end }) {
-      const timespans = await this.fetchTimespansForPbehavior(pbehavior, { start, end });
+    async fetchEventsForPbehavior(pbehavior) {
+      const timespans = await this.fetchTimespansForPbehavior(pbehavior);
 
       const events = this.convertTimespansToEvents({
         pbehavior,
@@ -373,18 +285,14 @@ export default {
      *
      * @param {Object} event
      */
-    async applyEventChangesHandler(event) {
-      const { pbehavior, color } = event.calendarEvent.data;
+    async addEventWithClose(event, close) {
+      const { pbehavior } = event;
 
       if (pbehavior) {
-        await this.updatePbehavior(pbehavior, color);
+        await this.updatePbehavior(pbehavior, pbehavior.color);
       }
 
-      if (event.closePopover) {
-        event.closePopover(event);
-      }
-
-      event.clearPlaceholder();
+      close();
     },
 
     /**
@@ -601,13 +509,5 @@ export default {
 
 .calendar-progress .v-progress-circular--indeterminate .v-progress-circular__overlay {
   animation: none;
-}
-
-.pbehavior-calendar-event-popover__wrapper {
-  max-height: 95%;
-  max-width: 95% !important;
-  width: 980px !important;
-  top: 50% !important;
-  transform: translate3d(0, -50%, 0);
 }
 </style>
