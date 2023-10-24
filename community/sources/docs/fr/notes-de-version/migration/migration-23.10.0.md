@@ -15,6 +15,8 @@ Les fichiers de référence qui sont mentionnés dans ce guide sont disponibles 
 | Édition Community | [https://git.canopsis.net/canopsis/canopsis-community/-/releases](https://git.canopsis.net/canopsis/canopsis-community/-/releases)   |
 | Édition pro       | [https://git.canopsis.net/sources/canopsis-pro-sources/-/releases](https://git.canopsis.net/sources/canopsis-pro-sources/-/releases) |
 
+[TOC]
+
 ## Procédure de mise à jour
 
 ### Réalisation d'une sauvegarde
@@ -43,6 +45,24 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
     systemctl stop rabbitmq-server
     systemctl stop redis
     ```
+
+## Environnement SNMP
+
+Depuis la version 22.10, le moteur SNMP n'était plus intégré nativement dans Canopsis. 
+Pour pouvoir continuer à l'utiliser, nous vous avions recommandé [d'utiliser une version ancienne](./migration-23.04.0.md#moteur-snmp-et-linkbuilder).  
+Cela n'est plus nécessaire, le moteur SNMP a été réintégré dans Canopsis 23.10.  
+
+**Suppression de l'environnement obsolète**
+
+```sh
+cd canopsis-pro-sources-release-23.04-pro-mock-external-services-snmp-docker
+cd mock/external-services/snmp/docker
+docker compose down
+```
+
+**Intégration du nouvel environnement**
+
+Le moteur SNMP ainsi que la gestion des règles SNMP sont à présent nativement intégrés à Canopsis. Vous n'avez rien à faire.
 
 ## Conversion de MongoDB noeud unique en MongoDB replicaset
 
@@ -93,13 +113,14 @@ La procédure suivante propose les étapes suivantes :
     docker volume rm canopsis-pro_mongodbdata
     ```
 
-
-
 === "Paquets RHEL 8"
 
 
+Les opérations de démarrage de mongoDB en mode replicaset et d'import nécessitent de récupérer les configurations de références livrées avec Canopsis 23.10.  
+Elles sont décrites dans le chapitre suivant.
 
-### Mise à jour Canopsis
+
+## Mise à jour Canopsis
 
 !!! information "Information"
 
@@ -258,7 +279,7 @@ Si vous avez utilisé un fichier de surcharge, alors vous n'avez rien à faire, 
 
     La commande `canopsis-reconfigure` doit être exécutée après mise à jour de Canopsis dans le cadre d'installation par paquets RPM.
 
-#### Mise à jour et démarrage final de Canopsis
+### Mise à jour et démarrage final de Canopsis
 
 Enfin, il vous reste à mettre à jour et à démarrer tous les composants applicatifs de Canopsis
 
