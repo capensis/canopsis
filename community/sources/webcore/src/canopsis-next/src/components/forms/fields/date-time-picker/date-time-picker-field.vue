@@ -9,7 +9,6 @@
     max-width="290px"
     right
     lazy-with-unmount
-    lazy
   >
     <template #activator="{ on }">
       <div v-on="on">
