@@ -37,7 +37,7 @@ $minimizedDialogMaxWidth: 360px;
   display: none;
 
   &--active {
-    position: absolute;
+    position: fixed;
     display: flex;
     bottom: 0;
     width: 100%;
@@ -47,6 +47,7 @@ $minimizedDialogMaxWidth: 360px;
     justify-content: center;
     align-items: flex-end;
     align-content: flex-start;
+    z-index: 300;
 
     & ::v-deep .v-dialog__content {
       &--minimized {
