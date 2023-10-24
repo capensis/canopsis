@@ -6,7 +6,7 @@ export default {
   statsRequestProblem: 'Erreur dans la récupération des statistiques',
   statsWrongEditionError: "Les widgets de statistiques ne sont pas disponibles dans l'édition 'community' de Canopsis",
   socketConnectionProblem: 'Problème de connexion aux Websockets',
-  socketConnectionRoomNotFound: 'Canal de Websockets introuvable. Veuillez recharger la page ou contacter l\'administrateur',
+  socketConnectionRoomNotFound: 'Canal Websocket introuvable. Veuillez recharger la page ou contacter l\'administrateur',
   socketConnectionRoomForbidden: 'Ce canal Websocket est interdit',
   socketConnectionRoomBadRequest: 'Mauvaise demande d\'adhésion aux Websockets',
   socketConnectionRoomInternalServerError: 'La connexion Websocket est interrompue. Veuillez recharger la page ou contacter l\'administrateur',
