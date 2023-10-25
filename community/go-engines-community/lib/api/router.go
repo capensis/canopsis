@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"net/url"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
@@ -89,6 +90,7 @@ import (
 const BaseUrl = "/api/v4"
 
 func RegisterRoutes(
+	ctx context.Context,
 	conf config.CanopsisConf,
 	router gin.IRouter,
 	security Security,
@@ -122,7 +124,7 @@ func RegisterRoutes(
 ) {
 	sessionStore := security.GetSessionStore()
 	authMiddleware := security.GetAuthMiddleware()
-	security.RegisterCallbackRoutes(router, dbClient)
+	security.RegisterCallbackRoutes(ctx, router, dbClient, sessionStore)
 
 	maintenanceAdapter := config.NewMaintenanceAdapter(dbClient)
 	authApi := auth.NewApi(
@@ -799,9 +801,7 @@ func RegisterRoutes(
 				eventApi.Send)
 		}
 
-		securityConfig := security.GetConfig().Security
-		appInfoApi := appinfo.NewApi(appinfo.NewStore(dbClient, maintenanceAdapter, securityConfig.AuthProviders,
-			securityConfig.Cas.Title, securityConfig.Saml.Title))
+		appInfoApi := appinfo.NewApi(appinfo.NewStore(dbClient, maintenanceAdapter, security.GetConfig()))
 		protected.GET("app-info", appInfoApi.GetAppInfo)
 		appInfoRouter := protected.Group("/internal")
 		{

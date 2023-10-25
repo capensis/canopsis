@@ -2,6 +2,7 @@ package security
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -189,7 +190,13 @@ func (s *tokenService) getIntervals(ctx context.Context, user security.User, pro
 		case security.AuthMethodSaml:
 			expirationIntervalStr = s.config.Security.Saml.ExpirationInterval
 			inactivityIntervalStr = s.config.Security.Saml.InactivityInterval
-
+		case security.AuthMethodOAuth2:
+			if config, ok := s.config.Security.OAuth2.Providers[provider]; ok {
+				expirationIntervalStr = config.ExpirationInterval
+				inactivityIntervalStr = config.InactivityInterval
+			} else {
+				return expirationInterval, inactivityInterval, fmt.Errorf("provider %s is not defined", provider)
+			}
 		}
 
 		if expirationInterval.Value == 0 && expirationIntervalStr != "" {

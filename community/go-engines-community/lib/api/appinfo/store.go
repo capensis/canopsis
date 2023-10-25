@@ -2,6 +2,7 @@ package appinfo
 
 import (
 	"context"
+	"errors"
 	"sort"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
@@ -33,36 +34,43 @@ type store struct {
 	configCollection     mongo.DbCollection
 	colorThemeCollection mongo.DbCollection
 	maintenanceAdapter   config.MaintenanceAdapter
-
-	authProviders       []string
-	casTitle, samlTitle string
+	securityConfig       security.Config
 }
 
 // NewStore instantiates configuration store.
-func NewStore(db mongo.DbClient, maintenanceAdapter config.MaintenanceAdapter, authProviders []string, casTitle, samlTitle string) Store {
+func NewStore(db mongo.DbClient, maintenanceAdapter config.MaintenanceAdapter, securityConfig security.Config) Store {
 	return &store{
 		dbClient:             db,
 		configCollection:     db.Collection(mongo.ConfigurationMongoCollection),
 		colorThemeCollection: db.Collection(mongo.ColorThemeCollection),
 		maintenanceAdapter:   maintenanceAdapter,
-		authProviders:        authProviders,
-		casTitle:             casTitle,
-		samlTitle:            samlTitle,
+		securityConfig:       securityConfig,
 	}
 }
 
 func (s *store) RetrieveLoginConfig() LoginConf {
 	var login = LoginConf{}
-	for _, p := range s.authProviders {
+	for _, p := range s.securityConfig.Security.AuthProviders {
 		switch p {
 		case security.AuthMethodLdap:
 			login.LdapConfig.Enable = true
 		case security.AuthMethodCas:
 			login.CasConfig.Enable = true
-			login.CasConfig.Title = s.casTitle
+			login.CasConfig.Title = s.securityConfig.Security.Cas.Title
 		case security.AuthMethodSaml:
 			login.SamlConfig.Enable = true
-			login.SamlConfig.Title = s.samlTitle
+			login.SamlConfig.Title = s.securityConfig.Security.Saml.Title
+		case security.AuthMethodOAuth2:
+			providersLen := len(s.securityConfig.Security.OAuth2.Providers)
+			if providersLen == 0 {
+				continue
+			}
+
+			login.OAuth2Config.Enable = true
+			login.OAuth2Config.Providers = make([]string, 0, providersLen)
+			for name := range s.securityConfig.Security.OAuth2.Providers {
+				login.OAuth2Config.Providers = append(login.OAuth2Config.Providers, name)
+			}
 		}
 	}
 
@@ -76,7 +84,7 @@ func (s *store) RetrieveUserInterfaceConfig(ctx context.Context) (UserInterfaceC
 
 	var conf UserInterfaceConf
 	err := s.configCollection.FindOne(ctx, filter).Decode(&conf)
-	if err == mongodriver.ErrNoDocuments {
+	if errors.Is(err, mongodriver.ErrNoDocuments) {
 		return conf, nil
 	}
 
@@ -90,7 +98,7 @@ func (s *store) RetrieveVersionConfig(ctx context.Context) (VersionConf, error) 
 
 	var version VersionConf
 	err := s.configCollection.FindOne(ctx, filter).Decode(&version)
-	if err == mongodriver.ErrNoDocuments {
+	if errors.Is(err, mongodriver.ErrNoDocuments) {
 		return version, nil
 	}
 
@@ -105,7 +113,7 @@ func (s *store) RetrieveGlobalConfig(ctx context.Context) (GlobalConf, error) {
 	}
 	err := s.configCollection.FindOne(ctx, bson.M{"_id": config.ConfigKeyName}).Decode(&conf)
 	if err != nil {
-		if err == mongodriver.ErrNoDocuments {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return GlobalConf{}, nil
 		}
 
@@ -124,7 +132,7 @@ func (s *store) RetrieveRemediationConfig(ctx context.Context) (RemediationConf,
 	result := RemediationConf{}
 	err := s.configCollection.FindOne(ctx, bson.M{"_id": config.RemediationKeyName}).Decode(&conf)
 	if err != nil {
-		if err == mongodriver.ErrNoDocuments {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return result, nil
 		}
 

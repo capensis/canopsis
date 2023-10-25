@@ -23,7 +23,6 @@ import (
 	libsession "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
 	"github.com/beevik/etree"
 	"github.com/gin-gonic/gin"
-	"github.com/gorilla/sessions"
 	"github.com/rs/zerolog"
 	saml2 "github.com/russellhaering/gosaml2"
 	samltypes "github.com/russellhaering/gosaml2/types"
@@ -44,7 +43,6 @@ const (
 type ServiceProvider interface {
 	SamlMetadataHandler() gin.HandlerFunc
 	SamlAuthHandler() gin.HandlerFunc
-	SamlSessionAcsHandler() gin.HandlerFunc
 	SamlAcsHandler() gin.HandlerFunc
 	SamlSloHandler() gin.HandlerFunc
 }
@@ -274,82 +272,6 @@ func (sp *serviceProvider) SamlAuthHandler() gin.HandlerFunc {
 
 			c.Data(http.StatusOK, gin.MIMEHTML, b)
 		}
-	}
-}
-
-func (sp *serviceProvider) SamlSessionAcsHandler() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		samlResponse, exists := c.GetPostForm("SAMLResponse")
-		if !exists {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(fmt.Errorf("SAMLResponse doesn't exist")))
-			return
-		}
-
-		relayState, exists := c.GetPostForm("RelayState")
-		if !exists {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(fmt.Errorf("RelayState doesn't exist")))
-			return
-		}
-
-		relayUrl, err := url.Parse(relayState)
-		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(fmt.Errorf("RelayState is not a valid url")))
-			return
-		}
-
-		assertionInfo, err := sp.samlSP.RetrieveAssertionInfo(samlResponse)
-		if err != nil {
-			sp.logger.Err(err).Msg("Assertion is not valid")
-			c.AbortWithStatus(http.StatusForbidden)
-			return
-		}
-
-		if assertionInfo.WarningInfo.InvalidTime {
-			sp.logger.Err(fmt.Errorf("invalid time")).Msg("Assertion is not valid")
-			c.AbortWithStatus(http.StatusForbidden)
-			return
-		}
-
-		if assertionInfo.WarningInfo.NotInAudience {
-			sp.logger.Err(fmt.Errorf("not in audience")).Msg("Assertion is not valid")
-			c.AbortWithStatus(http.StatusForbidden)
-			return
-		}
-
-		user, err := sp.userProvider.FindByExternalSource(c, assertionInfo.NameID, security.SourceSaml)
-		if err != nil {
-			sp.logger.Err(err).Msg("SamlAcsHandler: userProvider FindByExternalSource error")
-			panic(err)
-		}
-
-		if user == nil {
-			var ok bool
-			user, ok = sp.createUser(c, relayUrl, assertionInfo)
-			if !ok {
-				return
-			}
-		}
-
-		session := sp.getSession(c)
-		session.Values["user"] = user.ID
-		session.Values["provider"] = security.AuthMethodSaml
-
-		if assertionInfo.SessionNotOnOrAfter != nil {
-			session.Options.MaxAge = int(time.Until(*assertionInfo.SessionNotOnOrAfter).Seconds())
-		}
-
-		err = session.Save(c.Request, c.Writer)
-		if err != nil {
-			sp.logger.Err(err).Msg("SamlAcsHandler: save session error")
-			panic(err)
-		}
-
-		err = sp.enforcer.LoadPolicy()
-		if err != nil {
-			panic(fmt.Errorf("reload enforcer error: %w", err))
-		}
-
-		c.Redirect(http.StatusPermanentRedirect, relayUrl.String())
 	}
 }
 
@@ -587,15 +509,6 @@ func (sp *serviceProvider) encodeAndCompress(doc io.WriterTo) (_ *bytes.Buffer, 
 	}
 
 	return buffer, nil
-}
-
-func (sp *serviceProvider) getSession(c *gin.Context) *sessions.Session {
-	session, err := sp.sessionStore.Get(c.Request, security.SessionKey)
-	if err != nil {
-		panic(err)
-	}
-
-	return session
 }
 
 func (sp *serviceProvider) createUser(c *gin.Context, relayUrl *url.URL, assertionInfo *saml2.AssertionInfo) (*security.User, bool) {
