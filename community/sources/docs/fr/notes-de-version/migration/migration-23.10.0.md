@@ -62,21 +62,36 @@ docker compose down
 
 **Intégration du nouvel environnement**
 
-Le moteur SNMP ainsi que la gestion des règles SNMP sont à présent nativement intégrés à Canopsis. Vous n'avez rien à faire.
+=== "Docker Compose"
+
+    Le moteur SNMP ainsi que la gestion des règles SNMP sont à présent nativement intégrés à Canopsis. Vous n'avez rien à faire.
+
+=== "Paquets RHEL 8"
+
+    Activation du service :
+
+    ```sh
+    systemctl enable --now canopsis-engine-python-snmp.service
+    ```
 
 ## Conversion de MongoDB noeud unique en MongoDB replicaset
 
 Canopsis 23.10 IMPOSE à présent d'utiliser MongoDB en [replicaset](https://www.mongodb.com/docs/manual/replication/).  
 Si votre installation utilise un noeud unique MongoDB, vous devez le migrer vers un replicaset.  
 
-La procédure suivante propose les étapes suivantes : 
+!!! warning "Avesrtissement"
+    Ce guide de migration vous propose une procédure vous permettant de convertir votre mongoDB standalone en replicaset à UN SEUL NOEUD.  
+    En aucun cas vous ne devez utiliser cela sur votre système de production.
 
-1. Réalisation d'un `dump` MongoDB
-1. Suppression du volume accueillant les données MongoDB
-1. Démarrage de MongoDB en mode replicaset
-1. Import du dump précédemment réalisé
 
 === "Docker Compose"
+
+    Voici les différentes étapes de la procédure
+    
+    1. Réalisation d'un `dump` MongoDB
+    1. Suppression du volume accueillant les données MongoDB
+    1. Démarrage de MongoDB en mode replicaset
+    1. Import du dump précédemment réalisé
 
     Démarrez le conteneur `mongodb` :
 
@@ -113,11 +128,82 @@ La procédure suivante propose les étapes suivantes :
     docker volume rm canopsis-pro_mongodbdata
     ```
 
+    Les opérations de démarrage de mongoDB en mode replicaset et d'import nécessitent de récupérer les configurations de références livrées avec Canopsis 23.10.  
+    Elles sont décrites dans le chapitre suivant.
+
+
 === "Paquets RHEL 8"
 
+    Voici les différentes étapes de la procédure
+    
+    1. Réalisation d'un `dump` MongoDB
+    1. Initialisation de MongoDB en mode replicaset
+    1. Vérifications
 
-Les opérations de démarrage de mongoDB en mode replicaset et d'import nécessitent de récupérer les configurations de références livrées avec Canopsis 23.10.  
-Elles sont décrites dans le chapitre suivant.
+    **Dump MongoDB**
+
+    Démarrez le service `mongodb` :
+
+    ```sh
+    systemctl start mongod
+    ```
+
+    Réalisez un dump :
+
+    ```sh
+    set -o allexport; source /opt/canopsis/etc/go-engines-vars.conf
+    mongodump --uri $CPS_MONGO_URL --gzip --archive="/tmp/backup_mongodb_canopsis_23.04.gz"
+    ```
+
+    **Migration vers un replicaset**
+
+    Création d'une clé :
+
+    ```sh
+    openssl rand -base64 756 > /etc/mongodb-keyfile
+    chmod 400 /etc/mongodb-keyfile
+    chown mongod:root /etc/mongodb-keyfile
+    ```
+
+    Adaptation du fichier de configuration mongoDB :
+
+    ```
+    security:
+      authorization: enabled
+      keyFile: /etc/mongodb-keyfile
+      
+    replication:
+      oplogSizeMB: 1024
+      replSetName: rs0 
+    ```
+
+    Redémarrage du service :
+
+    ```
+    systemctl restart mongod
+    ```
+
+    Initialisation du replicaset :
+
+    ```sh
+    mongo admin -u UTILISATEUR_ADMIN -p
+    > rs.initiate()
+    ```
+
+    **Vérifications**
+
+    Le prompt suivant doit vous indiquer que vous êtes sur le noeud primaire `rs0:PRIMARY` :
+
+    ```sh
+    > rs.status()
+    ```
+
+    Vous devez pouvoir accéder à la base de données Canopsis :
+
+    ```sh
+    > use canopsis
+    > show collections
+    ```
 
 
 ## Mise à jour Canopsis
@@ -162,7 +248,7 @@ Elles sont décrites dans le chapitre suivant.
 
 === "Paquets RHEL 8"
 
-    À venir
+    Non concerné car ces configurations sont livrées directemement dans les paquets RPM.
 
 ### Lancement de MongoDB en mode Replicaset
 
@@ -183,6 +269,7 @@ Elles sont décrites dans le chapitre suivant.
 
 === "Paquets RHEL 8"
 
+    Non concerné car MongoDB a déjà été démarré en replicaset dans le chapitre précédent.
 
 ### Mise à jour de RabbitMQ
 
@@ -210,13 +297,11 @@ Vous pouvez effectuer cette opération en utilisant l'interface graphique de man
     Passage en version 3.12 puis lancement du service `rabbitmq-server` :
 
     ```sh
-    dnf install --repo rabbitmq_erlang --repo rabbitmq_server erlang rabbitmq-server-3.12
+    dnf install --repo rabbitmq_erlang --repo rabbitmq_server erlang rabbitmq-server-3.12.7
     systemctl restart rabbitmq-server
     ```
 
 ### Remise à 0 du cache Redis
-
-TODO : A REVOIR CAR PROBLEME D'AUTH
 
 Dans cette version de Canopsis, le cache de Canopsis doit repartir à 0.
 
@@ -224,7 +309,7 @@ Dans cette version de Canopsis, le cache de Canopsis doit repartir à 0.
 
     ```sh
     CPS_EDITION=pro docker compose up -d redis
-    CPS_EDITION=pro docker compose exec redis /usr/local/bin/redis-cli flushall
+    CPS_EDITION=pro docker compose exec redis /usr/local/bin/redis-cli -a canopsis flushall
     OK
     ```
 
@@ -232,7 +317,7 @@ Dans cette version de Canopsis, le cache de Canopsis doit repartir à 0.
 
     ```sh
     systemctl start redis
-    /bin/redis-cli flushall
+    /bin/redis-cli -a canopsis flushall
     ```
 
 ### Lancement du provisioning `canopsis-reconfigure`
@@ -333,6 +418,7 @@ Enfin, il vous reste à mettre à jour et à démarrer tous les composants appli
     Si vous utilisez un fichier d'override du canopsis.toml, veuillez ajouter à la ligne de commande suivante l'option `-override` suivie du chemin du fichier en question.
 
     ```sh
+    systemctl start postgresql-13
     set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
     /opt/canopsis/bin/canopsis-reconfigure -migrate-postgres=true -migrate-mongo=true -edition pro
     ```
@@ -346,6 +432,7 @@ Enfin, il vous reste à mettre à jour et à démarrer tous les composants appli
     Redémarrage de Canopsis
 
     ```sh
+    systemctl disable canopsis-engine-go@engine-service.service
     systemctl restart canopsis
     ```
 
