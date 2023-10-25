@@ -124,7 +124,7 @@ func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider)
 	}
 }
 
-func (q *MongoQueryBuilder) clear(now types.CpsTime) {
+func (q *MongoQueryBuilder) clear(now types.CpsTime, userID string) {
 	q.searchPipeline = make([]bson.M, 0)
 	q.alarmMatch = make([]bson.M, 0)
 	q.additionalMatch = []bson.M{
@@ -152,12 +152,12 @@ func (q *MongoQueryBuilder) clear(now types.CpsTime) {
 
 	q.computedFieldsForAlarmMatch = make(map[string]bool)
 	q.computedFieldsForSort = make(map[string]bool)
-	q.computedFields = getComputedFields(now)
-	q.excludedFields = []string{"v.steps", "pbehavior.comments", "pbehavior_info_type", "entity.services"}
+	q.computedFields = getComputedFields(now, userID)
+	q.excludedFields = []string{"bookmarks", "v.steps", "pbehavior.comments", "pbehavior_info_type", "entity.services"}
 }
 
-func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r ListRequestWithPagination, now types.CpsTime) ([]bson.M, error) {
-	q.clear(now)
+func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r ListRequestWithPagination, now types.CpsTime, userID string) ([]bson.M, error) {
+	q.clear(now, userID)
 
 	err := q.handleWidgetFilter(ctx, r.FilterRequest)
 	if err != nil {
@@ -167,7 +167,7 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	if err != nil {
 		return nil, err
 	}
-	err = q.handleFilter(ctx, r.FilterRequest)
+	err = q.handleFilter(ctx, r.FilterRequest, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -179,14 +179,14 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	return q.createPaginationAggregationPipeline(r.Query), nil
 }
 
-func (q *MongoQueryBuilder) CreateCountAggregationPipeline(ctx context.Context, r FilterRequest, now types.CpsTime) ([]bson.M, error) {
-	q.clear(now)
+func (q *MongoQueryBuilder) CreateCountAggregationPipeline(ctx context.Context, r FilterRequest, userID string, now types.CpsTime) ([]bson.M, error) {
+	q.clear(now, userID)
 
 	err := q.handleWidgetFilter(ctx, r)
 	if err != nil {
 		return nil, err
 	}
-	err = q.handleFilter(ctx, r)
+	err = q.handleFilter(ctx, r, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -199,9 +199,10 @@ func (q *MongoQueryBuilder) CreateCountAggregationPipeline(ctx context.Context, 
 func (q *MongoQueryBuilder) CreateGetAggregationPipeline(
 	match bson.M,
 	now types.CpsTime,
+	userID string,
 	onlyParents bool,
 ) ([]bson.M, error) {
-	q.clear(now)
+	q.clear(now, userID)
 
 	q.alarmMatch = append(q.alarmMatch,
 		bson.M{"$match": match},
@@ -229,8 +230,9 @@ func (q *MongoQueryBuilder) CreateAggregationPipelineByMatch(
 	sortRequest SortRequest,
 	filterRequest FilterRequest,
 	now types.CpsTime,
+	userID string,
 ) ([]bson.M, error) {
-	q.clear(now)
+	q.clear(now, userID)
 	if len(alarmMatch) > 0 {
 		q.alarmMatch = append(q.alarmMatch, bson.M{"$match": alarmMatch})
 	}
@@ -239,7 +241,7 @@ func (q *MongoQueryBuilder) CreateAggregationPipelineByMatch(
 		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": entityMatch})
 	}
 
-	err := q.handleFilter(ctx, filterRequest)
+	err := q.handleFilter(ctx, filterRequest, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -257,10 +259,11 @@ func (q *MongoQueryBuilder) CreateChildrenAggregationPipeline(
 	opened int,
 	parentId string,
 	search string,
+	userID string,
 	searchBy []string,
 	now types.CpsTime,
 ) ([]bson.M, error) {
-	q.clear(now)
+	q.clear(now, userID)
 
 	match := bson.M{
 		"v.parents": parentId,
@@ -391,14 +394,15 @@ func (q *MongoQueryBuilder) CreateOnlyListAggregationPipeline(
 	ctx context.Context,
 	r ListRequest,
 	now types.CpsTime,
+	userID string,
 ) ([]bson.M, error) {
-	q.clear(now)
+	q.clear(now, userID)
 
 	err := q.handleWidgetFilter(ctx, r.FilterRequest)
 	if err != nil {
 		return nil, err
 	}
-	err = q.handleFilter(ctx, r.FilterRequest)
+	err = q.handleFilter(ctx, r.FilterRequest, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -506,7 +510,7 @@ func (q *MongoQueryBuilder) addFieldsToPipeline(fieldsMap, addedFields map[strin
 	*pipeline = append(*pipeline, bson.M{"$addFields": query})
 }
 
-func (q *MongoQueryBuilder) handleFilter(ctx context.Context, r FilterRequest) error {
+func (q *MongoQueryBuilder) handleFilter(ctx context.Context, r FilterRequest, userID string) error {
 	alarmMatch := make([]bson.M, 0)
 
 	q.addOpenedFilter(r, &alarmMatch)
@@ -514,6 +518,7 @@ func (q *MongoQueryBuilder) handleFilter(ctx context.Context, r FilterRequest) e
 	q.addStartToFilter(r, &alarmMatch)
 	q.addOnlyParentsFilter(r, &alarmMatch)
 	q.addTagFilter(r, &alarmMatch)
+	q.addBookmarkFilter(r, userID, &alarmMatch)
 	searchMarch, withLookups, err := q.addSearchFilter(r)
 	if err != nil {
 		return err
@@ -851,6 +856,14 @@ func (q *MongoQueryBuilder) addTagFilter(r FilterRequest, match *[]bson.M) {
 	}
 
 	*match = append(*match, bson.M{"tags": r.Tag})
+}
+
+func (q *MongoQueryBuilder) addBookmarkFilter(r FilterRequest, userID string, match *[]bson.M) {
+	if !r.OnlyBookmarks {
+		return
+	}
+
+	*match = append(*match, bson.M{"bookmarks": userID})
 }
 
 func (q *MongoQueryBuilder) addOnlyParentsFilter(r FilterRequest, match *[]bson.M) {
@@ -1372,8 +1385,8 @@ func getInstructionExecutionLookup(withType bool) []bson.M {
 	return pipeline
 }
 
-func getComputedFields(now types.CpsTime) bson.M {
-	return bson.M{
+func getComputedFields(now types.CpsTime, userID string) bson.M {
+	computedFields := bson.M{
 		"infos":        "$v.infos",
 		"impact_state": bson.M{"$multiply": bson.A{"$v.state.val", "$entity.impact_level"}},
 		"v.duration": bson.M{"$ifNull": bson.A{
@@ -1413,6 +1426,23 @@ func getComputedFields(now types.CpsTime) bson.M {
 			}},
 		}},
 	}
+
+	if userID != "" {
+		computedFields["bookmark"] = bson.M{
+			"$cond": bson.M{
+				"if": bson.M{
+					"$and": bson.A{
+						bson.M{"$isArray": "$bookmarks"},
+						bson.M{"$in": bson.A{userID, "$bookmarks"}},
+					},
+				},
+				"then": true,
+				"else": false,
+			},
+		}
+	}
+
+	return computedFields
 }
 
 func getIsMetaAlarmField() bson.M {

@@ -181,7 +181,7 @@ export default {
     },
 
     getItemIcon(item) {
-      return item.is_private ? 'person' : 'lock';
+      return item.is_user_preference ? 'person' : 'lock';
     },
 
     isOldPattern(filter) {

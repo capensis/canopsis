@@ -48,6 +48,7 @@ func (p *rmqPublisher) SendImportResultEvent(ctx context.Context, uuid string, e
 		ExtraInfos: map[string]interface{}{
 			"execution_time": execTime,
 		},
+		Initiator: types.InitiatorSystem,
 	})
 }
 
@@ -62,6 +63,7 @@ func (p *rmqPublisher) SendPerfDataEvent(ctx context.Context, uuid string, stats
 		State:         state,
 		Output:        fmt.Sprintf("execution : %f sec, updated ent : %d, deleted ent : %d", stats.ExecTime.Seconds(), stats.Updated, stats.Deleted),
 		PerfData:      fmt.Sprintf("execution_time=%ds ent_updated=%d ent_deleted=%d", int64(stats.ExecTime.Seconds()), stats.Updated, stats.Deleted),
+		Initiator:     types.InitiatorSystem,
 	})
 }
 

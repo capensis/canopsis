@@ -1,12 +1,11 @@
 <template lang="pug">
   v-layout.secondary.groups-wrapper
     v-tabs(ref="tabs", color="secondary", show-arrows, dark)
-      template(v-if="hasReadAnyViewAccess")
-        groups-top-bar-group(
-          v-for="group in availableGroups",
-          :key="group._id",
-          :group="group"
-        )
+      groups-top-bar-group(
+        v-for="group in availableGroups",
+        :key="group._id",
+        :group="group"
+      )
       groups-top-bar-playlists
     groups-settings-button(
       tooltipLeft,

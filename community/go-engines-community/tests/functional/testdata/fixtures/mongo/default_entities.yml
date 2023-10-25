@@ -472,8 +472,6 @@ default_entities:
     <<: *service
     _id: test-service-weather-entity-7
     name: test-service-weather-entity-7
-    depends:
-      - test-resource-service-weather-entity-7/test-component-service-weather-entity-7
     entity_pattern:
       - - field: name
           cond:
@@ -1095,6 +1093,77 @@ default_entities:
     name: test-entity-to-alarm-metrics-get-2
     component: test-entity-to-alarm-metrics-get-2
 
+  connector_idle_since_integration_1:
+    <<: *connector
+    _id: test-connector-idle-since-integration-1/test-connector-name-idle-since-integration-1
+    name: test-connector-name-idle-since-integration-1
+  component_idle_since_integration_1:
+    <<: *component
+    _id: test-component-idle-since-integration-1
+    name: test-component-idle-since-integration-1
+    component: test-component-idle-since-integration-1
+    connector: test-connector-idle-since-integration-1/test-connector-name-idle-since-integration-1
+  resource_idle_since_integration_1:
+    <<: *resource
+    _id: test-resource-idle-since-integration-1/test-component-idle-since-integration-1
+    name: test-resource-idle-since-integration-1
+    component: test-component-idle-since-integration-1
+    connector: test-connector-idle-since-integration-1/test-connector-name-idle-since-integration-1
+  connector_idle_since_integration_2:
+    <<: *connector
+    _id: test-connector-idle-since-integration-2/test-connector-name-idle-since-integration-2
+    name: test-connector-name-idle-since-integration-2
+  component_idle_since_integration_2:
+    <<: *component
+    _id: test-component-idle-since-integration-2
+    name: test-component-idle-since-integration-2
+    component: test-component-idle-since-integration-2
+    connector: test-connector-idle-since-integration-2/test-connector-name-idle-since-integration-2
+  resource_idle_since_integration_2:
+    <<: *resource
+    _id: test-resource-idle-since-integration-2/test-component-idle-since-integration-2
+    name: test-resource-idle-since-integration-2
+    component: test-component-idle-since-integration-2
+    connector: test-connector-idle-since-integration-2/test-connector-name-idle-since-integration-2
+  connector_idle_since_integration_3:
+    <<: *connector
+    _id: test-connector-idle-since-integration-3/test-connector-name-idle-since-integration-3
+    name: test-connector-name-idle-since-integration-3
+  component_idle_since_integration_3:
+    <<: *component
+    _id: test-component-idle-since-integration-3
+    name: test-component-idle-since-integration-3
+    component: test-component-idle-since-integration-3
+    connector: test-connector-idle-since-integration-3/test-connector-name-idle-since-integration-3
+  resource_idle_since_integration_3:
+    <<: *resource
+    _id: test-resource-idle-since-integration-3/test-component-idle-since-integration-3
+    name: test-resource-idle-since-integration-3
+    component: test-component-idle-since-integration-3
+    connector: test-connector-idle-since-integration-3/test-connector-name-idle-since-integration-3
+  connector_idle_since_integration_4:
+    <<: *connector
+    _id: test-connector-idle-since-integration-4/test-connector-name-idle-since-integration-4
+    name: test-connector-name-idle-since-integration-4
+  component_idle_since_integration_4:
+    <<: *component
+    _id: test-component-idle-since-integration-4
+    name: test-component-idle-since-integration-4
+    component: test-component-idle-since-integration-4
+    connector: test-connector-idle-since-integration-4/test-connector-name-idle-since-integration-4
+  resource_idle_since_integration_4_1:
+    <<: *resource
+    _id: test-resource-idle-since-integration-4-1/test-component-idle-since-integration-4
+    name: test-resource-idle-since-integration-4-1
+    component: test-component-idle-since-integration-4
+    connector: test-connector-idle-since-integration-4/test-connector-name-idle-since-integration-4
+  resource_idle_since_integration_4_2:
+    <<: *resource
+    _id: test-resource-idle-since-integration-4-2/test-component-idle-since-integration-4
+    name: test-resource-idle-since-integration-4-2
+    component: test-component-idle-since-integration-4
+    connector: test-connector-idle-since-integration-4/test-connector-name-idle-since-integration-4
+
   default_entities_34:
     _id: test-instruction-execution-next-resource-1/test-instruction-execution-next-component
     component: test-instruction-execution-next-component
@@ -1281,110 +1350,6 @@ default_entities:
     infos: { }
     measurements: null
     name: test-instruction-execution-get-resource-43
-    type: resource
-  default_entities_114:
-    _id: test-idle-since-integration-connector/test-idle-since-integration-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-idle-since-integration-connectorname
-    type: connector
-  default_entities_115:
-    _id: test-idle-since-integration-component
-    enable_history:
-      - 1620915951
-    enabled: true
-    connector: test-idle-since-integration-connector/test-idle-since-integration-connectorname
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-idle-since-integration-component
-    component: test-idle-since-integration-component
-    type: component
-  default_entities_116:
-    _id: test-idle-since-integration-resource-1/test-idle-since-integration-component
-    component: test-idle-since-integration-component
-    connector: test-idle-since-integration-connector/test-idle-since-integration-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-idle-since-integration-resource-1
-    type: resource
-  default_entities_117:
-    _id: test-idle-since-integration-resource-2/test-idle-since-integration-component
-    component: test-idle-since-integration-component
-    connector: test-idle-since-integration-connector/test-idle-since-integration-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-idle-since-integration-resource-2
-    type: resource
-  default_entities_118:
-    _id: test-idle-since-integration-resource-3/test-idle-since-integration-component
-    component: test-idle-since-integration-component
-    connector: test-idle-since-integration-connector/test-idle-since-integration-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-idle-since-integration-resource-3
-    type: resource
-  default_entities_119:
-    _id: test-idle-since-integration-resource-4/test-idle-since-integration-component
-    component: test-idle-since-integration-component
-    connector: test-idle-since-integration-connector/test-idle-since-integration-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-idle-since-integration-resource-4
-    type: resource
-  default_entities_120:
-    _id: test-idle-since-integration-2-connector/test-idle-since-integration-2-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-idle-since-integration-2-connectorname
-    type: connector
-  default_entities_121:
-    _id: test-idle-since-integration-2-component
-    enable_history:
-      - 1620915951
-    enabled: true
-    connector: test-idle-since-integration-2-connector/test-idle-since-integration-2-connectorname
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-idle-since-integration-2-component
-    component: test-idle-since-integration-2-component
-    type: component
-  default_entities_122:
-    _id: test-idle-since-integration-2-resource-1/test-idle-since-integration-2-component
-    component: test-idle-since-integration-2-component
-    connector: test-idle-since-integration-2-connector/test-idle-since-integration-2-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-idle-since-integration-2-resource-1
     type: resource
   default_entities_149:
     _id: test-resource-to-not-run-auto-instruction-manually/test-component-to-not-run-auto-instruction-manually
@@ -3406,16 +3371,6 @@ default_entities:
     name: <Current()._id>
     component: <Current()._id>
     connector: test-connector-not-acked-metrics-axe/test-connector-name-not-acked-metrics-axe
-    depends:
-      - test-resource-not-acked-metrics-axe-2/test-component-not-acked-metrics-axe
-      - test-resource-not-acked-metrics-axe-3/test-component-not-acked-metrics-axe
-      - test-resource-not-acked-metrics-axe-4/test-component-not-acked-metrics-axe
-      - test-resource-not-acked-metrics-axe-5/test-component-not-acked-metrics-axe
-      - test-resource-not-acked-metrics-axe-6/test-component-not-acked-metrics-axe
-      - test-resource-not-acked-metrics-axe-7/test-component-not-acked-metrics-axe
-      - test-resource-not-acked-metrics-axe-8/test-component-not-acked-metrics-axe
-      - test-resource-not-acked-metrics-axe-9/test-component-not-acked-metrics-axe
-      - test-resource-not-acked-metrics-axe-10/test-component-not-acked-metrics-axe
   resource_to_test_not_acked_metrics_axe_2:
     <<: *resource
     _id: test-resource-not-acked-metrics-axe-2/test-component-not-acked-metrics-axe
@@ -3492,3 +3447,73 @@ default_entities:
       test-info-to-alarm-link-get-1:
         name: test-info-to-alarm-link-get-1
         value: test-resource-to-alarm-link-get-2-info-1-val
+
+  entity_alarm_bookmark_1_1:
+    <<: *resource
+    _id: test-resource-alarm-bookmark-1-1/test-component-alarm-bookmark-1
+    name: test-resource-alarm-bookmark-1-1
+
+  entity_alarm_bookmark_1_2:
+    <<: *resource
+    _id: test-resource-alarm-bookmark-1-2/test-component-alarm-bookmark-1
+    name: test-resource-alarm-bookmark-1-2
+
+  entity_alarm_bookmark_2_1:
+    <<: *resource
+    _id: test-resource-alarm-bookmark-2-1/test-component-alarm-bookmark-2
+    name: test-resource-alarm-bookmark-2-1
+
+  entity_alarm_bookmark_2_2:
+    <<: *resource
+    _id: test-resource-alarm-bookmark-2-2/test-component-alarm-bookmark-2
+    name: test-resource-alarm-bookmark-2-2
+
+  entity_alarm_bookmark_3_1:
+    <<: *resource
+    _id: test-resource-alarm-bookmark-3-1/test-component-alarm-bookmark-3
+    name: test-resource-alarm-bookmark-3-1
+
+  entity_alarm_bookmark_3_2:
+    <<: *resource
+    _id: test-resource-alarm-bookmark-3-2/test-component-alarm-bookmark-3
+    name: test-resource-alarm-bookmark-3-2
+
+  entity_alarm_bookmark_4_1:
+    <<: *resource
+    _id: test-resource-alarm-bookmark-4-1/test-component-alarm-bookmark-4
+    name: test-resource-alarm-bookmark-4-1
+
+  entity_alarm_bookmark_4_2:
+    <<: *resource
+    _id: test-resource-alarm-bookmark-4-2/test-component-alarm-bookmark-4
+    name: test-resource-alarm-bookmark-4-2
+
+  entity_alarm_bookmark_5_1:
+    <<: *resource
+    _id: test-resource-alarm-bookmark-5-1/test-component-alarm-bookmark-5
+    name: test-resource-alarm-bookmark-5-1
+
+  entity_alarm_bookmark_5_2:
+    <<: *resource
+    _id: test-resource-alarm-bookmark-5-2/test-component-alarm-bookmark-5
+    name: test-resource-alarm-bookmark-5-2
+
+  entity_alarm_bookmark_6_1:
+    <<: *resource
+    _id: test-resource-alarm-bookmark-6-1/test-component-alarm-bookmark-6
+    name: test-resource-alarm-bookmark-6-1
+
+  entity_alarm_bookmark_6_2:
+    <<: *resource
+    _id: test-resource-alarm-bookmark-6-2/test-component-alarm-bookmark-6
+    name: test-resource-alarm-bookmark-6-2
+    
+  entity_alarm_bookmark_7_1:
+    <<: *resource
+    _id: test-resource-alarm-bookmark-7-1/test-component-alarm-bookmark-7
+    name: test-resource-alarm-bookmark-7-1
+
+  entity_alarm_bookmark_7_2:
+    <<: *resource
+    _id: test-resource-alarm-bookmark-7-2/test-component-alarm-bookmark-7
+    name: test-resource-alarm-bookmark-7-2    

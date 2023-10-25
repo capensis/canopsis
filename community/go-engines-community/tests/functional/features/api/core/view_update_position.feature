@@ -2,6 +2,7 @@ Feature: Update view positions
   I need to be able to view positions
   Only admin should be able to view positions
 
+  @concurrent
   Scenario: given update request should return ok
     When I am test-role-to-update-view-position
     # Create views
@@ -351,15 +352,18 @@ Feature: Update view positions
     }
     """
 
+  @concurrent
   Scenario: given update request and no auth user should not allow access
     When I do PUT /api/v4/view-positions
     Then the response code should be 401
 
+  @concurrent
   Scenario: given update request and auth user without view permission should not allow access
     When I am noperms
     When I do PUT /api/v4/view-positions
     Then the response code should be 403
 
+  @concurrent
   Scenario: given invalid request should return error
     When I am test-role-to-update-view-position
     When I do PUT /api/v4/view-positions:
@@ -437,6 +441,7 @@ Feature: Update view positions
     }
     """
 
+  @concurrent
   Scenario: given request with not exist group should return not found error
     When I am test-role-to-update-view-position
     When I do PUT /api/v4/view-positions:
@@ -450,6 +455,7 @@ Feature: Update view positions
     """
     Then the response code should be 404
 
+  @concurrent
   Scenario: given request with not exist view should return forbidden error
     When I am test-role-to-update-view-position
     When I do POST /api/v4/view-groups:

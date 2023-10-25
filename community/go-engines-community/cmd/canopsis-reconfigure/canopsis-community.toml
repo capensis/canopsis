@@ -171,6 +171,7 @@ FilePattern = "/tmp/import_%s.json"
 [Canopsis.api]
 TokenSigningMethod = "HS256"
 BulkMaxSize = 10000
+ExportMongoClientTimeout = "1m"
 AuthorScheme = ["$username"]
 #AuthorScheme = ["$username", " ", "$firstname", " ", "$lastname", " ", "$email", " ", "$_id"]
 
@@ -199,3 +200,21 @@ DumpKeepInterval = "1h"
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.template.vars]
 #Location = "FR"
+
+# It's required to restart api after canopsis-reconfigure updates mongodb to catch up following parameter.
+[HealthCheck]
+update_interval = "10s"
+
+# Following engine_order parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
+[[HealthCheck.engine_order]]
+from = "engine-fifo"
+to = "engine-che"
+[[HealthCheck.engine_order]]
+from = "engine-che"
+to = "engine-axe"
+[[HealthCheck.engine_order]]
+from = "engine-axe"
+to = "engine-action"
+[[HealthCheck.engine_order]]
+from = "engine-axe"
+to = "engine-pbehavior"

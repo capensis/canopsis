@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-menu(v-show="administrationGroupedLinks.length", bottom, offset-y)
+  v-menu(v-if="administrationGroupedLinks.length", bottom, offset-y)
     template(#activator="{ on }")
       v-btn.white--text(v-on="on", flat) {{ $t('common.administration') }}
     v-list.py-0
@@ -91,7 +91,7 @@ export default {
     },
 
     administrationGeneralLinks() {
-      const links = [
+      return [
         {
           route: { name: ROUTES_NAMES.adminParameters },
           icon: 'settings',
@@ -127,23 +127,12 @@ export default {
           icon: 'local_offer',
           permission: USERS_PERMISSIONS.technical.tag,
         },
-      ];
-
-      const enginesLink = this.isProVersion
-        ? {
+        {
           route: { name: ROUTES_NAMES.adminHealthcheck },
           icon: '$vuetify.icons.alt_route',
           permission: USERS_PERMISSIONS.technical.healthcheck,
-        }
-        : {
-          route: { name: ROUTES_NAMES.adminEngines },
-          icon: '$vuetify.icons.alt_route',
-          permission: USERS_PERMISSIONS.technical.engine,
-        };
-
-      links.push(enginesLink);
-
-      return links;
+        },
+      ];
     },
 
     permissionsWithDefaultType() {

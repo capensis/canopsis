@@ -373,142 +373,6 @@ Feature: create entities on event
     }
     """
 
-  Scenario: given resources check events should create entities, context graph should be valid
-    Given I am admin
-    When I send an event:
-    """json
-    {
-      "connector": "test-context-graph-build-connector-che-1",
-      "connector_name": "test-context-graph-build-connector-name-che-1",
-      "source_type": "resource",
-      "event_type": "check",
-      "component": "test-context-graph-build-component-che-1",
-      "resource": "test-context-graph-build-resource-che-1",
-      "state": 2,
-      "output": "test-context-graph-build-output-che-1"
-    }
-    """
-    When I wait the end of event processing
-    When I send an event:
-    """json
-    {
-      "connector": "test-context-graph-build-connector-che-1",
-      "connector_name": "test-context-graph-build-connector-name-che-1",
-      "source_type": "resource",
-      "event_type": "check",
-      "component": "test-context-graph-build-component-che-2",
-      "resource": "test-context-graph-build-resource-che-1",
-      "state": 2,
-      "output": "test-context-graph-build-output-che-1"
-    }
-    """
-    When I wait the end of event processing
-    When I send an event:
-    """json
-    {
-      "connector": "test-context-graph-build-connector-che-1",
-      "connector_name": "test-context-graph-build-connector-name-che-1",
-      "source_type": "resource",
-      "event_type": "check",
-      "component": "test-context-graph-build-component-che-3",
-      "resource": "test-context-graph-build-resource-che-1",
-      "state": 2,
-      "output": "test-context-graph-build-output-che-1"
-    }
-    """
-    When I wait the end of event processing
-    When I do GET /api/v4/entities?search=test-context-graph-build
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "data": [
-        {
-          "_id": "test-context-graph-build-component-che-1",
-          "category": null,
-          "connector": "test-context-graph-build-connector-che-1/test-context-graph-build-connector-name-che-1",
-          "component": "test-context-graph-build-component-che-1",
-          "enabled": true,
-          "impact_level": 1,
-          "infos": {},
-          "name": "test-context-graph-build-component-che-1",
-          "type": "component"
-        },
-        {
-          "_id": "test-context-graph-build-component-che-2",
-          "category": null,
-          "connector": "test-context-graph-build-connector-che-1/test-context-graph-build-connector-name-che-1",
-          "component": "test-context-graph-build-component-che-2",
-          "enabled": true,
-          "impact_level": 1,
-          "infos": {},
-          "name": "test-context-graph-build-component-che-2",
-          "type": "component"
-        },
-        {
-          "_id": "test-context-graph-build-component-che-3",
-          "category": null,
-          "connector": "test-context-graph-build-connector-che-1/test-context-graph-build-connector-name-che-1",
-          "component": "test-context-graph-build-component-che-3",
-          "enabled": true,
-          "impact_level": 1,
-          "infos": {},
-          "name": "test-context-graph-build-component-che-3",
-          "type": "component"
-        },
-        {
-          "_id": "test-context-graph-build-connector-che-1/test-context-graph-build-connector-name-che-1",
-          "category": null,
-          "enabled": true,
-          "impact_level": 1,
-          "infos": {},
-          "name": "test-context-graph-build-connector-name-che-1",
-          "connector_type": "test-context-graph-build-connector-che-1",
-          "type": "connector"
-        },
-        {
-          "_id": "test-context-graph-build-resource-che-1/test-context-graph-build-component-che-1",
-          "category": null,
-          "connector": "test-context-graph-build-connector-che-1/test-context-graph-build-connector-name-che-1",
-          "component": "test-context-graph-build-component-che-1",
-          "enabled": true,
-          "impact_level": 1,
-          "infos": {},
-          "name": "test-context-graph-build-resource-che-1",
-          "type": "resource"
-        },
-        {
-          "_id": "test-context-graph-build-resource-che-1/test-context-graph-build-component-che-2",
-          "category": null,
-          "connector": "test-context-graph-build-connector-che-1/test-context-graph-build-connector-name-che-1",
-          "component": "test-context-graph-build-component-che-2",
-          "enabled": true,
-          "impact_level": 1,
-          "infos": {},
-          "name": "test-context-graph-build-resource-che-1",
-          "type": "resource"
-        },
-        {
-          "_id": "test-context-graph-build-resource-che-1/test-context-graph-build-component-che-3",
-          "category": null,
-          "connector": "test-context-graph-build-connector-che-1/test-context-graph-build-connector-name-che-1",
-          "component": "test-context-graph-build-component-che-3",
-          "enabled": true,
-          "impact_level": 1,
-          "infos": {},
-          "name": "test-context-graph-build-resource-che-1",
-          "type": "resource"
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 7
-      }
-    }
-    """
-
   @concurrent
   Scenario: given resource event with a new connector should change connector field in the entity
     Given I am admin
@@ -667,6 +531,140 @@ Feature: create entities on event
         "page_count": 1,
         "per_page": 10,
         "total_count": 1
+      }
+    }
+    """
+
+  @concurrent
+  Scenario: given resources check events should create entities, context graph should be valid
+    Given I am admin
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-connector-context-graph-build-che-7",
+      "connector_name": "test-connector-name-context-graph-build-che-7",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-context-graph-build-che-7-1",
+      "resource": "test-resource-context-graph-build-che-7",
+      "state": 2,
+      "output": "test-context-graph-build-output-che-7"
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-connector-context-graph-build-che-7",
+      "connector_name": "test-connector-name-context-graph-build-che-7",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-context-graph-build-che-7-2",
+      "resource": "test-resource-context-graph-build-che-7",
+      "state": 2,
+      "output": "test-context-graph-build-output-che-7"
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-connector-context-graph-build-che-7",
+      "connector_name": "test-connector-name-context-graph-build-che-7",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-context-graph-build-che-7-3",
+      "resource": "test-resource-context-graph-build-che-7",
+      "state": 2,
+      "output": "test-context-graph-build-output-che-7"
+    }
+    """
+    When I do GET /api/v4/entities?search=context-graph-build-che-7
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-component-context-graph-build-che-7-1",
+          "category": null,
+          "connector": "test-connector-context-graph-build-che-7/test-connector-name-context-graph-build-che-7",
+          "component": "test-component-context-graph-build-che-7-1",
+          "enabled": true,
+          "impact_level": 1,
+          "infos": {},
+          "name": "test-component-context-graph-build-che-7-1",
+          "type": "component"
+        },
+        {
+          "_id": "test-component-context-graph-build-che-7-2",
+          "category": null,
+          "connector": "test-connector-context-graph-build-che-7/test-connector-name-context-graph-build-che-7",
+          "component": "test-component-context-graph-build-che-7-2",
+          "enabled": true,
+          "impact_level": 1,
+          "infos": {},
+          "name": "test-component-context-graph-build-che-7-2",
+          "type": "component"
+        },
+        {
+          "_id": "test-component-context-graph-build-che-7-3",
+          "category": null,
+          "connector": "test-connector-context-graph-build-che-7/test-connector-name-context-graph-build-che-7",
+          "component": "test-component-context-graph-build-che-7-3",
+          "enabled": true,
+          "impact_level": 1,
+          "infos": {},
+          "name": "test-component-context-graph-build-che-7-3",
+          "type": "component"
+        },
+        {
+          "_id": "test-connector-context-graph-build-che-7/test-connector-name-context-graph-build-che-7",
+          "category": null,
+          "enabled": true,
+          "impact_level": 1,
+          "infos": {},
+          "name": "test-connector-name-context-graph-build-che-7",
+          "connector_type": "test-connector-context-graph-build-che-7",
+          "type": "connector"
+        },
+        {
+          "_id": "test-resource-context-graph-build-che-7/test-component-context-graph-build-che-7-1",
+          "category": null,
+          "connector": "test-connector-context-graph-build-che-7/test-connector-name-context-graph-build-che-7",
+          "component": "test-component-context-graph-build-che-7-1",
+          "enabled": true,
+          "impact_level": 1,
+          "infos": {},
+          "name": "test-resource-context-graph-build-che-7",
+          "type": "resource"
+        },
+        {
+          "_id": "test-resource-context-graph-build-che-7/test-component-context-graph-build-che-7-2",
+          "category": null,
+          "connector": "test-connector-context-graph-build-che-7/test-connector-name-context-graph-build-che-7",
+          "component": "test-component-context-graph-build-che-7-2",
+          "enabled": true,
+          "impact_level": 1,
+          "infos": {},
+          "name": "test-resource-context-graph-build-che-7",
+          "type": "resource"
+        },
+        {
+          "_id": "test-resource-context-graph-build-che-7/test-component-context-graph-build-che-7-3",
+          "category": null,
+          "connector": "test-connector-context-graph-build-che-7/test-connector-name-context-graph-build-che-7",
+          "component": "test-component-context-graph-build-che-7-3",
+          "enabled": true,
+          "impact_level": 1,
+          "infos": {},
+          "name": "test-resource-context-graph-build-che-7",
+          "type": "resource"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 7
       }
     }
     """

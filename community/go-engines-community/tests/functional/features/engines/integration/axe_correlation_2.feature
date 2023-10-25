@@ -68,10 +68,16 @@ Feature: create and update meta alarm
             "meta": "{{ .metaAlarmRuleID }}",
             "state": {
               "_t": "stateinc",
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 3
             },
             "status": {
               "_t": "statusinc",
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 1
             }
           }
@@ -185,7 +191,9 @@ Feature: create and update meta alarm
               },
               {
                 "_t": "metaalarmattach",
-                "a": "engine.correlation"
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system"
               }
             ],
             "meta": {
@@ -212,7 +220,9 @@ Feature: create and update meta alarm
               },
               {
                 "_t": "metaalarmattach",
-                "a": "engine.correlation"
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system"
               }
             ],
             "meta": {
@@ -239,7 +249,9 @@ Feature: create and update meta alarm
               },
               {
                 "_t": "metaalarmattach",
-                "a": "engine.correlation"
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system"
               }
             ],
             "meta": {
@@ -299,10 +311,16 @@ Feature: create and update meta alarm
             "meta": "{{ .metaAlarmRuleID }}",
             "state": {
               "_t": "stateinc",
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 3
             },
             "status": {
               "_t": "statusinc",
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 1
             }
           }
@@ -388,7 +406,9 @@ Feature: create and update meta alarm
               },
               {
                 "_t": "metaalarmattach",
-                "a": "engine.correlation"
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system"
               },
               {
                 "_t": "stateinc",
@@ -441,10 +461,16 @@ Feature: create and update meta alarm
             "meta": "{{ .metaAlarmRuleID1 }}",
             "state": {
               "_t": "stateinc",
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 3
             },
             "status": {
               "_t": "statusinc",
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 1
             }
           }
@@ -461,10 +487,16 @@ Feature: create and update meta alarm
             "meta": "{{ .metaAlarmRuleID2 }}",
             "state": {
               "_t": "stateinc",
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 3
             },
             "status": {
               "_t": "statusinc",
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 1
             }
           }
@@ -594,11 +626,15 @@ Feature: create and update meta alarm
               },
               {
                 "_t": "metaalarmattach",
-                "a": "engine.correlation"
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system"
               },
               {
                 "_t": "metaalarmattach",
-                "a": "engine.correlation"
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system"
               }
             ],
             "meta": {
@@ -674,10 +710,16 @@ Feature: create and update meta alarm
             "meta": "{{ .metaAlarmRuleID1 }}",
             "state": {
               "_t": "stateinc",
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 3
             },
             "status": {
               "_t": "statusinc",
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 1
             }
           }
@@ -691,10 +733,16 @@ Feature: create and update meta alarm
             "meta": "{{ .metaAlarmRuleID2 }}",
             "state": {
               "_t": "stateinc",
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 3
             },
             "status": {
               "_t": "statusinc",
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 1
             }
           }
@@ -846,11 +894,15 @@ Feature: create and update meta alarm
               },
               {
                 "_t": "metaalarmattach",
-                "a": "engine.correlation"
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system"
               },
               {
                 "_t": "metaalarmattach",
-                "a": "engine.correlation"
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system"
               }
             ],
             "meta": {
@@ -877,11 +929,15 @@ Feature: create and update meta alarm
               },
               {
                 "_t": "metaalarmattach",
-                "a": "engine.correlation"
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system"
               },
               {
                 "_t": "metaalarmattach",
-                "a": "engine.correlation"
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system"
               }
             ],
             "meta": {
@@ -942,7 +998,8 @@ Feature: create and update meta alarm
         "duration": 6000,
         "component": "{{ .metaAlarmComponent }}",
         "resource": "{{ .metaAlarmResource }}",
-        "output": "test-output-axe-correlation-8"
+        "output": "test-output-axe-correlation-8",
+        "initiator": "user"
       },
       {
         "connector": "test-connector-axe-correlation-second-5",
@@ -951,7 +1008,8 @@ Feature: create and update meta alarm
         "event_type": "ack",
         "component": "test-component-axe-correlation-second-5",
         "resource": "test-resource-axe-correlation-second-5",
-        "output": "test-output-axe-correlation-second-5"
+        "output": "test-output-axe-correlation-second-5",
+        "initiator": "user"
       }
     ]
     """
@@ -1056,13 +1114,21 @@ Feature: create and update meta alarm
               },
               {
                 "_t": "metaalarmattach",
-                "a": "engine.correlation"
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system"
               },
               {
-                "_t": "ack"
+                "_t": "ack",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
+                "initiator": "user"
               },
               {
-                "_t": "snooze"
+                "_t": "snooze",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
+                "initiator": "user"
               }
             ],
             "meta": {
@@ -1155,10 +1221,16 @@ Feature: create and update meta alarm
             "display_name": "test-metaAlarm-axe-correlation-second-6",
             "state": {
               "_t": "stateinc",
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 2
             },
             "status": {
               "_t": "statusinc",
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 1
             }
           }
@@ -1452,8 +1524,6 @@ Feature: create and update meta alarm
     """
     When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
     When I save response metaalarmEntityID={{ (index .lastResponse.data 0).entity._id }}
-    When I save response metaAlarmConnector={{ (index .lastResponse.data 0).v.connector }}
-    When I save response metaAlarmConnectorName={{ (index .lastResponse.data 0).v.connector_name }}
     When I save response metaAlarmComponent={{ (index .lastResponse.data 0).v.component }}
     When I save response metaAlarmResource={{ (index .lastResponse.data 0).v.resource }}
     When I send an event and wait the end of event processing:
@@ -1466,30 +1536,23 @@ Feature: create and update meta alarm
       "component": "test-component-axe-correlation-second-7",
       "resource": "test-resource-axe-correlation-second-7-2",
       "output": "previous ack",
-      "author": "test-author-axe-correlation-second-7"
+      "initiator": "user"
     }
     """
-    When I send an event:
+    When I do PUT /api/v4/alarms/{{ .metaAlarmID }}/ack:
     """json
     {
-      "connector": "{{ .metaAlarmConnector }}",
-      "connector_name": "{{ .metaAlarmConnectorName }}",
-      "source_type": "resource",
-      "event_type": "ack",
-      "component": "{{ .metaAlarmComponent }}",
-      "resource": "{{ .metaAlarmResource }}",
-      "output": "metaalarm ack",
-      "long_output": "test-long-output-axe-correlation-second-7",
-      "author": "test-author-axe-correlation-second-7"
+      "comment": "metaalarm ack"
     }
     """
+    Then the response code should be 204
     Then I wait the end of events processing which contain:
     """json
     [
       {
         "event_type": "ack",
-        "connector": "{{ .metaAlarmConnector }}",
-        "connector_name": "{{ .metaAlarmConnectorName }}",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .metaAlarmComponent }}",
         "resource": "{{ .metaAlarmResource }}",
         "source_type": "resource"
@@ -1604,9 +1667,10 @@ Feature: create and update meta alarm
               },
               {
                 "_t": "ack",
-                "a": "test-author-axe-correlation-second-7",
-                "m": "metaalarm ack",
-                "val": 0
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
+                "initiator": "user",
+                "m": "metaalarm ack"
               }
             ],
             "meta": {
@@ -1634,13 +1698,15 @@ Feature: create and update meta alarm
               {
                 "_t": "metaalarmattach",
                 "a": "engine.correlation",
-                "val": 0
+                "user_id": "",
+                "initiator": "system"
               },
               {
                 "_t": "ack",
-                "a": "test-author-axe-correlation-second-7",
-                "m": "metaalarm ack",
-                "val": 0
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
+                "initiator": "user",
+                "m": "metaalarm ack"
               }
             ],
             "meta": {
@@ -1668,19 +1734,22 @@ Feature: create and update meta alarm
               {
                 "_t": "metaalarmattach",
                 "a": "engine.correlation",
-                "val": 0
+                "user_id": "",
+                "initiator": "system"
               },
               {
                 "_t": "ack",
-                "a": "test-author-axe-correlation-second-7",
-                "m": "previous ack",
-                "val": 0
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
+                "initiator": "user",
+                "m": "previous ack"
               },
               {
                 "_t": "ack",
-                "a": "test-author-axe-correlation-second-7",
-                "m": "metaalarm ack",
-                "val": 0
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
+                "initiator": "user",
+                "m": "metaalarm ack"
               }
             ],
             "meta": {
@@ -1770,9 +1839,15 @@ Feature: create and update meta alarm
             "connector": "engine",
             "connector_name": "correlation",
             "state": {
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 2
             },
             "status": {
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 1
             }
           }
@@ -1787,9 +1862,15 @@ Feature: create and update meta alarm
             "connector": "engine",
             "connector_name": "correlation",
             "state": {
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 2
             },
             "status": {
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 1
             }
           }
@@ -1842,9 +1923,15 @@ Feature: create and update meta alarm
             "connector_name": "correlation",
             "meta": "{{ .metaAlarmRuleID1 }}",
             "state": {
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 0
             },
             "status": {
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 0
             }
           }
@@ -1873,9 +1960,15 @@ Feature: create and update meta alarm
             "connector_name": "correlation",
             "meta": "{{ .metaAlarmRuleID2 }}",
             "state": {
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 2
             },
             "status": {
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 1
             }
           }
@@ -1956,37 +2049,28 @@ Feature: create and update meta alarm
     """
     When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
     When I save response metaAlarmEntityID={{ (index .lastResponse.data 0).entity._id }}
-    When I save response metaAlarmConnector={{ (index .lastResponse.data 0).v.connector }}
-    When I save response metaAlarmConnectorName={{ (index .lastResponse.data 0).v.connector_name }}
     When I save response metaAlarmComponent={{ (index .lastResponse.data 0).v.component }}
     When I save response metaAlarmResource={{ (index .lastResponse.data 0).v.resource }}
-    When I send an event:
+    When I do PUT /api/v4/alarms/{{ .metaAlarmID }}/assocticket:
     """json
     {
-      "connector": "{{ .metaAlarmConnector }}",
-      "connector_name": "{{ .metaAlarmConnectorName }}",
-      "source_type": "resource",
-      "event_type": "assocticket",
-      "component": "{{ .metaAlarmComponent }}",
-      "resource": "{{ .metaAlarmResource }}",
-      "author": "test-author-axe-correlation-second-9",
-      "initiator": "user",
       "ticket": "test-ticket-axe-correlation-second-9",
-      "ticket_url": "test-url-axe-correlation-second-9",
-      "ticket_system_name": "test-system-name-axe-correlation-second-9",
-      "ticket_data": {
+      "url": "test-url-axe-correlation-second-9",
+      "system_name": "test-system-name-axe-correlation-second-9",
+      "data": {
         "ticket_param_1": "ticket_value_1"
       },
-      "ticket_comment": "test-comment-axe-correlation-second-9"
+      "comment": "test-comment-axe-correlation-second-9"
     }
     """
+    Then the response code should be 204
     Then I wait the end of events processing which contain:
     """json
     [
       {
         "event_type": "assocticket",
-        "connector": "{{ .metaAlarmConnector }}",
-        "connector_name": "{{ .metaAlarmConnectorName }}",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .metaAlarmComponent }}",
         "resource": "{{ .metaAlarmResource }}",
         "source_type": "resource"
@@ -2020,9 +2104,9 @@ Feature: create and update meta alarm
             "tickets": [
               {
                 "_t": "assocticket",
-                "a": "test-author-axe-correlation-second-9",
+                "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
-                "initiator": "system",
+                "initiator": "user",
                 "m": "Ticket ID: test-ticket-axe-correlation-second-9. Ticket URL: test-url-axe-correlation-second-9. Ticket ticket_param_1: ticket_value_1.",
                 "ticket": "test-ticket-axe-correlation-second-9",
                 "ticket_url": "test-url-axe-correlation-second-9",
@@ -2036,9 +2120,9 @@ Feature: create and update meta alarm
             ],
             "ticket": {
               "_t": "assocticket",
-              "a": "test-author-axe-correlation-second-9",
+              "a": "root John Doe admin@canopsis.net",
               "user_id": "root",
-              "initiator": "system",
+              "initiator": "user",
               "m": "Ticket ID: test-ticket-axe-correlation-second-9. Ticket URL: test-url-axe-correlation-second-9. Ticket ticket_param_1: ticket_value_1.",
               "ticket": "test-ticket-axe-correlation-second-9",
               "ticket_url": "test-url-axe-correlation-second-9",
@@ -2107,9 +2191,9 @@ Feature: create and update meta alarm
               },
               {
                 "_t": "assocticket",
-                "a": "test-author-axe-correlation-second-9",
+                "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
-                "initiator": "system",
+                "initiator": "user",
                 "m": "Ticket ID: test-ticket-axe-correlation-second-9. Ticket URL: test-url-axe-correlation-second-9. Ticket ticket_param_1: ticket_value_1.",
                 "ticket": "test-ticket-axe-correlation-second-9",
                 "ticket_url": "test-url-axe-correlation-second-9",
@@ -2143,9 +2227,9 @@ Feature: create and update meta alarm
             "tickets": [
               {
                 "_t": "assocticket",
-                "a": "test-author-axe-correlation-second-9",
+                "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
-                "initiator": "system",
+                "initiator": "user",
                 "m": "Ticket ID: test-ticket-axe-correlation-second-9. Ticket URL: test-url-axe-correlation-second-9. Ticket ticket_param_1: ticket_value_1.",
                 "ticket": "test-ticket-axe-correlation-second-9",
                 "ticket_url": "test-url-axe-correlation-second-9",
@@ -2159,9 +2243,9 @@ Feature: create and update meta alarm
             ],
             "ticket": {
               "_t": "assocticket",
-              "a": "test-author-axe-correlation-second-9",
+              "a": "root John Doe admin@canopsis.net",
               "user_id": "root",
-              "initiator": "system",
+              "initiator": "user",
               "m": "Ticket ID: test-ticket-axe-correlation-second-9. Ticket URL: test-url-axe-correlation-second-9. Ticket ticket_param_1: ticket_value_1.",
               "ticket": "test-ticket-axe-correlation-second-9",
               "ticket_url": "test-url-axe-correlation-second-9",
@@ -2226,13 +2310,16 @@ Feature: create and update meta alarm
                 "val": 1
               },
               {
-                "_t": "metaalarmattach"
+                "_t": "metaalarmattach",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system"
               },
               {
                 "_t": "assocticket",
-                "a": "test-author-axe-correlation-second-9",
+                "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
-                "initiator": "system",
+                "initiator": "user",
                 "m": "Ticket ID: test-ticket-axe-correlation-second-9. Ticket URL: test-url-axe-correlation-second-9. Ticket ticket_param_1: ticket_value_1.",
                 "ticket": "test-ticket-axe-correlation-second-9",
                 "ticket_url": "test-url-axe-correlation-second-9",
