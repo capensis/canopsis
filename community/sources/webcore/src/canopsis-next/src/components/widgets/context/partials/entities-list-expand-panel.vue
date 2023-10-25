@@ -71,7 +71,7 @@
 <script>
 import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
 
-import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-simple-list.vue';
+import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/pbehaviors-simple-list.vue';
 import EntityCharts from '@/components/widgets/chart/entity-charts.vue';
 
 import ImpactDependsTab from './expand-panel-tabs/impact-depends-tab.vue';
