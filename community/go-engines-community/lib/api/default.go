@@ -148,7 +148,7 @@ func Default(
 	if p.ApiConfigProvider == nil {
 		p.ApiConfigProvider = config.NewApiConfigProvider(cfg, logger)
 	}
-	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, p.ApiConfigProvider, config.NewMaintenanceAdapter(dbClient), cookieOptions, logger)
+	security := NewSecurity(securityConfig, cfg, dbClient, sessionStore, enforcer, p.ApiConfigProvider, config.NewMaintenanceAdapter(dbClient), cookieOptions, logger)
 
 	if flags.EnableSameServiceNames {
 		logger.Info().Msg("Non-unique names for services ENABLED")
@@ -321,6 +321,7 @@ func Default(
 
 		RegisterValidators(dbClient, flags.EnableSameServiceNames)
 		RegisterRoutes(
+			ctx,
 			cfg,
 			router,
 			security,
