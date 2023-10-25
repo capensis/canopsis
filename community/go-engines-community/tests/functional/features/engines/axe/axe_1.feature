@@ -52,6 +52,7 @@ Feature: create and update alarm by main event stream
             "state": {
               "_t": "stateinc",
               "a": "test-connector-axe-1.test-connector-name-axe-1",
+              "initiator": "external",
               "m": "test-output-axe-1",
               "t": {{ .eventTimestamp }},
               "val": 2
@@ -59,6 +60,7 @@ Feature: create and update alarm by main event stream
             "status": {
               "_t": "statusinc",
               "a": "test-connector-axe-1.test-connector-name-axe-1",
+              "initiator": "external",
               "m": "test-output-axe-1",
               "t": {{ .eventTimestamp }},
               "val": 1
@@ -104,6 +106,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "stateinc",
                 "a": "test-connector-axe-1.test-connector-name-axe-1",
+                "initiator": "external",
                 "m": "test-output-axe-1",
                 "t": {{ .eventTimestamp }},
                 "val": 2
@@ -111,6 +114,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "statusinc",
                 "a": "test-connector-axe-1.test-connector-name-axe-1",
+                "initiator": "external",
                 "m": "test-output-axe-1",
                 "t": {{ .eventTimestamp }},
                 "val": 1
@@ -195,6 +199,7 @@ Feature: create and update alarm by main event stream
             "state": {
               "_t": "stateinc",
               "a": "test-connector-axe-2.test-connector-name-axe-2",
+              "initiator": "external",
               "m": "test-output-axe-2",
               "t": {{ .secondEventTimestamp }},
               "val": 3
@@ -202,6 +207,7 @@ Feature: create and update alarm by main event stream
             "status": {
               "_t": "statusinc",
               "a": "test-connector-axe-2.test-connector-name-axe-2",
+              "initiator": "external",
               "m": "test-output-axe-2",
               "t": {{ .firstEventTimestamp }},
               "val": 1
@@ -246,6 +252,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "stateinc",
                 "a": "test-connector-axe-2.test-connector-name-axe-2",
+                "initiator": "external",
                 "m": "test-output-axe-2",
                 "t": {{ .firstEventTimestamp }},
                 "val": 2
@@ -253,6 +260,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "statusinc",
                 "a": "test-connector-axe-2.test-connector-name-axe-2",
+                "initiator": "external",
                 "m": "test-output-axe-2",
                 "t": {{ .firstEventTimestamp }},
                 "val": 1
@@ -260,6 +268,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "stateinc",
                 "a": "test-connector-axe-2.test-connector-name-axe-2",
+                "initiator": "external",
                 "m": "test-output-axe-2",
                 "t": {{ .secondEventTimestamp }},
                 "val": 3
@@ -324,6 +333,7 @@ Feature: create and update alarm by main event stream
             "ack": {
               "_t": "ack",
               "a": "test-author-axe-3",
+              "initiator": "external",
               "m": "test-output-axe-3",
               "t": {{ .ackEventTimestamp }},
               "val": 0
@@ -381,6 +391,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "ack",
                 "a": "test-author-axe-3",
+                "initiator": "external",
                 "m": "test-output-axe-3",
                 "t": {{ .ackEventTimestamp }},
                 "val": 0
@@ -512,6 +523,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "ack",
                 "a": "test-author-axe-4",
+                "initiator": "external",
                 "m": "test-output-axe-4",
                 "t": {{ .ackEventTimestamp }},
                 "val": 0
@@ -519,6 +531,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "ackremove",
                 "a": "test-author-axe-4",
+                "initiator": "external",
                 "m": "test-output-axe-4",
                 "t": {{ .ackRemoveEventTimestamp }},
                 "val": 0
@@ -582,6 +595,7 @@ Feature: create and update alarm by main event stream
             "canceled": {
               "_t": "cancel",
               "a": "test-author-axe-5",
+              "initiator": "external",
               "m": "test-output-axe-5",
               "t": {{ .cancelEventTimestamp }},
               "val": 0
@@ -597,6 +611,7 @@ Feature: create and update alarm by main event stream
             "status": {
               "_t": "statusinc",
               "a": "test-author-axe-5",
+              "initiator": "external",
               "m": "test-output-axe-5",
               "t": {{ .cancelEventTimestamp }},
               "val": 4
@@ -643,6 +658,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "cancel",
                 "a": "test-author-axe-5",
+                "initiator": "external",
                 "m": "test-output-axe-5",
                 "t": {{ .cancelEventTimestamp }},
                 "val": 0
@@ -650,6 +666,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "statusinc",
                 "a": "test-author-axe-5",
+                "initiator": "external",
                 "m": "test-output-axe-5",
                 "t": {{ .cancelEventTimestamp }},
                 "val": 4
@@ -737,6 +754,7 @@ Feature: create and update alarm by main event stream
             "status": {
               "_t": "statusdec",
               "a": "test-author-axe-6",
+              "initiator": "external",
               "m": "test-output-axe-6",
               "t": {{ .uncancelEventTimestamp }},
               "val": 1
@@ -784,6 +802,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "cancel",
                 "a": "test-author-axe-6",
+                "initiator": "external",
                 "m": "test-output-axe-6",
                 "t": {{ .cancelEventTimestamp }},
                 "val": 0
@@ -791,6 +810,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "statusinc",
                 "a": "test-author-axe-6",
+                "initiator": "external",
                 "m": "test-output-axe-6",
                 "t": {{ .cancelEventTimestamp }},
                 "val": 4
@@ -798,6 +818,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "uncancel",
                 "a": "test-author-axe-6",
+                "initiator": "external",
                 "m": "test-output-axe-6",
                 "t": {{ .uncancelEventTimestamp }},
                 "val": 0
@@ -805,6 +826,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "statusdec",
                 "a": "test-author-axe-6",
+                "initiator": "external",
                 "m": "test-output-axe-6",
                 "t": {{ .uncancelEventTimestamp }},
                 "val": 1
@@ -873,6 +895,7 @@ Feature: create and update alarm by main event stream
             "last_comment": {
               "_t": "comment",
               "a": "test-author-axe-7",
+              "initiator": "external",
               "m": "test-output-axe-7-1",
               "t": {{ .commentEventTimestamp }},
               "val": 0
@@ -926,6 +949,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "comment",
                 "a": "test-author-axe-7",
+                "initiator": "external",
                 "m": "test-output-axe-7-1",
                 "t": {{ .commentEventTimestamp }},
                 "val": 0
@@ -972,6 +996,7 @@ Feature: create and update alarm by main event stream
             "last_comment": {
               "_t": "comment",
               "a": "test-author-axe-7",
+              "initiator": "external",
               "m": "test-output-axe-7-2",
               "t": {{ .commentEventTimestamp }},
               "val": 0
@@ -1025,12 +1050,14 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "comment",
                 "a": "test-author-axe-7",
+                "initiator": "external",
                 "m": "test-output-axe-7-1",
                 "val": 0
               },
               {
                 "_t": "comment",
                 "a": "test-author-axe-7",
+                "initiator": "external",
                 "m": "test-output-axe-7-2",
                 "t": {{ .commentEventTimestamp }},
                 "val": 0
@@ -1101,6 +1128,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "assocticket",
                 "a": "test-author-axe-8",
+                "initiator": "external",
                 "m": "Ticket ID: test-ticket. Ticket URL: test-ticket-url. Ticket ticket_param_1: ticket_value_1.",
                 "t": {{ .ticketEventTimestamp }},
                 "ticket": "test-ticket",
@@ -1115,6 +1143,7 @@ Feature: create and update alarm by main event stream
             "ticket": {
               "_t": "assocticket",
               "a": "test-author-axe-8",
+              "initiator": "external",
               "m": "Ticket ID: test-ticket. Ticket URL: test-ticket-url. Ticket ticket_param_1: ticket_value_1.",
               "t": {{ .ticketEventTimestamp }},
               "ticket": "test-ticket",
@@ -1178,6 +1207,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "assocticket",
                 "a": "test-author-axe-8",
+                "initiator": "external",
                 "m": "Ticket ID: test-ticket. Ticket URL: test-ticket-url. Ticket ticket_param_1: ticket_value_1.",
                 "t": {{ .ticketEventTimestamp }},
                 "ticket": "test-ticket",
@@ -1254,6 +1284,7 @@ Feature: create and update alarm by main event stream
             "state": {
               "_t": "changestate",
               "a": "test-author-axe-9",
+              "initiator": "external",
               "m": "test-output-axe-9",
               "t": {{ .changeStateEventTimestamp }},
               "val": 3
@@ -1303,6 +1334,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "changestate",
                 "a": "test-author-axe-9",
+                "initiator": "external",
                 "m": "test-output-axe-9",
                 "t": {{ .changeStateEventTimestamp }},
                 "val": 3

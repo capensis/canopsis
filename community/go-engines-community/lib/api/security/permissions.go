@@ -67,4 +67,12 @@ const (
 	PermMaintenance = "api_maintenance"
 
 	ObjColorTheme = "api_color_theme"
+
+	PermPrivateViewGroups = "api_private_view_groups"
 )
+
+// PermCheck defines the permission check configuration where Obj is an object and Act is an action
+type PermCheck struct {
+	Obj string
+	Act string
+}

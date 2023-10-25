@@ -23,9 +23,16 @@
 </template>
 
 <script>
+import { omit } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
-import { MODALS, USERS_PERMISSIONS, ENTITIES_STATES_KEYS, COUNTER_STATES_ICONS } from '@/constants';
+import {
+  MODALS,
+  USERS_PERMISSIONS,
+  ENTITIES_STATES_KEYS,
+  COUNTER_STATES_ICONS,
+  COUNTER_EXPORT_FILE_NAME_PREFIX,
+} from '@/constants';
 
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 import { convertObjectToTreeview } from '@/helpers/treeview';
@@ -125,6 +132,8 @@ export default {
       widget.parameters = {
         ...widget.parameters,
         ...this.widget.parameters.alarmsList,
+
+        opened: this.widget.parameters.opened,
       };
 
       this.$modals.show({
@@ -133,7 +142,12 @@ export default {
           widget,
           title: this.$t('modals.alarmsList.prefixTitle', { prefix: this.counter.filter?.title }),
           fetchList: params => this.fetchAlarmsListWithoutStore({
-            params: { ...this.query, ...params, filters: [this.counter.filter?._id] },
+            params: {
+              ...this.query,
+              ...omit(params, ['tstart', 'tstop']),
+
+              filters: [this.counter.filter?._id],
+            },
           }),
         },
       });
@@ -148,6 +162,8 @@ export default {
         name: MODALS.variablesHelp,
         config: {
           variables,
+          exportEntity: this.counter,
+          exportEntityName: COUNTER_EXPORT_FILE_NAME_PREFIX,
         },
       });
     },

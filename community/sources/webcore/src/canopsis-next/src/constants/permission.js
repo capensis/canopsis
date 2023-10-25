@@ -51,9 +51,10 @@ export const EXPLOITATION_PAGES_RULES = {
 
 export const ADMIN_PAGES_RULES = {
   remediation: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
-  healthcheck: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
+  healthcheck: { stack: CANOPSIS_STACK.go },
   kpi: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
   tag: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
+  map: { edition: CANOPSIS_EDITION.pro },
 };
 
 export const NOTIFICATIONS_PAGES_RULES = {
@@ -88,6 +89,7 @@ export const USER_PERMISSIONS_PREFIXES = {
 export const USERS_PERMISSIONS = {
   technical: {
     view: `${USER_PERMISSIONS_PREFIXES.technical.admin}_userview`,
+    privateView: `${USER_PERMISSIONS_PREFIXES.technical.admin}_privateView`,
     role: `${USER_PERMISSIONS_PREFIXES.technical.admin}_role`,
     permission: `${USER_PERMISSIONS_PREFIXES.technical.admin}_permission`,
     user: `${USER_PERMISSIONS_PREFIXES.technical.admin}_user`,
@@ -105,7 +107,6 @@ export const USERS_PERMISSIONS = {
     remediationStatistic: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationStatistic`,
     healthcheck: `${USER_PERMISSIONS_PREFIXES.technical.admin}_healthcheck`,
     techmetrics: `${USER_PERMISSIONS_PREFIXES.technical.admin}_techmetrics`,
-    engine: `${USER_PERMISSIONS_PREFIXES.technical.admin}_engine`,
     healthcheckStatus: `${USER_PERMISSIONS_PREFIXES.technical.admin}_healthcheckStatus`,
     kpi: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpi`,
     kpiFilters: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpiFilters`,
@@ -181,6 +182,10 @@ export const USERS_PERMISSIONS = {
         variablesHelp: `${USER_PERMISSIONS_PREFIXES.business.common}_variablesHelp`,
 
         exportAsCsv: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_exportAsCsv`,
+
+        addBookmark: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_addBookmark`,
+        removeBookmark: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_removeBookmark`,
+        filterByBookmark: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_filterByBookmark`,
 
         ...featuresService.get('constants.USERS_PERMISSIONS.business.alarmsList.actions'),
       },
@@ -339,6 +344,7 @@ export const USERS_PERMISSIONS = {
       event: `${USER_PERMISSIONS_PREFIXES.api}_event`,
       view: `${USER_PERMISSIONS_PREFIXES.api}_view`,
       viewgroup: `${USER_PERMISSIONS_PREFIXES.api}_viewgroup`,
+      privateViewGroups: `${USER_PERMISSIONS_PREFIXES.api}_private_view_groups`,
       userInterfaceUpdate: `${USER_PERMISSIONS_PREFIXES.api}_user_interface_update`,
       userInterfaceDelete: `${USER_PERMISSIONS_PREFIXES.api}_user_interface_delete`,
       datastorageRead: `${USER_PERMISSIONS_PREFIXES.api}_datastorage_read`,
@@ -444,6 +450,9 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
 
     [ALARM_LIST_ACTIONS_TYPES.executeInstruction]:
     USERS_PERMISSIONS.business.alarmsList.actions.executeInstruction,
+
+    [ALARM_LIST_ACTIONS_TYPES.addBookmark]: USERS_PERMISSIONS.business.alarmsList.actions.addBookmark,
+    [ALARM_LIST_ACTIONS_TYPES.removeBookmark]: USERS_PERMISSIONS.business.alarmsList.actions.removeBookmark,
   },
 
   context: {
@@ -495,6 +504,7 @@ export const USER_PERMISSIONS_TO_PAGES_RULES = {
   [USERS_PERMISSIONS.technical.healthcheck]: ADMIN_PAGES_RULES.healthcheck,
   [USERS_PERMISSIONS.technical.kpi]: ADMIN_PAGES_RULES.kpi,
   [USERS_PERMISSIONS.technical.tag]: ADMIN_PAGES_RULES.tag,
+  [USERS_PERMISSIONS.technical.map]: ADMIN_PAGES_RULES.map,
 
   /**
    * Exploitation pages

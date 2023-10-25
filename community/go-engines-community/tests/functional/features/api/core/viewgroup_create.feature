@@ -2,6 +2,7 @@ Feature: Create a view group
   I need to be able to create a view group
   Only admin should be able to create a view group
 
+  @concurrent
   Scenario: given create request should return ok
     When I am admin
     When I do POST /api/v4/view-groups:
@@ -15,19 +16,11 @@ Feature: Create a view group
     """
     {
       "title": "test-viewgroup-to-create-1-title",
+      "is_private": false,
       "author": {
         "_id": "root",
         "name": "root"
       }
-    }
-    """
-
-  Scenario: given create request should return ok to get request
-    When I am admin
-    When I do POST /api/v4/view-groups:
-    """
-    {
-      "title": "test-viewgroup-to-create-2-title"
     }
     """
     When I do GET /api/v4/view-groups/{{ .lastResponse._id}}
@@ -35,7 +28,8 @@ Feature: Create a view group
     Then the response body should contain:
     """
     {
-      "title": "test-viewgroup-to-create-2-title",
+      "title": "test-viewgroup-to-create-1-title",
+      "is_private": false,
       "author": {
         "_id": "root",
         "name": "root"
@@ -43,15 +37,18 @@ Feature: Create a view group
     }
     """
 
+  @concurrent
   Scenario: given create request and no auth user should not allow access
     When I do POST /api/v4/view-groups
     Then the response code should be 401
 
+  @concurrent
   Scenario: given create request and auth user by api key without permissions should not allow access
     When I am noperms
     When I do POST /api/v4/view-groups
     Then the response code should be 403
 
+  @concurrent
   Scenario: given invalid create request should return errors
     When I am admin
     When I do POST /api/v4/view-groups:
@@ -69,6 +66,7 @@ Feature: Create a view group
     }
     """
 
+  @concurrent
   Scenario: given create request with already exists title should return error
     When I am admin
     When I do POST /api/v4/view-groups:
@@ -86,3 +84,14 @@ Feature: Create a view group
       }
     }
     """
+
+  @concurrent
+  Scenario: given create request with already exists title in private viewgroup should be ok
+    When I am admin
+    When I do POST /api/v4/view-groups:
+    """
+    {
+      "title": "test-private-viewgroup-to-check-unique-title-5-title"
+    }
+    """
+    Then the response code should be 201

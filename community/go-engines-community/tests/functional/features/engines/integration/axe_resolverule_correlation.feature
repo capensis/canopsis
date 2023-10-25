@@ -74,9 +74,15 @@ Feature: resolve meta alarm
             "connector": "engine",
             "connector_name": "correlation",
             "state": {
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 2
             },
             "status": {
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 1
             }
           }
@@ -114,9 +120,15 @@ Feature: resolve meta alarm
             "connector": "engine",
             "connector_name": "correlation",
             "state": {
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 0
             },
             "status": {
+              "a": "engine.correlation",
+              "user_id": "",
+              "initiator": "system",
               "val": 0
             }
           }
@@ -152,18 +164,30 @@ Feature: resolve meta alarm
             "data": [
               {
                 "_t": "stateinc",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system",
                 "val": 2
               },
               {
                 "_t": "statusinc",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system",
                 "val": 1
               },
               {
                 "_t": "statedec",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system",
                 "val": 0
               },
               {
                 "_t": "statusdec",
+                "a": "engine.correlation",
+                "user_id": "",
+                "initiator": "system",
                 "val": 0
               }
             ],

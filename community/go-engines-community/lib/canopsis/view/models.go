@@ -37,9 +37,11 @@ type Group struct {
 	ID       string        `bson:"_id"`
 	Title    string        `bson:"title"`
 	Author   string        `bson:"author"`
-	Position int64         `bson:"position"`
+	Position int64         `bson:"position,omitempty"`
 	Created  types.CpsTime `bson:"created"`
 	Updated  types.CpsTime `bson:"updated"`
+
+	IsPrivate bool `bson:"is_private"`
 }
 
 type View struct {
@@ -51,24 +53,26 @@ type View struct {
 	Tags            []string                   `bson:"tags"`
 	PeriodicRefresh *types.DurationWithEnabled `bson:"periodic_refresh"`
 	Author          string                     `bson:"author"`
-	Position        int64                      `bson:"position"`
+	Position        int64                      `bson:"position,omitempty"`
+	IsPrivate       bool                       `bson:"is_private"`
 	Created         types.CpsTime              `bson:"created"`
 	Updated         types.CpsTime              `bson:"updated"`
 }
 
 type Tab struct {
-	ID       string        `bson:"_id" json:"_id"`
-	Title    string        `bson:"title" json:"title"`
-	View     string        `bson:"view" json:"-"`
-	Author   string        `bson:"author" json:"author"`
-	Position int64         `bson:"position" json:"-"`
-	Created  types.CpsTime `bson:"created" json:"created" swaggertype:"integer"`
-	Updated  types.CpsTime `bson:"updated" json:"updated" swaggertype:"integer"`
+	ID        string        `bson:"_id" json:"_id"`
+	Title     string        `bson:"title" json:"title"`
+	View      string        `bson:"view,omitempty" json:"-"`
+	Author    string        `bson:"author" json:"author"`
+	Position  int64         `bson:"position" json:"-"`
+	IsPrivate bool          `bson:"is_private" json:"-"`
+	Created   types.CpsTime `bson:"created" json:"created" swaggertype:"integer"`
+	Updated   types.CpsTime `bson:"updated" json:"updated" swaggertype:"integer"`
 }
 
 type Widget struct {
 	ID                 string             `bson:"_id" json:"_id,omitempty"`
-	Tab                string             `bson:"tab" json:"-"`
+	Tab                string             `bson:"tab,omitempty" json:"-"`
 	Title              string             `bson:"title" json:"title"`
 	Type               string             `bson:"type" json:"type"`
 	GridParameters     map[string]any     `bson:"grid_parameters" json:"grid_parameters"`
@@ -77,6 +81,8 @@ type Widget struct {
 	Author             string             `bson:"author" json:"author,omitempty"`
 	Created            types.CpsTime      `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
 	Updated            types.CpsTime      `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+
+	IsPrivate bool `bson:"is_private" json:"is_private"`
 }
 
 type Parameters struct {
@@ -159,7 +165,7 @@ func (p InternalParameters) IsZero() bool {
 type WidgetFilter struct {
 	ID        string        `bson:"_id,omitempty"`
 	Title     string        `bson:"title"`
-	Widget    string        `bson:"widget"`
+	Widget    string        `bson:"widget,omitempty"`
 	IsPrivate bool          `bson:"is_private"`
 	Author    string        `bson:"author"`
 	Position  int64         `bson:"position"`
@@ -174,6 +180,8 @@ type WidgetFilter struct {
 	OldMongoQuery string `bson:"old_mongo_query,omitempty"`
 
 	WeatherServicePattern WeatherServicePattern `bson:"weather_service_pattern,omitempty"`
+
+	IsUserPreference bool `bson:"is_user_preference"`
 }
 
 type WidgetTemplate struct {

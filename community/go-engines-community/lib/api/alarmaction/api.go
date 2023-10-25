@@ -28,6 +28,8 @@ type API interface {
 	BulkAssocTicket(c *gin.Context)
 	BulkComment(c *gin.Context)
 	BulkChangeState(c *gin.Context)
+	AddBookmark(c *gin.Context)
+	RemoveBookmark(c *gin.Context)
 }
 
 type api struct {
@@ -381,4 +383,32 @@ func (a *api) BulkChangeState(c *gin.Context) {
 
 		return request.ID, nil
 	}, a.logger)
+}
+
+func (a *api) AddBookmark(c *gin.Context) {
+	found, err := a.store.AddBookmark(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
+	if err != nil {
+		panic(err)
+	}
+
+	if !found {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	c.Status(http.StatusNoContent)
+}
+
+func (a *api) RemoveBookmark(c *gin.Context) {
+	found, err := a.store.RemoveBookmark(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
+	if err != nil {
+		panic(err)
+	}
+
+	if !found {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	c.Status(http.StatusNoContent)
 }
