@@ -151,7 +151,7 @@ import { widgetExpandPanelAlarmDetails } from '@/mixins/widget/expand-panel/alar
 import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
 
 import ServiceDependencies from '@/components/other/service/partials/service-dependencies.vue';
-import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-simple-list.vue';
+import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/pbehaviors-simple-list.vue';
 import DeclaredTicketsList from '@/components/other/declare-ticket/declared-tickets-list.vue';
 import EntityCharts from '@/components/widgets/chart/entity-charts.vue';
 
