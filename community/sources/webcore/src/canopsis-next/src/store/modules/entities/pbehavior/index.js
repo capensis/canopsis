@@ -134,6 +134,10 @@ export default {
       return request.post(API_ROUTES.pbehavior.bulkPbehaviors, data);
     },
 
+    fetchItemWithoutStore(context, { id }) {
+      return request.get(`${API_ROUTES.pbehavior.pbehaviors}/${id}`);
+    },
+
     async update({ dispatch }, { data, id }) {
       await dispatch('entities/update', {
         route: `${API_ROUTES.pbehavior.pbehaviors}/${id}`,
