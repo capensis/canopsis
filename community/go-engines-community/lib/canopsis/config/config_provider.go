@@ -12,11 +12,47 @@ import (
 	"sync"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/rs/zerolog"
 )
 
 const SystemEnvVariablesKey = "System"
+
+var defaultEngineOrder = []EngineOrder{
+	{
+		From: canopsis.FIFOEngineName,
+		To:   canopsis.CheEngineName,
+	},
+	{
+		From: canopsis.CheEngineName,
+		To:   canopsis.PBehaviorEngineName,
+	},
+	{
+		From: canopsis.PBehaviorEngineName,
+		To:   canopsis.AxeEngineName,
+	},
+	{
+		From: canopsis.AxeEngineName,
+		To:   canopsis.CorrelationEngineName,
+	},
+	{
+		From: canopsis.AxeEngineName,
+		To:   canopsis.RemediationEngineName,
+	},
+	{
+		From: canopsis.CorrelationEngineName,
+		To:   canopsis.DynamicInfosEngineName,
+	},
+	{
+		From: canopsis.DynamicInfosEngineName,
+		To:   canopsis.ActionEngineName,
+	},
+	{
+		From: canopsis.ActionEngineName,
+		To:   canopsis.WebhookEngineName,
+	},
+}
 
 var weekdays = map[string]time.Weekday{}
 
@@ -66,6 +102,10 @@ type TemplateConfigProvider interface {
 	Get() SectionTemplate
 }
 
+type HealthCheckConfigProvider interface {
+	Get() HealthCheckConf
+}
+
 type AlarmConfig struct {
 	StealthyInterval      time.Duration
 	CancelAutosolveDelay  time.Duration
@@ -85,10 +125,11 @@ type TimezoneConfig struct {
 }
 
 type ApiConfig struct {
-	TokenSigningMethod     jwt.SigningMethod
-	BulkMaxSize            int
-	AuthorScheme           []string
-	MetricsCacheExpiration time.Duration
+	TokenSigningMethod       jwt.SigningMethod
+	BulkMaxSize              int
+	ExportMongoClientTimeout time.Duration
+	AuthorScheme             []string
+	MetricsCacheExpiration   time.Duration
 }
 
 type RemediationConfig struct {
@@ -313,9 +354,10 @@ func (p *BaseTimezoneConfigProvider) Get() TimezoneConfig {
 func NewApiConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseApiConfigProvider {
 	sectionName := "api"
 	conf := ApiConfig{
-		TokenSigningMethod:     parseJwtSigningMethod(cfg.API.TokenSigningMethod, jwt.GetSigningMethod(ApiTokenSigningMethod), "TokenSigningMethod", sectionName, logger),
-		BulkMaxSize:            parseInt(cfg.API.BulkMaxSize, ApiBulkMaxSize, "BulkMaxSize", sectionName, logger),
-		MetricsCacheExpiration: parseTimeDurationByStr(cfg.API.MetricsCacheExpiration, ApiMetricsCacheExpiration, "MetricsCacheExpiration", sectionName, logger),
+		TokenSigningMethod:       parseJwtSigningMethod(cfg.API.TokenSigningMethod, jwt.GetSigningMethod(ApiTokenSigningMethod), "TokenSigningMethod", sectionName, logger),
+		BulkMaxSize:              parseInt(cfg.API.BulkMaxSize, ApiBulkMaxSize, "BulkMaxSize", sectionName, logger),
+		ExportMongoClientTimeout: parseTimeDurationByStr(cfg.API.ExportMongoClientTimeout, ApiExportMongoClientTimeout, "ExportMongoClientTimeout", sectionName, logger),
+		MetricsCacheExpiration:   parseTimeDurationByStr(cfg.API.MetricsCacheExpiration, ApiMetricsCacheExpiration, "MetricsCacheExpiration", sectionName, logger),
 	}
 
 	if len(cfg.API.AuthorScheme) == 0 {
@@ -358,6 +400,11 @@ func (p *BaseApiConfigProvider) Update(cfg CanopsisConf) {
 		p.conf.BulkMaxSize = i
 	}
 
+	d, ok := parseUpdatedTimeDurationByStr(cfg.API.ExportMongoClientTimeout, p.conf.ExportMongoClientTimeout, "ExportMongoClientTimeout", sectionName, p.logger)
+	if ok {
+		p.conf.ExportMongoClientTimeout = d
+	}
+
 	if len(cfg.API.AuthorScheme) == 0 {
 		p.logger.Error().
 			Strs("invalid", cfg.API.AuthorScheme).
@@ -370,7 +417,7 @@ func (p *BaseApiConfigProvider) Update(cfg CanopsisConf) {
 		p.conf.AuthorScheme = cfg.API.AuthorScheme
 	}
 
-	d, ok := parseUpdatedTimeDurationByStr(cfg.API.MetricsCacheExpiration, p.conf.MetricsCacheExpiration, "MetricsCacheExpiration", sectionName, p.logger)
+	d, ok = parseUpdatedTimeDurationByStr(cfg.API.MetricsCacheExpiration, p.conf.MetricsCacheExpiration, "MetricsCacheExpiration", sectionName, p.logger)
 	if ok {
 		p.conf.MetricsCacheExpiration = d
 	}
@@ -491,11 +538,20 @@ func NewUserInterfaceConfigProvider(cfg UserInterfaceConf, logger zerolog.Logger
 			Msg("CheckCountRequestTimeout of user interface config is used")
 	}
 
+	logger.Info().
+		Bool("value", cfg.IsAllowChangeSeverityToInfo).
+		Msg("IsAllowChangeSeverityToInfo of user interface config is used")
+
+	logger.Info().
+		Bool("value", cfg.RequiredInstructionApprove).
+		Msg("RequiredInstructionApprove of user interface config is used")
+
 	return &BaseUserInterfaceConfigProvider{
 		conf: UserInterfaceConf{
 			IsAllowChangeSeverityToInfo: cfg.IsAllowChangeSeverityToInfo,
 			MaxMatchedItems:             maxMatchedItems,
 			CheckCountRequestTimeout:    checkCountRequestTimeout,
+			RequiredInstructionApprove:  cfg.RequiredInstructionApprove,
 		},
 		logger: logger,
 	}
@@ -542,6 +598,15 @@ func (p *BaseUserInterfaceConfigProvider) Update(conf UserInterfaceConf) {
 			Msg("IsAllowChangeSeverityToInfo of user interface config is loaded")
 
 		p.conf.IsAllowChangeSeverityToInfo = conf.IsAllowChangeSeverityToInfo
+	}
+
+	if conf.RequiredInstructionApprove != p.conf.RequiredInstructionApprove {
+		p.logger.Info().
+			Bool("previous", p.conf.RequiredInstructionApprove).
+			Bool("new", conf.RequiredInstructionApprove).
+			Msg("RequiredInstructionApprove of user interface config is loaded")
+
+		p.conf.RequiredInstructionApprove = conf.RequiredInstructionApprove
 	}
 }
 
@@ -658,6 +723,39 @@ func (p *BaseTemplateConfigProvider) parseVariables(templateCfg SectionTemplate)
 }
 
 func (p *BaseTemplateConfigProvider) Get() SectionTemplate {
+	p.mx.RLock()
+	defer p.mx.RUnlock()
+
+	return p.conf
+}
+
+type BaseHealthCheckConfigProvider struct {
+	conf   HealthCheckConf
+	mx     sync.RWMutex
+	logger zerolog.Logger
+}
+
+func NewBaseHealthCheckConfigProvider(cfg HealthCheckConf, logger zerolog.Logger) *BaseHealthCheckConfigProvider {
+	return &BaseHealthCheckConfigProvider{
+		conf: HealthCheckConf{
+			EngineOrder:    parseEngineOrder(cfg.EngineOrder, defaultEngineOrder, logger),
+			UpdateInterval: cfg.UpdateInterval,
+		},
+		logger: logger,
+	}
+}
+
+func (p *BaseHealthCheckConfigProvider) Update(cfg HealthCheckConf) error {
+	p.mx.Lock()
+	defer p.mx.Unlock()
+
+	p.conf.EngineOrder = parseEngineOrder(cfg.EngineOrder, p.conf.EngineOrder, p.logger)
+	p.conf.Parameters = parseParameters(cfg.Parameters, p.conf.Parameters, p.logger)
+
+	return nil
+}
+
+func (p *BaseHealthCheckConfigProvider) Get() HealthCheckConf {
 	p.mx.RLock()
 	defer p.mx.RUnlock()
 
@@ -1342,4 +1440,77 @@ func logErrInvalidValueUsePrevious(
 		Any("previous", previousVal).
 		Any("invalid", invalidVal).
 		Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
+}
+
+func parseEngineOrder(value []EngineOrder, oldValue []EngineOrder, logger zerolog.Logger) []EngineOrder {
+	possibleEngines := map[string]bool{
+		canopsis.FIFOEngineName:         true,
+		canopsis.CheEngineName:          true,
+		canopsis.PBehaviorEngineName:    true,
+		canopsis.AxeEngineName:          true,
+		canopsis.CorrelationEngineName:  true,
+		canopsis.RemediationEngineName:  true,
+		canopsis.DynamicInfosEngineName: true,
+		canopsis.ActionEngineName:       true,
+		canopsis.WebhookEngineName:      true,
+	}
+
+	for idx, pair := range value {
+		_, fromValid := possibleEngines[pair.From]
+		_, toValid := possibleEngines[pair.To]
+
+		if !fromValid || !toValid || pair.To == pair.From {
+			logger.Error().
+				Int("index", idx).
+				Str("from", pair.From).
+				Str("to", pair.To).
+				Msgf("from and to values shouldn't be equal and should be one of %v", possibleEngines)
+
+			return oldValue
+		}
+	}
+
+	return value
+}
+
+func parseParameters(value HealthCheckParameters, oldValue HealthCheckParameters, logger zerolog.Logger) HealthCheckParameters {
+	valid := true
+	if value.Queue.Enabled && value.Queue.Limit < 1 {
+		valid = false
+		logger.Error().Str("key", "queue_limit").Int("value", value.Queue.Limit).Msg("queue_limit should be greater than 0")
+	}
+
+	if value.Messages.Enabled && value.Messages.Limit < 1 {
+		valid = false
+		logger.Error().Str("key", "messages_limit").Int("value", value.Messages.Limit).Msg("messages_limit should be greater than 0")
+	}
+
+	if !valid ||
+		!validEngineParameter(logger, canopsis.FIFOEngineName, value.Fifo) ||
+		!validEngineParameter(logger, canopsis.CheEngineName, value.Che) ||
+		!validEngineParameter(logger, canopsis.PBehaviorEngineName, value.PBehavior) ||
+		!validEngineParameter(logger, canopsis.AxeEngineName, value.Axe) ||
+		!validEngineParameter(logger, canopsis.CorrelationEngineName, value.Correlation) ||
+		!validEngineParameter(logger, canopsis.RemediationEngineName, value.Remediation) ||
+		!validEngineParameter(logger, canopsis.DynamicInfosEngineName, value.DynamicInfos) ||
+		!validEngineParameter(logger, canopsis.ActionEngineName, value.Action) ||
+		!validEngineParameter(logger, canopsis.WebhookEngineName, value.Webhook) {
+		return oldValue
+	}
+
+	return value
+}
+
+func validEngineParameter(logger zerolog.Logger, engineName string, params EngineParameters) bool {
+	if params.Enabled && params.Minimal < 1 {
+		logger.Error().Str("engine", engineName).Int("minimal", params.Minimal).Msg("queue_limit should be greater than 0")
+		return false
+	}
+
+	if params.Enabled && params.Optimal < params.Minimal {
+		logger.Error().Str("engine", engineName).Int("minimal", params.Minimal).Int("optimal", params.Optimal).Msg("optimal should be greater or equal minimal")
+		return false
+	}
+
+	return true
 }

@@ -52,6 +52,7 @@ export default {
   view: {
     create: {
       title: 'Créer une vue',
+      privateTitle: 'Créer une vue privée',
     },
     edit: {
       title: 'Éditer une vue',
@@ -59,12 +60,6 @@ export default {
     duplicate: {
       title: 'Dupliquer une vue - {viewTitle}',
       infoMessage: 'Vous êtes en train de dupliquer une vue. Toutes les lignes et les widgets de la vue dupliquée seront copiés dans la nouvelle vue.',
-    },
-    noData: 'Aucun groupe correspondant. Appuyez sur <kbd>enter</kbd> pour en créer un nouveau.',
-    fields: {
-      periodicRefresh: 'Rafraichissement périodique',
-      groupIds: 'Choisissez une groupe, ou créez-en un nouveau',
-      groupTags: 'Étiquettes de groupe',
     },
     success: {
       create: 'Nouvelle vue créée !',
@@ -77,11 +72,6 @@ export default {
       edit: 'Erreur lors de l\'édition de la vue...',
       duplicate: 'Échec de la duplication de la vue...',
       delete: 'Erreur lors de la suppression de la vue...',
-    },
-  },
-  createEvent: {
-    fields: {
-      output: 'Note',
     },
   },
   confirmAckWithTicket: {
@@ -205,7 +195,6 @@ export default {
   },
   variablesHelp: {
     variables: 'Variables',
-    copyToClipboard: 'Copier dans le presse-papier',
   },
   service: {
     refreshEntities: 'Rafraîchir la liste des entités',
@@ -686,7 +675,7 @@ export default {
   },
   remediationInstructionApproval: {
     title: 'Approbation des consignes',
-    requested: 'demandé pour approbation',
+    requested: 'vous a sollicité pour une pour approbation',
     tabs: {
       updated: 'Mise à jour',
       original: 'Original',
@@ -970,17 +959,17 @@ export default {
   },
   confirmationLeaveMaintenance: {
     title: 'Quitter le mode maintenance',
-    text: 'Êtes-vous sûr de vouloir quitter le mode maintenance ?\\nTous les utilisateurs pourront se connecter au système après avoir quitté.',
+    text: 'Êtes-vous sûr de vouloir quitter le mode maintenance ?\nTous les utilisateurs pourront à nouveau se connecter à Canopsis.',
   },
   createTag: {
     create: {
-      title: 'Créer une balise',
+      title: 'Créer un tag',
     },
     edit: {
-      title: 'Modifier une balise',
+      title: 'Modifier un tag',
     },
     duplicate: {
-      title: 'Dupliquer une balise',
+      title: 'Dupliquer un tag',
     },
   },
   createTheme: {

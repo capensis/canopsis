@@ -14,7 +14,6 @@ export const ROUTES_NAMES = {
   adminPlanning: 'admin-planning-administration',
   adminRemediation: 'admin-remediation-administration',
   adminHealthcheck: 'admin-healthcheck',
-  adminEngines: 'admin-engines',
   adminKPI: 'admin-kpi',
   adminMaps: 'admin-maps',
   adminTags: 'admin-tags',
@@ -51,7 +50,6 @@ export const ROUTES = {
   adminPlanning: '/admin/planning',
   adminRemediation: '/admin/remediation',
   adminHealthcheck: '/admin/healthcheck',
-  adminEngines: '/admin/engines',
   adminKPI: '/admin/kpi',
   adminMaps: '/admin/maps',
   adminTags: '/admin/tags',
@@ -120,10 +118,6 @@ export const CANOPSIS_DOCUMENTATION = 'https://doc.canopsis.net';
 export const CANOPSIS_WEBSITE = 'https://www.capensis.fr/canopsis/';
 
 export const CANOPSIS_FORUM = 'https://community.capensis.org/';
-
-export const TOURS = {
-  alarmsExpandPanel: 'alarmsExpandPanel',
-};
 
 export const QUICK_RANGES = {
   last15Minutes: {
@@ -370,13 +364,24 @@ export const MAX_SEARCH_ITEMS = 8;
 export const LOGIN_APP_INFO_POLLING_DELAY = 5000;
 
 export const RESPONSE_STATUSES = {
+  badRequest: 400,
   unauthorized: 401,
   notFound: 404,
   forbidden: 403,
   timeout: 408,
 
+  internalServerError: 500,
   badGateway: 502,
   serviceUnavailable: 503,
 };
 
-export const EXCLUDED_SERVER_ERROR_STATUSES = [RESPONSE_STATUSES.unauthorized, RESPONSE_STATUSES.forbidden];
+export const LOGOUT_RESPONSE_STATUSES = [
+  RESPONSE_STATUSES.unauthorized,
+  RESPONSE_STATUSES.badGateway,
+  RESPONSE_STATUSES.serviceUnavailable,
+];
+
+export const EXCLUDED_SERVER_ERROR_STATUSES = [
+  RESPONSE_STATUSES.unauthorized,
+  RESPONSE_STATUSES.forbidden,
+];

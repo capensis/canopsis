@@ -88,37 +88,6 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
     jest.clearAllMocks();
   });
 
-  it('Tabs key updated after change tour enabled', async () => {
-    const wrapper = factory({
-      store,
-      propsData: {
-        alarm: {
-          _id: 'alarm-id',
-          entity: {
-            type: ENTITY_TYPES.connector,
-            impact: [],
-          },
-          v: {},
-        },
-        widget: {
-          parameters: {
-            moreInfoTemplate: 'template',
-            isHtmlEnabledOnTimeLine: false,
-            serviceDependenciesColumns: [],
-          },
-        },
-      },
-    });
-
-    const prevKey = selectTabs(wrapper).$vnode.key;
-
-    await wrapper.setProps({
-      isTourEnabled: true,
-    });
-
-    expect(prevKey !== selectTabs(wrapper).$vnode.key).toBe(true);
-  });
-
   it('Tab key updated after change moreInfoTemplate', async () => {
     const widget = {
       parameters: {
@@ -201,7 +170,6 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
         },
         hideChildren: true,
         editing: true,
-        isTourEnabled: true,
       },
     });
 

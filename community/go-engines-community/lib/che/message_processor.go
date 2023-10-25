@@ -321,6 +321,7 @@ func (p *messageProcessor) postProcessUpdatedEntities(ctx context.Context, event
 					Resource:      ent.Name,
 					Timestamp:     types.CpsTime{Time: time.Now()},
 					Entity:        &ent,
+					Initiator:     types.InitiatorSystem,
 				}
 			case types.EntityTypeComponent:
 				updateCountersEvent = types.Event{
@@ -331,6 +332,7 @@ func (p *messageProcessor) postProcessUpdatedEntities(ctx context.Context, event
 					Component:     ent.Component,
 					Timestamp:     types.CpsTime{Time: time.Now()},
 					Entity:        &ent,
+					Initiator:     types.InitiatorSystem,
 				}
 			case types.EntityTypeConnector:
 				updateCountersEvent = types.Event{
@@ -340,6 +342,7 @@ func (p *messageProcessor) postProcessUpdatedEntities(ctx context.Context, event
 					ConnectorName: event.ConnectorName,
 					Timestamp:     types.CpsTime{Time: time.Now()},
 					Entity:        &ent,
+					Initiator:     types.InitiatorSystem,
 				}
 			}
 

@@ -50,6 +50,10 @@ export default {
       type: String,
       required: false,
     },
+    units: {
+      type: Array,
+      required: false,
+    },
   },
   computed: {
     enabledFieldName() {
@@ -57,12 +61,14 @@ export default {
     },
 
     timeUnits() {
-      return [
+      const units = this.units || [
         AVAILABLE_TIME_UNITS.day,
         AVAILABLE_TIME_UNITS.week,
         AVAILABLE_TIME_UNITS.month,
         AVAILABLE_TIME_UNITS.year,
-      ].map(({ value, text }) => ({
+      ];
+
+      return units.map(({ value, text }) => ({
         value,
         text: this.$tc(text, this.duration.value),
       }));

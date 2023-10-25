@@ -168,7 +168,19 @@ export default {
     this.changeRecurrenceRuleOption();
   },
   methods: {
+    resetForm() {
+      const recurrenceRule = new RRule();
+
+      this.recurrenceRuleObject = recurrenceRule;
+      this.form = recurrenceRuleToFormOptions(recurrenceRule.origOptions);
+    },
+
     updateFrequency(frequency) {
+      if (!frequency) {
+        this.resetForm();
+        return;
+      }
+
       this.form.freq = frequency;
 
       if (!this.isWeeklyFrequency && this.form.byweekday) {

@@ -45,7 +45,7 @@ cancel            | Annule un évènement et met son statut dans un état "cance
 changestate       | Change et verrouille la criticité d'une alarme                                                                                             |
 check             | Envoie le résultat d'un check (depuis Nagios, Icinga,...)                                                                                  |
 comment           | Ajoute un commentaire sur une alarme                                                                                                           |
-snmp              | Envoyé par le connecteur [`snmp2canopsis`](../../interconnexions/Supervision/SNMPtrap.md) au moteur [`snmp`](../../guide-administration/moteurs/moteur-snmp.md) |
+snmp              | Envoyé par le connecteur [`snmp2canopsis`](../../interconnexions/Supervision/SNMPtrap.md) au moteur [`snmp`](../../guide-utilisation/menu-exploitation/regles-snmp.md) |
 snooze            | Place un Snooze sur une alarme                                                                                                             |
 statcounterinc    | Incrémente un compteur dans l'engine statistics                                                                                            |
 statduration      | Ajoute une durée dans l'engine statistics                                                                                                  |

@@ -20,7 +20,6 @@ import view from './view';
 import validation from './validation';
 import home from './home';
 import serviceWeather from './service-weather';
-import tours from './tours';
 import handlebars from './handlebars';
 import playlist from './playlist';
 import permission from './permission';
@@ -82,7 +81,6 @@ export default {
   validation,
   home,
   serviceWeather,
-  tours,
   handlebars,
   playlist,
   permission,
