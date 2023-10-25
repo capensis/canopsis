@@ -60,6 +60,11 @@ require (
 )
 
 require (
+	github.com/coreos/go-oidc/v3 v3.6.0
+	golang.org/x/oauth2 v0.13.0
+)
+
+require (
 	github.com/Azure/go-ntlmssp v0.0.0-20221128193559-754e69321358 // indirect
 	github.com/ChannelMeter/iso8601duration v0.0.0-20150204201828-8da3af7a2a61 // indirect
 	github.com/ClickHouse/ch-go v0.55.0 // indirect
@@ -79,10 +84,12 @@ require (
 	github.com/go-asn1-ber/asn1-ber v1.5.4 // indirect
 	github.com/go-faster/city v1.0.1 // indirect
 	github.com/go-faster/errors v0.6.1 // indirect
+	github.com/go-jose/go-jose/v3 v3.0.0 // indirect
 	github.com/go-redis/redis/v8 v8.11.5 // indirect
 	github.com/go-sourcemap/sourcemap v2.1.3+incompatible // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/gofrs/uuid v4.3.1+incompatible // indirect
+	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/pprof v0.0.0-20230207041349-798e818bf904 // indirect
 	github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1 // indirect
@@ -111,6 +118,7 @@ require (
 	github.com/mattermost/xml-roundtrip-validator v0.1.0 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
+	github.com/mattn/go-sqlite3 v2.0.3+incompatible // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe // indirect
@@ -135,11 +143,12 @@ require (
 	go.opentelemetry.io/otel/trace v1.15.0 // indirect
 	go.uber.org/atomic v1.10.0 // indirect
 	golang.org/x/arch v0.3.0 // indirect
-	golang.org/x/crypto v0.9.0 // indirect
-	golang.org/x/net v0.10.0 // indirect
-	golang.org/x/sys v0.8.0 // indirect
+	golang.org/x/crypto v0.14.0 // indirect
+	golang.org/x/net v0.16.0 // indirect
+	golang.org/x/sys v0.13.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
-	google.golang.org/protobuf v1.30.0 // indirect
+	google.golang.org/appengine v1.6.7 // indirect
+	google.golang.org/protobuf v1.31.0 // indirect
 )
 
 // No effect on the real canopsis-community repo, but necessary when it's part of the canopsis-pro monorepo
