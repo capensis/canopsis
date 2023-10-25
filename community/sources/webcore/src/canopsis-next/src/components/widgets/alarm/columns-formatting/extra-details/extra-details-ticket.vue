@@ -2,7 +2,7 @@
   div
     v-tooltip.c-extra-details.extra-details-ticket(top)
       template(#activator="{ on }")
-        v-badge.time-line-flag(:value="isSomeOneFailed", color="transparent", overlap)
+        v-badge.time-line-flag(:value="isLastFailed", color="transparent", overlap)
           template(#badge="")
             v-icon.extra-details-ticket__badge-icon(color="error", size="14") error
           span.c-extra-details__badge.blue(v-on="on")
@@ -23,6 +23,8 @@
 </template>
 
 <script>
+import { last } from 'lodash';
+
 import { EVENT_ENTITY_TYPES } from '@/constants';
 
 import { getEntityEventIcon } from '@/helpers/entities/entity/icons';
@@ -44,8 +46,8 @@ export default {
       return this.tickets.slice(0, this.limit);
     },
 
-    isSomeOneFailed() {
-      return this.tickets.some(ticket => !this.isSuccessTicketDeclaration(ticket));
+    isLastFailed() {
+      return !this.isSuccessTicketDeclaration(last(this.tickets));
     },
 
     icon() {
@@ -53,8 +55,8 @@ export default {
     },
   },
   methods: {
-    isSuccessTicketDeclaration(ticket) {
-      return [EVENT_ENTITY_TYPES.declareTicket, EVENT_ENTITY_TYPES.assocTicket].includes(ticket._t);
+    isSuccessTicketDeclaration(ticket = {}) {
+      return [EVENT_ENTITY_TYPES.declareTicket, EVENT_ENTITY_TYPES.assocTicket].includes(ticket?._t);
     },
 
     getTicketStatusText(ticket) {

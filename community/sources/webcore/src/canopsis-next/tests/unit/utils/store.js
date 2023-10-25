@@ -467,6 +467,74 @@ export const createWidgetModule = () => {
   };
 };
 
+export const createViewModule = () => {
+  const groups = jest.fn().mockReturnValue([]);
+  const pending = jest.fn().mockReturnValue(false);
+  const fetchGroupsList = jest.fn();
+  const fetchGroupsListWithoutStore = jest.fn();
+  const updateViewsPositions = jest.fn();
+  const createGroup = jest.fn();
+  const updateGroup = jest.fn();
+  const removeGroup = jest.fn();
+  const copyView = jest.fn();
+  const createView = jest.fn();
+  const updateView = jest.fn();
+  const removeView = jest.fn();
+
+  afterEach(() => {
+    fetchGroupsList.mockClear();
+    fetchGroupsListWithoutStore.mockClear();
+    updateViewsPositions.mockClear();
+    createGroup.mockClear();
+    updateGroup.mockClear();
+    removeGroup.mockClear();
+    createView.mockClear();
+    copyView.mockClear();
+    updateView.mockClear();
+    removeView.mockClear();
+    groups.mockClear();
+    pending.mockClear();
+  });
+
+  const viewModule = {
+    name: 'view',
+    getters: {
+      items: groups,
+      pending,
+    },
+    actions: {
+      fetchList: fetchGroupsList,
+      fetchListWithoutStore: fetchGroupsListWithoutStore,
+      updateViewPositions: updateViewsPositions,
+      create: createGroup,
+      update: updateGroup,
+      remove: removeGroup,
+      copyView,
+      createView,
+      updateView,
+      removeView,
+    },
+  };
+
+  return {
+    viewModule,
+
+    groups,
+    pending,
+
+    fetchGroupsList,
+    fetchGroupsListWithoutStore,
+    updateViewsPositions,
+    createGroup,
+    updateGroup,
+    removeGroup,
+    createView,
+    copyView,
+    updateView,
+    removeView,
+  };
+};
+
 export const createServiceModule = () => {
   const fetchEntityInfosKeysWithoutStore = jest.fn().mockReturnValue({
     data: [],
@@ -669,6 +737,8 @@ export const createAlarmModule = () => {
   const bulkCreateAlarmCancelEvent = jest.fn();
   const bulkCreateAlarmUnCancelEvent = jest.fn();
   const bulkCreateAlarmChangestateEvent = jest.fn();
+  const addBookmarkToAlarm = jest.fn();
+  const removeBookmarkFromAlarm = jest.fn();
 
   afterEach(() => {
     fetchAlarmItem.mockClear();
@@ -682,6 +752,8 @@ export const createAlarmModule = () => {
     bulkCreateAlarmCancelEvent.mockClear();
     bulkCreateAlarmUnCancelEvent.mockClear();
     bulkCreateAlarmChangestateEvent.mockClear();
+    addBookmarkToAlarm.mockClear();
+    removeBookmarkFromAlarm.mockClear();
   });
 
   const alarmModule = {
@@ -698,6 +770,8 @@ export const createAlarmModule = () => {
       bulkCreateAlarmCancelEvent,
       bulkCreateAlarmUnCancelEvent,
       bulkCreateAlarmChangestateEvent,
+      addBookmarkToAlarm,
+      removeBookmarkFromAlarm,
     },
   };
 
@@ -713,6 +787,8 @@ export const createAlarmModule = () => {
     bulkCreateAlarmCancelEvent,
     bulkCreateAlarmUnCancelEvent,
     bulkCreateAlarmChangestateEvent,
+    addBookmarkToAlarm,
+    removeBookmarkFromAlarm,
     alarmModule,
   };
 };
@@ -1186,36 +1262,6 @@ export const createEntitiesModule = () => {
     entitiesModule,
     registerGetter,
     unregisterGetter,
-  };
-};
-
-export const createViewModule = () => {
-  const pending = jest.fn().mockReturnValue(false);
-  const groups = jest.fn().mockReturnValue([]);
-  const updateViewsPositions = jest.fn();
-  const fetchGroupsList = jest.fn();
-
-  afterEach(() => {
-    updateViewsPositions.mockClear();
-  });
-
-  const viewModule = {
-    name: 'view',
-    getters: {
-      pending,
-      items: groups,
-    },
-    actions: {
-      updatePositionsView: updateViewsPositions,
-      fetchList: fetchGroupsList,
-    },
-  };
-
-  return {
-    viewModule,
-    groups,
-    fetchGroupsList,
-    updateViewsPositions,
   };
 };
 

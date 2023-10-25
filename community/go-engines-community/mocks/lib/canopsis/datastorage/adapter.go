@@ -65,18 +65,46 @@ func (mr *MockAdapterMockRecorder) UpdateHistoryAlarm(arg0, arg1 interface{}) *g
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateHistoryAlarm", reflect.TypeOf((*MockAdapter)(nil).UpdateHistoryAlarm), arg0, arg1)
 }
 
-// UpdateHistoryEntity mocks base method.
-func (m *MockAdapter) UpdateHistoryEntity(arg0 context.Context, arg1 datastorage.HistoryWithCount) error {
+// UpdateHistoryEntityCleaned mocks base method.
+func (m *MockAdapter) UpdateHistoryEntityCleaned(arg0 context.Context, arg1 datastorage.HistoryWithCount) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateHistoryEntity", arg0, arg1)
+	ret := m.ctrl.Call(m, "UpdateHistoryEntityCleaned", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// UpdateHistoryEntity indicates an expected call of UpdateHistoryEntity.
-func (mr *MockAdapterMockRecorder) UpdateHistoryEntity(arg0, arg1 interface{}) *gomock.Call {
+// UpdateHistoryEntityCleaned indicates an expected call of UpdateHistoryEntityCleaned.
+func (mr *MockAdapterMockRecorder) UpdateHistoryEntityCleaned(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateHistoryEntity", reflect.TypeOf((*MockAdapter)(nil).UpdateHistoryEntity), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateHistoryEntityCleaned", reflect.TypeOf((*MockAdapter)(nil).UpdateHistoryEntityCleaned), arg0, arg1)
+}
+
+// UpdateHistoryEntityDisabled mocks base method.
+func (m *MockAdapter) UpdateHistoryEntityDisabled(arg0 context.Context, arg1 datastorage.HistoryWithCount) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateHistoryEntityDisabled", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateHistoryEntityDisabled indicates an expected call of UpdateHistoryEntityDisabled.
+func (mr *MockAdapterMockRecorder) UpdateHistoryEntityDisabled(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateHistoryEntityDisabled", reflect.TypeOf((*MockAdapter)(nil).UpdateHistoryEntityDisabled), arg0, arg1)
+}
+
+// UpdateHistoryEntityUnlinked mocks base method.
+func (m *MockAdapter) UpdateHistoryEntityUnlinked(arg0 context.Context, arg1 datastorage.HistoryWithCount) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateHistoryEntityUnlinked", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateHistoryEntityUnlinked indicates an expected call of UpdateHistoryEntityUnlinked.
+func (mr *MockAdapterMockRecorder) UpdateHistoryEntityUnlinked(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateHistoryEntityUnlinked", reflect.TypeOf((*MockAdapter)(nil).UpdateHistoryEntityUnlinked), arg0, arg1)
 }
 
 // UpdateHistoryEventFilterFailure mocks base method.

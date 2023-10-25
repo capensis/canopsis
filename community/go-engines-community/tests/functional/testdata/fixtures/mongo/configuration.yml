@@ -15,6 +15,8 @@ configuration:
     login_page_description: Test login
     max_matched_items: 4
     allow_change_severity_to_info: true
+    show_header_on_kiosk_mode: false
+    required_instruction_approve: false
 
   configuration_global:
     _id: global_config
@@ -32,6 +34,7 @@ configuration:
     api:
       bulkmaxsize: 10000
       tokensigningmethod: HS256
+      exportmongoclienttimeout: 1m
       authorscheme: ["$username", " ", "$firstname", " ", "$lastname", " ", "$email"]
       metricscachexpiration: 24h
     data_storage:
@@ -211,11 +214,7 @@ configuration:
           method: GET
         response_err_msg_key: message
     http_timeout: 1m
-    launch_job_retries_amount: 1
-    launch_job_retries_interval: 1s
     pause_manual_instruction_interval: 30m
-    wait_job_complete_retries_amount: 1
-    wait_job_complete_retries_interval: 1s
     job_wait_interval: 4s
     job_retry_interval: 4s
 
@@ -225,13 +224,13 @@ configuration:
     - from: engine-fifo
       to: engine-che
     - from: engine-che
-      to: engine-pbehavior
-    - from: engine-pbehavior
       to: engine-axe
     - from: engine-axe
       to: engine-correlation
     - from: engine-axe
       to: engine-remediation
+    - from: engine-axe
+      to: engine-pbehavior
     - from: engine-correlation
       to: engine-dynamic-infos
     - from: engine-dynamic-infos

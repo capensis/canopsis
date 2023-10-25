@@ -45,9 +45,18 @@ type store struct {
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
 	var pipeline []bson.M
+	var match []bson.M
+	if len(r.Values) > 0 {
+		match = append(match, bson.M{"value": bson.M{"$in": r.Values}})
+	}
+
 	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
-		pipeline = append(pipeline, bson.M{"$match": filter})
+		match = append(match, filter)
+	}
+
+	if len(match) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": bson.M{"$and": match}})
 	}
 
 	sortBy := s.defaultSortBy

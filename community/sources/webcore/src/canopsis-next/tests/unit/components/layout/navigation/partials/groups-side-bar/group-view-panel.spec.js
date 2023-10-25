@@ -55,7 +55,7 @@ describe('group-view-panel', () => {
           title: 'Custom view title',
         },
         allowEditing: true,
-        hasEditAccess: true,
+        editable: true,
         isEditing: true,
         isOrderChanged: true,
         isViewActive: true,

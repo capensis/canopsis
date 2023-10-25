@@ -23,7 +23,7 @@ Feature: delete an instruction
     When I do DELETE /api/v4/cat/instructions/test-instruction-not-found
     Then the response code should be 404
     Then the response body should be:
-    """
+    """json
     {
       "error": "Not found"
     }

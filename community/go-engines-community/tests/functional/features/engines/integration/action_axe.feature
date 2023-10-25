@@ -399,7 +399,7 @@ Feature: update alarm on action
     {
       "title": "test-widgetfilter-action-axe-3-1",
       "widget": "test-widget-to-alarm-get",
-      "is_private": true,
+      "is_user_preference": true,
       "alarm_pattern": [
         [
           {
@@ -436,7 +436,7 @@ Feature: update alarm on action
     {
       "title": "test-widgetfilter-action-axe-3-2",
       "widget": "test-widget-to-alarm-get",
-      "is_private": true,
+      "is_user_preference": true,
       "alarm_pattern": [
         [
           {
@@ -483,7 +483,7 @@ Feature: update alarm on action
     {
       "title": "test-widgetfilter-action-axe-3-3",
       "widget": "test-widget-to-alarm-get",
-      "is_private": true,
+      "is_user_preference": true,
       "alarm_pattern": [
         [
           {
@@ -520,7 +520,7 @@ Feature: update alarm on action
     {
       "title": "test-widgetfilter-action-axe-3-4",
       "widget": "test-widget-to-alarm-get",
-      "is_private": true,
+      "is_user_preference": true,
       "alarm_pattern": [
         [
           {
@@ -658,7 +658,7 @@ Feature: update alarm on action
     {
       "title": "test-widgetfilter-action-axe-4-1",
       "widget": "test-widget-to-alarm-get",
-      "is_private": true,
+      "is_user_preference": true,
       "alarm_pattern": [
         [
           {
@@ -695,7 +695,7 @@ Feature: update alarm on action
     {
       "title": "test-widgetfilter-action-axe-4-2",
       "widget": "test-widget-to-alarm-get",
-      "is_private": true,
+      "is_user_preference": true,
       "alarm_pattern": [
         [
           {

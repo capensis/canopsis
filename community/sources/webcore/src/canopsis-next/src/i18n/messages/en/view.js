@@ -8,6 +8,12 @@ export default {
   copyWidgetId: 'Copy widget ID',
   autoHeightButton: 'If this button is selected, height will be automatically calculated.',
   selectAll: 'Select all groups and views',
+  duplicateAsPrivate: 'Duplicate as private view',
+  duplicateAsRegular: 'Duplicate as regular view',
+  periodicRefresh: 'Periodic refresh',
+  groupIds: 'Choose a group, or create a new one',
+  groupTags: 'Group tags',
+  noGroupsFound: 'No group corresponding. Press <kbd>enter</kbd> to create a new one',
   errors: {
     emptyTabs: 'You should create a tab',
   },

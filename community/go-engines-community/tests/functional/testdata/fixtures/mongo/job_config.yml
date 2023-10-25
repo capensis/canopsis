@@ -81,7 +81,7 @@ job_config:
     host: http://example.com
     name: test-job-config-to-edit-instruction-name
 
-  job_config_to_exection_get:
+  job_config_to_execution_get:
     <<: *config_rundeck
     _id: test-jobconfig-to-execution-get
   
@@ -91,6 +91,13 @@ job_config:
     auth_token: test-job-config-to-run-auto-instruction-token
     created: 1596550518
     name: test-job-config-to-run-auto-instruction-name
+
+  job_config_to_run_auto_instruction_2:
+    <<: *config_dummy_jenkins
+    _id: test-job-config-to-run-auto-instruction-2
+    auth_token: test-job-config-to-run-auto-instruction-2-token
+    created: 1596550518
+    name: test-job-config-to-run-auto-instruction-2-name
 
   job_config_to_run_manual_job_1:
     <<: *config_dummy_rundeck

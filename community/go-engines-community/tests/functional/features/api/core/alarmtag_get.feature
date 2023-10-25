@@ -3,7 +3,7 @@ Feature: Get a alarm tag
   Only admin should be able to read a alarm tag
 
   @concurrent
-  Scenario: given get all request should return alarm tags
+  Scenario: given search request should return alarm tags
     When I am admin
     When I do GET /api/v4/alarm-tags?search=test-alarm-tag-to-get
     Then the response code should be 200
@@ -68,6 +68,10 @@ Feature: Get a alarm tag
       }
     }
     """
+
+  @concurrent
+  Scenario: given get all request should return flags
+    When I am admin
     When I do GET /api/v4/alarm-tags?search=test-alarm-tag-to-get&with_flags=true
     Then the response code should be 200
     Then the response body should contain:
@@ -90,6 +94,38 @@ Feature: Get a alarm tag
         "page_count": 1,
         "per_page": 10,
         "total_count": 2
+      }
+    }
+    """
+
+  @concurrent
+  Scenario: given filter request should return alarm tags
+    When I am admin
+    When I do GET /api/v4/alarm-tags?values[]=test-alarm-tag-to-get-2-value
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-alarm-tag-to-get-2",
+          "type": 0,
+          "value": "test-alarm-tag-to-get-2-value",
+          "color": "#AABBCC",
+          "author": {
+            "_id": "root",
+            "display_name": "root John Doe admin@canopsis.net",
+            "name": "root"
+          },
+          "created": 1612139798,
+          "updated": 1612139798
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
       }
     }
     """
