@@ -1,15 +1,25 @@
 <template lang="pug">
   state-settings-list(
+    :pagination.sync="pagination",
     :state-settings="stateSettingsWithStaticSetting",
+    :total-items="stateSettingsMeta.total_count",
     :pending="stateSettingsPending",
-    @edit="showEditStateSettingModal"
+    :updatable="hasUpdateAnyStateSettingAccess",
+    :removable="hasDeleteAnyStateSettingAccess",
+    @edit="showEditStateSettingModal",
+    @duplicate="showDuplicateStateSettingModal",
+    @remove="showRemoveStateSettingModal"
   )
 </template>
 
 <script>
-import { MAX_LIMIT, MODALS, STATE_SETTING_METHODS } from '@/constants';
+import { omit } from 'lodash';
 
+import { MODALS, STATE_SETTING_METHODS } from '@/constants';
+
+import { localQueryMixin } from '@/mixins/query-local/query';
 import { entitiesStateSettingMixin } from '@/mixins/entities/state-setting';
+import { permissionsTechnicalStateSettingMixin } from '@/mixins/permissions/technical/state-setting';
 
 import StateSettingsList from '@/components/other/state-setting/state-settings-list.vue';
 
@@ -17,7 +27,11 @@ const SERVICE_STATE_SETTING_ID = 'serviceState';
 
 export default {
   components: { StateSettingsList },
-  mixins: [entitiesStateSettingMixin],
+  mixins: [
+    localQueryMixin,
+    entitiesStateSettingMixin,
+    permissionsTechnicalStateSettingMixin,
+  ],
   computed: {
     stateSettingsWithStaticSetting() {
       const stateSettings = this.stateSettings.map(stateSetting => ({ editable: true, ...stateSetting }));
@@ -50,8 +64,35 @@ export default {
       });
     },
 
-    async fetchList() {
-      this.fetchStateSettingsList({ params: { page: 1, limit: MAX_LIMIT } });
+    showDuplicateStateSettingModal(stateSetting) {
+      this.$modals.show({
+        name: MODALS.stateSetting,
+        config: {
+          stateSetting: omit(stateSetting, ['_id']),
+          action: async (data) => {
+            await this.createStateSetting({ data });
+
+            this.fetchList();
+          },
+        },
+      });
+    },
+
+    showRemoveStateSettingModal(stateSetting) {
+      this.$modals.show({
+        name: MODALS.confirmation,
+        config: {
+          action: async () => {
+            await this.removeStateSetting({ id: stateSetting._id });
+
+            this.fetchList();
+          },
+        },
+      });
+    },
+
+    fetchList() {
+      return this.fetchStateSettingsList({ params: this.getQuery() });
     },
   },
 };
