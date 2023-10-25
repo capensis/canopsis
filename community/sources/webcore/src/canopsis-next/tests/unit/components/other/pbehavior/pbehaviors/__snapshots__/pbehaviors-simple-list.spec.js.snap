@@ -350,18 +350,11 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                 </svg>
               </td>
               <td>
-                <div
-                  class="layout row"
-                >
-                  <c-action-btn-stub
-                    disabled="true"
-                    tooltip="Cannot be modified"
-                    type="edit"
-                  />
-                  <c-action-btn-stub
-                    type="delete"
-                  />
-                </div>
+                <pbehavior-actions-stub
+                  pbehavior="[object Object]"
+                  removable="true"
+                  updatable="true"
+                />
               </td>
             </tr>
             <tr>
@@ -463,17 +456,11 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                 </svg>
               </td>
               <td>
-                <div
-                  class="layout row"
-                >
-                  <c-action-btn-stub
-                    tooltip="Edit"
-                    type="edit"
-                  />
-                  <c-action-btn-stub
-                    type="delete"
-                  />
-                </div>
+                <pbehavior-actions-stub
+                  pbehavior="[object Object]"
+                  removable="true"
+                  updatable="true"
+                />
               </td>
             </tr>
             <tr>
@@ -573,18 +560,11 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                 </svg>
               </td>
               <td>
-                <div
-                  class="layout row"
-                >
-                  <c-action-btn-stub
-                    disabled="true"
-                    tooltip="Cannot be modified"
-                    type="edit"
-                  />
-                  <c-action-btn-stub
-                    type="delete"
-                  />
-                </div>
+                <pbehavior-actions-stub
+                  pbehavior="[object Object]"
+                  removable="true"
+                  updatable="true"
+                />
               </td>
             </tr>
             <tr>
@@ -686,17 +666,11 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                 </svg>
               </td>
               <td>
-                <div
-                  class="layout row"
-                >
-                  <c-action-btn-stub
-                    tooltip="Edit"
-                    type="edit"
-                  />
-                  <c-action-btn-stub
-                    type="delete"
-                  />
-                </div>
+                <pbehavior-actions-stub
+                  pbehavior="[object Object]"
+                  removable="true"
+                  updatable="true"
+                />
               </td>
             </tr>
             <tr>
@@ -796,18 +770,11 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                 </svg>
               </td>
               <td>
-                <div
-                  class="layout row"
-                >
-                  <c-action-btn-stub
-                    disabled="true"
-                    tooltip="Cannot be modified"
-                    type="edit"
-                  />
-                  <c-action-btn-stub
-                    type="delete"
-                  />
-                </div>
+                <pbehavior-actions-stub
+                  pbehavior="[object Object]"
+                  removable="true"
+                  updatable="true"
+                />
               </td>
             </tr>
           </tbody>
