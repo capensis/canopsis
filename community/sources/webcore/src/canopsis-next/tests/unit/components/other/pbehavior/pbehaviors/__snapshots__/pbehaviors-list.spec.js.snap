@@ -537,21 +537,12 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               </svg>
             </td>
             <td>
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  tooltip="Cannot be modified"
-                  type="edit"
-                />
-                <c-action-btn-stub
-                  type="duplicate"
-                />
-                <c-action-btn-stub
-                  type="delete"
-                />
-              </div>
+              <pbehavior-actions-stub
+                duplicable="true"
+                pbehavior="[object Object]"
+                removable="true"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -718,21 +709,12 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               </svg>
             </td>
             <td>
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  tooltip="Cannot be modified"
-                  type="edit"
-                />
-                <c-action-btn-stub
-                  type="duplicate"
-                />
-                <c-action-btn-stub
-                  type="delete"
-                />
-              </div>
+              <pbehavior-actions-stub
+                duplicable="true"
+                pbehavior="[object Object]"
+                removable="true"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -897,21 +879,12 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               </svg>
             </td>
             <td>
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  tooltip="Cannot be modified"
-                  type="edit"
-                />
-                <c-action-btn-stub
-                  type="duplicate"
-                />
-                <c-action-btn-stub
-                  type="delete"
-                />
-              </div>
+              <pbehavior-actions-stub
+                duplicable="true"
+                pbehavior="[object Object]"
+                removable="true"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -1078,21 +1051,12 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               </svg>
             </td>
             <td>
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  tooltip="Cannot be modified"
-                  type="edit"
-                />
-                <c-action-btn-stub
-                  type="duplicate"
-                />
-                <c-action-btn-stub
-                  type="delete"
-                />
-              </div>
+              <pbehavior-actions-stub
+                duplicable="true"
+                pbehavior="[object Object]"
+                removable="true"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -1257,21 +1221,12 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               </svg>
             </td>
             <td>
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  tooltip="Cannot be modified"
-                  type="edit"
-                />
-                <c-action-btn-stub
-                  type="duplicate"
-                />
-                <c-action-btn-stub
-                  type="delete"
-                />
-              </div>
+              <pbehavior-actions-stub
+                duplicable="true"
+                pbehavior="[object Object]"
+                removable="true"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -1438,21 +1393,12 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               </svg>
             </td>
             <td>
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  tooltip="Cannot be modified"
-                  type="edit"
-                />
-                <c-action-btn-stub
-                  type="duplicate"
-                />
-                <c-action-btn-stub
-                  type="delete"
-                />
-              </div>
+              <pbehavior-actions-stub
+                duplicable="true"
+                pbehavior="[object Object]"
+                removable="true"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -1617,21 +1563,12 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               </svg>
             </td>
             <td>
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  tooltip="Cannot be modified"
-                  type="edit"
-                />
-                <c-action-btn-stub
-                  type="duplicate"
-                />
-                <c-action-btn-stub
-                  type="delete"
-                />
-              </div>
+              <pbehavior-actions-stub
+                duplicable="true"
+                pbehavior="[object Object]"
+                removable="true"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -1798,21 +1735,12 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               </svg>
             </td>
             <td>
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  tooltip="Cannot be modified"
-                  type="edit"
-                />
-                <c-action-btn-stub
-                  type="duplicate"
-                />
-                <c-action-btn-stub
-                  type="delete"
-                />
-              </div>
+              <pbehavior-actions-stub
+                duplicable="true"
+                pbehavior="[object Object]"
+                removable="true"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -1977,21 +1905,12 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               </svg>
             </td>
             <td>
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  tooltip="Cannot be modified"
-                  type="edit"
-                />
-                <c-action-btn-stub
-                  type="duplicate"
-                />
-                <c-action-btn-stub
-                  type="delete"
-                />
-              </div>
+              <pbehavior-actions-stub
+                duplicable="true"
+                pbehavior="[object Object]"
+                removable="true"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -2158,21 +2077,12 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               </svg>
             </td>
             <td>
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  tooltip="Cannot be modified"
-                  type="edit"
-                />
-                <c-action-btn-stub
-                  type="duplicate"
-                />
-                <c-action-btn-stub
-                  type="delete"
-                />
-              </div>
+              <pbehavior-actions-stub
+                duplicable="true"
+                pbehavior="[object Object]"
+                removable="true"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -2986,13 +2896,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               </svg>
             </td>
             <td>
-              <div
-                class="layout row"
-              >
-                <!---->
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+              />
             </td>
           </tr>
           <tr
@@ -3135,13 +3041,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               </svg>
             </td>
             <td>
-              <div
-                class="layout row"
-              >
-                <!---->
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+              />
             </td>
           </tr>
           <tr
@@ -3270,13 +3172,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               </svg>
             </td>
             <td>
-              <div
-                class="layout row"
-              >
-                <!---->
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+              />
             </td>
           </tr>
           <tr
@@ -3407,13 +3305,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               </svg>
             </td>
             <td>
-              <div
-                class="layout row"
-              >
-                <!---->
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+              />
             </td>
           </tr>
           <tr
@@ -3542,13 +3436,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               </svg>
             </td>
             <td>
-              <div
-                class="layout row"
-              >
-                <!---->
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+              />
             </td>
           </tr>
           <tr
@@ -3679,13 +3569,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               </svg>
             </td>
             <td>
-              <div
-                class="layout row"
-              >
-                <!---->
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+              />
             </td>
           </tr>
           <tr
@@ -3814,13 +3700,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               </svg>
             </td>
             <td>
-              <div
-                class="layout row"
-              >
-                <!---->
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+              />
             </td>
           </tr>
           <tr
@@ -3951,13 +3833,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               </svg>
             </td>
             <td>
-              <div
-                class="layout row"
-              >
-                <!---->
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+              />
             </td>
           </tr>
           <tr
@@ -4086,13 +3964,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               </svg>
             </td>
             <td>
-              <div
-                class="layout row"
-              >
-                <!---->
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+              />
             </td>
           </tr>
           <tr
@@ -4223,13 +4097,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               </svg>
             </td>
             <td>
-              <div
-                class="layout row"
-              >
-                <!---->
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+              />
             </td>
           </tr>
           <tr
@@ -4699,18 +4569,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               </svg>
             </td>
             <td>
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  badge-value="true"
-                  tooltip="Cannot be modified"
-                  type="edit"
-                />
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -4853,18 +4715,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               </svg>
             </td>
             <td>
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  badge-value="true"
-                  tooltip="Cannot be modified"
-                  type="edit"
-                />
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -4993,18 +4847,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               </svg>
             </td>
             <td>
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  badge-value="true"
-                  tooltip="Cannot be modified"
-                  type="edit"
-                />
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -5135,18 +4981,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               </svg>
             </td>
             <td>
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  badge-value="true"
-                  tooltip="Cannot be modified"
-                  type="edit"
-                />
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -5275,18 +5113,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               </svg>
             </td>
             <td>
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  badge-value="true"
-                  tooltip="Cannot be modified"
-                  type="edit"
-                />
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -5417,18 +5247,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               </svg>
             </td>
             <td>
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  badge-value="true"
-                  tooltip="Cannot be modified"
-                  type="edit"
-                />
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -5557,18 +5379,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               </svg>
             </td>
             <td>
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  badge-value="true"
-                  tooltip="Cannot be modified"
-                  type="edit"
-                />
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -5699,18 +5513,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               </svg>
             </td>
             <td>
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  badge-value="true"
-                  tooltip="Cannot be modified"
-                  type="edit"
-                />
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -5839,18 +5645,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               </svg>
             </td>
             <td>
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  badge-value="true"
-                  tooltip="Cannot be modified"
-                  type="edit"
-                />
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -5981,18 +5779,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               </svg>
             </td>
             <td>
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  badge-value="true"
-                  tooltip="Cannot be modified"
-                  type="edit"
-                />
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
