@@ -1,14 +1,28 @@
 # Installation de paquets Canopsis sur Red Hat Enterprise Linux 8
 
-!!! Warning
-    **Pour information, cette procédure d'installation n'est pas préconisée pour de la production, elle peut néanmoins être utile dans un environnement de test.**
-
 !!! Information
     Si vous souhaitez réaliser une mise à jour, la procédure est décrite dans le [guide de mise à jour](../mise-a-jour/index.md).
 
 Cette procédure décrit l'installation de Canopsis en mono-instance à l'aide de paquets RHEL 8. Les binaires sont compilés pour l'architecture x86-64.
 
-L'ensemble des commandes suivantes doivent être réalisées avec l'utilisateur **`root`.**
+!!! Warning
+    L'installation de tous les services sur un seul nœud, décrite ici, permet
+    de monter aisément un environnement de test.  
+    Cependant, **ce type d'installation ne saurait être conseillé pour de la
+    production**.
+
+    Une plate-forme Canopsis de production repose généralement sur plusieurs
+    nœuds, avec les mécanismes de haute disponibilité appropriés. Ce type de
+    déploiement plus avancé est supporté uniquement dans le cadre
+    d'une souscription à l'édition Pro de Canopsis.
+
+    [Capensis][capensis] peut vous accompagner dans la mise en place de
+    l'architecture Canopsis distribuée et des solutions de haute disponibilité.
+
+[capensis]: https://www.capensis.fr/
+
+Toutes les commandes dans cette procédure doivent être invoquées avec
+l'utilisateur `root`.
 
 ## Prérequis
 
