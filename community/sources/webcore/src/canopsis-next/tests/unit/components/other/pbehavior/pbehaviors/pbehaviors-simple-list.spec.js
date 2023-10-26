@@ -5,11 +5,10 @@ import flushPromises from 'flush-promises';
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules, createPbehaviorModule } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
-import { selectRowEditButtonByIndex, selectRowRemoveButtonByIndex } from '@unit/utils/table';
 import { MODALS } from '@/constants';
 import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
 
-import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-simple-list.vue';
+import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/pbehaviors-simple-list.vue';
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 
 const stubs = {
@@ -20,6 +19,7 @@ const stubs = {
   'c-action-fab-btn': true,
   'c-enabled': true,
   'c-table-pagination': true,
+  'pbehavior-actions': true,
 };
 
 const selectAddButton = wrapper => wrapper.find('c-action-fab-btn-stub[icon="add"]');
@@ -51,7 +51,7 @@ describe('pbehaviors-simple-list', () => {
     is_active_status: !(index % 2),
   }));
 
-  const { pbehaviorModule, fetchPbehaviorsByEntityIdWithoutStore, removePbehavior } = createPbehaviorModule();
+  const { pbehaviorModule, fetchPbehaviorsByEntityIdWithoutStore } = createPbehaviorModule();
 
   const store = createMockedStoreModules([pbehaviorModule]);
 
@@ -161,80 +161,6 @@ describe('pbehaviors-simple-list', () => {
         },
       },
     );
-  });
-
-  test('Confirmation remove pbehavior modal opened after trigger remove button', async () => {
-    fetchPbehaviorsByEntityIdWithoutStore.mockResolvedValueOnce(pbehaviorsItems);
-    const wrapper = snapshotFactory({
-      store: createMockedStoreModules([pbehaviorModule]),
-      propsData: {
-        entity: {},
-        removable: true,
-      },
-    });
-
-    await flushPromises();
-    fetchPbehaviorsByEntityIdWithoutStore.mockClear();
-
-    const removingIndex = 1;
-    const removingPbehavior = pbehaviorsItems[removingIndex];
-
-    selectRowRemoveButtonByIndex(wrapper, removingIndex).vm.$emit('click');
-
-    expect($modals.show).toBeCalledWith(
-      {
-        name: MODALS.confirmation,
-        config: {
-          action: expect.any(Function),
-        },
-      },
-    );
-
-    const [{ config }] = $modals.show.mock.calls[0];
-
-    await config.action();
-
-    expect(removePbehavior).toBeCalledWith(
-      expect.any(Object),
-      { id: removingPbehavior._id },
-      undefined,
-    );
-    expect(fetchPbehaviorsByEntityIdWithoutStore).toBeCalled();
-  });
-
-  test('Edit pbehavior modal opened after trigger edit button', async () => {
-    fetchPbehaviorsByEntityIdWithoutStore.mockResolvedValueOnce(pbehaviorsItems);
-    const wrapper = snapshotFactory({
-      store: createMockedStoreModules([pbehaviorModule]),
-      propsData: {
-        entity: {},
-        updatable: true,
-      },
-    });
-
-    await flushPromises();
-    fetchPbehaviorsByEntityIdWithoutStore.mockClear();
-
-    const editingIndex = 2;
-    const editingPbehavior = pbehaviorsItems[editingIndex];
-
-    selectRowEditButtonByIndex(wrapper, editingIndex).vm.$emit('click');
-
-    expect($modals.show).toBeCalledWith(
-      {
-        name: MODALS.pbehaviorPlanning,
-        config: {
-          pbehaviors: [editingPbehavior],
-          afterSubmit: expect.any(Function),
-        },
-      },
-    );
-
-    const [{ config }] = $modals.show.mock.calls[0];
-
-    await config.afterSubmit();
-
-    expect(fetchPbehaviorsByEntityIdWithoutStore).toBeCalled();
   });
 
   test('Renders `pbehaviors-simple-list` without pbehaviors', async () => {
