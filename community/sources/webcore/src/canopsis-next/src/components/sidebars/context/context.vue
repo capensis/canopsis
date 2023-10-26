@@ -69,7 +69,8 @@
         v-model="form.parameters",
         :type="$constants.ENTITIES_TYPES.entity",
         :templates="entityColumnsWidgetTemplates",
-        :templates-pending="widgetTemplatesPending"
+        :templates-pending="widgetTemplatesPending",
+        without-infos-attributes
       )
     v-divider
     charts-form(v-model="form.parameters.charts")
