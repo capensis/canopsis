@@ -15,6 +15,7 @@ import {
   convertDateToTimestampByTimezone,
   getLocaleTimezone,
   getNowTimestamp,
+  isEndOfDay,
   isStartOfDay,
 } from '@/helpers/date/date';
 import { addKeyInEntities, getIdFromEntity, removeKeyFromEntities } from '@/helpers/array';
@@ -335,19 +336,37 @@ export const calendarEventToPbehaviorForm = (
 };
 
 /**
+ * Check pbehavior is full day
+ *
+ * @param {number} start
+ * @param {number} stop
+ * @return {boolean}
+ */
+export const isFullDayEvent = (start, stop) => {
+  const noEnding = start && !stop;
+
+  return isStartOfDay(start) && (noEnding || isEndOfDay(stop));
+};
+
+/**
  * Convert form to calendar event.
  *
  * @param {PbehaviorForm} form
  * @param {Object} event
  * @param {string} timezone
- * @return {CalendarEvent}
+ * @return {Object}
  */
-export const formToCalendarEvent = (form, event, timezone) => ({
-  ...event,
-  color: form.color,
+export const formToCalendarEvent = (form, event, timezone) => {
+  const timed = !isFullDayEvent(form.tstart, form.tstop);
 
-  pbehavior: formToPbehavior(form, timezone),
-});
+  return {
+    ...event,
+    timed,
+    color: form.color,
+
+    pbehavior: formToPbehavior(form, timezone),
+  };
+};
 
 /**
  * Convert pbehavior to request data.
