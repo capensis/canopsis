@@ -87,6 +87,7 @@ func (s *service) RecomputeAllServices(ctx context.Context) error {
 			Connector:     types.ConnectorEngineService,
 			ConnectorName: types.ConnectorEngineService,
 			Timestamp:     types.CpsTime{Time: time.Now()},
+			Initiator:     types.InitiatorSystem,
 		}
 
 		body, err := s.encoder.Encode(event)
@@ -123,6 +124,7 @@ func (s *service) UpdateServiceState(ctx context.Context, serviceID string, serv
 		State:         types.CpsNumber(serviceInfo.State),
 		Output:        serviceInfo.Output,
 		Timestamp:     types.CpsTime{Time: time.Now()},
+		Initiator:     types.InitiatorSystem,
 	}
 
 	body, err := s.encoder.Encode(event)

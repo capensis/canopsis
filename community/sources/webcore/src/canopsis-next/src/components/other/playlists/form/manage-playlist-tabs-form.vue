@@ -40,7 +40,7 @@
                         color="primary",
                         @change="selectViewHandler(view, $event)"
                       )
-                      span.ellipsis {{ view.title }}
+                      span.ellipsis.fill-width {{ view.title }}
                         span.ml-1(v-show="view.description") ({{ view.description }})
               tab-panel-content(v-for="tab in view.tabs", :key="tab._id", :tab="tab", hide-actions)
                 template(#title="")

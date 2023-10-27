@@ -2,6 +2,7 @@ Feature: Create a playlist
   I need to be able to create a playlist
   Only admin should be able to create a playlist
 
+  @concurrent
   Scenario: given create request should return ok
     When I am admin
     When I do POST /api/v4/playlists:
@@ -40,6 +41,7 @@ Feature: Create a playlist
     }
     """
 
+  @concurrent
   Scenario: given create request should return ok to get request
     When I am admin
     When I do POST /api/v4/playlists:
@@ -80,6 +82,7 @@ Feature: Create a playlist
     }
     """
 
+  @concurrent
   Scenario: given create request should create new permission
     When I am test-role-to-playlist-edit
     When I do POST /api/v4/playlists:
@@ -156,15 +159,18 @@ Feature: Create a playlist
     ]
     """
 
+  @concurrent
   Scenario: given create request and no auth user should not allow access
     When I do POST /api/v4/playlists
     Then the response code should be 401
 
+  @concurrent
   Scenario: given create request and auth user by api key without permissions should not allow access
     When I am noperms
     When I do POST /api/v4/playlists
     Then the response code should be 403
 
+  @concurrent
   Scenario: given invalid create request should return errors
     When I am admin
     When I do POST /api/v4/playlists:
@@ -188,6 +194,7 @@ Feature: Create a playlist
     }
     """
 
+  @concurrent
   Scenario: given invalid create request should return errors
     When I am admin
     When I do POST /api/v4/playlists:
@@ -219,6 +226,7 @@ Feature: Create a playlist
     """
     Then the response code should be 403
 
+  @concurrent
   Scenario: given create request with already exists name should return error
     When I am admin
     When I do POST /api/v4/playlists:
@@ -236,3 +244,23 @@ Feature: Create a playlist
       }
     }
     """
+
+  @concurrent
+  Scenario: given create request with private tab should not allow access
+    When I am admin
+    When I do POST /api/v4/playlists:
+    """json
+    {
+      "fullscreen": true,
+      "name": "test-playlist-to-create-name-with-private-tab",
+      "tabs_list": [
+        "test-private-tab-to-playlist-edit-1"
+      ],
+      "interval": {
+        "value": 10,
+        "unit": "s"
+      },
+      "enabled": true
+    }
+    """
+    Then the response code should be 403

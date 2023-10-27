@@ -26,7 +26,7 @@
               :value="view._id",
               color="primary"
             )
-            span.ellipsis {{ view.title }}
+            span.ellipsis.fill-width {{ view.title }}
               span.ml-1(v-show="view.description") ({{ view.description }})
 </template>
 

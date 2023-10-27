@@ -1,13 +1,13 @@
 <template lang="pug">
   v-layout(column)
     v-checkbox(
-      v-field="approval.need_approve",
+      v-model="needApprove",
       :label="$t('remediation.instruction.requestApproval')",
-      :disabled="disabled",
+      :disabled="disabled || required",
       color="primary",
       hide-details
     )
-    template(v-if="approval.need_approve")
+    template(v-if="needApprove")
       v-layout(v-if="disabled", row)
         span.subheading.grey--text.my-4 {{ assignLabel }}: {{ assignValue }}
       v-layout(v-else, row, align-center)
@@ -19,6 +19,7 @@
             v-field="approval.role",
             :required="isRoleType",
             :name="roleFieldName",
+            :permission="approvePermission",
             autocomplete
           )
           c-user-picker-field(
@@ -27,6 +28,7 @@
             :required="!isRoleType",
             :name="userFieldName",
             :label="$tc('common.user')",
+            :permission="approvePermission",
             return-object
           )
       v-textarea(
@@ -40,7 +42,7 @@
 </template>
 
 <script>
-import { REMEDIATION_INSTRUCTION_APPROVAL_TYPES } from '@/constants';
+import { REMEDIATION_INSTRUCTION_APPROVAL_TYPES, USERS_PERMISSIONS } from '@/constants';
 
 import RemediationInstructionApprovalTypeField from './fields/remediation-instruction-approval-type-field.vue';
 
@@ -64,8 +66,21 @@ export default {
       type: Boolean,
       default: false,
     },
+    required: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      needApprove: !!this.approval?.comment || this.required,
+    };
   },
   computed: {
+    approvePermission() {
+      return USERS_PERMISSIONS.api.remediation.instructionApprove;
+    },
+
     isRoleType() {
       return this.approval.type === REMEDIATION_INSTRUCTION_APPROVAL_TYPES.role;
     },

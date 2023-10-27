@@ -367,6 +367,14 @@ paths:
         -  PERMISSIONS: `api_alarm_tag:read`
       operationId: alarm-tags-get
       parameters:
+        - name: values[]
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
         - $ref: '#/components/parameters/withFlags'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/page'
@@ -662,6 +670,11 @@ paths:
           description: show assigned declare ticket rules
           schema:
             type: boolean
+        - name: only_bookmarks
+          in: query
+          description: show bookmarked alarms
+          schema:
+            type: boolean
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/search'
@@ -874,6 +887,47 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarms/{id}/bookmark:
+    put:
+      tags:
+        - alarms
+      summary: Add bookmark to an alarm
+      description: |
+        Add bookmark to an alarm.
+        
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: add-alarm-bookmark
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        204:
+          description: OK
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    delete:
+      tags:
+        - alarms
+      summary: Remove bookmark from an alarm
+      description: |
+        Remove bookmark from an alarm.
+        
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: remove-alarm-bookmark
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        204:
+          description: OK
         404:
           description: Not Found
           content:
@@ -3263,7 +3317,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/colortheme.CreateRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/colortheme.EditRequest'
             examples:
               create:
                 summary: Create a color theme
@@ -3362,7 +3416,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/colortheme.UpdateRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/colortheme.EditRequest'
             examples:
               update:
                 summary: Update a color theme
@@ -6800,6 +6854,177 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /healthcheck:
+    get:
+      tags:
+        - healthcheck
+      summary: Get healthcheck status
+      description: |
+        Get healthcheck status.
+
+        -  PERMISSIONS: `api_healthcheck`
+      operationId: healthcheck-get
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/healthcheck.Info'
+  /healthcheck/engines-order:
+    get:
+      tags:
+        - healthcheck
+      summary: Get engines' order
+      description: |
+        Get engines' order.
+
+        -  PERMISSIONS: `api_healthcheck`
+      operationId: healthcheck-get-engines-order
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/healthcheck.Graph'
+  /healthcheck/parameters:
+    get:
+      tags:
+        - healthcheck
+      summary: Get healthcheck parameters
+      description: |
+        Get healthcheck parameters.
+
+        -  PERMISSIONS: `api_healthcheck`
+      operationId: healthcheck-get-parameters
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/config.HealthCheckParameters'
+    put:
+      tags:
+        - healthcheck
+      summary: Update healthcheck parameters
+      description: |
+        Update healthcheck parameters.
+
+        -  PERMISSIONS: `api_healthcheck`
+      operationId: healthcheck-update-parameters
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/config.HealthCheckParameters'
+            examples:
+              update:
+                summary: Update
+                description: Update parameters.
+                value: {
+                  "queue": {
+                    "limit": 1000,
+                    "enabled": true
+                  },
+                  "messages": {
+                    "limit": 5000,
+                    "enabled": true
+                  },
+                  "engine-fifo": {
+                    "enabled": true,
+                    "minimal": 1,
+                    "optimal": 2
+                  },
+                  "engine-pbehavior": {
+                    "enabled": true,
+                    "minimal": 1,
+                    "optimal": 2
+                  },
+                  "engine-action": {
+                    "enabled": false
+                  },
+                  "engine-che": {
+                    "enabled": true,
+                    "minimal": 1,
+                    "optimal": 1
+                  },
+                  "engine-remediation": {
+                    "enabled": true,
+                    "minimal": 1,
+                    "optimal": 1
+                  },
+                  "engine-webhook": {
+                    "enabled": true,
+                    "minimal": 1,
+                    "optimal": 4
+                  },
+                  "engine-axe": {
+                    "enabled": true,
+                    "minimal": 1,
+                    "optimal": 2
+                  },
+                  "engine-correlation": {
+                    "enabled": true,
+                    "minimal": 1,
+                    "optimal": 1
+                  },
+                  "engine-dynamic-infos": {
+                    "enabled": true,
+                    "minimal": 1,
+                    "optimal": 1
+                  }
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/config.HealthCheckParameters'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /healthcheck/live:
+    get:
+      tags:
+        - healthcheck
+      summary: Get healthcheck status code
+      description: |
+        Get healthcheck status code.
+
+        -  PERMISSIONS: `api_healthcheck`
+      operationId: healthcheck-get-live
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/healthcheck.LiveResponse'
+  /healthcheck/status:
+    get:
+      tags:
+        - healthcheck
+      summary: Get short healthcheck status
+      description: |
+        Get short healthcheck status.
+
+        -  PERMISSIONS: `api_healthcheck`
+      operationId: healthcheck-get-status
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/healthcheck.Status'
   /idle-rules:
     get:
       tags:
@@ -11906,7 +12131,7 @@ paths:
       description: |
         Copy view.
         
-        -  PERMISSIONS: `api_view:create` `api_view:read` `{id}:read`
+        -  PERMISSIONS: `api_view:create` `api_view:read` `{id}:read` or `api_private_view_groups:can`
       operationId: views-copy
       parameters:
         - name: id
@@ -12007,7 +12232,7 @@ paths:
       description: |
         Get paginated list of view groups.
         
-        -  PERMISSIONS: `api_viewgroup:read`
+        -  PERMISSIONS: `api_viewgroup:read` or `api_private_view_groups:can`
       operationId: viewgroups-find-all
       parameters:
         - name: with_flags
@@ -12446,7 +12671,7 @@ paths:
       description: |
         Copy view tab.
         
-        -  PERMISSIONS: `api_view:update` `api_view:read` `{view_id}:read`
+        -  PERMISSIONS: `api_view:update` `{view_id}:read` or `api_private_view_groups:can`
       operationId: viewtabs-copy
       parameters:
         - name: id
@@ -12497,7 +12722,7 @@ paths:
       description: |
         Update view tabs positions.
         
-        -  PERMISSIONS: `api_view:update` `{view_id}:update`
+        -  PERMISSIONS: `api_view:update` `{view_id}:update` or `api_private_view_groups:can`
       operationId: viewtabs-update-positions
       requestBody:
         description: body
@@ -12539,7 +12764,7 @@ paths:
       description: |
         Create view tab.
         
-        -  PERMISSIONS: `api_view:update` `{view_id}:update`
+        -  PERMISSIONS: `api_view:update` `{view_id}:update` or `api_private_view_groups:can`
       operationId: viewtabs-create
       requestBody:
         description: body
@@ -12577,7 +12802,7 @@ paths:
       description: |
         Get view tab by id.
         
-        -  PERMISSIONS: `api_view:read` `{view_id}:read`
+        -  PERMISSIONS: `api_view:read` `{view_id}:read` or `api_private_view_groups:can`
       operationId: viewtabs-get-by-id
       parameters:
         - name: id
@@ -12606,7 +12831,7 @@ paths:
       description: |
         Update view tab by id.
         
-        -  PERMISSIONS: `api_view:update` `{view_id}:update`
+        -  PERMISSIONS: `api_view:update` `{view_id}:update` or `api_private_view_groups:can`
       operationId: viewtabs-update-by-id
       parameters:
         - name: id
@@ -12626,8 +12851,7 @@ paths:
                 summary: Update
                 description: Update a tab.
                 value: {
-                  "title": "Alarms",
-                  "view": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2"
+                  "title": "Alarms"
                 }
         required: true
       responses:
@@ -12656,7 +12880,7 @@ paths:
       description: |
         Delete view tab by id.
         
-        -  PERMISSIONS: `api_view:update` `{view_id}:update`
+        -  PERMISSIONS: `api_view:update` `{view_id}:update` or `api_private_view_groups:can`
       operationId: viewtabs-delete-by-id
       parameters:
         - name: id
@@ -12682,7 +12906,7 @@ paths:
       description: |
         Get paginated list of views.
         
-        -  PERMISSIONS: `api_view:read` `{id}:read`
+        -  PERMISSIONS: `api_view:read` `{id}:read` or `api_private_view_groups:can`
       operationId: views-find-all
       parameters:
         - $ref: '#/components/parameters/page'
@@ -12715,7 +12939,7 @@ paths:
       description: |
         Create view.
         
-        -  PERMISSIONS: `api_view:create`
+        -  PERMISSIONS: `api_view:create` or `api_private_view_groups:can`
       operationId: views-create
       requestBody:
         description: body
@@ -12763,7 +12987,7 @@ paths:
       description: |
         Get view by id.
         
-        -  PERMISSIONS: `api_view:read` `{id}:read`
+        -  PERMISSIONS: `api_view:read` `{id}:read` or `api_private_view_groups:can`
       operationId: views-get-by-id
       parameters:
         - name: id
@@ -12792,7 +13016,7 @@ paths:
       description: |
         Update view by id.
         
-        -  PERMISSIONS: `api_view:update` `{id}:update`
+        -  PERMISSIONS: `api_view:update` `{id}:update` or `api_private_view_groups:can`
       operationId: views-update-by-id
       parameters:
         - name: id
@@ -12852,7 +13076,7 @@ paths:
       description: |
         Delete view by id.
         
-        -  PERMISSIONS: `api_view:delete` `{id}:delete`
+        -  PERMISSIONS: `api_view:delete` `{id}:delete` or `api_private_view_groups:can`
       operationId: views-delete-by-id
       parameters:
         - name: id
@@ -12999,7 +13223,7 @@ paths:
       description: |
         Copy widget.
         
-        -  PERMISSIONS: `api_view:update` `api_view:read` `{view_id}:read`
+        -  PERMISSIONS: `api_view:update` `{view_id}:read` or `api_private_view_groups:can`
       operationId: widgets-copy
       parameters:
         - name: id
@@ -13118,7 +13342,7 @@ paths:
       description: |
         Get paginated list of widget filters.
         
-        -  PERMISSIONS: `api_view:read`
+        -  PERMISSIONS: `api_view:read` or `api_private_view_groups:can`
       operationId: widgetfilters-find-all
       parameters:
         - name: private
@@ -13159,7 +13383,7 @@ paths:
       description: |
         Create widget filter.
         
-        -  PERMISSIONS: `api_view:read`
+        -  PERMISSIONS: `api_view:read` or `api_private_view_groups:can`
       operationId: widgetfilters-create
       requestBody:
         description: body
@@ -13174,7 +13398,7 @@ paths:
                 value: {
                   "title": "Filter",
                   "widget": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2",
-                  "is_private": true,
+                  "is_user_preference": true,
                   "alarm_pattern": [
                     [
                       {
@@ -13242,7 +13466,7 @@ paths:
       description: |
         Get widget filter by id.
         
-        -  PERMISSIONS: `api_view:read`
+        -  PERMISSIONS: `api_view:read` or `api_private_view_groups:can`
       operationId: widgetfilters-get-by-id
       parameters:
         - name: id
@@ -13271,7 +13495,7 @@ paths:
       description: |
         Update widget filter by id.
         
-        -  PERMISSIONS: `api_view:read`
+        -  PERMISSIONS: `api_view:read` or `api_private_view_groups:can`
       operationId: widgetfilters-update-by-id
       parameters:
         - name: id
@@ -13292,8 +13516,7 @@ paths:
                 description: Update a filter.
                 value: {
                   "title": "Filter",
-                  "widget": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2",
-                  "is_private": true,
+                  "is_user_preference": true,
                   "alarm_pattern": [
                     [
                       {
@@ -13355,7 +13578,7 @@ paths:
       description: |
         Delete widget filter by id.
         
-        -  PERMISSIONS: `api_view:read`
+        -  PERMISSIONS: `api_view:read` or `api_private_view_groups:can`
       operationId: widgetfilters-delete-by-id
       parameters:
         - name: id
@@ -13381,7 +13604,7 @@ paths:
       description: |
         Update widget filters positions.
         
-        -  PERMISSIONS: `api_view:read` `{view_id}:read`
+        -  PERMISSIONS: `api_view:read` `{view_id}:read` or `api_private_view_groups:can`
       operationId: widgetfilters-update-positions
       requestBody:
         description: body
@@ -13423,7 +13646,7 @@ paths:
       description: |
         Update widgets grid positions.
         
-        -  PERMISSIONS: `api_view:update` `{view_id}:update`
+        -  PERMISSIONS: `api_view:update` `{view_id}:update` or `api_private_view_groups:can`
       operationId: widgets-update-grid-positions
       requestBody:
         description: body
@@ -13701,7 +13924,7 @@ paths:
       description: |
         Create widget.
         
-        -  PERMISSIONS: `api_view:update` `{view_id}:update`
+        -  PERMISSIONS: `api_view:update` `{view_id}:update` or `api_private_view_groups:can`
       operationId: widgets-create
       requestBody:
         description: body
@@ -13849,7 +14072,7 @@ paths:
       description: |
         Get widget by id.
         
-        -  PERMISSIONS: `api_view:read` `{view_id}:read`
+        -  PERMISSIONS: `api_view:read` `{view_id}:read` or `api_private_view_groups:can`
       operationId: widgets-get-by-id
       parameters:
         - name: id
@@ -13878,7 +14101,7 @@ paths:
       description: |
         Update widget by id.
         
-        -  PERMISSIONS: `api_view:update` `{view_id}:update`
+        -  PERMISSIONS: `api_view:update` `{view_id}:update` or `api_private_view_groups:can`
       operationId: widgets-update-by-id
       parameters:
         - name: id
@@ -13898,7 +14121,6 @@ paths:
                 summary: Update
                 description: Update a widget.
                 value: {
-                  "tab": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2",
                   "title": "Opened",
                   "type": "AlarmsList",
                   "grid_parameters": {
@@ -13996,7 +14218,7 @@ paths:
       description: |
         Delete widget by id.
         
-        -  PERMISSIONS: `api_view:update` `{view_id}:update`
+        -  PERMISSIONS: `api_view:update` `{view_id}:update` or `api_private_view_groups:can`
       operationId: widgets-delete-by-id
       parameters:
         - name: id

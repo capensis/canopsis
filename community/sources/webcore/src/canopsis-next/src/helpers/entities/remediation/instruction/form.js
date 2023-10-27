@@ -9,6 +9,7 @@ import {
 
 import { uuid } from '@/helpers/uuid';
 import { durationToForm } from '@/helpers/date/duration';
+import { flattenErrorMap } from '@/helpers/entities/shared/form';
 
 /**
  * @typedef {
@@ -55,14 +56,20 @@ import { durationToForm } from '@/helpers/date/duration';
  */
 
 /**
+ * @typedef {Object} RemediationInstructionApprovalRequestedBy
+ * @property {string} _id
+ * @property {string} name
+ * @property {string} display_name
+ */
+
+/**
  * @typedef {RemediationInstructionApprovalUser | RemediationInstructionApprovalRole} RemediationInstructionApproval
  * @property {string} comment
- * @property {string} requested_by
+ * @property {RemediationInstructionApprovalRequestedBy} requested_by
  */
 
 /**
  * @typedef {RemediationInstructionApproval} RemediationInstructionApprovalForm
- * @property {boolean} need_approve
  * @property {number} type
  */
 
@@ -193,13 +200,12 @@ const remediationInstructionStepsToForm = (steps = [undefined]) => steps.map(rem
  * @return {RemediationInstructionApprovalForm}
  */
 const remediationInstructionApprovalToForm = (approval = {}) => ({
-  need_approve: !!approval.comment,
-  type: approval.user && approval.user._id
+  type: approval?.user?._id
     ? REMEDIATION_INSTRUCTION_APPROVAL_TYPES.user
     : REMEDIATION_INSTRUCTION_APPROVAL_TYPES.role,
-  user: approval.user,
-  role: approval.role,
-  comment: approval.comment || '',
+  user: approval?.user,
+  role: approval?.role,
+  comment: approval?.comment ?? '',
 });
 
 /**
@@ -301,7 +307,7 @@ const formStepsToRemediationInstructionSteps = steps => steps.map(step => ({
  * @returns {RemediationInstructionApprovalRequest | undefined}
  */
 const formApprovalToRemediationInstructionApproval = (approval) => {
-  if (!approval.need_approve) {
+  if (!approval.comment) {
     return undefined;
   }
 
@@ -353,7 +359,7 @@ export const formToRemediationInstruction = (form) => {
  * @param {RemediationInstructionForm} form
  * @return {FlattenErrors}
  */
-export const remediationInstructionErrorsToForm = (errors, form) => form(errors, (errorsObject) => {
+export const remediationInstructionErrorsToForm = (errors, form) => flattenErrorMap(errors, (errorsObject) => {
   const { jobs, ...errorMessages } = errorsObject;
 
   if (jobs) {

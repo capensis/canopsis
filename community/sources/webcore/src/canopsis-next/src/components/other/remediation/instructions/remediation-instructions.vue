@@ -59,7 +59,7 @@ export default {
 
     showEditRemediationInstructionModal(remediationInstruction) {
       const wasRequestedByAnotherUser = !!remediationInstruction.approval
-        && !(remediationInstruction.approval.requested_by === this.currentUser._id);
+        && !(remediationInstruction.approval.requested_by?._id === this.currentUser._id);
 
       this.$modals.show({
         name: MODALS.createRemediationInstruction,

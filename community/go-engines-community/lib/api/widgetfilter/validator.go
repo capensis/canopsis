@@ -20,8 +20,13 @@ func NewValidator(client mongo.DbClient) *Validator {
 	}
 }
 
-func (v *Validator) ValidateEditRequest(ctx context.Context, sl validator.StructLevel) {
-	r := sl.Current().Interface().(EditRequest)
+func (v *Validator) ValidateCreateRequest(ctx context.Context, sl validator.StructLevel) {
+	r := sl.Current().Interface().(CreateRequest)
+	v.ValidatePatterns(ctx, sl, r.BaseEditRequest, "")
+}
+
+func (v *Validator) ValidateUpdateRequest(ctx context.Context, sl validator.StructLevel) {
+	r := sl.Current().Interface().(UpdateRequest)
 	v.ValidatePatterns(ctx, sl, r.BaseEditRequest, r.ID)
 }
 

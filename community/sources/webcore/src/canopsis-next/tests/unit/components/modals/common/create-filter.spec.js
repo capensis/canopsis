@@ -86,7 +86,7 @@ describe('create-filter', () => {
     await flushPromises();
 
     expect(action).toBeCalledWith({
-      is_private: false,
+      is_user_preference: false,
       title: '',
     });
     expect($modals.hide).toBeCalledWith();
@@ -119,7 +119,7 @@ describe('create-filter', () => {
     await flushPromises();
 
     expect(action).toBeCalledWith({
-      is_private: false,
+      is_user_preference: false,
       title: '',
       alarm_pattern: [],
       entity_pattern: [],
@@ -228,7 +228,7 @@ describe('create-filter', () => {
 
     expect(addedErrors).toEqual(formErrors);
     expect(action).toBeCalledWith({
-      is_private: false,
+      is_user_preference: false,
       alarm_pattern: [],
       entity_pattern: [],
       pbehavior_pattern: [],
@@ -248,7 +248,7 @@ describe('create-filter', () => {
     const action = jest.fn().mockRejectedValue(errors);
     const customFilter = {
       title: 'Title',
-      is_private: true,
+      is_user_preference: true,
       alarm_pattern: [
         [customPattern],
       ],
@@ -289,7 +289,7 @@ describe('create-filter', () => {
     const action = jest.fn();
     const filter = {
       title: 'Title',
-      is_private: true,
+      is_user_preference: true,
       alarm_pattern: [
         [customPattern],
       ],
@@ -319,7 +319,7 @@ describe('create-filter', () => {
 
     const newForm = {
       title: filter.title,
-      is_private: filter.is_private,
+      is_user_preference: filter.is_user_preference,
       alarm_pattern: {
         id: PATTERN_CUSTOM_ITEM_VALUE,
         groups: [{
@@ -356,7 +356,7 @@ describe('create-filter', () => {
         ],
       ],
       entity_pattern: [],
-      is_private: filter.is_private,
+      is_user_preference: filter.is_user_preference,
       title: filter.title,
     });
     expect($modals.hide).toBeCalled();

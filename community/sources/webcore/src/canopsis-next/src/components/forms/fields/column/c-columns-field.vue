@@ -1,16 +1,36 @@
 <template lang="pug">
-  c-movable-card-iterator-field(v-field="columns", addable, @add="add")
-    template(#item="{ item, index }")
-      column-field(
+  v-layout(column)
+    c-draggable-list-field(
+      v-field="columns",
+      :class="{ empty: isColumnsEmpty }",
+      :handle="`.${dragItemHandleClass}`"
+    )
+      column-field.mb-3(
+        v-for="(column, index) in columns",
         v-field="columns[index]",
-        :name="item.key",
+        :key="column.key",
+        :name="column.key",
         :type="type",
+        :drag-handle-class="dragItemHandleClass",
         :with-html="withHtml",
         :with-template="withTemplate",
         :with-color-indicator="withColorIndicator",
         :with-instructions="withInstructions",
-        :without-infos-attributes="withoutInfosAttributes"
+        :without-infos-attributes="withoutInfosAttributes",
+        @remove="remove(index)"
       )
+    v-layout(justify-end)
+      v-tooltip(left)
+        template(#activator="{ on }")
+          v-btn.mr-2.mx-0(
+            v-on="on",
+            color="primary",
+            icon,
+            large,
+            @click.prevent="add"
+          )
+            v-icon add
+        span {{ $t('common.add') }}
 </template>
 
 <script>
@@ -63,9 +83,22 @@ export default {
       default: false,
     },
   },
+  computed: {
+    dragItemHandleClass() {
+      return 'column-drag-handle';
+    },
+
+    isColumnsEmpty() {
+      return !this.columns.length;
+    },
+  },
   methods: {
     add() {
       this.addItemIntoArray(widgetColumnToForm());
+    },
+
+    remove(index) {
+      this.removeItemFromArray(index);
     },
   },
 };

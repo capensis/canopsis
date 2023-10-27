@@ -1,12 +1,12 @@
 Feature: update service weather on event
   I need to be able to see new service weather state on event
 
+  @concurrent
   Scenario: given service for entity should update service weather on entity event
     Given I am admin
     When I do POST /api/v4/entityservices:
     """json
     {
-      "_id": "test-service-weather-1",
       "name": "test-service-weather-1",
       "output_template": "test-service-weather-1-output",
       "category": "test-category-service-weather",
@@ -27,27 +27,64 @@ Feature: update service weather on event
     }
     """
     Then the response code should be 201
-    When I wait the end of 2 events processing
+    When I save response serviceId={{ .lastResponse._id }}
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}",
+        "source_type": "service"
+      }
+    ]
+    """
     When I send an event:
     """json
     {
+      "event_type": "check",
+      "state": 2,
+      "output": "test-output-service-weather-1",
       "connector": "test-connector-service-weather-1",
       "connector_name": "test-connector-name-service-weather-1",
-      "source_type": "resource",
-      "event_type": "check",
-      "component":  "test-component-service-weather-1",
+      "component": "test-component-service-weather-1",
       "resource": "test-resource-service-weather-1",
-      "state": 2,
-      "output": "noveo alarm"
+      "source_type": "resource"
     }
     """
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "activate",
+        "connector": "test-connector-service-weather-1",
+        "connector_name": "test-connector-name-service-weather-1",
+        "component": "test-component-service-weather-1",
+        "resource": "test-resource-service-weather-1",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}"
+      }
+    ]
+    """
     When I do POST /api/v4/widget-filters:
     """json
     {
       "title": "test-widgetfilter-service-weather-1",
       "widget": "test-widget-to-weather-get",
-      "is_private": true,
+      "is_user_preference": true,
       "entity_pattern": [
         [
           {
@@ -69,11 +106,11 @@ Feature: update service weather on event
     {
       "data": [
         {
-          "_id": "test-service-weather-1",
+          "_id": "{{ .serviceId }}",
           "name": "test-service-weather-1",
           "connector": "service",
           "connector_name": "service",
-          "component": "test-service-weather-1",
+          "component": "{{ .serviceId }}",
           "resource": "",
           "state": {"val": 2},
           "status": {"val": 1},
@@ -117,6 +154,7 @@ Feature: update service weather on event
     }
     """
 
+  @concurrent
   Scenario: given service for multiple entities should set service weather state as worst entity state
     Given I am admin
     When I do POST /api/v4/entityservices:
@@ -146,56 +184,129 @@ Feature: update service weather on event
     }
     """
     Then the response code should be 201
-    When I wait the end of 2 events processing
+    When I save response serviceId={{ .lastResponse._id }}
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}",
+        "source_type": "service"
+      }
+    ]
+    """
     When I send an event:
     """json
     {
-      "connector": "test-connector-service-weather-2",
-      "connector_name": "test-connector-name-service-weather-2",
-      "source_type": "resource",
       "event_type": "check",
-      "category": "test-category-service-weather",
-      "component":  "test-component-service-weather-2",
-      "resource": "test-resource-service-weather-2-1",
       "state": 1,
-      "output": "noveo alarm"
+      "output": "test-output-service-weather-2",
+      "connector": "test-connector-service-weather-2",
+      "connector_name": "test-connector-name-service-weather-2",
+      "category": "test-category-service-weather",
+      "component": "test-component-service-weather-2",
+      "resource": "test-resource-service-weather-2-1",
+      "source_type": "resource"
     }
     """
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "activate",
+        "connector": "test-connector-service-weather-2",
+        "connector_name": "test-connector-name-service-weather-2",
+        "component": "test-component-service-weather-2",
+        "resource": "test-resource-service-weather-2-1",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}"
+      }
+    ]
+    """
     When I send an event:
     """json
     {
-      "connector": "test-connector-service-weather-2",
-      "connector_name": "test-connector-name-service-weather-2",
-      "source_type": "resource",
       "event_type": "check",
-      "component":  "test-component-service-weather-2",
-      "resource": "test-resource-service-weather-2-2",
       "state": 2,
-      "output": "noveo alarm"
+      "output": "test-output-service-weather-2",
+      "connector": "test-connector-service-weather-2",
+      "connector_name": "test-connector-name-service-weather-2",
+      "component": "test-component-service-weather-2",
+      "resource": "test-resource-service-weather-2-2",
+      "source_type": "resource"
     }
     """
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "activate",
+        "connector": "test-connector-service-weather-2",
+        "connector_name": "test-connector-name-service-weather-2",
+        "component": "test-component-service-weather-2",
+        "resource": "test-resource-service-weather-2-2",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}"
+      }
+    ]
+    """
     When I send an event:
     """json
     {
+      "event_type": "check",
+      "state": 3,
+      "output": "test-output-service-weather-2",
       "connector": "test-connector-service-weather-2",
       "connector_name": "test-connector-name-service-weather-2",
-      "source_type": "resource",
-      "event_type": "check",
-      "component":  "test-component-service-weather-2",
+      "component": "test-component-service-weather-2",
       "resource": "test-resource-service-weather-2-3",
-      "state": 3,
-      "output": "noveo alarm"
+      "source_type": "resource"
     }
     """
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "activate",
+        "connector": "test-connector-service-weather-2",
+        "connector_name": "test-connector-name-service-weather-2",
+        "component": "test-component-service-weather-2",
+        "resource": "test-resource-service-weather-2-3",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}"
+      }
+    ]
+    """
     When I do POST /api/v4/widget-filters:
     """json
     {
       "title": "test-widgetfilter-service-weather-1",
       "widget": "test-widget-to-weather-get",
-      "is_private": true,
+      "is_user_preference": true,
       "entity_pattern": [
         [
           {
@@ -262,12 +373,12 @@ Feature: update service weather on event
     }
     """
 
+  @concurrent
   Scenario: given service for entity and no open alarm should get ok service weather state
     Given I am admin
     When I do POST /api/v4/entityservices:
     """json
     {
-      "_id": "test-service-weather-3",
       "name": "test-service-weather-3",
       "enabled": true,
       "output_template": "Test-service-weather-3",
@@ -288,27 +399,64 @@ Feature: update service weather on event
     }
     """
     Then the response code should be 201
-    When I wait the end of 2 events processing
+    When I save response serviceId={{ .lastResponse._id }}
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}",
+        "source_type": "service"
+      }
+    ]
+    """
     When I send an event:
     """json
     {
+      "event_type": "check",
+      "state": 0,
+      "output": "test-output-service-weather-3",
       "connector": "test-connector-service-weather-3",
       "connector_name": "test-connector-name-service-weather-3",
-      "source_type": "resource",
-      "event_type": "check",
-      "component":  "test-component-service-weather-3",
+      "component": "test-component-service-weather-3",
       "resource": "test-resource-service-weather-3",
-      "state": 0,
-      "output": "noveo alarm"
+      "source_type": "resource"
     }
     """
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "check",
+        "connector": "test-connector-service-weather-3",
+        "connector_name": "test-connector-name-service-weather-3",
+        "component": "test-component-service-weather-3",
+        "resource": "test-resource-service-weather-3",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}"
+      }
+    ]
+    """
     When I do POST /api/v4/widget-filters:
     """json
     {
       "title": "test-widgetfilter-service-weather-1",
       "widget": "test-widget-to-weather-get",
-      "is_private": true,
+      "is_user_preference": true,
       "entity_pattern": [
         [
           {
@@ -377,13 +525,12 @@ Feature: update service weather on event
     }
     """
 
-  Scenario: given service for multiple entities and acked alarms
-    should return false in is_action_required
+  @concurrent
+  Scenario: given service for multiple entities and acked alarms should return false in is_action_required
     Given I am admin
     When I do POST /api/v4/entityservices:
     """json
     {
-      "_id": "test-service-weather-4",
       "name": "test-service-weather-4",
       "enabled": true,
       "output_template": "Test-service-weather-4",
@@ -407,67 +554,158 @@ Feature: update service weather on event
     }
     """
     Then the response code should be 201
-    When I wait the end of 2 events processing
+    When I save response serviceId={{ .lastResponse._id }}
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}",
+        "source_type": "service"
+      }
+    ]
+    """
     When I send an event:
     """json
     {
-      "connector": "test-connector-service-weather-4",
-      "connector_name": "test-connector-name-service-weather-4",
-      "source_type": "resource",
       "event_type": "check",
-      "component":  "test-component-service-weather-4",
-      "resource": "test-resource-service-weather-4-1",
       "state": 2,
-      "output": "noveo alarm"
-    }
-    """
-    When I wait the end of 2 events processing
-    When I send an event:
-    """json
-    {
+      "output": "test-output-service-weather-4",
       "connector": "test-connector-service-weather-4",
       "connector_name": "test-connector-name-service-weather-4",
-      "source_type": "resource",
-      "event_type": "check",
-      "component":  "test-component-service-weather-4",
-      "resource": "test-resource-service-weather-4-2",
-      "state": 3,
-      "output": "noveo alarm"
-    }
-    """
-    When I wait the end of 2 events processing
-    When I send an event:
-    """json
-    {
-      "connector": "test-connector-service-weather-4",
-      "connector_name": "test-connector-name-service-weather-4",
-      "source_type": "resource",
-      "event_type": "ack",
-      "component":  "test-component-service-weather-4",
+      "component": "test-component-service-weather-4",
       "resource": "test-resource-service-weather-4-1",
-      "output": "noveo alarm"
+      "source_type": "resource"
     }
     """
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "activate",
+        "connector": "test-connector-service-weather-4",
+        "connector_name": "test-connector-name-service-weather-4",
+        "component": "test-component-service-weather-4",
+        "resource": "test-resource-service-weather-4-1",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}"
+      }
+    ]
+    """
     When I send an event:
     """json
     {
+      "event_type": "check",
+      "state": 3,
+      "output": "test-output-service-weather-4",
       "connector": "test-connector-service-weather-4",
       "connector_name": "test-connector-name-service-weather-4",
-      "source_type": "resource",
-      "event_type": "ack",
-      "component":  "test-component-service-weather-4",
+      "component": "test-component-service-weather-4",
       "resource": "test-resource-service-weather-4-2",
-      "output": "noveo alarm"
+      "source_type": "resource"
     }
     """
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "activate",
+        "connector": "test-connector-service-weather-4",
+        "connector_name": "test-connector-name-service-weather-4",
+        "component": "test-component-service-weather-4",
+        "resource": "test-resource-service-weather-4-2",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}"
+      }
+    ]
+    """
+    When I send an event:
+    """json
+    {
+      "event_type": "ack",
+      "output": "test-output-service-weather-4",
+      "connector": "test-connector-service-weather-4",
+      "connector_name": "test-connector-name-service-weather-4",
+      "component": "test-component-service-weather-4",
+      "resource": "test-resource-service-weather-4-1",
+      "source_type": "resource"
+    }
+    """
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "ack",
+        "connector": "test-connector-service-weather-4",
+        "connector_name": "test-connector-name-service-weather-4",
+        "component":  "test-component-service-weather-4",
+        "resource": "test-resource-service-weather-4-1",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}"
+      }
+    ]
+    """
+    When I send an event:
+    """json
+    {
+      "event_type": "ack",
+      "output": "test-output-service-weather-4",
+      "connector": "test-connector-service-weather-4",
+      "connector_name": "test-connector-name-service-weather-4",
+      "component": "test-component-service-weather-4",
+      "resource": "test-resource-service-weather-4-2",
+      "source_type": "resource"
+    }
+    """
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "ack",
+        "connector": "test-connector-service-weather-4",
+        "connector_name": "test-connector-name-service-weather-4",
+        "component":  "test-component-service-weather-4",
+        "resource": "test-resource-service-weather-4-2",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}"
+      }
+    ]
+    """
     When I do POST /api/v4/widget-filters:
     """json
     {
       "title": "test-widgetfilter-service-weather-1",
       "widget": "test-widget-to-weather-get",
-      "is_private": true,
+      "is_user_preference": true,
       "entity_pattern": [
         [
           {
@@ -534,12 +772,12 @@ Feature: update service weather on event
     }
     """
 
+  @concurrent
   Scenario: given service for entity should calculate impact_state regarding of impact_level
     Given I am admin
     When I do POST /api/v4/entityservices:
     """json
     {
-      "_id": "test-service-weather-5",
       "name": "test-service-weather-5",
       "enabled": true,
       "output_template": "Test-service-weather-5",
@@ -560,27 +798,64 @@ Feature: update service weather on event
     }
     """
     Then the response code should be 201
-    When I wait the end of 2 events processing
+    When I save response serviceId={{ .lastResponse._id }}
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}",
+        "source_type": "service"
+      }
+    ]
+    """
     When I send an event:
     """json
     {
+      "event_type": "check",
+      "state": 2,
+      "output": "test-output-service-weather-5",
       "connector": "test-connector-service-weather-5",
       "connector_name": "test-connector-name-service-weather-5",
-      "source_type": "resource",
-      "event_type": "check",
-      "component":  "test-component-service-weather-5",
+      "component": "test-component-service-weather-5",
       "resource": "test-resource-service-weather-5",
-      "state": 2,
-      "output": "noveo alarm"
+      "source_type": "resource"
     }
     """
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "activate",
+        "connector": "test-connector-service-weather-5",
+        "connector_name": "test-connector-name-service-weather-5",
+        "component":  "test-component-service-weather-5",
+        "resource": "test-resource-service-weather-5",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId }}"
+      }
+    ]
+    """
     When I do POST /api/v4/widget-filters:
     """json
     {
       "title": "test-widgetfilter-service-weather-1",
       "widget": "test-widget-to-weather-get",
-      "is_private": true,
+      "is_user_preference": true,
       "entity_pattern": [
         [
           {
@@ -649,6 +924,7 @@ Feature: update service weather on event
     }
     """
 
+  @concurrent
   Scenario: given service should get service by filter state=critical
     Given I am admin
     When I do POST /api/v4/entityservices:
@@ -674,6 +950,7 @@ Feature: update service weather on event
     }
     """
     Then the response code should be 201
+    When I save response serviceId1={{ .lastResponse._id }}
     When I do POST /api/v4/entityservices:
     """json
     {
@@ -697,42 +974,111 @@ Feature: update service weather on event
     }
     """
     Then the response code should be 201
-    When I wait the end of 4 events processing
+    When I save response serviceId2={{ .lastResponse._id }}
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId1 }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId1 }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId2 }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId2 }}",
+        "source_type": "service"
+      }
+    ]
+    """
     When I send an event:
     """json
     {
-      "connector": "test-connector-service-weather-6",
-      "connector_name": "test-connector-name-service-weather-6",
-      "source_type": "resource",
       "event_type": "check",
-      "category": "test-category-service-weather",
-      "component":  "test-component-service-weather-6",
-      "resource": "test-resource-service-weather-6-1",
       "state": 1,
-      "output": "noveo alarm"
+      "output": "test-output-service-weather-6",
+      "connector": "test-connector-service-weather-6",
+      "connector_name": "test-connector-name-service-weather-6",
+      "category": "test-category-service-weather",
+      "component": "test-component-service-weather-6",
+      "resource": "test-resource-service-weather-6-1",
+      "source_type": "resource"
     }
     """
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "activate",
+        "connector": "test-connector-service-weather-6",
+        "connector_name": "test-connector-name-service-weather-6",
+        "component":  "test-component-service-weather-6",
+        "resource": "test-resource-service-weather-6-1",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId1 }}"
+      }
+    ]
+    """
     When I send an event:
     """json
     {
+      "event_type": "check",
+      "state": 2,
+      "output": "test-output-service-weather-6",
       "connector": "test-connector-service-weather-6",
       "connector_name": "test-connector-name-service-weather-6",
-      "source_type": "resource",
-      "event_type": "check",
-      "component":  "test-component-service-weather-6",
+      "component": "test-component-service-weather-6",
       "resource": "test-resource-service-weather-6-2",
-      "state": 2,
-      "output": "noveo alarm"
+      "source_type": "resource"
     }
     """
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "activate",
+        "connector": "test-connector-service-weather-6",
+        "connector_name": "test-connector-name-service-weather-6",
+        "component":  "test-component-service-weather-6",
+        "resource": "test-resource-service-weather-6-2",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceId2 }}"
+      }
+    ]
+    """
     When I do POST /api/v4/widget-filters:
     """json
     {
       "title": "test-widgetfilter-service-weather-1",
       "widget": "test-widget-to-weather-get",
-      "is_private": true,
+      "is_user_preference": true,
       "entity_pattern": [
         [
           {
@@ -784,7 +1130,7 @@ Feature: update service weather on event
     {
       "title": "test-widgetfilter-service-weather-1",
       "widget": "test-widget-to-weather-get",
-      "is_private": true,
+      "is_user_preference": true,
       "entity_pattern": [
         [
           {

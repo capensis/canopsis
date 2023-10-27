@@ -60,7 +60,6 @@ describe('group-panel', () => {
           title: 'Custom group title',
         },
         isEditing: true,
-        isGroupsOrderChanged: true,
         orderChanged: true,
         hideActions: true,
       },
