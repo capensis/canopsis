@@ -27,10 +27,11 @@
       ref="calendar"
       v-bind="$attrs"
       v-on="calendarListeners"
-      class="c-calendar__calendar"
+      :class="['c-calendar__calendar', { 'c-calendar__calendar--dragging': dragging }]"
       :value="focus"
       :events="availableEvents"
       :type="type"
+      :event-color="getEventColor"
     >
       <template #event="{ event, start, end }">
         <v-layout
@@ -71,7 +72,7 @@
           <slot
             name="form-event"
             :close="closeCreateEventPopover"
-            :event="newEvent || popoverEvent"
+            :event="newEvent || editEvent || popoverEvent"
           />
         </v-card-text>
       </v-card>
@@ -82,7 +83,8 @@
 <script>
 import { CALENDAR_TYPES } from '@/constants';
 
-import { convertDateToDateObject } from '@/helpers/date/date';
+import { convertDateToEndOfDayDateObject, convertDateToStartOfDayDateObject } from '@/helpers/date/date';
+import { colorToRgba } from '@/helpers/color';
 
 import CalendarTodayBtn from './partials/calendar-today-btn.vue';
 import CalendarViewMode from './partials/calendar-view-mode.vue';
@@ -106,9 +108,12 @@ export default {
         stop: null,
       },
 
+      creating: false,
       newEvent: null,
 
-      creating: false,
+      dragging: false,
+      dragStartTime: 0,
+      editEvent: null,
 
       popoverOpen: false,
       popoverEvent: null,
@@ -122,6 +127,10 @@ export default {
     },
 
     availableEvents() {
+      if (this.editEvent) {
+        return this.events.map(event => (event.id === this.editEvent.id ? this.editEvent : event));
+      }
+
       return this.newEvent
         ? [...this.events, this.newEvent]
         : this.events;
@@ -137,16 +146,22 @@ export default {
         'mousedown:time': this.startCreateEvent,
         'mousedown:day': this.startCreateEvent,
         'mousedown:event': this.startDragEvent,
-
-        'mouseup:event': this.finishDragEvent,
       };
 
       if (this.creating) {
         listeners['mouseup:time'] = this.finishCreateEvent;
         listeners['mouseup:day'] = this.finishCreateEvent;
 
-        listeners['mousemove:day'] = this.handleMouseMove;
-        listeners['mousemove:time'] = this.handleMouseMove;
+        listeners['mousemove:day'] = this.handleMouseMoveEventCreate;
+        listeners['mousemove:time'] = this.handleMouseMoveEventCreate;
+      }
+
+      if (this.dragging) {
+        listeners['mouseup:time'] = this.finishDragEvent;
+        listeners['mouseup:day'] = this.finishDragEvent;
+
+        listeners['mousemove:day'] = this.handleMouseMoveEventDrag;
+        listeners['mousemove:time'] = this.handleMouseMoveEventDrag;
       }
 
       return listeners;
@@ -156,10 +171,18 @@ export default {
     this.$refs.calendar.checkChange();
   },
   methods: {
+    getEventColor(event) {
+      if (event.id === this.editEvent?.id) {
+        return colorToRgba(event.color, 0.5);
+      }
+
+      return event.color;
+    },
+
     updateRange({ start, end }) {
       this.filled = {
-        start: convertDateToDateObject(start.date),
-        end: convertDateToDateObject(end.date),
+        start: convertDateToStartOfDayDateObject(start.date),
+        end: convertDateToEndOfDayDateObject(end.date),
       };
 
       this.$emit('change');
@@ -199,6 +222,7 @@ export default {
       this.popoverOpen = false;
       this.popoverEvent = null;
       this.newEvent = null;
+      this.editEvent = null;
     },
 
     showEventDetails({ nativeEvent, event }) {
@@ -223,10 +247,8 @@ export default {
       return date;
     },
 
-    handleMouseMove(event) {
-      if (this.creating) {
-        this.newEvent.end = this.getDateByEvent(event);
-      }
+    handleMouseMoveEventCreate(event) {
+      this.newEvent.end = this.getDateByEvent(event);
     },
 
     startCreateEvent(event) {
@@ -255,12 +277,45 @@ export default {
       this.creating = false;
     },
 
-    startDragEvent(event, nativeEvent) {
+    startDragEvent({ event }, nativeEvent) {
       nativeEvent.stopPropagation();
+
+      if (this.editEvent) {
+        this.closeCreateEventPopover();
+      }
+
+      this.editEvent = { ...event };
+      this.dragging = true;
     },
 
-    finishDragEvent(...args) {
-      console.error(...args);
+    handleMouseMoveEventDrag(event) {
+      const mouseTime = this.getDateByEvent(event).getTime();
+
+      if (!this.dragStartTime) {
+        this.dragStartTime = mouseTime;
+        return;
+      }
+
+      const diff = mouseTime - this.dragStartTime;
+
+      if (diff) {
+        this.dragStartTime = mouseTime;
+
+        const start = new Date(this.editEvent.start.getTime() + diff);
+        const end = new Date(this.editEvent.end.getTime() + diff);
+
+        this.editEvent.start = start;
+        this.editEvent.end = end;
+      }
+    },
+
+    finishDragEvent(event, nativeEvent) {
+      nativeEvent.stopPropagation();
+
+      this.showCreateEventPopover(this.newEvent, nativeEvent.target);
+
+      this.dragStartTime = 0;
+      this.dragging = false;
     },
   },
 };
@@ -273,6 +328,14 @@ export default {
   &__calendar {
     .v-calendar-weekly__week {
       min-height: 140px;
+    }
+
+    &--dragging {
+      cursor: grab;
+
+      .v-event {
+        pointer-events: none;
+      }
     }
   }
 

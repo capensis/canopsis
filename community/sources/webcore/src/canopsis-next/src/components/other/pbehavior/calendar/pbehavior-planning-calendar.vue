@@ -49,6 +49,7 @@ import {
   convertDateToDateObjectByTimezone,
   convertDateToDateObject,
 } from '@/helpers/date/date';
+import { isFullDayEvent } from '@/helpers/entities/pbehavior/form';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { entitiesPbehaviorTimespansMixin } from '@/mixins/entities/pbehavior/timespans';
@@ -209,6 +210,10 @@ export default {
          */
         const color = pbehavior.color || type.color || pbehavior.type?.color || CSS_COLORS_VARS.secondary;
         const iconColor = getMostReadableTextColor(color, { level: 'AA', size: 'large' });
+        const isFullDay = isFullDayEvent(
+          convertDateToDateObjectByTimezone(pbehavior.tstart, this.$system.timezone),
+          convertDateToDateObjectByTimezone(pbehavior.tstop, this.$system.timezone),
+        );
 
         const start = convertDateToDateObjectByTimezone(timespan.from, this.$system.timezone);
         const end = convertDateToDateObjectByTimezone(timespan.to, this.$system.timezone);
@@ -222,9 +227,8 @@ export default {
           end,
           icon: type.icon_name,
           name: pbehavior.name,
+          timed: !isFullDay,
           data: {
-            ...this.$dayspan.getDefaultEventDetails(),
-
             pbehavior,
             color,
             icon: type.icon_name,
