@@ -17,7 +17,7 @@ import (
 const shutdownTimout = 5 * time.Second
 
 // Router is used to implement adding new routes to API.
-type Router func(gin.IRouter)
+type Router func(*gin.Engine)
 
 // Worker is used to implement adding new worker to API.
 type Worker func(context.Context)

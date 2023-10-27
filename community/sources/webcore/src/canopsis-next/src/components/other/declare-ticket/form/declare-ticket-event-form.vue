@@ -4,8 +4,8 @@
       v-field="form.alarms_by_tickets",
       :alarms="alarms",
       :tickets-by-alarms="ticketsByAlarms",
-      :disable-tickets="disableTickets",
-      :hide-remove="hideRemove"
+      :hide-tickets="hideTickets",
+      :hide-row-select="hideRowSelect"
     )
     v-checkbox(
       v-if="!hideTicketResource",
@@ -38,11 +38,11 @@ export default {
       type: Array,
       default: () => [],
     },
-    disableTickets: {
+    hideTickets: {
       type: Boolean,
       default: false,
     },
-    hideRemove: {
+    hideRowSelect: {
       type: Boolean,
       default: false,
     },

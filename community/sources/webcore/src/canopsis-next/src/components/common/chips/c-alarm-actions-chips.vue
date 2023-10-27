@@ -21,6 +21,7 @@
     v-menu(
       v-if="dropDownItems.length",
       key="more",
+      max-height="400px",
       bottom,
       left,
       @input="$emit('activate')"
@@ -30,7 +31,7 @@
           v-icon(color="white", size="20") more_horiz
       v-card
         v-card-text
-          v-layout.c-alarm-actions-chips__more(:class="{ 'c-alarm-actions-chips--small': small }")
+          v-layout.c-alarm-actions-chips__more(:class="{ 'c-alarm-actions-chips--small': small }", wrap)
             c-alarm-action-chip.mx-0(
               v-for="item in dropDownItems",
               :key="item[itemValue]",

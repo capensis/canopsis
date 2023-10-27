@@ -38,18 +38,18 @@ func (m *MockStore) EXPECT() *MockStoreMockRecorder {
 }
 
 // Count mocks base method.
-func (m *MockStore) Count(arg0 context.Context, arg1 alarm.FilterRequest) (*alarm.Count, error) {
+func (m *MockStore) Count(arg0 context.Context, arg1 alarm.FilterRequest, arg2 string) (*alarm.Count, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Count", arg0, arg1)
+	ret := m.ctrl.Call(m, "Count", arg0, arg1, arg2)
 	ret0, _ := ret[0].(*alarm.Count)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Count indicates an expected call of Count.
-func (mr *MockStoreMockRecorder) Count(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockStoreMockRecorder) Count(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Count", reflect.TypeOf((*MockStore)(nil).Count), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Count", reflect.TypeOf((*MockStore)(nil).Count), arg0, arg1, arg2)
 }
 
 // Export mocks base method.

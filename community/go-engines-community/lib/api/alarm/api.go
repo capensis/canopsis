@@ -327,7 +327,7 @@ func (a *api) Count(c *gin.Context) {
 		return
 	}
 
-	res, err := a.store.Count(c, r)
+	res, err := a.store.Count(c, r, c.MustGet(auth.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}

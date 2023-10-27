@@ -24,7 +24,7 @@
               v-icon(:color="isFailedJob ? 'error' : 'success'") {{ statusIcon }}
           div(v-if="job.fail_reason")
             span {{ $t('remediation.instructionExecute.jobs.failedReason') }}:&nbsp;
-            c-compiled-template.pre-wrap(:template="job.fail_reason", parent-element="span")
+            span.pre-wrap(v-html="job.fail_reason")
         v-tooltip(v-if="cancelable && isRunningJob && hasJobsInQueue", top)
           template(#activator="{ on }")
             v-btn.error.ml-2(

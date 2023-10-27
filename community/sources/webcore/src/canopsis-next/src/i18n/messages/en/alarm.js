@@ -29,8 +29,14 @@ export default {
   noAlarmFound: 'No alarms is found according to the patterns defined',
   associateTicketResources: 'Associate ticket for resources',
   followLink: 'Follow the link "{title}"',
+  hasBookmark: 'Alarm has bookmark',
+  filterByBookmark: 'Filter by bookmark',
   popups: {
     exportFailed: 'Failed to export alarms list in CSV format',
+    addBookmarkSuccess: 'Bookmark was added',
+    addBookmarkFailed: 'Something went wrong. Bookmark wasn\'t added',
+    removeBookmarkSuccess: 'Bookmark was removed',
+    removeBookmarkFailed: 'Something went wrong. Bookmark wasn\'t removed',
   },
   actions: {
     titles: {
@@ -52,6 +58,8 @@ export default {
       removeAlarmsFromAutoMetaAlarm: 'Unlink alarm from meta alarm',
       comment: 'Comment',
       exportPdf: 'Export alarm to PDF file',
+      addBookmark: 'Add bookmark',
+      removeBookmark: 'Remove bookmark',
     },
     iconsTitles: {
       ack: 'Ack',
@@ -181,6 +189,7 @@ export default {
     initialOutput: 'Initial output',
     initialLongOutput: 'Initial long output',
     lastComment: 'Last comment',
+    lastCommentInitiator: 'Last comment initiator',
     ackBy: 'Acked by',
     ackMessage: 'Acked message',
     ackInitiator: 'Acked initiator',
@@ -203,6 +212,7 @@ export default {
     ticketAuthor: 'Ticket submitter',
     ticketId: 'Ticket id',
     ticketMessage: 'Ticket message',
+    ticketInitiator: 'Ticket initiator',
     ticketCreatedAt: 'Ticket created at',
     ticketData: 'Ticket data',
     entityId: 'Entity ID',
@@ -219,5 +229,6 @@ export default {
     entityLastPbehaviorDate: 'Entity last pbehavior date',
     openedChildren: 'Opened consequences',
     closedChildren: 'Closed consequences',
+    canceledInitiator: 'Canceled initiator',
   },
 };

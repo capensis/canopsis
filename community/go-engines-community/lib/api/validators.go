@@ -15,6 +15,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/exdate"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/flappingrule"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/linkrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
@@ -37,6 +38,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgettemplate"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libdatastorage "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	libidlerule "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -214,18 +216,17 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	accountValidator := account.NewValidator(client)
 	v.RegisterStructValidationCtx(accountValidator.ValidateEditRequest, account.EditRequest{})
 
-	viewValidator := view.NewValidator(client)
-	v.RegisterStructValidationCtx(viewValidator.ValidateEditRequest, view.EditRequest{})
 	v.RegisterStructValidation(view.ValidateEditPositionRequest, view.EditPositionRequest{})
 
-	viewGroupUniqueTitleValidator := common.NewUniqueFieldValidator(client, mongo.ViewGroupMongoCollection, "Title")
-	v.RegisterStructValidationCtx(viewGroupUniqueTitleValidator.Validate, viewgroup.EditRequest{})
+	viewGroupValidator := viewgroup.NewValidator(client)
+	v.RegisterStructValidationCtx(viewGroupValidator.ValidateEditRequest, viewgroup.EditRequest{})
 
 	widgetValidator := widget.NewValidator(client)
 	v.RegisterStructValidation(widgetValidator.ValidateEditRequest, widget.EditRequest{})
 	v.RegisterStructValidationCtx(widgetValidator.ValidateFilterRequest, widget.FilterRequest{})
 
-	v.RegisterStructValidationCtx(widgetfilter.NewValidator(client).ValidateEditRequest, widgetfilter.EditRequest{})
+	v.RegisterStructValidationCtx(widgetfilter.NewValidator(client).ValidateCreateRequest, widgetfilter.CreateRequest{})
+	v.RegisterStructValidationCtx(widgetfilter.NewValidator(client).ValidateUpdateRequest, widgetfilter.UpdateRequest{})
 
 	v.RegisterStructValidation(widgettemplate.ValidateEditRequest, widgettemplate.EditRequest{})
 
@@ -312,4 +313,7 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 
 	v.RegisterStructValidation(alarmtag.ValidateCreateRequest, alarmtag.CreateRequest{})
 	v.RegisterStructValidation(alarmtag.ValidateUpdateRequest, alarmtag.UpdateRequest{})
+
+	v.RegisterStructValidation(healthcheck.ValidateEngineParameters, config.EngineParameters{})
+	v.RegisterStructValidation(healthcheck.ValidateLimitParameters, config.LimitParameters{})
 }

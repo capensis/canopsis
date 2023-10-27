@@ -132,36 +132,42 @@ Feature: run an manual simplified instruction
         "_t": "instructionstart",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-1-name."
       },
       {
         "_t": "instructionjobstart",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-1-name. Job test-job-to-run-manual-simplified-instruction-1-name."
       },
       {
         "_t": "instructionjobcomplete",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-1-name. Job test-job-to-run-manual-simplified-instruction-1-name."
       },
       {
         "_t": "instructionjobstart",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-1-name. Job test-job-to-run-manual-simplified-instruction-2-name."
       },
       {
         "_t": "instructionjobcomplete",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-1-name. Job test-job-to-run-manual-simplified-instruction-2-name."
       },
       {
         "_t": "instructioncomplete",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-1-name."
       }
     ]
@@ -234,24 +240,28 @@ Feature: run an manual simplified instruction
         "_t": "instructionstart",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-2-name."
       },
       {
         "_t": "instructionjobstart",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-2-name. Job test-job-to-run-manual-simplified-instruction-3-name."
       },
       {
         "_t": "instructionjobfail",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-2-name. Job test-job-to-run-manual-simplified-instruction-3-name."
       },
       {
         "_t": "instructionfail",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-2-name."
       }
     ]
@@ -329,36 +339,42 @@ Feature: run an manual simplified instruction
         "_t": "instructionstart",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-3-name."
       },
       {
         "_t": "instructionjobstart",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-3-name. Job test-job-to-run-manual-simplified-instruction-3-name."
       },
       {
         "_t": "instructionjobfail",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-3-name. Job test-job-to-run-manual-simplified-instruction-3-name."
       },
       {
         "_t": "instructionjobstart",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-3-name. Job test-job-to-run-manual-simplified-instruction-2-name."
       },
       {
         "_t": "instructionjobcomplete",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-3-name. Job test-job-to-run-manual-simplified-instruction-2-name."
       },
       {
         "_t": "instructioncomplete",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-3-name."
       }
     ]
@@ -431,24 +447,28 @@ Feature: run an manual simplified instruction
         "_t": "instructionstart",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-4-name."
       },
       {
         "_t": "instructionjobstart",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-4-name. Job test-job-to-instruction-edit-1-name."
       },
       {
         "_t": "instructionjobfail",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-4-name. Job test-job-to-instruction-edit-1-name."
       },
       {
         "_t": "instructionfail",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-4-name."
       }
     ]
@@ -560,24 +580,28 @@ Feature: run an manual simplified instruction
         "_t": "instructionstart",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-5-name."
       },
       {
         "_t": "instructionjobstart",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-5-name. Job test-job-to-run-manual-simplified-instruction-1-name."
       },
       {
         "_t": "instructionjobcomplete",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-5-name. Job test-job-to-run-manual-simplified-instruction-1-name."
       },
       {
         "_t": "instructionjobstart",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
+        "initiator": "user",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-5-name. Job test-job-to-run-manual-simplified-instruction-4-name."
       },
       {

@@ -8,7 +8,7 @@
     c-draggable-list-field.views-panel.secondary.lighten-1(
       :class="{ empty: isGroupEmpty }",
       :value="group.views",
-      :disabled="!isNavigationEditingMode",
+      :disabled="group.is_private || !isNavigationEditingMode",
       group="views",
       @input="changeViewsOrdering"
     )
