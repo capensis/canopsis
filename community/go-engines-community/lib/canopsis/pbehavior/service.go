@@ -1,6 +1,6 @@
 package pbehavior
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/pbehavior/pbehavior.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior Service,EntityMatcher,ModelProvider,EventManager,ComputedEntityMatcher,Store,EntityTypeResolver,ComputedEntityTypeResolver,TypeComputer
+//go:generate mockgen -destination=../../../mocks/lib/canopsis/pbehavior/pbehavior.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior Service,ModelProvider,EventManager,ComputedEntityMatcher,Store,EntityTypeResolver,ComputedEntityTypeResolver,TypeComputer
 
 import (
 	"context"
@@ -206,19 +206,20 @@ func (s *service) load(ctx context.Context, span timespan.Span) (ComputedEntityT
 	return NewComputedEntityTypeResolver(matcher, resolver), nil
 }
 
-func (s *service) getQueries(computed map[string]ComputedPbehavior) map[string]interface{} {
-	queries := make(map[string]interface{}, len(computed))
+func (s *service) getQueries(computed map[string]ComputedPbehavior) map[string]any {
+	queries := make(map[string]any, len(computed))
 	for id, pbehavior := range computed {
-		if len(pbehavior.OldMongoQuery) > 0 {
-			queries[id] = pbehavior.OldMongoQuery
-		} else {
-			query, err := pbehavior.Pattern.ToMongoQuery("")
-			if err != nil {
-				s.logger.Err(err).Str("pbehavior", id).Msg("pbehavior has invalid pattern")
-				continue
-			}
-			queries[id] = query
+		if len(pbehavior.Pattern) == 0 {
+			continue
 		}
+
+		query, err := pbehavior.Pattern.ToMongoQuery("")
+		if err != nil {
+			s.logger.Err(err).Str("pbehavior", id).Msg("pbehavior has invalid pattern")
+			continue
+		}
+
+		queries[id] = query
 	}
 
 	return queries

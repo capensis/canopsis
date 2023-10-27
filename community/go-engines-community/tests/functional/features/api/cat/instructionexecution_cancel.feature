@@ -15,7 +15,7 @@ Feature: cancel a instruction execution
             "field": "v.resource",
             "cond": {
               "type": "eq",
-              "value": "test-instruction-execution-cancel-resource-1"
+              "value": "test-resource-to-instruction-execution-cancel-1"
             }
           }
         ]
@@ -51,7 +51,7 @@ Feature: cancel a instruction execution
     When I do POST /api/v4/cat/executions:
     """json
     {
-      "alarm": "test-instruction-execution-cancel-1",
+      "alarm": "test-alarm-to-instruction-execution-cancel-1",
       "instruction": "{{ .lastResponse._id }}"
     }
     """
@@ -72,7 +72,7 @@ Feature: cancel a instruction execution
             "field": "v.resource",
             "cond": {
               "type": "eq",
-              "value": "test-instruction-execution-cancel-resource-2"
+              "value": "test-resource-to-instruction-execution-cancel-2"
             }
           }
         ]
@@ -108,7 +108,7 @@ Feature: cancel a instruction execution
     When I do POST /api/v4/cat/executions:
     """json
     {
-      "alarm": "test-instruction-execution-cancel-2",
+      "alarm": "test-alarm-to-instruction-execution-cancel-2",
       "instruction": "{{ .lastResponse._id }}"
     }
     """

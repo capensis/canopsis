@@ -1,5 +1,5 @@
 default_associativetable:
-  default_associativetable_1:
+  associativetable_to_get_content_nested_val_4:
     content:
       val:
       - _id: test-associativetable-to-get-content-nested-val-4
@@ -8,12 +8,14 @@ default_associativetable:
         - test-associativetable-to-get-content-nested-val-3
         title: test-associativetable-to-get-content-nested-val-1
     name: test-associativetable-to-get
-  default_associativetable_2:
+
+  associativetable_to_update_val:
     content:
       val:
         test-associativetable-to-update-key: test-associativetable-to-update-val
     name: test-associativetable-to-update
-  default_associativetable_3:
+
+  associativetable_to_delete_key:
     content:
       val:
         test-associativetable-to-delete-key: test-associativetable-to-delete-val

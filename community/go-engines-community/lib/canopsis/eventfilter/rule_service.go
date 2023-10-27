@@ -4,7 +4,6 @@ import (
 	"context"
 	"sync"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -84,12 +83,11 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (type
 		}
 
 		var err error
-		var match, backwardCompatibility bool
-		var oldRegexMatches oldpattern.EventRegexMatches
+		var match bool
 		var eventRegexMatches pattern.EventRegexMatches
 		var entityRegexMatches pattern.EntityRegexMatches
 
-		if !rule.OldPatterns.IsSet() && len(rule.EntityPattern) == 0 && len(rule.EventPattern) == 0 {
+		if len(rule.EntityPattern) == 0 && len(rule.EventPattern) == 0 {
 			if event.Debug {
 				s.logger.Info().Str("rule", rule.ID).Str("event_type", event.EventType).Str("entity", event.GetEID()).Msg("Event filter rule service: rule is not matched")
 			}
@@ -129,22 +127,6 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (type
 					continue
 				}
 			}
-		} else if rule.OldPatterns.IsSet() {
-			backwardCompatibility = true
-			if !rule.OldPatterns.IsValid() {
-				s.logger.Warn().Msgf("Rule %s has an invalid old event pattern, skip", rule.ID)
-				s.failureService.Add(rule.ID, FailureTypeInvalidPattern, "invalid old pattern", nil)
-				continue
-			}
-
-			oldRegexMatches, match = rule.OldPatterns.GetRegexMatches(event)
-			if !match {
-				if event.Debug {
-					s.logger.Info().Str("rule", rule.ID).Str("event_type", event.EventType).Str("entity", event.GetEID()).Msg("Event filter rule service: rule is not matched")
-				}
-
-				continue
-			}
 		}
 
 		if event.Debug {
@@ -157,13 +139,9 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (type
 			continue
 		}
 
-		outcome, event, err = applicator.Apply(ctx, rule, event, RegexMatchWrapper{
-			BackwardCompatibility: backwardCompatibility,
-			OldRegexMatch:         oldRegexMatches,
-			RegexMatch: RegexMatch{
-				EventRegexMatches: eventRegexMatches,
-				Entity:            entityRegexMatches,
-			},
+		outcome, event, err = applicator.Apply(ctx, rule, event, RegexMatch{
+			EventRegexMatches: eventRegexMatches,
+			Entity:            entityRegexMatches,
 		})
 
 		if err != nil {

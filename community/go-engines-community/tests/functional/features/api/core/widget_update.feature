@@ -63,10 +63,6 @@ Feature: Update a widget
           "_id": "test-widgetfilter-to-widget-update-1-2",
           "title": "test-widgetfilter-to-widget-update-1-2-title",
           "corporate_alarm_pattern": "test-pattern-to-widget-edit-1"
-        },
-        {
-          "_id": "test-widgetfilter-to-widget-update-1-4",
-          "title": "test-widgetfilter-to-widget-update-1-4-title"
         }
       ]
     }
@@ -161,19 +157,6 @@ Feature: Update a widget
               }
             ]
           ]
-        },
-        {
-          "_id": "test-widgetfilter-to-widget-update-1-4",
-          "title": "test-widgetfilter-to-widget-update-1-4-title",
-          "is_private": false,
-          "is_user_preference": false,
-          "author": {
-            "_id": "root",
-            "name": "root"
-          },
-          "old_mongo_query": {
-            "name": "test-widgetfilter-to-widget-update-1-4-pattern"
-          }
         }
       ]
     }
@@ -252,20 +235,6 @@ Feature: Update a widget
         {
           "_id": "test-widgetfilter-to-widget-update-1-4",
           "title": "test-widgetfilter-to-widget-update-1-4-title",
-          "is_private": false,
-          "is_user_preference": false,
-          "author": {
-            "_id": "root",
-            "name": "root"
-          },
-          "old_mongo_query": {
-            "name": "test-widgetfilter-to-widget-update-1-4-pattern"
-          }
-        },
-        {
-          "_id": "test-widgetfilter-to-widget-update-1-5",
-          "title": "test-widgetfilter-to-widget-update-1-5-title",
-          "is_private": false,
           "is_user_preference": true,
           "author": {
             "_id": "root",
@@ -277,7 +246,7 @@ Feature: Update a widget
                 "field": "v.component",
                 "cond": {
                   "type": "eq",
-                  "value": "test-widgetfilter-to-widget-update-1-5-pattern"
+                  "value": "test-widgetfilter-to-widget-update-1-4-pattern"
                 }
               }
             ]
@@ -288,7 +257,7 @@ Feature: Update a widget
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 4
+        "total_count": 3
       }
     }
     """
@@ -407,10 +376,6 @@ Feature: Update a widget
           "_id": "test-private-widgetfilter-to-private-widget-update-1-2",
           "title": "test-private-widgetfilter-to-private-widget-update-1-2-title",
           "corporate_alarm_pattern": "test-pattern-to-widget-edit-1"
-        },
-        {
-          "_id": "test-private-widgetfilter-to-private-widget-update-1-4",
-          "title": "test-private-widgetfilter-to-private-widget-update-1-4-title"
         }
       ]
     }
@@ -505,19 +470,6 @@ Feature: Update a widget
               }
             ]
           ]
-        },
-        {
-          "_id": "test-private-widgetfilter-to-private-widget-update-1-4",
-          "title": "test-private-widgetfilter-to-private-widget-update-1-4-title",
-          "is_private": true,
-          "is_user_preference": false,
-          "author": {
-            "_id": "root",
-            "name": "root"
-          },
-          "old_mongo_query": {
-            "name": "test-private-widgetfilter-to-private-widget-update-1-4-pattern"
-          }
         }
       ]
     }

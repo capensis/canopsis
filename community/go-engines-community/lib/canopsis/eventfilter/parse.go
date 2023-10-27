@@ -3,7 +3,6 @@ package eventfilter
 import (
 	"fmt"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
@@ -19,7 +18,6 @@ type ParsedRule struct {
 	Created      *types.CpsTime
 	Updated      *types.CpsTime
 
-	OldPatterns  oldpattern.EventPatternList
 	EventPattern pattern.Event
 	savedpattern.EntityPatternFields
 
@@ -136,7 +134,6 @@ func ParseRule(rule Rule, tplExecutor libtemplate.Executor) ParsedRule {
 		ExternalData:        parsedExternalData,
 		Created:             rule.Created,
 		Updated:             rule.Updated,
-		OldPatterns:         rule.OldPatterns,
 		EventPattern:        rule.EventPattern,
 		EntityPatternFields: rule.EntityPatternFields,
 		ResolvedStart:       rule.ResolvedStart,

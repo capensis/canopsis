@@ -38,12 +38,7 @@ func (r *computedEntityTypeResolver) Resolve(
 	entity types.Entity,
 	t time.Time,
 ) (ResolveResult, error) {
-	pbhIDs, err := r.matcher.Match(entity.ID)
-	if err != nil {
-		return ResolveResult{}, err
-	}
-
-	return r.resolver.Resolve(ctx, t, entity, pbhIDs)
+	return r.resolver.Resolve(ctx, t, entity)
 }
 
 func (r *computedEntityTypeResolver) GetComputedEntityIDs() ([]string, error) {

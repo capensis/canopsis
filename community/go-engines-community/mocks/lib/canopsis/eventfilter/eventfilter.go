@@ -37,7 +37,7 @@ func (m *MockRuleApplicator) EXPECT() *MockRuleApplicatorMockRecorder {
 }
 
 // Apply mocks base method.
-func (m *MockRuleApplicator) Apply(arg0 context.Context, arg1 eventfilter.ParsedRule, arg2 types.Event, arg3 eventfilter.RegexMatchWrapper) (string, types.Event, error) {
+func (m *MockRuleApplicator) Apply(arg0 context.Context, arg1 eventfilter.ParsedRule, arg2 types.Event, arg3 eventfilter.RegexMatch) (string, types.Event, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Apply", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].(string)
@@ -179,7 +179,7 @@ func (m *MockExternalDataGetter) EXPECT() *MockExternalDataGetterMockRecorder {
 }
 
 // Get mocks base method.
-func (m *MockExternalDataGetter) Get(arg0 context.Context, arg1, arg2 string, arg3 types.Event, arg4 eventfilter.ParsedExternalDataParameters, arg5 eventfilter.TemplateGetter) (interface{}, error) {
+func (m *MockExternalDataGetter) Get(arg0 context.Context, arg1, arg2 string, arg3 types.Event, arg4 eventfilter.ParsedExternalDataParameters, arg5 eventfilter.Template) (interface{}, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", arg0, arg1, arg2, arg3, arg4, arg5)
 	ret0, _ := ret[0].(interface{})
@@ -269,7 +269,7 @@ func (m *MockActionProcessor) EXPECT() *MockActionProcessorMockRecorder {
 }
 
 // Process mocks base method.
-func (m *MockActionProcessor) Process(arg0 context.Context, arg1 string, arg2 eventfilter.ParsedAction, arg3 types.Event, arg4 eventfilter.RegexMatchWrapper, arg5 map[string]interface{}) (types.Event, error) {
+func (m *MockActionProcessor) Process(arg0 context.Context, arg1 string, arg2 eventfilter.ParsedAction, arg3 types.Event, arg4 eventfilter.RegexMatch, arg5 map[string]interface{}) (types.Event, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Process", arg0, arg1, arg2, arg3, arg4, arg5)
 	ret0, _ := ret[0].(types.Event)
