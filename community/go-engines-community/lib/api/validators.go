@@ -191,13 +191,13 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 		if !enableSameServiceNames {
 			entityserviceUniqueNameValidator.Validate(ctx, sl)
 		}
-		entityserviceValidator.ValidateUpdateRequest(ctx, sl)
+		entityserviceValidator.ValidateUpdateRequest(sl)
 	}, entityservice.UpdateRequest{})
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		if !enableSameServiceNames {
 			entityserviceUniqueNameValidator.Validate(ctx, sl)
 		}
-		entityserviceValidator.ValidateUpdateRequest(ctx, sl)
+		entityserviceValidator.ValidateUpdateRequest(sl)
 	}, entityservice.BulkUpdateRequestItem{})
 	v.RegisterStructValidationCtx(entityserviceValidator.ValidateEditRequest, entityservice.EditRequest{})
 
@@ -221,12 +221,12 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	viewGroupValidator := viewgroup.NewValidator(client)
 	v.RegisterStructValidationCtx(viewGroupValidator.ValidateEditRequest, viewgroup.EditRequest{})
 
-	widgetValidator := widget.NewValidator(client)
+	widgetValidator := widget.NewValidator()
 	v.RegisterStructValidation(widgetValidator.ValidateEditRequest, widget.EditRequest{})
-	v.RegisterStructValidationCtx(widgetValidator.ValidateFilterRequest, widget.FilterRequest{})
+	v.RegisterStructValidation(widgetValidator.ValidateFilterRequest, widget.FilterRequest{})
 
-	v.RegisterStructValidationCtx(widgetfilter.NewValidator(client).ValidateCreateRequest, widgetfilter.CreateRequest{})
-	v.RegisterStructValidationCtx(widgetfilter.NewValidator(client).ValidateUpdateRequest, widgetfilter.UpdateRequest{})
+	v.RegisterStructValidation(widgetfilter.NewValidator().ValidateCreateRequest, widgetfilter.CreateRequest{})
+	v.RegisterStructValidation(widgetfilter.NewValidator().ValidateUpdateRequest, widgetfilter.UpdateRequest{})
 
 	v.RegisterStructValidation(widgettemplate.ValidateEditRequest, widgettemplate.EditRequest{})
 
@@ -251,17 +251,17 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 
 	v.RegisterStructValidation(messageratestats.ValidateListRequest, messageratestats.ListRequest{})
 
-	idleRuleValidator := idlerule.NewValidator(client)
+	idleRuleValidator := idlerule.NewValidator()
 	idleRuleUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.IdleRuleMongoCollection, "Name")
 	idleRuleExistIdValidator := common.NewUniqueFieldValidator(client, mongo.IdleRuleMongoCollection, "ID")
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		idleRuleUniqueNameValidator.Validate(ctx, sl)
 		idleRuleExistIdValidator.Validate(ctx, sl)
-		idleRuleValidator.ValidateCreateRequest(ctx, sl)
+		idleRuleValidator.ValidateCreateRequest(sl)
 	}, idlerule.CreateRequest{})
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		idleRuleUniqueNameValidator.Validate(ctx, sl)
-		idleRuleValidator.ValidateUpdateRequest(ctx, sl)
+		idleRuleValidator.ValidateUpdateRequest(sl)
 	}, idlerule.UpdateRequest{})
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		scenarioExistReasonValidator.Validate(ctx, sl)
@@ -269,7 +269,7 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	}, libidlerule.Parameters{})
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		idleRuleUniqueNameValidator.Validate(ctx, sl)
-		idleRuleValidator.ValidateBulkUpdateRequestItem(ctx, sl)
+		idleRuleValidator.ValidateBulkUpdateRequestItem(sl)
 	}, idlerule.BulkUpdateRequestItem{})
 
 	v.RegisterStructValidation(alarm.ValidateListRequest, alarm.ListRequest{})
@@ -277,30 +277,30 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 
 	v.RegisterStructValidation(datastorage.ValidateConfig, libdatastorage.Config{})
 
-	resolveRuleValidator := resolverule.NewValidator(client)
+	resolveRuleValidator := resolverule.NewValidator()
 	resolveRuleIdUniqueValidator := common.NewUniqueFieldValidator(client, mongo.ResolveRuleMongoCollection, "ID")
 	resolveRuleNameUniqueValidator := common.NewUniqueFieldValidator(client, mongo.ResolveRuleMongoCollection, "Name")
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		resolveRuleIdUniqueValidator.Validate(ctx, sl)
 		resolveRuleNameUniqueValidator.Validate(ctx, sl)
-		resolveRuleValidator.ValidateCreateRequest(ctx, sl)
+		resolveRuleValidator.ValidateCreateRequest(sl)
 	}, resolverule.CreateRequest{})
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		resolveRuleNameUniqueValidator.Validate(ctx, sl)
-		resolveRuleValidator.ValidateUpdateRequest(ctx, sl)
+		resolveRuleValidator.ValidateUpdateRequest(sl)
 	}, resolverule.UpdateRequest{})
 
-	flappingRuleValidator := flappingrule.NewValidator(client)
+	flappingRuleValidator := flappingrule.NewValidator()
 	flappingRuleIdUniqueValidator := common.NewUniqueFieldValidator(client, mongo.FlappingRuleMongoCollection, "ID")
 	flappingRuleNameUniqueValidator := common.NewUniqueFieldValidator(client, mongo.FlappingRuleMongoCollection, "Name")
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		flappingRuleIdUniqueValidator.Validate(ctx, sl)
 		flappingRuleNameUniqueValidator.Validate(ctx, sl)
-		flappingRuleValidator.ValidateCreateRequest(ctx, sl)
+		flappingRuleValidator.ValidateCreateRequest(sl)
 	}, flappingrule.CreateRequest{})
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		flappingRuleNameUniqueValidator.Validate(ctx, sl)
-		flappingRuleValidator.ValidateUpdateRequest(ctx, sl)
+		flappingRuleValidator.ValidateUpdateRequest(sl)
 	}, flappingrule.UpdateRequest{})
 
 	v.RegisterStructValidation(pattern.ValidateEditRequest, pattern.EditRequest{})

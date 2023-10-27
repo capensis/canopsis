@@ -71,31 +71,6 @@ dynamic_infos:
     updated: 1593679995
     name: test-dynamic-infos-to-get-1-name
 
-  dynamic_infos_to_get_2:
-    <<: *rule
-    _id: test-dynamic-infos-to-get-2
-    alarm_pattern:
-    entity_pattern:
-    old_alarm_patterns:
-      - v:
-          connector: test-dynamic-infos-to-get-2-alarm-pattern
-    old_entity_patterns:
-      - _id: test-dynamic-infos-to-get-2-entity-pattern
-    pattern:
-      - test-dynamic-infos-to-get-2-alarm-pattern
-      - test-dynamic-infos-to-get-2-entity-pattern
-    author: root
-    created: 1581423405
-    description: test-dynamic-infos-to-get-2-description
-    enabled: true
-    infos:
-      - name: test-dynamic-infos-to-get-2-info-1-name
-        value: test-dynamic-infos-to-get-2-info-1-value
-      - name: test-dynamic-infos-to-get-2-info-2-name
-        value: test-dynamic-infos-to-get-2-info-2-value
-    updated: 1593679995
-    name: test-dynamic-infos-to-get-2-name
-
   dynamic_infos_to_delete:
     <<: *rule
     _id: test-dynamic-infos-to-delete
@@ -109,14 +84,6 @@ dynamic_infos:
     <<: *rule
     _id: test-dynamic-infos-to-update-2
     created: 1581423405
-    old_alarm_patterns:
-      - v:
-          connector: test-dynamic-infos-to-update-2-alarm-pattern
-    old_entity_patterns:
-      - _id: test-dynamic-infos-to-update-2-entity-pattern
-    pattern:
-      - test-dynamic-infos-to-update-2-alarm-pattern
-      - test-dynamic-infos-to-update-2-entity-pattern
 
   dynamic_infos_to_check_unique:
     <<: *rule
