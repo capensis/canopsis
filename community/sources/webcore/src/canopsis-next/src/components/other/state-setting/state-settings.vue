@@ -13,8 +13,6 @@
 </template>
 
 <script>
-import { omit } from 'lodash';
-
 import { MODALS, STATE_SETTING_METHODS } from '@/constants';
 
 import { localQueryMixin } from '@/mixins/query-local/query';
@@ -52,12 +50,14 @@ export default {
   methods: {
     showEditStateSettingModal(stateSetting) {
       this.$modals.show({
-        name: MODALS.stateSetting,
+        name: MODALS.createStateSetting,
         config: {
           stateSetting,
+          title: this.$t('modals.createStateSetting.edit.title'),
           action: async (data) => {
             await this.updateStateSetting({ data, id: stateSetting._id });
 
+            this.$popups.success({ text: this.$t('modals.createStateSetting.edit.success') });
             this.fetchList();
           },
         },
@@ -66,12 +66,14 @@ export default {
 
     showDuplicateStateSettingModal(stateSetting) {
       this.$modals.show({
-        name: MODALS.stateSetting,
+        name: MODALS.createStateSetting,
         config: {
-          stateSetting: omit(stateSetting, ['_id']),
+          stateSetting,
+          title: this.$t('modals.createStateSetting.duplicate.title'),
           action: async (data) => {
             await this.createStateSetting({ data });
 
+            this.$popups.success({ text: this.$t('modals.createStateSetting.duplicate.success') });
             this.fetchList();
           },
         },
@@ -85,6 +87,7 @@ export default {
           action: async () => {
             await this.removeStateSetting({ id: stateSetting._id });
 
+            this.$popups.success({ text: this.$t('modals.createStateSetting.remove.success') });
             this.fetchList();
           },
         },

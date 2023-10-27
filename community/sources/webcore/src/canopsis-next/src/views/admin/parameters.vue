@@ -35,9 +35,8 @@
                   widget-templates
     v-fade-transition
       c-fab-btn(
-        v-if="hasFabButton",
-        @create="showSelectWidgetTemplateTypeModal",
-        @refresh="refresh"
+        v-if="fabListeners",
+        v-on="fabListeners"
       )
         span {{ $t('modals.createWidgetTemplate.create.title') }}
 </template>
@@ -80,25 +79,20 @@ export default {
     };
   },
   computed: {
-    hasFabButton() {
-      return [
-        PARAMETERS_TABS.widgetTemplates,
-        PARAMETERS_TABS.stateSettings,
-      ].includes(this.activeTab);
+    fabListeners() {
+      return {
+        [PARAMETERS_TABS.widgetTemplates]: {
+          refresh: this.fetchWidgetTemplatesListWithPreviousParams,
+          create: this.showSelectWidgetTemplateTypeModal,
+        },
+        [PARAMETERS_TABS.stateSettings]: {
+          refresh: this.fetchStateSettingsList,
+          create: this.showCreateStateSettingModal,
+        },
+      }[this.activeTab];
     },
   },
   methods: {
-    async refresh() {
-      const refreshFunc = {
-        [PARAMETERS_TABS.widgetTemplates]: this.fetchWidgetTemplatesListWithPreviousParams,
-        [PARAMETERS_TABS.stateSettings]: this.fetchStateSettingsList,
-      }[this.activeTab];
-
-      if (refreshFunc) {
-        await refreshFunc();
-      }
-    },
-
     showSelectWidgetTemplateTypeModal() {
       this.$modals.show({
         name: MODALS.selectWidgetTemplateType,
@@ -107,7 +101,22 @@ export default {
           action: async (newWidgetTemplate) => {
             await this.createWidgetTemplate({ data: newWidgetTemplate });
 
-            return this.refresh();
+            this.refresh();
+          },
+        },
+      });
+    },
+
+    showCreateStateSettingModal() {
+      this.$modals.show({
+        name: MODALS.createStateSetting,
+        config: {
+          title: this.$t('modals.createStateSetting.create.title'),
+          action: async (newStateSetting) => {
+            await this.createWidgetTemplate({ data: newStateSetting });
+
+            this.$popups.success({ text: this.$t('modals.createStateSetting.create.success') });
+            this.refresh();
           },
         },
       });

@@ -646,8 +646,22 @@ export default {
       title: 'Dependencies for {name}',
     },
   },
-  stateSetting: {
-    title: 'JUnit test suite state settings',
+  createStateSetting: {
+    create: {
+      title: 'Create state compute method',
+      success: 'State compute method created!',
+    },
+    edit: {
+      title: 'Edit state compute method',
+      success: 'State compute method edited!',
+    },
+    duplicate: {
+      title: 'Duplicate state compute method',
+      success: 'State compute method duplicated!',
+    },
+    remove: {
+      success: 'State compute method deleted!',
+    },
   },
   defineStorage: {
     title: 'Define result storage',
