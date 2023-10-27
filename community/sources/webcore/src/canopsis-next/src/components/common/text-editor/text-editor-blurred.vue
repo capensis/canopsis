@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import Themeable from 'vuetify/es5/mixins/themeable';
+import Themeable from 'vuetify/lib/mixins/themeable';
 
 import { MODALS } from '@/constants';
 
