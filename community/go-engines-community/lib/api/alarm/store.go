@@ -17,6 +17,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/perfdata"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
@@ -74,6 +75,8 @@ type store struct {
 
 	timezoneConfigProvider config.TimezoneConfigProvider
 
+	tplExecutor template.Executor
+
 	decoder encoding.Decoder
 
 	logger zerolog.Logger
@@ -85,6 +88,7 @@ func NewStore(
 	linkGenerator link.Generator,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	authorProvider author.Provider,
+	tplExecutor template.Executor,
 	decoder encoding.Decoder,
 	logger zerolog.Logger,
 ) Store {
@@ -103,6 +107,8 @@ func NewStore(
 		linkGenerator: linkGenerator,
 
 		timezoneConfigProvider: timezoneConfigProvider,
+
+		tplExecutor: tplExecutor,
 
 		decoder: decoder,
 
@@ -642,13 +648,20 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 	project := make(bson.M, len(t.Fields))
 	withInstructions := false
 	withLinks := false
+	withModel := false
 	for _, field := range t.Fields {
 		if field.Name == "assigned_instructions" {
 			withInstructions = true
+			withModel = true
 			continue
 		}
 		if field.Name == "links" || strings.HasPrefix(field.Name, "links.") {
 			withLinks = true
+			withModel = true
+			continue
+		}
+		if field.Template != "" {
+			withModel = true
 			continue
 		}
 
@@ -667,7 +680,7 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 		}
 	}
 
-	if withInstructions || withLinks {
+	if withModel {
 		project["model"] = bson.M{
 			"alarm": "$$ROOT",
 			"entity": bson.M{"$mergeObjects": bson.A{
@@ -709,8 +722,8 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 			return nil, err
 		}
 	}
-	exportCursor := newExportCursor(cursor, t.Fields.Fields(), common.GetRealFormatTime(r.TimeFormat), location,
-		instructions, linkGenerator, user, s.logger)
+	exportCursor := newExportCursor(cursor, t.Fields, common.GetRealFormatTime(r.TimeFormat), location,
+		instructions, linkGenerator, user, s.tplExecutor, withModel, s.logger)
 	return exportCursor, nil
 }
 
