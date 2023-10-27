@@ -36,14 +36,14 @@
           </v-radio-group>
           <template v-if="overlays.length">
             <v-divider class="my-2" />
-            <v-checkbox-functional
+            <v-simple-checkbox
               class="mt-0 pt-0"
               v-for="overlay in overlays"
               :key="overlay.name"
-              :input-value="isLayerActive(overlay.layer)"
+              :value="isLayerActive(overlay.layer)"
               :label="overlay.name"
               hide-details
-              @change="enableOverlay(overlay, $event)"
+              @input="enableOverlay(overlay, $event)"
             />
           </template>
         </v-layout>
