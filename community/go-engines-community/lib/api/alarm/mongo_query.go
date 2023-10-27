@@ -175,6 +175,7 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	if err != nil {
 		return nil, err
 	}
+	q.handleDependencies(r.WithDependencies)
 
 	return q.createPaginationAggregationPipeline(r.Query), nil
 }
@@ -410,6 +411,7 @@ func (q *MongoQueryBuilder) CreateOnlyListAggregationPipeline(
 	if err != nil {
 		return nil, err
 	}
+	q.handleDependencies(r.WithDependencies)
 
 	beforeLimit, afterLimit := q.createAggregationPipeline()
 	pipeline := append(beforeLimit, q.sort)
@@ -1207,6 +1209,17 @@ func (q *MongoQueryBuilder) resolveAlias(v string) string {
 	}
 
 	return prefix + v
+}
+
+func (q *MongoQueryBuilder) handleDependencies(v bool) {
+	if !v {
+		for i := 0; i < len(q.lookups); i++ {
+			if q.lookups[i].key == "entity.impacts_counts" {
+				q.lookups = append(q.lookups[:i], q.lookups[i+1:]...)
+				break
+			}
+		}
+	}
 }
 
 func getEntityLookup() []bson.M {

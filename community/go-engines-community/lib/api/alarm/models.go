@@ -55,6 +55,7 @@ type ListRequest struct {
 	WithInstructions   bool `form:"with_instructions" json:"with_instructions"`
 	WithDeclareTickets bool `form:"with_declare_tickets" json:"with_declare_tickets"`
 	WithLinks          bool `form:"with_links" json:"with_links"`
+	WithDependencies   bool `form:"with_dependencies" json:"with_dependencies"`
 }
 
 type FilterRequest struct {
