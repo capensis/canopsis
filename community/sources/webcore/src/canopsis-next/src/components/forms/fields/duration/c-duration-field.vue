@@ -2,7 +2,7 @@
   <v-layout>
     <v-flex
       class="pr-3"
-      xs8
+      xs7
     >
       <c-number-field
         v-field="duration.value"
@@ -13,7 +13,7 @@
         :min="min"
       />
     </v-flex>
-    <v-flex xs4>
+    <v-flex xs5>
       <v-select
         v-validate="unitValidateRules"
         :value="duration.unit"
