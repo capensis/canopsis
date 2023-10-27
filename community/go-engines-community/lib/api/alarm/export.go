@@ -2,12 +2,14 @@ package alarm
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	liblink "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
@@ -30,12 +32,14 @@ var statusTitles = map[int]string{
 
 func newExportCursor(
 	cursor mongo.Cursor,
-	fields []string,
+	fields export.Fields,
 	timeFormat string,
 	location *time.Location,
 	instructions []Instruction,
 	linkGenerator liblink.Generator,
 	linkUser liblink.User,
+	tplExecutor template.Executor,
+	withModel bool,
 	logger zerolog.Logger,
 ) export.DataCursor {
 	return &mongoCursor{
@@ -46,18 +50,24 @@ func newExportCursor(
 		instructions:  instructions,
 		linkGenerator: linkGenerator,
 		linkUser:      linkUser,
+		tplExecutor:   tplExecutor,
+		tpls:          make(map[int]template.ParsedTemplate),
+		withModel:     withModel,
 		logger:        logger,
 	}
 }
 
 type mongoCursor struct {
 	cursor        mongo.Cursor
-	fields        []string
+	fields        export.Fields
 	timeFormat    string
 	location      *time.Location
 	instructions  []Instruction
 	linkGenerator liblink.Generator
 	linkUser      liblink.User
+	tplExecutor   template.Executor
+	tpls          map[int]template.ParsedTemplate
+	withModel     bool
 	logger        zerolog.Logger
 }
 
@@ -72,7 +82,7 @@ func (c *mongoCursor) Scan(m *map[string]any) error {
 	}
 
 	var model types.AlarmWithEntity
-	if len(c.instructions) > 0 || c.linkGenerator != nil {
+	if c.withModel {
 		delete(*m, "model")
 		item := struct {
 			Model types.AlarmWithEntity `bson:"model"`
@@ -85,8 +95,8 @@ func (c *mongoCursor) Scan(m *map[string]any) error {
 		model = item.Model
 	}
 
-	*m = c.filterFields(context.Background(), *m, c.fields, model)
-	return nil
+	*m, err = c.filterFields(context.Background(), *m, c.fields, model)
+	return err
 }
 
 func (c *mongoCursor) Close(ctx context.Context) error {
@@ -96,9 +106,9 @@ func (c *mongoCursor) Close(ctx context.Context) error {
 func (c *mongoCursor) filterFields(
 	ctx context.Context,
 	m map[string]any,
-	fields []string,
+	fields export.Fields,
 	model types.AlarmWithEntity,
-) map[string]any {
+) (map[string]any, error) {
 	var links liblink.LinksByCategory
 	var err error
 	if c.linkGenerator != nil {
@@ -109,23 +119,45 @@ func (c *mongoCursor) filterFields(
 	}
 
 	res := make(map[string]any, len(fields))
-	for _, field := range fields {
-		v, _ := c.getNestedVal(m, strings.Split(field, "."))
-		res[field] = c.transformField(field, v, model, links)
+	for i, field := range fields {
+		v, _ := c.getNestedVal(m, strings.Split(field.Name, "."))
+		res[field.Name], err = c.transformField(i, field, v, model, links)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	return res
+	return res, nil
 }
 
-func (c *mongoCursor) transformField(k string, v any, model types.AlarmWithEntity, linksByCategory liblink.LinksByCategory) any {
-	switch k {
+func (c *mongoCursor) transformField(i int, f export.Field, v any, model types.AlarmWithEntity, linksByCategory liblink.LinksByCategory) (any, error) {
+	if f.Template != "" {
+		tpl, ok := c.tpls[i]
+		if !ok {
+			tpl = c.tplExecutor.Parse(f.Template)
+			if err := tpl.Err; err != nil {
+				return nil, fmt.Errorf("invalid template for %s field: %w", f.Name, err)
+			}
+
+			c.tpls[i] = tpl
+		}
+
+		res, err := c.tplExecutor.ExecuteByTpl(tpl.Tpl, model)
+		if err != nil {
+			c.logger.Err(err).Str("alarm", model.Alarm.ID).Str("field", f.Name).Msg("cannot execute template")
+		}
+
+		return res, nil
+	}
+
+	switch f.Name {
 	case "v.state.val":
 		if i, ok := c.getInt64(v); ok {
-			return stateTitles[int(i)]
+			return stateTitles[int(i)], nil
 		}
 	case "v.status.val":
 		if i, ok := c.getInt64(v); ok {
-			return statusTitles[int(i)]
+			return statusTitles[int(i)], nil
 		}
 	case "t",
 		"v.creation_date",
@@ -134,7 +166,7 @@ func (c *mongoCursor) transformField(k string, v any, model types.AlarmWithEntit
 		"v.last_event_date",
 		"v.resolved":
 		if i, ok := c.getInt64(v); ok {
-			return types.NewCpsTime(i).In(c.location).Time.Format(c.timeFormat)
+			return types.NewCpsTime(i).In(c.location).Time.Format(c.timeFormat), nil
 		}
 	case "v.infos":
 		values := make([]string, 0)
@@ -150,7 +182,7 @@ func (c *mongoCursor) transformField(k string, v any, model types.AlarmWithEntit
 			}
 		}
 
-		return strings.Join(values, ",")
+		return strings.Join(values, ","), nil
 	case "entity.infos",
 		"entity.component_infos":
 		values := make([]string, 0)
@@ -164,10 +196,10 @@ func (c *mongoCursor) transformField(k string, v any, model types.AlarmWithEntit
 			}
 		}
 
-		return strings.Join(values, ",")
+		return strings.Join(values, ","), nil
 	case "assigned_instructions":
 		names := c.matchInstructions(model)
-		return strings.Join(names, ",")
+		return strings.Join(names, ","), nil
 	case "links":
 		values := make([]string, 0)
 		for _, links := range linksByCategory {
@@ -176,26 +208,26 @@ func (c *mongoCursor) transformField(k string, v any, model types.AlarmWithEntit
 			}
 		}
 
-		return strings.Join(values, ",")
+		return strings.Join(values, ","), nil
 	default:
-		if strings.HasSuffix(k, ".t") {
+		if strings.HasSuffix(f.Name, ".t") {
 			if i, ok := c.getInt64(v); ok {
-				return types.NewCpsTime(i).In(c.location).Time.Format(c.timeFormat)
+				return types.NewCpsTime(i).In(c.location).Time.Format(c.timeFormat), nil
 			}
 		}
 
-		if strings.HasPrefix(k, "links.") {
-			category := strings.TrimPrefix(k, "links.")
+		if strings.HasPrefix(f.Name, "links.") {
+			category := strings.TrimPrefix(f.Name, "links.")
 			values := make([]string, 0)
 			for _, link := range linksByCategory[category] {
 				values = append(values, link.Label+": "+link.Url)
 			}
 
-			return strings.Join(values, ",")
+			return strings.Join(values, ","), nil
 		}
 	}
 
-	return v
+	return v, nil
 }
 
 func (c *mongoCursor) getNestedVal(m map[string]any, keys []string) (any, bool) {
