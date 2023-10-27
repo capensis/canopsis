@@ -23,7 +23,7 @@
       </template>
       <template #actions="">
         <v-btn
-          class="ml-0"
+          class="mr-2"
           color="primary"
           @click="addException"
         >
