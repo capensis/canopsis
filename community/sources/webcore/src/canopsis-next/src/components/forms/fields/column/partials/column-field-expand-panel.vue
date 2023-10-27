@@ -199,7 +199,7 @@ export default {
       ].includes(this.column?.column) ? this.entityInfos : this.alarmInfos;
     },
 
-    createTemplateModalConfig() {
+    templateModalConfig() {
       return {
         text: this.column?.template ?? '',
         title: this.$t('settings.columns.withTemplate'),
@@ -209,6 +209,10 @@ export default {
           required: true,
         },
       };
+    },
+
+    templateModalName() {
+      return this.withSimpleTemplate ? MODALS.payloadTextareaEditor : MODALS.textEditor;
     },
   },
   methods: {
@@ -238,11 +242,9 @@ export default {
       }
 
       this.$modals.show({
-        name: this.withSimpleTemplate
-          ? MODALS.payloadTextareaEditor
-          : MODALS.textEditor,
+        name: this.templateModalName,
         config: {
-          ...this.createTemplateModalConfig,
+          ...this.templateModalConfig,
           template: this.withSimpleTemplate ? '' : DEFAULT_COLUMN_TEMPLATE_VALUE,
           action: value => this.updateModelByTemplate(checked, value),
         },
@@ -263,11 +265,9 @@ export default {
 
     showEditTemplateModal() {
       this.$modals.show({
-        name: this.withSimpleTemplate
-          ? MODALS.payloadTextareaEditor
-          : MODALS.textEditor,
+        name: this.templateModalName,
         config: {
-          ...this.createTemplateModalConfig,
+          ...this.templateModalConfig,
           action: value => this.updateField('template', value),
         },
       });
