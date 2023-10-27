@@ -1,11 +1,14 @@
 <script>
-import VDialog from 'vuetify/es5/components/VDialog';
-import ThemeProvider from 'vuetify/es5/components/VThemeProvider';
-import { getZIndex, convertToUnit } from 'vuetify/es5/util/helpers';
+import VDialog from 'vuetify/lib/components/VDialog';
+import { getZIndex, convertToUnit } from 'vuetify/lib/util/helpers';
 
+import ClickOutside from '../../directives/click-outside';
 import overlayableMixin from '../../mixins/overlayable';
 
 export default {
+  directives: {
+    ClickOutside,
+  },
   extends: VDialog,
   mixins: [overlayableMixin],
   props: {
@@ -14,10 +17,6 @@ export default {
       default: null,
     },
     ignoreClickOutside: {
-      type: Boolean,
-      default: false,
-    },
-    absolute: {
       type: Boolean,
       default: false,
     },
@@ -65,17 +64,25 @@ export default {
   },
   methods: {
     onFocusin(event) {
+      if (!event || !this.retainFocus) return;
+
       const { target } = event;
 
       if (
+        !!target
+        && this.$refs.dialog
         /**
          * It isn't the document or the dialog body
          */
-        ![document, this.$refs.content].includes(target)
+        && ![document, this.$refs.dialog].includes(target)
         /**
          * It isn't inside the dialog body
          */
-        && !this.$refs.content.contains(target)
+        && !this.$refs.dialog.contains(target)
+        /*
+         * It isn't inside a dependent element (like a menu)
+         */
+        && this.activeZIndex >= this.getMaxZIndex()
         /**
          * It isn't inside a dependent element (like a menu)
          */
@@ -86,23 +93,18 @@ export default {
          * We need next tick here for correct zIndex comparison
          */
       ) {
-        this.$nextTick(() => {
-          /**
-           *  We're the topmost dialog
-           */
-          if (this.activeZIndex >= this.getMaxZIndex()) {
-            /**
-             * Find and focus the first available element inside the dialog
-             */
-            const focusable = this.$refs.content.querySelectorAll(
-              'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-            );
+        /**
+         * Find and focus the first available element inside the dialog
+         */
+        const focusable = this.$refs.dialog.querySelectorAll(
+          'button, [href], input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])',
+        );
 
-            if (focusable.length) {
-              focusable[0].focus();
-            }
-          }
-        });
+        const focusableElement = [...focusable].find(element => !element.hasAttribute('disabled') && !element.matches('[tabindex="-1"]'));
+
+        if (focusableElement) {
+          focusableElement.focus();
+        }
       }
     },
     closeConditional(e) {
@@ -145,7 +147,8 @@ export default {
       // prevent an Edge bug with Symbol.iterator
       // https://github.com/vuetifyjs/vuetify/issues/2146
       const activeElements = [
-        ...document.getElementsByClassName(this.stackClass),
+        ...document.getElementsByClassName('v-menu__content--active'),
+        ...document.getElementsByClassName('v-dialog__content--active'),
 
         /**
          * We've added it here for correct zIndex calculation
@@ -162,92 +165,68 @@ export default {
 
       return Math.max(...zis);
     },
-  },
-  /**
-   * We've replaced render method because we've put changes for the `click-outside` directive value function
-   *
-   * @param h
-   * @returns {*}
-   */
-  render: function render(h) {
-    const children = [];
-    const directives = [{ name: 'show', value: this.isActive }];
 
-    if (!this.ignoreClickOutside) {
-      directives.push({
-        name: 'click-outside',
-        value: () => {
-          /**
-           * We can't move call of customCloseConditional into closeConditional because here this method will call
-           * more than once. But we need only once call
-           */
-          if (this.customCloseConditional && this.customCloseConditional() === false) {
-            return;
-          }
+    genInnerContent() {
+      const directives = [{
+        name: 'show',
+        value: this.isActive,
+      }];
 
-          this.isActive = false;
+      if (!this.ignoreClickOutside) {
+        directives.push({
+          name: 'click-outside',
+          value: {
+            handler: (event) => {
+              /**
+               * We can't move call of customCloseConditional into closeConditional because here this method will call
+               * more than once. But we need only once call
+               */
+              if (this.customCloseConditional && this.customCloseConditional() === false) {
+                return;
+              }
+
+              this.onClickOutside(event);
+            },
+            closeConditional: this.closeConditional,
+            include: this.getOpenDependentElements,
+          },
+          modifiers: { same: true },
+        });
+      }
+
+      const data = {
+        class: this.classes,
+        attrs: {
+          tabindex: this.isActive ? 0 : undefined,
         },
-        args: {
-          closeConditional: this.closeConditional,
-          include: this.getOpenDependentElements,
+        ref: 'dialog',
+        directives,
+        style: {
+          transformOrigin: this.origin,
         },
-        modifiers: { same: true },
-      });
-    }
-
-    const data = {
-      class: this.classes,
-      ref: 'dialog',
-      directives,
-      on: {
-        click: (e) => {
-          e.stopPropagation();
-        },
-      },
-    };
-
-    if (!this.fullscreen) {
-      data.style = {
-        maxWidth: this.maxWidth === 'none' ? undefined : convertToUnit(this.maxWidth),
-        width: this.width === 'auto' ? undefined : convertToUnit(this.width),
       };
-    }
 
-    children.push(this.genActivator());
+      if (!this.fullscreen) {
+        data.style = {
+          ...data.style,
+          maxWidth: convertToUnit(this.maxWidth),
+          width: convertToUnit(this.width),
+        };
+      }
 
-    let dialog = h('div', data, this.showLazyContent(this.$slots.default));
+      return this.$createElement('div', data, this.getContentSlot());
+    },
+  },
 
-    if (this.transition) {
-      dialog = h('transition', {
-        props: {
-          name: this.transition,
-          origin: this.origin,
-        },
-      }, [dialog]);
-    }
-
-    children.push(h('div', {
-      class: this.contentClasses,
-      attrs: { tabIndex: '-1', ...this.getScopeIdAttrs() },
-      on: {
-        keydown: this.onKeydown,
-      },
-      style: { zIndex: this.activeZIndex },
-      ref: 'content',
-    }, [this.$createElement(ThemeProvider, {
-      props: {
-        root: true,
-        light: this.light,
-        dark: this.dark,
-      },
-    }, [dialog])]));
-
+  render(h) {
     return h('div', {
       staticClass: 'v-dialog__container',
-      style: {
-        display: !this.hasActivator || this.fullWidth ? 'block' : 'inline-block',
+      class: {
+        'v-dialog__container--attached': this.attach === ''
+          || this.attach === true
+          || this.attach === 'attach',
       },
-    }, children);
+    }, [this.genActivator(), this.genContent()]);
   },
 };
 </script>
