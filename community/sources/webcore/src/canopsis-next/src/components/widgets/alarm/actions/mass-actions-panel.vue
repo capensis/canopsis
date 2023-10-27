@@ -59,7 +59,7 @@ export default {
     },
 
     alarmsWithTickets() {
-      return this.openedAlarms.filter(item => item.v?.tickets?.length);
+      return this.openedAlarms.filter(item => item.v?.ticket);
     },
 
     alarmsWithoutTickets() {

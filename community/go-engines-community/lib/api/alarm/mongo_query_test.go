@@ -49,10 +49,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
-		"$addFields": getComputedFields(now),
+		"$addFields": getComputedFields(now, ""),
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"bookmarks":           0,
 			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
@@ -80,7 +81,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	}...)
 
 	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
-	result, err := b.CreateListAggregationPipeline(ctx, request, now)
+	result, err := b.CreateListAggregationPipeline(ctx, request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -143,10 +144,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
-		"$addFields": getComputedFields(now),
+		"$addFields": getComputedFields(now, ""),
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"bookmarks":           0,
 			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
@@ -180,7 +182,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}...)
 
 	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
-	result, err := b.CreateListAggregationPipeline(ctx, request, now)
+	result, err := b.CreateListAggregationPipeline(ctx, request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -243,7 +245,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
-	fields := getComputedFields(now)
+	fields := getComputedFields(now, "")
 	durationField := fields["v.duration"]
 	delete(fields, "v.duration")
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
@@ -251,6 +253,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"bookmarks":           0,
 			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
@@ -283,7 +286,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}...)
 
 	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
-	result, err := b.CreateListAggregationPipeline(ctx, request, now)
+	result, err := b.CreateListAggregationPipeline(ctx, request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -341,10 +344,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
-		"$addFields": getComputedFields(now),
+		"$addFields": getComputedFields(now, ""),
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"bookmarks":           0,
 			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
@@ -380,7 +384,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}...)
 
 	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
-	result, err := b.CreateListAggregationPipeline(ctx, request, now)
+	result, err := b.CreateListAggregationPipeline(ctx, request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -453,10 +457,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
-		"$addFields": getComputedFields(now),
+		"$addFields": getComputedFields(now, ""),
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"bookmarks":           0,
 			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
@@ -493,7 +498,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	)
 
 	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
-	result, err := b.CreateListAggregationPipeline(ctx, request, now)
+	result, err := b.CreateListAggregationPipeline(ctx, request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -539,10 +544,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
-		"$addFields": getComputedFields(now),
+		"$addFields": getComputedFields(now, ""),
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"bookmarks":           0,
 			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
@@ -574,7 +580,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}...)
 
 	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
-	result, err := b.CreateListAggregationPipeline(ctx, request, now)
+	result, err := b.CreateListAggregationPipeline(ctx, request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -623,7 +629,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
-	fields := getComputedFields(now)
+	fields := getComputedFields(now, "")
 	durationField := fields["v.duration"]
 	infosField := fields["infos"]
 	delete(fields, "v.duration")
@@ -633,6 +639,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"bookmarks":           0,
 			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
@@ -678,7 +685,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	)
 
 	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
-	result, err := b.CreateListAggregationPipeline(ctx, request, now)
+	result, err := b.CreateListAggregationPipeline(ctx, request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -718,10 +725,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithCategor
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
-		"$addFields": getComputedFields(now),
+		"$addFields": getComputedFields(now, ""),
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"bookmarks":           0,
 			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
@@ -754,7 +762,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithCategor
 	)
 
 	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
-	result, err := b.CreateListAggregationPipeline(ctx, request, now)
+	result, err := b.CreateListAggregationPipeline(ctx, request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -860,7 +868,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
-	fields := getComputedFields(now)
+	fields := getComputedFields(now, "")
 	durationField := fields["v.duration"]
 	delete(fields, "v.duration")
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
@@ -868,6 +876,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"bookmarks":           0,
 			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
@@ -924,7 +933,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 	)
 
 	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
-	result, err := b.CreateListAggregationPipeline(ctx, request, now)
+	result, err := b.CreateListAggregationPipeline(ctx, request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -979,10 +988,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithEntityS
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
-		"$addFields": getComputedFields(now),
+		"$addFields": getComputedFields(now, ""),
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"bookmarks":           0,
 			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
@@ -1019,7 +1029,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithEntityS
 	)
 
 	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
-	result, err := b.CreateListAggregationPipeline(ctx, request, now)
+	result, err := b.CreateListAggregationPipeline(ctx, request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -1088,7 +1098,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
-	fields := getComputedFields(now)
+	fields := getComputedFields(now, "")
 	durationField := fields["v.duration"]
 	activeDurationField := fields["v.active_duration"]
 	delete(fields, "v.duration")
@@ -1098,6 +1108,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"bookmarks":           0,
 			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
@@ -1130,7 +1141,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 	}...)
 
 	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
-	result, err := b.CreateListAggregationPipeline(ctx, request, now)
+	result, err := b.CreateListAggregationPipeline(ctx, request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -1175,10 +1186,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
-		"$addFields": getComputedFields(now),
+		"$addFields": getComputedFields(now, ""),
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"bookmarks":           0,
 			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
@@ -1214,7 +1226,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 	}...)
 
 	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
-	result, err := b.CreateListAggregationPipeline(ctx, request, now)
+	result, err := b.CreateListAggregationPipeline(ctx, request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -1263,13 +1275,14 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getMetaAlarmRuleLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getChildrenCountLookup()...)
-	fields := getComputedFields(now)
+	fields := getComputedFields(now, "")
 	fields["is_meta_alarm"] = getIsMetaAlarmField()
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": fields,
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"bookmarks":           0,
 			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
@@ -1314,7 +1327,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 	)
 
 	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
-	result, err := b.CreateListAggregationPipeline(ctx, request, now)
+	result, err := b.CreateListAggregationPipeline(ctx, request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -1366,13 +1379,14 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchB
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getMetaAlarmRuleLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getChildrenCountLookup()...)
-	fields := getComputedFields(now)
+	fields := getComputedFields(now, "")
 	fields["is_meta_alarm"] = getIsMetaAlarmField()
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": fields,
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"bookmarks":           0,
 			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
@@ -1414,7 +1428,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchB
 	)
 
 	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
-	result, err := b.CreateListAggregationPipeline(ctx, request, now)
+	result, err := b.CreateListAggregationPipeline(ctx, request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -1454,10 +1468,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
-		"$addFields": getComputedFields(now),
+		"$addFields": getComputedFields(now, ""),
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"bookmarks":           0,
 			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
@@ -1491,7 +1506,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	}...)
 
 	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
-	result, err := b.CreateListAggregationPipeline(ctx, request, now)
+	result, err := b.CreateListAggregationPipeline(ctx, request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -1530,7 +1545,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
-	fields := getComputedFields(now)
+	fields := getComputedFields(now, "")
 	durationField := fields["v.duration"]
 	delete(fields, "v.duration")
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
@@ -1538,6 +1553,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"bookmarks":           0,
 			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
@@ -1572,7 +1588,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	}...)
 
 	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
-	result, err := b.CreateListAggregationPipeline(ctx, request, now)
+	result, err := b.CreateListAggregationPipeline(ctx, request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -1611,7 +1627,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
-	fields := getComputedFields(now)
+	fields := getComputedFields(now, "")
 	infosField := fields["infos"]
 	delete(fields, "infos")
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
@@ -1619,6 +1635,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"bookmarks":           0,
 			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
@@ -1650,7 +1667,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	}...)
 
 	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
-	result, err := b.CreateListAggregationPipeline(ctx, request, now)
+	result, err := b.CreateListAggregationPipeline(ctx, request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -1756,10 +1773,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
-		"$addFields": getComputedFields(now),
+		"$addFields": getComputedFields(now, ""),
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"bookmarks":           0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -1805,7 +1823,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 	)
 
 	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
-	result, err := b.CreateListAggregationPipeline(ctx, request, now)
+	result, err := b.CreateListAggregationPipeline(ctx, request, now, "")
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}

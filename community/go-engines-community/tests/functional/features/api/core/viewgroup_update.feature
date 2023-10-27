@@ -2,20 +2,21 @@ Feature: Update a view group
   I need to be able to update a view group
   Only admin should be able to update a view group
 
+  @concurrent
   Scenario: given update request should update view group
     When I am admin
-    Then I do PUT /api/v4/view-groups/test-viewgroup-to-update:
+    Then I do PUT /api/v4/view-groups/test-viewgroup-to-update-1:
     """
     {
-      "title": "test-viewgroup-to-update-title"
+      "title": "test-viewgroup-to-update-1-title"
     }
     """
     Then the response code should be 200
     Then the response body should contain:
     """
     {
-      "_id": "test-viewgroup-to-update",
-      "title": "test-viewgroup-to-update-title",
+      "_id": "test-viewgroup-to-update-1",
+      "title": "test-viewgroup-to-update-1-title",
       "author": {
         "_id": "root",
         "name": "root"
@@ -24,18 +25,21 @@ Feature: Update a view group
     }
     """
 
+  @concurrent
   Scenario: given get request and no auth user should not allow access
-    When I do PUT /api/v4/view-groups/test-viewgroup-to-update
+    When I do PUT /api/v4/view-groups/test-viewgroup-to-update-1
     Then the response code should be 401
 
+  @concurrent
   Scenario: given get request and auth user by api key without permissions should not allow access
     When I am noperms
-    When I do PUT /api/v4/view-groups/test-viewgroup-to-update
+    When I do PUT /api/v4/view-groups/test-viewgroup-to-update-1
     Then the response code should be 403
 
+  @concurrent
   Scenario: given invalid update request should return errors
     When I am admin
-    When I do PUT /api/v4/view-groups/test-viewgroup-to-update:
+    When I do PUT /api/v4/view-groups/test-viewgroup-to-update-1:
     """
     {
     }
@@ -50,6 +54,7 @@ Feature: Update a view group
     }
     """
 
+  @concurrent
   Scenario: given update request with not exist id should return not found error
     When I am admin
     When I do PUT /api/v4/view-groups/test-viewgroup-not-found:
@@ -66,9 +71,10 @@ Feature: Update a view group
     }
     """
 
+  @concurrent
   Scenario: given update request with already exists title should return error
     When I am admin
-    When I do PUT /api/v4/view-groups/test-viewgroup-to-update:
+    When I do PUT /api/v4/view-groups/test-viewgroup-to-update-1:
     """
     {
       "title": "test-viewgroup-to-check-unique-title-title"
@@ -83,3 +89,14 @@ Feature: Update a view group
       }
     }
     """
+
+  @concurrent
+  Scenario: given update request with already exists title should return error
+    When I am admin
+    When I do PUT /api/v4/view-groups/test-viewgroup-to-update-2:
+    """
+    {
+      "title": "test-private-viewgroup-to-check-unique-title-6-title"
+    }
+    """
+    Then the response code should be 200

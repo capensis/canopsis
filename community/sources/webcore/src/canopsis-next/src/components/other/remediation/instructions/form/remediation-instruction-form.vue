@@ -43,8 +43,17 @@
       v-field="form.jobs",
       :disabled="disabled"
     )
-    remediation-instruction-steps-form(v-else, v-field="form.steps", :disabled="disabled")
-    remediation-instruction-approval-form(v-if="!disabledCommon", v-field="form.approval", :disabled="disabled")
+    remediation-instruction-steps-form(
+      v-else,
+      v-field="form.steps",
+      :disabled="disabled"
+    )
+    remediation-instruction-approval-form(
+      v-if="!disabledCommon",
+      v-field="form.approval",
+      :disabled="disabled",
+      :required="requiredApprove"
+    )
 </template>
 
 <script>
@@ -81,6 +90,10 @@ export default {
       default: false,
     },
     isNew: {
+      type: Boolean,
+      default: false,
+    },
+    requiredApprove: {
       type: Boolean,
       default: false,
     },

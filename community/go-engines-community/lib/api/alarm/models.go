@@ -89,7 +89,8 @@ type BaseFilterRequest struct {
 	EntityPattern    string `form:"entity_pattern" json:"entity_pattern"`
 	PbehaviorPattern string `form:"pbehavior_pattern" json:"pbehavior_pattern"`
 
-	Instructions []InstructionFilterRequest `form:"instructions[]" json:"instructions"`
+	Instructions  []InstructionFilterRequest `form:"instructions[]" json:"instructions"`
+	OnlyBookmarks bool                       `form:"only_bookmarks" json:"only_bookmarks"`
 }
 
 type InstructionFilterRequest struct {
@@ -278,6 +279,8 @@ type Alarm struct {
 
 	// Only for details request
 	Filtered *bool `bson:"filtered" json:"filtered,omitempty"`
+
+	Bookmark bool `bson:"bookmark" json:"bookmark"`
 }
 
 type MetaAlarmRule struct {

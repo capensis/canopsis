@@ -18,6 +18,7 @@ import { durationToForm } from '@/helpers/date/duration';
  * @property {string} timezone
  * @property {boolean} allow_change_severity_to_info
  * @property {boolean} show_header_on_kiosk_mode
+ * @property {boolean} required_instruction_approve
  * @property {PopupTimeout} popup_timeout
  * @property {string} [logo]
  * @property {number} [max_matched_items]
@@ -65,6 +66,7 @@ export const userInterfaceToForm = (userInterface = {}) => ({
   login_page_description: userInterface.login_page_description ?? '',
   allow_change_severity_to_info: userInterface.allow_change_severity_to_info ?? false,
   show_header_on_kiosk_mode: userInterface.show_header_on_kiosk_mode ?? false,
+  required_instruction_approve: userInterface.required_instruction_approve ?? false,
   timezone: userInterface.timezone ?? '',
   max_matched_items: userInterface.max_matched_items ?? '',
   check_count_request_timeout: userInterface.check_count_request_timeout ?? '',

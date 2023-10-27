@@ -446,11 +446,16 @@ Feature: crop alarm steps
               },
               {
                 "_t": "statusinc",
-                "val": 1,
-                "m": "test-output-axe-crop-steps-1"
+                "a": "test-connector-axe-crop-steps.test-connector-name-axe-crop-steps",
+                "initiator": "external",
+                "m": "test-output-axe-crop-steps-1",
+                "val": 1
               },
               {
                 "_t": "statecounter",
+                "a": "test-connector-axe-crop-steps.test-connector-name-axe-crop-steps",
+                "user_id": "",
+                "initiator": "external",
                 "m": "test-output-axe-crop-steps-1",
                 "statecounter": {
                  "state:1": 2,

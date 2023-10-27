@@ -208,6 +208,7 @@ Feature: execute action on trigger
       {
         "_t": "declareticketfail",
         "a": "system",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-second-1-1-name. Fail reason: url {{ .dummyApiURL }}/webhook/auth-request is unauthorized.",
         "ticket_rule_id": "{{ .scenarioId1 }}",
         "ticket_rule_name": "Scenario: test-scenario-action-webhook-second-1-1-name",
@@ -217,6 +218,7 @@ Feature: execute action on trigger
       {
         "_t": "declareticketfail",
         "a": "system",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-second-1-2-name. Fail reason: url POST http://not-exist.com cannot be connected.",
         "ticket_rule_id": "{{ .scenarioId2 }}",
         "ticket_rule_name": "Scenario: test-scenario-action-webhook-second-1-2-name",
@@ -226,6 +228,7 @@ Feature: execute action on trigger
       {
         "_t": "declareticketfail",
         "a": "system",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-second-1-3-name. Fail reason: ticket_id is emtpy, response has nothing in _id.",
         "ticket_rule_id": "{{ .scenarioId3 }}",
         "ticket_rule_name": "Scenario: test-scenario-action-webhook-second-1-3-name",
@@ -235,6 +238,7 @@ Feature: execute action on trigger
       {
         "_t": "declareticketfail",
         "a": "system",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-second-1-4-name. Fail reason: response of POST {{ .dummyApiURL }}/webhook/request is not valid JSON.",
         "ticket_rule_id": "{{ .scenarioId4 }}",
         "ticket_rule_name": "Scenario: test-scenario-action-webhook-second-1-4-name",
@@ -274,72 +278,84 @@ Feature: execute action on trigger
         "_t": "webhookstart",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-second-1-1-name"
       },
       {
         "_t": "webhookfail",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-second-1-1-name. Fail reason: url {{ .dummyApiURL }}/webhook/auth-request is unauthorized."
       },
       {
         "_t": "declareticketfail",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-second-1-1-name. Fail reason: url {{ .dummyApiURL }}/webhook/auth-request is unauthorized."
       },
       {
         "_t": "webhookstart",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-second-1-2-name"
       },
       {
         "_t": "webhookfail",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-second-1-2-name. Fail reason: url POST http://not-exist.com cannot be connected."
       },
       {
         "_t": "declareticketfail",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-second-1-2-name. Fail reason: url POST http://not-exist.com cannot be connected."
       },
       {
         "_t": "webhookstart",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-second-1-3-name"
       },
       {
         "_t": "webhookcomplete",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-second-1-3-name"
       },
       {
         "_t": "declareticketfail",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-second-1-3-name. Fail reason: ticket_id is emtpy, response has nothing in _id."
       },
       {
         "_t": "webhookstart",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-second-1-4-name"
       },
       {
         "_t": "webhookcomplete",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-second-1-4-name"
       },
       {
         "_t": "declareticketfail",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-second-1-4-name. Fail reason: response of POST {{ .dummyApiURL }}/webhook/request is not valid JSON."
       }
     ]
@@ -474,24 +490,28 @@ Feature: execute action on trigger
         "_t": "webhookstart",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-second-2-1-name"
       },
       {
         "_t": "webhookfail",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-second-2-1-name. Fail reason: url {{ .dummyApiURL }}/webhook/auth-request is unauthorized."
       },
       {
         "_t": "webhookstart",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-second-2-2-name"
       },
       {
         "_t": "webhookfail",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-second-2-2-name. Fail reason: url POST http://not-exist.com cannot be connected."
       }
     ]
@@ -579,12 +599,14 @@ Feature: execute action on trigger
         "_t": "webhookstart",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-second-3-name"
       },
       {
         "_t": "webhookcomplete",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-second-3-name"
       }
     ]
@@ -663,6 +685,7 @@ Feature: execute action on trigger
               {
                 "_t": "declareticket",
                 "a": "system",
+                "initiator": "system",
                 "m": "Scenario: test-scenario-action-webhook-second-4-name. Ticket ID: N/A.",
                 "ticket": "N/A",
                 "ticket_rule_id": "{{ .scenarioId }}",
@@ -674,6 +697,7 @@ Feature: execute action on trigger
             "ticket": {
               "_t": "declareticket",
               "a": "system",
+              "initiator": "system",
               "m": "Scenario: test-scenario-action-webhook-second-4-name. Ticket ID: N/A.",
               "ticket": "N/A",
               "ticket_rule_id": "{{ .scenarioId }}",
@@ -721,18 +745,21 @@ Feature: execute action on trigger
         "_t": "webhookstart",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-second-4-name"
       },
       {
         "_t": "webhookcomplete",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-second-4-name"
       },
       {
         "_t": "declareticket",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-second-4-name. Ticket ID: N/A."
       }
     ]
@@ -814,6 +841,7 @@ Feature: execute action on trigger
               {
                 "_t": "declareticket",
                 "a": "system",
+                "initiator": "system",
                 "m": "Scenario: test-scenario-action-webhook-second-5-name. Ticket ID: N/A.",
                 "ticket": "N/A",
                 "ticket_rule_id": "{{ .scenarioId }}",
@@ -825,6 +853,7 @@ Feature: execute action on trigger
             "ticket": {
               "_t": "declareticket",
               "a": "system",
+              "initiator": "system",
               "m": "Scenario: test-scenario-action-webhook-second-5-name. Ticket ID: N/A.",
               "ticket": "N/A",
               "ticket_rule_id": "{{ .scenarioId }}",
@@ -872,18 +901,21 @@ Feature: execute action on trigger
         "_t": "webhookstart",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-second-5-name"
       },
       {
         "_t": "webhookcomplete",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-second-5-name"
       },
       {
         "_t": "declareticket",
         "a": "system",
         "user_id": "",
+        "initiator": "system",
         "m": "Scenario: test-scenario-action-webhook-second-5-name. Ticket ID: N/A."
       }
     ]

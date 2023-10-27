@@ -547,54 +547,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
               Rating setting 10
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
-              <div
-                class="layout row align-center"
-              >
-                <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
-                >
-                  <div
-                    class="v-input__control"
-                  >
-                    <div
-                      class="v-input__slot"
-                    >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="true"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons primary--text theme--light"
-                        >
-                          check_box
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </td>
-            <td>
-              Rating setting 11
-            </td>
-          </tr>
         </tbody>
       </table>
     </div>
@@ -1186,54 +1138,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
             </td>
             <td>
               Rating setting 10
-            </td>
-          </tr>
-          <tr>
-            <!---->
-            <td>
-              <div
-                class="layout row align-center"
-              >
-                <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
-                >
-                  <div
-                    class="v-input__control"
-                  >
-                    <div
-                      class="v-input__slot"
-                    >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="true"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons primary--text theme--light"
-                        >
-                          check_box
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </td>
-            <td>
-              Rating setting 11
             </td>
           </tr>
         </tbody>
@@ -1899,54 +1803,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               Rating setting 10
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
-              <div
-                class="layout row align-center"
-              >
-                <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
-                >
-                  <div
-                    class="v-input__control"
-                  >
-                    <div
-                      class="v-input__slot"
-                    >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="true"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons primary--text theme--light"
-                        >
-                          check_box
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </td>
-            <td>
-              Rating setting 11
-            </td>
-          </tr>
         </tbody>
       </table>
     </div>
@@ -2504,54 +2360,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
             </td>
             <td>
               Rating setting 10
-            </td>
-          </tr>
-          <tr>
-            <!---->
-            <td>
-              <div
-                class="layout row align-center"
-              >
-                <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
-                >
-                  <div
-                    class="v-input__control"
-                  >
-                    <div
-                      class="v-input__slot"
-                    >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="true"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons primary--text theme--light"
-                        >
-                          check_box
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </td>
-            <td>
-              Rating setting 11
             </td>
           </tr>
         </tbody>

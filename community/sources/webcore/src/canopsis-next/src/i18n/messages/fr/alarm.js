@@ -29,8 +29,14 @@ export default {
   noAlarmFound: 'Aucune alarme n\'a été trouvée selon les modèles définis',
   associateTicketResources: 'Ticket associé pour les ressources',
   followLink: 'Suivez le lien "{title}"',
+  hasBookmark: 'L\'alarme a un signet',
+  filterByBookmark: 'Filtrer par signet',
   popups: {
     exportFailed: 'Impossible d\'exporter la liste des alarmes au format CSV',
+    addBookmarkSuccess: 'Le signet a été ajouté',
+    addBookmarkFailed: 'Quelque chose s\'est mal passé. Le signet n\'a pas été ajouté',
+    removeBookmarkSuccess: 'Le signet a été supprimé',
+    removeBookmarkFailed: 'Quelque chose s\'est mal passé. Le signet n\'a pas été supprimé',
   },
   actions: {
     titles: {
@@ -52,6 +58,8 @@ export default {
       removeAlarmsFromAutoMetaAlarm: 'Dissocier l\'alarme de la méta-alarme',
       comment: 'Commenter l\'alarme',
       exportPdf: 'Exporter l\'alarme au format PDF',
+      addBookmark: 'Ajouter un signet',
+      removeBookmark: 'Supprimer le signet',
     },
     iconsTitles: {
       ack: 'Acquitter',
@@ -181,6 +189,7 @@ export default {
     initialOutput: 'Sortie initiale longue',
     initialLongOutput: 'Sortie longue initiale',
     lastComment: 'Dernier commentaire',
+    lastCommentInitiator: 'Initiateur du dernier commentaire',
     ackBy: 'Acquitté par',
     ackMessage: 'Message de l\'acquittement',
     ackInitiator: 'Origine de l\'acquittement',
@@ -203,6 +212,7 @@ export default {
     ticketAuthor: 'Auteur du ticket',
     ticketId: 'ID du ticket',
     ticketMessage: 'Message du ticket',
+    ticketInitiator: 'Initiateur du ticket',
     ticketCreatedAt: 'Ticket créé à',
     ticketData: 'Données du ticket',
     entityId: 'ID d\'entité',
@@ -219,5 +229,6 @@ export default {
     entityLastPbehaviorDate: 'Date du dernier comportement de l\'entité',
     openedChildren: 'Conséquences ouvertes',
     closedChildren: 'Conséquences fermées',
+    canceledInitiator: 'Initiateur annulé',
   },
 };

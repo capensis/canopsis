@@ -107,7 +107,7 @@ export default {
     message: '', // TODO: add correct message
   },
   [USERS_PERMISSIONS.technical.tag]: {
-    title: 'Gestion des balises',
+    title: 'Gestion des Tags',
     message: '', // TODO: add correct message
   },
 
@@ -138,7 +138,7 @@ export default {
    * Profile
    */
   [USERS_PERMISSIONS.technical.profile.theme]: {
-    title: 'Thèmes de couleurs',
+    title: 'Thèmes graphiques',
     message: '', // TODO: add correct message
   },
 };

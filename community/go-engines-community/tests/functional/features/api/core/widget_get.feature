@@ -2,7 +2,8 @@ Feature: Get a widget
   I need to be able to get a widget
   Only admin should be able to get a widget
 
-  Scenario: given get request should return widget
+  @concurrent
+  Scenario: given get public widget request should return widget
     When I am admin
     When I do GET /api/v4/widgets/test-widget-to-get
     Then the response code should be 200
@@ -12,6 +13,7 @@ Feature: Get a widget
       "_id": "test-widget-to-get",
       "title": "test-widget-to-get-title",
       "type": "test-widget-to-get-type",
+      "is_private": false,
       "grid_parameters": {
         "desktop": {"x": 0, "y": 0}
       },
@@ -30,6 +32,7 @@ Feature: Get a widget
           "_id": "test-widgetfilter-to-widget-get-1",
           "title": "test-widgetfilter-to-widget-get-1-title",
           "is_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "nopermsuser",
             "name": "nopermsuser",
@@ -53,6 +56,7 @@ Feature: Get a widget
           "_id": "test-widgetfilter-to-widget-get-2",
           "title": "test-widgetfilter-to-widget-get-2-title",
           "is_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root",
@@ -83,21 +87,65 @@ Feature: Get a widget
     }
     """
 
+  @concurrent
   Scenario: given get request and no auth user should not allow access
     When I do GET /api/v4/widgets/test-widget-to-get
     Then the response code should be 401
 
+  @concurrent
   Scenario: given get request and auth user without permissions should not allow access
     When I am noperms
     When I do GET /api/v4/widgets/test-widget-to-get
     Then the response code should be 403
 
+  @concurrent
   Scenario: given get request and auth user without view permissions should not allow access
     When I am admin
     When I do GET /api/v4/widgets/test-widget-to-check-access
     Then the response code should be 403
 
+  @concurrent
   Scenario: given get request with not exist id should return error
     When I am admin
     When I do GET /api/v4/widgets/test-widget-not-found
     Then the response code should be 404
+
+  @concurrent
+  Scenario: given get owned private widget request should be ok
+    When I am admin
+    When I do GET /api/v4/widgets/test-private-widget-to-get-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-private-widget-to-get-1",
+      "is_private": true
+    }
+    """
+
+  @concurrent
+  Scenario: given get not owned private widget request should not allow access
+    When I am admin
+    When I do GET /api/v4/widgets/test-private-widget-to-get-2
+    Then the response code should be 403
+
+  @concurrent
+  Scenario: given get owned private widget request with owned private with api_private_view_groups
+   but without api_view permissions should be ok
+    When I am test-role-to-private-views-without-view-perm
+    When I do GET /api/v4/widgets/test-private-widget-to-get-3
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-private-widget-to-get-3",
+      "is_private": true
+    }
+    """
+
+  @concurrent
+  Scenario: given get owned private widget request with owned private with api_private_view_groups
+   but without api_view permissions should be ok
+    When I am test-role-to-private-views-without-view-perm
+    When I do GET /api/v4/widgets/test-widget-to-get
+    Then the response code should be 403

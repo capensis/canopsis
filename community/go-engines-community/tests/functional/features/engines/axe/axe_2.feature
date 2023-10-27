@@ -49,6 +49,7 @@ Feature: create and update alarm by main event stream
             "snooze": {
               "_t": "snooze",
               "a": "test-author-axe-second-1",
+              "initiator": "external",
               "m": "test-output-axe-second-1",
               "t": {{ .snoozeEventTimestamp }},
               "val": {{ .snoozeEventTimestamp | sumTime 3600 }}
@@ -106,6 +107,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "snooze",
                 "a": "test-author-axe-second-1",
+                "initiator": "external",
                 "m": "test-output-axe-second-1",
                 "t": {{ .snoozeEventTimestamp }},
                 "val": {{ .snoozeEventTimestamp | sumTime 3600 }}
@@ -237,6 +239,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "snooze",
                 "a": "test-author-axe-second-2",
+                "initiator": "external",
                 "m": "test-output-axe-second-2",
                 "t": {{ .snoozeEventTimestamp }},
                 "val": {{ .snoozeEventTimestamp | sumTime 3600 }}
@@ -368,6 +371,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "cancel",
                 "a": "test-author-axe-second-3",
+                "initiator": "external",
                 "m": "test-output-axe-second-3",
                 "t": {{ .cancelEventTimestamp }},
                 "val": 0
@@ -375,6 +379,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "statusinc",
                 "a": "test-author-axe-second-3",
+                "initiator": "external",
                 "m": "test-output-axe-second-3",
                 "t": {{ .cancelEventTimestamp }},
                 "val": 4
@@ -508,6 +513,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "statedec",
                 "a": "test-connector-axe-second-4.test-connector-name-axe-second-4",
+                "initiator": "external",
                 "m": "test-output-axe-second-4",
                 "t": {{ .closeEventTimestamp }},
                 "val": 0
@@ -515,6 +521,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "statusdec",
                 "a": "test-connector-axe-second-4.test-connector-name-axe-second-4",
+                "initiator": "external",
                 "m": "test-output-axe-second-4",
                 "t": {{ .closeEventTimestamp }},
                 "val": 0
@@ -597,6 +604,7 @@ Feature: create and update alarm by main event stream
             "state": {
               "_t": "changestate",
               "a": "test-author-axe-second-5",
+              "initiator": "external",
               "m": "test-output-axe-second-5",
               "val": 2
             },
@@ -645,6 +653,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "changestate",
                 "a": "test-author-axe-second-5",
+                "initiator": "external",
                 "m": "test-output-axe-second-5",
                 "val": 2
               }
@@ -711,6 +720,7 @@ Feature: create and update alarm by main event stream
             "state": {
               "_t": "changestate",
               "a": "test-author-axe-second-6",
+              "initiator": "external",
               "m": "test-output-axe-second-6",
               "val": 2
             },
@@ -759,6 +769,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "changestate",
                 "a": "test-author-axe-second-6",
+                "initiator": "external",
                 "m": "test-output-axe-second-6",
                 "val": 2
               }
@@ -804,6 +815,7 @@ Feature: create and update alarm by main event stream
             "state": {
               "_t": "changestate",
               "a": "test-author-axe-second-6",
+              "initiator": "external",
               "m": "test-output-axe-second-6",
               "val": 2
             },
@@ -852,6 +864,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "changestate",
                 "a": "test-author-axe-second-6",
+                "initiator": "external",
                 "m": "test-output-axe-second-6",
                 "val": 2
               }
@@ -978,6 +991,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "changestate",
                 "a": "test-author-axe-second-7",
+                "initiator": "external",
                 "m": "test-output-axe-second-7",
                 "val": 2
               },
@@ -1045,6 +1059,7 @@ Feature: create and update alarm by main event stream
             "ack": {
               "_t": "ack",
               "a": "test-author-axe-second-8",
+              "initiator": "external",
               "m": "test-output-axe-second-8",
               "val": 0
             },
@@ -1100,6 +1115,7 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "ack",
                 "a": "test-author-axe-second-8",
+                "initiator": "external",
                 "m": "test-output-axe-second-8",
                 "val": 0
               }
@@ -1140,6 +1156,7 @@ Feature: create and update alarm by main event stream
             "ack": {
               "_t": "ack",
               "a": "test-author-axe-second-8",
+              "initiator": "external",
               "m": "new-test-output-axe-second-8",
               "val": 0
             },
@@ -1195,12 +1212,14 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "ack",
                 "a": "test-author-axe-second-8",
+                "initiator": "external",
                 "m": "test-output-axe-second-8",
                 "val": 0
               },
               {
                 "_t": "ack",
                 "a": "test-author-axe-second-8",
+                "initiator": "external",
                 "m": "new-test-output-axe-second-8",
                 "val": 0
               }
@@ -1322,32 +1341,38 @@ Feature: create and update alarm by main event stream
               {
                 "_t": "stateinc",
                 "val": 1,
-                "a": "test-connector-axe-second-9.test-connector-name-axe-second-9"
+                "a": "test-connector-axe-second-9.test-connector-name-axe-second-9",
+                "initiator": "external"
               },
               {
                 "_t": "statusinc",
                 "val": 1,
-                "a": "test-connector-axe-second-9.test-connector-name-axe-second-9"
+                "a": "test-connector-axe-second-9.test-connector-name-axe-second-9",
+                "initiator": "external"
               },
               {
                 "_t": "stateinc",
                 "val": 2,
-                "a": "test-connector-axe-second-9.test-connector-name-axe-second-9-new"
+                "a": "test-connector-axe-second-9.test-connector-name-axe-second-9-new",
+                "initiator": "external"
               },
               {
                 "_t": "stateinc",
                 "val": 3,
-                "a": "test-connector-axe-second-9-new.test-connector-name-axe-second-9"
+                "a": "test-connector-axe-second-9-new.test-connector-name-axe-second-9",
+                "initiator": "external"
               },
               {
                 "_t": "statedec",
                 "val": 0,
-                "a": "test-connector-axe-second-9-new.test-connector-name-axe-second-9-new"
+                "a": "test-connector-axe-second-9-new.test-connector-name-axe-second-9-new",
+                "initiator": "external"
               },
               {
                 "_t": "statusdec",
                 "val": 0,
-                "a": "test-connector-axe-second-9-new.test-connector-name-axe-second-9-new"
+                "a": "test-connector-axe-second-9-new.test-connector-name-axe-second-9-new",
+                "initiator": "external"
               }
             ],
             "meta": {
