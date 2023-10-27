@@ -7,6 +7,7 @@ import (
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -36,8 +37,6 @@ const MetadataReqTimeout = time.Second * 15
 const (
 	BindingRedirect = "redirect"
 	BindingPOST     = "post"
-
-	DefaultUserRole = "Norights"
 )
 
 type ServiceProvider interface {
@@ -53,11 +52,10 @@ type serviceProvider struct {
 	roleCollection     mongo.DbCollection
 	sessionStore       libsession.Store
 	enforcer           security.Enforcer
-	config             security.Config
+	config             security.SamlConfig
 	tokenService       apisecurity.TokenService
 	maintenanceAdapter config.MaintenanceAdapter
 	logger             zerolog.Logger
-	defaultRole        string
 }
 
 func NewServiceProvider(
@@ -156,11 +154,6 @@ func NewServiceProvider(
 		sloLocation = idpMetadata.IDPSSODescriptor.SingleLogoutServices[0].Location
 	}
 
-	defaultRole := config.Security.Saml.DefaultRole
-	if defaultRole == "" {
-		defaultRole = DefaultUserRole
-	}
-
 	return &serviceProvider{
 		samlSP: &saml2.SAMLServiceProvider{
 			IdentityProviderSSOURL:         ssoLocation,
@@ -181,10 +174,9 @@ func NewServiceProvider(
 		roleCollection:     roleCollection,
 		sessionStore:       sessionStore,
 		enforcer:           enforcer,
-		config:             config,
+		config:             config.Security.Saml,
 		tokenService:       tokenService,
 		maintenanceAdapter: maintenanceAdapter,
-		defaultRole:        defaultRole,
 		logger:             logger,
 	}, nil
 }
@@ -197,17 +189,17 @@ func (sp *serviceProvider) SamlMetadataHandler() gin.HandlerFunc {
 			panic(err)
 		}
 
-		if len(meta.SPSSODescriptor.SingleLogoutServices) > 0 && sp.config.Security.Saml.CanopsisSSOBinding == BindingRedirect {
+		if len(meta.SPSSODescriptor.SingleLogoutServices) > 0 && sp.config.CanopsisSSOBinding == BindingRedirect {
 			meta.SPSSODescriptor.SingleLogoutServices[0].Binding = saml2.BindingHttpRedirect
 		}
 
 		if len(meta.SPSSODescriptor.AssertionConsumerServices) > 0 {
-			if sp.config.Security.Saml.CanopsisACSBinding == BindingRedirect {
+			if sp.config.CanopsisACSBinding == BindingRedirect {
 				meta.SPSSODescriptor.AssertionConsumerServices[0].Binding = saml2.BindingHttpRedirect
 			}
 
-			if sp.config.Security.Saml.ACSIndex != nil {
-				meta.SPSSODescriptor.AssertionConsumerServices[0].Index = *sp.config.Security.Saml.ACSIndex
+			if sp.config.ACSIndex != nil {
+				meta.SPSSODescriptor.AssertionConsumerServices[0].Index = *sp.config.ACSIndex
 			} else {
 				meta.SPSSODescriptor.AssertionConsumerServices[0].Index = 1
 			}
@@ -235,11 +227,11 @@ func (sp *serviceProvider) SamlAuthHandler() gin.HandlerFunc {
 			return
 		}
 
-		if sp.config.Security.Saml.CanopsisSSOBinding == BindingRedirect {
+		if sp.config.CanopsisSSOBinding == BindingRedirect {
 			var authRequest *etree.Document
 			var err error
 
-			if sp.config.Security.Saml.SignAuthRequest {
+			if sp.config.SignAuthRequest {
 				authRequest, err = sp.samlSP.BuildAuthRequestDocument()
 			} else {
 				authRequest, err = sp.samlSP.BuildAuthRequestDocumentNoSig()
@@ -263,7 +255,7 @@ func (sp *serviceProvider) SamlAuthHandler() gin.HandlerFunc {
 			c.Redirect(http.StatusPermanentRedirect, authUrl)
 		}
 
-		if sp.config.Security.Saml.CanopsisSSOBinding == BindingPOST {
+		if sp.config.CanopsisSSOBinding == BindingPOST {
 			b, err := sp.samlSP.BuildAuthBodyPost(request.RelayState)
 			if err != nil {
 				sp.logger.Err(err).Msg("SamlAuthHandler: BuildAuthBodyPost error")
@@ -351,7 +343,7 @@ func (sp *serviceProvider) SamlAcsHandler() gin.HandlerFunc {
 		}
 
 		var accessToken string
-		if assertionInfo.SessionNotOnOrAfter == nil {
+		if sp.config.ExpirationInterval != "" || assertionInfo.SessionNotOnOrAfter == nil {
 			accessToken, err = sp.tokenService.Create(c, *user, security.AuthMethodSaml)
 		} else {
 			accessToken, err = sp.tokenService.CreateWithExpiration(c, *user, security.AuthMethodSaml, *assertionInfo.SessionNotOnOrAfter)
@@ -371,7 +363,7 @@ func (sp *serviceProvider) SamlAcsHandler() gin.HandlerFunc {
 func (sp *serviceProvider) getAssocAttribute(attrs saml2.Values, canopsisName, defaultValue string) string {
 	v := defaultValue
 
-	idpAssoc, ok := sp.config.Security.Saml.IdpAttributesMap[canopsisName]
+	idpAssoc, ok := sp.config.IdpAttributesMap[canopsisName]
 	if ok {
 		v = attrs.Get(idpAssoc)
 	}
@@ -512,18 +504,18 @@ func (sp *serviceProvider) encodeAndCompress(doc io.WriterTo) (_ *bytes.Buffer, 
 }
 
 func (sp *serviceProvider) createUser(c *gin.Context, relayUrl *url.URL, assertionInfo *saml2.AssertionInfo) (*security.User, bool) {
-	if !sp.config.Security.Saml.AutoUserRegistration {
+	if !sp.config.AutoUserRegistration {
 		sp.logger.Err(fmt.Errorf("user with external_id = %s is not found", assertionInfo.NameID)).Msg("AutoUserRegistration is disabled")
 		sp.errorRedirect(c, relayUrl, "This user is not allowed to log into Canopsis")
 
 		return nil, false
 	}
 
-	role := sp.getAssocAttribute(assertionInfo.Values, "role", sp.defaultRole)
+	role := sp.getAssocAttribute(assertionInfo.Values, "role", sp.config.DefaultRole)
 
 	err := sp.roleCollection.FindOne(c, bson.M{"name": role}).Err()
 	if err != nil {
-		if err == mongodriver.ErrNoDocuments {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			errMessage := fmt.Errorf("role %s doesn't exist", role)
 			sp.logger.Err(errMessage).Msg("User registration failed")
 			sp.errorRedirect(c, relayUrl, errMessage.Error())
