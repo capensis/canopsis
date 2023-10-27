@@ -217,8 +217,9 @@ func Default(
 		exportExecutor = export.NewTaskExecutor(dbClient, p.TimezoneConfigProvider, logger)
 	}
 
+	tplExecutor := template.NewExecutor(p.TemplateConfigProvider, p.TimezoneConfigProvider)
 	alarmStore := alarmapi.NewStore(dbClient, dbExportClient, linkGenerator, p.TimezoneConfigProvider,
-		author.NewProvider(dbClient, p.ApiConfigProvider), json.NewDecoder(), logger)
+		author.NewProvider(dbClient, p.ApiConfigProvider), tplExecutor, json.NewDecoder(), logger)
 	websocketStore := websocket.NewStore(dbClient, flags.IntegrationPeriodicalWaitTime)
 	websocketHub, err := newWebsocketHub(enforcer, security.GetTokenProviders(), flags.IntegrationPeriodicalWaitTime,
 		dbClient, alarmStore, logger)
@@ -296,7 +297,7 @@ func Default(
 	legacyUrl := GetLegacyURL(logger)
 	if linkGenerator == nil {
 		linkGenerators := []link.Generator{
-			linkv2.NewGenerator(dbClient, template.NewExecutor(p.TemplateConfigProvider, p.TimezoneConfigProvider), logger),
+			linkv2.NewGenerator(dbClient, tplExecutor, logger),
 		}
 		if legacyUrl != nil {
 			linkGenerators = append(linkGenerators, linkv1.NewGenerator(legacyUrl.String(), dbClient, &http.Client{Timeout: linkFetchTimeout}, json.NewEncoder(), json.NewDecoder()))
@@ -350,6 +351,7 @@ func Default(
 			metricsUserMetaUpdater,
 			author.NewProvider(dbClient, p.ApiConfigProvider),
 			healthcheckStore,
+			tplExecutor,
 			logger,
 		)
 	})
