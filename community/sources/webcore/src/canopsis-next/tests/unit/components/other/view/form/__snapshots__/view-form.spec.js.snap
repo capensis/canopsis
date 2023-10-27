@@ -1,0 +1,133 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`view-form Renders \`view-form\` with custom props 1`] = `
+<div
+  class="layout column"
+>
+  <!---->
+  <c-name-field-stub
+    label="Title"
+    name="title"
+    required="required"
+    value="View title"
+  />
+  <div
+    class="v-input v-text-field v-input--is-label-active v-input--is-dirty theme--light"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+      >
+        <div
+          class="v-text-field__slot"
+        >
+          <label
+            aria-hidden="true"
+            class="v-label v-label--active theme--light"
+            style="left: 0px; position: absolute;"
+          >
+            Description
+          </label>
+          <input
+            aria-label="Description"
+            name="description"
+            type="text"
+          />
+        </div>
+      </div>
+      <div
+        class="v-text-field__details"
+      >
+        <div
+          class="v-messages theme--light"
+        >
+          <div
+            class="v-messages__wrapper"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <c-enabled-field-stub
+    value="true"
+  />
+  <periodic-refresh-field-stub
+    label="Periodic refresh"
+    name="periodic_refresh"
+    periodicrefresh="[object Object]"
+  />
+  <view-tags-field-stub
+    value="View tag"
+  />
+  <view-group-field-stub
+    groups="[object Object]"
+    value="[object Object]"
+  />
+</div>
+`;
+
+exports[`view-form Renders \`view-form\` with default props 1`] = `
+<div
+  class="layout column"
+>
+  <!---->
+  <c-name-field-stub
+    label="Title"
+    name="title"
+    required="required"
+  />
+  <div
+    class="v-input v-text-field theme--light"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+      >
+        <div
+          class="v-text-field__slot"
+        >
+          <label
+            aria-hidden="true"
+            class="v-label theme--light"
+            style="left: 0px; position: absolute;"
+          >
+            Description
+          </label>
+          <input
+            aria-label="Description"
+            name="description"
+            type="text"
+          />
+        </div>
+      </div>
+      <div
+        class="v-text-field__details"
+      >
+        <div
+          class="v-messages theme--light"
+        >
+          <div
+            class="v-messages__wrapper"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <c-enabled-field-stub />
+  <periodic-refresh-field-stub
+    label="Periodic refresh"
+    name="periodic_refresh"
+    periodicrefresh="[object Object]"
+  />
+  <view-tags-field-stub
+    value=""
+  />
+  <view-group-field-stub
+    groups=""
+  />
+</div>
+`;

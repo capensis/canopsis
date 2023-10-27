@@ -52,6 +52,14 @@
             with-entity,
             with-pbehavior
           )
+      v-flex(v-if="hasAccessToFilterByBookmark")
+        v-switch.mt-0(
+          :value="query.only_bookmarks",
+          :label="$t('alarm.filterByBookmark')",
+          color="primary",
+          hide-details,
+          @change="updateOnlyBookmarks"
+        )
       v-flex
         alarms-list-remediation-instructions-filters(
           :filters.sync="remediationInstructionsFilters",
@@ -87,7 +95,6 @@
       :total-items="alarmsMeta.total_count",
       :pagination.sync="pagination",
       :loading="alarmsPending",
-      :is-tour-enabled="isTourEnabled",
       :hide-children="!query.correlation",
       :columns="widget.parameters.widgetColumns",
       :sticky-header="widget.parameters.sticky_header",
@@ -110,13 +117,12 @@
       @update:columns-settings="updateColumnsSettings",
       @clear:tag="clearTag"
     )
-    alarms-expand-panel-tour(v-if="isTourEnabled", :callbacks="tourCallbacks")
 </template>
 
 <script>
 import { omit, pick, isObject, isEqual } from 'lodash';
 
-import { MODALS, TOURS, USERS_PERMISSIONS } from '@/constants';
+import { MODALS, USERS_PERMISSIONS } from '@/constants';
 
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 import { getAlarmListExportDownloadFileUrl } from '@/helpers/entities/alarm/url';
@@ -133,6 +139,7 @@ import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
 import { entitiesAlarmTagMixin } from '@/mixins/entities/alarm-tag';
 import { entitiesAlarmDetailsMixin } from '@/mixins/entities/alarm/details';
 import { permissionsWidgetsAlarmsListCorrelation } from '@/mixins/permissions/widgets/alarms-list/correlation';
+import { permissionsWidgetsAlarmsListBookmark } from '@/mixins/permissions/widgets/alarms-list/bookmark';
 import { permissionsWidgetsAlarmsListCategory } from '@/mixins/permissions/widgets/alarms-list/category';
 import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widgets/alarms-list/filters';
 import {
@@ -143,7 +150,6 @@ import FilterSelector from '@/components/other/filter/partials/filter-selector.v
 import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
 
 import AlarmsListTable from './partials/alarms-list-table.vue';
-import AlarmsExpandPanelTour from './expand-panel/alarms-expand-panel-tour.vue';
 import AlarmsListRemediationInstructionsFilters from './partials/alarms-list-remediation-instructions-filters.vue';
 
 /**
@@ -160,7 +166,6 @@ export default {
     FilterSelector,
     FiltersListBtn,
     AlarmsListTable,
-    AlarmsExpandPanelTour,
     AlarmsListRemediationInstructionsFilters,
   },
   mixins: [
@@ -176,6 +181,7 @@ export default {
     entitiesAlarmDetailsMixin,
     permissionsWidgetsAlarmsListCategory,
     permissionsWidgetsAlarmsListCorrelation,
+    permissionsWidgetsAlarmsListBookmark,
     permissionsWidgetsAlarmsListFilters,
     permissionsWidgetsAlarmsListRemediationInstructionsFilters,
     exportMixinCreator({
@@ -211,18 +217,6 @@ export default {
     };
   },
   computed: {
-    tourCallbacks() {
-      return {
-        onPreviousStep: this.onTourPreviousStep,
-        onNextStep: this.onTourNextStep,
-      };
-    },
-
-    isTourEnabled() {
-      return this.checkIsTourEnabled(TOURS.alarmsExpandPanel)
-        && !!this.alarms.length;
-    },
-
     activeRange() {
       const { tstart, tstop } = this.query;
 
@@ -296,9 +290,7 @@ export default {
     },
 
     updateCorrelation(correlation) {
-      this.updateContentInUserPreference({
-        isCorrelationEnabled: correlation,
-      });
+      this.updateContentInUserPreference({ isCorrelationEnabled: correlation });
 
       this.query = {
         ...this.query,
@@ -308,12 +300,21 @@ export default {
       };
     },
 
+    updateOnlyBookmarks(onlyBookmarks) {
+      this.updateContentInUserPreference({ onlyBookmarks });
+
+      this.query = {
+        ...this.query,
+
+        page: 1,
+        only_bookmarks: onlyBookmarks,
+      };
+    },
+
     updateCategory(category) {
       const categoryId = category && category._id;
 
-      this.updateContentInUserPreference({
-        category: categoryId,
-      });
+      this.updateContentInUserPreference({ category: categoryId });
 
       this.query = {
         ...this.query,
@@ -324,9 +325,7 @@ export default {
     },
 
     updateRecordsPerPage(limit) {
-      this.updateContentInUserPreference({
-        itemsPerPage: limit,
-      });
+      this.updateContentInUserPreference({ itemsPerPage: limit });
 
       this.query = {
         ...this.query,
@@ -336,29 +335,13 @@ export default {
     },
 
     updateDense(dense) {
-      this.updateContentInUserPreference({
-        dense,
-      });
+      this.updateContentInUserPreference({ dense });
     },
 
     expandFirstAlarm() {
       if (!this.firstAlarmExpanded) {
         this.$set(this.$refs.alarmsTable.expanded, this.alarms[0]._id, true);
       }
-    },
-
-    onTourPreviousStep(currentStep) {
-      if (currentStep !== 1) {
-        this.expandFirstAlarm();
-      }
-
-      return this.$nextTick();
-    },
-
-    onTourNextStep() {
-      this.expandFirstAlarm();
-
-      return this.$nextTick();
     },
 
     removeHistoryFilter() {
@@ -416,7 +399,15 @@ export default {
       const columns = widgetExportColumns?.length ? widgetExportColumns : widgetColumns;
 
       return {
-        ...pick(query, ['search', 'category', 'correlation', 'opened', 'tstart', 'tstop']),
+        ...pick(query, [
+          'search',
+          'category',
+          'correlation',
+          'opened',
+          'tstart',
+          'tstop',
+          'only_bookmarks',
+        ]),
 
         fields: columns.map(({ value, text }) => ({ name: value, label: text })),
         filters: query.filters,

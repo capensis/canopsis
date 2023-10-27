@@ -14,6 +14,9 @@ type ListRequest struct {
 	WithTabs    bool   `form:"with_tabs" json:"with_tabs"`
 	WithWidgets bool   `form:"with_widgets" json:"with_widgets"`
 	WithFlags   bool   `form:"with_flags" json:"with_flags"`
+	WithPrivate bool   `form:"with_private" json:"with_private"`
+
+	UserID string `form:"-" json:"-"`
 }
 
 type EditRequest struct {
@@ -30,6 +33,8 @@ type ViewGroup struct {
 	Created   *types.CpsTime   `bson:"created" json:"created,omitempty" swaggertype:"integer"`
 	Updated   *types.CpsTime   `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
 	Deletable *bool            `bson:"deletable,omitempty" json:"deletable,omitempty"`
+
+	IsPrivate bool `bson:"is_private" json:"is_private"`
 }
 
 type AggregationResult struct {

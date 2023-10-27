@@ -33,7 +33,7 @@
     v-data-table(
       v-model="selected",
       :headers="headersWithExpand",
-      :items="items",
+      :items="visibleItems",
       :loading="loading",
       :total-items="totalItems",
       :no-data-text="noDataText",
@@ -209,6 +209,10 @@ export default {
       set(selected) {
         this.selectedItems = selected;
       },
+    },
+
+    visibleItems() {
+      return this.pagination?.rowsPerPage ? this.items.slice(0, this.pagination?.rowsPerPage) : this.items;
     },
 
     headersWithExpand() {

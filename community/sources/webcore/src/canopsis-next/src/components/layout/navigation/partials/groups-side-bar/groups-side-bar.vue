@@ -3,41 +3,49 @@
     v-navigation-drawer.side-bar.secondary(
       v-model="isOpen",
       :width="$config.SIDE_BAR_WIDTH",
-      :class="{ editing: isNavigationEditingMode }",
+      :class="{ 'side-bar--editing': isNavigationEditingMode }",
       :ignore-click-outside="isGroupsOrderChanged || hasMaximizedModal",
       app
     )
-      div.brand.ma-0.secondary.lighten-1
+      div.side-bar__brand.ma-0.secondary.lighten-1
         app-logo.logo
         logged-users-count
         app-version.version
-      template(v-if="hasReadAnyViewAccess")
+      section.side-bar__links
         v-layout.pa-2(v-if="!mutatedGroups.length && groupsPending", row, justify-center)
           v-progress-circular(color="primary", indeterminate)
         c-draggable-list-field.groups-panel(
           v-else,
           v-model="mutatedGroups",
-          :class="{ ordering: isGroupsOrderChanged }",
+          :class="{ 'groups-panel--ordering': isGroupsOrderChanged }",
           :component-data="{ props: { expand: true, dark: true, focusable: true } }",
           :disabled="!isNavigationEditingMode",
+          draggable=".groups-panel__item--public",
           component="v-expansion-panel"
         )
-          groups-side-bar-group(
+          groups-side-bar-group.groups-panel__item--public(
             v-for="(group, index) in mutatedGroups",
             :key="group._id",
             :group.sync="mutatedGroups[index]",
             :is-groups-order-changed="isGroupsOrderChanged"
           )
-      v-divider
-      v-fade-transition
-        div.v-overlay.v-overlay--active(v-show="isGroupsOrderChanged")
-          v-btn.primary(@click="submit") {{ $t('common.submit') }}
-          v-btn(@click="resetMutatedGroups") {{ $t('common.cancel') }}
-      groups-side-bar-playlists
+          template(v-if="hasAccessToPrivateView", #footer="")
+            groups-side-bar-group(
+              v-for="privateGroup in privateGroups",
+              :key="privateGroup._id",
+              :group="privateGroup",
+              :is-groups-order-changed="isGroupsOrderChanged"
+            )
+        v-divider
+        groups-side-bar-playlists
       groups-settings-button(
         tooltip-right,
         @toggleEditingMode="toggleNavigationEditingMode"
       )
+      v-fade-transition
+        div.v-overlay.v-overlay--active(v-show="isGroupsOrderChanged")
+          v-btn.primary(@click="submit") {{ $t('common.submit') }}
+          v-btn(@click="resetMutatedGroups") {{ $t('common.cancel') }}
     v-fade-transition
       div.v-overlay.v-overlay--active.content-overlay(v-show="isGroupsOrderChanged")
 </template>
@@ -106,9 +114,17 @@ export default {
       },
     },
 
+    privateGroups() {
+      return this.availableGroups.filter(group => group.is_private);
+    },
+
+    publicGroups() {
+      return this.availableGroups.filter(group => !group.is_private);
+    },
+
     isGroupsOrderChanged() {
       return isDeepOrderChanged(
-        this.availableGroups,
+        this.publicGroups,
         this.mutatedGroups,
         '_id',
         (entity = {}, anotherEntity = {}) => isDeepOrderChanged(entity.views, anotherEntity.views),
@@ -116,7 +132,7 @@ export default {
     },
   },
   watch: {
-    availableGroups: {
+    publicGroups: {
       deep: true,
       immediate: true,
       handler(groups) {
@@ -129,7 +145,7 @@ export default {
      * Reset mutated groups method
      */
     resetMutatedGroups() {
-      this.setMutatedGroups(this.availableGroups);
+      this.setMutatedGroups(this.publicGroups);
     },
 
     /**
@@ -175,17 +191,9 @@ export default {
     position: relative;
     box-shadow: none;
 
-    &.ordering {
+    &--ordering {
       position: absolute;
       z-index: 9;
-    }
-
-    .editing &:after {
-      content: '';
-      position: absolute;
-      top: 100%;
-      width: 100%;
-      height: 48px;
     }
   }
 
@@ -193,21 +201,38 @@ export default {
     position: fixed;
     height: 100vh;
     overflow-y: auto;
-
-    &.editing {
-      z-index: 9;
-    }
-  }
-
-  .brand {
-    max-height: 48px;
-    position: relative;
     display: flex;
-    justify-content: center;
-    padding: 0.5em 0;
+    flex-direction: column;
+    justify-content: stretch;
 
-    & ::v-deep .logged-users-count {
-      right: 0;
+    &__brand {
+      max-height: 48px;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      flex-shrink: 0;
+      padding: 0.5em 0;
+
+      & ::v-deep .logged-users-count {
+        right: 0;
+      }
+    }
+
+    &__links {
+      overflow: auto;
+      padding-bottom: 100px;
+    }
+
+    &--editing {
+      z-index: 9;
+
+      .groups-panel:after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        width: 100%;
+        height: 48px;
+      }
     }
   }
 

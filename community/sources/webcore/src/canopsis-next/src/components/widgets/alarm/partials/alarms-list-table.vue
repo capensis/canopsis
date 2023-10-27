@@ -54,8 +54,8 @@
         :select-all="selectable",
         :loading="loading || columnsFiltersPending",
         :expand="expandable",
-        :dense="isMediumHeight",
-        :ultra-dense="isSmallHeight",
+        :dense="isMediumDense",
+        :ultra-dense="isSmallDense",
         header-key="value",
         item-key="_id",
         hide-actions,
@@ -73,10 +73,7 @@
             @clear:tag="$emit('clear:tag')"
           )
           template
-            span.alarms-list-table__dragging-handler(
-              v-if="draggingMode && header.value !== 'actions'",
-              @click.stop=""
-            )
+            span.alarms-list-table__dragging-handler(v-if="draggingMode", @click.stop="")
             span.alarms-list-table__resize-handler(
               v-if="resizingMode",
               @mousedown.stop.prevent="startColumnResize(header.value)",
@@ -92,18 +89,17 @@
             :expandable="expandable",
             :row="props",
             :widget="widget",
-            :columns="sortedColumns",
+            :headers="headers",
             :parent-alarm="parentAlarm",
-            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(props.index)",
             :refresh-alarms-list="refreshAlarmsList",
             :selecting="selecting",
             :selected-tag="selectedTag",
-            :hide-actions="hideActions",
-            :medium="isMediumHeight",
-            :small="isSmallHeight",
+            :medium="isMediumDense",
+            :small="isSmallDense",
             :resizing="resizingMode",
             :search="search",
             :wrap-actions="resizableColumn",
+            :show-instruction-icon="hasInstructionsAlarms",
             @start:resize="startColumnResize",
             @select:tag="$emit('select:tag', $event)"
           )
@@ -114,7 +110,6 @@
             :widget="widget",
             :search="search",
             :hide-children="hideChildren",
-            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(index)",
             @select:tag="$emit('select:tag', $event)"
           )
     c-table-pagination(
@@ -197,10 +192,6 @@ export default {
     columns: {
       type: Array,
       default: () => [],
-    },
-    isTourEnabled: {
-      type: Boolean,
-      default: false,
     },
     loading: {
       type: Boolean,
@@ -299,15 +290,6 @@ export default {
       return this.cellsContentBehavior === ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS.truncate;
     },
 
-    sortedColumns() {
-      if (this.draggableColumn) {
-        return [...this.preparedColumns]
-          .sort((a, b) => this.getColumnPositionByField(a.value) - this.getColumnPositionByField(b.value));
-      }
-
-      return this.preparedColumns;
-    },
-
     needToAddLeftActionsCell() {
       return (this.expandable || this.hasInstructionsAlarms) && !this.selectable;
     },
@@ -317,7 +299,7 @@ export default {
     },
 
     headers() {
-      const headers = this.sortedColumns.map((column) => {
+      const headers = this.preparedColumns.map((column) => {
         const header = {
           ...column,
           class: this.draggableClass,
@@ -340,17 +322,24 @@ export default {
       });
 
       if (!this.hideActions) {
-        headers.push({ text: this.$t('common.actionsLabel'), value: 'actions', sortable: false });
+        headers.push({
+          text: this.$t('common.actionsLabel'),
+          value: 'actions',
+          sortable: false,
+          class: this.draggableClass,
+        });
       }
 
       if (this.needToAddLeftActionsCell) {
         /**
          * We need it for the expand panel open button
          */
-        headers.unshift({ sortable: false });
+        headers.unshift({ sortable: false, width: 100 });
       }
 
-      return headers;
+      return this.draggableColumn
+        ? headers.sort((a, b) => this.getColumnPositionByField(a.value) - this.getColumnPositionByField(b.value))
+        : headers;
     },
 
     headersWithWidth() {
@@ -397,7 +386,7 @@ export default {
       /**
        * left expand/instruction icon/select actions width
        */
-      return this.isMediumHeight || this.isSmallHeight ? 82 : 100;
+      return this.isMediumDense || this.isSmallDense ? 100 : 120;
     },
 
     vDataTableStyle() {
@@ -428,11 +417,11 @@ export default {
       return {};
     },
 
-    isMediumHeight() {
+    isMediumDense() {
       return this.dense === ALARM_DENSE_TYPES.medium;
     },
 
-    isSmallHeight() {
+    isSmallDense() {
       return this.dense === ALARM_DENSE_TYPES.small;
     },
 
@@ -526,10 +515,6 @@ export default {
       if (this.selecting) {
         this.calculateRowsPositions();
       }
-    },
-
-    checkIsTourEnabledForAlarmByIndex(index) {
-      return this.isTourEnabled && index === 0;
     },
 
     updatePaginationHandler(data) {
@@ -740,14 +725,14 @@ export default {
   }
 
   th:not([role='columnheader']) {
-    width: 100px;
+    width: 120px;
   }
 
   .v-datatable--dense,
   .v-datatable--ultra-dense {
     thead {
       th:not([role='columnheader']) {
-        width: 82px;
+        width: 100px;
       }
     }
   }
