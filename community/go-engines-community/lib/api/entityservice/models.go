@@ -5,7 +5,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitybasic"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -16,7 +15,6 @@ type Response struct {
 	SliAvailState  int64  `bson:"sli_avail_state" json:"sli_avail_state"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
-	OldEntityPatterns                oldpattern.EntityPatternList `bson:"old_entity_patterns" json:"old_entity_patterns"`
 }
 
 type CreateRequest struct {

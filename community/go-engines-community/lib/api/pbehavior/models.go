@@ -2,7 +2,6 @@ package pbehavior
 
 import (
 	"encoding/json"
-	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -15,8 +14,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"go.mongodb.org/mongo-driver/bson/bsontype"
-	"go.mongodb.org/mongo-driver/x/bsonx/bsoncore"
 )
 
 type ListRequest struct {
@@ -109,26 +106,12 @@ type Response struct {
 	// IsActiveStatus represents if pbehavior is in action for current time.
 	IsActiveStatus *bool `bson:"-" json:"is_active_status,omitempty"`
 
-	OldMongoQuery OldMongoQuery `bson:"old_mongo_query" json:"old_mongo_query,omitempty"`
-
 	Origin   string `bson:"origin" json:"origin"`
 	Editable *bool  `bson:"editable,omitempty" json:"editable,omitempty"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
 
 	RRuleComputedStart *types.CpsTime `bson:"rrule_cstart" json:"-"`
-}
-
-type OldMongoQuery map[string]interface{}
-
-func (q *OldMongoQuery) UnmarshalBSONValue(_ bsontype.Type, b []byte) error {
-	v, _, ok := bsoncore.ReadString(b)
-	if !ok {
-		return errors.New("invalid value, expected string")
-	}
-
-	err := json.Unmarshal([]byte(v), &q)
-	return err
 }
 
 type NullableTime struct {

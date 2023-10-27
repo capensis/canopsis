@@ -17,8 +17,6 @@ var ErrCacheNotLoaded = errors.New("cache is not loaded")
 type ComputedEntityMatcher interface {
 	// LoadAll computes filter-entity associations to memory.
 	LoadAll(ctx context.Context, filters map[string]interface{}) error
-	// Match matches entity to filters by precomputed data in memory.
-	Match(entityID string) ([]string, error)
 	GetComputedEntityIDs() ([]string, error)
 }
 
@@ -106,14 +104,6 @@ func (m *computedEntityMatcher) LoadAll(ctx context.Context, filters map[string]
 
 	m.keysByEntityID = keysByEntityID
 	return nil
-}
-
-func (m *computedEntityMatcher) Match(entityID string) ([]string, error) {
-	if m.keysByEntityID == nil {
-		return nil, ErrCacheNotLoaded
-	}
-
-	return m.keysByEntityID[entityID], nil
 }
 
 func (m *computedEntityMatcher) GetComputedEntityIDs() ([]string, error) {

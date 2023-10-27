@@ -58,22 +58,6 @@ Feature: Get a widget filter
           ]
         },
         {
-          "_id": "test-widgetfilter-to-get-5",
-          "title": "test-widgetfilter-to-get-5-title",
-          "is_user_preference": false,
-          "is_private": false,
-          "author": {
-            "_id": "root",
-            "name": "root",
-            "display_name": "root John Doe admin@canopsis.net"
-          },
-          "created": 1605263992,
-          "updated": 1605263992,
-          "old_mongo_query": {
-            "name": "test-widgetfilter-to-get-5-pattern"
-          }
-        },
-        {
           "_id": "test-widgetfilter-to-get-2",
           "title": "test-widgetfilter-to-get-2-title",
           "is_user_preference": true,
@@ -130,7 +114,7 @@ Feature: Get a widget filter
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 3
+        "total_count": 2
       }
     }
     """
@@ -189,29 +173,13 @@ Feature: Get a widget filter
               }
             ]
           ]
-        },
-        {
-          "_id": "test-widgetfilter-to-get-5",
-          "title": "test-widgetfilter-to-get-5-title",
-          "is_user_preference": false,
-          "is_private": false,
-          "author": {
-            "_id": "root",
-            "name": "root",
-            "display_name": "root John Doe admin@canopsis.net"
-          },
-          "created": 1605263992,
-          "updated": 1605263992,
-          "old_mongo_query": {
-            "name": "test-widgetfilter-to-get-5-pattern"
-          }
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 2
+        "total_count": 1
       }
     }
     """
@@ -468,31 +436,6 @@ Feature: Get a widget filter
     When I am admin
     When I do GET /api/v4/widget-filters/test-widgetfilter-not-exist
     Then the response code should be 403
-
-  @concurrent
-  Scenario: given get old filter request should return ok
-    When I am admin
-    When I do GET /api/v4/widget-filters/test-widgetfilter-to-get-5
-    Then the response code should be 200
-    Then the response body should be:
-    """json
-    {
-      "_id": "test-widgetfilter-to-get-5",
-      "title": "test-widgetfilter-to-get-5-title",
-      "is_user_preference": false,
-      "is_private": false,
-      "author": {
-        "_id": "root",
-        "name": "root",
-        "display_name": "root John Doe admin@canopsis.net"
-      },
-      "created": 1605263992,
-      "updated": 1605263992,
-      "old_mongo_query": {
-        "name": "test-widgetfilter-to-get-5-pattern"
-      }
-    }
-    """
 
   @concurrent
   Scenario: given all private filters request should return filters only for owner

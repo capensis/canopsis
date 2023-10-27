@@ -15,7 +15,7 @@ Feature: get running instruction
             "field": "v.resource",
             "cond": {
               "type": "eq",
-              "value": "test-instruction-execution-get-resource-1"
+              "value": "test-resource-to-instruction-execution-get-1"
             }
           }
         ]
@@ -63,7 +63,7 @@ Feature: get running instruction
     When I do POST /api/v4/cat/executions:
     """json
     {
-      "alarm": "test-instruction-execution-get-1",
+      "alarm": "test-alarm-to-instruction-execution-get-1",
       "instruction": "{{ .lastResponse._id }}"
     }
     """
@@ -137,7 +137,7 @@ Feature: get running instruction
             "field": "v.resource",
             "cond": {
               "type": "eq",
-              "value": "test-instruction-execution-get-resource-2"
+              "value": "test-resource-to-instruction-execution-get-2"
             }
           }
         ]
@@ -185,7 +185,7 @@ Feature: get running instruction
     When I do POST /api/v4/cat/executions:
     """json
     {
-      "alarm": "test-instruction-execution-get-2",
+      "alarm": "test-alarm-to-instruction-execution-get-2",
       "instruction": "{{ .lastResponse._id }}"
     }
     """
@@ -269,7 +269,7 @@ Feature: get running instruction
             "field": "v.resource",
             "cond": {
               "type": "eq",
-              "value": "test-instruction-execution-get-resource-3"
+              "value": "test-resource-to-instruction-execution-get-3"
             }
           }
         ]
@@ -317,7 +317,7 @@ Feature: get running instruction
     When I do POST /api/v4/cat/executions:
     """json
     {
-      "alarm": "test-instruction-execution-get-3",
+      "alarm": "test-alarm-to-instruction-execution-get-3",
       "instruction": "{{ .lastResponse._id }}"
     }
     """
