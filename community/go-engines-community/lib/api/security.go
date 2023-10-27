@@ -146,6 +146,7 @@ func (s *security) RegisterCallbackRoutes(ctx context.Context, router gin.IRoute
 		case libsecurity.AuthMethodCas:
 			casConfig := s.config.Security.Cas
 			p := httpprovider.NewCasProvider(
+				s.dbClient,
 				http.DefaultClient,
 				casConfig,
 				s.newUserProvider(),
@@ -246,6 +247,7 @@ func (s *security) newBaseAuthProvider() libsecurity.Provider {
 
 func (s *security) newLdapAuthProvider() libsecurity.Provider {
 	return provider.NewLdapProvider(
+		s.dbClient,
 		s.config.Security.Ldap,
 		s.newUserProvider(),
 		provider.NewLdapDialer(),

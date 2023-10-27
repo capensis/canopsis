@@ -14,7 +14,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libhttp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/http"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -30,8 +29,6 @@ import (
 
 const (
 	randomBytesNumber = 16
-
-	defaultUserRole = "Norights"
 )
 
 type Provider interface {
@@ -54,9 +51,8 @@ type oauth2Provider struct {
 	oidcVerifier *oidc.IDTokenVerifier
 	provider     *oidc.Provider
 
-	name        string
-	defaultRole string
-	source      string
+	name   string
+	source string
 
 	maxResponseSize int64
 }
@@ -73,14 +69,8 @@ func NewOauth2Provider(
 	tokenService apisecurity.TokenService,
 	maxResponseSize int64,
 ) (Provider, error) {
-	defaultRole := config.DefaultRole
-	if defaultRole == "" {
-		defaultRole = defaultUserRole
-	}
-
 	p := &oauth2Provider{
 		name:               name,
-		defaultRole:        defaultRole,
 		roleCollection:     dbClient.Collection(mongo.RoleCollection),
 		userProvider:       userProvider,
 		maintenanceAdapter: maintenanceAdapter,
@@ -235,7 +225,24 @@ func (p *oauth2Provider) Callback(c *gin.Context) {
 		options = append(options, oauth2.VerifierOption(verifier))
 	}
 
-	oauth2Token, err := p.oauth2Config.Exchange(c, c.Query("code"), options...)
+	if errorMsg, ok := c.GetQuery("error"); ok {
+		if errorDesc, ok := c.GetQuery("error_description"); ok {
+			errorMsg = errorDesc
+		}
+
+		errorRedirect(c, redirectUrl, errorMsg)
+		return
+	}
+
+	code, ok := c.GetQuery("code")
+	if !ok {
+		p.logger.Err(errors.New("code is empty")).Str("provider", p.name)
+		errorRedirect(c, redirectUrl, "code is empty")
+
+		return
+	}
+
+	oauth2Token, err := p.oauth2Config.Exchange(c, code, options...)
 	if err != nil {
 		panic(err)
 	}
@@ -329,25 +336,13 @@ func (p *oauth2Provider) Callback(c *gin.Context) {
 		}
 	}
 
-	expiry := oauth2Token.Expiry
-	if p.config.MinExpirationInterval != "" {
-		minExpirationInterval, err := types.ParseDurationWithUnit(p.config.MinExpirationInterval)
-		if err != nil {
-			panic(fmt.Errorf("cannot parse min_expiration_interval: %w", err))
-		}
-
-		minExpiry := minExpirationInterval.AddTo(types.NewCpsTime()).Time
-		if minExpiry.After(expiry) {
-			expiry = minExpiry
-		}
+	var accessToken string
+	if p.config.ExpirationInterval != "" {
+		accessToken, err = p.tokenService.Create(c, *user, p.source)
+	} else {
+		accessToken, err = p.tokenService.CreateWithExpiration(c, *user, p.source, oauth2Token.Expiry)
 	}
 
-	accessToken, err := p.tokenService.CreateWithExpiration(
-		c,
-		*user,
-		p.source,
-		expiry,
-	)
 	if err != nil {
 		panic(fmt.Errorf("failed to create token: %w", err))
 	}
@@ -360,7 +355,7 @@ func (p *oauth2Provider) Callback(c *gin.Context) {
 }
 
 func (p *oauth2Provider) createUser(c *gin.Context, subj string, userInfo map[string]any) (*security.User, error) {
-	role := p.getAssocAttribute(userInfo, "role", p.defaultRole)
+	role := p.getAssocAttribute(userInfo, "role", p.config.DefaultRole)
 
 	err := p.roleCollection.FindOne(c, bson.M{"name": role}).Err()
 	if err != nil {
