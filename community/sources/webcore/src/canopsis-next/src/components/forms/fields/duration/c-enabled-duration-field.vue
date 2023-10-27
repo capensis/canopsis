@@ -4,15 +4,16 @@
       <v-checkbox
         v-validate
         v-field="duration.enabled"
-        :label="label"
         :error-messages="errors.collect(enabledFieldName)"
         :name="enabledFieldName"
         color="primary"
       >
-        <template #append="">
+        <template #label="">
+          {{ label }}
           <c-help-icon
             v-if="helpText"
             :text="helpText"
+            icon-class="ml-2"
             color="info"
             max-width="300"
             top

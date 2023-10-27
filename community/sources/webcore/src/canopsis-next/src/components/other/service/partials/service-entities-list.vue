@@ -5,7 +5,7 @@
       v-if="serviceEntities.length"
       align-center
     >
-      <v-checkbox-functional
+      <v-simple-checkbox
         class="ml-3 pa-0"
         v-model="isAllSelected"
         :disabled="!entitiesWithActions.length"

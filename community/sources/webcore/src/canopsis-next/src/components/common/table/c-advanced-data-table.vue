@@ -49,7 +49,7 @@
     </v-layout>
     <v-data-table
       v-model="selected"
-      :headers="headersWithExpand"
+      :headers="headers"
       :items="visibleItems"
       :loading="loading"
       :server-items-length="totalItems"
@@ -62,11 +62,9 @@
       :show-expand="expand"
       :is-disabled-item="isDisabledItem"
       :hide-default-footer="hideActions || advancedPagination || noPagination"
-      :multi-sort="multiSort"
       :table-class="tableClass"
-      :sort-by="disableInitialSort"
       :dense="dense"
-      @update:pagination="updatePagination"
+      @update:options="updatePagination"
     >
       <template #item="props">
         <slot
@@ -87,13 +85,13 @@
                   v-bind="getItemsProps(props)"
                   name="item-select"
                 >
-                  <v-checkbox-functional
+                  <v-simple-checkbox
                     v-if="!isDisabledItem(props.item)"
                     v-model="props.selected"
                     primary
                     hide-details
                   />
-                  <v-checkbox-functional
+                  <v-simple-checkbox
                     v-else
                     primary
                     disabled
@@ -107,8 +105,8 @@
                 >
                   <c-expand-btn
                     class="ml-2"
-                    :expanded="props.expanded"
-                    @expand="props.expanded = !props.expanded"
+                    :expanded="props.isExpanded"
+                    @expand="props.expand"
                   />
                 </slot>
               </v-layout>
@@ -129,7 +127,7 @@
       </template>
       <template
         v-if="hasExpandSlot"
-        #expand="props"
+        #expanded-item="props"
       >
         <div
           class="secondary lighten-2"
@@ -141,13 +139,20 @@
           />
         </div>
       </template>
-      <template #headerCell="props">
+      <template #header="props">
         <slot
-          name="headerCell"
+          name="header"
           v-bind="props"
-        >
-          {{ props.header[headerText] }}
-        </slot>
+        />
+      </template>
+      <template
+        v-for="header in headerScopedSlots"
+        #[header]="props"
+      >
+        <slot
+          :name="header"
+          v-bind="props"
+        />
       </template>
       <template #progress="props">
         <slot
@@ -261,17 +266,9 @@ export default {
       type: Object,
       required: false,
     },
-    multiSort: {
-      type: Boolean,
-      default: false,
-    },
     tableClass: {
       type: String,
       required: false,
-    },
-    disableInitialSort: {
-      type: Boolean,
-      default: false,
     },
     dense: {
       type: Boolean,
@@ -284,6 +281,10 @@ export default {
     };
   },
   computed: {
+    headerScopedSlots() {
+      return Object.keys(this.$scopedSlots ?? {}).filter(name => name.startsWith('header.'));
+    },
+
     selected: {
       get() {
         return this.selectedItems.filter(item => !this.isDisabledItem(item));
@@ -295,14 +296,6 @@ export default {
 
     visibleItems() {
       return this.pagination?.rowsPerPage ? this.items.slice(0, this.pagination?.rowsPerPage) : this.items;
-    },
-
-    headersWithExpand() {
-      if (this.expand && !this.selectAll) {
-        return [{ sortable: false, width: 20 }, ...this.headers];
-      }
-
-      return this.headers;
     },
 
     hasExpandSlot() {
@@ -360,7 +353,7 @@ export default {
         disabled: this.isDisabledItem(state.item),
         expanded: state.expanded,
         select: value => state.selected = value || !state.selected,
-        expand: value => state.expanded = value || !state.expanded,
+        expand: state.expand,
       };
     },
   },

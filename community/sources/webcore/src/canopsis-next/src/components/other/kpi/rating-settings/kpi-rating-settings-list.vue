@@ -37,11 +37,11 @@
     </template>
     <template #enabled="{ item }">
       <v-layout align-center>
-        <v-checkbox-functional
-          :input-value="isEnabledRatingSetting(item)"
+        <v-simple-checkbox
+          :value="isEnabledRatingSetting(item)"
           :disabled="!updatable"
           hide-details
-          @change="enableRatingSetting(item, $event)"
+          @input="enableRatingSetting(item, $event)"
         />
       </v-layout>
     </template>

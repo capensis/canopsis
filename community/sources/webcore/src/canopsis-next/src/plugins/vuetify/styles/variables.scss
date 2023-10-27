@@ -51,7 +51,8 @@ $btn-font-sizes: (
   'x-large': 1rem
 );
 
-$tabs-bar-background-color: 'surface';
+$tabs-bar-background-color: 'unset';
+$tabs-item-letter-spacing: normal;
 
 $dialog-card-text-padding: 16px;
 
@@ -114,6 +115,11 @@ $headings: (
   'subtitle-1': (
     'size': rem(16px),
     'weight': 400,
+    'line-height': rem(24px),
+  ),
+  'subtitle-2': (
+    'size': rem(14px),
+    'weight': 500,
     'line-height': rem(24px),
   ),
   caption: (

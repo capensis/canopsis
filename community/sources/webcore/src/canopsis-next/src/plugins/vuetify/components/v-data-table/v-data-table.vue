@@ -34,7 +34,7 @@ export default {
 
         const transition = this.$createElement('transition-group', {
           class: 'v-data-table__expanded__col',
-          attrs: { colspan: this.headers.length },
+          attrs: { colspan: this.computedHeaders.length },
           props: {
             tag: 'td',
           },
