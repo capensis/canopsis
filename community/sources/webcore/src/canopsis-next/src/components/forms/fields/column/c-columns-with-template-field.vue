@@ -9,16 +9,7 @@
       @input="updateTemplate"
     )
     span.body-2.my-2 {{ $tc('common.column', 2) }}
-    c-columns-field(
-      :columns="columns",
-      :with-template="withTemplate",
-      :with-html="withHtml",
-      :with-color-indicator="withColorIndicator",
-      :with-instructions="withInstructions",
-      :without-infos-attributes="withoutInfosAttributes",
-      :type="type",
-      @input="updateColumns"
-    )
+    c-columns-field(v-bind="$attrs", @input="updateColumns")
 </template>
 
 <script>
@@ -31,19 +22,12 @@ import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-i
 export default {
   components: { WidgetSettingsItem },
   mixins: [formBaseMixin],
+  inheritAttrs: false,
   model: {
     prop: 'columns',
     event: 'input',
   },
   props: {
-    type: {
-      type: String,
-      required: true,
-    },
-    columns: {
-      type: Array,
-      default: () => [],
-    },
     template: {
       type: [String, Symbol],
       required: false,
@@ -53,26 +37,6 @@ export default {
       default: () => [],
     },
     templatesPending: {
-      type: Boolean,
-      default: false,
-    },
-    withTemplate: {
-      type: Boolean,
-      default: false,
-    },
-    withHtml: {
-      type: Boolean,
-      default: false,
-    },
-    withColorIndicator: {
-      type: Boolean,
-      default: false,
-    },
-    withInstructions: {
-      type: Boolean,
-      default: false,
-    },
-    withoutInfosAttributes: {
       type: Boolean,
       default: false,
     },
