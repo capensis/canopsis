@@ -9,8 +9,11 @@ import (
 	"errors"
 	"fmt"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"github.com/go-ldap/ldap/v3"
+	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
 // LdapDialer interface is used to implement creation of LDAP connection.
@@ -38,24 +41,27 @@ func (baseDialer) DialURL(config security.LdapConfig) (ldap.Client, error) {
 
 // ldapProvider implements LDAP authentication.
 type ldapProvider struct {
-	config       security.LdapConfig
-	userProvider security.UserProvider
-	ldapDialer   LdapDialer
-	enforcer     security.Enforcer
+	roleCollection mongo.DbCollection
+	config         security.LdapConfig
+	userProvider   security.UserProvider
+	ldapDialer     LdapDialer
+	enforcer       security.Enforcer
 }
 
 // NewLdapProvider creates new provider.
 func NewLdapProvider(
+	dbClient mongo.DbClient,
 	config security.LdapConfig,
 	userProvider security.UserProvider,
 	ldapDialer LdapDialer,
 	enforcer security.Enforcer,
 ) security.Provider {
 	return &ldapProvider{
-		ldapDialer:   ldapDialer,
-		config:       config,
-		userProvider: userProvider,
-		enforcer:     enforcer,
+		roleCollection: dbClient.Collection(mongo.RoleCollection),
+		ldapDialer:     ldapDialer,
+		config:         config,
+		userProvider:   userProvider,
+		enforcer:       enforcer,
 	}
 }
 
@@ -196,6 +202,15 @@ func (p *ldapProvider) saveUser(
 	}
 
 	if user == nil {
+		err = p.roleCollection.FindOne(ctx, bson.M{"name": p.config.DefaultRole}).Err()
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil, fmt.Errorf("role %s doesn't exist", p.config.DefaultRole)
+			}
+
+			return nil, err
+		}
+
 		user = &security.User{
 			Name:       username,
 			Roles:      []string{p.config.DefaultRole},
