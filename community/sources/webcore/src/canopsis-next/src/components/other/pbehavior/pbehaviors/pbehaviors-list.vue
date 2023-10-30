@@ -37,40 +37,28 @@
     template(#is_active_status="{ item }")
       v-icon(:color="item.is_active_status ? 'primary' : 'error'") $vuetify.icons.settings_sync
     template(#actions="{ item }")
-      v-layout(row)
-        c-action-btn(
-          v-if="updatable",
-          :tooltip="item.editable ? $t('common.edit') : $t('pbehavior.notEditable')",
-          :badge-value="isOldPattern(item)",
-          :badge-tooltip="$t('pattern.oldPatternTooltip')",
-          type="edit",
-          @click="$emit('edit', item)"
-        )
-        c-action-btn(
-          v-if="duplicable",
-          type="duplicate",
-          @click="$emit('duplicate', item)"
-        )
-        c-action-btn(
-          v-if="removable",
-          type="delete",
-          @click="$emit('remove', item._id)"
-        )
+      pbehavior-actions(
+        :pbehavior="item",
+        :removable="removable",
+        :updatable="updatable",
+        :duplicable="duplicable",
+        @refresh="$emit('refresh')"
+      )
     template(#expand="{ item }")
       pbehaviors-list-expand-item(:pbehavior="item")
 </template>
 
 <script>
-import { isOldPattern } from '@/helpers/entities/pattern/form';
-
 import { pbehaviorsDateFormatMixin } from '@/mixins/pbehavior/pbehavior-date-format';
 
 import PbehaviorsMassActionsPanel from './actions/pbehaviors-mass-actions-panel.vue';
+import PbehaviorActions from './partials/pbehavior-actions.vue';
 import PbehaviorsListExpandItem from './partials/pbehaviors-list-expand-item.vue';
 
 export default {
   inject: ['$system'],
   components: {
+    PbehaviorActions,
     PbehaviorsListExpandItem,
     PbehaviorsMassActionsPanel,
   },
@@ -132,11 +120,6 @@ export default {
         { text: this.$t('common.status'), value: 'is_active_status', sortable: false },
         { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },
       ];
-    },
-  },
-  methods: {
-    isOldPattern(item) {
-      return isOldPattern(item);
     },
   },
 };

@@ -153,7 +153,6 @@ exports[`export-csv Renders \`export-csv\` with custom props 1`] = `
       templates=""
       type="alarm"
       value="[object Object]"
-      without-infos-attributes="without-infos-attributes"
     />
   </div>
 </widget-settings-item-stub>
@@ -428,7 +427,6 @@ exports[`export-csv Renders \`export-csv\` with default props 1`] = `
       label="Export column names"
       templates=""
       type="alarm"
-      without-infos-attributes="without-infos-attributes"
     />
   </div>
 </widget-settings-item-stub>
