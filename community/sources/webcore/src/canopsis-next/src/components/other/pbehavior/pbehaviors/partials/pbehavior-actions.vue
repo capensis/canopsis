@@ -3,8 +3,6 @@
     c-action-btn(
       v-if="updatable",
       :tooltip="pbehavior.editable ? $t('common.edit') : $t('pbehavior.notEditable')",
-      :badge-value="isOldPattern",
-      :badge-tooltip="$t('pattern.oldPatternTooltip')",
       :loading="editing",
       type="edit",
       @click="showEditPbehaviorModal"
@@ -26,8 +24,6 @@
 import { createNamespacedHelpers } from 'vuex';
 
 import { MODALS } from '@/constants';
-
-import { isOldPattern } from '@/helpers/entities/pattern/form';
 
 const { mapActions } = createNamespacedHelpers('pbehavior');
 
@@ -56,11 +52,6 @@ export default {
       editing: false,
       duplicating: false,
     };
-  },
-  computed: {
-    isOldPattern() {
-      return isOldPattern(this.pbehavior);
-    },
   },
   methods: {
     ...mapActions({
