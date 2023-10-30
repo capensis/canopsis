@@ -388,15 +388,28 @@ export default {
       }
     },
 
-    getExportQuery() {
-      const query = this.getQuery();
+    getExportQueryColumns() {
       const {
         widgetExportColumns,
         widgetColumns,
+      } = this.widget.parameters;
+
+      const hasExportColumns = !!widgetExportColumns?.length;
+      const columns = hasExportColumns ? widgetExportColumns : widgetColumns;
+
+      return columns.map(({ value, text, template }) => ({
+        name: value,
+        label: text,
+        template: hasExportColumns ? template : undefined,
+      }));
+    },
+
+    getExportQuery() {
+      const query = this.getQuery();
+      const {
         exportCsvSeparator,
         exportCsvDatetimeFormat,
       } = this.widget.parameters;
-      const columns = widgetExportColumns?.length ? widgetExportColumns : widgetColumns;
 
       return {
         ...pick(query, [
@@ -409,7 +422,7 @@ export default {
           'only_bookmarks',
         ]),
 
-        fields: columns.map(({ value, text }) => ({ name: value, label: text })),
+        fields: this.getExportQueryColumns(),
         filters: query.filters,
         separator: exportCsvSeparator,
         /**
