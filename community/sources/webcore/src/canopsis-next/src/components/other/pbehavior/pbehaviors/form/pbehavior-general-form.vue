@@ -44,7 +44,7 @@
               :no-ending="noEnding",
               :full-day="fullDay",
               @update:start="updateField('tstart', $event)",
-              @update:end="updateTStop"
+              @update:end="updateField('tstop', $event)"
             )
       v-layout(row)
         v-flex(xs6)
@@ -195,10 +195,6 @@ export default {
     this.fetchFieldPbehaviorTypesList();
   },
   methods: {
-    updateTStop(tstop) {
-      this.updateField('tstop', tstop ? convertDateToEndOfUnitDateObject(tstop, TIME_UNITS.minute) : tstop);
-    },
-
     updateStartOnTrigger(value) {
       if (value) {
         this.fullDay = false;

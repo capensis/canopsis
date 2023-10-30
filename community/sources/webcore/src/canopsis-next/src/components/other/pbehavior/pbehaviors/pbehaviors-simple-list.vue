@@ -36,15 +36,12 @@
       template(#status="{ item }")
         v-icon(:color="item.is_active_status ? 'primary' : 'error'") $vuetify.icons.settings_sync
       template(#actions="{ item }")
-        v-layout(row)
-          c-action-btn(
-            v-if="updatable",
-            :disabled="!item.editable",
-            :tooltip="item.editable ? $t('common.edit') : $t('pbehavior.notEditable')",
-            type="edit",
-            @click="showEditPbehaviorModal(item)"
-          )
-          c-action-btn(v-if="removable", type="delete", @click="showDeletePbehaviorModal(item._id)")
+        pbehavior-actions(
+          :pbehavior="item",
+          :removable="removable",
+          :updatable="updatable",
+          @refresh="fetchList"
+        )
 </template>
 
 <script>
@@ -58,6 +55,8 @@ import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
 
 import { pbehaviorsDateFormatMixin } from '@/mixins/pbehavior/pbehavior-date-format';
 
+import PbehaviorActions from './partials/pbehavior-actions.vue';
+
 const { mapActions } = createNamespacedHelpers('pbehavior');
 
 export default {
@@ -69,6 +68,7 @@ export default {
       },
     },
   },
+  components: { PbehaviorActions },
   mixins: [pbehaviorsDateFormatMixin],
   props: {
     entity: {
@@ -139,18 +139,7 @@ export default {
   methods: {
     ...mapActions({
       fetchPbehaviorsByEntityIdWithoutStore: 'fetchListByEntityIdWithoutStore',
-      removePbehavior: 'removeWithoutStore',
     }),
-
-    showEditPbehaviorModal(pbehavior) {
-      this.$modals.show({
-        name: MODALS.pbehaviorPlanning,
-        config: {
-          pbehaviors: [pbehavior],
-          afterSubmit: this.fetchList,
-        },
-      });
-    },
 
     showPbehaviorsCalendarModal() {
       this.$modals.show({
@@ -168,19 +157,6 @@ export default {
         config: {
           entityPattern: createEntityIdPatternByValue(this.entity._id),
           afterSubmit: this.fetchList,
-        },
-      });
-    },
-
-    showDeletePbehaviorModal(pbehaviorId) {
-      this.$modals.show({
-        name: MODALS.confirmation,
-        config: {
-          action: async () => {
-            await this.removePbehavior({ id: pbehaviorId });
-
-            return this.fetchList();
-          },
         },
       });
     },
