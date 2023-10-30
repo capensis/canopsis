@@ -13,15 +13,15 @@
         color="primary"
       )
         template(#label)
-          span.mr-2 {{ $t(`stateSetting.computeMethods.${method}.label`) }}
+          span.mr-2 {{ $t(`stateSetting.methods.${method}.label`) }}
           c-help-icon(
-            :text="$t(`stateSetting.computeMethods.${method}.tooltip`)",
+            :text="$t(`stateSetting.methods.${method}.tooltip`)",
             top
           )
 </template>
 
 <script>
-import { STATE_SETTING_COMPUTE_METHODS } from '@/constants';
+import { STATE_SETTING_METHODS } from '@/constants';
 
 export default {
   inject: ['$validator'],
@@ -32,12 +32,12 @@ export default {
   props: {
     value: {
       type: String,
-      default: STATE_SETTING_COMPUTE_METHODS.inherit,
+      default: STATE_SETTING_METHODS.inherited,
     },
   },
   computed: {
     methods() {
-      return STATE_SETTING_COMPUTE_METHODS;
+      return STATE_SETTING_METHODS;
     },
   },
 };
