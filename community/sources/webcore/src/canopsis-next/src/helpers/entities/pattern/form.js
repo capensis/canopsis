@@ -29,8 +29,6 @@ import {
   EVENT_FILTER_PATTERN_FIELDS,
   PATTERN_OPERATORS,
   SERVICE_WEATHER_PATTERN_FIELDS,
-  OLD_PATTERNS_FIELDS,
-  OLD_PATTERN_FIELDS_TO_NEW_FIELDS,
   QUICK_RANGES,
   PATTERN_QUICK_RANGES,
   PATTERNS_FIELDS,
@@ -128,7 +126,6 @@ import {
 /**
  * @typedef {Pattern} PatternForm
  * @property {PatternGroupsForm} groups
- * @property {Object} old_mongo_query
  */
 
 /**
@@ -648,22 +645,6 @@ export const createEntityIdPatternByValue = value => [[{
 }]];
 
 /**
- * Check if pattern for source is old (was not migrated)
- *
- * @param {Object} source
- * @param {string[]} [oldFields = OLD_PATTERNS_FIELDS.mongoQuery]
- * @returns {boolean}
- */
-export const isOldPattern = (source, oldFields = [OLD_PATTERNS_FIELDS.mongoQuery]) => {
-  const notEmptyOldFields = oldFields.filter(field => source[field]);
-
-  return !!notEmptyOldFields.length
-    && notEmptyOldFields.every(field => (
-      OLD_PATTERN_FIELDS_TO_NEW_FIELDS[field].every(newField => !source[newField]?.length)
-    ));
-};
-
-/**
  * Convert pattern rule to form
  *
  * @param {PatternRule} rule
@@ -902,7 +883,6 @@ export const patternToForm = (pattern = {}) => ({
   id: pattern.id ?? PATTERN_CUSTOM_ITEM_VALUE,
   type: pattern.type ?? PATTERN_TYPES.alarm,
   is_corporate: pattern.is_corporate ?? false,
-  old_mongo_query: pattern.old_mongo_query,
   groups: patternsToGroups(
     pattern.alarm_pattern
     || pattern.entity_pattern

@@ -1,17 +1,10 @@
-import {
-  cloneDeep,
-  pick,
-  isEmpty,
-  omit,
-  omitBy,
-} from 'lodash';
+import { cloneDeep, pick, isEmpty, omitBy } from 'lodash';
 import flatten from 'flat';
 
 import {
   EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
   EVENT_FILTER_ENRICHMENT_AFTER_TYPES,
   EVENT_FILTER_TYPES,
-  OLD_PATTERNS_FIELDS,
   PATTERNS_FIELDS,
 } from '@/constants';
 
@@ -126,20 +119,10 @@ export const eventFilterConfigToForm = (eventFilterConfig = {}) => ({
  * @param {EventFilter} eventFilter
  * @returns {FilterPatterns}
  */
-export const eventFilterPatternToForm = (eventFilter) => {
-  const entityPattern = eventFilter[PATTERNS_FIELDS.entity];
-  const eventPattern = eventFilter[PATTERNS_FIELDS.event];
-
-  const eventFilterWithPatterns = entityPattern?.length || eventPattern?.length
-    ? omit(eventFilter, [OLD_PATTERNS_FIELDS.patterns])
-    : eventFilter;
-
-  return filterPatternsToForm(
-    eventFilterWithPatterns,
-    [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.event],
-    [OLD_PATTERNS_FIELDS.patterns, OLD_PATTERNS_FIELDS.patterns],
-  );
-};
+export const eventFilterPatternToForm = eventFilter => filterPatternsToForm(
+  eventFilter,
+  [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.event],
+);
 
 /**
  * Convert event filter to form
