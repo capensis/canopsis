@@ -24,7 +24,7 @@ export const layoutNavigationGroupsBarGroupMixin = {
         config: {
           title: this.$t('modals.group.edit.title'),
           group: this.group,
-          deletable: this.hasDeleteAnyViewAccess,
+          deletable: this.group.is_private || this.hasDeleteAnyViewAccess,
           remove: async () => {
             const removeFunction = this.group.is_private
               ? this.removePrivateGroup
