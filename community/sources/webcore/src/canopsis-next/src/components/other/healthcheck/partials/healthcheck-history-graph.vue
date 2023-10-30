@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.healthcheck-history(@touchend.stop)
+  div.healthcheck-history(@touchend.stop="")
     v-layout.ml-4.mb-4(align-center)
       c-quick-date-interval-field(
         :interval="pagination.interval",
