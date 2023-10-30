@@ -27,11 +27,12 @@
       ref="calendar"
       v-bind="$attrs"
       v-on="calendarListeners"
-      :class="['c-calendar__calendar', { 'c-calendar__calendar--dragging': dragging }]"
+      :class="calendarClasses"
       :value="focus"
       :events="availableEvents"
       :type="type"
       :event-color="getEventColor"
+      :event-height="calendarEventHeight"
     >
       <template #event="{ event, start, end }">
         <v-layout
@@ -50,6 +51,7 @@
           <div
             v-if="end"
             :class="['c-calendar__event-drag-bottom', { 'c-calendar__event-drag-bottom--right': isMonthType }]"
+            @mousedown.stop="startResize(event)"
           />
         </v-layout>
       </template>
@@ -108,15 +110,19 @@ export default {
         stop: null,
       },
 
-      creating: false,
-      newEvent: null,
-
+      popoverOpen: false,
       dragging: false,
+      resizing: false,
+      creating: false,
+
       dragStartTime: 0,
+
+      newEvent: null,
+      popoverEvent: null,
       editEvent: null,
 
-      popoverOpen: false,
-      popoverEvent: null,
+      movingEnd: true,
+
       positionY: null,
       positionX: null,
     };
@@ -136,6 +142,23 @@ export default {
         : this.events;
     },
 
+    calendarEventHeight() {
+      return {
+        [CALENDAR_TYPES.day]: 0,
+        [CALENDAR_TYPES.week]: 0,
+        [CALENDAR_TYPES.month]: 20,
+      }[this.type];
+    },
+
+    calendarClasses() {
+      return ['c-calendar__calendar', {
+        'c-calendar__calendar--dragging': this.dragging,
+        'c-calendar__calendar--creating': this.creating,
+        'c-calendar__calendar--resizing-month': this.resizing && this.isMonthType,
+        'c-calendar__calendar--resizing-day': this.resizing && !this.isMonthType,
+      }];
+    },
+
     calendarListeners() {
       const listeners = {
         input: this.setCalendarFocus,
@@ -152,8 +175,8 @@ export default {
         listeners['mouseup:time'] = this.finishCreateEvent;
         listeners['mouseup:day'] = this.finishCreateEvent;
 
-        listeners['mousemove:day'] = this.handleMouseMoveEventCreate;
-        listeners['mousemove:time'] = this.handleMouseMoveEventCreate;
+        listeners['mousemove:day'] = this.handleMouseMoveEvent;
+        listeners['mousemove:time'] = this.handleMouseMoveEvent;
       }
 
       if (this.dragging) {
@@ -162,6 +185,14 @@ export default {
 
         listeners['mousemove:day'] = this.handleMouseMoveEventDrag;
         listeners['mousemove:time'] = this.handleMouseMoveEventDrag;
+      }
+
+      if (this.resizing) {
+        listeners['mouseup:time'] = this.finishResizeEvent;
+        listeners['mouseup:day'] = this.finishResizeEvent;
+
+        listeners['mousemove:day'] = this.handleMouseMoveEvent;
+        listeners['mousemove:time'] = this.handleMouseMoveEvent;
       }
 
       return listeners;
@@ -247,13 +278,44 @@ export default {
       return date;
     },
 
-    handleMouseMoveEventCreate(event) {
-      this.newEvent.end = this.getDateByEvent(event);
+    getStartDate(date, timed) {
+      return timed ? new Date(date) : convertDateToStartOfDayDateObject(date);
+    },
+
+    getEndDate(date, timed) {
+      return timed ? new Date(date) : convertDateToEndOfDayDateObject(date);
+    },
+
+    handleMouseMoveEvent(event) {
+      const timed = !!event.time;
+
+      const eventDate = this.getDateByEvent(event);
+      const newEnd = this.getEndDate(eventDate, timed);
+      const newStart = this.getStartDate(eventDate, timed);
+
+      const currentEvent = this.creating ? this.newEvent : this.editEvent;
+
+      if (this.movingEnd && newEnd.getTime() < currentEvent.start.getTime()) {
+        this.movingEnd = false;
+        currentEvent.end = this.getEndDate(currentEvent.start, timed);
+      } else if (!this.movingEnd && newStart.getTime() > currentEvent.end.getTime()) {
+        this.movingEnd = true;
+        currentEvent.start = this.getStartDate(currentEvent.end, timed);
+      }
+
+      if (this.movingEnd) {
+        currentEvent.end = newEnd;
+      } else {
+        currentEvent.start = newStart;
+      }
     },
 
     startCreateEvent(event) {
-      const start = this.getDateByEvent(event);
-      const end = new Date(start.getTime());
+      const timed = !!event.time;
+
+      const eventDate = this.getDateByEvent(event);
+      const start = this.getStartDate(eventDate, timed);
+      const end = this.getEndDate(eventDate, timed);
 
       if (event.time) {
         end.setMinutes(start.getMinutes() + 15);
@@ -263,15 +325,14 @@ export default {
         name: this.$t('calendar.noTitle'),
         start,
         end,
-        timed: !!event.time,
+        timed,
         data: {},
       };
       this.creating = true;
+      this.movingEnd = true;
     },
 
     finishCreateEvent(event, nativeEvent) {
-      this.newEvent.end = this.getDateByEvent(event);
-
       this.showCreateEventPopover(this.newEvent, nativeEvent.target);
 
       this.creating = false;
@@ -317,6 +378,19 @@ export default {
       this.dragStartTime = 0;
       this.dragging = false;
     },
+
+    startResize(event) {
+      this.editEvent = { ...event };
+      this.resizing = true;
+    },
+
+    finishResizeEvent(event, nativeEvent) {
+      nativeEvent.stopPropagation();
+
+      this.showCreateEventPopover(this.newEvent, nativeEvent.target);
+
+      this.resizing = false;
+    },
   },
 };
 </script>
@@ -332,9 +406,20 @@ export default {
 
     &--dragging {
       cursor: grab;
+    }
 
-      .v-event {
+    &--resizing-month {
+      cursor: ew-resize;
+    }
+
+    &--resizing-day {
+      cursor: ns-resize;
+    }
+
+    &--dragging, &--creating, &--resizing-day, &--resizing-month {
+      .v-event, .v-event-timed {
         pointer-events: none;
+        user-select: none;
       }
     }
   }
