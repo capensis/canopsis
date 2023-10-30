@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { keyBy, merge } from 'lodash';
+import { keyBy, mergeWith, isArray } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import {
@@ -308,10 +308,11 @@ export default {
     },
 
     availableEntityAttributes() {
-      const mergedAttributes = merge(
+      const mergedAttributes = mergeWith(
         {},
         this.availableAttributesByValue,
         this.externalAttributesByValue,
+        (a, b) => (isArray(b) ? b : undefined),
       );
 
       return Object.values(mergedAttributes);

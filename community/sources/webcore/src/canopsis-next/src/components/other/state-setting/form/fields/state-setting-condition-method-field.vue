@@ -2,6 +2,7 @@
   v-radio-group.mt-0(
     v-field="value",
     :label="label",
+    :disabled="disabled",
     hide-details,
     mandatory,
     row
@@ -16,7 +17,7 @@
 </template>
 
 <script>
-import { STATE_SETTING_CALCULATION_METHODS } from '@/constants';
+import { STATE_SETTING_CONDITIONS_METHODS } from '@/constants';
 
 export default {
   inject: ['$validator'],
@@ -27,16 +28,20 @@ export default {
   props: {
     value: {
       type: String,
-      default: STATE_SETTING_CALCULATION_METHODS.share,
+      default: STATE_SETTING_CONDITIONS_METHODS.share,
     },
     label: {
       type: String,
       default: '',
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     methods() {
-      return STATE_SETTING_CALCULATION_METHODS;
+      return STATE_SETTING_CONDITIONS_METHODS;
     },
   },
 };
