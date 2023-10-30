@@ -788,8 +788,9 @@ func (h *hub) listen(connId string, conn Connection) {
 
 			closeErr := &websocket.CloseError{}
 			if errors.As(err, &closeErr) {
-				if closeErr.Code != websocket.CloseNormalClosure {
+				if closeErr.Code != websocket.CloseNormalClosure && closeErr.Code != websocket.CloseGoingAway {
 					h.logger.
+						Warn().
 						Err(err).
 						Str("addr", conn.RemoteAddr().String()).
 						Msg("connection closed unexpectedly")
