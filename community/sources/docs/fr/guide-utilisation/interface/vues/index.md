@@ -3,7 +3,12 @@
 ## Création d'une vue
 
 Dans Canopsis, la création d'une vue est trés simple, il vous suffit de cliquer sur le bouton 'Créer une vue', présent dans le menu 'Paramètres' de la barre latérale.
-![Bouton création vue ](./img/bouton_creation_vue.png  "Bouton création vue")
+
+![Bouton création vue](./img/bouton_creation_vue.png  "Bouton création vue")
+
+Si vous en avez le droit, il vous est également possible de créer une vue privée.  Cette vue ne sera visible que de son créateur.
+
+![Bouton création vue privée](./img/bouton_creation_vue_privee.png  "Bouton création vue privée")
 
 Une fenêtre apparaît :
 
