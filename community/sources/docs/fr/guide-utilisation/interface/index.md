@@ -8,6 +8,7 @@ Elle n'est officiellement compatible qu'avec une version raisonnablement récent
 
 Canopsis fonctionne avec un système de vues, personnalisables, regroupées dans des groupes de vues.  
 Si vous avez les droits nécessaires, il vous est possible de créer/modifier des vues et des groupes de vues.  
+Par ailleurs, il exite également un système de vues privées qui permet à un utilisateur de créer des vues qui ne seront visibles que de lui.  
 Pour plus de détails concernant les vues, rendez-vous dans la section "Les vues", en cliquant [ici](./vues/index.md).
 
 ## Les widgets
