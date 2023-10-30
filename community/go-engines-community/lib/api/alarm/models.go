@@ -199,11 +199,11 @@ type DetailsResponse struct {
 }
 
 type EntityDetails struct {
-	types.Entity
+	types.Entity `bson:",inline" json:",inline"`
 	// DependsCount contains only service's dependencies
-	DependsCount *int `bson:"depends_count" json:"depends_count,omitempty"`
+	DependsCount int `bson:"depends_count" json:"depends_count"`
 	// ImpactsCount contains only services
-	ImpactsCount *int `bson:"impacts_count" json:"impacts_count,omitempty"`
+	ImpactsCount int `bson:"impacts_count" json:"impacts_count"`
 }
 
 type Details struct {
