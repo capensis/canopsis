@@ -7,67 +7,61 @@
           :step="steps.BASICS",
           :rules="[() => !hasBasicsFormAnyError]",
           editable
-        ) {{ $t('common.basics') }}
+        ) {{ $t('stateSetting.steps.basics') }}
         v-divider
         v-stepper-step(
-          :complete="stepper > steps.ENTITIES",
-          :step="steps.ENTITIES",
-          :rules="[() => !hasEntitiesFormAnyError]",
+          :complete="stepper > steps.RULE_PATTERNS",
+          :step="steps.RULE_PATTERNS",
+          :rules="[() => !hasRulePatternsFormAnyError]",
           editable
-        ) {{ $t('common.entities') }}
+        ) {{ $t('stateSetting.steps.rulePatterns') }}
         v-divider
         v-stepper-step(
           :complete="stepper > steps.CONDITIONS",
           :step="steps.CONDITIONS",
           :rules="[() => !hasConditionsFormAnyError]",
           editable
-        ) {{ $t('common.conditions') }}
+        ) {{ $t('stateSetting.steps.conditions') }}
       v-stepper-items
         v-stepper-content(:step="steps.BASICS")
-          v-layout(column)
-            v-layout(row)
-              v-flex(xs7)
-                c-name-field.mr-2(
-                  v-field="form.title",
-                  :label="$t('common.title')",
-                  name="title",
-                  required
-                )
-              v-flex(xs3)
-                c-priority-field.mx-2(
-                  v-field="form.priority",
-                  required
-                )
-              v-flex(xs2)
-                c-enabled-field.ml-2
-            state-setting-compute-method-field(v-field="form.method")
-            state-setting-target-entity-state-field(v-field="form", label="critical")
-        v-stepper-content(:step="steps.ENTITIES")
-          span ENTITIES
+          state-setting-basics-step(
+            ref="basicsForm",
+            v-field="form"
+          )
+        v-stepper-content(:step="steps.RULE_PATTERNS")
+          state-setting-rule-patterns-step(
+            ref="rulePatternsForm",
+            v-field="form.rule_patterns"
+          )
         v-stepper-content(:step="steps.CONDITIONS")
-          span CONDITIONS
+          state-setting-impacting-patterns-step(
+            ref="conditionsForm",
+            v-if="isInheritedMethod",
+            v-field="form.impacting_patterns"
+          )
+          state-setting-conditions-step(
+            ref="conditionsForm",
+            v-else,
+            v-field="form.conditions"
+          )
 </template>
 
 <script>
-import { STATE_SETTING_COMPUTE_METHODS, STATE_SETTING_METHODS } from '@/constants';
+import { STATE_SETTING_METHODS } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
 
-import CNameField from '@/components/forms/fields/c-name-field.vue';
-import CEnabledField from '@/components/forms/fields/c-enabled-field.vue';
-import CPriorityField from '@/components/forms/fields/c-priority-field.vue';
-
-import StateSettingComputeMethodField from './fields/state-setting-compute-method-field.vue';
-import StateSettingTargetEntityStateField from './fields/state-setting-target-entity-state-field.vue';
+import StateSettingBasicsStep from './steps/state-setting-basics-step.vue';
+import StateSettingRulePatternsStep from './steps/state-setting-rule-patterns-step.vue';
+import StateSettingImpactingPatternsStep from './steps/state-setting-impacting-patterns-step.vue';
+import StateSettingConditionsStep from './steps/state-setting-conditions-step.vue';
 
 export default {
-  inject: ['$validator'],
   components: {
-    CPriorityField,
-    CEnabledField,
-    CNameField,
-    StateSettingComputeMethodField,
-    StateSettingTargetEntityStateField,
+    StateSettingBasicsStep,
+    StateSettingRulePatternsStep,
+    StateSettingImpactingPatternsStep,
+    StateSettingConditionsStep,
   },
   mixins: [formMixin],
   model: {
@@ -84,39 +78,36 @@ export default {
     return {
       stepper: 1,
       hasBasicsFormAnyError: false,
-      hasEntitiesFormAnyError: false,
+      hasRulePatternsFormAnyError: false,
       hasConditionsFormAnyError: false,
     };
   },
   computed: {
-    STATE_SETTING_COMPUTE_METHODS() {
-      return STATE_SETTING_COMPUTE_METHODS;
-    },
     steps() {
       return {
         BASICS: 1,
-        ENTITIES: 2,
+        RULE_PATTERNS: 2,
         CONDITIONS: 3,
       };
     },
 
-    isWorstOfShareMethod() {
-      return this.form.method === STATE_SETTING_METHODS.worstOfShare;
+    isInheritedMethod() {
+      return this.form.method === STATE_SETTING_METHODS.inherited;
     },
   },
 
   mounted() {
-    /*    this.$watch(() => this.$refs.generalForm.hasAnyError, (value) => {
+    this.$watch(() => this.$refs.basicsForm.hasAnyError, (value) => {
       this.hasBasicsFormAnyError = value;
     });
 
-    this.$watch(() => this.$refs.infosForm.hasAnyError, (value) => {
-      this.hasEntitiesFormAnyError = value;
+    this.$watch(() => this.$refs.rulePatternsForm.hasAnyError, (value) => {
+      this.hasRulePatternsFormAnyError = value;
     });
 
-    this.$watch(() => this.$refs.patternsForm.hasAnyError, (value) => {
+    this.$watch(() => this.$refs.conditionsForm.hasAnyError, (value) => {
       this.hasConditionsFormAnyError = value;
-    }); */
+    });
   },
 };
 </script>
@@ -124,5 +115,9 @@ export default {
 <style lang="scss">
 .state-setting-form {
   background-color: transparent !important;
+
+  .v-stepper__wrapper {
+    overflow: unset;
+  }
 }
 </style>

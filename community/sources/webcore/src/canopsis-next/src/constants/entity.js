@@ -337,22 +337,12 @@ export const COLOR_INDICATOR_TYPES = {
   impactState: 'impact_state',
 };
 
-export const STATE_SETTING_METHODS = { // TODO: remove
-  worst: 'worst',
-  worstOfShare: 'worst_of_share',
+export const STATE_SETTING_METHODS = {
+  inherited: 'inherited',
+  dependenciesState: 'dependencies_state',
 };
 
-export const STATE_SETTING_THRESHOLD_TYPES = { // TODO: remove
-  number: 0,
-  percent: 1,
-};
-
-export const STATE_SETTING_COMPUTE_METHODS = {
-  inherit: 'inherit',
-  shareOfDependencies: 'shareOfDependencies',
-};
-
-export const STATE_SETTING_CALCULATION_METHODS = {
+export const STATE_SETTING_CONDITIONS_METHODS = {
   share: 'share',
   number: 'number',
 };

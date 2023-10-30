@@ -648,19 +648,19 @@ export default {
   },
   createStateSetting: {
     create: {
-      title: 'Create state compute method',
-      success: 'State compute method created!',
+      title: 'Créer une méthode de calcul d\'état',
+      success: 'Méthode de calcul d\'état créée !',
     },
     edit: {
-      title: 'Edit state compute method',
-      success: 'State compute method edited!',
+      title: 'Modifier la méthode de calcul de l\'état',
+      success: 'Méthode de calcul d\'état modifiée !',
     },
     duplicate: {
-      title: 'Duplicate state compute method',
-      success: 'State compute method duplicated!',
+      title: 'Méthode de calcul d\'état en double',
+      success: 'Méthode de calcul d\'état dupliquée !',
     },
     remove: {
-      success: 'State compute method deleted!',
+      success: 'Méthode de calcul d\'état supprimée !',
     },
   },
   defineStorage: {
