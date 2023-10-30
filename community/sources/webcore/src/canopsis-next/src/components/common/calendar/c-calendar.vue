@@ -151,12 +151,16 @@ export default {
     },
 
     calendarClasses() {
-      return ['c-calendar__calendar', {
+      const classes = ['c-calendar__calendar', {
         'c-calendar__calendar--dragging': this.dragging,
         'c-calendar__calendar--creating': this.creating,
-        'c-calendar__calendar--resizing-month': this.resizing && this.isMonthType,
-        'c-calendar__calendar--resizing-day': this.resizing && !this.isMonthType,
       }];
+
+      if (this.creating || this.resizing) {
+        classes.push(this.isMonthType ? 'c-calendar__calendar--resizing-month' : 'c-calendar__calendar--resizing-day');
+      }
+
+      return classes;
     },
 
     calendarListeners() {
