@@ -6,7 +6,7 @@
       template(#text="")
         c-payload-textarea-field(
           v-model="form.text",
-          :required="config.rules?.required",
+          :required="isRequired",
           :label="config.label",
           :name="config.name",
           :variables="config.variables",
@@ -63,6 +63,10 @@ export default {
 
     variables() {
       return this.config.variables;
+    },
+
+    isRequired() {
+      return this.config.rules?.required;
     },
   },
   methods: {
