@@ -97,6 +97,8 @@ func (s *store) Toggle(ctx context.Context, id string, enabled bool) (bool, Simp
 			}},
 			{"$project": bson.M{
 				"_id":       1,
+				"name":      1,
+				"component": 1,
 				"enabled":   1,
 				"type":      1,
 				"resources": bson.M{"$map": bson.M{"input": "$resources", "in": "$$this._id"}},

@@ -6,9 +6,7 @@ import (
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
@@ -20,8 +18,6 @@ type EventPublisher interface {
 }
 
 type eventPublisher struct {
-	alarmAdapter  libalarm.Adapter
-	entityAdapter entity.Adapter
 	encoder       encoding.Encoder
 	amqpPublisher libamqp.Publisher
 	// contentType is added to amqp message to support encoded format.
@@ -32,7 +28,9 @@ type eventPublisher struct {
 }
 
 type ChangeEntityMessage struct {
-	ID string
+	ID        string
+	Name      string
+	Component string
 	// IsToggled is true if entity is disabled or enabled.
 	IsToggled  bool
 	EntityType string
@@ -43,8 +41,6 @@ type ChangeEntityMessage struct {
 }
 
 func NewEventPublisher(
-	alarmAdapter libalarm.Adapter,
-	entityAdapter entity.Adapter,
 	publisher libamqp.Publisher,
 	encoder encoding.Encoder,
 	contentType string,
@@ -52,8 +48,6 @@ func NewEventPublisher(
 	logger zerolog.Logger,
 ) EventPublisher {
 	return &eventPublisher{
-		alarmAdapter:  alarmAdapter,
-		entityAdapter: entityAdapter,
 		amqpPublisher: publisher,
 		encoder:       encoder,
 		contentType:   contentType,
@@ -100,8 +94,8 @@ func (p *eventPublisher) publishServiceEvent(ctx context.Context, msg ChangeEnti
 
 	event := types.Event{
 		EventType:     eventType,
-		Connector:     types.ConnectorEngineService,
-		ConnectorName: types.ConnectorEngineService,
+		Connector:     types.ConnectorApi,
+		ConnectorName: types.ConnectorApi,
 		Component:     msg.ID,
 		Timestamp:     types.NewCpsTime(),
 		Author:        canopsis.DefaultEventAuthor,
@@ -119,53 +113,25 @@ func (p *eventPublisher) publishServiceEvent(ctx context.Context, msg ChangeEnti
 }
 
 func (p *eventPublisher) publishBasicEntityEvent(ctx context.Context, msg ChangeEntityMessage) {
-	alarms, err := p.alarmAdapter.GetAlarmsByID(ctx, msg.ID)
-	if err != nil {
-		p.logger.Err(err).Msg("cannot find alarm")
-		return
-	}
-
 	var event types.Event
-
-	if len(alarms) == 0 {
-		switch msg.EntityType {
-		case types.EntityTypeComponent:
-			connector, err := p.entityAdapter.FindConnector(ctx, msg.ID)
-			if err != nil || connector == nil {
-				p.logger.Warn().Str("entity", msg.ID).Msg("cannot generate event to component: no alarms and no connector")
-				return
-			}
-			event = types.Event{
-				Connector:     strings.ReplaceAll(connector.ID, "/"+connector.Name, ""),
-				ConnectorName: connector.Name,
-				Component:     msg.ID,
-			}
-		case types.EntityTypeResource:
-			connector, err := p.entityAdapter.FindConnector(ctx, msg.ID)
-			if err != nil || connector == nil {
-				p.logger.Warn().Str("entity", msg.ID).Msg("cannot generate event to resource: no alarms and no connector")
-				return
-			}
-			component, err := p.entityAdapter.FindComponent(ctx, msg.ID)
-			if err != nil || component == nil {
-				p.logger.Warn().Str("entity", msg.ID).Msg("cannot generate event to resource: no alarms and no component")
-				return
-			}
-
-			event = types.Event{
-				Connector:     strings.ReplaceAll(connector.ID, "/"+connector.Name, ""),
-				ConnectorName: connector.Name,
-				Component:     component.ID,
-				Resource:      strings.ReplaceAll(msg.ID, "/"+component.ID, ""),
-			}
-		}
-	} else {
-		alarm := alarms[0]
+	switch msg.EntityType {
+	case types.EntityTypeConnector:
 		event = types.Event{
-			Connector:     alarm.Value.Connector,
-			ConnectorName: alarm.Value.ConnectorName,
-			Component:     alarm.Value.Component,
-			Resource:      alarm.Value.Resource,
+			Connector:     strings.ReplaceAll(msg.ID, "/"+msg.Name, ""),
+			ConnectorName: msg.Name,
+		}
+	case types.EntityTypeComponent:
+		event = types.Event{
+			Connector:     types.ConnectorApi,
+			ConnectorName: types.ConnectorApi,
+			Component:     msg.ID,
+		}
+	case types.EntityTypeResource:
+		event = types.Event{
+			Connector:     types.ConnectorApi,
+			ConnectorName: types.ConnectorApi,
+			Component:     msg.Component,
+			Resource:      msg.Name,
 		}
 	}
 
@@ -179,7 +145,7 @@ func (p *eventPublisher) publishBasicEntityEvent(ctx context.Context, msg Change
 	event.Author = canopsis.DefaultEventAuthor
 	event.Initiator = types.InitiatorSystem
 	event.SourceType = event.DetectSourceType()
-	err = p.publishEvent(ctx, event)
+	err := p.publishEvent(ctx, event)
 	if err != nil {
 		p.logger.Err(err).Str("entity_id", msg.ID).Msg("cannot send event to amqp")
 		return
