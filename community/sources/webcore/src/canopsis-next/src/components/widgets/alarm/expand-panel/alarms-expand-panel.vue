@@ -246,12 +246,9 @@ export default {
     },
 
     hasImpactsDependencies() {
-      const { impact } = this.alarm.entity;
+      const { impacts_count: impactsCount } = this.alarm.entity;
 
-      return this.hasServiceDependencies
-        ? impact?.length > 0
-        // resource and component types having one basic entity into impact
-        : impact?.length > 1;
+      return impactsCount > 0;
     },
 
     hasEntityGantt() {
