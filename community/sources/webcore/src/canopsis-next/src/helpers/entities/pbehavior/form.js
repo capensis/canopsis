@@ -338,8 +338,8 @@ export const calendarEventToPbehaviorForm = (
 /**
  * Check pbehavior is full day
  *
- * @param {number} start
- * @param {number} stop
+ * @param {LocalDate} start
+ * @param {LocalDate} stop
  * @return {boolean}
  */
 export const isFullDayEvent = (start, stop) => {

@@ -22,10 +22,9 @@
         <date-time-splitted-picker-field
           class="ml-3"
           v-field="value.until"
-          v-validate="'required'"
+          v-validate="dateTimeSplittedRules"
           :placeholder="$t('common.date')"
           :disabled="!isDateType"
-          :required="isDateType"
           name="until"
         />
       </template>
@@ -93,6 +92,12 @@ export default {
     };
   },
   computed: {
+    dateTimeSplittedRules() {
+      return {
+        required: this.isDateType,
+      };
+    },
+
     isDateType() {
       return this.type === this.types.date;
     },
