@@ -209,6 +209,7 @@ export default {
     activeDuration: 'Durée active',
     eventsCount: 'Nombre d\'événements',
     extraDetails: 'Détails supplémentaires',
+    alarmInfos: 'Informations sur l\'alarme',
     ticketAuthor: 'Auteur du ticket',
     ticketId: 'ID du ticket',
     ticketMessage: 'Message du ticket',

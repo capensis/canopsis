@@ -8,8 +8,6 @@ exports[`groups-side-bar-group-view Renders \`groups-side-bar-group-view\` with 
   to="[object Object]"
 >
   <group-view-panel-stub
-    allowediting="true"
-    isediting="true"
     isorderchanged="true"
     isviewactive="true"
     view="[object Object]"
@@ -25,7 +23,6 @@ exports[`groups-side-bar-group-view Renders \`groups-side-bar-group-view\` with 
   to="[object Object]"
 >
   <group-view-panel-stub
-    allowediting="true"
     isorderchanged="true"
     view="[object Object]"
   />

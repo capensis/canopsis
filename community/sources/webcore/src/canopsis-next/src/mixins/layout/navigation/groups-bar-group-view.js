@@ -45,7 +45,7 @@ export default {
     },
 
     hasViewEditButtonAccess() {
-      return this.hasDeleteViewAccess && this.isNavigationEditingMode;
+      return this.hasUpdateViewAccess || this.hasDeleteViewAccess;
     },
   },
   methods: {

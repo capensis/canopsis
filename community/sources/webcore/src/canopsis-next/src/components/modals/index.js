@@ -125,6 +125,10 @@ export const TextEditor = () => ({
   component: import(/* webpackChunkName: "Common" */ './common/text-editor.vue'),
   loading: LoaderOverlay,
 });
+export const PayloadTextareaEditor = () => ({
+  component: import(/* webpackChunkName: "Common" */ './common/payload-textarea-editor.vue'),
+  loading: LoaderOverlay,
+});
 export const TextEditorWithTemplate = () => ({
   component: import(/* webpackChunkName: "Common" */ './common/text-editor-with-template.vue'),
   loading: LoaderOverlay,
