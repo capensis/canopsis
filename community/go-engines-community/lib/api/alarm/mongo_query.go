@@ -142,6 +142,7 @@ func (q *MongoQueryBuilder) clear(now types.CpsTime, userID string) {
 	q.lookups = []lookupWithKey{
 		{key: "entity", pipeline: getEntityLookup()},
 		{key: "entity.category", pipeline: getEntityCategoryLookup()},
+		{key: "entity.impacts_counts", pipeline: getImpactsCountPipeline()},
 		{key: "pbehavior", pipeline: getPbehaviorLookup(q.authorProvider)},
 		{key: "pbehavior.type", pipeline: getPbehaviorTypeLookup()},
 		{key: "v.pbehavior_info.icon_name", pipeline: getPbehaviorInfoTypeLookup()},
@@ -1211,8 +1212,13 @@ func (q *MongoQueryBuilder) resolveAlias(v string) string {
 }
 
 func (q *MongoQueryBuilder) handleDependencies(withDependencies bool) {
-	if withDependencies {
-		q.lookups = append(q.lookups, lookupWithKey{key: "entity.impacts_counts", pipeline: getImpactsCountPipeline()})
+	if !withDependencies {
+		for i := 0; i < len(q.lookups); i++ {
+			if q.lookups[i].key == "entity.impacts_counts" {
+				q.lookups = append(q.lookups[:i], q.lookups[i+1:]...)
+				break
+			}
+		}
 	}
 }
 
