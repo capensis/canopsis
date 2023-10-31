@@ -36,9 +36,11 @@ configuration:
       tokensigningmethod: HS256
       exportmongoclienttimeout: 1m
       authorscheme: ["$username", " ", "$firstname", " ", "$lastname", " ", "$email"]
-      metricscachexpiration: 24h
+      metricscacheexpiration: 24h
     data_storage:
       timetoexecute: ""
+      maxupdates: 100000
+      mongoclienttimeout: 1m
     file:
       junit: /tmp/canopsis/junit
       junitapi: /tmp/canopsis/junitapi
@@ -220,6 +222,7 @@ configuration:
 
   configuration_healthcheck:
     _id: health_check
+    update_interval: 10s
     engine_order:
     - from: engine-fifo
       to: engine-che
