@@ -2221,8 +2221,8 @@ Feature: correlation feature - valuegroup rule with threshold count
         "actions": [
           {
             "type" : "set_entity_info_from_template",
-            "name" : "test-info-correlation-valuegroup-count-8",
-            "value" : "{{ `{{ index .Event.ExtraInfos \"test-info-correlation-valuegroup-count-8\" }}` }}"
+            "name" : "test-info-cor-vg-count-8",
+            "value" : "{{ `{{ index .Event.ExtraInfos \"test-info-cor-vg-count-8\" }}` }}"
           }
         ],
         "on_success": "pass",
@@ -2245,7 +2245,7 @@ Feature: correlation feature - valuegroup rule with threshold count
         },
         "threshold_count": 2,
         "value_paths": [
-          "entity.infos.test-info-correlation-valuegroup-count-8.value"
+          "entity.infos.test-info-cor-vg-count-8.value"
         ]
       }
     }
@@ -2258,7 +2258,7 @@ Feature: correlation feature - valuegroup rule with threshold count
     {
       "event_type": "check",
       "state": 2,
-      "test-info-correlation-valuegroup-count-8": "test",
+      "test-info-cor-vg-count-8": "test",
       "connector": "test-connector-correlation-valuegroup-count-8",
       "connector_name": "test-connector-name-correlation-valuegroup-count-8",
       "component":  "test-component-correlation-valuegroup-count-8",
@@ -2271,7 +2271,7 @@ Feature: correlation feature - valuegroup rule with threshold count
     {
       "event_type": "check",
       "state": 3,
-      "test-info-correlation-valuegroup-count-8": "test",
+      "test-info-cor-vg-count-8": "test",
       "connector": "test-connector-correlation-valuegroup-count-8",
       "connector_name": "test-connector-name-correlation-valuegroup-count-8",
       "component":  "test-component-correlation-valuegroup-count-8",
@@ -2465,8 +2465,8 @@ Feature: correlation feature - valuegroup rule with threshold count
         "actions": [
           {
             "type" : "set_entity_info_from_template",
-            "name" : "test-info-correlation-valuegroup-count-9",
-            "value" : "{{ `{{ index .Event.ExtraInfos \"test-info-correlation-valuegroup-count-9\" }}` }}"
+            "name" : "test-info-cor-vg-count-9",
+            "value" : "{{ `{{ index .Event.ExtraInfos \"test-info-cor-vg-count-9\" }}` }}"
           }
         ],
         "on_success": "pass",
@@ -2489,7 +2489,7 @@ Feature: correlation feature - valuegroup rule with threshold count
         },
         "threshold_count": 2,
         "value_paths": [
-          "entity.infos.test-info-correlation-valuegroup-count-9.value"
+          "entity.infos.test-info-cor-vg-count-9.value"
         ]
       }
     }
@@ -2502,7 +2502,7 @@ Feature: correlation feature - valuegroup rule with threshold count
     {
       "event_type": "check",
       "state": 2,
-      "test-info-correlation-valuegroup-count-9": "test-1",
+      "test-info-cor-vg-count-9": "test-1",
       "connector": "test-connector-correlation-valuegroup-count-9",
       "connector_name": "test-connector-name-correlation-valuegroup-count-9",
       "component":  "test-component-correlation-valuegroup-count-9",
@@ -2515,7 +2515,7 @@ Feature: correlation feature - valuegroup rule with threshold count
     {
       "event_type": "check",
       "state": 3,
-      "test-info-correlation-valuegroup-count-9": "test-1",
+      "test-info-cor-vg-count-9": "test-1",
       "connector": "test-connector-correlation-valuegroup-count-9",
       "connector_name": "test-connector-name-correlation-valuegroup-count-9",
       "component":  "test-component-correlation-valuegroup-count-9",
@@ -2609,7 +2609,7 @@ Feature: correlation feature - valuegroup rule with threshold count
     {
       "event_type": "check",
       "state": 2,
-      "test-info-correlation-valuegroup-count-9": "test-1",
+      "test-info-cor-vg-count-9": "test-1",
       "connector": "test-connector-correlation-valuegroup-count-9",
       "connector_name": "test-connector-name-correlation-valuegroup-count-9",
       "component": "test-component-correlation-valuegroup-count-9",
@@ -2656,7 +2656,7 @@ Feature: correlation feature - valuegroup rule with threshold count
     {
       "event_type": "check",
       "state": 2,
-      "test-info-correlation-valuegroup-count-9": "test-1",
+      "test-info-cor-vg-count-9": "test-1",
       "connector": "test-connector-correlation-valuegroup-count-9",
       "connector_name": "test-connector-name-correlation-valuegroup-count-9",
       "component":  "test-component-correlation-valuegroup-count-9",
@@ -2700,7 +2700,7 @@ Feature: correlation feature - valuegroup rule with threshold count
     {
       "event_type": "check",
       "state": 3,
-      "test-info-correlation-valuegroup-count-9": "test-2",
+      "test-info-cor-vg-count-9": "test-2",
       "connector": "test-connector-correlation-valuegroup-count-9",
       "connector_name": "test-connector-name-correlation-valuegroup-count-9",
       "component":  "test-component-correlation-valuegroup-count-9",
@@ -2713,7 +2713,7 @@ Feature: correlation feature - valuegroup rule with threshold count
     {
       "event_type": "check",
       "state": 2,
-      "test-info-correlation-valuegroup-count-9": "test-2",
+      "test-info-cor-vg-count-9": "test-2",
       "connector": "test-connector-correlation-valuegroup-count-9",
       "connector_name": "test-connector-name-correlation-valuegroup-count-9",
       "component":  "test-component-correlation-valuegroup-count-9",

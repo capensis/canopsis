@@ -1,8 +1,8 @@
 <template lang="pug">
   modal-wrapper(close)
-    template(#title)
+    template(#title="")
       span {{ config.title }}
-    template(#text)
+    template(#text="")
       div(v-html="config.text")
 </template>
 
