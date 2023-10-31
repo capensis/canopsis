@@ -276,7 +276,6 @@ func createMockCursorFindAll[T any](ctrl *gomock.Controller, models []T) mongo.C
 	mockCursor.EXPECT().All(gomock.Any(), gomock.Any()).Do(func(ctx context.Context, results any) {
 		reflect.ValueOf(results).Elem().Set(reflect.ValueOf(models))
 	}).Return(nil)
-	mockCursor.EXPECT().Close(gomock.Any()).Return(nil)
 
 	return mockCursor
 }

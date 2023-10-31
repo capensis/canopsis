@@ -1864,10 +1864,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDepence
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(now, ""),
 	})
