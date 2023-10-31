@@ -8,6 +8,11 @@ Voir [le Guide de premier accès](../../guide-utilisation/premier-acces/index.md
 
 ## Accès aux composants internes de Canopsis
 
+De manière générale, les URI de connexion aux différents composants de Canopsis se trouve dans le fichier :
+
+* `/opt/canopsis/etc/go-engines-vars.conf` pour une [installation paquets](../installation-paquets-rhel8/)
+* `compose.env` pour une [installation avec Docker Compose](../installation-conteneurs/)
+
 ### Interface web RabbitMQ
 
 Par défaut, l'interface web d'administration de RabbitMQ est disponible depuis votre navigateur à l'adresse suivante : <http://localhost:15672/>.
@@ -20,7 +25,8 @@ Le bus AMQP RabbitMQ par défaut est : `amqp://cpsrabbit@canopsis:localhost:567
 
 ### MongoDB
 
-En ligne de commande, la base de données MongoDB est accessible avec la commande `mongo -u cpsmongo -p canopsis canopsis`.
+En ligne de commande, la base de données MongoDB est accessible avec la commande  
+`mongo mongodb://cpsmongo:canopsis@mongodb/cnopsis?replicaSet=rs0`
 
 Identifiants par défaut : `cpsmongo` / `canopsis`.
 
