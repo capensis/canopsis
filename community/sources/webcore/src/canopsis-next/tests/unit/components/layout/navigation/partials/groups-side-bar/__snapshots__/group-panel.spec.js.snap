@@ -76,23 +76,7 @@ exports[`group-panel Renders \`group-panel\` with required props 1`] = `
         class="panel-header__actions"
       >
         <!---->
-        <button
-          class="v-btn v-btn--icon v-btn--depressed v-btn--small theme--light"
-          style="display: none;"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-              style="font-size: 16px;"
-            >
-              edit
-            </i>
-          </div>
-        </button>
+        <!---->
       </div>
     </div>
     <transition-stub

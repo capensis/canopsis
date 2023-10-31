@@ -32,8 +32,6 @@ Feature: Import entities
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -169,8 +167,6 @@ Feature: Import entities
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },

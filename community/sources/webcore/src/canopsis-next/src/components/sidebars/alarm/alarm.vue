@@ -303,7 +303,7 @@ export default {
 
     columnsVariables() {
       return [
-        ...this.alarmPayloadSubVariables,
+        ...this.alarmPayloadVariables,
         {
           value: ALARM_PAYLOADS_VARIABLES.infosValue,
           text: this.$t('alarm.fields.alarmInfos'),

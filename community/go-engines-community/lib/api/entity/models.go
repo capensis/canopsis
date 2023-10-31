@@ -200,6 +200,8 @@ type BulkToggleRequestItem struct {
 
 type SimplifiedEntity struct {
 	ID        string   `bson:"_id"`
+	Name      string   `bson:"name"`
+	Component string   `bson:"component"`
 	Type      string   `bson:"type"`
 	Enabled   bool     `bson:"enabled"`
 	Resources []string `bson:"resources"`
