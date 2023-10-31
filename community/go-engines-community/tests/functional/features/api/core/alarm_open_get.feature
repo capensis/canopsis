@@ -53,9 +53,7 @@ Feature: Get alarms
           }
         },
         "name": "test-resource-to-alarm-get-1",
-        "type": "resource",
-        "depends_count": 0,
-        "impacts_count": 0
+        "type": "resource"
       },
       "impact_state": 3,
       "infos": {},
