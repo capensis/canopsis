@@ -290,6 +290,8 @@ func (a *api) toggle(c *gin.Context, enabled bool) {
 		if isToggled {
 			msg := entityservice.ChangeEntityMessage{
 				ID:         simplifiedEntity.ID,
+				Name:       simplifiedEntity.Name,
+				Component:  simplifiedEntity.Component,
 				EntityType: simplifiedEntity.Type,
 				IsToggled:  isToggled,
 			}

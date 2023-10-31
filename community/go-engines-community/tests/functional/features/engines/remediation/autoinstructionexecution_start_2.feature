@@ -220,13 +220,13 @@ Feature: run an auto instruction
         "_t": "instructionjobstart",
         "a": "system",
         "initiator": "system",
-        "m": "Instruction test-instruction-to-run-auto-instruction-second-2-name. Job test-job-to-instruction-edit-1-name."
+        "m": "Instruction test-instruction-to-run-auto-instruction-second-2-name. Job test-job-to-run-auto-instruction-3-name."
       },
       {
         "_t": "instructionjobfail",
         "a": "system",
         "initiator": "system",
-        "m": "Instruction test-instruction-to-run-auto-instruction-second-2-name. Job test-job-to-instruction-edit-1-name."
+        "m": "Instruction test-instruction-to-run-auto-instruction-second-2-name. Job test-job-to-run-auto-instruction-3-name."
       },
       {
         "_t": "autoinstructionfail",

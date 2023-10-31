@@ -6,7 +6,7 @@
       :key="group._id",
       hide-actions
     )
-      template(#title)
+      template(#title="")
         v-checkbox.group-checkbox.mt-0.pt-0(
           :input-value="selected.groups",
           :value="group._id",
@@ -19,7 +19,7 @@
         :key="view._id",
         :view="view"
       )
-        template(#title)
+        template(#title="")
           v-layout(align-center, row, justify-space-between)
             v-checkbox(
               v-field="selected.views",

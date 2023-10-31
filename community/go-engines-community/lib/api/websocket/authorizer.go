@@ -118,7 +118,7 @@ func (a *authorizer) RemoveGroupRoom(group, id string) error {
 
 	room := group + id
 	if _, ok := a.roomPerms[room]; !ok {
-		return fmt.Errorf("%q room doesn't exists", room)
+		return nil
 	}
 
 	delete(a.roomPerms, room)
