@@ -58,7 +58,9 @@
     </v-calendar>
 
     <div class="c-calendar__loader">
-      <slot name="loader" />
+      <slot name="loader">
+        <c-progress-overlay :pending="loading" />
+      </slot>
     </div>
 
     <v-menu
@@ -73,7 +75,7 @@
         <v-card-text>
           <slot
             name="form-event"
-            :close="closeCreateEventPopover"
+            :close="clearPlaceholder"
             :event="newEvent || editEvent || popoverEvent"
           />
         </v-card-text>
@@ -99,6 +101,10 @@ export default {
     events: {
       type: Array,
       default: () => [],
+    },
+    loading: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -220,7 +226,7 @@ export default {
         end: convertDateToEndOfDayDateObject(end.date),
       };
 
-      this.$emit('change');
+      this.$emit('change:pagination');
     },
 
     setFocusDate(date) {
@@ -253,7 +259,7 @@ export default {
       this.popoverOpen = true;
     },
 
-    closeCreateEventPopover() {
+    clearPlaceholder() {
       this.popoverOpen = false;
       this.popoverEvent = null;
       this.newEvent = null;
@@ -346,10 +352,10 @@ export default {
       nativeEvent.stopPropagation();
 
       if (this.editEvent) {
-        this.closeCreateEventPopover();
+        this.clearPlaceholder();
       }
 
-      this.editEvent = { ...event };
+      this.editEvent = { ...event, oldStart: event.start, oldEnd: event.end };
       this.dragging = true;
     },
 
@@ -374,10 +380,19 @@ export default {
       }
     },
 
+    isEditEventChanged() {
+      return this.editEvent.start.getTime() !== this.editEvent.oldStart.getTime()
+        || this.editEvent.end.getTime() !== this.editEvent.oldEnd.getTime();
+    },
+
     finishDragEvent(event, nativeEvent) {
       nativeEvent.stopPropagation();
 
-      this.showCreateEventPopover(this.newEvent, nativeEvent.target);
+      if (this.isEditEventChanged()) {
+        this.$emit('move:event', this.editEvent);
+      } else {
+        this.clearPlaceholder();
+      }
 
       this.dragStartTime = 0;
       this.dragging = false;
@@ -391,7 +406,11 @@ export default {
     finishResizeEvent(event, nativeEvent) {
       nativeEvent.stopPropagation();
 
-      this.showCreateEventPopover(this.newEvent, nativeEvent.target);
+      if (this.isEditEventChanged()) {
+        this.$emit('resize:event', this.editEvent);
+      } else {
+        this.clearPlaceholder();
+      }
 
       this.resizing = false;
     },
@@ -465,6 +484,12 @@ export default {
     width: 980px !important;
     top: 50% !important;
     transform: translate3d(0, -50%, 0);
+  }
+
+  .v-calendar-daily_head-day {
+    .v-event {
+      min-height: 20px;
+    }
   }
 }
 </style>

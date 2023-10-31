@@ -4,18 +4,12 @@
       ref="calendar"
       color="primary"
       :events="events"
-      @changed="changedEventHandler"
-      @moved="changedEventHandler"
-      @resized="changedEventHandler"
-      @change="fetchEvents"
+      :loading="pending"
+      @change:event="handleUpdateEvent"
+      @move:event="handleUpdateEvent"
+      @resize:event="handleUpdateEvent"
+      @change:pagination="fetchEvents"
     >
-      <template #loader="">
-        <c-progress-overlay
-          class="calendar-progress"
-          :pending="pending"
-        />
-      </template>
-
       <template #form-event="{ event, close }">
         <pbehavior-create-event
           :event="event"
@@ -35,19 +29,18 @@
 <script>
 import { get, omit, uniqBy } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
-import { Op } from 'dayspan';
 
 import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
 import { CSS_COLORS_VARS } from '@/config';
 
 import { uid } from '@/helpers/uid';
 import { getMostReadableTextColor } from '@/helpers/color';
-import { getSpanForTimestamps } from '@/helpers/calendar/dayspan';
 import { pbehaviorToTimespanRequest } from '@/helpers/entities/pbehavior/timespans/form';
 import {
   convertDateToTimestampByTimezone,
   convertDateToDateObjectByTimezone,
   convertDateToDateObject,
+  getDiffBetweenDates,
 } from '@/helpers/date/date';
 import { isFullDayEvent } from '@/helpers/entities/pbehavior/form';
 
@@ -202,6 +195,11 @@ export default {
       pbehavior,
       timespans,
     }) {
+      const isTimed = !isFullDayEvent(
+        convertDateToDateObjectByTimezone(pbehavior.tstart, this.$system.timezone),
+        convertDateToDateObjectByTimezone(pbehavior.tstop, this.$system.timezone),
+      );
+
       return timespans.map((timespan, index) => {
         const type = timespan.type ?? pbehavior.type;
 
@@ -210,24 +208,19 @@ export default {
          */
         const color = pbehavior.color || type.color || pbehavior.type?.color || CSS_COLORS_VARS.secondary;
         const iconColor = getMostReadableTextColor(color, { level: 'AA', size: 'large' });
-        const isFullDay = isFullDayEvent(
-          convertDateToDateObjectByTimezone(pbehavior.tstart, this.$system.timezone),
-          convertDateToDateObjectByTimezone(pbehavior.tstop, this.$system.timezone),
-        );
 
         const start = convertDateToDateObjectByTimezone(timespan.from, this.$system.timezone);
         const end = convertDateToDateObjectByTimezone(timespan.to, this.$system.timezone);
 
         return {
           id: `${pbehavior._id}-${index}`,
-          pbehavior,
           color,
           iconColor,
           start,
           end,
           icon: type.icon_name,
           name: pbehavior.name,
-          timed: !isFullDay,
+          timed: isTimed,
           data: {
             pbehavior,
             color,
@@ -293,7 +286,7 @@ export default {
       const { pbehavior } = event;
 
       if (pbehavior) {
-        await this.updatePbehavior(pbehavior, pbehavior.color);
+        await this.updatePbehavior(pbehavior);
       }
 
       close();
@@ -304,14 +297,17 @@ export default {
      *
      * @param {Object} event
      */
-    applyEventChangesForSelectedHandler({ target, calendarEvent }) {
-      const pbehavior = get(calendarEvent, 'data.pbehavior');
+    applyEventChangesForSelectedHandler({ data, start, oldStart, end, oldEnd }) {
+      const { pbehavior } = data;
+
       const originalPbehavior = this.allPbehaviorsById[pbehavior._id];
-      const tstart = convertDateToTimestampByTimezone(target.start.date, this.$system.timezone);
-      const tstop = convertDateToTimestampByTimezone(target.end.date, this.$system.timezone);
+
+      const tstart = convertDateToTimestampByTimezone(start, this.$system.timezone);
+      const tstop = convertDateToTimestampByTimezone(end, this.$system.timezone);
+
       const exdate = {
-        begin: convertDateToTimestampByTimezone(calendarEvent.start.date, this.$system.timezone),
-        end: convertDateToTimestampByTimezone(calendarEvent.end.date, this.$system.timezone),
+        begin: convertDateToTimestampByTimezone(oldStart, this.$system.timezone),
+        end: convertDateToTimestampByTimezone(oldEnd, this.$system.timezone),
         type: this.getOppositePbehaviorType(pbehavior.type),
       };
 
@@ -334,7 +330,7 @@ export default {
       };
 
       return Promise.all([
-        this.updatePbehavior(mainPbehavior, calendarEvent.data.color),
+        this.updatePbehavior(mainPbehavior),
         this.updatePbehavior(newPbehavior),
       ]);
     },
@@ -345,13 +341,16 @@ export default {
      * @param {Object} event
      * @returns {Promise<void>}
      */
-    applyEventChangesForAllHandler({ target, calendarEvent }) {
-      const pbehavior = get(calendarEvent, 'data.pbehavior');
+    applyEventChangesForAllHandler({ data, start, oldStart, end, oldEnd }) {
+      const { pbehavior } = data;
+
       const originalPbehavior = this.allPbehaviorsById[pbehavior._id];
-      const startDiff = target.start.secondsBetween(calendarEvent.start, Op.FLOOR, false);
-      const endDiff = target.end.secondsBetween(calendarEvent.end, Op.FLOOR, false);
-      const tstart = originalPbehavior.tstart + startDiff;
-      const tstop = originalPbehavior.tstop + endDiff;
+
+      const tstart = originalPbehavior.tstart + getDiffBetweenDates(start, oldStart);
+      const tstop = pbehavior.tstop
+        ? originalPbehavior.tstop + getDiffBetweenDates(end, oldEnd)
+        : null;
+
       const newPbehavior = {
         ...pbehavior,
 
@@ -359,22 +358,11 @@ export default {
         tstop,
       };
 
-      return this.updatePbehavior(newPbehavior, calendarEvent.data.color);
+      return this.updatePbehavior(newPbehavior);
     },
 
-    /**
-     * Close popover and clear placeholder for event
-     *
-     * @param {Object} [event = {}]
-     */
-    closePopoverForEvent(event = {}) { // TODO: move that
-      if (event.clearPlaceholder) {
-        event.clearPlaceholder();
-      }
-
-      if (event.closePopover) {
-        event.closePopover(event);
-      }
+    closePopoverForEvent() { // TODO: move that
+      this.$refs.calendar.clearPlaceholder();
     },
 
     /**
@@ -411,26 +399,13 @@ export default {
      * @param {Object} event
      * @returns {Promise<void>}
      */
-    async changedEventHandler(event) {
-      const pbehavior = get(event.calendarEvent, 'data.pbehavior');
-      const {
-        target = getSpanForTimestamps({
-          start: pbehavior.tstart,
-          end: pbehavior.tstop,
-          timezone: this.$system.timezone,
-        }),
-      } = event;
-
-      if (!pbehavior) {
-        event.openPopover();
-
-        return;
-      }
+    async handleUpdateEvent(event) {
+      const { pbehavior } = event.data;
 
       if (!pbehavior.rrule) {
-        const tstart = convertDateToTimestampByTimezone(target.start.date, this.$system.timezone);
+        const tstart = convertDateToTimestampByTimezone(event.start, this.$system.timezone);
         const tstop = pbehavior.tstop
-          ? convertDateToTimestampByTimezone(target.end.date, this.$system.timezone)
+          ? convertDateToTimestampByTimezone(event.end, this.$system.timezone)
           : null;
 
         await this.updatePbehavior({
@@ -438,14 +413,14 @@ export default {
 
           tstart,
           tstop,
-        }, event.calendarEvent.data.color);
+        });
 
-        this.closePopoverForEvent(event);
+        this.closePopoverForEvent();
 
         return;
       }
 
-      this.showPbehaviorRecurrentChangesConfirmationModal({ ...event, target });
+      this.showPbehaviorRecurrentChangesConfirmationModal(event);
     },
 
     /**
@@ -507,11 +482,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-// We've turned off animation because of render freezes on css animation on the render process
-
-.calendar-progress .v-progress-circular--indeterminate .v-progress-circular__overlay {
-  animation: none;
-}
-</style>
