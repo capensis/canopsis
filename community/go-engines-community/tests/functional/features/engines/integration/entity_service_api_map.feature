@@ -82,8 +82,6 @@ Feature: Get a map's state and alarms
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId1 }}",
         "source_type": "service"
       },
@@ -123,8 +121,6 @@ Feature: Get a map's state and alarms
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId2 }}",
         "source_type": "service"
       },
@@ -167,8 +163,6 @@ Feature: Get a map's state and alarms
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId3 }}",
         "source_type": "service"
       },
@@ -550,8 +544,6 @@ Feature: Get a map's state and alarms
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId1 }}",
         "source_type": "service"
       },
@@ -591,8 +583,6 @@ Feature: Get a map's state and alarms
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId2 }}",
         "source_type": "service"
       },
@@ -635,8 +625,6 @@ Feature: Get a map's state and alarms
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId3 }}",
         "source_type": "service"
       },
@@ -932,8 +920,6 @@ Feature: Get a map's state and alarms
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId }}",
         "source_type": "service"
       },
@@ -1024,8 +1010,6 @@ Feature: Get a map's state and alarms
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId }}",
         "source_type": "service"
       },
@@ -1148,8 +1132,6 @@ Feature: Get a map's state and alarms
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId }}",
         "source_type": "service"
       },
@@ -1235,8 +1217,6 @@ Feature: Get a map's state and alarms
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId }}",
         "source_type": "service"
       },
@@ -1360,8 +1340,6 @@ Feature: Get a map's state and alarms
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId1 }}",
         "source_type": "service"
       },
@@ -1403,8 +1381,6 @@ Feature: Get a map's state and alarms
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId2 }}",
         "source_type": "service"
       },
@@ -1447,8 +1423,6 @@ Feature: Get a map's state and alarms
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId3 }}",
         "source_type": "service"
       },
@@ -1690,8 +1664,6 @@ Feature: Get a map's state and alarms
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId1 }}",
         "source_type": "service"
       },
@@ -1733,8 +1705,6 @@ Feature: Get a map's state and alarms
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId2 }}",
         "source_type": "service"
       },
@@ -1777,8 +1747,6 @@ Feature: Get a map's state and alarms
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId3 }}",
         "source_type": "service"
       },
@@ -1979,8 +1947,6 @@ Feature: Get a map's state and alarms
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId1 }}",
         "source_type": "service"
       },
@@ -2022,8 +1988,6 @@ Feature: Get a map's state and alarms
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId2 }}",
         "source_type": "service"
       },
@@ -2066,8 +2030,6 @@ Feature: Get a map's state and alarms
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId3 }}",
         "source_type": "service"
       },
@@ -2252,8 +2214,6 @@ Feature: Get a map's state and alarms
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId1 }}",
         "source_type": "service"
       },
@@ -2296,8 +2256,6 @@ Feature: Get a map's state and alarms
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId2 }}",
         "source_type": "service"
       },
@@ -2340,8 +2298,6 @@ Feature: Get a map's state and alarms
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId3 }}",
         "source_type": "service"
       },
