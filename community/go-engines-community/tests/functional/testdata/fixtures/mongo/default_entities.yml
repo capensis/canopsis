@@ -3252,53 +3252,53 @@ default_entities:
     type: resource
   default_entities_335:
     <<: *resource
-    _id: test-entity-infos-dictionary-1
+    _id: test-einfos-dict-1
     infos:
-      test-entity-infos-dictionary-key-1:
-        value: test-entity-infos-dictionary-value-1
-      test-entity-infos-dictionary-key-2:
-        value: test-entity-infos-dictionary-value-2
-      test-entity-infos-dictionary-key-3:
-        value: test-entity-infos-dictionary-value-3
+      test-einfos-dict-key-1:
+        value: test-einfos-dict-value-1
+      test-einfos-dict-key-2:
+        value: test-einfos-dict-value-2
+      test-einfos-dict-key-3:
+        value: test-einfos-dict-value-3
   default_entities_336:
     <<: *resource
-    _id: test-entity-infos-dictionary-2
+    _id: test-einfos-dict-2
     infos:
-      test-entity-infos-dictionary-key-1:
-        value: test-entity-infos-dictionary-value-4
-      test-entity-infos-dictionary-key-2:
-        value: test-entity-infos-dictionary-value-5
-      test-entity-infos-dictionary-key-3:
-        value: test-entity-infos-dictionary-value-6
+      test-einfos-dict-key-1:
+        value: test-einfos-dict-value-4
+      test-einfos-dict-key-2:
+        value: test-einfos-dict-value-5
+      test-einfos-dict-key-3:
+        value: test-einfos-dict-value-6
   default_entities_337:
     <<: *resource
-    _id: test-entity-infos-dictionary-3
+    _id: test-einfos-dict-3
     infos:
-      test-entity-infos-dictionary-key-1:
+      test-einfos-dict-key-1:
         value:
-          - test-entity-infos-dictionary-value-7
-          - test-entity-infos-dictionary-value-10
-      test-entity-infos-dictionary-key-2:
+          - test-einfos-dict-value-7
+          - test-einfos-dict-value-10
+      test-einfos-dict-key-2:
         value:
-          - test-entity-infos-dictionary-value-8
-          - test-entity-infos-dictionary-value-11
-      test-entity-infos-dictionary-key-3:
+          - test-einfos-dict-value-8
+          - test-einfos-dict-value-11
+      test-einfos-dict-key-3:
         value:
-          - test-entity-infos-dictionary-value-9
-          - test-entity-infos-dictionary-value-12
+          - test-einfos-dict-value-9
+          - test-einfos-dict-value-12
   default_entities_338:
     <<: *resource
-    _id: test-entity-infos-dictionary-should-be-ignored
+    _id: test-einfos-dict-skip
     infos:
-      test-entity-infos-dictionary-should-be-ignored-key-1:
+      test-einfos-dict-skip-key-1:
         value: ab
-      test-entity-infos-dictionary-should-be-ignored-key-2:
+      test-einfos-dict-skip-key-2:
         value: a
-      test-entity-infos-dictionary-should-be-ignored-key-3:
+      test-einfos-dict-skip-key-3:
         value: 10
-      test-entity-infos-dictionary-should-be-ignored-key-4:
+      test-einfos-dict-skip-key-4:
         value: true
-      test-entity-infos-dictionary-should-be-ignored-key-5:
+      test-einfos-dict-skip-key-5:
         value:
           a: b
           c: d

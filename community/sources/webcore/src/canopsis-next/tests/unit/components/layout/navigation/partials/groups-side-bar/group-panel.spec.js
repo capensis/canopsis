@@ -31,7 +31,7 @@ describe('group-panel', () => {
   it('Change event emitted after trigger button', () => {
     const wrapper = factory({
       propsData: {
-        isEditing: true,
+        editable: true,
         group: {},
       },
     });
@@ -59,6 +59,7 @@ describe('group-panel', () => {
         group: {
           title: 'Custom group title',
         },
+        editable: true,
         isEditing: true,
         orderChanged: true,
         hideActions: true,
