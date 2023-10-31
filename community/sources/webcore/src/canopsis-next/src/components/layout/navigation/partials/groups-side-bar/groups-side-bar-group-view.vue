@@ -7,11 +7,10 @@
   )
     group-view-panel(
       :view="view",
-      :is-editing="isNavigationEditingMode",
       :is-order-changed="isGroupsOrderChanged",
       :is-view-active="isViewActive",
-      :editable="isViewPrivate || hasViewEditButtonAccess",
-      allow-editing,
+      :editable="(isViewPrivate || hasViewEditButtonAccess) && isNavigationEditingMode",
+      :duplicable="(isViewPrivate || hasCreateAnyViewAccess) && isNavigationEditingMode",
       @duplicate="showDuplicateViewModal",
       @change="showEditViewModal"
     )

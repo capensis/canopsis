@@ -75,8 +75,8 @@ Feature: update service on event
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -134,16 +134,16 @@ Feature: update service on event
     [
       {
         "event_type": "entitytoggled",
-        "connector": "test-connector-service-third-1",
-        "connector_name": "test-connector-name-service-third-1",
+        "connector": "api",
+        "connector_name": "api",
         "component": "test-component-service-third-1",
         "resource": "test-resource-service-third-1-2",
         "source_type": "resource"
       },
       {
         "event_type": "entitytoggled",
-        "connector": "test-connector-service-third-1",
-        "connector_name": "test-connector-name-service-third-1",
+        "connector": "api",
+        "connector_name": "api",
         "component": "test-component-service-third-1",
         "resource": "test-resource-service-third-1-3",
         "source_type": "resource"
@@ -210,16 +210,16 @@ Feature: update service on event
     [
       {
         "event_type": "entitytoggled",
-        "connector": "test-connector-service-third-1",
-        "connector_name": "test-connector-name-service-third-1",
+        "connector": "api",
+        "connector_name": "api",
         "component": "test-component-service-third-1",
         "resource": "test-resource-service-third-1-2",
         "source_type": "resource"
       },
       {
         "event_type": "entitytoggled",
-        "connector": "test-connector-service-third-1",
-        "connector_name": "test-connector-name-service-third-1",
+        "connector": "api",
+        "connector_name": "api",
         "component": "test-component-service-third-1",
         "resource": "test-resource-service-third-1-3",
         "source_type": "resource"
@@ -390,8 +390,8 @@ Feature: update service on event
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID1 }}",
         "source_type": "service"
       },
@@ -431,8 +431,8 @@ Feature: update service on event
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID2 }}",
         "source_type": "service"
       },
@@ -472,8 +472,8 @@ Feature: update service on event
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID3 }}",
         "source_type": "service"
       },
@@ -517,8 +517,8 @@ Feature: update service on event
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .impactServiceID }}",
         "source_type": "service"
       },
@@ -576,8 +576,8 @@ Feature: update service on event
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID2 }}",
         "source_type": "service"
       },
@@ -590,8 +590,8 @@ Feature: update service on event
       },
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID3 }}",
         "source_type": "service"
       },
@@ -650,8 +650,8 @@ Feature: update service on event
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID2 }}",
         "source_type": "service"
       },
@@ -670,8 +670,8 @@ Feature: update service on event
       },
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID3 }}",
         "source_type": "service"
       },
@@ -792,8 +792,8 @@ Feature: update service on event
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },

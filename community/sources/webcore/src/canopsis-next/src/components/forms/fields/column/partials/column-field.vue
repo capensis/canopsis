@@ -37,7 +37,10 @@
           :with-template="withTemplate",
           :with-color-indicator="withColorIndicator",
           :with-instructions="withInstructions",
-          :without-infos-attributes="withoutInfosAttributes"
+          :with-simple-template="withSimpleTemplate",
+          :optional-infos-attributes="optionalInfosAttributes",
+          :without-infos-attributes="withoutInfosAttributes",
+          :variables="variables"
         )
 </template>
 
@@ -104,6 +107,18 @@ export default {
     withoutInfosAttributes: {
       type: Boolean,
       default: false,
+    },
+    optionalInfosAttributes: {
+      type: Boolean,
+      default: false,
+    },
+    withSimpleTemplate: {
+      type: Boolean,
+      default: false,
+    },
+    variables: {
+      type: Array,
+      required: false,
     },
   },
   data() {

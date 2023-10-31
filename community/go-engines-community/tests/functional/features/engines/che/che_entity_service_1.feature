@@ -45,8 +45,8 @@ Feature: create service entity
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -164,8 +164,8 @@ Feature: create service entity
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -334,8 +334,8 @@ Feature: create service entity
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -401,8 +401,8 @@ Feature: create service entity
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -487,8 +487,8 @@ Feature: create service entity
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -643,8 +643,8 @@ Feature: create service entity
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -894,8 +894,8 @@ Feature: create service entity
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -979,8 +979,8 @@ Feature: create service entity
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -1065,8 +1065,8 @@ Feature: create service entity
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -1113,8 +1113,8 @@ Feature: create service entity
     [
       {
         "event_type": "entityupdated",
-        "connector": "test-connector-che-service-8",
-        "connector_name": "test-connector-name-che-service-8",
+        "connector": "api",
+        "connector_name": "api",
         "component": "test-component-che-service-8",
         "resource": "test-resource-che-service-8",
         "source_type": "resource"
@@ -1185,8 +1185,8 @@ Feature: create service entity
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -1227,8 +1227,8 @@ Feature: create service entity
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .impactServiceID }}",
         "source_type": "service"
       },
@@ -1325,8 +1325,8 @@ Feature: create service entity
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
