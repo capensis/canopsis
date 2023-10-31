@@ -185,10 +185,6 @@ func (a *adapter) getRolesWithPermissions(ctx context.Context) ([]role, error) {
 	}
 	err = cursor.All(ctx, &permissions)
 	if err != nil {
-		cursor.Close(ctx)
-		return nil, err
-	}
-	if err := cursor.Close(ctx); err != nil {
 		return nil, err
 	}
 
@@ -205,11 +201,6 @@ func (a *adapter) getRolesWithPermissions(ctx context.Context) ([]role, error) {
 		return nil, err
 	}
 	err = cursorRole.All(ctx, &roles)
-	if err != nil {
-		cursorRole.Close(ctx)
-		return nil, err
-	}
-	err = cursorRole.Close(ctx)
 	if err != nil {
 		return nil, err
 	}
