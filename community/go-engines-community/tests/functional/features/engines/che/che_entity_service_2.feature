@@ -35,8 +35,8 @@ Feature: create service entity
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -132,8 +132,8 @@ Feature: create service entity
     """json
     {
       "event_type": "recomputeentityservice",
-      "connector": "service",
-      "connector_name": "service",
+      "connector": "api",
+      "connector_name": "api",
       "component": "{{ .serviceID }}",
       "source_type": "service"
     }
@@ -217,8 +217,8 @@ Feature: create service entity
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -336,8 +336,8 @@ Feature: create service entity
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -433,8 +433,8 @@ Feature: create service entity
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -485,8 +485,8 @@ Feature: create service entity
     """json
     {
       "event_type": "entitytoggled",
-      "connector": "test-connector-che-service-second-4",
-      "connector_name": "test-connector-name-che-service-second-4",
+      "connector": "api",
+      "connector_name": "api",
       "component": "test-component-che-service-second-4",
       "resource": "test-resource-che-service-second-4",
       "source_type": "resource"
@@ -527,8 +527,8 @@ Feature: create service entity
     """json
     {
       "event_type": "entitytoggled",
-      "connector": "test-connector-che-service-second-4",
-      "connector_name": "test-connector-name-che-service-second-4",
+      "connector": "api",
+      "connector_name": "api",
       "component": "test-component-che-service-second-4",
       "resource": "test-resource-che-service-second-4",
       "source_type": "resource"
@@ -621,8 +621,8 @@ Feature: create service entity
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -690,16 +690,16 @@ Feature: create service entity
     [
       {
         "event_type": "entitytoggled",
-        "connector": "test-connector-che-service-second-5",
-        "connector_name": "test-connector-name-che-service-second-5",
+        "connector": "api",
+        "connector_name": "api",
         "component": "test-component-che-service-second-5",
         "resource": "test-resource-che-service-second-5-1",
         "source_type": "resource"
       },
       {
         "event_type": "entitytoggled",
-        "connector": "test-connector-che-service-second-5",
-        "connector_name": "test-connector-name-che-service-second-5",
+        "connector": "api",
+        "connector_name": "api",
         "component": "test-component-che-service-second-5",
         "resource": "test-resource-che-service-second-5-2",
         "source_type": "resource"
@@ -758,16 +758,16 @@ Feature: create service entity
     [
       {
         "event_type": "entitytoggled",
-        "connector": "test-connector-che-service-second-5",
-        "connector_name": "test-connector-name-che-service-second-5",
+        "connector": "api",
+        "connector_name": "api",
         "component": "test-component-che-service-second-5",
         "resource": "test-resource-che-service-second-5-1",
         "source_type": "resource"
       },
       {
         "event_type": "entitytoggled",
-        "connector": "test-connector-che-service-second-5",
-        "connector_name": "test-connector-name-che-service-second-5",
+        "connector": "api",
+        "connector_name": "api",
         "component": "test-component-che-service-second-5",
         "resource": "test-resource-che-service-second-5-2",
         "source_type": "resource"
