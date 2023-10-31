@@ -53,9 +53,7 @@ Feature: Get alarms
           }
         },
         "name": "test-resource-to-alarm-get-1",
-        "type": "resource",
-        "depends_count": 0,
-        "impacts_count": 0
+        "type": "resource"
       },
       "impact_state": 3,
       "infos": {},
@@ -129,9 +127,7 @@ Feature: Get alarms
         "impact_level": 1,
         "infos": {},
         "name": "test-resource-to-alarm-get-3",
-        "type": "resource",
-        "depends_count": 0,
-        "impacts_count": 0
+        "type": "resource"
       },
       "impact_state": 0,
       "infos": {},

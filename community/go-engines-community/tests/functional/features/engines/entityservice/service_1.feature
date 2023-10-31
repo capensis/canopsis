@@ -148,7 +148,7 @@ Feature: update service on event
       }
     ]
     """
-    When I do GET /api/v4/alarms?search={{ .serviceID }}
+    When I do GET /api/v4/alarms?search={{ .serviceID }}&with_dependencies=true
     Then the response code should be 200
     Then the response body should contain:
     """json
