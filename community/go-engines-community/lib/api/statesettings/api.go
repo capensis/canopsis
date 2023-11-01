@@ -30,7 +30,7 @@ func NewApi(
 }
 
 // List
-// @Success 200 {object} common.PaginatedListResponse{data=[]StateSetting}
+// @Success 200 {object} common.PaginatedListResponse{data=[]Response}
 func (a *api) List(c *gin.Context) {
 	var query FilteredQuery
 	query.Query = pagination.GetDefaultQuery()
@@ -55,7 +55,7 @@ func (a *api) List(c *gin.Context) {
 }
 
 // Get
-// @Success 200 {object} StateSetting
+// @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
 	stateSetting, err := a.store.GetById(c, c.Param("id"))
 	if err != nil {
@@ -71,10 +71,10 @@ func (a *api) Get(c *gin.Context) {
 }
 
 // Create
-// @Param body body StateSetting true "body"
-// @Success 201 {object} StateSetting
+// @Param body body Request true "body"
+// @Success 201 {object} Response
 func (a *api) Create(c *gin.Context) {
-	request := StateSetting{}
+	request := Request{}
 
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
@@ -105,10 +105,10 @@ func (a *api) Create(c *gin.Context) {
 }
 
 // Update
-// @Param body body StateSetting true "body"
-// @Success 200 {object} StateSetting
+// @Param body body Request true "body"
+// @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
-	request := StateSetting{
+	request := Request{
 		ID: c.Param("id"),
 	}
 
