@@ -1,11 +1,11 @@
 import { get, groupBy } from 'lodash';
-import { Day, Schedule } from 'dayspan';
 
 import {
-  convertDateToMoment,
   convertDateToTimestamp,
   convertDateToStartOfUnitString,
   convertDateToEndOfUnitTimestamp,
+  convertDateToDateObject,
+  convertDateToMoment,
 } from '@/helpers/date/date';
 
 /**
@@ -26,15 +26,15 @@ export function convertAlarmsToEvents({
   const groupedAlarms = groupBy(alarms, alarm => convertDateToStartOfUnitString(alarm.t, groupByValue, null));
 
   return Object.entries(groupedAlarms).map(([dateString, alarmsGroup]) => {
-    const dateObject = convertDateToMoment(dateString);
-    const startDay = new Day(dateObject);
+    const dateObject = convertDateToDateObject(dateString);
     const sum = alarmsGroup.length;
 
     return {
+      start: dateObject,
+      name: sum,
+      description: filter.title,
+      color: getColor(sum),
       data: {
-        title: sum,
-        description: filter.title,
-        color: getColor(sum),
         meta: {
           sum,
           filter,
@@ -42,12 +42,6 @@ export function convertAlarmsToEvents({
           tstop: convertDateToEndOfUnitTimestamp(dateObject, groupByValue),
         },
       },
-      schedule: new Schedule({
-        on: startDay,
-        times: [startDay.asTime()],
-        duration: 1,
-        durationUnit: 'hours',
-      }),
     };
   });
 }
@@ -61,7 +55,7 @@ export function convertAlarmsToEvents({
  * @returns []
  */
 export function convertEventsToGroupedEvents({ events, groupByValue = 'hour', getColor = () => '#fff' }) {
-  const groupedEvents = groupBy(events, event => event.schedule.start.date.clone().startOf(groupByValue).format());
+  const groupedEvents = groupBy(events, event => convertDateToMoment(event.start).startOf(groupByValue).format());
 
   return Object.keys(groupedEvents).map((dateString) => {
     const groupedEvent = groupedEvents[dateString];

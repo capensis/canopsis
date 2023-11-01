@@ -2,6 +2,7 @@
   <v-tooltip bottom>
     <template #activator="{ on }">
       <v-btn
+        class="mx-2 my-1"
         v-on="on"
         :icon="$vuetify.breakpoint.smAndDown"
         depressed
