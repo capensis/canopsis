@@ -2122,8 +2122,7 @@ definitions:
       _id:
         type: string
       event:
-        additionalProperties:
-          type: any
+        additionalProperties: {}
         type: object
       message:
         type: string
@@ -2285,6 +2284,8 @@ definitions:
       label:
         type: string
       name:
+        type: string
+      template:
         type: string
     type: object
   exportconfiguration.Request:
@@ -4825,43 +4826,7 @@ definitions:
       value:
         type: string
     type: object
-  statesettings.JUnitThresholds:
-    properties:
-      errors:
-        $ref: '#/definitions/statesettings.StateThresholds'
-      failures:
-        $ref: '#/definitions/statesettings.StateThresholds'
-      skipped:
-        $ref: '#/definitions/statesettings.StateThresholds'
-    required:
-    - errors
-    - failures
-    - skipped
-    type: object
-  statesettings.StateSetting:
-    properties:
-      _id:
-        type: string
-      junit_thresholds:
-        $ref: '#/definitions/statesettings.JUnitThresholds'
-      method:
-        type: string
-      type:
-        type: string
-    type: object
-  statesettings.StateSettingRequest:
-    properties:
-      junit_thresholds:
-        $ref: '#/definitions/statesettings.JUnitThresholds'
-      method:
-        type: string
-      type:
-        type: string
-    required:
-    - method
-    - type
-    type: object
-  statesettings.StateThresholds:
+  statesettings.JUnitThreshold:
     properties:
       critical:
         maximum: 100
@@ -4882,6 +4847,106 @@ definitions:
     - major
     - minor
     - type
+    type: object
+  statesettings.JUnitThresholds:
+    properties:
+      errors:
+        $ref: '#/definitions/statesettings.JUnitThreshold'
+      failures:
+        $ref: '#/definitions/statesettings.JUnitThreshold'
+      skipped:
+        $ref: '#/definitions/statesettings.JUnitThreshold'
+    required:
+    - errors
+    - failures
+    - skipped
+    type: object
+  statesettings.StateSetting:
+    properties:
+      _id:
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      inherited_entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      junit_thresholds:
+        $ref: '#/definitions/statesettings.JUnitThresholds'
+        description: JUnit state setting only field
+      method:
+        description: |-
+          Possible method values.
+            * `worst` - take worst state.
+            * `worst_of_share` - take worst of share defined in junit_thresholds.
+            * `inherited` - take worst of subset of dependencies defined by pattern in inherited_entity_pattern.
+            * `dependencies` - calculate state by rules defined in state_thresholds.
+        type: string
+      priority:
+        minimum: 0
+        type: integer
+      state_thresholds:
+        $ref: '#/definitions/statesettings.StateThresholds'
+      title:
+        description: Service and component state setting only fields
+        type: string
+    required:
+    - method
+    type: object
+  statesettings.StateThreshold:
+    properties:
+      cond:
+        description: |-
+          Possible cond values.
+            * `gt` - greater than.
+            * `lt` - less than.
+        enum:
+        - gt
+        - lt
+        type: string
+      method:
+        description: |-
+          Possible method values.
+            * `number` - calculate by number of entities.
+            * `share` - calculate by share of entities.
+        enum:
+        - number
+        - share
+        type: string
+      state:
+        description: |-
+          Possible state values.
+            * `critical` - calculate critical state.
+            * `major` - calculate major state.
+            * `minor` - calculate minor state.
+            * `ok` - calculate ok state.
+        enum:
+        - critical
+        - major
+        - minor
+        - ok
+        type: string
+      value:
+        type: integer
+    type: object
+  statesettings.StateThresholds:
+    properties:
+      critical:
+        $ref: '#/definitions/statesettings.StateThreshold'
+      major:
+        $ref: '#/definitions/statesettings.StateThreshold'
+      minor:
+        $ref: '#/definitions/statesettings.StateThreshold'
+      ok:
+        $ref: '#/definitions/statesettings.StateThreshold'
     type: object
   statistics.EventStatistics:
     properties:
@@ -5607,6 +5672,8 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+      is_user_preference:
+        type: boolean
       pbehavior_pattern:
         items:
           items:
@@ -5622,11 +5689,9 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
-      is_user_preference:
-        type: boolean
     required:
-    - title
     - is_user_preference
+    - title
     type: object
   widgetfilter.OldMongoQuery:
     additionalProperties: true
@@ -5665,6 +5730,8 @@ definitions:
         type: array
       is_private:
         type: boolean
+      is_user_preference:
+        type: boolean
       old_mongo_query:
         $ref: '#/definitions/widgetfilter.OldMongoQuery'
       pbehavior_pattern:
@@ -5683,8 +5750,6 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
-      is_user_preference:
-        type: boolean
     type: object
   widgettemplate.EditRequest:
     properties:
