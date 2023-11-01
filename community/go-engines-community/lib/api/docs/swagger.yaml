@@ -11330,7 +11330,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: 'schemas_swagger.yaml#/definitions/statesettings.StateSetting'
+                          $ref: 'schemas_swagger.yaml#/definitions/statesettings.Response'
         400:
           description: Bad Request
           content:
@@ -11351,7 +11351,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/statesettings.StateSetting'
+              $ref: 'schemas_swagger.yaml#/definitions/statesettings.Request'
             examples:
               create_inherited:
                 summary: Create inherited state setting
@@ -11435,7 +11435,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/statesettings.StateSetting'
+                $ref: 'schemas_swagger.yaml#/definitions/statesettings.Response'
         400:
           description: Bad Request
           content:
@@ -11465,7 +11465,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/statesettings.StateSetting'
+                $ref: 'schemas_swagger.yaml#/definitions/statesettings.Response'
         404:
           description: Not Found
           content:
@@ -11493,7 +11493,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/statesettings.StateSetting'
+              $ref: 'schemas_swagger.yaml#/definitions/statesettings.Request'
             examples:
               update_inherited:
                 summary: Update an inherited state setting
@@ -11609,7 +11609,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/statesettings.StateSetting'
+                $ref: 'schemas_swagger.yaml#/definitions/statesettings.Response'
         400:
           description: Bad Request
           content:

@@ -5,9 +5,17 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 )
 
-type StateSetting struct {
-	ID string `json:"_id" bson:"_id"`
+type Request struct {
+	StateSetting `bson:"inline"`
+	ID           string `json:"-" bson:"_id"`
+}
 
+type Response struct {
+	StateSetting `bson:"inline"`
+	ID           string `json:"_id" bson:"_id"`
+}
+
+type StateSetting struct {
 	// Possible method values.
 	//   * `worst` - take worst state.
 	//   * `worst_of_share` - take worst of share defined in junit_thresholds.
@@ -66,8 +74,8 @@ type JUnitThresholds struct {
 }
 
 type AggregationResult struct {
-	Data       []StateSetting `bson:"data" json:"data"`
-	TotalCount int64          `bson:"total_count" json:"total_count"`
+	Data       []Response `bson:"data" json:"data"`
+	TotalCount int64      `bson:"total_count" json:"total_count"`
 }
 
 func (r *AggregationResult) GetData() interface{} {

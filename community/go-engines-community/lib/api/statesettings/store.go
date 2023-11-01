@@ -17,10 +17,10 @@ import (
 const StickySortField = "on_top"
 
 type Store interface {
-	GetById(ctx context.Context, id string) (*StateSetting, error)
+	GetById(ctx context.Context, id string) (*Response, error)
 	Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error)
-	Insert(ctx context.Context, r StateSetting) (*StateSetting, error)
-	Update(ctx context.Context, r StateSetting) (*StateSetting, error)
+	Insert(ctx context.Context, r Request) (*Response, error)
+	Update(ctx context.Context, r Request) (*Response, error)
 	Delete(ctx context.Context, id string) (bool, error)
 }
 
@@ -41,8 +41,8 @@ func NewStore(
 	}
 }
 
-func (s *store) GetById(ctx context.Context, id string) (*StateSetting, error) {
-	var res StateSetting
+func (s *store) GetById(ctx context.Context, id string) (*Response, error) {
+	var res Response
 
 	err := s.dbCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&res)
 	if err != nil {
@@ -91,10 +91,10 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 	return &result, nil
 }
 
-func (s *store) Insert(ctx context.Context, r StateSetting) (*StateSetting, error) {
+func (s *store) Insert(ctx context.Context, r Request) (*Response, error) {
 	r.ID = utils.NewID()
 
-	var response *StateSetting
+	var response *Response
 
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
@@ -123,8 +123,8 @@ func (s *store) Insert(ctx context.Context, r StateSetting) (*StateSetting, erro
 	return response, nil
 }
 
-func (s *store) Update(ctx context.Context, r StateSetting) (*StateSetting, error) {
-	var response *StateSetting
+func (s *store) Update(ctx context.Context, r Request) (*Response, error) {
+	var response *Response
 
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
