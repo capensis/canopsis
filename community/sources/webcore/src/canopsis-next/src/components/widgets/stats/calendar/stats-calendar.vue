@@ -6,21 +6,24 @@
         :value="hasError"
         :message="serverErrorMessage"
       />
-      <ds-calendar-app
-        class="stats-calendar-app"
-        :class="{ single: !hasMultipleFilters }"
-        :calendar="calendar"
+      <c-calendar
+        ref="calendar"
+        :type.sync="type"
+        :class="['stats-calendar-app', { single: !hasMultipleFilters }]"
         :events="events"
-        fluid
-        read-only
-        @change="changeCalendar"
-        @edit="eventClick"
-      />
+        readonly
+        @change:pagination="changeCalendar"
+        @click:event="eventClick"
+      >
+        <template #event="{ event }">
+          {{ event.name }}
+        </template>
+      </c-calendar>
       <stats-calendar-menu
         v-if="hasMenu"
         :activator="menuActivator"
         :calendar-event="menuCalendarEvent"
-        @event-click="menuEventClick"
+        @click:event="menuEventClick"
         @closed="closedMenu"
       />
     </v-layout>
@@ -30,11 +33,10 @@
 <script>
 import { get, isEmpty, omit } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
-import { Calendar, Units } from 'dayspan';
 
-import { MODALS, MAX_LIMIT } from '@/constants';
+import { MODALS, MAX_LIMIT, CALENDAR_TYPES } from '@/constants';
 
-import { convertDateToTimestamp } from '@/helpers/date/date';
+import { convertDateToTimestamp, convertDateToTimestampByTimezone } from '@/helpers/date/date';
 import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '@/helpers/calendar/dayspan';
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 
@@ -45,6 +47,7 @@ import StatsCalendarMenu from './stats-calendar-menu.vue';
 const { mapActions: alarmMapActions } = createNamespacedHelpers('alarm');
 
 export default {
+  inject: ['$system'],
   components: {
     StatsCalendarMenu,
   },
@@ -57,12 +60,12 @@ export default {
   },
   data() {
     return {
+      type: CALENDAR_TYPES.month,
       menuActivator: null,
       menuCalendarEvent: null,
       pending: false,
       alarms: [],
       alarmsCollections: [],
-      calendar: Calendar.months(),
       serverErrorMessage: null,
     };
   },
@@ -96,7 +99,7 @@ export default {
     },
 
     events() {
-      const groupByValue = this.calendar.type === Units.MONTH ? 'day' : 'hour';
+      const groupByValue = this.type === CALENDAR_TYPES.month ? 'day' : 'hour';
 
       if (!this.hasFilters) {
         return convertAlarmsToEvents({
@@ -113,7 +116,7 @@ export default {
         getColor: this.getCalendarEventColor,
       })), []);
 
-      if (this.calendar.type !== Units.MONTH) {
+      if (this.type === CALENDAR_TYPES.month) {
         return convertEventsToGroupedEvents({
           events,
           getColor: this.getCalendarEventColor,
@@ -124,11 +127,11 @@ export default {
     },
 
     hasMultipleFilters() {
-      return get(this.query, 'filters.length', 0) > 1;
+      return this.query?.filters?.length > 1;
     },
 
     hasFilters() {
-      return get(this.query, 'filters.length') > 0;
+      return this.query?.filters?.length > 0;
     },
   },
   methods: {
@@ -141,18 +144,18 @@ export default {
       this.menuCalendarEvent = null;
     },
 
-    menuEventClick(calendarEvent) {
-      const meta = get(calendarEvent, 'data.meta', {});
+    menuEventClick(event) {
+      const meta = get(event, 'data.meta', {});
 
       this.showAlarmsListModal(meta);
     },
 
-    eventClick({ $element, calendarEvent }) {
-      const meta = get(calendarEvent, 'data.meta', {});
+    eventClick({ event, nativeEvent }) {
+      const meta = get(event, 'data.meta', {});
 
-      if ($element && meta.events) {
-        this.menuActivator = $element;
-        this.menuCalendarEvent = calendarEvent;
+      if (nativeEvent.target && meta.events) {
+        this.menuActivator = nativeEvent.target;
+        this.menuCalendarEvent = event;
 
         return;
       }
@@ -176,9 +179,9 @@ export default {
         name: MODALS.alarmsList,
         config: {
           widget,
-          title: this.$t('modals.alarmsList.prefixTitle', {
-            prefix: meta.filter.title,
-          }),
+          title: meta.filter.title
+            ? this.$t('modals.alarmsList.prefixTitle', { prefix: meta.filter.title })
+            : this.$t('modals.alarmsList.title'),
           fetchList: (params) => {
             const newParams = {
               ...this.getCommonQuery(),
@@ -206,11 +209,10 @@ export default {
 
     async fetchList() {
       try {
-        const { start, end } = this.calendar.filled;
         const query = this.getCommonQuery();
 
-        query.tstart = start.date.unix();
-        query.tstop = end.date.unix();
+        query.tstart = convertDateToTimestampByTimezone(this.$refs.calendar.filled.start, this.$system.timezone);
+        query.tstop = convertDateToTimestampByTimezone(this.$refs.calendar.filled.end, this.$system.timezone);
         query.limit = MAX_LIMIT;
 
         this.pending = true;
@@ -256,9 +258,25 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
   .calender-wrapper {
     position: relative;
+
+    .v-calendar-weekly__day {
+
+      .v-event {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        width: 100% !important;
+        height: 100% !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
 
     & ::v-deep .ds-calendar-event {
       font-size: 14px;

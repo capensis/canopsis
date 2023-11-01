@@ -524,4 +524,14 @@ export const getDateByMonthNumber = (date, month) => convertDateToMoment(date)
   .month(month)
   .toDate();
 
+/**
+ * Check is date before target date
+ *
+ * @param {LocalDate} date
+ * @param {LocalDate} targetDate
+ * @return {number}
+ */
+export const isDateBefore = (date, targetDate) => convertDateToMoment(date)
+  .isBefore(targetDate);
+
 export default convertDateToMoment;
