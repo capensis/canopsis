@@ -37,7 +37,7 @@ func NewStore(
 	return &store{
 		dbClient:              dbClient,
 		dbCollection:          dbClient.Collection(mongo.StateSettingsMongoCollection),
-		defaultSearchByFields: []string{"_id", "name"},
+		defaultSearchByFields: []string{"_id", "title"},
 	}
 }
 
