@@ -31,10 +31,40 @@
       :value="focus"
       :events="availableEvents"
       :type="internalType"
-      :event-color="getEventColor"
+      :weekdays="weekdays"
       :event-height="calendarEventHeight"
-      :month-format="formatMonth"
+      :event-color="getEventColor"
+      :weekday-format="formatWeekday"
     >
+      <template #day-label="event">
+        <v-btn
+          :color="event.present ? 'primary' : 'transparent'"
+          fab
+          depressed
+          small
+          @click.stop.prevent="moveToDay(event)"
+          @mousedown.stop=""
+        >
+          {{ event.day }}
+        </v-btn>
+        <template v-if="event.day === 1">
+          {{ formatMonth(event) }}
+        </template>
+      </template>
+
+      <template #day-label-header="event">
+        <v-btn
+          :color="event.present ? 'primary' : 'transparent'"
+          fab
+          depressed
+          small
+          @click.stop.prevent="moveToDay(event)"
+          @mousedown.stop=""
+        >
+          {{ event.day }}
+        </v-btn>
+      </template>
+
       <template #event="{ event, start, end }">
         <slot
           name="event"
@@ -94,8 +124,13 @@
 
 <script>
 import { CALENDAR_TYPES } from '@/constants';
+import { LOCALES } from '@/config';
 
-import { convertDateToEndOfDayDateObject, convertDateToStartOfDayDateObject } from '@/helpers/date/date';
+import {
+  convertDateToEndOfDayDateObject,
+  convertDateToStartOfDayDateObject,
+  getWeekdayNumber,
+} from '@/helpers/date/date';
 import { colorToRgba } from '@/helpers/color';
 
 import CalendarTodayBtn from './partials/calendar-today-btn.vue';
@@ -150,6 +185,12 @@ export default {
     };
   },
   computed: {
+    weekdays() {
+      return this.$i18n.locale === LOCALES.en
+        ? [0, 1, 2, 3, 4, 5, 6]
+        : [1, 2, 3, 4, 5, 6, 0];
+    },
+
     isMonthType() {
       return this.internalType === CALENDAR_TYPES.month;
     },
@@ -241,8 +282,37 @@ export default {
     this.$refs.calendar.checkChange();
   },
   methods: {
-    formatMonth() {
-      return '';
+    formatWeekday(event) {
+      const weekday = getWeekdayNumber(event.date);
+
+      return [
+        this.$t('common.shortWeekDays.monday'),
+        this.$t('common.shortWeekDays.tuesday'),
+        this.$t('common.shortWeekDays.wednesday'),
+        this.$t('common.shortWeekDays.thursday'),
+        this.$t('common.shortWeekDays.friday'),
+        this.$t('common.shortWeekDays.saturday'),
+        this.$t('common.shortWeekDays.sunday'),
+      ][weekday - 1];
+    },
+
+    formatMonth(event) {
+      const { month } = event;
+
+      return [
+        this.$t('common.shortMonths.january'),
+        this.$t('common.shortMonths.february'),
+        this.$t('common.shortMonths.march'),
+        this.$t('common.shortMonths.april'),
+        this.$t('common.shortMonths.may'),
+        this.$t('common.shortMonths.june'),
+        this.$t('common.shortMonths.july'),
+        this.$t('common.shortMonths.august'),
+        this.$t('common.shortMonths.september'),
+        this.$t('common.shortMonths.october'),
+        this.$t('common.shortMonths.november'),
+        this.$t('common.shortMonths.december'),
+      ][month - 1];
     },
 
     getEventColor(event) {
@@ -272,6 +342,11 @@ export default {
 
     setCalendarFocus(date) {
       this.setFocusDate(new Date(date));
+    },
+
+    moveToDay(event) {
+      this.setCalendarFocus(event.date);
+      this.internalType = CALENDAR_TYPES.day;
     },
 
     prev() {
@@ -521,6 +596,20 @@ export default {
 
   .v-calendar-weekly__head-weekday {
     text-align: unset;
+  }
+
+  .v-calendar-weekly__head-weekday {
+    text-transform: unset;
+  }
+
+  .v-calendar-daily_head-weekday {
+    text-align: unset;
+    padding: 0 12px;
+  }
+
+  .v-calendar-daily_head-day-label {
+    text-align: unset;
+    padding: 0 5px;
   }
 
   .v-calendar-weekly__day-label {

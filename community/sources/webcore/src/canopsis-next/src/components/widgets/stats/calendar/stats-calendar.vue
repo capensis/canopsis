@@ -263,8 +263,8 @@ export default {
     position: relative;
 
     .v-calendar-weekly__day {
-
       .v-event {
+        font-size: 14px;
         position: absolute;
         top: 0;
         bottom: 0;
@@ -276,10 +276,6 @@ export default {
         align-items: center;
         justify-content: center;
       }
-    }
-
-    & ::v-deep .ds-calendar-event {
-      font-size: 14px;
     }
 
     & ::v-deep .ds-calendar-app.stats-calendar-app {

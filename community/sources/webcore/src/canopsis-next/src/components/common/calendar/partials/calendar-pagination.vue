@@ -3,7 +3,7 @@
     <v-tooltip bottom>
       <template #activator="{ on }">
         <v-btn
-          class="mx-2 ds-calendar-app-action"
+          class="mx-2"
           v-on="on"
           icon
           depressed
@@ -22,7 +22,7 @@
     <v-tooltip bottom>
       <template #activator="{ on }">
         <v-btn
-          class="mx-2 ds-calendar-app-action"
+          class="mx-2"
           v-on="on"
           icon
           depressed
