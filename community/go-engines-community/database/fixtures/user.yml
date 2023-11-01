@@ -1241,7 +1241,7 @@ permission:
     name: <Current()._id>
     description: Roles, permissions, users
   permission_api_state_settings:
-    <<: *permission
+    <<: *permission_crud
     _id: api_state_settings
     name: <Current()._id>
     description: State settings
@@ -1598,7 +1598,7 @@ role:
       "@permission_api_entity": 15
       "@permission_api_contextgraph": 15
       "@permission_api_acl": 15
-      "@permission_api_state_settings": 1
+      "@permission_api_state_settings": 15
       "@permission_api_broadcast_message": 15
       "@permission_api_associative_table": 15
       "@permission_api_user_interface_update": 1
