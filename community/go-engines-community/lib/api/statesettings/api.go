@@ -81,7 +81,7 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	stateSetting, err := a.store.Insert(c.Request.Context(), request)
+	stateSetting, err := a.store.Insert(c, request)
 	if err != nil {
 		validationErr := common.ValidationError{}
 		if errors.As(err, &validationErr) {
@@ -122,7 +122,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	stateSetting, err := a.store.Update(c.Request.Context(), request)
+	stateSetting, err := a.store.Update(c, request)
 	if err != nil {
 		validationErr := common.ValidationError{}
 		if errors.As(err, &validationErr) {

@@ -2122,7 +2122,8 @@ definitions:
       _id:
         type: string
       event:
-        additionalProperties: {}
+        additionalProperties:
+          type: any
         type: object
       message:
         type: string
