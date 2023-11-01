@@ -4862,7 +4862,45 @@ definitions:
     - failures
     - skipped
     type: object
-  statesettings.StateSetting:
+  statesettings.Request:
+    properties:
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      inherited_entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      junit_thresholds:
+        $ref: '#/definitions/statesettings.JUnitThresholds'
+        description: JUnit state setting only field
+      method:
+        description: |-
+          Possible method values.
+            * `worst` - take worst state.
+            * `worst_of_share` - take worst of share defined in junit_thresholds.
+            * `inherited` - take worst of subset of dependencies defined by pattern in inherited_entity_pattern.
+            * `dependencies` - calculate state by rules defined in state_thresholds.
+        type: string
+      priority:
+        minimum: 0
+        type: integer
+      state_thresholds:
+        $ref: '#/definitions/statesettings.StateThresholds'
+      title:
+        description: Service and component state setting only fields
+        type: string
+    required:
+    - method
+    type: object
+  statesettings.Response:
     properties:
       _id:
         type: string

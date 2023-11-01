@@ -11,7 +11,7 @@ import (
 )
 
 type Validator interface {
-	ValidateStateSettingRequest(sl validator.StructLevel)
+	ValidateRequest(sl validator.StructLevel)
 	ValidateJUnitThresholds(sl validator.StructLevel)
 	ValidateStateThreshold(sl validator.StructLevel)
 }
@@ -28,14 +28,18 @@ func NewValidator() Validator {
 	}
 }
 
-func (v *baseValidator) ValidateStateSettingRequest(sl validator.StructLevel) {
-	r := sl.Current().Interface().(StateSetting)
+func (v *baseValidator) ValidateRequest(sl validator.StructLevel) {
+	r := sl.Current().Interface().(Request)
 
 	if r.ID == statesetting.JUnitID {
-		v.ValidateJUnitSettings(sl, r)
+		v.validateJUnitSettings(sl, r.StateSetting)
 		return
 	}
 
+	v.validateStateSetting(sl, r.StateSetting)
+}
+
+func (v *baseValidator) validateStateSetting(sl validator.StructLevel, r StateSetting) {
 	switch r.Method {
 	case statesetting.MethodInherited:
 		if r.InheritedEntityPattern == nil {
@@ -85,7 +89,7 @@ func (v *baseValidator) ValidateStateSettingRequest(sl validator.StructLevel) {
 	}
 }
 
-func (v *baseValidator) ValidateJUnitSettings(sl validator.StructLevel, r StateSetting) {
+func (v *baseValidator) validateJUnitSettings(sl validator.StructLevel, r StateSetting) {
 	switch r.Method {
 	case statesetting.MethodWorst:
 		if r.JUnitThresholds != nil {
