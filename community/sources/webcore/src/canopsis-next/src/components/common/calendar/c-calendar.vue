@@ -12,13 +12,13 @@
       <v-layout justify-center>
         <calendar-pagination
           :focus.sync="focus"
-          :type="type"
+          :type="internalType"
           @prev="prev"
           @next="next"
         />
       </v-layout>
       <div>
-        <calendar-view-mode v-model="type" />
+        <calendar-view-mode v-model="internalType" />
         <slot name="menu-right" />
       </div>
     </v-layout>
@@ -30,30 +30,38 @@
       :class="calendarClasses"
       :value="focus"
       :events="availableEvents"
-      :type="type"
+      :type="internalType"
       :event-color="getEventColor"
       :event-height="calendarEventHeight"
+      :month-format="formatMonth"
     >
       <template #event="{ event, start, end }">
-        <v-layout
-          class="pl-1"
-          align-center
+        <slot
+          name="event"
+          :event="event"
+          :start="start"
+          :end="end"
         >
-          <v-icon
-            v-if="event.icon"
-            :color="event.iconColor"
-            size="14"
-            class="pr-1"
+          <v-layout
+            class="pl-1"
+            align-center
           >
-            {{ event.icon }}
-          </v-icon>
-          <span v-if="start">{{ event.name }}</span>
-          <div
-            v-if="end"
-            :class="['c-calendar__event-drag-bottom', { 'c-calendar__event-drag-bottom--right': isMonthType }]"
-            @mousedown.stop="startResize(event)"
-          />
-        </v-layout>
+            <v-icon
+              v-if="event.icon"
+              :color="event.iconColor"
+              size="14"
+              class="pr-1"
+            >
+              {{ event.icon }}
+            </v-icon>
+            <span v-if="start">{{ event.name }}</span>
+            <div
+              v-if="end"
+              :class="['c-calendar__event-drag-bottom', { 'c-calendar__event-drag-bottom--right': isMonthType }]"
+              @mousedown.stop="startResize(event)"
+            />
+          </v-layout>
+        </slot>
       </template>
     </v-calendar>
 
@@ -106,10 +114,18 @@ export default {
       type: Boolean,
       default: false,
     },
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
+    type: {
+      type: String,
+      default: CALENDAR_TYPES.month,
+    },
   },
   data() {
     return {
-      type: CALENDAR_TYPES.month,
+      internalType: this.type,
       focus: new Date(),
       filled: {
         start: null,
@@ -135,7 +151,7 @@ export default {
   },
   computed: {
     isMonthType() {
-      return this.type === CALENDAR_TYPES.month;
+      return this.internalType === CALENDAR_TYPES.month;
     },
 
     availableEvents() {
@@ -153,7 +169,7 @@ export default {
         [CALENDAR_TYPES.day]: 0,
         [CALENDAR_TYPES.week]: 0,
         [CALENDAR_TYPES.month]: 20,
-      }[this.type];
+      }[this.internalType];
     },
 
     calendarClasses() {
@@ -175,11 +191,13 @@ export default {
         change: this.updateRange,
 
         'click:event': this.showEventDetails,
-
-        'mousedown:time': this.startCreateEvent,
-        'mousedown:day': this.startCreateEvent,
-        'mousedown:event': this.startDragEvent,
       };
+
+      if (!this.readonly) {
+        listeners['mousedown:time'] = this.startCreateEvent;
+        listeners['mousedown:day'] = this.startCreateEvent;
+        listeners['mousedown:event'] = this.startDragEvent;
+      }
 
       if (this.creating) {
         listeners['mouseup:time'] = this.finishCreateEvent;
@@ -208,10 +226,25 @@ export default {
       return listeners;
     },
   },
+  watch: {
+    type(type) {
+      if (type !== this.internalType) {
+        this.internalType = type;
+      }
+    },
+
+    internalType() {
+      this.$emit('update:type', this.internalType);
+    },
+  },
   mounted() {
     this.$refs.calendar.checkChange();
   },
   methods: {
+    formatMonth() {
+      return '';
+    },
+
     getEventColor(event) {
       if (event.id === this.editEvent?.id) {
         return colorToRgba(event.color, 0.5);
@@ -266,15 +299,15 @@ export default {
       this.editEvent = null;
     },
 
-    showEventDetails({ nativeEvent, event }) {
+    showEventDetails(event) {
       if (this.$listeners['click:event']) {
-        this.$emit('click:event');
+        this.$emit('click:event', event);
         return;
       }
 
-      this.showCreateEventPopover(event, nativeEvent.target);
+      this.showCreateEventPopover(event.event, event.nativeEvent.target);
 
-      nativeEvent.stopPropagation();
+      event.nativeEvent.stopPropagation();
     },
 
     getDateByEvent(event) {
@@ -484,6 +517,19 @@ export default {
     width: 980px !important;
     top: 50% !important;
     transform: translate3d(0, -50%, 0);
+  }
+
+  .v-calendar-weekly__head-weekday {
+    text-align: unset;
+  }
+
+  .v-calendar-weekly__day-label {
+    text-align: unset;
+
+    .v-btn {
+      width: 24px;
+      height: 24px;
+    }
   }
 
   .v-calendar-daily_head-day {

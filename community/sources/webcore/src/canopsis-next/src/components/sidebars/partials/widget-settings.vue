@@ -11,7 +11,8 @@
       <slot />
     </v-list>
     <v-btn
-      class="primary"
+      class="mx-2 my-1"
+      color="primary"
       :loading="submitting"
       :disabled="submitting || errors.any()"
       type="submit"

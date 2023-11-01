@@ -19,12 +19,12 @@
         >
           <v-flex xs12>
             <div
-              class="ds-calendar-event-popover-item"
+              class="stats-calendar-menu__item"
               :style="{ backgroundColor: getStyleColor(event) }"
-              @click="$emit('event-click', event)"
+              @click="$emit('click:event', event)"
             >
-              <strong>{{ event.data.title }}</strong>
-              <p>{{ event.data.description }}</p>
+              <strong>{{ event.name }}</strong>
+              <p>{{ event.description }}</p>
             </div>
           </v-flex>
         </v-layout>
@@ -37,6 +37,9 @@
 import { get } from 'lodash';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
+
+import { isDateBefore } from '@/helpers/date/date';
+import { colorToRgba } from '@/helpers/color';
 
 export default {
   props: {
@@ -75,23 +78,25 @@ export default {
   },
   methods: {
     getStyleColor(event) {
-      const past = event.schedule.end.isBefore(new Date());
+      const past = isDateBefore(event.end, new Date());
 
-      return this.$dayspan.getStyleColor(this.calendarEvent.data, event, past);
+      return past ? colorToRgba(event.color) : event.color;
     },
   },
 };
 </script>
 
 <style lang="scss">
-.ds-calendar-event-popover-item {
-  color: white;
-  margin: 1px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  padding-left: 0.5em;
-  cursor: pointer;
-  border-radius: 2px;
+.stats-calendar-menu {
+  &__item {
+    color: white;
+    margin: 1px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-left: 0.5em;
+    cursor: pointer;
+    border-radius: 2px;
+  }
 }
 </style>
