@@ -146,7 +146,7 @@ func (p *messageProcessor) handleEvent(
 		var updatedEntities []types.Entity
 		var eventEntity types.Entity
 		err := p.DbClient.WithTransaction(ctx, func(ctx context.Context) error {
-			updatedEntities = make([]types.Entity, 0, len(updatedEntities))
+			updatedEntities = updatedEntities[:0]
 			eventEntity = types.Entity{}
 			var err error
 			eventEntity, updatedEntities, err = p.ContextGraphManager.RecomputeService(ctx, event.GetEID())
@@ -180,7 +180,7 @@ func (p *messageProcessor) handleEvent(
 
 	err := p.DbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		eventEntity = types.Entity{}
-		updatedEntityIdsToCheck = make([]string, 0, len(updatedEntityIdsToCheck))
+		updatedEntityIdsToCheck = updatedEntityIdsToCheck[:0]
 		var contextGraphEntities []types.Entity
 		var err error
 		eventEntity, contextGraphEntities, err = p.ContextGraphManager.HandleEvent(ctx, event)
@@ -257,8 +257,8 @@ func (p *messageProcessor) handleEvent(
 	var serviceUpdatedEntities []types.Entity
 	var updatedEntityIdsForMetrics []string
 	err = p.DbClient.WithTransaction(ctx, func(ctx context.Context) error {
-		serviceUpdatedEntities = nil
-		updatedEntityIdsForMetrics = nil
+		serviceUpdatedEntities = serviceUpdatedEntities[:0]
+		updatedEntityIdsForMetrics = updatedEntityIdsForMetrics[:0]
 		eventMetric.IsServicesUpdated = false
 		eventEntity = *event.Entity
 		cursor, err := p.EntityCollection.Find(ctx, bson.M{"_id": bson.M{"$in": updatedEntityIdsToCheck}})
