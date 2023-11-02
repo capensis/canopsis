@@ -124,7 +124,7 @@ Feature: update state settings
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resource-state-settings-to-update-1"
+              "value": "test-service-state-settings-to-update-1"
             }
           }
         ]
@@ -390,7 +390,7 @@ Feature: update state settings
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resource-state-settings-to-update-1"
+              "value": "test-service-state-settings-to-update-1"
             }
           }
         ]
@@ -422,7 +422,7 @@ Feature: update state settings
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resource-state-settings-to-update-1"
+              "value": "test-service-state-settings-to-update-1"
             }
           }
         ]
@@ -457,7 +457,7 @@ Feature: update state settings
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resource-state-settings-to-update-1"
+              "value": "test-service-state-settings-to-update-1"
             }
           }
         ]
@@ -564,7 +564,7 @@ Feature: update state settings
             "field": "some",
             "cond": {
               "type": "eq",
-              "value": "test-resource-state-settings-to-update-1"
+              "value": "test-service-state-settings-to-update-1"
             }
           }
         ]
@@ -603,7 +603,7 @@ Feature: update state settings
             "field": "component",
             "cond": {
               "type": "eq",
-              "value": "test-resource-state-settings-to-update-1"
+              "value": "test-service-state-settings-to-update-1"
             }
           }
         ]
@@ -647,7 +647,7 @@ Feature: update state settings
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resource-state-settings-to-update-2"
+              "value": "test-service-state-settings-to-update-2"
             }
           }
         ]
@@ -694,7 +694,7 @@ Feature: update state settings
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resource-state-settings-to-update-2"
+              "value": "test-service-state-settings-to-update-2"
             }
           }
         ]
@@ -744,7 +744,7 @@ Feature: update state settings
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resource-state-settings-to-update-2"
+              "value": "test-service-state-settings-to-update-2"
             }
           }
         ]
@@ -851,7 +851,7 @@ Feature: update state settings
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resource-state-settings-invalid"
+              "value": "test-service-state-settings-invalid"
             }
           }
         ]
@@ -907,7 +907,7 @@ Feature: update state settings
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resource-state-settings-to-update-3"
+              "value": "test-service-state-settings-to-update-3"
             }
           }
         ]
@@ -954,7 +954,7 @@ Feature: update state settings
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resource-state-settings-to-update-3"
+              "value": "test-service-state-settings-to-update-3"
             }
           }
         ]
@@ -1003,7 +1003,7 @@ Feature: update state settings
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resource-state-settings-to-update-3"
+              "value": "test-service-state-settings-to-update-3"
             }
           }
         ]
@@ -1053,7 +1053,7 @@ Feature: update state settings
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resource-state-settings-to-update-4"
+              "value": "test-service-state-settings-to-update-4"
             }
           }
         ]
@@ -1085,7 +1085,7 @@ Feature: update state settings
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resource-state-settings-to-update-4"
+              "value": "test-service-state-settings-to-update-4"
             }
           }
         ]
@@ -1119,7 +1119,7 @@ Feature: update state settings
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resource-state-settings-to-update-4"
+              "value": "test-service-state-settings-to-update-4"
             }
           }
         ]
@@ -1154,7 +1154,7 @@ Feature: update state settings
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resource-state-settings-to-update-4"
+              "value": "test-service-state-settings-to-update-4"
             }
           }
         ]
@@ -1197,7 +1197,7 @@ Feature: update state settings
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resource-state-settings-to-update-not-found"
+              "value": "test-service-state-settings-to-update-not-found"
             }
           }
         ]

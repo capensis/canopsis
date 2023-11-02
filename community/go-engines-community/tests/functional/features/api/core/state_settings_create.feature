@@ -28,7 +28,7 @@ Feature: create state settings
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resource-state-settings-to-create-1"
+              "value": "test-service-state-settings-to-create-1"
             }
           }
         ]
@@ -61,7 +61,7 @@ Feature: create state settings
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resource-state-settings-to-create-1"
+              "value": "test-service-state-settings-to-create-1"
             }
           }
         ]
@@ -93,7 +93,7 @@ Feature: create state settings
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resource-state-settings-to-create-1"
+              "value": "test-service-state-settings-to-create-1"
             }
           }
         ]
@@ -127,7 +127,7 @@ Feature: create state settings
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resource-state-settings-to-create-2"
+              "value": "test-service-state-settings-to-create-2"
             }
           }
         ]
@@ -175,7 +175,7 @@ Feature: create state settings
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resource-state-settings-to-create-2"
+              "value": "test-service-state-settings-to-create-2"
             }
           }
         ]
@@ -222,7 +222,7 @@ Feature: create state settings
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resource-state-settings-to-create-2"
+              "value": "test-service-state-settings-to-create-2"
             }
           }
         ]
@@ -418,7 +418,7 @@ Feature: create state settings
             "field": "some",
             "cond": {
               "type": "eq",
-              "value": "test-resource-state-settings-to-create-1"
+              "value": "test-service-state-settings-to-create-1"
             }
           }
         ]
@@ -457,7 +457,7 @@ Feature: create state settings
             "field": "component",
             "cond": {
               "type": "eq",
-              "value": "test-resource-state-settings-to-create-1"
+              "value": "test-service-state-settings-to-create-1"
             }
           }
         ]
@@ -500,7 +500,7 @@ Feature: create state settings
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resource-state-settings-invalid"
+              "value": "test-service-state-settings-invalid"
             }
           }
         ]
@@ -556,7 +556,7 @@ Feature: create state settings
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resource-state-settings-to-create-2"
+              "value": "test-service-state-settings-to-create-2"
             }
           }
         ]
