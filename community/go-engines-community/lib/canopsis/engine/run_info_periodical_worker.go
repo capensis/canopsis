@@ -60,7 +60,7 @@ func updateInstanceRunInfo(
 	}
 
 	info.Time = types.NewCpsTime()
-	err := manager.SaveInstance(ctx, info, interval)
+	err := manager.SaveInstance(ctx, info, 2*interval)
 	if err != nil {
 		logger.Err(err).Msg("cannot save run info")
 	}
