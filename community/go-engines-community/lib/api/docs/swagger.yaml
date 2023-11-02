@@ -11351,13 +11351,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/statesettings.Request'
+              $ref: 'schemas_swagger.yaml#/definitions/statesettings.EditRequest'
             examples:
               create_inherited:
                 summary: Create inherited state setting
                 description: Create inherited state setting
                 value: {
-                  "title": "test-inherited-state-setting-1",
+                  "title": "Inherited state setting",
                   "method": "inherited",
                   "enabled": true,
                   "entity_pattern": [
@@ -11366,7 +11366,7 @@ paths:
                         "field": "name",
                         "cond": {
                           "type": "eq",
-                          "value": "test-resource-state-settings-to-create-1"
+                          "value": "some_service"
                         }
                       }
                     ]
@@ -11377,7 +11377,7 @@ paths:
                         "field": "name",
                         "cond": {
                           "type": "eq",
-                          "value": "test-resource-state-settings-to-create-1"
+                          "value": "cps_resource"
                         }
                       }
                     ]
@@ -11387,7 +11387,7 @@ paths:
                 summary: Create dependencies state setting
                 description: Create dependencies state setting
                 value: {
-                  "title": "test-dependencies-state-setting-1",
+                  "title": "Dependencies state setting",
                   "method": "dependencies",
                   "enabled": true,
                   "entity_pattern": [
@@ -11396,7 +11396,7 @@ paths:
                         "field": "name",
                         "cond": {
                           "type": "eq",
-                          "value": "test-resource-state-settings-to-create-2"
+                          "value": "some_service"
                         }
                       }
                     ]
@@ -11493,13 +11493,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/statesettings.Request'
+              $ref: 'schemas_swagger.yaml#/definitions/statesettings.EditRequest'
             examples:
               update_inherited:
                 summary: Update an inherited state setting
                 description: Update an inherited state setting
                 value: {
-                  "title": "inherited-settings-to-update-1-title-updated",
+                  "title": "Inherited state setting",
                   "method": "inherited",
                   "enabled": true,
                   "entity_pattern": [
@@ -11508,7 +11508,7 @@ paths:
                         "field": "name",
                         "cond": {
                           "type": "eq",
-                          "value": "test-resource-state-settings-to-update-1"
+                          "value": "some_service"
                         }
                       }
                     ]
@@ -11519,7 +11519,7 @@ paths:
                         "field": "name",
                         "cond": {
                           "type": "eq",
-                          "value": "test-resource-state-settings-to-update-1"
+                          "value": "cps_resource"
                         }
                       }
                     ]
@@ -11529,7 +11529,7 @@ paths:
                 summary: Update a dependencies state setting
                 description: Update a dependencies state setting
                 value: {
-                  "title": "dependencies-settings-to-update-1-title-updated",
+                  "title": "Dependencies state setting",
                   "method": "dependencies",
                   "enabled": true,
                   "entity_pattern": [
@@ -11538,7 +11538,7 @@ paths:
                         "field": "name",
                         "cond": {
                           "type": "eq",
-                          "value": "test-resource-state-settings-to-update-2"
+                          "value": "some_service"
                         }
                       }
                     ]

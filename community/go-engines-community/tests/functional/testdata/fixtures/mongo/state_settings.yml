@@ -142,7 +142,7 @@ state_settings:
       - - field: name
           cond:
             type: eq
-            value: test-resource-state-settings-to-get-rule-pattern-1
+            value: test-service-state-settings-to-get-rule-pattern-1
     inherited_entity_pattern:
       - - field: name
           cond:
@@ -156,7 +156,7 @@ state_settings:
       - - field: name
           cond:
             type: eq
-            value: test-resource-state-settings-to-get-rule-pattern-2
+            value: test-service-state-settings-to-get-rule-pattern-2
     inherited_entity_pattern:
       - - field: name
           cond:

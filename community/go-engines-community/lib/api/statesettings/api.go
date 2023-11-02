@@ -71,10 +71,10 @@ func (a *api) Get(c *gin.Context) {
 }
 
 // Create
-// @Param body body Request true "body"
+// @Param body body EditRequest true "body"
 // @Success 201 {object} Response
 func (a *api) Create(c *gin.Context) {
-	request := Request{}
+	request := EditRequest{}
 
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
@@ -105,10 +105,10 @@ func (a *api) Create(c *gin.Context) {
 }
 
 // Update
-// @Param body body Request true "body"
+// @Param body body EditRequest true "body"
 // @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
-	request := Request{
+	request := EditRequest{
 		ID: c.Param("id"),
 	}
 

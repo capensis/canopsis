@@ -11,7 +11,7 @@ import (
 )
 
 type Validator interface {
-	ValidateRequest(sl validator.StructLevel)
+	ValidateEditRequest(sl validator.StructLevel)
 	ValidateJUnitThresholds(sl validator.StructLevel)
 	ValidateStateThreshold(sl validator.StructLevel)
 }
@@ -28,8 +28,8 @@ func NewValidator() Validator {
 	}
 }
 
-func (v *baseValidator) ValidateRequest(sl validator.StructLevel) {
-	r := sl.Current().Interface().(Request)
+func (v *baseValidator) ValidateEditRequest(sl validator.StructLevel) {
+	r := sl.Current().Interface().(EditRequest)
 
 	if r.ID == statesetting.JUnitID {
 		v.validateJUnitSettings(sl, r.StateSetting)

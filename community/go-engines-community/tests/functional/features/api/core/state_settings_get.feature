@@ -33,7 +33,7 @@ Feature: get state settings
                 "field": "name",
                 "cond": {
                   "type": "eq",
-                  "value": "test-resource-state-settings-to-get-rule-pattern-1"
+                  "value": "test-service-state-settings-to-get-rule-pattern-1"
                 }
               }
             ]
@@ -63,7 +63,7 @@ Feature: get state settings
                 "field": "name",
                 "cond": {
                   "type": "eq",
-                  "value": "test-resource-state-settings-to-get-rule-pattern-2"
+                  "value": "test-service-state-settings-to-get-rule-pattern-2"
                 }
               }
             ]
@@ -92,6 +92,17 @@ Feature: get state settings
     }
     """
 
+  @concurrent
+  Scenario: given get list request should return default settings on top regarding of sort
+    When I am admin
+    When I do GET /api/v4/state-settings?sort_by=priority&sort=asc
+    Then the response code should be 200
+    Then the response key "data.0._id" should be "service"
+    Then the response key "data.1._id" should be "junit"
+    When I do GET /api/v4/state-settings?sort_by=priority&sort=desc
+    Then the response code should be 200
+    Then the response key "data.0._id" should be "service"
+    Then the response key "data.1._id" should be "junit"
 
   @concurrent
   Scenario: given get by id request should return ok
@@ -111,7 +122,7 @@ Feature: get state settings
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resource-state-settings-to-get-rule-pattern-1"
+              "value": "test-service-state-settings-to-get-rule-pattern-1"
             }
           }
         ]

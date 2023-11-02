@@ -5,7 +5,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 )
 
-type Request struct {
+type EditRequest struct {
 	ID           string `json:"-" bson:"_id"`
 	StateSetting `bson:"inline"`
 

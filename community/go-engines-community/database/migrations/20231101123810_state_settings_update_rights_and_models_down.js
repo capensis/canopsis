@@ -15,5 +15,5 @@ db.state_settings.updateOne({_id: "junit"}, {
 });
 
 db.permission.updateOne({_id:"api_state_settings"}, {$unset: {type: ""}});
-db.role.updateMany({"permissions.api_state_settings": {$exists: true}}, {$set: {"permissions.api_state_settings": 1}});
+db.role.updateMany({"permissions.api_state_settings": {$ne: null}}, {$set: {"permissions.api_state_settings": 1}});
 
