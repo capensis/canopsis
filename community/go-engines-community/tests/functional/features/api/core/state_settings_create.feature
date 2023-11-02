@@ -43,7 +43,9 @@ Feature: create state settings
             }
           }
         ]
-      ]
+      ],
+      "editable": true,
+      "deletable": true
     }
     """
     Then the response code should be 200
@@ -155,7 +157,9 @@ Feature: create state settings
           "cond": "gt",
           "value": 10
         }
-      }
+      },
+      "editable": true,
+      "deletable": true
     }
     """
     Then the response code should be 200
