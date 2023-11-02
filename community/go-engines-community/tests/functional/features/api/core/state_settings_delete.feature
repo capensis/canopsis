@@ -22,7 +22,7 @@ Feature: Delete state settings
   Then the response code should be 404
 
   @concurrent
-  Scenario: given delete request for not found theme should return error
+  Scenario: given delete request for not found state setting should return not found error
   When I am admin
   When I do DELETE /api/v4/state-settings/settings-not-found
   Then the response code should be 404
@@ -34,7 +34,7 @@ Feature: Delete state settings
   """
 
   @concurrent
-  Scenario: given delete request for default theme should return error
+  Scenario: given delete request for default state setting should return error
   When I am admin
   When I do DELETE /api/v4/state-settings/junit
   Then the response code should be 400
@@ -46,7 +46,7 @@ Feature: Delete state settings
   """
 
   @concurrent
-  Scenario: given delete request for default theme should return error
+  Scenario: given delete request for default state setting should return error
   When I am admin
   When I do DELETE /api/v4/state-settings/service
   Then the response code should be 400

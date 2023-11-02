@@ -6,13 +6,19 @@ import (
 )
 
 type Request struct {
-	StateSetting `bson:"inline"`
 	ID           string `json:"-" bson:"_id"`
+	StateSetting `bson:"inline"`
+
+	Editable  bool `bson:"editable,omitempty" json:"-"`
+	Deletable bool `bson:"deletable,omitempty" json:"-"`
 }
 
 type Response struct {
-	StateSetting `bson:"inline"`
 	ID           string `json:"_id" bson:"_id"`
+	StateSetting `bson:"inline"`
+
+	Editable  bool `bson:"editable,omitempty" json:"editable"`
+	Deletable bool `bson:"deletable,omitempty" json:"deletable"`
 }
 
 type StateSetting struct {

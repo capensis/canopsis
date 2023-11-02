@@ -48,7 +48,9 @@ Feature: get state settings
                 }
               }
             ]
-          ]
+          ],
+          "editable": true,
+          "deletable": true
         },
         {
           "_id": "state-settings-to-get-2",
@@ -76,7 +78,9 @@ Feature: get state settings
                 }
               }
             ]
-          ]
+          ],
+          "editable": true,
+          "deletable": true
         }
       ],
       "meta": {
@@ -122,7 +126,9 @@ Feature: get state settings
             }
           }
         ]
-      ]
+      ],
+      "editable": true,
+      "deletable": true
     }
     """
 
@@ -135,5 +141,31 @@ Feature: get state settings
     """json
     {
       "error": "Not found"
+    }
+    """
+
+  @concurrent
+  Scenario: given get some default settings should return ok and have deletable and editable fields
+    When I am admin
+    When I do GET /api/v4/state-settings/service
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "service",
+      "enabled": true,
+      "editable": false,
+      "deletable": false
+    }
+    """
+    When I do GET /api/v4/state-settings/junit
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "junit",
+      "enabled": true,
+      "editable": true,
+      "deletable": false
     }
     """
