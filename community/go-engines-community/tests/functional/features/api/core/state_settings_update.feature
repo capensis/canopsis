@@ -49,6 +49,7 @@ Feature: update state settings
       "_id": "junit",
       "title": "Junit",
       "method": "worst_of_share",
+      "enabled": true,
       "junit_thresholds": {
         "skipped": {
           "minor": 15,
@@ -68,7 +69,9 @@ Feature: update state settings
           "critical": 30,
           "type": 0
         }
-      }
+      },
+      "editable": true,
+      "deletable": false
     }
     """
     When I do GET /api/v4/state-settings/junit
@@ -98,7 +101,9 @@ Feature: update state settings
           "critical": 30,
           "type": 0
         }
-      }
+      },
+      "editable": true,
+      "deletable": false
     }
     """
 
@@ -432,7 +437,9 @@ Feature: update state settings
             }
           }
         ]
-      ]
+      ],
+      "editable": true,
+      "deletable": true
     }
     """
     When I do GET /api/v4/state-settings/inherited-settings-to-update-1
@@ -465,7 +472,9 @@ Feature: update state settings
             }
           }
         ]
-      ]
+      ],
+      "editable": true,
+      "deletable": true
     }
     """
 
@@ -715,7 +724,9 @@ Feature: update state settings
           "cond": "gt",
           "value": 10
         }
-      }
+      },
+      "editable": true,
+      "deletable": true
     }
     """
     When I do GET /api/v4/state-settings/dependencies-settings-to-update-1
@@ -763,7 +774,9 @@ Feature: update state settings
           "cond": "gt",
           "value": 10
         }
-      }
+      },
+      "editable": true,
+      "deletable": true
     }
     """
     
@@ -1170,7 +1183,7 @@ Feature: update state settings
     """
 
   @concurrent
-  Scenario: given update inherited state_settings request should return ok
+  Scenario: given update not found state_settings request should return not found error
     When I am admin
     When I do PUT /api/v4/state-settings/inherited-settings-to-update-not-found:
     """json

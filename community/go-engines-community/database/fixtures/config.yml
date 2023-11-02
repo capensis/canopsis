@@ -48,11 +48,15 @@ state_settings:
     _id: service
     title: Service
     method: worst
+    enabled: true
     on_top: 2
+    editable: false
+    deletable: false
   junit:
     _id: junit
     title: Junit
     method: worst_of_share
+    enabled: true
     on_top: 1
     junit_thresholds:
       skipped:
@@ -70,6 +74,8 @@ state_settings:
         major: 20
         critical: 30
         type: 1
+    editable: true
+    deletable: false
 notification:
   instruction:
     _id: notification

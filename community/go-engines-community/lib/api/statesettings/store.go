@@ -93,6 +93,8 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 
 func (s *store) Insert(ctx context.Context, r Request) (*Response, error) {
 	r.ID = utils.NewID()
+	r.Editable = true
+	r.Deletable = true
 
 	var response *Response
 

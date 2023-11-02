@@ -4904,6 +4904,10 @@ definitions:
     properties:
       _id:
         type: string
+      deletable:
+        type: boolean
+      editable:
+        type: boolean
       enabled:
         type: boolean
       entity_pattern:
