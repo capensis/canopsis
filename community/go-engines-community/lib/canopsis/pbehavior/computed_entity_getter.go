@@ -12,42 +12,34 @@ import (
 
 var ErrCacheNotLoaded = errors.New("cache is not loaded")
 
-// ComputedEntityMatcher checks if an entity is matched to filter. It precomputes
-// filter-entity associations and uses computed data to resolve matched filters.
-type ComputedEntityMatcher interface {
-	// LoadAll computes filter-entity associations to memory.
-	LoadAll(ctx context.Context, filters map[string]interface{}) error
+// ComputedEntityGetter checks if there are entities which are matched to filters. It saves matched entity ids to local cache.
+type ComputedEntityGetter interface {
+	Compute(ctx context.Context, filters []bson.M) error
 	GetComputedEntityIDs() ([]string, error)
 }
 
-func NewComputedEntityMatcher(dbClient mongo.DbClient) ComputedEntityMatcher {
-	return &computedEntityMatcher{
+func NewComputedEntityGetter(dbClient mongo.DbClient) ComputedEntityGetter {
+	return &computedEntityGetter{
 		dbCollection: dbClient.Collection(mongo.EntityMongoCollection),
 	}
 }
 
-// entityMatcher executes mongo query to check if entity is matched.
-type computedEntityMatcher struct {
-	dbCollection   mongo.DbCollection
-	keysByEntityID map[string][]string
+// computedEntityGetter executes mongo query to check if entity is matched.
+type computedEntityGetter struct {
+	dbCollection mongo.DbCollection
+	entityIds    []string
 }
 
-func (m *computedEntityMatcher) LoadAll(ctx context.Context, filters map[string]interface{}) error {
-	keysByEntityID := make(map[string][]string, len(filters))
+func (m *computedEntityGetter) Compute(ctx context.Context, filters []bson.M) error {
+	entityIds := make([]string, 0)
 	if len(filters) == 0 {
-		m.keysByEntityID = keysByEntityID
+		m.entityIds = entityIds
 		return nil
 	}
 
-	ch := make(chan string)
-	type workerResult struct {
-		key       string
-		entityIDs []string
-	}
-	resCh := make(chan workerResult)
-
+	ch := make(chan int)
+	resCh := make(chan []string)
 	g, ctx := errgroup.WithContext(ctx)
-
 	g.Go(func() error {
 		defer close(ch)
 		for key := range filters {
@@ -77,10 +69,7 @@ func (m *computedEntityMatcher) LoadAll(ctx context.Context, filters map[string]
 						return err
 					}
 
-					resCh <- workerResult{
-						key:       key,
-						entityIDs: entityIDs,
-					}
+					resCh <- entityIDs
 				}
 			}
 		})
@@ -92,9 +81,7 @@ func (m *computedEntityMatcher) LoadAll(ctx context.Context, filters map[string]
 	}()
 
 	for res := range resCh {
-		for _, entityID := range res.entityIDs {
-			keysByEntityID[entityID] = append(keysByEntityID[entityID], res.key)
-		}
+		entityIds = append(entityIds, res...)
 	}
 
 	err := g.Wait()
@@ -102,26 +89,19 @@ func (m *computedEntityMatcher) LoadAll(ctx context.Context, filters map[string]
 		return err
 	}
 
-	m.keysByEntityID = keysByEntityID
+	m.entityIds = entityIds
 	return nil
 }
 
-func (m *computedEntityMatcher) GetComputedEntityIDs() ([]string, error) {
-	if m.keysByEntityID == nil {
+func (m *computedEntityGetter) GetComputedEntityIDs() ([]string, error) {
+	if m.entityIds == nil {
 		return nil, ErrCacheNotLoaded
 	}
 
-	entityIDs := make([]string, len(m.keysByEntityID))
-	i := 0
-	for entityID := range m.keysByEntityID {
-		entityIDs[i] = entityID
-		i++
-	}
-
-	return entityIDs, nil
+	return m.entityIds, nil
 }
 
-func (m *computedEntityMatcher) findEntityIDs(ctx context.Context, filter interface{}) ([]string, error) {
+func (m *computedEntityGetter) findEntityIDs(ctx context.Context, filter bson.M) ([]string, error) {
 	cursor, err := m.dbCollection.Aggregate(ctx, []bson.M{
 		{"$match": filter},
 		{"$project": bson.M{
