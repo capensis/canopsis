@@ -82,6 +82,10 @@ func (m *runInfoManager) GetEngineQueues(ctx context.Context) ([]RunInfo, error)
 			}
 
 			for i, v := range resGet.Val() {
+				if v == nil {
+					continue
+				}
+
 				if s, ok := v.(string); ok {
 					var info InstanceRunInfo
 					err := json.Unmarshal([]byte(s), &info)
