@@ -3,3 +3,5 @@ export const CALENDAR_TYPES = {
   week: 'week',
   month: 'month',
 };
+
+export const CALENDAR_START_DRAG_DELAY = 100;
