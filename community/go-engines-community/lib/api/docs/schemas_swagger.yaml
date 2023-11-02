@@ -4827,42 +4827,7 @@ definitions:
       value:
         type: string
     type: object
-  statesettings.JUnitThreshold:
-    properties:
-      critical:
-        maximum: 100
-        minimum: 0
-        type: number
-      major:
-        maximum: 100
-        minimum: 0
-        type: number
-      minor:
-        maximum: 100
-        minimum: 0
-        type: number
-      type:
-        type: integer
-    required:
-    - critical
-    - major
-    - minor
-    - type
-    type: object
-  statesettings.JUnitThresholds:
-    properties:
-      errors:
-        $ref: '#/definitions/statesettings.JUnitThreshold'
-      failures:
-        $ref: '#/definitions/statesettings.JUnitThreshold'
-      skipped:
-        $ref: '#/definitions/statesettings.JUnitThreshold'
-    required:
-    - errors
-    - failures
-    - skipped
-    type: object
-  statesettings.Request:
+  statesettings.EditRequest:
     properties:
       enabled:
         type: boolean
@@ -4899,6 +4864,41 @@ definitions:
         type: string
     required:
     - method
+    type: object
+  statesettings.JUnitThreshold:
+    properties:
+      critical:
+        maximum: 100
+        minimum: 0
+        type: number
+      major:
+        maximum: 100
+        minimum: 0
+        type: number
+      minor:
+        maximum: 100
+        minimum: 0
+        type: number
+      type:
+        type: integer
+    required:
+    - critical
+    - major
+    - minor
+    - type
+    type: object
+  statesettings.JUnitThresholds:
+    properties:
+      errors:
+        $ref: '#/definitions/statesettings.JUnitThreshold'
+      failures:
+        $ref: '#/definitions/statesettings.JUnitThreshold'
+      skipped:
+        $ref: '#/definitions/statesettings.JUnitThreshold'
+    required:
+    - errors
+    - failures
+    - skipped
     type: object
   statesettings.Response:
     properties:

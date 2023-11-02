@@ -19,8 +19,8 @@ const StickySortField = "on_top"
 type Store interface {
 	GetById(ctx context.Context, id string) (*Response, error)
 	Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error)
-	Insert(ctx context.Context, r Request) (*Response, error)
-	Update(ctx context.Context, r Request) (*Response, error)
+	Insert(ctx context.Context, r EditRequest) (*Response, error)
+	Update(ctx context.Context, r EditRequest) (*Response, error)
 	Delete(ctx context.Context, id string) (bool, error)
 }
 
@@ -91,7 +91,7 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 	return &result, nil
 }
 
-func (s *store) Insert(ctx context.Context, r Request) (*Response, error) {
+func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 	r.ID = utils.NewID()
 	r.Editable = true
 	r.Deletable = true
@@ -125,7 +125,7 @@ func (s *store) Insert(ctx context.Context, r Request) (*Response, error) {
 	return response, nil
 }
 
-func (s *store) Update(ctx context.Context, r Request) (*Response, error) {
+func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	var response *Response
 
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
@@ -134,9 +134,7 @@ func (s *store) Update(ctx context.Context, r Request) (*Response, error) {
 		unset := make(bson.M)
 		if r.Method == statesetting.MethodDependencies {
 			unset["inherited_entity_pattern"] = 1
-		}
-
-		if r.Method == statesetting.MethodInherited {
+		} else if r.Method == statesetting.MethodInherited {
 			unset["state_thresholds"] = 1
 		}
 
@@ -149,8 +147,8 @@ func (s *store) Update(ctx context.Context, r Request) (*Response, error) {
 			return err
 		}
 
-		if err != nil || res.MatchedCount == 0 {
-			return err
+		if res.MatchedCount == 0 {
+			return nil
 		}
 
 		err = priority.UpdateFollowing(ctx, s.dbCollection, r.ID, r.Priority)
