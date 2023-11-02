@@ -17,7 +17,7 @@ db.default_entities.aggregate([
                 {
                     $match: {
                         $and: [
-                            {"v.resolved": true},
+                            {"v.resolved": null},
                             {$expr: {$eq: ["$d", "$$entity"]}}
                         ]
                     }
