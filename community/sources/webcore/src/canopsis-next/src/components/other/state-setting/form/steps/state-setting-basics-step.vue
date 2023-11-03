@@ -15,7 +15,7 @@
             required
           )
         v-flex(xs2)
-          c-enabled-field.ml-2
+          c-enabled-field.ml-2(v-field="form.enabled")
       state-setting-method-field(v-field="form.method")
 </template>
 

@@ -106,7 +106,10 @@ export const API_ROUTES = {
   entityContextGraph: '/api/v4/entities/context-graph',
   bulkEntitiesEnable: '/api/v4/bulk/entities/enable',
   bulkEntitiesDisable: '/api/v4/bulk/entities/disable',
-  entityBasics: '/api/v4/entitybasics',
+  entityBasics: {
+    list: '/api/v4/entitybasics',
+    checkStateSetting: '/api/v4/entitybasics/check-state-setting',
+  },
   service: '/api/v4/entityservices',
   serviceDependencies: '/api/v4/entityservice-dependencies',
   serviceImpacts: '/api/v4/entityservice-impacts',

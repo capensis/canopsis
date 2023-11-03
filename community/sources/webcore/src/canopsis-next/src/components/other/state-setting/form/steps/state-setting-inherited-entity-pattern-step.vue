@@ -4,7 +4,7 @@
     :entity-attributes="entityAttributes",
     :entity-types="entityTypes",
     :entity-title="$t('stateSetting.addImpactingEntityPattern')",
-    name="impacting_patterns",
+    name="inherited_entity_pattern",
     required,
     with-entity,
     entity-counters-type

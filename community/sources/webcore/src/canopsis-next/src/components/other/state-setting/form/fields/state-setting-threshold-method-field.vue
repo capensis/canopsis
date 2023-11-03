@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { STATE_SETTING_CONDITIONS_METHODS } from '@/constants';
+import { STATE_SETTING_THRESHOLDS_METHODS } from '@/constants';
 
 export default {
   inject: ['$validator'],
@@ -28,7 +28,7 @@ export default {
   props: {
     value: {
       type: String,
-      default: STATE_SETTING_CONDITIONS_METHODS.share,
+      default: STATE_SETTING_THRESHOLDS_METHODS.share,
     },
     label: {
       type: String,
@@ -41,7 +41,7 @@ export default {
   },
   computed: {
     methods() {
-      return STATE_SETTING_CONDITIONS_METHODS;
+      return STATE_SETTING_THRESHOLDS_METHODS;
     },
   },
 };

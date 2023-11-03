@@ -339,15 +339,15 @@ export const COLOR_INDICATOR_TYPES = {
 
 export const STATE_SETTING_METHODS = {
   inherited: 'inherited',
-  dependenciesState: 'dependencies_state',
+  dependencies: 'dependencies',
 };
 
-export const STATE_SETTING_CONDITIONS_METHODS = {
+export const STATE_SETTING_THRESHOLDS_METHODS = {
   share: 'share',
   number: 'number',
 };
 
-export const STATE_SETTING_CONDITIONS = {
+export const STATE_SETTING_THRESHOLDS_CONDITIONS = {
   greater: 'gt',
   less: 'lt',
 };
