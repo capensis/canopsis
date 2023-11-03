@@ -154,3 +154,59 @@ state_settings:
           cond:
             type: eq
             value: test-resource-state-settings-to-get-impacting-pattern-2
+
+  state_settings_to_check_1:
+    <<: *inherited_settings
+    _id: state-settings-to-check-1
+    title: state-settings-to-check-1-title
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-service-state-settings-to-check-1
+  state_settings_to_check_2_1:
+    <<: *inherited_settings
+    _id: state-settings-to-check-2-1
+    title: state-settings-to-check-2-1-title
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-service-state-settings-to-check-2
+  state_settings_to_check_2_2:
+    <<: *inherited_settings
+    _id: state-settings-to-check-2-2
+    title: state-settings-to-check-2-2-title
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-service-state-settings-to-check-2
+  state_settings_to_check_3_1:
+    <<: *inherited_settings
+    _id: state-settings-to-check-3-1
+    title: state-settings-to-check-3-1-title
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-service-state-settings-to-check-3
+        - field: infos.infos_1
+          field_type: string
+          cond:
+            type: eq
+            value: value_1
+  state_settings_to_check_3_2:
+    <<: *inherited_settings
+    _id: state-settings-to-check-3-2
+    title: state-settings-to-check-3-2-title
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-service-state-settings-to-check-3
+        - field: infos.infos_1
+          field_type: string
+          cond:
+            type: eq
+            value: value_2

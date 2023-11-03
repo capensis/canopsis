@@ -3,6 +3,8 @@ package entity
 //go:generate easyjson -no_std_marshalers
 
 import (
+	"encoding/json"
+	"fmt"
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -216,4 +218,72 @@ type ContextGraphRequest struct {
 type ContextGraphResponse struct {
 	Impacts []string `bson:"impact" json:"impact"`
 	Depends []string `bson:"depends" json:"depends"`
+}
+
+type InfoRequest struct {
+	Name        string      `json:"name" binding:"required,max=255"`
+	Description string      `json:"description" binding:"max=255"`
+	Value       interface{} `json:"value"`
+}
+
+func (r *InfoRequest) UnmarshalJSON(b []byte) error {
+	type Alias InfoRequest
+	tmp := Alias{}
+	err := json.Unmarshal(b, &tmp)
+	if err != nil {
+		return err
+	}
+
+	*r = InfoRequest(tmp)
+
+	if r.Value != nil {
+		switch v := r.Value.(type) {
+		case float64, float32, int, int64, int32, bool, string:
+			// do nothing
+		case []interface{}:
+			for _, item := range v {
+				if item != nil {
+					switch item.(type) {
+					case float64, float32, int, int64, int32, bool, string:
+						// do nothing
+					default:
+						return fmt.Errorf("invalid type of array item: %T", item)
+					}
+				}
+			}
+		default:
+			return fmt.Errorf("invalid value type: %T", r.Value)
+		}
+	}
+
+	return nil
+}
+
+func TransformInfosRequest(infoRequests []InfoRequest) map[string]types.Info {
+	infos := make(map[string]types.Info, len(infoRequests))
+	for _, v := range infoRequests {
+		infos[v.Name] = types.Info{
+			Name:        v.Name,
+			Description: v.Description,
+			Value:       v.Value,
+		}
+	}
+
+	return infos
+}
+
+// CheckStateSettingRequest contains some required fields because they are required in entitybasic.EditRequest
+// they are not needed to be required for check logic, we're just keeping the validation consistency between request models.
+type CheckStateSettingRequest struct {
+	ID          string        `json:"_id"`
+	Name        string        `json:"name" binding:"required,max=255"`
+	Connector   string        `json:"connector"`
+	Type        string        `json:"type" binding:"required,oneof=component service"`
+	Infos       []InfoRequest `json:"infos" binding:"dive"`
+	Category    string        `json:"category"`
+	ImpactLevel int64         `json:"impact_level" binding:"required,min=1,max=10"`
+}
+
+type CheckStateSettingResponse struct {
+	Title string `json:"title"`
 }
