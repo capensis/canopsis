@@ -12,13 +12,12 @@
     template(#enabled="{ item }")
       c-enabled(:value="item.enabled")
     template(#priority="{ item }") {{ item.priority || '-' }}
-    template(#method="{ item }") {{ $t(`stateSetting.methods.${item.method}`) }}
+    template(#method="{ item }") {{ $t(`stateSetting.methods.${item.method}.label`) }}
     template(#actions="{ item }")
       v-layout(row)
         c-action-btn(
           v-if="updatable",
           type="edit",
-          :disabled="!item.editable",
           @click.stop="$emit('edit', item)"
         )
         c-action-btn(
@@ -76,23 +75,19 @@ export default {
       return [
         {
           text: this.$t('common.title'),
-          value: 'type',
-          sortable: false,
+          value: 'title',
         },
         {
           text: this.$t('common.enabled'),
           value: 'enabled',
-          sortable: false,
         },
         {
           text: this.$t('common.priority'),
           value: 'priority',
-          sortable: false,
         },
         {
           text: this.$t('common.method'),
           value: 'method',
-          sortable: false,
         },
         {
           text: this.$t('common.actionsLabel'),
