@@ -43,9 +43,7 @@ Feature: create state settings
             }
           }
         ]
-      ],
-      "editable": true,
-      "deletable": true
+      ]
     }
     """
     Then the response code should be 200
@@ -76,7 +74,9 @@ Feature: create state settings
             }
           }
         ]
-      ]
+      ],
+      "editable": true,
+      "deletable": true
     }
     """
     When I do GET /api/v4/state-settings/{{ .lastResponse._id }}
@@ -108,7 +108,9 @@ Feature: create state settings
             }
           }
         ]
-      ]
+      ],
+      "editable": true,
+      "deletable": true
     }
     """
 
@@ -157,9 +159,7 @@ Feature: create state settings
           "cond": "gt",
           "value": 10
         }
-      },
-      "editable": true,
-      "deletable": true
+      }
     }
     """
     Then the response code should be 200
@@ -205,7 +205,9 @@ Feature: create state settings
           "cond": "gt",
           "value": 10
         }
-      }
+      },
+      "editable": true,
+      "deletable": true
     }
     """
     When I do GET /api/v4/state-settings/{{ .lastResponse._id }}
@@ -252,7 +254,9 @@ Feature: create state settings
           "cond": "gt",
           "value": 10
         }
-      }
+      },
+      "editable": true,
+      "deletable": true
     }
     """
 

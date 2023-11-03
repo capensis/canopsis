@@ -2,7 +2,6 @@ package statesettings
 
 import (
 	"context"
-	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -42,18 +41,27 @@ func NewStore(
 }
 
 func (s *store) GetById(ctx context.Context, id string) (*Response, error) {
-	var res Response
+	pipeline := []bson.M{{"$match": bson.M{"_id": id}}, addEditableAndDeletableFields()}
 
-	err := s.dbCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&res)
+	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return nil, nil
-		}
-
 		return nil, err
 	}
 
-	return &res, nil
+	defer cursor.Close(ctx)
+
+	if cursor.Next(ctx) {
+		var res Response
+
+		err = cursor.Decode(&res)
+		if err != nil {
+			return nil, err
+		}
+
+		return &res, nil
+	}
+
+	return nil, nil
 }
 
 func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error) {
@@ -63,6 +71,8 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
+
+	pipeline = append(pipeline, addEditableAndDeletableFields())
 
 	sortBy := "title"
 	if query.SortBy != "" {
@@ -93,8 +103,6 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 
 func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 	r.ID = utils.NewID()
-	r.Editable = true
-	r.Deletable = true
 
 	var response *Response
 
@@ -192,4 +200,21 @@ func (s *store) getSortQuery(sortBy, sort string) bson.M {
 	}
 
 	return bson.M{"$sort": q}
+}
+
+func addEditableAndDeletableFields() bson.M {
+	return bson.M{
+		"$addFields": bson.M{
+			"editable": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$eq": bson.A{"$_id", statesetting.ServiceID}},
+				"then": false,
+				"else": true,
+			}},
+			"deletable": bson.M{"$cond": bson.M{
+				"if":   bson.M{"$in": bson.A{"$_id", bson.A{statesetting.ServiceID, statesetting.JUnitID}}},
+				"then": false,
+				"else": true,
+			}},
+		},
+	}
 }
