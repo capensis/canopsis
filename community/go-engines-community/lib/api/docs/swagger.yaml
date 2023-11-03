@@ -4623,6 +4623,52 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /entities/check-state-setting:
+    post:
+      tags:
+        - entities
+      summary: Check state setting
+      description: |
+        Check if there is matched state setting rule.
+        
+        -  PERMISSIONS: `api_state_settings:read`
+      operationId: entities-check-state-setting
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/entity.CheckStateSettingRequest'
+            examples:
+              create:
+                summary: Check state setting
+                description: Check state setting.
+                value: {
+                  "name": "cps_service_1",
+                  "type": "service",
+                  "infos": [
+                    {
+                      "description": "Custom name infos",
+                      "name": "custom_name",
+                      "value": "service_1"
+                    }
+                  ],
+                  "impact_level": 1
+                }
+        required: true
+      responses:
+        200:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/entity.CheckStateSettingResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /entities/clean-archived:
     post:
       tags:
