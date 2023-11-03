@@ -3,6 +3,7 @@ import {
   STATE_SETTING_METHODS,
   STATE_SETTING_THRESHOLDS_METHODS,
   STATE_SETTING_THRESHOLDS_CONDITIONS,
+  JUNIT_STATE_SETTING_METHODS,
 } from '@/constants';
 
 export default {
@@ -41,5 +42,15 @@ export default {
     [ENTITIES_STATES_KEYS.minor]: 'Minor',
     [ENTITIES_STATES_KEYS.major]: 'Major',
     [ENTITIES_STATES_KEYS.critical]: 'Critical',
+  },
+  junit: {
+    worstLabel: 'The worst of:',
+    worstHelpText: 'Canopsis counts the state for each criterion defined. The final state of JUnit test suite is taken as a worst of resulting states.',
+    criterion: 'Criterion',
+    serviceState: 'Service state',
+    methods: {
+      [JUNIT_STATE_SETTING_METHODS.worst]: 'Worst',
+      [JUNIT_STATE_SETTING_METHODS.worstOfShare]: 'Worst of share',
+    },
   },
 };

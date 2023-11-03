@@ -113,4 +113,5 @@ export const MODALS = {
   createTheme: 'create-theme',
 
   createStateSetting: 'create-state-setting',
+  createJunitStateSetting: 'create-junit-state-setting',
 };
