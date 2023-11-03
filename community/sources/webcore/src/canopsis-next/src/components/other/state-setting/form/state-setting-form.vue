@@ -10,16 +10,16 @@
         ) {{ $t('stateSetting.steps.basics') }}
         v-divider
         v-stepper-step(
-          :complete="stepper > steps.RULE_PATTERNS",
-          :step="steps.RULE_PATTERNS",
-          :rules="[() => !hasRulePatternsFormAnyError]",
+          :complete="stepper > steps.ENTITY_PATTERN",
+          :step="steps.ENTITY_PATTERN",
+          :rules="[() => !hasEntityPatternFormAnyError]",
           editable
         ) {{ $t('stateSetting.steps.rulePatterns') }}
         v-divider
         v-stepper-step(
-          :complete="stepper > steps.CONDITIONS",
-          :step="steps.CONDITIONS",
-          :rules="[() => !hasConditionsFormAnyError]",
+          :complete="stepper > steps.THRESHOLDS",
+          :step="steps.THRESHOLDS",
+          :rules="[() => !hasThresholdsFormAnyError]",
           editable
         ) {{ $t('stateSetting.steps.conditions') }}
       v-stepper-items
@@ -28,21 +28,21 @@
             ref="basicsForm",
             v-field="form"
           )
-        v-stepper-content(:step="steps.RULE_PATTERNS")
-          state-setting-rule-patterns-step(
-            ref="rulePatternsForm",
-            v-field="form.rule_patterns"
+        v-stepper-content(:step="steps.ENTITY_PATTERN")
+          state-setting-entity-pattern-step(
+            ref="entityPatternForm",
+            v-field="form.entity_pattern"
           )
-        v-stepper-content(:step="steps.CONDITIONS")
-          state-setting-impacting-patterns-step(
-            ref="conditionsForm",
+        v-stepper-content(:step="steps.THRESHOLDS")
+          state-setting-inherited-entity-pattern-step(
+            ref="thresholdsForm",
             v-if="isInheritedMethod",
-            v-field="form.impacting_patterns"
+            v-field="form.inherited_entity_pattern"
           )
-          state-setting-conditions-step(
-            ref="conditionsForm",
+          state-setting-thresholds-step(
+            ref="thresholdsForm",
             v-else,
-            v-field="form.conditions"
+            v-field="form.state_thresholds"
           )
 </template>
 
@@ -52,16 +52,16 @@ import { STATE_SETTING_METHODS } from '@/constants';
 import { formMixin } from '@/mixins/form';
 
 import StateSettingBasicsStep from './steps/state-setting-basics-step.vue';
-import StateSettingRulePatternsStep from './steps/state-setting-rule-patterns-step.vue';
-import StateSettingImpactingPatternsStep from './steps/state-setting-impacting-patterns-step.vue';
-import StateSettingConditionsStep from './steps/state-setting-conditions-step.vue';
+import StateSettingEntityPatternStep from './steps/state-setting-entity-pattern-step.vue';
+import StateSettingInheritedEntityPatternStep from './steps/state-setting-inherited-entity-pattern-step.vue';
+import StateSettingThresholdsStep from './steps/state-setting-thresholds-step.vue';
 
 export default {
   components: {
     StateSettingBasicsStep,
-    StateSettingRulePatternsStep,
-    StateSettingImpactingPatternsStep,
-    StateSettingConditionsStep,
+    StateSettingEntityPatternStep,
+    StateSettingInheritedEntityPatternStep,
+    StateSettingThresholdsStep,
   },
   mixins: [formMixin],
   model: {
@@ -78,16 +78,16 @@ export default {
     return {
       stepper: 1,
       hasBasicsFormAnyError: false,
-      hasRulePatternsFormAnyError: false,
-      hasConditionsFormAnyError: false,
+      hasEntityPatternFormAnyError: false,
+      hasThresholdsFormAnyError: false,
     };
   },
   computed: {
     steps() {
       return {
         BASICS: 1,
-        RULE_PATTERNS: 2,
-        CONDITIONS: 3,
+        ENTITY_PATTERN: 2,
+        THRESHOLDS: 3,
       };
     },
 
@@ -101,12 +101,12 @@ export default {
       this.hasBasicsFormAnyError = value;
     });
 
-    this.$watch(() => this.$refs.rulePatternsForm.hasAnyError, (value) => {
-      this.hasRulePatternsFormAnyError = value;
+    this.$watch(() => this.$refs.entityPatternForm.hasAnyError, (value) => {
+      this.hasEntityPatternFormAnyError = value;
     });
 
-    this.$watch(() => this.$refs.conditionsForm.hasAnyError, (value) => {
-      this.hasConditionsFormAnyError = value;
+    this.$watch(() => this.$refs.thresholdsForm.hasAnyError, (value) => {
+      this.hasThresholdsFormAnyError = value;
     });
   },
 };

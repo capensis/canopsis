@@ -7,28 +7,12 @@
     item-key="key"
   )
     template(#expand="{ item }")
-      v-tooltip(v-if="item.loadMore", right)
-        template(#activator="{ on }")
-          v-btn(
-            v-on="on",
-            :loading="pendingByIds[item.parentId]",
-            icon,
-            @click="loadMore(item.parentId)"
-          )
-            v-icon more_horiz
-        span {{ $t('common.loadMore') }}
-      v-btn(
-        v-else,
-        :color="getEntityColor(item.entity)",
-        icon,
-        dark,
-        @click="showTreeOfDependenciesModal(item)"
+      service-dependencies-expand(
+        :item="item",
+        :pending="pendingByIds[item.parentId]",
+        @load="loadMore",
+        @show="showTreeOfDependenciesModal"
       )
-        v-icon {{ getIconByEntity(item.entity) }}
-      v-tooltip(v-if="item.cycle", top)
-        template(#activator="{ on }")
-          v-icon(v-on="on", color="error", size="14") autorenew
-        span {{ $t('common.cycleDependency') }}
     template(#expand-append="{ item }")
       div.expand-append(v-if="includeRoot && isInRootIds(item._id)")
         v-icon arrow_right_alt
@@ -54,7 +38,6 @@ import { get, uniq } from 'lodash';
 import { PAGINATION_LIMIT } from '@/config';
 import { MODALS, ENTITY_TYPES, ENTITY_FIELDS, COLOR_INDICATOR_TYPES } from '@/constants';
 
-import { getIconByEntityType } from '@/helpers/entities/entity/icons';
 import { getEntityColor } from '@/helpers/entities/entity/color';
 import {
   dependencyToTreeviewDependency,
@@ -65,10 +48,14 @@ import {
 
 import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
 
+import ServiceDependenciesExpand from './service-dependencies-expand.vue';
 import ServiceDependenciesEntityCell from './service-dependencies-entity-cell.vue';
 
 export default {
-  components: { ServiceDependenciesEntityCell },
+  components: {
+    ServiceDependenciesExpand,
+    ServiceDependenciesEntityCell,
+  },
   mixins: [entitiesEntityDependenciesMixin],
   props: {
     root: {
@@ -163,10 +150,6 @@ export default {
     }
   },
   methods: {
-    getIconByEntity(entity) {
-      return getIconByEntityType(entity.type);
-    },
-
     getEntityColor(entity) {
       return getEntityColor(entity, COLOR_INDICATOR_TYPES.impactState);
     },
@@ -195,15 +178,15 @@ export default {
       });
     },
 
-    async loadMore(id) {
-      const isRoot = this.rootId === id;
-      const meta = this.metaByIds[id] || {};
+    async loadMore({ parentId } = {}) {
+      const isRoot = this.rootId === parentId;
+      const meta = this.metaByIds[parentId] || {};
       const params = {
         page: meta.page + 1,
         limit: PAGINATION_LIMIT,
       };
 
-      const ids = await this.fetchDependenciesById(id, params);
+      const ids = await this.fetchDependenciesById(parentId, params);
 
       if (!this.includeRoot && isRoot) {
         this.rootIds.push(...ids);

@@ -8,7 +8,7 @@
           color="primary"
         )
       v-flex(xs3)
-        state-setting-condition-method-field(
+        state-setting-threshold-method-field(
           v-field="condition.type",
           :disabled="disabled"
         )
@@ -41,12 +41,12 @@
 </template>
 
 <script>
-import { ENTITIES_STATES_KEYS, STATE_SETTING_CONDITIONS } from '@/constants';
+import { ENTITIES_STATES_KEYS, STATE_SETTING_THRESHOLDS_CONDITIONS } from '@/constants';
 
-import StateSettingConditionMethodField from './state-setting-condition-method-field.vue';
+import StateSettingThresholdMethodField from './state-setting-threshold-method-field.vue';
 
 export default {
-  components: { StateSettingConditionMethodField },
+  components: { StateSettingThresholdMethodField },
   model: {
     prop: 'condition',
     event: 'input',
@@ -91,10 +91,10 @@ export default {
     },
 
     conditions() {
-      return Object.values(STATE_SETTING_CONDITIONS)
+      return Object.values(STATE_SETTING_THRESHOLDS_CONDITIONS)
         .map(condition => ({
           value: condition,
-          text: this.$t(`stateSetting.conditions.${condition}`),
+          text: this.$t(`stateSetting.thresholdConditions.${condition}`),
         }));
     },
   },
