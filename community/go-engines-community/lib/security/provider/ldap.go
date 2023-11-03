@@ -14,6 +14,7 @@ import (
 	"github.com/go-ldap/ldap/v3"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // LdapDialer interface is used to implement creation of LDAP connection.
@@ -202,7 +203,11 @@ func (p *ldapProvider) saveUser(
 	}
 
 	if user == nil {
-		err = p.roleCollection.FindOne(ctx, bson.M{"name": p.config.DefaultRole}).Err()
+		err = p.roleCollection.FindOne(
+			ctx,
+			bson.M{"name": p.config.DefaultRole},
+			options.FindOne().SetProjection(bson.M{"_id": 1}),
+		).Err()
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				return nil, fmt.Errorf("role %s doesn't exist", p.config.DefaultRole)
