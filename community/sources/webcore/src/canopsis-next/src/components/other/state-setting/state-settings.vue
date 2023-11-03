@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { JUNIT_STATE_SETTING_ID, MODALS } from '@/constants';
 
 import { localQueryMixin } from '@/mixins/query-local/query';
 import { entitiesStateSettingMixin } from '@/mixins/entities/state-setting';
@@ -33,7 +33,29 @@ export default {
     this.fetchList();
   },
   methods: {
+    showEditJunitStateSettingModal(stateSetting) {
+      this.$modals.show({
+        name: MODALS.createJunitStateSetting,
+        config: {
+          stateSetting,
+          title: this.$t('modals.createJunitStateSetting.edit.title'),
+          action: async (data) => {
+            await this.updateStateSetting({ data, id: stateSetting._id });
+
+            this.$popups.success({ text: this.$t('modals.createJunitStateSetting.edit.success') });
+            this.fetchList();
+          },
+        },
+      });
+    },
+
     showEditStateSettingModal(stateSetting) {
+      if (stateSetting._id === JUNIT_STATE_SETTING_ID) {
+        this.showEditJunitStateSettingModal(stateSetting);
+
+        return;
+      }
+
       this.$modals.show({
         name: MODALS.createStateSetting,
         config: {

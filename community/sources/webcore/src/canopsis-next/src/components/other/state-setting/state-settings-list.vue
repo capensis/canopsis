@@ -12,23 +12,25 @@
     template(#enabled="{ item }")
       c-enabled(:value="item.enabled")
     template(#priority="{ item }") {{ item.priority || '-' }}
-    template(#method="{ item }") {{ $t(`stateSetting.methods.${item.method}.label`) }}
+    template(#method="{ item }") {{ getMethodLabel(item.method) }}
     template(#actions="{ item }")
       v-layout(row)
         c-action-btn(
           v-if="updatable",
+          :disabled="!item.editable",
           type="edit",
           @click.stop="$emit('edit', item)"
         )
         c-action-btn(
           v-if="addable",
+          :disabled="!isDuplicable(item)",
           type="duplicate",
           @click.stop="$emit('duplicate', item)"
         )
         c-action-btn(
           v-if="removable",
+          :disabled="!item.deletable",
           type="delete",
-          :disabled="!item.editable",
           @click.stop="$emit('remove', item)"
         )
     template(#expand="{ item }")
@@ -36,6 +38,8 @@
 </template>
 
 <script>
+import { JUNIT_STATE_SETTING_ID, SERVICE_STATE_SETTING_ID } from '@/constants';
+
 import StateSettingsListExpandPanel from './partials/state-settings-list-expand-panel.vue';
 
 export default {
@@ -95,6 +99,17 @@ export default {
           sortable: false,
         },
       ];
+    },
+  },
+  methods: {
+    isDuplicable(item) {
+      return ![JUNIT_STATE_SETTING_ID, SERVICE_STATE_SETTING_ID].includes(item._id);
+    },
+
+    getMethodLabel(method) {
+      return this.$te(`stateSetting.methods.${method}.label`)
+        ? this.$t(`stateSetting.methods.${method}.label`)
+        : this.$t(`stateSetting.junit.methods.${method}`);
     },
   },
 };

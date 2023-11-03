@@ -648,19 +648,25 @@ export default {
   },
   createStateSetting: {
     create: {
-      title: 'Créer une méthode de calcul d\'état',
-      success: 'Méthode de calcul d\'état créée !',
+      title: 'Create state compute method',
+      success: 'State compute method created!',
     },
     edit: {
-      title: 'Modifier la méthode de calcul de l\'état',
-      success: 'Méthode de calcul d\'état modifiée !',
+      title: 'Edit state compute method',
+      success: 'State compute method edited!',
     },
     duplicate: {
-      title: 'Méthode de calcul d\'état en double',
-      success: 'Méthode de calcul d\'état dupliquée !',
+      title: 'Duplicate state compute method',
+      success: 'State compute method duplicated!',
     },
     remove: {
-      success: 'Méthode de calcul d\'état supprimée !',
+      success: 'State compute method deleted!',
+    },
+  },
+  createJunitStateSetting: {
+    edit: {
+      title: 'JUnit test suite state settings',
+      success: 'JUnit test suite state setting edited!',
     },
   },
   defineStorage: {

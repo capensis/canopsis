@@ -347,10 +347,24 @@ export const STATE_SETTING_THRESHOLDS_METHODS = {
   number: 'number',
 };
 
+export const JUNIT_STATE_SETTING_METHODS = {
+  worst: 'worst',
+  worstOfShare: 'worst_of_share',
+};
+
+export const JUNIT_STATE_SETTING_THRESHOLDS_TYPES = {
+  number: 0,
+  percent: 1,
+};
+
 export const STATE_SETTING_THRESHOLDS_CONDITIONS = {
   greater: 'gt',
   less: 'lt',
 };
+
+export const JUNIT_STATE_SETTING_ID = 'junit';
+
+export const SERVICE_STATE_SETTING_ID = 'service';
 
 export const CONTEXT_ACTIONS_TYPES = {
   createEntity: 'createEntity',
