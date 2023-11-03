@@ -30,6 +30,7 @@ import (
 	dsig "github.com/russellhaering/goxmldsig"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const MetadataReqTimeout = time.Second * 15
@@ -513,7 +514,11 @@ func (sp *serviceProvider) createUser(c *gin.Context, relayUrl *url.URL, asserti
 
 	role := sp.getAssocAttribute(assertionInfo.Values, "role", sp.config.DefaultRole)
 
-	err := sp.roleCollection.FindOne(c, bson.M{"name": role}).Err()
+	err := sp.roleCollection.FindOne(
+		c,
+		bson.M{"name": role},
+		options.FindOne().SetProjection(bson.M{"_id": 1}),
+	).Err()
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			errMessage := fmt.Errorf("role %s doesn't exist", role)
