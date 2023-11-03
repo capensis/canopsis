@@ -8,17 +8,14 @@ import (
 type EditRequest struct {
 	ID           string `json:"-" bson:"_id"`
 	StateSetting `bson:"inline"`
-
-	Editable  bool `bson:"editable,omitempty" json:"-"`
-	Deletable bool `bson:"deletable,omitempty" json:"-"`
 }
 
 type Response struct {
 	ID           string `json:"_id" bson:"_id"`
 	StateSetting `bson:"inline"`
 
-	Editable  bool `bson:"editable,omitempty" json:"editable"`
-	Deletable bool `bson:"deletable,omitempty" json:"deletable"`
+	Editable  bool `bson:"editable" json:"editable"`
+	Deletable bool `bson:"deletable" json:"deletable"`
 }
 
 type StateSetting struct {
