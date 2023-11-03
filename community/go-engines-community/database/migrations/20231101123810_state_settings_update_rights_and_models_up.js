@@ -6,9 +6,7 @@ if (!db.state_settings.findOne({_id: "service"})) {
         title: "Service",
         method: "worst",
         on_top: 2,
-        enabled: true,
-        editable: false,
-        deletable: false
+        enabled: true
     });
 }
 
@@ -16,9 +14,7 @@ db.state_settings.updateOne({_id: "junit"}, {
     $set: {
         title: "Junit",
         on_top: 1,
-        enabled: true,
-        editable: true,
-        deletable: false
+        enabled: true
     },
     $unset: {
         type: ""

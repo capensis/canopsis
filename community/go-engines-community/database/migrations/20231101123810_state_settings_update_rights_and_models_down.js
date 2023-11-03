@@ -8,9 +8,7 @@ db.state_settings.updateOne({_id: "junit"}, {
     $unset: {
         title: "",
         on_top: "",
-        enabled: "",
-        editable: "",
-        deletable: ""
+        enabled: ""
     }
 });
 
