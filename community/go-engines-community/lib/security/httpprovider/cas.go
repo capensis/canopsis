@@ -14,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // casProvider implements CAS authentication.
@@ -138,7 +139,11 @@ func (p *casProvider) saveUser(ctx context.Context, username string) (*security.
 	}
 
 	if user == nil {
-		err = p.roleCollection.FindOne(ctx, bson.M{"name": p.config.DefaultRole}).Err()
+		err = p.roleCollection.FindOne(
+			ctx,
+			bson.M{"name": p.config.DefaultRole},
+			options.FindOne().SetProjection(bson.M{"_id": 1}),
+		).Err()
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				return nil, fmt.Errorf("role %s doesn't exist", p.config.DefaultRole)

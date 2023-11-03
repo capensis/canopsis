@@ -2,7 +2,9 @@ package utils
 
 import (
 	crand "crypto/rand"
+	"encoding/base64"
 	"fmt"
+	"io"
 	"math/big"
 	"reflect"
 	"regexp"
@@ -145,4 +147,14 @@ func RandString(n int) string {
 		b[i] = NamingCharacterSet[index.Int64()]
 	}
 	return string(b)
+}
+
+// RandBase64String generates a random base64 string by generated n bytes
+func RandBase64String(n int) (string, error) {
+	b := make([]byte, n)
+	if _, err := io.ReadFull(crand.Reader, b); err != nil {
+		return "", err
+	}
+
+	return base64.RawURLEncoding.EncodeToString(b), nil
 }

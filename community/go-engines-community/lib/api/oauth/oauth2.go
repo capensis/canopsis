@@ -2,11 +2,8 @@ package oauth
 
 import (
 	"context"
-	"crypto/rand"
-	"encoding/base64"
 	"errors"
 	"fmt"
-	"io"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -18,12 +15,14 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/oauth2"
 )
 
@@ -138,7 +137,7 @@ func (p *oauth2Provider) Login(c *gin.Context) {
 	}
 
 	if p.config.OpenID {
-		nonce, err := randString(randomBytesNumber)
+		nonce, err := utils.RandBase64String(randomBytesNumber)
 		if err != nil {
 			panic(fmt.Errorf("failed to generate nonce: %w", err))
 		}
@@ -147,7 +146,7 @@ func (p *oauth2Provider) Login(c *gin.Context) {
 		options = append(options, oidc.Nonce(nonce))
 	}
 
-	state, err := randString(randomBytesNumber)
+	state, err := utils.RandBase64String(randomBytesNumber)
 	if err != nil {
 		panic(fmt.Errorf("failed to generate state: %w", err))
 	}
@@ -357,7 +356,11 @@ func (p *oauth2Provider) Callback(c *gin.Context) {
 func (p *oauth2Provider) createUser(c *gin.Context, subj string, userInfo map[string]any) (*security.User, error) {
 	role := p.getAssocAttribute(userInfo, "role", p.config.DefaultRole)
 
-	err := p.roleCollection.FindOne(c, bson.M{"name": role}).Err()
+	err := p.roleCollection.FindOne(
+		c,
+		bson.M{"name": role},
+		options.FindOne().SetProjection(bson.M{"_id": 1}),
+	).Err()
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return nil, fmt.Errorf("role %s doesn't exist", role)
@@ -470,13 +473,4 @@ func errorRedirect(c *gin.Context, relayUrl *url.URL, errorMessage string) {
 	relayUrl.RawQuery = query.Encode()
 
 	c.Redirect(http.StatusPermanentRedirect, relayUrl.String())
-}
-
-func randString(bytes int) (string, error) {
-	b := make([]byte, bytes)
-	if _, err := io.ReadFull(rand.Reader, b); err != nil {
-		return "", err
-	}
-
-	return base64.RawURLEncoding.EncodeToString(b), nil
 }
