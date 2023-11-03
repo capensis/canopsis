@@ -455,7 +455,7 @@ func getDbClientMock(ctrl *gomock.Controller) *mock_mongo.MockDbClient {
 	unexpectedResultHelper.EXPECT().Err().Return(mongo.ErrNoDocuments).AnyTimes()
 
 	mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
-	mockDbCollection.EXPECT().FindOne(gomock.Any(), gomock.Any()).DoAndReturn(
+	mockDbCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
 		func(_ context.Context, query bson.M, _ ...*options.FindOneOptions) libmongo.SingleResultHelper {
 			role, ok := query["name"]
 			if !ok {
