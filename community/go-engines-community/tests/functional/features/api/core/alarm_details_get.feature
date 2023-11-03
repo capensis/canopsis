@@ -12,21 +12,24 @@ Feature: Get alarms
         "opened": true,
         "steps": {
           "page": 1
-        }
+        },
+        "with_dependencies": true
       },
       {
         "_id": "test-alarm-to-get-1",
         "opened": true,
         "steps": {
           "reversed": true
-        }
+        },
+        "with_dependencies": true
       },
       {
         "_id": "test-alarm-to-get-1",
         "opened": true,
         "steps": {
           "type": "comment"
-        }
+        },
+        "with_dependencies": true
       },
       {
         "_id": "test-alarm-to-get-1",
@@ -34,53 +37,61 @@ Feature: Get alarms
         "steps": {
           "reversed": true,
           "type": "comment"
-        }
+        },
+        "with_dependencies": true
       },
       {
         "_id": "test-alarm-to-get-1",
         "steps": {
           "page": 2,
           "limit": 2
-        }
+        },
+        "with_dependencies": true
       },
       {
         "_id": "test-alarm-to-get-1",
         "steps": {
           "limit": 5
-        }
+        },
+        "with_dependencies": true
       },
       {
         "_id": "test-alarm-to-get-3",
         "steps": {
           "page": 1
-        }
+        },
+        "with_dependencies": true
       },
       {
         "_id": "test-alarm-to-get-4",
         "opened": false,
         "steps": {
           "page": 1
-        }
+        },
+        "with_dependencies": true
       },
       {
         "_id": "test-alarm-to-get-1",
         "opened": false,
         "steps": {
           "page": 1
-        }
+        },
+        "with_dependencies": true
       },
       {
         "_id": "test-alarm-to-get-3",
         "opened": true,
         "steps": {
           "page": 1
-        }
+        },
+        "with_dependencies": true
       },
       {
         "_id": "not-exist",
         "steps": {
           "page": 1
-        }
+        },
+        "with_dependencies": true
       },
       {
         "_id": "not-exist"
@@ -134,6 +145,10 @@ Feature: Get alarms
               "per_page": 10,
               "total_count": 4
             }
+          },
+          "entity": {
+            "impacts_count": 0,
+            "depends_count": 0
           }
         }
       },
@@ -180,6 +195,10 @@ Feature: Get alarms
               "per_page": 10,
               "total_count": 4
             }
+          },
+          "entity": {
+            "impacts_count": 0,
+            "depends_count": 0
           }
         }
       },
@@ -210,6 +229,10 @@ Feature: Get alarms
               "per_page": 10,
               "total_count": 2
             }
+          },
+          "entity": {
+            "impacts_count": 0,
+            "depends_count": 0
           }
         }
       },
@@ -240,6 +263,10 @@ Feature: Get alarms
               "per_page": 10,
               "total_count": 2
             }
+          },
+          "entity": {
+            "impacts_count": 0,
+            "depends_count": 0
           }
         }
       },
@@ -270,6 +297,10 @@ Feature: Get alarms
               "per_page": 2,
               "total_count": 4
             }
+          },
+          "entity": {
+            "impacts_count": 0,
+            "depends_count": 0
           }
         }
       },
@@ -316,6 +347,10 @@ Feature: Get alarms
               "per_page": 5,
               "total_count": 4
             }
+          },
+          "entity": {
+            "impacts_count": 0,
+            "depends_count": 0
           }
         }
       },
@@ -364,6 +399,10 @@ Feature: Get alarms
               "per_page": 10,
               "total_count": 4
             }
+          },
+          "entity": {
+            "impacts_count": 0,
+            "depends_count": 0
           }
         }
       },
@@ -412,6 +451,10 @@ Feature: Get alarms
               "per_page": 10,
               "total_count": 4
             }
+          },
+          "entity": {
+            "impacts_count": 0,
+            "depends_count": 0
           }
         }
       },
