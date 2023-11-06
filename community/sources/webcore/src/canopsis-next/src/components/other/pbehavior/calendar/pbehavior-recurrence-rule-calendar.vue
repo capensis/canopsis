@@ -4,6 +4,7 @@
     :events="events"
     :loading="pending"
     readonly
+    hide-details-menu
     @change:pagination="fetchTimespans"
   />
 </template>
@@ -15,7 +16,6 @@ import { DATETIME_FORMATS } from '@/constants';
 import { pbehaviorToTimespanRequest } from '@/helpers/entities/pbehavior/timespans/form';
 import {
   convertDateToDateObjectByTimezone,
-  convertDateToMoment,
   convertDateToString,
   convertDateToTimestampByTimezone,
 } from '@/helpers/date/date';
@@ -70,8 +70,6 @@ export default {
     },
   },
   mounted() {
-    this.calendar.set({ around: convertDateToMoment(this.pbehavior.tstart) });
-
     this.fetchTimespans();
   },
   methods: {

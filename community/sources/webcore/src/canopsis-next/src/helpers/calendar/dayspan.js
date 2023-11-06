@@ -1,4 +1,4 @@
-import { get, groupBy } from 'lodash';
+import { groupBy } from 'lodash';
 
 import {
   convertDateToTimestamp,
@@ -84,9 +84,7 @@ export function convertEventsToGroupedEvents({ events, groupByValue = 'hour', ge
 /**
  * Get class for calendar event menu by calendar event id
  *
- * @param {CalendarEvent} calendarEvent
+ * @param {string} id
  * @return {string}
  */
-export function getMenuClassByCalendarEvent(calendarEvent) {
-  return `ds-calendar-event-menu_${get(calendarEvent, 'id', 'placeholder')}`;
-}
+export const getMenuClassByCalendarEvent = id => `calendar-event-id-${id}`;

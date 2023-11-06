@@ -135,7 +135,7 @@ export const addUnitToDate = (date, value = 0, unit = TIME_UNITS.second) => conv
  * Convert date to native date object
  *
  * @param {LocalDate} date
- * @param format
+ * @param {string} [format]
  * @return {Date}
  */
 export const convertDateToDateObject = (date, format) => convertDateToMoment(date, format).toDate();

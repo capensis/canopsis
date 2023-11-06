@@ -40,7 +40,7 @@
 
 <script>
 import { cloneDeep } from 'lodash';
-import dependentMixin from 'vuetify/es5/mixins/dependent';
+import dependentMixin from 'vuetify/lib/mixins/dependent';
 
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
@@ -83,7 +83,7 @@ export default {
       const selectorsForInclude = [
         '.c-calendar__toolbar',
         '.v-event',
-        `.${getMenuClassByCalendarEvent(this.event)}`,
+        `.${getMenuClassByCalendarEvent(this.event.id)}`,
       ];
 
       return {
