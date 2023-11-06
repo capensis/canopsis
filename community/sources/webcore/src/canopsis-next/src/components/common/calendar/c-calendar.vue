@@ -35,7 +35,16 @@
       :event-height="calendarEventHeight"
       :event-color="getEventColor"
       :weekday-format="formatWeekday"
+      :interval-format="formatInterval"
     >
+      <template #day-body="">
+        <div
+          v-if="isCurrentTimeLineVisible"
+          class="c-calendar__current-time"
+          :style="{ top: currentTimeYPixels }"
+        />
+      </template>
+
       <template #day-label="event">
         <v-btn
           :color="event.present ? 'primary' : 'transparent'"
@@ -55,6 +64,7 @@
       <template #day-label-header="event">
         <v-btn
           :color="event.present ? 'primary' : 'transparent'"
+          class="c-calendar__week-day-label-btn"
           fab
           depressed
           small
@@ -73,7 +83,7 @@
           :end="end"
         >
           <v-layout
-            class="pl-1"
+            :class="['pl-1', getMenuClassByCalendarEvent(event.id)]"
             align-center
           >
             <v-icon
@@ -86,6 +96,7 @@
             </v-icon>
             <span v-if="start">{{ event.name }}</span>
             <div
+              v-if="!readonly"
               :class="['c-calendar__event-drag-bottom', { 'c-calendar__event-drag-bottom--right': !event.timed }]"
               @mousedown.stop="startResize(event)"
             />
@@ -122,6 +133,8 @@
 </template>
 
 <script>
+import { getStartOfWeek, getEndOfWeek } from 'vuetify/lib/components/VCalendar/util/timestamp';
+
 import { CALENDAR_TYPES, CALENDAR_START_DRAG_DELAY } from '@/constants';
 import { LOCALES } from '@/config';
 
@@ -129,8 +142,10 @@ import {
   convertDateToEndOfDayDateObject,
   convertDateToStartOfDayDateObject,
   getWeekdayNumber,
+  isDateBefore,
 } from '@/helpers/date/date';
 import { colorToRgba } from '@/helpers/color';
+import { getMenuClassByCalendarEvent } from '@/helpers/calendar/dayspan';
 
 import CalendarTodayBtn from './partials/calendar-today-btn.vue';
 import CalendarViewMode from './partials/calendar-view-mode.vue';
@@ -152,6 +167,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    hideDetailsMenu: {
+      type: Boolean,
+      default: false,
+    },
     type: {
       type: String,
       default: CALENDAR_TYPES.month,
@@ -165,6 +184,8 @@ export default {
         start: null,
         stop: null,
       },
+      currentTime: null,
+      currentTimeYPixels: '-10px',
 
       popoverOpen: false,
       dragging: false,
@@ -184,6 +205,10 @@ export default {
     };
   },
   computed: {
+    calendarElement() {
+      return this.ready ? this.$refs.calendar : null;
+    },
+
     weekdays() {
       return this.$i18n.locale === LOCALES.en
         ? [0, 1, 2, 3, 4, 5, 6]
@@ -224,7 +249,7 @@ export default {
 
       if (this.creating || this.resizing) {
         classes.push(
-          this.editEvent?.timed || this.newEvent?.timed
+          this.isMonthType || this.currentEditingEvent?.timed
             ? 'c-calendar__calendar--resizing-bottom'
             : 'c-calendar__calendar--resizing-right',
         );
@@ -265,6 +290,10 @@ export default {
 
       return listeners;
     },
+
+    isCurrentTimeLineVisible() {
+      return !this.isMonthType;
+    },
   },
   watch: {
     type(type) {
@@ -275,12 +304,39 @@ export default {
 
     internalType() {
       this.$emit('update:type', this.internalType);
+      this.$nextTick(this.updateCurrentTime);
     },
   },
   mounted() {
+    this.ready = true;
     this.$refs.calendar.checkChange();
+    this.startUpdateCurrentTime();
+    this.updateCurrentTime();
+  },
+  beforeDestroy() {
+    this.stopUpdateCurrentTime();
   },
   methods: {
+    getMenuClassByCalendarEvent,
+
+    updateCurrentTime() {
+      this.$refs.calendar.updateTimes();
+
+      const size = this.calendarElement.timeToY(this.calendarElement.times.now);
+
+      if (size) {
+        this.currentTimeYPixels = `${size}px`;
+      }
+    },
+
+    startUpdateCurrentTime() {
+      this.currentTimeIntervalId = setInterval(this.updateCurrentTime, 1000);
+    },
+
+    stopUpdateCurrentTime() {
+      clearInterval(this.currentTimeIntervalId);
+    },
+
     formatWeekday(event) {
       const weekday = getWeekdayNumber(event.date);
 
@@ -314,8 +370,18 @@ export default {
       ][month - 1];
     },
 
+    formatInterval(interval) {
+      return interval.time;
+    },
+
     getEventColor(event) {
       if (event.id === this.currentEditingEvent?.id) {
+        return colorToRgba(event.color, 0.75);
+      }
+
+      const past = isDateBefore(event.start, new Date());
+
+      if (!past) {
         return colorToRgba(event.color, 0.5);
       }
 
@@ -323,9 +389,12 @@ export default {
     },
 
     updateRange({ start, end }) {
+      const parsedStart = getStartOfWeek(start, this.weekdays);
+      const parsedEnd = getEndOfWeek(end, this.weekdays);
+
       this.filled = {
-        start: convertDateToStartOfDayDateObject(start.date),
-        end: convertDateToEndOfDayDateObject(end.date),
+        start: convertDateToStartOfDayDateObject(parsedStart.date),
+        end: convertDateToEndOfDayDateObject(parsedEnd.date),
       };
 
       this.$emit('change:pagination');
@@ -384,7 +453,7 @@ export default {
     },
 
     setCalendarFocus(date) {
-      this.setFocusDate(new Date(date));
+      this.setFocusDate(convertDateToStartOfDayDateObject(date));
     },
 
     moveToDay(event) {
@@ -393,11 +462,11 @@ export default {
     },
 
     prev() {
-      this.$refs.calendar.prev();
+      this.calendarElement.prev();
     },
 
     next() {
-      this.$refs.calendar.next();
+      this.calendarElement.next();
     },
 
     showCreateEventPopover(event, target) {
@@ -419,14 +488,16 @@ export default {
     },
 
     showEventDetails(event) {
+      event.nativeEvent.stopPropagation();
+
       if (this.$listeners['click:event']) {
         this.$emit('click:event', event);
         return;
       }
 
-      this.showCreateEventPopover(event.event, event.nativeEvent.target);
-
-      event.nativeEvent.stopPropagation();
+      if (!this.hideDetailsMenu) {
+        this.showCreateEventPopover(event.event, event.nativeEvent.target);
+      }
     },
 
     getDateByEvent(event) {
@@ -474,7 +545,6 @@ export default {
       this.setNewEvent(event);
 
       this.creating = true;
-      this.movingEnd = true;
     },
 
     finishCreateEvent(event, nativeEvent) {
@@ -569,6 +639,7 @@ export default {
       }
 
       this.resizing = false;
+      this.movingEnd = true;
     },
 
     handleMouseUpTime(event, nativeEvent) {
@@ -598,6 +669,61 @@ export default {
 <style lang="scss">
 .c-calendar {
   position: relative;
+
+  .theme--light & {
+    --c-calendar-present-day-background-color: rgba(0, 0, 0, 0.04);
+  }
+
+  .theme--dark & {
+    --c-calendar-present-day-background-color: rgba(255, 255, 255, 0.04);
+  }
+
+  .v-event {
+    font-weight: 700;
+  }
+
+  .v-calendar-weekly__head-weekday {
+    text-align: unset;
+  }
+
+  .v-calendar-weekly__head-weekday {
+    text-transform: unset;
+  }
+
+  .v-calendar-daily_head-weekday {
+    text-align: unset;
+    padding: 0 12px;
+  }
+
+  .v-calendar-daily_head-day-label {
+    text-align: unset;
+    padding: 0 5px;
+  }
+
+  .v-calendar-weekly__day-label {
+    text-align: unset;
+
+    .v-btn {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .v-calendar-daily_head-day {
+    &.v-present {
+      background-color: var(--c-calendar-present-day-background-color);
+    }
+
+    .v-event {
+      min-height: 20px;
+    }
+  }
+
+  .v-calendar-daily__day {
+    &.v-present {
+      background-color: var(--c-calendar-present-day-background-color);
+    }
+  }
 
   &__calendar {
     .v-calendar-weekly__week {
@@ -663,37 +789,17 @@ export default {
     transform: translate3d(0, -50%, 0);
   }
 
-  .v-calendar-weekly__head-weekday {
-    text-align: unset;
+  &__week-day-label-btn {
+    font-size: 25px !important;
   }
 
-  .v-calendar-weekly__head-weekday {
-    text-transform: unset;
-  }
-
-  .v-calendar-daily_head-weekday {
-    text-align: unset;
-    padding: 0 12px;
-  }
-
-  .v-calendar-daily_head-day-label {
-    text-align: unset;
-    padding: 0 5px;
-  }
-
-  .v-calendar-weekly__day-label {
-    text-align: unset;
-
-    .v-btn {
-      width: 24px;
-      height: 24px;
-    }
-  }
-
-  .v-calendar-daily_head-day {
-    .v-event {
-      min-height: 20px;
-    }
+  .v-present > &__current-time {
+    height: 3px;
+    background-color: var(--v-secondary-base);
+    position: absolute;
+    left: -1px;
+    right: 0;
+    pointer-events: none;
   }
 }
 </style>

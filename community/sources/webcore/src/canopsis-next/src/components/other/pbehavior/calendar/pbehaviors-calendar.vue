@@ -2,8 +2,9 @@
   <c-calendar
     :events="events"
     :loading="pending"
-    read-only
-    @change="fetchEvents"
+    readonly
+    hide-details-menu
+    @change:pagination="fetchEvents"
   />
 </template>
 
