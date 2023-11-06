@@ -80,6 +80,10 @@ func (s *redisDelayedScenarioStorage) GetAll(ctx context.Context) ([]DelayedScen
 			}
 
 			for i, v := range resGet.Val() {
+				if v == nil {
+					continue
+				}
+
 				if s, ok := v.(string); ok {
 					var scenario DelayedScenario
 					err := json.Unmarshal([]byte(s), &scenario)
