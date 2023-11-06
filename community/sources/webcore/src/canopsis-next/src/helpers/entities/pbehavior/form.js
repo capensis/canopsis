@@ -309,8 +309,7 @@ export const calendarEventToPbehaviorForm = (
   const {
     start,
     end,
-    data: { cachedForm = {} },
-    pbehavior,
+    data: { cachedForm = {}, pbehavior },
   } = event;
 
   const form = {

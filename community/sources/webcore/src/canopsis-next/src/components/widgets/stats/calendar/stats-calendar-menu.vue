@@ -80,7 +80,7 @@ export default {
     getStyleColor(event) {
       const past = isDateBefore(event.end, new Date());
 
-      return past ? colorToRgba(event.color) : event.color;
+      return past ? colorToRgba(event.color, 0.5) : event.color;
     },
   },
 };
