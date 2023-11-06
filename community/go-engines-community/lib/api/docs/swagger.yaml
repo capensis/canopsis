@@ -485,6 +485,11 @@ paths:
           description: show assigned declare ticket rules
           schema:
             type: boolean
+        - name: with_dependencies
+          in: query
+          description: count connected services depends_count and impacts_count
+          schema:
+            type: boolean
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/search'
