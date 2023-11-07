@@ -357,6 +357,8 @@ definitions:
     properties:
       children:
         $ref: '#/definitions/alarm.ChildrenDetails'
+      entity:
+        $ref: '#/definitions/alarm.EntityDetails'
       steps:
         $ref: '#/definitions/alarm.StepDetails'
     type: object
@@ -370,6 +372,8 @@ definitions:
         type: boolean
       steps:
         $ref: '#/definitions/alarm.StepsRequest'
+      with_dependencies:
+        type: boolean
       with_instructions:
         type: boolean
     required:
@@ -388,6 +392,15 @@ definitions:
           type: string
         type: object
       status:
+        type: integer
+    type: object
+  alarm.EntityDetails:
+    properties:
+      depends_count:
+        description: DependsCount contains only service's dependencies
+        type: integer
+      impacts_count:
+        description: ImpactsCount contains only services
         type: integer
     type: object
   alarm.Execution:
