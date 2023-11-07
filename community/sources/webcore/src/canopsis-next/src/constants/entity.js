@@ -338,13 +338,18 @@ export const COLOR_INDICATOR_TYPES = {
 };
 
 export const STATE_SETTING_METHODS = {
-  worst: 'worst',
-  worstOfShare: 'worst_of_share',
+  inherited: 'inherited',
+  dependenciesState: 'dependencies_state',
 };
 
-export const STATE_SETTING_THRESHOLD_TYPES = {
-  number: 0,
-  percent: 1,
+export const STATE_SETTING_CONDITIONS_METHODS = {
+  share: 'share',
+  number: 'number',
+};
+
+export const STATE_SETTING_CONDITIONS = {
+  greater: 'gt',
+  less: 'lt',
 };
 
 export const CONTEXT_ACTIONS_TYPES = {

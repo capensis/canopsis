@@ -1,12 +1,23 @@
 <template lang="pug">
-  v-select(
-    v-field="value",
-    v-validate="'required'",
-    :items="methodTypes",
-    :error-messages="errors.collect(name)",
-    :label="label || $t('common.method')",
-    :name="name"
-  )
+  v-layout(column)
+    span.subheading.font-weight-bold {{ $t('stateSetting.computeMethod') }}
+    v-radio-group(
+      v-field="value",
+      hide-details,
+      mandatory
+    )
+      v-radio(
+        v-for="method in methods",
+        :key="method",
+        :value="method",
+        color="primary"
+      )
+        template(#label)
+          span.mr-2 {{ $t(`stateSetting.methods.${method}.label`) }}
+          c-help-icon(
+            :text="$t(`stateSetting.methods.${method}.tooltip`)",
+            top
+          )
 </template>
 
 <script>
@@ -21,23 +32,12 @@ export default {
   props: {
     value: {
       type: String,
-      default: STATE_SETTING_METHODS.worst,
-    },
-    label: {
-      type: String,
-      default: '',
-    },
-    name: {
-      type: String,
-      default: 'method',
+      default: STATE_SETTING_METHODS.inherited,
     },
   },
   computed: {
-    methodTypes() {
-      return Object.values(STATE_SETTING_METHODS).map(method => ({
-        value: method,
-        text: this.$t(`stateSetting.methods.${method}`),
-      }));
+    methods() {
+      return STATE_SETTING_METHODS;
     },
   },
 };

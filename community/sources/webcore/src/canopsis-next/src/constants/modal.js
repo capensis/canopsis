@@ -78,7 +78,6 @@ export const MODALS = {
   imagesViewer: 'images-viewer',
   rate: 'rate',
   createScenario: 'create-scenario',
-  stateSetting: 'state-setting',
   testSuite: 'test-suite',
   createIdleRule: 'create-idle-rule',
   createAlarmStatusRule: 'create-alarm-status-rule',
@@ -112,4 +111,6 @@ export const MODALS = {
   entitiesList: 'entities-list',
 
   createTheme: 'create-theme',
+
+  createStateSetting: 'create-state-setting',
 };
