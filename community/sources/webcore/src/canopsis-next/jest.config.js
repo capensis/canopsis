@@ -40,6 +40,7 @@ module.exports = {
   snapshotSerializers: [
     'jest-serializer-vue',
   ],
+  collectCoverageFrom: ['<rootDir>/src/**/*.{js,vue}'],
   setupFiles: ['jest-localstorage-mock'],
   setupFilesAfterEnv: ['<rootDir>/tests/unit/jest.setup-test-framework'],
   globalSetup: '<rootDir>/tests/unit/jest.global-setup',

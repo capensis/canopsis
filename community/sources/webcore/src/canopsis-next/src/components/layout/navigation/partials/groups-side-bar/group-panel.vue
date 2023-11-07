@@ -10,7 +10,7 @@
         div.panel-header__actions
           v-icon.mr-2(v-if="group.is_private", small) lock
           v-btn(
-            v-show="isEditing",
+            v-if="editable",
             :disabled="orderChanged",
             depressed,
             small,
@@ -25,6 +25,10 @@
 export default {
   props: {
     isEditing: {
+      type: Boolean,
+      default: false,
+    },
+    editable: {
       type: Boolean,
       default: false,
     },
