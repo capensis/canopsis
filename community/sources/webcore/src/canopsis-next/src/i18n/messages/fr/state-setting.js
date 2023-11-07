@@ -3,9 +3,11 @@ import {
   STATE_SETTING_METHODS,
   STATE_SETTING_THRESHOLDS_METHODS,
   STATE_SETTING_THRESHOLDS_CONDITIONS,
+  JUNIT_STATE_SETTING_METHODS,
 } from '@/constants';
 
 export default {
+  title: 'Paramétrage de l\'état',
   targetEntityState: 'État de l\'entité cible',
   entitiesStates: 'États des entités impactant',
   computeMethod: 'Méthode de calcul d\'état',
@@ -37,8 +39,17 @@ export default {
   },
   states: {
     [ENTITIES_STATES_KEYS.ok]: 'OK',
-    [ENTITIES_STATES_KEYS.minor]: 'Minor',
-    [ENTITIES_STATES_KEYS.major]: 'Major',
-    [ENTITIES_STATES_KEYS.critical]: 'Critical',
+    [ENTITIES_STATES_KEYS.minor]: 'Mineur',
+    [ENTITIES_STATES_KEYS.major]: 'Majeur',
+    [ENTITIES_STATES_KEYS.critical]: 'Critique',
+  },
+  junit: {
+    worstLabel: 'Le pire critère :',
+    worstHelpText: 'Canopsis compte l\'état pour chaque critère défini. L\'état final de la suite de tests JUnit est considéré comme le pire des états résultants.',
+    criterion: 'Critère',
+    methods: {
+      [JUNIT_STATE_SETTING_METHODS.worst]: 'Pire',
+      [JUNIT_STATE_SETTING_METHODS.worstOfShare]: 'Pire des états',
+    },
   },
 };
