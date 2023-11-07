@@ -491,6 +491,11 @@ func (s *store) GetDetails(ctx context.Context, apiKey string, r DetailsRequest)
 		"v.steps": 0,
 	}})
 
+	if r.WithDependencies {
+		pipeline = append(pipeline, getEntityLookup()...)
+		pipeline = append(pipeline, getImpactsCountPipeline()...)
+	}
+
 	var details Details
 	cursor, err := collection.Aggregate(ctx, pipeline)
 	if err != nil {
@@ -498,13 +503,12 @@ func (s *store) GetDetails(ctx context.Context, apiKey string, r DetailsRequest)
 	}
 	defer cursor.Close(ctx)
 
-	if cursor.Next(ctx) {
-		err = cursor.Decode(&details)
-		if err != nil {
-			return nil, err
-		}
-	} else {
+	if !cursor.Next(ctx) {
 		return nil, nil
+	}
+	err = cursor.Decode(&details)
+	if err != nil {
+		return nil, err
 	}
 
 	if r.Steps != nil {

@@ -73,7 +73,7 @@ Feature: update service on event
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .serviceID }}
+    When I do GET /api/v4/alarms?search={{ .serviceID }}&with_dependencies=true
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -114,7 +114,8 @@ Feature: update service on event
         "_id": "{{ (index .lastResponse.data 0)._id }}",
         "steps": {
           "page": 1
-        }
+        },
+        "with_dependencies": true
       }
     ]
     """
@@ -152,6 +153,10 @@ Feature: update service on event
               "per_page": 10,
               "total_count": 3
             }
+          },
+          "entity": {
+            "depends_count": 3,
+            "impacts_count": 0
           }
         }
       }
