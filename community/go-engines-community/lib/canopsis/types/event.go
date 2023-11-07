@@ -112,6 +112,7 @@ const (
 const (
 	ConnectorEngineService = "service"
 	ConnectorJunit         = "junit"
+	ConnectorApi           = "api"
 )
 
 const MaxEventTimestampVariation = 24 * time.Hour

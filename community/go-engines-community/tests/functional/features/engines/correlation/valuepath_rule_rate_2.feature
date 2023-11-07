@@ -23,8 +23,8 @@ Feature: correlation feature - valuegroup rule with threshold rate
         "actions": [
           {
             "type" : "set_entity_info_from_template",
-            "name" : "test-info-correlation-valuegroup-rate-second-1",
-            "value" : "{{ `{{ index .Event.ExtraInfos \"test-info-correlation-valuegroup-rate-second-1\" }}` }}"
+            "name" : "test-info-cor-vg-rate-second-1",
+            "value" : "{{ `{{ index .Event.ExtraInfos \"test-info-cor-vg-rate-second-1\" }}` }}"
           }
         ],
         "on_success": "pass",
@@ -41,7 +41,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       {
         "event_type": "check",
         "state": 0,
-        "test-info-correlation-valuegroup-rate-second-1": "test",
+        "test-info-cor-vg-rate-second-1": "test",
         "connector": "test-connector-correlation-valuegroup-rate-second-1",
         "connector_name": "test-connector-name-correlation-valuegroup-rate-second-1",
         "component":  "test-component-correlation-valuegroup-rate-second-1",
@@ -51,7 +51,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       {
         "event_type": "check",
         "state": 0,
-        "test-info-correlation-valuegroup-rate-second-1": "test",
+        "test-info-cor-vg-rate-second-1": "test",
         "connector": "test-connector-correlation-valuegroup-rate-second-1",
         "connector_name": "test-connector-name-correlation-valuegroup-rate-second-1",
         "component":  "test-component-correlation-valuegroup-rate-second-1",
@@ -61,7 +61,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       {
         "event_type": "check",
         "state": 0,
-        "test-info-correlation-valuegroup-rate-second-1": "test",
+        "test-info-cor-vg-rate-second-1": "test",
         "connector": "test-connector-correlation-valuegroup-rate-second-1",
         "connector_name": "test-connector-name-correlation-valuegroup-rate-second-1",
         "component":  "test-component-correlation-valuegroup-rate-second-1",
@@ -71,7 +71,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       {
         "event_type": "check",
         "state": 0,
-        "test-info-correlation-valuegroup-rate-second-1": "test",
+        "test-info-cor-vg-rate-second-1": "test",
         "connector": "test-connector-correlation-valuegroup-rate-second-1",
         "connector_name": "test-connector-name-correlation-valuegroup-rate-second-1",
         "component":  "test-component-correlation-valuegroup-rate-second-1",
@@ -93,7 +93,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
         },
         "threshold_rate": 0.5,
         "value_paths": [
-          "entity.infos.test-info-correlation-valuegroup-rate-second-1.value"
+          "entity.infos.test-info-cor-vg-rate-second-1.value"
         ]
       }
     }
@@ -106,7 +106,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
     {
       "event_type": "check",
       "state": 2,
-      "test-info-correlation-valuegroup-rate-second-1": "test",
+      "test-info-cor-vg-rate-second-1": "test",
       "connector": "test-connector-correlation-valuegroup-rate-second-1",
       "connector_name": "test-connector-name-correlation-valuegroup-rate-second-1",
       "component":  "test-component-correlation-valuegroup-rate-second-1",
@@ -119,7 +119,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
     {
       "event_type": "check",
       "state": 3,
-      "test-info-correlation-valuegroup-rate-second-1": "test",
+      "test-info-cor-vg-rate-second-1": "test",
       "connector": "test-connector-correlation-valuegroup-rate-second-1",
       "connector_name": "test-connector-name-correlation-valuegroup-rate-second-1",
       "component":  "test-component-correlation-valuegroup-rate-second-1",
@@ -313,8 +313,8 @@ Feature: correlation feature - valuegroup rule with threshold rate
         "actions": [
           {
             "type" : "set_entity_info_from_template",
-            "name" : "test-info-correlation-valuegroup-rate-second-2",
-            "value" : "{{ `{{ index .Event.ExtraInfos \"test-info-correlation-valuegroup-rate-second-2\" }}` }}"
+            "name" : "test-info-cor-vg-rate-second-2",
+            "value" : "{{ `{{ index .Event.ExtraInfos \"test-info-cor-vg-rate-second-2\" }}` }}"
           }
         ],
         "on_success": "pass",
@@ -331,7 +331,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       {
         "event_type": "check",
         "state": 0,
-        "test-info-correlation-valuegroup-rate-second-2": "test-1",
+        "test-info-cor-vg-rate-second-2": "test-1",
         "connector": "test-connector-correlation-valuegroup-rate-second-2",
         "connector_name": "test-connector-name-correlation-valuegroup-rate-second-2",
         "component":  "test-component-correlation-valuegroup-rate-second-2",
@@ -341,7 +341,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       {
         "event_type": "check",
         "state": 0,
-        "test-info-correlation-valuegroup-rate-second-2": "test-1",
+        "test-info-cor-vg-rate-second-2": "test-1",
         "connector": "test-connector-correlation-valuegroup-rate-second-2",
         "connector_name": "test-connector-name-correlation-valuegroup-rate-second-2",
         "component":  "test-component-correlation-valuegroup-rate-second-2",
@@ -351,7 +351,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       {
         "event_type": "check",
         "state": 0,
-        "test-info-correlation-valuegroup-rate-second-2": "test-1",
+        "test-info-cor-vg-rate-second-2": "test-1",
         "connector": "test-connector-correlation-valuegroup-rate-second-2",
         "connector_name": "test-connector-name-correlation-valuegroup-rate-second-2",
         "component":  "test-component-correlation-valuegroup-rate-second-2",
@@ -361,7 +361,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       {
         "event_type": "check",
         "state": 0,
-        "test-info-correlation-valuegroup-rate-second-2": "test-1",
+        "test-info-cor-vg-rate-second-2": "test-1",
         "connector": "test-connector-correlation-valuegroup-rate-second-2",
         "connector_name": "test-connector-name-correlation-valuegroup-rate-second-2",
         "component":  "test-component-correlation-valuegroup-rate-second-2",
@@ -371,7 +371,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       {
         "event_type": "check",
         "state": 0,
-        "test-info-correlation-valuegroup-rate-second-2": "test-2",
+        "test-info-cor-vg-rate-second-2": "test-2",
         "connector": "test-connector-correlation-valuegroup-rate-second-2",
         "connector_name": "test-connector-name-correlation-valuegroup-rate-second-2",
         "component":  "test-component-correlation-valuegroup-rate-second-2",
@@ -381,7 +381,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       {
         "event_type": "check",
         "state": 0,
-        "test-info-correlation-valuegroup-rate-second-2": "test-2",
+        "test-info-cor-vg-rate-second-2": "test-2",
         "connector": "test-connector-correlation-valuegroup-rate-second-2",
         "connector_name": "test-connector-name-correlation-valuegroup-rate-second-2",
         "component":  "test-component-correlation-valuegroup-rate-second-2",
@@ -403,7 +403,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
         },
         "threshold_rate": 0.5,
         "value_paths": [
-          "entity.infos.test-info-correlation-valuegroup-rate-second-2.value"
+          "entity.infos.test-info-cor-vg-rate-second-2.value"
         ]
       }
     }
@@ -416,7 +416,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
     {
       "event_type": "check",
       "state": 2,
-      "test-info-correlation-valuegroup-rate-second-2": "test-1",
+      "test-info-cor-vg-rate-second-2": "test-1",
       "connector": "test-connector-correlation-valuegroup-rate-second-2",
       "connector_name": "test-connector-name-correlation-valuegroup-rate-second-2",
       "component":  "test-component-correlation-valuegroup-rate-second-2",
@@ -429,7 +429,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
     {
       "event_type": "check",
       "state": 3,
-      "test-info-correlation-valuegroup-rate-second-2": "test-1",
+      "test-info-cor-vg-rate-second-2": "test-1",
       "connector": "test-connector-correlation-valuegroup-rate-second-2",
       "connector_name": "test-connector-name-correlation-valuegroup-rate-second-2",
       "component":  "test-component-correlation-valuegroup-rate-second-2",
@@ -523,7 +523,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
     {
       "event_type": "check",
       "state": 2,
-      "test-info-correlation-valuegroup-rate-second-2": "test-1",
+      "test-info-cor-vg-rate-second-2": "test-1",
       "connector": "test-connector-correlation-valuegroup-rate-second-2",
       "connector_name": "test-connector-name-correlation-valuegroup-rate-second-2",
       "component":  "test-component-correlation-valuegroup-rate-second-2",
@@ -567,7 +567,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
     {
       "event_type": "check",
       "state": 2,
-      "test-info-correlation-valuegroup-rate-second-2": "test-1",
+      "test-info-cor-vg-rate-second-2": "test-1",
       "connector": "test-connector-correlation-valuegroup-rate-second-2",
       "connector_name": "test-connector-name-correlation-valuegroup-rate-second-2",
       "component":  "test-component-correlation-valuegroup-rate-second-2",
@@ -612,7 +612,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
     {
       "event_type": "check",
       "state": 3,
-      "test-info-correlation-valuegroup-rate-second-2": "test-2",
+      "test-info-cor-vg-rate-second-2": "test-2",
       "connector": "test-connector-correlation-valuegroup-rate-second-2",
       "connector_name": "test-connector-name-correlation-valuegroup-rate-second-2",
       "component":  "test-component-correlation-valuegroup-rate-second-2",
@@ -625,7 +625,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
     {
       "event_type": "check",
       "state": 2,
-      "test-info-correlation-valuegroup-rate-second-2": "test-2",
+      "test-info-cor-vg-rate-second-2": "test-2",
       "connector": "test-connector-correlation-valuegroup-rate-second-2",
       "connector_name": "test-connector-name-correlation-valuegroup-rate-second-2",
       "component":  "test-component-correlation-valuegroup-rate-second-2",
