@@ -33,17 +33,12 @@
           type="delete",
           @click.stop="$emit('remove', item)"
         )
-    template(#expand="{ item }")
-      state-settings-list-expand-panel(:state-setting="item")
 </template>
 
 <script>
 import { JUNIT_STATE_SETTING_ID, SERVICE_STATE_SETTING_ID } from '@/constants';
 
-import StateSettingsListExpandPanel from './partials/state-settings-list-expand-panel.vue';
-
 export default {
-  components: { StateSettingsListExpandPanel },
   props: {
     pagination: {
       type: Object,
