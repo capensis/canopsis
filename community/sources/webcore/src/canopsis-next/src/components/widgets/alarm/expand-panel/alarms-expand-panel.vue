@@ -3,7 +3,7 @@
     class="expand-panel secondary lighten-2"
     v-model="activeTab"
     :key="tabsKey"
-    color="secondary lighten-1"
+    background-color="secondary lighten-1"
     slider-color="primary"
     dark
     centered

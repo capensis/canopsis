@@ -1,5 +1,5 @@
 <template>
-  <v-list-item>
+  <v-list-item class="widget-settings-flat-item">
     <v-list-item-content>
       <v-list-item-title>
         {{ title }}
@@ -21,3 +21,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.widget-settings-flat-item {
+  .v-list-item__title {
+    white-space: unset;
+  }
+}
+</style>

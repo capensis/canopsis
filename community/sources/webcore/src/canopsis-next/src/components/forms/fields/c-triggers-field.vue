@@ -40,7 +40,6 @@
       >
         <v-list-item-action>
           <v-checkbox
-            class="ma-0"
             :input-value="attrs.value"
             :color="parent.color"
             hide-details
