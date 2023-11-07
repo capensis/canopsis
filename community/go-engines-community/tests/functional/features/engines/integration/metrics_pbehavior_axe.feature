@@ -562,8 +562,6 @@ Feature: SLI metrics should be added on alarm changes
     """json
     {
       "event_type": "entityupdated",
-      "connector": "test-connector-metrics-pbehavior-axe-7",
-      "connector_name": "test-connector-name-metrics-pbehavior-axe-7",
       "component": "test-component-metrics-pbehavior-axe-7",
       "resource": "test-resource-metrics-pbehavior-axe-7",
       "source_type": "resource"
@@ -680,8 +678,6 @@ Feature: SLI metrics should be added on alarm changes
     """json
     {
       "event_type": "entityupdated",
-      "connector": "test-connector-metrics-pbehavior-axe-8",
-      "connector_name": "test-connector-name-metrics-pbehavior-axe-8",
       "component": "test-component-metrics-pbehavior-axe-8",
       "resource": "test-resource-metrics-pbehavior-axe-8",
       "source_type": "resource"
