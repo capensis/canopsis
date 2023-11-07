@@ -2,7 +2,6 @@
   <v-layout column>
     <v-layout justify-end>
       <c-action-fab-btn
-        class="ma-0"
         v-if="addable"
         :tooltip="$t('modals.createPbehavior.create.title')"
         icon="add"
@@ -11,7 +10,6 @@
         @click="showCreatePbehaviorModal"
       />
       <c-action-fab-btn
-        class="ma-0"
         :tooltip="$t('modals.pbehaviorsCalendar.title')"
         icon="calendar_today"
         color="secondary"
@@ -20,7 +18,6 @@
       />
     </v-layout>
     <c-advanced-data-table
-      class="ma-0"
       :items="pbehaviors"
       :headers="headers"
       :loading="pending"

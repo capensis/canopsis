@@ -5,7 +5,6 @@
   >
     <template #item="{ item }">
       <v-btn
-        class="ma-0"
         :disabled="item.last"
         :loading="item.last && pending"
         small

@@ -1,5 +1,6 @@
 <template>
   <c-calendar
+    ref="calendar"
     :events="events"
     :loading="pending"
     readonly
@@ -40,14 +41,6 @@ export default {
       events: [],
     };
   },
-  computed: {
-    viewInterval() {
-      return {
-        from: convertDateToTimestampByTimezone(this.$refs.calendar.filled.start, this.$system.timezone),
-        to: convertDateToTimestampByTimezone(this.$refs.calendar.filled.end, this.$system.timezone),
-      };
-    },
-  },
   mounted() {
     this.fetchEvents();
   },
@@ -79,8 +72,8 @@ export default {
 
     fetchPbehaviorsCalendar() {
       const params = {
-        from: this.viewInterval.from,
-        to: this.viewInterval.to,
+        from: convertDateToTimestampByTimezone(this.$refs.calendar.filled.start, this.$system.timezone),
+        to: convertDateToTimestampByTimezone(this.$refs.calendar.filled.end, this.$system.timezone),
       };
 
       if (this.entityId) {

@@ -110,6 +110,7 @@ export default {
 <style lang="scss">
 .numbers-metrics-item {
   &__value {
+    line-height: normal;
     text-align: center;
   }
 

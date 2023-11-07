@@ -5,7 +5,6 @@
     wrap
   >
     <v-btn
-      class="ma-0"
       :loading="downloading"
       color="primary"
       small
@@ -20,7 +19,6 @@
       <span>{{ $t('common.exportAsCsv') }}</span>
     </v-btn>
     <v-btn
-      class="ma-0"
       color="primary"
       small
       @click="exportChartAsPng"

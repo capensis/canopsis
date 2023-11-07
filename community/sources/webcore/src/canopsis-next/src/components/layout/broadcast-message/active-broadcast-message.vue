@@ -11,7 +11,7 @@
         #actions=""
       >
         <v-btn
-          class="my-0 ml-0 mr-2"
+          class="mr-2"
           color="white"
           outlined
           rounded

@@ -1,6 +1,6 @@
 <template>
   <v-select
-    class="filter-selector"
+    class="filter-selector mt-0"
     v-field="value"
     :items="preparedFilters"
     :label="label"

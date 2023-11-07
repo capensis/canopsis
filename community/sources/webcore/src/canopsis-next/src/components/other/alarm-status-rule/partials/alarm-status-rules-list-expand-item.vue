@@ -1,6 +1,6 @@
 <template>
   <v-tabs
-    color="secondary lighten-1"
+    background-color="secondary lighten-1"
     slider-color="primary"
     dark
     centered
