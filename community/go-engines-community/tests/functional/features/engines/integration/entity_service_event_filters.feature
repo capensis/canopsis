@@ -78,8 +78,6 @@ Feature: update service on event
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
