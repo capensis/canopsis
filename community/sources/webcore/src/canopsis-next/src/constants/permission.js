@@ -116,6 +116,7 @@ export const USERS_PERMISSIONS = {
     shareToken: `${USER_PERMISSIONS_PREFIXES.technical.admin}_shareToken`,
     maintenance: `${USER_PERMISSIONS_PREFIXES.technical.admin}_maintenance`,
     widgetTemplate: `${USER_PERMISSIONS_PREFIXES.technical.admin}_widgetTemplate`,
+    stateSetting: `${USER_PERMISSIONS_PREFIXES.technical.admin}_stateSetting`,
     tag: `${USER_PERMISSIONS_PREFIXES.technical.admin}_tag`,
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,

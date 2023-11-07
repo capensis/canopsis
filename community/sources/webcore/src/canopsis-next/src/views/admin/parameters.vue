@@ -46,6 +46,7 @@
 import { MODALS, PARAMETERS_TABS } from '@/constants';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
+import { entitiesStateSettingMixin } from '@/mixins/entities/state-setting';
 import { entitiesWidgetTemplatesMixin } from '@/mixins/entities/widget-template';
 import { permissionsTechnicalParametersMixin } from '@/mixins/permissions/technical/parameters';
 import { permissionsTechnicalWidgetTemplateMixin } from '@/mixins/permissions/technical/widget-templates';
@@ -68,6 +69,7 @@ export default {
   },
   mixins: [
     entitiesInfoMixin,
+    entitiesStateSettingMixin,
     entitiesWidgetTemplatesMixin,
     permissionsTechnicalParametersMixin,
     permissionsTechnicalWidgetTemplateMixin,
@@ -79,12 +81,22 @@ export default {
   },
   computed: {
     hasFabButton() {
-      return this.activeTab === PARAMETERS_TABS.widgetTemplates;
+      return [
+        PARAMETERS_TABS.widgetTemplates,
+        PARAMETERS_TABS.stateSettings,
+      ].includes(this.activeTab);
     },
   },
   methods: {
-    refresh() {
-      this.fetchWidgetTemplatesListWithPreviousParams();
+    async refresh() {
+      const refreshFunc = {
+        [PARAMETERS_TABS.widgetTemplates]: this.fetchWidgetTemplatesListWithPreviousParams,
+        [PARAMETERS_TABS.stateSettings]: this.fetchStateSettingsList,
+      }[this.activeTab];
+
+      if (refreshFunc) {
+        await refreshFunc();
+      }
     },
 
     showSelectWidgetTemplateTypeModal() {
