@@ -663,6 +663,12 @@ export default {
       success: 'Méthode de calcul d\'état supprimée !',
     },
   },
+  createJunitStateSetting: {
+    edit: {
+      title: 'Paramètres d\'état de la suite de tests JUnit',
+      success: 'Paramètre d\'état de la suite de tests JUnit modifié !',
+    },
+  },
   defineStorage: {
     title: 'Définir le stockage des résultats',
     field: {

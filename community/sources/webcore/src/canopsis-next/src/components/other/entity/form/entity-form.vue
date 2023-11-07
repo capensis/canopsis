@@ -21,18 +21,29 @@
               v-flex(xs6)
                 c-entity-type-field(v-field="form.type", required, disabled)
         c-coordinates-field(v-field="form.coordinates", row)
+        entity-state-setting(
+          v-if="hasStateSetting",
+          :form="form",
+          :preparer="formToEntity"
+        )
     v-tab {{ $t('entity.manageInfos') }}
     v-tab-item
       manage-infos(v-field="form.infos")
 </template>
 
 <script>
+import { ENTITY_TYPES } from '@/constants';
+
+import { formToEntity } from '@/helpers/entities/entity/form';
+
 import ManageInfos from '@/components/widgets/context/manage-infos.vue';
+import EntityStateSetting from '@/components/other/state-setting/entity-state-setting.vue';
 
 export default {
   inject: ['$validator'],
   components: {
     ManageInfos,
+    EntityStateSetting,
   },
   model: {
     prop: 'form',
@@ -42,6 +53,15 @@ export default {
     form: {
       type: Object,
       required: true,
+    },
+  },
+  computed: {
+    hasStateSetting() {
+      return this.form.type === ENTITY_TYPES.component;
+    },
+
+    formToEntity() {
+      return formToEntity;
     },
   },
 };
