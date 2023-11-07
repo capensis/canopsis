@@ -94,29 +94,25 @@ export default createEntityModule({
     },
 
     update(context, { data, id }) {
-      return request.put(API_ROUTES.entityBasics.list, data, {
+      return request.put(API_ROUTES.entityBasics, data, {
         params: { _id: id },
       });
     },
 
     create(context, { data, id }) {
-      return request.post(API_ROUTES.entityBasics.list, data, {
+      return request.post(API_ROUTES.entityBasics, data, {
         params: { _id: id },
       });
     },
 
     remove(context, { id }) {
-      return request.delete(API_ROUTES.entityBasics.list, {
+      return request.delete(API_ROUTES.entityBasics, {
         params: { _id: id },
       });
     },
 
-    checkStateSetting(context, { data }) {
-      return request.post(API_ROUTES.entityBasics.checkStateSetting, data);
-    },
-
     fetchBasicEntityWithoutStore(context, { id } = {}) {
-      return request.get(API_ROUTES.entityBasics.list, {
+      return request.get(API_ROUTES.entityBasics, {
         params: { _id: id },
       });
     },
@@ -125,6 +121,10 @@ export default createEntityModule({
       return request.get(API_ROUTES.entityContextGraph, {
         params: { _id: id },
       });
+    },
+
+    checkStateSetting(context, { data }) {
+      return request.post(API_ROUTES.entityCheckStateSetting, data);
     },
 
     fetchListWithoutStore(context, { params } = {}) {
