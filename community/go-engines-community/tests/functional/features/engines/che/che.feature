@@ -327,8 +327,8 @@ Feature: create entities on event
     [
       {
         "event_type": "entityupdated",
-        "connector": "test-connector-che-4",
-        "connector_name": "test-connector-name-che-4",
+        "connector": "api",
+        "connector_name": "api",
         "component": "test-component-che-4",
         "source_type": "component"
       }

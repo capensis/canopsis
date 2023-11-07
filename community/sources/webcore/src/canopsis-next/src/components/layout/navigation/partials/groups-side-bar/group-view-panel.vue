@@ -5,9 +5,9 @@
         slot(name="title") {{ view.title }}
       div.panel-item-content__actions
         v-icon.mr-2(v-if="view.is_private", small) lock
-        template(v-if="allowEditing")
+        template(v-if="editable || duplicable")
           v-btn.ma-0(
-            v-show="editable",
+            v-if="editable",
             :disabled="isOrderChanged",
             depressed,
             small,
@@ -16,7 +16,7 @@
           )
             v-icon(small) edit
           v-btn.ma-0(
-            v-show="isEditing",
+            v-if="duplicable",
             :disabled="isOrderChanged",
             depressed,
             small,
@@ -34,15 +34,11 @@ export default {
       type: Object,
       required: true,
     },
-    allowEditing: {
-      type: Boolean,
-      default: false,
-    },
     editable: {
       type: Boolean,
       default: false,
     },
-    isEditing: {
+    duplicable: {
       type: Boolean,
       default: false,
     },
