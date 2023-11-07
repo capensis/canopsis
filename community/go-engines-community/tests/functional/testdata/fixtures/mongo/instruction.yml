@@ -1019,6 +1019,8 @@ instruction:
     timeout_after_execution:
       unit: s
       value: 2
+    jobs:
+      - job: test-job-to-run-auto-instruction-3
 
   instruction_to_run_auto_instruction_second_3_1:
     <<: *instruction_auto
@@ -1374,6 +1376,8 @@ instruction:
   instruction_alarm_instruction_get_2_2:
     <<: *instruction_auto
     _id: test-instruction-to-alarm-instruction-get-2-2
+    jobs:
+      - job: test-job-to-run-auto-instruction-3
     entity_pattern:
       - - field: name
           cond:
@@ -1508,6 +1512,8 @@ instruction:
             type: regexp
             value: test-resource-correlation-alarm-get-4-3
     alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-5
 
   instruction_action_remediation_triggers_1:
     <<: *instruction_manual
@@ -1926,6 +1932,8 @@ instruction:
     timeout_after_execution:
       unit: s
       value: 2
+    jobs:
+      - job: test-job-to-run-manual-simplified-instruction-3
 
   instruction_to_run_manual_simplified_instruction_5:
     <<: *instruction_manual_simplified
@@ -1991,6 +1999,8 @@ instruction:
     timeout_after_execution:
       value: 1
       unit: s
+    jobs:
+      - job: test-job-to-run-auto-instruction-3
 
   instruction_alarm_instruction_get_icons_4_1:
     <<: *instruction_auto
@@ -2005,6 +2015,8 @@ instruction:
     timeout_after_execution:
       value: 1
       unit: s
+    jobs:
+      - job: test-job-to-run-auto-instruction-3
 
   instruction_alarm_instruction_get_icons_4_2:
     <<: *instruction_auto
@@ -2036,6 +2048,8 @@ instruction:
     timeout_after_execution:
       value: 1
       unit: s
+    jobs:
+      - job: test-job-to-run-auto-instruction-3
 
   instruction_alarm_instruction_get_icons_5_2:
     <<: *instruction_manual
@@ -2169,7 +2183,7 @@ instruction:
       value: 1
       unit: s
 
-  instruction_alarm_instruction_get_icons_10_1:
+  instruction_alarm_instruction_get_icons_second_1_1:
     <<: *instruction_manual
     name: test-instruction-to-alarm-instruction-get-icons-second-1-1-name
     _id: test-instruction-to-alarm-instruction-get-icons-second-1-1
@@ -2183,7 +2197,7 @@ instruction:
       value: 1
       unit: s
 
-  instruction_alarm_instruction_get_icons_10_2:
+  instruction_alarm_instruction_get_icons_second_1_2:
     <<: *instruction_manual
     name: test-instruction-to-alarm-instruction-get-icons-second-1-2-name
     _id: test-instruction-to-alarm-instruction-get-icons-second-1-2
@@ -2197,7 +2211,7 @@ instruction:
       value: 1
       unit: s
 
-  instruction_alarm_instruction_get_icons_11_1:
+  instruction_alarm_instruction_get_icons_second_2_1:
     <<: *instruction_auto
     name: test-instruction-to-alarm-instruction-get-icons-second-2-1-name
     _id: test-instruction-to-alarm-instruction-get-icons-second-2-1
@@ -2210,8 +2224,10 @@ instruction:
     timeout_after_execution:
       value: 1
       unit: s
+    jobs:
+      - job: test-job-to-run-auto-instruction-3
 
-  instruction_alarm_instruction_get_icons_11_2:
+  instruction_alarm_instruction_get_icons_second_2_2:
     <<: *instruction_manual
     name: test-instruction-to-alarm-instruction-get-icons-second-2-2-name
     _id: test-instruction-to-alarm-instruction-get-icons-second-2-2
@@ -2225,7 +2241,7 @@ instruction:
       value: 1
       unit: s
 
-  instruction_alarm_instruction_get_icons_12_1:
+  instruction_alarm_instruction_get_icons_second_3_1:
     <<: *instruction_auto
     name: test-instruction-to-alarm-instruction-get-icons-second-3-1-name
     _id: test-instruction-to-alarm-instruction-get-icons-second-3-1
@@ -2238,8 +2254,10 @@ instruction:
     timeout_after_execution:
       value: 1
       unit: s
+    jobs:
+      - job: test-job-to-run-auto-instruction-3
 
-  instruction_alarm_instruction_get_icons_12_2:
+  instruction_alarm_instruction_get_icons_second_3_2:
     <<: *instruction_auto
     name: test-instruction-to-alarm-instruction-get-icons-second-3-2-name
     _id: test-instruction-to-alarm-instruction-get-icons-second-3-2
@@ -2256,7 +2274,7 @@ instruction:
       value: 1
       unit: s
 
-  instruction_alarm_instruction_get_icons_13_1:
+  instruction_alarm_instruction_get_icons_second_4_1:
     <<: *instruction_manual
     name: test-instruction-to-alarm-instruction-get-icons-second-4-1-name
     _id: test-instruction-to-alarm-instruction-get-icons-second-4-1
@@ -2270,7 +2288,7 @@ instruction:
       value: 1
       unit: s
 
-  instruction_alarm_instruction_get_icons_13_2:
+  instruction_alarm_instruction_get_icons_second_4_2:
     <<: *instruction_manual
     name: test-instruction-to-alarm-instruction-get-icons-second-4-2-name
     _id: test-instruction-to-alarm-instruction-get-icons-second-4-2
@@ -2284,7 +2302,7 @@ instruction:
       value: 1
       unit: s
 
-  instruction_alarm_instruction_get_icons_14_1:
+  instruction_alarm_instruction_get_icons_second_5_1:
     <<: *instruction_auto
     name: test-instruction-to-alarm-instruction-get-icons-second-5-1-name
     _id: test-instruction-to-alarm-instruction-get-icons-second-5-1
@@ -2297,8 +2315,10 @@ instruction:
     timeout_after_execution:
       value: 1
       unit: s
+    jobs:
+      - job: test-job-to-run-auto-instruction-3
 
-  instruction_alarm_instruction_get_icons_14_2:
+  instruction_alarm_instruction_get_icons_second_5_2:
     <<: *instruction_manual
     name: test-instruction-to-alarm-instruction-get-icons-second-5-2-name
     _id: test-instruction-to-alarm-instruction-get-icons-second-5-2
@@ -2312,7 +2332,7 @@ instruction:
       value: 1
       unit: s
 
-  instruction_alarm_instruction_get_icons_15:
+  instruction_alarm_instruction_get_icons_second_6:
     <<: *instruction_manual
     name: test-instruction-to-alarm-instruction-get-icons-second-6-name
     _id: test-instruction-to-alarm-instruction-get-icons-second-6
@@ -2326,7 +2346,7 @@ instruction:
       value: 1
       unit: s
 
-  instruction_alarm_instruction_get_icons_16:
+  instruction_alarm_instruction_get_icons_second_7:
     <<: *instruction_auto
     name: test-instruction-to-alarm-instruction-get-icons-second-7-name
     _id: test-instruction-to-alarm-instruction-get-icons-second-7
@@ -2343,7 +2363,7 @@ instruction:
       value: 1
       unit: s
 
-  instruction_alarm_instruction_get_icons_17:
+  instruction_alarm_instruction_get_icons_second_8:
     <<: *instruction_manual
     name: test-instruction-to-alarm-instruction-get-icons-second-8-name
     _id: test-instruction-to-alarm-instruction-get-icons-second-8
@@ -2357,7 +2377,7 @@ instruction:
       value: 1
       unit: s
 
-  instruction_alarm_instruction_get_icons_18_1:
+  instruction_alarm_instruction_get_icons_second_9_1:
     <<: *instruction_auto
     name: test-instruction-to-alarm-instruction-get-icons-second-9-1-name
     _id: test-instruction-to-alarm-instruction-get-icons-second-9-1
@@ -2374,7 +2394,7 @@ instruction:
       value: 1
       unit: s
 
-  instruction_alarm_instruction_get_icons_18_2:
+  instruction_alarm_instruction_get_icons_second_9_2:
     <<: *instruction_manual
     name: test-instruction-to-alarm-instruction-get-icons-second-9-2-name
     _id: test-instruction-to-alarm-instruction-get-icons-second-9-2
@@ -2388,7 +2408,7 @@ instruction:
       value: 1
       unit: s
 
-  instruction_alarm_instruction_get_icons_19_1:
+  instruction_alarm_instruction_get_icons_third_1_1:
     <<: *instruction_manual
     name: test-instruction-to-alarm-instruction-get-icons-third-1-1-name
     _id: test-instruction-to-alarm-instruction-get-icons-third-1-1
@@ -2402,7 +2422,7 @@ instruction:
       value: 1
       unit: s
 
-  instruction_alarm_instruction_get_icons_19_2:
+  instruction_alarm_instruction_get_icons_third_1_2:
     <<: *instruction_manual
     name: test-instruction-to-alarm-instruction-get-icons-third-1-2-name
     _id: test-instruction-to-alarm-instruction-get-icons-third-1-2
@@ -2416,7 +2436,7 @@ instruction:
       value: 1
       unit: s
 
-  instruction_alarm_instruction_get_icons_20_1:
+  instruction_alarm_instruction_get_icons_third_2_1:
     <<: *instruction_auto
     name: test-instruction-to-alarm-instruction-get-icons-third-2-1-name
     _id: test-instruction-to-alarm-instruction-get-icons-third-2-1
@@ -2433,7 +2453,7 @@ instruction:
       value: 1
       unit: s
 
-  instruction_alarm_instruction_get_icons_20_2:
+  instruction_alarm_instruction_get_icons_third_2_2:
     <<: *instruction_manual
     name: test-instruction-to-alarm-instruction-get-icons-third-2-2-name
     _id: test-instruction-to-alarm-instruction-get-icons-third-2-2
@@ -2447,7 +2467,7 @@ instruction:
       value: 1
       unit: s
 
-  instruction_alarm_instruction_get_icons_21_1:
+  instruction_alarm_instruction_get_icons_third_3_1:
     <<: *instruction_manual
     name: test-instruction-to-alarm-instruction-get-icons-third-3-1-name
     _id: test-instruction-to-alarm-instruction-get-icons-third-3-1
@@ -2461,7 +2481,7 @@ instruction:
       value: 1
       unit: s
 
-  instruction_alarm_instruction_get_icons_21_2:
+  instruction_alarm_instruction_get_icons_third_3_2:
     <<: *instruction_manual
     name: test-instruction-to-alarm-instruction-get-icons-third-3-2-name
     _id: test-instruction-to-alarm-instruction-get-icons-third-3-2
@@ -2475,7 +2495,7 @@ instruction:
       value: 1
       unit: s
 
-  instruction_alarm_instruction_get_icons_22:
+  instruction_alarm_instruction_get_icons_third_4:
     <<: *instruction_manual_simplified
     _id: test-instruction-to-alarm-instruction-get-icons-third-4
     name: test-instruction-to-alarm-instruction-get-icons-third-4-name
@@ -2492,7 +2512,7 @@ instruction:
       - job: test-job-to-run-manual-simplified-instruction-1
         stop_on_fail: false
 
-  instruction_alarm_instruction_get_icons_23_1:
+  instruction_alarm_instruction_get_icons_third_5_1:
     <<: *instruction_auto
     name: test-instruction-to-alarm-instruction-get-icons-third-5-1-name
     _id: test-instruction-to-alarm-instruction-get-icons-third-5-1
@@ -2505,8 +2525,10 @@ instruction:
     timeout_after_execution:
       value: 1
       unit: s
+    jobs:
+      - job: test-job-to-run-auto-instruction-3
 
-  instruction_alarm_instruction_get_icons_23_2:
+  instruction_alarm_instruction_get_icons_third_5_2:
     <<: *instruction_manual_simplified
     name: test-instruction-to-alarm-instruction-get-icons-third-5-2-name
     _id: test-instruction-to-alarm-instruction-get-icons-third-5-2
@@ -2523,7 +2545,7 @@ instruction:
       - job: test-job-to-run-manual-simplified-instruction-1
         stop_on_fail: false
 
-  instruction_alarm_instruction_get_icons_24:
+  instruction_alarm_instruction_get_icons_third_6:
     <<: *instruction_manual_simplified
     name: test-instruction-to-alarm-instruction-get-icons-third-6-name
     _id: test-instruction-to-alarm-instruction-get-icons-third-6
@@ -2540,7 +2562,7 @@ instruction:
       - job: test-job-to-run-manual-simplified-instruction-3
         stop_on_fail: false
 
-  instruction_alarm_instruction_get_icons_25_1:
+  instruction_alarm_instruction_get_icons_third_7_1:
     <<: *instruction_auto
     name: test-instruction-to-alarm-instruction-get-icons-third-7-1-name
     _id: test-instruction-to-alarm-instruction-get-icons-third-7-1
@@ -2557,7 +2579,7 @@ instruction:
       - job: test-job-to-run-auto-instruction-1
         stop_on_fail: false
 
-  instruction_alarm_instruction_get_icons_25_2:
+  instruction_alarm_instruction_get_icons_third_7_2:
     <<: *instruction_manual_simplified
     name: test-instruction-to-alarm-instruction-get-icons-third-7-2-name
     _id: test-instruction-to-alarm-instruction-get-icons-third-7-2
@@ -2574,7 +2596,7 @@ instruction:
       - job: test-job-to-run-manual-simplified-instruction-3
         stop_on_fail: false
 
-  instruction_alarm_instruction_get_icons_26_1:
+  instruction_alarm_instruction_get_icons_third_8_1:
     <<: *instruction_manual_simplified
     name: test-instruction-to-alarm-instruction-get-icons-third-8-1-name
     _id: test-instruction-to-alarm-instruction-get-icons-third-8-1
@@ -2591,7 +2613,7 @@ instruction:
       - job: test-job-to-run-manual-simplified-instruction-3
         stop_on_fail: false
 
-  instruction_alarm_instruction_get_icons_26_2:
+  instruction_alarm_instruction_get_icons_third_8_2:
     <<: *instruction_manual_simplified
     name: test-instruction-to-alarm-instruction-get-icons-third-8-2-name
     _id: test-instruction-to-alarm-instruction-get-icons-third-8-2
@@ -2608,7 +2630,7 @@ instruction:
       - job: test-job-to-run-manual-simplified-instruction-1
         stop_on_fail: false
 
-  instruction_alarm_instruction_get_icons_27_1:
+  instruction_alarm_instruction_get_icons_third_9_1:
     <<: *instruction_manual_simplified
     name: test-instruction-to-alarm-instruction-get-icons-third-9-1-name
     _id: test-instruction-to-alarm-instruction-get-icons-third-9-1
@@ -2625,7 +2647,7 @@ instruction:
       - job: test-job-to-run-manual-simplified-instruction-3
         stop_on_fail: false
 
-  instruction_alarm_instruction_get_icons_27_2:
+  instruction_alarm_instruction_get_icons_third_9_2:
     <<: *instruction_manual_simplified
     name: test-instruction-to-alarm-instruction-get-icons-third-9-2-name
     _id: test-instruction-to-alarm-instruction-get-icons-third-9-2
@@ -2642,7 +2664,7 @@ instruction:
       - job: test-job-to-run-manual-simplified-instruction-1
         stop_on_fail: false
 
-  instruction_alarm_instruction_get_icons_28_1:
+  instruction_alarm_instruction_get_icons_fourth_1_1:
     <<: *instruction_auto
     name: test-instruction-to-alarm-instruction-get-icons-fourth-1-1-name
     _id: test-instruction-to-alarm-instruction-get-icons-fourth-1-1
@@ -2655,8 +2677,10 @@ instruction:
     timeout_after_execution:
       value: 1
       unit: s
+    jobs:
+      - job: test-job-to-run-auto-instruction-3
 
-  instruction_alarm_instruction_get_icons_28_2:
+  instruction_alarm_instruction_get_icons_fourth_1_2:
     <<: *instruction_manual_simplified
     name: test-instruction-to-alarm-instruction-get-icons-fourth-1-2-name
     _id: test-instruction-to-alarm-instruction-get-icons-fourth-1-2
@@ -2673,7 +2697,7 @@ instruction:
       - job: test-job-to-run-manual-simplified-instruction-1
         stop_on_fail: false
 
-  instruction_alarm_instruction_get_icons_29_1:
+  instruction_alarm_instruction_get_icons_fourth_2_1:
     <<: *instruction_manual_simplified
     name: test-instruction-to-alarm-instruction-get-icons-fourth-2-1-name
     _id: test-instruction-to-alarm-instruction-get-icons-fourth-2-1
@@ -2690,7 +2714,7 @@ instruction:
       - job: test-job-to-run-manual-simplified-instruction-3
         stop_on_fail: false
 
-  instruction_alarm_instruction_get_icons_29_2:
+  instruction_alarm_instruction_get_icons_fourth_2_2:
     <<: *instruction_manual_simplified
     name: test-instruction-to-alarm-instruction-get-icons-fourth-2-2-name
     _id: test-instruction-to-alarm-instruction-get-icons-fourth-2-2
@@ -2707,7 +2731,7 @@ instruction:
       - job: test-job-to-run-manual-simplified-instruction-1
         stop_on_fail: false
 
-  instruction_alarm_instruction_get_icons_30_1:
+  instruction_alarm_instruction_get_icons_fourth_3_1:
     <<: *instruction_auto
     name: test-instruction-to-alarm-instruction-get-icons-fourth-3-1-name
     _id: test-instruction-to-alarm-instruction-get-icons-fourth-3-1
@@ -2720,8 +2744,10 @@ instruction:
     timeout_after_execution:
       value: 1
       unit: s
+    jobs:
+      - job: test-job-to-run-auto-instruction-3
 
-  instruction_alarm_instruction_get_icons_30_2:
+  instruction_alarm_instruction_get_icons_fourth_3_2:
     <<: *instruction_manual
     name: test-instruction-to-alarm-instruction-get-icons-fourth-3-2-name
     _id: test-instruction-to-alarm-instruction-get-icons-fourth-3-2
@@ -2735,7 +2761,7 @@ instruction:
       value: 1
       unit: s
 
-  instruction_alarm_instruction_get_icons_31:
+  instruction_alarm_instruction_get_icons_fourth_4:
     <<: *instruction_manual_simplified
     name: test-instruction-to-alarm-instruction-get-icons-fourth-4-name
     _id: test-instruction-to-alarm-instruction-get-icons-fourth-4
@@ -2749,7 +2775,7 @@ instruction:
       value: 1
       unit: s
 
-  instruction_alarm_instruction_get_icons_32:
+  instruction_alarm_instruction_get_icons_fourth_5:
     <<: *instruction_manual_simplified
     name: test-instruction-to-alarm-instruction-get-icons-fourth-5-name
     _id: test-instruction-to-alarm-instruction-get-icons-fourth-5
@@ -2766,7 +2792,7 @@ instruction:
       - job: test-job-to-run-manual-simplified-instruction-1
         stop_on_fail: false
 
-  instruction_alarm_instruction_get_icons_33_1:
+  instruction_alarm_instruction_get_icons_fourth_6_1:
     <<: *instruction_auto
     name: test-instruction-to-alarm-instruction-get-icons-fourth-6-1-name
     _id: test-instruction-to-alarm-instruction-get-icons-fourth-6-1
@@ -2783,7 +2809,7 @@ instruction:
       - job: test-job-to-run-auto-instruction-1
         stop_on_fail: false
 
-  instruction_alarm_instruction_get_icons_33_2:
+  instruction_alarm_instruction_get_icons_fourth_6_2:
     <<: *instruction_manual_simplified
     name: test-instruction-to-alarm-instruction-get-icons-fourth-6-2-name
     _id: test-instruction-to-alarm-instruction-get-icons-fourth-6-2
@@ -2800,7 +2826,7 @@ instruction:
       - job: test-job-to-run-manual-simplified-instruction-1
         stop_on_fail: false
 
-  instruction_alarm_instruction_get_icons_34_1:
+  instruction_alarm_instruction_get_icons_fourth_7_1:
     <<: *instruction_manual_simplified
     name: test-instruction-to-alarm-instruction-get-icons-fourth-7-1-name
     _id: test-instruction-to-alarm-instruction-get-icons-fourth-7-1
@@ -2817,7 +2843,7 @@ instruction:
       - job: test-job-to-run-manual-simplified-instruction-1
         stop_on_fail: false
 
-  instruction_alarm_instruction_get_icons_34_2:
+  instruction_alarm_instruction_get_icons_fourth_7_2:
     <<: *instruction_manual_simplified
     name: test-instruction-to-alarm-instruction-get-icons-fourth-7-2-name
     _id: test-instruction-to-alarm-instruction-get-icons-fourth-7-2
@@ -2834,7 +2860,7 @@ instruction:
       - job: test-job-to-run-manual-simplified-instruction-1
         stop_on_fail: false
 
-  instruction_alarm_instruction_get_icons_35_1:
+  instruction_alarm_instruction_get_icons_fourth_8_1:
     <<: *instruction_auto
     name: test-instruction-to-alarm-instruction-get-icons-fourth-8-1-name
     _id: test-instruction-to-alarm-instruction-get-icons-fourth-8-1
@@ -2851,7 +2877,7 @@ instruction:
       value: 1
       unit: s
 
-  instruction_alarm_instruction_get_icons_35_2:
+  instruction_alarm_instruction_get_icons_fourth_8_2:
     <<: *instruction_manual_simplified
     name: test-instruction-to-alarm-instruction-get-icons-fourth-8-2-name
     _id: test-instruction-to-alarm-instruction-get-icons-fourth-8-2
@@ -2865,7 +2891,7 @@ instruction:
       value: 1
       unit: s
 
-  instruction_alarm_instruction_get_icons_36_1:
+  instruction_alarm_instruction_get_icons_fourth_9_1:
     <<: *instruction_manual_simplified
     name: test-instruction-to-alarm-instruction-get-icons-fourth-9-1-name
     _id: test-instruction-to-alarm-instruction-get-icons-fourth-9-1
@@ -2882,7 +2908,7 @@ instruction:
       - job: test-job-to-run-manual-simplified-instruction-1
         stop_on_fail: false
 
-  instruction_alarm_instruction_get_icons_36_2:
+  instruction_alarm_instruction_get_icons_fourth_9_2:
     <<: *instruction_manual_simplified
     name: test-instruction-to-alarm-instruction-get-icons-fourth-9-2-name
     _id: test-instruction-to-alarm-instruction-get-icons-fourth-9-2
@@ -2899,7 +2925,7 @@ instruction:
       - job: test-job-to-run-manual-simplified-instruction-1
         stop_on_fail: false
 
-  instruction_alarm_instruction_get_icons_37_1:
+  instruction_alarm_instruction_get_icons_fifth_1_1:
     <<: *instruction_auto
     name: test-instruction-to-alarm-instruction-get-icons-fifth-1-1-name
     _id: test-instruction-to-alarm-instruction-get-icons-fifth-1-1
@@ -2912,8 +2938,10 @@ instruction:
     timeout_after_execution:
       value: 1
       unit: s
+    jobs:
+      - job: test-job-to-run-auto-instruction-3
 
-  instruction_alarm_instruction_get_icons_37_2:
+  instruction_alarm_instruction_get_icons_fifth_1_2:
     <<: *instruction_manual_simplified
     name: test-instruction-to-alarm-instruction-get-icons-fifth-1-2-name
     _id: test-instruction-to-alarm-instruction-get-icons-fifth-1-2

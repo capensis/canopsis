@@ -31,8 +31,6 @@ Feature: entity_service idle_rules integration
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId }}",
         "source_type": "service"
       },
@@ -202,8 +200,6 @@ Feature: entity_service idle_rules integration
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId }}",
         "source_type": "service"
       },
@@ -326,8 +322,6 @@ Feature: entity_service idle_rules integration
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId1 }}",
         "source_type": "service"
       },
@@ -368,8 +362,6 @@ Feature: entity_service idle_rules integration
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId2 }}",
         "source_type": "service"
       },
@@ -530,8 +522,6 @@ Feature: entity_service idle_rules integration
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId }}",
         "source_type": "service"
       },
