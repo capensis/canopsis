@@ -49,7 +49,7 @@
       v-model="activeTab"
       centered
       slider-color="primary"
-      color="transparent"
+      background-color="transparent"
       fixed-tabs
     >
       <v-tab :class="{ 'error--text': hasGeneralError }">
@@ -64,7 +64,7 @@
       class="pt-2"
       v-model="activeTab"
     >
-      <v-tab-item>
+      <v-tab-item eager>
         <action-parameters-form
           class="mt-4"
           ref="general"
@@ -74,7 +74,7 @@
           :has-previous-webhook="hasPreviousWebhook"
         />
       </v-tab-item>
-      <v-tab-item>
+      <v-tab-item eager>
         <scenario-action-patterns-form
           v-field="action.patterns"
           class="mt-4"
