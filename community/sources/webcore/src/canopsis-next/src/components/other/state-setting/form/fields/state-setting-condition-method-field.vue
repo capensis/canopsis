@@ -1,0 +1,48 @@
+<template lang="pug">
+  v-radio-group.mt-0(
+    v-field="value",
+    :label="label",
+    :disabled="disabled",
+    hide-details,
+    mandatory,
+    row
+  )
+    v-radio(
+      v-for="method in methods",
+      :key="method",
+      :label="$t(`stateSetting.calculationMethods.${method}`)",
+      :value="method",
+      color="primary"
+    )
+</template>
+
+<script>
+import { STATE_SETTING_CONDITIONS_METHODS } from '@/constants';
+
+export default {
+  inject: ['$validator'],
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
+  props: {
+    value: {
+      type: String,
+      default: STATE_SETTING_CONDITIONS_METHODS.share,
+    },
+    label: {
+      type: String,
+      default: '',
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  computed: {
+    methods() {
+      return STATE_SETTING_CONDITIONS_METHODS;
+    },
+  },
+};
+</script>

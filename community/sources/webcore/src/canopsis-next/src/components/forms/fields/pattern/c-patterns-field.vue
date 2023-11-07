@@ -3,7 +3,7 @@
     c-collapse-panel(
       v-if="withAlarm",
       :outline-color="alarmPatternOutlineColor",
-      :title="$t('common.alarmPatterns')"
+      :title="alarmTitle || $t('common.alarmPatterns')"
     )
       c-alarm-patterns-field(
         v-field="value.alarm_pattern",
@@ -20,7 +20,7 @@
     c-collapse-panel(
       v-if="withEntity",
       :outline-color="entityPatternOutlineColor",
-      :title="$t('common.entityPatterns')"
+      :title="entityTitle || $t('common.entityPatterns')"
     )
       c-entity-patterns-field(
         v-field="value.entity_pattern",
@@ -38,7 +38,7 @@
     c-collapse-panel(
       v-if="withPbehavior",
       :outline-color="pbehaviorPatternOutlineColor",
-      :title="$t('common.pbehaviorPatterns')"
+      :title="pbehaviorTitle || $t('common.pbehaviorPatterns')"
     )
       c-pbehavior-patterns-field(
         v-field="value.pbehavior_pattern",
@@ -54,7 +54,7 @@
     c-collapse-panel(
       v-if="withEvent",
       :outline-color="eventPatternOutlineColor",
-      :title="$t('common.eventPatterns')"
+      :title="eventTitle || $t('common.eventPatterns')"
     )
       c-event-filter-patterns-field(
         v-field="value.event_pattern",
@@ -69,7 +69,7 @@
     c-collapse-panel(
       v-if="withTotalEntity",
       :outline-color="totalEntityPatternOutlineColor",
-      :title="$t('common.totalEntityPatterns')"
+      :title="totalEntityTitle || $t('common.totalEntityPatterns')"
     )
       c-entity-patterns-field(
         v-field="value.total_entity_pattern",
@@ -85,7 +85,7 @@
     c-collapse-panel(
       v-if="withServiceWeather",
       :outline-color="serviceWeatherPatternOutlineColor",
-      :title="$t('common.serviceWeatherPatterns')"
+      :title="serviceWeatherTitle || $t('common.serviceWeatherPatterns')"
     )
       c-service-weather-patterns-field(
         v-field="value.weather_service_pattern",
@@ -217,6 +217,30 @@ export default {
     bothCounters: {
       type: Boolean,
       default: false,
+    },
+    alarmTitle: {
+      type: String,
+      default: '',
+    },
+    entityTitle: {
+      type: String,
+      default: '',
+    },
+    pbehaviorTitle: {
+      type: String,
+      default: '',
+    },
+    eventTitle: {
+      type: String,
+      default: '',
+    },
+    totalEntityTitle: {
+      type: String,
+      default: '',
+    },
+    serviceWeatherTitle: {
+      type: String,
+      default: '',
     },
   },
   data() {

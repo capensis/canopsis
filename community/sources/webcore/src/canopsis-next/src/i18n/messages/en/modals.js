@@ -646,8 +646,22 @@ export default {
       title: 'Dependencies for {name}',
     },
   },
-  stateSetting: {
-    title: 'JUnit test suite state settings',
+  createStateSetting: {
+    create: {
+      title: 'Créer une méthode de calcul d\'état',
+      success: 'Méthode de calcul d\'état créée !',
+    },
+    edit: {
+      title: 'Modifier la méthode de calcul de l\'état',
+      success: 'Méthode de calcul d\'état modifiée !',
+    },
+    duplicate: {
+      title: 'Méthode de calcul d\'état en double',
+      success: 'Méthode de calcul d\'état dupliquée !',
+    },
+    remove: {
+      success: 'Méthode de calcul d\'état supprimée !',
+    },
   },
   defineStorage: {
     title: 'Define result storage',
