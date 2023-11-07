@@ -2,6 +2,7 @@
   <v-list-group
     class="widget-settings-group"
     color=""
+    eager
   >
     <template #activator="">
       <v-list-item-content>

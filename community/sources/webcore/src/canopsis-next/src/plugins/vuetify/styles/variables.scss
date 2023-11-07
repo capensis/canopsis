@@ -17,6 +17,8 @@ $expansion-panel-header-font-size: $font-size-root;
 
 $alert-font-size: $font-size-root;
 $alert-prominent-icon-font-size: rem(16px);
+$alert-margin: 4px;
+$alert-border-radius: 0;
 
 $badge-font-size: rem(14px);
 
@@ -58,6 +60,9 @@ $dialog-card-text-padding: 16px;
 
 $card-title-font-weight: 400;
 $card-border-radius: 0;
+$card-shaped-border-radius: 0;
+
+$dialog-border-radius: 0;
 
 $expansion-panel-content-padding: 0;
 $expansion-panel-header-min-height: 48px;
@@ -159,7 +164,6 @@ $material-light: (
   icons: $icons-light,
   buttons: $buttons-light,
   stepper: $stepper-light,
-  chips: var(--v-text-light-primary, #e0e0e0),
   tabs: var(--v-text-light-primary, rgba(0, 0, 0, 0.54))
 );
 
@@ -191,6 +195,5 @@ $material-dark: (
   icons: $icons-dark,
   buttons: $buttons-dark,
   stepper: $stepper-dark,
-  chips: var(--v-text-dark-primary, #555),
   tabs: var(--v-text-dark-primary, rgba(map-get($shades, 'white'), 0.6))
 )

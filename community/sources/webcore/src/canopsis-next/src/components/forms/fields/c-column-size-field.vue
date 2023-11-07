@@ -10,7 +10,6 @@
     row
   >
     <v-radio
-      class="ma-0"
       v-for="item in availableItems"
       :key="item.src"
       :value="item.value"

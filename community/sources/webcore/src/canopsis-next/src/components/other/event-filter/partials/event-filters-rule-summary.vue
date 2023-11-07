@@ -22,7 +22,7 @@
       :label="$t('common.author')"
       :width="labelWidth"
     >
-      {{ eventFilter.author.display_name }}
+      {{ eventFilter.author?.display_name }}
     </c-information-block-row>
     <c-information-block-row
       :label="$t('common.created')"

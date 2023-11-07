@@ -17,7 +17,6 @@
         class="panel-item-content__actions"
       >
         <v-btn
-          class="ma-0"
           v-show="hasEditAccess"
           :disabled="isOrderChanged"
           depressed
@@ -30,7 +29,6 @@
           </v-icon>
         </v-btn>
         <v-btn
-          class="ma-0"
           v-show="isEditing"
           :disabled="isOrderChanged"
           depressed

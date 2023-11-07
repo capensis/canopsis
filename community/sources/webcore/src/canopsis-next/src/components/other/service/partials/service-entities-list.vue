@@ -6,7 +6,7 @@
       align-center
     >
       <v-simple-checkbox
-        class="ml-3 pa-0"
+        class="ml-4 pa-0"
         v-model="isAllSelected"
         :disabled="!entitiesWithActions.length"
       />

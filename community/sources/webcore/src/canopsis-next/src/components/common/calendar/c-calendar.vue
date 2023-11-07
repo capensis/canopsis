@@ -97,7 +97,10 @@
             <span v-if="start">{{ event.name }}</span>
             <div
               v-if="!readonly"
-              :class="['c-calendar__event-drag-bottom', { 'c-calendar__event-drag-bottom--right': !event.timed }]"
+              :class="[
+                'c-calendar__event-drag-bottom',
+                { 'c-calendar__event-drag-bottom--right': isMonthType || !event.timed }
+              ]"
               @mousedown.stop="startResize(event)"
             />
           </v-layout>

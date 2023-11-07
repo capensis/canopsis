@@ -1,6 +1,5 @@
 <template>
   <v-btn
-    class="ma-0"
     :loading="loading"
     icon
     small

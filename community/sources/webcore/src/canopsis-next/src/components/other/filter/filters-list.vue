@@ -21,7 +21,7 @@
       />
     </c-draggable-list-field>
     <v-btn
-      class="ml-0"
+      class="v-btn-legacy-m--y"
       v-if="addable"
       color="primary"
       outlined

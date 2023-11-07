@@ -63,33 +63,35 @@
       key="content"
       wrap
     >
-      <v-alert
-        v-if="hasNoData && servicesError"
-        type="error"
+      <v-layout
+        v-if="hasNoData"
+        justify-center
       >
-        <v-layout align-center>
-          <div class="mr-4">
-            {{ $t('errors.default') }}
-          </div>
-          <c-help-icon
-            icon="help"
-            top
-          >
-            <div v-if="servicesError.name">
-              {{ $t('common.name') }}: {{ servicesError.name }}
+        <v-alert
+          v-if="servicesError"
+          type="error"
+        >
+          <v-layout align-center>
+            <div class="mr-4">
+              {{ $t('errors.default') }}
             </div>
-            <div v-if="servicesError.description">
-              {{ $t('common.description') }}: {{ servicesError.description }}
-            </div>
-          </c-help-icon>
-        </v-layout>
-      </v-alert>
-      <v-alert
-        v-else-if="hasNoData"
-        type="info"
-      >
-        {{ $t('common.noData') }}
-      </v-alert>
+            <c-help-icon
+              icon="help"
+              top
+            >
+              <div v-if="servicesError.name">
+                {{ $t('common.name') }}: {{ servicesError.name }}
+              </div>
+              <div v-if="servicesError.description">
+                {{ $t('common.description') }}: {{ servicesError.description }}
+              </div>
+            </c-help-icon>
+          </v-layout>
+        </v-alert>
+        <v-alert type="info">
+          {{ $t('common.noData') }}
+        </v-alert>
+      </v-layout>
       <template v-else>
         <v-flex
           v-for="service in services"

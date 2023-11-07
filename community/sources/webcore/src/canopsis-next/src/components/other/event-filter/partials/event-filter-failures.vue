@@ -11,7 +11,7 @@
       xs12
     >
       <v-btn
-        class="mx-0"
+        class="v-btn-legacy-m--y"
         :loading="markAsReadPending"
         color="primary"
         @click="markNewFailuresAsRead"

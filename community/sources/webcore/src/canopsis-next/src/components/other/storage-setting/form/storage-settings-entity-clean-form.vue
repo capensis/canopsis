@@ -17,7 +17,7 @@
     </template>
     <v-flex>
       <v-btn
-        class="mx-0 my-4"
+        class="my-4"
         color="primary"
         @click="$emit('clean')"
       >

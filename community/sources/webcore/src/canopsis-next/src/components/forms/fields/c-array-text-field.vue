@@ -19,7 +19,7 @@
       />
     </v-layout>
     <v-btn
-      class="mx-0"
+      class="v-btn-legacy-m--y"
       :disabled="disabled"
       color="primary"
       outlined

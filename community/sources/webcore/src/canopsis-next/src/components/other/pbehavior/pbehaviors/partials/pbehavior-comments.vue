@@ -8,7 +8,7 @@
     <template v-for="(comment, index) in comments">
       <v-list-item :key="comment._id">
         <v-list-item-content>
-          <v-list-item-title>{{ comment.author.display_name }}</v-list-item-title>
+          <v-list-item-title>{{ comment.author?.display_name }}</v-list-item-title>
           <v-list-item-subtitle>
             <c-compiled-template :template="comment.message" />
           </v-list-item-subtitle>
