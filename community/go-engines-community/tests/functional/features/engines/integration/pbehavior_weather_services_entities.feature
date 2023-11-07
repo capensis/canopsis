@@ -46,8 +46,6 @@ Feature: get service entities
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId }}",
         "source_type": "service"
       },
@@ -196,8 +194,6 @@ Feature: get service entities
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId }}",
         "source_type": "service"
       },
@@ -383,8 +379,6 @@ Feature: get service entities
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId }}",
         "source_type": "service"
       },
@@ -542,8 +536,6 @@ Feature: get service entities
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId }}",
         "source_type": "service"
       },
@@ -658,8 +650,6 @@ Feature: get service entities
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId }}",
         "source_type": "service"
       },
@@ -775,8 +765,6 @@ Feature: get service entities
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId }}",
         "source_type": "service"
       },
@@ -926,8 +914,6 @@ Feature: get service entities
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId }}",
         "source_type": "service"
       },
@@ -1069,8 +1055,6 @@ Feature: get service entities
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId }}",
         "source_type": "service"
       },

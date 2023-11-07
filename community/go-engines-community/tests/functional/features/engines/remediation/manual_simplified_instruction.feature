@@ -455,14 +455,14 @@ Feature: run an manual simplified instruction
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "initiator": "user",
-        "m": "Instruction test-instruction-to-run-manual-simplified-instruction-4-name. Job test-job-to-instruction-edit-1-name."
+        "m": "Instruction test-instruction-to-run-manual-simplified-instruction-4-name. Job test-job-to-run-manual-simplified-instruction-3-name."
       },
       {
         "_t": "instructionjobfail",
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "initiator": "user",
-        "m": "Instruction test-instruction-to-run-manual-simplified-instruction-4-name. Job test-job-to-instruction-edit-1-name."
+        "m": "Instruction test-instruction-to-run-manual-simplified-instruction-4-name. Job test-job-to-run-manual-simplified-instruction-3-name."
       },
       {
         "_t": "instructionfail",
