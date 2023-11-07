@@ -101,7 +101,7 @@ export default {
           action: async (newWidgetTemplate) => {
             await this.createWidgetTemplate({ data: newWidgetTemplate });
 
-            this.refresh();
+            this.fabListeners?.refresh();
           },
         },
       });
@@ -113,10 +113,10 @@ export default {
         config: {
           title: this.$t('modals.createStateSetting.create.title'),
           action: async (newStateSetting) => {
-            await this.createWidgetTemplate({ data: newStateSetting });
+            await this.createStateSetting({ data: newStateSetting });
 
             this.$popups.success({ text: this.$t('modals.createStateSetting.create.success') });
-            this.refresh();
+            this.fabListeners?.refresh();
           },
         },
       });

@@ -123,6 +123,10 @@ export default createEntityModule({
       });
     },
 
+    checkStateSetting(context, { data }) {
+      return request.post(API_ROUTES.entityCheckStateSetting, data);
+    },
+
     fetchListWithoutStore(context, { params } = {}) {
       return request.get(API_ROUTES.entity, { params });
     },

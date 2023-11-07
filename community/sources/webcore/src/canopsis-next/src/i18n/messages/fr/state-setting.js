@@ -1,11 +1,13 @@
 import {
   ENTITIES_STATES_KEYS,
   STATE_SETTING_METHODS,
-  STATE_SETTING_CONDITIONS_METHODS,
-  STATE_SETTING_CONDITIONS,
+  STATE_SETTING_THRESHOLDS_METHODS,
+  STATE_SETTING_THRESHOLDS_CONDITIONS,
+  JUNIT_STATE_SETTING_METHODS,
 } from '@/constants';
 
 export default {
+  title: 'Paramétrage de l\'état',
   targetEntityState: 'État de l\'entité cible',
   entitiesStates: 'États des entités impactant',
   computeMethod: 'Méthode de calcul d\'état',
@@ -22,23 +24,32 @@ export default {
       tooltip: 'L\'état est défini par la ou les ressources impactantes.\n'
           + 'Lorsque plusieurs ressources sont définies, le pire état d\'entre elles est retenu.',
     },
-    [STATE_SETTING_METHODS.dependenciesState]: {
+    [STATE_SETTING_METHODS.dependencies]: {
       label: 'L\'état est défini par une part ou un nombre d\'entités impactantes d\'un État spécifique',
       tooltip: 'Les états d\'entité peuvent être remplacés par une règle personnalisée définie par le nombre ou la part d\'entités impactantes d\'états spécifiques.',
     },
   },
   calculationMethods: {
-    [STATE_SETTING_CONDITIONS_METHODS.share]: 'Partager',
-    [STATE_SETTING_CONDITIONS_METHODS.number]: 'Nombre',
+    [STATE_SETTING_THRESHOLDS_METHODS.share]: 'Partager',
+    [STATE_SETTING_THRESHOLDS_METHODS.number]: 'Nombre',
   },
-  conditions: {
-    [STATE_SETTING_CONDITIONS.greater]: 'Plus grand que',
-    [STATE_SETTING_CONDITIONS.less]: 'Moins que',
+  thresholdConditions: {
+    [STATE_SETTING_THRESHOLDS_CONDITIONS.greater]: 'Plus grand que',
+    [STATE_SETTING_THRESHOLDS_CONDITIONS.less]: 'Moins que',
   },
   states: {
     [ENTITIES_STATES_KEYS.ok]: 'OK',
-    [ENTITIES_STATES_KEYS.minor]: 'Minor',
-    [ENTITIES_STATES_KEYS.major]: 'Major',
-    [ENTITIES_STATES_KEYS.critical]: 'Critical',
+    [ENTITIES_STATES_KEYS.minor]: 'Mineur',
+    [ENTITIES_STATES_KEYS.major]: 'Majeur',
+    [ENTITIES_STATES_KEYS.critical]: 'Critique',
+  },
+  junit: {
+    worstLabel: 'Le pire critère :',
+    worstHelpText: 'Canopsis compte l\'état pour chaque critère défini. L\'état final de la suite de tests JUnit est considéré comme le pire des états résultants.',
+    criterion: 'Critère',
+    methods: {
+      [JUNIT_STATE_SETTING_METHODS.worst]: 'Pire',
+      [JUNIT_STATE_SETTING_METHODS.worstOfShare]: 'Pire des états',
+    },
   },
 };

@@ -1,8 +1,8 @@
 <template lang="pug">
   v-layout(column)
-    state-setting-condition-field(
-      v-for="key in sortedConditionsKeys",
-      v-field="conditions[key]",
+    state-setting-threshold-field(
+      v-for="key in sortedThresholdsKeys",
+      v-field="thresholds[key]",
       :key="key",
       :label="$t(`stateSetting.states.${key}`)",
       :name="`${name}.${key}`",
@@ -18,29 +18,29 @@
 import { formValidationHeaderMixin } from '@/mixins/form';
 import { validationAttachRequiredMixin } from '@/mixins/form/validation-attach-required';
 
-import StateSettingConditionField from '../fields/state-setting-condition-field.vue';
+import StateSettingThresholdField from '../fields/state-setting-threshold-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { StateSettingConditionField },
+  components: { StateSettingThresholdField },
   mixins: [formValidationHeaderMixin, validationAttachRequiredMixin],
   model: {
-    prop: 'conditions',
+    prop: 'thresholds',
     event: 'input',
   },
   props: {
-    conditions: {
+    thresholds: {
       type: Object,
       default: () => ({}),
     },
     name: {
       type: String,
-      default: 'conditions',
+      default: 'thresholds',
     },
   },
   computed: {
-    sortedConditionsKeys() {
-      return Object.keys(this.conditions).reverse();
+    sortedThresholdsKeys() {
+      return Object.keys(this.thresholds).reverse();
     },
   },
   created() {
@@ -51,7 +51,7 @@ export default {
   },
   methods: {
     requiredRuleGetter() {
-      return Object.values(this.conditions).some(({ enabled }) => enabled);
+      return Object.values(this.thresholds).some(({ enabled }) => enabled);
     },
   },
 };
