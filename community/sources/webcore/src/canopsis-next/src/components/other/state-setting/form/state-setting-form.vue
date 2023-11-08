@@ -1,49 +1,48 @@
 <template lang="pug">
-  div
-    v-stepper.state-setting-form(v-model="stepper")
-      v-stepper-header
-        v-stepper-step(
-          :complete="stepper > steps.BASICS",
-          :step="steps.BASICS",
-          :rules="[() => !hasBasicsFormAnyError]",
-          editable
-        ) {{ $t('stateSetting.steps.basics') }}
-        v-divider
-        v-stepper-step(
-          :complete="stepper > steps.ENTITY_PATTERN",
-          :step="steps.ENTITY_PATTERN",
-          :rules="[() => !hasEntityPatternFormAnyError]",
-          editable
-        ) {{ $t('stateSetting.steps.rulePatterns') }}
-        v-divider
-        v-stepper-step(
-          :complete="stepper > steps.THRESHOLDS",
-          :step="steps.THRESHOLDS",
-          :rules="[() => !hasThresholdsFormAnyError]",
-          editable
-        ) {{ $t('stateSetting.steps.conditions') }}
-      v-stepper-items
-        v-stepper-content(:step="steps.BASICS")
-          state-setting-basics-step(
-            ref="basicsForm",
-            v-field="form"
-          )
-        v-stepper-content(:step="steps.ENTITY_PATTERN")
-          state-setting-entity-pattern-step(
-            ref="entityPatternForm",
-            v-field="form.entity_pattern"
-          )
-        v-stepper-content(:step="steps.THRESHOLDS")
-          state-setting-inherited-entity-pattern-step(
-            ref="thresholdsForm",
-            v-if="isInheritedMethod",
-            v-field="form.inherited_entity_pattern"
-          )
-          state-setting-thresholds-step(
-            ref="thresholdsForm",
-            v-else,
-            v-field="form.state_thresholds"
-          )
+  v-stepper.state-setting-form(v-model="stepper")
+    v-stepper-header
+      v-stepper-step(
+        :complete="stepper > steps.BASICS",
+        :step="steps.BASICS",
+        :rules="[() => !hasBasicsFormAnyError]",
+        editable
+      ) {{ $t('stateSetting.steps.basics') }}
+      v-divider
+      v-stepper-step(
+        :complete="stepper > steps.ENTITY_PATTERN",
+        :step="steps.ENTITY_PATTERN",
+        :rules="[() => !hasEntityPatternFormAnyError]",
+        editable
+      ) {{ $t('stateSetting.steps.rulePatterns') }}
+      v-divider
+      v-stepper-step(
+        :complete="stepper > steps.THRESHOLDS",
+        :step="steps.THRESHOLDS",
+        :rules="[() => !hasThresholdsFormAnyError]",
+        editable
+      ) {{ $t('stateSetting.steps.conditions') }}
+    v-stepper-items
+      v-stepper-content(:step="steps.BASICS")
+        state-setting-basics-step(
+          ref="basicsForm",
+          v-field="form"
+        )
+      v-stepper-content(:step="steps.ENTITY_PATTERN")
+        state-setting-entity-pattern-step(
+          ref="entityPatternForm",
+          v-field="form.entity_pattern"
+        )
+      v-stepper-content(:step="steps.THRESHOLDS")
+        state-setting-inherited-entity-pattern-step(
+          ref="thresholdsForm",
+          v-if="isInheritedMethod",
+          v-field="form.inherited_entity_pattern"
+        )
+        state-setting-thresholds-step(
+          ref="thresholdsForm",
+          v-else,
+          v-field="form.state_thresholds"
+        )
 </template>
 
 <script>
