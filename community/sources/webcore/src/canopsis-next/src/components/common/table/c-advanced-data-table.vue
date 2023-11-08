@@ -49,12 +49,12 @@
     </v-layout>
     <v-data-table
       v-model="selected"
-      :headers="headers"
+      :headers="preparedHeaders"
       :items="visibleItems"
       :loading="loading"
       :server-items-length="totalItems"
       :no-data-text="noDataText"
-      :options="pagination"
+      :options="options"
       :header-text="headerText"
       :footer-props="{ itemsPerPageOptions: rowsPerPageItems }"
       :item-key="itemKey"
@@ -66,65 +66,18 @@
       :dense="dense"
       @update:options="updatePagination"
     >
-      <template #item="props">
+      <template
+        v-for="header in headers"
+        #[getItemSlotName(header)]="props"
+      >
         <slot
+          :name="header.value"
           v-bind="getItemsProps(props)"
-          name="items"
         >
-          <tr :key="props.item[itemKey] || props.index">
-            <td
-              v-if="selectAll || expand"
-              @click.stop=""
-            >
-              <v-layout
-                class="c-checkbox-wrapper"
-                justify-start
-              >
-                <slot
-                  v-if="selectAll"
-                  v-bind="getItemsProps(props)"
-                  name="item-select"
-                >
-                  <v-simple-checkbox
-                    v-if="!isDisabledItem(props.item)"
-                    v-model="props.selected"
-                    primary
-                    hide-details
-                  />
-                  <v-simple-checkbox
-                    v-else
-                    primary
-                    disabled
-                    hide-details
-                  />
-                </slot>
-                <slot
-                  v-if="expand && isExpandableItem(props.item)"
-                  v-bind="getItemsProps(props)"
-                  name="item-expand"
-                >
-                  <c-expand-btn
-                    class="ml-2"
-                    :expanded="props.isExpanded"
-                    @expand="props.expand"
-                  />
-                </slot>
-              </v-layout>
-            </td>
-            <td
-              v-for="header in headers"
-              :key="header.value"
-            >
-              <slot
-                :name="header.value"
-                v-bind="getItemsProps(props)"
-              >
-                {{ props.item | get(header.value) }}
-              </slot>
-            </td>
-          </tr>
+          {{ props.item | get(header.value) }}
         </slot>
       </template>
+
       <template
         v-if="hasExpandSlot"
         #expanded-item="props"
@@ -139,12 +92,14 @@
           />
         </div>
       </template>
+
       <template #header="props">
         <slot
           name="header"
           v-bind="props"
         />
       </template>
+
       <template
         v-for="header in headerScopedSlots"
         #[header]="props"
@@ -154,6 +109,7 @@
           v-bind="props"
         />
       </template>
+
       <template #progress="props">
         <slot
           name="progress"
@@ -161,6 +117,7 @@
         />
       </template>
     </v-data-table>
+
     <c-table-pagination
       v-if="!noPagination && pagination && advancedPagination"
       :total-items="totalItems"
@@ -281,6 +238,37 @@ export default {
     };
   },
   computed: {
+    preparedHeaders() {
+      const headers = [];
+
+      if (this.selectAll) {
+        headers.push({
+          value: 'data-table-select',
+          text: '',
+          sortable: false,
+          width: '1px',
+        });
+      }
+
+      if (this.expand) {
+        headers.push({
+          value: 'data-table-expand',
+          text: '',
+          sortable: false,
+          width: '1px',
+        });
+      }
+
+      return [
+        ...headers,
+        ...this.headers,
+      ];
+    },
+
+    options() {
+      return {};
+    },
+
     headerScopedSlots() {
       return Object.keys(this.$scopedSlots ?? {}).filter(name => name.startsWith('header.'));
     },
@@ -355,6 +343,10 @@ export default {
         select: value => state.selected = value || !state.selected,
         expand: state.expand,
       };
+    },
+
+    getItemSlotName(header) {
+      return `item.${header.value}`;
     },
   },
 };

@@ -32,16 +32,15 @@
         <span>{{ $t('common.deprecatedTrigger') }}</span>
       </v-tooltip>
     </template>
-    <template #item="{ item, tile, parent }">
+    <template #item="{ item, attrs, on, parent }">
       <v-list-item
-        v-bind="tile.props"
+        v-bind="attrs"
         :active-class="errors.has(getAdditionalValueFieldName(item.type)) ? 'error--text' : tile.props.activeClass"
-        @click="tile.on.click"
+        @click="on.click"
       >
         <v-list-item-action>
           <v-checkbox
-            class="ma-0"
-            :input-value="tile.props.value"
+            :input-value="attrs.value"
             :color="parent.color"
             hide-details
           />
@@ -59,7 +58,7 @@
               v-bind="additionalValuesComponentsByTypes[item.type].bind"
               v-on="additionalValuesComponentsByTypes[item.type].on"
               :is="additionalValuesComponentsByTypes[item.type].is"
-              :disabled="!tile.props.value"
+              :disabled="!attrs.value"
               @click.prevent.stop=""
             />
           </v-layout>

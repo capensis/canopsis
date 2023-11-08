@@ -19,7 +19,6 @@
         <v-tooltip top>
           <template #activator="{ on: tooltipOn }">
             <v-btn
-              class="ma-0"
               v-on="{ ...on, ...tooltipOn }"
               :color="errors.has('file') ? 'error' : 'primary'"
               :disabled="disabled"

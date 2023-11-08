@@ -1,34 +1,32 @@
 <template>
-  <span class="ds-calendar-app-period-picker">
-    <template v-if="!isYearType">
+  <span class="calendar-period-picker">
+    <v-select
+      class="calendar-period-picker__week pt-0 mt-0"
+      v-if="isWeekType"
+      v-model="week"
+      :items="weeks"
+      :menu-props="menuProps"
+      hide-details
+    />
+    <template v-else>
       <v-select
-        class="ds-calendar-app-period-picker__week"
-        v-if="isWeekType"
-        v-model="week"
-        :items="weeks"
+        class="calendar-period-picker__day pt-0 mt-0"
+        v-if="!isMonthType"
+        v-model="day"
+        :items="days"
         :menu-props="menuProps"
         hide-details
       />
-      <template v-else>
-        <v-select
-          class="ds-calendar-app-period-picker__day"
-          v-if="!isMonthType"
-          v-model="day"
-          :items="days"
-          :menu-props="menuProps"
-          hide-details
-        />
-        <v-select
-          class="ds-calendar-app-period-picker__month"
-          v-model="month"
-          :items="months"
-          :menu-props="menuProps"
-          hide-details
-        />
-      </template>
+      <v-select
+        class="calendar-period-picker__month pt-0 mt-0"
+        v-model="month"
+        :items="months"
+        :menu-props="menuProps"
+        hide-details
+      />
     </template>
     <v-select
-      class="ds-calendar-app-period-picker__year"
+      class="calendar-period-picker__year pt-0 mt-0"
       v-model="year"
       :items="years"
       :menu-props="menuProps"
@@ -38,17 +36,29 @@
 </template>
 
 <script>
-import { Calendar, Units } from 'dayspan';
 import { range } from 'lodash';
 
-import { TIME_UNITS } from '@/constants';
+import { CALENDAR_TYPES, TIME_UNITS } from '@/constants';
 
-import { getDiffBetweenDates } from '@/helpers/date/date';
+import {
+  convertDateToString,
+  getDateByMonthNumber,
+  getDateByWeekNumber,
+  getDaysInMonth,
+  getWeekEndDay,
+  getWeekNumber,
+  getWeekStartDay,
+  isSameDates,
+} from '@/helpers/date/date';
 
 export default {
   props: {
-    calendar: {
-      type: Calendar,
+    focus: {
+      type: Date,
+      required: true,
+    },
+    type: {
+      type: String,
       required: true,
     },
     previousYearsOffset: {
@@ -68,46 +78,41 @@ export default {
     },
 
     isWeekType() {
-      return this.calendar.type === Units.WEEK;
-    },
-
-    isYearType() {
-      return this.calendar.type === Units.YEAR;
+      return this.type === CALENDAR_TYPES.week;
     },
 
     isMonthType() {
-      return this.calendar.type === Units.MONTH;
+      return this.type === CALENDAR_TYPES.month;
     },
 
     start() {
-      return this.calendar.start;
+      return this.calendar?.start;
     },
 
     startMoment() {
-      return this.start.date;
+      return this.start?.date;
     },
 
     day: {
       get() {
-        return this.start.dayOfMonth;
+        return this.focus.getDate();
       },
       set(value) {
-        const selectDate = this.startMoment.toDate();
+        const selectDate = new Date(this.focus);
+
         selectDate.setDate(value);
 
-        this.updateCalendar(selectDate);
+        this.updateFocus(selectDate);
       },
     },
 
     month: {
       get() {
-        return this.start.month;
+        return this.focus.getMonth();
       },
       set(value) {
-        const selectDate = this.startMoment.toDate();
-        const lastDay = this.startMoment.clone()
-          .month(value)
-          .daysInMonth();
+        const selectDate = new Date(this.focus);
+        const lastDay = getDaysInMonth(getDateByMonthNumber(selectDate, value));
 
         if (selectDate.getDate() > lastDay) {
           selectDate.setDate(lastDay);
@@ -115,30 +120,29 @@ export default {
 
         selectDate.setMonth(value);
 
-        this.updateCalendar(selectDate);
+        this.updateFocus(selectDate);
       },
     },
 
     year: {
       get() {
-        return this.start.year;
+        return this.focus.getFullYear();
       },
       set(value) {
-        const selectDate = this.startMoment.toDate();
+        const selectDate = new Date(this.focus);
+
         selectDate.setYear(value);
 
-        this.updateCalendar(selectDate);
+        this.updateFocus(selectDate);
       },
     },
 
     week: {
       get() {
-        return this.start.week;
+        return getWeekNumber(this.focus);
       },
       set(value) {
-        const selectDate = this.startMoment.clone().week(value).toDate();
-
-        this.updateCalendar(selectDate);
+        this.updateFocus(getDateByWeekNumber(this.focus, value));
       },
     },
 
@@ -168,7 +172,7 @@ export default {
     },
 
     days() {
-      return range(1, this.startMoment.daysInMonth() + 1);
+      return range(1, getDaysInMonth(this.focus) + 1);
     },
 
     weeks() {
@@ -180,35 +184,23 @@ export default {
   },
   methods: {
     getWeekLabelByNumber(week) {
-      const start = this.startMoment.clone()
-        .week(week)
-        .startOf(TIME_UNITS.week);
-      const end = this.startMoment.clone()
-        .week(week)
-        .endOf(TIME_UNITS.week);
+      const start = getWeekStartDay(this.focus, week);
+      const end = getWeekEndDay(this.focus, week);
 
-      const format = start.isSame(end, TIME_UNITS.year) ? 'MMMM Do' : 'MMMM Do YYYY';
+      const format = isSameDates(start, end, TIME_UNITS.year) ? 'MMMM Do' : 'MMMM Do YYYY';
 
-      return `${start.format(format)} - ${end.format(format)}`;
+      return `${convertDateToString(start, format)} - ${convertDateToString(end, format)}`;
     },
 
-    updateCalendar(date) {
-      const unit = {
-        [Units.DAY]: TIME_UNITS.day,
-        [Units.WEEK]: TIME_UNITS.week,
-        [Units.MONTH]: TIME_UNITS.month,
-      }[this.calendar.type];
-
-      const diff = getDiffBetweenDates(date, this.startMoment, unit);
-
-      this.$emit('change', diff);
+    updateFocus(date) {
+      this.$emit('input', date);
     },
   },
 };
 </script>
 
 <style lang="scss">
-.ds-calendar-app-period-picker {
+.calendar-period-picker {
   display: inline-flex;
   gap: 10px;
 
@@ -221,7 +213,7 @@ export default {
   }
 
   &__month {
-    width: 100px;
+    width: 115px;
   }
 
   &__year {

@@ -27,7 +27,6 @@
             align-center
           >
             <v-btn
-              class="ma-0"
               type="submit"
               color="primary"
             >

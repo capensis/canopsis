@@ -27,13 +27,11 @@
       </v-card-text>
       <template v-if="$slots.actions">
         <v-divider key="divider" />
-        <v-card-actions key="actions">
-          <v-layout
-            class="py-1"
-            justify-end
-          >
-            <slot name="actions" />
-          </v-layout>
+        <v-card-actions
+          key="actions"
+          class="justify-end px-2 py-3"
+        >
+          <slot name="actions" />
         </v-card-actions>
       </template>
     </template>

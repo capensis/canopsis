@@ -4,7 +4,6 @@
     @change="inputHandler"
   >
     <v-btn
-      class="ma-0"
       :value="true"
       light
       text

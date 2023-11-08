@@ -6,7 +6,6 @@
     bottom
     left
     lazy-with-unmount
-    lazy
     offset-x
   >
     <template #activator="{ on }">

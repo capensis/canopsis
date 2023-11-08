@@ -11,10 +11,10 @@
     hide-details
     clearable
   >
-    <template #item="{ item, tile }">
+    <template #item="{ item, attrs, on }">
       <v-list-item
-        v-bind="tile.props"
-        v-on="tile.on"
+        v-bind="attrs"
+        v-on="on"
       >
         <v-list-item-content>
           <v-list-item-title class="v-list-badge__tile__title">

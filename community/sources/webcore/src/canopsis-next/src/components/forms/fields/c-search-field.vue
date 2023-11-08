@@ -27,7 +27,6 @@
         <v-list-item-action>
           <v-layout>
             <v-btn
-              class="ma-0"
               small
               icon
               @click.stop="$emit('remove', item.search)"
@@ -40,7 +39,6 @@
               </v-icon>
             </v-btn>
             <v-btn
-              class="ma-0"
               :class="{ 'c-search-field__item__pinned': item.pinned }"
               small
               icon

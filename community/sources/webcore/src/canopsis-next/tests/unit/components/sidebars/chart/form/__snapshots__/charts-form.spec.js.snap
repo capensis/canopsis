@@ -31,7 +31,7 @@ exports[`charts-form Renders \`charts-form\` with custom props 1`] = `
       transition="v-menu-transition"
     >
       <v-list-stub>
-        <v-list-tile-stub
+        <v-list-item-stub
           activeclass="primary--text"
         >
           <i
@@ -45,8 +45,8 @@ exports[`charts-form Renders \`charts-form\` with custom props 1`] = `
           >
             Bar chart
           </span>
-        </v-list-tile-stub>
-        <v-list-tile-stub
+        </v-list-item-stub>
+        <v-list-item-stub
           activeclass="primary--text"
         >
           <i
@@ -60,8 +60,8 @@ exports[`charts-form Renders \`charts-form\` with custom props 1`] = `
           >
             Line chart
           </span>
-        </v-list-tile-stub>
-        <v-list-tile-stub
+        </v-list-item-stub>
+        <v-list-item-stub
           activeclass="primary--text"
         >
           <i
@@ -75,7 +75,7 @@ exports[`charts-form Renders \`charts-form\` with custom props 1`] = `
           >
             Numbers
           </span>
-        </v-list-tile-stub>
+        </v-list-item-stub>
       </v-list-stub>
     </v-menu-stub>
   </div>
@@ -115,7 +115,7 @@ exports[`charts-form Renders \`charts-form\` with default props 1`] = `
       transition="v-menu-transition"
     >
       <v-list-stub>
-        <v-list-tile-stub
+        <v-list-item-stub
           activeclass="primary--text"
         >
           <i
@@ -129,8 +129,8 @@ exports[`charts-form Renders \`charts-form\` with default props 1`] = `
           >
             Bar chart
           </span>
-        </v-list-tile-stub>
-        <v-list-tile-stub
+        </v-list-item-stub>
+        <v-list-item-stub
           activeclass="primary--text"
         >
           <i
@@ -144,8 +144,8 @@ exports[`charts-form Renders \`charts-form\` with default props 1`] = `
           >
             Line chart
           </span>
-        </v-list-tile-stub>
-        <v-list-tile-stub
+        </v-list-item-stub>
+        <v-list-item-stub
           activeclass="primary--text"
         >
           <i
@@ -159,7 +159,7 @@ exports[`charts-form Renders \`charts-form\` with default props 1`] = `
           >
             Numbers
           </span>
-        </v-list-tile-stub>
+        </v-list-item-stub>
       </v-list-stub>
     </v-menu-stub>
   </div>

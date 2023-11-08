@@ -18,16 +18,16 @@
         {{ item.text }}
       </template>
     </template>
-    <template #item="{ parent, item, tile }">
+    <template #item="{ parent, item, attrs, on }">
       <v-list-item
-        v-bind="tile.props"
-        v-on="tile.on"
+        v-bind="attrs"
+        v-on="on"
       >
         <v-list-item-action v-if="isMultiple">
           <v-checkbox
-            :input-value="tile.props.value"
+            :input-value="attrs.value"
             :color="parent.color"
-            :disabled="tile.props.disabled"
+            :disabled="attrs.disabled"
           />
         </v-list-item-action>
         <v-list-item-content>

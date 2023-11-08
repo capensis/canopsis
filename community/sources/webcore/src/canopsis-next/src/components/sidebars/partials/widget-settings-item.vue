@@ -1,5 +1,8 @@
 <template>
-  <v-list-group color="">
+  <v-list-group
+    color=""
+    eager
+  >
     <template #activator="">
       <v-list-item-content class="widget-settings-item-title">
         <v-list-item-title

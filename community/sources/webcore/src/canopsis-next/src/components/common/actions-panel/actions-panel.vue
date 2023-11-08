@@ -28,7 +28,6 @@
         >
           <template #activator="{ on }">
             <v-btn
-              class="ma-0"
               v-on="on"
               icon
             >

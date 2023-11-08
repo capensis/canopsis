@@ -63,8 +63,7 @@
         <c-action-btn
           v-if="updatable"
           :tooltip="item.editable ? $t('common.edit') : $t('pbehavior.notEditable')"
-          :badge-value="isOldPattern(item)"
-          :badge-tooltip="$t('pattern.oldPatternTooltip')"
+          :disabled="!item.editable"
           type="edit"
           @click="$emit('edit', item)"
         />

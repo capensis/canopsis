@@ -11,10 +11,11 @@
       <slot />
     </v-list>
     <v-btn
-      class="primary"
+      class="mx-2 my-1"
       :loading="submitting"
       :disabled="submitting || errors.any()"
       type="submit"
+      color="primary"
     >
       {{ $t('common.save') }}
     </v-btn>

@@ -1,4 +1,4 @@
-import { addPassiveEventListener } from 'vuetify/es5/util/helpers';
+import { addPassiveEventListener } from 'vuetify/lib/util/helpers';
 
 export default {
   methods: {
