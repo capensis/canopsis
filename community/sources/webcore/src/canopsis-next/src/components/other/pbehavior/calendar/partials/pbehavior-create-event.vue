@@ -46,7 +46,7 @@ import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { calendarEventToPbehaviorForm, formToCalendarEvent } from '@/helpers/entities/pbehavior/form';
 import { isOmitEqual } from '@/helpers/collection';
-import { getMenuClassByCalendarEvent } from '@/helpers/calendar/dayspan';
+import { getMenuClassByCalendarEvent } from '@/helpers/calendar/calendar';
 
 import PbehaviorForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-form.vue';
 
@@ -76,7 +76,7 @@ export default {
   },
   computed: {
     pbehavior() {
-      return this.event?.pbehavior;
+      return this.event?.data?.pbehavior;
     },
 
     clickOutsideDirective() {

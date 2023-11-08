@@ -37,7 +37,7 @@ import { createNamespacedHelpers } from 'vuex';
 import { MODALS, MAX_LIMIT, CALENDAR_TYPES } from '@/constants';
 
 import { convertDateToTimestamp, convertDateToTimestampByTimezone } from '@/helpers/date/date';
-import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '@/helpers/calendar/dayspan';
+import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '@/helpers/calendar/calendar';
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';

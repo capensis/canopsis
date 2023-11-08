@@ -9,7 +9,9 @@
       class="c-calendar__toolbar py-3"
     >
       <calendar-today-btn @click="setToday" />
-      <v-layout justify-center>
+      <v-layout
+        justify-center
+      >
         <calendar-pagination
           :focus.sync="focus"
           :type="internalType"
@@ -23,95 +25,100 @@
       </div>
     </v-layout>
 
-    <v-calendar
-      ref="calendar"
-      v-bind="$attrs"
-      v-on="calendarListeners"
-      :class="calendarClasses"
-      :value="focus"
-      :events="availableEvents"
-      :type="internalType"
-      :weekdays="weekdays"
-      :event-height="calendarEventHeight"
-      :event-color="getEventColor"
-      :weekday-format="formatWeekday"
-      :interval-format="formatInterval"
-    >
-      <template #day-body="">
-        <div
-          v-if="isCurrentTimeLineVisible"
-          class="c-calendar__current-time"
-          :style="{ top: currentTimeYPixels }"
-        />
-      </template>
-
-      <template #day-label="event">
-        <v-btn
-          :color="event.present ? 'primary' : 'transparent'"
-          fab
-          depressed
-          small
-          @click.stop.prevent="moveToDay(event)"
-          @mousedown.stop=""
-        >
-          {{ event.day }}
-        </v-btn>
-        <template v-if="event.day === 1">
-          {{ formatMonth(event) }}
+    <div class="fill-height position-relative">
+      <v-calendar
+        ref="calendar"
+        v-bind="$attrs"
+        v-on="calendarListeners"
+        :class="calendarClasses"
+        :value="focus"
+        :events="availableEvents"
+        :type="internalType"
+        :weekdays="weekdays"
+        :event-color="getEventColor"
+        :weekday-format="formatWeekday"
+        :interval-format="formatInterval"
+        :event-margin-bottom="3"
+      >
+        <template #day-body="">
+          <div
+            v-if="isCurrentTimeLineVisible"
+            class="c-calendar__current-time"
+            :style="{ top: currentTimeYPixels }"
+          />
         </template>
-      </template>
 
-      <template #day-label-header="event">
-        <v-btn
-          :color="event.present ? 'primary' : 'transparent'"
-          class="c-calendar__week-day-label-btn"
-          fab
-          depressed
-          small
-          @click.stop.prevent="moveToDay(event)"
-          @mousedown.stop=""
-        >
-          {{ event.day }}
-        </v-btn>
-      </template>
-
-      <template #event="{ event, start, end }">
-        <slot
-          name="event"
-          :event="event"
-          :start="start"
-          :end="end"
-        >
-          <v-layout
-            :class="['pl-1', getMenuClassByCalendarEvent(event.id)]"
-            align-center
+        <template #day-label="event">
+          <v-btn
+            :color="event.present ? 'primary' : 'transparent'"
+            fab
+            depressed
+            small
+            @click.stop.prevent="moveToDay(event)"
+            @mousedown.stop=""
           >
-            <v-icon
-              v-if="event.icon"
-              :color="event.iconColor"
-              size="14"
-              class="pr-1"
-            >
-              {{ event.icon }}
-            </v-icon>
-            <span v-if="start">{{ event.name }}</span>
-            <div
-              v-if="!readonly"
-              :class="[
-                'c-calendar__event-drag-bottom',
-                { 'c-calendar__event-drag-bottom--right': isMonthType || !event.timed }
-              ]"
-              @mousedown.stop="startResize(event)"
-            />
-          </v-layout>
-        </slot>
-      </template>
-    </v-calendar>
+            {{ event.day }}
+          </v-btn>
+          <template v-if="event.day === 1">
+            {{ formatMonth(event) }}
+          </template>
+        </template>
 
-    <div class="c-calendar__loader">
-      <slot name="loader">
-        <c-progress-overlay :pending="loading" />
-      </slot>
+        <template #day-label-header="event">
+          <v-btn
+            :color="event.present ? 'primary' : 'transparent'"
+            class="c-calendar__week-day-label-btn"
+            fab
+            depressed
+            small
+            @click.stop.prevent="moveToDay(event)"
+            @mousedown.stop=""
+          >
+            {{ event.day }}
+          </v-btn>
+        </template>
+
+        <template #event="{ event, start, end }">
+          <slot
+            name="event"
+            :event="event"
+            :start="start"
+            :end="end"
+          >
+            <v-layout
+              :class="['pl-1', getMenuClassByCalendarEvent(event.id)]"
+              align-center
+            >
+              <v-icon
+                v-if="event.icon"
+                :color="event.iconColor"
+                size="14"
+                class="pr-1"
+              >
+                {{ event.icon }}
+              </v-icon>
+              <span :style="{ color: event.iconColor }">
+                {{ event.name }}
+              </span>
+              <div
+                v-if="!readonly"
+                :class="[
+                  'c-calendar__event-drag-bottom',
+                  { 'c-calendar__event-drag-bottom--right': isMonthType || !event.timed }
+                ]"
+                @mousedown.stop="startResize(event)"
+                @mouseup.stop="finishResizeEvent(event, $event)"
+              />
+            </v-layout>
+          </slot>
+        </template>
+      </v-calendar>
+
+      <div class="c-calendar__loader">
+        <slot name="loader">
+          <c-progress-overlay :pending="loading" />
+        </slot>
+      </div>
     </div>
 
     <v-menu
@@ -138,8 +145,8 @@
 <script>
 import { getStartOfWeek, getEndOfWeek } from 'vuetify/lib/components/VCalendar/util/timestamp';
 
-import { CALENDAR_TYPES, CALENDAR_START_DRAG_DELAY } from '@/constants';
 import { LOCALES } from '@/config';
+import { CALENDAR_TYPES, CALENDAR_START_DRAG_DELAY } from '@/constants';
 
 import {
   convertDateToEndOfDayDateObject,
@@ -148,7 +155,7 @@ import {
   isDateBefore,
 } from '@/helpers/date/date';
 import { colorToRgba } from '@/helpers/color';
-import { getMenuClassByCalendarEvent } from '@/helpers/calendar/dayspan';
+import { getMenuClassByCalendarEvent } from '@/helpers/calendar/calendar';
 
 import CalendarTodayBtn from './partials/calendar-today-btn.vue';
 import CalendarViewMode from './partials/calendar-view-mode.vue';
@@ -236,14 +243,6 @@ export default {
         : this.events;
     },
 
-    calendarEventHeight() {
-      return {
-        [CALENDAR_TYPES.day]: 0,
-        [CALENDAR_TYPES.week]: 0,
-        [CALENDAR_TYPES.month]: 20,
-      }[this.internalType];
-    },
-
     calendarClasses() {
       const classes = ['c-calendar__calendar', {
         'c-calendar__calendar--dragging': this.dragging,
@@ -252,9 +251,9 @@ export default {
 
       if (this.creating || this.resizing) {
         classes.push(
-          this.isMonthType || this.currentEditingEvent?.timed
-            ? 'c-calendar__calendar--resizing-bottom'
-            : 'c-calendar__calendar--resizing-right',
+          this.isMonthType || !this.currentEditingEvent?.timed
+            ? 'c-calendar__calendar--resizing-right'
+            : 'c-calendar__calendar--resizing-bottom',
         );
       }
 
@@ -648,6 +647,7 @@ export default {
     handleMouseUpTime(event, nativeEvent) {
       if (this.startDraggingTimerId) {
         clearTimeout(this.startDraggingTimerId);
+        this.startDraggingTimerId = null;
         return;
       }
 
@@ -683,6 +683,10 @@ export default {
 
   .v-event {
     font-weight: 700;
+
+    box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2),
+      0px 1px 1px 0px rgba(0, 0, 0, 0.14),
+      0px 1px 3px 0px rgba(0, 0, 0, 0.12) !important;
   }
 
   .v-calendar-weekly__head-weekday {
@@ -715,10 +719,6 @@ export default {
   .v-calendar-daily_head-day {
     &.v-present {
       background-color: var(--c-calendar-present-day-background-color);
-    }
-
-    .v-event {
-      min-height: 20px;
     }
   }
 
@@ -767,20 +767,16 @@ export default {
       cursor: ns-resize;
       left: 0;
       right: 0;
-      bottom: 4px;
-      height: 4px;
-      border-top: 1px solid white;
-      border-bottom: 1px solid white;
+      bottom: -3px;
+      height: 6px;
     }
 
     &--right {
       cursor: ew-resize;
-      right: 4px;
+      right: -3px;
       top: 0;
       bottom: 0;
-      width: 4px;
-      border-left: 1px solid white;
-      border-right: 1px solid white;
+      width: 6px;
     }
   }
 

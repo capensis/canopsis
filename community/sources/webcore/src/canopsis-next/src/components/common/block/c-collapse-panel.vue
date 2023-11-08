@@ -4,7 +4,7 @@
     accordion
     :style="panelStyle"
   >
-    <v-expansion-panel>
+    <v-expansion-panel class="c-collapse-panel__panel elevation-2">
       <v-expansion-panel-header :color="color">
         <slot name="header">
           <span class="white--text">{{ title }}</span>
@@ -21,8 +21,13 @@
         :class="panelContentClass"
         :style="panelContentStyle"
       >
-        <v-card>
-          <v-card-text>
+        <v-card
+          class="c-collapse-panel__card"
+          flat
+        >
+          <v-card-text
+            class="c-collapse-panel__card"
+          >
             <slot />
           </v-card-text>
         </v-card>
@@ -50,7 +55,7 @@ export default {
     },
     color: {
       type: String,
-      default: 'grey',
+      default: 'rgb(128, 128, 128)',
     },
     outlineColor: {
       type: String,
@@ -87,8 +92,13 @@ export default {
 
 <style lang="scss">
 .c-collapse-panel {
-  border-radius: 5px;
-  overflow: hidden;
+  --c-collapse-panel-border-radius: 5px;
+
   outline: 3px solid transparent;
+
+  &__panel {
+    border-radius: var(--c-collapse-panel-border-radius);
+    overflow: hidden;
+  }
 }
 </style>
