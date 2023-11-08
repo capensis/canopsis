@@ -4,4 +4,4 @@ export const CALENDAR_TYPES = {
   month: 'month',
 };
 
-export const CALENDAR_START_DRAG_DELAY = 100;
+export const CALENDAR_START_DRAG_DELAY = 200;

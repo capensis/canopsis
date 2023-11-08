@@ -1,5 +1,5 @@
 <script>
-import VTooltip from 'vuetify/es5/components/VTooltip';
+import VTooltip from 'vuetify/lib/components/VTooltip';
 
 export default {
   extends: VTooltip,

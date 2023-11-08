@@ -2,9 +2,9 @@
   <div class="fill-height">
     <c-calendar
       ref="calendar"
-      color="primary"
       :events="events"
       :loading="pending"
+      color="primary"
       @change:event="handleUpdateEvent"
       @move:event="handleUpdateEvent"
       @resize:event="handleUpdateEvent"
@@ -361,7 +361,7 @@ export default {
       return this.updatePbehavior(newPbehavior);
     },
 
-    closePopoverForEvent() { // TODO: move that
+    closePopoverForEvent() {
       this.$refs.calendar.clearPlaceholder();
     },
 

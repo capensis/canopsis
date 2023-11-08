@@ -12,10 +12,10 @@
     </v-list>
     <v-btn
       class="mx-2 my-1"
-      color="primary"
       :loading="submitting"
       :disabled="submitting || errors.any()"
       type="submit"
+      color="primary"
     >
       {{ $t('common.save') }}
     </v-btn>
