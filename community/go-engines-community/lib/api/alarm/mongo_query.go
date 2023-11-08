@@ -162,7 +162,6 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 
 func (q *MongoQueryBuilder) CreateCountAggregationPipeline(ctx context.Context, r FilterRequest, now types.CpsTime) ([]bson.M, error) {
 	q.clear(now)
-	q.handleDependencies(true)
 
 	err := q.handleWidgetFilter(ctx, r)
 	if err != nil {
@@ -1366,12 +1365,14 @@ func getImpactsCountPipeline() []bson.M {
 			"localField":   "entity.services",
 			"foreignField": "_id",
 			"as":           "service_impacts",
+			"pipeline":     []bson.M{{"$project": bson.M{"_id": 1}}},
 		}},
 		{"$lookup": bson.M{
 			"from":         mongo.EntityMongoCollection,
 			"localField":   "entity._id",
 			"foreignField": "services",
 			"as":           "depends",
+			"pipeline":     []bson.M{{"$project": bson.M{"_id": 1}}},
 		}},
 		{"$addFields": bson.M{
 			"entity.depends_count": bson.M{"$size": "$depends"},
