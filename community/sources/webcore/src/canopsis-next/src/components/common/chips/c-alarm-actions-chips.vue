@@ -7,7 +7,6 @@
     align-center
   >
     <c-alarm-action-chip
-      class="ma-0"
       v-for="item in inlineItems"
       :key="item[itemValue]"
       :class="itemClass"

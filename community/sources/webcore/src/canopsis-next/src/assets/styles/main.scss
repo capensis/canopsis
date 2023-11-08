@@ -271,3 +271,17 @@ html {
 .fill-width {
   width: 100%;
 }
+
+.v-btn-legacy-m {
+  &--x {
+    margin-left: 8px;
+    margin-right: 8px;
+  }
+
+  &--y {
+    margin-bottom: 6px;
+    margin-top: 6px;
+  }
+
+  margin: 6px 8px;
+}

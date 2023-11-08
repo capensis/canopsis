@@ -7,7 +7,7 @@ import MassActionsPanel from '@/components/common/actions-panel/mass-actions-pan
 
 const stubs = {
   'c-action-btn': createButtonStub('c-action-btn'),
-  'v-list-tile': createButtonStub('v-list-tile'),
+  'v-list-item': createButtonStub('v-list-item'),
 };
 
 const snapshotStubs = {
@@ -58,7 +58,7 @@ describe('mass-actions-panel', () => {
       },
     });
 
-    const dropdownActionElements = wrapper.findAll('v-menu-stub button.v-list-tile');
+    const dropdownActionElements = wrapper.findAll('v-menu-stub button.v-list-item');
 
     expect(dropdownActionElements).toHaveLength(actions.length);
 

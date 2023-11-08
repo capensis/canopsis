@@ -66,10 +66,7 @@
       <v-tab :href="`#${$constants.PATTERN_EDITOR_TABS.advanced}`">
         {{ $t('pattern.advancedEditor') }}
       </v-tab>
-      <v-tab-item
-        :value="$constants.PATTERN_EDITOR_TABS.advanced"
-        lazy
-      >
+      <v-tab-item :value="$constants.PATTERN_EDITOR_TABS.advanced">
         <c-json-field
           v-if="patterns.old_mongo_query"
           :value="patterns.old_mongo_query"

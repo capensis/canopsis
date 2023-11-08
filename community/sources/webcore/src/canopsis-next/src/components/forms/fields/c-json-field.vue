@@ -16,7 +16,10 @@
         :error-messages="errors.collect(name)"
         data-vv-validate-on="none"
       >
-        <template #append="">
+        <template
+          v-if="helpText"
+          #append=""
+        >
           <c-help-icon
             icon="help"
             :text="helpText"
@@ -30,7 +33,6 @@
       xs12
     >
       <v-btn
-        class="ml-0"
         :disabled="errors.has(name) || !wasChanged"
         color="primary"
         outlined
@@ -39,6 +41,7 @@
         {{ $t('common.parse') }}
       </v-btn>
       <v-btn
+        class="v-btn-legacy-m--x"
         :disabled="!wasChanged"
         color="grey darken-1"
         outlined

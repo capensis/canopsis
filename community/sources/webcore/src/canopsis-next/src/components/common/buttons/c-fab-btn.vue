@@ -1,7 +1,9 @@
 <template>
-  <div class="fab">
+  <div class="fab ma-2">
     <v-layout column>
-      <c-refresh-btn @click="$listeners.refresh" />
+      <v-flex class="mb-3">
+        <c-refresh-btn @click="$emit('refresh')" />
+      </v-flex>
       <slot name="additional" />
       <v-tooltip
         v-if="hasAccess && $listeners.create"

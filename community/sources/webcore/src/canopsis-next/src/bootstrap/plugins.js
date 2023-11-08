@@ -2,10 +2,8 @@ import VueMq from 'vue-mq';
 import VueFullScreen from 'vue-fullscreen';
 import VueClipboard from 'vue-clipboard2';
 import PortalVue from 'portal-vue';
-import frDaySpanVuetifyMessages from 'dayspan-vuetify/src/locales/fr';
 
 import 'vue-tour/dist/vue-tour.css';
-import 'dayspan-vuetify/dist/lib/dayspan-vuetify.min.css';
 
 import { MODALS } from '@/constants';
 import { MEDIA_QUERIES_BREAKPOINTS } from '@/config';
@@ -18,15 +16,12 @@ import SetSeveralPlugin from '@/plugins/set-several';
 import UpdateFieldPlugin from '@/plugins/update-field';
 import ToursPlugin from '@/plugins/tours';
 import SocketPlugin from '@/plugins/socket';
-import DaySpanVuetifyPlugin from '@/plugins/dayspan-vuetify';
 
 import featuresService from '@/services/features';
 
 import store from '@/store';
 import i18n from '@/i18n';
 import Filters from '@/filters';
-
-import { setSeveralFields } from '@/helpers/immutable';
 
 import * as modalsComponents from '@/components/modals';
 import * as sidebarsComponents from '@/components/sidebars';
@@ -40,64 +35,6 @@ export const bootstrapApplicationPlugins = (Vue) => {
   Vue.use(Filters);
 
   Vue.use(VueFullScreen);
-  Vue.use(DaySpanVuetifyPlugin, {
-    data: {
-      locales: {
-        fr: setSeveralFields(frDaySpanVuetifyMessages, {
-          'defaults.dsScheduleFrequencyDayOfWeek.weekdays': ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'],
-          'defaults.dsDayPicker.weekdays': ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'],
-          'defaults.dsWeeksView.weekdays': ['lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.', 'dim.'],
-        }),
-      },
-      defaults: {
-        dsCalendarEventTime: {
-          placeholderStyle: false,
-          disabled: false,
-          popoverProps: {
-            nudgeWidth: 200,
-            closeOnContentClick: false,
-            transition: 'fade-transition',
-            offsetOverflow: true,
-            offsetX: true,
-            maxWidth: 500,
-            openOnHover: true,
-          },
-        },
-        dsCalendarEvent: {
-          popoverProps: {
-            offsetY: true,
-            openOnHover: true,
-            transition: 'fade-transition',
-          },
-        },
-        dsCalendarEventPlaceholder: {
-          popoverProps: {
-            offsetY: true,
-            openOnHover: true,
-            transition: 'fade-transition',
-          },
-        },
-        dsCalendarEventTimePlaceholder: {
-          popoverProps: {
-            openOnHover: true,
-            transition: 'fade-transition',
-          },
-        },
-      },
-    },
-    methods: {
-      getPrefix: () => '',
-      getStyleColor(details, calendarEvent, past, cancelled) {
-        let { color } = details;
-
-        if (!past && !cancelled) {
-          color = this.blend(color, this.inactiveBlendAmount, this.inactiveBlendTarget);
-        }
-
-        return color;
-      },
-    },
-  });
 
   Vue.use(VueMq, {
     breakpoints: MEDIA_QUERIES_BREAKPOINTS,

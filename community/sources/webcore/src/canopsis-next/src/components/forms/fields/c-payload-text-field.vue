@@ -19,9 +19,9 @@
     <template #append="">
       <slot name="append" />
     </template>
-    <template #item="{ item, tile }">
+    <template #item="{ item, attrs }">
       <v-list-item
-        v-bind="{ ...tile.props, value: item.value === variablesMenuValue }"
+        v-bind="{ ...attrs, value: item.value === variablesMenuValue }"
         @click="pasteVariable(item.value)"
       >
         <v-list-item-content>{{ item.text }}</v-list-item-content>

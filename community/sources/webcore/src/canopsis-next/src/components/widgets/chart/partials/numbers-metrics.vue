@@ -24,7 +24,6 @@
       justify-end
     >
       <v-btn
-        class="ma-0"
         :loading="downloading"
         color="primary"
         small

@@ -45,7 +45,6 @@
       v-if="actions"
     >
       <v-btn
-        class="ma-0"
         v-if="hasAlarmsListAccess && point.entity"
         text
         block
@@ -54,7 +53,6 @@
         {{ $t('common.seeAlarms') }}
       </v-btn>
       <v-btn
-        class="ma-0"
         v-if="point.map"
         text
         block
