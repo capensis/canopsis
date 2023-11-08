@@ -16,7 +16,8 @@ export default {
         const item = items[i];
         let children = [];
 
-        rows.push(this.$scopedSlots.item({ ...this.createItemProps(item, i),
+        rows.push(this.$scopedSlots.item({
+          ...this.createItemProps(item, i),
           isMobile: this.isMobile,
         }));
 
@@ -45,6 +46,43 @@ export default {
       }
 
       return rows;
+    },
+
+    genDefaultExpandedRow(item, index) {
+      const isExpanded = this.isExpanded(item);
+      const classes = {
+        'v-data-table__expanded v-data-table__expanded__row': isExpanded,
+      };
+      let children = [];
+
+      const headerRow = this.genDefaultSimpleRow(item, index, classes);
+
+      if (isExpanded) {
+        children = this.$createElement('div', {
+          class: 'v-data-table__expanded__content',
+          key: `expand-${getObjectValueByPath(item, this.itemKey)}`,
+        }, this.$scopedSlots['expanded-item']({
+          headers: this.computedHeaders,
+          isMobile: this.isMobile,
+          index,
+          item,
+        }));
+      }
+
+      const transition = this.$createElement('transition-group', {
+        class: 'v-data-table__expanded__col',
+        attrs: { colspan: this.computedHeaders.length },
+        props: {
+          tag: 'td',
+        },
+        on: ExpandTransitionGenerator('v-data-table__expanded__col'),
+      }, [children]);
+
+      const expandedRow = this.$createElement('tr', {
+        staticClass: 'v-data-table__expanded v-data-table__expanded__content',
+      }, [transition]);
+
+      return [headerRow, expandedRow];
     },
   },
 };

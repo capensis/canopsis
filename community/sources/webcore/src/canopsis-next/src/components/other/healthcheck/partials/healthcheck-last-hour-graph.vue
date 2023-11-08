@@ -11,7 +11,6 @@
         justify-end
       >
         <v-btn
-          class="ma-0"
           color="primary"
           @click="exportChart(chart)"
         >

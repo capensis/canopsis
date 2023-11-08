@@ -28,17 +28,18 @@
     @blur="onBlur"
     @update:searchInput="debouncedUpdateSearch"
   >
-    <template #item="{ item, tile, parent }">
+    <template #item="{ item, attrs, on, parent }">
       <slot
         name="item"
+        :attrs="attrs"
+        :on="on"
         :item="item"
-        :tile="tile"
         :parent="parent"
       >
         <v-list-item
           class="c-lazy-search-field--tile"
-          v-bind="tile.props"
-          v-on="tile.on"
+          v-bind="attrs"
+          v-on="on"
         >
           <slot
             name="icon"

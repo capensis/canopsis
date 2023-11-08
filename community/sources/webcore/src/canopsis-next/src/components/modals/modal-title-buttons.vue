@@ -29,7 +29,7 @@
         <span>{{ $t('modals.common.titleButtons.minimizeTooltip') }}</span>
       </v-tooltip>
       <v-btn
-        class="my-0"
+        class="v-btn-legacy-m--x"
         v-else
         icon
         small
@@ -45,7 +45,6 @@
       v-if="close"
     >
       <v-btn
-        class="ma-0"
         :small="$modal.minimized"
         icon
         @click="closeHandler"

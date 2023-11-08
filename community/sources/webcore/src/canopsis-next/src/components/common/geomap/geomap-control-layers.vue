@@ -19,7 +19,6 @@
           column
         >
           <v-radio-group
-            class="ma-0"
             :value="activeLayer"
             color="primary"
             column

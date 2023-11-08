@@ -65,7 +65,7 @@
           </v-icon>
         </v-btn>
         <v-btn
-          class="mx-0"
+          class="v-btn-legacy-m--y"
           color="error"
           icon
           @click="$emit('delete')"

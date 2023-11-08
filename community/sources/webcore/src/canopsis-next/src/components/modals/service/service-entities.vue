@@ -10,7 +10,7 @@
       <v-tabs
         class="position-relative"
         slider-color="primary"
-        fixed-tabs
+        centered
       >
         <v-tab>{{ $t('common.service') }}</v-tab>
         <v-tab-item>
@@ -41,13 +41,13 @@
     </template>
     <template #actions="">
       <v-tooltip
-        class="mx-2"
         top
       >
         <template #activator="{ on }">
           <v-btn
-            class="secondary"
             v-on="on"
+            class="mx-2"
+            color="secondary"
             @click="refresh"
           >
             <v-icon>refresh</v-icon>
