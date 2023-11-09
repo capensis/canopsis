@@ -1,8 +1,6 @@
-import { pick, isEqual } from 'lodash';
-
 import { PAGINATION_LIMIT } from '@/config';
 
-import { convertWidgetQueryToRequest } from '@/helpers/entities/shared/query';
+import { convertDataTableOptionsToQuery, convertWidgetQueryToRequest } from '@/helpers/entities/shared/query';
 
 import { queryMixin } from '@/mixins/query';
 import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
@@ -47,22 +45,10 @@ export const queryWidgetMixin = {
         return { page, itemsPerPage, sortBy, sortDesc };
       },
 
-      set(value) {
-        const paginationKeys = ['sortBy', 'sortDesc'];
-        const newPagination = pick(value, paginationKeys);
-        const oldPagination = pick(this.options, paginationKeys);
-
-        if (isEqual(newPagination, oldPagination)) {
-          return;
-        }
-
-        const { sortBy = [], sortDesc = [] } = newPagination;
-
+      set(newOptions) {
         this.query = {
           ...this.query,
-
-          sortBy,
-          sortDesc,
+          ...convertDataTableOptionsToQuery(newOptions, this.options),
         };
       },
     },
@@ -72,10 +58,10 @@ export const queryWidgetMixin = {
       return convertWidgetQueryToRequest(this.query);
     },
 
-    updateRecordsPerPage(limit) {
+    updateItemsPerPage(itemsPerPage) {
       this.updateLockedQuery({
         id: this.queryId,
-        query: { limit },
+        query: { itemsPerPage },
       });
     },
 

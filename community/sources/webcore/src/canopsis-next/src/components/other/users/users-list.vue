@@ -4,7 +4,6 @@
     :items="users"
     :loading="pending"
     :total-items="totalItems"
-    :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES"
     :pagination="pagination"
     :select-all="removable"
     advanced-pagination

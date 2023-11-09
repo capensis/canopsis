@@ -27,7 +27,7 @@
         :type="criteriaType"
         hide-details
       />
-      <c-records-per-page-field v-field="query.rowsPerPage" />
+      <c-items-per-page-field v-field="query.itemsPerPage" />
     </v-layout>
   </div>
 </template>

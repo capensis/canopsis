@@ -61,7 +61,7 @@ export default {
       jobsItems: [],
       totalItems: 0,
       query: {
-        rowsPerPage: 5,
+        itemsPerPage: 5,
       },
     };
   },
