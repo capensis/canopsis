@@ -8,7 +8,6 @@
     transition="slide-y-transition"
     max-width="290px"
     right
-    lazy-with-unmount
   >
     <template #activator="{ on }">
       <div v-on="on">
