@@ -6,7 +6,6 @@
         <v-menu
           :items="items"
           max-height="200"
-          full-width
           offset-y
         >
           <template #activator="{ on }">

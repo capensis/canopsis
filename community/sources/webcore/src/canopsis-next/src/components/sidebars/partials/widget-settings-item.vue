@@ -1,5 +1,6 @@
 <template>
   <v-list-group
+    v-bind="$attrs"
     color=""
     eager
   >
@@ -33,6 +34,7 @@ import { formValidationHeaderMixin } from '@/mixins/form';
 export default {
   inject: ['$validator'],
   mixins: [formValidationHeaderMixin],
+  inheritAttrs: false,
   props: {
     title: {
       type: String,

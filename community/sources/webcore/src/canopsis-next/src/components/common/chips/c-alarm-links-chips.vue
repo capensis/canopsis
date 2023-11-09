@@ -16,7 +16,6 @@
       <v-tooltip
         v-if="onlyIcon"
         top
-        custom-activator
       >
         <template #activator="{ on }">
           <v-icon

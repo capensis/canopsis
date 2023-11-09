@@ -6,7 +6,6 @@
     transition="slide-y-transition"
     max-width="290"
     right
-    lazy-with-unmount
   >
     <template #activator="{ on }">
       <v-btn

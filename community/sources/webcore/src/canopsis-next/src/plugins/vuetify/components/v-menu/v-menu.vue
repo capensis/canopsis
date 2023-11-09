@@ -3,7 +3,6 @@ import VMenu from 'vuetify/lib/components/VMenu';
 import Resize from 'vuetify/lib/directives/resize';
 import { getZIndex } from 'vuetify/lib/util/helpers';
 
-import lazyWithUnmountMixin from '../../mixins/lazy-with-unmount';
 import ClickOutside from '../../directives/click-outside';
 
 export default {
@@ -12,7 +11,6 @@ export default {
     Resize,
   },
   extends: VMenu,
-  mixins: [lazyWithUnmountMixin],
   props: {
     ignoreClickUpperOutside: {
       type: Boolean,
