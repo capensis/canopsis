@@ -1,4 +1,4 @@
-import { isArray, omit } from 'lodash';
+import { isArray, isEqual, omit, pick } from 'lodash';
 
 import { DATETIME_FORMATS, SORT_ORDERS } from '@/constants';
 import { PAGINATION_LIMIT } from '@/config';
@@ -6,20 +6,49 @@ import { PAGINATION_LIMIT } from '@/config';
 import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals';
 
 /**
+ * @typedef {Object} DataTableSortOptions
+ * @property {string[]} sortBy
+ * @property {boolean[]} sortDesc
+ */
+
+/**
  * This function converts widget.parameters.sort to query Object
  *
  * @param {Object} widget
- * @returns {{}}
+ * @returns {DataTableSortOptions | {}}
  */
-export function convertSortToQuery({ parameters }) {
+export const convertSortToQuery = ({ parameters }) => {
   const { sort } = parameters;
+  const query = { sortBy: [], sortDesc: [] };
 
   if (sort && sort.column && sort.order) {
-    return { sortKey: sort.column, sortDir: sort.order };
+    query.sortBy = [sort.column];
+    query.sortDesc = [sort.order === SORT_ORDERS.desc];
   }
 
-  return { sortKey: null, sortDir: null };
-}
+  return query;
+};
+
+/**
+ * Convert vuetify data table sort options to sort options with comparison
+ *
+ * @param {DataTableSortOptions} newOptions
+ * @param {DataTableSortOptions} oldOptions
+ * @return {DataTableSortOptions}
+ */
+export const convertDataTableOptionsToQuery = (newOptions = {}, oldOptions = {}) => {
+  const optionsKeys = ['sortBy', 'sortDesc'];
+  const newOptionsToCompare = pick(newOptions, optionsKeys);
+  const oldOptionsToCompare = pick(oldOptions, optionsKeys);
+
+  if (isEqual(newOptionsToCompare, oldOptionsToCompare)) {
+    return oldOptionsToCompare;
+  }
+
+  const { sortBy = [], sortDesc = [] } = newOptions;
+
+  return { sortBy, sortDesc };
+};
 
 /**
  * Convert sortBy and sordDesc query parameters to request
@@ -78,7 +107,7 @@ export const convertWidgetQueryToRequest = (query) => {
   const {
     sortBy = [],
     sortDesc = [],
-    limit = PAGINATION_LIMIT,
+    itemsPerPage = PAGINATION_LIMIT,
     tstart,
     tstop,
     category,
@@ -94,12 +123,14 @@ export const convertWidgetQueryToRequest = (query) => {
       'sortBy',
       'sortDesc',
       'category',
-      'limit',
       'filter',
       'lockedFilter',
       'search',
     ]),
+
     ...convertSortToRequest(sortBy, sortDesc),
+
+    limit: itemsPerPage,
   };
 
   if (lockedFilter || filter) {
@@ -121,8 +152,6 @@ export const convertWidgetQueryToRequest = (query) => {
   if (search) {
     result.search = search;
   }
-
-  result.limit = limit;
 
   return result;
 };

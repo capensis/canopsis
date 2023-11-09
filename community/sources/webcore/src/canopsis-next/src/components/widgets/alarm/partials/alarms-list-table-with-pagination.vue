@@ -16,14 +16,14 @@
     :hide-actions="hideActions"
     :hide-pagination="hidePagination"
     @update:page="updateQueryPage"
-    @update:rows-per-page="updateRecordsPerPage"
+    @update:items-per-page="updateItemsPerPage"
   />
 </template>
 
 <script>
-import { isEqual, pick } from 'lodash';
+import { PAGINATION_LIMIT } from '@/config';
 
-import { SORT_ORDERS } from '@/constants';
+import { convertDataTableOptionsToQuery } from '@/helpers/entities/shared/query';
 
 /**
  * Group-alarm-list component
@@ -95,48 +95,27 @@ export default {
     },
   },
   computed: {
-    pagination: {
+    options: {
       get() {
-        const { sortDir, page, limit, sortKey: sortBy = null, multiSortBy = [] } = this.query;
-        const descending = sortDir === SORT_ORDERS.desc;
+        const { page = 1, itemsPerPage = PAGINATION_LIMIT, sortBy = [], sortDesc = [] } = this.query;
 
-        return { sortBy, page, limit, descending, multiSortBy };
+        return { page, itemsPerPage, sortBy, sortDesc };
       },
 
-      set(value) {
-        const paginationKeys = ['sortBy', 'descending', 'multiSortBy'];
-        const newPagination = pick(value, paginationKeys);
-        const oldPagination = pick(this.pagination, paginationKeys);
-
-        if (isEqual(newPagination, oldPagination)) {
-          return;
-        }
-
-        const {
-          sortBy = null,
-          descending = false,
-          multiSortBy = [],
-        } = newPagination;
-
-        const newQuery = {
-          sortKey: sortBy,
-          sortDir: descending ? SORT_ORDERS.desc : SORT_ORDERS.asc,
-          multiSortBy,
-        };
-
+      set(newOptions) {
         this.$emit('update:query', {
           ...this.query,
-          ...newQuery,
+          ...convertDataTableOptionsToQuery(newOptions, this.options),
         });
       },
     },
   },
   methods: {
-    updateRecordsPerPage(limit) {
+    updateItemsPerPage(itemsPerPage) {
       this.$emit('update:query', {
         ...this.query,
 
-        limit,
+        itemsPerPage,
       });
     },
 

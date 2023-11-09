@@ -74,12 +74,12 @@ describe('kpi-rating-settings', () => {
 
   it('Rating settings fetched after change query', async () => {
     const fetchRatingSettings = jest.fn();
-    const initialRowsPerPage = Faker.datatype.number();
+    const initialItemsPerPage = Faker.datatype.number();
     const wrapper = factory({
       data() {
         return {
           query: {
-            rowsPerPage: initialRowsPerPage,
+            itemsPerPage: initialItemsPerPage,
           },
         };
       },
@@ -109,11 +109,11 @@ describe('kpi-rating-settings', () => {
 
     const kpiRatingSettingsListElement = wrapper.find('kpi-rating-settings-list-stub');
 
-    const rowsPerPage = Faker.datatype.number({ max: initialRowsPerPage });
+    const itemsPerPage = Faker.datatype.number({ max: initialItemsPerPage });
     const page = Faker.datatype.number();
 
     kpiRatingSettingsListElement.vm.$emit('update:pagination', {
-      rowsPerPage,
+      itemsPerPage,
       page,
     });
 
@@ -124,7 +124,7 @@ describe('kpi-rating-settings', () => {
       expect.any(Object),
       {
         params: {
-          limit: rowsPerPage,
+          limit: itemsPerPage,
           page,
         },
       },
