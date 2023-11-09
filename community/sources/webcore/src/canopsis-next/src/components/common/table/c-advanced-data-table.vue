@@ -10,13 +10,13 @@
       >
         <c-search-field
           v-if="search"
-          :value="pagination.search"
+          :value="options.search"
           @submit="updateSearchHandler"
           @clear="clearSearchHandler"
         />
         <c-advanced-search-field
           v-else
-          :query="pagination"
+          :query="options"
           :columns="headers"
           :tooltip="searchTooltip"
           @update:query="updatePagination"
@@ -56,7 +56,7 @@
       :no-data-text="noDataText"
       :options="options"
       :header-text="headerText"
-      :footer-props="{ itemsPerPageOptions: rowsPerPageItems }"
+      :footer-props="{ itemsPerPageOptions: itemsPerPageItems }"
       :item-key="itemKey"
       :show-select="selectAll"
       :show-expand="expand"
@@ -64,7 +64,7 @@
       :hide-default-footer="hideActions || advancedPagination || noPagination"
       :table-class="tableClass"
       :dense="dense"
-      @update:options="updatePagination"
+      @update:options="updateOptions"
     >
       <template
         v-for="header in headers"
@@ -119,13 +119,13 @@
     </v-data-table>
 
     <c-table-pagination
-      v-if="!noPagination && pagination && advancedPagination"
+      v-if="!noPagination && options && advancedPagination"
       :total-items="totalItems"
-      :rows-per-page-items="rowsPerPageItems"
-      :rows-per-page="pagination.rowsPerPage"
-      :page="pagination.page"
+      :items-per-page="options.itemsPerPage"
+      :items="itemsPerPageItems"
+      :page="options.page"
       @update:page="updatePage"
-      @update:rows-per-page="updateRecordsPerPage"
+      @update:items-per-page="updateItemsPerPage"
     />
   </div>
 </template>
@@ -147,7 +147,7 @@ export default {
       type: Array,
       required: true,
     },
-    rowsPerPageItems: {
+    itemsPerPageItems: {
       type: Array,
       required: false,
     },
@@ -203,13 +203,9 @@ export default {
       type: String,
       default: '',
     },
-    pagination: {
+    options: {
       type: Object,
       required: false,
-    },
-    getPagination: {
-      type: Function,
-      default: pagination => pagination,
     },
     isDisabledItem: {
       type: Function,
@@ -265,10 +261,6 @@ export default {
       ];
     },
 
-    options() {
-      return {};
-    },
-
     headerScopedSlots() {
       return Object.keys(this.$scopedSlots ?? {}).filter(name => name.startsWith('header.'));
     },
@@ -283,7 +275,7 @@ export default {
     },
 
     visibleItems() {
-      return this.pagination?.rowsPerPage ? this.items.slice(0, this.pagination?.rowsPerPage) : this.items;
+      return this.options?.itemsPerPage ? this.items.slice(0, this.options?.itemsPerPage) : this.items;
     },
 
     hasExpandSlot() {
@@ -308,18 +300,18 @@ export default {
     },
   },
   methods: {
-    updatePagination(pagination) {
+    updateOptions(options) {
       this.selected = [];
 
-      this.$emit('update:pagination', this.getPagination(pagination));
+      this.$emit('update:updateOptions', options);
     },
 
     updateSearchHandler(search) {
-      this.updatePagination({ ...this.pagination, search, page: 1 });
+      this.updatePagination({ ...this.options, search, page: 1 });
     },
 
-    updateRecordsPerPage(rowsPerPage) {
-      this.updatePagination({ ...this.pagination, rowsPerPage });
+    updateItemsPerPage(itemsPerPage) {
+      this.updatePagination({ ...this.pagination, itemsPerPage });
     },
 
     updatePage(page) {

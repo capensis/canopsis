@@ -163,10 +163,10 @@
     <c-table-pagination
       v-if="!hidePagination"
       :total-items="totalItems"
-      :rows-per-page="options.itemsPerPage"
+      :items-per-page="options.itemsPerPage"
       :page="options.page"
       @update:page="updateQueryPage"
-      @update:rows-per-page="updateRecordsPerPage"
+      @update:items-per-page="updateItemsPerPage"
     />
     <component
       v-bind="additionalComponent.props"
@@ -552,8 +552,8 @@ export default {
       }
     },
 
-    updateRecordsPerPage(limit) {
-      this.$emit('update:rows-per-page', limit);
+    updateItemsPerPage(limit) {
+      this.$emit('update:items-per-page', limit);
     },
 
     updateQueryPage(page) {

@@ -107,7 +107,7 @@ export default {
         criteria: this.query.criteria?.id,
         filter: this.query.metric !== USER_METRIC_PARAMETERS.totalUserActivity ? this.query.filter : undefined,
         metric: this.query.metric,
-        limit: this.query.rowsPerPage,
+        limit: this.query.itemsPerPage,
       };
     },
 

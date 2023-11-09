@@ -643,46 +643,46 @@ describe('service-entities-list', () => {
   });
 
   test('Page updated after trigger pagination', async () => {
-    const pagination = {
-      rowsPerPage: 10,
+    const options = {
+      itemsPerPage: 10,
       page: 1,
     };
     const wrapper = factory({
       propsData: {
         serviceEntities,
         totalItems: 20,
-        pagination,
+        options,
       },
     });
 
     const newPage = 2;
     await selectTablePagination(wrapper).vm.$emit('update:page', newPage);
 
-    expect(wrapper).toEmit('update:pagination', {
-      ...pagination,
+    expect(wrapper).toEmit('update:options', {
+      ...options,
       page: newPage,
     });
   });
 
   test('Records per page updated after trigger pagination', async () => {
-    const pagination = {
-      rowsPerPage: 10,
+    const options = {
+      itemsPerPage: 10,
       page: 1,
     };
     const wrapper = factory({
       propsData: {
         serviceEntities,
         totalItems: 20,
-        pagination,
+        options,
       },
     });
 
-    const newRowsPerPage = 11;
-    await selectTablePagination(wrapper).vm.$emit('update:rows-per-page', newRowsPerPage);
+    const newItemsPerPage = 11;
+    await selectTablePagination(wrapper).vm.$emit('update:rows-per-page', newItemsPerPage);
 
     expect(wrapper).toEmit('update:pagination', {
-      ...pagination,
-      rowsPerPage: newRowsPerPage,
+      ...options,
+      itemsPerPage: newItemsPerPage,
     });
   });
 

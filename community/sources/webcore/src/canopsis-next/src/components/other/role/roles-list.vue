@@ -4,7 +4,6 @@
     :items="roles"
     :loading="pending"
     :pagination="pagination"
-    :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES"
     :total-items="totalItems"
     :select-all="removable"
     advanced-pagination

@@ -68,7 +68,7 @@
 
 <script>
 import { PAGINATION_LIMIT } from '@/config';
-import { MODALS, PBEHAVIOR_ORIGINS, SORT_ORDERS, USERS_PERMISSIONS } from '@/constants';
+import { MODALS, PBEHAVIOR_ORIGINS, USERS_PERMISSIONS } from '@/constants';
 
 import Observer from '@/services/observer';
 
@@ -102,9 +102,9 @@ export default {
       pending: true,
       unavailableEntitiesAction: {},
       query: {
-        rowsPerPage: this.modal.config.widgetParameters.modalItemsPerPage ?? PAGINATION_LIMIT,
-        sortKey: 'state',
-        sortDir: SORT_ORDERS.desc,
+        itemsPerPage: this.modal.config.widgetParameters.modalItemsPerPage ?? PAGINATION_LIMIT,
+        sortBy: ['state'],
+        sortDesc: [true],
       },
     };
   },

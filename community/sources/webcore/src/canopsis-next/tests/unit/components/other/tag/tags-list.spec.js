@@ -50,9 +50,9 @@ describe('tags-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         tags,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
         },
         totalItems,
         removable: true,
@@ -70,9 +70,9 @@ describe('tags-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         tags,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
         },
         totalItems,
         removable: true,
@@ -90,9 +90,9 @@ describe('tags-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         tags,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
         },
         totalItems,
         updatable: true,
@@ -110,9 +110,9 @@ describe('tags-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         tags,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
         },
         totalItems,
         duplicable: true,
@@ -141,12 +141,12 @@ describe('tags-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         tags,
-        pagination: {
+        options: {
           page: 2,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
           search: 'Tag',
-          sortBy: 'updated',
-          descending: true,
+          sortBy: ['updated'],
+          sortDesc: [true],
         },
         totalItems,
         pending: true,

@@ -76,12 +76,12 @@ describe('kpi-filters', () => {
 
   it('Filters fetched after change query', async () => {
     const fetchFilters = jest.fn();
-    const initialRowsPerPage = Faker.datatype.number();
+    const initialItemsPerPage = Faker.datatype.number();
     const wrapper = factory({
       data() {
         return {
           query: {
-            rowsPerPage: initialRowsPerPage,
+            itemsPerPage: initialItemsPerPage,
           },
         };
       },
@@ -111,11 +111,11 @@ describe('kpi-filters', () => {
 
     const kpiFiltersListElement = selectFiltersList(wrapper);
 
-    const rowsPerPage = Faker.datatype.number({ max: initialRowsPerPage });
+    const itemsPerPage = Faker.datatype.number({ max: initialItemsPerPage });
     const page = Faker.datatype.number();
 
     kpiFiltersListElement.vm.$emit('update:pagination', {
-      rowsPerPage,
+      itemsPerPage,
       page,
     });
 
@@ -126,7 +126,7 @@ describe('kpi-filters', () => {
       expect.any(Object),
       {
         params: {
-          limit: rowsPerPage,
+          limit: itemsPerPage,
           page,
         },
       },
