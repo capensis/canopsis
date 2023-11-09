@@ -41,7 +41,7 @@
         </v-layout>
         <alarms-expand-panel-btn
           v-if="expandable"
-          :value="row.expanded"
+          :expanded="row.isExpanded"
           :alarm="alarm"
           :widget="widget"
           :is-tour-enabled="isTourEnabled"
@@ -272,8 +272,7 @@ export default {
     },
 
     updateExpanded(value) {
-      // eslint-disable-next-line vue/no-mutating-props
-      this.row.expanded = value;
+      this.row.expand(value);
     },
   },
 };

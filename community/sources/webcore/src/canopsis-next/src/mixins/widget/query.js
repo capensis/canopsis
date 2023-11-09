@@ -1,6 +1,6 @@
 import { pick, isEqual } from 'lodash';
 
-import { SORT_ORDERS } from '@/constants';
+import { PAGINATION_LIMIT } from '@/config';
 
 import { convertWidgetQueryToRequest } from '@/helpers/entities/shared/query';
 
@@ -40,38 +40,29 @@ export const queryWidgetMixin = {
       return this.getQueryNonceById(this.tabId);
     },
 
-    pagination: {
+    options: {
       get() {
-        const { sortDir, page, limit, sortKey: sortBy = null, multiSortBy = [] } = this.query;
-        const descending = sortDir === SORT_ORDERS.desc;
+        const { page = 1, itemsPerPage = PAGINATION_LIMIT, sortBy = [], sortDesc = [] } = this.query;
 
-        return { page, limit, sortBy, descending, multiSortBy };
+        return { page, itemsPerPage, sortBy, sortDesc };
       },
 
       set(value) {
-        const paginationKeys = ['sortBy', 'descending', 'multiSortBy'];
+        const paginationKeys = ['sortBy', 'sortDesc'];
         const newPagination = pick(value, paginationKeys);
-        const oldPagination = pick(this.pagination, paginationKeys);
+        const oldPagination = pick(this.options, paginationKeys);
 
         if (isEqual(newPagination, oldPagination)) {
           return;
         }
 
-        const {
-          sortBy = null,
-          descending = false,
-          multiSortBy = [],
-        } = newPagination;
-
-        const newQuery = {
-          sortKey: sortBy,
-          sortDir: descending ? SORT_ORDERS.desc : SORT_ORDERS.asc,
-          multiSortBy,
-        };
+        const { sortBy = [], sortDesc = [] } = newPagination;
 
         this.query = {
           ...this.query,
-          ...newQuery,
+
+          sortBy,
+          sortDesc,
         };
       },
     },
