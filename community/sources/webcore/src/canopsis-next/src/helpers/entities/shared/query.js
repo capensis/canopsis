@@ -22,13 +22,31 @@ export function convertSortToQuery({ parameters }) {
 }
 
 /**
- * Convert multiSortBy query parameter to request
+ * Convert sortBy and sordDesc query parameters to request
  *
- * @param {Object[]} multiSortBy
- * @returns {string[]}
+ * @param {string[]} sortBy
+ * @param {string[]} sortDesc
+ * @returns {{ sort_by: string, sort: string } | { multi_sort: string[] } | {}}
  */
-export const convertMultiSortToRequest = (multiSortBy = []) => multiSortBy
-  .map(({ sortBy, descending }) => `${sortBy},${(descending ? SORT_ORDERS.desc : SORT_ORDERS.asc).toLowerCase()}`);
+export const convertSortToRequest = (sortBy = [], sortDesc = []) => {
+  if (!sortBy?.length) {
+    return {};
+  }
+
+  if (sortBy.length === 1) {
+    return {
+      sort_by: sortBy[0],
+      sort: (sortDesc?.[0] ? SORT_ORDERS.desc : SORT_ORDERS.asc).toLowerCase(),
+    };
+  }
+
+  return {
+    multi_sort: sortBy
+      .map((property, index) => (
+        `${property},${(sortDesc?.[index] ? SORT_ORDERS.desc : SORT_ORDERS.asc).toLowerCase()}`
+      )),
+  };
+};
 
 /**
  * Convert filter to query filters
@@ -57,31 +75,32 @@ export const convertFiltersToQuery = (filter, lockedFilter) => [
  * @returns {Object}
  */
 export const convertWidgetQueryToRequest = (query) => {
-  const result = omit(query, [
-    'tstart',
-    'tstop',
-    'sortKey',
-    'sortDir',
-    'category',
-    'multiSortBy',
-    'limit',
-    'filter',
-    'lockedFilter',
-    'search',
-  ]);
-
   const {
+    sortBy = [],
+    sortDesc = [],
+    limit = PAGINATION_LIMIT,
     tstart,
     tstop,
-    sortKey,
-    sortDir,
     category,
     filter,
     lockedFilter,
     search,
-    multiSortBy = [],
-    limit = PAGINATION_LIMIT,
   } = query;
+
+  const result = {
+    ...omit(query, [
+      'tstart',
+      'tstop',
+      'sortBy',
+      'sortDesc',
+      'category',
+      'limit',
+      'filter',
+      'lockedFilter',
+      'search',
+    ]),
+    ...convertSortToRequest(sortBy, sortDesc),
+  };
 
   if (lockedFilter || filter) {
     result.filters = convertFiltersToQuery(filter, lockedFilter);
@@ -95,17 +114,8 @@ export const convertWidgetQueryToRequest = (query) => {
     result.tstop = convertStopDateIntervalToTimestamp(tstop, DATETIME_FORMATS.dateTimePicker);
   }
 
-  if (sortKey) {
-    result.sort_by = sortKey;
-    result.sort = sortDir.toLowerCase();
-  }
-
   if (category) {
     result.category = category;
-  }
-
-  if (multiSortBy.length) {
-    result.multi_sort = convertMultiSortToRequest(multiSortBy);
   }
 
   if (search) {

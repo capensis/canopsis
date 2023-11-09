@@ -46,8 +46,8 @@
           xs4
         >
           <c-pagination
-            :page="pagination.page"
-            :limit="pagination.limit"
+            :page="options.page"
+            :limit="options.itemsPerPage"
             :total="totalItems"
             type="top"
             @input="updateQueryPage"
@@ -79,17 +79,16 @@
         :items="alarms"
         :headers="headersWithWidth"
         :server-items-length="totalItems"
-        :options="pagination"
+        :options="options"
         :show-select="selectable"
         :loading="loading || columnsFiltersPending"
-        :show-expand="expandable"
         :dense="isMediumDense"
         :ultra-dense="isSmallDense"
         header-key="value"
         item-key="_id"
         hide-default-footer
         multi-sort
-        @update:pagination="updatePaginationHandler"
+        @update:options="$emit('update:options', $event)"
       >
         <template #progress="">
           <v-fade-transition>
@@ -121,12 +120,12 @@
             />
           </template>
         </template>
-        <template #items="props">
+        <template #item="props">
           <alarms-list-row
-            v-model="props.selected"
             v-on="rowListeners"
             :ref="`row${props.item._id}`"
             :key="props.item._id"
+            :selected="props.isSelected"
             :selectable="selectable"
             :expandable="expandable"
             :row="props"
@@ -145,9 +144,10 @@
             :show-instruction-icon="hasInstructionsAlarms"
             @start:resize="startColumnResize"
             @select:tag="$emit('select:tag', $event)"
+            @input="props.select"
           />
         </template>
-        <template #expand="{ item, index }">
+        <template #expanded-item="{ item, index }">
           <alarms-expand-panel
             :alarm="item"
             :parent-alarm-id="parentAlarmId"
@@ -163,8 +163,8 @@
     <c-table-pagination
       v-if="!hidePagination"
       :total-items="totalItems"
-      :rows-per-page="pagination.limit"
-      :page="pagination.page"
+      :rows-per-page="options.itemsPerPage"
+      :page="options.page"
       @update:page="updateQueryPage"
       @update:rows-per-page="updateRecordsPerPage"
     />
@@ -234,7 +234,7 @@ export default {
       type: Number,
       required: false,
     },
-    pagination: {
+    options: {
       type: Object,
       default: () => ({}),
     },
@@ -572,10 +572,6 @@ export default {
 
     checkIsTourEnabledForAlarmByIndex(index) {
       return this.isTourEnabled && index === 0;
-    },
-
-    updatePaginationHandler(data) {
-      this.$emit('update:pagination', data);
     },
   },
 };

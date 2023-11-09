@@ -116,7 +116,7 @@
       :widget="widget"
       :alarms="alarms"
       :total-items="alarmsMeta.total_count"
-      :pagination.sync="pagination"
+      :options.sync="options"
       :loading="alarmsPending"
       :is-tour-enabled="isTourEnabled"
       :hide-children="!query.correlation"
