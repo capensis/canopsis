@@ -135,6 +135,7 @@ import {
 } from '@/constants';
 
 import uid from '@/helpers/uid';
+import { setField } from '@/helpers/immutable';
 import { getStepClass } from '@/helpers/tour';
 import { alarmToServiceDependency } from '@/helpers/treeview/service-dependencies';
 import { convertAlarmDetailsQueryToRequest } from '@/helpers/query';
@@ -230,7 +231,12 @@ export default {
     },
 
     dependency() {
-      return alarmToServiceDependency(this.alarm);
+      const alarmWithDependenciesCounts = setField(this.alarm, 'entity', entity => ({
+        ...entity,
+        ...this.alarmDetails.entity,
+      }));
+
+      return alarmToServiceDependency(alarmWithDependenciesCounts);
     },
 
     hasMoreInfos() {
@@ -250,12 +256,9 @@ export default {
     },
 
     hasImpactsDependencies() {
-      const { impact } = this.alarm.entity;
+      const { impacts_count: impactsCount } = this.alarm.entity;
 
-      return this.hasServiceDependencies
-        ? impact?.length > 0
-        // resource and component types having one basic entity into impact
-        : impact?.length > 1;
+      return impactsCount > 0;
     },
 
     hasEntityGantt() {
