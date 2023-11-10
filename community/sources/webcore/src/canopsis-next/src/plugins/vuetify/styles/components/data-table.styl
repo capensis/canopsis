@@ -38,34 +38,15 @@ theme(v-datatable, "v-datatable")
   &.v-table
     background-color: var(--v-table-background-base) !important
 
-  & tbody tr td
-    transition inherit !important
-    background-clip padding-box !important
-
-  & tbody tr:not(.v-datatable__expand-row) td
+  & tbody tr:not(.v-datatable__expand-row)
     background-color: var(--v-table-row-color-base) !important
 
-  & tbody tr:nth-of-type(4n + 1) td,
-  &:not(&--expand) tbody tr:nth-of-type(2n + 1) td
+  & tbody tr:nth-of-type(4n + 1),
+  &:not(&--expand) tbody tr:nth-of-type(2n + 1)
     background-color: var(--v-table-shift-row-color-base, var(--v-table-row-color-base)) !important
 
-  & tbody tr:not(.v-datatable__expand-row):hover td
+  & tbody tr:not(.v-datatable__expand-row):hover
     background-color: var(--v-table-hover-row-color-base, var(--v-table-row-color-base)) !important
-
-  & tbody tr:not(:first-child)
-    border-top: unset !important
-
-  & tbody tr:not(.v-datatable__expand-row)
-    .theme--light &
-      border-bottom-color: rgba(black, .12)
-
-    .theme--dark &
-      border-bottom-color: rgba(white, .12)
-
-    border-bottom: 1px solid
-
-  &--expand tbody tr:nth-last-of-type(2)
-    border-bottom: unset !important
 
 table.v-datatable
   transition: background-color .3s cubic-bezier(.25,.8,.5,1)
