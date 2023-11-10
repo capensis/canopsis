@@ -92,11 +92,28 @@ db.viewtabs.createIndex({view: 1}, {name: "view_1"});
 db.widgets.createIndex({tab: 1}, {name: "tab_1"});
 
 // Can be removed if index is added
-db.createCollection("pbehavior_reason");
-db.createCollection("pbehavior_exception");
-db.createCollection("meta_alarm_rules");
-db.createCollection("dynamic_infos");
-db.createCollection("eventfilter");
-db.createCollection("broadcast_message");
-db.createCollection("viewgroups");
-db.createCollection("view_playlist");
+var collectionNames = db.getCollectionNames();
+if (!collectionNames.includes('pbehavior_reason')) {
+    db.createCollection("pbehavior_reason");
+}
+if (!collectionNames.includes('pbehavior_exception')) {
+    db.createCollection("pbehavior_exception");
+}
+if (!collectionNames.includes('meta_alarm_rules')) {
+    db.createCollection("meta_alarm_rules");
+}
+if (!collectionNames.includes('dynamic_infos')) {
+    db.createCollection("dynamic_infos");
+}
+if (!collectionNames.includes('eventfilter')) {
+    db.createCollection("eventfilter");
+}
+if (!collectionNames.includes('broadcast_message')) {
+    db.createCollection("broadcast_message");
+}
+if (!collectionNames.includes('viewgroups')) {
+    db.createCollection("viewgroups");
+}
+if (!collectionNames.includes('view_playlist')) {
+    db.createCollection("view_playlist");
+}
