@@ -34,8 +34,6 @@ Feature: Get a dynamic infos
               }
             ]
           ],
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "author": {
             "_id": "root",
             "name": "root",
@@ -57,62 +55,26 @@ Feature: Get a dynamic infos
           ],
           "updated": 1593679995,
           "name": "test-dynamic-infos-to-get-1-name"
-        },
-        {
-          "_id": "test-dynamic-infos-to-get-2",
-          "old_alarm_patterns": [
-            {
-              "v": {
-                "connector": "test-dynamic-infos-to-get-2-alarm-pattern"
-              }
-            }
-          ],
-          "author": {
-            "_id": "root",
-            "name": "root",
-            "display_name": "root John Doe admin@canopsis.net"
-          },
-          "created": 1581423405,
-          "description": "test-dynamic-infos-to-get-2-description",
-          "disable_during_periods": null,
-          "enabled": true,
-          "old_entity_patterns": [
-            {
-              "_id": "test-dynamic-infos-to-get-2-entity-pattern"
-            }
-          ],
-          "infos": [
-            {
-              "name": "test-dynamic-infos-to-get-2-info-1-name",
-              "value": "test-dynamic-infos-to-get-2-info-1-value"
-            },
-            {
-              "name": "test-dynamic-infos-to-get-2-info-2-name",
-              "value": "test-dynamic-infos-to-get-2-info-2-value"
-            }
-          ],
-          "updated": 1593679995,
-          "name": "test-dynamic-infos-to-get-2-name"
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 2
+        "total_count": 1
       }
     }
     """
 
   Scenario: given pattern search request should return dynamic infos
     When I am admin
-    When I do GET /api/v4/cat/dynamic-infos?search=pattern%20LIKE%20"test-dynamic-infos-to-get-2"
+    When I do GET /api/v4/cat/dynamic-infos?search=pattern%20LIKE%20"test-dynamic-infos-to-get-1"
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
-        {"_id": "test-dynamic-infos-to-get-2"}
+        {"_id": "test-dynamic-infos-to-get-1"}
       ],
       "meta": {
         "page": 1,
@@ -125,23 +87,33 @@ Feature: Get a dynamic infos
 
   Scenario: given get request should return dynamic infos
     When I am admin
-    When I do GET /api/v4/cat/dynamic-infos/test-dynamic-infos-to-get-2
+    When I do GET /api/v4/cat/dynamic-infos/test-dynamic-infos-to-get-1
     Then the response code should be 200
     Then the response body should be:
     """json
     {
-      "_id": "test-dynamic-infos-to-get-2",
-      "old_alarm_patterns": [
-        {
-          "v": {
-            "connector": "test-dynamic-infos-to-get-2-alarm-pattern"
+      "_id": "test-dynamic-infos-to-get-1",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-dynamic-infos-to-get-1-alarm-pattern"
+            }
           }
-        }
+        ]
       ],
-      "old_entity_patterns": [
-        {
-          "_id": "test-dynamic-infos-to-get-2-entity-pattern"
-        }
+      "entity_pattern": [
+        [
+          {
+            "field": "_id",
+            "cond": {
+              "type": "eq",
+              "value": "test-dynamic-infos-to-get-1-entity-pattern"
+            }
+          }
+        ]
       ],
       "author": {
         "_id": "root",
@@ -149,21 +121,21 @@ Feature: Get a dynamic infos
         "display_name": "root John Doe admin@canopsis.net"
       },
       "created": 1581423405,
-      "description": "test-dynamic-infos-to-get-2-description",
+      "description": "test-dynamic-infos-to-get-1-description",
       "disable_during_periods": null,
       "enabled": true,
       "infos": [
         {
-          "name": "test-dynamic-infos-to-get-2-info-1-name",
-          "value": "test-dynamic-infos-to-get-2-info-1-value"
+          "name": "test-dynamic-infos-to-get-1-info-1-name",
+          "value": "test-dynamic-infos-to-get-1-info-1-value"
         },
         {
-          "name": "test-dynamic-infos-to-get-2-info-2-name",
-          "value": "test-dynamic-infos-to-get-2-info-2-value"
+          "name": "test-dynamic-infos-to-get-1-info-2-name",
+          "value": "test-dynamic-infos-to-get-1-info-2-value"
         }
       ],
       "updated": 1593679995,
-      "name": "test-dynamic-infos-to-get-2-name"
+      "name": "test-dynamic-infos-to-get-1-name"
     }
     """
 

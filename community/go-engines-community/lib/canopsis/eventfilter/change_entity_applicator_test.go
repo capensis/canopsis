@@ -317,11 +317,7 @@ func TestChangeEntityApply(t *testing.T) {
 
 	for _, dataSet := range dataSets {
 		t.Run(dataSet.testName, func(t *testing.T) {
-			outcome, resultEvent, err := applicator.Apply(context.Background(), dataSet.rule, dataSet.event, eventfilter.RegexMatchWrapper{
-				BackwardCompatibility: false,
-				RegexMatch:            dataSet.regexMatches,
-			})
-
+			outcome, resultEvent, err := applicator.Apply(context.Background(), dataSet.rule, dataSet.event, dataSet.regexMatches)
 			if err != nil {
 				t.Errorf("expected not error but got %v", err)
 			}
@@ -381,7 +377,7 @@ func TestChangeEntityApplyWithExternalData(t *testing.T) {
 			},
 		},
 		event,
-		eventfilter.RegexMatchWrapper{},
+		eventfilter.RegexMatch{},
 	)
 
 	if err != nil {
