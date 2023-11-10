@@ -265,6 +265,7 @@ describe('service-weather-item', () => {
     currentUserPermissionsById.mockReturnValueOnce({
       [USERS_PERMISSIONS.business.serviceWeather.actions.alarmsList]: { actions: [] },
       [USERS_PERMISSIONS.business.serviceWeather.actions.moreInfos]: { actions: [] },
+      [USERS_PERMISSIONS.business.serviceWeather.actions.variablesHelp]: { actions: [] },
     });
     const wrapper = snapshotFactory({
       propsData: {

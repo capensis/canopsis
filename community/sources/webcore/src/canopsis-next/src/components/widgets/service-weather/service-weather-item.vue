@@ -12,6 +12,13 @@
         v-layout.weather-item__toolbar.pt-1.pr-1(row, align-center)
           c-no-events-icon(:value="service.idle_since", color="white", top)
           impact-state-indicator.mr-1(v-if="isPriorityEnabled", :value="service.impact_state")
+          v-btn.ma-0(
+            v-if="hasVariablesHelpAccess",
+            icon,
+            small,
+            @click.stop="showVariablesHelpModal(service)"
+          )
+            v-icon(color="white", small) help
         v-icon.weather-item__background.white--text(size="5em") {{ service.icon }}
         v-icon.weather-item__secondary-icon.mb-1.mr-1(
           v-if="service.secondary_icon",
@@ -46,6 +53,7 @@ import {
 import { compile } from '@/helpers/handlebars';
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
 import { getEntityColor } from '@/helpers/color';
+import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import { authMixin } from '@/mixins/auth';
 import { entitiesServiceEntityMixin } from '@/mixins/entities/service-entity';
@@ -90,6 +98,10 @@ export default {
 
     hasAlarmsListAccess() {
       return this.checkAccess(USERS_PERMISSIONS.business.serviceWeather.actions.alarmsList);
+    },
+
+    hasVariablesHelpAccess() {
+      return this.checkAccess(USERS_PERMISSIONS.business.serviceWeather.actions.variablesHelp);
     },
 
     color() {
@@ -214,6 +226,18 @@ export default {
       } catch (err) {
         this.$popups.error({ text: this.$t('errors.default') });
       }
+    },
+
+    showVariablesHelpModal() {
+      const entityFields = convertObjectToTreeview(this.service, 'entity');
+      const variables = [entityFields];
+
+      this.$modals.show({
+        name: MODALS.variablesHelp,
+        config: {
+          variables,
+        },
+      });
     },
   },
 };
