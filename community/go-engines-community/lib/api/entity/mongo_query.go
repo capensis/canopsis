@@ -577,13 +577,14 @@ func getDeletablePipeline() []bson.M {
 
 func getDependsCountPipeline() []bson.M {
 	return []bson.M{
-		{"$graphLookup": bson.M{
-			"from":             mongo.EntityMongoCollection,
-			"startWith":        "$_id",
-			"connectFromField": "_id",
-			"connectToField":   "services",
-			"as":               "depends",
-			"maxDepth":         0,
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "_id",
+			"foreignField": "services",
+			"as":           "depends",
+			"pipeline": []bson.M{
+				{"$project": bson.M{"_id": 1}},
+			},
 		}},
 		{"$addFields": bson.M{
 			"depends_count": bson.M{"$size": "$depends"},
@@ -594,13 +595,14 @@ func getDependsCountPipeline() []bson.M {
 
 func getImpactsCountPipeline() []bson.M {
 	return []bson.M{
-		{"$graphLookup": bson.M{
-			"from":             mongo.EntityMongoCollection,
-			"startWith":        "$services",
-			"connectFromField": "services",
-			"connectToField":   "_id",
-			"as":               "service_impacts",
-			"maxDepth":         0,
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "services",
+			"foreignField": "_id",
+			"as":           "service_impacts",
+			"pipeline": []bson.M{
+				{"$project": bson.M{"_id": 1}},
+			},
 		}},
 		{"$addFields": bson.M{
 			"impacts_count": bson.M{"$size": "$service_impacts"},
