@@ -24,8 +24,6 @@
       v-layout(row)
         c-action-btn(
           v-if="updatable",
-          :badge-value="isOldPattern(item)",
-          :badge-tooltip="$t('pattern.oldPatternTooltip')",
           type="edit",
           @click="$emit('edit', item)"
         )
@@ -44,10 +42,6 @@
 </template>
 
 <script>
-import { OLD_PATTERNS_FIELDS } from '@/constants';
-
-import { isOldPattern } from '@/helpers/entities/pattern/form';
-
 import AlarmStatusRulesListExpandItem from './partials/alarm-status-rules-list-expand-item.vue';
 
 export default {
@@ -103,11 +97,6 @@ export default {
           sortable: false,
         },
       ].filter(Boolean);
-    },
-  },
-  methods: {
-    isOldPattern(item) {
-      return isOldPattern(item, [OLD_PATTERNS_FIELDS.entity, OLD_PATTERNS_FIELDS.alarm]);
     },
   },
 };

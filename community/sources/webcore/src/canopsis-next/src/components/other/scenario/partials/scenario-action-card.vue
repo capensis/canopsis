@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { OLD_PATTERNS_FIELDS, PATTERNS_FIELDS } from '@/constants';
+import { PATTERNS_FIELDS } from '@/constants';
 
 import { filterPatternsToForm } from '@/helpers/entities/filter/form';
 
@@ -63,11 +63,7 @@ export default {
   },
   computed: {
     patterns() {
-      return filterPatternsToForm(
-        this.action,
-        [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity],
-        [OLD_PATTERNS_FIELDS.alarm, OLD_PATTERNS_FIELDS.entity],
-      );
+      return filterPatternsToForm(this.action, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]);
     },
   },
 };
