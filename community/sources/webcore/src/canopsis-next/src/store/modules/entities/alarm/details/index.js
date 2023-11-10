@@ -8,6 +8,7 @@ import request from '@/services/request';
 
 import { alarmDetailsSchema } from '@/store/schemas';
 
+import { convertAlarmDetailsQueryToRequest } from '@/helpers/entities/alarm/query';
 import { generateAlarmDetailsId, getAlarmDetailsDataPreparer } from '@/helpers/entities/alarm/list';
 
 export const types = {
@@ -135,7 +136,7 @@ export default {
         await dispatch('entities/create', {
           route: API_ROUTES.alarmDetails,
           schema: [alarmDetailsSchema],
-          body: queries,
+          body: queries.map(convertAlarmDetailsQueryToRequest),
           dataPreparer: getAlarmDetailsDataPreparer(widgetId),
         }, { root: true });
       } catch (err) {
