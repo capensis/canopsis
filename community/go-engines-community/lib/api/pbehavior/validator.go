@@ -31,27 +31,15 @@ func (v *Validator) ValidateCreateRequest(sl validator.StructLevel) {
 }
 
 func (v *Validator) ValidateUpdateRequest(ctx context.Context, sl validator.StructLevel) {
-	id := ""
 	corporateEntityPattern := ""
 	var entityPattern pattern.Entity
 	switch r := sl.Current().Interface().(type) {
 	case UpdateRequest:
-		id = r.ID
 		entityPattern = r.EntityPattern
 		corporateEntityPattern = r.CorporateEntityPattern
 	case BulkUpdateRequestItem:
-		id = r.ID
 		entityPattern = r.EntityPattern
 		corporateEntityPattern = r.CorporateEntityPattern
-	}
-
-	if id != "" {
-		err := v.dbClient.Collection(mongo.PbehaviorMongoCollection).FindOne(ctx, bson.M{"_id": id, "old_mongo_query": bson.M{"$ne": nil}}).Err()
-		if err == nil {
-			return
-		} else if !errors.Is(err, mongodriver.ErrNoDocuments) {
-			panic(err)
-		}
 	}
 
 	if len(entityPattern) == 0 && corporateEntityPattern == "" {

@@ -1554,8 +1554,6 @@ definitions:
       ok_events:
         description: Stats
         type: integer
-      old_entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
       snooze:
@@ -1750,8 +1748,6 @@ definitions:
       ok_events:
         description: Stats
         type: integer
-      old_entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
       sli_avail_state:
@@ -1970,8 +1966,6 @@ definitions:
       ok_events:
         description: Stats
         type: integer
-      old_entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
       output_template:
         type: string
       pbehavior_info:
@@ -2260,8 +2254,6 @@ definitions:
         type: object
       failures_count:
         type: integer
-      old_patterns:
-        $ref: '#/definitions/oldpattern.EventPatternList'
       priority:
         type: integer
       rrule:
@@ -2500,10 +2492,6 @@ definitions:
         type: integer
       name:
         type: string
-      old_alarm_patterns:
-        $ref: '#/definitions/oldpattern.AlarmPatternList'
-      old_entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
       priority:
         type: integer
       updated:
@@ -2853,6 +2841,7 @@ definitions:
       _id:
         type: string
       alarm_condition:
+        description: Only for Alarm rules
         type: string
       alarm_pattern:
         items:
@@ -2895,11 +2884,6 @@ definitions:
         type: array
       name:
         type: string
-      old_alarm_patterns:
-        $ref: '#/definitions/oldpattern.AlarmPatternList'
-        description: Only for Alarm rules
-      old_entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
       operation:
         $ref: '#/definitions/idlerule.Operation'
       priority:
@@ -3237,12 +3221,6 @@ definitions:
       instruction:
         $ref: '#/definitions/notification.InstructionNotification'
     type: object
-  oldpattern.AlarmPatternList:
-    type: object
-  oldpattern.EntityPatternList:
-    type: object
-  oldpattern.EventPatternList:
-    type: object
   pattern.BulkDeleteRequestItem:
     properties:
       _id:
@@ -3542,9 +3520,6 @@ definitions:
     - tstart
     - type
     type: object
-  pbehavior.OldMongoQuery:
-    additionalProperties: true
-    type: object
   pbehavior.PatchRequest:
     properties:
       color:
@@ -3641,8 +3616,6 @@ definitions:
         type: integer
       name:
         type: string
-      old_mongo_query:
-        $ref: '#/definitions/pbehavior.OldMongoQuery'
       origin:
         type: string
       reason:
@@ -4178,10 +4151,6 @@ definitions:
         type: array
       name:
         type: string
-      old_alarm_patterns:
-        $ref: '#/definitions/oldpattern.AlarmPatternList'
-      old_entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
       priority:
         type: integer
       updated:
@@ -4349,10 +4318,6 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
-      old_alarm_patterns:
-        $ref: '#/definitions/oldpattern.AlarmPatternList'
-      old_entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
       parameters:
         $ref: '#/definitions/scenario.Parameters'
       type:
@@ -4382,10 +4347,6 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
-      old_alarm_patterns:
-        $ref: '#/definitions/oldpattern.AlarmPatternList'
-      old_entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
       parameters:
         $ref: '#/definitions/action.Parameters'
       type:
@@ -5746,9 +5707,6 @@ definitions:
     - is_user_preference
     - title
     type: object
-  widgetfilter.OldMongoQuery:
-    additionalProperties: true
-    type: object
   widgetfilter.Response:
     properties:
       _id:
@@ -5785,8 +5743,6 @@ definitions:
         type: boolean
       is_user_preference:
         type: boolean
-      old_mongo_query:
-        $ref: '#/definitions/widgetfilter.OldMongoQuery'
       pbehavior_pattern:
         items:
           items:

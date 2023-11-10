@@ -61,6 +61,4 @@ type PBehavior struct {
 	Entity string `bson:"entity,omitempty"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
-	// OldMongoQuery contains old mongo query which cannot be migrated to pattern.
-	OldMongoQuery string `bson:"old_mongo_query,omitempty" json:"old_mongo_query,omitempty"`
 }

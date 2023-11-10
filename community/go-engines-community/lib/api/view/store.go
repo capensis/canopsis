@@ -361,7 +361,6 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 				{"$match": bson.M{"$and": []bson.M{
 					{"$expr": bson.M{"$eq": bson.A{"$widget", "$$id"}}},
 					{"is_user_preference": false},
-					{"old_mongo_query": nil}, //do not import old filters
 				}}},
 			},
 			"as": "filters",
