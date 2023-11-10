@@ -179,6 +179,7 @@ export const prepareAlarmDetailsQuery = (alarm, widget, search) => {
     with_instructions: true,
     with_declare_tickets: true,
     with_links: true,
+    with_dependencies: true,
     opened: isResolvedAlarm(alarm) ? false : widget.parameters.opened,
     perf_data: convertWidgetChartsToPerfDataQuery(charts),
     steps: {

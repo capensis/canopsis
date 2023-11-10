@@ -101,7 +101,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
           _id: 'alarm-id',
           entity: {
             type: ENTITY_TYPES.connector,
-            impact: [],
+            impacts_count: 0,
           },
           v: {},
         },
@@ -130,7 +130,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
           _id: 'alarm-id',
           entity: {
             type: ENTITY_TYPES.connector,
-            impact: [],
+            impacts_count: 0,
           },
           v: {},
         },
@@ -157,7 +157,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
           consequences: {},
           entity: {
             type: ENTITY_TYPES.connector,
-            impact: [],
+            impacts_count: 0,
           },
           v: {},
         },
@@ -186,7 +186,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
           consequences: {},
           entity: {
             type: ENTITY_TYPES.service,
-            impact: ['test'],
+            impacts_count: 1,
           },
           v: {
             tickets: [{}],
@@ -223,7 +223,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
           },
           entity: {
             type: ENTITY_TYPES.resource,
-            impact: [],
+            impacts_count: 0,
           },
         },
         widget: {
