@@ -225,7 +225,7 @@ func (a *api) GetDetails(c *gin.Context) {
 			response[idx].ID = request.ID
 			response[idx].Status = http.StatusInternalServerError
 			response[idx].Error = common.InternalServerErrorResponse.Error
-			a.logger.Err(err).Msg("cannot fetch alarm details")
+			a.logger.Err(err).Str("ID", request.ID).Msg("cannot fetch alarm details")
 			continue
 		}
 

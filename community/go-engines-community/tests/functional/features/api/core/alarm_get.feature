@@ -20,9 +20,7 @@ Feature: Get alarms
             "impact_level": 1,
             "infos": {},
             "name": "test-resource-to-alarm-get-3",
-            "type": "resource",
-            "depends_count": 0,
-            "impacts_count": 0
+            "type": "resource"
           },
           "impact_state": 0,
           "infos": {},
@@ -86,9 +84,7 @@ Feature: Get alarms
             "impact_level": 1,
             "infos": {},
             "name": "test-resource-to-alarm-get-2",
-            "type": "resource",
-            "depends_count": 0,
-            "impacts_count": 0
+            "type": "resource"
           },
           "impact_state": 1,
           "infos": {},
@@ -181,9 +177,7 @@ Feature: Get alarms
               }
             },
             "name": "test-resource-to-alarm-get-1",
-            "type": "resource",
-            "depends_count": 0,
-            "impacts_count": 0
+            "type": "resource"
           },
           "impact_state": 3,
           "infos": {},
@@ -922,53 +916,61 @@ Feature: Get alarms
         "opened": true,
         "steps": {
           "page": 1
-        }
+        },
+        "with_dependencies": true
       },
       {
         "_id": "test-alarm-to-get-1",
         "steps": {
           "page": 2,
           "limit": 2
-        }
+        },
+        "with_dependencies": true
       },
       {
         "_id": "test-alarm-to-get-1",
         "steps": {
           "limit": 5
-        }
+        },
+        "with_dependencies": true
       },
       {
         "_id": "test-alarm-to-get-3",
         "steps": {
           "page": 1
-        }
+        },
+        "with_dependencies": true
       },
       {
         "_id": "test-alarm-to-get-4",
         "opened": false,
         "steps": {
           "page": 1
-        }
+        },
+        "with_dependencies": true
       },
       {
         "_id": "test-alarm-to-get-1",
         "opened": false,
         "steps": {
           "page": 1
-        }
+        },
+        "with_dependencies": true
       },
       {
         "_id": "test-alarm-to-get-3",
         "opened": true,
         "steps": {
           "page": 1
-        }
+        },
+        "with_dependencies": true
       },
       {
         "_id": "not-exist",
         "steps": {
           "page": 1
-        }
+        },
+        "with_dependencies": true
       },
       {
         "_id": "not-exist"
@@ -1022,6 +1024,10 @@ Feature: Get alarms
               "per_page": 10,
               "total_count": 4
             }
+          },
+          "entity": {
+            "depends_count": 0,
+            "impacts_count": 0
           }
         }
       },
@@ -1052,6 +1058,10 @@ Feature: Get alarms
               "per_page": 2,
               "total_count": 4
             }
+          },
+          "entity": {
+            "depends_count": 0,
+            "impacts_count": 0
           }
         }
       },
@@ -1098,6 +1108,10 @@ Feature: Get alarms
               "per_page": 5,
               "total_count": 4
             }
+          },
+          "entity": {
+            "depends_count": 0,
+            "impacts_count": 0
           }
         }
       },
@@ -1146,6 +1160,10 @@ Feature: Get alarms
               "per_page": 10,
               "total_count": 4
             }
+          },
+          "entity": {
+            "depends_count": 0,
+            "impacts_count": 0
           }
         }
       },
@@ -1194,6 +1212,10 @@ Feature: Get alarms
               "per_page": 10,
               "total_count": 4
             }
+          },
+          "entity": {
+            "depends_count": 0,
+            "impacts_count": 0
           }
         }
       },
