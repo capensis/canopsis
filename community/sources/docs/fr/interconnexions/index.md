@@ -74,7 +74,7 @@ Canopsis permet d’émettre des notifications vers différents outils à partir
 
 | **Nom** | **Destination** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|
-| [Webhooks](../menu-exploitation/scenarios/) | Tout outil / API HTTP qui peut réceptionner des appels webhooks | Pro | Oui | Version ≥ 3 (moteurs Go) |
+| [Webhooks](../guide-utilisation/menu-exploitation/scenarios/) | Tout outil / API HTTP qui peut réceptionner des appels webhooks | Pro | Oui | Version ≥ 3 (moteurs Go) |
 
 ### Transport
 
