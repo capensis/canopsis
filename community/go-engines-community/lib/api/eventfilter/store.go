@@ -174,10 +174,6 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 	update := bson.M{"$set": model}
 	unset := bson.M{"events_count": ""}
 
-	if request.CorporateEntityPattern != "" || len(request.EntityPattern) > 0 || len(request.EventPattern) > 0 {
-		unset["old_patterns"] = 1
-	}
-
 	if model.Start == nil || model.Start.IsZero() || model.Stop == nil || model.Stop.IsZero() {
 		unset["start"] = ""
 		unset["stop"] = ""
