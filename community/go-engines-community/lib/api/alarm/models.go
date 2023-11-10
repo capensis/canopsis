@@ -53,6 +53,7 @@ type ListRequest struct {
 	WithInstructions   bool `form:"with_instructions" json:"with_instructions"`
 	WithDeclareTickets bool `form:"with_declare_tickets" json:"with_declare_tickets"`
 	WithLinks          bool `form:"with_links" json:"with_links"`
+	WithDependencies   bool `form:"with_dependencies" json:"with_dependencies"`
 }
 
 type FilterRequest struct {
@@ -131,6 +132,7 @@ type DetailsRequest struct {
 	Opened             *bool                `json:"opened"`
 	WithInstructions   bool                 `json:"with_instructions"`
 	WithDeclareTickets bool                 `json:"with_declare_tickets"`
+	WithDependencies   bool                 `json:"with_dependencies"`
 	Steps              *StepsRequest        `json:"steps"`
 	Children           *ChildDetailsRequest `json:"children"`
 }
@@ -165,13 +167,21 @@ type DetailsResponse struct {
 	Error  string            `json:"error,omitempty"`
 }
 
+type EntityDetails struct {
+	// DependsCount contains only service's dependencies
+	DependsCount int `bson:"depends_count" json:"depends_count"`
+	// ImpactsCount contains only services
+	ImpactsCount int `bson:"impacts_count" json:"impacts_count"`
+}
+
 type Details struct {
 	Steps    *StepDetails     `bson:"steps" json:"steps,omitempty"`
 	Children *ChildrenDetails `bson:"children" json:"children,omitempty"`
 
-	IsMetaAlarm bool   `json:"-" bson:"is_meta_alarm"`
-	EntityID    string `json:"-" bson:"d"`
-	StepsCount  int64  `json:"-" bson:"steps_count"`
+	IsMetaAlarm bool           `json:"-" bson:"is_meta_alarm"`
+	EntityID    string         `json:"-" bson:"d"`
+	StepsCount  int64          `json:"-" bson:"steps_count"`
+	Entity      *EntityDetails `json:"entity,omitempty" bson:"entity,omitempty"`
 }
 
 type StepDetails struct {

@@ -123,7 +123,6 @@ func (q *MongoQueryBuilder) clear(now types.CpsTime) {
 	q.lookups = []lookupWithKey{
 		{key: "entity", pipeline: getEntityLookup()},
 		{key: "entity.category", pipeline: getEntityCategoryLookup()},
-		{key: "entity.impacts_counts", pipeline: getImpactsCountPipeline()},
 		{key: "pbehavior", pipeline: getPbehaviorLookup()},
 		{key: "pbehavior.type", pipeline: getPbehaviorTypeLookup()},
 		{key: "v.pbehavior_info.icon_name", pipeline: getPbehaviorInfoTypeLookup()},
@@ -156,6 +155,7 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	if err != nil {
 		return nil, err
 	}
+	q.handleDependencies(r.WithDependencies)
 
 	return q.createPaginationAggregationPipeline(r.Query), nil
 }
@@ -191,6 +191,7 @@ func (q *MongoQueryBuilder) CreateGetAggregationPipeline(
 		Page:  1,
 		Limit: 1,
 	}
+	q.handleDependencies(true)
 	return q.createPaginationAggregationPipeline(query), nil
 }
 
@@ -221,6 +222,7 @@ func (q *MongoQueryBuilder) CreateAggregationPipelineByMatch(
 	if err != nil {
 		return nil, err
 	}
+	q.handleDependencies(true)
 
 	return q.createPaginationAggregationPipeline(paginationQuery), nil
 }
@@ -232,6 +234,7 @@ func (q *MongoQueryBuilder) CreateChildrenAggregationPipeline(
 	now types.CpsTime,
 ) ([]bson.M, error) {
 	q.clear(now)
+	q.handleDependencies(true)
 
 	match := bson.M{
 		"v.parents": parentId,
@@ -311,6 +314,7 @@ func (q *MongoQueryBuilder) CreateOnlyListAggregationPipeline(
 	if err != nil {
 		return nil, err
 	}
+	q.handleDependencies(r.WithDependencies)
 
 	beforeLimit, afterLimit := q.createAggregationPipeline()
 	pipeline := append(beforeLimit, q.sort)
@@ -1075,6 +1079,12 @@ func (q *MongoQueryBuilder) resolveAlias(v string) string {
 	return v
 }
 
+func (q *MongoQueryBuilder) handleDependencies(withDependencies bool) {
+	if withDependencies {
+		q.lookups = append(q.lookups, lookupWithKey{key: "entity.impacts_counts", pipeline: getImpactsCountPipeline()})
+	}
+}
+
 func getEntityLookup() []bson.M {
 	return []bson.M{
 		{"$lookup": bson.M{
@@ -1355,12 +1365,14 @@ func getImpactsCountPipeline() []bson.M {
 			"localField":   "entity.services",
 			"foreignField": "_id",
 			"as":           "service_impacts",
+			"pipeline":     []bson.M{{"$project": bson.M{"_id": 1}}},
 		}},
 		{"$lookup": bson.M{
 			"from":         mongo.EntityMongoCollection,
 			"localField":   "entity._id",
 			"foreignField": "services",
 			"as":           "depends",
+			"pipeline":     []bson.M{{"$project": bson.M{"_id": 1}}},
 		}},
 		{"$addFields": bson.M{
 			"entity.depends_count": bson.M{"$size": "$depends"},
