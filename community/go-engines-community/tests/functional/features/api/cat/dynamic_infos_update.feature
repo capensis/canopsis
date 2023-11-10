@@ -102,56 +102,6 @@ Feature: Update a dynamic infos
       "alarm_patterns": null,
       "description": "test-dynamic-infos-to-update-2-description-updated",
       "enabled": true,
-      "infos": [
-        {
-          "name": "test-dynamic-infos-to-update-2-info-3-name",
-          "value": "test-dynamic-infos-to-update-2-info-3-value"
-        },
-        {
-          "name": "test-dynamic-infos-to-update-2-info-2-name",
-          "value": "test-dynamic-infos-to-update-2-info-2-value-updated"
-        }
-      ]
-    }
-    """
-    Then the response code should be 200
-    When I do GET /api/v4/cat/dynamic-infos?search=pattern%20LIKE%20"test-dynamic-infos-to-update-2-entity-pattern"
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "data": [
-        {
-          "_id": "test-dynamic-infos-to-update-2",
-          "old_alarm_patterns": [
-            {
-              "v": {
-                "connector": "test-dynamic-infos-to-update-2-alarm-pattern"
-              }
-            }
-          ],
-          "old_entity_patterns": [
-            {
-              "_id": "test-dynamic-infos-to-update-2-entity-pattern"
-            }
-          ]
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
-      }
-    }
-    """
-    Then I do PUT /api/v4/cat/dynamic-infos/test-dynamic-infos-to-update-2:
-    """json
-    {
-      "name": "test-dynamic-infos-to-update-2-name-updated",
-      "alarm_patterns": null,
-      "description": "test-dynamic-infos-to-update-2-description-updated",
-      "enabled": true,
       "alarm_pattern": [
         [
           {
@@ -216,9 +166,7 @@ Feature: Update a dynamic infos
                 }
               }
             ]
-          ],
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null
+          ]
         }
       ],
       "meta": {

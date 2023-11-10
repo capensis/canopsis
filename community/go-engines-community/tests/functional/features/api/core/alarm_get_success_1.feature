@@ -453,24 +453,6 @@ Feature: Get alarms
       }
     }
     """
-    When I do GET /api/v4/alarms?filters[]=test-widgetfilter-to-alarm-get-2
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "data": [
-        {
-          "_id": "test-alarm-to-get-2"
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
-      }
-    }
-    """
 
   @concurrent
   Scenario: given search expression get request should return alarms
