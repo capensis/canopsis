@@ -1,7 +1,7 @@
 <template lang="pug">
   v-layout(column)
     c-pattern-field.mb-2(
-      v-if="!patterns.old_mongo_query && withType",
+      v-if="withType",
       :value="patterns.id",
       :type="type",
       :disabled="disabled || readonly",
@@ -21,14 +21,7 @@
         :href="`#${$constants.PATTERN_EDITOR_TABS.simple}`"
       ) {{ $t('pattern.simpleEditor') }}
       v-tab-item(:value="$constants.PATTERN_EDITOR_TABS.simple")
-        v-layout(v-if="patterns.old_mongo_query", justify-center, wrap)
-          v-flex.pt-2(xs8)
-            div.error--text.text-xs-center {{ $t('pattern.errors.oldPattern') }}
-          v-flex.pt-2(v-if="!readonly && !disabled", xs12)
-            v-layout(justify-center)
-              v-btn(color="primary", @click="discardPattern") {{ $t('pattern.discard') }}
         pattern-groups-field.mt-2(
-          v-else,
           v-field="patterns.groups",
           :disabled="formDisabled",
           :readonly="readonly",
@@ -40,15 +33,7 @@
 
       v-tab(:href="`#${$constants.PATTERN_EDITOR_TABS.advanced}`") {{ $t('pattern.advancedEditor') }}
       v-tab-item(:value="$constants.PATTERN_EDITOR_TABS.advanced", lazy)
-        c-json-field(
-          v-if="patterns.old_mongo_query",
-          :value="patterns.old_mongo_query",
-          :label="$t('pattern.advancedEditor')",
-          readonly,
-          rows="10"
-        )
         pattern-advanced-editor-field(
-          v-else,
           :value="patternsJson",
           :disabled="readonly || disabled || !isCustomPattern",
           :attributes="attributes",
@@ -56,7 +41,7 @@
           @input="updateGroupsFromPatterns"
         )
 
-    template(v-if="!readonly && !patterns.old_mongo_query")
+    template(v-if="!readonly")
       v-layout(row, align-center, justify-end)
         v-btn.mr-0(
           v-if="withType && !isCustomPattern",
@@ -213,10 +198,6 @@ export default {
     this.$validator.detach(this.name);
   },
   methods: {
-    discardPattern() {
-      this.updateModel(patternToForm({ id: PATTERN_CUSTOM_ITEM_VALUE }));
-    },
-
     updatePattern(pattern) {
       const { groups } = patternToForm(pattern);
 
