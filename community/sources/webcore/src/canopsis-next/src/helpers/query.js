@@ -492,6 +492,7 @@ export const prepareAlarmDetailsQuery = (alarm, widget) => {
     with_instructions: true,
     with_declare_tickets: true,
     with_links: true,
+    with_dependencies: true,
     opened: isResolvedAlarm(alarm) ? false : widget.parameters.opened,
     steps: {
       reversed: true,
