@@ -396,7 +396,7 @@ meta_alarm_rules:
             value: test-component-axe-correlation-9
     name: test-metaalarmrule-axe-correlation-9-name
     output_template: "Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}"
-  meta_alarm_rules_axe_correlation_10:
+  meta_alarm_rules_axe_correlation_second_1:
     <<: *metaaalarm_rule_attribute
     _id: test-metaalarmrule-axe-correlation-second-1
     entity_pattern:
@@ -407,7 +407,7 @@ meta_alarm_rules:
             value: test-component-axe-correlation-second-1
     name: test-metaalarmrule-axe-correlation-second-1-name
     output_template: "Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}"
-  meta_alarm_rules_axe_correlation_11:
+  meta_alarm_rules_axe_correlation_second_2:
     <<: *metaaalarm_rule_attribute
     _id: test-metaalarmrule-axe-correlation-second-2
     entity_pattern:
@@ -418,7 +418,7 @@ meta_alarm_rules:
             value: test-component-axe-correlation-second-2
     name: test-metaalarmrule-axe-correlation-second-2-name
     output_template: "Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}"
-  meta_alarm_rules_axe_correlation_12_1:
+  meta_alarm_rules_axe_correlation_second_3_1:
     <<: *metaaalarm_rule_attribute
     _id: test-metaalarmrule-axe-correlation-second-3-1
     entity_pattern:
@@ -440,7 +440,7 @@ meta_alarm_rules:
             value: test-component-axe-correlation-second-3
     name: test-metaalarmrule-axe-correlation-second-3-2-name
     output_template: "Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}"
-  meta_alarm_rules_axe_correlation_13_1:
+  meta_alarm_rules_axe_correlation_second_4_1:
     <<: *metaaalarm_rule_attribute
     _id: test-metaalarmrule-axe-correlation-second-4-1
     entity_pattern:
@@ -451,7 +451,7 @@ meta_alarm_rules:
             value: test-component-axe-correlation-second-4
     name: test-metaalarmrule-axe-correlation-second-4-1-name
     output_template: "Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}"
-  meta_alarm_rules_axe_correlation_13_2:
+  meta_alarm_rules_axe_correlation_second_4_2:
     <<: *metaaalarm_rule_attribute
     _id: test-metaalarmrule-axe-correlation-second-4-2
     entity_pattern:
@@ -462,7 +462,7 @@ meta_alarm_rules:
             value: test-component-axe-correlation-second-4
     name: test-metaalarmrule-axe-correlation-second-4-2-name
     output_template: "Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}"
-  meta_alarm_rules_axe_correlation_14:
+  meta_alarm_rules_axe_correlation_second_5:
     <<: *metaaalarm_rule_attribute
     _id: test-metaalarmrule-axe-correlation-second-5
     entity_pattern:
@@ -472,4 +472,26 @@ meta_alarm_rules:
             type: eq
             value: test-component-axe-correlation-second-5
     name: test-metaalarmrule-axe-correlation-second-5-name
+    output_template: "Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}"
+  meta_alarm_rules_axe_correlation_third_4:
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarmrule-axe-correlation-third-4
+    entity_pattern:
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-axe-correlation-third-4
+    name: test-metaalarmrule-axe-correlation-third-4-name
+    output_template: "Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}"
+  meta_alarm_rules_axe_correlation_third_5:
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarmrule-axe-correlation-third-5
+    entity_pattern:
+    alarm_pattern:
+      - - field: v.component
+          cond:
+            type: eq
+            value: test-component-axe-correlation-third-5
+    name: test-metaalarmrule-axe-correlation-third-5-name
     output_template: "Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}"
