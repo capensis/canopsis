@@ -710,16 +710,17 @@ export default {
     }
 
     tr {
-      background: var(--v-table-background-base);
       transition: background-color .3s cubic-bezier(.25,.8,.5,1);
 
-      .theme--dark & {
-        background: var(--v-table-background-base);
-      }
-
       th {
+        background-color: var(--v-table-background-base);
+        background-clip: padding-box;
         position: relative;
         transition: none;
+
+        .theme--dark & {
+          background-color: var(--v-table-background-base);
+        }
       }
     }
   }
