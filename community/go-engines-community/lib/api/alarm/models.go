@@ -55,6 +55,7 @@ type ListRequest struct {
 	WithInstructions   bool `form:"with_instructions" json:"with_instructions"`
 	WithDeclareTickets bool `form:"with_declare_tickets" json:"with_declare_tickets"`
 	WithLinks          bool `form:"with_links" json:"with_links"`
+	WithDependencies   bool `form:"with_dependencies" json:"with_dependencies"`
 }
 
 type FilterRequest struct {
@@ -136,6 +137,7 @@ type DetailsRequest struct {
 	Opened             *bool                `json:"opened"`
 	WithInstructions   bool                 `json:"with_instructions"`
 	WithDeclareTickets bool                 `json:"with_declare_tickets"`
+	WithDependencies   bool                 `json:"with_dependencies"`
 	Steps              *StepsRequest        `json:"steps"`
 	Children           *ChildDetailsRequest `json:"children"`
 	PerfData           []string             `json:"perf_data"`
@@ -196,6 +198,14 @@ type DetailsResponse struct {
 	Error  string            `json:"error,omitempty"`
 }
 
+type EntityDetails struct {
+	types.Entity `bson:",inline" json:",inline"`
+	// DependsCount contains only service's dependencies
+	DependsCount int `bson:"depends_count" json:"depends_count"`
+	// ImpactsCount contains only services
+	ImpactsCount int `bson:"impacts_count" json:"impacts_count"`
+}
+
 type Details struct {
 	// Only for websocket
 	ID string `bson:"-" json:"_id,omitempty"`
@@ -205,9 +215,10 @@ type Details struct {
 
 	FilteredPerfData []string `bson:"filtered_perf_data" json:"filtered_perf_data,omitempty"`
 
-	IsMetaAlarm bool         `json:"-" bson:"is_meta_alarm"`
-	StepsCount  int64        `json:"-" bson:"steps_count"`
-	Entity      types.Entity `json:"-" bson:"entity"`
+	IsMetaAlarm bool  `json:"-" bson:"is_meta_alarm"`
+	StepsCount  int64 `json:"-" bson:"steps_count"`
+	// Entity isn't the same as Entity of Alarm, but have counts in response as well
+	Entity EntityDetails `json:"entity" bson:"entity"`
 }
 
 type StepDetails struct {
