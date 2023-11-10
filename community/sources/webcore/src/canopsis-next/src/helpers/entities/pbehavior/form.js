@@ -4,7 +4,6 @@ import { CalendarEvent, DaySpan, Op, Schedule } from 'dayspan';
 
 import { COLORS } from '@/config';
 import {
-  OLD_PATTERNS_FIELDS,
   PATTERNS_FIELDS,
   PBEHAVIOR_ORIGINS,
   PBEHAVIOR_TYPE_TYPES,
@@ -225,7 +224,6 @@ export const pbehaviorToForm = (
       ? { entity_pattern: entityPattern }
       : pbehavior,
     [PATTERNS_FIELDS.entity],
-    [OLD_PATTERNS_FIELDS.mongoQuery],
   );
 
   return {

@@ -143,7 +143,6 @@ func (q *MongoQueryBuilder) clear(now types.CpsTime, userID string) {
 	q.lookups = []lookupWithKey{
 		{key: "entity", pipeline: getEntityLookup()},
 		{key: "entity.category", pipeline: getEntityCategoryLookup()},
-		{key: "entity.impacts_counts", pipeline: getImpactsCountPipeline()},
 		{key: "pbehavior", pipeline: getPbehaviorLookup(q.authorProvider)},
 		{key: "pbehavior.type", pipeline: getPbehaviorTypeLookup()},
 		{key: "v.pbehavior_info.icon_name", pipeline: getPbehaviorInfoTypeLookup()},
@@ -176,6 +175,7 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	if err != nil {
 		return nil, err
 	}
+	q.handleDependencies(r.WithDependencies)
 
 	return q.createPaginationAggregationPipeline(r.Query), nil
 }
@@ -204,6 +204,7 @@ func (q *MongoQueryBuilder) CreateGetAggregationPipeline(
 	onlyParents bool,
 ) ([]bson.M, error) {
 	q.clear(now, userID)
+	q.handleDependencies(true)
 
 	q.alarmMatch = append(q.alarmMatch,
 		bson.M{"$match": match},
@@ -251,6 +252,7 @@ func (q *MongoQueryBuilder) CreateAggregationPipelineByMatch(
 	if err != nil {
 		return nil, err
 	}
+	q.handleDependencies(true)
 
 	return q.createPaginationAggregationPipeline(paginationQuery), nil
 }
@@ -265,6 +267,7 @@ func (q *MongoQueryBuilder) CreateChildrenAggregationPipeline(
 	now types.CpsTime,
 ) ([]bson.M, error) {
 	q.clear(now, userID)
+	q.handleDependencies(true)
 
 	match := bson.M{
 		"v.parents": parentId,
@@ -411,6 +414,7 @@ func (q *MongoQueryBuilder) CreateOnlyListAggregationPipeline(
 	if err != nil {
 		return nil, err
 	}
+	q.handleDependencies(r.WithDependencies)
 
 	beforeLimit, afterLimit := q.createAggregationPipeline()
 	pipeline := append(beforeLimit, q.sort)
@@ -1177,6 +1181,12 @@ func (q *MongoQueryBuilder) resolveAlias(v string) string {
 	}
 
 	return prefix + v
+}
+
+func (q *MongoQueryBuilder) handleDependencies(withDependencies bool) {
+	if withDependencies {
+		q.lookups = append(q.lookups, lookupWithKey{key: "entity.impacts_counts", pipeline: getImpactsCountPipeline()})
+	}
 }
 
 func getEntityLookup() []bson.M {
