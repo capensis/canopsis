@@ -379,6 +379,7 @@ export const prepareAlarmDetailsQuery = (alarm, widget) => {
   const query = {
     _id: alarm._id,
     with_instructions: true,
+    with_dependencies: true,
     opened: isResolvedAlarm(alarm) ? false : widget.parameters.opened,
     steps: {
       reversed: true,
