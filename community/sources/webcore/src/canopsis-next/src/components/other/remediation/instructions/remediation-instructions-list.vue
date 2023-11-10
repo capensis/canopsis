@@ -47,8 +47,6 @@
           c-action-btn(
             v-if="updatable",
             :tooltip="$t('modals.patterns.title')",
-            :badge-value="isOldPattern(item)",
-            :badge-tooltip="$t('pattern.oldPatternTooltip')",
             icon="assignment",
             @click="$emit('assign-patterns', item)"
           )
@@ -65,9 +63,6 @@
 </template>
 
 <script>
-import { OLD_PATTERNS_FIELDS } from '@/constants';
-
-import { isOldPattern } from '@/helpers/entities/pattern/form';
 import { isUserHasRole } from '@/helpers/entities/user/entity';
 
 import { authMixin } from '@/mixins/auth';
@@ -152,10 +147,6 @@ export default {
     isApprovalForCurrentUser(remediationInstruction) {
       return remediationInstruction?.user?._id === this.currentUser._id
         || isUserHasRole(this.currentUser, remediationInstruction?.role);
-    },
-
-    isOldPattern(item) {
-      return isOldPattern(item, [OLD_PATTERNS_FIELDS.entity, OLD_PATTERNS_FIELDS.alarm]);
     },
   },
 };

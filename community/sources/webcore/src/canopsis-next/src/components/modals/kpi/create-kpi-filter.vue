@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { MODALS, OLD_PATTERNS_FIELDS, PATTERNS_FIELDS, VALIDATION_DELAY } from '@/constants';
+import { MODALS, PATTERNS_FIELDS, VALIDATION_DELAY } from '@/constants';
 
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
 
@@ -49,11 +49,7 @@ export default {
     return {
       form: {
         name: filter.name ?? '',
-        patterns: filterPatternsToForm(
-          filter,
-          [PATTERNS_FIELDS.entity],
-          [OLD_PATTERNS_FIELDS.entity],
-        ),
+        patterns: filterPatternsToForm(filter, [PATTERNS_FIELDS.entity]),
       },
     };
   },
