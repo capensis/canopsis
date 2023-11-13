@@ -676,6 +676,7 @@ export default {
       z-index: 1;
 
       &:after {
+        transition: background-color .3s cubic-bezier(0.25, 0.8, 0.5, 1);
         content: ' ';
         position: absolute;
         top: 0;
@@ -695,7 +696,7 @@ export default {
         background-color: unset !important;
 
         &:after {
-          background-color: var(--v-table-hover-row-color-base, var(--v-table-row-color-base))
+          background-color: var(--v-table-hover-row-color-base, var(--v-table-row-color-base)) !important;
         }
       }
     }
@@ -744,7 +745,6 @@ export default {
 
   &__selecting {
     & > .v-table__overflow > table > tbody > tr.alarm-list-row:after {
-      transition: background-color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
       opacity: 0.3;
       background-color: rgb(200, 220, 200) !important;
       pointer-events: auto;
