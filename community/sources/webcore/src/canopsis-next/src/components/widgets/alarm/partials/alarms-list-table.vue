@@ -676,7 +676,6 @@ export default {
       z-index: 1;
 
       &:after {
-        transition: background 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
         content: ' ';
         position: absolute;
         top: 0;
@@ -745,7 +744,9 @@ export default {
 
   &__selecting {
     & > .v-table__overflow > table > tbody > tr.alarm-list-row:after {
-      background: rgba(200, 220, 200, .3) !important;
+      transition: background-color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+      opacity: 0.3;
+      background-color: rgb(200, 220, 200) !important;
       pointer-events: auto;
       z-index: 1;
     }
