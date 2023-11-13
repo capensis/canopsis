@@ -9,7 +9,7 @@
     lazy
   )
     template(#activator="{ on }")
-      v-layout(v-on="on", d-inline-flex, align-center)
+      v-layout.alarms-column-cell__layout(v-on="on", d-inline-flex, align-center)
         c-compiled-template(v-if="column.isHtml", :template="value")
         div(v-else, v-bind="component.bind", v-on="component.on")
         v-btn.ma-0.alarms-column-cell__show-info-btn(
@@ -106,13 +106,19 @@ export default {
 </script>
 
 <style lang="scss">
-.alarms-column-cell {
+.alarms-column-cell__show-info-btn {
   &__show-info-btn {
+    flex-shrink: 0 !important;
+
     &--small {
       width: 22px;
       max-width: 22px;
       height: 22px;
     }
+  }
+
+  &__layout {
+    max-width: 100%;
   }
 }
 </style>
