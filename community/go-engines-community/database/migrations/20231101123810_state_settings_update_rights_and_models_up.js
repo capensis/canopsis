@@ -21,5 +21,15 @@ db.state_settings.updateOne({_id: "junit"}, {
     }
 });
 
+if (!db.permission.findOne({_id: "models_stateSetting"})) {
+    db.permission.insertOne({
+        _id: "models_stateSetting",
+        name: "models_stateSetting",
+        type: "CRUD",
+        description: "State settings"
+    });
+    db.role.updateMany({_id: "admin"}, {$set: {"permissions.models_stateSetting": 15}});
+}
+
 db.permission.updateOne({_id:"api_state_settings"}, {$set: {type: "CRUD"}});
 db.role.updateMany({"permissions.api_state_settings": 1}, {$set: {"permissions.api_state_settings": 15}});
