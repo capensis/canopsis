@@ -21,7 +21,6 @@
         :label="$t('settings.exportColumnNames')",
         :type="type",
         :with-instructions="withInstructions",
-        without-infos-attributes,
         @update:template="updateTemplate"
       )
 </template>
