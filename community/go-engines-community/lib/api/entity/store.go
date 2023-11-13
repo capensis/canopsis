@@ -393,17 +393,7 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 func (s *store) CheckStateSetting(ctx context.Context, r CheckStateSettingRequest) (CheckStateSettingResponse, error) {
 	response := CheckStateSettingResponse{}
 
-	ent := types.Entity{
-		ID:          r.ID,
-		Name:        r.Name,
-		Connector:   r.Connector,
-		Type:        r.Type,
-		Infos:       TransformInfosRequest(r.Infos),
-		Category:    r.Category,
-		ImpactLevel: r.ImpactLevel,
-	}
-
-	cursor, err := s.db.Collection(mongo.StateSettingsMongoCollection).Find(
+	cursor, err := s.stateSettingsCollection.Find(
 		ctx,
 		bson.M{
 			"enabled": true,
@@ -418,6 +408,16 @@ func (s *store) CheckStateSetting(ctx context.Context, r CheckStateSettingReques
 	}
 
 	defer cursor.Close(ctx)
+
+	ent := types.Entity{
+		ID:          r.ID,
+		Name:        r.Name,
+		Connector:   r.Connector,
+		Type:        r.Type,
+		Infos:       TransformInfosRequest(r.Infos),
+		Category:    r.Category,
+		ImpactLevel: r.ImpactLevel,
+	}
 
 	for cursor.Next(ctx) {
 		var stateSetting statesetting.StateSetting
