@@ -682,8 +682,17 @@ export default {
   }
 
   &--truncated {
+    .color-indicator {
+      max-width: 100%;
+    }
+
+    .alarms-column-cell__layout .alarm-column-cell__text {
+      display: grid;
+    }
+
     .alarm-list-row__cell {
-      .alarm-column-cell__text > span {
+      .alarm-column-cell__text > span,
+      .alarm-column-value {
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
