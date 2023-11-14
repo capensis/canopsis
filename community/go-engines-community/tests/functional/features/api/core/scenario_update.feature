@@ -91,8 +91,6 @@ Feature: Update a scenario
               }
             ]
           ],
-          "old_entity_patterns": null,
-          "old_alarm_patterns": null,
           "type": "snooze",
           "parameters": {
             "output": "test snooze updated",
@@ -369,8 +367,6 @@ Feature: Update a scenario
       },
       "actions": [
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "alarm_pattern": [
             [
               {
@@ -407,8 +403,6 @@ Feature: Update a scenario
           "emit_trigger": false
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
           "corporate_alarm_pattern_title": "test-pattern-to-rule-edit-1-title",
           "alarm_pattern": [
@@ -445,8 +439,6 @@ Feature: Update a scenario
           "emit_trigger": false
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
           "corporate_alarm_pattern_title": "test-pattern-to-rule-edit-1-title",
           "alarm_pattern": [
@@ -583,139 +575,6 @@ Feature: Update a scenario
     """
 
   @concurrent
-  Scenario: given update request should update old patterns but keep them if they're not updated
-    When I am admin
-    When I do PUT /api/v4/scenarios/test-scenario-to-update-3:
-    """json
-    {
-      "name": "test-scenario-to-update-3-name",
-      "enabled": true,
-      "triggers": [
-        {
-          "type": "create"
-        }
-      ],
-      "delay": {
-        "value": 3,
-        "unit": "s"
-      },
-      "actions": [
-        {
-          "alarm_pattern": [
-            [
-              {
-                "field": "v.component",
-                "cond": {
-                  "type": "eq",
-                  "value": "test-scenario-to-update-3-alarm"
-                }
-              }
-            ]
-          ],
-          "old_entity_patterns": [
-            {
-              "name": "test-scenario-to-update-3-name-1"
-            }
-          ],
-          "comment": "first ack",
-          "type": "ack",
-          "drop_scenario_if_not_matched": false,
-          "emit_trigger": false
-        },
-        {
-          "old_alarm_patterns": [
-            {
-              "_id": "test-scenario-to-update-3-alarm-2"
-            }
-          ],
-          "entity_pattern": [
-            [
-              {
-                "field": "name",
-                "cond": {
-                  "type": "eq",
-                  "value": "test-scenario-to-update-3-name"
-                }
-              }
-            ]
-          ],
-          "comment": "second ack",
-          "type": "ack",
-          "drop_scenario_if_not_matched": false,
-          "emit_trigger": false
-        }
-      ]
-    }
-    """
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "name": "test-scenario-to-update-3-name",
-      "author": {
-        "_id": "root",
-        "name": "root"
-      },
-      "enabled": true,
-      "triggers": [
-        {
-          "type": "create"
-        }
-      ],
-      "delay": {
-        "value": 3,
-        "unit": "s"
-      },
-      "actions": [
-        {
-          "alarm_pattern": [
-            [
-              {
-                "field": "v.component",
-                "cond": {
-                  "type": "eq",
-                  "value": "test-scenario-to-update-3-alarm"
-                }
-              }
-            ]
-          ],
-          "old_entity_patterns": [
-            {
-              "name": "test-scenario-to-update-3-name-1"
-            }
-          ],
-          "type": "ack",
-          "drop_scenario_if_not_matched": false,
-          "emit_trigger": false,
-          "comment": "first ack"
-        },
-        {
-          "old_alarm_patterns": [
-            {
-              "_id": "test-scenario-to-update-3-alarm-2"
-            }
-          ],
-          "entity_pattern": [
-            [
-              {
-                "field": "name",
-                "cond": {
-                  "type": "eq",
-                  "value": "test-scenario-to-update-3-name"
-                }
-              }
-            ]
-          ],
-          "type": "ack",
-          "drop_scenario_if_not_matched": false,
-          "emit_trigger": false,
-          "comment": "second ack"
-        }
-      ]
-    }    
-    """    
-
-  @concurrent
   Scenario: given update scenario request should return ok
     When I am admin
     When I do PUT /api/v4/scenarios/test-scenario-to-update-4:
@@ -789,8 +648,6 @@ Feature: Update a scenario
               }
             ]
           ],
-          "old_entity_patterns": null,
-          "old_alarm_patterns": null,
           "type": "snooze",
           "parameters": {
             "output": "test snooze updated",

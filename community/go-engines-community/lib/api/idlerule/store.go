@@ -138,28 +138,11 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Rule, error) {
 	model := transformRequestToModel(r.EditRequest)
 	model.ID = r.ID
 	model.Updated = types.CpsTime{Time: time.Now()}
-
-	update := bson.M{"$set": model}
-
-	unset := bson.M{}
-	// check for type entity in case if we update an old alarm idle rule with old alarm patterns
-	if r.CorporateAlarmPattern != "" || len(r.AlarmPattern) > 0 || model.Type == idlerule.RuleTypeEntity {
-		unset["old_alarm_patterns"] = 1
-	}
-
-	if r.CorporateEntityPattern != "" || len(r.EntityPattern) > 0 {
-		unset["old_entity_patterns"] = 1
-	}
-
-	if len(unset) > 0 {
-		update["$unset"] = unset
-	}
-
 	var idleRule *Rule
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		idleRule = nil
 
-		_, err := s.collection.UpdateOne(ctx, bson.M{"_id": model.ID}, update)
+		_, err := s.collection.UpdateOne(ctx, bson.M{"_id": model.ID}, bson.M{"$set": model})
 		if err != nil {
 			return err
 		}

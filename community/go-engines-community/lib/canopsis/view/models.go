@@ -176,9 +176,6 @@ type WidgetFilter struct {
 	savedpattern.EntityPatternFields    `bson:",inline"`
 	savedpattern.PbehaviorPatternFields `bson:",inline"`
 
-	// Deprecated : contains old mongo query which cannot be migrated to pattern.
-	OldMongoQuery string `bson:"old_mongo_query,omitempty"`
-
 	WeatherServicePattern WeatherServicePattern `bson:"weather_service_pattern,omitempty"`
 
 	IsUserPreference bool `bson:"is_user_preference"`

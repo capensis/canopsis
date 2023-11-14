@@ -1,7 +1,6 @@
 package action
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
@@ -36,20 +35,18 @@ func (s Scenario) IsTriggered(triggers []string) string {
 
 // Action represents a canopsis Action on alarms.
 type Action struct {
-	Type                     string                       `bson:"type" json:"type"`
-	Comment                  string                       `bson:"comment" json:"comment"`
-	Parameters               Parameters                   `bson:"parameters,omitempty" json:"parameters,omitempty"`
-	OldAlarmPatterns         oldpattern.AlarmPatternList  `bson:"old_alarm_patterns,omitempty" json:"old_alarm_patterns,omitempty"`
-	OldEntityPatterns        oldpattern.EntityPatternList `bson:"old_entity_patterns,omitempty" json:"old_entity_patterns,omitempty"`
-	DropScenarioIfNotMatched bool                         `bson:"drop_scenario_if_not_matched" json:"drop_scenario_if_not_matched"`
-	EmitTrigger              bool                         `bson:"emit_trigger" json:"emit_trigger"`
+	Type                     string     `bson:"type" json:"type"`
+	Comment                  string     `bson:"comment" json:"comment"`
+	Parameters               Parameters `bson:"parameters,omitempty" json:"parameters,omitempty"`
+	DropScenarioIfNotMatched bool       `bson:"drop_scenario_if_not_matched" json:"drop_scenario_if_not_matched"`
+	EmitTrigger              bool       `bson:"emit_trigger" json:"emit_trigger"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
 	savedpattern.AlarmPatternFields  `bson:",inline"`
 }
 
 func (a Action) Match(entity types.Entity, alarm types.Alarm) (bool, error) {
-	return pattern.Match(entity, alarm, a.EntityPattern, a.AlarmPattern, a.OldEntityPatterns, a.OldAlarmPatterns)
+	return pattern.Match(entity, alarm, a.EntityPattern, a.AlarmPattern)
 }
 
 type Parameters struct {

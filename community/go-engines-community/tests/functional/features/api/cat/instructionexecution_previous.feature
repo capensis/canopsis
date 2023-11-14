@@ -15,7 +15,7 @@ Feature: move a instruction execution to previous operation
             "field": "v.resource",
             "cond": {
               "type": "eq",
-              "value": "test-instruction-execution-previous-resource-1"
+              "value": "test-resource-to-instruction-execution-previous-1"
             }
           }
         ]
@@ -63,7 +63,7 @@ Feature: move a instruction execution to previous operation
     When I do POST /api/v4/cat/executions:
     """json
     {
-      "alarm": "test-instruction-execution-previous-1",
+      "alarm": "test-alarm-to-instruction-execution-previous-1",
       "instruction": "{{ .lastResponse._id }}"
     }
     """
@@ -89,14 +89,14 @@ Feature: move a instruction execution to previous operation
               "completed_at": null,
               "name": "test-instruction-execution-previous-1-step-1-operation-1",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-execution-previous-1-step-1-operation-1-description connector test-instruction-execution-previous-connector entity test-instruction-execution-previous-resource-1/test-instruction-execution-previous-component"
+              "description": "test-instruction-execution-previous-1-step-1-operation-1-description connector test-connector-default entity test-resource-to-instruction-execution-previous-1/test-component-default"
             },
             {
               "started_at": null,
               "completed_at": null,
               "name": "test-instruction-execution-previous-1-step-1-operation-2",
               "time_to_complete": {"value": 3, "unit":"s"},
-              "description": "test-instruction-execution-previous-1-step-1-operation-2-description connector test-instruction-execution-previous-connector entity test-instruction-execution-previous-resource-1/test-instruction-execution-previous-component",
+              "description": "test-instruction-execution-previous-1-step-1-operation-2-description connector test-connector-default entity test-resource-to-instruction-execution-previous-1/test-component-default",
               "jobs": []
             }
           ],
@@ -113,7 +113,7 @@ Feature: move a instruction execution to previous operation
               "completed_at": null,
               "name": "test-instruction-execution-previous-1-step-2-operation-1",
               "time_to_complete": {"value": 6, "unit":"s"},
-              "description": "test-instruction-execution-previous-1-step-2-operation-1-description connector test-instruction-execution-previous-connector entity test-instruction-execution-previous-resource-1/test-instruction-execution-previous-component",
+              "description": "test-instruction-execution-previous-1-step-2-operation-1-description connector test-connector-default entity test-resource-to-instruction-execution-previous-1/test-component-default",
               "jobs": []
             }
           ],
@@ -139,7 +139,7 @@ Feature: move a instruction execution to previous operation
             "field": "v.resource",
             "cond": {
               "type": "eq",
-              "value": "test-instruction-execution-previous-resource-2"
+              "value": "test-resource-to-instruction-execution-previous-2"
             }
           }
         ]
@@ -187,7 +187,7 @@ Feature: move a instruction execution to previous operation
     When I do POST /api/v4/cat/executions:
     """json
     {
-      "alarm": "test-instruction-execution-previous-2",
+      "alarm": "test-alarm-to-instruction-execution-previous-2",
       "instruction": "{{ .lastResponse._id }}"
     }
     """
@@ -208,7 +208,7 @@ Feature: move a instruction execution to previous operation
             "field": "v.resource",
             "cond": {
               "type": "eq",
-              "value": "test-instruction-execution-previous-resource-3"
+              "value": "test-resource-to-instruction-execution-previous-3"
             }
           }
         ]
@@ -256,7 +256,7 @@ Feature: move a instruction execution to previous operation
     When I do POST /api/v4/cat/executions:
     """json
     {
-      "alarm": "test-instruction-execution-previous-3",
+      "alarm": "test-alarm-to-instruction-execution-previous-3",
       "instruction": "{{ .lastResponse._id }}"
     }
     """
@@ -283,13 +283,13 @@ Feature: move a instruction execution to previous operation
             {
               "name": "test-instruction-execution-previous-3-step-1-operation-1",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-execution-previous-3-step-1-operation-1-description connector test-instruction-execution-previous-connector entity test-instruction-execution-previous-resource-3/test-instruction-execution-previous-component"
+              "description": "test-instruction-execution-previous-3-step-1-operation-1-description connector test-connector-default entity test-resource-to-instruction-execution-previous-3/test-component-default"
             },
             {
               "completed_at": null,
               "name": "test-instruction-execution-previous-3-step-1-operation-2",
               "time_to_complete": {"value": 3, "unit":"s"},
-              "description": "test-instruction-execution-previous-3-step-1-operation-2-description connector test-instruction-execution-previous-connector entity test-instruction-execution-previous-resource-3/test-instruction-execution-previous-component",
+              "description": "test-instruction-execution-previous-3-step-1-operation-2-description connector test-connector-default entity test-resource-to-instruction-execution-previous-3/test-component-default",
               "jobs": []
             }
           ],
@@ -306,7 +306,7 @@ Feature: move a instruction execution to previous operation
               "completed_at": null,
               "name": "test-instruction-execution-previous-3-step-2-operation-1",
               "time_to_complete": {"value": 6, "unit":"s"},
-              "description": "test-instruction-execution-previous-3-step-2-operation-1-description connector test-instruction-execution-previous-connector entity test-instruction-execution-previous-resource-3/test-instruction-execution-previous-component",
+              "description": "test-instruction-execution-previous-3-step-2-operation-1-description connector test-connector-default entity test-resource-to-instruction-execution-previous-3/test-component-default",
               "jobs": []
             }
           ],
@@ -336,7 +336,7 @@ Feature: move a instruction execution to previous operation
             "field": "v.resource",
             "cond": {
               "type": "eq",
-              "value": "test-instruction-execution-previous-resource-4"
+              "value": "test-resource-to-instruction-execution-previous-4"
             }
           }
         ]
@@ -384,7 +384,7 @@ Feature: move a instruction execution to previous operation
     When I do POST /api/v4/cat/executions:
     """json
     {
-      "alarm": "test-instruction-execution-previous-4",
+      "alarm": "test-alarm-to-instruction-execution-previous-4",
       "instruction": "{{ .lastResponse._id }}"
     }
     """

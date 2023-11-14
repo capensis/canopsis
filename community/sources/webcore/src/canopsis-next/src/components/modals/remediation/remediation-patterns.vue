@@ -33,7 +33,6 @@ import {
   ALARM_PATTERN_FIELDS,
   ENTITY_PATTERN_FIELDS,
   MODALS,
-  OLD_PATTERNS_FIELDS,
   PATTERNS_FIELDS,
   QUICK_RANGES,
   VALIDATION_DELAY,
@@ -72,7 +71,6 @@ export default {
         ...filterPatternsToForm(
           instruction,
           [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity],
-          [OLD_PATTERNS_FIELDS.alarm, OLD_PATTERNS_FIELDS.entity],
         ),
         active_on_pbh: instruction?.active_on_pbh ?? [],
         disabled_on_pbh: instruction?.disabled_on_pbh ?? [],

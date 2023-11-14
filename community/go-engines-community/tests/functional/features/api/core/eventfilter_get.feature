@@ -7,7 +7,7 @@ Feature: Get an eventfilter
     When I do GET /api/v4/eventfilter/rules/test-eventfilter-to-get-1
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-eventfilter-to-get-1",
       "author": {
@@ -16,7 +16,6 @@ Feature: Get an eventfilter
       },
       "description": "how it should have ended.",
       "type": "enrichment",
-      "old_patterns": null,
       "event_pattern": [
         [
           {
@@ -53,7 +52,7 @@ Feature: Get an eventfilter
     When I do GET /api/v4/eventfilter/rules?search=test-eventfilter-to-get
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -64,7 +63,6 @@ Feature: Get an eventfilter
           },
           "description": "how it should have ended.",
           "type": "enrichment",
-          "old_patterns": null,
           "event_pattern": [
             [
               {
@@ -102,7 +100,6 @@ Feature: Get an eventfilter
           },
           "description": "drop filter",
           "type": "drop",
-          "old_patterns": null,
           "event_pattern": [
             [
               {
@@ -125,7 +122,6 @@ Feature: Get an eventfilter
           },
           "description": "break filter",
           "type": "break",
-          "old_patterns": null,
           "event_pattern": [
             [
               {
@@ -173,46 +169,8 @@ Feature: Get an eventfilter
     When I do GET /api/v4/eventfilter/rules/test-eventfilter-not-found
     Then the response code should be 404
     Then the response body should be:
-    """
+    """json
     {
       "error": "Not found"
-    }
-    """
-
-  Scenario: given search request should return an eventfilter with old patterns
-    When I am admin
-    When I do GET /api/v4/eventfilter/rules/test-eventfilter-to-backward-compatibility-to-get
-    Then the response code should be 200
-    Then the response body should contain:
-    """
-    {
-      "_id": "test-eventfilter-to-backward-compatibility-to-get",
-      "author": {
-        "_id": "root",
-        "name": "root"
-      },
-      "description": "how it should have ended.",
-      "type": "enrichment",
-      "enabled": true,
-      "config": {
-        "actions": [
-          {
-            "type": "set_entity_info_from_template",
-            "name": "customer",
-            "description": "customer",
-            "value": "test"
-          }
-        ],
-        "on_success": "pass",
-        "on_failure": "pass"
-      },
-      "event_pattern": null,
-      "old_patterns": [
-        {
-          "resource": {
-            "regex_match": "test-eventfilter-to-backward-compatibility-to-get"
-          }
-        }
-      ]
     }
     """

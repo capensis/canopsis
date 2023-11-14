@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -287,18 +288,20 @@ func (q *MongoQueryBuilder) handleFilter(r ListRequest) error {
 }
 
 func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListRequest, now types.CpsTime) error {
-	if len(r.Filters) == 0 {
-		return nil
-	}
-
-	for _, v := range r.Filters {
+	for i, id := range r.Filters {
 		filter := view.WidgetFilter{}
-		err := q.filterCollection.FindOne(ctx, bson.M{"_id": v}).Decode(&filter)
+		err := q.filterCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&filter)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return common.NewValidationError("filter", "Filter doesn't exist.")
+				return common.NewValidationError("filters."+strconv.Itoa(i), "Filter doesn't exist.")
 			}
+
 			return fmt.Errorf("cannot fetch widget filter: %w", err)
+		}
+
+		if len(filter.EntityPattern) == 0 && len(filter.PbehaviorPattern) == 0 && len(filter.AlarmPattern) == 0 ||
+			len(filter.WeatherServicePattern) > 0 {
+			return common.NewValidationError("filters."+strconv.Itoa(i), "Filter cannot be applied.")
 		}
 
 		entityPatternQuery, err := filter.EntityPattern.ToMongoQuery("")
@@ -337,17 +340,6 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListReques
 				q.computedFieldsForAdditionalMatch["alarm.v.duration"] = true
 				q.computedFields["alarm.v.duration"] = getDurationField(now)
 			}
-		}
-
-		if len(entityPatternQuery) == 0 && len(pbhPatternQuery) == 0 && len(alarmPatternQuery) == 0 &&
-			len(filter.OldMongoQuery) > 0 {
-			var query map[string]interface{}
-			err := json.Unmarshal([]byte(filter.OldMongoQuery), &query)
-			if err != nil {
-				return fmt.Errorf("cannot unmarshal old mongo query: %w", err)
-			}
-
-			q.entityMatch = append(q.entityMatch, bson.M{"$match": query})
 		}
 	}
 
@@ -577,13 +569,14 @@ func getDeletablePipeline() []bson.M {
 
 func getDependsCountPipeline() []bson.M {
 	return []bson.M{
-		{"$graphLookup": bson.M{
-			"from":             mongo.EntityMongoCollection,
-			"startWith":        "$_id",
-			"connectFromField": "_id",
-			"connectToField":   "services",
-			"as":               "depends",
-			"maxDepth":         0,
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "_id",
+			"foreignField": "services",
+			"as":           "depends",
+			"pipeline": []bson.M{
+				{"$project": bson.M{"_id": 1}},
+			},
 		}},
 		{"$addFields": bson.M{
 			"depends_count": bson.M{"$size": "$depends"},
@@ -594,13 +587,14 @@ func getDependsCountPipeline() []bson.M {
 
 func getImpactsCountPipeline() []bson.M {
 	return []bson.M{
-		{"$graphLookup": bson.M{
-			"from":             mongo.EntityMongoCollection,
-			"startWith":        "$services",
-			"connectFromField": "services",
-			"connectToField":   "_id",
-			"as":               "service_impacts",
-			"maxDepth":         0,
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "services",
+			"foreignField": "_id",
+			"as":           "service_impacts",
+			"pipeline": []bson.M{
+				{"$project": bson.M{"_id": 1}},
+			},
 		}},
 		{"$addFields": bson.M{
 			"impacts_count": bson.M{"$size": "$service_impacts"},

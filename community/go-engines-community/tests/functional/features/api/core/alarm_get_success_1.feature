@@ -21,9 +21,7 @@ Feature: Get alarms
             "impact_level": 1,
             "infos": {},
             "name": "test-resource-to-alarm-get-3",
-            "type": "resource",
-            "depends_count": 0,
-            "impacts_count": 0
+            "type": "resource"
           },
           "impact_state": 0,
           "infos": {},
@@ -87,9 +85,7 @@ Feature: Get alarms
             "impact_level": 1,
             "infos": {},
             "name": "test-resource-to-alarm-get-2",
-            "type": "resource",
-            "depends_count": 0,
-            "impacts_count": 0
+            "type": "resource"
           },
           "impact_state": 1,
           "infos": {},
@@ -182,9 +178,7 @@ Feature: Get alarms
               }
             },
             "name": "test-resource-to-alarm-get-1",
-            "type": "resource",
-            "depends_count": 0,
-            "impacts_count": 0
+            "type": "resource"
           },
           "impact_state": 3,
           "infos": {},
@@ -442,24 +436,6 @@ Feature: Get alarms
   Scenario: given filter get request should return alarms
     When I am admin
     When I do GET /api/v4/alarms?filters[]=test-widgetfilter-to-alarm-get-1
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "data": [
-        {
-          "_id": "test-alarm-to-get-2"
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
-      }
-    }
-    """
-    When I do GET /api/v4/alarms?filters[]=test-widgetfilter-to-alarm-get-2
     Then the response code should be 200
     Then the response body should contain:
     """json

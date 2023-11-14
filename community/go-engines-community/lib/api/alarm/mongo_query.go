@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"reflect"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
@@ -142,7 +143,6 @@ func (q *MongoQueryBuilder) clear(now types.CpsTime, userID string) {
 	q.lookups = []lookupWithKey{
 		{key: "entity", pipeline: getEntityLookup()},
 		{key: "entity.category", pipeline: getEntityCategoryLookup()},
-		{key: "entity.impacts_counts", pipeline: getImpactsCountPipeline()},
 		{key: "pbehavior", pipeline: getPbehaviorLookup(q.authorProvider)},
 		{key: "pbehavior.type", pipeline: getPbehaviorTypeLookup()},
 		{key: "v.pbehavior_info.icon_name", pipeline: getPbehaviorInfoTypeLookup()},
@@ -175,6 +175,7 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	if err != nil {
 		return nil, err
 	}
+	q.handleDependencies(r.WithDependencies)
 
 	return q.createPaginationAggregationPipeline(r.Query), nil
 }
@@ -203,6 +204,7 @@ func (q *MongoQueryBuilder) CreateGetAggregationPipeline(
 	onlyParents bool,
 ) ([]bson.M, error) {
 	q.clear(now, userID)
+	q.handleDependencies(true)
 
 	q.alarmMatch = append(q.alarmMatch,
 		bson.M{"$match": match},
@@ -250,6 +252,7 @@ func (q *MongoQueryBuilder) CreateAggregationPipelineByMatch(
 	if err != nil {
 		return nil, err
 	}
+	q.handleDependencies(true)
 
 	return q.createPaginationAggregationPipeline(paginationQuery), nil
 }
@@ -264,6 +267,7 @@ func (q *MongoQueryBuilder) CreateChildrenAggregationPipeline(
 	now types.CpsTime,
 ) ([]bson.M, error) {
 	q.clear(now, userID)
+	q.handleDependencies(true)
 
 	match := bson.M{
 		"v.parents": parentId,
@@ -410,6 +414,7 @@ func (q *MongoQueryBuilder) CreateOnlyListAggregationPipeline(
 	if err != nil {
 		return nil, err
 	}
+	q.handleDependencies(r.WithDependencies)
 
 	beforeLimit, afterLimit := q.createAggregationPipeline()
 	pipeline := append(beforeLimit, q.sort)
@@ -550,18 +555,20 @@ func (q *MongoQueryBuilder) handleFilter(ctx context.Context, r FilterRequest, u
 }
 
 func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r FilterRequest) error {
-	if len(r.Filters) == 0 {
-		return nil
-	}
-
-	for _, v := range r.Filters {
+	for i, id := range r.Filters {
 		filter := view.WidgetFilter{}
-		err := q.filterCollection.FindOne(ctx, bson.M{"_id": v}).Decode(&filter)
+		err := q.filterCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&filter)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return common.NewValidationError("filter", "Filter doesn't exist.")
+				return common.NewValidationError("filters."+strconv.Itoa(i), "Filter doesn't exist.")
 			}
+
 			return fmt.Errorf("cannot fetch widget filter: %w", err)
+		}
+
+		if len(filter.AlarmPattern) == 0 && len(filter.PbehaviorPattern) == 0 && len(filter.EntityPattern) == 0 ||
+			len(filter.WeatherServicePattern) > 0 {
+			return common.NewValidationError("filters."+strconv.Itoa(i), "Filter cannot be applied.")
 		}
 
 		err = q.handleAlarmPattern(filter.AlarmPattern)
@@ -577,39 +584,6 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r FilterRequ
 		err = q.handleEntityPattern(filter.EntityPattern)
 		if err != nil {
 			return fmt.Errorf("invalid entity pattern in widget filter id=%q: %w", filter.ID, err)
-		}
-
-		if len(filter.AlarmPattern) == 0 && len(filter.PbehaviorPattern) == 0 && len(filter.EntityPattern) == 0 &&
-			len(filter.OldMongoQuery) > 0 {
-			var query map[string]any
-			err := json.Unmarshal([]byte(filter.OldMongoQuery), &query)
-			if err != nil {
-				return fmt.Errorf("cannot unmarshal old mongo query: %w", err)
-			}
-
-			q.computedFieldsForAlarmMatch["v.infos_array"] = true
-			q.computedFields["v.infos_array"] = bson.M{"$objectToArray": "$v.infos"}
-			resolvedQuery := q.resolveAliasesInQuery(query)
-			extraLookups := false
-
-			for _, lookup := range q.lookups {
-				if strings.Contains(filter.OldMongoQuery, lookup.key+".") {
-					extraLookups = true
-					q.lookupsForAdditionalMatch[lookup.key] = true
-				}
-			}
-
-			if extraLookups {
-				q.additionalMatch = append(q.additionalMatch, bson.M{"$match": resolvedQuery})
-			} else {
-				q.alarmMatch = append(q.alarmMatch, bson.M{"$match": resolvedQuery})
-			}
-
-			for field := range q.computedFields {
-				if strings.Contains(filter.OldMongoQuery, field) {
-					q.computedFieldsForAlarmMatch[field] = true
-				}
-			}
 		}
 	}
 
@@ -1209,6 +1183,12 @@ func (q *MongoQueryBuilder) resolveAlias(v string) string {
 	return prefix + v
 }
 
+func (q *MongoQueryBuilder) handleDependencies(withDependencies bool) {
+	if withDependencies {
+		q.lookups = append(q.lookups, lookupWithKey{key: "entity.impacts_counts", pipeline: getImpactsCountPipeline()})
+	}
+}
+
 func getEntityLookup() []bson.M {
 	return []bson.M{
 		{"$lookup": bson.M{
@@ -1450,12 +1430,12 @@ func getIsMetaAlarmField() bson.M {
 }
 
 func getInstructionQuery(instruction Instruction) (bson.M, error) {
-	alarmPatternQuery, err := pattern.AlarmPatternToMongoQuery("", instruction.AlarmPattern, instruction.OldAlarmPatterns)
+	alarmPatternQuery, err := instruction.AlarmPattern.ToMongoQuery("")
 	if err != nil {
 		return nil, fmt.Errorf("invalid alarm pattern in instruction id=%q: %w", instruction.ID, err)
 	}
 
-	entityPatternQuery, err := pattern.EntityPatternToMongoQuery("entity", instruction.EntityPattern, instruction.OldEntityPatterns)
+	entityPatternQuery, err := instruction.EntityPattern.ToMongoQuery("entity")
 	if err != nil {
 		return nil, fmt.Errorf("invalid entity pattern in instruction id=%q: %w", instruction.ID, err)
 	}

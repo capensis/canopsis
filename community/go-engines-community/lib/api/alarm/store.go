@@ -393,6 +393,10 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userId string)
 		{"$unwind": "$entity"},
 	}
 
+	if r.WithDependencies {
+		pipeline = append(pipeline, getImpactsCountPipeline()...)
+	}
+
 	if r.Steps != nil {
 		stepMatch := bson.M{}
 		if r.Steps.Type != "" {
