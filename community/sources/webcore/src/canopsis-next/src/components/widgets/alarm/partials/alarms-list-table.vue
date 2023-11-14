@@ -696,7 +696,7 @@ export default {
         background-color: unset !important;
 
         &:after {
-          background-color: var(--v-table-hover-row-color-base, var(--v-table-row-color-base)) !important;
+          background-color: var(--v-table-hover-row-color-base, var(--v-table-row-color-base));
         }
       }
     }
@@ -744,11 +744,17 @@ export default {
   }
 
   &__selecting {
-    & > .v-table__overflow > table > tbody > tr.alarm-list-row:after {
-      opacity: 0.3;
-      background-color: rgb(200, 220, 200) !important;
-      pointer-events: auto;
-      z-index: 1;
+    & > .v-table__overflow > table > tbody > tr.alarm-list-row {
+      &:after {
+        opacity: 0.3;
+        background-color: rgb(200, 220, 200) !important;
+        pointer-events: auto;
+        z-index: 1;
+      }
+
+      &:hover:after {
+        background-color: rgb(140, 160, 140) !important;
+      }
     }
 
     &--text-unselectable {
