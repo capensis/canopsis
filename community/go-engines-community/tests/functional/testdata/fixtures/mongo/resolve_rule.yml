@@ -130,64 +130,6 @@ resolve_rule:
     <<: *resolve_rule
     _id: test-resolve-rule-to-update-10
 
-  resolve_rule_backward_compatibility_to_update_1:
-    <<: *resolve_rule
-    _id: test-resolve-rule-backward-compatibility-to-update-1
-    created: 1619083733
-    entity_pattern:
-    alarm_pattern:
-    old_alarm_patterns:
-      - v:
-          component: test-resolve-rule-backward-compatibility-to-update-1
-    old_entity_patterns:
-      - name:
-          regex_match: test-resolve-rule-backward-compatibility-to-update-1
-
-  resolve_rule_backward_compatibility_to_update_2:
-    <<: *resolve_rule
-    _id: test-resolve-rule-backward-compatibility-to-update-2
-    entity_pattern:
-    alarm_pattern:
-    old_entity_patterns:
-      - name:
-          regex_match: test-resolve-rule-backward-compatibility-to-update-2
-
-  resolve_rule_backward_compatibility_to_update_3:
-    <<: *resolve_rule
-    _id: test-resolve-rule-backward-compatibility-to-update-3
-    entity_pattern:
-    alarm_pattern:
-    old_alarm_patterns:
-      - v:
-          component: test-resolve-rule-backward-compatibility-to-update-3
-
-  resolve_rule_backward_compatibility_to_update_4:
-    <<: *resolve_rule
-    _id: test-resolve-rule-backward-compatibility-to-update-4
-    created: 1619083733
-    entity_pattern:
-    alarm_pattern:
-    old_alarm_patterns:
-      - v:
-          component: test-resolve-rule-backward-compatibility-to-update-4
-    old_entity_patterns:
-      - name:
-          regex_match: test-resolve-rule-backward-compatibility-to-update-4
-
-  resolve_rule_backward_compatibility_1:
-    <<: *resolve_rule
-    _id: test-resolve-rule-backward-compatibility-1
-    entity_pattern:
-    alarm_pattern:
-    old_alarm_patterns:
-      - v:
-          component: test-resolve-rule-backward-compatibility-1-component
-    old_entity_patterns:
-      - name: test-resolve-rule-backward-compatibility-1-resource
-    duration:
-      unit: s
-      value: 2
-
   # Should be in the end not to overlap other rules.
   resolve_rule_default:
     <<: *resolve_rule

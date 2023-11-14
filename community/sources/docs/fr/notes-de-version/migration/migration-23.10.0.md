@@ -387,7 +387,6 @@ Enfin, il vous reste à mettre à jour et à démarrer tous les composants appli
     canopsis-pro-correlation-1            "/bin/sh -c /${CMD}"     correlation            running             
     canopsis-pro-dynamic-infos-1          "/bin/sh -c /${CMD}"     dynamic-infos          running             
     canopsis-pro-fifo-1                   "/bin/sh -c /${CMD}"     fifo                   running             
-    canopsis-pro-migrate-metrics-meta-1   "/bin/true /migrate-…"   migrate-metrics-meta   exited (0)          
     canopsis-pro-mongodb-1                "docker-entrypoint.s…"   mongodb                running (healthy)   0.0.0.0:27027->27017/tcp, :::27027->27017/tcp
     canopsis-pro-nginx-1                  "/bin/sh -c /entrypo…"   nginx                  running             80/tcp, 0.0.0.0:80->8080/tcp, :::80->8080/tcp, 0.0.0.0:443->8443/tcp, :::443->8443/tcp
     canopsis-pro-pbehavior-1              "/bin/sh -c /${CMD}"     pbehavior              running             
@@ -395,7 +394,6 @@ Enfin, il vous reste à mettre à jour et à démarrer tous les composants appli
     canopsis-pro-reconfigure-1            "/canopsis-reconfigu…"   reconfigure            exited (0)          
     canopsis-pro-redis-1                  "docker-entrypoint.s…"   redis                  running (healthy)   0.0.0.0:6379->6379/tcp, :::6379->6379/tcp
     canopsis-pro-remediation-1            "/bin/sh -c /${CMD}"     remediation            running             
-    canopsis-pro-service-1                "/engine-service -pu…"   service                running             
     canopsis-pro-timescaledb-1            "docker-entrypoint.s…"   timescaledb            running (healthy)   0.0.0.0:5432->5432/tcp, :::5432->5432/tcp
     ```
 

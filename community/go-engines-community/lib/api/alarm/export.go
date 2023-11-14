@@ -265,8 +265,7 @@ func (c *mongoCursor) matchInstructions(model types.AlarmWithEntity) []string {
 	names := make([]string, 0)
 	alarmPbhType := model.Alarm.Value.PbehaviorInfo.TypeID
 	for _, instruction := range c.instructions {
-		match, err := pattern.Match(model.Entity, model.Alarm, instruction.EntityPattern, instruction.AlarmPattern,
-			instruction.OldEntityPatterns, instruction.OldAlarmPatterns)
+		match, err := pattern.Match(model.Entity, model.Alarm, instruction.EntityPattern, instruction.AlarmPattern)
 		if err != nil || !match {
 			continue
 		}

@@ -4,7 +4,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -31,16 +30,14 @@ type UpdateRequest struct {
 }
 
 type Response struct {
-	ID                string                       `bson:"_id" json:"_id"`
-	Name              string                       `bson:"name" json:"name"`
-	Description       string                       `bson:"description" json:"description"`
-	Duration          types.DurationWithUnit       `bson:"duration" json:"duration"`
-	OldAlarmPatterns  oldpattern.AlarmPatternList  `bson:"old_alarm_patterns" json:"old_alarm_patterns"`
-	OldEntityPatterns oldpattern.EntityPatternList `bson:"old_entity_patterns" json:"old_entity_patterns"`
-	Priority          int64                        `bson:"priority" json:"priority"`
-	Author            *author.Author               `bson:"author" json:"author"`
-	Created           types.CpsTime                `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated           types.CpsTime                `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	ID          string                 `bson:"_id" json:"_id"`
+	Name        string                 `bson:"name" json:"name"`
+	Description string                 `bson:"description" json:"description"`
+	Duration    types.DurationWithUnit `bson:"duration" json:"duration"`
+	Priority    int64                  `bson:"priority" json:"priority"`
+	Author      *author.Author         `bson:"author" json:"author"`
+	Created     types.CpsTime          `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Updated     types.CpsTime          `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
 	savedpattern.AlarmPatternFields  `bson:",inline"`

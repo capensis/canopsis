@@ -286,32 +286,6 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				in.Delim(']')
 			}
-		case "q":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				in.Delim('{')
-				if !in.IsDelim('}') {
-					out.OldMongoQuery = make(map[string]interface{})
-				} else {
-					out.OldMongoQuery = nil
-				}
-				for !in.IsDelim('}') {
-					key := string(in.String())
-					in.WantColon()
-					var v6 interface{}
-					if m, ok := v6.(easyjson.Unmarshaler); ok {
-						m.UnmarshalEasyJSON(in)
-					} else if m, ok := v6.(json.Unmarshaler); ok {
-						_ = m.UnmarshalJSON(in.Raw())
-					} else {
-						v6 = in.Interface()
-					}
-					(out.OldMongoQuery)[key] = v6
-					in.WantComma()
-				}
-				in.Delim('}')
-			}
 		default:
 			in.SkipRecursive()
 		}
@@ -353,11 +327,11 @@ func easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v7, v8 := range in.Types {
-				if v7 > 0 {
+			for v6, v7 := range in.Types {
+				if v6 > 0 {
 					out.RawByte(',')
 				}
-				easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPbehavior3(out, v8)
+				easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPbehavior3(out, v7)
 			}
 			out.RawByte(']')
 		}
@@ -372,49 +346,24 @@ func easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.RawString(prefix)
 		{
 			out.RawByte('[')
-			for v9, v10 := range in.Pattern {
-				if v9 > 0 {
+			for v8, v9 := range in.Pattern {
+				if v8 > 0 {
 					out.RawByte(',')
 				}
-				if v10 == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+				if v9 == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
 					out.RawString("null")
 				} else {
 					out.RawByte('[')
-					for v11, v12 := range v10 {
-						if v11 > 0 {
+					for v10, v11 := range v9 {
+						if v10 > 0 {
 							out.RawByte(',')
 						}
-						easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPattern(out, v12)
+						easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPattern(out, v11)
 					}
 					out.RawByte(']')
 				}
 			}
 			out.RawByte(']')
-		}
-	}
-	if len(in.OldMongoQuery) != 0 {
-		const prefix string = ",\"q\":"
-		out.RawString(prefix)
-		{
-			out.RawByte('{')
-			v13First := true
-			for v13Name, v13Value := range in.OldMongoQuery {
-				if v13First {
-					v13First = false
-				} else {
-					out.RawByte(',')
-				}
-				out.String(string(v13Name))
-				out.RawByte(':')
-				if m, ok := v13Value.(easyjson.Marshaler); ok {
-					m.MarshalEasyJSON(out)
-				} else if m, ok := v13Value.(json.Marshaler); ok {
-					out.Raw(m.MarshalJSON())
-				} else {
-					out.Raw(json.Marshal(v13Value))
-				}
-			}
-			out.RawByte('}')
 		}
 	}
 	out.RawByte('}')

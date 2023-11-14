@@ -36,7 +36,7 @@ func (p *actionProcessor) Process(
 	ruleID string,
 	action ParsedAction,
 	event types.Event,
-	regexMatchWrapper RegexMatchWrapper,
+	regexMatch RegexMatch,
 	externalData map[string]any,
 ) (types.Event, error) {
 	switch action.Type {
@@ -58,10 +58,10 @@ func (p *actionProcessor) Process(
 		}
 
 		tplData := Template{
-			Event:             event,
-			RegexMatchWrapper: regexMatchWrapper,
-			ExternalData:      externalData,
-		}.GetTemplate()
+			Event:        event,
+			RegexMatch:   regexMatch,
+			ExternalData: externalData,
+		}
 		value, err := ExecuteParsedTemplate(ruleID, "Actions."+strconv.Itoa(action.Index)+".Value",
 			action.ParsedValue, tplData, event, p.failureService,
 			p.templateExecutor)
@@ -97,10 +97,10 @@ func (p *actionProcessor) Process(
 		}
 
 		tplData := Template{
-			Event:             event,
-			RegexMatchWrapper: regexMatchWrapper,
-			ExternalData:      externalData,
-		}.GetTemplate()
+			Event:        event,
+			RegexMatch:   regexMatch,
+			ExternalData: externalData,
+		}
 		value, err := ExecuteParsedTemplate(ruleID, "Actions."+strconv.Itoa(action.Index)+".Value",
 			action.ParsedValue, tplData, event, p.failureService,
 			p.templateExecutor)
@@ -121,13 +121,13 @@ func (p *actionProcessor) Process(
 		}
 
 		t := Template{
-			Event:             event,
-			RegexMatchWrapper: regexMatchWrapper,
-			ExternalData:      externalData,
+			Event:        event,
+			RegexMatch:   regexMatch,
+			ExternalData: externalData,
 		}
 
 		value, err := utils.GetField(
-			t.GetTemplate(),
+			t,
 			strValue,
 		)
 		if err != nil {
@@ -156,13 +156,13 @@ func (p *actionProcessor) Process(
 		}
 
 		t := Template{
-			Event:             event,
-			RegexMatchWrapper: regexMatchWrapper,
-			ExternalData:      externalData,
+			Event:        event,
+			RegexMatch:   regexMatch,
+			ExternalData: externalData,
 		}
 
 		value, err := utils.GetField(
-			t.GetTemplate(),
+			t,
 			strValue,
 		)
 		if err != nil {

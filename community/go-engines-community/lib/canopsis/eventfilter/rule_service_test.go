@@ -36,14 +36,14 @@ func TestProcessEventSuccess(t *testing.T) {
 
 	applicator1 := mock_eventfilter.NewMockRuleApplicator(ctrl)
 	applicator1.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event types.Event, _ eventfilter.RegexMatchWrapper) (string, types.Event, error) {
+		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event types.Event, _ eventfilter.RegexMatch) (string, types.Event, error) {
 			event.Resource = "apply 1"
 
 			return eventfilter.OutcomePass, event, nil
 		})
 	applicator2 := mock_eventfilter.NewMockRuleApplicator(ctrl)
 	applicator2.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event types.Event, _ eventfilter.RegexMatchWrapper) (string, types.Event, error) {
+		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event types.Event, _ eventfilter.RegexMatch) (string, types.Event, error) {
 			event.Component = "apply 2"
 
 			return eventfilter.OutcomePass, event, nil
@@ -107,14 +107,14 @@ func TestProcessEventBreakOutcome(t *testing.T) {
 
 	applicator1 := mock_eventfilter.NewMockRuleApplicator(ctrl)
 	applicator1.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event types.Event, _ eventfilter.RegexMatchWrapper) (string, types.Event, error) {
+		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event types.Event, _ eventfilter.RegexMatch) (string, types.Event, error) {
 			event.Resource = "apply 1"
 
 			return eventfilter.OutcomeBreak, event, nil
 		})
 	applicator2 := mock_eventfilter.NewMockRuleApplicator(ctrl)
 	applicator2.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event types.Event, _ eventfilter.RegexMatchWrapper) (string, types.Event, error) {
+		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event types.Event, _ eventfilter.RegexMatch) (string, types.Event, error) {
 			event.Component = "apply 2"
 
 			return eventfilter.OutcomePass, event, nil
@@ -177,14 +177,14 @@ func TestProcessEventDropOutcome(t *testing.T) {
 
 	applicator1 := mock_eventfilter.NewMockRuleApplicator(ctrl)
 	applicator1.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event types.Event, _ eventfilter.RegexMatchWrapper) (string, types.Event, error) {
+		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event types.Event, _ eventfilter.RegexMatch) (string, types.Event, error) {
 			event.Resource = "apply 1"
 
 			return eventfilter.OutcomeDrop, event, nil
 		})
 	applicator2 := mock_eventfilter.NewMockRuleApplicator(ctrl)
 	applicator2.EXPECT().Apply(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event types.Event, _ eventfilter.RegexMatchWrapper) (string, types.Event, error) {
+		DoAndReturn(func(_ context.Context, _ eventfilter.ParsedRule, event types.Event, _ eventfilter.RegexMatch) (string, types.Event, error) {
 			event.Component = "apply 2"
 
 			return eventfilter.OutcomePass, event, nil

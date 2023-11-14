@@ -214,57 +214,6 @@ eventfilter:
     start: 1591164001
     stop: 1591166001
 
-  eventfilter_backward_compatibility_1:
-    <<: *eventfilter
-    _id: test-eventfilter-to-backward-compatibility-1
-    config:
-      actions:
-        - name: customer
-          description: customer
-          type: set_entity_info_from_template
-          value: '{{ .RegexMatch.Resource.SI_CMDB }}'
-        - name: manager
-          description: manager
-          type: set_entity_info_from_template
-          value: '{{ .RegexMatch.Resource.SI_CMDB }}'
-      on_failure: pass
-      on_success: pass
-    entity_pattern: [ ]
-    event_pattern: [ ]
-    old_patterns:
-      - resource:
-          regex_match: 'CMDD:(?P<SI_CMDB>.*?)($|,)'
-    type: enrichment
-
-  eventfilter_backward_compatibility_to_get:
-    _id: test-eventfilter-to-backward-compatibility-to-get
-    author: root
-    config:
-      actions:
-        - name: customer
-          description: customer
-          type: set_entity_info_from_template
-          value: 'test'
-      on_failure: pass
-      on_success: pass
-    created: 1608284568
-    description: how it should have ended.
-    enabled: true
-    old_patterns:
-      - resource:
-          regex_match: 'test-eventfilter-to-backward-compatibility-to-get'
-    priority: 0
-    type: enrichment
-    updated: 1608285370
-
-  eventfilter_backward_compatibility_to_update:
-    <<: *eventfilter
-    _id: test-eventfilter-to-backward-compatibility-to-update
-    old_patterns:
-      - resource:
-          regex_match: 'test-eventfilter-to-backward-compatibility-to-update'
-    type: drop
-
   eventfilter_to_test_deletable_exception:
     <<: *eventfilter
     _id: test-eventfilter-to-test-deletable-exception
@@ -339,14 +288,6 @@ eventfilter:
               type: eq
               value: 1
     event_pattern:
-  eventfilter_che_event_filters_failure_second_3_3:
-    <<: *eventfilter
-    _id: test-event-filter-che-event-filters-failure-second-3-3
-    entity_pattern:
-    event_pattern:
-    old_patterns:
-      - state:
-          regex_match: 'CMDD:(?P<SI_CMDB>.*?)($|,)'
 
   eventfilter_che_event_filters_failure_api_8:
     <<: *eventfilter

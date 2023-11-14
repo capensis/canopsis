@@ -270,28 +270,3 @@ Feature: modify event on event filter
       }
     }
     """
-    When I do GET /api/v4/eventfilter/{{ .ruleId3 }}/failures until response code is 200 and body contains:
-    """json
-    {
-      "data": [
-        {
-          "type": 0,
-          "message": "invalid old pattern",
-          "event": null,
-          "unread": true
-        },
-        {
-          "type": 0,
-          "message": "invalid old pattern",
-          "event": null,
-          "unread": true
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 2
-      }
-    }
-    """

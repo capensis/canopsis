@@ -74,35 +74,13 @@ pbehavior:
     created: 1592215337
     enabled: true
     entity_pattern:
-    old_mongo_query: |
-      {
-        "$and": [
-          {
-            "name": "test filter"
-          }
-        ]
-      }
-    name: test-pbehavior-to-get-by-name-2-name
-    reason: test-reason-to-pbh-edit
-    rrule: ""
-    tstart: 1591172881
-    color: ""
-    type_: test-type-to-pbh-edit-2
-    comments: [ ]
-    updated: 1592215337
-  pbehavior_to_get_by_name_3:
-    _id: test-pbehavior-to-get-by-name-3
-    author: root
-    created: 1592215337
-    enabled: true
-    entity_pattern:
       - - field: _id
           cond:
             type: eq
-            value: test-pbehavior-to-get-by-name-3-pattern
-    entity: test-pbehavior-to-get-by-name-3-pattern
-    origin: test-pbehavior-to-get-by-name-3-origin
-    name: test-pbehavior-to-get-by-name-3-name
+            value: test-pbehavior-to-get-by-name-2-pattern
+    entity: test-pbehavior-to-get-by-name-2-pattern
+    origin: test-pbehavior-to-get-by-name-2-origin
+    name: test-pbehavior-to-get-by-name-2-name
     reason: test-reason-to-pbh-edit
     rrule: ""
     tstart: 1591172881
@@ -139,19 +117,6 @@ pbehavior:
     _id: test-pbehavior-to-update-2
     comments: [ ]
     created: 1592215337
-  pbehavior_to_update_3:
-    <<: *pbehavior
-    _id: test-pbehavior-to-update-3
-    comments: [ ]
-    created: 1592215337
-    old_mongo_query: |
-      {
-        "$and": [
-          {
-            "name": "test filter"
-          }
-        ]
-      }
   pbehavior_to_update_4:
     <<: *pbehavior
     _id: test-pbehavior-to-update-4
@@ -240,32 +205,6 @@ pbehavior:
     type_: test-type-to-pbh-edit-1
     updated: 1592215337
 
-  pbehavior_to_get_by_entity_id_2:
-    <<: *pbehavior
-    _id: test-pbehavior-to-get-by-entity-id-2
-    entity_pattern:
-    old_mongo_query: |
-      {
-        "$and": [
-          {
-            "name": "test-resource-to-pbehavior-get-by-entity-id-2"
-          }
-        ]
-      }
-    author: root
-    comments: [ ]
-    created: 1592215337
-    enabled: true
-    exdates: [ ]
-    name: test-pbehavior-to-get-by-entity-id-2-name
-    reason: test-reason-to-pbh-edit
-    rrule: ""
-    tstart: 1591172881
-    tstop: 1591536400
-    color: "#FFFFFF"
-    type_: test-type-to-pbh-edit-1
-    updated: 1592215337
-
   pbehavior_to_get_by_type:
     <<: *pbehavior
     _id: test-pbehavior-to-get-by-type
@@ -294,19 +233,6 @@ pbehavior:
               - test-resource-to-entities-get-by-pbh-3
               - test-resource-to-entities-get-by-pbh-4
               - test-resource-to-entities-get-by-pbh-5
-
-  pbehavior_to_entities_get_2:
-    <<: *pbehavior
-    _id: test-pbehavior-to-entities-get-2
-    entity_pattern:
-    old_mongo_query: |
-      {
-        "$and": [
-          {
-            "name": "test-resource-to-entities-get-by-pbh-6"
-          }
-        ]
-      }
 
   pbehavior_to_patch_1:
     <<: *pbehavior
@@ -549,20 +475,6 @@ pbehavior:
     <<: *pbehavior
     _id: test-pbehavior-to-check-unique
     name: test-pbehavior-to-check-unique-name
-
-  pbehavior_to_pbehavior_second_4:
-    <<: *pbehavior
-    _id: test-pbehavior-second-4
-    enabled: false
-    entity_pattern:
-    old_mongo_query: |
-      {
-        "$and": [
-          {
-            "name": "test-resource-pbehavior-second-4"
-          }
-        ]
-      }
 
   pbehavior_to_calendar_get_by_entity_1:
     <<: *pbehavior

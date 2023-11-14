@@ -6,7 +6,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/exdate"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -52,8 +51,7 @@ type Response struct {
 	FailuresCount       *int64 `bson:"failures_count" json:"failures_count,omitempty"`
 	UnreadFailuresCount *int64 `bson:"unread_failures_count" json:"unread_failures_count,omitempty"`
 
-	OldPatterns                      oldpattern.EventPatternList `bson:"old_patterns,omitempty" json:"old_patterns,omitempty"`
-	EventPattern                     pattern.Event               `bson:"event_pattern" json:"event_pattern"`
+	EventPattern                     pattern.Event `bson:"event_pattern" json:"event_pattern"`
 	savedpattern.EntityPatternFields `bson:",inline"`
 }
 

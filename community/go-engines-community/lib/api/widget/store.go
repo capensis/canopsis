@@ -274,13 +274,9 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 			}
 			if doc, ok := filters[idModel.ID]; ok {
 				updateFilterIds = append(updateFilterIds, idModel.ID)
-				filterUpdate := bson.M{"$set": doc}
-				if len(doc.EntityPattern) > 0 || len(doc.AlarmPattern) > 0 || len(doc.PbehaviorPattern) > 0 {
-					filterUpdate["$unset"] = bson.M{"old_mongo_query": ""}
-				}
 				filterWriteModels = append(filterWriteModels, mongodriver.NewUpdateOneModel().
 					SetFilter(bson.M{"_id": idModel.ID}).
-					SetUpdate(filterUpdate))
+					SetUpdate(bson.M{"$set": doc}))
 				delete(filters, idModel.ID)
 			}
 		}
@@ -441,7 +437,6 @@ func (s *store) copy(ctx context.Context, widgetID string, isPrivate bool, r Cre
 	cursor, err := s.filterCollection.Find(ctx, bson.M{
 		"widget":             widgetID,
 		"is_user_preference": false,
-		"old_mongo_query":    nil, //do not copy old filters
 	}, options.Find().SetProjection(bson.M{"author": 0}))
 	if err != nil {
 		return nil, err
