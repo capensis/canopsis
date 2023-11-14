@@ -106,7 +106,7 @@ export default {
 </script>
 
 <style lang="scss">
-.alarms-column-cell__show-info-btn {
+.alarms-column-cell {
   &__show-info-btn {
     flex-shrink: 0 !important;
 
