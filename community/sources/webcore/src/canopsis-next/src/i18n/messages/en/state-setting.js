@@ -13,6 +13,7 @@ export default {
   computeMethod: 'State compute method',
   addImpactingEntityPattern: 'Impacting entity pattern',
   conditionsError: 'Please add at least one condition',
+  entityThresholdSummary: 'A targeted entity state is {state} when the {type} of impacting entities of the {impactingEntitiesState} state is {condition} {value}.',
   steps: {
     basics: 'Basics',
     rulePatterns: 'Define target entities',
@@ -23,13 +24,15 @@ export default {
       label: 'State is inherited from impacting entities',
       tooltip: 'State is defined by the one or several impacting resources.\n'
           + 'When several resources are defined, the worst state of them is taken.',
+      stepTitle: 'The target entity state is inherited from one or several impacting resources. When several resources fit the pattern, the worst state is taken.',
     },
     [STATE_SETTING_METHODS.dependencies]: {
       label: 'State is defined by a share or number of impacting entities of a specific state',
       tooltip: 'Entity states can be overridden with custom rule defined by number or share of impacting entities of specific states.',
+      stepTitle: 'The target entity states can be overridden by conditions based on a number or share of impacting entities of a specific states.',
     },
   },
-  calculationMethods: {
+  thresholdMethods: {
     [STATE_SETTING_THRESHOLDS_METHODS.share]: 'Share',
     [STATE_SETTING_THRESHOLDS_METHODS.number]: 'Number',
   },

@@ -57,6 +57,10 @@ export default {
           options: { disabled: true },
         },
         {
+          value: ENTITY_PATTERN_FIELDS.connector,
+          options: { disabled: true },
+        },
+        {
           value: ENTITY_PATTERN_FIELDS.componentInfos,
           options: { disabled: true },
         },

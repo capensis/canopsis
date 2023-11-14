@@ -40,10 +40,6 @@ export default {
     entityAttributes() {
       return [
         {
-          value: ENTITY_PATTERN_FIELDS.type,
-          options: { disabled: true },
-        },
-        {
           value: ENTITY_PATTERN_FIELDS.connector,
           options: { disabled: true },
         },
