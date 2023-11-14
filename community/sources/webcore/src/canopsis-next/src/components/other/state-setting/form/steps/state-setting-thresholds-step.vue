@@ -1,11 +1,12 @@
 <template lang="pug">
-  v-layout(column)
+  v-layout.state-setting-thresholds-step(column)
     state-setting-threshold-field(
       v-for="key in sortedThresholdsKeys",
       v-field="thresholds[key]",
       :key="key",
       :label="$t(`stateSetting.states.${key}`)",
       :name="`${name}.${key}`",
+      :state="key",
       @input="errors.remove(name)"
     )
     c-alert(
@@ -56,3 +57,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.state-setting-thresholds-step {
+  gap: 16px;
+}
+</style>
