@@ -160,9 +160,7 @@ Feature: Get alarms
       "data": [
         {
           "entity": {
-            "_id": "test-resource-to-alarm-service-get-1-1/test-component-to-alarm-service-get-1",
-            "depends_count": 0,
-            "impacts_count": 1
+            "_id": "test-resource-to-alarm-service-get-1-1/test-component-to-alarm-service-get-1"
           },
           "v": {
             "connector": "test-connector-to-alarm-service-get-1",
@@ -173,9 +171,7 @@ Feature: Get alarms
         },
         {
           "entity": {
-            "_id": "test-resource-to-alarm-service-get-1-2/test-component-to-alarm-service-get-1",
-            "depends_count": 0,
-            "impacts_count": 1
+            "_id": "test-resource-to-alarm-service-get-1-2/test-component-to-alarm-service-get-1"
           },
           "v": {
             "connector": "test-connector-to-alarm-service-get-1",
@@ -186,9 +182,7 @@ Feature: Get alarms
         },
         {
           "entity": {
-            "_id": "test-resource-to-alarm-service-get-1-3/test-component-to-alarm-service-get-1",
-            "depends_count": 0,
-            "impacts_count": 1
+            "_id": "test-resource-to-alarm-service-get-1-3/test-component-to-alarm-service-get-1"
           },
           "v": {
             "connector": "test-connector-to-alarm-service-get-1",
@@ -206,6 +200,68 @@ Feature: Get alarms
       }
     }
     """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        },
+        "with_dependencies": true
+      },
+      {
+        "_id": "{{ (index .lastResponse.data 1)._id }}",
+        "with_dependencies": true,
+        "steps": {
+          "page": 1
+        }
+      },
+      {
+        "_id": "{{ (index .lastResponse.data 2)._id }}",
+        "with_dependencies": true,
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "data": {
+          "entity": {
+            "_id": "test-resource-to-alarm-service-get-1-1/test-component-to-alarm-service-get-1",
+            "depends_count": 0,
+            "impacts_count": 1
+          }
+        },
+        "status": 200
+      },
+      {
+        "data": {
+          "entity": {
+            "_id": "test-resource-to-alarm-service-get-1-2/test-component-to-alarm-service-get-1",
+            "depends_count": 0,
+            "impacts_count": 1
+          }
+        },
+        "status": 200
+      },
+      {
+        "data": {
+          "entity": {
+            "_id": "test-resource-to-alarm-service-get-1-3/test-component-to-alarm-service-get-1",
+            "depends_count": 0,
+            "impacts_count": 1
+          }
+        },
+        "status": 200
+      }
+    ]
+    """
     When I do GET /api/v4/entityservice-alarms/{{ .serviceId }}?with_service=true&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
@@ -214,9 +270,7 @@ Feature: Get alarms
       "data": [
         {
           "entity": {
-            "_id": "{{ .serviceId }}",
-            "depends_count": 3,
-            "impacts_count": 0
+            "_id": "{{ .serviceId }}"
           },
           "v": {
             "connector": "service",
@@ -226,9 +280,7 @@ Feature: Get alarms
         },
         {
           "entity": {
-            "_id": "test-resource-to-alarm-service-get-1-1/test-component-to-alarm-service-get-1",
-            "depends_count": 0,
-            "impacts_count": 1
+            "_id": "test-resource-to-alarm-service-get-1-1/test-component-to-alarm-service-get-1"
           },
           "v": {
             "connector": "test-connector-to-alarm-service-get-1",
@@ -239,9 +291,7 @@ Feature: Get alarms
         },
         {
           "entity": {
-            "_id": "test-resource-to-alarm-service-get-1-2/test-component-to-alarm-service-get-1",
-            "depends_count": 0,
-            "impacts_count": 1
+            "_id": "test-resource-to-alarm-service-get-1-2/test-component-to-alarm-service-get-1"
           },
           "v": {
             "connector": "test-connector-to-alarm-service-get-1",
@@ -252,9 +302,7 @@ Feature: Get alarms
         },
         {
           "entity": {
-            "_id": "test-resource-to-alarm-service-get-1-3/test-component-to-alarm-service-get-1",
-            "depends_count": 0,
-            "impacts_count": 1
+            "_id": "test-resource-to-alarm-service-get-1-3/test-component-to-alarm-service-get-1"
           },
           "v": {
             "connector": "test-connector-to-alarm-service-get-1",
@@ -271,6 +319,85 @@ Feature: Get alarms
         "total_count": 4
       }
     }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        },
+        "with_dependencies": true
+      },
+      {
+        "_id": "{{ (index .lastResponse.data 1)._id }}",
+        "with_dependencies": true,
+        "steps": {
+          "page": 1
+        }
+      },
+      {
+        "_id": "{{ (index .lastResponse.data 2)._id }}",
+        "with_dependencies": true,
+        "steps": {
+          "page": 1
+        }
+      },
+      {
+        "_id": "{{ (index .lastResponse.data 3)._id }}",
+        "with_dependencies": true,
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "data": {
+          "entity": {
+            "_id": "{{ .serviceId }}",
+            "depends_count": 3,
+            "impacts_count": 0
+          }
+        },
+        "status": 200
+      },
+      {
+        "data": {
+          "entity": {
+            "_id": "test-resource-to-alarm-service-get-1-1/test-component-to-alarm-service-get-1",
+            "depends_count": 0,
+            "impacts_count": 1
+          }
+        },
+        "status": 200
+      },
+      {
+        "data": {
+          "entity": {
+            "_id": "test-resource-to-alarm-service-get-1-2/test-component-to-alarm-service-get-1",
+            "depends_count": 0,
+            "impacts_count": 1
+          }
+        },
+        "status": 200
+      },
+      {
+        "data": {
+          "entity": {
+            "_id": "test-resource-to-alarm-service-get-1-3/test-component-to-alarm-service-get-1",
+            "depends_count": 0,
+            "impacts_count": 1
+          }
+        },
+        "status": 200
+      }
+    ]
     """
 
   @concurrent
@@ -746,9 +873,7 @@ Feature: Get alarms
       "data": [
         {
           "entity": {
-            "_id": "test-resource-to-alarm-service-get-3-1/test-component-to-alarm-service-get-3",
-            "depends_count": 0,
-            "impacts_count": 1
+            "_id": "test-resource-to-alarm-service-get-3-1/test-component-to-alarm-service-get-3"
           },
           "v": {
             "connector": "test-connector-to-alarm-service-get-3",
@@ -759,9 +884,7 @@ Feature: Get alarms
         },
         {
           "entity": {
-            "_id": "test-resource-to-alarm-service-get-3-2/test-component-to-alarm-service-get-3",
-            "depends_count": 0,
-            "impacts_count": 1
+            "_id": "test-resource-to-alarm-service-get-3-2/test-component-to-alarm-service-get-3"
           },
           "v": {
             "connector": "test-connector-to-alarm-service-get-3",
@@ -778,9 +901,7 @@ Feature: Get alarms
         },
         {
           "entity": {
-            "_id": "test-resource-to-alarm-service-get-3-3/test-component-to-alarm-service-get-3",
-            "depends_count": 0,
-            "impacts_count": 1
+            "_id": "test-resource-to-alarm-service-get-3-3/test-component-to-alarm-service-get-3"
           },
           "v": {
             "connector": "test-connector-to-alarm-service-get-3",
@@ -805,6 +926,68 @@ Feature: Get alarms
     }
     """
     Then the response key "data.0.assigned_declare_ticket_rules" should not exist
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        },
+        "with_dependencies": true
+      },
+      {
+        "_id": "{{ (index .lastResponse.data 1)._id }}",
+        "with_dependencies": true,
+        "steps": {
+          "page": 1
+        }
+      },
+      {
+        "_id": "{{ (index .lastResponse.data 2)._id }}",
+        "with_dependencies": true,
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "data": {
+          "entity": {
+            "_id": "test-resource-to-alarm-service-get-3-1/test-component-to-alarm-service-get-3",
+            "depends_count": 0,
+            "impacts_count": 1
+          }
+        },
+        "status": 200
+      },
+      {
+        "data": {
+          "entity": {
+            "_id": "test-resource-to-alarm-service-get-3-2/test-component-to-alarm-service-get-3",
+            "depends_count": 0,
+            "impacts_count": 1
+          }
+        },
+        "status": 200
+      },
+      {
+        "data": {
+          "entity": {
+            "_id": "test-resource-to-alarm-service-get-3-3/test-component-to-alarm-service-get-3",
+            "depends_count": 0,
+            "impacts_count": 1
+          }
+        },
+        "status": 200
+      }
+    ]
+    """
 
   @concurrent
   Scenario: given get dependency alarms unauth request should not allow access
