@@ -13,7 +13,7 @@ export default {
   computeMethod: 'State compute method',
   addImpactingEntityPattern: 'Impacting entity pattern',
   conditionsError: 'Please add at least one condition',
-  entityThresholdSummary: 'A targeted entity state is {state} when the {type} of impacting entities of the {impactingEntitiesState} state is {condition} {value}.',
+  entityThresholdSummary: 'A targeted entity state is {state} when the {method} of impacting entities of the {impactingEntitiesState} state is {condition} {value}.',
   steps: {
     basics: 'Basics',
     rulePatterns: 'Define target entities',
