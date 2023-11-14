@@ -526,6 +526,14 @@ export default {
 
 <style lang="scss">
 .alarms-list-table {
+  .theme--light & {
+    --alarms-list-table-border-color: rgba(0, 0, 0, 0.12);
+  }
+
+  .theme--dark & {
+    --alarms-list-table-border-color: rgba(255, 255, 255, 0.12);
+  }
+
   &__top-pagination {
     position: relative;
     min-height: 48px;
@@ -701,7 +709,7 @@ export default {
       td:first-child:after {
         content: ' ';
         position: absolute;
-        background: rgba(0, 0, 0, 0.12);
+        background: var(--alarms-list-table-border-color);
         height: 1px;
         right: 0;
         top: 0;
@@ -722,7 +730,7 @@ export default {
       &:after {
         content: ' ';
         position: absolute;
-        background: rgba(0, 0, 0, 0.12);
+        background: var(--alarms-list-table-border-color);
         height: 1px;
         right: 0;
         bottom: 0;
