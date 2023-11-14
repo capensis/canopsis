@@ -28,11 +28,13 @@
           v-field="form"
         )
       v-stepper-content(:step="steps.ENTITY_PATTERN")
+        c-alert.mb-4(type="info") {{ methodMessage }}
         state-setting-entity-pattern-step(
           ref="entityPatternForm",
           v-field="form.entity_pattern"
         )
       v-stepper-content(:step="steps.THRESHOLDS")
+        c-alert.mb-4(type="info") {{ methodMessage }}
         state-setting-inherited-entity-pattern-step(
           ref="thresholdsForm",
           v-if="isInheritedMethod",
@@ -92,6 +94,10 @@ export default {
 
     isInheritedMethod() {
       return this.form.method === STATE_SETTING_METHODS.inherited;
+    },
+
+    methodMessage() {
+      return this.$t(`stateSetting.methods.${this.form.method}.stepTitle`);
     },
   },
 

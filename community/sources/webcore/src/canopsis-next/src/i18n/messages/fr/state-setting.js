@@ -13,6 +13,7 @@ export default {
   computeMethod: 'Méthode de calcul d\'état',
   addImpactingEntityPattern: 'Modèle d\'entité impactant',
   conditionsError: 'Veuillez ajouter au moins une condition',
+  entityThresholdSummary: 'Un état d\'entité ciblé est {state} lorsque le {type} d\'entités impactantes de l\'état {impactingEntitiesState} est {condition} {value}.',
   steps: {
     basics: 'Les bases',
     rulePatterns: 'Définir les entités cibles',
@@ -23,13 +24,15 @@ export default {
       label: 'L\'état est hérité des entités impactantes',
       tooltip: 'L\'état est défini par la ou les ressources impactantes.\n'
           + 'Lorsque plusieurs ressources sont définies, le pire état d\'entre elles est retenu.',
+      stepTitle: 'L\'état de l\'entité cible est hérité d\'une ou plusieurs ressources impactantes. Lorsque plusieurs ressources correspondent au modèle, le pire état est retenu.',
     },
     [STATE_SETTING_METHODS.dependencies]: {
       label: 'L\'état est défini par une part ou un nombre d\'entités impactantes d\'un État spécifique',
       tooltip: 'Les états d\'entité peuvent être remplacés par une règle personnalisée définie par le nombre ou la part d\'entités impactantes d\'états spécifiques.',
+      stepTitle: 'Les états des entités cibles peuvent être remplacés par des conditions basées sur un nombre ou une part d\'entités impactantes d\'un état spécifique.',
     },
   },
-  calculationMethods: {
+  thresholdMethods: {
     [STATE_SETTING_THRESHOLDS_METHODS.share]: 'Partager',
     [STATE_SETTING_THRESHOLDS_METHODS.number]: 'Nombre',
   },

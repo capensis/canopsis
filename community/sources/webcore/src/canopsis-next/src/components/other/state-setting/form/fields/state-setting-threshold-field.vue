@@ -8,7 +8,7 @@
           color="primary"
         )
       v-flex(xs3)
-        state-setting-threshold-method-field(
+        state-setting-threshold-type-field(
           v-field="condition.type",
           :disabled="disabled"
         )
@@ -36,17 +36,29 @@
           :label="$t('common.value')",
           :disabled="disabled",
           :required="!disabled",
-          :name="valueName"
+          :name="valueName",
+          :min="0"
         )
+    v-expand-transition
+      span(v-if="summaryMessage")
+        strong {{ $t('common.summary') }}:
+        span.ml-2 {{ summaryMessage }}
 </template>
 
 <script>
-import { ENTITIES_STATES_KEYS, STATE_SETTING_THRESHOLDS_CONDITIONS } from '@/constants';
+import { pick } from 'lodash';
 
-import StateSettingThresholdMethodField from './state-setting-threshold-method-field.vue';
+import {
+  ENTITIES_STATES_KEYS,
+  STATE_SETTING_THRESHOLDS_CONDITIONS,
+  STATE_SETTING_THRESHOLDS_METHODS,
+} from '@/constants';
+
+import StateSettingThresholdTypeField from './state-setting-threshold-type-field.vue';
 
 export default {
-  components: { StateSettingThresholdMethodField },
+  inject: ['$validator'],
+  components: { StateSettingThresholdTypeField },
   model: {
     prop: 'condition',
     event: 'input',
@@ -57,6 +69,10 @@ export default {
       required: true,
     },
     label: {
+      type: String,
+      default: '',
+    },
+    state: {
       type: String,
       default: '',
     },
@@ -96,6 +112,25 @@ export default {
           value: condition,
           text: this.$t(`stateSetting.thresholdConditions.${condition}`),
         }));
+    },
+
+    isShareType() {
+      return this.condition.method === STATE_SETTING_THRESHOLDS_METHODS.share;
+    },
+
+    summaryMessage() {
+      const fieldsForSummary = pick(this.condition, ['cond', 'state', 'value']);
+      const hasFieldsForSummary = Object.values(fieldsForSummary).every(value => !!String(value));
+
+      return hasFieldsForSummary
+        ? this.$t('stateSetting.entityThresholdSummary', {
+          state: this.state,
+          type: this.condition.type,
+          condition: this.$t(`stateSetting.thresholdConditions.${this.condition.cond}`).toLowerCase(),
+          impactingEntitiesState: this.condition.state,
+          value: `${this.condition.value}${this.isShareType ? '%' : ''}`,
+        })
+        : '';
     },
   },
 };

@@ -10,7 +10,7 @@
     v-radio(
       v-for="method in methods",
       :key="method",
-      :label="$t(`stateSetting.calculationMethods.${method}`)",
+      :label="$t(`stateSetting.thresholdMethods.${method}`)",
       :value="method",
       color="primary"
     )
