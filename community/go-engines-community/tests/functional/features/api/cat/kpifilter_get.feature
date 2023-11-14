@@ -30,23 +30,6 @@ Feature: Get a kpi filter
               }
             ]
           ],
-          "old_entity_patterns": null,
-          "updated": 1619083733
-        },
-        {
-          "_id": "test-kpi-filter-to-get-2",
-          "author": {
-            "_id": "root",
-            "name": "root",
-            "display_name": "root John Doe admin@canopsis.net"
-          },
-          "created": 1619083733,
-          "name": "test-kpi-filter-to-get-2-name",
-          "old_entity_patterns": [
-            {
-              "name": "test-kpi-filter-to-get-2-resource"
-            }
-          ],
           "updated": 1619083733
         }
       ],
@@ -54,7 +37,7 @@ Feature: Get a kpi filter
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 2
+        "total_count": 1
       }
     }
     """
@@ -85,7 +68,6 @@ Feature: Get a kpi filter
           }
         ]
       ],
-      "old_entity_patterns": null,
       "updated": 1619083733
     }
     """

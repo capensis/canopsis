@@ -145,19 +145,6 @@ widget_filters:
     _id: test-widgetfilter-to-update-5
     widget: test-widget-to-filter-edit
 
-  filter_to_update_6:
-    <<: *filter
-    _id: test-widgetfilter-to-update-6
-    widget: test-widget-to-filter-edit
-    created: 1605263992
-    alarm_pattern:
-    entity_pattern:
-    pbehavior_pattern:
-    old_mongo_query: | 
-      {
-        "name": "test-widgetfilter-to-update-6-pattern"
-      }
-
   filter_to_delete_1:
     <<: *filter
     _id: test-widgetfilter-to-delete-1
@@ -265,24 +252,6 @@ widget_filters:
     position: 1
     is_user_preference: true
     author: nopermsuser
-
-  filter_to_get_5:
-    <<: *filter
-    _id: test-widgetfilter-to-get-5
-    title: test-widgetfilter-to-get-5-title
-    widget: test-widget-to-filter-get
-    position: 1
-    is_user_preference: false
-    created: 1605263992
-    updated: <Current().created>
-    author: root
-    alarm_pattern:
-    entity_pattern:
-    pbehavior_pattern:
-    old_mongo_query: |
-      {
-        "name": "test-widgetfilter-to-get-5-pattern"
-      }
 
   filter_to_widget_get_1:
     <<: *filter
@@ -724,19 +693,6 @@ widget_filters:
             value: test-resource-to-alarm-get-2
     pbehavior_pattern:
 
-  filter_to_alarm_get_2:
-    <<: *filter
-    _id: test-widgetfilter-to-alarm-get-2
-    widget: test-widget-to-alarm-get
-    is_user_preference: false
-    old_mongo_query: |
-      {"$and": [
-        {"entity.name": {"$eq": "test-resource-to-alarm-get-2"}}
-      ]}
-    alarm_pattern:
-    entity_pattern:
-    pbehavior_pattern:
-
   filter_to_entity_get_1:
     <<: *filter
     _id: test-widgetfilter-to-entity-get-1
@@ -762,19 +718,6 @@ widget_filters:
           cond:
             type: eq
             value: test-resource-to-entity-get-1
-    pbehavior_pattern:
-
-  filter_to_entity_get_2:
-    <<: *filter
-    _id: test-widgetfilter-to-entity-get-2
-    widget: test-widget-to-entity-get
-    is_user_preference: false
-    old_mongo_query: |
-      {"$and": [
-        {"name": {"$eq": "test-resource-to-entity-get-1"}}
-      ]}
-    alarm_pattern:
-    entity_pattern:
     pbehavior_pattern:
 
   filter_dynamic_infos_1:
@@ -869,32 +812,11 @@ widget_filters:
     widget: test-widget-to-update
     position: 1
     created: 1611229670
-    alarm_pattern:
-    entity_pattern:
-    pbehavior_pattern:
-    old_mongo_query: |
-      {
-        "name": "test-widgetfilter-to-widget-update-1-2-pattern"
-      }
 
   filter_to_widget_update_1_4:
     <<: *filter
     _id: test-widgetfilter-to-widget-update-1-4
-    widget: test-widget-to-update
-    position: 2
-    created: 1611229670
-    alarm_pattern:
-    entity_pattern:
-    pbehavior_pattern:
-    old_mongo_query: |
-      {
-        "name": "test-widgetfilter-to-widget-update-1-4-pattern"
-      }
-
-  filter_to_widget_update_1_5:
-    <<: *filter
-    _id: test-widgetfilter-to-widget-update-1-5
-    title: test-widgetfilter-to-widget-update-1-5-title
+    title: test-widgetfilter-to-widget-update-1-4-title
     widget: test-widget-to-update
     position: 0
     is_user_preference: true
@@ -904,7 +826,7 @@ widget_filters:
       - - field: v.component
           cond:
             type: eq
-            value: test-widgetfilter-to-widget-update-1-5-pattern
+            value: test-widgetfilter-to-widget-update-1-4-pattern
     entity_pattern:
     pbehavior_pattern:
 
@@ -1139,27 +1061,6 @@ widget_filters:
     widget: test-private-widget-to-update-1
     author: root
     position: 1
-    alarm_pattern:
-    entity_pattern:
-    pbehavior_pattern:
-    old_mongo_query: |
-      {
-        "name": "test-private-widgetfilter-to-private-widget-update-1-2-pattern"
-      }
-
-  private_filter_to_private-widget_update_1_4:
-    <<: *private_filter
-    _id: test-private-widgetfilter-to-private-widget-update-1-4
-    widget: test-private-widget-to-update-1
-    author: root
-    position: 2
-    alarm_pattern:
-    entity_pattern:
-    pbehavior_pattern:
-    old_mongo_query: |
-      {
-        "name": "test-private-widgetfilter-to-private-widget-update-1-4-pattern"
-      }
 
   private_widgetfilter_to_widget_copy_1:
     <<: *private_filter

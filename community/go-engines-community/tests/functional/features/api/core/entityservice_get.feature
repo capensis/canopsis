@@ -25,7 +25,6 @@ Feature: Get entity service
           }
         ]
       ],
-      "old_entity_patterns": null,
       "impact_level": 3,
       "infos": {
         "test-entityservice-to-get-1-info-1": {
@@ -72,26 +71,6 @@ Feature: Get entity service
         "lat": 64.52269494598361,
         "lng": 54.037685420804365
       }
-    }
-    """
-
-  Scenario: given get request with old pattern should return entity
-    When I am admin
-    When I do GET /api/v4/entityservices/test-entityservice-to-get-2
-    Then the response code should be 200
-    Then the response body should be:
-    """json
-    {
-      "_id": "test-entityservice-to-get-2",
-      "category": null,
-      "enabled": true,
-      "old_entity_patterns": [{"name": "test-entityservice-to-get-2-pattern"}],
-      "impact_level": 1,
-      "infos": {},
-      "name": "test-entityservice-to-get-2-name",
-      "output_template": "test-entityservice-to-get-2-output",
-      "sli_avail_state": 0,
-      "type": "service"
     }
     """
 

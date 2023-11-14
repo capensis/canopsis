@@ -115,25 +115,3 @@ Feature: Update a kpi filter
       }
     }
     """
-
-  Scenario: given update request for filter with old pattern should not update old pattern
-    When I am admin
-    Then I do PUT /api/v4/cat/kpi-filters/test-kpi-filter-to-update-2:
-    """json
-    {
-      "name": "test-kpi-filter-to-update-2-name-updated"
-    }
-    """
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "author": {
-        "_id": "root",
-        "name": "root"
-      },
-      "created": 1619083733,
-      "name": "test-kpi-filter-to-update-2-name-updated",
-      "old_entity_patterns": [{"name": "test-kpi-filter-to-update-2-resource"}]
-    }
-    """

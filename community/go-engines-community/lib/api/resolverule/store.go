@@ -143,22 +143,6 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, error) {
 	model := s.transformRequestToDocument(request.EditRequest)
 	model.Updated = types.CpsTime{Time: time.Now()}
-
-	update := bson.M{"$set": model}
-
-	unset := bson.M{}
-	if request.CorporateAlarmPattern != "" || len(request.AlarmPattern) > 0 {
-		unset["old_alarm_patterns"] = 1
-	}
-
-	if request.CorporateEntityPattern != "" || len(request.EntityPattern) > 0 {
-		unset["old_entity_patterns"] = 1
-	}
-
-	if len(unset) > 0 {
-		update["$unset"] = unset
-	}
-
 	var res *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		res = nil
@@ -166,7 +150,7 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 		_, err := s.dbCollection.UpdateOne(
 			ctx,
 			bson.M{"_id": request.ID},
-			update,
+			bson.M{"$set": model},
 		)
 		if err != nil {
 			return err

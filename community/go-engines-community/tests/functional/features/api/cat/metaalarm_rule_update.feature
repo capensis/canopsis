@@ -50,10 +50,6 @@ Feature: Update a metaalarmrule
       "config": {
         "threshold_count": 10
       },
-      "old_entity_patterns": null,
-      "old_total_entity_patterns": null,
-      "old_alarm_patterns": null,
-      "old_event_patterns": null,
       "entity_pattern": [
         [
           {
@@ -83,10 +79,6 @@ Feature: Update a metaalarmrule
       "config": {
         "threshold_count": 10
       },
-      "old_entity_patterns": null,
-      "old_total_entity_patterns": null,
-      "old_alarm_patterns": null,
-      "old_event_patterns": null,
       "entity_pattern": [
         [
           {
@@ -140,10 +132,6 @@ Feature: Update a metaalarmrule
       "config": {
         "threshold_count": 10
       },
-      "old_entity_patterns": null,
-      "old_total_entity_patterns": null,
-      "old_alarm_patterns": null,
-      "old_event_patterns": null,
       "entity_pattern": [
         [
           {
@@ -173,10 +161,6 @@ Feature: Update a metaalarmrule
       "config": {
         "threshold_count": 10
       },
-      "old_entity_patterns": null,
-      "old_total_entity_patterns": null,
-      "old_alarm_patterns": null,
-      "old_event_patterns": null,
       "entity_pattern": [
         [
           {
@@ -230,10 +214,6 @@ Feature: Update a metaalarmrule
       "config": {
         "threshold_count": 10
       },
-      "old_entity_patterns": null,
-      "old_total_entity_patterns": null,
-      "old_alarm_patterns": null,
-      "old_event_patterns": null,
       "alarm_pattern": [
         [
           {
@@ -263,10 +243,6 @@ Feature: Update a metaalarmrule
       "config": {
         "threshold_count": 10
       },
-      "old_entity_patterns": null,
-      "old_total_entity_patterns": null,
-      "old_alarm_patterns": null,
-      "old_event_patterns": null,
       "alarm_pattern": [
         [
           {
@@ -331,10 +307,6 @@ Feature: Update a metaalarmrule
       "config": {
         "threshold_count": 10
       },
-      "old_entity_patterns": null,
-      "old_total_entity_patterns": null,
-      "old_alarm_patterns": null,
-      "old_event_patterns": null,
       "entity_pattern": [
         [
           {
@@ -375,10 +347,6 @@ Feature: Update a metaalarmrule
       "config": {
         "threshold_count": 10
       },
-      "old_entity_patterns": null,
-      "old_total_entity_patterns": null,
-      "old_alarm_patterns": null,
-      "old_event_patterns": null,
       "entity_pattern": [
         [
           {
@@ -444,10 +412,6 @@ Feature: Update a metaalarmrule
       "config": {
         "threshold_count": 10
       },
-      "old_entity_patterns": null,
-      "old_total_entity_patterns": null,
-      "old_alarm_patterns": null,
-      "old_event_patterns": null,
       "entity_pattern": [
         [
           {
@@ -490,10 +454,6 @@ Feature: Update a metaalarmrule
       "config": {
         "threshold_count": 10
       },
-      "old_entity_patterns": null,
-      "old_total_entity_patterns": null,
-      "old_alarm_patterns": null,
-      "old_event_patterns": null,
       "entity_pattern": [
         [
           {
@@ -551,10 +511,6 @@ Feature: Update a metaalarmrule
       "config": {
         "threshold_count": 10
       },
-      "old_entity_patterns": null,
-      "old_total_entity_patterns": null,
-      "old_alarm_patterns": null,
-      "old_event_patterns": null,
       "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
       "corporate_entity_pattern_title": "test-pattern-to-rule-edit-2-title",
       "entity_pattern": [
@@ -599,10 +555,6 @@ Feature: Update a metaalarmrule
       "config": {
         "threshold_count": 10
       },
-      "old_entity_patterns": null,
-      "old_total_entity_patterns": null,
-      "old_alarm_patterns": null,
-      "old_event_patterns": null,
       "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
       "corporate_entity_pattern_title": "test-pattern-to-rule-edit-2-title",
       "entity_pattern": [
@@ -682,10 +634,6 @@ Feature: Update a metaalarmrule
       "config": {
         "threshold_count": 10
       },
-      "old_entity_patterns": null,
-      "old_total_entity_patterns": null,
-      "old_alarm_patterns": null,
-      "old_event_patterns": null,
       "entity_pattern": [
         [
           {
@@ -726,10 +674,6 @@ Feature: Update a metaalarmrule
       "config": {
         "threshold_count": 10
       },
-      "old_entity_patterns": null,
-      "old_total_entity_patterns": null,
-      "old_alarm_patterns": null,
-      "old_event_patterns": null,
       "entity_pattern": [
         [
           {
@@ -795,10 +739,6 @@ Feature: Update a metaalarmrule
       "config": {
         "threshold_count": 10
       },
-      "old_entity_patterns": null,
-      "old_total_entity_patterns": null,
-      "old_alarm_patterns": null,
-      "old_event_patterns": null,
       "entity_pattern": [
         [
           {
@@ -841,10 +781,6 @@ Feature: Update a metaalarmrule
       "config": {
         "threshold_count": 10
       },
-      "old_entity_patterns": null,
-      "old_total_entity_patterns": null,
-      "old_alarm_patterns": null,
-      "old_event_patterns": null,
       "entity_pattern": [
         [
           {
@@ -1181,221 +1117,6 @@ Feature: Update a metaalarmrule
         "alarm_pattern": "AlarmPattern or EntityPattern is required.",
         "entity_pattern": "EntityPattern or AlarmPattern is required."
       }
-    }
-    """
-
-  Scenario: given update request should update metaalarmrule without changes in old patterns,
-            but should unset old patterns if new patterns are present
-    When I am admin
-    Then I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-rule-backward-compatibility-to-update:
-    """json
-    {
-      "name": "test-metaalarm-rule-backward-compatibility-to-update-name-updated",
-      "auto_resolve": false,
-      "type": "complex",
-      "config": {
-        "threshold_count": 3
-      }
-    }
-    """
-    Then the response code should be 200
-    When I do GET /api/v4/cat/metaalarmrules/test-metaalarm-rule-backward-compatibility-to-update
-    Then the response body should contain:
-    """json
-    {
-      "_id": "test-metaalarm-rule-backward-compatibility-to-update",
-      "auto_resolve": false,
-      "config": {
-        "threshold_count": 3
-      },
-      "name": "test-metaalarm-rule-backward-compatibility-to-update-name-updated",
-      "type": "complex",
-      "old_alarm_patterns": [
-        {
-          "v": {
-            "component": "test-metaalarm-rule-backward-compatibility-component-to-update"
-          }
-        }
-      ],
-      "old_entity_patterns": [
-        {
-          "name": {
-            "regex_match": "test-metaalarm-rule-backward-compatibility-component-to-update"
-          }
-        }
-      ],
-      "old_total_entity_patterns": [
-        {
-          "name": {
-            "regex_match": "test-metaalarm-rule-backward-compatibility-component-to-update"
-          }
-        }
-      ],
-      "old_event_patterns": [
-        {
-          "resource": {
-            "regex_match": "test-metaalarm-rule-backward-compatibility-component-to-update"
-          }
-        }
-      ]
-    }
-    """
-    Then I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-rule-backward-compatibility-to-update:
-    """json
-    {
-      "name": "test-metaalarm-rule-backward-compatibility-to-update-name-updated",
-      "auto_resolve": false,
-      "type": "complex",
-      "config": {
-        "threshold_count": 3
-      },
-      "entity_pattern": [
-        [
-          {
-            "field": "name",
-            "cond": {
-              "type": "eq",
-              "value": "test"
-            }
-          }
-        ]
-      ]
-    }
-    """
-    Then the response code should be 200
-    When I do GET /api/v4/cat/metaalarmrules/test-metaalarm-rule-backward-compatibility-to-update
-    Then the response body should contain:
-    """json
-    {
-      "_id": "test-metaalarm-rule-backward-compatibility-to-update",
-      "auto_resolve": false,
-      "config": {
-        "threshold_count": 3
-      },
-      "name": "test-metaalarm-rule-backward-compatibility-to-update-name-updated",
-      "type": "complex",
-      "entity_pattern": [
-        [
-          {
-            "field": "name",
-            "cond": {
-              "type": "eq",
-              "value": "test"
-            }
-          }
-        ]
-      ],
-      "old_alarm_patterns": [
-        {
-          "v": {
-            "component": "test-metaalarm-rule-backward-compatibility-component-to-update"
-          }
-        }
-      ],
-      "old_entity_patterns": null,
-      "old_event_patterns": null,
-      "old_total_entity_patterns": [
-        {
-          "name": {
-            "regex_match": "test-metaalarm-rule-backward-compatibility-component-to-update"
-          }
-        }
-      ]
-    }
-    """
-    Then I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-rule-backward-compatibility-to-update:
-    """json
-    {
-      "name": "test-metaalarm-rule-backward-compatibility-to-update-name-updated",
-      "auto_resolve": false,
-      "type": "complex",
-      "config": {
-        "threshold_count": 3
-      },
-      "entity_pattern": [
-        [
-          {
-            "field": "name",
-            "cond": {
-              "type": "eq",
-              "value": "test"
-            }
-          }
-        ]
-      ],
-      "total_entity_pattern": [
-        [
-          {
-            "field": "name",
-            "cond": {
-              "type": "eq",
-              "value": "test"
-            }
-          }
-        ]
-      ],
-      "alarm_pattern": [
-        [
-          {
-            "field": "v.component",
-            "cond": {
-              "type": "eq",
-              "value": "test"
-            }
-          }
-        ]
-      ]
-    }
-    """
-    Then the response code should be 200
-    When I do GET /api/v4/cat/metaalarmrules/test-metaalarm-rule-backward-compatibility-to-update
-    Then the response body should contain:
-    """json
-    {
-      "_id": "test-metaalarm-rule-backward-compatibility-to-update",
-      "auto_resolve": false,
-      "config": {
-        "threshold_count": 3
-      },
-      "name": "test-metaalarm-rule-backward-compatibility-to-update-name-updated",
-      "type": "complex",
-      "entity_pattern": [
-        [
-          {
-            "field": "name",
-            "cond": {
-              "type": "eq",
-              "value": "test"
-            }
-          }
-        ]
-      ],
-      "total_entity_pattern": [
-        [
-          {
-            "field": "name",
-            "cond": {
-              "type": "eq",
-              "value": "test"
-            }
-          }
-        ]
-      ],
-      "alarm_pattern": [
-        [
-          {
-            "field": "v.component",
-            "cond": {
-              "type": "eq",
-              "value": "test"
-            }
-          }
-        ]
-      ],
-      "old_alarm_patterns": null,
-      "old_entity_patterns": null,
-      "old_total_entity_patterns": null,
-      "old_event_patterns": null
     }
     """
 
@@ -1777,8 +1498,6 @@ Feature: Update a metaalarmrule
         },
         "threshold_rate": 1
       },
-      "old_alarm_patterns": null,
-      "old_entity_patterns": null,
       "entity_pattern": [
         [
           {
@@ -1850,44 +1569,5 @@ Feature: Update a metaalarmrule
       ],
       "corporate_total_entity_pattern": "test-pattern-to-metaalarm-rule-pattern-to-exclude-1",
       "corporate_total_entity_pattern_title": "test-pattern-to-metaalarm-rule-pattern-to-exclude-1-title"
-    }
-    """
-
-  Scenario: given update request should allow to update value group metaalarmrule without patterns
-            and all old patterns should be removed
-    When I am admin
-    Then I do PUT /api/v4/cat/metaalarmrules/test-valuegroup-rule-rate-backward-compatibility-to-update:
-    """json
-    {
-      "name": "test-valuegroup-rule-rate-backward-compatibility-to-update-1",
-      "type": "valuegroup",
-      "config": {
-        "time_interval": {
-          "value": 10,
-          "unit": "s"
-        },
-        "threshold_count": 2,
-        "value_paths": [
-          "entity.infos.some.value"
-        ]
-      }
-    }
-    """
-    Then the response code should be 200
-    When I do GET /api/v4/cat/metaalarmrules/test-valuegroup-rule-rate-backward-compatibility-to-update
-    Then the response body should contain:
-    """json
-    {
-      "_id": "test-valuegroup-rule-rate-backward-compatibility-to-update",
-      "old_alarm_patterns": null,
-      "old_entity_patterns": null,
-      "old_event_patterns": null,
-      "old_total_entity_patterns": [
-        {
-          "name": {
-            "regex_match": "test-valuegroup-rule-rate-backward-compatibility-to-update"
-          }
-        }
-      ]
     }
     """

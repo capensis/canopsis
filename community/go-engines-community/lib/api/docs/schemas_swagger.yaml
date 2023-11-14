@@ -378,6 +378,10 @@ definitions:
         type: string
       children:
         $ref: '#/definitions/alarm.ChildrenDetails'
+      entity:
+        $ref: '#/definitions/alarm.EntityDetails'
+        description: Entity isn't the same as Entity of Alarm, but have counts in
+          response as well
       filtered_perf_data:
         items:
           type: string
@@ -407,6 +411,8 @@ definitions:
         $ref: '#/definitions/alarm.StepsRequest'
       with_declare_tickets:
         type: boolean
+      with_dependencies:
+        type: boolean
       with_instructions:
         type: boolean
     required:
@@ -426,6 +432,82 @@ definitions:
         type: object
       status:
         type: integer
+    type: object
+  alarm.EntityDetails:
+    properties:
+      _id:
+        type: string
+      category:
+        type: string
+      component:
+        type: string
+      component_infos:
+        additionalProperties:
+          $ref: '#/definitions/types.Info'
+        type: object
+      connector:
+        type: string
+      created:
+        $ref: '#/definitions/types.CpsTime'
+      depends_count:
+        description: DependsCount contains only service's dependencies
+        type: integer
+      description:
+        type: string
+      enable_history:
+        items:
+          $ref: '#/definitions/types.CpsTime'
+        type: array
+      enabled:
+        type: boolean
+      idle_since:
+        $ref: '#/definitions/types.CpsTime'
+        description: IdleSince represents since when entity didn't receive any events.
+      impact_level:
+        type: integer
+      impacts_count:
+        description: ImpactsCount contains only services
+        type: integer
+      import_source:
+        type: string
+      imported:
+        $ref: '#/definitions/types.CpsTime'
+      infos:
+        additionalProperties:
+          $ref: '#/definitions/types.Info'
+        type: object
+      last_event_date:
+        $ref: '#/definitions/types.CpsTime'
+      last_idle_rule_apply:
+        description: LastIdleRuleApply is used to mark entity if some idle rule was
+          applied.
+        type: string
+      last_pbehavior_date:
+        $ref: '#/definitions/types.CpsTime'
+      measurements:
+        description: unused collection ids
+      name:
+        type: string
+      pbehavior_info:
+        $ref: '#/definitions/types.PbehaviorInfo'
+      services:
+        items:
+          type: string
+        type: array
+      services_to_add:
+        items:
+          type: string
+        type: array
+      services_to_remove:
+        items:
+          type: string
+        type: array
+      sli_avail_state:
+        type: integer
+      soft_deleted:
+        $ref: '#/definitions/types.CpsTime'
+      type:
+        type: string
     type: object
   alarm.Execution:
     properties:
@@ -1472,8 +1554,6 @@ definitions:
       ok_events:
         description: Stats
         type: integer
-      old_entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
       snooze:
@@ -1668,8 +1748,6 @@ definitions:
       ok_events:
         description: Stats
         type: integer
-      old_entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
       sli_avail_state:
@@ -1888,8 +1966,6 @@ definitions:
       ok_events:
         description: Stats
         type: integer
-      old_entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
       output_template:
         type: string
       pbehavior_info:
@@ -2178,8 +2254,6 @@ definitions:
         type: object
       failures_count:
         type: integer
-      old_patterns:
-        $ref: '#/definitions/oldpattern.EventPatternList'
       priority:
         type: integer
       rrule:
@@ -2285,6 +2359,8 @@ definitions:
       label:
         type: string
       name:
+        type: string
+      template:
         type: string
       template:
         type: string
@@ -2418,10 +2494,6 @@ definitions:
         type: integer
       name:
         type: string
-      old_alarm_patterns:
-        $ref: '#/definitions/oldpattern.AlarmPatternList'
-      old_entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
       priority:
         type: integer
       updated:
@@ -2771,6 +2843,7 @@ definitions:
       _id:
         type: string
       alarm_condition:
+        description: Only for Alarm rules
         type: string
       alarm_pattern:
         items:
@@ -2813,11 +2886,6 @@ definitions:
         type: array
       name:
         type: string
-      old_alarm_patterns:
-        $ref: '#/definitions/oldpattern.AlarmPatternList'
-        description: Only for Alarm rules
-      old_entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
       operation:
         $ref: '#/definitions/idlerule.Operation'
       priority:
@@ -3155,12 +3223,6 @@ definitions:
       instruction:
         $ref: '#/definitions/notification.InstructionNotification'
     type: object
-  oldpattern.AlarmPatternList:
-    type: object
-  oldpattern.EntityPatternList:
-    type: object
-  oldpattern.EventPatternList:
-    type: object
   pattern.BulkDeleteRequestItem:
     properties:
       _id:
@@ -3460,9 +3522,6 @@ definitions:
     - tstart
     - type
     type: object
-  pbehavior.OldMongoQuery:
-    additionalProperties: true
-    type: object
   pbehavior.PatchRequest:
     properties:
       color:
@@ -3559,8 +3618,6 @@ definitions:
         type: integer
       name:
         type: string
-      old_mongo_query:
-        $ref: '#/definitions/pbehavior.OldMongoQuery'
       origin:
         type: string
       reason:
@@ -4096,10 +4153,6 @@ definitions:
         type: array
       name:
         type: string
-      old_alarm_patterns:
-        $ref: '#/definitions/oldpattern.AlarmPatternList'
-      old_entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
       priority:
         type: integer
       updated:
@@ -4267,10 +4320,6 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
-      old_alarm_patterns:
-        $ref: '#/definitions/oldpattern.AlarmPatternList'
-      old_entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
       parameters:
         $ref: '#/definitions/scenario.Parameters'
       type:
@@ -4300,10 +4349,6 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
-      old_alarm_patterns:
-        $ref: '#/definitions/oldpattern.AlarmPatternList'
-      old_entity_patterns:
-        $ref: '#/definitions/oldpattern.EntityPatternList'
       parameters:
         $ref: '#/definitions/action.Parameters'
       type:
@@ -5044,6 +5089,11 @@ definitions:
     - lat
     - lng
     type: object
+  types.CpsTime:
+    properties:
+      time.Time:
+        type: string
+    type: object
   types.CropCounter:
     properties:
       state:0:
@@ -5116,6 +5166,35 @@ definitions:
       name:
         type: string
       value: {}
+    type: object
+  types.PbehaviorInfo:
+    properties:
+      canonical_type:
+        description: CanonicalType is Type of pbehavior.Type.
+        type: string
+      id:
+        description: ID is ID of pbehavior.PBehavior.
+        type: string
+      name:
+        description: Name is Name of pbehavior.PBehavior.
+        type: string
+      reason:
+        description: ReasonID is ID of pbehavior.Reason.
+        type: string
+      reason_name:
+        description: ReasonName is Name of pbehavior.Reason.
+        type: string
+      timestamp:
+        description: |-
+          Timestamp is time when entity enters pbehavior.
+          Use pointer of CpsTime to unmarshal null and undefined to nil pointer instead of zero CpsTime.
+        type: integer
+      type:
+        description: TypeID is ID of pbehavior.Type.
+        type: string
+      type_name:
+        description: TypeName is Name of pbehavior.Type.
+        type: string
     type: object
   user.BulkDeleteRequestItem:
     properties:
@@ -5736,9 +5815,6 @@ definitions:
     - is_user_preference
     - title
     type: object
-  widgetfilter.OldMongoQuery:
-    additionalProperties: true
-    type: object
   widgetfilter.Response:
     properties:
       _id:
@@ -5775,8 +5851,6 @@ definitions:
         type: boolean
       is_user_preference:
         type: boolean
-      old_mongo_query:
-        $ref: '#/definitions/widgetfilter.OldMongoQuery'
       pbehavior_pattern:
         items:
           items:
