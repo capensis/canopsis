@@ -122,6 +122,10 @@ export default {
     },
 
     isActionsAllowWithOkState() {
+      if (this.isAlarmStatusFlapping) {
+        return this.isAlarmStateOk;
+      }
+
       return this.widget.parameters.isActionsAllowWithOkState && this.isAlarmStateOk;
     },
 
