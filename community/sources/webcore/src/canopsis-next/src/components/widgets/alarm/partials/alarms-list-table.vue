@@ -609,6 +609,32 @@ export default {
 
   .alarm-list-row {
     position: relative;
+
+    &:after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      pointer-events: none;
+      background: rgba(200, 220, 200, .3);
+      transition: opacity linear .3s;
+    }
+  }
+
+  &__selecting {
+    & > .v-table__overflow > table > tbody > .alarm-list-row:after {
+      pointer-events: auto;
+      opacity: 1;
+    }
+
+    &--text-unselectable {
+      * {
+        user-select: none;
+      }
+    }
   }
 
   &__grid {
@@ -668,36 +694,18 @@ export default {
 
   tbody {
     position: relative;
-    z-index: 0;
 
-    tr.alarm-list-row:not(.v-datatable__expand-row) {
-      position: relative;
-      background: transparent !important;
-      z-index: 1;
+    tr:not(.v-datatable__expand-row):not(:first-child) {
+      border-top: unset !important;
 
-      &:after {
-        transition: background-color .3s cubic-bezier(0.25, 0.8, 0.5, 1);
+      td:first-child:after {
         content: ' ';
         position: absolute;
-        top: 0;
+        background: rgba(0, 0, 0, 0.12);
+        height: 1px;
         right: 0;
-        bottom: 0;
+        top: 0;
         left: 0;
-        z-index: -1;
-        pointer-events: none;
-        background-color: var(--v-table-row-color-base);
-      }
-
-      &:nth-of-type(4n + 1):after {
-        background-color: var(--v-table-shift-row-color-base, var(--v-table-row-color-base));
-      }
-
-      &:hover {
-        background-color: unset !important;
-
-        &:after {
-          background-color: var(--v-table-hover-row-color-base, var(--v-table-row-color-base));
-        }
       }
     }
   }
@@ -708,58 +716,41 @@ export default {
     transition-property: opacity, background-color;
     z-index: 1;
 
-    &.head-shadow {
-      tr:first-child {
-        border-bottom: none !important;
-        box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.12) !important;
-      }
-    }
-
-    tr {
-      position: relative;
-      transition: background-color .3s cubic-bezier(.25, .8, .5, 1);
-      z-index: 2;
+    tr:first-child {
+      border-bottom: unset !important;
 
       &:after {
         content: ' ';
         position: absolute;
-        top: 0;
+        background: rgba(0, 0, 0, 0.12);
+        height: 1px;
         right: 0;
-        bottom: 1px;
+        bottom: 0;
         left: 0;
-        z-index: -1;
-        background-color: var(--v-table-background-base);
+      }
+    }
 
-        .theme--dark & {
-          background-color: var(--v-table-background-base);
+    &.head-shadow {
+      tr:first-child {
+        box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.12) !important;
+
+        &:after {
+          content: unset;
         }
+      }
+    }
+
+    tr {
+      background: var(--v-table-background-base);
+      transition: background-color .3s cubic-bezier(.25,.8,.5,1);
+
+      .theme--dark & {
+        background: var(--v-table-background-base);
       }
 
       th {
-        background-clip: padding-box;
         position: relative;
         transition: none;
-      }
-    }
-  }
-
-  &__selecting {
-    & > .v-table__overflow > table > tbody > tr.alarm-list-row {
-      &:after {
-        opacity: 0.3;
-        background-color: rgb(200, 220, 200) !important;
-        pointer-events: auto;
-        z-index: 1;
-      }
-
-      &:hover:after {
-        background-color: rgb(140, 160, 140) !important;
-      }
-    }
-
-    &--text-unselectable {
-      * {
-        user-select: none;
       }
     }
   }
