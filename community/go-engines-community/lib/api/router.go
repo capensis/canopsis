@@ -484,7 +484,6 @@ func RegisterRoutes(
 		pbehaviorApi := pbehavior.NewApi(
 			pbehavior.NewStore(
 				dbClient,
-				libpbehavior.NewEntityMatcher(dbClient),
 				pbhEntityTypeResolver,
 				libpbehavior.NewTypeComputer(libpbehavior.NewModelProvider(dbClient), json.NewDecoder()),
 				timezoneConfigProvider,

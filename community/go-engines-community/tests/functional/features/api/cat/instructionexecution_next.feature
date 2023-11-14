@@ -15,7 +15,7 @@ Feature: move a instruction execution to next operation
             "field": "v.resource",
             "cond": {
               "type": "eq",
-              "value": "test-instruction-execution-next-resource-1"
+              "value": "test-resource-to-instruction-execution-next-1"
             }
           }
         ]
@@ -63,7 +63,7 @@ Feature: move a instruction execution to next operation
     When I do POST /api/v4/cat/executions:
     """json
     {
-      "alarm": "test-instruction-execution-next-1",
+      "alarm": "test-alarm-to-instruction-execution-next-1",
       "instruction": "{{ .lastResponse._id }}"
     }
     """
@@ -86,13 +86,13 @@ Feature: move a instruction execution to next operation
             {
               "name": "test-instruction-execution-next-1-step-1-operation-1",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-execution-next-1-step-1-operation-1-description connector test-instruction-execution-next-connector entity test-instruction-execution-next-resource-1/test-instruction-execution-next-component"
+              "description": "test-instruction-execution-next-1-step-1-operation-1-description connector test-connector-default entity test-resource-to-instruction-execution-next-1/test-component-default"
             },
             {
               "completed_at": null,
               "name": "test-instruction-execution-next-1-step-1-operation-2",
               "time_to_complete": {"value": 3, "unit":"s"},
-              "description": "test-instruction-execution-next-1-step-1-operation-2-description connector test-instruction-execution-next-connector entity test-instruction-execution-next-resource-1/test-instruction-execution-next-component",
+              "description": "test-instruction-execution-next-1-step-1-operation-2-description connector test-connector-default entity test-resource-to-instruction-execution-next-1/test-component-default",
               "jobs": []
             }
           ],
@@ -109,7 +109,7 @@ Feature: move a instruction execution to next operation
               "completed_at": null,
               "name": "test-instruction-execution-next-1-step-2-operation-1",
               "time_to_complete": {"value": 6, "unit":"s"},
-              "description": "test-instruction-execution-next-1-step-2-operation-1-description connector test-instruction-execution-next-connector entity test-instruction-execution-next-resource-1/test-instruction-execution-next-component",
+              "description": "test-instruction-execution-next-1-step-2-operation-1-description connector test-connector-default entity test-resource-to-instruction-execution-next-1/test-component-default",
               "jobs": []
             }
           ],
@@ -139,7 +139,7 @@ Feature: move a instruction execution to next operation
             "field": "v.resource",
             "cond": {
               "type": "eq",
-              "value": "test-instruction-execution-next-resource-2"
+              "value": "test-resource-to-instruction-execution-next-2"
             }
           }
         ]
@@ -187,7 +187,7 @@ Feature: move a instruction execution to next operation
     When I do POST /api/v4/cat/executions:
     """json
     {
-      "alarm": "test-instruction-execution-next-2",
+      "alarm": "test-alarm-to-instruction-execution-next-2",
       "instruction": "{{ .lastResponse._id }}"
     }
     """

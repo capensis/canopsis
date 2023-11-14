@@ -148,8 +148,6 @@ Feature: Update and delete corporate pattern should affect eventfilter models
       ],
       "actions": [
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "alarm_pattern": [
             [
               {
@@ -175,8 +173,6 @@ Feature: Update and delete corporate pattern should affect eventfilter models
           "comment": "snooze 1"
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "entity_pattern": [
             [
               {
@@ -202,8 +198,6 @@ Feature: Update and delete corporate pattern should affect eventfilter models
           "comment": "snooze 2"
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "corporate_alarm_pattern": "test-pattern-to-scenario-corporate-update-2",
           "corporate_alarm_pattern_title": "test-pattern-to-scenario-corporate-update-2-title",
           "alarm_pattern": [
@@ -263,8 +257,6 @@ Feature: Update and delete corporate pattern should affect eventfilter models
           "comment": "snooze 3"
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "corporate_entity_pattern": "test-pattern-to-scenario-corporate-update-1",
           "corporate_entity_pattern_title": "test-pattern-to-scenario-corporate-update-1-title",
           "entity_pattern": [
@@ -292,8 +284,6 @@ Feature: Update and delete corporate pattern should affect eventfilter models
           "comment": "snooze 4"
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "corporate_entity_pattern": "test-pattern-to-scenario-corporate-update-3",
           "corporate_entity_pattern_title": "test-pattern-to-scenario-corporate-update-3-title",
           "entity_pattern": [
@@ -321,8 +311,6 @@ Feature: Update and delete corporate pattern should affect eventfilter models
           "comment": "snooze 5"
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "corporate_alarm_pattern": "test-pattern-to-scenario-corporate-update-4",
           "corporate_alarm_pattern_title": "test-pattern-to-scenario-corporate-update-4-title",
           "alarm_pattern": [
@@ -401,8 +389,6 @@ Feature: Update and delete corporate pattern should affect eventfilter models
       ],
       "actions": [
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "alarm_pattern": [
             [
               {
@@ -428,8 +414,6 @@ Feature: Update and delete corporate pattern should affect eventfilter models
           "comment": "snooze 1"
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "entity_pattern": [
             [
               {
@@ -455,8 +439,6 @@ Feature: Update and delete corporate pattern should affect eventfilter models
           "comment": "snooze 2"
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "corporate_alarm_pattern": "test-pattern-to-scenario-corporate-update-2",
           "corporate_alarm_pattern_title": "test-pattern-to-scenario-corporate-update-2-title",
           "alarm_pattern": [
@@ -516,8 +498,6 @@ Feature: Update and delete corporate pattern should affect eventfilter models
           "comment": "snooze 3"
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "corporate_entity_pattern": "test-pattern-to-scenario-corporate-update-1",
           "corporate_entity_pattern_title": "new entity pattern title",
           "entity_pattern": [
@@ -545,8 +525,6 @@ Feature: Update and delete corporate pattern should affect eventfilter models
           "comment": "snooze 4"
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "corporate_entity_pattern": "test-pattern-to-scenario-corporate-update-3",
           "corporate_entity_pattern_title": "test-pattern-to-scenario-corporate-update-3-title",
           "entity_pattern": [
@@ -574,8 +552,6 @@ Feature: Update and delete corporate pattern should affect eventfilter models
           "comment": "snooze 5"
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "corporate_alarm_pattern": "test-pattern-to-scenario-corporate-update-4",
           "corporate_alarm_pattern_title": "test-pattern-to-scenario-corporate-update-4-title",
           "alarm_pattern": [
@@ -738,8 +714,6 @@ Feature: Update and delete corporate pattern should affect eventfilter models
       ],
       "actions": [
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "alarm_pattern": [
             [
               {
@@ -765,8 +739,6 @@ Feature: Update and delete corporate pattern should affect eventfilter models
           "comment": "snooze 1"
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "entity_pattern": [
             [
               {
@@ -792,8 +764,6 @@ Feature: Update and delete corporate pattern should affect eventfilter models
           "comment": "snooze 2"
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "corporate_alarm_pattern": "test-pattern-to-scenario-corporate-update-2",
           "corporate_alarm_pattern_title": "new alarm pattern title",
           "alarm_pattern": [
@@ -853,8 +823,6 @@ Feature: Update and delete corporate pattern should affect eventfilter models
           "comment": "snooze 3"
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "corporate_entity_pattern": "test-pattern-to-scenario-corporate-update-1",
           "corporate_entity_pattern_title": "new entity pattern title",
           "entity_pattern": [
@@ -882,8 +850,6 @@ Feature: Update and delete corporate pattern should affect eventfilter models
           "comment": "snooze 4"
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "corporate_entity_pattern": "test-pattern-to-scenario-corporate-update-3",
           "corporate_entity_pattern_title": "test-pattern-to-scenario-corporate-update-3-title",
           "entity_pattern": [
@@ -911,8 +877,6 @@ Feature: Update and delete corporate pattern should affect eventfilter models
           "comment": "snooze 5"
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "corporate_alarm_pattern": "test-pattern-to-scenario-corporate-update-4",
           "corporate_alarm_pattern_title": "test-pattern-to-scenario-corporate-update-4-title",
           "alarm_pattern": [
@@ -963,8 +927,6 @@ Feature: Update and delete corporate pattern should affect eventfilter models
       ],
       "actions": [
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "alarm_pattern": [
             [
               {
@@ -990,8 +952,6 @@ Feature: Update and delete corporate pattern should affect eventfilter models
           "comment": "snooze 1"
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "entity_pattern": [
             [
               {
@@ -1017,8 +977,6 @@ Feature: Update and delete corporate pattern should affect eventfilter models
           "comment": "snooze 2"
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "corporate_alarm_pattern": "test-pattern-to-scenario-corporate-update-2",
           "corporate_alarm_pattern_title": "new alarm pattern title",
           "alarm_pattern": [
@@ -1078,8 +1036,6 @@ Feature: Update and delete corporate pattern should affect eventfilter models
           "comment": "snooze 3"
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "entity_pattern": [
             [
               {
@@ -1105,8 +1061,6 @@ Feature: Update and delete corporate pattern should affect eventfilter models
           "comment": "snooze 4"
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "corporate_entity_pattern": "test-pattern-to-scenario-corporate-update-3",
           "corporate_entity_pattern_title": "test-pattern-to-scenario-corporate-update-3-title",
           "entity_pattern": [
@@ -1134,8 +1088,6 @@ Feature: Update and delete corporate pattern should affect eventfilter models
           "comment": "snooze 5"
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "corporate_alarm_pattern": "test-pattern-to-scenario-corporate-update-4",
           "corporate_alarm_pattern_title": "test-pattern-to-scenario-corporate-update-4-title",
           "alarm_pattern": [
@@ -1188,8 +1140,6 @@ Feature: Update and delete corporate pattern should affect eventfilter models
       ],
       "actions": [
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "alarm_pattern": [
             [
               {
@@ -1215,8 +1165,6 @@ Feature: Update and delete corporate pattern should affect eventfilter models
           "comment": "snooze 1"
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "entity_pattern": [
             [
               {
@@ -1242,8 +1190,6 @@ Feature: Update and delete corporate pattern should affect eventfilter models
           "comment": "snooze 2"
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "alarm_pattern": [
             [
               {
@@ -1301,8 +1247,6 @@ Feature: Update and delete corporate pattern should affect eventfilter models
           "comment": "snooze 3"
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "entity_pattern": [
             [
               {
@@ -1328,8 +1272,6 @@ Feature: Update and delete corporate pattern should affect eventfilter models
           "comment": "snooze 4"
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "corporate_entity_pattern": "test-pattern-to-scenario-corporate-update-3",
           "corporate_entity_pattern_title": "test-pattern-to-scenario-corporate-update-3-title",
           "entity_pattern": [
@@ -1357,8 +1299,6 @@ Feature: Update and delete corporate pattern should affect eventfilter models
           "comment": "snooze 5"
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "corporate_alarm_pattern": "test-pattern-to-scenario-corporate-update-4",
           "corporate_alarm_pattern_title": "test-pattern-to-scenario-corporate-update-4-title",
           "alarm_pattern": [

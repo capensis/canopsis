@@ -256,10 +256,6 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 	update := bson.M{
 		"$set": filter,
 	}
-	if len(filter.EntityPattern) > 0 || len(filter.AlarmPattern) > 0 || len(filter.PbehaviorPattern) > 0 {
-		update["$unset"] = bson.M{"old_mongo_query": ""}
-	}
-
 	var response *Response
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil

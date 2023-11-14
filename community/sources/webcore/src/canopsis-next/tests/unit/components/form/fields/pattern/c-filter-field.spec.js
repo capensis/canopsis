@@ -133,18 +133,4 @@ describe('c-filter-field', () => {
     expect(wrapper.element).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
-
-  it('Renders `c-filter-field` with old_entity_patterns', () => {
-    filtersGetter.mockReturnValueOnce(filters.map(filter => ({ ...filter, old_entity_patterns: true })));
-    const wrapper = snapshotFactory({
-      store: createMockedStoreModules([filterModule]),
-      propsData: {
-        label: 'Custom label',
-        name: 'customName',
-      },
-    });
-
-    expect(wrapper.element).toMatchSnapshot();
-    expect(wrapper).toMatchMenuSnapshot();
-  });
 });

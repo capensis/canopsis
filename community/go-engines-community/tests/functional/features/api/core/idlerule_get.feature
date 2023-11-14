@@ -13,8 +13,6 @@ Feature: Get a idle rule
         {
           "_id": "test-idle-rule-to-get-1",
           "alarm_condition": "last_event",
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "alarm_pattern": [
             [
               {
@@ -76,8 +74,6 @@ Feature: Get a idle rule
             "unit": "s"
           },
           "enabled": true,
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "entity_pattern": [
             [
               {
@@ -144,8 +140,6 @@ Feature: Get a idle rule
     {
       "_id": "test-idle-rule-to-get-1",
       "alarm_condition": "last_event",
-      "old_alarm_patterns": null,
-      "old_entity_patterns": null,
       "alarm_pattern": [
         [
           {

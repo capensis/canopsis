@@ -675,6 +675,11 @@ paths:
           description: show bookmarked alarms
           schema:
             type: boolean
+        - name: with_dependencies
+          in: query
+          description: count connected services depends_count and impacts_count
+          schema:
+            type: boolean
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/search'
@@ -11817,7 +11822,7 @@ paths:
                       "label": "Dashboard",
                       "category": "Prod",
                       "icon_name": "build",
-                      "url": "https://prod.local?{{ .range Alarms }}resources[]={{ .Entity.ID }}&{{ end }}",
+                      "url": "https://prod.local?user={{ .User.Username }}&{{ .range Alarms }}resources[]={{ .Entity.ID }}&{{ end }}",
                       "action": "open",
                       "single": false
                     }
@@ -11851,7 +11856,7 @@ paths:
                 value: {
                   "name": "Link rule",
                   "enabled": true,
-                  "source_code": "function generate(alarms, data) {\n    var queryStr = \"\";\n    for (var alarm of alarms) {\n        queryStr += \"resources[]=\" + alarm.Entity.ID + \"&\";\n    }\n    return [{\"label\": \"Dashboard\", \"category\": \"Prod\", \"icon_name\": \"build\", \"url\": \"https://prod.local\" + queryStr, \"action\": \"copy\", \"single\": false}];\n}",
+                  "source_code": "function generate(alarms, user) {\n    var queryStr = \"user=\" + user.Username + \"&\";\n    for (var alarm of alarms) {\n        queryStr += \"resources[]=\" + alarm.Entity.ID + \"&\";\n    }\n    return [{\"label\": \"Dashboard\", \"category\": \"Prod\", \"icon_name\": \"build\", \"url\": \"https://prod.local\" + queryStr, \"action\": \"copy\", \"single\": false}];\n}",
                   "entity_pattern": [
                     [
                       {
@@ -11954,7 +11959,7 @@ paths:
                         "label": "Dashboard",
                         "category": "Prod",
                         "icon_name": "build",
-                        "url": "https://prod.local?{{ .range Alarms }}resources[]={{ .Entity.ID }}&{{ end }}",
+                        "url": "https://prod.local?user={{ .User.Username }}&{{ .range Alarms }}resources[]={{ .Entity.ID }}&{{ end }}",
                         "action": "open",
                         "single": true
                       }

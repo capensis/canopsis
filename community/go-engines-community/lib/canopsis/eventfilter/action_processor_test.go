@@ -1202,10 +1202,8 @@ func TestActionProcessor(t *testing.T) {
 	processor := eventfilter.NewActionProcessor(mockFailureService, tplExecutor, mockTechMetricsSender)
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
-			resultEvent, resultErr := processor.Process(context.Background(), "test", dataset.action, dataset.event, eventfilter.RegexMatchWrapper{
-				BackwardCompatibility: false,
-				RegexMatch:            dataset.regexMatches,
-			}, dataset.externalData)
+			resultEvent, resultErr := processor.Process(context.Background(), "test", dataset.action, dataset.event,
+				dataset.regexMatches, dataset.externalData)
 			if !reflect.DeepEqual(resultEvent, dataset.expectedEvent) {
 				t.Errorf("expected an event = %v, but got %v", dataset.expectedEvent, resultEvent)
 			}

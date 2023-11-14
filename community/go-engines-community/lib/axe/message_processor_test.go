@@ -322,7 +322,7 @@ func benchmarkMessageProcessor(
 			alarmConfigProvider,
 			userInterfaceConfigProvider,
 			alarmStatusService,
-			pbehavior.NewEntityTypeResolver(pbhStore, pbehavior.NewEntityMatcher(dbClient), logger),
+			pbehavior.NewEntityTypeResolver(pbhStore, logger),
 			event.NewNullAutoInstructionMatcher(),
 			statecounters.NewStateCountersService(dbClient, amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), template.NewExecutor(templateConfigProvider, tzConfigProvider), logger),
 			metaAlarmEventProcessor,

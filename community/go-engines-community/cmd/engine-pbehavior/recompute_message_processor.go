@@ -92,8 +92,7 @@ func (p *recomputeMessageProcessor) updateAlarms(
 	pbehavior := libpbehavior.PBehavior{}
 	err := p.PbehaviorCollection.FindOne(ctx, bson.M{"_id": id},
 		options.FindOne().SetProjection(bson.M{
-			"entity_pattern":  1,
-			"old_mongo_query": 1,
+			"entity_pattern": 1,
 		})).Decode(&pbehavior)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -103,23 +102,11 @@ func (p *recomputeMessageProcessor) updateAlarms(
 		return excludeIds, err
 	}
 
-	var query interface{}
-	if len(pbehavior.EntityPattern) > 0 {
-		query, err = pbehavior.EntityPattern.ToMongoQuery("")
-		if err != nil {
-			return excludeIds, err
-		}
-	} else {
-		var oldMongoQuery map[string]interface{}
-		err = p.Decoder.Decode([]byte(pbehavior.OldMongoQuery), &oldMongoQuery)
-		if err != nil {
-			return excludeIds, err
-		}
-
-		query = oldMongoQuery
+	matchByPattern, err := pbehavior.EntityPattern.ToMongoQuery("")
+	if err != nil || len(matchByPattern) == 0 {
+		return excludeIds, err
 	}
 
-	matchByPattern := query
 	if len(excludeIds) > 0 {
 		matchByPattern = bson.M{"$and": bson.A{
 			bson.M{"_id": bson.M{"$nin": excludeIds}},
