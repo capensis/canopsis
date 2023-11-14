@@ -17,7 +17,7 @@ func NewScriptExecutor() ScriptExecutor {
 type scriptExecutor struct{}
 
 func (scriptExecutor) Exec(file string) error {
-	cmd := fmt.Sprintf("mongo %s %s", os.Getenv(EnvURL), file)
+	cmd := fmt.Sprintf("mongosh %s %s", os.Getenv(EnvURL), file)
 	result := exec.Command("bash", "-c", cmd)
 	output, err := result.CombinedOutput()
 	if err != nil {

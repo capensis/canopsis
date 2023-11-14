@@ -190,7 +190,6 @@ describe('create-filter', () => {
   test('Errors added after trigger submit button with action errors', async () => {
     const formErrors = {
       title: 'Title error',
-      old_mongo_query: 'Old mongo query error',
       alarm_pattern: 'Alarm pattern error',
       entity_pattern: 'Entity pattern error',
       pbehavior_pattern: 'PBehavior pattern error',

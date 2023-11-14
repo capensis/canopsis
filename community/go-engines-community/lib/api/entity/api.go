@@ -93,6 +93,12 @@ func (a *api) List(c *gin.Context) {
 
 	entities, err := a.store.Find(c, query)
 	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+
 		panic(err)
 	}
 

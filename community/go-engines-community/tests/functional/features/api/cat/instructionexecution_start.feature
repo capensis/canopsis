@@ -264,47 +264,6 @@ Feature: run a instruction
     """
     Then the response code should be 200
 
-  Scenario: given instruction with old pattern should start an execution
-    When I am admin
-    When I do POST /api/v4/cat/executions:
-    """json
-    {
-      "alarm": "test-alarm-to-instruction-execution-start-4-1",
-      "instruction": "test-instruction-to-execution-start-4-1"
-    }
-    """
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "name": "test-instruction-to-execution-start-4-1-name"
-    }
-    """
-    When I save response startedAt={{ .lastResponse.started_at }}
-    When I save response operationStartedAt={{ (index (index .lastResponse.steps 0).operations 0).started_at }}
-    When I save response expectedStartedAt=1
-    Then "startedAt" >= "expectedStartedAt"
-    Then "operationStartedAt" >= "expectedStartedAt"
-    When I do POST /api/v4/cat/executions:
-    """json
-    {
-      "alarm": "test-alarm-to-instruction-execution-start-4-2",
-      "instruction": "test-instruction-to-execution-start-4-2"
-    }
-    """
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "name": "test-instruction-to-execution-start-4-2-name"
-    }
-    """
-    When I save response startedAt={{ .lastResponse.started_at }}
-    When I save response operationStartedAt={{ (index (index .lastResponse.steps 0).operations 0).started_at }}
-    When I save response expectedStartedAt=1
-    Then "startedAt" >= "expectedStartedAt"
-    Then "operationStartedAt" >= "expectedStartedAt"
-
   Scenario: given instruction with empty patterns should not start an execution
     When I am admin
     When I do POST /api/v4/cat/instructions:

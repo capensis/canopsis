@@ -155,7 +155,7 @@ func NewEngine(
 		alarmConfigProvider,
 		userInterfaceConfigProvider,
 		alarmStatusService,
-		pbehavior.NewEntityTypeResolver(pbehavior.NewStore(pbhRedisClient, json.NewEncoder(), json.NewDecoder()), pbehavior.NewEntityMatcher(dbClient), logger),
+		pbehavior.NewEntityTypeResolver(pbehavior.NewStore(pbhRedisClient, json.NewEncoder(), json.NewDecoder()), logger),
 		autoInstructionMatcher,
 		stateCountersService,
 		metaAlarmEventProcessor,

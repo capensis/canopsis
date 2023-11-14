@@ -255,9 +255,6 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, S
 	}
 	unset := bson.M{}
 
-	if request.CorporateEntityPattern != "" || len(request.EntityPattern) > 0 {
-		unset["old_entity_patterns"] = ""
-	}
 	if request.Coordinates == nil {
 		unset["coordinates"] = ""
 	} else {
@@ -283,7 +280,7 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, S
 			},
 			update,
 			options.FindOneAndUpdate().
-				SetProjection(bson.M{"enabled": 1, "entity_pattern": 1, "old_entity_patterns": 1}).
+				SetProjection(bson.M{"enabled": 1, "entity_pattern": 1}).
 				SetReturnDocument(options.Before),
 		).Decode(oldValues)
 		if err != nil {
@@ -293,11 +290,7 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, S
 			return err
 		}
 		serviceChanges.IsToggled = request.Enabled != nil && oldValues.Enabled != *request.Enabled
-		if oldValues.OldEntityPatterns.IsSet() {
-			serviceChanges.IsPatternChanged = len(request.EntityPattern) > 0
-		} else {
-			serviceChanges.IsPatternChanged = !reflect.DeepEqual(oldValues.EntityPattern, request.EntityPattern)
-		}
+		serviceChanges.IsPatternChanged = !reflect.DeepEqual(oldValues.EntityPattern, request.EntityPattern)
 
 		_, err = s.serviceCountersCollection.UpdateOne(
 			ctx,
