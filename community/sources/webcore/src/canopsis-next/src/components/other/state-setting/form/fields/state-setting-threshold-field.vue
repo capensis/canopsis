@@ -8,8 +8,8 @@
           color="primary"
         )
       v-flex(xs3)
-        state-setting-threshold-type-field(
-          v-field="condition.type",
+        state-setting-threshold-method-field(
+          v-field="condition.method",
           :disabled="disabled"
         )
       v-flex(xs3)
@@ -54,11 +54,11 @@ import {
   STATE_SETTING_THRESHOLDS_METHODS,
 } from '@/constants';
 
-import StateSettingThresholdTypeField from './state-setting-threshold-type-field.vue';
+import StateSettingThresholdMethodField from './state-setting-threshold-method-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { StateSettingThresholdTypeField },
+  components: { StateSettingThresholdMethodField },
   model: {
     prop: 'condition',
     event: 'input',
@@ -114,7 +114,7 @@ export default {
         }));
     },
 
-    isShareType() {
+    isShareMethod() {
       return this.condition.method === STATE_SETTING_THRESHOLDS_METHODS.share;
     },
 
@@ -125,10 +125,10 @@ export default {
       return hasFieldsForSummary
         ? this.$t('stateSetting.entityThresholdSummary', {
           state: this.state,
-          type: this.condition.type,
+          method: this.condition.method,
           condition: this.$t(`stateSetting.thresholdConditions.${this.condition.cond}`).toLowerCase(),
           impactingEntitiesState: this.condition.state,
-          value: `${this.condition.value}${this.isShareType ? '%' : ''}`,
+          value: `${this.condition.value}${this.isShareMethod ? '%' : ''}`,
         })
         : '';
     },
