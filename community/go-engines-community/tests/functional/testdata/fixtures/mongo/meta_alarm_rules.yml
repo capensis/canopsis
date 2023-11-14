@@ -396,7 +396,7 @@ meta_alarm_rules:
             value: test-component-axe-correlation-9
     name: test-metaalarmrule-axe-correlation-9-name
     output_template: "Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}"
-  meta_alarm_rules_axe_correlation_10:
+  meta_alarm_rules_axe_correlation_second_1:
     <<: *metaaalarm_rule_attribute
     _id: test-metaalarmrule-axe-correlation-second-1
     entity_pattern:
@@ -407,7 +407,7 @@ meta_alarm_rules:
             value: test-component-axe-correlation-second-1
     name: test-metaalarmrule-axe-correlation-second-1-name
     output_template: "Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}"
-  meta_alarm_rules_axe_correlation_11:
+  meta_alarm_rules_axe_correlation_second_2:
     <<: *metaaalarm_rule_attribute
     _id: test-metaalarmrule-axe-correlation-second-2
     entity_pattern:
@@ -418,7 +418,7 @@ meta_alarm_rules:
             value: test-component-axe-correlation-second-2
     name: test-metaalarmrule-axe-correlation-second-2-name
     output_template: "Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}"
-  meta_alarm_rules_axe_correlation_12_1:
+  meta_alarm_rules_axe_correlation_second_3_1:
     <<: *metaaalarm_rule_attribute
     _id: test-metaalarmrule-axe-correlation-second-3-1
     entity_pattern:
@@ -440,7 +440,7 @@ meta_alarm_rules:
             value: test-component-axe-correlation-second-3
     name: test-metaalarmrule-axe-correlation-second-3-2-name
     output_template: "Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}"
-  meta_alarm_rules_axe_correlation_13_1:
+  meta_alarm_rules_axe_correlation_second_4_1:
     <<: *metaaalarm_rule_attribute
     _id: test-metaalarmrule-axe-correlation-second-4-1
     entity_pattern:
@@ -451,7 +451,7 @@ meta_alarm_rules:
             value: test-component-axe-correlation-second-4
     name: test-metaalarmrule-axe-correlation-second-4-1-name
     output_template: "Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}"
-  meta_alarm_rules_axe_correlation_13_2:
+  meta_alarm_rules_axe_correlation_second_4_2:
     <<: *metaaalarm_rule_attribute
     _id: test-metaalarmrule-axe-correlation-second-4-2
     entity_pattern:
@@ -462,7 +462,7 @@ meta_alarm_rules:
             value: test-component-axe-correlation-second-4
     name: test-metaalarmrule-axe-correlation-second-4-2-name
     output_template: "Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}"
-  meta_alarm_rules_axe_correlation_14:
+  meta_alarm_rules_axe_correlation_second_5:
     <<: *metaaalarm_rule_attribute
     _id: test-metaalarmrule-axe-correlation-second-5
     entity_pattern:
@@ -473,149 +473,25 @@ meta_alarm_rules:
             value: test-component-axe-correlation-second-5
     name: test-metaalarmrule-axe-correlation-second-5-name
     output_template: "Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}"
-
-  metaalarm_rule_backward_compatibility_1:
-    _id: test-metaalarm-rule-backward-compatibility-1
-    auto_resolve: false
-    name: test-metaalarm-rule-backward-compatibility-1-name
-    config:
-      threshold_count: 3
-    type: complex
-    old_alarm_patterns:
-        - v:
-            component: test-metaalarm-rule-backward-compatibility-component-1
-
-  metaalarm_rule_backward_compatibility_2:
-    _id: test-metaalarm-rule-backward-compatibility-to-get
-    auto_resolve: false
-    name: test-metaalarm-rule-backward-compatibility-to-get-name
-    config:
-      threshold_count: 3
-    type: complex
-    old_alarm_patterns:
-        - v:
-            component: test-metaalarm-rule-backward-compatibility-component-to-get
-
-  metaalarm_rule_backward_compatibility_3:
-    _id: test-metaalarm-rule-backward-compatibility-to-update
-    auto_resolve: false
-    name: test-metaalarm-rule-backward-compatibility-to-update-name
-    config:
-      threshold_count: 3
-    type: complex
-    old_event_patterns:
-      - resource:
-          regex_match: test-metaalarm-rule-backward-compatibility-component-to-update
-    old_alarm_patterns:
-      - v:
-          component: test-metaalarm-rule-backward-compatibility-component-to-update
-    old_entity_patterns:
-      - name:
-          regex_match: test-metaalarm-rule-backward-compatibility-component-to-update
-    old_total_entity_patterns:
-      - name:
-          regex_match: test-metaalarm-rule-backward-compatibility-component-to-update
-
-  metaalarm_rule_backward_compatibility_complex_rule_rate_1:
-    _id: test-complex-rule-rate-backward-compatibility-1
-    auto_resolve: false
-    name: test-complex-rule-rate-backward-compatibility-1-name
-    config:
-      threshold_rate: 0.6
-      time_interval: {
-        unit: s,
-        value: 10
-      }
-    type: complex
-    old_entity_patterns:
-      - name:
-          regex_match: test-complex-rule-rate-backward-compatibility-1-resource
-
-  metaalarm_rule_backward_compatibility_complex_rule_rate_2:
-    _id: test-complex-rule-rate-backward-compatibility-2
-    auto_resolve: false
-    name: test-complex-rule-rate-backward-compatibility-2-name
-    config:
-      threshold_rate: 0.4
-      time_interval: {
-        unit: s,
-        value: 10
-      }
-    type: complex
+  meta_alarm_rules_axe_correlation_third_4:
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarmrule-axe-correlation-third-4
     entity_pattern:
-      - - field: name
+    alarm_pattern:
+      - - field: v.component
           cond:
-            type: regexp
-            value: test-complex-rule-rate-backward-compatibility-2-resource
-    old_total_entity_patterns:
-      - name:
-          regex_match: test-complex-rule-rate-backward-compatibility-1-resource
-      - name:
-          regex_match: test-complex-rule-rate-backward-compatibility-2-resource
-
-  metaalarm_rule_backward_compatibility_valuegroup_rate_1:
-    _id: test-valuegroup-rule-rate-backward-compatibility-1
-    auto_resolve: false
-    name: test-valuegroup-rule-rate-backward-compatibility-1-name
-    config:
-      threshold_rate: 0.6
-      time_interval: {
-        unit: s,
-        value: 10
-      }
-      value_paths:
-        - entity.infos.valuegroupRateOldPatterns1.value
-    type: valuegroup
-    old_entity_patterns:
-      - name:
-          regex_match: test-valuegroup-rule-rate-backward-compatibility-1-resource
-
-  metaalarm_rule_backward_compatibility_valuegroup_rate_2:
-    _id: test-valuegroup-rule-rate-backward-compatibility-2
-    auto_resolve: false
-    name: test-valuegroup-rule-rate-backward-compatibility-2-name
-    config:
-      threshold_rate: 0.4
-      time_interval: {
-        unit: s,
-        value: 10
-      }
-      value_paths:
-        - entity.infos.valuegroupRateOldPatterns1.value
-    type: valuegroup
+            type: eq
+            value: test-component-axe-correlation-third-4
+    name: test-metaalarmrule-axe-correlation-third-4-name
+    output_template: "Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}"
+  meta_alarm_rules_axe_correlation_third_5:
+    <<: *metaaalarm_rule_attribute
+    _id: test-metaalarmrule-axe-correlation-third-5
     entity_pattern:
-      - - field: name
+    alarm_pattern:
+      - - field: v.component
           cond:
-            type: regexp
-            value: test-valuegroup-rule-rate-backward-compatibility-2-resource
-    old_total_entity_patterns:
-      - name:
-          regex_match: test-valuegroup-rule-rate-backward-compatibility-1-resource
-      - name:
-          regex_match: test-valuegroup-rule-rate-backward-compatibility-2-resource
-
-  metaalarm_rule_backward_compatibility_4:
-    _id: test-valuegroup-rule-rate-backward-compatibility-to-update
-    auto_resolve: false
-    name: test-valuegroup-rule-rate-backward-compatibility-to-update-name
-    config:
-      threshold_rate: 0.6
-      time_interval: {
-        unit: s,
-        value: 10
-      }
-      value_paths:
-        - entity.infos.test-valuegroup-rule-rate-backward-compatibility-to-update.value
-    type: valuegroup
-    old_event_patterns:
-      - resource:
-          regex_match: test-valuegroup-rule-rate-backward-compatibility-to-update
-    old_alarm_patterns:
-      - v:
-          component: test-valuegroup-rule-rate-backward-compatibility-to-update
-    old_entity_patterns:
-      - name:
-          regex_match: test-valuegroup-rule-rate-backward-compatibility-to-update
-    old_total_entity_patterns:
-      - name:
-          regex_match: test-valuegroup-rule-rate-backward-compatibility-to-update
+            type: eq
+            value: test-component-axe-correlation-third-5
+    name: test-metaalarmrule-axe-correlation-third-5-name
+    output_template: "Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}"

@@ -15,7 +15,7 @@ Feature: pause a instruction execution
             "field": "v.resource",
             "cond": {
               "type": "eq",
-              "value": "test-instruction-execution-pause-resource-1"
+              "value": "test-resource-to-instruction-execution-pause-1"
             }
           }
         ]
@@ -63,7 +63,7 @@ Feature: pause a instruction execution
     When I do POST /api/v4/cat/executions:
     """json
     {
-      "alarm": "test-instruction-execution-pause-1",
+      "alarm": "test-alarm-to-instruction-execution-pause-1",
       "instruction": "{{ .lastResponse._id }}"
     }
     """

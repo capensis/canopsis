@@ -28,7 +28,7 @@ func TestEnrichmentApplyOnSuccess(t *testing.T) {
 		Return(expectedEvent, nil)
 
 	applicator := eventfilter.NewEnrichmentApplicator(eventfilter.NewExternalDataGetterContainer(), mockActionProcessor, mockFailureService)
-	resOutcome, resEvent, resError := applicator.Apply(context.Background(), eventfilter.ParsedRule{Config: eventfilter.ParsedRuleConfig{Actions: []eventfilter.ParsedAction{{}}, OnSuccess: expectedOutcome}}, types.Event{}, eventfilter.RegexMatchWrapper{})
+	resOutcome, resEvent, resError := applicator.Apply(context.Background(), eventfilter.ParsedRule{Config: eventfilter.ParsedRuleConfig{Actions: []eventfilter.ParsedAction{{}}, OnSuccess: expectedOutcome}}, types.Event{}, eventfilter.RegexMatch{})
 	if resError != nil {
 		t.Errorf("expected not error but got %v", resError)
 	}
@@ -55,7 +55,7 @@ func TestEnrichmentApplyOnFailed(t *testing.T) {
 		Return(expectedEvent, fmt.Errorf("error"))
 
 	applicator := eventfilter.NewEnrichmentApplicator(eventfilter.NewExternalDataGetterContainer(), mockActionProcessor, mockFailureService)
-	resOutcome, resEvent, resError := applicator.Apply(context.Background(), eventfilter.ParsedRule{Config: eventfilter.ParsedRuleConfig{Actions: []eventfilter.ParsedAction{{}}, OnFailure: expectedOutcome}}, types.Event{}, eventfilter.RegexMatchWrapper{})
+	resOutcome, resEvent, resError := applicator.Apply(context.Background(), eventfilter.ParsedRule{Config: eventfilter.ParsedRuleConfig{Actions: []eventfilter.ParsedAction{{}}, OnFailure: expectedOutcome}}, types.Event{}, eventfilter.RegexMatch{})
 	if resError == nil {
 		t.Errorf("expected error but nothing")
 	}
@@ -112,7 +112,7 @@ func TestApplyWithExternalData(t *testing.T) {
 			},
 		},
 		event,
-		eventfilter.RegexMatchWrapper{},
+		eventfilter.RegexMatch{},
 	)
 
 	if err != nil {

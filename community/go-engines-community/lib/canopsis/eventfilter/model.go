@@ -1,7 +1,6 @@
 package eventfilter
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
@@ -65,8 +64,7 @@ type Rule struct {
 	Updated      *types.CpsTime                    `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 	EventsCount  int64                             `bson:"events_count,omitempty" json:"events_count,omitempty"`
 
-	OldPatterns                      oldpattern.EventPatternList `bson:"old_patterns,omitempty" json:"old_patterns,omitempty"`
-	EventPattern                     pattern.Event               `json:"event_pattern" bson:"event_pattern"`
+	EventPattern                     pattern.Event `json:"event_pattern" bson:"event_pattern"`
 	savedpattern.EntityPatternFields `bson:",inline"`
 
 	RRule string         `json:"rrule" bson:"rrule"`
@@ -107,43 +105,13 @@ type Action struct {
 	Value       interface{} `bson:"value" json:"value" binding:"info_value"`
 }
 
-type RegexMatchWrapper struct {
-	BackwardCompatibility bool
-	OldRegexMatch         oldpattern.EventRegexMatches
-	RegexMatch            RegexMatch
-}
-
 type RegexMatch struct {
 	pattern.EventRegexMatches
 	Entity pattern.EntityRegexMatches
 }
 
 type Template struct {
-	Event             types.Event
-	RegexMatchWrapper RegexMatchWrapper
-	ExternalData      map[string]interface{}
-}
-
-func (t Template) GetTemplate() interface{} {
-	if t.RegexMatchWrapper.BackwardCompatibility {
-		return struct {
-			Event        types.Event
-			RegexMatch   oldpattern.EventRegexMatches
-			ExternalData map[string]interface{}
-		}{
-			Event:        t.Event,
-			RegexMatch:   t.RegexMatchWrapper.OldRegexMatch,
-			ExternalData: t.ExternalData,
-		}
-	}
-
-	return struct {
-		Event        types.Event
-		RegexMatch   RegexMatch
-		ExternalData map[string]interface{}
-	}{
-		Event:        t.Event,
-		RegexMatch:   t.RegexMatchWrapper.RegexMatch,
-		ExternalData: t.ExternalData,
-	}
+	Event        types.Event
+	RegexMatch   RegexMatch
+	ExternalData map[string]interface{}
 }

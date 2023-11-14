@@ -144,24 +144,3 @@ Feature: Get entities by pbehavior id
       }
     }
     """
-
-  Scenario: given get request by pbehavior with old mongo query should return entities
-    When I am admin
-    When I do GET /api/v4/pbehaviors/test-pbehavior-to-entities-get-2/entities
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "data": [
-        {
-          "_id": "test-resource-to-entities-get-by-pbh-6/test-component-default"
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "per_page": 10,
-        "page_count": 1,
-        "total_count": 1
-      }
-    }
-    """

@@ -49,26 +49,14 @@
         v-list-tile-content
           v-list-tile-title.v-list-badge__tile__title
             span {{ item.title }}
-            v-badge(
-              :value="isOldPattern(item)",
-              color="error",
-              overlap
-            )
-              template(#badge="")
-                v-tooltip(top)
-                  template(#activator="{ on: badgeTooltipOn }")
-                    v-icon(v-on="badgeTooltipOn", color="white") priority_high
-                  span {{ $t('pattern.oldPatternTooltip') }}
-              v-icon.ml-2(
-                :color="tile.props.value ? parent.color : ''",
-                small
-              ) {{ getItemIcon(item) }}
+            v-icon.ml-2(
+              :color="tile.props.value ? parent.color : ''",
+              small
+            ) {{ getItemIcon(item) }}
 </template>
 
 <script>
 import { isArray } from 'lodash';
-
-import { isOldPattern } from '@/helpers/entities/pattern/form';
 
 import { formArrayMixin } from '@/mixins/form';
 
@@ -182,10 +170,6 @@ export default {
 
     getItemIcon(item) {
       return item.is_user_preference ? 'person' : 'lock';
-    },
-
-    isOldPattern(filter) {
-      return isOldPattern(filter);
     },
 
     isFilterItemDisabled(filter) {

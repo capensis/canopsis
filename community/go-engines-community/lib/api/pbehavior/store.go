@@ -2,7 +2,6 @@ package pbehavior
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"regexp"
@@ -11,6 +10,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
@@ -53,7 +53,6 @@ type store struct {
 	entityDbCollection mongo.DbCollection
 
 	authorProvider         author.Provider
-	entityMatcher          pbehavior.EntityMatcher
 	entityTypeResolver     pbehavior.EntityTypeResolver
 	pbhTypeComputer        pbehavior.TypeComputer
 	timezoneConfigProvider config.TimezoneConfigProvider
@@ -67,7 +66,6 @@ type store struct {
 
 func NewStore(
 	dbClient mongo.DbClient,
-	entityMatcher pbehavior.EntityMatcher,
 	entityTypeResolver pbehavior.EntityTypeResolver,
 	pbhTypeComputer pbehavior.TypeComputer,
 	timezoneConfigProvider config.TimezoneConfigProvider,
@@ -77,7 +75,6 @@ func NewStore(
 		dbClient:                      dbClient,
 		dbCollection:                  dbClient.Collection(mongo.PbehaviorMongoCollection),
 		entityDbCollection:            dbClient.Collection(mongo.EntityMongoCollection),
-		entityMatcher:                 entityMatcher,
 		entityTypeResolver:            entityTypeResolver,
 		pbhTypeComputer:               pbhTypeComputer,
 		timezoneConfigProvider:        timezoneConfigProvider,
@@ -258,15 +255,17 @@ func (s *store) FindEntities(ctx context.Context, pbhID string, request Entities
 		return nil, err
 	}
 
-	var match interface{}
-	if len(pbh.OldMongoQuery) > 0 {
-		match = pbh.OldMongoQuery
-	} else {
-		match, err = pbh.EntityPattern.ToMongoQuery("")
-		if err != nil {
-			return nil, err
-		}
+	match, err := pbh.EntityPattern.ToMongoQuery("")
+	if err != nil {
+		return nil, err
 	}
+
+	if len(match) == 0 {
+		return &AggregationEntitiesResult{
+			Data: []entity.Entity{},
+		}, nil
+	}
+
 	pipeline := []bson.M{
 		{"$match": match},
 	}
@@ -323,10 +322,6 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 
 	if r.Stop == nil {
 		unset["tstop"] = ""
-	}
-
-	if r.CorporateEntityPattern != "" || len(r.EntityPattern) > 0 {
-		unset["old_mongo_query"] = ""
 	}
 
 	rruleEnd, err := pbehavior.GetRruleEnd(*r.Start, r.RRule, s.timezoneConfigProvider.Get().Location)
@@ -637,7 +632,6 @@ func (s *store) getMatchedPbhIDs(ctx context.Context, entity libtypes.Entity) ([
 
 	defer cursor.Close(ctx)
 	pbhIDs := make([]string, 0)
-	filters := make(map[string]interface{})
 
 	for cursor.Next(ctx) {
 		var pbh pbehavior.PBehavior
@@ -646,34 +640,18 @@ func (s *store) getMatchedPbhIDs(ctx context.Context, entity libtypes.Entity) ([
 			return nil, err
 		}
 
-		if len(pbh.EntityPattern) > 0 {
-			matched, err := pbh.EntityPattern.Match(entity)
-			if err != nil {
-				return nil, err
-			}
-
-			if matched {
-				pbhIDs = append(pbhIDs, pbh.ID)
-			}
-
+		if len(pbh.EntityPattern) == 0 {
 			continue
 		}
 
-		var oldMongoQuery map[string]interface{}
-		err = json.Unmarshal([]byte(pbh.OldMongoQuery), &oldMongoQuery)
-		if err != nil {
-			return nil, err
-		}
-		filters[pbh.ID] = oldMongoQuery
-	}
-
-	if len(filters) > 0 {
-		ids, err := s.entityMatcher.MatchAll(ctx, entity.ID, filters)
+		matched, err := pbh.EntityPattern.Match(entity)
 		if err != nil {
 			return nil, err
 		}
 
-		pbhIDs = append(pbhIDs, ids...)
+		if matched {
+			pbhIDs = append(pbhIDs, pbh.ID)
+		}
 	}
 
 	return pbhIDs, nil
