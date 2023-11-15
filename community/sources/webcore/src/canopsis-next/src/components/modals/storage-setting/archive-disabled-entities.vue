@@ -40,11 +40,8 @@ import { submittableMixinCreator } from '@/mixins/submittable';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
-/**
- * Confirmation modal
- */
 export default {
-  name: MODALS.confirmation,
+  name: MODALS.archiveDisabledEntities,
   inject: ['$system'],
   components: { ModalWrapper },
   mixins: [
