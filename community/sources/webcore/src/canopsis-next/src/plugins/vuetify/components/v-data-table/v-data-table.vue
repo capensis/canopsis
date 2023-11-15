@@ -1,10 +1,19 @@
 <script>
 import { VDataTable } from 'vuetify/lib/components/VDataTable';
-import { getObjectValueByPath } from 'vuetify/lib/util/helpers';
+import { getObjectValueByPath, getSlot } from 'vuetify/lib/util/helpers';
 import ExpandTransitionGenerator from 'vuetify/lib/components/transitions/expand-transition';
 
+import VSimpleTable from './v-simple-table.vue';
+
 export default {
+  components: { VSimpleTable },
   extends: VDataTable,
+  props: {
+    ultraDense: {
+      type: Boolean,
+      default: false,
+    },
+  },
   methods: {
     /**
      * We've added expand transition here
@@ -83,6 +92,51 @@ export default {
       }, [transition]);
 
       return [headerRow, expandedRow];
+    },
+
+    genDefaultScopedSlot(props) {
+      const simpleProps = {
+        height: this.height,
+        fixedHeader: this.fixedHeader,
+        dense: this.dense,
+        ultraDense: this.ultraDense,
+      };
+      // if (this.virtualRows) {
+      //   return this.$createElement(VVirtualTable, {
+      //     props: Object.assign(simpleProps, {
+      //       items: props.items,
+      //       height: this.height,
+      //       rowHeight: this.dense ? 24 : 48,
+      //       headerHeight: this.dense ? 32 : 48,
+      //       // TODO: expose rest of props from virtual table?
+      //     }),
+      //     scopedSlots: {
+      //       items: ({ items }) => this.genItems(items, props) as any,
+      //     },
+      //   }, [
+      //     this.proxySlot('body.before', [this.genCaption(props), this.genHeaders(props)]),
+      //     this.proxySlot('bottom', this.genFooters(props)),
+      //   ])
+      // }
+
+      return this.$createElement(VSimpleTable, {
+        props: simpleProps,
+        class: {
+          'v-data-table--mobile': this.isMobile,
+          'v-data-table--selectable': this.showSelect,
+        },
+      }, [
+        this.proxySlot('top', getSlot(this, 'top', {
+          ...props,
+          isMobile: this.isMobile,
+        }, true)),
+        this.genCaption(props),
+        this.genColgroup(props),
+        this.genHeaders(props),
+        this.genBody(props),
+        this.genFoot(props),
+        this.proxySlot('bottom', this.genFooters(props)),
+      ]);
     },
   },
 };

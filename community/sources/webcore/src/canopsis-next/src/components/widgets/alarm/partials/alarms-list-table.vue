@@ -678,7 +678,7 @@ export default {
   }
 
   &__selecting {
-    & > .v-table__overflow > table > tbody > .alarm-list-row:after {
+    & > .v-data-table__wrapper > table > tbody > .alarm-list-row:after {
       pointer-events: auto;
       opacity: 1;
     }
@@ -691,7 +691,7 @@ export default {
   }
 
   &__grid {
-    & > .v-table__overflow > table {
+    & > .v-data-table__wrapper > table {
       & > tbody > tr > td,
       & > thead > tr > th {
         position: relative;
@@ -710,7 +710,7 @@ export default {
   }
 
   &--fixed {
-    & > .v-table__overflow > table {
+    & > .v-data-table__wrapper > table {
       table-layout: fixed;
       /**
        * TODO: Should be used v-bind later. We should update compiler.
@@ -728,7 +728,7 @@ export default {
   }
 
   &--wrapped {
-    & > .v-table__overflow > table > tbody > tr > td:not(:last-of-type) {
+    & > .v-data-table__wrapper > table > tbody > tr > td:not(:last-of-type) {
       word-break: break-all;
       word-wrap: break-word;
     }
@@ -781,8 +781,8 @@ export default {
     width: 120px;
   }
 
-  .v-datatable--dense,
-  .v-datatable--ultra-dense {
+  .v-data-table--dense,
+  .v-data-table--ultra-dense {
     thead {
       th:not([role='columnheader']) {
         width: 100px;
@@ -790,8 +790,8 @@ export default {
     }
   }
 
-  &.columns-lg .v-table {
-    &:not(.v-datatable--dense) {
+  &.columns-lg table {
+    &:not(.v-data-table--dense) {
       td, th {
         padding: 0 8px;
       }

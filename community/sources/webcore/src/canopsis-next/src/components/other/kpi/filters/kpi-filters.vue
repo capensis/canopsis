@@ -2,7 +2,7 @@
   <v-layout column>
     <span class="pl-4">{{ $t('kpi.filters.helpInformation') }}</span>
     <kpi-filters-list
-      :pagination.sync="pagination"
+      :options.sync="options"
       :filters="filters"
       :pending="filtersPending"
       :total-items="filtersMeta.total_count"

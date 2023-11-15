@@ -138,6 +138,15 @@ $headings: (
 
 $container-padding-x: 24px;
 
+$dense-padding: 6px;
+$ultra-dense-padding: 6px;
+
+$dense-cell-height: 32px;
+$ultra-dense-cell-height: 24px;
+$dense-treeview-cell-height: 32px;
+
+$dense-color-indicator-padding: 1px 5px;
+
 // Light backgrounds
 $text-light: (
   primary: var(--v-text-light-primary, rgba(map-get($shades, 'black'), 0.87)),

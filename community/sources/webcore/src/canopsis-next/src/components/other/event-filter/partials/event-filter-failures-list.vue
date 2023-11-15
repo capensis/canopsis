@@ -4,11 +4,11 @@
     :items="failures"
     :loading="pending"
     :total-items="totalItems"
-    :pagination="pagination"
+    :options="options"
     :is-expandable-item="hasEvent"
     expand
     advanced-pagination
-    @update:pagination="$emit('update:pagination', $event)"
+    @update:options="$emit('update:options', $event)"
   >
     <template #status="{ item }">
       <c-circle-badge
@@ -51,7 +51,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },

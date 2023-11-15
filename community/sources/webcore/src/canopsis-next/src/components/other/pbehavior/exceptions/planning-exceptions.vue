@@ -4,7 +4,7 @@
       :pbehavior-exceptions="pbehaviorExceptions"
       :pending="pbehaviorExceptionsPending"
       :total-items="pbehaviorExceptionsMeta.total_count"
-      :pagination.sync="pagination"
+      :options.sync="options"
       @remove-selected="showRemoveSelectedPbehaviorExceptionModal"
       @remove="showRemovePbehaviorExceptionModal"
       @edit="showEditPbehaviorExceptionModal"

@@ -1,6 +1,6 @@
 <template>
   <patterns-list
-    :pagination.sync="pagination"
+    :options.sync="options"
     :patterns="corporatePatterns"
     :total-items="corporatePatternsMeta.total_count"
     :pending="corporatePatternsPending"

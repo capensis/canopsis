@@ -25,7 +25,7 @@
     <v-flex xs12>
       <event-filter-failures-list
         :failures="eventFilterFailures"
-        :pagination.sync="pagination"
+        :options.sync="options"
         :total-items="eventFilterFailuresMeta.total_count"
         :pending="eventFilterFailuresPending"
       />
