@@ -484,9 +484,6 @@ func (e *Event) SetField(name string, value interface{}) (err error) {
 			return fmt.Errorf("value cannot be assigned to a map[string]string: %+v", value)
 		}
 		m := make(map[string]string, len(mapValue))
-		for key, value := range e.Tags {
-			m[key] = value
-		}
 		for key, value := range mapValue {
 			stringValue, success := utils.AsString(value)
 			if !success {
