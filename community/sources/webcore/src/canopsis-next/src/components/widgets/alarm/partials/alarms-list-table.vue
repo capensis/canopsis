@@ -526,6 +526,14 @@ export default {
 
 <style lang="scss">
 .alarms-list-table {
+  .theme--light & {
+    --alarms-list-table-border-color: rgba(0, 0, 0, 0.12);
+  }
+
+  .theme--dark & {
+    --alarms-list-table-border-color: rgba(255, 255, 255, 0.12);
+  }
+
   &__top-pagination {
     position: relative;
     min-height: 48px;
@@ -694,6 +702,20 @@ export default {
 
   tbody {
     position: relative;
+
+    tr:not(.v-datatable__expand-row):not(:first-child) {
+      border-top: unset !important;
+
+      td:first-child:after {
+        content: ' ';
+        position: absolute;
+        background: var(--alarms-list-table-border-color);
+        height: 1px;
+        right: 0;
+        top: 0;
+        left: 0;
+      }
+    }
   }
 
   thead {
@@ -702,10 +724,27 @@ export default {
     transition-property: opacity, background-color;
     z-index: 1;
 
+    tr:first-child {
+      border-bottom: unset !important;
+
+      &:after {
+        content: ' ';
+        position: absolute;
+        background: var(--alarms-list-table-border-color);
+        height: 1px;
+        right: 0;
+        bottom: 0;
+        left: 0;
+      }
+    }
+
     &.head-shadow {
       tr:first-child {
-        border-bottom: none !important;
         box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.12) !important;
+
+        &:after {
+          content: unset;
+        }
       }
     }
 
