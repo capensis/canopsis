@@ -2010,3 +2010,79 @@ Feature: modify event on event filter
       }
     }
     """
+
+  @concurrent
+  Scenario: given check event and enrichment event filter rule should copy newtags to tags in event
+    Given I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "type": "enrichment",
+      "description": "test-event-filter-che-event-filters-third-5-description",
+      "enabled": true,
+      "event_pattern": [
+        [
+          {
+            "field": "resource",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-che-event-filters-third-5"
+            }
+          },
+          {
+            "field": "event_type",
+            "cond": {
+              "type": "eq",
+              "value": "check"
+            }
+          }
+        ]
+      ],
+      "config": {
+        "actions": [
+          {
+            "type": "copy",
+            "name" : "Tags",
+            "description" : "Copy newtags as tags",
+            "value" : "Event.ExtraInfos.newtags"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 201
+    Then I save response ruleId={{ .lastResponse._id }}
+    When I wait the next periodical process
+    When I send an event and wait the end of event processing:
+    """json
+    [
+      {
+        "connector": "test-connector-che-event-filters-third-5",
+        "connector_name": "test-connector-name-che-event-filters-third-5",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-che-event-filters-third-5",
+        "resource": "test-resource-che-event-filters-third-5",
+        "newtags" : {
+          "RAM" : "",
+          "Location": "location-che-event-filters-third-5",
+          "Env": "env-che-event-filters-third-5",
+          "Catégorie" : "cat-che-event-filters-third-5"
+        },
+        "state": 3
+      }
+    ]
+    """
+    When I do GET /api/v4/alarms?search=che-event-filters-third-5
+    Then the response code should be 200
+    Then the response array key "data.0.tags" should contain only:
+    """json
+    [
+      "Catégorie: cat-che-event-filters-third-5",
+      "Env: env-che-event-filters-third-5",
+      "Location: location-che-event-filters-third-5",
+      "RAM"
+    ]
+    """
