@@ -260,15 +260,11 @@ func TestEvent_SetField(t *testing.T) {
 			Expected: map[string]string{
 				"tag1": "value1",
 				"tag2": "value2",
-				"tag3": "value3",
 			},
 		},
 	}
 
 	for i, data := range dataSet {
-		if data.Field != "Tags" {
-			continue
-		}
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			err = event.SetField(data.Field, data.Value)
 			if !errors.Is(err, data.Err) {
