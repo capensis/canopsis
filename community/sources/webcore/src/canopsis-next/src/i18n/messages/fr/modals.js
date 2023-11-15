@@ -983,4 +983,7 @@ export default {
       title: 'Thème en double',
     },
   },
+  archiveDisabledEntities: {
+    text: 'Êtes-vous sûr de vouloir archiver les entités désactivées ?\nCette action ne peut pas être annulée',
+  },
 };
