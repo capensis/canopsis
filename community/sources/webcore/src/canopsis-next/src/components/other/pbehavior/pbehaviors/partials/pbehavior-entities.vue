@@ -3,7 +3,7 @@
     :headers="headers"
     :items="entities"
     :loading="pending"
-    :pagination.sync="pagination"
+    :options.sync="options"
     :total-items="meta.total_count"
     item-key="_id"
     search

@@ -36,10 +36,10 @@
     </div>
     <c-table-pagination
       class="mt-1"
-      v-if="totalItems > pagination.itemsPerPage"
+      v-if="totalItems > options.itemsPerPage"
       :total-items="totalItems"
-      :items-per-page="pagination.itemsPerPage"
-      :page="pagination.page"
+      :items-per-page="options.itemsPerPage"
+      :page="options.page"
       @update:page="updatePage"
       @update:items-per-page="updateItemsPerPage"
     />
@@ -70,7 +70,7 @@ export default {
       type: Object,
       required: true,
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },
@@ -159,11 +159,11 @@ export default {
     },
 
     updatePage(page) {
-      this.$emit('update:pagination', { ...this.pagination, page });
+      this.$emit('update:options', { ...this.options, page });
     },
 
     updateItemsPerPage(itemsPerPage) {
-      this.$emit('update:pagination', { ...this.pagination, itemsPerPage, page: 1 });
+      this.$emit('update:options', { ...this.options, itemsPerPage, page: 1 });
     },
   },
 };

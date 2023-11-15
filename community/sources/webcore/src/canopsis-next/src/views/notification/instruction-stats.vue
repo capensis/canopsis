@@ -5,7 +5,7 @@
       <remediation-instruction-stats-list
         :remediation-instruction-stats="remediationInstructionStats"
         :pending="remediationInstructionStatsPending"
-        :pagination.sync="pagination"
+        :options.sync="options"
         :total-items="remediationInstructionStatsMeta.total_count"
         :accumulated-before="remediationInstructionStatsMeta.accumulated_before"
         :interval="interval"

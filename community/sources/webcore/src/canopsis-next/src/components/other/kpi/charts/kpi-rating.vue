@@ -2,12 +2,12 @@
   <div class="position-relative">
     <c-progress-overlay :pending="pending" />
     <kpi-rating-filters
-      v-model="pagination"
+      v-model="options"
       :min-date="minDate"
     />
     <kpi-rating-chart
       :metrics="ratingMetrics"
-      :metric="pagination.metric"
+      :metric="options.metric"
       :downloading="downloading"
       :min-date="minDate"
       responsive

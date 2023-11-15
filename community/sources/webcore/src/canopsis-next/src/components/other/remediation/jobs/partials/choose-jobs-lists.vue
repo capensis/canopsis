@@ -5,7 +5,7 @@
     :loading="pending"
     :total-items="totalItems"
     :is-disabled-item="isSelectedJob"
-    :pagination.sync="pagination"
+    :options.sync="options"
     select-all
     advanced-pagination
   >

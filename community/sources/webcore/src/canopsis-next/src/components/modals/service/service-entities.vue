@@ -19,7 +19,7 @@
             :service="service"
             :service-entities="serviceEntitiesWithKey"
             :widget-parameters="widgetParameters"
-            :pagination.sync="pagination"
+            :options.sync="options"
             :total-items="serviceEntitiesMeta.total_count"
             @refresh="refresh"
           />

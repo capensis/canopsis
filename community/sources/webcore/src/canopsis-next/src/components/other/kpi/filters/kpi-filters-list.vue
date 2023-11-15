@@ -1,6 +1,6 @@
 <template>
   <c-advanced-data-table
-    :pagination="pagination"
+    :options="options"
     :items="filters"
     :loading="pending"
     :headers="headers"
@@ -9,7 +9,7 @@
     advanced-pagination
     hide-actions
     expand
-    @update:pagination="$emit('update:pagination', $event)"
+    @update:options="$emit('update:options', $event)"
   >
     <template #created="{ item }">
       {{ item.created | date }}
@@ -58,7 +58,7 @@ export default {
       type: Array,
       required: true,
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },

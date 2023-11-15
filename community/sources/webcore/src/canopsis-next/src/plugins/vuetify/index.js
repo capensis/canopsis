@@ -17,6 +17,7 @@ import VMenu from './components/v-menu/v-menu.vue';
 import VDialog from './components/v-dialog/v-dialog.vue';
 import VNavigationDrawer from './components/v-navigation-drawer/v-navigation-drawer.vue';
 import VDataTable from './components/v-data-table/v-data-table.vue';
+import VSimpleTable from './components/v-data-table/v-simple-table.vue';
 import VSpeedDial from './components/v-speed-dial/v-speed-dial.vue';
 import VCalendar from './components/v-calendar/v-calendar.vue';
 
@@ -31,6 +32,7 @@ export const createVuetify = (Vue, options) => {
       VDialog,
       VSpeedDial,
       VDataTable,
+      VSimpleTable,
       VCalendar,
     },
 

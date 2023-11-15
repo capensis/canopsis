@@ -2,13 +2,13 @@
   <div class="position-relative">
     <c-progress-overlay :pending="remediationMetricsPending" />
     <remediation-statistics-filters
-      v-model="pagination"
+      v-model="options"
       :min-date="minDate"
     />
     <remediation-statistics-chart
       :metrics="metrics"
-      :data-type="pagination.type"
-      :sampling="pagination.sampling"
+      :data-type="options.type"
+      :sampling="options.sampling"
       :min-date="minDate"
       :downloading="downloading"
       responsive

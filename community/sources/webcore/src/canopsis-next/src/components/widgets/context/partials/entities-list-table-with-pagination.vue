@@ -7,7 +7,7 @@
       :headers="headers"
       :loading="pending || columnsFiltersPending"
       :total-items="meta.total_count"
-      :pagination.sync="pagination"
+      :options.sync="options"
       :toolbar-props="toolbarProps"
       :select-all="selectable"
       expand
@@ -154,7 +154,7 @@ export default {
         : [];
     },
 
-    pagination: {
+    options: {
       get() {
         const { page = 1, itemsPerPage = PAGINATION_LIMIT, sortBy = [], sortDesc = [] } = this.query;
 

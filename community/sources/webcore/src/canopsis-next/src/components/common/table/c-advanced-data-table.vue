@@ -303,23 +303,23 @@ export default {
     updateOptions(options) {
       this.selected = [];
 
-      this.$emit('update:updateOptions', options);
+      this.$emit('update:options', options);
     },
 
     updateSearchHandler(search) {
-      this.updatePagination({ ...this.options, search, page: 1 });
+      this.updateOptions({ ...this.options, search, page: 1 });
     },
 
     updateItemsPerPage(itemsPerPage) {
-      this.updatePagination({ ...this.pagination, itemsPerPage });
+      this.updateOptions({ ...this.options, itemsPerPage });
     },
 
     updatePage(page) {
-      this.updatePagination({ ...this.pagination, page });
+      this.updateOptions({ ...this.options, page });
     },
 
     clearSearchHandler() {
-      this.updatePagination(omit(this.pagination, ['search']));
+      this.updateOptions(omit(this.options, ['search']));
     },
 
     clearSelected() {
