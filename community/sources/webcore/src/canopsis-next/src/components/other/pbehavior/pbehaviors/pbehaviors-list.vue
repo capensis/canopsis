@@ -1,7 +1,7 @@
 <template>
   <c-advanced-data-table
     :items="pbehaviors"
-    :pagination="pagination"
+    :options="options"
     :loading="pending"
     :headers="headers"
     :total-items="totalItems"
@@ -10,7 +10,7 @@
     advanced-search
     advanced-pagination
     expand
-    @update:pagination="$emit('update:pagination', $event)"
+    @update:options="$emit('update:options', $event)"
   >
     <template #mass-actions="{ selected, clearSelected }">
       <pbehaviors-mass-actions-panel
@@ -105,7 +105,7 @@ export default {
       type: Array,
       required: true,
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },

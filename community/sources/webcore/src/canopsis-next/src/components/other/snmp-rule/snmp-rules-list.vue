@@ -6,10 +6,10 @@
       :items="items"
       :loading="pending"
       :total-items="totalItems"
-      :pagination="pagination"
+      :options="options"
       :select-all="removable"
       advanced-pagination
-      @update:pagination="$emit('update:pagination', $event)"
+      @update:options="$emit('update:options', $event)"
     >
       <template #mass-actions="{ selected }">
         <c-action-btn
@@ -96,7 +96,7 @@ export default {
     SnmpRulesListItemCell,
   },
   props: {
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },

@@ -3,7 +3,7 @@
     :widget="widget"
     :alarms="alarms"
     :total-items="meta.total_count"
-    :pagination.sync="pagination"
+    :options.sync="options"
     :columns="columns"
     :loading="loading"
     :parent-alarm="parentAlarm"

@@ -1,6 +1,6 @@
 <template>
   <c-advanced-data-table
-    :pagination="pagination"
+    :options="options"
     :items="dynamicInfos"
     :loading="pending"
     :headers="headers"
@@ -11,7 +11,7 @@
     advanced-pagination
     hide-actions
     expand
-    @update:pagination="$emit('update:pagination', $event)"
+    @update:options="$emit('update:options', $event)"
   >
     <template #mass-actions="{ selected }">
       <c-action-btn
@@ -79,7 +79,7 @@ export default {
       type: Array,
       required: true,
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },

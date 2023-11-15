@@ -4,10 +4,10 @@
     :items="widgetTemplates"
     :loading="pending"
     :total-items="totalItems"
-    :pagination="pagination"
+    :options="options"
     advanced-pagination
     search
-    @update:pagination="$emit('update:pagination', $event)"
+    @update:options="$emit('update:options', $event)"
   >
     <template #updated="{ item }">
       {{ item.updated | date }}
@@ -39,7 +39,7 @@ export default {
       type: Array,
       required: true,
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },

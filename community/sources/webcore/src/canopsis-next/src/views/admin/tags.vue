@@ -8,7 +8,7 @@
     <tags-list
       :tags="alarmTags"
       :pending="alarmTagsPending"
-      :pagination.sync="pagination"
+      :options.sync="options"
       :total-items="alarmTagsMeta.total_count"
       :updatable="hasUpdateAnyTagAccess"
       :removable="hasDeleteAnyTagAccess"

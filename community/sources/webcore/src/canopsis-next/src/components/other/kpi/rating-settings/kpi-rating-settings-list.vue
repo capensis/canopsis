@@ -1,6 +1,6 @@
 <template>
   <c-advanced-data-table
-    :pagination="pagination"
+    :options="options"
     :items="ratingSettings"
     :loading="pending"
     :headers="headers"
@@ -9,7 +9,7 @@
     search
     advanced-pagination
     hide-actions
-    @update:pagination="$emit('update:pagination', $event)"
+    @update:options="$emit('update:options', $event)"
   >
     <template #toolbar="">
       <v-flex xs12>
@@ -55,7 +55,7 @@ export default {
       type: Array,
       required: true,
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },

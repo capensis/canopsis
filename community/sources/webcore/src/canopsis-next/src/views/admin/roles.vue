@@ -5,7 +5,7 @@
       <roles-list
         :roles="roles"
         :pending="rolesPending"
-        :pagination.sync="pagination"
+        :options.sync="options"
         :total-items="rolesMeta.total_count"
         :removable="hasDeleteAnyRoleAccess"
         :duplicable="hasCreateAnyRoleAccess"
