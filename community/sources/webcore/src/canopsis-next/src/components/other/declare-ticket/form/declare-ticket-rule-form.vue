@@ -1,32 +1,31 @@
 <template>
   <v-tabs
     slider-color="primary"
-    color="transparent"
-    fixed-tabs
     centered
   >
     <v-tab :class="{ 'error--text': hasGeneralError }">
       {{ $t('common.general') }}
     </v-tab>
-    <v-tab-item>
+    <v-tab :class="{ 'error--text': hasPatternsError }">
+      {{ $tc('common.pattern') }}
+    </v-tab>
+    <v-tab>{{ $t('declareTicket.testQuery') }}</v-tab>
+
+    <v-tab-item eager>
       <declare-ticket-rule-general-form
         class="mt-2"
         ref="general"
         v-field="form"
       />
     </v-tab-item>
-    <v-tab :class="{ 'error--text': hasPatternsError }">
-      {{ $tc('common.pattern') }}
-    </v-tab>
-    <v-tab-item>
+    <v-tab-item eager>
       <declare-ticket-rule-patterns-form
         class="mt-2"
         ref="patterns"
         v-field="form.patterns"
       />
     </v-tab-item>
-    <v-tab>{{ $t('declareTicket.testQuery') }}</v-tab>
-    <v-tab-item lazy>
+    <v-tab-item>
       <v-layout>
         <v-flex
           offset-xs1
