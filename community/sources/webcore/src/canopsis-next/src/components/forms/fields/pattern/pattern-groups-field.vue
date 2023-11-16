@@ -34,7 +34,7 @@
       align-center
     >
       <v-btn
-        class="ml-0"
+        class="mt-2 mr-2"
         :color="hasGroupsErrors ? 'error' : 'primary'"
         :disabled="disabled"
         @click="addFilterGroup"

@@ -27,7 +27,7 @@
       align-center
     >
       <v-btn
-        class="ml-0"
+        class="my-2 mr-2"
         :disabled="disabled"
         :color="hasRulesErrors ? 'error' : 'primary'"
         outlined

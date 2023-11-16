@@ -1,6 +1,18 @@
 <script>
 import VCombobox from 'vuetify/lib/components/VCombobox';
 
+import VMenu from '../v-menu/v-menu.vue';
+
+/**
+ * Check is attach prop enabled
+ *
+ * @param {string | boolean} attach
+ * @returns {boolean}
+ */
+const isAttached = attach => attach === '' // If used as a boolean prop (<v-menu attach>)
+  || attach === true // If bound to a boolean (<v-menu :attach="true">)
+  || attach === 'attach'; // If bound as boolean prop in pug (v-menu(attach))
+
 export default {
   extends: VCombobox,
   props: {
@@ -23,6 +35,36 @@ export default {
     },
   },
   methods: {
+    genMenu() {
+      const props = this.$_menuProps;
+      props.activator = this.$refs['input-slot'];
+
+      if (!('attach' in props)) {
+        if (isAttached(this.attach)) {
+          // Attach to root el so that
+          // menu covers prepend/append icons
+          props.attach = this.$el;
+        } else {
+          props.attach = this.attach;
+        }
+      }
+
+      return this.$createElement(VMenu, {
+        attrs: {
+          role: undefined,
+        },
+        props,
+        on: {
+          input: (val) => {
+            this.isMenuActive = val;
+            this.isFocused = val;
+          },
+          scroll: this.onScroll,
+        },
+        ref: 'menu',
+      }, [this.genList()]);
+    },
+
     onEnterDown(e) {
       e.preventDefault();
 

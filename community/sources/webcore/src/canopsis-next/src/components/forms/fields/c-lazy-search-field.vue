@@ -1,6 +1,6 @@
 <template>
   <c-select-field
-    class="c-lazy-search-field"
+    class="c-lazy-search-field mt-4"
     v-validate="rules"
     v-field="value"
     :search-input="search"
@@ -16,7 +16,7 @@
     :small-chips="isMultiply"
     :error-messages="errors.collect(name)"
     :disabled="disabled"
-    :menu-props="{ contentClass: 'c-lazy-search-field__list' }"
+    :menu-props="{ contentClass: 'c-lazy-search-field__list', eager: true }"
     :clearable="clearable"
     :autocomplete="autocomplete"
     :combobox="!autocomplete"
