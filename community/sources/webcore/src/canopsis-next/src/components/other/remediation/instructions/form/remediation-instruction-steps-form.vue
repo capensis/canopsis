@@ -1,13 +1,11 @@
 <template>
   <v-layout column>
-    <v-flex
-      v-if="!steps.length"
-      xs12
+    <c-alert
+      :value="!steps.length"
+      type="info"
     >
-      <v-alert type="info">
-        {{ $t('remediation.instruction.emptySteps') }}
-      </v-alert>
-    </v-flex>
+      {{ $t('remediation.instruction.emptySteps') }}
+    </c-alert>
     <c-card-iterator-field
       class="mb-2"
       v-field="steps"
@@ -26,7 +24,7 @@
     </c-card-iterator-field>
     <v-layout align-center>
       <v-btn
-        class="ml-0"
+        class="mr-2"
         :color="hasStepsErrors ? 'error' : 'primary'"
         :disabled="disabled"
         outlined
