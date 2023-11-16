@@ -1,12 +1,13 @@
 <script>
 import { VDataTable } from 'vuetify/lib/components/VDataTable';
-import { getObjectValueByPath, getSlot } from 'vuetify/lib/util/helpers';
+import { getObjectValueByPath, getSlot, getPrefixedScopedSlots } from 'vuetify/lib/util/helpers';
 import ExpandTransitionGenerator from 'vuetify/lib/components/transitions/expand-transition';
 
 import VSimpleTable from './v-simple-table.vue';
+import VDataTableHeader from './v-data-table-header.vue';
 
 export default {
-  components: { VSimpleTable },
+  components: { VSimpleTable, VDataTableHeader },
   extends: VDataTable,
   props: {
     ultraDense: {
@@ -137,6 +138,38 @@ export default {
         this.genFoot(props),
         this.proxySlot('bottom', this.genFooters(props)),
       ]);
+    },
+    genHeaders(props) {
+      const data = {
+        props: {
+          ...this.sanitizedHeaderProps,
+
+          headers: this.computedHeaders,
+          options: props.options,
+          mobile: this.isMobile,
+          showGroupBy: this.showGroupBy,
+          checkboxColor: this.checkboxColor,
+          someItems: this.someItems,
+          everyItem: this.everyItem,
+          singleSelect: this.singleSelect,
+          disableSort: this.disableSort,
+        },
+        on: {
+          sort: props.sort,
+          group: props.group,
+          'toggle-select-all': this.toggleSelectAll,
+        },
+      }; // TODO: rename to 'head'? (thead, tbody, tfoot)
+
+      const children = [getSlot(this, 'header', { ...data, isMobile: this.isMobile })];
+
+      if (!this.hideDefaultHeader) {
+        const scopedSlots = getPrefixedScopedSlots('header.', this.$scopedSlots);
+        children.push(this.$createElement(VDataTableHeader, { ...data, scopedSlots }));
+      }
+
+      if (this.loading) children.push(this.genLoading());
+      return children;
     },
   },
 };

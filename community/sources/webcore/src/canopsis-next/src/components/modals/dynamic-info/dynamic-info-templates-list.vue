@@ -21,6 +21,7 @@
           :headers="headers"
           :loading="pending"
           item-key="_id"
+          loader-height="2"
           show-expand
         >
           <template #items="props">

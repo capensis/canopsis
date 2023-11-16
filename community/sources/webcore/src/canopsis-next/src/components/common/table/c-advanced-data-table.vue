@@ -64,6 +64,7 @@
       :hide-default-footer="hideActions || advancedPagination || noPagination"
       :table-class="tableClass"
       :dense="dense"
+      :loader-height="loaderHeight"
       @update:options="updateOptions"
     >
       <template
@@ -226,6 +227,10 @@ export default {
     dense: {
       type: Boolean,
       default: false,
+    },
+    loaderHeight: {
+      type: [String, Number],
+      default: 2,
     },
   },
   data() {
