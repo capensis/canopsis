@@ -7,6 +7,10 @@
     <v-tab :class="{ 'error--text': hasGeneralError }">
       {{ $t('common.general') }}
     </v-tab>
+    <v-tab :class="{ 'error--text': hasPatternsError }">
+      {{ $tc('common.pattern', 2) }}
+    </v-tab>
+
     <v-tab-item eager>
       <v-layout
         class="py-3"
@@ -47,9 +51,6 @@
         </c-collapse-panel>
       </v-layout>
     </v-tab-item>
-    <v-tab :class="{ 'error--text': hasPatternsError }">
-      {{ $tc('common.pattern', 2) }}
-    </v-tab>
     <v-tab-item eager>
       <v-layout
         class="py-3"

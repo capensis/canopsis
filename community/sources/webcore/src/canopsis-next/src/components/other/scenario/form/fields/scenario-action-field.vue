@@ -50,7 +50,6 @@
       slider-color="primary"
       background-color="transparent"
       centered
-      fixed-tabs
     >
       <v-tab :class="{ 'error--text': hasGeneralError }">
         {{ $t('common.general') }}

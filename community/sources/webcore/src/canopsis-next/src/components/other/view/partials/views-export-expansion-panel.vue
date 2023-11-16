@@ -87,7 +87,7 @@ export default {
   },
   computed: {
     openedPanels() {
-      return new Array(this.groups.length).fill(true).map((_, index) => index);
+      return Array.from({ length: this.groups.length }, (_, index) => index);
     },
   },
   methods: {

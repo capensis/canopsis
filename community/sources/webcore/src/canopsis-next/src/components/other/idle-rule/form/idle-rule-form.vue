@@ -3,24 +3,23 @@
     <c-enabled-field v-field="form.enabled" />
     <v-tabs
       slider-color="primary"
-      color="transparent"
-      fixed-tabs
       centered
     >
       <v-tab :class="{ 'error--text': hasGeneralError }">
         {{ $t('common.general') }}
       </v-tab>
-      <v-tab-item>
+      <v-tab :class="{ 'error--text': hasPatternsError }">
+        {{ $tc('common.pattern') }}
+      </v-tab>
+
+      <v-tab-item eager>
         <idle-rule-general-form
           ref="general"
           v-field="form"
           :is-entity-type="isEntityType"
         />
       </v-tab-item>
-      <v-tab :class="{ 'error--text': hasPatternsError }">
-        {{ $tc('common.pattern') }}
-      </v-tab>
-      <v-tab-item>
+      <v-tab-item eager>
         <idle-rule-patterns-form
           class="mt-2"
           ref="patterns"

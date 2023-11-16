@@ -14,7 +14,7 @@
     :name="name"
     no-filter
     @blur="handleBlur"
-    @update:searchInput="onSearchInputChange"
+    @update:search-input="onSearchInputChange"
   >
     <template #append="">
       <slot name="append" />
@@ -75,7 +75,9 @@ export default {
       this.updateModel(value ?? '');
 
       if (this.errorMessages?.length) {
-        this.$validator.validate(this.name);
+        this.$nextTick(() => {
+          this.$validator.validate(this.name);
+        });
       }
     },
   },

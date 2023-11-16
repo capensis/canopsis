@@ -6,7 +6,10 @@
     @click="handleClick"
   >
     <v-list-item-avatar class="my-0">
-      <v-icon :color="link.color">
+      <v-icon
+        class="text--secondary"
+        :color="link.color"
+      >
         {{ link.icon }}
       </v-icon>
     </v-list-item-avatar>
