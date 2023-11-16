@@ -24,10 +24,11 @@
     </v-layout>
     <v-layout
       v-if="!readonly"
+      class="mt-2"
       align-center
     >
       <v-btn
-        class="my-2 mr-2"
+        class="mr-2"
         :disabled="disabled"
         :color="hasRulesErrors ? 'error' : 'primary'"
         outlined
