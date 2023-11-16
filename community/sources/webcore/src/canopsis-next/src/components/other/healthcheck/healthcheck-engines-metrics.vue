@@ -21,7 +21,7 @@
         />
       </td>
     </template>
-    <template #items="{ item }">
+    <template #item="{ item }">
       <td
         class="text-center"
         v-if="!exporting && (item.disabled || isMetricNotCreated(item))"

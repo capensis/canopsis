@@ -4,11 +4,11 @@
     column
   >
     <v-layout>
-      <v-flex
-        v-if="!operations.length"
-        xs11
-      >
-        <v-alert type="info">
+      <v-flex xs11>
+        <v-alert
+          :value="!operations.length"
+          type="info"
+        >
           {{ $t('remediation.instruction.emptyOperations') }}
         </v-alert>
       </v-flex>
@@ -36,7 +36,7 @@
     </c-draggable-list-field>
     <v-layout align-center>
       <v-btn
-        class="ml-0"
+        class="mr-2"
         :color="hasOperationsErrors ? 'error' : 'primary'"
         :disabled="disabled"
         outlined
