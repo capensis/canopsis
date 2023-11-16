@@ -38,7 +38,7 @@ export default {
         header,
       }) : this.$createElement('span', [header.text]));
 
-      if (!this.disableSort && header.sortable) {
+      if (!this.disableSort && (header.sortable || !('sortable' in header))) {
         data.on.click = () => this.$emit('sort', header.value);
 
         const sortIndex = this.options.sortBy.findIndex(k => k === header.value);
