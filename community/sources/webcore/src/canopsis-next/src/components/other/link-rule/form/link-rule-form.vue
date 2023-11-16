@@ -1,27 +1,35 @@
 <template>
   <v-tabs
     slider-color="primary"
-    color="transparent"
-    fixed-tabs
     centered
   >
     <v-tab :class="{ 'error--text': hasGeneralError }">
       {{ $t('common.general') }}
     </v-tab>
-    <v-tab-item>
-      <link-rule-general-form
-        class="mt-2"
-        ref="general"
-        v-field="form"
-      />
-    </v-tab-item>
     <v-tab
       :class="{ 'error--text': hasSimpleError || errors.has('links') }"
       :disabled="sourceCodeWasChanged"
     >
       {{ $t('linkRule.simpleMode') }}
     </v-tab>
-    <v-tab-item>
+    <v-tab :class="{ 'error--text': hasAdvancedError || errors.has('links') }">
+      {{ $t('linkRule.advancedMode') }}
+    </v-tab>
+
+    <v-tab-item
+      class="mt-3"
+      eager
+    >
+      <link-rule-general-form
+        class="mt-2"
+        ref="general"
+        v-field="form"
+      />
+    </v-tab-item>
+    <v-tab-item
+      class="mt-3"
+      eager
+    >
       <c-alert
         :value="errors.has('links')"
         transition="fade-transition"
@@ -30,17 +38,16 @@
         {{ $t('linkRule.linksEmptyError') }}
       </c-alert>
       <link-rule-simple-form
-        class="mt-2"
         ref="simple"
         v-field="form.links"
         :type="form.type"
         @input="resetLinksErrors"
       />
     </v-tab-item>
-    <v-tab :class="{ 'error--text': hasAdvancedError || errors.has('links') }">
-      {{ $t('linkRule.advancedMode') }}
-    </v-tab>
-    <v-tab-item>
+    <v-tab-item
+      class="mt-3"
+      eager
+    >
       <c-alert
         :value="errors.has('links')"
         transition="fade-transition"
@@ -49,7 +56,6 @@
         {{ $t('linkRule.linksEmptyError') }}
       </c-alert>
       <link-rule-advanced-form
-        class="mt-2"
         ref="advanced"
         v-field="form.source_code"
         @input="resetLinksErrors"

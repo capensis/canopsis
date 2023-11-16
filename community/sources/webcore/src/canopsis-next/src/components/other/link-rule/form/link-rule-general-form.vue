@@ -1,9 +1,6 @@
 <template>
   <v-layout column>
-    <v-layout
-      class="mt-3"
-      align-end
-    >
+    <v-layout align-end>
       <v-flex xs6>
         <div class="text-subtitle-1">
           {{ $t('linkRule.type') }}

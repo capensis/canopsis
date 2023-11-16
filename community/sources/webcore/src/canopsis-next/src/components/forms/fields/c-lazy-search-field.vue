@@ -26,7 +26,7 @@
     dense
     @focus="onFocus"
     @blur="onBlur"
-    @update:searchInput="debouncedUpdateSearch"
+    @update:search-input="debouncedUpdateSearch"
   >
     <template #item="{ item, attrs, on, parent }">
       <slot
