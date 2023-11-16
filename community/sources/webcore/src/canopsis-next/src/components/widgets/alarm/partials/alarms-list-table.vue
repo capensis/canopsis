@@ -84,7 +84,6 @@
         :loading="loading || columnsFiltersPending"
         :dense="isMediumDense"
         :ultra-dense="isSmallDense"
-        header-key="value"
         item-key="_id"
         loader-height="2"
         hide-default-footer
