@@ -1,6 +1,6 @@
 <template>
   <v-select
-    class="c-input-type-field"
+    class="mt-4 c-input-type-field"
     v-field="value"
     v-validate="rules"
     :items="preparedTypes"
