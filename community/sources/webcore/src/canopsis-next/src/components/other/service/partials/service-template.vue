@@ -61,7 +61,7 @@ export default {
           :total-items="totalItems"
           entity-name-field="${entityNameField}"
           @refresh="refreshEntities"
-          @update:options="updatePagination"
+          @update:options="updateOptions"
         ></service-entities-list>
       `);
     });

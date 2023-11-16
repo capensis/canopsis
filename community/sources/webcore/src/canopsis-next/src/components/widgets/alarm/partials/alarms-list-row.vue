@@ -18,6 +18,7 @@
               class="ma-0"
               v-if="isAlarmSelectable"
               v-field="selected"
+              color="primary"
               hide-details
             />
             <v-simple-checkbox
