@@ -79,8 +79,9 @@ export default {
 .alarms-expand-panel-btn {
   &--small {
     width: 22px;
-    max-width: 22px;
     height: 22px;
+    max-width: 22px;
+    max-height: 22px;
   }
 }
 </style>

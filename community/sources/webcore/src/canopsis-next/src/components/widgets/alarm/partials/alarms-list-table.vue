@@ -86,6 +86,7 @@
         :ultra-dense="isSmallDense"
         header-key="value"
         item-key="_id"
+        loader-height="2"
         hide-default-footer
         multi-sort
         @update:options="$emit('update:options', $event)"
@@ -702,7 +703,7 @@ export default {
           position: absolute;
           right: -1px;
           top: 0;
-          width: 2px;
+          width: 1px;
           height: 100%;
         }
       }
@@ -777,16 +778,14 @@ export default {
     }
   }
 
-  th:not([role='columnheader']) {
-    width: 120px;
+  tr:not(.v-data-table__expanded) th:first-of-type {
+    width: 120px !important;
   }
 
-  .v-data-table--dense,
-  .v-data-table--ultra-dense {
-    thead {
-      th:not([role='columnheader']) {
-        width: 100px;
-      }
+  &.v-data-table--dense,
+  &.v-data-table--ultra-dense {
+    thead tr:not(.v-data-table__expanded) th:first-of-type {
+      width: 100px !important;
     }
   }
 
