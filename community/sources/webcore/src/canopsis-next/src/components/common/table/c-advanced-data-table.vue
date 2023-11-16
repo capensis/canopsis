@@ -19,7 +19,7 @@
           :query="options"
           :columns="headers"
           :tooltip="searchTooltip"
-          @update:query="updatePagination"
+          @update:query="updateOptions"
         />
       </v-flex>
       <slot
