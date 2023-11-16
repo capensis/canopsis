@@ -3,6 +3,7 @@
     :headers="headers"
     :items="metrics"
     :loading="pending"
+    loader-height="2"
   >
     <template #no-data="">
       <td
