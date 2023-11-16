@@ -29,6 +29,8 @@
     v-else
     v-field="value"
     :name="name"
+    tile
+    group
     mandatory
   >
     <v-tooltip
@@ -38,6 +40,7 @@
     >
       <template #activator="{ on }">
         <v-btn
+          class="ma-0"
           v-on="on"
           :value="type.value"
           small

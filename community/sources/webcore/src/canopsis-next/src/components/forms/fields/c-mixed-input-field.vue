@@ -106,14 +106,13 @@ export default {
               'hideDetails',
               'flat',
               'errorMessages',
-              'label',
             ]),
             ...additionalProps,
 
+            placeholder: this.label,
             class: 'c-mixed-input-field__text',
             type: this.inputType === PATTERN_FIELD_TYPES.number ? 'number' : 'text',
             singleLine: true,
-            dense: true,
           },
           on: {
             input: this.updateTextFieldValue,
