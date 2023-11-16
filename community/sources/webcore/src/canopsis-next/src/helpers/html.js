@@ -29,7 +29,7 @@ const DEFAULT_SANITIZE_OPTIONS = {
       '@refresh', '@update:pagination',
     ],
   },
-  allowedSchemes: sanitizeHtmlLib.defaults.allowedSchemes.concat(['data', 'http']),
+  allowedSchemes: sanitizeHtmlLib.defaults.allowedSchemes.concat(['data']),
 };
 
 const DEFAULT_LINKIFY_OPTIONS = { target: '_blank' };
