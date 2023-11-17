@@ -8,7 +8,7 @@
         :disabled="disabled"
         :min="min"
         required
-        box
+        filled
       />
     </v-flex>
     <v-flex

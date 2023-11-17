@@ -3,6 +3,7 @@
     <v-btn-toggle
       :value="value"
       :mandatory="mandatory"
+      dense
       @change="$emit('input', $event)"
     >
       <v-btn

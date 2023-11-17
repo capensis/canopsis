@@ -12,13 +12,13 @@ $default-font-size: 14px;
 
 // Font sizes
 $font-size-root: var(--v-font-size-root, $default-font-size);
+$border-radius-root: 2px;
 
 $expansion-panel-header-font-size: $font-size-root;
 
 $alert-font-size: $font-size-root;
 $alert-prominent-icon-font-size: rem(16px);
 $alert-margin: 4px;
-$alert-border-radius: 0;
 
 $badge-font-size: rem(14px);
 
@@ -40,14 +40,18 @@ $card-subtitle-padding: rem(16px);
 $card-adjacent-sibling-text-padding-top: $card-subtitle-padding;
 
 $pagination-item-font-size: rem(14px);
+$pagination-border-radius: 4px;
 
 $list-item-title-font-size: rem(16px);
 
+$tooltip-font-size: 12px;
+$tooltip-padding: 5px 8px !default;
+
 $btn-letter-spacing: normal;
-$btn-border-radius: 2px;
+$btn-toggle-btn-opacity: 0.4;
 $btn-font-sizes: (
   'x-small': .625rem,
-  'small': .75rem,
+  'small': rem(13px),
   'default': rem(14px),
   'large': .875rem,
   'x-large': 1rem
@@ -59,19 +63,15 @@ $tabs-item-letter-spacing: normal;
 $dialog-card-text-padding: 16px;
 
 $card-title-font-weight: 400;
-$card-border-radius: 0;
-$card-shaped-border-radius: 0;
-
-$dialog-border-radius: 0;
 
 $expansion-panel-content-padding: 0;
 $expansion-panel-header-min-height: 48px;
 $expansion-panel-active-header-min-height: $expansion-panel-header-min-height;
 
-$menu-content-border-radius: 0;
-$calendar-event-border-radius: 0;
-
 $data-table-border-radius: 0;
+
+$text-field-dense-padding: 8px 0;
+$text-field-dense-append-prepend-margin: 4px;
 
 $headings: (
   'h1': (
@@ -113,12 +113,12 @@ $headings: (
   'body-1': (
     'size': rem(14px),
     'weight': 500,
-    'line-height': rem(25px),
+    'line-height': 1.5,
   ),
   'body-2': (
     'size': rem(14px),
     'weight': 500,
-    'line-height': rem(25px),
+    'line-height': 1.5,
   ),
   'subtitle-1': (
     'size': rem(16px),
@@ -154,7 +154,7 @@ $text-light: (
   disabled: var(--v-text-light-disabled, rgba(map-get($shades, 'black'), 0.38))
 );
 $icons-light: (
-  active: map-get($text-light, 'secondary'),
+  active: map-get($text-light, 'primary'),
   inactive: map-get($text-light, 'disabled'),
 );
 $buttons-light: (
@@ -185,7 +185,7 @@ $text-dark: (
   disabled: var(--v-text-dark-disabled, rgba(map-get($shades, 'white'), 0.5))
 );
 $icons-dark: (
-  active: map-get($text-dark, 'secondary'),
+  active: map-get($text-dark, 'primary'),
   inactive: map-get($text-dark, 'disabled'),
 );
 $buttons-dark: (

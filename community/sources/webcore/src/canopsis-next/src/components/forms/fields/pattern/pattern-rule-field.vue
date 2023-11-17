@@ -2,11 +2,11 @@
   <v-layout>
     <v-flex
       :xs5="isAnyInfosRule"
-      xs4
+      :xs4="!isAnyInfosRule"
     >
       <v-layout>
         <v-flex
-          :xs4="isAnyInfosRule"
+          :xs4="!isObjectRule && isAnyInfosRule"
           :xs6="isObjectRule"
         >
           <pattern-attribute-field
@@ -50,7 +50,7 @@
     <v-flex
       v-if="rule.attribute"
       :xs8="!isAnyInfosRule"
-      xs7
+      :xs7="isAnyInfosRule"
     >
       <v-layout>
         <template v-if="isDateRule">
@@ -96,7 +96,7 @@
             class="pl-3"
             v-if="shownOperatorField"
             :xs6="!isAnyInfosRule"
-            xs4
+            :xs4="isAnyInfosRule"
           >
             <pattern-operator-field
               v-field="rule.operator"

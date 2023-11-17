@@ -108,17 +108,25 @@ export default {
       }
     },
     closeConditional(e) {
-      // If the dialog content contains
-      // the click event, or if the
-      // dialog is not active
-      if (!this.isActive || this.$refs.content.contains(e.target)) {
+      const { target } = e; // Ignore the click if the dialog is closed or destroyed,
+      // if it was on an element inside the content,
+      // if it was dragged onto the overlay (#6969),
+      // or if this isn't the topmost dialog (#9907)
+
+      // eslint-disable-next-line no-underscore-dangle
+      if (this._isDestroyed || !this.isActive || this.$refs.content.contains(target)) {
         return false;
       }
+
+      if (this.overlay && target && !this.overlay.$el.contains(target)) {
+        return false;
+      }
+
       // If we made it here, the click is outside
       // and is active. If persistent, and the
       // click is on the overlay, animate
       if (this.persistent) {
-        if (!this.noClickAnimation && this.overlay === e.target) {
+        if (!this.noClickAnimation) {
           this.animateClick();
         }
 

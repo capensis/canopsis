@@ -6,11 +6,15 @@
     />
     <c-duration-field v-field="form.interval" />
     <v-layout>
-      <c-enabled-field v-field="form.enabled" />
-      <c-enabled-field
-        v-field="form.fullscreen"
-        :label="$t('common.fullscreen')"
-      />
+      <v-flex xs6>
+        <c-enabled-field v-field="form.enabled" />
+      </v-flex>
+      <v-flex xs6>
+        <c-enabled-field
+          v-field="form.fullscreen"
+          :label="$t('common.fullscreen')"
+        />
+      </v-flex>
     </v-layout>
     <v-btn
       class="secondary ml-0"
@@ -40,14 +44,12 @@
         <draggable-playlist-tabs v-field="form.tabs_list" />
       </v-flex>
     </v-layout>
-    <v-layout>
-      <v-alert
-        :value="errors.has('tabs')"
-        type="error"
-      >
-        {{ $t('modals.createPlaylist.errors.emptyTabs') }}
-      </v-alert>
-    </v-layout>
+    <c-alert
+      :value="errors.has('tabs')"
+      type="error"
+    >
+      {{ $t('modals.createPlaylist.errors.emptyTabs') }}
+    </c-alert>
   </div>
 </template>
 

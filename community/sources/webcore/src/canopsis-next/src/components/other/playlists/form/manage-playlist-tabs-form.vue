@@ -7,13 +7,12 @@
       <v-flex class="text-center mb-2">
         {{ $t('modals.createPlaylist.groups') }}
       </v-flex>
-      <v-expansion-panel
-        readonly
-        hide-actions
-        expand
-        dark
-        focusable
+      <v-expansion-panels
         :value="openedPanels"
+        accordion
+        readonly
+        multiple
+        dark
       >
         <group-panel
           v-for="group in groups"
@@ -22,86 +21,111 @@
           hide-actions
         >
           <template #title="">
-            <v-checkbox
-              class="group-checkbox mt-0 pt-0"
-              :input-value="selectedGroupsIds"
-              :value="group._id"
-              :disabled="isDisabledGroup(group)"
-              color="primary"
-              @change="selectGroupHandler(group, $event)"
-            />
-            <span class="group-title">{{ group.title }}</span>
+            <v-layout align-center>
+              <v-checkbox
+                class="group-checkbox mt-0 pt-0"
+                :input-value="selectedGroupsIds"
+                :value="group._id"
+                :disabled="isDisabledGroup(group)"
+                color="primary"
+                @change="selectGroupHandler(group, $event)"
+              >
+                <template #label>
+                  {{ group.title }}
+                </template>
+              </v-checkbox>
+            </v-layout>
           </template>
-          <v-expansion-panel
-            class="tabs-panel"
-            v-for="view in group.views"
-            :key="view._id"
-            :value="getPanelValueFromArray(view.tabs)"
+          <v-expansion-panels
+            :value="getPanelValueFromArray(group.views)"
+            accordion
             readonly
             hide-actions
-            expand
+            multiple
             dark
-            focusable
           >
-            <v-expansion-panel-content hide-actions>
-              <template #header="">
-                <group-view-panel :view="view">
-                  <template #title="">
-                    <v-layout
-                      align-center
-                      justify-space-between
-                    >
-                      <v-checkbox
-                        class="group-checkbox mt-0 pt-0"
-                        :input-value="selectedViewsIds"
-                        :value="view._id"
-                        :disabled="isDisabledView(view)"
-                        color="primary"
-                        @change="selectViewHandler(view, $event)"
-                      />
-                      <span class="text-truncate">{{ view.title }}
-                        <span
-                          class="ml-1"
-                          v-show="view.description"
-                        >
-                          ({{ view.description }})
-                        </span>
-                      </span>
-                    </v-layout>
-                  </template>
-                </group-view-panel>
-              </template>
-              <tab-panel-content
-                v-for="tab in view.tabs"
-                :key="tab._id"
-                :tab="tab"
+            <v-expansion-panel
+              class="tabs-panel"
+              v-for="view in group.views"
+              :key="view._id"
+            >
+              <v-expansion-panel-header
+                class="pa-0"
                 hide-actions
               >
-                <template #title="">
-                  <v-layout
-                    class="ml-5"
-                    align-center
-                  >
+                <group-view-panel :view="view">
+                  <template #title="">
                     <v-checkbox
-                      class="tab-checkbox group-checkbox"
-                      :input-value="selectedTabsIds"
-                      :value="tab._id"
+                      class="group-checkbox mt-0 pt-0"
+                      :input-value="selectedViewsIds"
+                      :value="view._id"
+                      :disabled="isDisabledView(view)"
                       color="primary"
-                      @change="selectTabHandler(tab, $event)"
-                    />
-                    <span>{{ tab.title }}</span>
-                  </v-layout>
-                </template>
-              </tab-panel-content>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
+                      @change="selectViewHandler(view, $event)"
+                    >
+                      <template #label>
+                        <span class="text-truncate">
+                          {{ view.title }}
+                          <span
+                            class="ml-1"
+                            v-show="view.description"
+                          >
+                            ({{ view.description }})
+                          </span>
+                        </span>
+                      </template>
+                    </v-checkbox>
+                  </template>
+                </group-view-panel>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content hide-actions>
+                <v-expansion-panels
+                  :value="getPanelValueFromArray(view.tabs)"
+                  accordion
+                  readonly
+                  hide-actions
+                  multiple
+                  dark
+                >
+                  <v-expansion-panel
+                    v-for="tab in view.tabs"
+                    :key="tab._id"
+                  >
+                    <v-expansion-panel-header
+                      class="pa-0"
+                      hide-actions
+                    >
+                      <tab-panel-content :tab="tab">
+                        <template #title="">
+                          <v-checkbox
+                            class="ml-10"
+                            :input-value="selectedTabsIds"
+                            :value="tab._id"
+                            :label="tab.title"
+                            color="primary"
+                            @change="selectTabHandler(tab, $event)"
+                          >
+                            <template #label>
+                              {{ tab.title }}
+                            </template>
+                          </v-checkbox>
+                        </template>
+                      </tab-panel-content>
+                    </v-expansion-panel-header>
+                  </v-expansion-panel>
+                </v-expansion-panels>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
         </group-panel>
-      </v-expansion-panel>
+      </v-expansion-panels>
     </v-flex>
   </v-layout>
 </template>
 
 <script>
+import { createRangeArray } from '@/helpers/array';
+
 import GroupViewPanel from '@/components/layout/navigation/partials/groups-side-bar/group-view-panel.vue';
 import GroupPanel from '@/components/layout/navigation/partials/groups-side-bar/group-panel.vue';
 
@@ -160,7 +184,7 @@ export default {
   },
   methods: {
     getPanelValueFromArray(values = []) {
-      return new Array(values.length).fill(true);
+      return createRangeArray(values.length);
     },
 
     selectTabHandler(tab, checkedTabs) {
@@ -218,12 +242,6 @@ export default {
     & ::v-deep .v-expansion-panel__header {
       padding: 0;
       margin: 0;
-    }
-    .tab-checkbox {
-      flex: none;
-      height: 24px;
-      margin: 0;
-      padding: 0;
     }
   }
 </style>

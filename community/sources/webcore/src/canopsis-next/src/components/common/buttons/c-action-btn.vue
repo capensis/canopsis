@@ -5,7 +5,6 @@
     :bottom="bottom"
     :left="left"
     :disabled="disabled"
-    :custom-activator="customTooltipActivator"
   >
     <template #activator="{ on: tooltipOn }">
       <slot
@@ -25,7 +24,6 @@
               :bottom="bottom"
               :left="left"
               :disabled="!badgeTooltip"
-              :custom-activator="customTooltipActivator"
             >
               <template #activator="{ on: badgeTooltipOn }">
                 <slot

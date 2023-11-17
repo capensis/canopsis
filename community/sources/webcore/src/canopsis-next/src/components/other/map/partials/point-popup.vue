@@ -45,23 +45,23 @@
       v-if="actions"
     >
       <v-btn
+        class="point-popup__action"
         v-if="hasAlarmsListAccess && point.entity"
         text
-        block
         @click.stop="$emit('show:alarms')"
       >
         {{ $t('common.seeAlarms') }}
       </v-btn>
       <v-btn
+        class="point-popup__action"
         v-if="point.map"
         text
-        block
         @click.stop="$emit('show:map')"
       >
         <v-icon left>
           link
         </v-icon>
-        <span class="text-none"> {{ point.map.name }}</span>
+        <span class="text-none">{{ point.map.name }}</span>
       </v-btn>
     </v-layout>
   </v-card>
@@ -123,3 +123,12 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.point-popup {
+  &__action {
+    width: 100%;
+    flex-shrink: 1;
+  }
+}
+</style>

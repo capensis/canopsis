@@ -5,7 +5,6 @@
     content-class="c-color-picker-menu-field__dropdown"
     bottom
     left
-    lazy-with-unmount
     offset-x
   >
     <template #activator="{ on }">
@@ -79,8 +78,9 @@ export default {
 <style lang="scss">
 .c-color-picker-menu-field {
   &__button {
-    min-width: unset;
+    min-width: unset !important;
     max-width: 80px;
+    width: 80px;
     flex-shrink: 0;
   }
 

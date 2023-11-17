@@ -24,29 +24,24 @@
           loader-height="2"
           show-expand
         >
-          <template #items="props">
-            <tr @click="props.expanded = !props.expanded">
-              <td>{{ props.item.title }}</td>
-              <td>
-                <v-layout>
-                  <c-action-btn
-                    :tooltip="$t('modals.createDynamicInfo.create.title')"
-                    icon="assignment"
-                    @click="selectTemplate(props.item)"
-                  />
-                  <c-action-btn
-                    type="edit"
-                    @click="showEditTemplateModal(props.item)"
-                  />
-                  <c-action-btn
-                    type="delete"
-                    @click="showDeleteTemplateModal(props.item._id)"
-                  />
-                </v-layout>
-              </td>
-            </tr>
+          <template #item.actions="{ item }">
+            <v-layout>
+              <c-action-btn
+                :tooltip="$t('modals.createDynamicInfo.create.title')"
+                icon="assignment"
+                @click="selectTemplate(item)"
+              />
+              <c-action-btn
+                type="edit"
+                @click="showEditTemplateModal(item)"
+              />
+              <c-action-btn
+                type="delete"
+                @click="showDeleteTemplateModal(item._id)"
+              />
+            </v-layout>
           </template>
-          <template #expand="{ item }">
+          <template #expanded-item="{ item }">
             <v-container class="secondary lighten-2">
               <v-card>
                 <v-card-text>
@@ -99,6 +94,7 @@ export default {
         },
         {
           text: this.$t('common.actionsLabel'),
+          value: 'actions',
           sortable: false,
         },
       ];

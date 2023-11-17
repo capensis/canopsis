@@ -6,7 +6,6 @@
     :close-on-content-click="false"
     :open-on-click="false"
     offset-x
-    lazy-with-unmount
     lazy
   >
     <template #activator="{ on }">

@@ -5,49 +5,52 @@
     @dblclick.stop=""
     @mousemove.stop=""
   >
-    <v-expansion-panel
-      class="geomap-layers-control"
-      color="grey"
-    >
-      <v-expansion-panel-content>
-        <template #header="">
+    <v-expansion-panels>
+      <v-expansion-panel
+        class="geomap-layers-control"
+        color="grey"
+      >
+        <v-expansion-panel-header>
           <span class="v-label">{{ $t('geomap.layers') }}</span>
-        </template>
-        <v-divider />
-        <v-layout
-          class="pa-2"
-          column
-        >
-          <v-radio-group
-            :value="activeLayer"
-            color="primary"
+        </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <v-divider />
+          <v-layout
+            class="pa-2"
             column
-            hide-details
-            @change="enableLayer"
           >
-            <v-radio
-              v-for="layer in layers"
-              :key="layer.name"
-              :label="layer.name"
-              :value="layer"
+            <v-radio-group
+              class="mt-0"
+              :value="activeLayer"
               color="primary"
-            />
-          </v-radio-group>
-          <template v-if="overlays.length">
-            <v-divider class="my-2" />
-            <v-simple-checkbox
-              class="mt-0 pt-0"
-              v-for="overlay in overlays"
-              :key="overlay.name"
-              :value="isLayerActive(overlay.layer)"
-              :label="overlay.name"
+              column
               hide-details
-              @input="enableOverlay(overlay, $event)"
-            />
-          </template>
-        </v-layout>
-      </v-expansion-panel-content>
-    </v-expansion-panel>
+              @change="enableLayer"
+            >
+              <v-radio
+                v-for="layer in layers"
+                :key="layer.name"
+                :label="layer.name"
+                :value="layer"
+                color="primary"
+              />
+            </v-radio-group>
+            <template v-if="overlays.length">
+              <v-divider class="my-2" />
+              <v-checkbox
+                class="mt-0 pt-0"
+                v-for="overlay in overlays"
+                :key="overlay.name"
+                :input-value="isLayerActive(overlay.layer)"
+                :label="overlay.name"
+                hide-details
+                @change="enableOverlay(overlay, $event)"
+              />
+            </template>
+          </v-layout>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
   </div>
 </template>
 

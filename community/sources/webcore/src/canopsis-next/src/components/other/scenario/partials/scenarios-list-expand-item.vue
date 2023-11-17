@@ -14,7 +14,10 @@
             justify-center
             align-center
           >
-            <v-flex xs12>
+            <v-flex
+              v-if="scenario.author"
+              xs12
+            >
               <scenario-info-item
                 :label="$t('common.author')"
                 :value="scenario.author.display_name"

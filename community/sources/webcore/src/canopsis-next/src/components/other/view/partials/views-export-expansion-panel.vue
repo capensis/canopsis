@@ -63,6 +63,8 @@
 <script>
 import { difference } from 'lodash';
 
+import { createRangeArray } from '@/helpers/array';
+
 import { formMixin } from '@/mixins/form';
 
 import GroupPanel from '@/components/layout/navigation/partials/groups-side-bar/group-panel.vue';
@@ -87,7 +89,7 @@ export default {
   },
   computed: {
     openedPanels() {
-      return new Array(this.groups.length).fill(true).map((_, index) => index);
+      return createRangeArray(this.groups.length);
     },
   },
   methods: {
