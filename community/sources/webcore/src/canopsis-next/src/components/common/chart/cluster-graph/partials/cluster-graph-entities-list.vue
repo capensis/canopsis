@@ -48,6 +48,7 @@
       </v-card-actions>
     </v-card>
     <v-btn
+      class="ml-2"
       color="primary"
       @click="add"
     >

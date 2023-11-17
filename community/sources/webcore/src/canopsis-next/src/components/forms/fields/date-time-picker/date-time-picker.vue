@@ -40,7 +40,7 @@
     <slot name="footer">
       <v-divider />
       <v-layout
-        class="mt-1"
+        class="mt-1 py-2"
         justify-space-around
       >
         <v-btn

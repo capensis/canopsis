@@ -7,7 +7,7 @@
           <v-tabs
             v-model="activeTab"
             slider-color="primary"
-            fixed-tabs
+            centered
           >
             <template v-if="hasReadAnyRemediationInstructionAccess">
               <v-tab :href="`#${$constants.REMEDIATION_TABS.instructions}`">

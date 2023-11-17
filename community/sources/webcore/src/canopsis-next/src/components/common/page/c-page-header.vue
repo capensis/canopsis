@@ -1,9 +1,9 @@
 <template>
   <div>
-    <h2 class="text-center text-h4 font-weight-medium mt-3 mb-2">
+    <h2 class="text-center text-h4 font-weight-medium mt-4 mb-2">
       <slot>{{ $t(`pageHeaders.${name}.title`) }}</slot>
       <v-btn
-        class="mr-0"
+        class="ml-2 my-2"
         v-if="hasMessage"
         icon
         @click="toggleMessageVisibility"
@@ -30,6 +30,7 @@
           justify-center
         >
           <v-btn
+            class="my-2"
             color="primary"
             @click="hideMessage"
           >

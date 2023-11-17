@@ -52,7 +52,7 @@ export default {
           on: ExpandTransitionGenerator('v-data-table__expanded__col'),
         }, [children]);
 
-        rows.push(this.$createElement('tr', { class: 'v-data-table__expanded__row' }, [transition]));
+        rows.push(this.$createElement('tr', { class: 'v-data-table__expanded v-data-table__expanded__row' }, [transition]));
       }
 
       return rows;

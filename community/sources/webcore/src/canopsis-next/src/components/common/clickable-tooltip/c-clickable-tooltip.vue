@@ -2,8 +2,8 @@
   <div class="c-clickable-tooltip">
     <div
       ref="activator"
-      @focusin="showTooltip"
-      @focusout="hideTooltip"
+      @mouseenter="showTooltip"
+      @mouseleave="hideTooltip"
     >
       <slot name="activator" />
     </div>
@@ -17,13 +17,14 @@
       :open-delay="transitionDelay"
       :activator="$refs.activator"
       ignore-content-leave
+      content-class="c-clickable-tooltip__content"
     >
-      <span
-        @focusin="showTooltip"
-        @focusout="hideTooltip"
+      <div
+        @mouseenter="showTooltip"
+        @mouseleave="hideTooltip"
       >
         <slot />
-      </span>
+      </div>
     </v-tooltip>
   </div>
 </template>
@@ -77,3 +78,16 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.c-clickable-tooltip {
+  &__content {
+    pointer-events: initial;
+    padding: 0;
+
+    div {
+      padding: 5px 16px;
+    }
+  }
+}
+</style>

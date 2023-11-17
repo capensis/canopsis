@@ -30,11 +30,14 @@
       {{ item.source || $constants.AUTH_METHODS.local }}
     </template>
     <template #roles="{ item }">
-      <v-chip-group
-        :items="item.roles"
-        item-text="name"
-        item-value="_id"
-      />
+      <v-chip-group>
+        <v-chip
+          v-for="role in item.roles"
+          :key="role._id"
+        >
+          {{ role.name }}
+        </v-chip>
+      </v-chip-group>
     </template>
     <template #actions="{ item }">
       <v-layout>

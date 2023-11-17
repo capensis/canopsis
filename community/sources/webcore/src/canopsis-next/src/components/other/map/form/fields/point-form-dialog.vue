@@ -30,7 +30,7 @@
           @fly:coordinates="$emit('fly:coordinates', $event)"
         />
       </v-card-text>
-      <v-layout justify-end>
+      <v-card-actions class="v-layout justify-end">
         <v-btn
           :disabled="submitting"
           depressed
@@ -58,7 +58,7 @@
         >
           {{ $t('common.submit') }}
         </v-btn>
-      </v-layout>
+      </v-card-actions>
     </v-card>
   </v-form>
 </template>
