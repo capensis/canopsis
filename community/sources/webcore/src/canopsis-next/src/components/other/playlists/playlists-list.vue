@@ -4,11 +4,11 @@
     :items="playlists"
     :loading="pending"
     :total-items="totalItems"
-    :pagination="pagination"
+    :options="options"
     advanced-pagination
     expand
     search
-    @update:pagination="$emit('update:pagination', $event)"
+    @update:options="$emit('update:options', $event)"
   >
     <template #fullscreen="{ item }">
       <c-enabled :value="item.fullscreen" />
@@ -84,7 +84,7 @@ export default {
       type: Number,
       required: false,
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },

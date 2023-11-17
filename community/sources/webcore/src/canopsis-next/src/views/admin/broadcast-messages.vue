@@ -5,7 +5,7 @@
       <broadcast-messages-list
         :broadcast-messages="broadcastMessages"
         :pending="broadcastMessagesPending"
-        :pagination.sync="pagination"
+        :options.sync="options"
         :total-items="broadcastMessagesMeta.total_count"
         @edit="showEditBroadcastMessageModal"
         @remove="showRemoveBroadcastMessageModal"

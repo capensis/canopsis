@@ -4,7 +4,7 @@
       :pbehavior-reasons="pbehaviorReasons"
       :pending="pbehaviorReasonsPending"
       :total-items="pbehaviorReasonsMeta.total_count"
-      :pagination.sync="pagination"
+      :options.sync="options"
       @remove-selected="showRemoveSelectedPbehaviorReasonModal"
       @remove="showRemovePbehaviorReasonModal"
       @edit="showEditPbehaviorReasonModal"

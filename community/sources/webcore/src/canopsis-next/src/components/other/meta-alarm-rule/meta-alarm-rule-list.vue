@@ -4,13 +4,13 @@
     :headers="headers"
     :loading="pending"
     :total-items="totalItems"
-    :pagination="pagination"
+    :options="options"
     :is-expandable-item="hasRulePatterns"
     :select-all="removable"
     expand
     search
     advanced-pagination
-    @update:pagination="$emit('update:pagination', $event)"
+    @update:options="$emit('update:options', $event)"
   >
     <template #mass-actions="{ selected }">
       <c-action-btn
@@ -89,7 +89,7 @@ export default {
       type: Number,
       required: false,
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },

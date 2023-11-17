@@ -14,6 +14,7 @@
 <script>
 import { WIDGET_TYPES } from '@/constants';
 
+import { prepareAlarmListWidget } from '@/helpers/entities/widget/forms/alarm';
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 
 import { authMixin } from '@/mixins/auth';
@@ -72,7 +73,7 @@ export default {
       const [, widget] = await Promise.all(requests);
 
       if (widget?.type === WIDGET_TYPES.alarmList) {
-        this.widget = widget;
+        this.widget = prepareAlarmListWidget(widget);
       }
     } catch (err) {
       this.$popups.error({ text: err.description || this.$t('errors.default') });

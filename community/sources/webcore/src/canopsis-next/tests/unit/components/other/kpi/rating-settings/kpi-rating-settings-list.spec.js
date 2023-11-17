@@ -78,12 +78,12 @@ describe('kpi-rating-settings-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         ratingSettings: ratingSettingsItems,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
           search: '',
-          sortBy: '',
-          descending: false,
+          sortBy: [],
+          sortDesc: [],
         },
         totalItems: 50,
         updatable: true,
@@ -128,12 +128,12 @@ describe('kpi-rating-settings-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         ratingSettings: ratingSettingsItems,
-        pagination: {
+        options: {
           page: 2,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
           search: 'Rating setting',
-          sortBy: '',
-          descending: false,
+          sortBy: [],
+          sortDesc: [],
         },
         totalItems: 50,
         pending: true,
@@ -148,12 +148,12 @@ describe('kpi-rating-settings-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         ratingSettings: ratingSettingsItems,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
           search: '',
-          sortBy: '',
-          descending: false,
+          sortBy: [],
+          sortDesc: [],
         },
         totalItems: 50,
         updatable: true,
@@ -182,12 +182,12 @@ describe('kpi-rating-settings-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         ratingSettings: [],
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
           search: '',
-          sortBy: '',
-          descending: false,
+          sortBy: [],
+          sortDesc: [],
         },
         totalItems: 50,
         updatable: true,

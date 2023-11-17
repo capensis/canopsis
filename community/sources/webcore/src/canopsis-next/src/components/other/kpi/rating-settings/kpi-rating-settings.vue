@@ -2,7 +2,7 @@
   <v-layout column>
     <span class="pl-4 text-subtitle-1">{{ $t('kpi.ratingSettings.helpInformation') }}</span>
     <kpi-rating-settings-list
-      :pagination.sync="pagination"
+      :options.sync="options"
       :rating-settings="ratingSettings"
       :pending="ratingSettingsPending"
       :total-items="ratingSettingsMeta.total_count"

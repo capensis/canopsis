@@ -6,19 +6,19 @@
     <v-flex xs10>
       <c-pagination
         :page="page"
-        :limit="rowsPerPage"
+        :limit="itemsPerPage"
         :total="totalItems"
         @input="$emit('update:page', $event)"
       />
     </v-flex>
     <v-spacer />
     <v-flex xs2>
-      <c-records-per-page-field
+      <c-items-per-page-field
         class="pa-0"
-        :value="rowsPerPage"
-        :items="rowsPerPageItems"
+        :value="itemsPerPage"
+        :items="items"
         hide-details
-        @input="$emit('update:rows-per-page', $event)"
+        @input="$emit('update:items-per-page', $event)"
       />
     </v-flex>
   </v-layout>
@@ -32,7 +32,7 @@ export default {
     CPagination,
   },
   props: {
-    rowsPerPageItems: {
+    items: {
       type: Array,
       required: false,
     },
@@ -44,7 +44,7 @@ export default {
       type: Number,
       required: false,
     },
-    rowsPerPage: {
+    itemsPerPage: {
       type: Number,
       required: false,
     },

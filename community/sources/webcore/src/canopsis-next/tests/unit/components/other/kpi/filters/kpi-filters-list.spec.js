@@ -104,9 +104,9 @@ describe('kpi-filters-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         filters: filtersItems,
-        pagination: {
+        options: {
           page: 2,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
           search: 'Filter',
           sortBy: 'created',
           descending: true,
@@ -126,11 +126,12 @@ describe('kpi-filters-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         filters: filtersItems,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
           search: '',
-          sortBy: '',
+          sortBy: [],
+          sortDesc: [],
           descending: false,
         },
         totalItems: 50,
@@ -150,9 +151,10 @@ describe('kpi-filters-list', () => {
         filters: filtersItems.map(item => ({ ...item, old_entity_patterns: true })),
         pagination: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
           search: '',
-          sortBy: '',
+          sortBy: [],
+          sortDesc: [],
           descending: false,
         },
         updatable: true,

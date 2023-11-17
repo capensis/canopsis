@@ -8,7 +8,7 @@
     <themes-list
       :themes="themes"
       :pending="themesPending"
-      :pagination.sync="pagination"
+      :options.sync="options"
       :total-items="themesMeta.total_count"
       :updatable="hasUpdateAnyThemeAccess"
       :removable="hasDeleteAnyThemeAccess"
