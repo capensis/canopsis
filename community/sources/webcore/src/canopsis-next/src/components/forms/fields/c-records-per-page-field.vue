@@ -3,10 +3,10 @@
     class="select"
     :items="items"
     :value="value"
-    @input="$emit('input', $event)"
     hide-details
     single-line
     dense
+    @input="$emit('input', $event)"
   />
 </template>
 

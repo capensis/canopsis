@@ -7,7 +7,7 @@
   >
     <v-list-item-avatar class="my-0">
       <v-icon
-        class="text--secondary"
+        :class="{ 'text--secondary': !link.color }"
         :color="link.color"
       >
         {{ link.icon }}

@@ -1,13 +1,15 @@
 <template>
   <v-btn-toggle
     :value="value"
+    tile
+    group
     @change="inputHandler"
   >
     <v-btn
+      class="ma-0"
       :value="true"
       light
       text
-      large
       block
     >
       <v-icon left>

@@ -22,7 +22,9 @@
                     {{ $t(`map.types.${type}`) }}
                   </div>
                   <v-spacer />
-                  <v-icon>{{ getIconByType(type) }}</v-icon>
+                  <v-icon class="text--secondary">
+                    {{ getIconByType(type) }}
+                  </v-icon>
                 </v-layout>
               </v-card-title>
             </v-card>
