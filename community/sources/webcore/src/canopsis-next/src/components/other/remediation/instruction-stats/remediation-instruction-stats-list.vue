@@ -5,17 +5,17 @@
       :items="remediationInstructionStats"
       :loading="pending"
       :total-items="totalItems"
-      :pagination="pagination"
+      :options="options"
       table-class="c-remediation-instruction-stats__table"
       expand
       search
       advanced-pagination
-      @update:pagination="$emit('update:pagination', $event)"
+      @update:options="$emit('update:options', $event)"
     >
       <template #toolbar="">
         <v-layout align-center>
           <c-quick-date-interval-field
-            :interval="pagination.interval"
+            :interval="options.interval"
             :accumulated-before="accumulatedBefore"
             @input="updateInterval"
           />
@@ -109,7 +109,7 @@ export default {
       type: Number,
       required: false,
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },
@@ -184,8 +184,8 @@ export default {
   },
   methods: {
     updateInterval(interval) {
-      this.$emit('update:pagination', {
-        ...this.pagination,
+      this.$emit('update:options', {
+        ...this.options,
         interval,
       });
     },

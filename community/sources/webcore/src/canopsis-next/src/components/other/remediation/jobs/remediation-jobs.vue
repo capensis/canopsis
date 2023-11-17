@@ -4,7 +4,7 @@
       :remediation-jobs="remediationJobs"
       :pending="remediationJobsPending"
       :total-items="remediationJobsMeta.total_count"
-      :pagination.sync="pagination"
+      :options.sync="options"
       :removable="hasDeleteAnyRemediationJobAccess"
       :updatable="hasUpdateAnyRemediationJobAccess"
       :duplicable="hasCreateAnyRemediationJobAccess"

@@ -1,10 +1,20 @@
 <script>
 import { VDataTable } from 'vuetify/lib/components/VDataTable';
-import { getObjectValueByPath } from 'vuetify/lib/util/helpers';
+import { getObjectValueByPath, getSlot, getPrefixedScopedSlots } from 'vuetify/lib/util/helpers';
 import ExpandTransitionGenerator from 'vuetify/lib/components/transitions/expand-transition';
 
+import VSimpleTable from './v-simple-table.vue';
+import VDataTableHeader from './v-data-table-header.vue';
+
 export default {
+  components: { VSimpleTable, VDataTableHeader },
   extends: VDataTable,
+  props: {
+    ultraDense: {
+      type: Boolean,
+      default: false,
+    },
+  },
   methods: {
     /**
      * We've added expand transition here
@@ -83,6 +93,83 @@ export default {
       }, [transition]);
 
       return [headerRow, expandedRow];
+    },
+
+    genDefaultScopedSlot(props) {
+      const simpleProps = {
+        height: this.height,
+        fixedHeader: this.fixedHeader,
+        dense: this.dense,
+        ultraDense: this.ultraDense,
+      };
+      // if (this.virtualRows) {
+      //   return this.$createElement(VVirtualTable, {
+      //     props: Object.assign(simpleProps, {
+      //       items: props.items,
+      //       height: this.height,
+      //       rowHeight: this.dense ? 24 : 48,
+      //       headerHeight: this.dense ? 32 : 48,
+      //       // TODO: expose rest of props from virtual table?
+      //     }),
+      //     scopedSlots: {
+      //       items: ({ items }) => this.genItems(items, props) as any,
+      //     },
+      //   }, [
+      //     this.proxySlot('body.before', [this.genCaption(props), this.genHeaders(props)]),
+      //     this.proxySlot('bottom', this.genFooters(props)),
+      //   ])
+      // }
+
+      return this.$createElement(VSimpleTable, {
+        props: simpleProps,
+        class: {
+          'v-data-table--mobile': this.isMobile,
+          'v-data-table--selectable': this.showSelect,
+        },
+      }, [
+        this.proxySlot('top', getSlot(this, 'top', {
+          ...props,
+          isMobile: this.isMobile,
+        }, true)),
+        this.genCaption(props),
+        this.genColgroup(props),
+        this.genHeaders(props),
+        this.genBody(props),
+        this.genFoot(props),
+        this.proxySlot('bottom', this.genFooters(props)),
+      ]);
+    },
+    genHeaders(props) {
+      const data = {
+        props: {
+          ...this.sanitizedHeaderProps,
+
+          headers: this.computedHeaders,
+          options: props.options,
+          mobile: this.isMobile,
+          showGroupBy: this.showGroupBy,
+          checkboxColor: this.checkboxColor,
+          someItems: this.someItems,
+          everyItem: this.everyItem,
+          singleSelect: this.singleSelect,
+          disableSort: this.disableSort,
+        },
+        on: {
+          sort: props.sort,
+          group: props.group,
+          'toggle-select-all': this.toggleSelectAll,
+        },
+      }; // TODO: rename to 'head'? (thead, tbody, tfoot)
+
+      const children = [getSlot(this, 'header', { ...data, isMobile: this.isMobile })];
+
+      if (!this.hideDefaultHeader) {
+        const scopedSlots = getPrefixedScopedSlots('header.', this.$scopedSlots);
+        children.push(this.$createElement(VDataTableHeader, { ...data, scopedSlots }));
+      }
+
+      if (this.loading) children.push(this.genLoading());
+      return children;
     },
   },
 };

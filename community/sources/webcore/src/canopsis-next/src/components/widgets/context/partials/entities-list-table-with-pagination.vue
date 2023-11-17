@@ -7,7 +7,7 @@
       :headers="headers"
       :loading="pending || columnsFiltersPending"
       :total-items="meta.total_count"
-      :pagination.sync="pagination"
+      :options.sync="options"
       :toolbar-props="toolbarProps"
       :select-all="selectable"
       expand
@@ -67,18 +67,18 @@
     </c-advanced-data-table>
     <c-table-pagination
       :total-items="meta.total_count"
-      :rows-per-page="query.limit"
+      :items-per-page="query.limit"
       :page="query.page"
       @update:page="updateQueryPage"
-      @update:rows-per-page="updateRecordsPerPage"
+      @update:items-per-page="updateItemsPerPage"
     />
   </div>
 </template>
 
 <script>
-import { isEqual, pick } from 'lodash';
+import { PAGINATION_LIMIT } from '@/config';
 
-import { SORT_ORDERS } from '@/constants';
+import { convertDataTableOptionsToQuery } from '@/helpers/entities/shared/query';
 
 import { authMixin } from '@/mixins/auth';
 import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
@@ -154,38 +154,17 @@ export default {
         : [];
     },
 
-    pagination: {
+    options: {
       get() {
-        const { sortDir, sortKey: sortBy = null, multiSortBy = [] } = this.query;
-        const descending = sortDir === SORT_ORDERS.desc;
+        const { page = 1, itemsPerPage = PAGINATION_LIMIT, sortBy = [], sortDesc = [] } = this.query;
 
-        return { sortBy, descending, multiSortBy };
+        return { page, itemsPerPage, sortBy, sortDesc };
       },
 
-      set(value) {
-        const paginationKeys = ['sortBy', 'descending', 'multiSortBy'];
-        const newPagination = pick(value, paginationKeys);
-        const oldPagination = pick(this.pagination, paginationKeys);
-
-        if (isEqual(newPagination, oldPagination)) {
-          return;
-        }
-
-        const {
-          sortBy = null,
-          descending = false,
-          multiSortBy = [],
-        } = newPagination;
-
-        const newQuery = {
-          sortKey: sortBy,
-          sortDir: descending ? SORT_ORDERS.desc : SORT_ORDERS.asc,
-          multiSortBy,
-        };
-
+      set(newOptions) {
         this.$emit('update:query', {
           ...this.query,
-          ...newQuery,
+          ...convertDataTableOptionsToQuery(newOptions, this.options),
         });
       },
     },
@@ -196,12 +175,12 @@ export default {
     this.columnsFiltersPending = false;
   },
   methods: {
-    updateRecordsPerPage(limit) {
+    updateItemsPerPage(itemsPerPage) {
       this.$emit('update:query', {
         ...this.query,
 
+        itemsPerPage,
         page: 1,
-        limit,
       });
     },
 

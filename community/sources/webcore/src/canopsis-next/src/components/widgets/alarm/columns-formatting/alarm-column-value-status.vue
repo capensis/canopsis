@@ -12,7 +12,6 @@
   >
     <template #activator="{ on }">
       <v-icon
-        class="d-block"
         v-on="on"
         :size="iconSize"
         :style="{ color: statusColor, caretColor: statusColor}"

@@ -5,7 +5,7 @@
       <playlists-list
         :playlists="playlists"
         :pending="playlistsPending"
-        :pagination.sync="pagination"
+        :options.sync="options"
         :total-items="playlistsMeta.total_count"
         :creatable="hasCreateAnyPlaylistAccess"
         :updatable="hasUpdateAnyPlaylistAccess"

@@ -4,7 +4,7 @@
       :remediation-instructions="remediationInstructions"
       :pending="remediationInstructionsPending"
       :total-items="remediationInstructionsMeta.total_count"
-      :pagination.sync="pagination"
+      :options.sync="options"
       :updatable="hasUpdateAnyRemediationInstructionAccess"
       :removable="hasDeleteAnyRemediationInstructionAccess"
       :duplicable="hasCreateAnyRemediationInstructionAccess"

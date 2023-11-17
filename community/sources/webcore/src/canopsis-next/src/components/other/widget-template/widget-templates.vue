@@ -1,6 +1,6 @@
 <template>
   <widget-templates-list
-    :pagination.sync="pagination"
+    :options.sync="options"
     :widget-templates="widgetTemplates"
     :pending="widgetTemplatesPending"
     :total-items="widgetTemplatesMeta.total_count"

@@ -40,7 +40,7 @@ export default {
       meta: {},
       query: {
         page: 1,
-        rowsPerPage: PAGINATION_LIMIT,
+        itemsPerPage: PAGINATION_LIMIT,
         months: 0,
       },
     };
@@ -65,7 +65,7 @@ export default {
       try {
         this.pending = true;
 
-        const { page, rowsPerPage: limit, months } = this.query;
+        const { page, itemsPerPage: limit, months } = this.query;
         const { data = [], meta } = await this.fetchTestSuiteItemGanttIntervalsWithoutStore({
           id: this.testSuite._id,
           params: { page, limit, months },

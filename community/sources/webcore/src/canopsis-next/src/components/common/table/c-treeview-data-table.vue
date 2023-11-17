@@ -42,6 +42,7 @@
           :item-key="itemKey"
           :dark="dark"
           :light="light"
+          loader-height="2"
           hide-default-footer
         >
           <template #items="props">

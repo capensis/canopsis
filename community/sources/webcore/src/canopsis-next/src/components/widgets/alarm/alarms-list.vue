@@ -116,7 +116,7 @@
       :widget="widget"
       :alarms="alarms"
       :total-items="alarmsMeta.total_count"
-      :pagination.sync="pagination"
+      :options.sync="options"
       :loading="alarmsPending"
       :is-tour-enabled="isTourEnabled"
       :hide-children="!query.correlation"
@@ -137,7 +137,7 @@
       @select:tag="selectTag"
       @update:dense="updateDense"
       @update:page="updateQueryPage"
-      @update:rows-per-page="updateRecordsPerPage"
+      @update:items-per-page="updateItemsPerPage"
       @update:columns-settings="updateColumnsSettings"
       @clear:tag="clearTag"
     />
@@ -367,13 +367,13 @@ export default {
       };
     },
 
-    updateRecordsPerPage(limit) {
-      this.updateContentInUserPreference({ itemsPerPage: limit });
+    updateItemsPerPage(itemsPerPage) {
+      this.updateContentInUserPreference({ itemsPerPage });
 
       this.query = {
         ...this.query,
 
-        limit,
+        itemsPerPage,
       };
     },
 
