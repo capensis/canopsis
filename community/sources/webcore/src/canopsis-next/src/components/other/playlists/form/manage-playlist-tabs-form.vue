@@ -124,6 +124,8 @@
 </template>
 
 <script>
+import { createRangeArray } from '@/helpers/array';
+
 import GroupViewPanel from '@/components/layout/navigation/partials/groups-side-bar/group-view-panel.vue';
 import GroupPanel from '@/components/layout/navigation/partials/groups-side-bar/group-panel.vue';
 
@@ -182,7 +184,7 @@ export default {
   },
   methods: {
     getPanelValueFromArray(values = []) {
-      return Array.from({ length: values.length }, (_, index) => index);
+      return createRangeArray(values.length);
     },
 
     selectTabHandler(tab, checkedTabs) {

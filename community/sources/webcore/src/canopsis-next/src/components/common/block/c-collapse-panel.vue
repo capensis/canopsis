@@ -74,11 +74,7 @@ export default {
     },
 
     headerColor() {
-      if (this.hasError) {
-        return 'error';
-      }
-
-      return this.color;
+      return this.hasError ? 'error' : this.color;
     },
 
     panelContentStyle() {
