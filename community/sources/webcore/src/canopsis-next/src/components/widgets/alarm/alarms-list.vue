@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="alarms-list">
     <v-layout
       v-if="!hideToolbar"
-      :class="{ 'mb-4': !dense }"
+      :class="['alarms-list__toolbar', { 'mb-4': !dense }]"
       wrap
       justify-space-between
       align-end
@@ -497,3 +497,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.alarms-list {
+  &__toolbar {
+    z-index: 3;
+  }
+}
+</style>
