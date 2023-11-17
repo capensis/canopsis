@@ -78,7 +78,7 @@ export default {
     margin: 2px;
   }
 
-  .v-datatable thead th.column.sortable & .v-icon {
+  .v-data-table thead th.column.sortable & .v-icon {
     opacity: .6;
   }
 

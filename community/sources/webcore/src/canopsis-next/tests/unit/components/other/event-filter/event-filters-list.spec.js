@@ -54,10 +54,10 @@ describe('event-filters-list', () => {
         eventFilters,
         pagination: {
           page: 2,
-          rowsPerPage: 10,
+          updatedPerPage: 10,
           search: 'Filter',
-          sortBy: 'created',
-          descending: true,
+          sortBy: ['created'],
+          sortDesc: [true],
         },
         totalItems: 50,
         pending: true,
@@ -74,12 +74,12 @@ describe('event-filters-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         eventFilters,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
           search: '',
-          sortBy: '',
-          descending: false,
+          sortBy: [],
+          sortDesc: [],
         },
         totalItems: 50,
       },
@@ -99,9 +99,9 @@ describe('event-filters-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         eventFilters: eventFilters.map(eventFilter => ({ ...eventFilter, old_patterns: true })),
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
           search: '',
           sortBy: '',
           descending: false,

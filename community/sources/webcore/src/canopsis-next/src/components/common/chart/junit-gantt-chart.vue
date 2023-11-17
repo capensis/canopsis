@@ -19,11 +19,11 @@
     </v-layout>
     <c-table-pagination
       :total-items="totalItems"
-      :rows-per-page="query.rowsPerPage"
-      :rows-per-page-items="rowsPerPageItems"
+      :items-per-page="query.itemsPerPage"
+      :items="itemsPerPageItems"
       :page="query.page"
       @update:page="updatePage"
-      @update:rows-per-page="updateRowsPerPage"
+      @update:items-per-page="updateItemsPerPage"
     />
   </div>
 </template>
@@ -90,7 +90,7 @@ export default {
     },
   },
   computed: {
-    rowsPerPageItems() {
+    itemsPerPageItems() {
       return [5, 10, 20];
     },
 
@@ -287,8 +287,8 @@ export default {
       tooltipEl.style.pointerEvents = 'none';
     },
 
-    updateRowsPerPage(rowsPerPage) {
-      this.$emit('update:query', { ...this.query, rowsPerPage, page: 1 });
+    updateItemsPerPage(itemsPerPage) {
+      this.$emit('update:query', { ...this.query, itemsPerPage, page: 1 });
     },
 
     updatePage(page) {

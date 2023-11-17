@@ -2,7 +2,7 @@
   <users-list
     :users="users"
     :total-items="usersMeta.total_count"
-    :pagination.sync="pagination"
+    :options.sync="options"
     :pending="usersPending"
     :removable="hasDeleteAnyUserAccess"
     :updatable="hasUpdateAnyUserAccess"

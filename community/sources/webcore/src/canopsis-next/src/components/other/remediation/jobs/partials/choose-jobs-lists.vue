@@ -5,7 +5,7 @@
     :loading="pending"
     :total-items="totalItems"
     :is-disabled-item="isSelectedJob"
-    :pagination.sync="pagination"
+    :options.sync="options"
     select-all
     advanced-pagination
   >
@@ -61,7 +61,7 @@ export default {
       jobsItems: [],
       totalItems: 0,
       query: {
-        rowsPerPage: 5,
+        itemsPerPage: 5,
       },
     };
   },

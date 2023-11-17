@@ -2,7 +2,7 @@
   <share-tokens-list
     :share-tokens="shareTokens"
     :total-items="shareTokensMeta.total_count"
-    :pagination.sync="pagination"
+    :options.sync="options"
     :pending="shareTokensPending"
     :removable="hasDeleteAnyShareTokenAccess"
     @remove="showRemoveShareTokenModal"

@@ -4,7 +4,7 @@
       :remediation-configurations="remediationConfigurations"
       :pending="remediationConfigurationsPending"
       :total-items="remediationConfigurationsMeta.total_count"
-      :pagination.sync="pagination"
+      :options.sync="options"
       :removable="hasDeleteAnyRemediationConfigurationAccess"
       :duplicable="hasCreateAnyRemediationConfigurationAccess"
       :updatable="hasUpdateAnyRemediationConfigurationAccess"
