@@ -150,11 +150,10 @@ describe('alarms-list-table', () => {
     });
 
     const pagination = {
-      descending: Faker.datatype.boolean(),
-      multiSortBy: [],
       page: Faker.datatype.number(),
-      rowsPerPage: Faker.datatype.number(),
-      sortBy: Faker.datatype.string(),
+      itemsPerPage: Faker.datatype.number(),
+      sortBy: [Faker.datatype.string()],
+      sortDesc: [Faker.datatype.boolean()],
       totalItems: Faker.datatype.number(),
     };
 

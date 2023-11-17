@@ -2,12 +2,12 @@
   <div class="position-relative">
     <c-progress-overlay :pending="pending" />
     <kpi-alarms-filters
-      v-model="pagination"
+      v-model="options"
       :min-date="minDate"
     />
     <kpi-alarms-chart
       :metrics="alarmsMetrics"
-      :sampling="pagination.sampling"
+      :sampling="options.sampling"
       :downloading="downloading"
       :min-date="minDate"
       :interval="interval"

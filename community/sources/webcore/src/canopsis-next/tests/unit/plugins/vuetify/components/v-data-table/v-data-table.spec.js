@@ -13,7 +13,7 @@ describe('v-data-table', () => {
     { value: 'column3', sortable: true },
   ];
   const [sortableHeader, , sortableHeaderTwo] = headers;
-  const rowsPerPage = 5;
+  const itemsPerPage = 5;
   const page = 1;
   const totalItems = 0;
 
@@ -32,11 +32,11 @@ describe('v-data-table', () => {
     const [eventDataAfterMount] = updatePaginationEventsAfterMount[0];
     expect(eventDataAfterMount).toEqual({
       page,
-      rowsPerPage,
+      itemsPerPage,
       totalItems,
 
-      descending: false,
-      sortBy: sortableHeader.value,
+      sortDesc: [false],
+      sortBy: [sortableHeader.value],
     });
 
     const tableHeader = selectTableHeader(wrapper).at(0);
@@ -47,11 +47,11 @@ describe('v-data-table', () => {
     const [eventData] = updatePaginationEvents[1];
     expect(eventData).toEqual({
       page,
-      rowsPerPage,
+      itemsPerPage,
       totalItems,
 
-      descending: true,
-      sortBy: sortableHeader.value,
+      sortDesc: [true],
+      sortBy: [sortableHeader.value],
     });
   });
 
@@ -67,11 +67,11 @@ describe('v-data-table', () => {
     const [eventDataAfterMount] = updatePaginationEventsAfterMount[0];
     expect(eventDataAfterMount).toEqual({
       page,
-      rowsPerPage,
+      itemsPerPage,
       totalItems,
 
-      descending: false,
-      sortBy: sortableHeader.value,
+      sortDesc: [false],
+      sortBy: [sortableHeader.value],
     });
 
     const tableHeader = selectTableHeader(wrapper).at(2);
@@ -82,11 +82,11 @@ describe('v-data-table', () => {
     const [eventData] = updatePaginationEvents[1];
     expect(eventData).toEqual({
       page,
-      rowsPerPage,
+      itemsPerPage,
       totalItems,
 
-      descending: false,
-      sortBy: sortableHeaderTwo.value,
+      sortDesc: [false],
+      sortBy: [sortableHeaderTwo.value],
     });
   });
 
@@ -102,11 +102,11 @@ describe('v-data-table', () => {
     const [eventDataAfterMount] = updatePaginationEventsAfterMount[0];
     expect(eventDataAfterMount).toEqual({
       page,
-      rowsPerPage,
+      itemsPerPage,
       totalItems,
 
-      descending: false,
-      sortBy: sortableHeader.value,
+      sortDesc: [false],
+      sortBy: [sortableHeader.value],
     });
 
     const tableHeader = selectTableHeader(wrapper).at(2);
@@ -117,22 +117,22 @@ describe('v-data-table', () => {
     const [eventData] = updatePaginationEvents[1];
     expect(eventData).toEqual({
       page,
-      rowsPerPage,
+      itemsPerPage,
       totalItems,
 
-      descending: false,
-      sortBy: sortableHeaderTwo.value,
+      sortDesc: [false],
+      sortBy: [sortableHeaderTwo.value],
     });
   });
 
   it('Column sort reset after click on the header', () => {
     const pagination = {
       page,
-      rowsPerPage,
+      itemsPerPage,
       totalItems,
 
-      descending: true,
-      sortBy: sortableHeaderTwo.value,
+      sortDesc: [false],
+      sortBy: [sortableHeaderTwo.value],
     };
     const wrapper = factory({
       propsData: {
@@ -140,11 +140,11 @@ describe('v-data-table', () => {
         items: [],
         pagination: {
           page,
-          rowsPerPage,
+          itemsPerPage,
           totalItems,
 
-          descending: true,
-          sortBy: sortableHeaderTwo.value,
+          sortDesc: [false],
+          sortBy: [sortableHeaderTwo.value],
         },
       },
     });
@@ -170,11 +170,11 @@ describe('v-data-table', () => {
   it('Column sorted by DESC after click on the header with must sort', () => {
     const pagination = {
       page,
-      rowsPerPage,
+      itemsPerPage,
       totalItems,
 
-      descending: true,
-      sortBy: sortableHeaderTwo.value,
+      sortDesc: [true],
+      sortBy: [sortableHeaderTwo.value],
     };
     const wrapper = factory({
       propsData: {
@@ -204,11 +204,11 @@ describe('v-data-table', () => {
   it('First column sorted by DESC after click on the header with multi sort', () => {
     const pagination = {
       page,
-      rowsPerPage,
+      itemsPerPage,
       totalItems,
 
-      descending: true,
-      sortBy: sortableHeader.value,
+      sortDesc: [true],
+      sortBy: [sortableHeader.value],
     };
     const wrapper = factory({
       propsData: {
@@ -244,7 +244,7 @@ describe('v-data-table', () => {
   it('First column sorted by ASC after click on the header with multi sort', () => {
     const pagination = {
       page,
-      rowsPerPage,
+      itemsPerPage,
       totalItems,
 
       descending: false,
@@ -290,7 +290,7 @@ describe('v-data-table', () => {
   it('Second column sorted by DESC after click on the header with multi sort', () => {
     const pagination = {
       page,
-      rowsPerPage,
+      itemsPerPage,
       totalItems,
 
       descending: false,
@@ -340,7 +340,7 @@ describe('v-data-table', () => {
   it('Second column sorted by ASC after click on the header with multi sort', () => {
     const pagination = {
       page,
-      rowsPerPage,
+      itemsPerPage,
       totalItems,
 
       descending: false,
@@ -394,7 +394,7 @@ describe('v-data-table', () => {
   it('Second column sort reset after click on the header with multi sort', () => {
     const pagination = {
       page,
-      rowsPerPage,
+      itemsPerPage,
       totalItems,
 
       descending: false,
@@ -444,7 +444,7 @@ describe('v-data-table', () => {
   it('Column sort reset after click on the header with multi sort', () => {
     const pagination = {
       page,
-      rowsPerPage,
+      itemsPerPage,
       totalItems,
 
       descending: false,

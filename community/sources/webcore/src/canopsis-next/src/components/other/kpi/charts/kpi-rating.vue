@@ -2,12 +2,12 @@
   <div class="position-relative">
     <c-progress-overlay :pending="pending" />
     <kpi-rating-filters
-      v-model="pagination"
+      v-model="options"
       :min-date="minDate"
     />
     <kpi-rating-chart
       :metrics="ratingMetrics"
-      :metric="pagination.metric"
+      :metric="options.metric"
       :downloading="downloading"
       :min-date="minDate"
       responsive
@@ -107,7 +107,7 @@ export default {
         criteria: this.query.criteria?.id,
         filter: this.query.metric !== USER_METRIC_PARAMETERS.totalUserActivity ? this.query.filter : undefined,
         metric: this.query.metric,
-        limit: this.query.rowsPerPage,
+        limit: this.query.itemsPerPage,
       };
     },
 

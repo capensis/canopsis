@@ -3,7 +3,7 @@
     :items="remediationInstructionStatsComments"
     :headers="headers"
     :loading="pending"
-    :pagination.sync="pagination"
+    :options.sync="options"
     :total-items="totalItems"
     advanced-pagination
   >
