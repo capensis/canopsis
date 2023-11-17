@@ -43,9 +43,9 @@ describe('patterns-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         patterns,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
         },
         totalItems,
       },
@@ -75,9 +75,9 @@ describe('patterns-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         patterns,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
         },
         totalItems,
       },
@@ -100,9 +100,9 @@ describe('patterns-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         patterns,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
         },
         totalItems,
       },
@@ -136,12 +136,12 @@ describe('patterns-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         patterns,
-        pagination: {
+        options: {
           page: 2,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
           search: 'Filter',
-          sortBy: 'updated',
-          descending: true,
+          sortBy: ['updated'],
+          sortDesc: [true],
         },
         totalItems,
         pending: true,

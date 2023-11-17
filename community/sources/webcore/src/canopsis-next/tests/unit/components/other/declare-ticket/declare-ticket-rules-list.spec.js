@@ -49,10 +49,10 @@ describe('declare-ticket-rules-list', () => {
         declareTicketRules,
         pagination: {
           page: 2,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
           search: 'Rule',
-          sortBy: 'created',
-          descending: true,
+          sortBy: ['created'],
+          sortDesc: [true],
         },
         totalItems: 50,
         pending: true,
