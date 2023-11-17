@@ -15,7 +15,7 @@
       <v-flex xs12>
         <v-expand-transition>
           <v-layout
-            class="ml-3"
+            class="ml-3 mt-3"
             v-if="changedIds.length"
           >
             <v-btn
@@ -26,6 +26,7 @@
               {{ $t('common.cancel') }}
             </v-btn>
             <v-btn
+              class="ml-2"
               color="primary"
               @click="submit"
             >

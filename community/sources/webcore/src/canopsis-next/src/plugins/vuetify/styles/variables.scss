@@ -51,7 +51,7 @@ $btn-letter-spacing: normal;
 $btn-toggle-btn-opacity: 0.4;
 $btn-font-sizes: (
   'x-small': .625rem,
-  'small': .75rem,
+  'small': rem(13px),
   'default': rem(14px),
   'large': .875rem,
   'x-large': 1rem
@@ -71,6 +71,7 @@ $expansion-panel-active-header-min-height: $expansion-panel-header-min-height;
 $data-table-border-radius: 0;
 
 $text-field-dense-padding: 8px 0;
+$text-field-dense-append-prepend-margin: 4px;
 
 $headings: (
   'h1': (
