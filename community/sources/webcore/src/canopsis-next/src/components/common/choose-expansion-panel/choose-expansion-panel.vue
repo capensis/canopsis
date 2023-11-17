@@ -20,8 +20,8 @@
           <v-card class="pt-1">
             <v-alert
               class="pa-2 mx-2"
-              type="error"
               :value="!!errors.length"
+              type="error"
             >
               {{ errors.join(' ') }}
             </v-alert>
