@@ -14,7 +14,10 @@
       class="ml-2"
       size="24"
     >
-      <v-icon size="24">
+      <v-icon
+        class="text--secondary"
+        size="24"
+      >
         {{ link.icon }}
       </v-icon>
     </v-list-item-avatar>

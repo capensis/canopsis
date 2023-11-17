@@ -130,14 +130,14 @@ export default {
 </script>
 
 <style lang="scss">
-$borderColor: #e5e5e5;
-
 .flowchart-map-editor {
+  --flowchart-map-editor-border-color: #e5e5e5;
+
   position: relative;
-  border: 1px solid $borderColor;
+  border: 1px solid var(--flowchart-map-editor-border-color);
   height: 800px;
 
-  &__help-icon {
+  &__help-icon.v-icon {
     position: absolute;
     right: 10px;
     bottom: 10px;

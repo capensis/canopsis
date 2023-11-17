@@ -5,8 +5,11 @@
     :class="{ 'group-panel--editing': isEditing }"
     :rounded="false"
   >
-    <v-expansion-panel-header>
-      <div class="group-panel__title">
+    <v-expansion-panel-header
+      class="pa-0"
+      :hide-actions="hideActions"
+    >
+      <div class="px-6 py-4 group-panel__title">
         <slot name="title">
           {{ group.title }}
         </slot>

@@ -31,10 +31,11 @@
     </v-layout>
     <v-layout
       v-if="!readonly"
+      class="mt-2"
       align-center
     >
       <v-btn
-        class="ml-0"
+        class="mr-2"
         :color="hasGroupsErrors ? 'error' : 'primary'"
         :disabled="disabled"
         @click="addFilterGroup"

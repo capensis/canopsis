@@ -1,5 +1,9 @@
 <template>
-  <widget-settings-item :title="title">
+  <widget-settings-item
+    :title="title"
+    :disabled="disabled"
+    hide-on-disabled
+  >
     <c-storage-field
       v-field="storage"
       v-on="$listeners"

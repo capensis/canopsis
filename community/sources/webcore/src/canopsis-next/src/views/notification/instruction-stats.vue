@@ -1,7 +1,7 @@
 <template>
   <div>
     <c-page-header />
-    <v-card class="ma-4 mt-0">
+    <v-card class="ma-6">
       <remediation-instruction-stats-list
         :remediation-instruction-stats="remediationInstructionStats"
         :pending="remediationInstructionStatsPending"

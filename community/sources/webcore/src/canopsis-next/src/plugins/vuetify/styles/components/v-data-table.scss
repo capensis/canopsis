@@ -26,9 +26,12 @@
     thead > tr > th {
       height: $dense-cell-height;
     }
+
     tbody, thead {
-      tr:not(.v-data-table__progress) {
-        height: $dense-cell-height;
+      tr:not(.v-data-table__progress, .v-data-table__expanded) {
+        td {
+          height: $ultra-dense-cell-height;
+        }
       }
     }
   }

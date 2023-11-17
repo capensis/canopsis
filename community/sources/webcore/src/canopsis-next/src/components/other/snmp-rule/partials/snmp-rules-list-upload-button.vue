@@ -6,21 +6,19 @@
     @change="changeFiles"
   >
     <template #activator="{ on: fileSelectorOn }">
-      <v-tooltip
-        top
-        custom-activator
-      >
-        <template #activator="{}">
+      <v-tooltip top>
+        <template #activator="{ on: tooltipOn }">
           <v-btn
-            v-on="fileSelectorOn"
+            v-on="{ ...fileSelectorOn, ...tooltipOn }"
             :loading="pending"
             color="indigo"
-            icon
             small
             dark
             fab
           >
-            <v-icon>cloud_upload</v-icon>
+            <v-icon small>
+              cloud_upload
+            </v-icon>
           </v-btn>
         </template>
         <span>{{ $t('snmpRule.uploadMib') }}</span>

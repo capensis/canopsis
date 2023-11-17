@@ -28,7 +28,6 @@
               <v-tabs
                 v-model="activeTab"
                 slider-color="primary"
-                color="transparent"
                 centered
                 fixed-tabs
               >
