@@ -22,7 +22,6 @@ import { isInstructionManual } from '@/helpers/entities/remediation/instruction/
 import { harmonizeLinks, getLinkRuleLinkActionType } from '@/helpers/entities/link/list';
 import {
   isCancelledAlarmStatus,
-  isClosedAlarmStatus,
   isResolvedAlarm,
   isAlarmStateOk,
   isAlarmStatusCancelled,
@@ -87,10 +86,6 @@ export default {
   computed: {
     isCancelledAlarm() {
       return isCancelledAlarmStatus(this.item);
-    },
-
-    isClosedAlarm() {
-      return isClosedAlarmStatus(this.item);
     },
 
     isResolvedAlarm() {
@@ -361,6 +356,18 @@ export default {
 
           actions.unshift(
             {
+              type: ALARM_LIST_ACTIONS_TYPES.cancel,
+              icon: '$vuetify.icons.list_delete',
+              title: this.$t('alarm.actions.titles.cancel'),
+              method: this.showCancelModal,
+            },
+            {
+              type: ALARM_LIST_ACTIONS_TYPES.fastCancel,
+              icon: 'delete',
+              title: this.$t('alarm.actions.titles.fastCancel'),
+              method: this.createFastCancel,
+            },
+            {
               type: ALARM_LIST_ACTIONS_TYPES.ackRemove,
               icon: getEntityEventIcon(EVENT_ENTITY_TYPES.ackRemove),
               title: this.$t('alarm.actions.titles.ackRemove'),
@@ -373,23 +380,6 @@ export default {
               method: this.showCreateChangeStateEventModal,
             },
           );
-
-          if (!this.isAlarmStateOk) {
-            actions.unshift(
-              {
-                type: ALARM_LIST_ACTIONS_TYPES.cancel,
-                icon: '$vuetify.icons.list_delete',
-                title: this.$t('alarm.actions.titles.cancel'),
-                method: this.showCancelModal,
-              },
-              {
-                type: ALARM_LIST_ACTIONS_TYPES.fastCancel,
-                icon: 'delete',
-                title: this.$t('alarm.actions.titles.fastCancel'),
-                method: this.createFastCancel,
-              },
-            );
-          }
 
           actions.unshift(...this.ticketsActions);
         } else {
