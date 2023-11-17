@@ -33,7 +33,7 @@ export default {
       meta: {},
       ganttIntervals: [],
       query: {
-        rowsPerPage: PAGINATION_LIMIT,
+        itemsPerPage: PAGINATION_LIMIT,
         page: 1,
       },
     };
@@ -56,7 +56,7 @@ export default {
       try {
         this.pending = true;
 
-        const { page, rowsPerPage: limit } = this.query;
+        const { page, itemsPerPage: limit } = this.query;
         const { data, meta } = await this.fetchEntityGanttIntervalsWithoutStore({
           id: this.alarm.entity._id,
           params: { page, limit },

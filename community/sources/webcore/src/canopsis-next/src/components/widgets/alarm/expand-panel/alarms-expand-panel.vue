@@ -60,7 +60,10 @@
     >
       {{ $t('alarm.tabs.entityGantt') }}
     </v-tab>
-    <v-tabs-items v-model="activeTab">
+    <v-tabs-items
+      v-model="activeTab"
+      mandatory
+    >
       <v-tab-item
         v-if="hasMoreInfos"
         :value="$constants.ALARMS_EXPAND_PANEL_TABS.moreInfos"

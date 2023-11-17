@@ -46,8 +46,8 @@
           xs4
         >
           <c-pagination
-            :page="pagination.page"
-            :limit="pagination.limit"
+            :page="options.page"
+            :limit="options.itemsPerPage"
             :total="totalItems"
             type="top"
             @input="updateQueryPage"
@@ -79,17 +79,16 @@
         :items="alarms"
         :headers="headersWithWidth"
         :server-items-length="totalItems"
-        :options="pagination"
+        :options="options"
         :show-select="selectable"
         :loading="loading || columnsFiltersPending"
-        :show-expand="expandable"
         :dense="isMediumDense"
         :ultra-dense="isSmallDense"
-        header-key="value"
         item-key="_id"
+        loader-height="2"
         hide-default-footer
         multi-sort
-        @update:pagination="updatePaginationHandler"
+        @update:options="$emit('update:options', $event)"
       >
         <template #progress="">
           <v-fade-transition>
@@ -121,12 +120,12 @@
             />
           </template>
         </template>
-        <template #items="props">
+        <template #item="props">
           <alarms-list-row
-            v-model="props.selected"
             v-on="rowListeners"
             :ref="`row${props.item._id}`"
             :key="props.item._id"
+            :selected="props.isSelected"
             :selectable="selectable"
             :expandable="expandable"
             :row="props"
@@ -145,9 +144,10 @@
             :show-instruction-icon="hasInstructionsAlarms"
             @start:resize="startColumnResize"
             @select:tag="$emit('select:tag', $event)"
+            @input="props.select"
           />
         </template>
-        <template #expand="{ item, index }">
+        <template #expanded-item="{ item, index }">
           <alarms-expand-panel
             :alarm="item"
             :parent-alarm-id="parentAlarmId"
@@ -163,10 +163,10 @@
     <c-table-pagination
       v-if="!hidePagination"
       :total-items="totalItems"
-      :rows-per-page="pagination.limit"
-      :page="pagination.page"
+      :items-per-page="options.itemsPerPage"
+      :page="options.page"
       @update:page="updateQueryPage"
-      @update:rows-per-page="updateRecordsPerPage"
+      @update:items-per-page="updateItemsPerPage"
     />
     <component
       v-bind="additionalComponent.props"
@@ -234,7 +234,7 @@ export default {
       type: Number,
       required: false,
     },
-    pagination: {
+    options: {
       type: Object,
       default: () => ({}),
     },
@@ -552,8 +552,8 @@ export default {
       }
     },
 
-    updateRecordsPerPage(limit) {
-      this.$emit('update:rows-per-page', limit);
+    updateItemsPerPage(limit) {
+      this.$emit('update:items-per-page', limit);
     },
 
     updateQueryPage(page) {
@@ -572,10 +572,6 @@ export default {
 
     checkIsTourEnabledForAlarmByIndex(index) {
       return this.isTourEnabled && index === 0;
-    },
-
-    updatePaginationHandler(data) {
-      this.$emit('update:pagination', data);
     },
   },
 };
@@ -682,7 +678,7 @@ export default {
   }
 
   &__selecting {
-    & > .v-table__overflow > table > tbody > .alarm-list-row:after {
+    & > .v-data-table__wrapper > table > tbody > .alarm-list-row:after {
       pointer-events: auto;
       opacity: 1;
     }
@@ -695,7 +691,7 @@ export default {
   }
 
   &__grid {
-    & > .v-table__overflow > table {
+    & > .v-data-table__wrapper > table {
       & > tbody > tr > td,
       & > thead > tr > th {
         position: relative;
@@ -706,7 +702,7 @@ export default {
           position: absolute;
           right: -1px;
           top: 0;
-          width: 2px;
+          width: 1px;
           height: 100%;
         }
       }
@@ -714,7 +710,7 @@ export default {
   }
 
   &--fixed {
-    & > .v-table__overflow > table {
+    & > .v-data-table__wrapper > table {
       table-layout: fixed;
       /**
        * TODO: Should be used v-bind later. We should update compiler.
@@ -732,7 +728,7 @@ export default {
   }
 
   &--wrapped {
-    & > .v-table__overflow > table > tbody > tr > td:not(:last-of-type) {
+    & > .v-data-table__wrapper > table > tbody > tr > td:not(:last-of-type) {
       word-break: break-all;
       word-wrap: break-word;
     }
@@ -781,21 +777,19 @@ export default {
     }
   }
 
-  th:not([role='columnheader']) {
-    width: 120px;
+  tr:not(.v-data-table__expanded) th:first-of-type {
+    width: 120px !important;
   }
 
-  .v-datatable--dense,
-  .v-datatable--ultra-dense {
-    thead {
-      th:not([role='columnheader']) {
-        width: 100px;
-      }
+  &.v-data-table--dense,
+  &.v-data-table--ultra-dense {
+    thead tr:not(.v-data-table__expanded) th:first-of-type {
+      width: 100px !important;
     }
   }
 
-  &.columns-lg .v-table {
-    &:not(.v-datatable--dense) {
+  &.columns-lg table {
+    &:not(.v-data-table--dense) {
       td, th {
         padding: 0 8px;
       }

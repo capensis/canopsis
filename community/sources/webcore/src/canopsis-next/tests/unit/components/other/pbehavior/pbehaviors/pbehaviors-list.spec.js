@@ -68,12 +68,12 @@ describe('pbehaviors-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         pbehaviors: pbehaviorsItems,
-        pagination: {
+        options: {
           page: 2,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
           search: 'Filter',
-          sortBy: 'created',
-          descending: true,
+          sortBy: ['created'],
+          sortDesc: [true],
         },
         totalItems: 50,
         pending: true,
@@ -92,12 +92,12 @@ describe('pbehaviors-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         pbehaviors: pbehaviorsItems,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
           search: '',
-          sortBy: '',
-          descending: false,
+          sortBy: [],
+          sortDesc: [],
         },
         totalItems: 50,
       },
@@ -112,12 +112,12 @@ describe('pbehaviors-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         pbehaviors: pbehaviorsItems.map(item => ({ ...item, old_mongo_query: true })),
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
           search: '',
-          sortBy: '',
-          descending: false,
+          sortBy: [],
+          sortDesc: [],
         },
         updatable: true,
         totalItems: 50,

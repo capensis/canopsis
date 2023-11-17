@@ -5,7 +5,7 @@
       <maps-list
         :maps="maps"
         :pending="mapsPending"
-        :pagination.sync="pagination"
+        :options.sync="options"
         :total-items="mapsMeta.total_count"
         :updatable="hasUpdateAnyMapAccess"
         :removable="hasDeleteAnyMapAccess"

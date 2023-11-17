@@ -1,8 +1,6 @@
-import { pick, isEqual } from 'lodash';
+import { PAGINATION_LIMIT } from '@/config';
 
-import { SORT_ORDERS } from '@/constants';
-
-import { convertWidgetQueryToRequest } from '@/helpers/entities/shared/query';
+import { convertDataTableOptionsToQuery, convertWidgetQueryToRequest } from '@/helpers/entities/shared/query';
 
 import { queryMixin } from '@/mixins/query';
 import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
@@ -40,38 +38,17 @@ export const queryWidgetMixin = {
       return this.getQueryNonceById(this.tabId);
     },
 
-    pagination: {
+    options: {
       get() {
-        const { sortDir, page, limit, sortKey: sortBy = null, multiSortBy = [] } = this.query;
-        const descending = sortDir === SORT_ORDERS.desc;
+        const { page = 1, itemsPerPage = PAGINATION_LIMIT, sortBy = [], sortDesc = [] } = this.query;
 
-        return { page, limit, sortBy, descending, multiSortBy };
+        return { page, itemsPerPage, sortBy, sortDesc };
       },
 
-      set(value) {
-        const paginationKeys = ['sortBy', 'descending', 'multiSortBy'];
-        const newPagination = pick(value, paginationKeys);
-        const oldPagination = pick(this.pagination, paginationKeys);
-
-        if (isEqual(newPagination, oldPagination)) {
-          return;
-        }
-
-        const {
-          sortBy = null,
-          descending = false,
-          multiSortBy = [],
-        } = newPagination;
-
-        const newQuery = {
-          sortKey: sortBy,
-          sortDir: descending ? SORT_ORDERS.desc : SORT_ORDERS.asc,
-          multiSortBy,
-        };
-
+      set(newOptions) {
         this.query = {
           ...this.query,
-          ...newQuery,
+          ...convertDataTableOptionsToQuery(newOptions, this.options),
         };
       },
     },
@@ -81,10 +58,10 @@ export const queryWidgetMixin = {
       return convertWidgetQueryToRequest(this.query);
     },
 
-    updateRecordsPerPage(limit) {
+    updateItemsPerPage(itemsPerPage) {
       this.updateLockedQuery({
         id: this.queryId,
-        query: { limit },
+        query: { itemsPerPage },
       });
     },
 

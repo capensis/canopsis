@@ -47,9 +47,9 @@ describe('maps-list', () => {
       propsData: {
         maps,
         removable: true,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
         },
         totalItems,
       },
@@ -73,9 +73,9 @@ describe('maps-list', () => {
       propsData: {
         maps,
         removable: true,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
         },
         totalItems,
       },
@@ -94,9 +94,9 @@ describe('maps-list', () => {
       propsData: {
         maps,
         updatable: true,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
         },
         totalItems,
       },
@@ -115,9 +115,9 @@ describe('maps-list', () => {
       propsData: {
         maps,
         duplicable: true,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
         },
         totalItems,
       },
@@ -146,12 +146,12 @@ describe('maps-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         maps,
-        pagination: {
+        options: {
           page: 2,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
           search: 'Filter',
-          sortBy: 'updated',
-          descending: true,
+          sortBy: ['updated'],
+          sortDesc: [true],
         },
         totalItems,
         pending: true,

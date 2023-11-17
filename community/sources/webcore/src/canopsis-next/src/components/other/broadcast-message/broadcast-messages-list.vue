@@ -4,10 +4,10 @@
     :items="preparedBroadcastMessages"
     :loading="pending"
     :total-items="totalItems"
-    :pagination="pagination"
+    :options="options"
     advanced-pagination
     search
-    @update:pagination="$emit('update:pagination', $event)"
+    @update:options="$emit('update:options', $event)"
   >
     <template #status="{ item }">
       {{ $t(`broadcastMessage.statuses.${item.status}`) }}
@@ -68,7 +68,7 @@ export default {
       type: Number,
       required: false,
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },

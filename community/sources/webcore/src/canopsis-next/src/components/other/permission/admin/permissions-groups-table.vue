@@ -4,6 +4,7 @@
     :headers="headers"
     :expanded.sync="expanded"
     item-key="name"
+    loader-height="2"
     hide-default-footer
   >
     <template #item="props">

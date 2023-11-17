@@ -4,12 +4,11 @@
     :items="users"
     :loading="pending"
     :total-items="totalItems"
-    :rows-per-page-items="$config.PAGINATION_PER_PAGE_VALUES"
-    :pagination="pagination"
+    :options="options"
     :select-all="removable"
     advanced-pagination
     search
-    @update:pagination="$emit('update:pagination', $event)"
+    @update:options="$emit('update:options', $event)"
   >
     <template #mass-actions="{ selected }">
       <c-action-btn
@@ -72,7 +71,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },
