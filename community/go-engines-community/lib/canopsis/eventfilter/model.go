@@ -2,8 +2,10 @@ package eventfilter
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
@@ -60,24 +62,24 @@ type Rule struct {
 	Enabled      bool                              `bson:"enabled" json:"enabled"`
 	Config       RuleConfig                        `bson:"config" json:"config"`
 	ExternalData map[string]ExternalDataParameters `bson:"external_data" json:"external_data,omitempty"`
-	Created      *types.CpsTime                    `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated      *types.CpsTime                    `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	Created      *libtime.CpsTime                  `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Updated      *libtime.CpsTime                  `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 	EventsCount  int64                             `bson:"events_count,omitempty" json:"events_count,omitempty"`
 
 	EventPattern                     pattern.Event `json:"event_pattern" bson:"event_pattern"`
 	savedpattern.EntityPatternFields `bson:",inline"`
 
-	RRule string         `json:"rrule" bson:"rrule"`
-	Start *types.CpsTime `json:"start,omitempty" bson:"start,omitempty"`
-	Stop  *types.CpsTime `json:"stop,omitempty" bson:"stop,omitempty"`
+	RRule string           `json:"rrule" bson:"rrule"`
+	Start *libtime.CpsTime `json:"start,omitempty" bson:"start,omitempty"`
+	Stop  *libtime.CpsTime `json:"stop,omitempty" bson:"stop,omitempty"`
 
 	//ResolvedStart and ResolvedStop shows the current or the next time interval, where eventfilter rule is enabled
-	ResolvedStart *types.CpsTime `json:"-" bson:"resolved_start,omitempty"`
-	ResolvedStop  *types.CpsTime `json:"-" bson:"resolved_stop,omitempty"`
+	ResolvedStart *libtime.CpsTime `json:"-" bson:"resolved_start,omitempty"`
+	ResolvedStop  *libtime.CpsTime `json:"-" bson:"resolved_stop,omitempty"`
 
 	//NextResolvedStart and NextResolvedStop shows the next time interval after the one which is defined by ResolvedStart and ResolvedStop
-	NextResolvedStart *types.CpsTime `json:"-" bson:"next_resolved_start,omitempty"`
-	NextResolvedStop  *types.CpsTime `json:"-" bson:"next_resolved_stop,omitempty"`
+	NextResolvedStart *libtime.CpsTime `json:"-" bson:"next_resolved_start,omitempty"`
+	NextResolvedStop  *libtime.CpsTime `json:"-" bson:"next_resolved_stop,omitempty"`
 
 	Exdates    []types.Exdate `json:"exdates" bson:"exdates"`
 	Exceptions []string       `json:"exceptions" bson:"exceptions"`
@@ -106,8 +108,8 @@ type Action struct {
 }
 
 type RegexMatch struct {
-	pattern.EventRegexMatches
-	Entity pattern.EntityRegexMatches
+	match.EventRegexMatches
+	Entity match.EntityRegexMatches
 }
 
 type Template struct {

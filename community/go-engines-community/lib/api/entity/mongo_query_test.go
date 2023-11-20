@@ -8,7 +8,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
@@ -32,7 +32,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 			Paginate: true,
 		},
 	}
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "_id", Value: 1}}},
 		{"$skip": 10},
@@ -96,7 +96,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			},
 		},
 		PbehaviorPatternFields: savedpattern.PbehaviorPatternFields{
-			PbehaviorPattern: pattern.PbehaviorInfo{
+			PbehaviorPattern: pattern.PBehaviorInfo{
 				{
 					{
 						Field:     "pbehavior_info.canonical_type",
@@ -115,7 +115,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "_id", Value: 1}}},
 		{"$skip": 0},
@@ -185,7 +185,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			},
 		},
 		PbehaviorPatternFields: savedpattern.PbehaviorPatternFields{
-			PbehaviorPattern: pattern.PbehaviorInfo{
+			PbehaviorPattern: pattern.PBehaviorInfo{
 				{
 					{
 						Field:     "pbehavior_info.canonical_type",
@@ -214,7 +214,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "_id", Value: 1}}},
 		{"$skip": 0},
@@ -278,7 +278,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	durationCond, err := pattern.NewDurationCondition(pattern.ConditionGT, types.DurationWithUnit{
+	durationCond, err := pattern.NewDurationCondition(pattern.ConditionGT, libtime.DurationWithUnit{
 		Value: 10,
 		Unit:  "m",
 	})
@@ -311,7 +311,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "_id", Value: 1}}},
 		{"$skip": 0},
@@ -396,7 +396,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "_id", Value: 1}}},
 		{"$skip": 0},
@@ -482,7 +482,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithAlarmSo
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{
 			{Key: "state", Value: 1},
@@ -557,7 +557,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "_id", Value: 1}}},
 		{"$skip": 0},
@@ -624,7 +624,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "_id", Value: 1}}},
 		{"$skip": 0},
@@ -689,7 +689,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 			},
 		},
 		PbehaviorPatternFields: savedpattern.PbehaviorPatternFields{
-			PbehaviorPattern: pattern.PbehaviorInfo{
+			PbehaviorPattern: pattern.PBehaviorInfo{
 				{
 					{
 						Field:     "pbehavior_info.canonical_type",
@@ -722,7 +722,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 			},
 		},
 		PbehaviorPatternFields: savedpattern.PbehaviorPatternFields{
-			PbehaviorPattern: pattern.PbehaviorInfo{
+			PbehaviorPattern: pattern.PBehaviorInfo{
 				{
 					{
 						Field:     "pbehavior_info.id",
@@ -751,7 +751,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "_id", Value: 1}}},
 		{"$skip": 0},

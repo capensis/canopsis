@@ -5,13 +5,13 @@ import (
 	"errors"
 	"fmt"
 	"math"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libamqp "github.com/rabbitmq/amqp091-go"
@@ -86,7 +86,7 @@ func (s *service) RecomputeAllServices(ctx context.Context) error {
 			Component:     serv.ID,
 			Connector:     types.ConnectorEngineService,
 			ConnectorName: types.ConnectorEngineService,
-			Timestamp:     types.CpsTime{Time: time.Now()},
+			Timestamp:     libtime.NewCpsTime(),
 			Initiator:     types.InitiatorSystem,
 		}
 
@@ -123,7 +123,7 @@ func (s *service) UpdateServiceState(ctx context.Context, serviceID string, serv
 		ConnectorName: types.ConnectorEngineService,
 		State:         types.CpsNumber(serviceInfo.State),
 		Output:        serviceInfo.Output,
-		Timestamp:     types.CpsTime{Time: time.Now()},
+		Timestamp:     libtime.NewCpsTime(),
 		Initiator:     types.InitiatorSystem,
 	}
 

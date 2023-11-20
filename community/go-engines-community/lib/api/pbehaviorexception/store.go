@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -63,7 +64,7 @@ func (s *store) Insert(ctx context.Context, model *Exception) error {
 		model.ID = utils.NewID()
 	}
 
-	created := types.CpsTime{Time: time.Now()}
+	created := libtime.NewCpsTime()
 	exdates := make([]pbehavior.Exdate, len(model.Exdates))
 	for i := range model.Exdates {
 		exdates[i].Type = model.Exdates[i].Type.ID
@@ -177,7 +178,7 @@ func (s *store) Update(ctx context.Context, model *Exception) (bool, error) {
 		return false, err
 	}
 
-	var v struct{ Created *types.CpsTime }
+	var v struct{ Created *libtime.CpsTime }
 	err := res.Decode(&v)
 	if err != nil {
 		return false, err
@@ -276,8 +277,8 @@ func (s *store) importJson(
 
 		exdates = append(exdates, pbehavior.Exdate{
 			Exdate: types.Exdate{
-				Begin: types.CpsTime{Time: start},
-				End:   types.CpsTime{Time: end},
+				Begin: libtime.CpsTime{Time: start},
+				End:   libtime.CpsTime{Time: end},
 			},
 			Type: pbhType,
 		})
@@ -291,7 +292,7 @@ func (s *store) importJson(
 		ID:      utils.NewID(),
 		Name:    name,
 		Exdates: exdates,
-		Created: &types.CpsTime{Time: now},
+		Created: &libtime.CpsTime{Time: now},
 	}
 
 	var response *Exception
@@ -341,8 +342,8 @@ func (s *store) importICS(
 
 		exdates = append(exdates, pbehavior.Exdate{
 			Exdate: types.Exdate{
-				Begin: types.CpsTime{Time: start},
-				End:   types.CpsTime{Time: end},
+				Begin: libtime.CpsTime{Time: start},
+				End:   libtime.CpsTime{Time: end},
 			},
 			Type: pbhType,
 		})
@@ -356,7 +357,7 @@ func (s *store) importICS(
 		ID:      utils.NewID(),
 		Name:    name,
 		Exdates: exdates,
-		Created: &types.CpsTime{Time: now},
+		Created: &libtime.CpsTime{Time: now},
 	}
 
 	var response *Exception

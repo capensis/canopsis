@@ -11,6 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
@@ -82,7 +83,7 @@ func processResolve(
 	alarmCollection, entityCollection, resolvedCollection mongo.DbCollection,
 ) (Result, map[string]statecounters.UpdatedServicesInfo, string, error) {
 	result := Result{}
-	update := getResolveAlarmUpdate(types.NewCpsTime())
+	update := getResolveAlarmUpdate(libtime.NewCpsTime())
 	var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
 	notAckedMetricType := ""
 	err := dbClient.WithTransaction(ctx, func(ctx context.Context) error {
@@ -207,7 +208,7 @@ func postProcessResolve(
 	}
 }
 
-func getResolveAlarmUpdate(t types.CpsTime) []bson.M {
+func getResolveAlarmUpdate(t libtime.CpsTime) []bson.M {
 	return []bson.M{
 		{"$set": bson.M{
 			"v.duration": bson.M{"$subtract": bson.A{

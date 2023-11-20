@@ -4,7 +4,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 )
 
 type ListRequest struct {
@@ -21,7 +21,7 @@ type EditRequest struct {
 	IsCorporate      *bool                 `json:"is_corporate" binding:"required"`
 	AlarmPattern     pattern.Alarm         `json:"alarm_pattern" binding:"alarm_pattern"`
 	EntityPattern    pattern.Entity        `json:"entity_pattern" binding:"entity_pattern"`
-	PbehaviorPattern pattern.PbehaviorInfo `json:"pbehavior_pattern" binding:"pbehavior_pattern"`
+	PbehaviorPattern pattern.PBehaviorInfo `json:"pbehavior_pattern" binding:"pbehavior_pattern"`
 	Author           string                `json:"author" swaggerignore:"true"`
 }
 
@@ -36,10 +36,10 @@ type Response struct {
 	IsCorporate      bool                  `bson:"is_corporate" json:"is_corporate"`
 	AlarmPattern     pattern.Alarm         `bson:"alarm_pattern" json:"alarm_pattern,omitempty"`
 	EntityPattern    pattern.Entity        `bson:"entity_pattern" json:"entity_pattern,omitempty"`
-	PbehaviorPattern pattern.PbehaviorInfo `bson:"pbehavior_pattern" json:"pbehavior_pattern,omitempty"`
+	PbehaviorPattern pattern.PBehaviorInfo `bson:"pbehavior_pattern" json:"pbehavior_pattern,omitempty"`
 	Author           *author.Author        `bson:"author" json:"author"`
-	Created          types.CpsTime         `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated          types.CpsTime         `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	Created          libtime.CpsTime       `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Updated          libtime.CpsTime       `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 }
 
 type AggregationResult struct {
@@ -58,7 +58,7 @@ func (r *AggregationResult) GetTotal() int64 {
 type CountRequest struct {
 	AlarmPattern     pattern.Alarm         `json:"alarm_pattern" binding:"alarm_pattern"`
 	EntityPattern    pattern.Entity        `json:"entity_pattern" binding:"entity_pattern"`
-	PbehaviorPattern pattern.PbehaviorInfo `json:"pbehavior_pattern" binding:"pbehavior_pattern"`
+	PbehaviorPattern pattern.PBehaviorInfo `json:"pbehavior_pattern" binding:"pbehavior_pattern"`
 }
 
 type CountAlarmsResponse struct {

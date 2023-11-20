@@ -1,5 +1,7 @@
 package types
 
+import libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
+
 // Operation represents alarm modification operation.
 type Operation struct {
 	Type       string              `bson:"type" json:"type"`
@@ -17,7 +19,7 @@ type OperationParameters struct {
 	WebhookRequest    bool   `bson:"webhook_request,omitempty" json:"webhook_request,omitempty"`
 	WebhookFailReason string `bson:"webhook_fail_reason,omitempty" json:"webhook_fail_reason,omitempty"`
 	// Snooze
-	Duration *DurationWithUnit `bson:"duration,omitempty" json:"duration,omitempty"`
+	Duration *libtime.DurationWithUnit `bson:"duration,omitempty" json:"duration,omitempty"`
 	// ChangeState
 	State *CpsNumber `bson:"state,omitempty" json:"state,omitempty"`
 	// Pbehavior

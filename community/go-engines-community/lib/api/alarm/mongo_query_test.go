@@ -10,7 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
@@ -36,7 +36,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 			Paginate: true,
 		},
 	}
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 		{"$skip": 10},
@@ -108,7 +108,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			},
 		},
 		PbehaviorPatternFields: savedpattern.PbehaviorPatternFields{
-			PbehaviorPattern: pattern.PbehaviorInfo{
+			PbehaviorPattern: pattern.PBehaviorInfo{
 				{
 					{
 						Field:     "pbehavior_info.canonical_type",
@@ -130,7 +130,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 		{"$skip": 0},
@@ -195,7 +195,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	durationCond, err := pattern.NewDurationCondition(pattern.ConditionGT, types.DurationWithUnit{
+	durationCond, err := pattern.NewDurationCondition(pattern.ConditionGT, libtime.DurationWithUnit{
 		Value: 10,
 		Unit:  "m",
 	})
@@ -231,7 +231,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 		{"$skip": 0},
@@ -328,7 +328,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 		{"$skip": 0},
@@ -408,7 +408,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			},
 		},
 		PbehaviorPatternFields: savedpattern.PbehaviorPatternFields{
-			PbehaviorPattern: pattern.PbehaviorInfo{
+			PbehaviorPattern: pattern.PBehaviorInfo{
 				{
 					{
 						Field:     "pbehavior_info.canonical_type",
@@ -440,7 +440,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 		{"$skip": 0},
@@ -520,7 +520,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithCategor
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 		{"$skip": 0},
@@ -590,7 +590,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 	mockCursor.EXPECT().Next(gomock.Any()).Return(false)
 	mockCursor.EXPECT().Close(gomock.Any())
 	mockCursor.EXPECT().Decode(gomock.Any()).Do(func(instruction *Instruction) {
-		durationCond, err := pattern.NewDurationCondition(pattern.ConditionGT, types.DurationWithUnit{
+		durationCond, err := pattern.NewDurationCondition(pattern.ConditionGT, libtime.DurationWithUnit{
 			Value: 10,
 			Unit:  "m",
 		})
@@ -663,7 +663,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 		{"$skip": 0},
@@ -785,7 +785,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithEntityS
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{
 			{Key: "entity._id", Value: -1},
@@ -851,7 +851,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	durationCond, err := pattern.NewDurationCondition(pattern.ConditionGT, types.DurationWithUnit{
+	durationCond, err := pattern.NewDurationCondition(pattern.ConditionGT, libtime.DurationWithUnit{
 		Value: 10,
 		Unit:  "m",
 	})
@@ -889,7 +889,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{
 			{Key: "v.duration", Value: -1},
@@ -979,7 +979,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 		{"$skip": 0},
@@ -1066,7 +1066,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 		{"$skip": 0},
@@ -1169,7 +1169,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchB
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 		{"$skip": 0},
@@ -1258,7 +1258,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 		{"$skip": 0},
@@ -1335,7 +1335,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 		{"$skip": 0},
@@ -1416,7 +1416,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 		{"$skip": 0},
@@ -1495,7 +1495,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 			},
 		},
 		PbehaviorPatternFields: savedpattern.PbehaviorPatternFields{
-			PbehaviorPattern: pattern.PbehaviorInfo{
+			PbehaviorPattern: pattern.PBehaviorInfo{
 				{
 					{
 						Field:     "pbehavior_info.canonical_type",
@@ -1528,7 +1528,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 			},
 		},
 		PbehaviorPatternFields: savedpattern.PbehaviorPatternFields{
-			PbehaviorPattern: pattern.PbehaviorInfo{
+			PbehaviorPattern: pattern.PBehaviorInfo{
 				{
 					{
 						Field:     "pbehavior_info.id",
@@ -1560,7 +1560,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 		{"$skip": 0},
@@ -1650,7 +1650,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDepence
 			},
 		},
 		PbehaviorPatternFields: savedpattern.PbehaviorPatternFields{
-			PbehaviorPattern: pattern.PbehaviorInfo{
+			PbehaviorPattern: pattern.PBehaviorInfo{
 				{
 					{
 						Field:     "pbehavior_info.canonical_type",
@@ -1673,7 +1673,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDepence
 			WithDependencies: true,
 		},
 	}
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 		{"$skip": 0},

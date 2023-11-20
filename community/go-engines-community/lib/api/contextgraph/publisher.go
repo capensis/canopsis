@@ -8,6 +8,7 @@ import (
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
@@ -42,7 +43,7 @@ func (p *rmqPublisher) SendImportResultEvent(ctx context.Context, uuid string, e
 		EventType:     types.EventTypeCheck,
 		SourceType:    types.SourceTypeResource,
 		Resource:      uuid,
-		Timestamp:     types.NewCpsTime(time.Now().Unix()),
+		Timestamp:     libtime.NewCpsTime(),
 		State:         state,
 		Output:        fmt.Sprintf("Import %s failed.", uuid),
 		ExtraInfos: map[string]interface{}{

@@ -7,6 +7,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
@@ -69,8 +70,8 @@ func (s *service) GetTimespans(ctx context.Context, r TimespansRequest) ([]ItemR
 	res := make([]ItemResponse, len(computed))
 	for i, v := range computed {
 		res[i] = ItemResponse{
-			From: types.CpsTime{Time: v.Span.From()},
-			To:   types.CpsTime{Time: v.Span.To()},
+			From: libtime.CpsTime{Time: v.Span.From()},
+			To:   libtime.CpsTime{Time: v.Span.To()},
 		}
 		if spanType, ok := pbhTypes[v.ID]; ok {
 			res[i].Type = spanType

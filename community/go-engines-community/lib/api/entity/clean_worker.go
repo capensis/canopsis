@@ -7,7 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/redis/go-redis/v9"
@@ -127,7 +127,7 @@ func (w *worker) doTask(ctx context.Context, task CleanTask) {
 		}
 
 		err = w.dataStorageAdapter.UpdateHistoryEntityDisabled(ctx, datastorage.HistoryWithCount{
-			Time:     types.NewCpsTime(),
+			Time:     libtime.NewCpsTime(),
 			Archived: archived,
 		})
 		if err != nil {
@@ -145,7 +145,7 @@ func (w *worker) doTask(ctx context.Context, task CleanTask) {
 			return
 		}
 
-		before := task.ArchiveBefore.SubFrom(types.NewCpsTime())
+		before := task.ArchiveBefore.SubFrom(libtime.NewCpsTime())
 		totalArchived, err := arch.ArchiveUnlinkedResources(ctx, before)
 		if err != nil {
 			w.logger.Err(err).Msg("failed to archive unlinked resources")
@@ -164,7 +164,7 @@ func (w *worker) doTask(ctx context.Context, task CleanTask) {
 
 		totalArchived += archivedConnectors
 		err = w.dataStorageAdapter.UpdateHistoryEntityUnlinked(ctx, datastorage.HistoryWithCount{
-			Time:     types.NewCpsTime(),
+			Time:     libtime.NewCpsTime(),
 			Archived: totalArchived,
 		})
 		if err != nil {
@@ -185,7 +185,7 @@ func (w *worker) doTask(ctx context.Context, task CleanTask) {
 		}
 
 		err = w.dataStorageAdapter.UpdateHistoryEntityCleaned(ctx, datastorage.HistoryWithCount{
-			Time:    types.NewCpsTime(),
+			Time:    libtime.NewCpsTime(),
 			Deleted: deleted,
 		})
 		if err != nil {

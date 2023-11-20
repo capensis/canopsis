@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/validator"
@@ -32,8 +33,8 @@ var timeFormats = map[string]string{
 
 // ValidateCpsTimeType implements CustomTypeFunc and returns value to validate.
 func ValidateCpsTimeType(field reflect.Value) interface{} {
-	if field.Type() == reflect.TypeOf(types.CpsTime{}) {
-		val := field.Interface().(types.CpsTime).Time
+	if field.Type() == reflect.TypeOf(libtime.CpsTime{}) {
+		val := field.Interface().(libtime.CpsTime).Time
 		if val.IsZero() {
 			return nil
 		}

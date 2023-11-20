@@ -7,6 +7,7 @@ import (
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
@@ -97,7 +98,7 @@ func (p *eventPublisher) publishServiceEvent(ctx context.Context, msg ChangeEnti
 		Connector:     types.ConnectorApi,
 		ConnectorName: types.ConnectorApi,
 		Component:     msg.ID,
-		Timestamp:     types.NewCpsTime(),
+		Timestamp:     libtime.NewCpsTime(),
 		Author:        canopsis.DefaultEventAuthor,
 		SourceType:    types.SourceTypeService,
 		Initiator:     types.InitiatorSystem,
@@ -141,7 +142,7 @@ func (p *eventPublisher) publishBasicEntityEvent(ctx context.Context, msg Change
 		event.EventType = types.EventTypeEntityUpdated
 	}
 
-	event.Timestamp = types.NewCpsTime()
+	event.Timestamp = libtime.NewCpsTime()
 	event.Author = canopsis.DefaultEventAuthor
 	event.Initiator = types.InitiatorSystem
 	event.SourceType = event.DetectSourceType()

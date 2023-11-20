@@ -1,8 +1,10 @@
-package pattern_test
+package match_test
 
 import (
 	"errors"
 	"testing"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -21,7 +23,7 @@ func TestEvent_Match(t *testing.T) {
 
 	for name, data := range dataSets {
 		t.Run(name, func(t *testing.T) {
-			ok, err := data.pattern.Match(data.event)
+			ok, err := match.MatchEventPattern(data.pattern, &data.event)
 			if !errors.Is(err, data.matchErr) {
 				t.Errorf("expected error %v but got %v", data.matchErr, err)
 			}
@@ -29,7 +31,7 @@ func TestEvent_Match(t *testing.T) {
 				t.Errorf("expected result %v but got %v", data.matchResult, ok)
 			}
 
-			ok, _, err = data.pattern.MatchWithRegexMatches(data.event)
+			ok, _, err = match.MatchEventPatternWithRegexMatches(data.pattern, &data.event)
 			if !errors.Is(err, data.matchErr) {
 				t.Errorf("expected error %v but got %v", data.matchErr, err)
 			}
@@ -163,7 +165,7 @@ func benchmarkEventMatch(b *testing.B, fieldCond pattern.FieldCondition, event t
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		_, err := p.Match(event)
+		_, err := match.MatchEventPattern(p, &event)
 		if err != nil {
 			b.Fatalf("unexpected error %v", err)
 		}
@@ -194,7 +196,7 @@ func benchmarkEventUnmarshalBsonAndMatch(b *testing.B, fieldCond pattern.FieldCo
 			b.Fatalf("unexpected error %v", err)
 		}
 
-		_, err = w.Pattern.Match(event)
+		_, err = match.MatchEventPattern(w.Pattern, &event)
 		if err != nil {
 			b.Fatalf("unexpected error %v", err)
 		}

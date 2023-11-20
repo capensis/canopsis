@@ -16,6 +16,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -124,7 +125,7 @@ func (p *noEventsProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 }
 
 func (p *noEventsProcessor) createAlarm(ctx context.Context, entity types.Entity, params rpc.AxeParameters) (Result, error) {
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	result := Result{}
 	if *params.State == types.AlarmStateOK {
 		return result, nil
@@ -351,7 +352,7 @@ func (p *noEventsProcessor) newAlarmChange(alarm types.Alarm) types.AlarmChange 
 func (p *noEventsProcessor) newAlarm(
 	params rpc.AxeParameters,
 	entity types.Entity,
-	timestamp types.CpsTime,
+	timestamp libtime.CpsTime,
 	alarmConfig config.AlarmConfig,
 ) types.Alarm {
 	alarm := types.Alarm{

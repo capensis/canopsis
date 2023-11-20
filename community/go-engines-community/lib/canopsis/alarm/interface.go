@@ -8,6 +8,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 )
@@ -69,11 +70,11 @@ type Adapter interface {
 	// MassPartialUpdateOpen updates opened alarms matching by list of IDs, applying partial update from alarm
 	MassPartialUpdateOpen(context.Context, *types.Alarm, []string) error
 
-	GetOpenedAlarmsWithLastDatesBefore(ctx context.Context, time types.CpsTime) (mongo.Cursor, error)
+	GetOpenedAlarmsWithLastDatesBefore(ctx context.Context, time libtime.CpsTime) (mongo.Cursor, error)
 
 	GetOpenedAlarmsByConnectorIdleRules(ctx context.Context) ([]types.Alarm, error)
 
-	GetOpenedAlarmsWithEntityAfter(ctx context.Context, createdAfter types.CpsTime) (mongo.Cursor, error)
+	GetOpenedAlarmsWithEntityAfter(ctx context.Context, createdAfter libtime.CpsTime) (mongo.Cursor, error)
 
 	CountResolvedAlarm(ctx context.Context, alarmList []string) (int, error)
 
@@ -85,11 +86,11 @@ type Adapter interface {
 	// CopyAlarmToResolvedCollection copies alarm to resolved alarm collection
 	CopyAlarmToResolvedCollection(ctx context.Context, alarm types.Alarm) error
 
-	FindToCheckPbehaviorInfo(ctx context.Context, createdBefore types.CpsTime, idsWithPbehaviors []string) (mongo.Cursor, error)
+	FindToCheckPbehaviorInfo(ctx context.Context, createdBefore libtime.CpsTime, idsWithPbehaviors []string) (mongo.Cursor, error)
 
 	GetWorstAlarmStateAndMaxLastEventDate(ctx context.Context, entityIds []string) (int64, int64, error)
 
-	UpdateLastEventDate(ctx context.Context, entityIds []string, t types.CpsTime) error
+	UpdateLastEventDate(ctx context.Context, entityIds []string, t libtime.CpsTime) error
 }
 
 type EventProcessor interface {

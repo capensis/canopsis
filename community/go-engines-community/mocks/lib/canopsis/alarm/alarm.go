@@ -7,10 +7,11 @@ package mock_alarm
 import (
 	context "context"
 	reflect "reflect"
-	time "time"
+	time0 "time"
 
 	config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	rpc "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
+	time "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	types "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	gomock "github.com/golang/mock/gomock"
@@ -69,7 +70,7 @@ func (mr *MockAdapterMockRecorder) CountResolvedAlarm(arg0, arg1 interface{}) *g
 }
 
 // DeleteResolvedAlarms mocks base method.
-func (m *MockAdapter) DeleteResolvedAlarms(arg0 context.Context, arg1 time.Duration) error {
+func (m *MockAdapter) DeleteResolvedAlarms(arg0 context.Context, arg1 time0.Duration) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteResolvedAlarms", arg0, arg1)
 	ret0, _ := ret[0].(error)
@@ -83,7 +84,7 @@ func (mr *MockAdapterMockRecorder) DeleteResolvedAlarms(arg0, arg1 interface{}) 
 }
 
 // FindToCheckPbehaviorInfo mocks base method.
-func (m *MockAdapter) FindToCheckPbehaviorInfo(arg0 context.Context, arg1 types.CpsTime, arg2 []string) (mongo.Cursor, error) {
+func (m *MockAdapter) FindToCheckPbehaviorInfo(arg0 context.Context, arg1 time.CpsTime, arg2 []string) (mongo.Cursor, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindToCheckPbehaviorInfo", arg0, arg1, arg2)
 	ret0, _ := ret[0].(mongo.Cursor)
@@ -351,7 +352,7 @@ func (mr *MockAdapterMockRecorder) GetOpenedAlarmsWithEntity(arg0 interface{}) *
 }
 
 // GetOpenedAlarmsWithEntityAfter mocks base method.
-func (m *MockAdapter) GetOpenedAlarmsWithEntityAfter(arg0 context.Context, arg1 types.CpsTime) (mongo.Cursor, error) {
+func (m *MockAdapter) GetOpenedAlarmsWithEntityAfter(arg0 context.Context, arg1 time.CpsTime) (mongo.Cursor, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetOpenedAlarmsWithEntityAfter", arg0, arg1)
 	ret0, _ := ret[0].(mongo.Cursor)
@@ -394,7 +395,7 @@ func (mr *MockAdapterMockRecorder) GetOpenedAlarmsWithEntityByIDs(arg0, arg1, ar
 }
 
 // GetOpenedAlarmsWithLastDatesBefore mocks base method.
-func (m *MockAdapter) GetOpenedAlarmsWithLastDatesBefore(arg0 context.Context, arg1 types.CpsTime) (mongo.Cursor, error) {
+func (m *MockAdapter) GetOpenedAlarmsWithLastDatesBefore(arg0 context.Context, arg1 time.CpsTime) (mongo.Cursor, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetOpenedAlarmsWithLastDatesBefore", arg0, arg1)
 	ret0, _ := ret[0].(mongo.Cursor)
@@ -525,7 +526,7 @@ func (mr *MockAdapterMockRecorder) Update(arg0, arg1 interface{}) *gomock.Call {
 }
 
 // UpdateLastEventDate mocks base method.
-func (m *MockAdapter) UpdateLastEventDate(arg0 context.Context, arg1 []string, arg2 types.CpsTime) error {
+func (m *MockAdapter) UpdateLastEventDate(arg0 context.Context, arg1 []string, arg2 time.CpsTime) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateLastEventDate", arg0, arg1, arg2)
 	ret0, _ := ret[0].(error)
@@ -683,7 +684,7 @@ func (m *MockActivationService) EXPECT() *MockActivationServiceMockRecorder {
 }
 
 // Process mocks base method.
-func (m *MockActivationService) Process(arg0 context.Context, arg1 types.Alarm, arg2 types.MicroTime) (bool, error) {
+func (m *MockActivationService) Process(arg0 context.Context, arg1 types.Alarm, arg2 time.MicroTime) (bool, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Process", arg0, arg1, arg2)
 	ret0, _ := ret[0].(bool)
