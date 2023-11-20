@@ -9,11 +9,14 @@ import (
 	"os"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitycategory"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -235,7 +238,7 @@ func (w *worker) parseEntities(
 	updatedIds := make([]string, 0)
 	removedIds := make([]string, 0)
 
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	componentInfos := make(map[string]map[string]types.Info)
 
 	componentsExist := make(map[string]bool)
@@ -260,7 +263,7 @@ func (w *worker) parseEntities(
 			return res, fmt.Errorf("ci = %s, validation error: %s", ci.ID, err.Error())
 		}
 
-		if ci.Type == types.EntityTypeService && !ci.EntityPattern.Validate(common.GetForbiddenFieldsInEntityPattern(libmongo.EntityMongoCollection)) {
+		if ci.Type == types.EntityTypeService && !match.ValidateEntityPattern(ci.EntityPattern, common.GetForbiddenFieldsInEntityPattern(libmongo.EntityMongoCollection)) {
 			w.logger.Warn().Str("entity_name", ci.Name).Msg("invalid entity pattern, skip")
 			continue
 		}
@@ -553,7 +556,7 @@ func (w *worker) sendUpdateServiceEvents(ctx context.Context) error {
 			Connector:     defaultConnector,
 			ConnectorName: defaultConnectorName,
 			Component:     service.ID,
-			Timestamp:     types.NewCpsTime(),
+			Timestamp:     libtime.NewCpsTime(),
 			Author:        canopsis.DefaultEventAuthor,
 			Initiator:     types.InitiatorSystem,
 			SourceType:    types.SourceTypeService,
@@ -642,7 +645,7 @@ func (w *worker) validate(ci importcontextgraph.EntityConfiguration) error {
 	return nil
 }
 
-func (w *worker) fillDefaultFields(ci *importcontextgraph.EntityConfiguration, source string, now types.CpsTime) {
+func (w *worker) fillDefaultFields(ci *importcontextgraph.EntityConfiguration, source string, now libtime.CpsTime) {
 	switch ci.Type {
 	case types.EntityTypeService:
 		ci.ID = ci.Name
@@ -676,7 +679,7 @@ func (w *worker) createEntity(ci importcontextgraph.EntityConfiguration) mongo.W
 		SetFilter(bson.M{"_id": ci.ID}).
 		SetUpdate(bson.M{
 			"$set":         ci,
-			"$setOnInsert": bson.M{"created": types.NewCpsTime()},
+			"$setOnInsert": bson.M{"created": libtime.NewCpsTime()},
 			"$unset":       bson.M{"soft_deleted": ""},
 		}).
 		SetUpsert(true)
@@ -709,13 +712,13 @@ func (w *worker) updateEntity(ci *importcontextgraph.EntityConfiguration, oldEnt
 		SetFilter(bson.M{"_id": oldEntity.ID}).
 		SetUpdate(bson.M{
 			"$set":         ci,
-			"$setOnInsert": bson.M{"created": types.NewCpsTime()},
+			"$setOnInsert": bson.M{"created": libtime.NewCpsTime()},
 			"$unset":       bson.M{"soft_deleted": ""},
 		}).
 		SetUpsert(true)
 }
 
-func (w *worker) changeState(id string, enabled bool, importSource string, imported types.CpsTime) mongo.WriteModel {
+func (w *worker) changeState(id string, enabled bool, importSource string, imported libtime.CpsTime) mongo.WriteModel {
 	return mongo.NewUpdateManyModel().
 		SetFilter(bson.M{"_id": id}).
 		SetUpdate(bson.M{"$set": bson.M{
@@ -725,7 +728,7 @@ func (w *worker) changeState(id string, enabled bool, importSource string, impor
 		}})
 }
 
-func (w *worker) deleteEntity(id string, now types.CpsTime) []mongo.WriteModel {
+func (w *worker) deleteEntity(id string, now libtime.CpsTime) []mongo.WriteModel {
 	return []mongo.WriteModel{
 		mongo.NewUpdateOneModel().
 			SetFilter(bson.M{"_id": id}).
@@ -739,7 +742,7 @@ func (w *worker) updateComponentInfos(componentID string, infos map[string]types
 		SetUpdate(bson.M{"$set": bson.M{"component_infos": infos}})
 }
 
-func (w *worker) createServiceEvent(ci importcontextgraph.EntityConfiguration, eventType string, now types.CpsTime) types.Event {
+func (w *worker) createServiceEvent(ci importcontextgraph.EntityConfiguration, eventType string, now libtime.CpsTime) types.Event {
 	return types.Event{
 		EventType:     eventType,
 		Timestamp:     now,
@@ -752,7 +755,7 @@ func (w *worker) createServiceEvent(ci importcontextgraph.EntityConfiguration, e
 	}
 }
 
-func (w *worker) createBasicEntityEvent(eventType string, t, name, component string, now types.CpsTime) (types.Event, error) {
+func (w *worker) createBasicEntityEvent(eventType string, t, name, component string, now libtime.CpsTime) (types.Event, error) {
 	event := types.Event{
 		Connector:     defaultConnector,
 		ConnectorName: defaultConnectorName,

@@ -7,6 +7,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	redislib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
@@ -43,7 +44,7 @@ func TestRedisScenarioExecutionStorage_GetAbandoned_GivenTooLongNotUpdatedExecut
 	if err != nil {
 		t.Fatalf("Error %s is not expected", err.Error())
 	}
-	zeroTime := types.CpsTime{}
+	zeroTime := libtime.CpsTime{}
 	firstExecution := action.ScenarioExecution{
 		AlarmID:    "4",
 		ScenarioID: "4",

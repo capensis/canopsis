@@ -2,7 +2,7 @@ package datastorage
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -25,18 +25,18 @@ func ValidateConfig(sl validator.StructLevel) {
 		sl.ReportError(r.Alarm.DeleteAfter, "Alarm.DeleteAfter", "DeleteAfter", "gtfield", "ArchiveAfter")
 	}
 
-	if types.IsDurationEnabledAndValid(r.Alarm.DeleteAfter) && !types.IsDurationEnabledAndValid(r.Alarm.ArchiveAfter) {
+	if libtime.IsDurationEnabledAndValid(r.Alarm.DeleteAfter) && !libtime.IsDurationEnabledAndValid(r.Alarm.ArchiveAfter) {
 		sl.ReportError(r.Alarm.ArchiveAfter, "Alarm.ArchiveAfter", "ArchiveAfter", "required_if", "DeleteAfter")
 	}
 }
 
-func durationGt(left, right *types.DurationWithEnabled) bool {
+func durationGt(left, right *libtime.DurationWithEnabled) bool {
 	if left != nil && right == nil {
 		return false
 	}
 
-	if types.IsDurationEnabledAndValid(left) && types.IsDurationEnabledAndValid(right) {
-		now := types.NewCpsTime()
+	if libtime.IsDurationEnabledAndValid(left) && libtime.IsDurationEnabledAndValid(right) {
+		now := libtime.NewCpsTime()
 		leftAt := left.AddTo(now)
 		rightAt := right.AddTo(now)
 

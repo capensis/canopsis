@@ -3,7 +3,7 @@ package widgettemplate
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 )
 
@@ -29,8 +29,8 @@ type Response struct {
 	Columns []view.WidgetColumn `bson:"columns" json:"columns,omitempty"`
 	Content string              `bson:"content" json:"content,omitempty"`
 	Author  *author.Author      `bson:"author" json:"author"`
-	Created *types.CpsTime      `bson:"created" json:"created" swaggertype:"integer"`
-	Updated *types.CpsTime      `bson:"updated" json:"updated" swaggertype:"integer"`
+	Created *libtime.CpsTime    `bson:"created" json:"created" swaggertype:"integer"`
+	Updated *libtime.CpsTime    `bson:"updated" json:"updated" swaggertype:"integer"`
 }
 
 type AggregationResult struct {

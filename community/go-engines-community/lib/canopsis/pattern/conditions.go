@@ -9,11 +9,13 @@ import (
 	"strings"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/bsontype"
 )
+
+const pbhCanonicalTypeActive = "active"
 
 var ErrUnsupportedField = errors.New("unsupported field")
 var ErrUnsupportedConditionType = errors.New("unsupported condition type")
@@ -133,7 +135,7 @@ func NewTimeIntervalCondition(t string, from, to int64) Condition {
 	}
 }
 
-func NewDurationCondition(t string, d types.DurationWithUnit) (Condition, error) {
+func NewDurationCondition(t string, d libtime.DurationWithUnit) (Condition, error) {
 	var err error
 	d, err = d.To("s")
 	if err != nil {
@@ -568,7 +570,7 @@ func (c *Condition) TimeToMongoQuery(f string) (bson.M, error) {
 			return nil, ErrWrongConditionValue
 		}
 
-		t := types.CpsTime{Time: time.Now().Add(time.Duration(-*c.valueDuration) * time.Second)}
+		t := libtime.CpsTime{Time: time.Now().Add(time.Duration(-*c.valueDuration) * time.Second)}
 
 		return bson.M{f: bson.M{"$gt": t}}, nil
 	case ConditionTimeAbsolute:
@@ -576,8 +578,8 @@ func (c *Condition) TimeToMongoQuery(f string) (bson.M, error) {
 			return nil, ErrWrongConditionValue
 		}
 
-		ft := types.NewCpsTime(*c.valueTimeIntervalFrom)
-		tt := types.NewCpsTime(*c.valueTimeIntervalTo)
+		ft := libtime.NewCpsTime(*c.valueTimeIntervalFrom)
+		tt := libtime.NewCpsTime(*c.valueTimeIntervalTo)
 
 		return bson.M{f: bson.M{"$gt": ft, "$lt": tt}}, nil
 	default:
@@ -602,6 +604,57 @@ func (c *Condition) DurationToMongoQuery(f string) (bson.M, error) {
 	default:
 		return nil, ErrUnsupportedConditionType
 	}
+}
+
+func (c *Condition) CanonicalTypeToMongoQuery(f string) (bson.M, error) {
+	switch c.Type {
+	case ConditionEqual:
+		if c.valueStr != nil && *c.valueStr == pbhCanonicalTypeActive {
+			return bson.M{f: bson.M{"$in": bson.A{nil, *c.valueStr}}}, nil
+		}
+	case ConditionNotEqual:
+		if c.valueStr != nil && *c.valueStr == pbhCanonicalTypeActive {
+			return bson.M{f: bson.M{"$nin": bson.A{nil, *c.valueStr}}}, nil
+		}
+	case ConditionIsOneOf:
+		found := false
+		for _, item := range c.valueStrArray {
+			if item == pbhCanonicalTypeActive {
+				found = true
+				break
+			}
+		}
+
+		if found {
+			values := make([]interface{}, len(c.valueStrArray)+1)
+			for k, s := range c.valueStrArray {
+				values[k] = s
+			}
+			values[len(values)-1] = nil
+
+			return bson.M{f: bson.M{"$in": values}}, nil
+		}
+	case ConditionIsNotOneOf:
+		found := false
+		for _, item := range c.valueStrArray {
+			if item == pbhCanonicalTypeActive {
+				found = true
+				break
+			}
+		}
+
+		if found {
+			values := make([]interface{}, len(c.valueStrArray)+1)
+			for k, s := range c.valueStrArray {
+				values[k] = s
+			}
+			values[len(values)-1] = nil
+
+			return bson.M{f: bson.M{"$nin": values}}, nil
+		}
+	}
+
+	return nil, ErrUnsupportedConditionType
 }
 
 func (c *Condition) StringToSql(f string) (string, error) {
@@ -957,7 +1010,7 @@ func (c *Condition) UnmarshalBSONValue(_ bsontype.Type, b []byte) error {
 }
 
 func (c *Condition) parseValue() {
-	if s, err := getStringValue(c.Value); err == nil {
+	if s, err := GetStringValue(c.Value); err == nil {
 		regexpStr := ""
 		switch c.Type {
 		case ConditionRegexp:
@@ -988,19 +1041,19 @@ func (c *Condition) parseValue() {
 		return
 	}
 
-	if i, err := getIntValue(c.Value); err == nil {
+	if i, err := GetIntValue(c.Value); err == nil {
 		c.Value = i
 		c.valueInt = &i
 		return
 	}
 
-	if b, err := getBoolValue(c.Value); err == nil {
+	if b, err := GetBoolValue(c.Value); err == nil {
 		c.Value = b
 		c.valueBool = &b
 		return
 	}
 
-	if a, err := getStringArrayValue(c.Value); err == nil {
+	if a, err := GetStringArrayValue(c.Value); err == nil {
 		c.Value = a
 		c.valueStrArray = a
 		return
@@ -1026,7 +1079,7 @@ func (c *Condition) parseValue() {
 	}
 }
 
-func getStringValue(v interface{}) (string, error) {
+func GetStringValue(v interface{}) (string, error) {
 	if s, ok := v.(string); ok {
 		return s, nil
 	}
@@ -1034,7 +1087,7 @@ func getStringValue(v interface{}) (string, error) {
 	return "", ErrWrongConditionValue
 }
 
-func getIntValue(v interface{}) (int64, error) {
+func GetIntValue(v interface{}) (int64, error) {
 	switch i := v.(type) {
 	case int:
 		return int64(i), nil
@@ -1061,7 +1114,7 @@ func getIntValue(v interface{}) (int64, error) {
 	}
 }
 
-func getBoolValue(v interface{}) (bool, error) {
+func GetBoolValue(v interface{}) (bool, error) {
 	if b, ok := v.(bool); ok {
 		return b, nil
 	}
@@ -1069,7 +1122,7 @@ func getBoolValue(v interface{}) (bool, error) {
 	return false, ErrWrongConditionValue
 }
 
-func getStringArrayValue(v interface{}) ([]string, error) {
+func GetStringArrayValue(v interface{}) ([]string, error) {
 	var interfaceArr []interface{}
 
 	switch a := v.(type) {
@@ -1116,7 +1169,7 @@ func getTimeIntervalValue(v interface{}) (int64, int64, error) {
 		return 0, 0, errors.New("condition value expected 'from' key")
 	}
 
-	from, err := getIntValue(rawFrom)
+	from, err := GetIntValue(rawFrom)
 	if err != nil {
 		return 0, 0, err
 	}
@@ -1126,7 +1179,7 @@ func getTimeIntervalValue(v interface{}) (int64, int64, error) {
 		return 0, 0, errors.New("condition value expected 'to' key")
 	}
 
-	to, err := getIntValue(rawTo)
+	to, err := GetIntValue(rawTo)
 	if err != nil {
 		return 0, 0, err
 	}
@@ -1134,7 +1187,7 @@ func getTimeIntervalValue(v interface{}) (int64, int64, error) {
 	return from, to, nil
 }
 
-func getDurationValue(v interface{}) (types.DurationWithUnit, error) {
+func getDurationValue(v interface{}) (libtime.DurationWithUnit, error) {
 	var mapVal map[string]interface{}
 	if m, ok := v.(map[string]interface{}); ok {
 		mapVal = m
@@ -1146,30 +1199,30 @@ func getDurationValue(v interface{}) (types.DurationWithUnit, error) {
 	} else if m, ok := v.(bson.M); ok {
 		mapVal = m
 	} else {
-		return types.DurationWithUnit{}, ErrWrongConditionValue
+		return libtime.DurationWithUnit{}, ErrWrongConditionValue
 	}
 
 	rawVal, ok := mapVal["value"]
 	if !ok {
-		return types.DurationWithUnit{}, errors.New("condition value expected 'value' key")
+		return libtime.DurationWithUnit{}, errors.New("condition value expected 'value' key")
 	}
 
-	val, err := getIntValue(rawVal)
+	val, err := GetIntValue(rawVal)
 	if err != nil {
-		return types.DurationWithUnit{}, err
+		return libtime.DurationWithUnit{}, err
 	}
 
 	rawUnit, ok := mapVal["unit"]
 	if !ok {
-		return types.DurationWithUnit{}, errors.New("condition value expected 'unit' key")
+		return libtime.DurationWithUnit{}, errors.New("condition value expected 'unit' key")
 	}
 
-	unit, err := getStringValue(rawUnit)
+	unit, err := GetStringValue(rawUnit)
 	if err != nil {
-		return types.DurationWithUnit{}, err
+		return libtime.DurationWithUnit{}, err
 	}
 
-	return types.DurationWithUnit{
+	return libtime.DurationWithUnit{
 		Value: val,
 		Unit:  unit,
 	}, nil

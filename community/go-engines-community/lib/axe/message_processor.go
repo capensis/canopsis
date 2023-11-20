@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -144,9 +145,9 @@ func (p *MessageProcessor) transformEvent(event types.Event) rpc.AxeEvent {
 	}
 
 	if event.Duration > 0 {
-		params.Duration = &types.DurationWithUnit{
+		params.Duration = &libtime.DurationWithUnit{
 			Value: int64(event.Duration),
-			Unit:  types.DurationUnitSecond,
+			Unit:  libtime.DurationUnitSecond,
 		}
 	}
 

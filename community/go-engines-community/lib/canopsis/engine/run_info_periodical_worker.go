@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"github.com/rs/zerolog"
 )
 
@@ -59,7 +59,7 @@ func updateInstanceRunInfo(
 		info.QueueLength = queue.Messages
 	}
 
-	info.Time = types.NewCpsTime()
+	info.Time = libtime.NewCpsTime()
 	err := manager.SaveInstance(ctx, info, 2*interval)
 	if err != nil {
 		logger.Err(err).Msg("cannot save run info")

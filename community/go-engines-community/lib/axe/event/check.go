@@ -19,6 +19,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -146,7 +147,7 @@ func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 
 func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, event rpc.AxeEvent) (Result, error) {
 	params := event.Parameters
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	result := Result{
 		Forward: true,
 	}
@@ -239,7 +240,7 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 	}
 
 	alarm.InternalTags = p.internalTagAlarmMatcher.Match(entity, alarm)
-	alarm.InternalTagsUpdated = types.NewMicroTime()
+	alarm.InternalTagsUpdated = libtime.NewMicroTime()
 	alarm.Tags = append(alarm.Tags, alarm.InternalTags...)
 	alarm.Healthcheck = event.Healthcheck
 	_, err = p.alarmCollection.InsertOne(ctx, alarm)
@@ -413,7 +414,7 @@ func (p *checkProcessor) newAlarmChange(alarm types.Alarm) types.AlarmChange {
 func (p *checkProcessor) newAlarm(
 	params rpc.AxeParameters,
 	entity types.Entity,
-	timestamp types.CpsTime,
+	timestamp libtime.CpsTime,
 	alarmConfig config.AlarmConfig,
 ) types.Alarm {
 	tags := types.TransformEventTags(params.Tags)
@@ -541,7 +542,7 @@ func (p *checkProcessor) sendEventStatistics(ctx context.Context, event rpc.AxeE
 	p.eventStatisticsSender.Send(ctx, event.Entity.ID, stats)
 }
 
-func resolvePbehaviorInfo(ctx context.Context, entity types.Entity, now types.CpsTime, pbhTypeResolver pbehavior.EntityTypeResolver) (types.PbehaviorInfo, error) {
+func resolvePbehaviorInfo(ctx context.Context, entity types.Entity, now libtime.CpsTime, pbhTypeResolver pbehavior.EntityTypeResolver) (types.PbehaviorInfo, error) {
 	result, err := pbhTypeResolver.Resolve(ctx, entity, now.Time)
 	if err != nil {
 		return types.PbehaviorInfo{}, err
@@ -617,7 +618,7 @@ func updatePbhLastAlarmDate(ctx context.Context, result Result, pbehaviorCollect
 	}
 
 	pbhId := ""
-	var lastAlarmDate *types.CpsTime
+	var lastAlarmDate *libtime.CpsTime
 	if result.Alarm.ID == "" {
 		pbhId = result.Entity.PbehaviorInfo.ID
 		lastAlarmDate = result.Entity.PbehaviorInfo.Timestamp

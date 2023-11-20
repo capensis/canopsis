@@ -10,6 +10,7 @@ import (
 	"regexp"
 	"time"
 
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
@@ -142,8 +143,8 @@ type Event struct {
 	Author string `bson:"author" json:"author"`
 	UserID string `bson:"user_id" json:"user_id"`
 
-	Timestamp         CpsTime   `bson:"timestamp" json:"timestamp"`
-	ReceivedTimestamp MicroTime `bson:"rt" json:"rt"`
+	Timestamp         libtime.CpsTime   `bson:"timestamp" json:"timestamp"`
+	ReceivedTimestamp libtime.MicroTime `bson:"rt" json:"rt"`
 
 	RK          string                 `bson:"routing_key" json:"routing_key"`
 	Duration    CpsNumber              `bson:"duration,omitempty" json:"duration,omitempty"`
@@ -211,11 +212,11 @@ type Event struct {
 //	if "entity" is not null, "impacts" and "depends" are ensured to be initialized
 func (e *Event) Format() {
 	//events can't be later or earlier than MaxEventTimestampVariation
-	now := NewCpsTime()
+	now := libtime.NewCpsTime()
 	if e.Timestamp.IsZero() || e.Timestamp.Time.Before(now.Add(-MaxEventTimestampVariation)) || e.Timestamp.Time.After(now.Add(MaxEventTimestampVariation)) {
 		e.Timestamp = now
 	}
-	e.ReceivedTimestamp = NewMicroTime()
+	e.ReceivedTimestamp = libtime.NewMicroTime()
 	if e.EventType == "" {
 		e.EventType = EventTypeCheck
 	}
@@ -291,7 +292,7 @@ func (e *Event) IsOnlyServiceUpdate() bool {
 }
 
 // IsMatched tell if an event is catched by a regex
-func (e Event) IsMatched(regex string, fields []string) bool {
+func (e *Event) IsMatched(regex string, fields []string) bool {
 	for _, fieldName := range fields {
 		field := utils.GetStringField(e, fieldName)
 		matched, _ := regexp.MatchString(regex, field)
@@ -304,7 +305,7 @@ func (e Event) IsMatched(regex string, fields []string) bool {
 
 // IsValid checks if an Event is valid for Canopsis processing.
 // the error returned, if any, is of type errt.UnknownError
-func (e Event) IsValid() error {
+func (e *Event) IsValid() error {
 	if e.Connector == "" || e.ConnectorName == "" {
 		return errt.NewUnknownError(errors.New("missing connector"))
 	}
@@ -403,7 +404,7 @@ func (e *Event) GetRequiredKeys() []string {
 
 var cpsNumberType = reflect.TypeOf(CpsNumber(0))
 var cpsNumberPtrType = reflect.PtrTo(cpsNumberType)
-var cpsTimeType = reflect.TypeOf(CpsTime{})
+var cpsTimeType = reflect.TypeOf(libtime.CpsTime{})
 var stringType = reflect.TypeOf("")
 var stringPtrType = reflect.PtrTo(stringType)
 var boolType = reflect.TypeOf(false)
@@ -454,7 +455,7 @@ func (e *Event) SetField(name string, value interface{}) (err error) {
 		if !success {
 			return fmt.Errorf("%[1]T value cannot be converted to an integer: %+[1]v", value)
 		}
-		cpsTimeValue := CpsTime{Time: time.Unix(integerValue, 0)}
+		cpsTimeValue := libtime.CpsTime{Time: time.Unix(integerValue, 0)}
 		field.Set(reflect.ValueOf(cpsTimeValue))
 
 	case stringType:
@@ -489,6 +490,46 @@ func (e *Event) IsPbehaviorEvent() bool {
 	return e.EventType == EventTypePbhEnter ||
 		e.EventType == EventTypePbhLeave ||
 		e.EventType == EventTypePbhLeaveAndEnter
+}
+
+func (e *Event) GetStringField(f string) (string, bool) {
+	switch f {
+	case "connector":
+		return e.Connector, true
+	case "connector_name":
+		return e.ConnectorName, true
+	case "component":
+		return e.Component, true
+	case "resource":
+		return e.Resource, true
+	case "output":
+		return e.Output, true
+	case "long_output":
+		return e.LongOutput, true
+	case "event_type":
+		return e.EventType, true
+	case "source_type":
+		return e.SourceType, true
+	default:
+		return "", false
+	}
+}
+
+func (e *Event) GetIntField(f string) (int64, bool) {
+	switch f {
+	case "state":
+		return int64(e.State), true
+	default:
+		return 0, false
+	}
+}
+
+func (e *Event) GetExtraInfoVal(f string) (interface{}, bool) {
+	if v, ok := e.ExtraInfos[f]; ok {
+		return v, true
+	}
+
+	return nil, false
 }
 
 func isValidEventType(t string) bool {

@@ -7,7 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
 )
@@ -31,7 +31,7 @@ func (w *cleanPeriodicalWorker) Work(ctx context.Context) {
 		return
 	}
 
-	var lastExecuted types.CpsTime
+	var lastExecuted libtime.CpsTime
 	if conf.History.Pbehavior != nil {
 		lastExecuted = *conf.History.Pbehavior
 	}
@@ -58,7 +58,7 @@ func (w *cleanPeriodicalWorker) Work(ctx context.Context) {
 			w.Logger.Err(err).Msg("cannot disconnect from mongo")
 		}
 	}()
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	cleaner := pbehavior.NewCleaner(mongoClient, datastorage.BulkSize, w.Logger)
 	maxUpdates := int64(w.DataStorageConfigProvider.Get().MaxUpdates)
 	deleted, err := cleaner.Clean(ctx, d.SubFrom(now), maxUpdates)
