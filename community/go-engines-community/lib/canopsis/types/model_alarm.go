@@ -4,8 +4,10 @@ import (
 	"log"
 	"regexp"
 	"sort"
+	"strings"
 	"time"
 
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -96,14 +98,14 @@ const (
 
 // Alarm represents an alarm document.
 type Alarm struct {
-	ID       string  `bson:"_id" json:"_id"`
-	Time     CpsTime `bson:"t" json:"t"`
-	EntityID string  `bson:"d" json:"d"`
+	ID       string          `bson:"_id" json:"_id"`
+	Time     libtime.CpsTime `bson:"t" json:"t"`
+	EntityID string          `bson:"d" json:"d"`
 
-	Tags                []string  `bson:"tags" json:"tags"`
-	ExternalTags        []string  `bson:"etags" json:"etags"`
-	InternalTags        []string  `bson:"itags" json:"itags"`
-	InternalTagsUpdated MicroTime `bson:"itags_upd" json:"itags_upd"`
+	Tags                []string          `bson:"tags" json:"tags"`
+	ExternalTags        []string          `bson:"etags" json:"etags"`
+	InternalTags        []string          `bson:"itags" json:"itags"`
+	InternalTagsUpdated libtime.MicroTime `bson:"itags_upd" json:"itags_upd"`
 	// todo move all field from Value to Alarm
 	Value AlarmValue `bson:"v" json:"v"`
 	// update contains alarm changes after last mongo update. Use functions Update* to
@@ -122,9 +124,9 @@ type Alarm struct {
 	KpiExecutedAutoInstructions []string `bson:"kpi_executed_auto_instructions,omitempty" json:"kpi_executed_auto_instructions,omitempty"`
 
 	// is used only for not acked metrics
-	NotAckedMetricType     string   `bson:"not_acked_metric_type,omitempty" json:"-"`
-	NotAckedMetricSendTime *CpsTime `bson:"not_acked_metric_send_time,omitempty" json:"-"`
-	NotAckedSince          *CpsTime `bson:"not_acked_since,omitempty" json:"-"`
+	NotAckedMetricType     string           `bson:"not_acked_metric_type,omitempty" json:"-"`
+	NotAckedMetricSendTime *libtime.CpsTime `bson:"not_acked_metric_send_time,omitempty" json:"-"`
+	NotAckedSince          *libtime.CpsTime `bson:"not_acked_since,omitempty" json:"-"`
 
 	// InactiveAutoInstructionInProgress shows that autoremediation is launched and alarm is not active until the remediation is finished
 	InactiveAutoInstructionInProgress bool `bson:"auto_instruction_in_progress,omitempty" json:"auto_instruction_in_progress,omitempty"`
@@ -258,7 +260,7 @@ func (a *Alarm) IsSnoozed() bool {
 	}
 
 	snoozeEnd := a.Value.Snooze.Value.CpsTimestamp()
-	return snoozeEnd.After(NewCpsTime())
+	return snoozeEnd.After(libtime.NewCpsTime())
 }
 
 // IsStateLocked checks that the Alarm is not Locked (by manual intervention for example)
@@ -399,7 +401,8 @@ func (a *Alarm) SetMetaValuePath(path string) {
 }
 
 func (a *Alarm) Activate() {
-	a.Value.ActivationDate = &CpsTime{time.Now()}
+	now := libtime.NewCpsTime()
+	a.Value.ActivationDate = &now
 }
 
 func (a *Alarm) IsActivated() bool {
@@ -420,4 +423,206 @@ func (a *Alarm) IncrementEventsCount(count CpsNumber) {
 
 func (a *Alarm) DecrementEventsCount(count CpsNumber) {
 	a.AddUpdate("$inc", bson.M{"v.events_count": -count})
+}
+
+func (a *Alarm) GetStringField(f string) (string, bool) {
+	switch f {
+	case "v.display_name":
+		return a.Value.DisplayName, true
+	case "v.output":
+		return a.Value.Output, true
+	case "v.long_output":
+		return a.Value.LongOutput, true
+	case "v.initial_output":
+		return a.Value.InitialOutput, true
+	case "v.initial_long_output":
+		return a.Value.InitialLongOutput, true
+	case "v.connector":
+		return a.Value.Connector, true
+	case "v.connector_name":
+		return a.Value.ConnectorName, true
+	case "v.component":
+		return a.Value.Component, true
+	case "v.resource":
+		return a.Value.Resource, true
+	case "v.last_comment.m":
+		if a.Value.LastComment == nil {
+			return "", true
+		}
+		return a.Value.LastComment.Message, true
+	case "v.last_comment.initiator":
+		if a.Value.LastComment == nil {
+			return "", true
+		}
+		return a.Value.LastComment.Initiator, true
+	case "v.ticket.m":
+		if a.Value.Ticket == nil {
+			return "", true
+		}
+
+		return a.Value.Ticket.Message, true
+	case "v.ticket.ticket":
+		if a.Value.Ticket == nil {
+			return "", true
+		}
+
+		return a.Value.Ticket.Ticket, true
+	case "v.ticket.initiator":
+		if a.Value.Ticket == nil {
+			return "", true
+		}
+
+		return a.Value.Ticket.Initiator, true
+	case "v.ack.a":
+		if a.Value.ACK == nil {
+			return "", true
+		}
+
+		return a.Value.ACK.Author, true
+	case "v.ack.m":
+		if a.Value.ACK == nil {
+			return "", true
+		}
+
+		return a.Value.ACK.Message, true
+	case "v.ack.initiator":
+		if a.Value.ACK == nil {
+			return "", true
+		}
+
+		return a.Value.ACK.Initiator, true
+	case "v.canceled.initiator":
+		if a.Value.Canceled == nil {
+			return "", true
+		}
+
+		return a.Value.Canceled.Initiator, true
+	default:
+		if n := strings.TrimPrefix(f, "v.ticket.ticket_data."); n != f {
+			if a.Value.Ticket == nil || a.Value.Ticket.TicketData == nil {
+				return "", true
+			}
+
+			return a.Value.Ticket.TicketData[n], true
+		}
+
+		return "", false
+	}
+}
+
+func (a *Alarm) GetIntField(f string) (int64, bool) {
+	switch f {
+	case "v.state.val":
+		if a.Value.State == nil {
+			return 0, true
+		}
+		return int64(a.Value.State.Value), true
+	case "v.status.val":
+		if a.Value.Status == nil {
+			return 0, true
+		}
+		return int64(a.Value.Status.Value), true
+	case "v.total_state_changes":
+		return int64(a.Value.TotalStateChanges), true
+	default:
+		return 0, false
+	}
+}
+
+func (a *Alarm) GetRefField(f string) (interface{}, bool) {
+	switch f {
+	case "v.ack":
+		if a.Value.ACK == nil {
+			return nil, true
+		}
+		return a.Value.ACK, true
+	case "v.ticket":
+		if a.Value.Ticket == nil {
+			return nil, true
+		}
+		return a.Value.Ticket, true
+	case "v.canceled":
+		if a.Value.Canceled == nil {
+			return nil, true
+		}
+		return a.Value.Canceled, true
+	case "v.snooze":
+		if a.Value.Snooze == nil {
+			return nil, true
+		}
+		return a.Value.Snooze, true
+	case "v.activation_date":
+		if a.Value.ActivationDate == nil {
+			return nil, true
+		}
+		return a.Value.ActivationDate, true
+	default:
+		return nil, false
+	}
+}
+
+func (a *Alarm) GetTimeField(f string) (time.Time, bool) {
+	switch f {
+	case "v.creation_date":
+		return a.Value.CreationDate.Time, true
+	case "v.last_event_date":
+		return a.Value.LastEventDate.Time, true
+	case "v.last_update_date":
+		return a.Value.LastUpdateDate.Time, true
+	case "v.ack.t":
+		if a.Value.ACK != nil {
+			return a.Value.ACK.Timestamp.Time, true
+		}
+
+		return time.Time{}, true
+	case "v.resolved":
+		if a.Value.Resolved != nil {
+			return a.Value.Resolved.Time, true
+		}
+
+		return time.Time{}, true
+	case "v.activation_date":
+		if a.Value.ActivationDate != nil {
+			return a.Value.ActivationDate.Time, true
+		}
+		return time.Time{}, true
+	default:
+		return time.Time{}, false
+	}
+}
+
+func (a *Alarm) GetDurationField(f string) (int64, bool) {
+	switch f {
+	case "v.duration":
+		if a.Value.Duration > 0 {
+			return a.Value.Duration, true
+		}
+
+		if a.Value.Resolved != nil {
+			return int64(a.Value.Resolved.Sub(a.Time.Time).Seconds()), true
+		}
+
+		return int64(time.Since(a.Time.Time).Seconds()), true
+	default:
+		return 0, false
+	}
+}
+
+func (a *Alarm) GetStringArrayField(f string) ([]string, bool) {
+	switch f {
+	case "tags":
+		return a.Tags, true
+	default:
+		return nil, false
+	}
+}
+
+func (a *Alarm) GetInfoVal(f string) (interface{}, bool) {
+	for _, infosByRule := range a.Value.Infos {
+		if v, ok := infosByRule[f]; ok {
+			return v, true
+		}
+	}
+
+	return nil, false
 }

@@ -4,7 +4,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/view"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 )
 
 type ListRequest struct {
@@ -30,8 +30,8 @@ type ViewGroup struct {
 	Title     string           `bson:"title" json:"title"`
 	Author    *author.Author   `bson:"author" json:"author,omitempty"`
 	Views     *[]view.Response `bson:"views,omitempty" json:"views,omitempty"`
-	Created   *types.CpsTime   `bson:"created" json:"created,omitempty" swaggertype:"integer"`
-	Updated   *types.CpsTime   `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
+	Created   *libtime.CpsTime `bson:"created" json:"created,omitempty" swaggertype:"integer"`
+	Updated   *libtime.CpsTime `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
 	Deletable *bool            `bson:"deletable,omitempty" json:"deletable,omitempty"`
 
 	IsPrivate bool `bson:"is_private" json:"is_private"`

@@ -2,14 +2,15 @@ package statistics
 
 import (
 	"context"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"time"
 )
 
 type EventStatisticsSender interface {
@@ -17,10 +18,10 @@ type EventStatisticsSender interface {
 }
 
 type EventStatistics struct {
-	OK        int            `json:"ok" bson:"ok"`
-	KO        int            `json:"ko" bson:"ko"`
-	LastEvent *types.CpsTime `json:"last_event,omitempty" bson:"last_event,omitempty" swaggertype:"integer"`
-	LastKO    *types.CpsTime `json:"last_ko,omitempty" bson:"last_ko,omitempty" swaggertype:"integer"`
+	OK        int              `json:"ok" bson:"ok"`
+	KO        int              `json:"ko" bson:"ko"`
+	LastEvent *libtime.CpsTime `json:"last_event,omitempty" bson:"last_event,omitempty" swaggertype:"integer"`
+	LastKO    *libtime.CpsTime `json:"last_ko,omitempty" bson:"last_ko,omitempty" swaggertype:"integer"`
 }
 
 type eventStatisticsSender struct {

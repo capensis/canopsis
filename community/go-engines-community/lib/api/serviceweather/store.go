@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	libtypes "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
@@ -99,7 +100,7 @@ func (s *store) FindEntities(ctx context.Context, id string, r EntitiesListReque
 	}
 
 	location := s.timezoneConfigProvider.Get().Location
-	now := libtypes.CpsTime{Time: time.Now().In(location)}
+	now := libtime.CpsTime{Time: time.Now().In(location)}
 	pipeline, err := s.getQueryBuilder().CreateListDependenciesAggregationPipeline(id, r, now)
 	if err != nil {
 		return nil, err

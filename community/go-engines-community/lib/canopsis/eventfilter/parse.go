@@ -7,6 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
@@ -15,16 +16,16 @@ type ParsedRule struct {
 	Type         string
 	Config       ParsedRuleConfig
 	ExternalData map[string]ParsedExternalDataParameters
-	Created      *types.CpsTime
-	Updated      *types.CpsTime
+	Created      *libtime.CpsTime
+	Updated      *libtime.CpsTime
 
 	EventPattern pattern.Event
 	savedpattern.EntityPatternFields
 
-	ResolvedStart     *types.CpsTime
-	ResolvedStop      *types.CpsTime
-	NextResolvedStart *types.CpsTime
-	NextResolvedStop  *types.CpsTime
+	ResolvedStart     *libtime.CpsTime
+	ResolvedStop      *libtime.CpsTime
+	NextResolvedStart *libtime.CpsTime
+	NextResolvedStop  *libtime.CpsTime
 	ResolvedExdates   []types.Exdate
 }
 

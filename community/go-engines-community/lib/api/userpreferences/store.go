@@ -2,11 +2,10 @@ package userpreferences
 
 import (
 	"context"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
@@ -129,7 +128,7 @@ func (s *store) Update(ctx context.Context, userId string, request EditRequest) 
 		}, bson.M{
 			"$set": bson.M{
 				"content": request.Content,
-				"updated": types.CpsTime{Time: time.Now()},
+				"updated": libtime.NewCpsTime(),
 			},
 			"$setOnInsert": bson.M{
 				"_id":    utils.NewID(),

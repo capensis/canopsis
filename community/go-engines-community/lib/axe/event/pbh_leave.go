@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
@@ -103,7 +104,7 @@ func (p *pbhLeaveProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 					"v.inactive_duration":     int64(event.Parameters.Timestamp.Sub(alarm.Value.InactiveStart.Time).Seconds()),
 				}
 
-				var inactiveStart *types.CpsTime
+				var inactiveStart *libtime.CpsTime
 				if alarm.Value.Snooze != nil || alarm.InactiveAutoInstructionInProgress {
 					inactiveStart = &event.Parameters.Timestamp
 				}
@@ -209,7 +210,7 @@ func (p *pbhLeaveProcessor) postProcess(
 	}
 }
 
-func resolveSnoozeAfterPbhLeave(timestamp types.CpsTime, alarm types.Alarm) int64 {
+func resolveSnoozeAfterPbhLeave(timestamp libtime.CpsTime, alarm types.Alarm) int64 {
 	if alarm.Value.Snooze == nil || alarm.Value.Snooze.Initiator == types.InitiatorUser {
 		return 0
 	}

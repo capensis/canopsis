@@ -22,6 +22,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fixtures"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -35,7 +36,7 @@ import (
 )
 
 func BenchmarkMessageProcessor_Process_GivenNewAlarm(b *testing.B) {
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	benchmarkMessageProcessor(b, "./testdata/fixtures/new_alarm.yml", func(i int) types.Event {
 		return types.Event{
 			EventType:     types.EventTypeCheck,
@@ -59,7 +60,7 @@ func BenchmarkMessageProcessor_Process_GivenNewAlarm(b *testing.B) {
 }
 
 func BenchmarkMessageProcessor_Process_GivenOldAlarm(b *testing.B) {
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	entity := &types.Entity{
 		ID:        "test-resource/test-component",
 		Name:      "test-resource",
@@ -84,7 +85,7 @@ func BenchmarkMessageProcessor_Process_GivenOldAlarm(b *testing.B) {
 }
 
 func BenchmarkMessageProcessor_Process_GivenNoAlarm(b *testing.B) {
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	entity := &types.Entity{
 		ID:        "test-resource/test-component",
 		Name:      "test-resource",
@@ -110,7 +111,7 @@ func BenchmarkMessageProcessor_Process_GivenNoAlarm(b *testing.B) {
 
 func BenchmarkMessageProcessor_Process_GivenNewAlarmState(b *testing.B) {
 	const alarmsCount = 1000
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	benchmarkMessageProcessor(b, "./testdata/fixtures/new_alarm_state.yml", func(i int) types.Event {
 		alarmIndex := (i % alarmsCount) + 1
 		state := ((i/alarmsCount + 1) % 3) + 1
@@ -137,7 +138,7 @@ func BenchmarkMessageProcessor_Process_GivenNewAlarmState(b *testing.B) {
 
 func BenchmarkMessageProcessor_Process_GivenNewComment(b *testing.B) {
 	const alarmsCount = 1000
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	benchmarkMessageProcessor(b, "./testdata/fixtures/new_comment.yml", func(i int) types.Event {
 		alarmIndex := (i % alarmsCount) + 1
 		return types.Event{
@@ -163,7 +164,7 @@ func BenchmarkMessageProcessor_Process_GivenNewComment(b *testing.B) {
 
 func BenchmarkMessageProcessor_Process_GivenNewMetaAlarm(b *testing.B) {
 	const alarmsCount = 100
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	children := make([]string, alarmsCount)
 	for i := 0; i < alarmsCount; i++ {
 		children[i] = fmt.Sprintf("test-resource-%d/test-component", i+1)
@@ -192,7 +193,7 @@ func BenchmarkMessageProcessor_Process_GivenNewMetaAlarm(b *testing.B) {
 
 func BenchmarkMessageProcessor_Process_GivenManyAlarmSteps(b *testing.B) {
 	const alarmsCount = 1000
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	benchmarkMessageProcessor(b, "./testdata/fixtures/many_alarm_steps.yml", func(i int) types.Event {
 		alarmIndex := (i % alarmsCount) + 1
 		state := ((i/alarmsCount + 1) % 3) + 1

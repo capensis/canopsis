@@ -6,7 +6,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 )
 
 type ListRequest struct {
@@ -41,8 +41,8 @@ type Response struct {
 	Links      []link.Parameters `bson:"links" json:"links,omitempty"`
 	SourceCode string            `bson:"source_code" json:"source_code,omitempty"`
 	Author     *author.Author    `bson:"author" json:"author"`
-	Created    types.CpsTime     `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated    types.CpsTime     `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	Created    libtime.CpsTime   `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Updated    libtime.CpsTime   `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 
 	ExternalData map[string]link.ExternalDataParameters `bson:"external_data" json:"external_data"`
 

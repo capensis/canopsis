@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
@@ -51,7 +52,7 @@ type EntityConfiguration struct {
 	Enabled        bool                  `json:"enabled" bson:"enabled,omitempty"`
 	Action         string                `json:"action" bson:"-"`
 	ImportSource   string                `json:"-" bson:"import_source"`
-	Imported       types.CpsTime         `json:"-" bson:"imported"`
+	Imported       libtime.CpsTime       `json:"-" bson:"imported"`
 }
 
 type ConfigurationItem struct {
@@ -71,7 +72,7 @@ type ConfigurationItem struct {
 	Enabled        *bool                  `json:"enabled" bson:"enabled,omitempty"`
 	Action         string                 `json:"action" bson:"-" binding:"oneof=set create update delete enable disable"`
 	ImportSource   string                 `json:"-" bson:"import_source"`
-	Imported       types.CpsTime          `json:"-" bson:"imported"`
+	Imported       libtime.CpsTime        `json:"-" bson:"imported"`
 }
 
 type Link struct {

@@ -5,7 +5,7 @@ import (
 	"sort"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/teambition/rrule-go"
@@ -30,8 +30,8 @@ func NewEventComputer(typesByID map[string]Type, defaultTypes map[string]string)
 
 type PbhEventParams struct {
 	ID      string
-	Start   types.CpsTime
-	End     types.CpsTime
+	Start   libtime.CpsTime
+	End     libtime.CpsTime
 	RRule   string
 	Type    string
 	Exdates []Exdate
