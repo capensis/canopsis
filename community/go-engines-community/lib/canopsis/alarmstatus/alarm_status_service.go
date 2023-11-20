@@ -9,6 +9,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 )
@@ -85,7 +86,7 @@ func (s *service) isFlapping(alarm types.Alarm, entity types.Entity) bool {
 	s.flappingRulesMx.RLock()
 	defer s.flappingRulesMx.RUnlock()
 
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	alarmWithEntity := types.AlarmWithEntity{
 		Alarm:  alarm,
 		Entity: entity,

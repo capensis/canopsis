@@ -11,6 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libwebhook "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/webhook"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -371,7 +372,7 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 		UserID:        additionalData.User,
 		Username:      additionalData.Author,
 		Initiator:     types.InitiatorSystem,
-		CreatedAt:     types.NewCpsTime(),
+		CreatedAt:     libtime.NewCpsTime(),
 	}
 
 	err = s.webhookHistoryCollection.FindOneAndUpdate(ctx,

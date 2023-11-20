@@ -1,6 +1,6 @@
 package techmetrics
 
-import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+import libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 
 type ExportResponse struct {
 	// Possible values.
@@ -9,7 +9,7 @@ type ExportResponse struct {
 	//   * `2` - Succeeded
 	//   * `3` - Failed
 	//   * `4` - Disabled
-	Status   int            `json:"status"`
-	Created  *types.CpsTime `json:"created,omitempty" swaggertype:"integer"`
-	Duration *int           `json:"duration,omitempty"`
+	Status   int              `json:"status"`
+	Created  *libtime.CpsTime `json:"created,omitempty" swaggertype:"integer"`
+	Duration *int             `json:"duration,omitempty"`
 }

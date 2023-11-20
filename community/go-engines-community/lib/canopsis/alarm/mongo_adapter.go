@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -360,7 +361,7 @@ func (a mongoAdapter) MassPartialUpdateOpen(ctx context.Context, updatedAlarm *t
 
 func (a mongoAdapter) GetOpenedAlarmsWithLastDatesBefore(
 	ctx context.Context,
-	time types.CpsTime,
+	time libtime.CpsTime,
 ) (libmongo.Cursor, error) {
 	return a.mainDbCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
@@ -394,7 +395,7 @@ func (a mongoAdapter) GetOpenedAlarmsWithLastDatesBefore(
 	})
 }
 
-func (a mongoAdapter) GetOpenedAlarmsWithEntityAfter(ctx context.Context, createdAfter types.CpsTime) (libmongo.Cursor, error) {
+func (a mongoAdapter) GetOpenedAlarmsWithEntityAfter(ctx context.Context, createdAfter libtime.CpsTime) (libmongo.Cursor, error) {
 	return a.mainDbCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
 			"v.resolved": nil,
@@ -640,7 +641,7 @@ func (a *mongoAdapter) CopyAlarmToResolvedCollection(ctx context.Context, alarm 
 	return err
 }
 
-func (a *mongoAdapter) FindToCheckPbehaviorInfo(ctx context.Context, createdBefore types.CpsTime, idsWithPbehaviors []string) (libmongo.Cursor, error) {
+func (a *mongoAdapter) FindToCheckPbehaviorInfo(ctx context.Context, createdBefore libtime.CpsTime, idsWithPbehaviors []string) (libmongo.Cursor, error) {
 	filter := bson.M{
 		"v.resolved": nil,
 		"t":          bson.M{"$lt": createdBefore},
@@ -703,7 +704,7 @@ func (a *mongoAdapter) GetWorstAlarmStateAndMaxLastEventDate(ctx context.Context
 	return 0, 0, nil
 }
 
-func (a *mongoAdapter) UpdateLastEventDate(ctx context.Context, entityIds []string, t types.CpsTime) error {
+func (a *mongoAdapter) UpdateLastEventDate(ctx context.Context, entityIds []string, t libtime.CpsTime) error {
 	_, err := a.mainDbCollection.UpdateMany(ctx, bson.M{
 		"d":          bson.M{"$in": entityIds},
 		"v.resolved": nil,

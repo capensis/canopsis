@@ -5,6 +5,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -33,7 +34,7 @@ type rpcChecker struct {
 
 func (c *rpcChecker) Check(ctx context.Context) error {
 	uuid := utils.NewID()
-	now := types.NewCpsTime()
+	now := libtime.NewCpsTime()
 	event := c.createEvent(c.createEntity(uuid, now), c.createAlarm(uuid, now))
 	b, err := c.encoder.Encode(event)
 	if err != nil {
@@ -45,7 +46,7 @@ func (c *rpcChecker) Check(ctx context.Context) error {
 	return err
 }
 
-func (c *rpcChecker) createEntity(resource string, now types.CpsTime) types.Entity {
+func (c *rpcChecker) createEntity(resource string, now libtime.CpsTime) types.Entity {
 	return types.Entity{
 		ID:            resource + "/" + eventComponent,
 		Name:          resource,
@@ -59,7 +60,7 @@ func (c *rpcChecker) createEntity(resource string, now types.CpsTime) types.Enti
 	}
 }
 
-func (c *rpcChecker) createAlarm(resource string, now types.CpsTime) types.Alarm {
+func (c *rpcChecker) createAlarm(resource string, now libtime.CpsTime) types.Alarm {
 	output := "healthcheck" + resource
 	stateStep := types.AlarmStep{
 		Type:      types.AlarmStepStateIncrease,

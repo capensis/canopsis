@@ -1,17 +1,18 @@
 package types
 
 import (
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func (a *Alarm) PartialUpdateLastEventDate(timestamp CpsTime) {
+func (a *Alarm) PartialUpdateLastEventDate(timestamp libtime.CpsTime) {
 	a.Value.LastEventDate = timestamp
 	a.AddUpdate("$set", bson.M{
 		"v.last_event_date": a.Value.LastEventDate,
 	})
 }
 
-func (a *Alarm) PartialUpdateResolve(timestamp CpsTime) error {
+func (a *Alarm) PartialUpdateResolve(timestamp libtime.CpsTime) error {
 	a.Value.Resolved = &timestamp
 	a.Value.Duration = int64(timestamp.Sub(a.Value.CreationDate.Time).Seconds())
 	a.Value.CurrentStateDuration = int64(timestamp.Sub(a.Value.State.Timestamp.Time).Seconds())
@@ -22,7 +23,7 @@ func (a *Alarm) PartialUpdateResolve(timestamp CpsTime) error {
 		a.AddUpdate("$inc", bson.M{"v.snooze_duration": snoozeDuration})
 	}
 	if !a.Value.PbehaviorInfo.IsActive() {
-		enterTimestamp := CpsTime{}
+		enterTimestamp := libtime.CpsTime{}
 		for i := len(a.Value.Steps) - 2; i >= 0; i-- {
 			if a.Value.Steps[i].Type == AlarmStepPbhEnter {
 				enterTimestamp = a.Value.Steps[i].Timestamp

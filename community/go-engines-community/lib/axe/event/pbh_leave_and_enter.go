@@ -9,6 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
@@ -103,7 +104,7 @@ func (p *pbhLeaveAndEnterProcessor) Process(ctx context.Context, event rpc.AxeEv
 			update := bson.M{
 				"$push": bson.M{"v.steps": bson.M{"$each": bson.A{newLeaveStep, newEnterStep}}},
 			}
-			var inactiveStart *types.CpsTime
+			var inactiveStart *libtime.CpsTime
 			if !event.Parameters.PbehaviorInfo.IsActive() || alarm.Value.Snooze != nil || alarm.InactiveAutoInstructionInProgress {
 				inactiveStart = &event.Parameters.Timestamp
 			}

@@ -16,6 +16,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -344,7 +345,7 @@ func (p *messageProcessor) postProcessUpdatedEntities(
 					ConnectorName: event.ConnectorName,
 					Component:     ent.Component,
 					Resource:      ent.Name,
-					Timestamp:     types.CpsTime{Time: time.Now()},
+					Timestamp:     libtime.NewCpsTime(),
 					Entity:        &ent,
 					Initiator:     types.InitiatorSystem,
 				}
@@ -355,7 +356,7 @@ func (p *messageProcessor) postProcessUpdatedEntities(
 					Connector:     event.Connector,
 					ConnectorName: event.ConnectorName,
 					Component:     ent.Component,
-					Timestamp:     types.CpsTime{Time: time.Now()},
+					Timestamp:     libtime.NewCpsTime(),
 					Entity:        &ent,
 					Initiator:     types.InitiatorSystem,
 				}
@@ -365,7 +366,7 @@ func (p *messageProcessor) postProcessUpdatedEntities(
 					SourceType:    types.SourceTypeConnector,
 					Connector:     event.Connector,
 					ConnectorName: event.ConnectorName,
-					Timestamp:     types.CpsTime{Time: time.Now()},
+					Timestamp:     libtime.NewCpsTime(),
 					Entity:        &ent,
 					Initiator:     types.InitiatorSystem,
 				}
@@ -421,7 +422,7 @@ func (p *messageProcessor) handlePerfData(ctx context.Context, event types.Event
 		go func() {
 			_, err := p.EntityCollection.UpdateOne(ctx, bson.M{"_id": event.Entity.ID}, bson.M{
 				"$addToSet": bson.M{"perf_data": bson.M{"$each": names}},
-				"$set":      bson.M{"perf_data_updated": types.CpsTime{Time: now}},
+				"$set":      bson.M{"perf_data_updated": libtime.CpsTime{Time: now}},
 			})
 			if err != nil {
 				p.Logger.Err(err).Str("entity", event.Entity.ID).Msg("cannot update entity perf data")

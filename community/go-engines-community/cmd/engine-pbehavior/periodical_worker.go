@@ -14,6 +14,7 @@ import (
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
@@ -93,7 +94,7 @@ func (w *periodicalWorker) processAlarms(
 	resolver pbehavior.ComputedEntityTypeResolver,
 ) ([]string, int) {
 	eventsCount := 0
-	cursor, err := w.AlarmAdapter.FindToCheckPbehaviorInfo(ctx, types.CpsTime{Time: computedAt}, computedEntityIDs)
+	cursor, err := w.AlarmAdapter.FindToCheckPbehaviorInfo(ctx, libtime.CpsTime{Time: computedAt}, computedEntityIDs)
 	if err != nil {
 		w.Logger.Err(err).Msg("get alarms from mongo failed")
 		return nil, eventsCount
@@ -221,7 +222,7 @@ func (w *periodicalWorker) processEntities(
 
 		event.EventType = eventType
 		event.Output = output
-		event.Timestamp = types.CpsTime{Time: now}
+		event.Timestamp = libtime.CpsTime{Time: now}
 		event.PbehaviorInfo = pbehavior.NewPBehaviorInfo(event.Timestamp, resolveResult)
 
 		eventsCount++

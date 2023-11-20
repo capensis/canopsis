@@ -2,14 +2,13 @@ package resolverule
 
 import (
 	"context"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/resolverule"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
@@ -45,7 +44,7 @@ func NewStore(
 }
 
 func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, error) {
-	now := types.NewCpsTime(time.Now().Unix())
+	now := libtime.NewCpsTime()
 	model := s.transformRequestToDocument(request.EditRequest)
 
 	if request.ID == "" {
@@ -142,7 +141,7 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 
 func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, error) {
 	model := s.transformRequestToDocument(request.EditRequest)
-	model.Updated = types.CpsTime{Time: time.Now()}
+	model.Updated = libtime.NewCpsTime()
 	var res *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		res = nil

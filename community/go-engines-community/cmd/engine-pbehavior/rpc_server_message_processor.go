@@ -13,6 +13,7 @@ import (
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
+	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -130,8 +131,8 @@ func (p *rpcServerMessageProcessor) createPbehavior(
 		return nil, fmt.Errorf("cannot get pbehavior reason: %w", err)
 	}
 
-	now := types.NewCpsTime()
-	var start, stop types.CpsTime
+	now := libtime.NewCpsTime()
+	var start, stop libtime.CpsTime
 	if params.Tstart != nil && params.Tstop != nil {
 		start = *params.Tstart
 		stop = *params.Tstop
