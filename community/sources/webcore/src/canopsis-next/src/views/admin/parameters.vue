@@ -4,6 +4,7 @@
       <v-flex xs12>
         <v-card class="ma-2">
           <v-tabs
+            class="parameters__tabs"
             v-model="activeTab"
             slider-color="primary"
             transition="slide-y"
@@ -144,3 +145,18 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.parameters__tabs .v-slide-group__wrapper {
+  position: relative;
+  background: transparent;
+
+  &:before {
+    content: '';
+    position: absolute;
+    inset: 0 0;
+    background-color: var(--v-application-background-base);
+    opacity: .5;
+  }
+}
+</style>

@@ -16,7 +16,9 @@
           <v-btn
             v-on="on"
             :loading="pendingByIds[item.parentId]"
-            icon
+            fab
+            small
+            depressed
             @click="loadMore(item.parentId)"
           >
             <v-icon>more_horiz</v-icon>
@@ -27,7 +29,9 @@
       <v-btn
         v-else
         :color="getEntityColor(item.entity)"
-        icon
+        fab
+        small
+        depressed
         dark
         @click="showTreeOfDependenciesModal(item)"
       >
@@ -39,6 +43,7 @@
       >
         <template #activator="{ on }">
           <v-icon
+            class="mx-1"
             v-on="on"
             color="error"
             size="14"
