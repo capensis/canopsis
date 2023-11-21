@@ -606,15 +606,15 @@ func (c *Condition) DurationToMongoQuery(f string) (bson.M, error) {
 	}
 }
 
-func (c *Condition) CanonicalTypeToMongoQuery(f string) (bson.M, error) {
+func (c *Condition) CanonicalTypeToMongoQuery(f string) (bson.M, bool) {
 	switch c.Type {
 	case ConditionEqual:
 		if c.valueStr != nil && *c.valueStr == pbhCanonicalTypeActive {
-			return bson.M{f: bson.M{"$in": bson.A{nil, *c.valueStr}}}, nil
+			return bson.M{f: bson.M{"$in": bson.A{nil, *c.valueStr}}}, true
 		}
 	case ConditionNotEqual:
 		if c.valueStr != nil && *c.valueStr == pbhCanonicalTypeActive {
-			return bson.M{f: bson.M{"$nin": bson.A{nil, *c.valueStr}}}, nil
+			return bson.M{f: bson.M{"$nin": bson.A{nil, *c.valueStr}}}, true
 		}
 	case ConditionIsOneOf:
 		found := false
@@ -632,7 +632,7 @@ func (c *Condition) CanonicalTypeToMongoQuery(f string) (bson.M, error) {
 			}
 			values[len(values)-1] = nil
 
-			return bson.M{f: bson.M{"$in": values}}, nil
+			return bson.M{f: bson.M{"$in": values}}, true
 		}
 	case ConditionIsNotOneOf:
 		found := false
@@ -650,11 +650,11 @@ func (c *Condition) CanonicalTypeToMongoQuery(f string) (bson.M, error) {
 			}
 			values[len(values)-1] = nil
 
-			return bson.M{f: bson.M{"$nin": values}}, nil
+			return bson.M{f: bson.M{"$nin": values}}, true
 		}
 	}
 
-	return nil, ErrUnsupportedConditionType
+	return nil, false
 }
 
 func (c *Condition) StringToSql(f string) (string, error) {

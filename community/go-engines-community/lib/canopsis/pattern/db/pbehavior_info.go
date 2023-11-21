@@ -28,12 +28,12 @@ func PBehaviorInfoPatternToMongoQuery(p pattern.PBehaviorInfo, prefix string) (b
 			cond := fieldCond.Condition
 
 			if fieldCond.Field == "pbehavior_info.canonical_type" {
-				condQueries[j], err = cond.CanonicalTypeToMongoQuery(mongoField)
-				if err != nil {
-					return nil, fmt.Errorf("invalid condition for %q field: %w", fieldCond.Field, err)
-				}
+				var ok bool
 
-				continue
+				condQueries[j], ok = cond.CanonicalTypeToMongoQuery(mongoField)
+				if ok {
+					continue
+				}
 			}
 
 			if _, ok := emptyPbhInfo.GetStringField(fieldCond.Field); ok {
