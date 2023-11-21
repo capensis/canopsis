@@ -3,17 +3,17 @@ package pbehavior
 import (
 	"time"
 
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	librrule "github.com/teambition/rrule-go"
 )
 
 const rruleEndMaxYears = 10
 
 func GetRruleEnd(
-	start libtime.CpsTime,
+	start datetime.CpsTime,
 	rrule string,
 	loc *time.Location,
-) (*libtime.CpsTime, error) {
+) (*datetime.CpsTime, error) {
 	if rrule == "" {
 		return nil, nil
 	}
@@ -39,5 +39,5 @@ func GetRruleEnd(
 		return nil, nil
 	}
 
-	return &libtime.CpsTime{Time: t}, nil
+	return &datetime.CpsTime{Time: t}, nil
 }

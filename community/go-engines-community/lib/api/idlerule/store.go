@@ -7,8 +7,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
@@ -100,7 +100,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Rule, error) {
 }
 
 func (s *store) Insert(ctx context.Context, r CreateRequest) (*Rule, error) {
-	now := libtime.NewCpsTime()
+	now := datetime.NewCpsTime()
 	rule := transformRequestToModel(r.EditRequest)
 	if r.ID == "" {
 		r.ID = utils.NewID()
@@ -136,7 +136,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Rule, error) {
 func (s *store) Update(ctx context.Context, r UpdateRequest) (*Rule, error) {
 	model := transformRequestToModel(r.EditRequest)
 	model.ID = r.ID
-	model.Updated = libtime.NewCpsTime()
+	model.Updated = datetime.NewCpsTime()
 	var idleRule *Rule
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		idleRule = nil

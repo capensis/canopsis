@@ -11,11 +11,11 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorcomment"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -77,15 +77,15 @@ func (r BaseFilterRequest) GetOpenedFilter() int {
 }
 
 type BaseFilterRequest struct {
-	Filters     []string         `form:"filters[]" json:"filters"`
-	Search      string           `form:"search" json:"search"`
-	TimeField   string           `form:"time_field" json:"time_field" binding:"oneoforempty=t v.creation_date v.resolved v.last_update_date v.last_event_date"`
-	StartFrom   *libtime.CpsTime `form:"tstart" json:"tstart" swaggertype:"integer"`
-	StartTo     *libtime.CpsTime `form:"tstop" json:"tstop" swaggertype:"integer"`
-	Opened      *bool            `form:"opened" json:"opened"`
-	OnlyParents bool             `form:"correlation" json:"correlation"`
-	Category    string           `form:"category" json:"category"`
-	Tag         string           `form:"tag" json:"tag"`
+	Filters     []string          `form:"filters[]" json:"filters"`
+	Search      string            `form:"search" json:"search"`
+	TimeField   string            `form:"time_field" json:"time_field" binding:"oneoforempty=t v.creation_date v.resolved v.last_update_date v.last_event_date"`
+	StartFrom   *datetime.CpsTime `form:"tstart" json:"tstart" swaggertype:"integer"`
+	StartTo     *datetime.CpsTime `form:"tstop" json:"tstop" swaggertype:"integer"`
+	Opened      *bool             `form:"opened" json:"opened"`
+	OnlyParents bool              `form:"correlation" json:"correlation"`
+	Category    string            `form:"category" json:"category"`
+	Tag         string            `form:"tag" json:"tag"`
 
 	AlarmPattern     string `form:"alarm_pattern" json:"alarm_pattern"`
 	EntityPattern    string `form:"entity_pattern" json:"entity_pattern"`
@@ -120,9 +120,9 @@ type ListByComponentRequest struct {
 type ResolvedListRequest struct {
 	pagination.Query
 	SortRequest
-	ID        string           `form:"_id" json:"_id" binding:"required"`
-	StartFrom *libtime.CpsTime `form:"tstart" json:"tstart" swaggertype:"integer"`
-	StartTo   *libtime.CpsTime `form:"tstop" json:"tstop" swaggertype:"integer"`
+	ID        string            `form:"_id" json:"_id" binding:"required"`
+	StartFrom *datetime.CpsTime `form:"tstart" json:"tstart" swaggertype:"integer"`
+	StartTo   *datetime.CpsTime `form:"tstop" json:"tstop" swaggertype:"integer"`
 }
 
 type SortRequest struct {
@@ -256,7 +256,7 @@ type ExportResponse struct {
 
 type Alarm struct {
 	ID     string                            `bson:"_id" json:"_id"`
-	Time   libtime.CpsTime                   `bson:"t" json:"t" swaggertype:"integer"`
+	Time   datetime.CpsTime                  `bson:"t" json:"t" swaggertype:"integer"`
 	Entity entity.Entity                     `bson:"entity" json:"entity"`
 	Value  AlarmValue                        `bson:"v" json:"v"`
 	Tags   []string                          `bson:"tags" json:"tags"`
@@ -315,18 +315,18 @@ type AlarmValue struct {
 	Component         string                `bson:"component" json:"component"`
 	Connector         string                `bson:"connector" json:"connector"`
 	ConnectorName     string                `bson:"connector_name" json:"connector_name"`
-	CreationDate      libtime.CpsTime       `bson:"creation_date" json:"creation_date" swaggertype:"integer"`
-	ActivationDate    *libtime.CpsTime      `bson:"activation_date,omitempty" json:"activation_date,omitempty" swaggertype:"integer"`
+	CreationDate      datetime.CpsTime      `bson:"creation_date" json:"creation_date" swaggertype:"integer"`
+	ActivationDate    *datetime.CpsTime     `bson:"activation_date,omitempty" json:"activation_date,omitempty" swaggertype:"integer"`
 	DisplayName       string                `bson:"display_name" json:"display_name"`
 	InitialOutput     string                `bson:"initial_output" json:"initial_output"`
 	Output            string                `bson:"output" json:"output"`
 	InitialLongOutput string                `bson:"initial_long_output" json:"initial_long_output"`
 	LongOutput        string                `bson:"long_output" json:"long_output"`
 	LongOutputHistory []string              `bson:"long_output_history" json:"long_output_history"`
-	LastUpdateDate    libtime.CpsTime       `bson:"last_update_date" json:"last_update_date" swaggertype:"integer"`
-	LastEventDate     libtime.CpsTime       `bson:"last_event_date" json:"last_event_date" swaggertype:"integer"`
+	LastUpdateDate    datetime.CpsTime      `bson:"last_update_date" json:"last_update_date" swaggertype:"integer"`
+	LastEventDate     datetime.CpsTime      `bson:"last_event_date" json:"last_event_date" swaggertype:"integer"`
 	Resource          string                `bson:"resource,omitempty" json:"resource,omitempty"`
-	Resolved          *libtime.CpsTime      `bson:"resolved,omitempty" json:"resolved,omitempty" swaggertype:"integer"`
+	Resolved          *datetime.CpsTime     `bson:"resolved,omitempty" json:"resolved,omitempty" swaggertype:"integer"`
 	PbehaviorInfo     *entity.PbehaviorInfo `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
 	Meta              string                `bson:"meta,omitempty" json:"meta,omitempty"`
 	Parents           []string              `bson:"parents" json:"parents"`
@@ -352,8 +352,8 @@ type Pbehavior struct {
 	Author *author.Author    `bson:"author" json:"author"`
 	Name   string            `bson:"name" json:"name"`
 	RRule  string            `bson:"rrule" json:"rrule"`
-	Start  *libtime.CpsTime  `bson:"tstart" json:"tstart" swaggertype:"integer"`
-	Stop   *libtime.CpsTime  `bson:"tstop" json:"tstop" swaggertype:"integer"`
+	Start  *datetime.CpsTime `bson:"tstart" json:"tstart" swaggertype:"integer"`
+	Stop   *datetime.CpsTime `bson:"tstop" json:"tstop" swaggertype:"integer"`
 	Type   *pbehavior.Type   `bson:"type" json:"type"`
 	Reason *pbehavior.Reason `bson:"reason" json:"reason"`
 
@@ -466,7 +466,7 @@ func (r DeclareTicketRule) getDeclareTicketQuery() (bson.M, error) {
 		return nil, fmt.Errorf("invalid entity pattern in declare ticket rule id=%q: %w", r.ID, err)
 	}
 
-	pbhPatternQuery, err := db.PBehaviorInfoPatternToMongoQuery(r.PbehaviorPattern, "v")
+	pbhPatternQuery, err := db.PbehaviorInfoPatternToMongoQuery(r.PbehaviorPattern, "v")
 	if err != nil {
 		return nil, fmt.Errorf("invalid pbehavior pattern in declare ticket rule id=%q: %w", r.ID, err)
 	}

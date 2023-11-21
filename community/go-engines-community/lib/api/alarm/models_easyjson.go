@@ -4,7 +4,7 @@ package alarm
 
 import (
 	json "encoding/json"
-	time "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
+	datetime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	easyjson "github.com/mailru/easyjson"
 	jlexer "github.com/mailru/easyjson/jlexer"
 	jwriter "github.com/mailru/easyjson/jwriter"
@@ -72,7 +72,7 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				out.StartFrom = nil
 			} else {
 				if out.StartFrom == nil {
-					out.StartFrom = new(time.CpsTime)
+					out.StartFrom = new(datetime.CpsTime)
 				}
 				if data := in.Raw(); in.Ok() {
 					in.AddError((*out.StartFrom).UnmarshalJSON(data))
@@ -84,7 +84,7 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				out.StartTo = nil
 			} else {
 				if out.StartTo == nil {
-					out.StartTo = new(time.CpsTime)
+					out.StartTo = new(datetime.CpsTime)
 				}
 				if data := in.Raw(); in.Ok() {
 					in.AddError((*out.StartTo).UnmarshalJSON(data))

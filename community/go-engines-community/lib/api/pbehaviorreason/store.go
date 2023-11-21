@@ -5,8 +5,8 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -100,7 +100,7 @@ func (s *store) Insert(ctx context.Context, model *Reason) error {
 	}
 
 	doc.ID = model.ID
-	doc.Created = libtime.NewCpsTime()
+	doc.Created = datetime.NewCpsTime()
 
 	_, err := s.dbClient.Collection(pbehavior.ReasonCollectionName).InsertOne(ctx, doc)
 

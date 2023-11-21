@@ -5,16 +5,15 @@ import (
 	"testing"
 	"time"
 
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
-
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func TestAlarm_Match(t *testing.T) {
-	dataSets := getAlarmMatchDataSets()
+func TestMatchAlarmPattern(t *testing.T) {
+	dataSets := getMatchAlarmPatternDataSets()
 
 	for name, data := range dataSets {
 		t.Run(name, func(t *testing.T) {
@@ -29,10 +28,10 @@ func TestAlarm_Match(t *testing.T) {
 	}
 }
 
-func getAlarmMatchDataSets() map[string]alarmDataSet {
-	timeRelativeCond, err := pattern.NewDurationCondition(pattern.ConditionTimeRelative, libtime.DurationWithUnit{
+func getMatchAlarmPatternDataSets() map[string]alarmDataSet {
+	timeRelativeCond, err := pattern.NewDurationCondition(pattern.ConditionTimeRelative, datetime.DurationWithUnit{
 		Value: 1,
-		Unit:  libtime.DurationUnitMinute,
+		Unit:  datetime.DurationUnitMinute,
 	})
 	if err != nil {
 		panic(err)
@@ -333,7 +332,7 @@ func getAlarmMatchDataSets() map[string]alarmDataSet {
 			},
 			alarm: types.Alarm{
 				Value: types.AlarmValue{
-					ActivationDate: &libtime.CpsTime{Time: time.Now().Add(-30 * time.Second)},
+					ActivationDate: &datetime.CpsTime{Time: time.Now().Add(-30 * time.Second)},
 				},
 			},
 			matchResult: true,
@@ -526,7 +525,7 @@ type alarmDataSet struct {
 	matchResult bool
 }
 
-func BenchmarkAlarm_Match_Equal(b *testing.B) {
+func BenchmarkMatchAlarmPattern_Equal(b *testing.B) {
 	cond := pattern.FieldCondition{
 		Field:     "v.display_name",
 		Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name 2"),
@@ -537,10 +536,10 @@ func BenchmarkAlarm_Match_Equal(b *testing.B) {
 		},
 	}
 
-	benchmarkAlarmMatch(b, cond, alarm)
+	benchmarkMatchAlarmPattern(b, cond, alarm)
 }
 
-func BenchmarkAlarm_Match_Regexp(b *testing.B) {
+func BenchmarkMatchAlarmPattern_Regexp(b *testing.B) {
 	regexpCondition, err := pattern.NewRegexpCondition(pattern.ConditionRegexp, "^test .+name$")
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)
@@ -555,10 +554,10 @@ func BenchmarkAlarm_Match_Regexp(b *testing.B) {
 		},
 	}
 
-	benchmarkAlarmMatch(b, cond, alarm)
+	benchmarkMatchAlarmPattern(b, cond, alarm)
 }
 
-func BenchmarkAlarm_Match_Infos_Equal(b *testing.B) {
+func BenchmarkMatchAlarmPattern_Infos_Equal(b *testing.B) {
 	cond := pattern.FieldCondition{
 		Field:     "v.infos.test",
 		FieldType: pattern.FieldTypeString,
@@ -574,10 +573,10 @@ func BenchmarkAlarm_Match_Infos_Equal(b *testing.B) {
 		},
 	}
 
-	benchmarkAlarmMatch(b, cond, alarm)
+	benchmarkMatchAlarmPattern(b, cond, alarm)
 }
 
-func BenchmarkAlarm_Match_Infos_Regexp(b *testing.B) {
+func BenchmarkMatchAlarmPattern_Infos_Regexp(b *testing.B) {
 	regexpCondition, err := pattern.NewRegexpCondition(pattern.ConditionRegexp, "^test .+name$")
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)
@@ -597,10 +596,10 @@ func BenchmarkAlarm_Match_Infos_Regexp(b *testing.B) {
 		},
 	}
 
-	benchmarkAlarmMatch(b, cond, alarm)
+	benchmarkMatchAlarmPattern(b, cond, alarm)
 }
 
-func BenchmarkAlarm_UnmarshalBsonAndMatch_Equal(b *testing.B) {
+func BenchmarkMatchAlarmPattern_UnmarshalBson_Equal(b *testing.B) {
 	cond := pattern.FieldCondition{
 		Field: "v.display_name",
 		Condition: pattern.Condition{
@@ -614,10 +613,10 @@ func BenchmarkAlarm_UnmarshalBsonAndMatch_Equal(b *testing.B) {
 		},
 	}
 
-	benchmarkAlarmUnmarshalBsonAndMatch(b, cond, []types.Alarm{alarm})
+	benchmarkMatchAlarmPatternUnmarshalBson(b, cond, []types.Alarm{alarm})
 }
 
-func BenchmarkAlarm_UnmarshalBsonAndMatch_Regexp(b *testing.B) {
+func BenchmarkMatchAlarmPattern_UnmarshalBson_Regexp(b *testing.B) {
 	cond := pattern.FieldCondition{
 		Field: "v.display_name",
 		Condition: pattern.Condition{
@@ -631,10 +630,10 @@ func BenchmarkAlarm_UnmarshalBsonAndMatch_Regexp(b *testing.B) {
 		},
 	}
 
-	benchmarkAlarmUnmarshalBsonAndMatch(b, cond, []types.Alarm{alarm})
+	benchmarkMatchAlarmPatternUnmarshalBson(b, cond, []types.Alarm{alarm})
 }
 
-func BenchmarkAlarm_UnmarshalBsonAndMatch_Infos_Equal(b *testing.B) {
+func BenchmarkMatchAlarmPattern_UnmarshalBson_Infos_Equal(b *testing.B) {
 	cond := pattern.FieldCondition{
 		Field:     "v.infos.test",
 		FieldType: pattern.FieldTypeString,
@@ -653,10 +652,10 @@ func BenchmarkAlarm_UnmarshalBsonAndMatch_Infos_Equal(b *testing.B) {
 		},
 	}
 
-	benchmarkAlarmUnmarshalBsonAndMatch(b, cond, []types.Alarm{alarm})
+	benchmarkMatchAlarmPatternUnmarshalBson(b, cond, []types.Alarm{alarm})
 }
 
-func BenchmarkAlarm_UnmarshalBsonAndMatch_Infos_Regexp(b *testing.B) {
+func BenchmarkMatchAlarmPattern_UnmarshalBson_Infos_Regexp(b *testing.B) {
 	cond := pattern.FieldCondition{
 		Field:     "v.infos.test",
 		FieldType: pattern.FieldTypeString,
@@ -675,10 +674,10 @@ func BenchmarkAlarm_UnmarshalBsonAndMatch_Infos_Regexp(b *testing.B) {
 		},
 	}
 
-	benchmarkAlarmUnmarshalBsonAndMatch(b, cond, []types.Alarm{alarm})
+	benchmarkMatchAlarmPatternUnmarshalBson(b, cond, []types.Alarm{alarm})
 }
 
-func BenchmarkAlarm_ManyAlarms_UnmarshalBsonAndMatch_Regexp(b *testing.B) {
+func BenchmarkMatchAlarmPattern_ManyAlarms_UnmarshalBson_Regexp(b *testing.B) {
 	cond := pattern.FieldCondition{
 		Field: "v.display_name",
 		Condition: pattern.Condition{
@@ -696,10 +695,10 @@ func BenchmarkAlarm_ManyAlarms_UnmarshalBsonAndMatch_Regexp(b *testing.B) {
 		}
 	}
 
-	benchmarkAlarmUnmarshalBsonAndMatch(b, cond, alarms)
+	benchmarkMatchAlarmPatternUnmarshalBson(b, cond, alarms)
 }
 
-func benchmarkAlarmMatch(b *testing.B, fieldCond pattern.FieldCondition, alarm types.Alarm) {
+func benchmarkMatchAlarmPattern(b *testing.B, fieldCond pattern.FieldCondition, alarm types.Alarm) {
 	const size = 100
 	p := make(pattern.Alarm, size)
 	for i := 0; i < size; i++ {
@@ -716,7 +715,7 @@ func benchmarkAlarmMatch(b *testing.B, fieldCond pattern.FieldCondition, alarm t
 	}
 }
 
-func benchmarkAlarmUnmarshalBsonAndMatch(b *testing.B, fieldCond pattern.FieldCondition, alarms []types.Alarm) {
+func benchmarkMatchAlarmPatternUnmarshalBson(b *testing.B, fieldCond pattern.FieldCondition, alarms []types.Alarm) {
 	const size = 100
 	p := make(pattern.Alarm, size)
 	for i := 0; i < size; i++ {

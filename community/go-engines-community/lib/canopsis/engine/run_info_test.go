@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/rs/zerolog"
 )
@@ -39,7 +39,7 @@ func TestNewRunInfoManager(t *testing.T) {
 			RpcConsumeQueues: []string{"test-rpc-consume-axe"},
 			RpcPublishQueues: []string{"test-rpc-publish-axe"},
 			QueueLength:      9,
-			Time:             libtime.CpsTime{Time: now.Add(-2 * time.Second)},
+			Time:             datetime.CpsTime{Time: now.Add(-2 * time.Second)},
 		},
 		{
 			ID:               "test-axe-2",
@@ -49,7 +49,7 @@ func TestNewRunInfoManager(t *testing.T) {
 			RpcConsumeQueues: []string{"test-rpc-consume-axe"},
 			RpcPublishQueues: []string{"test-rpc-publish-axe"},
 			QueueLength:      10,
-			Time:             libtime.CpsTime{Time: now.Add(-time.Second)},
+			Time:             datetime.CpsTime{Time: now.Add(-time.Second)},
 		},
 		{
 			ID:               "test-che-1",
@@ -59,7 +59,7 @@ func TestNewRunInfoManager(t *testing.T) {
 			RpcConsumeQueues: []string{"test-rpc-consume-che"},
 			RpcPublishQueues: []string{"test-rpc-publish-che"},
 			QueueLength:      11,
-			Time:             libtime.CpsTime{Time: now.Add(-3 * time.Second)},
+			Time:             datetime.CpsTime{Time: now.Add(-3 * time.Second)},
 		},
 	}
 	expected := []engine.RunInfo{
@@ -99,15 +99,15 @@ func TestNewRunInfoManager(t *testing.T) {
 		t.Errorf("expected no error but got %v", err)
 	}
 
-	times := make([]libtime.CpsTime, len(engines))
-	expectedTimes := make([]libtime.CpsTime, len(expected))
+	times := make([]datetime.CpsTime, len(engines))
+	expectedTimes := make([]datetime.CpsTime, len(expected))
 	for i, v := range engines {
 		times[i] = v.Time
-		engines[i].Time = libtime.CpsTime{}
+		engines[i].Time = datetime.CpsTime{}
 	}
 	for i, v := range expected {
 		expectedTimes[i] = v.Time
-		expected[i].Time = libtime.CpsTime{}
+		expected[i].Time = datetime.CpsTime{}
 	}
 
 	if reflect.DeepEqual(engines, expected) {

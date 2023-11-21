@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	cps "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 )
 
 // Alarm consts
@@ -21,20 +21,20 @@ const (
 	TicketRuleNameDeclareTicketRulePrefix = "Ticket declaration rule: "
 )
 
-const pbhCanonicalTypeActive = "active"
+const PbhCanonicalTypeActive = "active"
 
 // AlarmStep represents a generic step used in an alarm.
 type AlarmStep struct {
-	Type                   string          `bson:"_t" json:"_t"`
-	Timestamp              libtime.CpsTime `bson:"t" json:"t"`
-	Author                 string          `bson:"a" json:"a"`
-	UserID                 string          `bson:"user_id,omitempty" json:"user_id,omitempty"`
-	Message                string          `bson:"m" json:"m"`
-	Role                   string          `bson:"role,omitempty" json:"role,omitempty"`
-	Value                  CpsNumber       `bson:"val" json:"val"`
-	StateCounter           CropCounter     `bson:"statecounter,omitempty" json:"statecounter,omitempty"`
-	PbehaviorCanonicalType string          `bson:"pbehavior_canonical_type,omitempty" json:"pbehavior_canonical_type,omitempty"`
-	Initiator              string          `bson:"initiator,omitempty" json:"initiator,omitempty"`
+	Type                   string           `bson:"_t" json:"_t"`
+	Timestamp              datetime.CpsTime `bson:"t" json:"t"`
+	Author                 string           `bson:"a" json:"a"`
+	UserID                 string           `bson:"user_id,omitempty" json:"user_id,omitempty"`
+	Message                string           `bson:"m" json:"m"`
+	Role                   string           `bson:"role,omitempty" json:"role,omitempty"`
+	Value                  CpsNumber        `bson:"val" json:"val"`
+	StateCounter           CropCounter      `bson:"statecounter,omitempty" json:"statecounter,omitempty"`
+	PbehaviorCanonicalType string           `bson:"pbehavior_canonical_type,omitempty" json:"pbehavior_canonical_type,omitempty"`
+	Initiator              string           `bson:"initiator,omitempty" json:"initiator,omitempty"`
 	// Execution contains id
 	// - of instruction execution for instruction steps
 	// - of webhook execution for webhook steps
@@ -92,7 +92,7 @@ func (t TicketInfo) GetStepMessage() string {
 
 // NewAlarmStep returns an AlarmStep.
 // If the timestamp or author are empty, default values will be used to create an AlarmStep.
-func NewAlarmStep(stepType string, timestamp libtime.CpsTime, author, msg, userID, role, initiator string) AlarmStep {
+func NewAlarmStep(stepType string, timestamp datetime.CpsTime, author, msg, userID, role, initiator string) AlarmStep {
 	authorAlarmStep := author
 	if authorAlarmStep == "" {
 		authorAlarmStep = cps.DefaultEventAuthor
@@ -100,7 +100,7 @@ func NewAlarmStep(stepType string, timestamp libtime.CpsTime, author, msg, userI
 
 	timestampAlarmStep := timestamp
 	if timestampAlarmStep.IsZero() {
-		timestampAlarmStep = libtime.NewCpsTime()
+		timestampAlarmStep = datetime.NewCpsTime()
 	}
 
 	return AlarmStep{
@@ -116,7 +116,7 @@ func NewAlarmStep(stepType string, timestamp libtime.CpsTime, author, msg, userI
 
 func NewMetaAlarmAttachStep(metaAlarm Alarm, ruleName string) AlarmStep {
 	newStep := NewAlarmStep(AlarmStepMetaAlarmAttach,
-		libtime.NewCpsTime(),
+		datetime.NewCpsTime(),
 		StepEngineCorrelationAuthor,
 		fmt.Sprintf("Rule: {%s}\n Displayname: {%s}\n Entity: {%s}",
 			ruleName,
@@ -265,7 +265,7 @@ func (s AlarmSteps) UpdateStateCounter(currentStatus *AlarmStep, currentStatusId
 			Initiator:    currentStatus.Initiator,
 			Message:      currentStatus.Message,
 			Value:        currentStatus.Value,
-			Timestamp:    libtime.NewCpsTime(),
+			Timestamp:    datetime.NewCpsTime(),
 			Type:         AlarmStepStateCounter,
 			StateCounter: CropCounter{},
 		}
@@ -279,7 +279,7 @@ func (s AlarmSteps) UpdateStateCounter(currentStatus *AlarmStep, currentStatusId
 			Initiator:    currentStatus.Initiator,
 			Message:      currentStatus.Message,
 			Value:        currentStatus.Value,
-			Timestamp:    libtime.NewCpsTime(),
+			Timestamp:    datetime.NewCpsTime(),
 			Type:         AlarmStepStateCounter,
 			StateCounter: CropCounter{},
 		}
@@ -322,7 +322,7 @@ func (s ByTimestamp) Less(i, j int) bool {
 type PbehaviorInfo struct {
 	// Timestamp is time when entity enters pbehavior.
 	// Use pointer of CpsTime to unmarshal null and undefined to nil pointer instead of zero CpsTime.
-	Timestamp *libtime.CpsTime `bson:"timestamp" json:"timestamp" swaggertype:"integer"`
+	Timestamp *datetime.CpsTime `bson:"timestamp" json:"timestamp" swaggertype:"integer"`
 	// ID is ID of pbehavior.PBehavior.
 	ID string `bson:"id" json:"id"`
 	// Name is Name of pbehavior.PBehavior.
@@ -344,7 +344,7 @@ func (i *PbehaviorInfo) IsDefaultActive() bool {
 }
 
 func (i *PbehaviorInfo) IsActive() bool {
-	return i.CanonicalType == "" || i.CanonicalType == "active"
+	return i.CanonicalType == "" || i.CanonicalType == PbhCanonicalTypeActive
 }
 
 func (i *PbehaviorInfo) Is(t string) bool {
@@ -352,7 +352,7 @@ func (i *PbehaviorInfo) Is(t string) bool {
 		return true
 	}
 
-	if i.CanonicalType == "" && t == "active" {
+	if i.CanonicalType == "" && t == PbhCanonicalTypeActive {
 		return true
 	}
 
@@ -388,7 +388,7 @@ func (i *PbehaviorInfo) GetStringField(f string) (string, bool) {
 		return i.TypeID, true
 	case "pbehavior_info.canonical_type":
 		if i.CanonicalType == "" {
-			return pbhCanonicalTypeActive, true
+			return PbhCanonicalTypeActive, true
 		}
 		return i.CanonicalType, true
 	case "pbehavior_info.reason":
@@ -411,25 +411,25 @@ type AlarmValue struct {
 	Ticket *AlarmStep `bson:"ticket,omitempty" json:"ticket,omitempty"`
 	Steps  AlarmSteps `bson:"steps" json:"steps"`
 
-	Component         string           `bson:"component" json:"component"`
-	Connector         string           `bson:"connector" json:"connector"`
-	ConnectorName     string           `bson:"connector_name" json:"connector_name"`
-	CreationDate      libtime.CpsTime  `bson:"creation_date" json:"creation_date"`
-	ActivationDate    *libtime.CpsTime `bson:"activation_date,omitempty" json:"activation_date,omitempty"`
-	DisplayName       string           `bson:"display_name" json:"display_name"`
-	HardLimit         *CpsNumber       `bson:"hard_limit,omitempty" json:"hard_limit,omitempty"`
-	InitialOutput     string           `bson:"initial_output" json:"initial_output"`
-	Output            string           `bson:"output" json:"output"`
-	InitialLongOutput string           `bson:"initial_long_output" json:"initial_long_output"`
-	LongOutput        string           `bson:"long_output" json:"long_output"`
-	LongOutputHistory []string         `bson:"long_output_history" json:"long_output_history"`
-	LastUpdateDate    libtime.CpsTime  `bson:"last_update_date" json:"last_update_date"`
-	LastEventDate     libtime.CpsTime  `bson:"last_event_date" json:"last_event_date"`
-	Resource          string           `bson:"resource,omitempty" json:"resource,omitempty"`
-	Resolved          *libtime.CpsTime `bson:"resolved,omitempty" json:"resolved,omitempty"`
-	PbehaviorInfo     PbehaviorInfo    `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
-	Meta              string           `bson:"meta,omitempty" json:"meta,omitempty"`
-	MetaValuePath     string           `bson:"meta_value_path,omitempty" json:"meta_value_path,omitempty"`
+	Component         string            `bson:"component" json:"component"`
+	Connector         string            `bson:"connector" json:"connector"`
+	ConnectorName     string            `bson:"connector_name" json:"connector_name"`
+	CreationDate      datetime.CpsTime  `bson:"creation_date" json:"creation_date"`
+	ActivationDate    *datetime.CpsTime `bson:"activation_date,omitempty" json:"activation_date,omitempty"`
+	DisplayName       string            `bson:"display_name" json:"display_name"`
+	HardLimit         *CpsNumber        `bson:"hard_limit,omitempty" json:"hard_limit,omitempty"`
+	InitialOutput     string            `bson:"initial_output" json:"initial_output"`
+	Output            string            `bson:"output" json:"output"`
+	InitialLongOutput string            `bson:"initial_long_output" json:"initial_long_output"`
+	LongOutput        string            `bson:"long_output" json:"long_output"`
+	LongOutputHistory []string          `bson:"long_output_history" json:"long_output_history"`
+	LastUpdateDate    datetime.CpsTime  `bson:"last_update_date" json:"last_update_date"`
+	LastEventDate     datetime.CpsTime  `bson:"last_event_date" json:"last_event_date"`
+	Resource          string            `bson:"resource,omitempty" json:"resource,omitempty"`
+	Resolved          *datetime.CpsTime `bson:"resolved,omitempty" json:"resolved,omitempty"`
+	PbehaviorInfo     PbehaviorInfo     `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
+	Meta              string            `bson:"meta,omitempty" json:"meta,omitempty"`
+	MetaValuePath     string            `bson:"meta_value_path,omitempty" json:"meta_value_path,omitempty"`
 
 	Parents         []string `bson:"parents" json:"parents"`
 	Children        []string `bson:"children" json:"children"`
@@ -447,7 +447,7 @@ type AlarmValue struct {
 
 	// InactiveStart represents start of snooze or maintenance, pause, inactive pbehavior interval.
 	// It's used only to compute InactiveDuration.
-	InactiveStart *libtime.CpsTime `bson:"inactive_start,omitempty" json:"inactive_start"`
+	InactiveStart *datetime.CpsTime `bson:"inactive_start,omitempty" json:"inactive_start"`
 	// Duration represents a duration from creation date to resolve date.
 	// Keep omitempty.
 	Duration int64 `bson:"duration,omitempty" json:"duration"`
@@ -471,7 +471,7 @@ func (v *AlarmValue) Transform() {
 	}
 }
 
-func NewTicketStep(stepType string, timestamp libtime.CpsTime, author, msg, userID, role, initiator string, ticketInfo TicketInfo) AlarmStep {
+func NewTicketStep(stepType string, timestamp datetime.CpsTime, author, msg, userID, role, initiator string, ticketInfo TicketInfo) AlarmStep {
 	s := NewAlarmStep(stepType, timestamp, author, msg, userID, role, initiator)
 
 	s.TicketInfo = ticketInfo

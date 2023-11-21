@@ -8,18 +8,15 @@ import (
 	"sort"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
-
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
-
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	libtypes "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -93,7 +90,7 @@ func NewStore(
 }
 
 func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) {
-	now := libtime.NewCpsTime()
+	now := datetime.NewCpsTime()
 	doc := s.transformRequestToDocument(r.EditRequest)
 	doc.ID = r.ID
 	if doc.ID == "" {
@@ -218,8 +215,8 @@ func (s *store) CalendarByEntityID(ctx context.Context, entity libtypes.Entity, 
 				ID:    pbhId,
 				Title: computedPbehavior.Name,
 				Color: computedPbehavior.Color,
-				From:  libtime.CpsTime{Time: computedType.Span.From()},
-				To:    libtime.CpsTime{Time: computedType.Span.To()},
+				From:  datetime.CpsTime{Time: computedType.Span.From()},
+				To:    datetime.CpsTime{Time: computedType.Span.To()},
 				Type:  computed.TypesByID[computedType.ID],
 			})
 		}
@@ -318,7 +315,7 @@ func (s *store) FindEntities(ctx context.Context, pbhID string, request Entities
 }
 
 func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) {
-	now := libtime.NewCpsTime()
+	now := datetime.NewCpsTime()
 	doc := s.transformRequestToDocument(r.EditRequest)
 	doc.Updated = &now
 
@@ -376,7 +373,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, error) {
 	set := bson.M{
 		"author":  r.Author,
-		"updated": libtime.NewCpsTime(),
+		"updated": datetime.NewCpsTime(),
 	}
 	unset := bson.M{}
 	rruleUpdated := false
@@ -531,7 +528,7 @@ func (s *store) FindEntity(ctx context.Context, entityId string) (*libtypes.Enti
 }
 
 func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem) (*Response, error) {
-	now := libtime.NewCpsTime()
+	now := datetime.NewCpsTime()
 	doc := pbehavior.PBehavior{
 		ID:       utils.NewID(),
 		Author:   r.Author,
@@ -733,10 +730,10 @@ func (s *store) transformResponse(ctx context.Context, result []Response) error 
 		if !next.IsZero() {
 			if v.Stop != nil {
 				d := v.Stop.Sub(v.Start.Time)
-				result[i].Stop = &libtime.CpsTime{Time: next.Add(d)}
+				result[i].Stop = &datetime.CpsTime{Time: next.Add(d)}
 			}
 
-			result[i].Start = &libtime.CpsTime{Time: next}
+			result[i].Start = &datetime.CpsTime{Time: next}
 		}
 	}
 

@@ -6,7 +6,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
@@ -100,7 +100,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 }
 
 func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
-	now := libtime.NewCpsTime()
+	now := datetime.NewCpsTime()
 	category := Category{
 		ID:      utils.NewID(),
 		Name:    r.Name,
@@ -123,7 +123,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 }
 
 func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
-	now := libtime.NewCpsTime()
+	now := datetime.NewCpsTime()
 	var result *Response
 
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {

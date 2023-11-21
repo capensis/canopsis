@@ -9,13 +9,11 @@ import (
 	"strings"
 	"time"
 
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/bsontype"
 )
-
-const pbhCanonicalTypeActive = "active"
 
 var ErrUnsupportedField = errors.New("unsupported field")
 var ErrUnsupportedConditionType = errors.New("unsupported condition type")
@@ -135,7 +133,7 @@ func NewTimeIntervalCondition(t string, from, to int64) Condition {
 	}
 }
 
-func NewDurationCondition(t string, d libtime.DurationWithUnit) (Condition, error) {
+func NewDurationCondition(t string, d datetime.DurationWithUnit) (Condition, error) {
 	var err error
 	d, err = d.To("s")
 	if err != nil {
@@ -147,6 +145,22 @@ func NewDurationCondition(t string, d libtime.DurationWithUnit) (Condition, erro
 		Value:         d,
 		valueDuration: &d.Value,
 	}, nil
+}
+
+func (c *Condition) GetValueStr() *string {
+	if c == nil {
+		return nil
+	}
+
+	return c.valueStr
+}
+
+func (c *Condition) GetValueStrArray() []string {
+	if c == nil {
+		return nil
+	}
+
+	return c.valueStrArray
 }
 
 func (c *Condition) MatchString(value string) (bool, error) {
@@ -570,7 +584,7 @@ func (c *Condition) TimeToMongoQuery(f string) (bson.M, error) {
 			return nil, ErrWrongConditionValue
 		}
 
-		t := libtime.CpsTime{Time: time.Now().Add(time.Duration(-*c.valueDuration) * time.Second)}
+		t := datetime.CpsTime{Time: time.Now().Add(time.Duration(-*c.valueDuration) * time.Second)}
 
 		return bson.M{f: bson.M{"$gt": t}}, nil
 	case ConditionTimeAbsolute:
@@ -578,8 +592,8 @@ func (c *Condition) TimeToMongoQuery(f string) (bson.M, error) {
 			return nil, ErrWrongConditionValue
 		}
 
-		ft := libtime.NewCpsTime(*c.valueTimeIntervalFrom)
-		tt := libtime.NewCpsTime(*c.valueTimeIntervalTo)
+		ft := datetime.NewCpsTime(*c.valueTimeIntervalFrom)
+		tt := datetime.NewCpsTime(*c.valueTimeIntervalTo)
 
 		return bson.M{f: bson.M{"$gt": ft, "$lt": tt}}, nil
 	default:
@@ -604,57 +618,6 @@ func (c *Condition) DurationToMongoQuery(f string) (bson.M, error) {
 	default:
 		return nil, ErrUnsupportedConditionType
 	}
-}
-
-func (c *Condition) CanonicalTypeToMongoQuery(f string) (bson.M, bool) {
-	switch c.Type {
-	case ConditionEqual:
-		if c.valueStr != nil && *c.valueStr == pbhCanonicalTypeActive {
-			return bson.M{f: bson.M{"$in": bson.A{nil, *c.valueStr}}}, true
-		}
-	case ConditionNotEqual:
-		if c.valueStr != nil && *c.valueStr == pbhCanonicalTypeActive {
-			return bson.M{f: bson.M{"$nin": bson.A{nil, *c.valueStr}}}, true
-		}
-	case ConditionIsOneOf:
-		found := false
-		for _, item := range c.valueStrArray {
-			if item == pbhCanonicalTypeActive {
-				found = true
-				break
-			}
-		}
-
-		if found {
-			values := make([]interface{}, len(c.valueStrArray)+1)
-			for k, s := range c.valueStrArray {
-				values[k] = s
-			}
-			values[len(values)-1] = nil
-
-			return bson.M{f: bson.M{"$in": values}}, true
-		}
-	case ConditionIsNotOneOf:
-		found := false
-		for _, item := range c.valueStrArray {
-			if item == pbhCanonicalTypeActive {
-				found = true
-				break
-			}
-		}
-
-		if found {
-			values := make([]interface{}, len(c.valueStrArray)+1)
-			for k, s := range c.valueStrArray {
-				values[k] = s
-			}
-			values[len(values)-1] = nil
-
-			return bson.M{f: bson.M{"$nin": values}}, true
-		}
-	}
-
-	return nil, false
 }
 
 func (c *Condition) StringToSql(f string) (string, error) {
@@ -1187,7 +1150,7 @@ func getTimeIntervalValue(v interface{}) (int64, int64, error) {
 	return from, to, nil
 }
 
-func getDurationValue(v interface{}) (libtime.DurationWithUnit, error) {
+func getDurationValue(v interface{}) (datetime.DurationWithUnit, error) {
 	var mapVal map[string]interface{}
 	if m, ok := v.(map[string]interface{}); ok {
 		mapVal = m
@@ -1199,30 +1162,30 @@ func getDurationValue(v interface{}) (libtime.DurationWithUnit, error) {
 	} else if m, ok := v.(bson.M); ok {
 		mapVal = m
 	} else {
-		return libtime.DurationWithUnit{}, ErrWrongConditionValue
+		return datetime.DurationWithUnit{}, ErrWrongConditionValue
 	}
 
 	rawVal, ok := mapVal["value"]
 	if !ok {
-		return libtime.DurationWithUnit{}, errors.New("condition value expected 'value' key")
+		return datetime.DurationWithUnit{}, errors.New("condition value expected 'value' key")
 	}
 
 	val, err := GetIntValue(rawVal)
 	if err != nil {
-		return libtime.DurationWithUnit{}, err
+		return datetime.DurationWithUnit{}, err
 	}
 
 	rawUnit, ok := mapVal["unit"]
 	if !ok {
-		return libtime.DurationWithUnit{}, errors.New("condition value expected 'unit' key")
+		return datetime.DurationWithUnit{}, errors.New("condition value expected 'unit' key")
 	}
 
 	unit, err := GetStringValue(rawUnit)
 	if err != nil {
-		return libtime.DurationWithUnit{}, err
+		return datetime.DurationWithUnit{}, err
 	}
 
-	return libtime.DurationWithUnit{
+	return datetime.DurationWithUnit{
 		Value: val,
 		Unit:  unit,
 	}, nil

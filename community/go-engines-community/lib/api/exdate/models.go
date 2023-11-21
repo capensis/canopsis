@@ -1,8 +1,8 @@
 package exdate
 
-import libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
+import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 
 type Request struct {
-	Begin libtime.CpsTime `json:"begin" binding:"required" swaggertype:"integer"`
-	End   libtime.CpsTime `json:"end" binding:"required" swaggertype:"integer"`
+	Begin datetime.CpsTime `json:"begin" binding:"required" swaggertype:"integer"`
+	End   datetime.CpsTime `json:"end" binding:"required" swaggertype:"integer"`
 }

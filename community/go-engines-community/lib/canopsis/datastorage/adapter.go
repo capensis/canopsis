@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -34,7 +34,7 @@ func (a *adapter) Get(ctx context.Context) (DataStorage, error) {
 	return data, nil
 }
 
-func (a *adapter) UpdateHistoryJunit(ctx context.Context, t libtime.CpsTime) error {
+func (a *adapter) UpdateHistoryJunit(ctx context.Context, t datetime.CpsTime) error {
 	res, err := a.collection.UpdateOne(ctx, bson.M{"_id": ID}, bson.M{
 		"$set": bson.M{
 			"history.junit": t,
@@ -50,7 +50,7 @@ func (a *adapter) UpdateHistoryJunit(ctx context.Context, t libtime.CpsTime) err
 	return nil
 }
 
-func (a *adapter) UpdateHistoryRemediation(ctx context.Context, t libtime.CpsTime) error {
+func (a *adapter) UpdateHistoryRemediation(ctx context.Context, t datetime.CpsTime) error {
 	res, err := a.collection.UpdateOne(ctx, bson.M{"_id": ID}, bson.M{
 		"$set": bson.M{
 			"history.remediation": t,
@@ -130,7 +130,7 @@ func (a *adapter) UpdateHistoryEntityCleaned(ctx context.Context, history Histor
 	return nil
 }
 
-func (a *adapter) UpdateHistoryPbehavior(ctx context.Context, t libtime.CpsTime) error {
+func (a *adapter) UpdateHistoryPbehavior(ctx context.Context, t datetime.CpsTime) error {
 	res, err := a.collection.UpdateOne(ctx, bson.M{"_id": ID}, bson.M{
 		"$set": bson.M{
 			"history.pbehavior": t,
@@ -146,7 +146,7 @@ func (a *adapter) UpdateHistoryPbehavior(ctx context.Context, t libtime.CpsTime)
 	return nil
 }
 
-func (a *adapter) UpdateHistoryHealthCheck(ctx context.Context, t libtime.CpsTime) error {
+func (a *adapter) UpdateHistoryHealthCheck(ctx context.Context, t datetime.CpsTime) error {
 	res, err := a.collection.UpdateOne(ctx, bson.M{"_id": ID}, bson.M{
 		"$set": bson.M{
 			"history.health_check": t,
@@ -162,7 +162,7 @@ func (a *adapter) UpdateHistoryHealthCheck(ctx context.Context, t libtime.CpsTim
 	return nil
 }
 
-func (a *adapter) UpdateHistoryWebhook(ctx context.Context, t libtime.CpsTime) error {
+func (a *adapter) UpdateHistoryWebhook(ctx context.Context, t datetime.CpsTime) error {
 	res, err := a.collection.UpdateOne(ctx, bson.M{"_id": ID}, bson.M{
 		"$set": bson.M{
 			"history.webhook": t,
@@ -178,7 +178,7 @@ func (a *adapter) UpdateHistoryWebhook(ctx context.Context, t libtime.CpsTime) e
 	return nil
 }
 
-func (a *adapter) UpdateHistoryEventFilterFailure(ctx context.Context, t libtime.CpsTime) error {
+func (a *adapter) UpdateHistoryEventFilterFailure(ctx context.Context, t datetime.CpsTime) error {
 	res, err := a.collection.UpdateOne(ctx, bson.M{"_id": ID}, bson.M{
 		"$set": bson.M{
 			"history.event_filter_failure": t,

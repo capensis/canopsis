@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
 
@@ -37,8 +37,8 @@ func (t CpsNumber) Float64() float64 {
 }
 
 // CpsTimestamp convert a number to a timestamp
-func (t CpsNumber) CpsTimestamp() libtime.CpsTime {
-	return libtime.NewCpsTime(int64(t))
+func (t CpsNumber) CpsTimestamp() datetime.CpsTime {
+	return datetime.NewCpsTime(int64(t))
 }
 
 func listOfInterfaceToString(v []interface{}) (string, error) {
@@ -157,9 +157,9 @@ func AsInteger(value interface{}) (int64, bool) {
 			return 0, false
 		}
 		return typedValue.Unix(), true
-	case libtime.CpsTime:
+	case datetime.CpsTime:
 		return typedValue.Unix(), true
-	case *libtime.CpsTime:
+	case *datetime.CpsTime:
 		if typedValue == nil {
 			return 0, false
 		}

@@ -13,12 +13,11 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -104,7 +103,7 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event rpc
 		metaAlarm = p.newAlarm(event.Parameters, *event.Entity, p.alarmConfigProvider.Get())
 		metaAlarm.Value.Meta = event.Parameters.MetaAlarmRuleID
 		metaAlarm.Value.MetaValuePath = event.Parameters.MetaAlarmValuePath
-		metaAlarm.Value.LastEventDate = libtime.CpsTime{} // should be empty
+		metaAlarm.Value.LastEventDate = datetime.CpsTime{} // should be empty
 
 		if event.Parameters.DisplayName != "" {
 			metaAlarm.Value.DisplayName = event.Parameters.DisplayName
@@ -406,7 +405,7 @@ func (p *metaAlarmEventProcessor) DetachChildrenFromMetaAlarm(ctx context.Contex
 			return err
 		}
 
-		var lastEventDate libtime.CpsTime // should be empty
+		var lastEventDate datetime.CpsTime // should be empty
 		worstState := types.CpsNumber(types.AlarmStateOK)
 
 		for _, childAlarm := range metaAlarmChildren {
@@ -467,7 +466,7 @@ func (p *metaAlarmEventProcessor) applyActionsOnChildren(metaAlarm types.Alarm, 
 			ConnectorName: childAlarm.Value.ConnectorName,
 			Resource:      childAlarm.Value.Resource,
 			Component:     childAlarm.Value.Component,
-			Timestamp:     libtime.NewCpsTime(),
+			Timestamp:     datetime.NewCpsTime(),
 		}
 		childEvent.SourceType = childEvent.DetectSourceType()
 
@@ -537,7 +536,7 @@ func (p *metaAlarmEventProcessor) processParentRpc(ctx context.Context, event rp
 
 	childEvent := types.Event{
 		EventType:  event.EventType,
-		Timestamp:  libtime.NewCpsTime(),
+		Timestamp:  datetime.NewCpsTime(),
 		Output:     event.Parameters.Output,
 		Author:     event.Parameters.Author,
 		UserID:     event.Parameters.User,
@@ -600,7 +599,7 @@ func (p *metaAlarmEventProcessor) processComponentRpc(ctx context.Context, event
 			ConnectorName: resource.Alarm.Value.ConnectorName,
 			Resource:      resource.Alarm.Value.Resource,
 			Component:     resource.Alarm.Value.Component,
-			Timestamp:     libtime.NewCpsTime(),
+			Timestamp:     datetime.NewCpsTime(),
 			Output:        componentAlarm.Value.Ticket.Message,
 			TicketInfo:    componentAlarm.Value.Ticket.TicketInfo,
 			Author:        event.Parameters.Author,
@@ -695,7 +694,7 @@ func (p *metaAlarmEventProcessor) sendChildrenEvents(ctx context.Context, childr
 	return nil
 }
 
-func (p *metaAlarmEventProcessor) resolveParents(ctx context.Context, childAlarm types.Alarm, timestamp libtime.CpsTime) error {
+func (p *metaAlarmEventProcessor) resolveParents(ctx context.Context, childAlarm types.Alarm, timestamp datetime.CpsTime) error {
 	ch := make(chan string)
 	g, ctx := errgroup.WithContext(ctx)
 	g.Go(func() error {
@@ -747,7 +746,7 @@ func (p *metaAlarmEventProcessor) resolveParents(ctx context.Context, childAlarm
 						return nil
 					}
 
-					err = parentAlarm.Alarm.PartialUpdateResolve(time.NewCpsTime())
+					err = parentAlarm.Alarm.PartialUpdateResolve(datetime.NewCpsTime())
 					if err != nil {
 						return fmt.Errorf("cannot update alarm: %w", err)
 					}
@@ -835,7 +834,7 @@ func (p *metaAlarmEventProcessor) updateParentState(ctx context.Context, childAl
 						}
 
 						newState = types.CpsNumber(state)
-						parentAlarm.Alarm.PartialUpdateLastEventDate(time.NewCpsTime(lastEventDate))
+						parentAlarm.Alarm.PartialUpdateLastEventDate(datetime.NewCpsTime(lastEventDate))
 					} else {
 						return nil
 					}
@@ -956,7 +955,7 @@ func (p *metaAlarmEventProcessor) newAlarm(
 	entity types.Entity,
 	alarmConfig config.AlarmConfig,
 ) types.Alarm {
-	now := libtime.NewCpsTime()
+	now := datetime.NewCpsTime()
 	alarm := types.Alarm{
 		EntityID: entity.ID,
 		ID:       utils.NewID(),
@@ -1013,7 +1012,7 @@ func applyOnChild(changeType types.AlarmChangeType) bool {
 	return false
 }
 
-func updateMetaAlarmState(alarm *types.Alarm, entity types.Entity, timestamp libtime.CpsTime, state types.CpsNumber, output string,
+func updateMetaAlarmState(alarm *types.Alarm, entity types.Entity, timestamp datetime.CpsTime, state types.CpsNumber, output string,
 	service alarmstatus.Service) error {
 	var currentState, currentStatus types.CpsNumber
 	if alarm.Value.State != nil {
