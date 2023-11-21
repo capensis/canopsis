@@ -1,5 +1,128 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with custom props 1`] = `
+<div
+  class="v-input select v-input--hide-details v-input--dense theme--light v-text-field v-text-field--single-line v-select"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
+      aria-owns="list-43"
+      class="v-input__slot"
+      role="button"
+    >
+      <div
+        class="v-select__slot"
+      >
+        <div
+          class="v-select__selections"
+        >
+          <input
+            aria-readonly="false"
+            autocomplete="off"
+            id="input-43"
+            readonly="readonly"
+            type="text"
+          />
+        </div>
+        <div
+          class="v-input__append-inner"
+        >
+          <div
+            class="v-input__icon v-input__icon--append"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              arrow_drop_down
+            </i>
+          </div>
+        </div>
+        <input
+          type="hidden"
+          value="10"
+        />
+      </div>
+      <div
+        class="v-menu"
+      >
+        <!---->
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with custom props 2`] = `undefined`;
+
+exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with default props 1`] = `
+<div
+  class="v-input select v-input--hide-details v-input--is-label-active v-input--is-dirty v-input--dense theme--light v-text-field v-text-field--single-line v-select"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
+      aria-owns="list-37"
+      class="v-input__slot"
+      role="button"
+    >
+      <div
+        class="v-select__slot"
+      >
+        <div
+          class="v-select__selections"
+        >
+          <div
+            class="v-select__selection v-select__selection--comma"
+          >
+            10
+          </div>
+          <input
+            aria-readonly="false"
+            autocomplete="off"
+            id="input-37"
+            readonly="readonly"
+            type="text"
+          />
+        </div>
+        <div
+          class="v-input__append-inner"
+        >
+          <div
+            class="v-input__icon v-input__icon--append"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              arrow_drop_down
+            </i>
+          </div>
+        </div>
+        <input
+          type="hidden"
+          value="10"
+        />
+      </div>
+      <div
+        class="v-menu"
+      >
+        <!---->
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with default props 2`] = `undefined`;
+
 exports[`c-records-per-page-field Renders \`c-records-per-page-field\` with custom props 1`] = `
 <div
   class="v-input select v-text-field v-text-field--single-line v-select v-input--hide-details theme--light"

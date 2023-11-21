@@ -10,7 +10,7 @@ const stubs = {
   'pbehavior-recurrence-rule': true,
 };
 
-const selectTabItems = wrapper => wrapper.findAll('a.v-tabs__item');
+const selectTabItems = wrapper => wrapper.findAll('.v-tab');
 const selectTabItemByIndex = (wrapper, index) => selectTabItems(wrapper).at(index);
 
 describe('pbehaviors-list-expand-item', () => {

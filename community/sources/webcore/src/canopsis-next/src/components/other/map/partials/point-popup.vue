@@ -61,7 +61,7 @@
         <v-icon left>
           link
         </v-icon>
-        <span class="text-none">{{ point.map.name }}</span>
+        <span class="text-none text-truncate">{{ point.map.name }}</span>
       </v-btn>
     </v-layout>
   </v-card>
@@ -129,6 +129,10 @@ export default {
   &__action {
     width: 100%;
     flex-shrink: 1;
+
+    .v-btn__content {
+      max-width: 100%;
+    }
   }
 }
 </style>

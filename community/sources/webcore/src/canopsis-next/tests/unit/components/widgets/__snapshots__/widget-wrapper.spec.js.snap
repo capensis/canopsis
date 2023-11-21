@@ -5,6 +5,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with default props 1`] = `
   style="min-height: 40px;"
 >
   <!---->
+   
   <div
     class="v-card__text pa-0 position-relative"
   >
@@ -33,16 +34,23 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with editing mode 1`] = `
           class="ml-2 font-weight-regular"
         >
           
+            
+          
         </h4>
       </div>
+       
       <div
         class="spacer"
       />
     </div>
   </div>
+   
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
+   
   <div
     class="v-card__text pa-0 position-relative"
   >
@@ -70,17 +78,24 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with title and editing mode 1
         <h4
           class="ml-2 font-weight-regular"
         >
-          Title
+          
+            Title
+          
         </h4>
       </div>
+       
       <div
         class="spacer"
       />
     </div>
   </div>
+   
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
+   
   <div
     class="v-card__text pa-0 position-relative"
   >
@@ -97,6 +112,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type AlarmStatistics and
   style="min-height: 40px;"
 >
   <!---->
+   
   <div
     class="v-card__text pa-0 position-relative"
   >
@@ -113,6 +129,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type AlarmStatistics and
   style="min-height: 40px;"
 >
   <!---->
+   
   <div
     class="v-card__text pa-0 position-relative"
   >
@@ -131,6 +148,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type AlarmsList and cat 
   style="min-height: 40px;"
 >
   <!---->
+   
   <div
     class="v-card__text pa-0 position-relative"
   >
@@ -147,6 +165,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type AlarmsList and core
   style="min-height: 40px;"
 >
   <!---->
+   
   <div
     class="v-card__text pa-0 position-relative"
   >
@@ -165,6 +184,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type BarChart and cat ed
   style="min-height: 40px;"
 >
   <!---->
+   
   <div
     class="v-card__text pa-0 position-relative"
   >
@@ -181,6 +201,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type BarChart and core e
   style="min-height: 40px;"
 >
   <!---->
+   
   <div
     class="v-card__text pa-0 position-relative"
   >
@@ -199,6 +220,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Context and cat edi
   style="min-height: 40px;"
 >
   <!---->
+   
   <div
     class="v-card__text pa-0 position-relative"
   >
@@ -215,6 +237,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Context and core ed
   style="min-height: 40px;"
 >
   <!---->
+   
   <div
     class="v-card__text pa-0 position-relative"
   >
@@ -233,6 +256,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Counter and cat edi
   style="min-height: 40px;"
 >
   <!---->
+   
   <div
     class="v-card__text pa-0 position-relative"
   >
@@ -249,6 +273,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Counter and core ed
   style="min-height: 40px;"
 >
   <!---->
+   
   <div
     class="v-card__text pa-0 position-relative"
   >
@@ -267,6 +292,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Junit and cat editi
   style="min-height: 40px;"
 >
   <!---->
+   
   <div
     class="v-card__text pa-0 position-relative"
   >
@@ -283,6 +309,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Junit and core edit
   style="min-height: 40px;"
 >
   <!---->
+   
   <div
     class="v-card__text pa-0 position-relative"
   >
@@ -301,6 +328,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type LineChart and cat e
   style="min-height: 40px;"
 >
   <!---->
+   
   <div
     class="v-card__text pa-0 position-relative"
   >
@@ -317,6 +345,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type LineChart and core 
   style="min-height: 40px;"
 >
   <!---->
+   
   <div
     class="v-card__text pa-0 position-relative"
   >
@@ -335,6 +364,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Map and cat edition
   style="min-height: 40px;"
 >
   <!---->
+   
   <div
     class="v-card__text pa-0 position-relative"
   >
@@ -351,6 +381,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Map and core editio
   style="min-height: 40px;"
 >
   <!---->
+   
   <div
     class="v-card__text pa-0 position-relative"
   >
@@ -369,6 +400,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Numbers and cat edi
   style="min-height: 40px;"
 >
   <!---->
+   
   <div
     class="v-card__text pa-0 position-relative"
   >
@@ -385,6 +417,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Numbers and core ed
   style="min-height: 40px;"
 >
   <!---->
+   
   <div
     class="v-card__text pa-0 position-relative"
   >
@@ -403,6 +436,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type PieChart and cat ed
   style="min-height: 40px;"
 >
   <!---->
+   
   <div
     class="v-card__text pa-0 position-relative"
   >
@@ -419,6 +453,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type PieChart and core e
   style="min-height: 40px;"
 >
   <!---->
+   
   <div
     class="v-card__text pa-0 position-relative"
   >
@@ -437,6 +472,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type ServiceWeather and 
   style="min-height: 40px;"
 >
   <!---->
+   
   <div
     class="v-card__text pa-0 position-relative"
   >
@@ -453,6 +489,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type ServiceWeather and 
   style="min-height: 40px;"
 >
   <!---->
+   
   <div
     class="v-card__text pa-0 position-relative"
   >
@@ -471,6 +508,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsCalendar and c
   style="min-height: 40px;"
 >
   <!---->
+   
   <div
     class="v-card__text pa-0 position-relative"
   >
@@ -487,6 +525,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsCalendar and c
   style="min-height: 40px;"
 >
   <!---->
+   
   <div
     class="v-card__text pa-0 position-relative"
   >
@@ -505,6 +544,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Text and cat editio
   style="min-height: 40px;"
 >
   <!---->
+   
   <div
     class="v-card__text pa-0 position-relative"
   >
@@ -521,6 +561,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Text and core editi
   style="min-height: 40px;"
 >
   <!---->
+   
   <div
     class="v-card__text pa-0 position-relative"
   >
@@ -539,6 +580,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type UserStatistics and 
   style="min-height: 40px;"
 >
   <!---->
+   
   <div
     class="v-card__text pa-0 position-relative"
   >
@@ -555,6 +597,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type UserStatistics and 
   style="min-height: 40px;"
 >
   <!---->
+   
   <div
     class="v-card__text pa-0 position-relative"
   >
@@ -584,17 +627,24 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with widget title 1`] = `
         <h4
           class="ml-2 font-weight-regular"
         >
-          Title
+          
+            Title
+          
         </h4>
       </div>
+       
       <div
         class="spacer"
       />
     </div>
   </div>
+   
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
+   
   <div
     class="v-card__text pa-0 position-relative"
   >

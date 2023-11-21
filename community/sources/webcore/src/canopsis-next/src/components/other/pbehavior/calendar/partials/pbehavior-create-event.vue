@@ -81,7 +81,9 @@ export default {
 
     clickOutsideDirective() {
       const selectorsForInclude = [
-        '.c-calendar__toolbar',
+        '.c-calendar__today-btn',
+        '.c-calendar__pagination',
+        '.c-calendar__menu-right',
         '.v-event',
         `.${getMenuClassByCalendarEvent(this.event.id)}`,
       ];

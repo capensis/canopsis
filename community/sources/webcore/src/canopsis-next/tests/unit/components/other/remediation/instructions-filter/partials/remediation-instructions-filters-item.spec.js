@@ -55,16 +55,9 @@ describe('remediation-instructions-filters-item', () => {
       },
     });
 
-    const chip = selectChip(wrapper);
+    selectChip(wrapper).vm.$emit('click:close');
 
-    chip.vm.$emit('input');
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmit('input', {
       ...lockedFilter,
       disabled: !lockedFilter.disabled,
     });
@@ -78,13 +71,9 @@ describe('remediation-instructions-filters-item', () => {
       },
     });
 
-    const chip = selectChip(wrapper);
+    selectChip(wrapper).vm.$emit('click:close');
 
-    chip.vm.$emit('input');
-
-    const inputEvents = wrapper.emitted('remove');
-
-    expect(inputEvents).toHaveLength(1);
+    expect(wrapper).toEmit('remove');
   });
 
   it('Edit instruction filter modal opened after trigger click event on the chip', () => {

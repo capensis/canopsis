@@ -3,6 +3,8 @@ import { generateRenderer } from '@unit/utils/vue';
 import flushPromises from 'flush-promises';
 import ExtraDetailsChildren from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-children.vue';
 
+const selectExtraDetailsIcon = wrapper => wrapper.find('.c-extra-details__badge');
+
 describe('extra-details-children', () => {
   const total = 3;
   const opened = 2;
@@ -12,12 +14,13 @@ describe('extra-details-children', () => {
   };
 
   const snapshotFactory = generateRenderer(ExtraDetailsChildren, {
-
     attachTo: document.body,
   });
 
   it('Renders `extra-details-children` with full children and rule', async () => {
-    snapshotFactory({
+    jest.useFakeTimers();
+
+    const wrapper = snapshotFactory({
       propsData: {
         total,
         opened,
@@ -25,6 +28,12 @@ describe('extra-details-children', () => {
         rule,
       },
     });
+
+    await flushPromises();
+
+    selectExtraDetailsIcon(wrapper).trigger('mouseenter');
+
+    jest.runAllTimers();
 
     await flushPromises();
 

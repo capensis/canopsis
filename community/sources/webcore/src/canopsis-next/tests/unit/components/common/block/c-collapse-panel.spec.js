@@ -48,7 +48,6 @@ describe('c-collapse-panel', () => {
       propsData: {
         color: 'grey',
         icon: 'custom_icon',
-        lazy: true,
       },
     });
 

@@ -1,16 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`] = `
-<div>
+<div
+  class="alarms-list"
+>
   <div
-    class="layout row wrap justify-space-between align-end mb-4"
+    class="layout wrap justify-space-between align-end alarms-list__toolbar mb-4"
   >
     <div
       class="flex"
     >
       <c-advanced-search-field-stub
         columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-        combobox="combobox"
+        combobox=""
         items="item 1,item 2"
         query="[object Object]"
         tooltip=<span>Help on the advanced research :</span>
@@ -28,13 +30,16 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
 </dl>
       />
     </div>
+     
     <!---->
+     
     <!---->
+     
     <div
       class="flex"
     >
       <div
-        class="layout row align-end"
+        class="layout align-end"
       >
         <filter-selector-stub
           disabled="true"
@@ -45,10 +50,13 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
           label="Select a filter"
           lockedfilters=""
         />
+         
         <!---->
       </div>
     </div>
+     
     <!---->
+     
     <div
       class="flex"
     >
@@ -57,37 +65,40 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
         lockedfilters=""
       />
     </div>
+     
     <div
       class="flex"
     >
       <span
-        class="v-chip primary white--text v-chip--label v-chip--removable theme--light"
-        tabindex="0"
+        class="primary white--text v-chip v-chip--label v-chip--no-color v-chip--removable theme--light v-size--default"
       >
         <span
           class="v-chip__content"
         >
-          Last 1 year
-          <div
-            class="v-chip__close"
+          
+        Last 1 year
+      
+          <button
+            aria-label="Close"
+            class="v-icon notranslate v-chip__close v-icon--link v-icon--right material-icons theme--light"
+            style="font-size: 18px;"
+            type="button"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              cancel
-            </i>
-          </div>
+            cancel
+          </button>
         </span>
       </span>
+       
       <c-action-btn-stub
         color="primary"
         icon="schedule"
         tooltip="Set a custom date range"
       />
     </div>
+     
     <!---->
   </div>
+   
   <alarms-list-table-stub
     alarms="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     cellscontentbehavior="wrap"
@@ -101,7 +112,7 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
     hidechildren="true"
     istourenabled="true"
     mincolumnwidth="10"
-    pagination="[object Object]"
+    options="[object Object]"
     refreshalarmslist="[Function]"
     resizingcolumnthrottledelay="10"
     search="search"
@@ -110,6 +121,7 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
     totalitems="10"
     widget="[object Object]"
   />
+   
   <alarms-expand-panel-tour-stub
     callbacks="[object Object]"
   />
@@ -117,16 +129,18 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
 `;
 
 exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
-<div>
+<div
+  class="alarms-list"
+>
   <div
-    class="layout row wrap justify-space-between align-end mb-4"
+    class="layout wrap justify-space-between align-end alarms-list__toolbar mb-4"
   >
     <div
       class="flex"
     >
       <c-advanced-search-field-stub
         columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-        combobox="combobox"
+        combobox=""
         items=""
         query="[object Object]"
         tooltip=<span>Help on the advanced research :</span>
@@ -144,14 +158,19 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
 </dl>
       />
     </div>
+     
     <!---->
+     
     <!---->
+     
     <div
       class="flex"
     >
       <!---->
     </div>
+     
     <!---->
+     
     <div
       class="flex"
     >
@@ -160,37 +179,40 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
         lockedfilters=""
       />
     </div>
+     
     <div
       class="flex"
     >
       <span
-        class="v-chip primary white--text v-chip--label v-chip--removable theme--light"
-        tabindex="0"
+        class="primary white--text v-chip v-chip--label v-chip--no-color v-chip--removable theme--light v-size--default"
       >
         <span
           class="v-chip__content"
         >
-          Last 1 year
-          <div
-            class="v-chip__close"
+          
+        Last 1 year
+      
+          <button
+            aria-label="Close"
+            class="v-icon notranslate v-chip__close v-icon--link v-icon--right material-icons theme--light"
+            style="font-size: 18px;"
+            type="button"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              cancel
-            </i>
-          </div>
+            cancel
+          </button>
         </span>
       </span>
+       
       <c-action-btn-stub
         color="primary"
         icon="schedule"
         tooltip="Set a custom date range"
       />
     </div>
+     
     <!---->
   </div>
+   
   <alarms-list-table-stub
     alarms="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     cellscontentbehavior="wrap"
@@ -204,7 +226,7 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
     hidechildren="true"
     istourenabled="true"
     mincolumnwidth="10"
-    pagination="[object Object]"
+    options="[object Object]"
     refreshalarmslist="[Function]"
     resizingcolumnthrottledelay="10"
     search="search"
@@ -213,6 +235,7 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
     totalitems="10"
     widget="[object Object]"
   />
+   
   <alarms-expand-panel-tour-stub
     callbacks="[object Object]"
   />
@@ -220,16 +243,18 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
 `;
 
 exports[`alarms-list Renders \`alarms-list\` with default props and user filter permission and correlation and bookmark 1`] = `
-<div>
+<div
+  class="alarms-list"
+>
   <div
-    class="layout row wrap justify-space-between align-end mb-4"
+    class="layout wrap justify-space-between align-end alarms-list__toolbar mb-4"
   >
     <div
       class="flex"
     >
       <c-advanced-search-field-stub
         columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-        combobox="combobox"
+        combobox=""
         items=""
         query="[object Object]"
         tooltip=<span>Help on the advanced research :</span>
@@ -247,7 +272,9 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
 </dl>
       />
     </div>
+     
     <!---->
+     
     <div
       class="flex"
     >
@@ -266,11 +293,12 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
         valuecomparator="[Function]"
       />
     </div>
+     
     <div
       class="flex"
     >
       <div
-        class="layout row align-end"
+        class="layout align-end"
       >
         <filter-selector-stub
           clearable="true"
@@ -282,9 +310,11 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
           label="Select a filter"
           lockedfilters=""
         />
+         
         <!---->
       </div>
     </div>
+     
     <div
       class="flex"
     >
@@ -303,6 +333,7 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
         valuecomparator="[Function]"
       />
     </div>
+     
     <div
       class="flex"
     >
@@ -311,37 +342,40 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
         lockedfilters=""
       />
     </div>
+     
     <div
       class="flex"
     >
       <span
-        class="v-chip primary white--text v-chip--label v-chip--removable theme--light"
-        tabindex="0"
+        class="primary white--text v-chip v-chip--label v-chip--no-color v-chip--removable theme--light v-size--default"
       >
         <span
           class="v-chip__content"
         >
-          Last 1 year
-          <div
-            class="v-chip__close"
+          
+        Last 1 year
+      
+          <button
+            aria-label="Close"
+            class="v-icon notranslate v-chip__close v-icon--link v-icon--right material-icons theme--light"
+            style="font-size: 18px;"
+            type="button"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              cancel
-            </i>
-          </div>
+            cancel
+          </button>
         </span>
       </span>
+       
       <c-action-btn-stub
         color="primary"
         icon="schedule"
         tooltip="Set a custom date range"
       />
     </div>
+     
     <!---->
   </div>
+   
   <alarms-list-table-stub
     alarms="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     cellscontentbehavior="wrap"
@@ -355,7 +389,7 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
     hidechildren="true"
     istourenabled="true"
     mincolumnwidth="10"
-    pagination="[object Object]"
+    options="[object Object]"
     refreshalarmslist="[Function]"
     resizingcolumnthrottledelay="10"
     search="search"
@@ -364,6 +398,7 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
     totalitems="10"
     widget="[object Object]"
   />
+   
   <alarms-expand-panel-tour-stub
     callbacks="[object Object]"
   />

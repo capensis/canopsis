@@ -51,7 +51,7 @@
         :key="getItemValue(item)"
         :close="isChipRemovable"
         small
-        @input="removeFilter(index)"
+        @click:close="removeFilter(index)"
       >
         {{ getItemText(item) }}
       </v-chip>
