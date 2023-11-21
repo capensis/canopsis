@@ -379,6 +379,7 @@ func (i PbehaviorInfo) Same(v PbehaviorInfo) bool {
 	return i == v
 }
 
+// GetStringField is a magic getter for string fields for easier field retrieving when matching pbehavior info pattern
 func (i *PbehaviorInfo) GetStringField(f string) (string, bool) {
 	switch f {
 	case "pbehavior_info.id":
