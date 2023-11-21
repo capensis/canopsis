@@ -41,7 +41,7 @@ describe('event-filters-list', () => {
   it('Renders `event-filters-list` with default props', () => {
     const wrapper = snapshotFactory({
       propsData: {
-        pagination: {},
+        options: {},
       },
     });
 
@@ -52,7 +52,7 @@ describe('event-filters-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         eventFilters,
-        pagination: {
+        options: {
           page: 2,
           updatedPerPage: 10,
           search: 'Filter',
@@ -88,7 +88,7 @@ describe('event-filters-list', () => {
     const expandButton = wrapper
       .findAll('tr > td')
       .at(0)
-      .find('c-expand-btn-stub');
+      .find('.v-data-table__expand-icon');
 
     await expandButton.vm.$emit('expand');
 
@@ -102,8 +102,8 @@ describe('event-filters-list', () => {
         options: {
           page: 1,
           itemsPerPage: 10,
-          search: '',
-          sortBy: '',
+          search: [],
+          sortBy: [],
           descending: false,
         },
         updatable: true,

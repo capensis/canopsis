@@ -64,16 +64,20 @@
       />
     </v-layout>
     <v-layout>
-      <v-switch
-        v-field="form.allow_change_severity_to_info"
-        :label="$t('userInterface.allowChangeSeverityToInfo')"
-        color="primary"
-      />
-      <v-switch
-        v-field="form.show_header_on_kiosk_mode"
-        :label="$t('userInterface.showHeaderOnKioskMode')"
-        color="primary"
-      />
+      <v-flex xs6>
+        <v-switch
+          v-field="form.allow_change_severity_to_info"
+          :label="$t('userInterface.allowChangeSeverityToInfo')"
+          color="primary"
+        />
+      </v-flex>
+      <v-flex xs6>
+        <v-switch
+          v-field="form.show_header_on_kiosk_mode"
+          :label="$t('userInterface.showHeaderOnKioskMode')"
+          color="primary"
+        />
+      </v-flex>
     </v-layout>
     <v-layout>
       <v-flex>

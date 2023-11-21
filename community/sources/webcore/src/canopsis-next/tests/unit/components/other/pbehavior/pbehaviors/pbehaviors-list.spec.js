@@ -20,7 +20,7 @@ const stubs = {
 const selectExpandButtonByRow = (wrapper, index) => wrapper
   .findAll('tbody > tr')
   .at(index)
-  .find('c-expand-btn-stub');
+  .find('.v-data-table__expand-icon');
 
 describe('pbehaviors-list', () => {
   const totalItems = 11;
@@ -57,7 +57,7 @@ describe('pbehaviors-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         pbehaviors: [],
-        pagination: {},
+        options: {},
       },
     });
 

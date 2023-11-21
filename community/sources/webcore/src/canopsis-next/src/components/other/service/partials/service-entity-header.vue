@@ -4,13 +4,13 @@
     align-center
   >
     <v-flex @click.stop="">
-      <v-checkbox
+      <v-simple-checkbox
         class="ma-0 pa-0"
-        :input-value="selected"
+        :value="selected"
         :disabled="!selectable"
         color="white"
-        hide-details
-        @change="$emit('update:selected', $event)"
+        dark
+        @input="$emit('update:selected', $event)"
       />
     </v-flex>
     <v-flex class="pa-2">

@@ -10,6 +10,7 @@
         xs6
       >
         <c-entity-category-field
+          class="mt-1"
           v-field="form.category"
           addable
           required

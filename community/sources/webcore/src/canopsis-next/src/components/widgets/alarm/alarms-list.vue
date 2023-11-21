@@ -90,7 +90,7 @@
           v-if="activeRange"
           close
           label
-          @input="removeHistoryFilter"
+          @click:close="removeHistoryFilter"
         >
           {{ $t(`quickRanges.types.${activeRange.value}`) }}
         </v-chip>

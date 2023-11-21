@@ -111,11 +111,13 @@ describe('alarms-list', () => {
   };
   const defaultQuery = {
     filters: [],
+    sortBy: [],
+    sortDesc: [],
     active_columns: widget.parameters.widgetColumns.map(v => v.value),
     correlation: userPreferences.content.isCorrelationEnabled,
     only_bookmarks: userPreferences.content.onlyBookmarks,
     category: userPreferences.content.category,
-    limit: userPreferences.content.itemsPerPage,
+    itemsPerPage: userPreferences.content.itemsPerPage,
     tstart: QUICK_RANGES.last1Year.start,
     tstop: QUICK_RANGES.last1Year.stop,
     opened: null,
@@ -316,7 +318,6 @@ describe('alarms-list', () => {
           ...omit(defaultQuery, ['tstart', 'tstop', 'filters']),
           filter: undefined,
           lockedFilter: null,
-          multiSortBy: [],
           page: 1,
           with_instructions: true,
           with_declare_tickets: true,
@@ -349,7 +350,6 @@ describe('alarms-list', () => {
           ...omit(defaultQuery, ['tstart', 'tstop', 'filters']),
           filter: undefined,
           lockedFilter: null,
-          multiSortBy: [],
           page: 1,
           with_instructions: true,
           with_declare_tickets: true,
@@ -886,7 +886,7 @@ describe('alarms-list', () => {
     updateQuery.mockClear();
 
     const newLimit = Faker.datatype.number();
-    selectAlarmsListTable(wrapper).vm.$emit('update:rows-per-page', newLimit);
+    selectAlarmsListTable(wrapper).vm.$emit('update:items-per-page', newLimit);
 
     await flushPromises();
 
@@ -908,7 +908,7 @@ describe('alarms-list', () => {
         id: widget._id,
         query: {
           ...defaultQuery,
-          limit: newLimit,
+          itemsPerPage: newLimit,
         },
       },
       undefined,
@@ -1537,8 +1537,9 @@ describe('alarms-list', () => {
       {
         widgetId: widget._id,
         params: {
-          ...defaultQuery,
+          ...omit(defaultQuery, ['sortBy', 'sortDesc', 'itemsPerPage']),
 
+          limit: defaultQuery.itemsPerPage,
           tstart: expect.any(Number),
           tstop: expect.any(Number),
         },
@@ -1588,8 +1589,9 @@ describe('alarms-list', () => {
       {
         widgetId: widget._id,
         params: {
-          ...defaultQuery,
+          ...omit(defaultQuery, ['sortBy', 'sortDesc', 'itemsPerPage']),
 
+          limit: defaultQuery.itemsPerPage,
           tstart: expect.any(Number),
           tstop: expect.any(Number),
         },
@@ -1644,8 +1646,9 @@ describe('alarms-list', () => {
       {
         widgetId: widget._id,
         params: {
-          ...defaultQuery,
+          ...omit(defaultQuery, ['sortBy', 'sortDesc', 'itemsPerPage']),
 
+          limit: defaultQuery.itemsPerPage,
           tstart: expect.any(Number),
           tstop: expect.any(Number),
         },

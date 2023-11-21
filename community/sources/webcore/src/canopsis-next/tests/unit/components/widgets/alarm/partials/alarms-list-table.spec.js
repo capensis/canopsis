@@ -149,7 +149,7 @@ describe('alarms-list-table', () => {
       },
     });
 
-    const pagination = {
+    const options = {
       page: Faker.datatype.number(),
       itemsPerPage: Faker.datatype.number(),
       sortBy: [Faker.datatype.string()],
@@ -158,13 +158,13 @@ describe('alarms-list-table', () => {
     };
 
     const table = selectTable(wrapper);
-    table.vm.$emit('update:pagination', pagination);
+    table.vm.$emit('update:options', options);
 
-    const updatePaginationEvents = wrapper.emitted('update:pagination');
-    expect(updatePaginationEvents).toHaveLength(1);
+    const updateOptionsEvents = wrapper.emitted('update:options');
+    expect(updateOptionsEvents).toHaveLength(1);
 
-    const [eventData] = updatePaginationEvents[0];
-    expect(eventData).toEqual(pagination);
+    const [eventData] = updateOptionsEvents[0];
+    expect(eventData).toEqual(options);
   });
 
   it('Resize listener added after mount and removed after destroy', async () => {
@@ -174,7 +174,7 @@ describe('alarms-list-table', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        pagination: {},
+        options: {},
         columns,
         widget: defaultWidget,
         alarms: [],
@@ -192,8 +192,9 @@ describe('alarms-list-table', () => {
 
     expect(addEventListener).toHaveBeenNthCalledWith(
       2,
-      'scroll',
+      'resize',
       expect.any(Function),
+      { passive: true },
     );
 
     expect(addEventListener).toHaveBeenNthCalledWith(
@@ -206,48 +207,96 @@ describe('alarms-list-table', () => {
       4,
       'keyup',
       expect.any(Function),
+    );
+
+    expect(addEventListener).toHaveBeenNthCalledWith(
+      5,
+      'resize',
+      wrapper.vm.changeHeaderPositionOnResize,
+      { passive: true },
+    );
+
+    expect(addEventListener).toHaveBeenNthCalledWith(
+      6,
+      'scroll',
+      wrapper.vm.changeHeaderPosition,
+    );
+
+    expect(addEventListener).toHaveBeenNthCalledWith(
+      7,
+      'keydown',
+      wrapper.vm.enableSelecting,
+    );
+
+    expect(addEventListener).toHaveBeenNthCalledWith(
+      8,
+      'keyup',
+      wrapper.vm.disableSelecting,
+    );
+
+    expect(addEventListener).toHaveBeenNthCalledWith(
+      9,
+      'mousedown',
+      wrapper.vm.mousedownHandler,
+    );
+
+    expect(addEventListener).toHaveBeenNthCalledWith(
+      10,
+      'mouseup',
+      wrapper.vm.mouseupHandler,
     );
 
     await wrapper.setProps({
       stickyHeader: false,
     });
 
-    expect(removeEventListener).toHaveBeenCalledTimes(1);
+    expect(removeEventListener).toHaveBeenNthCalledWith(1, 'scroll', wrapper.vm.changeHeaderPosition);
     removeEventListener.mockClear();
 
     wrapper.destroy();
 
-    expect(removeEventListener).toHaveBeenCalledTimes(6);
+    expect(removeEventListener).toHaveBeenCalledTimes(8);
+
     expect(removeEventListener).toHaveBeenNthCalledWith(
       1,
       'scroll',
-      expect.any(Function),
+      wrapper.vm.changeHeaderPosition,
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
       2,
       'keydown',
-      expect.any(Function),
+      wrapper.vm.enableSelecting,
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
       3,
       'keyup',
-      expect.any(Function),
+      wrapper.vm.disableSelecting,
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
       4,
       'mousedown',
-      expect.any(Function),
+      wrapper.vm.mousedownHandler,
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
       5,
       'mouseup',
-      expect.any(Function),
+      wrapper.vm.mouseupHandler,
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
       6,
       'resize',
-      expect.any(Function),
+      wrapper.vm.changeHeaderPositionOnResize,
       { passive: true },
+    );
+    expect(removeEventListener).toHaveBeenNthCalledWith(
+      7,
+      'keydown',
+      expect.any(Function),
+    );
+    expect(removeEventListener).toHaveBeenNthCalledWith(
+      8,
+      'keyup',
+      expect.any(Function),
     );
   });
 
@@ -327,7 +376,7 @@ describe('alarms-list-table', () => {
 
     wrapper.destroy();
 
-    expect(removeEventListener).toHaveBeenCalledTimes(6);
+    expect(removeEventListener).toHaveBeenCalledTimes(8);
     expect(removeEventListener).toHaveBeenNthCalledWith(
       1,
       'scroll',
@@ -445,7 +494,7 @@ describe('alarms-list-table', () => {
 
     const alarmsListRow = selectAlarmsListRow(wrapper).at(0);
 
-    alarmsListRow.vm.row.expanded = true;
+    alarmsListRow.vm.row.expand(true);
 
     const [firstAlarm] = alarms;
 
@@ -453,11 +502,9 @@ describe('alarms-list-table', () => {
       [firstAlarm._id]: true,
     });
 
-    alarmsListRow.vm.row.expanded = false;
+    alarmsListRow.vm.row.expand(false);
 
-    expect(wrapper.vm.expanded).toEqual({
-      [firstAlarm._id]: false,
-    });
+    expect(wrapper.vm.expanded).toEqual({});
   });
 
   it('Renders `alarms-list-table` with default and required props', () => {
