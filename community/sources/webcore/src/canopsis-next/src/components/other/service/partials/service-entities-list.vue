@@ -36,9 +36,9 @@
     </div>
     <c-table-pagination
       class="mt-1"
-      v-if="totalItems > options.itemsPerPage"
+      v-if="totalItems > options?.itemsPerPage"
       :total-items="totalItems"
-      :items-per-page="options.itemsPerPage"
+      :items-per-page="options?.itemsPerPage"
       :page="options.page"
       @update:page="updatePage"
       @update:items-per-page="updateItemsPerPage"

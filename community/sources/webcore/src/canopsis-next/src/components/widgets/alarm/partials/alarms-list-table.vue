@@ -99,8 +99,12 @@
             />
           </v-fade-transition>
         </template>
-        <template #headerCell="{ header }">
+        <template
+          v-for="item in headers"
+          #[`header.${item.value}`]="{ header }"
+        >
           <alarm-header-cell
+            :key="`header.${item.value}`"
             :header="header"
             :selected-tag="selectedTag"
             :resizing="resizingMode"
@@ -108,11 +112,13 @@
           />
           <template>
             <span
+              :key="`header.${item.value}.drag`"
               class="alarms-list-table__dragging-handler"
               v-if="draggingMode"
               @click.stop=""
             />
             <span
+              :key="`header.cell.${item.value}.resize`"
               class="alarms-list-table__resize-handler"
               v-if="resizingMode"
               @mousedown.stop.prevent="startColumnResize(header.value)"
@@ -324,7 +330,7 @@ export default {
     },
 
     expanded() {
-      return this.$refs.dataTable.expanded;
+      return this.$refs.dataTable.expansion;
     },
 
     isColumnsChanging() {

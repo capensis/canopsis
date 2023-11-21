@@ -9,7 +9,7 @@
         :key="getEntityKey(entity)"
         :close="!isDisabledEntity(entity)"
         :class="{ 'error white--text': isEntityExists(entity) }"
-        @input="$emit('remove', entity)"
+        @click:close="$emit('remove', entity)"
       >
         {{ contentKey ? entity[contentKey] : entity }}
       </v-chip>
