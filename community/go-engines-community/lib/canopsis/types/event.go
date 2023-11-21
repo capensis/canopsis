@@ -492,6 +492,7 @@ func (e *Event) IsPbehaviorEvent() bool {
 		e.EventType == EventTypePbhLeaveAndEnter
 }
 
+// GetStringField is a magic getter for string fields for easier field retrieving when matching event pattern
 func (e *Event) GetStringField(f string) (string, bool) {
 	switch f {
 	case "connector":
@@ -515,6 +516,7 @@ func (e *Event) GetStringField(f string) (string, bool) {
 	}
 }
 
+// GetIntField is a magic getter for int fields for easier field retrieving when matching event pattern
 func (e *Event) GetIntField(f string) (int64, bool) {
 	switch f {
 	case "state":
@@ -524,6 +526,7 @@ func (e *Event) GetIntField(f string) (int64, bool) {
 	}
 }
 
+// GetExtraInfoVal is a magic getter for extra infos fields for easier field retrieving when matching event pattern
 func (e *Event) GetExtraInfoVal(f string) (interface{}, bool) {
 	if v, ok := e.ExtraInfos[f]; ok {
 		return v, true
