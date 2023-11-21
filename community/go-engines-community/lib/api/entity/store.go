@@ -9,9 +9,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/perfdata"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -48,7 +48,7 @@ func NewStore(db, dbExport mongo.DbClient, timezoneConfigProvider config.Timezon
 
 func (s *store) Find(ctx context.Context, r ListRequestWithPagination) (*AggregationResult, error) {
 	location := s.timezoneConfigProvider.Get().Location
-	now := libtime.CpsTime{Time: time.Now().In(location)}
+	now := datetime.CpsTime{Time: time.Now().In(location)}
 
 	pipeline, err := s.getQueryBuilder().CreateListAggregationPipeline(ctx, r, now)
 	if err != nil {
@@ -352,7 +352,7 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 		return nil, err
 	}
 
-	now := libtime.NewCpsTime()
+	now := datetime.NewCpsTime()
 	pipeline, err := s.getQueryBuilder().CreateOnlyListAggregationPipeline(ctx, ListRequest{
 		BaseFilterRequest: r,
 		SearchBy:          t.Fields.Fields(),

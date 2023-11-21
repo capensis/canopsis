@@ -7,10 +7,10 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	liblink "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
@@ -167,7 +167,7 @@ func (c *mongoCursor) transformField(i int, f export.Field, v any, model types.A
 		"v.last_event_date",
 		"v.resolved":
 		if i, ok := c.getInt64(v); ok {
-			return libtime.NewCpsTime(i).In(c.location).Time.Format(c.timeFormat), nil
+			return datetime.NewCpsTime(i).In(c.location).Time.Format(c.timeFormat), nil
 		}
 	case "v.infos":
 		values := make([]string, 0)
@@ -213,7 +213,7 @@ func (c *mongoCursor) transformField(i int, f export.Field, v any, model types.A
 	default:
 		if strings.HasSuffix(f.Name, ".t") {
 			if i, ok := c.getInt64(v); ok {
-				return libtime.NewCpsTime(i).In(c.location).Time.Format(c.timeFormat), nil
+				return datetime.NewCpsTime(i).In(c.location).Time.Format(c.timeFormat), nil
 			}
 		}
 

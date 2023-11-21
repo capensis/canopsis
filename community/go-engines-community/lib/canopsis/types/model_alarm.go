@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -98,14 +98,14 @@ const (
 
 // Alarm represents an alarm document.
 type Alarm struct {
-	ID       string          `bson:"_id" json:"_id"`
-	Time     libtime.CpsTime `bson:"t" json:"t"`
-	EntityID string          `bson:"d" json:"d"`
+	ID       string           `bson:"_id" json:"_id"`
+	Time     datetime.CpsTime `bson:"t" json:"t"`
+	EntityID string           `bson:"d" json:"d"`
 
-	Tags                []string          `bson:"tags" json:"tags"`
-	ExternalTags        []string          `bson:"etags" json:"etags"`
-	InternalTags        []string          `bson:"itags" json:"itags"`
-	InternalTagsUpdated libtime.MicroTime `bson:"itags_upd" json:"itags_upd"`
+	Tags                []string           `bson:"tags" json:"tags"`
+	ExternalTags        []string           `bson:"etags" json:"etags"`
+	InternalTags        []string           `bson:"itags" json:"itags"`
+	InternalTagsUpdated datetime.MicroTime `bson:"itags_upd" json:"itags_upd"`
 	// todo move all field from Value to Alarm
 	Value AlarmValue `bson:"v" json:"v"`
 	// update contains alarm changes after last mongo update. Use functions Update* to
@@ -124,9 +124,9 @@ type Alarm struct {
 	KpiExecutedAutoInstructions []string `bson:"kpi_executed_auto_instructions,omitempty" json:"kpi_executed_auto_instructions,omitempty"`
 
 	// is used only for not acked metrics
-	NotAckedMetricType     string           `bson:"not_acked_metric_type,omitempty" json:"-"`
-	NotAckedMetricSendTime *libtime.CpsTime `bson:"not_acked_metric_send_time,omitempty" json:"-"`
-	NotAckedSince          *libtime.CpsTime `bson:"not_acked_since,omitempty" json:"-"`
+	NotAckedMetricType     string            `bson:"not_acked_metric_type,omitempty" json:"-"`
+	NotAckedMetricSendTime *datetime.CpsTime `bson:"not_acked_metric_send_time,omitempty" json:"-"`
+	NotAckedSince          *datetime.CpsTime `bson:"not_acked_since,omitempty" json:"-"`
 
 	// InactiveAutoInstructionInProgress shows that autoremediation is launched and alarm is not active until the remediation is finished
 	InactiveAutoInstructionInProgress bool `bson:"auto_instruction_in_progress,omitempty" json:"auto_instruction_in_progress,omitempty"`
@@ -260,7 +260,7 @@ func (a *Alarm) IsSnoozed() bool {
 	}
 
 	snoozeEnd := a.Value.Snooze.Value.CpsTimestamp()
-	return snoozeEnd.After(libtime.NewCpsTime())
+	return snoozeEnd.After(datetime.NewCpsTime())
 }
 
 // IsStateLocked checks that the Alarm is not Locked (by manual intervention for example)
@@ -401,7 +401,7 @@ func (a *Alarm) SetMetaValuePath(path string) {
 }
 
 func (a *Alarm) Activate() {
-	now := libtime.NewCpsTime()
+	now := datetime.NewCpsTime()
 	a.Value.ActivationDate = &now
 }
 

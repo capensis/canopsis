@@ -9,7 +9,7 @@ import (
 	"text/template"
 	"time"
 
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/kylelemons/godebug/pretty"
 )
@@ -111,7 +111,7 @@ func TestFunctions(t *testing.T) {
 			{
 				Tpl: `{{ .TestDate | localtime "Mon, 02 Jan 2006 15:04:05 MST" "Australia/Queensland" }}`,
 				TplData: map[string]any{
-					"TestDate": libtime.CpsTime{
+					"TestDate": datetime.CpsTime{
 						Time: time.Date(2021, time.October, 28, 7, 5, 0, 0, time.UTC),
 					},
 				},
@@ -120,7 +120,7 @@ func TestFunctions(t *testing.T) {
 			{
 				Tpl: `{{ .TestDate | localtime "Mon, 02 Jan 2006 15:04:05 MST" }}`,
 				TplData: map[string]any{
-					"TestDate": libtime.CpsTime{
+					"TestDate": datetime.CpsTime{
 						Time: time.Date(2021, time.October, 28, 7, 5, 0, 0, time.UTC),
 					},
 				},
@@ -259,7 +259,7 @@ func TestAddEnvVarsToData(t *testing.T) {
 				"KpiExecutedAutoInstructions":       alarm.KpiExecutedAutoInstructions,
 				"Tags":                              alarm.Tags,
 				"InternalTags":                      alarm.InternalTags,
-				"InternalTagsUpdated":               libtime.MicroTime{},
+				"InternalTagsUpdated":               datetime.MicroTime{},
 				"ExternalTags":                      alarm.ExternalTags,
 				"Time":                              alarm.Time,
 				"Value":                             alarm.Value,
@@ -282,7 +282,7 @@ func TestAddEnvVarsToData(t *testing.T) {
 				"KpiExecutedAutoInstructions":       alarm.KpiExecutedAutoInstructions,
 				"Tags":                              alarm.Tags,
 				"InternalTags":                      alarm.InternalTags,
-				"InternalTagsUpdated":               libtime.MicroTime{},
+				"InternalTagsUpdated":               datetime.MicroTime{},
 				"ExternalTags":                      alarm.ExternalTags,
 				"Time":                              alarm.Time,
 				"Value":                             alarm.Value,
@@ -305,7 +305,7 @@ func TestAddEnvVarsToData(t *testing.T) {
 				"KpiExecutedAutoInstructions":       alarm.KpiExecutedAutoInstructions,
 				"Tags":                              alarm.Tags,
 				"InternalTags":                      alarm.InternalTags,
-				"InternalTagsUpdated":               libtime.MicroTime{},
+				"InternalTagsUpdated":               datetime.MicroTime{},
 				"ExternalTags":                      alarm.ExternalTags,
 				"Time":                              alarm.Time,
 				"Value":                             alarm.Value,
@@ -332,7 +332,7 @@ func TestAddEnvVarsToData(t *testing.T) {
 				"KpiExecutedAutoInstructions":       alarm.KpiExecutedAutoInstructions,
 				"Tags":                              alarm.Tags,
 				"InternalTags":                      alarm.InternalTags,
-				"InternalTagsUpdated":               libtime.MicroTime{},
+				"InternalTagsUpdated":               datetime.MicroTime{},
 				"ExternalTags":                      alarm.ExternalTags,
 				"Time":                              alarm.Time,
 				"Value":                             alarm.Value,
@@ -359,7 +359,7 @@ func TestAddEnvVarsToData(t *testing.T) {
 				"KpiExecutedAutoInstructions":       alarm.KpiExecutedAutoInstructions,
 				"Tags":                              alarm.Tags,
 				"InternalTags":                      alarm.InternalTags,
-				"InternalTagsUpdated":               libtime.MicroTime{},
+				"InternalTagsUpdated":               datetime.MicroTime{},
 				"ExternalTags":                      alarm.ExternalTags,
 				"Time":                              alarm.Time,
 				"Value":                             alarm.Value,
@@ -386,7 +386,7 @@ func TestAddEnvVarsToData(t *testing.T) {
 				"KpiExecutedAutoInstructions":       alarm.KpiExecutedAutoInstructions,
 				"Tags":                              alarm.Tags,
 				"InternalTags":                      alarm.InternalTags,
-				"InternalTagsUpdated":               libtime.MicroTime{},
+				"InternalTagsUpdated":               datetime.MicroTime{},
 				"ExternalTags":                      alarm.ExternalTags,
 				"Time":                              alarm.Time,
 				"Value":                             alarm.Value,

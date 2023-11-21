@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/rs/zerolog"
 )
@@ -22,7 +22,7 @@ func TestRedisDelayedScenarioStorage_Add(t *testing.T) {
 	scenario := action.DelayedScenario{
 		ScenarioID:    "test-scenario-id",
 		AlarmID:       "test-alarm-id",
-		ExecutionTime: libtime.NewCpsTime(),
+		ExecutionTime: datetime.NewCpsTime(),
 		Paused:        false,
 		TimeLeft:      0,
 	}
@@ -43,7 +43,7 @@ func TestRedisDelayedScenarioStorage_Get(t *testing.T) {
 	expectedScenario := action.DelayedScenario{
 		ScenarioID:    "test-scenario-id",
 		AlarmID:       "test-alarm-id",
-		ExecutionTime: libtime.NewCpsTime(),
+		ExecutionTime: datetime.NewCpsTime(),
 		Paused:        false,
 		TimeLeft:      0,
 	}
@@ -75,14 +75,14 @@ func TestRedisDelayedScenarioStorage_GetAll(t *testing.T) {
 		{
 			ScenarioID:    "test-scenario-id-1",
 			AlarmID:       "test-alarm-id-1",
-			ExecutionTime: libtime.NewCpsTime(),
+			ExecutionTime: datetime.NewCpsTime(),
 			Paused:        false,
 			TimeLeft:      0,
 		},
 		{
 			ScenarioID:    "test-scenario-id-2",
 			AlarmID:       "test-alarm-id-2",
-			ExecutionTime: libtime.NewCpsTime(),
+			ExecutionTime: datetime.NewCpsTime(),
 			Paused:        false,
 			TimeLeft:      0,
 		},
@@ -123,7 +123,7 @@ func TestRedisDelayedScenarioStorage_Delete(t *testing.T) {
 	scenario := action.DelayedScenario{
 		ScenarioID:    "test-scenario-id",
 		AlarmID:       "test-alarm-id",
-		ExecutionTime: libtime.NewCpsTime(),
+		ExecutionTime: datetime.NewCpsTime(),
 		Paused:        false,
 		TimeLeft:      0,
 	}
@@ -160,7 +160,7 @@ func TestRedisDelayedScenarioStorage_Update(t *testing.T) {
 	expectedScenario := action.DelayedScenario{
 		ScenarioID:    "test-scenario-id",
 		AlarmID:       "test-alarm-id",
-		ExecutionTime: libtime.NewCpsTime(),
+		ExecutionTime: datetime.NewCpsTime(),
 		Paused:        false,
 		TimeLeft:      0,
 	}

@@ -7,7 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
-func ValidatePBehaviorInfoPattern(p pattern.PBehaviorInfo) bool {
+func ValidatePbehaviorInfoPattern(p pattern.PbehaviorInfo) bool {
 	emptyPbhInfo := types.PbehaviorInfo{}
 
 	for _, group := range p {
@@ -35,7 +35,7 @@ func ValidatePBehaviorInfoPattern(p pattern.PBehaviorInfo) bool {
 	return true
 }
 
-func MatchPBehaviorInfoPattern(p pattern.PBehaviorInfo, pbhInfo *types.PbehaviorInfo) (bool, error) {
+func MatchPbehaviorInfoPattern(p pattern.PbehaviorInfo, pbhInfo *types.PbehaviorInfo) (bool, error) {
 	if len(p) == 0 {
 		return true, nil
 	}

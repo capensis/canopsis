@@ -4,11 +4,11 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 )
 
 func CanRun(
-	lastExecuted libtime.CpsTime,
+	lastExecuted datetime.CpsTime,
 	scheduledTime *config.ScheduledTime,
 	location *time.Location,
 ) bool {
@@ -17,7 +17,7 @@ func CanRun(
 		return false
 	}
 	// Check now = schedule.
-	now := libtime.NewCpsTime().In(location)
+	now := datetime.NewCpsTime().In(location)
 	if now.Weekday() != scheduledTime.Weekday || now.Hour() != scheduledTime.Hour {
 		return false
 	}

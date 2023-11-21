@@ -4,10 +4,9 @@ import (
 	"context"
 	"sync"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 )
@@ -49,7 +48,7 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (type
 	defer s.rulesMutex.RUnlock()
 
 	outcome := OutcomePass
-	now := libtime.NewCpsTime()
+	now := datetime.NewCpsTime()
 
 	for _, rule := range s.rules {
 		if outcome != OutcomePass {

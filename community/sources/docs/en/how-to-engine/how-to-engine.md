@@ -294,12 +294,12 @@ Let's add an additional field to the event structure that we want to populate wi
 
 ```go
 
-import libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
+import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 
 type Event struct {
     //.....
     
-	LoggedAt libtime.CpsTime `json:"logged_at"`
+	LoggedAt datetime.CpsTime `json:"logged_at"`
 }
 ```
 
@@ -313,7 +313,7 @@ import (
 	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
@@ -341,7 +341,7 @@ func (p *messageProcessor) Process(_ context.Context, d amqp.Delivery) ([]byte, 
 		return nil, errors.New("alarm is nil")
 	}
 
-	event.LoggedAt = libtime.NewCpsTime()
+	event.LoggedAt = datetime.NewCpsTime()
 
 	p.logger.Info().Str("entity_id", event.Entity.ID).Str("alarm_id", event.Alarm.ID).Msg("log")
 
@@ -570,7 +570,7 @@ First of all we need to define message formats, basically we need request and re
 ```go
 package types
 
-import libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
+import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 
 type LogsRpcRequest struct {
 	EntityID string `json:"entity_id"`
@@ -578,7 +578,7 @@ type LogsRpcRequest struct {
 }
 
 type LogsRpcResponse struct {
-	LoggedAt libtime.CpsTime `json:"logged_at"`
+	LoggedAt datetime.CpsTime `json:"logged_at"`
 }
 ```
 
@@ -625,7 +625,7 @@ import (
 	"context"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 	"github.com/streadway/amqp"
@@ -647,7 +647,7 @@ func (p *messageProcessor) Process(_ context.Context, d amqp.Delivery) ([]byte, 
 	}
 
 	p.logger.Info().Str("entity_id", request.EntityID).Str("alarm_id", request.AlarmID).Msg("log")
-	response.LoggedAt = libtime.NewCpsTime()
+	response.LoggedAt = datetime.NewCpsTime()
 
 	body, err := p.Encoder.Encode(response)
 	if err != nil {

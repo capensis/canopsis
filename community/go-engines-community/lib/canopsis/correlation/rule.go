@@ -1,10 +1,10 @@
 package correlation
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
@@ -31,8 +31,8 @@ type Rule struct {
 	savedpattern.AlarmPatternFields  `bson:",inline"`
 	TotalEntityPatternFields         `bson:",inline"`
 
-	Created *libtime.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated *libtime.CpsTime `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	Created *datetime.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Updated *datetime.CpsTime `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 }
 
 func (r *Rule) Matches(alarmWithEntity types.AlarmWithEntity) (bool, error) {

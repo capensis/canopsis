@@ -1,3 +1,3 @@
 package pattern
 
-type PBehaviorInfo [][]FieldCondition
+type PbehaviorInfo [][]FieldCondition

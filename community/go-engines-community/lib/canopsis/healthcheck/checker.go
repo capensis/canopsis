@@ -3,9 +3,9 @@ package healthcheck
 import (
 	"context"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -58,7 +58,7 @@ func (c *checker) Check(ctx context.Context) error {
 }
 
 func (c *checker) createEvent() types.Event {
-	now := libtime.NewCpsTime()
+	now := datetime.NewCpsTime()
 	event := types.Event{
 		EventType:     types.EventTypeCheck,
 		State:         eventState,

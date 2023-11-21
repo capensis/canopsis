@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	libreflect "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/reflect"
 )
 
@@ -276,9 +276,9 @@ func GetFunctions(appLocation *time.Location) template.FuncMap {
 
 func castTime(v interface{}) (time.Time, bool) {
 	switch t := v.(type) {
-	case libtime.CpsTime:
+	case datetime.CpsTime:
 		return t.Time, true
-	case *libtime.CpsTime:
+	case *datetime.CpsTime:
 		if t == nil {
 			return time.Time{}, false
 		}

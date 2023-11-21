@@ -1,15 +1,15 @@
 package pbehavior
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 )
 
 type Comment struct {
-	ID        string           `bson:"_id" json:"_id"`
-	Author    string           `bson:"author" json:"author"`
-	Timestamp *libtime.CpsTime `bson:"ts" json:"ts" swaggertype:"integer"`
-	Message   string           `bson:"message" json:"message"`
+	ID        string            `bson:"_id" json:"_id"`
+	Author    string            `bson:"author" json:"author"`
+	Timestamp *datetime.CpsTime `bson:"ts" json:"ts" swaggertype:"integer"`
+	Message   string            `bson:"message" json:"message"`
 }
 
 const (
@@ -33,26 +33,26 @@ type Comments []*Comment
 
 // PBehavior represents a canopsis periodical behavior.
 type PBehavior struct {
-	ID            string           `bson:"_id,omitempty"`
-	Author        string           `bson:"author"`
-	Comments      Comments         `bson:"comments,omitempty"`
-	Enabled       bool             `bson:"enabled"`
-	Name          string           `bson:"name"`
-	Reason        string           `bson:"reason"`
-	Type          string           `bson:"type_"`
-	Exdates       []Exdate         `bson:"exdates"`
-	Exceptions    []string         `bson:"exceptions"`
-	Color         string           `bson:"color"`
-	Created       *libtime.CpsTime `bson:"created,omitempty"`
-	Updated       *libtime.CpsTime `bson:"updated,omitempty"`
-	LastAlarmDate *libtime.CpsTime `bson:"last_alarm_date,omitempty"`
+	ID            string            `bson:"_id,omitempty"`
+	Author        string            `bson:"author"`
+	Comments      Comments          `bson:"comments,omitempty"`
+	Enabled       bool              `bson:"enabled"`
+	Name          string            `bson:"name"`
+	Reason        string            `bson:"reason"`
+	Type          string            `bson:"type_"`
+	Exdates       []Exdate          `bson:"exdates"`
+	Exceptions    []string          `bson:"exceptions"`
+	Color         string            `bson:"color"`
+	Created       *datetime.CpsTime `bson:"created,omitempty"`
+	Updated       *datetime.CpsTime `bson:"updated,omitempty"`
+	LastAlarmDate *datetime.CpsTime `bson:"last_alarm_date,omitempty"`
 
-	Start    *libtime.CpsTime `bson:"tstart"`
-	Stop     *libtime.CpsTime `bson:"tstop,omitempty"`
-	RRule    string           `bson:"rrule"`
-	RRuleEnd *libtime.CpsTime `bson:"rrule_end,omitempty"`
+	Start    *datetime.CpsTime `bson:"tstart"`
+	Stop     *datetime.CpsTime `bson:"tstop,omitempty"`
+	RRule    string            `bson:"rrule"`
+	RRuleEnd *datetime.CpsTime `bson:"rrule_end,omitempty"`
 	// RRuleComputedStart is an auxiliary start date to compute rrule faster.
-	RRuleComputedStart *libtime.CpsTime `bson:"rrule_cstart,omitempty"`
+	RRuleComputedStart *datetime.CpsTime `bson:"rrule_cstart,omitempty"`
 
 	// Origin is used if a pbehavior is created for certain entity.
 	// Origin can contain some feature name or external service name.

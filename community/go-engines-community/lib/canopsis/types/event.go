@@ -10,7 +10,7 @@ import (
 	"regexp"
 	"time"
 
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
@@ -143,8 +143,8 @@ type Event struct {
 	Author string `bson:"author" json:"author"`
 	UserID string `bson:"user_id" json:"user_id"`
 
-	Timestamp         libtime.CpsTime   `bson:"timestamp" json:"timestamp"`
-	ReceivedTimestamp libtime.MicroTime `bson:"rt" json:"rt"`
+	Timestamp         datetime.CpsTime   `bson:"timestamp" json:"timestamp"`
+	ReceivedTimestamp datetime.MicroTime `bson:"rt" json:"rt"`
 
 	RK          string                 `bson:"routing_key" json:"routing_key"`
 	Duration    CpsNumber              `bson:"duration,omitempty" json:"duration,omitempty"`
@@ -212,11 +212,11 @@ type Event struct {
 //	if "entity" is not null, "impacts" and "depends" are ensured to be initialized
 func (e *Event) Format() {
 	//events can't be later or earlier than MaxEventTimestampVariation
-	now := libtime.NewCpsTime()
+	now := datetime.NewCpsTime()
 	if e.Timestamp.IsZero() || e.Timestamp.Time.Before(now.Add(-MaxEventTimestampVariation)) || e.Timestamp.Time.After(now.Add(MaxEventTimestampVariation)) {
 		e.Timestamp = now
 	}
-	e.ReceivedTimestamp = libtime.NewMicroTime()
+	e.ReceivedTimestamp = datetime.NewMicroTime()
 	if e.EventType == "" {
 		e.EventType = EventTypeCheck
 	}
@@ -404,7 +404,7 @@ func (e *Event) GetRequiredKeys() []string {
 
 var cpsNumberType = reflect.TypeOf(CpsNumber(0))
 var cpsNumberPtrType = reflect.PtrTo(cpsNumberType)
-var cpsTimeType = reflect.TypeOf(libtime.CpsTime{})
+var cpsTimeType = reflect.TypeOf(datetime.CpsTime{})
 var stringType = reflect.TypeOf("")
 var stringPtrType = reflect.PtrTo(stringType)
 var boolType = reflect.TypeOf(false)
@@ -455,7 +455,7 @@ func (e *Event) SetField(name string, value interface{}) (err error) {
 		if !success {
 			return fmt.Errorf("%[1]T value cannot be converted to an integer: %+[1]v", value)
 		}
-		cpsTimeValue := libtime.CpsTime{Time: time.Unix(integerValue, 0)}
+		cpsTimeValue := datetime.CpsTime{Time: time.Unix(integerValue, 0)}
 		field.Set(reflect.ValueOf(cpsTimeValue))
 
 	case stringType:
