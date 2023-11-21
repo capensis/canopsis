@@ -7,12 +7,12 @@ import (
 	"math"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
@@ -386,7 +386,7 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 		return types.Entity{}, nil, nil
 	}
 
-	now := libtime.NewCpsTime()
+	now := datetime.NewCpsTime()
 	if event.EventType == types.EventTypeCheck {
 		eventEntity.LastEventDate = &now
 	}
@@ -408,7 +408,7 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 					{
 						ID:            connectorID,
 						Name:          connectorName,
-						EnableHistory: []libtime.CpsTime{now},
+						EnableHistory: []datetime.CpsTime{now},
 						Enabled:       true,
 						Type:          types.EntityTypeConnector,
 						Infos:         map[string]types.Info{},
@@ -434,7 +434,7 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 				ID:            event.Component,
 				Name:          event.Component,
 				Connector:     connectorID,
-				EnableHistory: []libtime.CpsTime{now},
+				EnableHistory: []datetime.CpsTime{now},
 				Enabled:       true,
 				Type:          types.EntityTypeComponent,
 				Component:     event.Component,
@@ -466,7 +466,7 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 				{
 					ID:            connectorID,
 					Name:          connectorName,
-					EnableHistory: []libtime.CpsTime{now},
+					EnableHistory: []datetime.CpsTime{now},
 					Enabled:       true,
 					Type:          types.EntityTypeConnector,
 					Infos:         map[string]types.Info{},
@@ -501,7 +501,7 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 			contextGraphEntities = append(contextGraphEntities, types.Entity{
 				ID:            connectorID,
 				Name:          connectorName,
-				EnableHistory: []libtime.CpsTime{now},
+				EnableHistory: []datetime.CpsTime{now},
 				Enabled:       true,
 				Type:          types.EntityTypeConnector,
 				Infos:         map[string]types.Info{},
@@ -559,7 +559,7 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 				ID:            event.Component,
 				Name:          event.Component,
 				Connector:     connectorID,
-				EnableHistory: []libtime.CpsTime{now},
+				EnableHistory: []datetime.CpsTime{now},
 				Enabled:       true,
 				Type:          types.EntityTypeComponent,
 				Component:     event.Component,
@@ -575,7 +575,7 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 		return types.Entity{
 			ID:             event.Resource + "/" + event.Component,
 			Name:           event.Resource,
-			EnableHistory:  []libtime.CpsTime{now},
+			EnableHistory:  []datetime.CpsTime{now},
 			Enabled:        true,
 			Type:           types.EntityTypeResource,
 			Connector:      connectorID,
@@ -607,7 +607,7 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 		contextGraphEntities = append(contextGraphEntities, types.Entity{
 			ID:            connectorID,
 			Name:          connectorName,
-			EnableHistory: []libtime.CpsTime{now},
+			EnableHistory: []datetime.CpsTime{now},
 			Enabled:       true,
 			Type:          types.EntityTypeConnector,
 			Infos:         map[string]types.Info{},
@@ -736,7 +736,7 @@ func (m *manager) FillResourcesWithInfos(ctx context.Context, component types.En
 	return resources, nil
 }
 
-func (m *manager) UpdateLastEventDate(ctx context.Context, eventType string, entityID string, timestamp libtime.CpsTime) error {
+func (m *manager) UpdateLastEventDate(ctx context.Context, eventType string, entityID string, timestamp datetime.CpsTime) error {
 	if eventType != types.EventTypeCheck {
 		return nil
 	}

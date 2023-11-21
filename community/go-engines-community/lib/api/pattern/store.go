@@ -6,15 +6,14 @@ import (
 	"fmt"
 	"reflect"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -93,7 +92,7 @@ func NewStore(
 }
 
 func (s *store) Insert(ctx context.Context, request EditRequest) (*Response, error) {
-	now := libtime.NewCpsTime()
+	now := datetime.NewCpsTime()
 	model := transformRequestToModel(request)
 	model.ID = utils.NewID()
 	model.Created = now
@@ -199,7 +198,7 @@ func (s *store) Find(ctx context.Context, request ListRequest, userId string) (*
 }
 
 func (s *store) Update(ctx context.Context, request EditRequest) (*Response, error) {
-	now := libtime.NewCpsTime()
+	now := datetime.NewCpsTime()
 	model := transformRequestToModel(request)
 	model.ID = request.ID
 	model.Updated = now
@@ -488,7 +487,7 @@ func (s *store) CountAlarms(ctx context.Context, r CountRequest, maxCount int64)
 		}
 	}
 	if len(r.PbehaviorPattern) > 0 {
-		pbhPatternQuery, err = db.PBehaviorInfoPatternToMongoQuery(r.PbehaviorPattern, "v")
+		pbhPatternQuery, err = db.PbehaviorInfoPatternToMongoQuery(r.PbehaviorPattern, "v")
 		if err != nil {
 			return res, err
 		}
@@ -633,7 +632,7 @@ func (s *store) CountEntities(ctx context.Context, r CountRequest, maxCount int6
 		}
 	}
 	if len(r.PbehaviorPattern) > 0 {
-		pbhPatternQuery, err = db.PBehaviorInfoPatternToMongoQuery(r.PbehaviorPattern, "")
+		pbhPatternQuery, err = db.PbehaviorInfoPatternToMongoQuery(r.PbehaviorPattern, "")
 		if err != nil {
 			return res, err
 		}

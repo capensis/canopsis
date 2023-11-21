@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
@@ -27,10 +27,10 @@ func (r eventManager) GetEvent(resolveResult ResolveResult, alarm types.Alarm, n
 		ConnectorName: alarm.Value.ConnectorName,
 		Component:     alarm.Value.Component,
 		Resource:      alarm.Value.Resource,
-		Timestamp:     libtime.CpsTime{Time: now},
+		Timestamp:     datetime.CpsTime{Time: now},
 		EventType:     eventType,
 		Output:        output,
-		PbehaviorInfo: NewPBehaviorInfo(libtime.CpsTime{Time: now}, resolveResult),
+		PbehaviorInfo: NewPBehaviorInfo(datetime.CpsTime{Time: now}, resolveResult),
 		Initiator:     types.InitiatorSystem,
 	}
 
@@ -79,7 +79,7 @@ func NewEventManager() EventManager {
 	return eventManager{}
 }
 
-func NewPBehaviorInfo(time libtime.CpsTime, result ResolveResult) types.PbehaviorInfo {
+func NewPBehaviorInfo(time datetime.CpsTime, result ResolveResult) types.PbehaviorInfo {
 	if result.ResolvedType.ID == "" {
 		return types.PbehaviorInfo{}
 	}

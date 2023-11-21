@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_amqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/amqp"
 	mock_encoding "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/encoding"
@@ -55,7 +55,7 @@ func TestActivationService_Process_GivenInactiveAlarm_ShouldPublishEvent(t *test
 		).
 		Times(1)
 
-	_, err := service.Process(ctx, alarm, libtime.NewMicroTime())
+	_, err := service.Process(ctx, alarm, datetime.NewMicroTime())
 	if err != nil {
 		t.Errorf("exepected not error but got %v", err)
 	}
@@ -121,7 +121,7 @@ func TestActivationService_Process_GivenInactiveAlarm_ShouldPublishActiveEvent(t
 			gomock.Any(),
 		)
 
-	_, err := service.Process(ctx, alarm, libtime.NewMicroTime())
+	_, err := service.Process(ctx, alarm, datetime.NewMicroTime())
 	if err != nil {
 		t.Errorf("exepected not error but got %v", err)
 	}
@@ -165,7 +165,7 @@ func TestActivationService_Process_GivenInactiveAndSnoozedAlarm_ShouldNotPublish
 		).
 		Times(0)
 
-	_, err := service.Process(ctx, alarm, libtime.NewMicroTime())
+	_, err := service.Process(ctx, alarm, datetime.NewMicroTime())
 	if err != nil {
 		t.Errorf("exepected not error but got %v", err)
 	}
@@ -208,7 +208,7 @@ func TestActivationService_Process_GivenInactiveAlarmWithActivePBehavior_ShouldN
 		).
 		Times(0)
 
-	_, err := service.Process(ctx, alarm, libtime.NewMicroTime())
+	_, err := service.Process(ctx, alarm, datetime.NewMicroTime())
 	if err != nil {
 		t.Errorf("exepected not error but got %v", err)
 	}
@@ -229,7 +229,7 @@ func TestActivationService_Process_GivenActiveAlarm_ShouldNotPublishEvent(t *tes
 		logger,
 	)
 
-	now := libtime.NewCpsTime()
+	now := datetime.NewCpsTime()
 	alarm := types.Alarm{
 		Value: types.AlarmValue{
 			ActivationDate: &now,
@@ -252,7 +252,7 @@ func TestActivationService_Process_GivenActiveAlarm_ShouldNotPublishEvent(t *tes
 		).
 		Times(0)
 
-	_, err := service.Process(ctx, alarm, libtime.NewMicroTime())
+	_, err := service.Process(ctx, alarm, datetime.NewMicroTime())
 	if err != nil {
 		t.Errorf("exepected not error but got %v", err)
 	}

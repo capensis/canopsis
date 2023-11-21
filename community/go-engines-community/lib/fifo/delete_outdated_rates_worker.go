@@ -6,7 +6,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
@@ -32,7 +32,7 @@ func (w *deleteOutdatedRatesWorker) Work(ctx context.Context) {
 		return
 	}
 
-	var lastExecuted libtime.CpsTime
+	var lastExecuted datetime.CpsTime
 	if conf.History.HealthCheck != nil {
 		lastExecuted = *conf.History.HealthCheck
 	}
@@ -43,7 +43,7 @@ func (w *deleteOutdatedRatesWorker) Work(ctx context.Context) {
 	}
 
 	d := conf.Config.HealthCheck.DeleteAfter
-	if libtime.IsDurationEnabledAndValid(d) {
+	if datetime.IsDurationEnabledAndValid(d) {
 		mongoClient, err := mongo.NewClientWithOptions(ctx, 0, 0, 0,
 			w.DataStorageConfigProvider.Get().MongoClientTimeout, w.Logger)
 		if err != nil {
@@ -57,7 +57,7 @@ func (w *deleteOutdatedRatesWorker) Work(ctx context.Context) {
 			}
 		}()
 
-		now := libtime.NewCpsTime()
+		now := datetime.NewCpsTime()
 		deleted, err := w.delete(ctx, mongoClient.Collection(mongo.MessageRateStatsHourCollectionName), d.SubFrom(now),
 			w.DataStorageConfigProvider.Get().MaxUpdates)
 		if err != nil {
@@ -75,7 +75,7 @@ func (w *deleteOutdatedRatesWorker) Work(ctx context.Context) {
 	}
 }
 
-func (w *deleteOutdatedRatesWorker) delete(ctx context.Context, dbCollection mongo.DbCollection, before libtime.CpsTime, limit int) (int64, error) {
+func (w *deleteOutdatedRatesWorker) delete(ctx context.Context, dbCollection mongo.DbCollection, before datetime.CpsTime, limit int) (int64, error) {
 	opts := options.Find().SetProjection(bson.M{"_id": 1})
 	if limit > 0 {
 		opts.SetLimit(int64(limit))

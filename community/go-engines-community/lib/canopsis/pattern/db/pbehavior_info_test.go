@@ -4,19 +4,19 @@ import (
 	"errors"
 	"testing"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/kylelemons/godebug/pretty"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func TestPbehaviorInfo_ToMongoQuery(t *testing.T) {
+func TestPbehaviorInfoPatternToMongoQuery(t *testing.T) {
 	dataSets := getPbehaviorInfoMongoQueryDataSets()
 
 	for name, data := range dataSets {
 		t.Run(name, func(t *testing.T) {
-			query, err := db.PBehaviorInfoPatternToMongoQuery(data.pattern, "alarm")
+			query, err := db.PbehaviorInfoPatternToMongoQuery(data.pattern, "alarm")
 			if !errors.Is(err, data.mongoQueryErr) {
 				t.Errorf("expected error %v but got %v", data.mongoQueryErr, err)
 			}
@@ -30,7 +30,7 @@ func TestPbehaviorInfo_ToMongoQuery(t *testing.T) {
 func getPbehaviorInfoMongoQueryDataSets() map[string]PbehaviorInfoDataSet {
 	return map[string]PbehaviorInfoDataSet{
 		"given one condition": {
-			pattern: pattern.PBehaviorInfo{
+			pattern: pattern.PbehaviorInfo{
 				{
 					{
 						Field:     "pbehavior_info.id",
@@ -45,7 +45,7 @@ func getPbehaviorInfoMongoQueryDataSets() map[string]PbehaviorInfoDataSet {
 			}},
 		},
 		"given multiple conditions": {
-			pattern: pattern.PBehaviorInfo{
+			pattern: pattern.PbehaviorInfo{
 				{
 					{
 						Field:     "pbehavior_info.id",
@@ -65,7 +65,7 @@ func getPbehaviorInfoMongoQueryDataSets() map[string]PbehaviorInfoDataSet {
 			}},
 		},
 		"given multiple groups": {
-			pattern: pattern.PBehaviorInfo{
+			pattern: pattern.PbehaviorInfo{
 				{
 					{
 						Field:     "pbehavior_info.id",
@@ -89,7 +89,7 @@ func getPbehaviorInfoMongoQueryDataSets() map[string]PbehaviorInfoDataSet {
 			}},
 		},
 		"given invalid condition type": {
-			pattern: pattern.PBehaviorInfo{
+			pattern: pattern.PbehaviorInfo{
 				{
 					{
 						Field:     "pbehavior_info.id",
@@ -100,7 +100,7 @@ func getPbehaviorInfoMongoQueryDataSets() map[string]PbehaviorInfoDataSet {
 			mongoQueryErr: pattern.ErrUnsupportedConditionType,
 		},
 		"given invalid condition value": {
-			pattern: pattern.PBehaviorInfo{
+			pattern: pattern.PbehaviorInfo{
 				{
 					{
 						Field:     "pbehavior_info.id",
@@ -111,32 +111,32 @@ func getPbehaviorInfoMongoQueryDataSets() map[string]PbehaviorInfoDataSet {
 			mongoQueryErr: pattern.ErrWrongConditionValue,
 		},
 		"given equal to active canonical type condition": {
-			pattern: pattern.PBehaviorInfo{
+			pattern: pattern.PbehaviorInfo{
 				{
 					{
 						Field:     "pbehavior_info.canonical_type",
-						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "active"),
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, types.PbhCanonicalTypeActive),
 					},
 				},
 			},
 			mongoQueryResult: bson.M{"$or": []bson.M{
 				{"$and": []bson.M{
-					{"alarm.pbehavior_info.canonical_type": bson.M{"$in": bson.A{nil, "active"}}},
+					{"alarm.pbehavior_info.canonical_type": bson.M{"$in": bson.A{nil, types.PbhCanonicalTypeActive}}},
 				}},
 			}},
 		},
 		"given not equal to active canonical type condition": {
-			pattern: pattern.PBehaviorInfo{
+			pattern: pattern.PbehaviorInfo{
 				{
 					{
 						Field:     "pbehavior_info.canonical_type",
-						Condition: pattern.NewStringCondition(pattern.ConditionNotEqual, "active"),
+						Condition: pattern.NewStringCondition(pattern.ConditionNotEqual, types.PbhCanonicalTypeActive),
 					},
 				},
 			},
 			mongoQueryResult: bson.M{"$or": []bson.M{
 				{"$and": []bson.M{
-					{"alarm.pbehavior_info.canonical_type": bson.M{"$nin": bson.A{nil, "active"}}},
+					{"alarm.pbehavior_info.canonical_type": bson.M{"$nin": bson.A{nil, types.PbhCanonicalTypeActive}}},
 				}},
 			}},
 		},
@@ -144,7 +144,7 @@ func getPbehaviorInfoMongoQueryDataSets() map[string]PbehaviorInfoDataSet {
 }
 
 type PbehaviorInfoDataSet struct {
-	pattern          pattern.PBehaviorInfo
+	pattern          pattern.PbehaviorInfo
 	mongoQueryErr    error
 	mongoQueryResult bson.M
 }

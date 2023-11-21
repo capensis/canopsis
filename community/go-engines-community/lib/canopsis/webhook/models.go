@@ -1,8 +1,8 @@
 package webhook
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 )
 
 const (
@@ -43,7 +43,7 @@ type History struct {
 	UserID          string                        `bson:"user,omitempty" json:"user,omitempty"`
 	Username        string                        `bson:"username,omitempty" json:"username,omitempty"`
 	Initiator       string                        `bson:"initiator,omitempty" json:"initiator,omitempty"`
-	CreatedAt       libtime.CpsTime               `bson:"created_at" json:"created_at"`
-	LaunchedAt      libtime.CpsTime               `bson:"launched_at,omitempty" json:"launched_at,omitempty"`
-	CompletedAt     libtime.CpsTime               `bson:"completed_at,omitempty" json:"completed_at,omitempty"`
+	CreatedAt       datetime.CpsTime              `bson:"created_at" json:"created_at"`
+	LaunchedAt      datetime.CpsTime              `bson:"launched_at,omitempty" json:"launched_at,omitempty"`
+	CompletedAt     datetime.CpsTime              `bson:"completed_at,omitempty" json:"completed_at,omitempty"`
 }

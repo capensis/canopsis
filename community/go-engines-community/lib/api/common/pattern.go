@@ -90,7 +90,7 @@ func (r EntityPatternFieldsRequest) ToModelWithoutFields(forbiddenFields []strin
 }
 
 type PbehaviorPatternFieldsRequest struct {
-	PbehaviorPattern          pattern.PBehaviorInfo `json:"pbehavior_pattern" binding:"pbehavior_pattern"`
+	PbehaviorPattern          pattern.PbehaviorInfo `json:"pbehavior_pattern" binding:"pbehavior_pattern"`
 	CorporatePbehaviorPattern string                `json:"corporate_pbehavior_pattern"`
 
 	CorporatePattern savedpattern.SavedPattern `json:"-"`
@@ -227,12 +227,12 @@ func ValidatePbehaviorPattern(fl validator.FieldLevel) bool {
 	if i == nil {
 		return true
 	}
-	p, ok := i.(pattern.PBehaviorInfo)
+	p, ok := i.(pattern.PbehaviorInfo)
 	if !ok {
 		return false
 	}
 
-	return match.ValidatePBehaviorInfoPattern(p)
+	return match.ValidatePbehaviorInfoPattern(p)
 }
 
 func GetForbiddenFieldsInEntityPattern(collection string) []string {

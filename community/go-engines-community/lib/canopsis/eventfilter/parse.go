@@ -3,11 +3,11 @@ package eventfilter
 import (
 	"fmt"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
@@ -16,16 +16,16 @@ type ParsedRule struct {
 	Type         string
 	Config       ParsedRuleConfig
 	ExternalData map[string]ParsedExternalDataParameters
-	Created      *libtime.CpsTime
-	Updated      *libtime.CpsTime
+	Created      *datetime.CpsTime
+	Updated      *datetime.CpsTime
 
 	EventPattern pattern.Event
 	savedpattern.EntityPatternFields
 
-	ResolvedStart     *libtime.CpsTime
-	ResolvedStop      *libtime.CpsTime
-	NextResolvedStart *libtime.CpsTime
-	NextResolvedStop  *libtime.CpsTime
+	ResolvedStart     *datetime.CpsTime
+	ResolvedStop      *datetime.CpsTime
+	NextResolvedStart *datetime.CpsTime
+	NextResolvedStop  *datetime.CpsTime
 	ResolvedExdates   []types.Exdate
 }
 

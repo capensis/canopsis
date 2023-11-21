@@ -7,7 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
@@ -96,7 +96,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Scenario, error) {
 }
 
 func (s *store) Insert(ctx context.Context, r CreateRequest) (*Scenario, error) {
-	now := libtime.NewCpsTime()
+	now := datetime.NewCpsTime()
 	model := s.transformer.TransformEditRequestToModel(r.EditRequest)
 
 	if r.ID == "" {
@@ -132,7 +132,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Scenario, error) 
 }
 
 func (s *store) Update(ctx context.Context, r UpdateRequest) (*Scenario, error) {
-	now := libtime.NewCpsTime()
+	now := datetime.NewCpsTime()
 	model := s.transformer.TransformEditRequestToModel(r.EditRequest)
 	model.Updated = now
 

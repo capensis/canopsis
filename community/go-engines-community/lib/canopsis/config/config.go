@@ -3,7 +3,7 @@ package config
 import (
 	"time"
 
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 )
 
 // Some default values related to configuration
@@ -142,6 +142,6 @@ type VersionConf struct {
 	Edition string `bson:"edition"`
 	Stack   string `bson:"stack"`
 
-	Version        string           `bson:"version"`
-	VersionUpdated *libtime.CpsTime `bson:"version_updated,omitempty"`
+	Version        string            `bson:"version"`
+	VersionUpdated *datetime.CpsTime `bson:"version_updated,omitempty"`
 }

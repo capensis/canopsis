@@ -8,8 +8,8 @@ import (
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -315,7 +315,7 @@ func (s *store) sendEvent(ctx context.Context, event types.Event) error {
 	event.Connector = canopsis.ApiName
 	event.ConnectorName = canopsis.ApiName
 	event.Initiator = types.InitiatorUser
-	event.Timestamp = libtime.NewCpsTime()
+	event.Timestamp = datetime.NewCpsTime()
 	event.SourceType = event.DetectSourceType()
 	body, err := s.encoder.Encode(event)
 	if err != nil {

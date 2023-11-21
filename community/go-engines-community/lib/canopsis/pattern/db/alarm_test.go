@@ -5,14 +5,14 @@ import (
 	"testing"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"github.com/kylelemons/godebug/pretty"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func TestAlarm_ToMongoQuery(t *testing.T) {
+func TestAlarmPatternToMongoQuery(t *testing.T) {
 	dataSets := getAlarmMongoQueryDataSets()
 
 	for name, data := range dataSets {
@@ -33,7 +33,7 @@ func TestAlarm_ToMongoQuery(t *testing.T) {
 }
 
 func getAlarmMongoQueryDataSets() map[string]alarmDataSet {
-	durationCond, err := pattern.NewDurationCondition(pattern.ConditionGT, libtime.DurationWithUnit{
+	durationCond, err := pattern.NewDurationCondition(pattern.ConditionGT, datetime.DurationWithUnit{
 		Value: 3,
 		Unit:  "s",
 	})
@@ -275,8 +275,8 @@ func getAlarmMongoQueryDataSets() map[string]alarmDataSet {
 			mongoQueryResult: bson.M{"$or": []bson.M{
 				{"$and": []bson.M{
 					{"alarm.v.activation_date": bson.M{
-						"$gt": libtime.NewCpsTime(from),
-						"$lt": libtime.NewCpsTime(to),
+						"$gt": datetime.NewCpsTime(from),
+						"$lt": datetime.NewCpsTime(to),
 					}},
 				}},
 			}},

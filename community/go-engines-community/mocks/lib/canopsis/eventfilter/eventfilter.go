@@ -8,8 +8,8 @@ import (
 	context "context"
 	reflect "reflect"
 
+	datetime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
-	time "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	types "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	gomock "github.com/golang/mock/gomock"
 )
@@ -355,7 +355,7 @@ func (m *MockEventCounter) EXPECT() *MockEventCounterMockRecorder {
 }
 
 // Add mocks base method.
-func (m *MockEventCounter) Add(arg0 string, arg1 time.CpsTime) {
+func (m *MockEventCounter) Add(arg0 string, arg1 datetime.CpsTime) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "Add", arg0, arg1)
 }
