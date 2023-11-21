@@ -6,7 +6,6 @@
     :close-on-content-click="false"
     :open-on-click="false"
     offset-x
-    lazy
   >
     <template #activator="{ on }">
       <v-layout
