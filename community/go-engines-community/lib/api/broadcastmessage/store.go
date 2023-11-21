@@ -8,7 +8,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
@@ -37,7 +37,7 @@ func (s store) Insert(ctx context.Context, model *BroadcastMessage) error {
 		model.ID = utils.NewID()
 	}
 
-	now := libtime.NewCpsTime()
+	now := datetime.NewCpsTime()
 	model.Created = &now
 	model.Updated = &now
 
@@ -97,7 +97,7 @@ func (s store) Find(ctx context.Context, query FilteredQuery) (*AggregationResul
 func (s store) Update(ctx context.Context, model *BroadcastMessage) (bool, error) {
 	var data BroadcastMessage
 
-	updated := libtime.NewCpsTime()
+	updated := datetime.NewCpsTime()
 	model.Created = nil
 	model.Updated = &updated
 

@@ -13,9 +13,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/expression/parser"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -126,7 +126,7 @@ func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider)
 	}
 }
 
-func (q *MongoQueryBuilder) clear(now libtime.CpsTime, userID string) {
+func (q *MongoQueryBuilder) clear(now datetime.CpsTime, userID string) {
 	q.searchPipeline = make([]bson.M, 0)
 	q.alarmMatch = make([]bson.M, 0)
 	q.additionalMatch = []bson.M{
@@ -157,7 +157,7 @@ func (q *MongoQueryBuilder) clear(now libtime.CpsTime, userID string) {
 	q.excludedFields = []string{"bookmarks", "v.steps", "pbehavior.comments", "pbehavior_info_type", "entity.services"}
 }
 
-func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r ListRequestWithPagination, now libtime.CpsTime, userID string) ([]bson.M, error) {
+func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r ListRequestWithPagination, now datetime.CpsTime, userID string) ([]bson.M, error) {
 	q.clear(now, userID)
 
 	err := q.handleWidgetFilter(ctx, r.FilterRequest)
@@ -181,7 +181,7 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	return q.createPaginationAggregationPipeline(r.Query), nil
 }
 
-func (q *MongoQueryBuilder) CreateCountAggregationPipeline(ctx context.Context, r FilterRequest, userID string, now libtime.CpsTime) ([]bson.M, error) {
+func (q *MongoQueryBuilder) CreateCountAggregationPipeline(ctx context.Context, r FilterRequest, userID string, now datetime.CpsTime) ([]bson.M, error) {
 	q.clear(now, userID)
 
 	err := q.handleWidgetFilter(ctx, r)
@@ -200,7 +200,7 @@ func (q *MongoQueryBuilder) CreateCountAggregationPipeline(ctx context.Context, 
 
 func (q *MongoQueryBuilder) CreateGetAggregationPipeline(
 	match bson.M,
-	now libtime.CpsTime,
+	now datetime.CpsTime,
 	userID string,
 	onlyParents bool,
 ) ([]bson.M, error) {
@@ -232,7 +232,7 @@ func (q *MongoQueryBuilder) CreateAggregationPipelineByMatch(
 	paginationQuery pagination.Query,
 	sortRequest SortRequest,
 	filterRequest FilterRequest,
-	now libtime.CpsTime,
+	now datetime.CpsTime,
 	userID string,
 ) ([]bson.M, error) {
 	q.clear(now, userID)
@@ -265,7 +265,7 @@ func (q *MongoQueryBuilder) CreateChildrenAggregationPipeline(
 	search string,
 	userID string,
 	searchBy []string,
-	now libtime.CpsTime,
+	now datetime.CpsTime,
 ) ([]bson.M, error) {
 	q.clear(now, userID)
 	q.handleDependencies(true)
@@ -398,7 +398,7 @@ func (q *MongoQueryBuilder) CreateChildrenAggregationPipeline(
 func (q *MongoQueryBuilder) CreateOnlyListAggregationPipeline(
 	ctx context.Context,
 	r ListRequest,
-	now libtime.CpsTime,
+	now datetime.CpsTime,
 	userID string,
 ) ([]bson.M, error) {
 	q.clear(now, userID)
@@ -605,7 +605,7 @@ func (q *MongoQueryBuilder) handlePatterns(r FilterRequest) error {
 	}
 
 	if r.PbehaviorPattern != "" {
-		var pbehaviorPattern pattern.PBehaviorInfo
+		var pbehaviorPattern pattern.PbehaviorInfo
 		err := json.Unmarshal([]byte(r.PbehaviorPattern), &pbehaviorPattern)
 		if err != nil {
 			return common.NewValidationError("pbehavior_pattern", "PbehaviorPattern is invalid.")
@@ -655,8 +655,8 @@ func (q *MongoQueryBuilder) handleAlarmPattern(alarmPattern pattern.Alarm) error
 	return nil
 }
 
-func (q *MongoQueryBuilder) handlePbehaviorPattern(pbehaviorPattern pattern.PBehaviorInfo) error {
-	pbhPatternQuery, err := db.PBehaviorInfoPatternToMongoQuery(pbehaviorPattern, "v")
+func (q *MongoQueryBuilder) handlePbehaviorPattern(pbehaviorPattern pattern.PbehaviorInfo) error {
+	pbhPatternQuery, err := db.PbehaviorInfoPatternToMongoQuery(pbehaviorPattern, "v")
 	if err != nil {
 		return err
 	}
@@ -1366,7 +1366,7 @@ func getInstructionExecutionLookup(withType bool) []bson.M {
 	return pipeline
 }
 
-func getComputedFields(now libtime.CpsTime, userID string) bson.M {
+func getComputedFields(now datetime.CpsTime, userID string) bson.M {
 	computedFields := bson.M{
 		"infos":        "$v.infos",
 		"impact_state": bson.M{"$multiply": bson.A{"$v.state.val", "$entity.impact_level"}},

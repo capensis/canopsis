@@ -11,9 +11,9 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -64,7 +64,7 @@ func NewMongoQueryBuilder(client mongo.DbClient) *MongoQueryBuilder {
 	}
 }
 
-func (q *MongoQueryBuilder) clear(now libtime.CpsTime) {
+func (q *MongoQueryBuilder) clear(now datetime.CpsTime) {
 	q.entityMatch = []bson.M{{"$match": bson.M{
 		"soft_deleted": bson.M{"$exists": false},
 		"healthcheck":  bson.M{"$in": bson.A{nil, false}},
@@ -89,7 +89,7 @@ func (q *MongoQueryBuilder) clear(now libtime.CpsTime) {
 	q.excludedFields = []string{"services", "alarm", "event_stats", "pbehavior_info_type"}
 }
 
-func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r ListRequestWithPagination, now libtime.CpsTime) ([]bson.M, error) {
+func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r ListRequestWithPagination, now datetime.CpsTime) ([]bson.M, error) {
 	q.clear(now)
 
 	err := q.handleWidgetFilter(ctx, r.ListRequest, now)
@@ -128,7 +128,7 @@ func (q *MongoQueryBuilder) CreateTreeOfDepsAggregationPipeline(
 	sortRequest SortRequest,
 	category, search string,
 	withFlags bool,
-	now libtime.CpsTime,
+	now datetime.CpsTime,
 ) []bson.M {
 	q.clear(now)
 
@@ -159,7 +159,7 @@ func (q *MongoQueryBuilder) CreateTreeOfDepsAggregationPipeline(
 	)
 }
 
-func (q *MongoQueryBuilder) CreateCountAggregationPipeline(ctx context.Context, r ListRequestWithPagination, now libtime.CpsTime) ([]bson.M, error) {
+func (q *MongoQueryBuilder) CreateCountAggregationPipeline(ctx context.Context, r ListRequestWithPagination, now datetime.CpsTime) ([]bson.M, error) {
 	q.clear(now)
 
 	err := q.handleWidgetFilter(ctx, r.ListRequest, now)
@@ -176,7 +176,7 @@ func (q *MongoQueryBuilder) CreateCountAggregationPipeline(ctx context.Context, 
 	return beforeLimit, nil
 }
 
-func (q *MongoQueryBuilder) CreateOnlyListAggregationPipeline(ctx context.Context, r ListRequest, now libtime.CpsTime) ([]bson.M, error) {
+func (q *MongoQueryBuilder) CreateOnlyListAggregationPipeline(ctx context.Context, r ListRequest, now datetime.CpsTime) ([]bson.M, error) {
 	q.clear(now)
 
 	err := q.handleWidgetFilter(ctx, r, now)
@@ -289,7 +289,7 @@ func (q *MongoQueryBuilder) handleFilter(r ListRequest) error {
 	return nil
 }
 
-func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListRequest, now libtime.CpsTime) error {
+func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListRequest, now datetime.CpsTime) error {
 	for i, id := range r.Filters {
 		filter := view.WidgetFilter{}
 		err := q.filterCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&filter)
@@ -315,7 +315,7 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListReques
 			q.entityMatch = append(q.entityMatch, bson.M{"$match": entityPatternQuery})
 		}
 
-		pbhPatternQuery, err := db.PBehaviorInfoPatternToMongoQuery(filter.PbehaviorPattern, "")
+		pbhPatternQuery, err := db.PbehaviorInfoPatternToMongoQuery(filter.PbehaviorPattern, "")
 		if err != nil {
 			return fmt.Errorf("invalid pbehavior pattern in widget filter id=%q: %w", filter.ID, err)
 		}
@@ -520,9 +520,9 @@ func getPbehaviorInfoTypeLookup() []bson.M {
 	}
 }
 
-func getEventStatsLookup(now libtime.CpsTime) []bson.M {
+func getEventStatsLookup(now datetime.CpsTime) []bson.M {
 	year, month, day := now.Date()
-	truncatedInLocation := libtime.CpsTime{Time: time.Date(year, month, day, 0, 0, 0, 0, now.Location())}
+	truncatedInLocation := datetime.CpsTime{Time: time.Date(year, month, day, 0, 0, 0, 0, now.Location())}
 
 	return []bson.M{
 		{"$lookup": bson.M{
@@ -634,7 +634,7 @@ func getComputedFields() bson.M {
 	}
 }
 
-func getDurationField(now libtime.CpsTime) bson.M {
+func getDurationField(now datetime.CpsTime) bson.M {
 	return bson.M{"$ifNull": bson.A{
 		"$alarm.v.duration",
 		bson.M{"$subtract": bson.A{

@@ -6,19 +6,19 @@ import (
 	"fmt"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/redis/go-redis/v9"
 )
 
 type DelayedScenario struct {
-	ID            string          `json:"id"`
-	ScenarioID    string          `json:"scenario_id"`
-	AlarmID       string          `json:"alarm_id"`
-	ExecutionTime libtime.CpsTime `json:"execution_time"`
-	Paused        bool            `json:"paused"`
-	TimeLeft      time.Duration   `json:"time_left"`
+	ID            string           `json:"id"`
+	ScenarioID    string           `json:"scenario_id"`
+	AlarmID       string           `json:"alarm_id"`
+	ExecutionTime datetime.CpsTime `json:"execution_time"`
+	Paused        bool             `json:"paused"`
+	TimeLeft      time.Duration    `json:"time_left"`
 
 	AdditionalData AdditionalData `json:"additional_data"`
 }

@@ -2,7 +2,7 @@ package colortheme
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 )
 
 type EditRequest struct {
@@ -17,12 +17,12 @@ type BulkDeleteRequestItem struct {
 }
 
 type Theme struct {
-	ID        string          `bson:"_id" json:"_id"`
-	Name      string          `bson:"name" json:"name"`
-	Colors    Colors          `bson:"colors" json:"colors"`
-	FontSize  int             `bson:"font_size" json:"font_size"`
-	Updated   libtime.CpsTime `bson:"updated" json:"updated" swaggertype:"integer"`
-	Deletable bool            `bson:"deletable" json:"deletable"`
+	ID        string           `bson:"_id" json:"_id"`
+	Name      string           `bson:"name" json:"name"`
+	Colors    Colors           `bson:"colors" json:"colors"`
+	FontSize  int              `bson:"font_size" json:"font_size"`
+	Updated   datetime.CpsTime `bson:"updated" json:"updated" swaggertype:"integer"`
+	Deletable bool             `bson:"deletable" json:"deletable"`
 }
 
 type Colors struct {

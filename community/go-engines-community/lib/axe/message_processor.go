@@ -6,11 +6,11 @@ import (
 	"time"
 
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/axe/event"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -145,9 +145,9 @@ func (p *MessageProcessor) transformEvent(event types.Event) rpc.AxeEvent {
 	}
 
 	if event.Duration > 0 {
-		params.Duration = &libtime.DurationWithUnit{
+		params.Duration = &datetime.DurationWithUnit{
 			Value: int64(event.Duration),
-			Unit:  libtime.DurationUnitSecond,
+			Unit:  datetime.DurationUnitSecond,
 		}
 	}
 

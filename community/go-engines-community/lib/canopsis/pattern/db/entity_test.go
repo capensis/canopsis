@@ -10,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func TestEntity_ToMongoQuery(t *testing.T) {
+func TestEntityPatternToMongoQuery(t *testing.T) {
 	dataSets := getEntityToMongoQueryDataSets()
 
 	for name, data := range dataSets {
@@ -26,7 +26,7 @@ func TestEntity_ToMongoQuery(t *testing.T) {
 	}
 }
 
-func TestEntity_ToSql(t *testing.T) {
+func TestEntityPatternToSql(t *testing.T) {
 	dataSets := getEntityToSqlDataSets()
 
 	for name, data := range dataSets {

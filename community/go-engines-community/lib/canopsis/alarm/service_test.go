@@ -9,8 +9,8 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
@@ -38,13 +38,13 @@ func TestService_ResolveCancels(t *testing.T) {
 		{
 			"given canceled alarms with cancel time < CancelAutosolveDelay should return empty result",
 			[]types.Alarm{
-				newCancelAlarm(libtime.CpsTime{
+				newCancelAlarm(datetime.CpsTime{
 					Time: time.Now(),
 				}),
-				newCancelAlarm(libtime.CpsTime{
+				newCancelAlarm(datetime.CpsTime{
 					Time: time.Now(),
 				}),
-				newCancelAlarm(libtime.CpsTime{
+				newCancelAlarm(datetime.CpsTime{
 					Time: time.Now(),
 				}),
 			},
@@ -54,13 +54,13 @@ func TestService_ResolveCancels(t *testing.T) {
 		{
 			"given canceled alarms and canceled alarms with cancel time > CancelAutosolveDelay should return count of alarms with time > CancelAutosolveDelay",
 			[]types.Alarm{
-				newCancelAlarm(libtime.CpsTime{
+				newCancelAlarm(datetime.CpsTime{
 					Time: time.Now(),
 				}),
-				newCancelAlarm(libtime.CpsTime{
+				newCancelAlarm(datetime.CpsTime{
 					Time: time.Now().Add(-config.AlarmCancelAutosolveDelay),
 				}),
-				newCancelAlarm(libtime.CpsTime{
+				newCancelAlarm(datetime.CpsTime{
 					Time: time.Now().Add(-config.AlarmCancelAutosolveDelay),
 				}),
 			},
@@ -70,13 +70,13 @@ func TestService_ResolveCancels(t *testing.T) {
 		{
 			"given canceled alarms with valid time should return count of alarms",
 			[]types.Alarm{
-				newCancelAlarm(libtime.CpsTime{
+				newCancelAlarm(datetime.CpsTime{
 					Time: time.Now().Add(-config.AlarmCancelAutosolveDelay),
 				}),
-				newCancelAlarm(libtime.CpsTime{
+				newCancelAlarm(datetime.CpsTime{
 					Time: time.Now().Add(-config.AlarmCancelAutosolveDelay),
 				}),
-				newCancelAlarm(libtime.CpsTime{
+				newCancelAlarm(datetime.CpsTime{
 					Time: time.Now().Add(-config.AlarmCancelAutosolveDelay),
 				}),
 			},
@@ -86,13 +86,13 @@ func TestService_ResolveCancels(t *testing.T) {
 		{
 			"given find error should return error",
 			[]types.Alarm{
-				newCancelAlarm(libtime.CpsTime{
+				newCancelAlarm(datetime.CpsTime{
 					Time: time.Now().Add(-config.AlarmCancelAutosolveDelay),
 				}),
-				newCancelAlarm(libtime.CpsTime{
+				newCancelAlarm(datetime.CpsTime{
 					Time: time.Now().Add(-config.AlarmCancelAutosolveDelay),
 				}),
-				newCancelAlarm(libtime.CpsTime{
+				newCancelAlarm(datetime.CpsTime{
 					Time: time.Now().Add(-config.AlarmCancelAutosolveDelay),
 				}),
 			},
@@ -247,7 +247,7 @@ func TestService_ResolveSnoozes(t *testing.T) {
 	}
 }
 
-func newCancelAlarm(time libtime.CpsTime) types.Alarm {
+func newCancelAlarm(time datetime.CpsTime) types.Alarm {
 	return types.Alarm{
 		Value: types.AlarmValue{
 			Canceled: &types.AlarmStep{
@@ -263,7 +263,7 @@ func newSnoozedAlarm(snoozeStart time.Time, snoozeEnd time.Time) types.Alarm {
 		Value: types.AlarmValue{
 			Snooze: &types.AlarmStep{
 				Type:      types.AlarmStepSnooze,
-				Timestamp: libtime.NewCpsTime(snoozeStart.Unix()),
+				Timestamp: datetime.NewCpsTime(snoozeStart.Unix()),
 				Author:    "",
 				Message:   "",
 				Value:     types.CpsNumber(snoozeEnd.Unix()),
@@ -280,7 +280,7 @@ func newSnoozedAlarmWithActivePbh(snoozeStart time.Time, snoozeEnd time.Time) ty
 			},
 			Snooze: &types.AlarmStep{
 				Type:      types.AlarmStepSnooze,
-				Timestamp: libtime.NewCpsTime(snoozeStart.Unix()),
+				Timestamp: datetime.NewCpsTime(snoozeStart.Unix()),
 				Author:    "",
 				Message:   "",
 				Value:     types.CpsNumber(snoozeEnd.Unix()),
@@ -297,7 +297,7 @@ func newSnoozedAlarmWithMaintenancePbh(snoozeStart time.Time, snoozeEnd time.Tim
 			},
 			Snooze: &types.AlarmStep{
 				Type:      types.AlarmStepSnooze,
-				Timestamp: libtime.NewCpsTime(snoozeStart.Unix()),
+				Timestamp: datetime.NewCpsTime(snoozeStart.Unix()),
 				Author:    "",
 				Message:   "",
 				Value:     types.CpsNumber(snoozeEnd.Unix()),

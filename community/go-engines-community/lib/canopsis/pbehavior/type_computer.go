@@ -6,9 +6,9 @@ import (
 	"context"
 	"fmt"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	"golang.org/x/sync/errgroup"
 )
@@ -283,11 +283,11 @@ func (c *typeComputer) computePbehavior(
 	eventComputer EventComputer,
 	models models,
 ) (ComputedPbehavior, error) {
-	var start, end libtime.CpsTime
+	var start, end datetime.CpsTime
 	if pbehavior.RRuleComputedStart != nil && pbehavior.RRuleComputedStart.Time.Before(span.From()) {
 		start = *pbehavior.RRuleComputedStart
 		if pbehavior.Stop != nil && pbehavior.Start != nil {
-			end = libtime.CpsTime{Time: start.Add(pbehavior.Stop.Sub(pbehavior.Start.Time))}
+			end = datetime.CpsTime{Time: start.Add(pbehavior.Stop.Sub(pbehavior.Start.Time))}
 		}
 	} else if pbehavior.Start != nil {
 		start = *pbehavior.Start

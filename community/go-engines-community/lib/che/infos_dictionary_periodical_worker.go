@@ -7,8 +7,8 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
@@ -74,7 +74,7 @@ func (w *infosDictionaryPeriodicalWorker) Work(ctx context.Context) {
 		return
 	}
 
-	now := libtime.NewCpsTime()
+	now := datetime.NewCpsTime()
 
 	entCursor, err := w.entityCollection.Find(
 		ctx,
@@ -170,7 +170,7 @@ func (w *infosDictionaryPeriodicalWorker) Work(ctx context.Context) {
 	}
 }
 
-func (w *infosDictionaryPeriodicalWorker) buildDictionary(ctx context.Context, entIds []string, t libtime.CpsTime) error {
+func (w *infosDictionaryPeriodicalWorker) buildDictionary(ctx context.Context, entIds []string, t datetime.CpsTime) error {
 	cursor, err := w.entityCollection.Aggregate(
 		ctx,
 		[]bson.M{

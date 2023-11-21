@@ -5,15 +5,14 @@ import (
 	"fmt"
 	"testing"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func TestEntity_Match(t *testing.T) {
-	dataSets := getEntityMatchDataSets()
+func TestMatchEntityPattern(t *testing.T) {
+	dataSets := getMatchEntityPatternDataSets()
 
 	for name, data := range dataSets {
 		t.Run(name, func(t *testing.T) {
@@ -43,7 +42,7 @@ type entityDataSet struct {
 	matchResult bool
 }
 
-func getEntityMatchDataSets() map[string]entityDataSet {
+func getMatchEntityPatternDataSets() map[string]entityDataSet {
 	return map[string]entityDataSet{
 		"given empty pattern should match": {
 			pattern: pattern.Entity{},
@@ -421,7 +420,7 @@ func getEntityMatchDataSets() map[string]entityDataSet {
 	}
 }
 
-func BenchmarkEntity_Match_Equal(b *testing.B) {
+func BenchmarkMatchEntityPattern_Equal(b *testing.B) {
 	cond := pattern.FieldCondition{
 		Field:     "name",
 		Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name 2"),
@@ -430,10 +429,10 @@ func BenchmarkEntity_Match_Equal(b *testing.B) {
 		Name: "test name",
 	}
 
-	benchmarkEntityMatch(b, cond, entity)
+	benchmarkMatchEntityPattern(b, cond, entity)
 }
 
-func BenchmarkEntity_Match_Regexp(b *testing.B) {
+func BenchmarkMatchEntityPattern_Regexp(b *testing.B) {
 	regexpCondition, err := pattern.NewRegexpCondition(pattern.ConditionRegexp, "^test .+name$")
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)
@@ -446,10 +445,10 @@ func BenchmarkEntity_Match_Regexp(b *testing.B) {
 		Name: "test name",
 	}
 
-	benchmarkEntityMatch(b, cond, entity)
+	benchmarkMatchEntityPattern(b, cond, entity)
 }
 
-func BenchmarkEntity_Match_HasOneOf(b *testing.B) {
+func BenchmarkMatchEntityPattern_HasOneOf(b *testing.B) {
 	const condValueSize = 10
 	const valueSize = 10
 	condValue := make([]string, condValueSize)
@@ -476,10 +475,10 @@ func BenchmarkEntity_Match_HasOneOf(b *testing.B) {
 		},
 	}
 
-	benchmarkEntityMatch(b, cond, entity)
+	benchmarkMatchEntityPattern(b, cond, entity)
 }
 
-func BenchmarkEntity_Match_Infos_Equal(b *testing.B) {
+func BenchmarkMatchEntityPattern_Infos_Equal(b *testing.B) {
 	cond := pattern.FieldCondition{
 		Field:     "infos.test",
 		FieldType: pattern.FieldTypeString,
@@ -494,10 +493,10 @@ func BenchmarkEntity_Match_Infos_Equal(b *testing.B) {
 		},
 	}
 
-	benchmarkEntityMatch(b, cond, entity)
+	benchmarkMatchEntityPattern(b, cond, entity)
 }
 
-func BenchmarkEntity_Match_Infos_Regexp(b *testing.B) {
+func BenchmarkMatchEntityPattern_Infos_Regexp(b *testing.B) {
 	regexpCondition, err := pattern.NewRegexpCondition(pattern.ConditionRegexp, "^test .+name$")
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)
@@ -516,10 +515,10 @@ func BenchmarkEntity_Match_Infos_Regexp(b *testing.B) {
 		},
 	}
 
-	benchmarkEntityMatch(b, cond, entity)
+	benchmarkMatchEntityPattern(b, cond, entity)
 }
 
-func BenchmarkEntity_UnmarshalBsonAndMatch_Equal(b *testing.B) {
+func BenchmarkMatchEntityPattern_UnmarshalBson_Equal(b *testing.B) {
 	cond := pattern.FieldCondition{
 		Field: "name",
 		Condition: pattern.Condition{
@@ -531,10 +530,10 @@ func BenchmarkEntity_UnmarshalBsonAndMatch_Equal(b *testing.B) {
 		Name: "test name",
 	}
 
-	benchmarkEntityUnmarshalBsonAndMatch(b, cond, entity)
+	benchmarkMatchEntityPatternUnmarshalBson(b, cond, entity)
 }
 
-func BenchmarkEntity_UnmarshalBsonAndMatch_Regexp(b *testing.B) {
+func BenchmarkMatchEntityPattern_UnmarshalBson_Regexp(b *testing.B) {
 	cond := pattern.FieldCondition{
 		Field: "name",
 		Condition: pattern.Condition{
@@ -546,10 +545,10 @@ func BenchmarkEntity_UnmarshalBsonAndMatch_Regexp(b *testing.B) {
 		Name: "test name",
 	}
 
-	benchmarkEntityUnmarshalBsonAndMatch(b, cond, entity)
+	benchmarkMatchEntityPatternUnmarshalBson(b, cond, entity)
 }
 
-func BenchmarkEntity_UnmarshalBsonAndMatch_HasOneOf(b *testing.B) {
+func BenchmarkMatchEntityPattern_UnmarshalBson_HasOneOf(b *testing.B) {
 	const condValueSize = 100
 	const valueSize = 1000
 	condValue := make([]string, condValueSize)
@@ -579,10 +578,10 @@ func BenchmarkEntity_UnmarshalBsonAndMatch_HasOneOf(b *testing.B) {
 		},
 	}
 
-	benchmarkEntityUnmarshalBsonAndMatch(b, cond, entity)
+	benchmarkMatchEntityPatternUnmarshalBson(b, cond, entity)
 }
 
-func BenchmarkEntity_UnmarshalBsonAndMatch_Infos_Equal(b *testing.B) {
+func BenchmarkMatchEntityPattern_UnmarshalBson_Infos_Equal(b *testing.B) {
 	cond := pattern.FieldCondition{
 		Field:     "infos.test",
 		FieldType: pattern.FieldTypeString,
@@ -600,10 +599,10 @@ func BenchmarkEntity_UnmarshalBsonAndMatch_Infos_Equal(b *testing.B) {
 		},
 	}
 
-	benchmarkEntityUnmarshalBsonAndMatch(b, cond, entity)
+	benchmarkMatchEntityPatternUnmarshalBson(b, cond, entity)
 }
 
-func BenchmarkEntity_UnmarshalBsonAndMatch_Infos_Regexp(b *testing.B) {
+func BenchmarkMatchEntityPattern_UnmarshalBson_Infos_Regexp(b *testing.B) {
 	cond := pattern.FieldCondition{
 		Field:     "infos.test",
 		FieldType: pattern.FieldTypeString,
@@ -621,10 +620,10 @@ func BenchmarkEntity_UnmarshalBsonAndMatch_Infos_Regexp(b *testing.B) {
 		},
 	}
 
-	benchmarkEntityUnmarshalBsonAndMatch(b, cond, entity)
+	benchmarkMatchEntityPatternUnmarshalBson(b, cond, entity)
 }
 
-func benchmarkEntityMatch(b *testing.B, fieldCond pattern.FieldCondition, entity *types.Entity) {
+func benchmarkMatchEntityPattern(b *testing.B, fieldCond pattern.FieldCondition, entity *types.Entity) {
 	const size = 1
 	p := make(pattern.Entity, size)
 	for i := 0; i < size; i++ {
@@ -641,7 +640,7 @@ func benchmarkEntityMatch(b *testing.B, fieldCond pattern.FieldCondition, entity
 	}
 }
 
-func benchmarkEntityUnmarshalBsonAndMatch(b *testing.B, fieldCond pattern.FieldCondition, entity *types.Entity) {
+func benchmarkMatchEntityPatternUnmarshalBson(b *testing.B, fieldCond pattern.FieldCondition, entity *types.Entity) {
 	const size = 100
 	p := make(pattern.Entity, size)
 	for i := 0; i < size; i++ {

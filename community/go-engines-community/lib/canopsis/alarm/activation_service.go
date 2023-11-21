@@ -4,9 +4,8 @@ import (
 	"context"
 
 	amqplib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
@@ -15,7 +14,7 @@ import (
 // ActivationService checks alarm and sends activation event
 // if alarm doesn't have active snooze and pbehavior.
 type ActivationService interface {
-	Process(ctx context.Context, alarm types.Alarm, eventReceivedTimestamp time.MicroTime) (bool, error)
+	Process(ctx context.Context, alarm types.Alarm, eventReceivedTimestamp datetime.MicroTime) (bool, error)
 }
 
 type baseActivationService struct {
@@ -39,7 +38,7 @@ func NewActivationService(
 	}
 }
 
-func (s *baseActivationService) Process(ctx context.Context, alarm types.Alarm, eventRealTimestamp time.MicroTime) (bool, error) {
+func (s *baseActivationService) Process(ctx context.Context, alarm types.Alarm, eventRealTimestamp datetime.MicroTime) (bool, error) {
 	if alarm.CanActivate() {
 		err := s.sendActivationEvent(ctx, alarm, eventRealTimestamp)
 
@@ -53,13 +52,13 @@ func (s *baseActivationService) Process(ctx context.Context, alarm types.Alarm, 
 	return false, nil
 }
 
-func (s *baseActivationService) sendActivationEvent(ctx context.Context, alarm types.Alarm, eventReceivedTimestamp time.MicroTime) error {
+func (s *baseActivationService) sendActivationEvent(ctx context.Context, alarm types.Alarm, eventReceivedTimestamp datetime.MicroTime) error {
 	event := types.Event{
 		Connector:         alarm.Value.Connector,
 		ConnectorName:     alarm.Value.ConnectorName,
 		Component:         alarm.Value.Component,
 		Resource:          alarm.Value.Resource,
-		Timestamp:         libtime.NewCpsTime(),
+		Timestamp:         datetime.NewCpsTime(),
 		ReceivedTimestamp: eventReceivedTimestamp,
 		EventType:         types.EventTypeActivate,
 		Initiator:         types.InitiatorSystem,

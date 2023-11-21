@@ -7,7 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
 )
@@ -31,7 +31,7 @@ func (w *resolvedArchiverWorker) Work(ctx context.Context) {
 		return
 	}
 
-	var lastExecuted libtime.CpsTime
+	var lastExecuted datetime.CpsTime
 	if conf.History.Alarm != nil {
 		lastExecuted = conf.History.Alarm.Time
 	}
@@ -53,13 +53,13 @@ func (w *resolvedArchiverWorker) Work(ctx context.Context) {
 			w.Logger.Err(err).Msg("cannot disconnect from mongo")
 		}
 	}()
-	now := libtime.NewCpsTime()
+	now := datetime.NewCpsTime()
 	cleaner := alarm.NewCleaner(mongoClient, datastorage.BulkSize)
 	maxUpdates := int64(w.DataStorageConfigProvider.Get().MaxUpdates)
 	var archived, deleted int64
 	updated := false
 	archiveAfter := conf.Config.Alarm.ArchiveAfter
-	if libtime.IsDurationEnabledAndValid(archiveAfter) {
+	if datetime.IsDurationEnabledAndValid(archiveAfter) {
 		updated = true
 		archived, err = cleaner.ArchiveResolvedAlarms(ctx, archiveAfter.SubFrom(now), maxUpdates)
 		if err != nil {
@@ -73,7 +73,7 @@ func (w *resolvedArchiverWorker) Work(ctx context.Context) {
 	}
 
 	deleteAfter := conf.Config.Alarm.DeleteAfter
-	if libtime.IsDurationEnabledAndValid(deleteAfter) {
+	if datetime.IsDurationEnabledAndValid(deleteAfter) {
 		updated = true
 		deleted, err = cleaner.DeleteArchivedResolvedAlarms(ctx, deleteAfter.SubFrom(now), maxUpdates)
 		if err != nil {

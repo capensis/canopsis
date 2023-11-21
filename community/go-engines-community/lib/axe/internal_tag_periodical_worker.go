@@ -6,9 +6,9 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
@@ -34,8 +34,8 @@ func (w *internalTagPeriodicalWorker) Work(ctx context.Context) {
 		return
 	}
 
-	secNow := libtime.NewCpsTime()
-	microNow := libtime.NewMicroTime()
+	secNow := datetime.NewCpsTime()
+	microNow := datetime.NewMicroTime()
 	existedTags := make([]string, len(tags))
 	for i, tag := range tags {
 		existedTags[i] = tag.Value
@@ -73,8 +73,8 @@ func (w *internalTagPeriodicalWorker) addTag(
 	ctx context.Context,
 	tag alarmtag.AlarmTag,
 	tags []alarmtag.AlarmTag,
-	secNow libtime.CpsTime,
-	microNow libtime.MicroTime,
+	secNow datetime.CpsTime,
+	microNow datetime.MicroTime,
 ) error {
 	alarmMatch := bson.M{
 		"t": bson.M{"$lt": secNow},
@@ -125,8 +125,8 @@ func (w *internalTagPeriodicalWorker) removeTag(
 	ctx context.Context,
 	tag alarmtag.AlarmTag,
 	tags []alarmtag.AlarmTag,
-	secNow libtime.CpsTime,
-	microNow libtime.MicroTime,
+	secNow datetime.CpsTime,
+	microNow datetime.MicroTime,
 ) error {
 	alarmMatch := bson.M{
 		"t":         bson.M{"$lt": secNow},
@@ -187,8 +187,8 @@ func (w *internalTagPeriodicalWorker) removeTags(
 	ctx context.Context,
 	existedTags []string,
 	tags []alarmtag.AlarmTag,
-	secNow libtime.CpsTime,
-	microNow libtime.MicroTime,
+	secNow datetime.CpsTime,
+	microNow datetime.MicroTime,
 ) error {
 	cursor, err := w.AlarmCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
@@ -221,7 +221,7 @@ func (w *internalTagPeriodicalWorker) updateByCursor(
 	ctx context.Context,
 	cursor mongo.Cursor,
 	tags []alarmtag.AlarmTag,
-	microNow libtime.MicroTime,
+	microNow datetime.MicroTime,
 ) error {
 	defer cursor.Close(ctx)
 

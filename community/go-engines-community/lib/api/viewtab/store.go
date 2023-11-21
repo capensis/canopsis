@@ -8,7 +8,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -201,7 +201,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 			}
 		}
 
-		now := libtime.NewCpsTime()
+		now := datetime.NewCpsTime()
 		tab := view.Tab{
 			ID:        utils.NewID(),
 			Title:     r.Title,
@@ -249,7 +249,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 			IsPrivate: oldTab.IsPrivate,
 			Position:  oldTab.Position,
 			Created:   oldTab.Created,
-			Updated:   libtime.NewCpsTime(),
+			Updated:   datetime.NewCpsTime(),
 		}})
 		if err != nil {
 			return err
@@ -358,7 +358,7 @@ func (s *store) copy(ctx context.Context, tabID string, isPrivate bool, r Create
 		return nil, err
 	}
 
-	now := libtime.NewCpsTime()
+	now := datetime.NewCpsTime()
 	newTab := view.Tab{
 		ID:        utils.NewID(),
 		Title:     r.Title,

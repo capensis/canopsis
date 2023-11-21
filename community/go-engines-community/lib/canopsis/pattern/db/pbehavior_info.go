@@ -8,7 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func PBehaviorInfoPatternToMongoQuery(p pattern.PBehaviorInfo, prefix string) (bson.M, error) {
+func PbehaviorInfoPatternToMongoQuery(p pattern.PbehaviorInfo, prefix string) (bson.M, error) {
 	if len(p) == 0 {
 		return nil, nil
 	}
@@ -30,7 +30,7 @@ func PBehaviorInfoPatternToMongoQuery(p pattern.PBehaviorInfo, prefix string) (b
 			if fieldCond.Field == "pbehavior_info.canonical_type" {
 				var ok bool
 
-				condQueries[j], ok = cond.CanonicalTypeToMongoQuery(mongoField)
+				condQueries[j], ok = canonicalTypeToMongoQuery(cond, mongoField)
 				if ok {
 					continue
 				}
@@ -50,4 +50,63 @@ func PBehaviorInfoPatternToMongoQuery(p pattern.PBehaviorInfo, prefix string) (b
 	}
 
 	return bson.M{"$or": groupQueries}, nil
+}
+
+func canonicalTypeToMongoQuery(c pattern.Condition, f string) (bson.M, bool) {
+	switch c.Type {
+	case pattern.ConditionEqual:
+		valueStr := c.GetValueStr()
+
+		if valueStr != nil && *valueStr == types.PbhCanonicalTypeActive {
+			return bson.M{f: bson.M{"$in": bson.A{nil, *valueStr}}}, true
+		}
+	case pattern.ConditionNotEqual:
+		valueStr := c.GetValueStr()
+
+		if valueStr != nil && *valueStr == types.PbhCanonicalTypeActive {
+			return bson.M{f: bson.M{"$nin": bson.A{nil, *valueStr}}}, true
+		}
+	case pattern.ConditionIsOneOf:
+		valueStrArray := c.GetValueStrArray()
+
+		found := false
+		for _, item := range valueStrArray {
+			if item == types.PbhCanonicalTypeActive {
+				found = true
+				break
+			}
+		}
+
+		if found {
+			values := make([]interface{}, len(valueStrArray)+1)
+			for k, s := range valueStrArray {
+				values[k] = s
+			}
+			values[len(values)-1] = nil
+
+			return bson.M{f: bson.M{"$in": values}}, true
+		}
+	case pattern.ConditionIsNotOneOf:
+		valueStrArray := c.GetValueStrArray()
+
+		found := false
+		for _, item := range valueStrArray {
+			if item == types.PbhCanonicalTypeActive {
+				found = true
+				break
+			}
+		}
+
+		if found {
+			values := make([]interface{}, len(valueStrArray)+1)
+			for k, s := range valueStrArray {
+				values[k] = s
+			}
+			values[len(values)-1] = nil
+
+			return bson.M{f: bson.M{"$nin": values}}, true
+		}
+	}
+
+	return nil, false
 }

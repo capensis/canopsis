@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_action "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/action"
 	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
@@ -52,7 +52,7 @@ func TestDelayedScenarioManager_AddDelayedScenario_GivenMatchedDelayedScenario_S
 	}
 	scenario := action.Scenario{
 		ID: "test-scenario-id",
-		Delay: &libtime.DurationWithUnit{
+		Delay: &datetime.DurationWithUnit{
 			Value: 10,
 			Unit:  "s",
 		},
@@ -95,14 +95,14 @@ func TestDelayedScenarioManager_PauseDelayedScenarios_GivenNotPausedScenario_Sho
 		{
 			ScenarioID:    "test-scenario-id",
 			AlarmID:       "test-alarm-id",
-			ExecutionTime: libtime.CpsTime{Time: time.Now().Add(10 * time.Second)},
+			ExecutionTime: datetime.CpsTime{Time: time.Now().Add(10 * time.Second)},
 			Paused:        false,
 			TimeLeft:      0,
 		},
 		{
 			ScenarioID:    "test-scenario-id",
 			AlarmID:       "test-alarm-id-2",
-			ExecutionTime: libtime.CpsTime{Time: time.Now().Add(10 * time.Second)},
+			ExecutionTime: datetime.CpsTime{Time: time.Now().Add(10 * time.Second)},
 			Paused:        false,
 			TimeLeft:      0,
 		},
@@ -137,7 +137,7 @@ func TestDelayedScenarioManager_PauseDelayedScenarios_GivenPausedScenario_Should
 		{
 			ScenarioID:    "test-scenario-id",
 			AlarmID:       "test-alarm-id",
-			ExecutionTime: libtime.CpsTime{Time: time.Now().Add(10 * time.Second)},
+			ExecutionTime: datetime.CpsTime{Time: time.Now().Add(10 * time.Second)},
 			Paused:        true,
 			TimeLeft:      time.Second * 5,
 		},
@@ -164,14 +164,14 @@ func TestDelayedScenarioManager_ResumeDelayedScenarios_GivenPausedScenario_Shoul
 		{
 			ScenarioID:    "test-scenario-id",
 			AlarmID:       "test-alarm-id",
-			ExecutionTime: libtime.CpsTime{Time: time.Now().Add(10 * time.Second)},
+			ExecutionTime: datetime.CpsTime{Time: time.Now().Add(10 * time.Second)},
 			Paused:        true,
 			TimeLeft:      time.Second * 5,
 		},
 		{
 			ScenarioID:    "test-scenario-id",
 			AlarmID:       "test-alarm-id-2",
-			ExecutionTime: libtime.CpsTime{Time: time.Now().Add(10 * time.Second)},
+			ExecutionTime: datetime.CpsTime{Time: time.Now().Add(10 * time.Second)},
 			Paused:        true,
 			TimeLeft:      time.Second * 5,
 		},
@@ -211,7 +211,7 @@ func TestDelayedScenarioManager_ResumeDelayedScenarios_GivenNotPausedScenario_Sh
 		{
 			ScenarioID:    "test-scenario-id",
 			AlarmID:       "test-alarm-id",
-			ExecutionTime: libtime.CpsTime{Time: time.Now().Add(10 * time.Second)},
+			ExecutionTime: datetime.CpsTime{Time: time.Now().Add(10 * time.Second)},
 			Paused:        false,
 			TimeLeft:      0,
 		},
@@ -241,13 +241,13 @@ func TestDelayedScenarioManager_Run_GivenExpiredScenario_ShouldReturnItByTick(t 
 			ID:            "test-delayed-id",
 			ScenarioID:    expectedScenario.ID,
 			AlarmID:       expectedAlarm.ID,
-			ExecutionTime: libtime.CpsTime{Time: time.Now().Add(periodicalTimeout + time.Millisecond)},
+			ExecutionTime: datetime.CpsTime{Time: time.Now().Add(periodicalTimeout + time.Millisecond)},
 		},
 		{
 			ID:            "test-delayed-id-2",
 			ScenarioID:    expectedScenario.ID,
 			AlarmID:       expectedAlarm.ID,
-			ExecutionTime: libtime.CpsTime{Time: time.Now().Add(10 * periodicalTimeout)},
+			ExecutionTime: datetime.CpsTime{Time: time.Now().Add(10 * periodicalTimeout)},
 		},
 	}, nil).Times(2)
 	mockStorage.EXPECT().Delete(gomock.Any(), gomock.Eq("test-delayed-id")).Return(true, nil)
@@ -298,7 +298,7 @@ func TestDelayedScenarioManager_Run_GivenExpiredScenario_ShouldReturnItByWaiting
 		ID:            "test-delayed-id",
 		ScenarioID:    expectedScenario.ID,
 		AlarmID:       expectedAlarm.ID,
-		ExecutionTime: libtime.CpsTime{Time: time.Now().Add(3500 * time.Millisecond)},
+		ExecutionTime: datetime.CpsTime{Time: time.Now().Add(3500 * time.Millisecond)},
 	}
 	mockStorage.EXPECT().GetAll(gomock.Any()).Return([]action.DelayedScenario{
 		delayedScenario,
@@ -306,7 +306,7 @@ func TestDelayedScenarioManager_Run_GivenExpiredScenario_ShouldReturnItByWaiting
 			ID:            "test-delayed-id-2",
 			ScenarioID:    expectedScenario.ID,
 			AlarmID:       expectedAlarm.ID,
-			ExecutionTime: libtime.CpsTime{Time: time.Now().Add(10 * periodicalTimeout)},
+			ExecutionTime: datetime.CpsTime{Time: time.Now().Add(10 * periodicalTimeout)},
 		},
 	}, nil).Times(2)
 	mockStorage.EXPECT().Get(gomock.Any(), gomock.Eq(delayedScenario.ID)).Return(&delayedScenario, nil)

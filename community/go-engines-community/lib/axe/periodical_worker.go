@@ -10,10 +10,10 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlealarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -100,7 +100,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 			ConnectorName: alarm.Value.ConnectorName,
 			Component:     alarm.Value.Component,
 			Resource:      alarm.Value.Resource,
-			Timestamp:     libtime.NewCpsTime(),
+			Timestamp:     datetime.NewCpsTime(),
 			EventType:     types.EventTypeUpdateStatus,
 			Author:        canopsis.DefaultEventAuthor,
 			Output:        "",
@@ -120,7 +120,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 			ConnectorName: alarm.Value.ConnectorName,
 			Component:     alarm.Value.Component,
 			Resource:      alarm.Value.Resource,
-			Timestamp:     libtime.NewCpsTime(),
+			Timestamp:     datetime.NewCpsTime(),
 			EventType:     types.EventTypeResolveClose,
 			Initiator:     types.InitiatorSystem,
 		}
@@ -138,7 +138,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 			ConnectorName: alarm.Value.ConnectorName,
 			Component:     alarm.Value.Component,
 			Resource:      alarm.Value.Resource,
-			Timestamp:     libtime.NewCpsTime(),
+			Timestamp:     datetime.NewCpsTime(),
 			EventType:     types.EventTypeResolveCancel,
 			Initiator:     types.InitiatorSystem,
 		}
@@ -156,7 +156,7 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 			ConnectorName: alarm.Value.ConnectorName,
 			Component:     alarm.Value.Component,
 			Resource:      alarm.Value.Resource,
-			Timestamp:     libtime.NewCpsTime(),
+			Timestamp:     datetime.NewCpsTime(),
 			EventType:     types.EventTypeUnsnooze,
 			Initiator:     types.InitiatorSystem,
 		}

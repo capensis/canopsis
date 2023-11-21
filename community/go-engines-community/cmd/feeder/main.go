@@ -12,7 +12,7 @@ import (
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	cps "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -50,7 +50,7 @@ func (f *Feeder) getCompatEvent(state, Ci, ci, ri int64) types.Event {
 		State:         types.CpsNumber(state),
 		SourceType:    types.SourceTypeResource,
 		EventType:     types.EventTypeCheck,
-		Timestamp:     libtime.NewCpsTime(),
+		Timestamp:     datetime.NewCpsTime(),
 	}
 }
 

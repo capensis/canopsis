@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	libtime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/time"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	. "github.com/smartystreets/goconvey/convey"
 	"go.mongodb.org/mongo-driver/bson"
@@ -128,11 +128,11 @@ func TestAsInteger(t *testing.T) {
 	})
 
 	Convey("Given a CpsTime, AsInteger returns its value", t, func() {
-		value, err := types.AsInteger(libtime.CpsTime{Time: time.Unix(3, 0)})
+		value, err := types.AsInteger(datetime.CpsTime{Time: time.Unix(3, 0)})
 		So(err, ShouldNotBeNil)
 		So(value, ShouldEqual, 3)
 
-		value, err = types.AsInteger(libtime.CpsTime{Time: time.Unix(-728, 0)})
+		value, err = types.AsInteger(datetime.CpsTime{Time: time.Unix(-728, 0)})
 		So(err, ShouldNotBeNil)
 		So(value, ShouldEqual, -728)
 	})
@@ -141,13 +141,13 @@ func TestAsInteger(t *testing.T) {
 func TestCpsTime(t *testing.T) {
 	Convey("Given a type struct with CpsTime", t, func() {
 		type MyTime struct {
-			TheTime libtime.CpsTime `json:"thetime" bson:"thetime"`
+			TheTime datetime.CpsTime `json:"thetime" bson:"thetime"`
 		}
 
 		tnow := time.Now()
 		stsnow := fmt.Sprint(tnow.Unix())
 		mt := MyTime{
-			TheTime: libtime.CpsTime{Time: tnow},
+			TheTime: datetime.CpsTime{Time: tnow},
 		}
 
 		Convey("I can marshal to JSON", func() {
@@ -240,8 +240,8 @@ func TestCpsNumber(t *testing.T) {
 
 func TestBinaryCpsTime(t *testing.T) {
 	Convey("Given time.Now()", t, func() {
-		t := libtime.NewCpsTime()
-		out := libtime.CpsTime{Time: time.Time{}}
+		t := datetime.NewCpsTime()
+		out := datetime.CpsTime{Time: time.Time{}}
 
 		So(out.Equal(t.Time), ShouldBeFalse)
 
