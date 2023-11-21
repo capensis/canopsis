@@ -983,4 +983,7 @@ export default {
       title: 'Duplicate theme',
     },
   },
+  archiveDisabledEntities: {
+    text: 'Are you sure you want to archive disabled entities?\nThis action cannot be undone',
+  },
 };
