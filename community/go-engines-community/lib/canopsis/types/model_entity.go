@@ -106,7 +106,7 @@ func (e *Entity) EnsureInitialized() {
 	}
 }
 
-// GetStringField is a magic getter for a string field for easier field retrieving when matching entity pattern
+// GetStringField is a magic getter for string fields for easier field retrieving when matching entity pattern
 func (e *Entity) GetStringField(f string) (string, bool) {
 	switch f {
 	case "_id":
@@ -126,7 +126,7 @@ func (e *Entity) GetStringField(f string) (string, bool) {
 	}
 }
 
-// GetIntField is a magic getter for an int field for easier field retrieving when matching entity pattern
+// GetIntField is a magic getter for int fields for easier field retrieving when matching entity pattern
 func (e *Entity) GetIntField(f string) (int64, bool) {
 	switch f {
 	case "impact_level":
@@ -136,7 +136,7 @@ func (e *Entity) GetIntField(f string) (int64, bool) {
 	}
 }
 
-// GetTimeField is a magic getter for a time field for easier field retrieving when matching entity pattern
+// GetTimeField is a magic getter for time fields for easier field retrieving when matching entity pattern
 func (e *Entity) GetTimeField(f string) (time.Time, bool) {
 	switch f {
 	case "last_event_date":
@@ -150,7 +150,7 @@ func (e *Entity) GetTimeField(f string) (time.Time, bool) {
 	}
 }
 
-// GetInfoVal is a magic getter for an infos field for easier field retrieving when matching entity pattern
+// GetInfoVal is a magic getter for infos fields for easier field retrieving when matching entity pattern
 func (e *Entity) GetInfoVal(f string) (any, bool) {
 	if v, ok := e.Infos[f]; ok {
 		return v.Value, true

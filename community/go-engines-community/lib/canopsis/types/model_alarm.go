@@ -425,6 +425,7 @@ func (a *Alarm) DecrementEventsCount(count CpsNumber) {
 	a.AddUpdate("$inc", bson.M{"v.events_count": -count})
 }
 
+// GetStringField is a magic getter for string fields for easier field retrieving when matching alarm pattern
 func (a *Alarm) GetStringField(f string) (string, bool) {
 	switch f {
 	case "v.display_name":
@@ -510,6 +511,7 @@ func (a *Alarm) GetStringField(f string) (string, bool) {
 	}
 }
 
+// GetIntField is a magic getter for int fields for easier field retrieving when matching alarm pattern
 func (a *Alarm) GetIntField(f string) (int64, bool) {
 	switch f {
 	case "v.state.val":
@@ -529,6 +531,7 @@ func (a *Alarm) GetIntField(f string) (int64, bool) {
 	}
 }
 
+// GetRefField is a magic getter for reference fields for easier field retrieving when matching alarm pattern
 func (a *Alarm) GetRefField(f string) (interface{}, bool) {
 	switch f {
 	case "v.ack":
@@ -561,6 +564,7 @@ func (a *Alarm) GetRefField(f string) (interface{}, bool) {
 	}
 }
 
+// GetTimeField is a magic getter for time fields for easier field retrieving when matching alarm pattern
 func (a *Alarm) GetTimeField(f string) (time.Time, bool) {
 	switch f {
 	case "v.creation_date":
@@ -591,6 +595,7 @@ func (a *Alarm) GetTimeField(f string) (time.Time, bool) {
 	}
 }
 
+// GetDurationField is a magic getter for duration fields for easier field retrieving when matching alarm pattern
 func (a *Alarm) GetDurationField(f string) (int64, bool) {
 	switch f {
 	case "v.duration":
@@ -608,6 +613,7 @@ func (a *Alarm) GetDurationField(f string) (int64, bool) {
 	}
 }
 
+// GetStringArrayField is a magic getter for string array fields for easier field retrieving when matching alarm pattern
 func (a *Alarm) GetStringArrayField(f string) ([]string, bool) {
 	switch f {
 	case "tags":
@@ -617,6 +623,7 @@ func (a *Alarm) GetStringArrayField(f string) ([]string, bool) {
 	}
 }
 
+// GetInfoVal is a magic getter for infos fields for easier field retrieving when matching alarm pattern
 func (a *Alarm) GetInfoVal(f string) (interface{}, bool) {
 	for _, infosByRule := range a.Value.Infos {
 		if v, ok := infosByRule[f]; ok {
