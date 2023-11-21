@@ -12,7 +12,7 @@ import { PAGINATION_LIMIT } from '@/config';
 import { isResolvedAlarm } from '@/helpers/entities/alarm/form';
 import { convertWidgetChartsToPerfDataQuery } from '@/helpers/entities/metric/query';
 import { convertMultiSortToRequest } from '@/helpers/entities/shared/query';
-import { getTemplateVariables } from '@/helpers/handlebars';
+import { getTemplateVariables } from '@/helpers/handlebars/variables';
 
 /**
  *  This function converts widget.parameters.opened to query Object
