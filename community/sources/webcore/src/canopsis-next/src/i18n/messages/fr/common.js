@@ -285,6 +285,7 @@ export default {
   seeEntities: 'Voir les entités',
   new: 'Nouvelle',
   regexp: 'Expression régulière',
+  archive: 'Archive',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
