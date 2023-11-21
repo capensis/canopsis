@@ -317,6 +317,10 @@ export const StateSetting = () => ({
   component: import(/* webpackChunkName: "Parameters" */ './state-setting/state-setting.vue'),
   loading: LoaderOverlay,
 });
+export const ArchiveDisabledEntities = () => ({
+  component: import(/* webpackChunkName: "Parameters" */ './storage-setting/archive-disabled-entities.vue'),
+  loading: LoaderOverlay,
+});
 export const CreateIdleRule = () => ({
   component: import(/* webpackChunkName: "IdleRule" */ './idle-rule/create-idle-rule.vue'),
   loading: LoaderOverlay,
