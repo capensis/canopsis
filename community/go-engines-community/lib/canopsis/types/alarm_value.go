@@ -21,6 +21,8 @@ const (
 	TicketRuleNameDeclareTicketRulePrefix = "Ticket declaration rule: "
 )
 
+// PbhCanonicalTypeActive is duplicate of pbehavior.TypeActive because of package cycle.
+// todo: move type constants from pbehavior package to types package
 const PbhCanonicalTypeActive = "active"
 
 // AlarmStep represents a generic step used in an alarm.
