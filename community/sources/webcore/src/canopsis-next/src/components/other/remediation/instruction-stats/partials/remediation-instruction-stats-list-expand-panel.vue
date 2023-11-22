@@ -42,7 +42,6 @@
             </v-tab-item>
             <v-tab-item
               v-if="remediationInstructionStatsItem.has_executions"
-              lazy
             >
               <remediation-instruction-stats-alarms-timeline-tab
                 :remediation-instruction="remediationInstruction"
