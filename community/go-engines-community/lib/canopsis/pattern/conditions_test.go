@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -920,7 +920,7 @@ func TestCondition_UnmarshalAndMatchRef(t *testing.T) {
 }
 
 func TestCondition_MatchTime(t *testing.T) {
-	timeRelativeCond, err := pattern.NewDurationCondition(pattern.ConditionTimeRelative, types.DurationWithUnit{
+	timeRelativeCond, err := pattern.NewDurationCondition(pattern.ConditionTimeRelative, datetime.DurationWithUnit{
 		Value: 100,
 		Unit:  "s",
 	})
@@ -1026,7 +1026,7 @@ func TestCondition_UnmarshalAndMatchTime(t *testing.T) {
 	dataSet := []pattern.Condition{
 		{
 			Type: pattern.ConditionTimeRelative,
-			Value: types.DurationWithUnit{
+			Value: datetime.DurationWithUnit{
 				Value: 100,
 				Unit:  "s",
 			},
@@ -1076,15 +1076,15 @@ func TestCondition_UnmarshalAndMatchTime(t *testing.T) {
 }
 
 func TestCondition_MatchDuration(t *testing.T) {
-	durationGtCond, err := pattern.NewDurationCondition(pattern.ConditionGT, types.DurationWithUnit{Value: 5, Unit: "m"})
+	durationGtCond, err := pattern.NewDurationCondition(pattern.ConditionGT, datetime.DurationWithUnit{Value: 5, Unit: "m"})
 	if err != nil {
 		t.Errorf("unexpected error %v", err)
 	}
-	durationLtCond, err := pattern.NewDurationCondition(pattern.ConditionLT, types.DurationWithUnit{Value: 5, Unit: "m"})
+	durationLtCond, err := pattern.NewDurationCondition(pattern.ConditionLT, datetime.DurationWithUnit{Value: 5, Unit: "m"})
 	if err != nil {
 		t.Errorf("unexpected error %v", err)
 	}
-	durationSomeCond, err := pattern.NewDurationCondition("some", types.DurationWithUnit{Value: 5, Unit: "m"})
+	durationSomeCond, err := pattern.NewDurationCondition("some", datetime.DurationWithUnit{Value: 5, Unit: "m"})
 	if err != nil {
 		t.Errorf("unexpected error %v", err)
 	}

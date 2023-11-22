@@ -40,8 +40,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libdatastorage "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	libidlerule "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/validator"
 	"github.com/gin-gonic/gin/binding"
@@ -99,7 +99,7 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	if err != nil {
 		panic(err)
 	}
-	v.RegisterCustomTypeFunc(common.ValidateCpsTimeType, types.CpsTime{})
+	v.RegisterCustomTypeFunc(common.ValidateCpsTimeType, datetime.CpsTime{})
 
 	// Request validators
 	v.RegisterStructValidation(common.ValidateFilteredQuery, pagination.FilteredQuery{})

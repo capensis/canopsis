@@ -6,6 +6,7 @@ package contextgraph
 import (
 	"context"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -31,5 +32,5 @@ type Manager interface {
 	//FillResourcesWithInfos fills all dependent component's resources with component_infos
 	FillResourcesWithInfos(ctx context.Context, component types.Entity) ([]types.Entity, error)
 	//UpdateLastEventDate updates last event date field in the entity document
-	UpdateLastEventDate(ctx context.Context, eventType string, entityID string, timestamp types.CpsTime) error
+	UpdateLastEventDate(ctx context.Context, eventType string, entityID string, timestamp datetime.CpsTime) error
 }
