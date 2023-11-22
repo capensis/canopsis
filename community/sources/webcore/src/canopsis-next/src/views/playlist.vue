@@ -55,7 +55,7 @@
                 :disabled="!activeTab"
                 :tooltip="$t('playlist.player.tooltips.fullscreen')"
                 icon="fullscreen"
-                color="white"
+                dark
                 @click="toggleFullScreenMode"
               />
             </v-toolbar-items>
@@ -263,6 +263,7 @@ export default {
 
   &__actions {
     width: 310px;
+    align-items: center;
   }
 
   &__timer {

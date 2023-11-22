@@ -10,6 +10,7 @@
     />
   </v-layout>
   <v-flex
+    class="py-2"
     v-else
     xs10
     offset-xs1
