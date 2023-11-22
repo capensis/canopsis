@@ -1,8 +1,8 @@
 package link
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 const (
@@ -16,15 +16,15 @@ const (
 )
 
 type Rule struct {
-	ID         string        `bson:"_id"`
-	Name       string        `bson:"name"`
-	Type       string        `bson:"type"`
-	Enabled    bool          `bson:"enabled"`
-	Links      []Parameters  `bson:"links"`
-	SourceCode string        `bson:"source_code"`
-	Author     string        `bson:"author"`
-	Created    types.CpsTime `bson:"created,omitempty"`
-	Updated    types.CpsTime `bson:"updated,omitempty"`
+	ID         string           `bson:"_id"`
+	Name       string           `bson:"name"`
+	Type       string           `bson:"type"`
+	Enabled    bool             `bson:"enabled"`
+	Links      []Parameters     `bson:"links"`
+	SourceCode string           `bson:"source_code"`
+	Author     string           `bson:"author"`
+	Created    datetime.CpsTime `bson:"created,omitempty"`
+	Updated    datetime.CpsTime `bson:"updated,omitempty"`
 
 	ExternalData map[string]ExternalDataParameters `bson:"external_data"`
 

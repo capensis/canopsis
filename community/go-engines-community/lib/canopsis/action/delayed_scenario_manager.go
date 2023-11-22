@@ -7,6 +7,7 @@ import (
 	"time"
 
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 )
@@ -55,7 +56,7 @@ func (m *delayedScenarioManager) AddDelayedScenario(ctx context.Context, alarm t
 		return errors.New("scenario is not delayed")
 	}
 
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	delayedScenario := DelayedScenario{
 		ScenarioID:     scenario.ID,
 		ExecutionTime:  scenario.Delay.AddTo(now),
@@ -108,7 +109,7 @@ func (m *delayedScenarioManager) ResumeDelayedScenarios(ctx context.Context, ala
 	for _, delayedScenario := range delayedScenarios {
 		if delayedScenario.AlarmID == alarm.ID && delayedScenario.Paused {
 			delayedScenario.Paused = false
-			delayedScenario.ExecutionTime = types.CpsTime{Time: now.Add(delayedScenario.TimeLeft)}
+			delayedScenario.ExecutionTime = datetime.CpsTime{Time: now.Add(delayedScenario.TimeLeft)}
 			delayedScenario.TimeLeft = 0
 			_, err := m.storage.Update(ctx, delayedScenario)
 			if err != nil {

@@ -11,6 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/js"
 	liblink "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -146,7 +147,7 @@ func (g *generator) GenerateCombinedForAlarmsByRule(ctx context.Context, ruleId 
 	}
 
 	for _, alarm := range alarms {
-		ok, err := rule.AlarmPattern.Match(alarm.Alarm)
+		ok, err := match.MatchAlarmPattern(rule.AlarmPattern, &alarm.Alarm)
 		if err != nil {
 			return nil, fmt.Errorf("invalid alarm pattern linkrule=%s: %w", rule.ID, err)
 		}
@@ -154,7 +155,7 @@ func (g *generator) GenerateCombinedForAlarmsByRule(ctx context.Context, ruleId 
 			return nil, liblink.ErrNotMatchedAlarm
 		}
 
-		ok, err = rule.EntityPattern.Match(alarm.Entity)
+		ok, err = match.MatchEntityPattern(rule.EntityPattern, &alarm.Entity)
 		if err != nil {
 			return nil, fmt.Errorf("invalid entity pattern linkrule=%s: %w", rule.ID, err)
 		}
@@ -423,7 +424,7 @@ func (g *generator) getEntities(ctx context.Context, ids []string) ([]entityWith
 func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, alarms []alarmWithData, user liblink.User) (map[string][]linkWithCategory, error) {
 	res := make(map[string][]linkWithCategory, len(alarms))
 	for _, alarm := range alarms {
-		ok, err := rule.AlarmPattern.Match(alarm.Alarm)
+		ok, err := match.MatchAlarmPattern(rule.AlarmPattern, &alarm.Alarm)
 		if err != nil {
 			g.logger.Err(err).Str("rule", rule.ID).Msg("invalid alarm pattern in link rule")
 			continue
@@ -432,7 +433,7 @@ func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, 
 			continue
 		}
 
-		ok, err = rule.EntityPattern.Match(alarm.Entity)
+		ok, err = match.MatchEntityPattern(rule.EntityPattern, &alarm.Entity)
 		if err != nil {
 			g.logger.Err(err).Str("rule", rule.ID).Msg("invalid entity pattern in link rule")
 			continue
@@ -476,7 +477,7 @@ func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule
 
 	res := make(map[string][]linkWithCategory, len(entities))
 	for _, entity := range entities {
-		ok, err := rule.EntityPattern.Match(entity.Entity)
+		ok, err := match.MatchEntityPattern(rule.EntityPattern, &entity.Entity)
 		if err != nil {
 			g.logger.Err(err).Str("rule", rule.ID).Msg("invalid entity pattern in link rule")
 			continue

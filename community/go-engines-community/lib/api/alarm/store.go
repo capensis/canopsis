@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -122,7 +123,7 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination, userId st
 		collection = s.resolvedDbCollection
 	}
 
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	pipeline, err := s.getQueryBuilder().CreateListAggregationPipeline(ctx, r, now, userId)
 	if err != nil {
 		return nil, err
@@ -146,7 +147,7 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination, userId st
 }
 
 func (s *store) GetByID(ctx context.Context, id, userId string, onlyParents bool) (*Alarm, error) {
-	pipeline, err := s.getQueryBuilder().CreateGetAggregationPipeline(bson.M{"_id": id}, types.NewCpsTime(), userId, onlyParents)
+	pipeline, err := s.getQueryBuilder().CreateGetAggregationPipeline(bson.M{"_id": id}, datetime.NewCpsTime(), userId, onlyParents)
 	if err != nil {
 		return nil, err
 	}
@@ -202,7 +203,7 @@ func (s *store) GetOpenByEntityID(ctx context.Context, entityID, userId string) 
 	pipeline, err := s.getQueryBuilder().CreateGetAggregationPipeline(bson.M{
 		"d":          entityID,
 		"v.resolved": nil,
-	}, types.NewCpsTime(), userId, false)
+	}, datetime.NewCpsTime(), userId, false)
 	if err != nil {
 		return nil, false, err
 	}
@@ -229,7 +230,7 @@ func (s *store) GetOpenByEntityID(ctx context.Context, entityID, userId string) 
 }
 
 func (s *store) FindByService(ctx context.Context, id string, r ListByServiceRequest, userId string) (*AggregationResult, error) {
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	service := types.Entity{}
 	err := s.dbEntityCollection.FindOne(ctx, bson.M{
 		"_id":     id,
@@ -281,7 +282,7 @@ func (s *store) FindByService(ctx context.Context, id string, r ListByServiceReq
 }
 
 func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest, userId string) (*AggregationResult, error) {
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	component := types.Entity{}
 	err := s.dbEntityCollection.FindOne(ctx, bson.M{
 		"_id":     r.ID,
@@ -322,7 +323,7 @@ func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest, u
 }
 
 func (s *store) FindResolved(ctx context.Context, r ResolvedListRequest, userId string) (*AggregationResult, error) {
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 
 	err := s.dbEntityCollection.FindOne(ctx, bson.M{
 		"_id":     r.ID,
@@ -369,7 +370,7 @@ func (s *store) FindResolved(ctx context.Context, r ResolvedListRequest, userId 
 }
 
 func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userId string) (*Details, error) {
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	match := bson.M{"_id": r.ID}
 	collection := s.mainDbCollection
 	switch r.GetOpenedFilter() {
@@ -531,7 +532,7 @@ func (s *store) Count(ctx context.Context, r FilterRequest, userID string) (*Cou
 		collection = s.resolvedDbCollection
 	}
 
-	pipeline, err := s.getQueryBuilder().CreateCountAggregationPipeline(ctx, r, userID, types.NewCpsTime())
+	pipeline, err := s.getQueryBuilder().CreateCountAggregationPipeline(ctx, r, userID, datetime.NewCpsTime())
 	if err != nil {
 		return nil, err
 	}
@@ -638,7 +639,7 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 		collectionName = mongo.ResolvedAlarmMongoCollection
 	}
 
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	pipeline, err := s.getQueryBuilder().CreateOnlyListAggregationPipeline(ctx, ListRequest{
 		FilterRequest: FilterRequest{
 			BaseFilterRequest: r.BaseFilterRequest,
@@ -864,7 +865,7 @@ func (s *store) processInstructionFiltersPipeline(
 		{"$addFields": bson.M{
 			"v.infos_array": bson.M{"$objectToArray": "$v.infos"},
 			"v.duration": bson.M{"$subtract": bson.A{
-				types.NewCpsTime(),
+				datetime.NewCpsTime(),
 				"$v.creation_date",
 			}},
 		}},
@@ -1488,7 +1489,7 @@ func (s *store) processPipeline(
 		{"$addFields": bson.M{
 			"v.infos_array": bson.M{"$objectToArray": "$v.infos"},
 			"v.duration": bson.M{"$subtract": bson.A{
-				types.NewCpsTime(),
+				datetime.NewCpsTime(),
 				"$v.creation_date",
 			}},
 		}},

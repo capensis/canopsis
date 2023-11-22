@@ -2,7 +2,8 @@ package types
 
 import (
 	"strconv"
-	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 )
 
 // AlarmChangeType is a type representing a change that can occur on an alarm.
@@ -83,11 +84,11 @@ const MinimalEventsCountThreshold = 2
 type AlarmChange struct {
 	Type                            AlarmChangeType
 	PreviousState                   CpsNumber
-	PreviousStateChange             CpsTime
+	PreviousStateChange             datetime.CpsTime
 	PreviousStatus                  CpsNumber
-	PreviousStatusChange            CpsTime
-	PreviousPbehaviorTime           *CpsTime
-	PreviousEntityPbehaviorTime     *CpsTime
+	PreviousStatusChange            datetime.CpsTime
+	PreviousPbehaviorTime           *datetime.CpsTime
+	PreviousEntityPbehaviorTime     *datetime.CpsTime
 	PreviousPbehaviorTypeID         string
 	PreviousPbehaviorCannonicalType string
 
@@ -98,9 +99,9 @@ func NewAlarmChange() AlarmChange {
 	return AlarmChange{
 		Type:                 AlarmChangeTypeNone,
 		PreviousState:        AlarmStateOK,
-		PreviousStateChange:  CpsTime{Time: time.Now()},
+		PreviousStateChange:  datetime.NewCpsTime(),
 		PreviousStatus:       AlarmStatusOff,
-		PreviousStatusChange: CpsTime{Time: time.Now()},
+		PreviousStatusChange: datetime.NewCpsTime(),
 	}
 }
 
