@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
@@ -210,11 +211,11 @@ func (s *service) load(ctx context.Context, span timespan.Span) (ComputedEntityT
 func (s *service) getQueries(computed map[string]ComputedPbehavior) []bson.M {
 	queries := make([]bson.M, 0, len(computed))
 	for id, pbehavior := range computed {
-		if len(pbehavior.Pattern) == 0 {
+		if len(pbehavior.EntityPattern) == 0 {
 			continue
 		}
 
-		query, err := pbehavior.Pattern.ToMongoQuery("")
+		query, err := db.EntityPatternToMongoQuery(pbehavior.EntityPattern, "")
 		if err != nil {
 			s.logger.Err(err).Str("pbehavior", id).Msg("pbehavior has invalid pattern")
 			continue

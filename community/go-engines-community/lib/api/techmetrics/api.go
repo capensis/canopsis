@@ -5,7 +5,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"github.com/gin-gonic/gin"
 )
 
@@ -45,7 +45,7 @@ func (a *api) StartExport(c *gin.Context) {
 		return
 	}
 
-	created := types.NewCpsTime(task.Created.Unix())
+	created := datetime.NewCpsTime(task.Created.Unix())
 	c.JSON(http.StatusCreated, ExportResponse{
 		Status:  task.Status,
 		Created: &created,
@@ -67,7 +67,7 @@ func (a *api) GetExport(c *gin.Context) {
 		return
 	}
 
-	created := types.NewCpsTime(task.Created.Unix())
+	created := datetime.NewCpsTime(task.Created.Unix())
 	response := ExportResponse{
 		Status:  task.Status,
 		Created: &created,

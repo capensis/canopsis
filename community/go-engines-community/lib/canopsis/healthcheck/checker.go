@@ -3,6 +3,7 @@ package healthcheck
 import (
 	"context"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -57,7 +58,7 @@ func (c *checker) Check(ctx context.Context) error {
 }
 
 func (c *checker) createEvent() types.Event {
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	event := types.Event{
 		EventType:     types.EventTypeCheck,
 		State:         eventState,

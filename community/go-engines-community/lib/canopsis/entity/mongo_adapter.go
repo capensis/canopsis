@@ -3,6 +3,8 @@ package entity
 import (
 	"context"
 	"errors"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -284,7 +286,7 @@ func (a *mongoAdapter) UpdateComponentInfosByComponent(ctx context.Context, comp
 	return nil, nil
 }
 
-func (a *mongoAdapter) UpdateLastEventDate(ctx context.Context, ids []string, time types.CpsTime) error {
+func (a *mongoAdapter) UpdateLastEventDate(ctx context.Context, ids []string, time datetime.CpsTime) error {
 	if len(ids) == 0 {
 		return nil
 	}
@@ -299,7 +301,7 @@ func (a *mongoAdapter) UpdateLastEventDate(ctx context.Context, ids []string, ti
 }
 
 func (a *mongoAdapter) UpdateIdleFields(ctx context.Context, id string,
-	idleSince *types.CpsTime, lastIdleRuleApply string) error {
+	idleSince *datetime.CpsTime, lastIdleRuleApply string) error {
 	set := bson.M{}
 	unset := bson.M{}
 
@@ -345,7 +347,7 @@ func (a *mongoAdapter) FindByIDs(ctx context.Context, ids []string) ([]types.Ent
 
 func (a *mongoAdapter) GetAllWithLastUpdateDateBefore(
 	ctx context.Context,
-	time types.CpsTime,
+	time datetime.CpsTime,
 	exclude []string,
 ) (mongo.Cursor, error) {
 	return a.dbCollection.Aggregate(ctx, []bson.M{

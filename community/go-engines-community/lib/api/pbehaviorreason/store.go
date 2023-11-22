@@ -2,10 +2,10 @@ package pbehaviorreason
 
 import (
 	"context"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -100,7 +100,7 @@ func (s *store) Insert(ctx context.Context, model *Reason) error {
 	}
 
 	doc.ID = model.ID
-	doc.Created = types.NewCpsTime(time.Now().Unix())
+	doc.Created = datetime.NewCpsTime()
 
 	_, err := s.dbClient.Collection(pbehavior.ReasonCollectionName).InsertOne(ctx, doc)
 
