@@ -33,22 +33,22 @@ export const isActionTypeAvailableForEntity = (actionType, entity) => {
   const stateIsOk = state?.val === ENTITIES_STATES.ok;
   const statusIsCancelled = status?.val === ENTITIES_STATUSES.cancelled;
 
-  if (stateIsOk || statusIsCancelled) {
+  if (statusIsCancelled) {
     return false;
   }
 
   switch (actionType) {
     case WEATHER_ACTIONS_TYPES.entityAck:
-      return !stateIsOk && isNull(ack);
+      return isNull(ack);
     case WEATHER_ACTIONS_TYPES.entityAckRemove:
-      return !stateIsOk && !isNull(ack);
+      return !isNull(ack);
 
     case WEATHER_ACTIONS_TYPES.entityValidate:
     case WEATHER_ACTIONS_TYPES.entityInvalidate:
-      return state?.val === ENTITIES_STATES.major;
+      return !stateIsOk && state?.val === ENTITIES_STATES.major;
 
     case WEATHER_ACTIONS_TYPES.entityCancel:
-      return alarmDisplayName && (!status || !statusIsCancelled);
+      return !stateIsOk && alarmDisplayName && (!status || !statusIsCancelled);
 
     case WEATHER_ACTIONS_TYPES.entityPlay:
       return paused;
@@ -57,10 +57,11 @@ export const isActionTypeAvailableForEntity = (actionType, entity) => {
       return !paused;
 
     case WEATHER_ACTIONS_TYPES.executeInstruction:
-      return !!assignedInstructions?.length;
+      return !stateIsOk && !!assignedInstructions?.length;
 
     case WEATHER_ACTIONS_TYPES.declareTicket:
     case WEATHER_ACTIONS_TYPES.entityAssocTicket:
+    case WEATHER_ACTIONS_TYPES.entityComment:
     default:
       return true;
   }
