@@ -79,7 +79,7 @@ describe('tag-form', () => {
   test('Renders `tag-form` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `tag-form` with custom props', () => {
@@ -95,6 +95,6 @@ describe('tag-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

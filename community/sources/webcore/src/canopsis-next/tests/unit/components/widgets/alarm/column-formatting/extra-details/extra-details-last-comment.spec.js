@@ -44,7 +44,7 @@ describe('extra-details-last-comment', () => {
 
     const tooltipContent = wrapper.findTooltip();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(tooltipContent.element).toMatchSnapshot();
   });
 
@@ -62,7 +62,7 @@ describe('extra-details-last-comment', () => {
 
     const tooltipContent = wrapper.findTooltip();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(tooltipContent.element).toMatchSnapshot();
   });
 });

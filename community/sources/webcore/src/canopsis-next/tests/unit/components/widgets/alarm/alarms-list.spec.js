@@ -733,7 +733,7 @@ describe('alarms-list', () => {
 
     const removeHistoryButton = selectRemoveHistoryButton(wrapper);
 
-    removeHistoryButton.vm.$emit('input');
+    removeHistoryButton.vm.$emit('click:close');
 
     await flushPromises();
 
@@ -1762,7 +1762,7 @@ describe('alarms-list', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list` with default props and user filter permission and correlation and bookmark', async () => {
@@ -1794,7 +1794,7 @@ describe('alarms-list', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list` with clear filter disabled props', async () => {
@@ -1843,6 +1843,6 @@ describe('alarms-list', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

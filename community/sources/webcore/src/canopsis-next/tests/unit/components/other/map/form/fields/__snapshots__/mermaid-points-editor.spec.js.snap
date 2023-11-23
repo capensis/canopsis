@@ -18,10 +18,12 @@ exports[`mermaid-points-editor Renders \`mermaid-points-editor\` with custom pro
     x="150"
     y="150"
   />
+   
   <point-contextmenu-stub
     positionx="0"
     positiony="0"
   />
+   
   <point-form-dialog-menu-stub
     existsentities=","
     positionx="0"
@@ -34,10 +36,12 @@ exports[`mermaid-points-editor Renders \`mermaid-points-editor\` with required p
 <div
   class="mermaid-points"
 >
+   
   <point-contextmenu-stub
     positionx="0"
     positiony="0"
   />
+   
   <point-form-dialog-menu-stub
     existsentities=""
     positionx="0"

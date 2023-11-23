@@ -15,7 +15,7 @@
       <template #toolbar="">
         <v-layout align-center>
           <c-quick-date-interval-field
-            :interval="options.interval"
+            :interval="query.interval"
             :accumulated-before="accumulatedBefore"
             @input="updateInterval"
           />

@@ -29,7 +29,7 @@ describe('pbehaviors-list-expand-item', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pbehaviors-list-expand-item` with custom props', () => {
@@ -44,7 +44,7 @@ describe('pbehaviors-list-expand-item', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `pbehaviors-list-expand-item` with opened entities tab', async () => {
@@ -58,7 +58,7 @@ describe('pbehaviors-list-expand-item', () => {
 
     await selectTabItemByIndex(wrapper, 1).trigger('click');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pbehaviors-list-expand-item` with opened comments tab', async () => {
@@ -73,7 +73,7 @@ describe('pbehaviors-list-expand-item', () => {
 
     await selectTabItemByIndex(wrapper, 2).trigger('click');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pbehaviors-list-expand-item` with opened recurrence rule tab', async () => {
@@ -88,6 +88,6 @@ describe('pbehaviors-list-expand-item', () => {
 
     await selectTabItemByIndex(wrapper, 3).trigger('click');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

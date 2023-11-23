@@ -9,8 +9,9 @@ exports[`associate-ticket-event-form Renders \`associate-ticket-event-form\` wit
     name="system_name"
     value="System name"
   />
+   
   <div
-    class="layout row"
+    class="layout"
   >
     <div
       class="flex mr-3 xs6"
@@ -21,6 +22,7 @@ exports[`associate-ticket-event-form Renders \`associate-ticket-event-form\` wit
         value="Ticket ID"
       />
     </div>
+     
     <div
       class="flex xs6"
     >
@@ -30,6 +32,7 @@ exports[`associate-ticket-event-form Renders \`associate-ticket-event-form\` wit
       />
     </div>
   </div>
+   
   <declare-ticket-rule-ticket-custom-fields-field-stub
     name="declare_ticket"
     value="[object Object]"

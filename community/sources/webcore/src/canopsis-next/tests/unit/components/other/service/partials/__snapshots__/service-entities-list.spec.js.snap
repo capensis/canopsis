@@ -3,46 +3,16 @@
 exports[`service-entities-list Renders \`service-entities-list\` with custom props 1`] = `
 <div>
   <div
-    class="layout d-inline-flex align-center row"
+    class="layout d-inline-flex align-center"
   >
-    <div
-      class="v-input v-input--selection-controls v-input--checkbox ml-3 pa-0 theme--light"
-    >
-      <div
-        class="v-input__control"
-      >
-        <div
-          class="v-input__slot"
-        >
-          <div
-            class="v-input--selection-controls__input"
-          >
-            <input
-              aria-checked="false"
-              class="hidden"
-              role="checkbox"
-              type="checkbox"
-            />
-            <div
-              class="v-input--selection-controls__ripple primary--text"
-            />
-            <i
-              class="v-icon material-icons theme--light"
-            >
-              check_box_outline_blank
-            </i>
-          </div>
-          <label
-            class="v-label theme--light"
-            style="display: none;"
-          >
-            
-          </label>
-        </div>
-      </div>
-    </div>
+    <input
+      class="v-simple-checkbox ml-4 pa-0"
+      type="checkbox"
+    />
+     
     <!---->
   </div>
+   
   <div
     class="mt-2"
   >
@@ -63,6 +33,7 @@ exports[`service-entities-list Renders \`service-entities-list\` with custom pro
       widgetparameters="[object Object]"
     />
   </div>
+   
   <!---->
 </div>
 `;
@@ -70,6 +41,7 @@ exports[`service-entities-list Renders \`service-entities-list\` with custom pro
 exports[`service-entities-list Renders \`service-entities-list\` with default props 1`] = `
 <div>
   <!---->
+    
   <!---->
 </div>
 `;
@@ -77,50 +49,20 @@ exports[`service-entities-list Renders \`service-entities-list\` with default pr
 exports[`service-entities-list Renders \`service-entities-list\` with selected entities 1`] = `
 <div>
   <div
-    class="layout d-inline-flex align-center row"
+    class="layout d-inline-flex align-center"
   >
-    <div
-      class="v-input v-input--selection-controls v-input--checkbox ml-3 pa-0 theme--light"
-    >
-      <div
-        class="v-input__control"
-      >
-        <div
-          class="v-input__slot"
-        >
-          <div
-            class="v-input--selection-controls__input"
-          >
-            <input
-              aria-checked="false"
-              class="hidden"
-              role="checkbox"
-              type="checkbox"
-            />
-            <div
-              class="v-input--selection-controls__ripple primary--text"
-            />
-            <i
-              class="v-icon material-icons theme--light"
-            >
-              check_box_outline_blank
-            </i>
-          </div>
-          <label
-            class="v-label theme--light"
-            style="display: none;"
-          >
-            
-          </label>
-        </div>
-      </div>
-    </div>
+    <input
+      class="v-simple-checkbox ml-4 pa-0"
+      type="checkbox"
+    />
+     
     <service-entity-actions-stub
       actions="[object Object],[object Object]"
       assignedinstructions=""
       entity="[object Object]"
     />
   </div>
+   
   <div
     class="mt-2"
   >
@@ -142,6 +84,7 @@ exports[`service-entities-list Renders \`service-entities-list\` with selected e
       widgetparameters="[object Object]"
     />
   </div>
+   
   <!---->
 </div>
 `;

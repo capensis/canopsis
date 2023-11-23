@@ -127,7 +127,7 @@ describe('remediation-instructions-filters-item', () => {
   it('Renders `remediation-instructions-filters-item` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `remediation-instructions-filters-item` with custom props', () => {
@@ -149,7 +149,7 @@ describe('remediation-instructions-filters-item', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `remediation-instructions-filters-item` with filter in progress', () => {
@@ -172,7 +172,7 @@ describe('remediation-instructions-filters-item', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `remediation-instructions-filters-item` with filter instruction in progress', () => {
@@ -195,6 +195,6 @@ describe('remediation-instructions-filters-item', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

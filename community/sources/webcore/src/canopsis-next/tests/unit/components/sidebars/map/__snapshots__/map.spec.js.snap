@@ -6,51 +6,76 @@ exports[`map Renders \`map\` widget settings with custom props 1`] = `
     name="title"
     value="Map widget"
   />
+   
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
+   
   <field-periodic-refresh-stub
     form="[object Object]"
   />
+   
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
+   
   <field-map-stub
     value="map_id"
   />
+   
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
+   
   <widget-settings-group-stub
     title="Entity display settings"
   >
     <field-color-indicator-stub
       value="state"
     />
+     
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
+     
     <field-switcher-stub
       title="Entities under PBh type inactive, Pause, Maintenance display"
       value="true"
     />
   </widget-settings-group-stub>
+   
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
+   
   <widget-settings-group-stub
     title="Advanced settings"
   >
     <!---->
+     
     <field-text-editor-stub
       defaultvalue=""
       title="Entity info popup"
-      value=<div>TEMPLATE</div>
+      value="<div>TEMPLATE</div>"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
+     
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
+     
     <field-columns-stub
       columns="[object Object]"
       label="Alarm list columns"
@@ -60,9 +85,13 @@ exports[`map Renders \`map\` widget settings with custom props 1`] = `
       withhtml="true"
       withtemplate="true"
     />
+     
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
+     
     <field-columns-stub
       columns="[object Object]"
       label="Context explorer columns"
@@ -72,8 +101,11 @@ exports[`map Renders \`map\` widget settings with custom props 1`] = `
       withcolorindicator="true"
     />
   </widget-settings-group-stub>
+   
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
 </widget-settings-stub>
 `;
@@ -84,53 +116,78 @@ exports[`map Renders \`map\` widget settings with default props 1`] = `
     name="title"
     value=""
   />
+   
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
+   
   <field-periodic-refresh-stub
     form="[object Object]"
   />
+   
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
+   
   <field-map-stub
     value=""
   />
+   
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
+   
   <widget-settings-group-stub
     title="Entity display settings"
   >
     <field-color-indicator-stub
       value="state"
     />
+     
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
+     
     <field-switcher-stub
       title="Entities under PBh type inactive, Pause, Maintenance display"
       value="true"
     />
   </widget-settings-group-stub>
+   
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
+   
   <widget-settings-group-stub
     title="Advanced settings"
   >
     <!---->
+     
     <field-text-editor-stub
       defaultvalue=""
       title="Entity info popup"
-      value=<ul>
-  <li><strong>Libellé</strong> : {{entity.name}}</li>
-</ul>
+      value="<ul>
+    <li><strong>Libellé</strong> : {{entity.name}}</li>
+</ul>"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
+     
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
+     
     <field-columns-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       label="Alarm list columns"
@@ -140,9 +197,13 @@ exports[`map Renders \`map\` widget settings with default props 1`] = `
       withhtml="true"
       withtemplate="true"
     />
+     
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
+     
     <field-columns-stub
       columns="[object Object],[object Object]"
       label="Context explorer columns"
@@ -152,8 +213,11 @@ exports[`map Renders \`map\` widget settings with default props 1`] = `
       withcolorindicator="true"
     />
   </widget-settings-group-stub>
+   
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
 </widget-settings-stub>
 `;

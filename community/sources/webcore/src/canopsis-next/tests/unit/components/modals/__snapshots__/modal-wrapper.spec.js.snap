@@ -9,13 +9,14 @@ exports[`modal-wrapper Renders \`modal-wrapper\` with custom props and slots 1`]
     style="background-color: red;"
   >
     <div
-      class="modal-wrapper__title headline"
+      class="modal-wrapper__title text-h5"
     >
       <div>
         <div>
           Title
         </div>
       </div>
+       
       <div>
         <modal-title-buttons-stub
           close="true"
@@ -24,6 +25,7 @@ exports[`modal-wrapper Renders \`modal-wrapper\` with custom props and slots 1`]
       </div>
     </div>
   </div>
+   
   <div
     class="v-card__text"
   >
@@ -31,18 +33,18 @@ exports[`modal-wrapper Renders \`modal-wrapper\` with custom props and slots 1`]
       Text
     </div>
   </div>
+   
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
+   
   <div
-    class="v-card__actions"
+    class="v-card__actions justify-end px-2 py-3"
   >
-    <div
-      class="layout py-1 justify-end"
-    >
-      <div>
-        Actions
-      </div>
+    <div>
+      Actions
     </div>
   </div>
 </div>
@@ -62,18 +64,20 @@ exports[`modal-wrapper Renders \`modal-wrapper\` with minimized modal 1`] = `
     class="v-card__title white--text"
   >
     <div
-      class="modal-wrapper__title headline"
+      class="modal-wrapper__title text-h5"
     >
       <div>
         <div>
           Title
         </div>
       </div>
+       
       <div>
         <modal-title-buttons-stub />
       </div>
     </div>
   </div>
+   
   <!---->
 </div>
 `;

@@ -3,7 +3,6 @@
 exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] = `
 <div
   class="flex"
-  pagination="[object Object]"
 >
   <div>
     <div
@@ -35,6 +34,97 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
       <div
         class="v-data-table__wrapper"
       >
+        <alarms-list-row-stub
+          columnsfilters=""
+          expandable="true"
+          headers="[object Object]"
+          istourenabled="true"
+          medium="true"
+          parentalarm="[object Object]"
+          refreshalarmslist="[Function]"
+          row="[object Object]"
+          search=""
+          selectable="true"
+          selectedtag="tag"
+          widget="[object Object]"
+        />
+        <transition-group-stub
+          class="v-data-table__expanded__col"
+          colspan="2"
+          tag="td"
+        />
+        <alarms-list-row-stub
+          columnsfilters=""
+          expandable="true"
+          headers="[object Object]"
+          medium="true"
+          parentalarm="[object Object]"
+          refreshalarmslist="[Function]"
+          row="[object Object]"
+          search=""
+          selectable="true"
+          selectedtag="tag"
+          widget="[object Object]"
+        />
+        <transition-group-stub
+          class="v-data-table__expanded__col"
+          colspan="2"
+          tag="td"
+        />
+        <alarms-list-row-stub
+          columnsfilters=""
+          expandable="true"
+          headers="[object Object]"
+          medium="true"
+          parentalarm="[object Object]"
+          refreshalarmslist="[Function]"
+          row="[object Object]"
+          search=""
+          selectable="true"
+          selectedtag="tag"
+          widget="[object Object]"
+        />
+        <transition-group-stub
+          class="v-data-table__expanded__col"
+          colspan="2"
+          tag="td"
+        />
+        <alarms-list-row-stub
+          columnsfilters=""
+          expandable="true"
+          headers="[object Object]"
+          medium="true"
+          parentalarm="[object Object]"
+          refreshalarmslist="[Function]"
+          row="[object Object]"
+          search=""
+          selectable="true"
+          selectedtag="tag"
+          widget="[object Object]"
+        />
+        <transition-group-stub
+          class="v-data-table__expanded__col"
+          colspan="2"
+          tag="td"
+        />
+        <alarms-list-row-stub
+          columnsfilters=""
+          expandable="true"
+          headers="[object Object]"
+          medium="true"
+          parentalarm="[object Object]"
+          refreshalarmslist="[Function]"
+          row="[object Object]"
+          search=""
+          selectable="true"
+          selectedtag="tag"
+          widget="[object Object]"
+        />
+        <transition-group-stub
+          class="v-data-table__expanded__col"
+          colspan="2"
+          tag="td"
+        />
         <table>
           <colgroup>
             <col
@@ -146,117 +236,21 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
             </tr>
           </thead>
           <tbody>
-            <alarms-list-row-stub
-              columnsfilters=""
-              expandable="true"
-              headers="[object Object]"
-              istourenabled="true"
-              medium="true"
-              parentalarm="[object Object]"
-              refreshalarmslist="[Function]"
-              row="[object Object]"
-              search=""
-              selectable="true"
-              selectedtag="tag"
-              widget="[object Object]"
+            <tr
+              class="v-data-table__expanded v-data-table__expanded__row"
             />
             <tr
               class="v-data-table__expanded v-data-table__expanded__row"
-            >
-              <transition-group-stub
-                class="v-data-table__expanded__col"
-                colspan="2"
-                tag="td"
-              />
-            </tr>
-            <alarms-list-row-stub
-              columnsfilters=""
-              expandable="true"
-              headers="[object Object]"
-              medium="true"
-              parentalarm="[object Object]"
-              refreshalarmslist="[Function]"
-              row="[object Object]"
-              search=""
-              selectable="true"
-              selectedtag="tag"
-              widget="[object Object]"
             />
             <tr
               class="v-data-table__expanded v-data-table__expanded__row"
-            >
-              <transition-group-stub
-                class="v-data-table__expanded__col"
-                colspan="2"
-                tag="td"
-              />
-            </tr>
-            <alarms-list-row-stub
-              columnsfilters=""
-              expandable="true"
-              headers="[object Object]"
-              medium="true"
-              parentalarm="[object Object]"
-              refreshalarmslist="[Function]"
-              row="[object Object]"
-              search=""
-              selectable="true"
-              selectedtag="tag"
-              widget="[object Object]"
             />
             <tr
               class="v-data-table__expanded v-data-table__expanded__row"
-            >
-              <transition-group-stub
-                class="v-data-table__expanded__col"
-                colspan="2"
-                tag="td"
-              />
-            </tr>
-            <alarms-list-row-stub
-              columnsfilters=""
-              expandable="true"
-              headers="[object Object]"
-              medium="true"
-              parentalarm="[object Object]"
-              refreshalarmslist="[Function]"
-              row="[object Object]"
-              search=""
-              selectable="true"
-              selectedtag="tag"
-              widget="[object Object]"
             />
             <tr
               class="v-data-table__expanded v-data-table__expanded__row"
-            >
-              <transition-group-stub
-                class="v-data-table__expanded__col"
-                colspan="2"
-                tag="td"
-              />
-            </tr>
-            <alarms-list-row-stub
-              columnsfilters=""
-              expandable="true"
-              headers="[object Object]"
-              medium="true"
-              parentalarm="[object Object]"
-              refreshalarmslist="[Function]"
-              row="[object Object]"
-              search=""
-              selectable="true"
-              selectedtag="tag"
-              widget="[object Object]"
             />
-            <tr
-              class="v-data-table__expanded v-data-table__expanded__row"
-            >
-              <transition-group-stub
-                class="v-data-table__expanded__col"
-                colspan="2"
-                tag="td"
-              />
-            </tr>
           </tbody>
         </table>
       </div>
@@ -272,7 +266,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
 exports[`alarms-list-table Renders \`alarms-list-table\` with default and required props 1`] = `
 <div
   class="flex"
-  pagination="[object Object]"
 >
   <c-empty-data-table-columns-stub />
    
@@ -287,7 +280,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
 exports[`alarms-list-table Renders \`alarms-list-table\` with default and required props with compact mode 1`] = `
 <div
   class="flex"
-  pagination="[object Object]"
 >
   <div>
     <!---->
@@ -378,7 +370,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
 exports[`alarms-list-table Renders \`alarms-list-table\` with default and required props with links column with links in row count 1`] = `
 <div
   class="flex"
-  pagination="[object Object]"
 >
   <div>
     <!---->
@@ -470,7 +461,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
 exports[`alarms-list-table Renders \`alarms-list-table\` with default and required props with simulate ctrl keydown with selectable = false 1`] = `
 <div
   class="flex"
-  pagination="[object Object]"
 >
   <div>
     <!---->
@@ -592,7 +582,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
 exports[`alarms-list-table Renders \`alarms-list-table\` with default and required props with simulate ctrl keydown with selectable = true 1`] = `
 <div
   class="flex"
-  pagination="[object Object]"
 >
   <div>
     <!---->
@@ -714,7 +703,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
 exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but without selectable 1`] = `
 <div
   class="flex"
-  pagination="[object Object]"
 >
   <div>
     <div
@@ -763,6 +751,81 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
       <div
         class="v-data-table__wrapper"
       >
+        <alarms-list-row-stub
+          columnsfilters=""
+          expandable="true"
+          headers="[object Object],[object Object],[object Object]"
+          refreshalarmslist="[Function]"
+          row="[object Object]"
+          search=""
+          selectedtag=""
+          widget="[object Object]"
+        />
+        <transition-group-stub
+          class="v-data-table__expanded__col"
+          colspan="3"
+          tag="td"
+        />
+        <alarms-list-row-stub
+          columnsfilters=""
+          expandable="true"
+          headers="[object Object],[object Object],[object Object]"
+          refreshalarmslist="[Function]"
+          row="[object Object]"
+          search=""
+          selectedtag=""
+          widget="[object Object]"
+        />
+        <transition-group-stub
+          class="v-data-table__expanded__col"
+          colspan="3"
+          tag="td"
+        />
+        <alarms-list-row-stub
+          columnsfilters=""
+          expandable="true"
+          headers="[object Object],[object Object],[object Object]"
+          refreshalarmslist="[Function]"
+          row="[object Object]"
+          search=""
+          selectedtag=""
+          widget="[object Object]"
+        />
+        <transition-group-stub
+          class="v-data-table__expanded__col"
+          colspan="3"
+          tag="td"
+        />
+        <alarms-list-row-stub
+          columnsfilters=""
+          expandable="true"
+          headers="[object Object],[object Object],[object Object]"
+          refreshalarmslist="[Function]"
+          row="[object Object]"
+          search=""
+          selectedtag=""
+          widget="[object Object]"
+        />
+        <transition-group-stub
+          class="v-data-table__expanded__col"
+          colspan="3"
+          tag="td"
+        />
+        <alarms-list-row-stub
+          columnsfilters=""
+          expandable="true"
+          headers="[object Object],[object Object],[object Object]"
+          refreshalarmslist="[Function]"
+          row="[object Object]"
+          search=""
+          selectedtag=""
+          widget="[object Object]"
+        />
+        <transition-group-stub
+          class="v-data-table__expanded__col"
+          colspan="3"
+          tag="td"
+        />
         <table>
           <colgroup>
             <col
@@ -838,101 +901,21 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
             </tr>
           </thead>
           <tbody>
-            <alarms-list-row-stub
-              columnsfilters=""
-              expandable="true"
-              headers="[object Object],[object Object],[object Object]"
-              refreshalarmslist="[Function]"
-              row="[object Object]"
-              search=""
-              selectedtag=""
-              widget="[object Object]"
+            <tr
+              class="v-data-table__expanded v-data-table__expanded__row"
             />
             <tr
               class="v-data-table__expanded v-data-table__expanded__row"
-            >
-              <transition-group-stub
-                class="v-data-table__expanded__col"
-                colspan="3"
-                tag="td"
-              />
-            </tr>
-            <alarms-list-row-stub
-              columnsfilters=""
-              expandable="true"
-              headers="[object Object],[object Object],[object Object]"
-              refreshalarmslist="[Function]"
-              row="[object Object]"
-              search=""
-              selectedtag=""
-              widget="[object Object]"
             />
             <tr
               class="v-data-table__expanded v-data-table__expanded__row"
-            >
-              <transition-group-stub
-                class="v-data-table__expanded__col"
-                colspan="3"
-                tag="td"
-              />
-            </tr>
-            <alarms-list-row-stub
-              columnsfilters=""
-              expandable="true"
-              headers="[object Object],[object Object],[object Object]"
-              refreshalarmslist="[Function]"
-              row="[object Object]"
-              search=""
-              selectedtag=""
-              widget="[object Object]"
             />
             <tr
               class="v-data-table__expanded v-data-table__expanded__row"
-            >
-              <transition-group-stub
-                class="v-data-table__expanded__col"
-                colspan="3"
-                tag="td"
-              />
-            </tr>
-            <alarms-list-row-stub
-              columnsfilters=""
-              expandable="true"
-              headers="[object Object],[object Object],[object Object]"
-              refreshalarmslist="[Function]"
-              row="[object Object]"
-              search=""
-              selectedtag=""
-              widget="[object Object]"
             />
             <tr
               class="v-data-table__expanded v-data-table__expanded__row"
-            >
-              <transition-group-stub
-                class="v-data-table__expanded__col"
-                colspan="3"
-                tag="td"
-              />
-            </tr>
-            <alarms-list-row-stub
-              columnsfilters=""
-              expandable="true"
-              headers="[object Object],[object Object],[object Object]"
-              refreshalarmslist="[Function]"
-              row="[object Object]"
-              search=""
-              selectedtag=""
-              widget="[object Object]"
             />
-            <tr
-              class="v-data-table__expanded v-data-table__expanded__row"
-            >
-              <transition-group-stub
-                class="v-data-table__expanded__col"
-                colspan="3"
-                tag="td"
-              />
-            </tr>
           </tbody>
         </table>
       </div>

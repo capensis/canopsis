@@ -8,14 +8,17 @@ exports[`bar-chart-widget-form Renders \`bar-chart-widget-form\` widget settings
     name="title"
     value="Bar chart"
   />
+   
   <field-periodic-refresh-stub
     form="[object Object]"
   />
+   
   <field-preset-stub
     name="preset"
     parameters="[object Object]"
     type="BarChart"
   />
+   
   <widget-settings-group-stub
     title="Metrics display"
   >
@@ -25,11 +28,13 @@ exports[`bar-chart-widget-form Renders \`bar-chart-widget-form\` widget settings
       withcolor="true"
       withexternal="true"
     />
+     
     <field-bar-graph-type-stub
       name="stacked"
       value="true"
     />
   </widget-settings-group-stub>
+   
   <widget-settings-group-stub
     title="Advanced settings"
   >
@@ -39,12 +44,15 @@ exports[`bar-chart-widget-form Renders \`bar-chart-widget-form\` widget settings
       placeholder="Header title"
       value="Chart title"
     />
+     
     <field-quick-date-interval-type-stub
       value="last30Days"
     />
+     
     <field-sampling-stub
       value="day"
     />
+     
     <field-filters-stub
       addable="true"
       editable="true"
@@ -52,6 +60,7 @@ exports[`bar-chart-widget-form Renders \`bar-chart-widget-form\` widget settings
       hideselector="true"
       withentity="true"
     />
+     
     <field-switcher-stub
       title="Show comparison"
     />
@@ -61,15 +70,18 @@ exports[`bar-chart-widget-form Renders \`bar-chart-widget-form\` widget settings
 
 exports[`bar-chart-widget-form Renders \`bar-chart-widget-form\` widget settings with default props 1`] = `
 <v-layout-stub
-  column="column"
+  column=""
   tag="div"
 >
   <field-title-stub
     name="title"
     value=""
   />
+   
   <!---->
+   
   <!---->
+   
   <widget-settings-group-stub
     title="Metrics display"
   >
@@ -79,10 +91,12 @@ exports[`bar-chart-widget-form Renders \`bar-chart-widget-form\` widget settings
       withcolor="true"
       withexternal="true"
     />
+     
     <field-bar-graph-type-stub
       name="stacked"
     />
   </widget-settings-group-stub>
+   
   <widget-settings-group-stub
     title="Advanced settings"
   >
@@ -92,13 +106,17 @@ exports[`bar-chart-widget-form Renders \`bar-chart-widget-form\` widget settings
       placeholder="Header title"
       value=""
     />
+     
     <field-quick-date-interval-type-stub
       value="last30Days"
     />
+     
     <field-sampling-stub
       value="day"
     />
+     
     <!---->
+     
     <field-switcher-stub
       title="Show comparison"
     />

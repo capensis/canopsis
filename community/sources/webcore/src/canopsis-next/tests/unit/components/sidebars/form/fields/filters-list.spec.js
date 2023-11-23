@@ -205,7 +205,7 @@ describe('filters-list', () => {
   it('Renders `filters` with default and required props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `filters` with custom props', () => {
@@ -222,6 +222,6 @@ describe('filters-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

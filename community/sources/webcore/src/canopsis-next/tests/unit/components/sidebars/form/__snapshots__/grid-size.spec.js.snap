@@ -2,6 +2,7 @@
 
 exports[`field-grid-size Renders \`field-grid-size\` with custom props 1`] = `
 <widget-settings-item-stub>
+   
   <c-column-size-field-stub
     mobile="true"
     tablet="true"
@@ -12,6 +13,7 @@ exports[`field-grid-size Renders \`field-grid-size\` with custom props 1`] = `
 
 exports[`field-grid-size Renders \`field-grid-size\` with default props 1`] = `
 <widget-settings-item-stub>
+   
   <c-column-size-field-stub />
 </widget-settings-item-stub>
 `;

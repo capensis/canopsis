@@ -10,6 +10,7 @@ exports[`mermaid-points-preview Renders \`mermaid-points-preview\` with custom p
     x="1"
     y="2"
   />
+   
   <point-popup-dialog-stub
     colorindicator="impact_state"
     point="[object Object]"
@@ -29,6 +30,7 @@ exports[`mermaid-points-preview Renders \`mermaid-points-preview\` with required
     x="1"
     y="2"
   />
+   
   <!---->
 </div>
 `;

@@ -7,7 +7,7 @@ exports[`create-associate-ticket-event Renders \`create-associate-ticket-event\`
 >
   <div
     class="modal-wrapper"
-    close="close"
+    close=""
   >
     <div
       class="title"
@@ -26,23 +26,32 @@ exports[`create-associate-ticket-event Renders \`create-associate-ticket-event\`
         <alarm-general-table-stub
           items="[object Object]"
         />
+         
         <hr
+          aria-orientation="horizontal"
           class="v-divider theme--light"
+          role="separator"
         />
+         
         <!---->
+         
         <associate-ticket-event-form-stub
           class="mt-3"
           form="[object Object]"
         />
+         
         <c-description-field-stub
           label="Comment"
           name="comment"
           value=""
         />
+         
         <c-alert-stub
           type="info"
         >
+          
           There is 1 item without ack. Ack event for the item will send before.
+        
         </c-alert-stub>
       </div>
     </div>
@@ -51,24 +60,29 @@ exports[`create-associate-ticket-event Renders \`create-associate-ticket-event\`
       class="actions"
     >
       <button
-        class="v-btn v-btn--flat theme--light"
+        class="v-btn v-btn--text theme--light v-size--default"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Cancel
-        </div>
+          
+        Cancel
+      
+        </span>
       </button>
+       
       <button
-        class="primary v-btn theme--light"
+        class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Save changes
-        </div>
+          
+        Save changes
+      
+        </span>
       </button>
     </div>
   </div>
@@ -82,7 +96,7 @@ exports[`create-associate-ticket-event Renders \`create-associate-ticket-event\`
 >
   <div
     class="modal-wrapper"
-    close="close"
+    close=""
   >
     <div
       class="title"
@@ -101,23 +115,32 @@ exports[`create-associate-ticket-event Renders \`create-associate-ticket-event\`
         <alarm-general-table-stub
           items="[object Object]"
         />
+         
         <hr
+          aria-orientation="horizontal"
           class="v-divider theme--light"
+          role="separator"
         />
+         
         <!---->
+         
         <associate-ticket-event-form-stub
           class="mt-3"
           form="[object Object]"
         />
+         
         <c-description-field-stub
           label="Comment"
           name="comment"
           value=""
         />
+         
         <c-alert-stub
           type="info"
         >
+          
           There is 1 item without ack. Ack event for the item will send before.
+        
         </c-alert-stub>
       </div>
     </div>
@@ -126,24 +149,29 @@ exports[`create-associate-ticket-event Renders \`create-associate-ticket-event\`
       class="actions"
     >
       <button
-        class="v-btn v-btn--flat theme--light"
+        class="v-btn v-btn--text theme--light v-size--default"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Cancel
-        </div>
+          
+        Cancel
+      
+        </span>
       </button>
+       
       <button
-        class="primary v-btn theme--light"
+        class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Save changes
-        </div>
+          
+        Save changes
+      
+        </span>
       </button>
     </div>
   </div>

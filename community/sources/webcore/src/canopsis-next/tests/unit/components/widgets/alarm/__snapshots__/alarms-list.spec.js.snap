@@ -15,19 +15,19 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
         combobox=""
         items="item 1,item 2"
         query="[object Object]"
-        tooltip=<span>Help on the advanced research :</span>
+        tooltip="<span>Help on the advanced research :</span>
 <p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]
-<p>The "-" before the research is required</p>
+<p>The \\"-\\" before the research is required</p>
 <p>Operators :
-  <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>
-<p>Value's type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>
-<dl><dt>Examples :</dt><dt>- Connector = "connector_1"</dt>
-  <dd>Alarms whose connectors are "connector_1"</dd><dt>- Connector="connector_1" AND Resource="resource_3"</dt>
-  <dd>Alarms whose connectors is "connector_1" and the resources is "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>
-  <dd>Alarms whose connectors is "connector_1" or the resources is "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>
-  <dd>Alarms whose connectors contains 1 or 2</dd><dt>- NOT Connector = "connector_1"</dt>
-  <dd>Alarms whose connectors isn't "connector_1"</dd>
-</dl>
+    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>
+<p>Value's type : String between quote, Boolean (\\"TRUE\\", \\"FALSE\\"), Integer, Float, \\"NULL\\"</p>
+<dl><dt>Examples :</dt><dt>- Connector = \\"connector_1\\"</dt>
+    <dd>Alarms whose connectors are \\"connector_1\\"</dd><dt>- Connector=\\"connector_1\\" AND Resource=\\"resource_3\\"</dt>
+    <dd>Alarms whose connectors is \\"connector_1\\" and the resources is \\"resource_3\\"</dd><dt>- Connector=\\"connector_1\\" OR Resource=\\"resource_3\\"</dt>
+    <dd>Alarms whose connectors is \\"connector_1\\" or the resources is \\"resource_3\\"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>
+    <dd>Alarms whose connectors contains 1 or 2</dd><dt>- NOT Connector = \\"connector_1\\"</dt>
+    <dd>Alarms whose connectors isn't \\"connector_1\\"</dd>
+</dl>"
       />
     </div>
      
@@ -143,19 +143,19 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
         combobox=""
         items=""
         query="[object Object]"
-        tooltip=<span>Help on the advanced research :</span>
+        tooltip="<span>Help on the advanced research :</span>
 <p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]
-<p>The "-" before the research is required</p>
+<p>The \\"-\\" before the research is required</p>
 <p>Operators :
-  <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>
-<p>Value's type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>
-<dl><dt>Examples :</dt><dt>- Connector = "connector_1"</dt>
-  <dd>Alarms whose connectors are "connector_1"</dd><dt>- Connector="connector_1" AND Resource="resource_3"</dt>
-  <dd>Alarms whose connectors is "connector_1" and the resources is "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>
-  <dd>Alarms whose connectors is "connector_1" or the resources is "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>
-  <dd>Alarms whose connectors contains 1 or 2</dd><dt>- NOT Connector = "connector_1"</dt>
-  <dd>Alarms whose connectors isn't "connector_1"</dd>
-</dl>
+    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>
+<p>Value's type : String between quote, Boolean (\\"TRUE\\", \\"FALSE\\"), Integer, Float, \\"NULL\\"</p>
+<dl><dt>Examples :</dt><dt>- Connector = \\"connector_1\\"</dt>
+    <dd>Alarms whose connectors are \\"connector_1\\"</dd><dt>- Connector=\\"connector_1\\" AND Resource=\\"resource_3\\"</dt>
+    <dd>Alarms whose connectors is \\"connector_1\\" and the resources is \\"resource_3\\"</dd><dt>- Connector=\\"connector_1\\" OR Resource=\\"resource_3\\"</dt>
+    <dd>Alarms whose connectors is \\"connector_1\\" or the resources is \\"resource_3\\"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>
+    <dd>Alarms whose connectors contains 1 or 2</dd><dt>- NOT Connector = \\"connector_1\\"</dt>
+    <dd>Alarms whose connectors isn't \\"connector_1\\"</dd>
+</dl>"
       />
     </div>
      
@@ -257,19 +257,19 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
         combobox=""
         items=""
         query="[object Object]"
-        tooltip=<span>Help on the advanced research :</span>
+        tooltip="<span>Help on the advanced research :</span>
 <p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]
-<p>The "-" before the research is required</p>
+<p>The \\"-\\" before the research is required</p>
 <p>Operators :
-  <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>
-<p>Value's type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>
-<dl><dt>Examples :</dt><dt>- Connector = "connector_1"</dt>
-  <dd>Alarms whose connectors are "connector_1"</dd><dt>- Connector="connector_1" AND Resource="resource_3"</dt>
-  <dd>Alarms whose connectors is "connector_1" and the resources is "resource_3"</dd><dt>- Connector="connector_1" OR Resource="resource_3"</dt>
-  <dd>Alarms whose connectors is "connector_1" or the resources is "resource_3"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>
-  <dd>Alarms whose connectors contains 1 or 2</dd><dt>- NOT Connector = "connector_1"</dt>
-  <dd>Alarms whose connectors isn't "connector_1"</dd>
-</dl>
+    <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>
+<p>Value's type : String between quote, Boolean (\\"TRUE\\", \\"FALSE\\"), Integer, Float, \\"NULL\\"</p>
+<dl><dt>Examples :</dt><dt>- Connector = \\"connector_1\\"</dt>
+    <dd>Alarms whose connectors are \\"connector_1\\"</dd><dt>- Connector=\\"connector_1\\" AND Resource=\\"resource_3\\"</dt>
+    <dd>Alarms whose connectors is \\"connector_1\\" and the resources is \\"resource_3\\"</dd><dt>- Connector=\\"connector_1\\" OR Resource=\\"resource_3\\"</dt>
+    <dd>Alarms whose connectors is \\"connector_1\\" or the resources is \\"resource_3\\"</dd><dt>- Connector LIKE 1 OR Connector LIKE 2</dt>
+    <dd>Alarms whose connectors contains 1 or 2</dd><dt>- NOT Connector = \\"connector_1\\"</dt>
+    <dd>Alarms whose connectors isn't \\"connector_1\\"</dd>
+</dl>"
       />
     </div>
      

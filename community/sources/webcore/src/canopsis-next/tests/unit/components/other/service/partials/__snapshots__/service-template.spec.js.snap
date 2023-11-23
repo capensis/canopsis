@@ -10,7 +10,7 @@ exports[`service-template Renders \`service-template\` with custom props 1`] = `
         
   <service-entities-list-stub
     entitynamefield="entity._id"
-    pagination="[object Object]"
+    options="[object Object]"
     service="[object Object]"
     serviceentities="[object Object],[object Object]"
     totalitems="20"

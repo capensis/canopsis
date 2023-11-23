@@ -5,8 +5,11 @@ exports[`filters-list Renders \`filters-list\` with custom props 1`] = `
   <c-alert-stub
     type="info"
   >
+    
     No filters added yet
+  
   </c-alert-stub>
+   
   <c-draggable-list-field-stub
     handle=".action-drag-handler"
     value="[object Object],[object Object]"
@@ -20,15 +23,18 @@ exports[`filters-list Renders \`filters-list\` with custom props 1`] = `
       filter="[object Object]"
     />
   </c-draggable-list-field-stub>
+   
   <button
-    class="ml-0 v-btn v-btn--outline v-btn--depressed theme--light primary--text"
+    class="v-btn-legacy-m--y v-btn v-btn--outlined theme--light v-size--default primary--text"
     type="button"
   >
-    <div
+    <span
       class="v-btn__content"
     >
-      Add filter
-    </div>
+      
+    Add filter
+  
+    </span>
   </button>
 </div>
 `;
@@ -39,21 +45,27 @@ exports[`filters-list Renders \`filters-list\` with default props 1`] = `
     type="info"
     value="true"
   >
+    
     No filters added yet
+  
   </c-alert-stub>
+   
   <c-draggable-list-field-stub
     handle=".action-drag-handler"
     value=""
   />
+   
   <button
-    class="ml-0 v-btn v-btn--outline v-btn--depressed theme--light primary--text"
+    class="v-btn-legacy-m--y v-btn v-btn--outlined theme--light v-size--default primary--text"
     type="button"
   >
-    <div
+    <span
       class="v-btn__content"
     >
-      Add filter
-    </div>
+      
+    Add filter
+  
+    </span>
   </button>
 </div>
 `;

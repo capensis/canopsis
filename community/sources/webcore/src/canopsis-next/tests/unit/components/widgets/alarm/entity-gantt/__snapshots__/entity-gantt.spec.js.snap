@@ -7,6 +7,7 @@ exports[`entity-gantt Renders \`entity-gantt\` with required props 1`] = `
   <c-progress-overlay-stub
     pending="true"
   />
+   
   <junit-gantt-chart-stub
     items=""
     query="[object Object]"
@@ -21,6 +22,7 @@ exports[`entity-gantt Renders \`entity-gantt\` with required props 2`] = `
   class="layout justify-center"
 >
   <c-progress-overlay-stub />
+   
   <junit-gantt-chart-stub
     items="[object Object],[object Object]"
     query="[object Object]"

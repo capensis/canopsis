@@ -2,13 +2,13 @@
 
 exports[`pattern-rule-field Renders \`pattern-rule-field\` with custom props 1`] = `
 <div
-  class="layout row"
+  class="layout"
 >
   <div
-    class="flex xs5 xs4"
+    class="flex xs5"
   >
     <div
-      class="layout row"
+      class="layout"
     >
       <div
         class="flex xs4"
@@ -22,6 +22,7 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with custom props 1`]
           value="v.display_name"
         />
       </div>
+       
       <div
         class="flex pl-3 xs8"
       >
@@ -30,17 +31,18 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with custom props 1`]
           disabled="true"
           items="Infos 1,Infos 2"
           name="customName"
-          row="row"
+          row=""
           value="[object Object]"
         />
       </div>
     </div>
   </div>
+   
   <div
     class="flex xs7"
   >
     <div
-      class="layout row"
+      class="layout"
     >
       <div
         class="flex pl-3 xs1"
@@ -53,6 +55,7 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with custom props 1`]
           value="string"
         />
       </div>
+       
       <div
         class="flex pl-3 xs4"
       >
@@ -65,6 +68,7 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with custom props 1`]
           value="equal"
         />
       </div>
+       
       <div
         class="flex pl-3 xs7 xs6"
       >
@@ -83,13 +87,13 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with custom props 1`]
 
 exports[`pattern-rule-field Renders \`pattern-rule-field\` with date type 1`] = `
 <div
-  class="layout row"
+  class="layout"
 >
   <div
     class="flex xs4"
   >
     <div
-      class="layout row"
+      class="layout"
     >
       <div
         class="flex"
@@ -102,14 +106,16 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with date type 1`] = 
           value="v.creation_date"
         />
       </div>
+       
       <!---->
     </div>
   </div>
+   
   <div
-    class="flex xs8 xs7"
+    class="flex xs8"
   >
     <div
-      class="layout row"
+      class="layout"
     >
       <div
         class="flex pl-3 xs5"
@@ -120,6 +126,7 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with date type 1`] = 
           value="custom"
         />
       </div>
+       
       <div
         class="flex pl-3 xs7"
       >
@@ -135,13 +142,13 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with date type 1`] = 
 
 exports[`pattern-rule-field Renders \`pattern-rule-field\` with default props 1`] = `
 <div
-  class="layout row"
+  class="layout"
 >
   <div
     class="flex xs4"
   >
     <div
-      class="layout row"
+      class="layout"
     >
       <div
         class="flex"
@@ -154,18 +161,21 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with default props 1`
           value="v.display_name"
         />
       </div>
+       
       <!---->
     </div>
   </div>
+   
   <div
-    class="flex xs8 xs7"
+    class="flex xs8"
   >
     <div
-      class="layout row"
+      class="layout"
     >
       <!---->
+       
       <div
-        class="flex pl-3 xs6 xs4"
+        class="flex pl-3 xs6"
       >
         <pattern-operator-field-stub
           label=""
@@ -175,6 +185,7 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with default props 1`
           value="equal"
         />
       </div>
+       
       <div
         class="flex pl-3 xs6"
       >
@@ -194,13 +205,13 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with default props 1`
 
 exports[`pattern-rule-field Renders \`pattern-rule-field\` with duration type 1`] = `
 <div
-  class="layout row"
+  class="layout"
 >
   <div
     class="flex xs4"
   >
     <div
-      class="layout row"
+      class="layout"
     >
       <div
         class="flex"
@@ -213,18 +224,21 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with duration type 1`
           value="v.duration"
         />
       </div>
+       
       <!---->
     </div>
   </div>
+   
   <div
-    class="flex xs8 xs7"
+    class="flex xs8"
   >
     <div
-      class="layout row"
+      class="layout"
     >
       <!---->
+       
       <div
-        class="flex pl-3 xs6 xs4"
+        class="flex pl-3 xs6"
       >
         <pattern-operator-field-stub
           label=""
@@ -234,6 +248,7 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with duration type 1`
           value="not_equal"
         />
       </div>
+       
       <div
         class="flex pl-3 xs6"
       >
@@ -249,13 +264,13 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with duration type 1`
 
 exports[`pattern-rule-field Renders \`pattern-rule-field\` with extra infos type 1`] = `
 <div
-  class="layout row"
+  class="layout"
 >
   <div
-    class="flex xs5 xs4"
+    class="flex xs5"
   >
     <div
-      class="layout row"
+      class="layout"
     >
       <div
         class="flex xs4"
@@ -268,25 +283,28 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with extra infos type
           value="extra"
         />
       </div>
+       
       <div
         class="flex pl-3 xs8"
       >
         <c-infos-attribute-field-stub
           items=""
           name="rule"
-          row="row"
+          row=""
           value="[object Object]"
         />
       </div>
     </div>
   </div>
+   
   <div
     class="flex xs7"
   >
     <div
-      class="layout row"
+      class="layout"
     >
       <!---->
+       
       <div
         class="flex pl-3 xs4"
       >
@@ -298,6 +316,7 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with extra infos type
           value="equal"
         />
       </div>
+       
       <!---->
     </div>
   </div>
@@ -306,13 +325,13 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with extra infos type
 
 exports[`pattern-rule-field Renders \`pattern-rule-field\` with infos type and field is name 1`] = `
 <div
-  class="layout row"
+  class="layout"
 >
   <div
-    class="flex xs5 xs4"
+    class="flex xs5"
   >
     <div
-      class="layout row"
+      class="layout"
     >
       <div
         class="flex xs4"
@@ -325,6 +344,7 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with infos type and f
           value="v.infos"
         />
       </div>
+       
       <div
         class="flex pl-3 xs8"
       >
@@ -332,19 +352,21 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with infos type and f
           combobox="true"
           items=""
           name="rule"
-          row="row"
+          row=""
           value="[object Object]"
         />
       </div>
     </div>
   </div>
+   
   <div
     class="flex xs7"
   >
     <div
-      class="layout row"
+      class="layout"
     >
       <!---->
+       
       <div
         class="flex pl-3 xs4"
       >
@@ -356,6 +378,7 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with infos type and f
           value="equal"
         />
       </div>
+       
       <!---->
     </div>
   </div>
