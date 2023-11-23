@@ -125,9 +125,9 @@ func NewMongoQueryBuilder(client mongo.DbClient) *MongoQueryBuilder {
 func (q *MongoQueryBuilder) clear(now types.CpsTime) {
 	q.searchPipeline = make([]bson.M, 0)
 	q.alarmMatch = make([]bson.M, 0)
-	q.additionalMatch = []bson.M{{"$match": bson.M{"entity.enabled": true}}}
+	q.additionalMatch = make([]bson.M, 0)
 
-	q.lookupsForAdditionalMatch = map[string]bool{"entity": true}
+	q.lookupsForAdditionalMatch = make(map[string]bool)
 	q.lookupsOnlyForAdditionalMatch = make(map[string]bool)
 	q.lookupsForSort = make(map[string]bool)
 	q.excludeLookupsBeforeSort = make([]string, 0)
@@ -191,18 +191,17 @@ func (q *MongoQueryBuilder) CreateCountAggregationPipeline(ctx context.Context, 
 func (q *MongoQueryBuilder) CreateGetAggregationPipeline(
 	match bson.M,
 	now types.CpsTime,
+	opened int,
 ) ([]bson.M, error) {
 	q.clear(now)
-
-	q.alarmMatch = append(q.alarmMatch,
-		bson.M{"$match": match},
-	)
-
+	q.handleOpened(opened)
+	q.handleDependencies(true)
+	q.alarmMatch = append(q.alarmMatch, bson.M{"$match": match})
 	query := pagination.Query{
 		Page:  1,
 		Limit: 1,
 	}
-	q.handleDependencies(true)
+
 	return q.createPaginationAggregationPipeline(query), nil
 }
 
@@ -247,19 +246,9 @@ func (q *MongoQueryBuilder) CreateChildrenAggregationPipeline(
 	now types.CpsTime,
 ) ([]bson.M, error) {
 	q.clear(now)
+	q.handleOpened(opened)
 	q.handleDependencies(true)
-
-	match := bson.M{
-		"v.parents": parentId,
-	}
-	if opened == OnlyOpened {
-		match["v.resolved"] = nil
-	}
-
-	q.alarmMatch = append(q.alarmMatch,
-		bson.M{"$match": match},
-	)
-
+	q.alarmMatch = append(q.alarmMatch, bson.M{"$match": bson.M{"v.parents": parentId}})
 	q.lookups = append(q.lookups, lookupWithKey{key: "parents", pipeline: []bson.M{
 		{"$graphLookup": bson.M{
 			"from":                    mongo.AlarmMongoCollection,
@@ -496,8 +485,9 @@ func (q *MongoQueryBuilder) addFieldsToPipeline(fieldsMap, addedFields map[strin
 
 func (q *MongoQueryBuilder) handleFilter(ctx context.Context, r FilterRequest) error {
 	alarmMatch := make([]bson.M, 0)
+	entityMatch := make([]bson.M, 0)
 
-	q.addOpenedFilter(r, &alarmMatch)
+	q.addOpenedFilter(r.GetOpenedFilter(), &alarmMatch, &entityMatch)
 	q.addStartFromFilter(r, &alarmMatch)
 	q.addStartToFilter(r, &alarmMatch)
 	q.addOnlyParentsFilter(r, &alarmMatch)
@@ -518,7 +508,6 @@ func (q *MongoQueryBuilder) handleFilter(ctx context.Context, r FilterRequest) e
 		q.alarmMatch = append(q.alarmMatch, bson.M{"$match": bson.M{"$and": alarmMatch}})
 	}
 
-	entityMatch := make([]bson.M, 0)
 	q.addCategoryFilter(r, &entityMatch)
 	err = q.addInstructionsFilter(ctx, r, &entityMatch)
 	if err != nil {
@@ -817,12 +806,14 @@ func (q *MongoQueryBuilder) getTimeField(r FilterRequest) string {
 	return r.TimeField
 }
 
-func (q *MongoQueryBuilder) addOpenedFilter(r FilterRequest, match *[]bson.M) {
-	if r.GetOpenedFilter() != OnlyOpened {
+func (q *MongoQueryBuilder) addOpenedFilter(opened int, match *[]bson.M, entityMatch *[]bson.M) {
+	if opened == OnlyOpened {
+		*match = append(*match, bson.M{"v.resolved": nil})
 		return
 	}
 
-	*match = append(*match, bson.M{"v.resolved": nil})
+	// disabled entity cannot have open alarm but can have resolved
+	*entityMatch = append(*entityMatch, bson.M{"entity.enabled": true})
 }
 
 func (q *MongoQueryBuilder) addCategoryFilter(r FilterRequest, match *[]bson.M) {
@@ -1182,6 +1173,20 @@ func (q *MongoQueryBuilder) resolveAlias(v string) string {
 	}
 
 	return prefix + v
+}
+
+func (q *MongoQueryBuilder) handleOpened(opened int) {
+	alarmMatch := make([]bson.M, 0)
+	entityMatch := make([]bson.M, 0)
+	q.addOpenedFilter(opened, &alarmMatch, &entityMatch)
+	if len(alarmMatch) > 0 {
+		q.alarmMatch = append(q.alarmMatch, bson.M{"$match": bson.M{"$and": alarmMatch}})
+	}
+
+	if len(entityMatch) > 0 {
+		q.lookupsForAdditionalMatch["entity"] = true
+		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": bson.M{"$and": entityMatch}})
+	}
 }
 
 func (q *MongoQueryBuilder) handleDependencies(withDependencies bool) {
