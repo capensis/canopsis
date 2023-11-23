@@ -30,7 +30,6 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props 1`] = `
       withtemplate="true"
     />
   </c-draggable-list-field-stub>
-   
   <div
     class="layout justify-end"
   >
@@ -67,7 +66,6 @@ exports[`c-columns-field Renders \`c-columns-field\` with default props 1`] = `
     handle=".column-drag-handle"
     value=""
   />
-   
   <div
     class="layout justify-end"
   >

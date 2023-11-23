@@ -16,7 +16,6 @@ exports[`create-filter Renders \`create-filter\` with all parameters 1`] = `
         Create filter title
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -29,7 +28,6 @@ exports[`create-filter Renders \`create-filter\` with all parameters 1`] = `
         withtitle="true"
       />
     </div>
-     
     <div
       class="actions"
     >
@@ -40,12 +38,9 @@ exports[`create-filter Renders \`create-filter\` with all parameters 1`] = `
         <span
           class="v-btn__content"
         >
-          
         Cancel
-      
         </span>
       </button>
-       
       <button
         class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
@@ -53,9 +48,7 @@ exports[`create-filter Renders \`create-filter\` with all parameters 1`] = `
         <span
           class="v-btn__content"
         >
-          
         Submit
-      
         </span>
       </button>
     </div>
@@ -79,7 +72,6 @@ exports[`create-filter Renders \`create-filter\` with empty modal 1`] = `
         Create filter
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -87,7 +79,6 @@ exports[`create-filter Renders \`create-filter\` with empty modal 1`] = `
         form="[object Object]"
       />
     </div>
-     
     <div
       class="actions"
     >
@@ -98,12 +89,9 @@ exports[`create-filter Renders \`create-filter\` with empty modal 1`] = `
         <span
           class="v-btn__content"
         >
-          
         Cancel
-      
         </span>
       </button>
-       
       <button
         class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
@@ -111,9 +99,7 @@ exports[`create-filter Renders \`create-filter\` with empty modal 1`] = `
         <span
           class="v-btn__content"
         >
-          
         Submit
-      
         </span>
       </button>
     </div>

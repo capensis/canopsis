@@ -16,9 +16,7 @@ exports[`field-map Renders \`field-map\` with custom props 1`] = `
       <div
         class="v-list-item__title validation-header"
       >
-        
           Map
-         
         <!---->
       </div>
     </div>
@@ -40,7 +38,6 @@ exports[`field-map Renders \`field-map\` with custom props 1`] = `
       class="v-list-group__items"
       style="display: none;"
     >
-       
       <div
         class="container"
       >
@@ -70,9 +67,7 @@ exports[`field-map Renders \`field-map\` with default props 1`] = `
       <div
         class="v-list-item__title validation-header"
       >
-        
           Map
-         
         <!---->
       </div>
     </div>
@@ -94,7 +89,6 @@ exports[`field-map Renders \`field-map\` with default props 1`] = `
       class="v-list-group__items"
       style="display: none;"
     >
-       
       <div
         class="container"
       >

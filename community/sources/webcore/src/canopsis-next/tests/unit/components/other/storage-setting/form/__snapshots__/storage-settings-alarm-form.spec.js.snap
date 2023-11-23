@@ -10,11 +10,8 @@ exports[`storage-settings-alarm-form Renders \`storage-settings-alarm-form\` wit
     <div
       class="text-subtitle-1 font-weight-bold"
     >
-      
       Alarm data storage
-    
     </div>
-     
     <c-help-icon-stub
       color="info"
       icon-class="ml-2"
@@ -23,7 +20,6 @@ exports[`storage-settings-alarm-form Renders \`storage-settings-alarm-form\` wit
       top=""
     />
   </div>
-   
   <div
     class="layout mt-2"
   >
@@ -37,13 +33,11 @@ exports[`storage-settings-alarm-form Renders \`storage-settings-alarm-form\` wit
       />
     </span>
   </div>
-    
   <c-enabled-duration-field-stub
     label="Archive resolved alarms data after"
     name="alarm.archive_after"
     value="[object Object]"
   />
-   
   <c-enabled-duration-field-stub
     label="Delete resolved alarms data after"
     name="alarm.delete_after"
@@ -62,11 +56,8 @@ exports[`storage-settings-alarm-form Renders \`storage-settings-alarm-form\` wit
     <div
       class="text-subtitle-1 font-weight-bold"
     >
-      
       Alarm data storage
-    
     </div>
-     
     <c-help-icon-stub
       color="info"
       icon-class="ml-2"
@@ -75,15 +66,12 @@ exports[`storage-settings-alarm-form Renders \`storage-settings-alarm-form\` wit
       top=""
     />
   </div>
-   
   <!---->
-    
   <c-enabled-duration-field-stub
     label="Archive resolved alarms data after"
     name="alarm.archive_after"
     value="[object Object]"
   />
-   
   <c-enabled-duration-field-stub
     label="Delete resolved alarms data after"
     name="alarm.delete_after"

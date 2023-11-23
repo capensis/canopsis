@@ -23,7 +23,6 @@ exports[`date-time-picker-menu Renders \`date-time-picker-menu\` with default pr
       </i>
     </span>
   </button>
-    
   <date-time-picker-stub
     dateformat="DD/MM/YYYY"
     label=""
@@ -57,7 +56,6 @@ exports[`date-time-picker-menu Renders \`date-time-picker-menu\` with opened men
       </i>
     </span>
   </button>
-    
   <date-time-picker-stub
     dateformat="DD/MM/YYYY"
     label="label"

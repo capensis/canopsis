@@ -14,7 +14,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
         value=""
       />
     </div>
-     
     <div
       class="flex xs12"
     >
@@ -24,10 +23,8 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
         <!---->
       </transition-stub>
     </div>
-     
     <!---->
   </div>
-   
   <div
     class="v-data-table theme--light"
     header-text="text"
@@ -105,9 +102,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
             <td
               class="text-start"
             >
-              
         Rating setting
-      
             </td>
           </tr>
           <tr
@@ -142,9 +137,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
             <td
               class="text-start"
             >
-              
         Rating setting 2
-      
             </td>
           </tr>
           <tr
@@ -179,9 +172,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
             <td
               class="text-start"
             >
-              
         Rating setting 3
-      
             </td>
           </tr>
           <tr
@@ -216,9 +207,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
             <td
               class="text-start"
             >
-              
         Rating setting 4
-      
             </td>
           </tr>
           <tr
@@ -253,9 +242,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
             <td
               class="text-start"
             >
-              
         Rating setting 5
-      
             </td>
           </tr>
           <tr
@@ -290,9 +277,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
             <td
               class="text-start"
             >
-              
         Rating setting 6
-      
             </td>
           </tr>
           <tr
@@ -327,9 +312,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
             <td
               class="text-start"
             >
-              
         Rating setting 7
-      
             </td>
           </tr>
           <tr
@@ -364,9 +347,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
             <td
               class="text-start"
             >
-              
         Rating setting 8
-      
             </td>
           </tr>
           <tr
@@ -401,9 +382,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
             <td
               class="text-start"
             >
-              
         Rating setting 9
-      
             </td>
           </tr>
           <tr
@@ -438,16 +417,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
             <td
               class="text-start"
             >
-              
         Rating setting 10
-      
             </td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
-   
   <c-table-pagination-stub
     items-per-page="10"
     page="1"
@@ -470,7 +446,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
         value="Rating setting"
       />
     </div>
-     
     <div
       class="flex xs12"
     >
@@ -480,10 +455,8 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
         <!---->
       </transition-stub>
     </div>
-     
     <!---->
   </div>
-   
   <div
     class="v-data-table theme--light"
     header-text="text"
@@ -601,9 +574,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
             <td
               class="text-start"
             >
-              
         Rating setting
-      
             </td>
           </tr>
           <tr
@@ -638,9 +609,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
             <td
               class="text-start"
             >
-              
         Rating setting 2
-      
             </td>
           </tr>
           <tr
@@ -675,9 +644,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
             <td
               class="text-start"
             >
-              
         Rating setting 3
-      
             </td>
           </tr>
           <tr
@@ -712,9 +679,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
             <td
               class="text-start"
             >
-              
         Rating setting 4
-      
             </td>
           </tr>
           <tr
@@ -749,9 +714,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
             <td
               class="text-start"
             >
-              
         Rating setting 5
-      
             </td>
           </tr>
           <tr
@@ -786,9 +749,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
             <td
               class="text-start"
             >
-              
         Rating setting 6
-      
             </td>
           </tr>
           <tr
@@ -823,9 +784,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
             <td
               class="text-start"
             >
-              
         Rating setting 7
-      
             </td>
           </tr>
           <tr
@@ -860,9 +819,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
             <td
               class="text-start"
             >
-              
         Rating setting 8
-      
             </td>
           </tr>
           <tr
@@ -897,9 +854,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
             <td
               class="text-start"
             >
-              
         Rating setting 9
-      
             </td>
           </tr>
           <tr
@@ -934,16 +889,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
             <td
               class="text-start"
             >
-              
         Rating setting 10
-      
             </td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
-   
   <c-table-pagination-stub
     items-per-page="10"
     page="2"
@@ -964,7 +916,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with defa
     >
       <c-search-field-stub />
     </div>
-     
     <div
       class="flex xs12"
     >
@@ -974,10 +925,8 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with defa
         <!---->
       </transition-stub>
     </div>
-     
     <!---->
   </div>
-   
   <div
     class="v-data-table theme--light"
     header-text="text"
@@ -1036,7 +985,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with defa
       </table>
     </div>
   </div>
-   
   <c-table-pagination-stub />
 </div>
 `;
@@ -1055,7 +1003,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
         value=""
       />
     </div>
-     
     <div
       class="flex xs12"
     >
@@ -1072,12 +1019,9 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
             <span
               class="v-btn__content"
             >
-              
             Cancel
-          
             </span>
           </button>
-           
           <button
             class="ml-2 v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
             type="button"
@@ -1085,18 +1029,14 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
             <span
               class="v-btn__content"
             >
-              
             Submit
-          
             </span>
           </button>
         </div>
       </transition-stub>
     </div>
-     
     <!---->
   </div>
-   
   <div
     class="v-data-table theme--light"
     header-text="text"
@@ -1174,9 +1114,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
             <td
               class="text-start"
             >
-              
         Rating setting
-      
             </td>
           </tr>
           <tr
@@ -1211,9 +1149,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
             <td
               class="text-start"
             >
-              
         Rating setting 2
-      
             </td>
           </tr>
           <tr
@@ -1248,9 +1184,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
             <td
               class="text-start"
             >
-              
         Rating setting 3
-      
             </td>
           </tr>
           <tr
@@ -1285,9 +1219,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
             <td
               class="text-start"
             >
-              
         Rating setting 4
-      
             </td>
           </tr>
           <tr
@@ -1322,9 +1254,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
             <td
               class="text-start"
             >
-              
         Rating setting 5
-      
             </td>
           </tr>
           <tr
@@ -1359,9 +1289,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
             <td
               class="text-start"
             >
-              
         Rating setting 6
-      
             </td>
           </tr>
           <tr
@@ -1396,9 +1324,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
             <td
               class="text-start"
             >
-              
         Rating setting 7
-      
             </td>
           </tr>
           <tr
@@ -1433,9 +1359,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
             <td
               class="text-start"
             >
-              
         Rating setting 8
-      
             </td>
           </tr>
           <tr
@@ -1470,9 +1394,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
             <td
               class="text-start"
             >
-              
         Rating setting 9
-      
             </td>
           </tr>
           <tr
@@ -1507,16 +1429,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
             <td
               class="text-start"
             >
-              
         Rating setting 10
-      
             </td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
-   
   <c-table-pagination-stub
     items-per-page="10"
     page="1"
@@ -1539,7 +1458,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
         value=""
       />
     </div>
-     
     <div
       class="flex xs12"
     >
@@ -1549,10 +1467,8 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
         <!---->
       </transition-stub>
     </div>
-     
     <!---->
   </div>
-   
   <div
     class="v-data-table theme--light"
     header-text="text"
@@ -1630,9 +1546,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
             <td
               class="text-start"
             >
-              
         Rating setting
-      
             </td>
           </tr>
           <tr
@@ -1667,9 +1581,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
             <td
               class="text-start"
             >
-              
         Rating setting 2
-      
             </td>
           </tr>
           <tr
@@ -1704,9 +1616,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
             <td
               class="text-start"
             >
-              
         Rating setting 3
-      
             </td>
           </tr>
           <tr
@@ -1741,9 +1651,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
             <td
               class="text-start"
             >
-              
         Rating setting 4
-      
             </td>
           </tr>
           <tr
@@ -1778,9 +1686,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
             <td
               class="text-start"
             >
-              
         Rating setting 5
-      
             </td>
           </tr>
           <tr
@@ -1815,9 +1721,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
             <td
               class="text-start"
             >
-              
         Rating setting 6
-      
             </td>
           </tr>
           <tr
@@ -1852,9 +1756,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
             <td
               class="text-start"
             >
-              
         Rating setting 7
-      
             </td>
           </tr>
           <tr
@@ -1889,9 +1791,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
             <td
               class="text-start"
             >
-              
         Rating setting 8
-      
             </td>
           </tr>
           <tr
@@ -1926,9 +1826,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
             <td
               class="text-start"
             >
-              
         Rating setting 9
-      
             </td>
           </tr>
           <tr
@@ -1963,16 +1861,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
             <td
               class="text-start"
             >
-              
         Rating setting 10
-      
             </td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
-   
   <c-table-pagination-stub
     items-per-page="10"
     page="1"

@@ -153,13 +153,11 @@ exports[`junit-gantt-chart Renders \`junit-gantt-chart\` tooltip with opacity 0.
         />
       </div>
     </div>
-     
     <div
       class="v-tooltip__content menuable__content__active"
       style="opacity: 0;"
     />
   </div>
-   
   <c-table-pagination-stub
     items="5,10,20"
     total-items="0"
@@ -184,7 +182,6 @@ exports[`junit-gantt-chart Renders \`junit-gantt-chart\` tooltip without. 1`] = 
         />
       </div>
     </div>
-     
     <div
       class="v-tooltip__content menuable__content__active"
       style="opacity: 1; left: 90px; top: 95px; pointer-events: none;"
@@ -199,7 +196,6 @@ exports[`junit-gantt-chart Renders \`junit-gantt-chart\` tooltip without. 1`] = 
       </div>
     </div>
   </div>
-   
   <c-table-pagination-stub
     items="5,10,20"
     total-items="0"
@@ -224,7 +220,6 @@ exports[`junit-gantt-chart Renders \`junit-gantt-chart\` tooltip. 1`] = `
         />
       </div>
     </div>
-     
     <div
       class="v-tooltip__content menuable__content__active"
       style="opacity: 1; left: 90px; top: 95px; pointer-events: none;"
@@ -239,7 +234,6 @@ exports[`junit-gantt-chart Renders \`junit-gantt-chart\` tooltip. 1`] = `
       </div>
     </div>
   </div>
-   
   <c-table-pagination-stub
     items="5,10,20"
     total-items="0"

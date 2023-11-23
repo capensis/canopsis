@@ -10,7 +10,6 @@ exports[`pbehavior-recurrence-rule Renders \`pbehavior-recurrence-rule\` with pb
     <recurrence-rule-information-stub
       rrule="RRULE"
     />
-     
     <pbehavior-recurrence-rule-periods-stub
       class="mt-2"
       pbehavior="[object Object]"

@@ -15,19 +15,15 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with bookmarked alarm 1`] =
       >
         <!---->
       </div>
-       
       <!---->
-       
       <div
         class="layout align-center"
       >
         <alarms-list-row-bookmark-icon-stub />
       </div>
-       
       <!---->
     </div>
   </td>
-   
   <td
     class="alarm-list-row__cell"
   >
@@ -36,7 +32,6 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with bookmarked alarm 1`] =
       refreshalarmslist="[Function]"
       widget="[object Object]"
     />
-     
     <!---->
   </td>
 </tr>
@@ -74,11 +69,8 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
           </div>
         </div>
       </div>
-       
       <!---->
-       
       <!---->
-       
       <alarms-expand-panel-btn-stub
         alarm="[object Object]"
         istourenabled="true"
@@ -87,7 +79,6 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
       />
     </div>
   </td>
-   
   <td
     class="alarm-list-row__cell"
   >
@@ -97,7 +88,6 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
       selectedtag="tag"
       widget="[object Object]"
     />
-     
     <!---->
   </td>
   <td
@@ -109,7 +99,6 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
       selectedtag="tag"
       widget="[object Object]"
     />
-     
     <!---->
   </td>
   <td
@@ -120,7 +109,6 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
       refreshalarmslist="[Function]"
       widget="[object Object]"
     />
-     
     <!---->
   </td>
 </tr>
@@ -131,7 +119,6 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with default and required p
   class="alarm-list-row"
 >
   <!---->
-   
   <td
     class="alarm-list-row__cell"
   >
@@ -141,7 +128,6 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with default and required p
       selectedtag=""
       widget="[object Object]"
     />
-     
     <!---->
   </td>
   <td
@@ -153,7 +139,6 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with default and required p
       selectedtag=""
       widget="[object Object]"
     />
-     
     <!---->
   </td>
   <td
@@ -164,7 +149,6 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with default and required p
       refreshalarmslist="[Function]"
       widget="[object Object]"
     />
-     
     <!---->
   </td>
 </tr>
@@ -185,11 +169,8 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with expand button 1`] = `
       >
         <!---->
       </div>
-       
       <!---->
-       
       <!---->
-       
       <alarms-expand-panel-btn-stub
         alarm="[object Object]"
         search=""
@@ -197,7 +178,6 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with expand button 1`] = `
       />
     </div>
   </td>
-   
   <td
     class="alarm-list-row__cell"
   >
@@ -206,7 +186,6 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with expand button 1`] = `
       refreshalarmslist="[Function]"
       widget="[object Object]"
     />
-     
     <!---->
   </td>
 </tr>
@@ -227,15 +206,11 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with feature classes 1`] = 
       >
         <!---->
       </div>
-       
       <!---->
-       
       <!---->
-       
       <!---->
     </div>
   </td>
-   
   <td
     class="alarm-list-row__cell"
   >
@@ -244,7 +219,6 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with feature classes 1`] = 
       refreshalarmslist="[Function]"
       widget="[object Object]"
     />
-     
     <!---->
   </td>
 </tr>
@@ -265,7 +239,6 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with filtered children in p
       >
         <!---->
       </div>
-       
       <div
         class="layout align-center"
       >
@@ -273,13 +246,10 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with filtered children in p
           alarm="[object Object]"
         />
       </div>
-       
       <!---->
-       
       <!---->
     </div>
   </td>
-   
   <td
     class="alarm-list-row__cell"
   >
@@ -289,7 +259,6 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with filtered children in p
       refreshalarmslist="[Function]"
       widget="[object Object]"
     />
-     
     <!---->
   </td>
 </tr>
@@ -300,7 +269,6 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with instructions 1`] = `
   class="alarm-list-row"
 >
   <!---->
-   
   <td
     class="alarm-list-row__cell"
   >
@@ -310,7 +278,6 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with instructions 1`] = `
       refreshalarmslist="[Function]"
       widget="[object Object]"
     />
-     
     <!---->
   </td>
 </tr>
@@ -345,15 +312,11 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with resolved alarm 1`] = `
           </div>
         </div>
       </div>
-       
       <!---->
-       
       <!---->
-       
       <!---->
     </div>
   </td>
-   
   <td
     class="alarm-list-row__cell"
   >
@@ -362,7 +325,6 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with resolved alarm 1`] = `
       refreshalarmslist="[Function]"
       widget="[object Object]"
     />
-     
     <!---->
   </td>
 </tr>

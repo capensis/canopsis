@@ -15,7 +15,6 @@ exports[`service-entity Renders \`service-entity\` after opened flag updated 1`]
         class="v-expansion-panel-header"
         type="button"
       >
-         
         <service-entity-header-stub
           entity="[object Object]"
           entitynamefield="name"
@@ -36,7 +35,6 @@ exports[`service-entity Renders \`service-entity\` after opened flag updated 1`]
           </div>
         </transition-stub>
       </button>
-       
       <transition-stub
         name="expand-transition"
       >
@@ -62,7 +60,6 @@ exports[`service-entity Renders \`service-entity\` with custom props 1`] = `
         class="v-expansion-panel-header"
         type="button"
       >
-         
         <service-entity-header-stub
           entity="[object Object]"
           entitynamefield="custom_name"
@@ -85,7 +82,6 @@ exports[`service-entity Renders \`service-entity\` with custom props 1`] = `
           </div>
         </transition-stub>
       </button>
-       
       <transition-stub
         name="expand-transition"
       >
@@ -132,7 +128,6 @@ exports[`service-entity Renders \`service-entity\` with default props 1`] = `
         class="v-expansion-panel-header"
         type="button"
       >
-         
         <service-entity-header-stub
           entity="[object Object]"
           entitynamefield="name"
@@ -153,7 +148,6 @@ exports[`service-entity Renders \`service-entity\` with default props 1`] = `
           </div>
         </transition-stub>
       </button>
-       
       <transition-stub
         name="expand-transition"
       >
@@ -206,7 +200,6 @@ exports[`service-entity Renders \`service-entity\` with default props 1`] = `
                         >
                           Info
                         </div>
-                          
                         <div
                           aria-selected="false"
                           class="v-tab"
@@ -215,7 +208,6 @@ exports[`service-entity Renders \`service-entity\` with default props 1`] = `
                         >
                           Tree of dependencies
                         </div>
-                          
                         <!---->
                       </div>
                     </div>
@@ -279,7 +271,6 @@ exports[`service-entity Renders \`service-entity\` with pbehaviors tab 1`] = `
         class="v-expansion-panel-header"
         type="button"
       >
-         
         <service-entity-header-stub
           entity="[object Object]"
           entitynamefield="name"
@@ -300,7 +291,6 @@ exports[`service-entity Renders \`service-entity\` with pbehaviors tab 1`] = `
           </div>
         </transition-stub>
       </button>
-       
       <transition-stub
         name="expand-transition"
       >
@@ -353,7 +343,6 @@ exports[`service-entity Renders \`service-entity\` with pbehaviors tab 1`] = `
                         >
                           Info
                         </div>
-                          
                         <div
                           aria-selected="false"
                           class="v-tab"
@@ -362,7 +351,6 @@ exports[`service-entity Renders \`service-entity\` with pbehaviors tab 1`] = `
                         >
                           Tree of dependencies
                         </div>
-                          
                         <div
                           aria-selected="false"
                           class="v-tab"
@@ -371,7 +359,6 @@ exports[`service-entity Renders \`service-entity\` with pbehaviors tab 1`] = `
                         >
                           Pbehaviors
                         </div>
-                         
                       </div>
                     </div>
                     <div
@@ -439,7 +426,6 @@ exports[`service-entity Renders \`service-entity\` with tree of deps tab 1`] = `
         class="v-expansion-panel-header"
         type="button"
       >
-         
         <service-entity-header-stub
           entity="[object Object]"
           entitynamefield="name"
@@ -460,7 +446,6 @@ exports[`service-entity Renders \`service-entity\` with tree of deps tab 1`] = `
           </div>
         </transition-stub>
       </button>
-       
       <transition-stub
         name="expand-transition"
       >
@@ -513,7 +498,6 @@ exports[`service-entity Renders \`service-entity\` with tree of deps tab 1`] = `
                         >
                           Info
                         </div>
-                          
                         <div
                           aria-selected="false"
                           class="v-tab"
@@ -522,7 +506,6 @@ exports[`service-entity Renders \`service-entity\` with tree of deps tab 1`] = `
                         >
                           Tree of dependencies
                         </div>
-                          
                         <!---->
                       </div>
                     </div>

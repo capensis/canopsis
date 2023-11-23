@@ -11,12 +11,9 @@ exports[`switcher Renders \`switcher\` with custom props 1`] = `
     <div
       class="v-list-item__title"
     >
-      
       Custom title
-    
     </div>
   </div>
-   
   <div
     class="v-list-item__action mr-3"
   >
@@ -41,12 +38,8 @@ exports[`switcher Renders \`switcher\` with default and required props 1`] = `
     <div
       class="v-list-item__title"
     >
-      
-      
-    
     </div>
   </div>
-   
   <div
     class="v-list-item__action mr-3"
   >

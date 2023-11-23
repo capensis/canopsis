@@ -10,7 +10,6 @@ exports[`c-quick-date-interval-field Renders \`c-quick-date-interval-field\` wit
     is-allowed-to-date="function () { [native code] }"
     value="[object Object]"
   />
-   
   <div
     class="c-quick-interval__range"
   >
@@ -36,7 +35,6 @@ exports[`c-quick-date-interval-field Renders \`c-quick-date-interval-field\` wit
     is-allowed-to-date="function () { [native code] }"
     value="[object Object]"
   />
-   
   <div
     class="c-quick-interval__range"
   >

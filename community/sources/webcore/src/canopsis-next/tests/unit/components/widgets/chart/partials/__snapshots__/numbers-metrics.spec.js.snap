@@ -7,11 +7,8 @@ exports[`numbers-metrics Renders \`numbers-metrics\` with custom props 1`] = `
   <h4
     class="kpi-widget__title"
   >
-    
     Custom title
-  
   </h4>
-   
   <div
     class="layout kpi-widget__list wrap"
   >
@@ -26,7 +23,6 @@ exports[`numbers-metrics Renders \`numbers-metrics\` with custom props 1`] = `
       valuefontsize="110"
     />
   </div>
-   
   <div
     class="layout kpi-widget__actions mt-4 justify-end"
   >
@@ -44,7 +40,6 @@ exports[`numbers-metrics Renders \`numbers-metrics\` with custom props 1`] = `
         >
           file_download
         </i>
-         
         <span>
           Export as csv
         </span>
@@ -61,15 +56,10 @@ exports[`numbers-metrics Renders \`numbers-metrics\` with default props 1`] = `
   <h4
     class="kpi-widget__title"
   >
-    
-    
-  
   </h4>
-   
   <div
     class="layout kpi-widget__list wrap"
   />
-   
   <div
     class="layout kpi-widget__actions mt-4 justify-end"
   >
@@ -87,7 +77,6 @@ exports[`numbers-metrics Renders \`numbers-metrics\` with default props 1`] = `
         >
           file_download
         </i>
-         
         <span>
           Export as csv
         </span>

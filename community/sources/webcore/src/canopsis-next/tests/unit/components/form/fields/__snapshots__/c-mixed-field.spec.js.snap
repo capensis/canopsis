@@ -13,7 +13,6 @@ exports[`c-mixed-field Renders \`c-mixed-field\` with custom props 1`] = `
     types="[object Object],[object Object],[object Object]"
     value="int"
   />
-   
   <c-mixed-input-field-stub
     class="ml-2 c-mixed-field__value"
     disabled="true"
@@ -40,7 +39,6 @@ exports[`c-mixed-field Renders \`c-mixed-field\` with default props 1`] = `
     types="[object Object],[object Object],[object Object],[object Object],[object Object]"
     value="string"
   />
-   
   <c-mixed-input-field-stub
     class="ml-2 c-mixed-field__value"
     input-type="string"

@@ -8,7 +8,6 @@ exports[`snooze-event-form Renders \`snooze-event-form\` with custom props 1`] =
     required=""
     value="[object Object]"
   />
-   
   <c-description-field-stub
     label="Note"
     name="comment"
@@ -24,7 +23,6 @@ exports[`snooze-event-form Renders \`snooze-event-form\` with required props 1`]
   <c-duration-field-stub
     required=""
   />
-   
   <c-description-field-stub
     label="Note"
     name="comment"

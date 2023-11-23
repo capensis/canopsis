@@ -28,8 +28,6 @@ module.exports = {
 
     const serializedHtml = serialize(element.firstChild);
 
-    // TODO: Should be uncommented
-    // return serializedHtml.replaceAll(/\n\s+\n/g, '\n');
-    return serializedHtml;
+    return serializedHtml ? serializedHtml.replaceAll(/\n\s+\n/g, '\n') : serializedHtml;
   },
 };

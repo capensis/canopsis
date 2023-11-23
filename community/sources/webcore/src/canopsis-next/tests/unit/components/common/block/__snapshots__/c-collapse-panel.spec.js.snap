@@ -30,7 +30,6 @@ exports[`c-collapse-panel Renders \`c-collapse-panel\` with custom props 1`] = `
         </div>
       </transition-stub>
     </button>
-     
     <transition-stub
       name="expand-transition"
       style="background-color: grey;"
@@ -89,7 +88,6 @@ exports[`c-collapse-panel Renders \`c-collapse-panel\` with custom title 1`] = `
         </div>
       </transition-stub>
     </button>
-     
     <transition-stub
       name="expand-transition"
       style="background-color: rgb(128, 128, 128);"
@@ -146,7 +144,6 @@ exports[`c-collapse-panel Renders \`c-collapse-panel\` with default props 1`] = 
         </div>
       </transition-stub>
     </button>
-     
     <transition-stub
       name="expand-transition"
       style="background-color: rgb(128, 128, 128);"
@@ -205,7 +202,6 @@ exports[`c-collapse-panel Renders \`c-collapse-panel\` with errors 1`] = `
         </div>
       </transition-stub>
     </button>
-     
     <transition-stub
       name="expand-transition"
       style="background-color: rgb(128, 128, 128);"

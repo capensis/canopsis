@@ -12,12 +12,10 @@ exports[`entity-chart-widget Renders \`entity-chart-widget\` with bar type 1`] =
     showsampling="true"
     widgetfilters=""
   />
-   
   <div
     class="layout pa-3 column"
   >
     <!---->
-     
     <bar-chart-metrics-stub
       animation="true"
       height="400"
@@ -43,12 +41,10 @@ exports[`entity-chart-widget Renders \`entity-chart-widget\` with line type 1`] 
     showsampling="true"
     widgetfilters=""
   />
-   
   <div
     class="layout pa-3 column"
   >
     <!---->
-     
     <line-chart-metrics-stub
       animation="true"
       height="400"
@@ -74,12 +70,10 @@ exports[`entity-chart-widget Renders \`entity-chart-widget\` with numbers type 1
     showsampling="true"
     widgetfilters=""
   />
-   
   <div
     class="layout pa-3 column"
   >
     <!---->
-     
     <numbers-metrics-stub
       metrics="[object Object],[object Object]"
       title=""

@@ -14,7 +14,6 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
         value="Filter"
       />
     </div>
-      
     <div
       class="flex xs12"
     >
@@ -25,7 +24,6 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
       </transition-stub>
     </div>
   </div>
-   
   <div
     class="v-data-table theme--light v-data-table--selectable"
     header-text="text"
@@ -327,9 +325,6 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -341,16 +336,12 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:48
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-0
-      
             </td>
             <td
               class="text-start"
@@ -361,11 +352,9 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   tooltip="Delete"
                   type="delete"
@@ -413,9 +402,6 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -427,16 +413,12 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:49
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-1
-      
             </td>
             <td
               class="text-start"
@@ -447,11 +429,9 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   tooltip="Delete"
                   type="delete"
@@ -499,9 +479,6 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -513,16 +490,12 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:50
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-2
-      
             </td>
             <td
               class="text-start"
@@ -533,11 +506,9 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   tooltip="Delete"
                   type="delete"
@@ -585,9 +556,6 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -599,16 +567,12 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:51
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-3
-      
             </td>
             <td
               class="text-start"
@@ -619,11 +583,9 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   tooltip="Delete"
                   type="delete"
@@ -671,9 +633,6 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -685,16 +644,12 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:52
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-4
-      
             </td>
             <td
               class="text-start"
@@ -705,11 +660,9 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   tooltip="Delete"
                   type="delete"
@@ -757,9 +710,6 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -771,16 +721,12 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:53
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-5
-      
             </td>
             <td
               class="text-start"
@@ -791,11 +737,9 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   tooltip="Delete"
                   type="delete"
@@ -843,9 +787,6 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -857,16 +798,12 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:54
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-6
-      
             </td>
             <td
               class="text-start"
@@ -877,11 +814,9 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   tooltip="Delete"
                   type="delete"
@@ -929,9 +864,6 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -943,16 +875,12 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:55
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-7
-      
             </td>
             <td
               class="text-start"
@@ -963,11 +891,9 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   tooltip="Delete"
                   type="delete"
@@ -1015,9 +941,6 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -1029,16 +952,12 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:56
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-8
-      
             </td>
             <td
               class="text-start"
@@ -1049,11 +968,9 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   tooltip="Delete"
                   type="delete"
@@ -1101,9 +1018,6 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -1115,16 +1029,12 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:57
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-9
-      
             </td>
             <td
               class="text-start"
@@ -1135,11 +1045,9 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   tooltip="Delete"
                   type="delete"
@@ -1154,7 +1062,6 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
       </table>
     </div>
   </div>
-   
   <c-table-pagination-stub
     items-per-page="10"
     page="2"
@@ -1175,7 +1082,6 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
     >
       <c-search-field-stub />
     </div>
-      
     <div
       class="flex xs12"
     >
@@ -1186,7 +1092,6 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
       </transition-stub>
     </div>
   </div>
-   
   <div
     class="v-data-table theme--light"
     header-text="text"
@@ -1386,9 +1291,6 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -1400,16 +1302,12 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:48
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-0
-      
             </td>
             <td
               class="text-start"
@@ -1418,9 +1316,7 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
                 class="layout"
               >
                 <!---->
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -1444,9 +1340,6 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -1458,16 +1351,12 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:49
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-1
-      
             </td>
             <td
               class="text-start"
@@ -1476,9 +1365,7 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
                 class="layout"
               >
                 <!---->
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -1502,9 +1389,6 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -1516,16 +1400,12 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:50
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-2
-      
             </td>
             <td
               class="text-start"
@@ -1534,9 +1414,7 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
                 class="layout"
               >
                 <!---->
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -1560,9 +1438,6 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -1574,16 +1449,12 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:51
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-3
-      
             </td>
             <td
               class="text-start"
@@ -1592,9 +1463,7 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
                 class="layout"
               >
                 <!---->
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -1618,9 +1487,6 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -1632,16 +1498,12 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:52
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-4
-      
             </td>
             <td
               class="text-start"
@@ -1650,9 +1512,7 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
                 class="layout"
               >
                 <!---->
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -1676,9 +1536,6 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -1690,16 +1547,12 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:53
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-5
-      
             </td>
             <td
               class="text-start"
@@ -1708,9 +1561,7 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
                 class="layout"
               >
                 <!---->
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -1734,9 +1585,6 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -1748,16 +1596,12 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:54
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-6
-      
             </td>
             <td
               class="text-start"
@@ -1766,9 +1610,7 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
                 class="layout"
               >
                 <!---->
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -1792,9 +1634,6 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -1806,16 +1645,12 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:55
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-7
-      
             </td>
             <td
               class="text-start"
@@ -1824,9 +1659,7 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
                 class="layout"
               >
                 <!---->
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -1850,9 +1683,6 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -1864,16 +1694,12 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:56
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-8
-      
             </td>
             <td
               class="text-start"
@@ -1882,9 +1708,7 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
                 class="layout"
               >
                 <!---->
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -1908,9 +1732,6 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -1922,16 +1743,12 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:57
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-9
-      
             </td>
             <td
               class="text-start"
@@ -1940,9 +1757,7 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
                 class="layout"
               >
                 <!---->
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -1954,7 +1769,6 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
       </table>
     </div>
   </div>
-   
   <c-table-pagination-stub />
 </div>
 `;

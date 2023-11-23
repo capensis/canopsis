@@ -18,7 +18,6 @@ exports[`point-form-dialog Renders \`point-form-dialog\` with custom props 1`] =
         <h4>
           Edit point
         </h4>
-         
         <button
           class="ma-0 ml-3 v-btn v-btn--icon v-btn--round theme--light v-size--small"
           type="button"
@@ -36,7 +35,6 @@ exports[`point-form-dialog Renders \`point-form-dialog\` with custom props 1`] =
         </button>
       </div>
     </div>
-     
     <div
       class="v-card__text"
     >
@@ -46,7 +44,6 @@ exports[`point-form-dialog Renders \`point-form-dialog\` with custom props 1`] =
         form="[object Object]"
       />
     </div>
-     
     <div
       class="v-card__actions v-layout justify-end"
     >
@@ -57,12 +54,9 @@ exports[`point-form-dialog Renders \`point-form-dialog\` with custom props 1`] =
         <span
           class="v-btn__content"
         >
-          
         Cancel
-      
         </span>
       </button>
-       
       <button
         class="v-btn v-btn--text theme--light v-size--default error--text"
         type="button"
@@ -70,12 +64,9 @@ exports[`point-form-dialog Renders \`point-form-dialog\` with custom props 1`] =
         <span
           class="v-btn__content"
         >
-          
         Delete
-      
         </span>
       </button>
-       
       <button
         class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
@@ -83,9 +74,7 @@ exports[`point-form-dialog Renders \`point-form-dialog\` with custom props 1`] =
         <span
           class="v-btn__content"
         >
-          
         Submit
-      
         </span>
       </button>
     </div>
@@ -111,7 +100,6 @@ exports[`point-form-dialog Renders \`point-form-dialog\` with required props 1`]
         <h4>
           Add point
         </h4>
-         
         <button
           class="ma-0 ml-3 v-btn v-btn--icon v-btn--round theme--light v-size--small"
           type="button"
@@ -129,7 +117,6 @@ exports[`point-form-dialog Renders \`point-form-dialog\` with required props 1`]
         </button>
       </div>
     </div>
-     
     <div
       class="v-card__text"
     >
@@ -138,7 +125,6 @@ exports[`point-form-dialog Renders \`point-form-dialog\` with required props 1`]
         form="[object Object]"
       />
     </div>
-     
     <div
       class="v-card__actions v-layout justify-end"
     >
@@ -149,14 +135,10 @@ exports[`point-form-dialog Renders \`point-form-dialog\` with required props 1`]
         <span
           class="v-btn__content"
         >
-          
         Cancel
-      
         </span>
       </button>
-       
       <!---->
-       
       <button
         class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
@@ -164,9 +146,7 @@ exports[`point-form-dialog Renders \`point-form-dialog\` with required props 1`]
         <span
           class="v-btn__content"
         >
-          
         Submit
-      
         </span>
       </button>
     </div>

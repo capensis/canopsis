@@ -16,7 +16,6 @@ exports[`info-popup-setting Renders \`info-popup-setting\` with empty modal 1`] 
         Info popup
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -39,12 +38,10 @@ exports[`info-popup-setting Renders \`info-popup-setting\` with empty modal 1`] 
           </span>
         </button>
       </div>
-       
       <div
         class="layout column"
       />
     </div>
-     
     <div
       class="actions"
     >
@@ -55,12 +52,9 @@ exports[`info-popup-setting Renders \`info-popup-setting\` with empty modal 1`] 
         <span
           class="v-btn__content"
         >
-          
         Cancel
-      
         </span>
       </button>
-       
       <button
         class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
@@ -68,9 +62,7 @@ exports[`info-popup-setting Renders \`info-popup-setting\` with empty modal 1`] 
         <span
           class="v-btn__content"
         >
-          
         Submit
-      
         </span>
       </button>
     </div>
@@ -94,7 +86,6 @@ exports[`info-popup-setting Renders \`info-popup-setting\` with interval 1`] = `
         Info popup
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -117,7 +108,6 @@ exports[`info-popup-setting Renders \`info-popup-setting\` with interval 1`] = `
           </span>
         </button>
       </div>
-       
       <div
         class="layout column"
       >
@@ -133,7 +123,6 @@ exports[`info-popup-setting Renders \`info-popup-setting\` with interval 1`] = `
               <div>
                 Column: alarm.v.connector
               </div>
-               
               <div>
                 <button
                   class="v-btn v-btn--icon v-btn--round theme--light v-size--small"
@@ -150,7 +139,6 @@ exports[`info-popup-setting Renders \`info-popup-setting\` with interval 1`] = `
                     </i>
                   </span>
                 </button>
-                 
                 <button
                   class="v-btn v-btn--icon v-btn--round theme--light v-size--small"
                   type="button"
@@ -169,14 +157,12 @@ exports[`info-popup-setting Renders \`info-popup-setting\` with interval 1`] = `
               </div>
             </div>
           </div>
-           
           <div
             class="v-card__text"
           >
             <p>
               Template:
             </p>
-             
             <div
               class="v-input v-textarea v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--dark v-text-field"
             >
@@ -224,7 +210,6 @@ exports[`info-popup-setting Renders \`info-popup-setting\` with interval 1`] = `
               <div>
                 Column: extra_details
               </div>
-               
               <div>
                 <button
                   class="v-btn v-btn--icon v-btn--round theme--light v-size--small"
@@ -241,7 +226,6 @@ exports[`info-popup-setting Renders \`info-popup-setting\` with interval 1`] = `
                     </i>
                   </span>
                 </button>
-                 
                 <button
                   class="v-btn v-btn--icon v-btn--round theme--light v-size--small"
                   type="button"
@@ -260,14 +244,12 @@ exports[`info-popup-setting Renders \`info-popup-setting\` with interval 1`] = `
               </div>
             </div>
           </div>
-           
           <div
             class="v-card__text"
           >
             <p>
               Template:
             </p>
-             
             <div
               class="v-input v-textarea v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--dark v-text-field"
             >
@@ -305,7 +287,6 @@ exports[`info-popup-setting Renders \`info-popup-setting\` with interval 1`] = `
         </div>
       </div>
     </div>
-     
     <div
       class="actions"
     >
@@ -316,12 +297,9 @@ exports[`info-popup-setting Renders \`info-popup-setting\` with interval 1`] = `
         <span
           class="v-btn__content"
         >
-          
         Cancel
-      
         </span>
       </button>
-       
       <button
         class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
@@ -329,9 +307,7 @@ exports[`info-popup-setting Renders \`info-popup-setting\` with interval 1`] = `
         <span
           class="v-btn__content"
         >
-          
         Submit
-      
         </span>
       </button>
     </div>

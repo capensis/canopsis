@@ -5,18 +5,15 @@ exports[`kpi-sli Renders \`kpi-sli\` with fetching error 1`] = `
   class="position-relative"
 >
   <c-progress-overlay-stub />
-   
   <kpi-sli-filters-stub
     query="[object Object]"
   />
-   
   <kpi-sli-chart-stub
     data-type="percent"
     metrics=""
     responsive=""
     sampling="day"
   />
-   
   <kpi-error-overlay-stub />
 </div>
 `;
@@ -26,12 +23,10 @@ exports[`kpi-sli Renders \`kpi-sli\` without metrics 1`] = `
   class="position-relative"
 >
   <c-progress-overlay-stub />
-   
   <kpi-sli-filters-stub
     mindate="1385766000"
     query="[object Object]"
   />
-   
   <kpi-sli-chart-stub
     data-type="percent"
     metrics=""
@@ -39,7 +34,6 @@ exports[`kpi-sli Renders \`kpi-sli\` without metrics 1`] = `
     responsive=""
     sampling="day"
   />
-   
   <!---->
 </div>
 `;

@@ -19,19 +19,15 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with custom props 1`] =
       <div
         class="v-stepper__label"
       >
-        
       General
-      
         <!---->
       </div>
     </div>
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <div
       class="v-stepper__step py-0 v-stepper__step--editable v-stepper__step--inactive"
       tabindex="0"
@@ -44,19 +40,15 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with custom props 1`] =
       <div
         class="v-stepper__label"
       >
-        
       Informations
-      
         <!---->
       </div>
     </div>
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <div
       class="v-stepper__step py-0 v-stepper__step--editable v-stepper__step--inactive"
       tabindex="0"
@@ -69,14 +61,11 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with custom props 1`] =
       <div
         class="v-stepper__label"
       >
-        
       Patterns
-      
         <!---->
       </div>
     </div>
   </div>
-   
   <div
     class="v-stepper__items"
   >
@@ -98,7 +87,6 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with custom props 1`] =
         </div>
       </div>
     </transition-stub>
-     
     <transition-stub
       class="pa-0"
       name="tab-transition"
@@ -118,7 +106,6 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with custom props 1`] =
         </div>
       </div>
     </transition-stub>
-     
     <transition-stub
       class="pa-0"
       name="tab-transition"
@@ -160,19 +147,15 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with default props 1`] 
       <div
         class="v-stepper__label"
       >
-        
       General
-      
         <!---->
       </div>
     </div>
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <div
       class="v-stepper__step py-0 v-stepper__step--editable v-stepper__step--inactive"
       tabindex="0"
@@ -185,19 +168,15 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with default props 1`] 
       <div
         class="v-stepper__label"
       >
-        
       Informations
-      
         <!---->
       </div>
     </div>
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <div
       class="v-stepper__step py-0 v-stepper__step--editable v-stepper__step--inactive"
       tabindex="0"
@@ -210,14 +189,11 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with default props 1`] 
       <div
         class="v-stepper__label"
       >
-        
       Patterns
-      
         <!---->
       </div>
     </div>
   </div>
-   
   <div
     class="v-stepper__items"
   >
@@ -239,7 +215,6 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with default props 1`] 
         </div>
       </div>
     </transition-stub>
-     
     <transition-stub
       class="pa-0"
       name="tab-transition"
@@ -259,7 +234,6 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with default props 1`] 
         </div>
       </div>
     </transition-stub>
-     
     <transition-stub
       class="pa-0"
       name="tab-transition"
@@ -306,21 +280,17 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with errors 1`] = `
       <div
         class="v-stepper__label"
       >
-        
       General
-      
         <small>
           Invalid
         </small>
       </div>
     </div>
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <div
       class="v-stepper__step py-0 v-stepper__step--editable v-stepper__step--inactive v-stepper__step--error error--text"
       tabindex="0"
@@ -338,21 +308,17 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with errors 1`] = `
       <div
         class="v-stepper__label"
       >
-        
       Informations
-      
         <small>
           Invalid
         </small>
       </div>
     </div>
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <div
       class="v-stepper__step py-0 v-stepper__step--editable v-stepper__step--inactive v-stepper__step--error error--text"
       tabindex="0"
@@ -370,16 +336,13 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with errors 1`] = `
       <div
         class="v-stepper__label"
       >
-        
       Patterns
-      
         <small>
           Invalid
         </small>
       </div>
     </div>
   </div>
-   
   <div
     class="v-stepper__items"
   >
@@ -401,7 +364,6 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with errors 1`] = `
         </div>
       </div>
     </transition-stub>
-     
     <transition-stub
       class="pa-0"
       name="tab-transition"
@@ -421,7 +383,6 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with errors 1`] = `
         </div>
       </div>
     </transition-stub>
-     
     <transition-stub
       class="pa-0"
       name="tab-transition"

@@ -5,19 +5,12 @@ exports[`alarm-column-value-extra-details Renders \`alarm-column-value-extra-det
   class="layout alarm-column-value-extra-details wrap"
 >
   <!---->
-   
   <!---->
-   
   <!---->
-   
   <!---->
-   
   <!---->
-   
   <!---->
-   
   <!---->
-   
   <!---->
 </div>
 `;
@@ -29,31 +22,24 @@ exports[`alarm-column-value-extra-details Renders \`alarm-column-value-extra-det
   <extra-details-ack-stub
     ack="[object Object]"
   />
-   
   <extra-details-last-comment-stub
     lastcomment="[object Object]"
   />
-   
   <extra-details-ticket-stub
     limit="5"
     tickets="[object Object]"
   />
-   
   <extra-details-canceled-stub
     canceled="[object Object]"
   />
-   
   <extra-details-snooze-stub
     snooze="[object Object]"
   />
-   
   <extra-details-pbehavior-stub
     pbehavior="[object Object]"
     pbehaviorinfo="[object Object]"
   />
-   
   <!---->
-   
   <extra-details-children-stub
     closed="1"
     opened="2"
@@ -70,31 +56,24 @@ exports[`alarm-column-value-extra-details Renders \`alarm-column-value-extra-det
   <extra-details-ack-stub
     ack="[object Object]"
   />
-   
   <extra-details-last-comment-stub
     lastcomment="[object Object]"
   />
-   
   <extra-details-ticket-stub
     limit="5"
     tickets="[object Object]"
   />
-   
   <extra-details-canceled-stub
     canceled="[object Object]"
   />
-   
   <extra-details-snooze-stub
     snooze="[object Object]"
   />
-   
   <extra-details-pbehavior-stub
     pbehavior="[object Object]"
     pbehaviorinfo="[object Object]"
   />
-   
   <!---->
-   
   <!---->
 </div>
 `;

@@ -16,7 +16,6 @@ exports[`create-snooze-event Renders \`create-snooze-event\` with config data 1`
         Snooze
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -25,7 +24,6 @@ exports[`create-snooze-event Renders \`create-snooze-event\` with config data 1`
         isnoterequired="true"
       />
     </div>
-     
     <div
       class="actions"
     >
@@ -36,12 +34,9 @@ exports[`create-snooze-event Renders \`create-snooze-event\` with config data 1`
         <span
           class="v-btn__content"
         >
-          
         Cancel
-      
         </span>
       </button>
-       
       <button
         class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
@@ -49,9 +44,7 @@ exports[`create-snooze-event Renders \`create-snooze-event\` with config data 1`
         <span
           class="v-btn__content"
         >
-          
         Save changes
-      
         </span>
       </button>
     </div>
@@ -75,7 +68,6 @@ exports[`create-snooze-event Renders \`create-snooze-event\` with empty modal 1`
         Snooze
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -83,7 +75,6 @@ exports[`create-snooze-event Renders \`create-snooze-event\` with empty modal 1`
         form="[object Object]"
       />
     </div>
-     
     <div
       class="actions"
     >
@@ -94,12 +85,9 @@ exports[`create-snooze-event Renders \`create-snooze-event\` with empty modal 1`
         <span
           class="v-btn__content"
         >
-          
         Cancel
-      
         </span>
       </button>
-       
       <button
         class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
@@ -107,9 +95,7 @@ exports[`create-snooze-event Renders \`create-snooze-event\` with empty modal 1`
         <span
           class="v-btn__content"
         >
-          
         Save changes
-      
         </span>
       </button>
     </div>

@@ -14,10 +14,8 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
         value="Filter"
       />
     </div>
-      
     <!---->
   </div>
-   
   <div
     class="v-data-table theme--light"
     header-text="text"
@@ -235,23 +233,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
         Filter
-      
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:48
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:48
-  
             </td>
             <td
               class="text-start"
@@ -263,11 +255,9 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
                   badge-tooltip="Filter patterns are not migrated"
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -293,23 +283,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
         Filter 2
-      
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 14:19:50
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 14:19:50
-  
             </td>
             <td
               class="text-start"
@@ -321,11 +305,9 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
                   badge-tooltip="Filter patterns are not migrated"
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -351,23 +333,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
         Filter 3
-      
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 14:20:49
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 14:20:49
-  
             </td>
             <td
               class="text-start"
@@ -379,11 +355,9 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
                   badge-tooltip="Filter patterns are not migrated"
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -409,23 +383,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
         Filter 4
-      
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 12:23:34
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 12:23:34
-  
             </td>
             <td
               class="text-start"
@@ -437,11 +405,9 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
                   badge-tooltip="Filter patterns are not migrated"
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -467,23 +433,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
         Filter 5
-      
             </td>
             <td
               class="text-start"
             >
-              
     18/02/2021 4:58:51
-  
             </td>
             <td
               class="text-start"
             >
-              
     18/02/2021 4:58:51
-  
             </td>
             <td
               class="text-start"
@@ -495,11 +455,9 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
                   badge-tooltip="Filter patterns are not migrated"
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -525,23 +483,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
         Filter 6
-      
             </td>
             <td
               class="text-start"
             >
-              
     18/02/2021 4:58:41
-  
             </td>
             <td
               class="text-start"
             >
-              
     18/02/2021 4:58:41
-  
             </td>
             <td
               class="text-start"
@@ -553,11 +505,9 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
                   badge-tooltip="Filter patterns are not migrated"
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -583,23 +533,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
         Filter 7
-      
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 14:24:11
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 14:24:11
-  
             </td>
             <td
               class="text-start"
@@ -611,11 +555,9 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
                   badge-tooltip="Filter patterns are not migrated"
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -641,23 +583,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
         Filter 8
-      
             </td>
             <td
               class="text-start"
             >
-              
     04/06/2021 6:41:37
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/06/2021 6:41:37
-  
             </td>
             <td
               class="text-start"
@@ -669,11 +605,9 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
                   badge-tooltip="Filter patterns are not migrated"
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -699,23 +633,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
         Filter 9
-      
             </td>
             <td
               class="text-start"
             >
-              
     11/03/2021 5:06:41
-  
             </td>
             <td
               class="text-start"
             >
-              
     11/03/2021 5:06:41
-  
             </td>
             <td
               class="text-start"
@@ -727,11 +655,9 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
                   badge-tooltip="Filter patterns are not migrated"
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -757,23 +683,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
         Filter 10
-      
             </td>
             <td
               class="text-start"
             >
-              
     11/03/2021 7:02:36
-  
             </td>
             <td
               class="text-start"
             >
-              
     11/03/2021 7:02:36
-  
             </td>
             <td
               class="text-start"
@@ -785,11 +705,9 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
                   badge-tooltip="Filter patterns are not migrated"
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -803,7 +721,6 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
       </table>
     </div>
   </div>
-   
   <c-table-pagination-stub
     items-per-page="10"
     page="2"
@@ -824,10 +741,8 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
     >
       <c-search-field-stub />
     </div>
-      
     <!---->
   </div>
-   
   <div
     class="v-data-table theme--light"
     header-text="text"
@@ -952,7 +867,6 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
       </table>
     </div>
   </div>
-   
   <c-table-pagination-stub />
 </div>
 `;
@@ -971,10 +885,8 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
         value=""
       />
     </div>
-      
     <!---->
   </div>
-   
   <div
     class="v-data-table theme--light"
     header-text="text"
@@ -1152,23 +1064,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
             <td
               class="text-start"
             >
-              
         Filter
-      
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:48
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:48
-  
             </td>
             <td
               class="text-start"
@@ -1177,9 +1083,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
                 class="layout"
               >
                 <!---->
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -1203,23 +1107,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
             <td
               class="text-start"
             >
-              
         Filter 2
-      
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 14:19:50
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 14:19:50
-  
             </td>
             <td
               class="text-start"
@@ -1228,9 +1126,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
                 class="layout"
               >
                 <!---->
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -1254,23 +1150,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
             <td
               class="text-start"
             >
-              
         Filter 3
-      
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 14:20:49
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 14:20:49
-  
             </td>
             <td
               class="text-start"
@@ -1279,9 +1169,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
                 class="layout"
               >
                 <!---->
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -1305,23 +1193,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
             <td
               class="text-start"
             >
-              
         Filter 4
-      
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 12:23:34
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 12:23:34
-  
             </td>
             <td
               class="text-start"
@@ -1330,9 +1212,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
                 class="layout"
               >
                 <!---->
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -1356,23 +1236,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
             <td
               class="text-start"
             >
-              
         Filter 5
-      
             </td>
             <td
               class="text-start"
             >
-              
     18/02/2021 4:58:51
-  
             </td>
             <td
               class="text-start"
             >
-              
     18/02/2021 4:58:51
-  
             </td>
             <td
               class="text-start"
@@ -1381,9 +1255,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
                 class="layout"
               >
                 <!---->
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -1407,23 +1279,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
             <td
               class="text-start"
             >
-              
         Filter 6
-      
             </td>
             <td
               class="text-start"
             >
-              
     18/02/2021 4:58:41
-  
             </td>
             <td
               class="text-start"
             >
-              
     18/02/2021 4:58:41
-  
             </td>
             <td
               class="text-start"
@@ -1432,9 +1298,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
                 class="layout"
               >
                 <!---->
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -1458,23 +1322,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
             <td
               class="text-start"
             >
-              
         Filter 7
-      
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 14:24:11
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 14:24:11
-  
             </td>
             <td
               class="text-start"
@@ -1483,9 +1341,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
                 class="layout"
               >
                 <!---->
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -1509,23 +1365,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
             <td
               class="text-start"
             >
-              
         Filter 8
-      
             </td>
             <td
               class="text-start"
             >
-              
     04/06/2021 6:41:37
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/06/2021 6:41:37
-  
             </td>
             <td
               class="text-start"
@@ -1534,9 +1384,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
                 class="layout"
               >
                 <!---->
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -1560,23 +1408,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
             <td
               class="text-start"
             >
-              
         Filter 9
-      
             </td>
             <td
               class="text-start"
             >
-              
     11/03/2021 5:06:41
-  
             </td>
             <td
               class="text-start"
             >
-              
     11/03/2021 5:06:41
-  
             </td>
             <td
               class="text-start"
@@ -1585,9 +1427,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
                 class="layout"
               >
                 <!---->
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -1611,23 +1451,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
             <td
               class="text-start"
             >
-              
         Filter 10
-      
             </td>
             <td
               class="text-start"
             >
-              
     11/03/2021 7:02:36
-  
             </td>
             <td
               class="text-start"
             >
-              
     11/03/2021 7:02:36
-  
             </td>
             <td
               class="text-start"
@@ -1636,9 +1470,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
                 class="layout"
               >
                 <!---->
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -1650,7 +1482,6 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
       </table>
     </div>
   </div>
-   
   <c-table-pagination-stub
     items-per-page="10"
     page="1"
@@ -1673,10 +1504,8 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
         value=""
       />
     </div>
-      
     <!---->
   </div>
-   
   <div
     class="v-data-table theme--light"
     header-text="text"
@@ -1854,23 +1683,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
             <td
               class="text-start"
             >
-              
         Filter
-      
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:48
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:48
-  
             </td>
             <td
               class="text-start"
@@ -1883,9 +1706,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
                   badge-value="true"
                   type="edit"
                 />
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -1909,23 +1730,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
             <td
               class="text-start"
             >
-              
         Filter 2
-      
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 14:19:50
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 14:19:50
-  
             </td>
             <td
               class="text-start"
@@ -1938,9 +1753,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
                   badge-value="true"
                   type="edit"
                 />
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -1964,23 +1777,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
             <td
               class="text-start"
             >
-              
         Filter 3
-      
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 14:20:49
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 14:20:49
-  
             </td>
             <td
               class="text-start"
@@ -1993,9 +1800,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
                   badge-value="true"
                   type="edit"
                 />
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -2019,23 +1824,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
             <td
               class="text-start"
             >
-              
         Filter 4
-      
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 12:23:34
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 12:23:34
-  
             </td>
             <td
               class="text-start"
@@ -2048,9 +1847,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
                   badge-value="true"
                   type="edit"
                 />
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -2074,23 +1871,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
             <td
               class="text-start"
             >
-              
         Filter 5
-      
             </td>
             <td
               class="text-start"
             >
-              
     18/02/2021 4:58:51
-  
             </td>
             <td
               class="text-start"
             >
-              
     18/02/2021 4:58:51
-  
             </td>
             <td
               class="text-start"
@@ -2103,9 +1894,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
                   badge-value="true"
                   type="edit"
                 />
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -2129,23 +1918,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
             <td
               class="text-start"
             >
-              
         Filter 6
-      
             </td>
             <td
               class="text-start"
             >
-              
     18/02/2021 4:58:41
-  
             </td>
             <td
               class="text-start"
             >
-              
     18/02/2021 4:58:41
-  
             </td>
             <td
               class="text-start"
@@ -2158,9 +1941,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
                   badge-value="true"
                   type="edit"
                 />
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -2184,23 +1965,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
             <td
               class="text-start"
             >
-              
         Filter 7
-      
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 14:24:11
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 14:24:11
-  
             </td>
             <td
               class="text-start"
@@ -2213,9 +1988,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
                   badge-value="true"
                   type="edit"
                 />
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -2239,23 +2012,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
             <td
               class="text-start"
             >
-              
         Filter 8
-      
             </td>
             <td
               class="text-start"
             >
-              
     04/06/2021 6:41:37
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/06/2021 6:41:37
-  
             </td>
             <td
               class="text-start"
@@ -2268,9 +2035,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
                   badge-value="true"
                   type="edit"
                 />
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -2294,23 +2059,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
             <td
               class="text-start"
             >
-              
         Filter 9
-      
             </td>
             <td
               class="text-start"
             >
-              
     11/03/2021 5:06:41
-  
             </td>
             <td
               class="text-start"
             >
-              
     11/03/2021 5:06:41
-  
             </td>
             <td
               class="text-start"
@@ -2323,9 +2082,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
                   badge-value="true"
                   type="edit"
                 />
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -2349,23 +2106,17 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
             <td
               class="text-start"
             >
-              
         Filter 10
-      
             </td>
             <td
               class="text-start"
             >
-              
     11/03/2021 7:02:36
-  
             </td>
             <td
               class="text-start"
             >
-              
     11/03/2021 7:02:36
-  
             </td>
             <td
               class="text-start"
@@ -2378,9 +2129,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
                   badge-value="true"
                   type="edit"
                 />
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -2392,7 +2141,6 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
       </table>
     </div>
   </div>
-   
   <c-table-pagination-stub
     items-per-page="10"
     page="1"

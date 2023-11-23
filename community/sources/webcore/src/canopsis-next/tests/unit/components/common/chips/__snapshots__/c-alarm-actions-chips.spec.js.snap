@@ -12,7 +12,6 @@ exports[`c-alarm-actions-chips Renders \`c-alarm-actions-chips\` with selected t
     class="c-alarm-action-chip"
     color="color1"
   />
-   
   <div
     class="v-menu"
   >
@@ -55,7 +54,6 @@ exports[`c-alarm-actions-chips Renders \`c-alarm-actions-chips\` without selecte
     class="c-alarm-action-chip"
     color="color3"
   />
-   
   <!---->
 </div>
 `;
@@ -68,7 +66,6 @@ exports[`c-alarm-actions-chips Renders \`c-alarm-actions-chips\` without selecte
     class="c-alarm-action-chip"
     color="color1"
   />
-   
   <div
     class="v-menu"
   >

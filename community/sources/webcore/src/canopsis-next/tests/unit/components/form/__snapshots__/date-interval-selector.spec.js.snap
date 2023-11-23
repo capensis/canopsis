@@ -18,7 +18,6 @@ exports[`date-interval-selector Renders \`date-interval-selector\` with custom p
           roundhours="true"
           value="today-2d"
         />
-         
         <date-time-picker-text-field-stub
           dateobjectpreparer="[Function]"
           label="End date"
@@ -28,7 +27,6 @@ exports[`date-interval-selector Renders \`date-interval-selector\` with custom p
         />
       </div>
     </div>
-     
     <div
       class="flex pl-1 xs6"
     >
@@ -36,7 +34,6 @@ exports[`date-interval-selector Renders \`date-interval-selector\` with custom p
         return-object=""
         value="[object Object]"
       />
-       
       <div
         class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
       >
@@ -151,7 +148,6 @@ exports[`date-interval-selector Renders \`date-interval-selector\` with default 
           name="tstart"
           value="now-3h"
         />
-         
         <date-time-picker-text-field-stub
           dateobjectpreparer="[Function]"
           label="End date"
@@ -160,7 +156,6 @@ exports[`date-interval-selector Renders \`date-interval-selector\` with default 
         />
       </div>
     </div>
-     
     <div
       class="flex pl-1 xs6"
     >
@@ -168,7 +163,6 @@ exports[`date-interval-selector Renders \`date-interval-selector\` with default 
         return-object=""
         value="[object Object]"
       />
-       
       <div
         class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
       >

@@ -9,20 +9,17 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
     shapes="[object Object]"
   >
     <add-location-btn-stub />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <flowchart-points-editor-stub
       iconsize="24"
       points=""
       shapes="[object Object]"
     />
   </div>
-   
   <!---->
 </div>
 `;
@@ -36,20 +33,17 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with form 1`] = `
     shapes="[object Object]"
   >
     <add-location-btn-stub />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <flowchart-points-editor-stub
       iconsize="24"
       points=""
       shapes="[object Object]"
     />
   </div>
-   
   <!---->
 </div>
 `;
@@ -64,20 +58,17 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with validation errors  1
     style="border-color: #ff5252;"
   >
     <add-location-btn-stub />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <flowchart-points-editor-stub
       iconsize="24"
       points=""
       shapes="[object Object]"
     />
   </div>
-   
   <div
     class="v-messages theme--light error--text"
   >

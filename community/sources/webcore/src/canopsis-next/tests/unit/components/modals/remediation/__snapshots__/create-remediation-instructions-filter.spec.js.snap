@@ -16,7 +16,6 @@ exports[`create-remediation-instructions-filter Renders \`create-remediation-ins
         Filters
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -25,7 +24,6 @@ exports[`create-remediation-instructions-filter Renders \`create-remediation-ins
         form="[object Object]"
       />
     </div>
-     
     <div
       class="actions"
     >
@@ -36,12 +34,9 @@ exports[`create-remediation-instructions-filter Renders \`create-remediation-ins
         <span
           class="v-btn__content"
         >
-          
         Cancel
-      
         </span>
       </button>
-       
       <button
         class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
@@ -49,9 +44,7 @@ exports[`create-remediation-instructions-filter Renders \`create-remediation-ins
         <span
           class="v-btn__content"
         >
-          
         Submit
-      
         </span>
       </button>
     </div>
@@ -75,7 +68,6 @@ exports[`create-remediation-instructions-filter Renders \`create-remediation-ins
         Filters
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -84,7 +76,6 @@ exports[`create-remediation-instructions-filter Renders \`create-remediation-ins
         form="[object Object]"
       />
     </div>
-     
     <div
       class="actions"
     >
@@ -95,12 +86,9 @@ exports[`create-remediation-instructions-filter Renders \`create-remediation-ins
         <span
           class="v-btn__content"
         >
-          
         Cancel
-      
         </span>
       </button>
-       
       <button
         class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
@@ -108,9 +96,7 @@ exports[`create-remediation-instructions-filter Renders \`create-remediation-ins
         <span
           class="v-btn__content"
         >
-          
         Submit
-      
         </span>
       </button>
     </div>
@@ -134,7 +120,6 @@ exports[`create-remediation-instructions-filter Renders \`create-remediation-ins
         Filters
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -143,7 +128,6 @@ exports[`create-remediation-instructions-filter Renders \`create-remediation-ins
         form="[object Object]"
       />
     </div>
-     
     <div
       class="actions"
     >
@@ -154,12 +138,9 @@ exports[`create-remediation-instructions-filter Renders \`create-remediation-ins
         <span
           class="v-btn__content"
         >
-          
         Cancel
-      
         </span>
       </button>
-       
       <button
         class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
@@ -167,9 +148,7 @@ exports[`create-remediation-instructions-filter Renders \`create-remediation-ins
         <span
           class="v-btn__content"
         >
-          
         Submit
-      
         </span>
       </button>
     </div>

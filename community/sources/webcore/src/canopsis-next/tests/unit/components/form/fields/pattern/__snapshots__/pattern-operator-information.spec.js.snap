@@ -11,7 +11,6 @@ exports[`pattern-operator-information Renders \`pattern-operator-information\` 1
       class="default-slot"
     />
   </c-pattern-operator-chip-stub>
-   
   <div
     class="pattern-operator-information__bracket"
   />

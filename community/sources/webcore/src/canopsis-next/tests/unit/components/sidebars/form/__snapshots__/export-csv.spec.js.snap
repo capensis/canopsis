@@ -80,7 +80,6 @@ exports[`export-csv Renders \`export-csv\` with custom props 1`] = `
       </div>
     </div>
   </div>
-   
   <div
     class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
   >
@@ -157,18 +156,14 @@ exports[`export-csv Renders \`export-csv\` with custom props 1`] = `
       </div>
     </div>
   </div>
-   
   <div
     class="layout column"
   >
     <h4
       class="text-subtitle-1 my-4"
     >
-      
       Export column names
-    
     </h4>
-     
     <c-columns-with-template-field-stub
       label="Export column names"
       templates=""
@@ -254,20 +249,15 @@ exports[`export-csv Renders \`export-csv\` with default props 1`] = `
       </div>
     </div>
   </div>
-   
   <!---->
-   
   <div
     class="layout column"
   >
     <h4
       class="text-subtitle-1 my-4"
     >
-      
       Export column names
-    
     </h4>
-     
     <c-columns-with-template-field-stub
       label="Export column names"
       templates=""

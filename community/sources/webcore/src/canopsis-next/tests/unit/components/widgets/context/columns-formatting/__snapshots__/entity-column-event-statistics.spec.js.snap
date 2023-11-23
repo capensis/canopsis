@@ -13,11 +13,9 @@ exports[`entity-column-event-statistics Renders \`entity-column-event-statistics
     >
       15
     </span>
-     
     <span>
       /
     </span>
-     
     <span
       class="ml-1 error--text font-weight-bold"
     >
@@ -55,11 +53,9 @@ exports[`entity-column-event-statistics Renders \`entity-column-event-statistics
     >
       30
     </span>
-     
     <span>
       /
     </span>
-     
     <span
       class="ml-1 error--text font-weight-bold"
     >

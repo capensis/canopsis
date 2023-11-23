@@ -10,7 +10,6 @@ exports[`bar-chart-widget Renders \`bar-chart-widget\` with custom props 1`] = `
     widgetfilters=""
     widgetid="bar-chart-widget-id"
   />
-   
   <div
     class="layout pa-3 column"
   >
@@ -45,7 +44,6 @@ exports[`bar-chart-widget Renders \`bar-chart-widget\` with custom props 1`] = `
         />
       </div>
     </div>
-     
     <!---->
   </div>
 </div>
@@ -61,7 +59,6 @@ exports[`bar-chart-widget Renders \`bar-chart-widget\` with required props 1`] =
     widgetfilters=""
     widgetid="bar-chart-widget-id"
   />
-   
   <div
     class="layout pa-3 column"
   >
@@ -96,7 +93,6 @@ exports[`bar-chart-widget Renders \`bar-chart-widget\` with required props 1`] =
         />
       </div>
     </div>
-     
     <!---->
   </div>
 </div>

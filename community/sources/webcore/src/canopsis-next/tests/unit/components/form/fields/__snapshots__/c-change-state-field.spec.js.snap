@@ -12,7 +12,6 @@ exports[`c-change-state-field Renders \`c-change-state-field\` after validate co
       value="2"
     />
   </div>
-   
   <div
     class="layout mt-4"
   >
@@ -78,7 +77,6 @@ exports[`c-change-state-field Renders \`c-change-state-field\` with allowed chan
       value="0"
     />
   </div>
-   
   <div
     class="layout mt-4"
   >
@@ -137,7 +135,6 @@ exports[`c-change-state-field Renders \`c-change-state-field\` with custom label
       value="0"
     />
   </div>
-   
   <div
     class="layout mt-4"
   >
@@ -196,7 +193,6 @@ exports[`c-change-state-field Renders \`c-change-state-field\` with errors corre
       value="0"
     />
   </div>
-   
   <div
     class="layout mt-4"
   >
@@ -262,7 +258,6 @@ exports[`c-change-state-field Renders \`c-change-state-field\` without allowed c
       value="0"
     />
   </div>
-   
   <div
     class="layout mt-4"
   >

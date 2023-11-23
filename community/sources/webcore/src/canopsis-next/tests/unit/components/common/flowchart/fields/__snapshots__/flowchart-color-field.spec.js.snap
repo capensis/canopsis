@@ -7,11 +7,8 @@ exports[`flowchart-color-field Renders \`flowchart-color-field\` with custom pro
   <span
     class="v-label"
   >
-    
     Custom label
-  
   </span>
-   
   <div
     class="flex xs3"
   >
@@ -69,7 +66,6 @@ exports[`flowchart-color-field Renders \`flowchart-color-field\` with default pr
       </div>
     </div>
   </div>
-   
   <div
     class="flex xs3"
     style="display: none;"

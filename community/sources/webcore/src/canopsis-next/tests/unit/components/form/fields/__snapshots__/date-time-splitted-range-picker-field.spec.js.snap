@@ -13,15 +13,11 @@ exports[`date-time-splitted-range-picker-field Renders \`date-time-splitted-rang
       placeholder=""
     />
   </div>
-   
   <div
     class="date-time-splitted-range-picker-field__time-dash"
   >
-    
       –
-    
   </div>
-   
   <div
     class="flex date-time-splitted-range-picker-field__end"
   >
@@ -51,15 +47,11 @@ exports[`date-time-splitted-range-picker-field Renders \`date-time-splitted-rang
       value="Sat Mar 03 2012 00:00:00 GMT+0100 (Central European Standard Time)"
     />
   </div>
-   
   <div
     class="date-time-splitted-range-picker-field__time-dash"
   >
-    
       –
-    
   </div>
-   
   <div
     class="flex date-time-splitted-range-picker-field__end"
   >

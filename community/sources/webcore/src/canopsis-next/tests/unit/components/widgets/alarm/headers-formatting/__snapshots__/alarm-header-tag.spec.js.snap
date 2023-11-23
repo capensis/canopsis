@@ -2,7 +2,6 @@
 
 exports[`alarm-header-tag Renders \`alarm-header-tag\` with selected tag 1`] = `
 <span>
-   
   <span
     class="c-alarm-action-chip"
     closable=""
@@ -24,7 +23,6 @@ exports[`alarm-header-tag Renders \`alarm-header-tag\` with selected tag and def
 
 exports[`alarm-header-tag Renders \`alarm-header-tag\` without selected tag 1`] = `
 <span>
-   
   <!---->
 </span>
 `;

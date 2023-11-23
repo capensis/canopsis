@@ -10,14 +10,10 @@ exports[`storage-settings-pbehavior-form Renders \`storage-settings-pbehavior-fo
     <div
       class="text-subtitle-1 font-weight-bold"
     >
-      
       PBehavior data storage
-    
     </div>
-     
     <!---->
   </div>
-   
   <div
     class="layout mt-2"
   >
@@ -29,7 +25,6 @@ exports[`storage-settings-pbehavior-form Renders \`storage-settings-pbehavior-fo
       />
     </span>
   </div>
-    
   <c-enabled-duration-field-stub
     help-text="When switched on, inactive PBehaviors will be deleted after the defined time period from the last event."
     label="Delete PBehavior data after"
@@ -49,16 +44,11 @@ exports[`storage-settings-pbehavior-form Renders \`storage-settings-pbehavior-fo
     <div
       class="text-subtitle-1 font-weight-bold"
     >
-      
       PBehavior data storage
-    
     </div>
-     
     <!---->
   </div>
-   
   <!---->
-    
   <c-enabled-duration-field-stub
     help-text="When switched on, inactive PBehaviors will be deleted after the defined time period from the last event."
     label="Delete PBehavior data after"

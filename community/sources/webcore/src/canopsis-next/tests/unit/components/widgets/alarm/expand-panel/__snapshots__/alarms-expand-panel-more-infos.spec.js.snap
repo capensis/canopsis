@@ -33,13 +33,10 @@ exports[`alarms-expand-panel-more-infos Renders \`alarms-expand-panel-more-infos
     >
       infos
     </i>
-     
     <p
       class="ma-0"
     >
-      
       To define a template for this window, go to the alarms list settings
-    
     </p>
   </div>
 </div>

@@ -10,7 +10,6 @@ exports[`view-form Renders \`view-form\` with custom props 1`] = `
     required=""
     value="View title"
   />
-   
   <div
     class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field"
   >
@@ -50,17 +49,14 @@ exports[`view-form Renders \`view-form\` with custom props 1`] = `
       </div>
     </div>
   </div>
-   
   <c-enabled-field-stub
     value="true"
   />
-   
   <periodic-refresh-field-stub
     label="Periodic refresh"
     name="periodic_refresh"
     periodicrefresh="[object Object]"
   />
-   
   <div
     class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select v-select--chips v-select--is-multi v-autocomplete"
   >
@@ -151,7 +147,6 @@ exports[`view-form Renders \`view-form\` with custom props 1`] = `
       </div>
     </div>
   </div>
-   
   <div
     class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select v-autocomplete"
   >
@@ -230,7 +225,6 @@ exports[`view-form Renders \`view-form\` with default props 1`] = `
     name="title"
     required=""
   />
-   
   <div
     class="v-input theme--light v-text-field"
   >
@@ -270,15 +264,12 @@ exports[`view-form Renders \`view-form\` with default props 1`] = `
       </div>
     </div>
   </div>
-   
   <c-enabled-field-stub />
-   
   <periodic-refresh-field-stub
     label="Periodic refresh"
     name="periodic_refresh"
     periodicrefresh="[object Object]"
   />
-   
   <div
     class="v-input theme--light v-text-field v-select v-select--chips v-select--is-multi v-autocomplete"
   >
@@ -339,7 +330,6 @@ exports[`view-form Renders \`view-form\` with default props 1`] = `
       </div>
     </div>
   </div>
-   
   <div
     class="v-input theme--light v-text-field v-select v-autocomplete"
   >

@@ -11,12 +11,10 @@ exports[`kpi-widget-filters Renders 'kpi-widget-filters' with custom props 1`] =
     quick-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     short=""
   />
-   
   <c-sampling-field-stub
     class="kpi-widget-filters__sampling"
     value="month"
   />
-   
   <div
     class="layout align-end"
   >
@@ -33,7 +31,6 @@ exports[`kpi-widget-filters Renders 'kpi-widget-filters' with custom props 1`] =
       lockedvalue="locked-filter-id"
       value="[object Object],[object Object]"
     />
-     
     <filters-list-btn-stub
       addable="true"
       editable="true"
@@ -50,9 +47,7 @@ exports[`kpi-widget-filters Renders 'kpi-widget-filters' with required props 1`]
   class="layout kpi-widget-filters wrap"
 >
   <!---->
-   
   <!---->
-   
   <!---->
 </div>
 `;

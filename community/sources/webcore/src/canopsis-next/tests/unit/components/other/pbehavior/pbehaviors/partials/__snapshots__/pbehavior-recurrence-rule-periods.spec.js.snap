@@ -14,13 +14,11 @@ exports[`pbehavior-recurrence-rule-periods Renders \`pbehavior-recurrence-rule-p
         Periods
       </span>
     </div>
-     
     <c-action-btn-stub
       icon="event_note"
       tooltip="Calendar with periods"
     />
   </div>
-   
   <div
     class="layout mt-2"
   >
@@ -101,7 +99,6 @@ exports[`pbehavior-recurrence-rule-periods Renders \`pbehavior-recurrence-rule-p
       </div>
     </div>
   </div>
-   
   <div
     class="layout"
   >
@@ -407,13 +404,11 @@ exports[`pbehavior-recurrence-rule-periods Renders \`pbehavior-recurrence-rule-p
         Periods
       </span>
     </div>
-     
     <c-action-btn-stub
       icon="event_note"
       tooltip="Calendar with periods"
     />
   </div>
-   
   <div
     class="layout mt-2"
   >
@@ -494,7 +489,6 @@ exports[`pbehavior-recurrence-rule-periods Renders \`pbehavior-recurrence-rule-p
       </div>
     </div>
   </div>
-   
   <div
     class="layout"
   >

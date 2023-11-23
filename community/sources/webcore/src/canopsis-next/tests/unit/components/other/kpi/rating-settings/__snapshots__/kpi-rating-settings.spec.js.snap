@@ -9,7 +9,6 @@ exports[`kpi-rating-settings Renders \`kpi-rating-settings\` with default props 
   >
     The list of parameters to use for rating.
   </span>
-   
   <kpi-rating-settings-list-stub
     options="[object Object]"
     ratingsettings=""
@@ -27,7 +26,6 @@ exports[`kpi-rating-settings Renders \`kpi-rating-settings\` with full permissio
   >
     The list of parameters to use for rating.
   </span>
-   
   <kpi-rating-settings-list-stub
     options="[object Object]"
     ratingsettings=""

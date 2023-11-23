@@ -35,22 +35,16 @@ exports[`pbehavior-form Renders \`pbehavior-form\` with custom props 1`] = `
           role="tab"
           tabindex="0"
         >
-          
     General
-  
         </div>
-         
         <div
           aria-selected="false"
           class="v-tab"
           role="tab"
           tabindex="0"
         >
-          
     Patterns
-  
         </div>
-          
       </div>
     </div>
     <div
@@ -82,11 +76,9 @@ exports[`pbehavior-form Renders \`pbehavior-form\` with custom props 1`] = `
               noenabled="true"
               withstartontrigger="true"
             />
-             
             <c-enabled-color-picker-field-stub
               label="Use special color for this event?"
             />
-             
             <c-collapse-panel-stub
               class="mb-2"
               title="Recurrence rule"
@@ -94,7 +86,6 @@ exports[`pbehavior-form Renders \`pbehavior-form\` with custom props 1`] = `
               <recurrence-rule-form-stub
                 rrule=""
               />
-               
               <pbehavior-recurrence-rule-exceptions-field-stub
                 class="mt-2"
                 exceptions=""
@@ -102,7 +93,6 @@ exports[`pbehavior-form Renders \`pbehavior-form\` with custom props 1`] = `
                 withexdatetype="true"
               />
             </c-collapse-panel-stub>
-             
             <!---->
           </div>
         </div>
@@ -167,22 +157,16 @@ exports[`pbehavior-form Renders \`pbehavior-form\` with required props 1`] = `
           role="tab"
           tabindex="0"
         >
-          
     General
-  
         </div>
-         
         <div
           aria-selected="false"
           class="v-tab"
           role="tab"
           tabindex="0"
         >
-          
     Patterns
-  
         </div>
-          
       </div>
     </div>
     <div
@@ -212,11 +196,9 @@ exports[`pbehavior-form Renders \`pbehavior-form\` with required props 1`] = `
             <pbehavior-general-form-stub
               form="[object Object]"
             />
-             
             <c-enabled-color-picker-field-stub
               label="Use special color for this event?"
             />
-             
             <c-collapse-panel-stub
               class="mb-2"
               title="Recurrence rule"
@@ -224,7 +206,6 @@ exports[`pbehavior-form Renders \`pbehavior-form\` with required props 1`] = `
               <recurrence-rule-form-stub
                 rrule=""
               />
-               
               <pbehavior-recurrence-rule-exceptions-field-stub
                 class="mt-2"
                 exceptions=""
@@ -232,7 +213,6 @@ exports[`pbehavior-form Renders \`pbehavior-form\` with required props 1`] = `
                 withexdatetype="true"
               />
             </c-collapse-panel-stub>
-             
             <c-collapse-panel-stub
               class="mt-2"
               title="Comments"

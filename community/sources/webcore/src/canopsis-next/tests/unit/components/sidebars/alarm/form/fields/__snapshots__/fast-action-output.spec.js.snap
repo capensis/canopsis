@@ -8,7 +8,6 @@ exports[`fast-action-output Renders \`fast-action-output\` with custom props 1`]
   <c-enabled-field-stub
     value="true"
   />
-   
   <div
     class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field"
   >
@@ -56,7 +55,6 @@ exports[`fast-action-output Renders \`fast-action-output\` with default props 1`
   title=""
 >
   <c-enabled-field-stub />
-   
   <div
     class="v-input v-input--is-disabled theme--light v-text-field"
   >

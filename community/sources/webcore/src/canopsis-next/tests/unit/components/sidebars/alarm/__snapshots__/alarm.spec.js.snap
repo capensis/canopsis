@@ -6,24 +6,20 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     name="title"
     value=""
   />
-   
   <hr
     aria-orientation="horizontal"
     class="v-divider theme--light"
     role="separator"
   />
-   
   <field-periodic-refresh-stub
     form="[object Object]"
     withlivewatching="true"
   />
-   
   <hr
     aria-orientation="horizontal"
     class="v-divider theme--light"
     role="separator"
   />
-   
   <widget-settings-group-stub
     title="Advanced settings"
   >
@@ -32,13 +28,11 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
       columnslabel="Column name"
       value="[object Object]"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-columns-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       label="Column names"
@@ -49,23 +43,19 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
       withhtml="true"
       withtemplate="true"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-resize-column-behavior-stub
       value="[object Object]"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-columns-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       label="Column names for meta alarms"
@@ -75,13 +65,11 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
       withcolorindicator="true"
       withhtml="true"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-columns-stub
       columns="[object Object],[object Object]"
       label="Track alarm source columns"
@@ -90,44 +78,36 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
       type="entity"
       withcolorindicator="true"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-default-elements-per-page-stub
       value="10"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-density-stub
       name="dense"
       value="0"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-opened-resolved-filter-stub
       value="true"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-filters-stub
       addable="true"
       editable="true"
@@ -137,56 +117,46 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
       withentity="true"
       withpbehavior="true"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-remediation-instructions-filters-stub
       addable="true"
       editable="true"
       filters=""
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-switcher-stub
       title="Disable possibility to clear selected filter"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-live-reporting-stub
       value="[object Object]"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-info-popup-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       popups=""
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-text-editor-with-template-stub
       addable="true"
       defaultvalue=""
@@ -197,13 +167,11 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
       value=""
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-text-editor-with-template-stub
       addable="true"
       defaultvalue="<div style=\\"width: 1000px; font-family: Roboto, sans-serif; font-size: 15px; line-height: 1.2; overflow-wrap: break-word;\\">
@@ -619,13 +587,11 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
 "
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-grid-range-size-stub
       max="12"
       min="0"
@@ -633,59 +599,49 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
       title="Expand card (more infos / timeline) width"
       value="0,12"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-switcher-stub
       title="HTML enabled on timeline?"
       value="true"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <widget-settings-group-stub
       title="Ack"
     >
       <field-switcher-stub
         title="Note field required when ack?"
       />
-       
       <hr
         aria-orientation="horizontal"
         class="v-divider theme--light"
         role="separator"
       />
-       
       <field-switcher-stub
         title="Multiple ack"
       />
-       
       <hr
         aria-orientation="horizontal"
         class="v-divider theme--light"
         role="separator"
       />
-       
       <field-fast-action-output-stub
         label="Fast-ack output"
         value="[object Object]"
       />
     </widget-settings-group-stub>
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <widget-settings-group-stub
       title="Cancel"
     >
@@ -694,55 +650,45 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
         value="[object Object]"
       />
     </widget-settings-group-stub>
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-switcher-stub
       title="Note field required when snooze?"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-switcher-stub
       title="Comment field required when remove alarms from manual meta alarm?"
       value="true"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-switcher-stub
       title="Comment field required when uncancel?"
       value="true"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-switcher-stub
       title="Multiple declare ticket"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <export-csv-form-stub
       datetimeformat="true"
       form="[object Object]"
@@ -750,72 +696,59 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
       type="alarm"
       withinstructions="true"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-switcher-stub
       title="Sticky header"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <widget-settings-group-stub
       title="Kiosk mode"
     >
       <field-switcher-stub
         title="Hide actions"
       />
-       
       <hr
         aria-orientation="horizontal"
         class="v-divider theme--light"
         role="separator"
       />
-       
       <field-switcher-stub
         title="Hide mass selection"
       />
-       
       <hr
         aria-orientation="horizontal"
         class="v-divider theme--light"
         role="separator"
       />
-       
       <field-switcher-stub
         title="Hide toolbar"
       />
     </widget-settings-group-stub>
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-switcher-stub
       title="Actions allowed when state OK?"
     />
   </widget-settings-group-stub>
-   
   <hr
     aria-orientation="horizontal"
     class="v-divider theme--light"
     role="separator"
   />
-   
   <charts-form-stub
     charts=""
   />
-   
   <hr
     aria-orientation="horizontal"
     class="v-divider theme--light"
@@ -830,24 +763,20 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     name="title"
     value="Alarms list"
   />
-   
   <hr
     aria-orientation="horizontal"
     class="v-divider theme--light"
     role="separator"
   />
-   
   <field-periodic-refresh-stub
     form="[object Object]"
     withlivewatching="true"
   />
-   
   <hr
     aria-orientation="horizontal"
     class="v-divider theme--light"
     role="separator"
   />
-   
   <widget-settings-group-stub
     title="Advanced settings"
   >
@@ -856,13 +785,11 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
       columnslabel="Column name"
       value="[object Object]"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-columns-stub
       columns="[object Object]"
       label="Column names"
@@ -873,23 +800,19 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
       withhtml="true"
       withtemplate="true"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-resize-column-behavior-stub
       value="[object Object]"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-columns-stub
       columns="[object Object]"
       label="Column names for meta alarms"
@@ -899,13 +822,11 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
       withcolorindicator="true"
       withhtml="true"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-columns-stub
       columns="[object Object]"
       label="Track alarm source columns"
@@ -914,79 +835,63 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
       type="entity"
       withcolorindicator="true"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-default-elements-per-page-stub
       value="12"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-density-stub
       name="dense"
       value="0"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-opened-resolved-filter-stub
       value="true"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <!---->
-     
     <!---->
-     
     <field-switcher-stub
       title="Disable possibility to clear selected filter"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-live-reporting-stub
       value="[object Object]"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-info-popup-stub
       columns="[object Object]"
       popups=""
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-text-editor-with-template-stub
       addable="true"
       defaultvalue=""
@@ -997,13 +902,11 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
       value="More info template"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-text-editor-with-template-stub
       addable="true"
       defaultvalue="<div style=\\"width: 1000px; font-family: Roboto, sans-serif; font-size: 15px; line-height: 1.2; overflow-wrap: break-word;\\">
@@ -1419,13 +1322,11 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
 "
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-grid-range-size-stub
       max="12"
       min="0"
@@ -1433,24 +1334,20 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
       title="Expand card (more infos / timeline) width"
       value="1,11"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-switcher-stub
       title="HTML enabled on timeline?"
       value="true"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <widget-settings-group-stub
       title="Ack"
     >
@@ -1458,36 +1355,30 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
         title="Note field required when ack?"
         value="true"
       />
-       
       <hr
         aria-orientation="horizontal"
         class="v-divider theme--light"
         role="separator"
       />
-       
       <field-switcher-stub
         title="Multiple ack"
         value="true"
       />
-       
       <hr
         aria-orientation="horizontal"
         class="v-divider theme--light"
         role="separator"
       />
-       
       <field-fast-action-output-stub
         label="Fast-ack output"
         value="[object Object]"
       />
     </widget-settings-group-stub>
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <widget-settings-group-stub
       title="Cancel"
     >
@@ -1496,56 +1387,46 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
         value="[object Object]"
       />
     </widget-settings-group-stub>
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-switcher-stub
       title="Note field required when snooze?"
       value="true"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-switcher-stub
       title="Comment field required when remove alarms from manual meta alarm?"
       value="true"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-switcher-stub
       title="Comment field required when uncancel?"
       value="true"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-switcher-stub
       title="Multiple declare ticket"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <export-csv-form-stub
       datetimeformat="true"
       form="[object Object]"
@@ -1553,73 +1434,60 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
       type="alarm"
       withinstructions="true"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-switcher-stub
       title="Sticky header"
       value="true"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <widget-settings-group-stub
       title="Kiosk mode"
     >
       <field-switcher-stub
         title="Hide actions"
       />
-       
       <hr
         aria-orientation="horizontal"
         class="v-divider theme--light"
         role="separator"
       />
-       
       <field-switcher-stub
         title="Hide mass selection"
       />
-       
       <hr
         aria-orientation="horizontal"
         class="v-divider theme--light"
         role="separator"
       />
-       
       <field-switcher-stub
         title="Hide toolbar"
       />
     </widget-settings-group-stub>
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-switcher-stub
       title="Actions allowed when state OK?"
     />
   </widget-settings-group-stub>
-   
   <hr
     aria-orientation="horizontal"
     class="v-divider theme--light"
     role="separator"
   />
-   
   <charts-form-stub
     charts=""
   />
-   
   <hr
     aria-orientation="horizontal"
     class="v-divider theme--light"
@@ -1634,24 +1502,20 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     name="title"
     value=""
   />
-   
   <hr
     aria-orientation="horizontal"
     class="v-divider theme--light"
     role="separator"
   />
-   
   <field-periodic-refresh-stub
     form="[object Object]"
     withlivewatching="true"
   />
-   
   <hr
     aria-orientation="horizontal"
     class="v-divider theme--light"
     role="separator"
   />
-   
   <widget-settings-group-stub
     title="Advanced settings"
   >
@@ -1660,13 +1524,11 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
       columnslabel="Column name"
       value="[object Object]"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-columns-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       label="Column names"
@@ -1677,23 +1539,19 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
       withhtml="true"
       withtemplate="true"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-resize-column-behavior-stub
       value="[object Object]"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-columns-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       label="Column names for meta alarms"
@@ -1703,13 +1561,11 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
       withcolorindicator="true"
       withhtml="true"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-columns-stub
       columns="[object Object],[object Object]"
       label="Track alarm source columns"
@@ -1718,79 +1574,63 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
       type="entity"
       withcolorindicator="true"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-default-elements-per-page-stub
       value="10"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-density-stub
       name="dense"
       value="0"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-opened-resolved-filter-stub
       value="true"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <!---->
-     
     <!---->
-     
     <field-switcher-stub
       title="Disable possibility to clear selected filter"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-live-reporting-stub
       value="[object Object]"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-info-popup-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       popups=""
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-text-editor-with-template-stub
       addable="true"
       defaultvalue=""
@@ -1801,13 +1641,11 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
       value=""
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-text-editor-with-template-stub
       addable="true"
       defaultvalue="<div style=\\"width: 1000px; font-family: Roboto, sans-serif; font-size: 15px; line-height: 1.2; overflow-wrap: break-word;\\">
@@ -2223,13 +2061,11 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
 "
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-grid-range-size-stub
       max="12"
       min="0"
@@ -2237,59 +2073,49 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
       title="Expand card (more infos / timeline) width"
       value="0,12"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-switcher-stub
       title="HTML enabled on timeline?"
       value="true"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <widget-settings-group-stub
       title="Ack"
     >
       <field-switcher-stub
         title="Note field required when ack?"
       />
-       
       <hr
         aria-orientation="horizontal"
         class="v-divider theme--light"
         role="separator"
       />
-       
       <field-switcher-stub
         title="Multiple ack"
       />
-       
       <hr
         aria-orientation="horizontal"
         class="v-divider theme--light"
         role="separator"
       />
-       
       <field-fast-action-output-stub
         label="Fast-ack output"
         value="[object Object]"
       />
     </widget-settings-group-stub>
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <widget-settings-group-stub
       title="Cancel"
     >
@@ -2298,55 +2124,45 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
         value="[object Object]"
       />
     </widget-settings-group-stub>
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-switcher-stub
       title="Note field required when snooze?"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-switcher-stub
       title="Comment field required when remove alarms from manual meta alarm?"
       value="true"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-switcher-stub
       title="Comment field required when uncancel?"
       value="true"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-switcher-stub
       title="Multiple declare ticket"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <export-csv-form-stub
       datetimeformat="true"
       form="[object Object]"
@@ -2354,72 +2170,59 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
       type="alarm"
       withinstructions="true"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-switcher-stub
       title="Sticky header"
     />
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <widget-settings-group-stub
       title="Kiosk mode"
     >
       <field-switcher-stub
         title="Hide actions"
       />
-       
       <hr
         aria-orientation="horizontal"
         class="v-divider theme--light"
         role="separator"
       />
-       
       <field-switcher-stub
         title="Hide mass selection"
       />
-       
       <hr
         aria-orientation="horizontal"
         class="v-divider theme--light"
         role="separator"
       />
-       
       <field-switcher-stub
         title="Hide toolbar"
       />
     </widget-settings-group-stub>
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <field-switcher-stub
       title="Actions allowed when state OK?"
     />
   </widget-settings-group-stub>
-   
   <hr
     aria-orientation="horizontal"
     class="v-divider theme--light"
     role="separator"
   />
-   
   <charts-form-stub
     charts=""
   />
-   
   <hr
     aria-orientation="horizontal"
     class="v-divider theme--light"

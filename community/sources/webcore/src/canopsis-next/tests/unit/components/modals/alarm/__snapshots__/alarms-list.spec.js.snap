@@ -12,7 +12,6 @@ exports[`alarms-list Renders \`alarms-list\` 1`] = `
       Alarm list
     </span>
   </div>
-   
   <div
     class="text"
   >
@@ -27,7 +26,6 @@ exports[`alarms-list Renders \`alarms-list\` 1`] = `
       widget="[object Object]"
     />
   </div>
-   
   <div
     class="actions"
   />

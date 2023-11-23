@@ -10,13 +10,11 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
     columnslabel="Column name"
     value="[object Object]"
   />
-   
   <hr
     aria-orientation="horizontal"
     class="v-divider theme--light"
     role="separator"
   />
-   
   <field-columns-stub
     columns=""
     label="Column names"
@@ -26,34 +24,28 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
     withhtml="true"
     withtemplate="true"
   />
-   
   <hr
     aria-orientation="horizontal"
     class="v-divider theme--light"
     role="separator"
   />
-   
   <field-default-elements-per-page-stub
     value="10"
   />
-   
   <hr
     aria-orientation="horizontal"
     class="v-divider theme--light"
     role="separator"
   />
-   
   <field-info-popup-stub
     columns=""
     popups=""
   />
-   
   <hr
     aria-orientation="horizontal"
     class="v-divider theme--light"
     role="separator"
   />
-   
   <field-text-editor-with-template-stub
     defaultvalue=""
     templates=""
@@ -61,13 +53,11 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
     value=""
     variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
   />
-   
   <hr
     aria-orientation="horizontal"
     class="v-divider theme--light"
     role="separator"
   />
-   
   <field-text-editor-with-template-stub
     addable="true"
     defaultvalue="<div style=\\"width: 1000px; font-family: Roboto, sans-serif; font-size: 15px; line-height: 1.2; overflow-wrap: break-word;\\">
@@ -292,13 +282,11 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
     columnslabel="Column name"
     value="[object Object]"
   />
-   
   <hr
     aria-orientation="horizontal"
     class="v-divider theme--light"
     role="separator"
   />
-   
   <field-columns-stub
     columns=""
     label="Column names"
@@ -308,34 +296,28 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
     withhtml="true"
     withtemplate="true"
   />
-   
   <hr
     aria-orientation="horizontal"
     class="v-divider theme--light"
     role="separator"
   />
-   
   <field-default-elements-per-page-stub
     value="10"
   />
-   
   <hr
     aria-orientation="horizontal"
     class="v-divider theme--light"
     role="separator"
   />
-   
   <field-info-popup-stub
     columns=""
     popups=""
   />
-   
   <hr
     aria-orientation="horizontal"
     class="v-divider theme--light"
     role="separator"
   />
-   
   <field-text-editor-with-template-stub
     defaultvalue=""
     templates=""
@@ -343,13 +325,11 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
     value=""
     variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
   />
-   
   <hr
     aria-orientation="horizontal"
     class="v-divider theme--light"
     role="separator"
   />
-   
   <field-text-editor-with-template-stub
     addable="true"
     defaultvalue="<div style=\\"width: 1000px; font-family: Roboto, sans-serif; font-size: 15px; line-height: 1.2; overflow-wrap: break-word;\\">

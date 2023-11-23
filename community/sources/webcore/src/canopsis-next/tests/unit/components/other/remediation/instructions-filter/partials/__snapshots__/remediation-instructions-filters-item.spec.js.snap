@@ -20,7 +20,6 @@ exports[`remediation-instructions-filters-item Renders \`remediation-instruction
         >
           assignment
         </i>
-         
         <i
           aria-hidden="true"
           class="v-icon notranslate pl-1 material-icons theme--light white--text"
@@ -28,21 +27,16 @@ exports[`remediation-instructions-filters-item Renders \`remediation-instruction
         >
           lock
         </i>
-         
         <strong
           class="pl-2 text-uppercase"
         >
           WITH:
         </strong>
-         
         <span
           class="pl-1"
         >
-          
         Manual
-      
         </span>
-         
         <!---->
       </span>
       <button
@@ -78,23 +72,16 @@ exports[`remediation-instructions-filters-item Renders \`remediation-instruction
         >
           assignment
         </i>
-         
         <!---->
-         
         <strong
           class="pl-2 text-uppercase"
         >
           WITHOUT:
         </strong>
-         
         <span
           class="pl-1"
         >
-          
-        
-      
         </span>
-         
         <!---->
       </span>
     </span>
@@ -122,7 +109,6 @@ exports[`remediation-instructions-filters-item Renders \`remediation-instruction
         >
           assignment
         </i>
-         
         <i
           aria-hidden="true"
           class="v-icon notranslate pl-1 material-icons theme--light white--text"
@@ -130,27 +116,20 @@ exports[`remediation-instructions-filters-item Renders \`remediation-instruction
         >
           lock
         </i>
-         
         <strong
           class="pl-2 text-uppercase"
         >
           Show WITH:
         </strong>
-         
         <span
           class="pl-1"
         >
-          
         Manual
-      
         </span>
-         
         <strong
           class="pl-1 text-uppercase"
         >
-          
         In progress
-      
         </strong>
       </span>
       <button
@@ -186,7 +165,6 @@ exports[`remediation-instructions-filters-item Renders \`remediation-instruction
         >
           assignment
         </i>
-         
         <i
           aria-hidden="true"
           class="v-icon notranslate pl-1 material-icons theme--light white--text"
@@ -194,27 +172,20 @@ exports[`remediation-instructions-filters-item Renders \`remediation-instruction
         >
           lock
         </i>
-         
         <strong
           class="pl-2 text-uppercase"
         >
           Show WITH:
         </strong>
-         
         <span
           class="pl-1"
         >
-          
         Manual
-      
         </span>
-         
         <strong
           class="pl-1 text-uppercase"
         >
-          
         In progress
-      
         </strong>
       </span>
       <button

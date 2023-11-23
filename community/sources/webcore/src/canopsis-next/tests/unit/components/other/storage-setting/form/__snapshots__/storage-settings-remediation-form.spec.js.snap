@@ -10,14 +10,10 @@ exports[`storage-settings-remediation-form Renders \`storage-settings-remediatio
     <div
       class="text-subtitle-1 font-weight-bold"
     >
-      
       Instructions data storage
-    
     </div>
-     
     <!---->
   </div>
-   
   <div
     class="layout mt-2"
   >
@@ -29,21 +25,18 @@ exports[`storage-settings-remediation-form Renders \`storage-settings-remediatio
       />
     </span>
   </div>
-    
   <c-enabled-duration-field-stub
     help-text="When switched on, the instructions timelines data will be deleted after the defined time period."
     label="Delete instructions timeline data after"
     name="remediation.delete_after"
     value="[object Object]"
   />
-   
   <c-enabled-duration-field-stub
     help-text="When switched on, the instruction statistics will be deleted after the defined time period."
     label="Delete instruction statistics data after"
     name="remediation.delete_stats_after"
     value="[object Object]"
   />
-   
   <c-enabled-duration-field-stub
     help-text="When switched on, the instructions summary data will be deleted after the defined time period."
     label="Delete instructions summary data after"
@@ -63,30 +56,23 @@ exports[`storage-settings-remediation-form Renders \`storage-settings-remediatio
     <div
       class="text-subtitle-1 font-weight-bold"
     >
-      
       Instructions data storage
-    
     </div>
-     
     <!---->
   </div>
-   
   <!---->
-    
   <c-enabled-duration-field-stub
     help-text="When switched on, the instructions timelines data will be deleted after the defined time period."
     label="Delete instructions timeline data after"
     name="remediation.delete_after"
     value="[object Object]"
   />
-   
   <c-enabled-duration-field-stub
     help-text="When switched on, the instruction statistics will be deleted after the defined time period."
     label="Delete instruction statistics data after"
     name="remediation.delete_stats_after"
     value="[object Object]"
   />
-   
   <c-enabled-duration-field-stub
     help-text="When switched on, the instructions summary data will be deleted after the defined time period."
     label="Delete instructions summary data after"

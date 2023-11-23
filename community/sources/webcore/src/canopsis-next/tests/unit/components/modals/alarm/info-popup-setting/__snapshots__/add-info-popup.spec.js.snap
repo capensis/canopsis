@@ -16,7 +16,6 @@ exports[`add-info-popup Renders \`add-info-popup\` with empty modal 1`] = `
         Add an info popup
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -25,7 +24,6 @@ exports[`add-info-popup Renders \`add-info-popup\` with empty modal 1`] = `
         form="[object Object]"
       />
     </div>
-     
     <div
       class="actions"
     >
@@ -36,12 +34,9 @@ exports[`add-info-popup Renders \`add-info-popup\` with empty modal 1`] = `
         <span
           class="v-btn__content"
         >
-          
         Cancel
-      
         </span>
       </button>
-       
       <button
         class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
@@ -49,9 +44,7 @@ exports[`add-info-popup Renders \`add-info-popup\` with empty modal 1`] = `
         <span
           class="v-btn__content"
         >
-          
         Submit
-      
         </span>
       </button>
     </div>
@@ -75,7 +68,6 @@ exports[`add-info-popup Renders \`add-info-popup\` with popup 1`] = `
         Add an info popup
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -84,7 +76,6 @@ exports[`add-info-popup Renders \`add-info-popup\` with popup 1`] = `
         form="[object Object]"
       />
     </div>
-     
     <div
       class="actions"
     >
@@ -95,12 +86,9 @@ exports[`add-info-popup Renders \`add-info-popup\` with popup 1`] = `
         <span
           class="v-btn__content"
         >
-          
         Cancel
-      
         </span>
       </button>
-       
       <button
         class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
@@ -108,9 +96,7 @@ exports[`add-info-popup Renders \`add-info-popup\` with popup 1`] = `
         <span
           class="v-btn__content"
         >
-          
         Submit
-      
         </span>
       </button>
     </div>

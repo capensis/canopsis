@@ -13,12 +13,10 @@ exports[`pbehavior-exceptions-list Renders \`pbehavior-exceptions-list\` with ex
       <h4>
         exception-0
       </h4>
-       
       <c-action-btn-stub
         type="delete"
       />
     </div>
-     
     <c-advanced-data-table-stub
       headers="[object Object],[object Object],[object Object]"
       items="[object Object],[object Object]"
@@ -33,12 +31,10 @@ exports[`pbehavior-exceptions-list Renders \`pbehavior-exceptions-list\` with ex
       <h4>
         exception-1
       </h4>
-       
       <c-action-btn-stub
         type="delete"
       />
     </div>
-     
     <c-advanced-data-table-stub
       headers="[object Object],[object Object],[object Object]"
       items="[object Object],[object Object]"
@@ -53,12 +49,10 @@ exports[`pbehavior-exceptions-list Renders \`pbehavior-exceptions-list\` with ex
       <h4>
         exception-2
       </h4>
-       
       <c-action-btn-stub
         type="delete"
       />
     </div>
-     
     <c-advanced-data-table-stub
       headers="[object Object],[object Object],[object Object]"
       items="[object Object],[object Object]"
@@ -73,12 +67,10 @@ exports[`pbehavior-exceptions-list Renders \`pbehavior-exceptions-list\` with ex
       <h4>
         exception-3
       </h4>
-       
       <c-action-btn-stub
         type="delete"
       />
     </div>
-     
     <c-advanced-data-table-stub
       headers="[object Object],[object Object],[object Object]"
       items="[object Object],[object Object]"
@@ -93,12 +85,10 @@ exports[`pbehavior-exceptions-list Renders \`pbehavior-exceptions-list\` with ex
       <h4>
         exception-4
       </h4>
-       
       <c-action-btn-stub
         type="delete"
       />
     </div>
-     
     <c-advanced-data-table-stub
       headers="[object Object],[object Object],[object Object]"
       items="[object Object],[object Object]"

@@ -9,7 +9,6 @@ exports[`pattern-groups-field Renders \`pattern-groups-field\` with custom props
   >
     <!---->
   </div>
-   
   <div
     class="layout wrap"
   >
@@ -22,7 +21,6 @@ exports[`pattern-groups-field Renders \`pattern-groups-field\` with custom props
         group="[object Object]"
       />
     </div>
-     
     <div
       class="layout justify-center"
     >
@@ -43,7 +41,6 @@ exports[`pattern-groups-field Renders \`pattern-groups-field\` with custom props
         group="[object Object]"
       />
     </div>
-     
     <div
       class="layout justify-center"
     >
@@ -64,7 +61,6 @@ exports[`pattern-groups-field Renders \`pattern-groups-field\` with custom props
         group="[object Object]"
       />
     </div>
-     
     <div
       class="layout justify-center"
       style="display: none;"
@@ -74,7 +70,6 @@ exports[`pattern-groups-field Renders \`pattern-groups-field\` with custom props
       </c-pattern-operator-chip-stub>
     </div>
   </div>
-   
   <div
     class="layout mt-2 align-center"
   >
@@ -86,19 +81,14 @@ exports[`pattern-groups-field Renders \`pattern-groups-field\` with custom props
       <span
         class="v-btn__content"
       >
-        
       Add group
-    
       </span>
     </button>
-     
     <span
       class="error--text"
       style="display: none;"
     >
-      
       Please add at least one group
-    
     </span>
   </div>
 </div>
@@ -127,14 +117,11 @@ exports[`pattern-groups-field Renders \`pattern-groups-field\` with default prop
         <div
           class="v-alert__content"
         >
-          
       No pattern set. Click 'Add group' button to start adding fields to the pattern
-    
         </div>
       </div>
     </div>
   </div>
-    
   <div
     class="layout mt-2 align-center"
   >
@@ -145,19 +132,14 @@ exports[`pattern-groups-field Renders \`pattern-groups-field\` with default prop
       <span
         class="v-btn__content"
       >
-        
       Add group
-    
       </span>
     </button>
-     
     <span
       class="error--text"
       style="display: none;"
     >
-      
       Please add at least one group
-    
     </span>
   </div>
 </div>
@@ -186,14 +168,11 @@ exports[`pattern-groups-field Renders \`pattern-groups-field\` with errors 1`] =
         <div
           class="v-alert__content"
         >
-          
       No pattern set. Click 'Add group' button to start adding fields to the pattern
-    
         </div>
       </div>
     </div>
   </div>
-    
   <div
     class="layout mt-2 align-center"
   >
@@ -204,19 +183,14 @@ exports[`pattern-groups-field Renders \`pattern-groups-field\` with errors 1`] =
       <span
         class="v-btn__content"
       >
-        
       Add group
-    
       </span>
     </button>
-     
     <span
       class="error--text"
       style=""
     >
-      
       Please add at least one group
-    
     </span>
   </div>
 </div>

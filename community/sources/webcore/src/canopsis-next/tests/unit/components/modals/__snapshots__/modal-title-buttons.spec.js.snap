@@ -27,13 +27,11 @@ exports[`modal-title-buttons Renders \`modal-title-buttons\` with custom props 1
           </i>
         </span>
       </button>
-        
       <span>
         You already have minimized modal window
       </span>
     </div>
   </div>
-   
   <div
     class="modal-title-button__wrapper"
   >
@@ -62,7 +60,6 @@ exports[`modal-title-buttons Renders \`modal-title-buttons\` with default props 
   class="modal-title-buttons"
 >
   <!---->
-   
   <!---->
 </div>
 `;
@@ -90,7 +87,6 @@ exports[`modal-title-buttons Renders \`modal-title-buttons\` with minimized moda
       </span>
     </button>
   </div>
-   
   <!---->
 </div>
 `;

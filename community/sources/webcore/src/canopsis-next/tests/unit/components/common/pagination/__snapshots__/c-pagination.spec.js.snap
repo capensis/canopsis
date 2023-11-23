@@ -12,7 +12,6 @@ exports[`c-pagination Renders \`c-pagination\` on the bottom correctly 1`] = `
     >
       showing 21 to 30 of 100 entries
     </span>
-     
     <nav
       aria-label="Pagination Navigation"
       data-test="vPagination"
@@ -137,15 +136,11 @@ exports[`c-pagination Renders \`c-pagination\` on the top correctly 1`] = `
         </i>
       </button>
     </li>
-     
     <div
       class="pagination-details"
     >
-      
       3 / 10
-    
     </div>
-     
     <li>
       <button
         class="v-pagination__navigation"
@@ -184,15 +179,11 @@ exports[`c-pagination Renders \`c-pagination\` on the top with disabled buttons 
         </i>
       </button>
     </li>
-     
     <div
       class="pagination-details"
     >
-      
       1 / 1
-    
     </div>
-     
     <li>
       <button
         class="v-pagination__navigation v-pagination__navigation--disabled"
@@ -231,15 +222,11 @@ exports[`c-pagination Renders \`c-pagination\` on the top with disabled next but
         </i>
       </button>
     </li>
-     
     <div
       class="pagination-details"
     >
-      
       2 / 2
-    
     </div>
-     
     <li>
       <button
         class="v-pagination__navigation v-pagination__navigation--disabled"
@@ -279,15 +266,11 @@ exports[`c-pagination Renders \`c-pagination\` on the top with disabled prev but
         </i>
       </button>
     </li>
-     
     <div
       class="pagination-details"
     >
-      
       1 / 2
-    
     </div>
-     
     <li>
       <button
         class="v-pagination__navigation"
@@ -317,7 +300,6 @@ exports[`c-pagination Renders \`c-pagination\` with default props correctly 1`] 
     >
       showing 1 to 1 of 1 entries
     </span>
-     
     <nav
       aria-label="Pagination Navigation"
       data-test="vPagination"
@@ -384,7 +366,6 @@ exports[`c-pagination Renders \`c-pagination\` with default props correctly 2`] 
     >
       showing 1 to 1 of 1 entries
     </span>
-     
     <nav
       aria-label="Pagination Navigation"
       data-test="vPagination"
@@ -460,15 +441,11 @@ exports[`c-pagination Renders \`c-pagination\` with default props on the top cor
         </i>
       </button>
     </li>
-     
     <div
       class="pagination-details"
     >
-      
       1 / 1
-    
     </div>
-     
     <li>
       <button
         class="v-pagination__navigation v-pagination__navigation--disabled"

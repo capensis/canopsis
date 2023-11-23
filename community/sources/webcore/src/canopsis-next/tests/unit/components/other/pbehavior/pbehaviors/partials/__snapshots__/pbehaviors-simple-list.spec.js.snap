@@ -13,7 +13,6 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
       left=""
       tooltip="Create periodical behavior"
     />
-     
     <c-action-fab-btn-stub
       color="secondary"
       icon="calendar_today"
@@ -21,7 +20,6 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
       tooltip="Periodic behaviors"
     />
   </div>
-   
   <div
     class="c-advanced-data-table"
   >
@@ -29,10 +27,8 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
       class="layout wrap"
     >
       <!---->
-        
       <!---->
     </div>
-     
     <div
       class="v-data-table v-data-table--has-bottom theme--light"
       header-text="text"
@@ -305,16 +301,12 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               <td
                 class="text-start"
               >
-                
         name-0
-      
               </td>
               <td
                 class="text-start"
               >
-                
         author-0
-      
               </td>
               <td
                 class="text-start"
@@ -324,23 +316,17 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               <td
                 class="text-start"
               >
-                
       04/03/2021 13:30:00
-    
               </td>
               <td
                 class="text-start"
               >
-                
       04/03/2021 13:33:20
-    
               </td>
               <td
                 class="text-start"
               >
-                
       -
-    
               </td>
               <td
                 class="text-start"
@@ -355,16 +341,12 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               <td
                 class="text-start"
               >
-                
         type-name-0
-      
               </td>
               <td
                 class="text-start"
               >
-                
         reason-name-0
-      
               </td>
               <td
                 class="text-start"
@@ -400,7 +382,6 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
     55.441406 17.007812 54.234375 17.167969 L 51.976562 17.40625 L 50.535156 14.320312 C 45.554688 3.757812 34.457031
     -1.78125 23.164062 0.632812 Z M 23.164062 0.632812 "
                       />
-                       
                       <path
                         d="M 25.308594 11.234375 C 25.308594 13.371094 25.269531 13.410156 23.90625 13.84375 C 22.542969 14.320312
     22.425781 14.28125 21.101562 12.894531 L 19.660156 11.472656 L 17.441406 13.726562 L 15.183594 15.980469
@@ -421,7 +402,6 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
     28.285156 C 20.089844 25.433594 20.636719 21.714844 22.699219 19.421875 C 24.722656 17.207031 28.578125
     16.417969 31.460938 17.601562 Z M 31.460938 17.601562 "
                       />
-                       
                       <path
                         d="M 3.699219 28.164062 C -0.195312 33.265625 -0.117188 32.992188 2.570312 32.675781 L 4.867188 32.4375
     L 6.308594 35.523438 C 8.761719 40.664062 12.730469 44.777344 17.675781 47.230469 C 29.863281 53.242188
@@ -447,7 +427,6 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                     tooltip="Cannot be modified"
                     type="edit"
                   />
-                   
                   <c-action-btn-stub
                     type="delete"
                   />
@@ -460,16 +439,12 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               <td
                 class="text-start"
               >
-                
         name-1
-      
               </td>
               <td
                 class="text-start"
               >
-                
         author-1
-      
               </td>
               <td
                 class="text-start"
@@ -481,23 +456,17 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               <td
                 class="text-start"
               >
-                
       04/03 13:30
-    
               </td>
               <td
                 class="text-start"
               >
-                
       04/03 13:33
-    
               </td>
               <td
                 class="text-start"
               >
-                
       04/03/2021 13:44:49
-    
               </td>
               <td
                 class="text-start"
@@ -512,16 +481,12 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               <td
                 class="text-start"
               >
-                
         type-name-1
-      
               </td>
               <td
                 class="text-start"
               >
-                
         reason-name-1
-      
               </td>
               <td
                 class="text-start"
@@ -557,7 +522,6 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
     55.441406 17.007812 54.234375 17.167969 L 51.976562 17.40625 L 50.535156 14.320312 C 45.554688 3.757812 34.457031
     -1.78125 23.164062 0.632812 Z M 23.164062 0.632812 "
                       />
-                       
                       <path
                         d="M 25.308594 11.234375 C 25.308594 13.371094 25.269531 13.410156 23.90625 13.84375 C 22.542969 14.320312
     22.425781 14.28125 21.101562 12.894531 L 19.660156 11.472656 L 17.441406 13.726562 L 15.183594 15.980469
@@ -578,7 +542,6 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
     28.285156 C 20.089844 25.433594 20.636719 21.714844 22.699219 19.421875 C 24.722656 17.207031 28.578125
     16.417969 31.460938 17.601562 Z M 31.460938 17.601562 "
                       />
-                       
                       <path
                         d="M 3.699219 28.164062 C -0.195312 33.265625 -0.117188 32.992188 2.570312 32.675781 L 4.867188 32.4375
     L 6.308594 35.523438 C 8.761719 40.664062 12.730469 44.777344 17.675781 47.230469 C 29.863281 53.242188
@@ -603,7 +566,6 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                     tooltip="Edit"
                     type="edit"
                   />
-                   
                   <c-action-btn-stub
                     type="delete"
                   />
@@ -616,16 +578,12 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               <td
                 class="text-start"
               >
-                
         name-2
-      
               </td>
               <td
                 class="text-start"
               >
-                
         author-2
-      
               </td>
               <td
                 class="text-start"
@@ -635,23 +593,17 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               <td
                 class="text-start"
               >
-                
       04/03/2021 13:30:02
-    
               </td>
               <td
                 class="text-start"
               >
-                
       04/03/2021 13:33:22
-    
               </td>
               <td
                 class="text-start"
               >
-                
       -
-    
               </td>
               <td
                 class="text-start"
@@ -666,16 +618,12 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               <td
                 class="text-start"
               >
-                
         type-name-2
-      
               </td>
               <td
                 class="text-start"
               >
-                
         reason-name-2
-      
               </td>
               <td
                 class="text-start"
@@ -711,7 +659,6 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
     55.441406 17.007812 54.234375 17.167969 L 51.976562 17.40625 L 50.535156 14.320312 C 45.554688 3.757812 34.457031
     -1.78125 23.164062 0.632812 Z M 23.164062 0.632812 "
                       />
-                       
                       <path
                         d="M 25.308594 11.234375 C 25.308594 13.371094 25.269531 13.410156 23.90625 13.84375 C 22.542969 14.320312
     22.425781 14.28125 21.101562 12.894531 L 19.660156 11.472656 L 17.441406 13.726562 L 15.183594 15.980469
@@ -732,7 +679,6 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
     28.285156 C 20.089844 25.433594 20.636719 21.714844 22.699219 19.421875 C 24.722656 17.207031 28.578125
     16.417969 31.460938 17.601562 Z M 31.460938 17.601562 "
                       />
-                       
                       <path
                         d="M 3.699219 28.164062 C -0.195312 33.265625 -0.117188 32.992188 2.570312 32.675781 L 4.867188 32.4375
     L 6.308594 35.523438 C 8.761719 40.664062 12.730469 44.777344 17.675781 47.230469 C 29.863281 53.242188
@@ -758,7 +704,6 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                     tooltip="Cannot be modified"
                     type="edit"
                   />
-                   
                   <c-action-btn-stub
                     type="delete"
                   />
@@ -771,16 +716,12 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               <td
                 class="text-start"
               >
-                
         name-3
-      
               </td>
               <td
                 class="text-start"
               >
-                
         author-3
-      
               </td>
               <td
                 class="text-start"
@@ -792,23 +733,17 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               <td
                 class="text-start"
               >
-                
       04/03 13:30
-    
               </td>
               <td
                 class="text-start"
               >
-                
       04/03 13:33
-    
               </td>
               <td
                 class="text-start"
               >
-                
       04/03/2021 13:44:51
-    
               </td>
               <td
                 class="text-start"
@@ -823,16 +758,12 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               <td
                 class="text-start"
               >
-                
         type-name-3
-      
               </td>
               <td
                 class="text-start"
               >
-                
         reason-name-3
-      
               </td>
               <td
                 class="text-start"
@@ -868,7 +799,6 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
     55.441406 17.007812 54.234375 17.167969 L 51.976562 17.40625 L 50.535156 14.320312 C 45.554688 3.757812 34.457031
     -1.78125 23.164062 0.632812 Z M 23.164062 0.632812 "
                       />
-                       
                       <path
                         d="M 25.308594 11.234375 C 25.308594 13.371094 25.269531 13.410156 23.90625 13.84375 C 22.542969 14.320312
     22.425781 14.28125 21.101562 12.894531 L 19.660156 11.472656 L 17.441406 13.726562 L 15.183594 15.980469
@@ -889,7 +819,6 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
     28.285156 C 20.089844 25.433594 20.636719 21.714844 22.699219 19.421875 C 24.722656 17.207031 28.578125
     16.417969 31.460938 17.601562 Z M 31.460938 17.601562 "
                       />
-                       
                       <path
                         d="M 3.699219 28.164062 C -0.195312 33.265625 -0.117188 32.992188 2.570312 32.675781 L 4.867188 32.4375
     L 6.308594 35.523438 C 8.761719 40.664062 12.730469 44.777344 17.675781 47.230469 C 29.863281 53.242188
@@ -914,7 +843,6 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                     tooltip="Edit"
                     type="edit"
                   />
-                   
                   <c-action-btn-stub
                     type="delete"
                   />
@@ -927,16 +855,12 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               <td
                 class="text-start"
               >
-                
         name-4
-      
               </td>
               <td
                 class="text-start"
               >
-                
         author-4
-      
               </td>
               <td
                 class="text-start"
@@ -946,23 +870,17 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               <td
                 class="text-start"
               >
-                
       04/03/2021 13:30:04
-    
               </td>
               <td
                 class="text-start"
               >
-                
       04/03/2021 13:33:24
-    
               </td>
               <td
                 class="text-start"
               >
-                
       -
-    
               </td>
               <td
                 class="text-start"
@@ -977,16 +895,12 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               <td
                 class="text-start"
               >
-                
         type-name-4
-      
               </td>
               <td
                 class="text-start"
               >
-                
         reason-name-4
-      
               </td>
               <td
                 class="text-start"
@@ -1022,7 +936,6 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
     55.441406 17.007812 54.234375 17.167969 L 51.976562 17.40625 L 50.535156 14.320312 C 45.554688 3.757812 34.457031
     -1.78125 23.164062 0.632812 Z M 23.164062 0.632812 "
                       />
-                       
                       <path
                         d="M 25.308594 11.234375 C 25.308594 13.371094 25.269531 13.410156 23.90625 13.84375 C 22.542969 14.320312
     22.425781 14.28125 21.101562 12.894531 L 19.660156 11.472656 L 17.441406 13.726562 L 15.183594 15.980469
@@ -1043,7 +956,6 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
     28.285156 C 20.089844 25.433594 20.636719 21.714844 22.699219 19.421875 C 24.722656 17.207031 28.578125
     16.417969 31.460938 17.601562 Z M 31.460938 17.601562 "
                       />
-                       
                       <path
                         d="M 3.699219 28.164062 C -0.195312 33.265625 -0.117188 32.992188 2.570312 32.675781 L 4.867188 32.4375
     L 6.308594 35.523438 C 8.761719 40.664062 12.730469 44.777344 17.675781 47.230469 C 29.863281 53.242188
@@ -1069,7 +981,6 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                     tooltip="Cannot be modified"
                     type="edit"
                   />
-                   
                   <c-action-btn-stub
                     type="delete"
                   />
@@ -1082,16 +993,12 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               <td
                 class="text-start"
               >
-                
         name-5
-      
               </td>
               <td
                 class="text-start"
               >
-                
         author-5
-      
               </td>
               <td
                 class="text-start"
@@ -1103,23 +1010,17 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               <td
                 class="text-start"
               >
-                
       04/03 13:30
-    
               </td>
               <td
                 class="text-start"
               >
-                
       04/03 13:33
-    
               </td>
               <td
                 class="text-start"
               >
-                
       04/03/2021 13:44:53
-    
               </td>
               <td
                 class="text-start"
@@ -1134,16 +1035,12 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               <td
                 class="text-start"
               >
-                
         type-name-5
-      
               </td>
               <td
                 class="text-start"
               >
-                
         reason-name-5
-      
               </td>
               <td
                 class="text-start"
@@ -1179,7 +1076,6 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
     55.441406 17.007812 54.234375 17.167969 L 51.976562 17.40625 L 50.535156 14.320312 C 45.554688 3.757812 34.457031
     -1.78125 23.164062 0.632812 Z M 23.164062 0.632812 "
                       />
-                       
                       <path
                         d="M 25.308594 11.234375 C 25.308594 13.371094 25.269531 13.410156 23.90625 13.84375 C 22.542969 14.320312
     22.425781 14.28125 21.101562 12.894531 L 19.660156 11.472656 L 17.441406 13.726562 L 15.183594 15.980469
@@ -1200,7 +1096,6 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
     28.285156 C 20.089844 25.433594 20.636719 21.714844 22.699219 19.421875 C 24.722656 17.207031 28.578125
     16.417969 31.460938 17.601562 Z M 31.460938 17.601562 "
                       />
-                       
                       <path
                         d="M 3.699219 28.164062 C -0.195312 33.265625 -0.117188 32.992188 2.570312 32.675781 L 4.867188 32.4375
     L 6.308594 35.523438 C 8.761719 40.664062 12.730469 44.777344 17.675781 47.230469 C 29.863281 53.242188
@@ -1225,7 +1120,6 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                     tooltip="Edit"
                     type="edit"
                   />
-                   
                   <c-action-btn-stub
                     type="delete"
                   />
@@ -1238,16 +1132,12 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               <td
                 class="text-start"
               >
-                
         name-6
-      
               </td>
               <td
                 class="text-start"
               >
-                
         author-6
-      
               </td>
               <td
                 class="text-start"
@@ -1257,23 +1147,17 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               <td
                 class="text-start"
               >
-                
       04/03/2021 13:30:06
-    
               </td>
               <td
                 class="text-start"
               >
-                
       04/03/2021 13:33:26
-    
               </td>
               <td
                 class="text-start"
               >
-                
       -
-    
               </td>
               <td
                 class="text-start"
@@ -1288,16 +1172,12 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               <td
                 class="text-start"
               >
-                
         type-name-6
-      
               </td>
               <td
                 class="text-start"
               >
-                
         reason-name-6
-      
               </td>
               <td
                 class="text-start"
@@ -1333,7 +1213,6 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
     55.441406 17.007812 54.234375 17.167969 L 51.976562 17.40625 L 50.535156 14.320312 C 45.554688 3.757812 34.457031
     -1.78125 23.164062 0.632812 Z M 23.164062 0.632812 "
                       />
-                       
                       <path
                         d="M 25.308594 11.234375 C 25.308594 13.371094 25.269531 13.410156 23.90625 13.84375 C 22.542969 14.320312
     22.425781 14.28125 21.101562 12.894531 L 19.660156 11.472656 L 17.441406 13.726562 L 15.183594 15.980469
@@ -1354,7 +1233,6 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
     28.285156 C 20.089844 25.433594 20.636719 21.714844 22.699219 19.421875 C 24.722656 17.207031 28.578125
     16.417969 31.460938 17.601562 Z M 31.460938 17.601562 "
                       />
-                       
                       <path
                         d="M 3.699219 28.164062 C -0.195312 33.265625 -0.117188 32.992188 2.570312 32.675781 L 4.867188 32.4375
     L 6.308594 35.523438 C 8.761719 40.664062 12.730469 44.777344 17.675781 47.230469 C 29.863281 53.242188
@@ -1380,7 +1258,6 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                     tooltip="Cannot be modified"
                     type="edit"
                   />
-                   
                   <c-action-btn-stub
                     type="delete"
                   />
@@ -1505,7 +1382,6 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
         </div>
       </div>
     </div>
-     
     <!---->
   </div>
 </div>
@@ -1519,7 +1395,6 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` without pbeha
     class="layout justify-end"
   >
     <!---->
-     
     <c-action-fab-btn-stub
       color="secondary"
       icon="calendar_today"
@@ -1527,7 +1402,6 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` without pbeha
       tooltip="Periodic behaviors"
     />
   </div>
-   
   <div
     class="c-advanced-data-table"
   >
@@ -1535,10 +1409,8 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` without pbeha
       class="layout wrap"
     >
       <!---->
-        
       <!---->
     </div>
-     
     <div
       class="v-data-table v-data-table--has-bottom theme--light"
       header-text="text"
@@ -1904,7 +1776,6 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` without pbeha
         </div>
       </div>
     </div>
-     
     <!---->
   </div>
 </div>

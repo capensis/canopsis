@@ -18,16 +18,12 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
           <c-density-btn-toggle-stub
             value="1"
           />
-           
           <!---->
         </div>
       </div>
-       
       <!---->
-       
       <!---->
     </div>
-     
     <div
       class="v-data-table alarms-list-table v-data-table--dense theme--light v-data-table--selectable columns-sm"
     >
@@ -177,9 +173,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
                   header="[object Object]"
                   selectedtag="tag"
                 />
-                 
                 <!---->
-                 
                 <!---->
                 <i
                   aria-hidden="true"
@@ -256,9 +250,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
       </div>
     </div>
   </div>
-   
   <!---->
-   
   <!---->
 </div>
 `;
@@ -268,11 +260,9 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
   class="flex"
 >
   <c-empty-data-table-columns-stub />
-   
   <c-table-pagination-stub
     total-items="0"
   />
-   
   <!---->
 </div>
 `;
@@ -283,7 +273,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
 >
   <div>
     <!---->
-     
     <div
       class="v-data-table alarms-list-table theme--light columns-sm"
     >
@@ -315,9 +304,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                   header="[object Object]"
                   selectedtag=""
                 />
-                 
                 <!---->
-                 
                 <!---->
                 <i
                   aria-hidden="true"
@@ -338,9 +325,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                   header="[object Object]"
                   selectedtag=""
                 />
-                 
                 <!---->
-                 
                 <!---->
               </th>
             </tr>
@@ -360,9 +345,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
       </div>
     </div>
   </div>
-   
   <c-table-pagination-stub />
-   
   <!---->
 </div>
 `;
@@ -373,7 +356,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
 >
   <div>
     <!---->
-     
     <div
       class="v-data-table alarms-list-table theme--light columns-sm"
     >
@@ -406,9 +388,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                   header="[object Object]"
                   selectedtag=""
                 />
-                 
                 <!---->
-                 
                 <!---->
                 <i
                   aria-hidden="true"
@@ -429,9 +409,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                   header="[object Object]"
                   selectedtag=""
                 />
-                 
                 <!---->
-                 
                 <!---->
               </th>
             </tr>
@@ -451,9 +429,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
       </div>
     </div>
   </div>
-   
   <c-table-pagination-stub />
-   
   <!---->
 </div>
 `;
@@ -464,7 +440,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
 >
   <div>
     <!---->
-     
     <div
       class="v-data-table alarms-list-table theme--light v-data-table--selectable columns-sm alarms-list-table__selecting"
     >
@@ -525,9 +500,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                   header="[object Object]"
                   selectedtag=""
                 />
-                 
                 <!---->
-                 
                 <!---->
                 <i
                   aria-hidden="true"
@@ -548,9 +521,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                   header="[object Object]"
                   selectedtag=""
                 />
-                 
                 <!---->
-                 
                 <!---->
               </th>
             </tr>
@@ -570,11 +541,9 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
       </div>
     </div>
   </div>
-   
   <c-table-pagination-stub
     total-items="0"
   />
-   
   <!---->
 </div>
 `;
@@ -585,7 +554,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
 >
   <div>
     <!---->
-     
     <div
       class="v-data-table alarms-list-table theme--light v-data-table--selectable columns-sm alarms-list-table__selecting"
     >
@@ -646,9 +614,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                   header="[object Object]"
                   selectedtag=""
                 />
-                 
                 <!---->
-                 
                 <!---->
                 <i
                   aria-hidden="true"
@@ -669,9 +635,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                   header="[object Object]"
                   selectedtag=""
                 />
-                 
                 <!---->
-                 
                 <!---->
               </th>
             </tr>
@@ -691,11 +655,9 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
       </div>
     </div>
   </div>
-   
   <c-table-pagination-stub
     total-items="0"
   />
-   
   <!---->
 </div>
 `;
@@ -715,7 +677,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
           class="layout align-center justify-start"
         >
           <!---->
-           
           <transition-stub
             name="fade-transition"
           >
@@ -732,7 +693,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
           </transition-stub>
         </div>
       </div>
-       
       <div
         class="flex alarms-list-table__top-pagination--center-absolute xs4"
       >
@@ -741,10 +701,8 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
           type="top"
         />
       </div>
-       
       <!---->
     </div>
-     
     <div
       class="v-data-table alarms-list-table theme--light columns-sm"
     >
@@ -853,9 +811,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                   header="[object Object]"
                   selectedtag=""
                 />
-                 
                 <!---->
-                 
                 <!---->
               </th>
               <th
@@ -870,9 +826,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                   header="[object Object]"
                   selectedtag=""
                 />
-                 
                 <!---->
-                 
                 <!---->
                 <i
                   aria-hidden="true"
@@ -893,9 +847,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                   header="[object Object]"
                   selectedtag=""
                 />
-                 
                 <!---->
-                 
                 <!---->
               </th>
             </tr>
@@ -921,11 +873,9 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
       </div>
     </div>
   </div>
-   
   <c-table-pagination-stub
     total-items="5"
   />
-   
   <!---->
 </div>
 `;

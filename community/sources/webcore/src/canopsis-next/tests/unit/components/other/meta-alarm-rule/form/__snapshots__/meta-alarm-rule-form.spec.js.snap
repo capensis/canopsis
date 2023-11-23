@@ -6,23 +6,19 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`attribute\
     help-text="If no id is specified, a unique id will be generated automatically on rule creation"
     value="meta-alarm-rule-id"
   />
-   
   <c-name-field-stub
     required=""
     value="event-filter-name"
   />
-   
   <c-description-field-stub
     help-text="<p>The accessible variables are:</p><p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p><p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p><p><strong>.Rule</strong>: The administrative information of the meta alarm itself.</p><p>For example:</p><p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p><p>A static informative message</p><p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>"
     label="Output template"
     value="event-filter-output-template"
   />
-   
   <c-enabled-field-stub
     label="Auto resolve"
     value="true"
   />
-   
   <div
     class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
   >
@@ -99,15 +95,10 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`attribute\
       </div>
     </div>
   </div>
-   
   <!---->
-   
   <!---->
-   
   <!---->
-   
   <!---->
-   
   <meta-alarm-rule-patterns-form-stub
     form="[object Object]"
     somerequired="true"
@@ -121,23 +112,19 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`complex\` 
     help-text="If no id is specified, a unique id will be generated automatically on rule creation"
     value="meta-alarm-rule-id"
   />
-   
   <c-name-field-stub
     required=""
     value="event-filter-name"
   />
-   
   <c-description-field-stub
     help-text="<p>The accessible variables are:</p><p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p><p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p><p><strong>.Rule</strong>: The administrative information of the meta alarm itself.</p><p>For example:</p><p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p><p>A static informative message</p><p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>"
     label="Output template"
     value="event-filter-output-template"
   />
-   
   <c-enabled-field-stub
     label="Auto resolve"
     value="true"
   />
-   
   <div
     class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
   >
@@ -214,19 +201,14 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`complex\` 
       </div>
     </div>
   </div>
-   
   <!---->
-   
   <meta-alarm-rule-threshold-form-stub
     threshold="[object Object]"
   />
-   
   <meta-alarm-rule-time-based-form-stub
     timebased="[object Object]"
   />
-   
   <!---->
-   
   <meta-alarm-rule-patterns-form-stub
     form="[object Object]"
     withtotalentity="true"
@@ -240,23 +222,19 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`corel\` ty
     help-text="If no id is specified, a unique id will be generated automatically on rule creation"
     value="meta-alarm-rule-id"
   />
-   
   <c-name-field-stub
     required=""
     value="event-filter-name"
   />
-   
   <c-description-field-stub
     help-text="<p>The accessible variables are:</p><p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p><p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p><p><strong>.Rule</strong>: The administrative information of the meta alarm itself.</p><p>For example:</p><p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p><p>A static informative message</p><p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>"
     label="Output template"
     value="event-filter-output-template"
   />
-   
   <c-enabled-field-stub
     label="Auto resolve"
     value="true"
   />
-   
   <div
     class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
   >
@@ -333,19 +311,14 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`corel\` ty
       </div>
     </div>
   </div>
-   
   <meta-alarm-rule-corel-form-stub
     config="[object Object]"
   />
-   
   <!---->
-   
   <meta-alarm-rule-time-based-form-stub
     timebased="[object Object]"
   />
-   
   <!---->
-   
   <meta-alarm-rule-patterns-form-stub
     form="[object Object]"
   />
@@ -358,23 +331,19 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`manualgrou
     help-text="If no id is specified, a unique id will be generated automatically on rule creation"
     value="meta-alarm-rule-id"
   />
-   
   <c-name-field-stub
     required=""
     value="event-filter-name"
   />
-   
   <c-description-field-stub
     help-text="<p>The accessible variables are:</p><p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p><p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p><p><strong>.Rule</strong>: The administrative information of the meta alarm itself.</p><p>For example:</p><p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p><p>A static informative message</p><p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>"
     label="Output template"
     value="event-filter-output-template"
   />
-   
   <c-enabled-field-stub
     label="Auto resolve"
     value="true"
   />
-   
   <div
     class="v-input theme--light v-text-field v-select"
   >
@@ -446,15 +415,10 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`manualgrou
       </div>
     </div>
   </div>
-   
   <!---->
-   
   <!---->
-   
   <!---->
-   
   <!---->
-   
   <meta-alarm-rule-patterns-form-stub
     form="[object Object]"
   />
@@ -467,23 +431,19 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`relation\`
     help-text="If no id is specified, a unique id will be generated automatically on rule creation"
     value="meta-alarm-rule-id"
   />
-   
   <c-name-field-stub
     required=""
     value="event-filter-name"
   />
-   
   <c-description-field-stub
     help-text="<p>The accessible variables are:</p><p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p><p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p><p><strong>.Rule</strong>: The administrative information of the meta alarm itself.</p><p>For example:</p><p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p><p>A static informative message</p><p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>"
     label="Output template"
     value="event-filter-output-template"
   />
-   
   <c-enabled-field-stub
     label="Auto resolve"
     value="true"
   />
-   
   <div
     class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
   >
@@ -560,15 +520,10 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`relation\`
       </div>
     </div>
   </div>
-   
   <!---->
-   
   <!---->
-   
   <!---->
-   
   <!---->
-   
   <meta-alarm-rule-patterns-form-stub
     form="[object Object]"
   />
@@ -581,23 +536,19 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`timebased\
     help-text="If no id is specified, a unique id will be generated automatically on rule creation"
     value="meta-alarm-rule-id"
   />
-   
   <c-name-field-stub
     required=""
     value="event-filter-name"
   />
-   
   <c-description-field-stub
     help-text="<p>The accessible variables are:</p><p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p><p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p><p><strong>.Rule</strong>: The administrative information of the meta alarm itself.</p><p>For example:</p><p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p><p>A static informative message</p><p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>"
     label="Output template"
     value="event-filter-output-template"
   />
-   
   <c-enabled-field-stub
     label="Auto resolve"
     value="true"
   />
-   
   <div
     class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
   >
@@ -674,17 +625,12 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`timebased\
       </div>
     </div>
   </div>
-   
   <!---->
-   
   <!---->
-   
   <meta-alarm-rule-time-based-form-stub
     timebased="[object Object]"
   />
-   
   <!---->
-   
   <meta-alarm-rule-patterns-form-stub
     form="[object Object]"
   />
@@ -697,23 +643,19 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`valuegroup
     help-text="If no id is specified, a unique id will be generated automatically on rule creation"
     value="meta-alarm-rule-id"
   />
-   
   <c-name-field-stub
     required=""
     value="event-filter-name"
   />
-   
   <c-description-field-stub
     help-text="<p>The accessible variables are:</p><p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p><p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p><p><strong>.Rule</strong>: The administrative information of the meta alarm itself.</p><p>For example:</p><p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p><p>A static informative message</p><p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>"
     label="Output template"
     value="event-filter-output-template"
   />
-   
   <c-enabled-field-stub
     label="Auto resolve"
     value="true"
   />
-   
   <div
     class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
   >
@@ -790,22 +732,17 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with \`valuegroup
       </div>
     </div>
   </div>
-   
   <!---->
-   
   <meta-alarm-rule-threshold-form-stub
     threshold="[object Object]"
   />
-   
   <meta-alarm-rule-time-based-form-stub
     timebased="[object Object]"
   />
-   
   <meta-alarm-rule-value-paths-form-stub
     class="mb-2"
     form="[object Object]"
   />
-   
   <meta-alarm-rule-patterns-form-stub
     form="[object Object]"
     withtotalentity="true"
@@ -819,23 +756,19 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with custom props
     help-text="If no id is specified, a unique id will be generated automatically on rule creation"
     value="meta-alarm-rule-id"
   />
-   
   <c-name-field-stub
     required=""
     value="event-filter-name"
   />
-   
   <c-description-field-stub
     help-text="<p>The accessible variables are:</p><p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p><p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p><p><strong>.Rule</strong>: The administrative information of the meta alarm itself.</p><p>For example:</p><p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p><p>A static informative message</p><p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>"
     label="Output template"
     value="event-filter-output-template"
   />
-   
   <c-enabled-field-stub
     label="Auto resolve"
     value="true"
   />
-   
   <div
     class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
   >
@@ -912,19 +845,14 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with custom props
       </div>
     </div>
   </div>
-   
   <!---->
-   
   <meta-alarm-rule-threshold-form-stub
     threshold="[object Object]"
   />
-   
   <meta-alarm-rule-time-based-form-stub
     timebased="[object Object]"
   />
-   
   <!---->
-   
   <meta-alarm-rule-patterns-form-stub
     form="[object Object]"
     withtotalentity="true"
@@ -937,20 +865,16 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with default prop
   <c-id-field-stub
     help-text="If no id is specified, a unique id will be generated automatically on rule creation"
   />
-   
   <c-name-field-stub
     required=""
   />
-   
   <c-description-field-stub
     help-text="<p>The accessible variables are:</p><p><strong>.Count</strong>: The number of consequence alarms attached to the meta alarm.</p><p><strong>.Children</strong>: The set of variables of the last consequence alarm attached to the meta alarm.</p><p><strong>.Rule</strong>: The administrative information of the meta alarm itself.</p><p>For example:</p><p>Count: <strong>{{ .Count }};</strong> Children: <strong>{{ .Children.Alarm.Value.State.Message }};</strong> Rule: <strong>{{ .Rule.Name }};</strong></p><p>A static informative message</p><p>Correlated by the rule <strong>{{ .Rule.Name }}</strong></p>"
     label="Output template"
   />
-   
   <c-enabled-field-stub
     label="Auto resolve"
   />
-   
   <div
     class="v-input theme--light v-text-field v-select"
   >
@@ -1021,15 +945,10 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with default prop
       </div>
     </div>
   </div>
-   
   <!---->
-   
   <!---->
-   
   <!---->
-   
   <!---->
-   
   <meta-alarm-rule-patterns-form-stub
     form="[object Object]"
   />

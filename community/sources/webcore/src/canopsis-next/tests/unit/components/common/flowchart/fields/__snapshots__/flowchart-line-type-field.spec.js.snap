@@ -11,7 +11,6 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with cu
   >
     Custom label
   </label>
-   
   <div
     class="flex xs3"
   >
@@ -98,7 +97,6 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with de
   >
     Custom label
   </label>
-   
   <div
     class="flex xs3"
   >
@@ -183,7 +181,6 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with de
     class="v-label theme--light"
     style="left: 0px; position: relative;"
   />
-   
   <div
     class="flex xs3"
   >

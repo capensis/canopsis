@@ -10,7 +10,6 @@ exports[`periodic-refresh Renders \`periodic-refresh\` with custom props 1`] = `
     name="customName"
     periodicrefresh="[object Object]"
   />
-   
   <!---->
 </widget-settings-item-stub>
 `;
@@ -25,7 +24,6 @@ exports[`periodic-refresh Renders \`periodic-refresh\` with default props 1`] = 
     name="periodic_refresh"
     periodicrefresh="[object Object]"
   />
-   
   <!---->
 </widget-settings-item-stub>
 `;
@@ -40,7 +38,6 @@ exports[`periodic-refresh Renders \`periodic-refresh\` with errors 1`] = `
     name="custom-name"
     periodicrefresh="[object Object]"
   />
-   
   <!---->
 </widget-settings-item-stub>
 `;
@@ -56,7 +53,6 @@ exports[`periodic-refresh Renders \`periodic-refresh\` with with life watching 1
     name="periodic_refresh"
     periodicrefresh="[object Object]"
   />
-   
   <!---->
 </widget-settings-item-stub>
 `;

@@ -8,7 +8,6 @@ exports[`service-pause-event-form Renders \`service-pause-event-form\` with cust
     required=""
     value="comment"
   />
-   
   <c-pbehavior-reason-field-stub
     required=""
     return-object=""
@@ -24,7 +23,6 @@ exports[`service-pause-event-form Renders \`service-pause-event-form\` with defa
     name="comment"
     required=""
   />
-   
   <c-pbehavior-reason-field-stub
     required=""
     return-object=""

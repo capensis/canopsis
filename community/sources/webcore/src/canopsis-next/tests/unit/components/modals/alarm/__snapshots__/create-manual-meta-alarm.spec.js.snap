@@ -16,7 +16,6 @@ exports[`create-manual-meta-alarm Renders \`create-manual-meta-alarm\` with empt
         Manual meta alarm management
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -31,7 +30,6 @@ exports[`create-manual-meta-alarm Renders \`create-manual-meta-alarm\` with empt
           />
         </div>
       </div>
-       
       <div
         class="layout"
       >
@@ -41,7 +39,6 @@ exports[`create-manual-meta-alarm Renders \`create-manual-meta-alarm\` with empt
           role="separator"
         />
       </div>
-       
       <div
         class="layout"
       >
@@ -54,7 +51,6 @@ exports[`create-manual-meta-alarm Renders \`create-manual-meta-alarm\` with empt
         </div>
       </div>
     </div>
-     
     <div
       class="actions"
     >
@@ -65,12 +61,9 @@ exports[`create-manual-meta-alarm Renders \`create-manual-meta-alarm\` with empt
         <span
           class="v-btn__content"
         >
-          
         Cancel
-      
         </span>
       </button>
-       
       <button
         class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
@@ -78,9 +71,7 @@ exports[`create-manual-meta-alarm Renders \`create-manual-meta-alarm\` with empt
         <span
           class="v-btn__content"
         >
-          
         Save changes
-      
         </span>
       </button>
     </div>

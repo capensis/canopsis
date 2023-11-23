@@ -11,7 +11,6 @@ exports[`flowchart-stroke-type-field Renders \`flowchart-stroke-type-field\` wit
   >
     Custom label
   </label>
-   
   <div
     class="flex xs3"
   >
@@ -138,7 +137,6 @@ exports[`flowchart-stroke-type-field Renders \`flowchart-stroke-type-field\` wit
     class="v-label theme--light"
     style="left: 0px; position: relative;"
   />
-   
   <div
     class="flex xs3"
   >

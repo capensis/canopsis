@@ -16,19 +16,13 @@ exports[`kpi-charts Renders \`kpi-charts\` with default props 1`] = `
         <div
           class="text-subtitle-1 font-weight-bold"
         >
-          
       Alarm metrics
-    
         </div>
-         
         <!---->
       </div>
-       
       <!---->
-       
       <kpi-alarms-stub />
     </div>
-     
     <div
       class="layout c-information-block column mb-5"
     >
@@ -38,19 +32,13 @@ exports[`kpi-charts Renders \`kpi-charts\` with default props 1`] = `
         <div
           class="text-subtitle-1 font-weight-bold"
         >
-          
       Ratings
-    
         </div>
-         
         <!---->
       </div>
-       
       <!---->
-       
       <kpi-rating-stub />
     </div>
-     
     <div
       class="layout c-information-block column mb-5"
     >
@@ -60,16 +48,11 @@ exports[`kpi-charts Renders \`kpi-charts\` with default props 1`] = `
         <div
           class="text-subtitle-1 font-weight-bold"
         >
-          
       SLI
-    
         </div>
-         
         <!---->
       </div>
-       
       <!---->
-       
       <kpi-sli-stub />
     </div>
   </div>

@@ -50,7 +50,6 @@ exports[`field-modal-type Renders \`field-modal-type\` with custom props 1`] = `
               More info
             </label>
           </div>
-           
           <div
             class="v-radio theme--light v-item--active"
           >
@@ -81,7 +80,6 @@ exports[`field-modal-type Renders \`field-modal-type\` with custom props 1`] = `
               Alarm list
             </label>
           </div>
-           
           <div
             class="v-radio theme--light"
           >
@@ -177,7 +175,6 @@ exports[`field-modal-type Renders \`field-modal-type\` with default props 1`] = 
               More info
             </label>
           </div>
-           
           <div
             class="v-radio theme--light"
           >
@@ -208,7 +205,6 @@ exports[`field-modal-type Renders \`field-modal-type\` with default props 1`] = 
               Alarm list
             </label>
           </div>
-           
           <div
             class="v-radio theme--light"
           >

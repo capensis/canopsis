@@ -16,9 +16,7 @@ exports[`grid-range-size Renders \`grid-range-size\` with custom props 1`] = `
       <div
         class="v-list-item__title validation-header"
       >
-        
           Custom title
-         
         <!---->
       </div>
     </div>
@@ -40,7 +38,6 @@ exports[`grid-range-size Renders \`grid-range-size\` with custom props 1`] = `
       class="v-list-group__items"
       style="display: none;"
     >
-       
       <div
         class="container"
       >
@@ -75,9 +72,6 @@ exports[`grid-range-size Renders \`grid-range-size\` with default and required p
       <div
         class="v-list-item__title validation-header"
       >
-        
-          
-         
         <!---->
       </div>
     </div>
@@ -99,7 +93,6 @@ exports[`grid-range-size Renders \`grid-range-size\` with default and required p
       class="v-list-group__items"
       style="display: none;"
     >
-       
       <div
         class="container"
       >

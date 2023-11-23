@@ -48,7 +48,6 @@ exports[`date-time-picker-text-field Renders \`date-time-picker-text-field\` wit
         </div>
       </div>
     </div>
-     
     <div
       class="flex"
     >
@@ -103,7 +102,6 @@ exports[`date-time-picker-text-field Renders \`date-time-picker-text-field\` wit
         </div>
       </div>
     </div>
-     
     <div
       class="flex"
     >

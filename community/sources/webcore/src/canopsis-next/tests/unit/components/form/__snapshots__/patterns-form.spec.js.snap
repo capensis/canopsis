@@ -10,7 +10,6 @@ exports[`patterns-form Renders \`patterns-form\` with custom props 1`] = `
     label="Title"
     name="title"
   />
-   
   <c-patterns-field-stub
     class="mt-2"
     some-required=""
@@ -28,7 +27,6 @@ exports[`patterns-form Renders \`patterns-form\` with default props 1`] = `
   class="layout column"
 >
   <!---->
-   
   <c-patterns-field-stub
     class="mt-2"
     some-required=""

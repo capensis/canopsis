@@ -7,7 +7,6 @@ exports[`idle-rule-form Renders \`idle-rule-form\` with custom props 1`] = `
   <c-enabled-field-stub
     value="true"
   />
-   
   <div
     class="v-tabs v-tabs--centered theme--light"
   >
@@ -42,22 +41,16 @@ exports[`idle-rule-form Renders \`idle-rule-form\` with custom props 1`] = `
             role="tab"
             tabindex="0"
           >
-            
       General
-    
           </div>
-           
           <div
             aria-selected="false"
             class="v-tab"
             role="tab"
             tabindex="0"
           >
-            
       Pattern
-    
           </div>
-            
         </div>
       </div>
       <div
@@ -112,7 +105,6 @@ exports[`idle-rule-form Renders \`idle-rule-form\` with default props 1`] = `
   class="layout column"
 >
   <c-enabled-field-stub />
-   
   <div
     class="v-tabs v-tabs--centered theme--light"
   >
@@ -147,22 +139,16 @@ exports[`idle-rule-form Renders \`idle-rule-form\` with default props 1`] = `
             role="tab"
             tabindex="0"
           >
-            
       General
-    
           </div>
-           
           <div
             aria-selected="false"
             class="v-tab"
             role="tab"
             tabindex="0"
           >
-            
       Pattern
-    
           </div>
-            
         </div>
       </div>
       <div
@@ -215,7 +201,6 @@ exports[`idle-rule-form Renders \`idle-rule-form\` with errors 1`] = `
   class="layout column"
 >
   <c-enabled-field-stub />
-   
   <div
     class="v-tabs v-tabs--centered theme--light"
   >
@@ -250,22 +235,16 @@ exports[`idle-rule-form Renders \`idle-rule-form\` with errors 1`] = `
             role="tab"
             tabindex="0"
           >
-            
       General
-    
           </div>
-           
           <div
             aria-selected="false"
             class="v-tab error--text"
             role="tab"
             tabindex="0"
           >
-            
       Pattern
-    
           </div>
-            
         </div>
       </div>
       <div

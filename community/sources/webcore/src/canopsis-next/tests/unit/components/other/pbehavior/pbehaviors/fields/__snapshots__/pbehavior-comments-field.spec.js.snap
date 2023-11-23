@@ -10,7 +10,6 @@ exports[`pbehavior-comments-field Renders \`pbehavior-comments-field\` with cust
     comment="[object Object]"
     max="255"
   />
-   
   <div
     class="layout"
   >
@@ -21,9 +20,7 @@ exports[`pbehavior-comments-field Renders \`pbehavior-comments-field\` with cust
       <span
         class="v-btn__content"
       >
-        
       Add comment
-    
       </span>
     </button>
   </div>
@@ -32,7 +29,6 @@ exports[`pbehavior-comments-field Renders \`pbehavior-comments-field\` with cust
 
 exports[`pbehavior-comments-field Renders \`pbehavior-comments-field\` with default props 1`] = `
 <div>
-   
   <div
     class="layout"
   >
@@ -43,9 +39,7 @@ exports[`pbehavior-comments-field Renders \`pbehavior-comments-field\` with defa
       <span
         class="v-btn__content"
       >
-        
       Add comment
-    
       </span>
     </button>
   </div>

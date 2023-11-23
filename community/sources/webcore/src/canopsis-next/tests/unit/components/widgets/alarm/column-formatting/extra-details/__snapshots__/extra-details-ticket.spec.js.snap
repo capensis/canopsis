@@ -9,7 +9,6 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` with full tickets
     <span
       class="v-badge time-line-flag v-badge--overlap theme--light"
     >
-       
       <span
         class="c-extra-details__badge blue"
       >
@@ -124,7 +123,6 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` with full tickets
     <span
       class="v-badge time-line-flag v-badge--overlap theme--light"
     >
-       
       <span
         class="c-extra-details__badge blue"
       >

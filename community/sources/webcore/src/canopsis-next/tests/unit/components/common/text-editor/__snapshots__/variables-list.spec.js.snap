@@ -19,13 +19,11 @@ exports[`variables-list Renders \`variables-list\` with custom props 1`] = `
         <div
           class="layout justify-space-between"
         >
-          
           Entity
           <!---->
         </div>
       </div>
     </div>
-     
     <div
       class="v-list-item__action"
     >
@@ -37,7 +35,6 @@ exports[`variables-list Renders \`variables-list\` with custom props 1`] = `
       </i>
     </div>
   </div>
-   
   <!---->
 </div>
 `;

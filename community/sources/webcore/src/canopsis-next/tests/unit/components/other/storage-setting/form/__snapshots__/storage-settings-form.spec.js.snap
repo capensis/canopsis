@@ -8,50 +8,39 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with custom for
     form="[object Object]"
     history="[object Object]"
   />
-   
   <storage-settings-entity-disabled-form-stub
     form="[object Object]"
   />
-   
   <storage-settings-entity-unlinked-form-stub
     form="[object Object]"
   />
-   
   <storage-settings-entity-clean-form-stub />
-   
   <storage-settings-remediation-form-stub
     form="[object Object]"
     history="1611220000"
   />
-   
   <storage-settings-pbehavior-form-stub
     form="[object Object]"
     history="1611230000"
   />
-   
   <storage-settings-junit-form-stub
     form="[object Object]"
     history="1611210000"
   />
-   
   <storage-settings-health-check-form-stub
     form="[object Object]"
     history="1611240000"
   />
-   
   <storage-settings-webhook-form-stub
     form="[object Object]"
     history="1611250000"
   />
-   
   <storage-settings-metrics-form-stub
     form="[object Object]"
   />
-   
   <storage-settings-perf-data-metrics-form-stub
     form="[object Object]"
   />
-   
   <storage-settings-event-filter-failure-form-stub
     form="[object Object]"
   />
@@ -65,45 +54,34 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with default fo
   <storage-settings-alarm-form-stub
     form="[object Object]"
   />
-   
   <storage-settings-entity-disabled-form-stub
     form="[object Object]"
   />
-   
   <storage-settings-entity-unlinked-form-stub
     form="[object Object]"
   />
-   
   <storage-settings-entity-clean-form-stub />
-   
   <storage-settings-remediation-form-stub
     form="[object Object]"
   />
-   
   <storage-settings-pbehavior-form-stub
     form="[object Object]"
   />
-   
   <storage-settings-junit-form-stub
     form="[object Object]"
   />
-   
   <storage-settings-health-check-form-stub
     form="[object Object]"
   />
-   
   <storage-settings-webhook-form-stub
     form="[object Object]"
   />
-   
   <storage-settings-metrics-form-stub
     form="[object Object]"
   />
-   
   <storage-settings-perf-data-metrics-form-stub
     form="[object Object]"
   />
-   
   <storage-settings-event-filter-failure-form-stub
     form="[object Object]"
   />

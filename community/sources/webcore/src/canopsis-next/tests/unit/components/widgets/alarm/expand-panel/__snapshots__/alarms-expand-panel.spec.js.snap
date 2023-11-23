@@ -37,11 +37,8 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
           role="tab"
           tabindex="0"
         >
-          
     More infos
-  
         </a>
-         
         <a
           aria-selected="false"
           class="v-tab v-tour-alarmsExpandPanel-step-3"
@@ -49,15 +46,10 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
           role="tab"
           tabindex="0"
         >
-          
     Timeline
-  
         </a>
-         
         <!---->
-         
         <!---->
-         
         <a
           aria-selected="false"
           class="v-tab"
@@ -65,19 +57,12 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
           role="tab"
           tabindex="0"
         >
-          
     Pbehaviors
-  
         </a>
-         
         <!---->
-         
         <!---->
-         
         <!---->
-         
         <!---->
-         
       </div>
     </div>
     <div
@@ -126,7 +111,6 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
           </div>
         </div>
       </transition-stub>
-       
       <transition-stub
         name="v-window-x-transition"
       >
@@ -174,7 +158,6 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
                     </div>
                   </transition-stub>
                 </div>
-                 
                 <div
                   class="v-card__text"
                 >
@@ -187,11 +170,8 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
           </div>
         </div>
       </transition-stub>
-       
       <!---->
-       
       <!---->
-       
       <transition-stub
         name="v-window-x-transition"
       >
@@ -221,13 +201,9 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
           </div>
         </div>
       </transition-stub>
-       
       <!---->
-       
       <!---->
-       
       <!---->
-       
       <!---->
     </div>
   </div>
@@ -270,11 +246,8 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           role="tab"
           tabindex="0"
         >
-          
     More infos
-  
         </a>
-         
         <a
           aria-selected="false"
           class="v-tab"
@@ -282,13 +255,9 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           role="tab"
           tabindex="0"
         >
-          
     Timeline
-  
         </a>
-         
         <!---->
-         
         <a
           aria-selected="false"
           class="v-tab"
@@ -296,11 +265,8 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           role="tab"
           tabindex="0"
         >
-          
     Tickets declared
-  
         </a>
-         
         <a
           aria-selected="false"
           class="v-tab"
@@ -308,13 +274,9 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           role="tab"
           tabindex="0"
         >
-          
     Pbehaviors
-  
         </a>
-         
         <!---->
-         
         <a
           aria-selected="false"
           class="v-tab"
@@ -322,11 +284,8 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           role="tab"
           tabindex="0"
         >
-          
     Track source
-  
         </a>
-         
         <a
           aria-selected="false"
           class="v-tab"
@@ -334,13 +293,9 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           role="tab"
           tabindex="0"
         >
-          
     Impact chain
-  
         </a>
-         
         <!---->
-         
       </div>
     </div>
     <div
@@ -389,7 +344,6 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           </div>
         </div>
       </transition-stub>
-       
       <transition-stub
         name="v-window-x-transition"
       >
@@ -437,7 +391,6 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
                     </div>
                   </transition-stub>
                 </div>
-                 
                 <div
                   class="v-card__text"
                 >
@@ -450,7 +403,6 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           </div>
         </div>
       </transition-stub>
-       
       <transition-stub
         name="v-window-x-transition"
       >
@@ -480,9 +432,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           </div>
         </div>
       </transition-stub>
-       
       <!---->
-       
       <transition-stub
         name="v-window-x-transition"
       >
@@ -512,9 +462,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           </div>
         </div>
       </transition-stub>
-       
       <!---->
-       
       <transition-stub
         name="v-window-x-transition"
       >
@@ -547,7 +495,6 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           </div>
         </div>
       </transition-stub>
-       
       <transition-stub
         name="v-window-x-transition"
       >
@@ -581,7 +528,6 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           </div>
         </div>
       </transition-stub>
-       
       <!---->
     </div>
   </div>
@@ -624,11 +570,8 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
           role="tab"
           tabindex="0"
         >
-          
     More infos
-  
         </a>
-         
         <a
           aria-selected="false"
           class="v-tab"
@@ -636,15 +579,10 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
           role="tab"
           tabindex="0"
         >
-          
     Timeline
-  
         </a>
-         
         <!---->
-         
         <!---->
-         
         <a
           aria-selected="false"
           class="v-tab"
@@ -652,17 +590,11 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
           role="tab"
           tabindex="0"
         >
-          
     Pbehaviors
-  
         </a>
-         
         <!---->
-         
         <!---->
-         
         <!---->
-         
         <a
           aria-selected="false"
           class="v-tab"
@@ -670,11 +602,8 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
           role="tab"
           tabindex="0"
         >
-          
     Gantt chart
-  
         </a>
-         
       </div>
     </div>
     <div
@@ -723,7 +652,6 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
           </div>
         </div>
       </transition-stub>
-       
       <transition-stub
         name=""
       >
@@ -771,7 +699,6 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
                     </div>
                   </transition-stub>
                 </div>
-                 
                 <div
                   class="v-card__text"
                 >
@@ -784,11 +711,8 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
           </div>
         </div>
       </transition-stub>
-       
       <!---->
-       
       <!---->
-       
       <transition-stub
         name=""
       >
@@ -818,13 +742,9 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
           </div>
         </div>
       </transition-stub>
-       
       <!---->
-       
       <!---->
-       
       <!---->
-       
       <transition-stub
         name=""
       >
@@ -895,11 +815,8 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
           role="tab"
           tabindex="0"
         >
-          
     More infos
-  
         </a>
-         
         <a
           aria-selected="false"
           class="v-tab"
@@ -907,15 +824,10 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
           role="tab"
           tabindex="0"
         >
-          
     Timeline
-  
         </a>
-         
         <!---->
-         
         <!---->
-         
         <a
           aria-selected="false"
           class="v-tab"
@@ -923,19 +835,12 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
           role="tab"
           tabindex="0"
         >
-          
     Pbehaviors
-  
         </a>
-         
         <!---->
-         
         <!---->
-         
         <!---->
-         
         <!---->
-         
       </div>
     </div>
     <div
@@ -984,7 +889,6 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
           </div>
         </div>
       </transition-stub>
-       
       <transition-stub
         name=""
       >
@@ -1032,7 +936,6 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
                     </div>
                   </transition-stub>
                 </div>
-                 
                 <div
                   class="v-card__text"
                 >
@@ -1045,11 +948,8 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
           </div>
         </div>
       </transition-stub>
-       
       <!---->
-       
       <!---->
-       
       <transition-stub
         name=""
       >
@@ -1079,13 +979,9 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
           </div>
         </div>
       </transition-stub>
-       
       <!---->
-       
       <!---->
-       
       <!---->
-       
       <!---->
     </div>
   </div>
