@@ -242,13 +242,13 @@ func (p Alarm) ToMongoQuery(prefix string) (bson.M, error) {
 
 				switch cond.FieldType {
 				case FieldTypeString:
-					condQueries[j], err = cond.Condition.StringToMongoQuery(mongoField)
+					condQueries[j], err = cond.Condition.StringToMongoQuery(mongoField, true)
 				case FieldTypeInt:
-					condQueries[j], err = cond.Condition.IntToMongoQuery(mongoField)
+					condQueries[j], err = cond.Condition.IntToMongoQuery(mongoField, true)
 				case FieldTypeBool:
 					condQueries[j], err = cond.Condition.BoolToMongoQuery(mongoField)
 				case FieldTypeStringArray:
-					condQueries[j], err = cond.Condition.StringArrayToMongoQuery(mongoField)
+					condQueries[j], err = cond.Condition.StringArrayToMongoQuery(mongoField, true)
 				case "":
 					condQueries[j], err = cond.Condition.RefToMongoQuery(mongoField)
 				default:
@@ -258,13 +258,6 @@ func (p Alarm) ToMongoQuery(prefix string) (bson.M, error) {
 					return nil, fmt.Errorf("invalid condition for %q field: %w", cond.Field, err)
 				}
 
-				conds := getTypeMongoQuery(mongoField, cond.FieldType)
-
-				if len(conds) > 0 {
-					conds = append(conds, condQueries[j])
-					condQueries[j] = bson.M{"$and": conds}
-				}
-
 				continue
 			}
 
@@ -272,12 +265,12 @@ func (p Alarm) ToMongoQuery(prefix string) (bson.M, error) {
 			foundField := false
 			if _, ok := getAlarmStringField(emptyAlarm, cond.Field); ok {
 				foundField = true
-				condQueries[j], err = cond.Condition.StringToMongoQuery(mongoField)
+				condQueries[j], err = cond.Condition.StringToMongoQuery(mongoField, false)
 			}
 			if !foundField || err != nil {
 				if _, ok := getAlarmIntField(emptyAlarm, cond.Field); ok {
 					foundField = true
-					condQueries[j], err = cond.Condition.IntToMongoQuery(mongoField)
+					condQueries[j], err = cond.Condition.IntToMongoQuery(mongoField, false)
 				}
 			}
 			if !foundField || err != nil {
@@ -301,7 +294,7 @@ func (p Alarm) ToMongoQuery(prefix string) (bson.M, error) {
 			if !foundField || err != nil {
 				if _, ok := getAlarmStringArrayField(emptyAlarm, cond.Field); ok {
 					foundField = true
-					condQueries[j], err = cond.Condition.StringArrayToMongoQuery(mongoField)
+					condQueries[j], err = cond.Condition.StringArrayToMongoQuery(mongoField, false)
 				}
 			}
 
@@ -616,25 +609,6 @@ func getAlarmInfoName(f string) string {
 	}
 
 	return ""
-}
-
-func getTypeMongoQuery(f, ft string) []bson.M {
-	var conds []bson.M
-
-	switch ft {
-	case FieldTypeString:
-		conds = []bson.M{{f: bson.M{"$type": "string"}}}
-	case FieldTypeInt:
-		conds = []bson.M{{f: bson.M{"$type": bson.A{"long", "int", "decimal"}}}}
-	case FieldTypeBool:
-		conds = []bson.M{{f: bson.M{"$type": "bool"}}}
-	case FieldTypeStringArray:
-		// Cond {"$type": "string"} checks only if an array contains at least one string element,
-		// other elements can be any type.
-		conds = []bson.M{{f: bson.M{"$type": "array"}}, {f: bson.M{"$type": "string"}}}
-	}
-
-	return conds
 }
 
 func isForbiddenAlarmField(condition FieldCondition, forbiddenFieldsMap map[string]bool, timeAbsoluteFieldsMap map[string]bool) bool {
