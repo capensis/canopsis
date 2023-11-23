@@ -12,7 +12,7 @@
         hide-deleted
       )
     v-flex
-      v-btn.ma-0.mb-4(color="primary", @click="$emit('archive')") {{ $t('storageSetting.entity.archiveDisabled') }}
+      v-btn.ma-0.my-4(color="primary", @click="$emit('archive')") {{ $t('storageSetting.entity.archiveDisabled') }}
 </template>
 
 <script>
