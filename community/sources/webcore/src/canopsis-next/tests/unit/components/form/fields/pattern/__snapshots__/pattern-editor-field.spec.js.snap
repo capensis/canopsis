@@ -5,7 +5,6 @@ exports[`pattern-editor-field Renders \`pattern-editor-field\` with advanced tab
   class="layout column"
 >
   <!---->
-   
   <div
     class="v-tabs v-tabs--centered theme--light"
   >
@@ -41,11 +40,8 @@ exports[`pattern-editor-field Renders \`pattern-editor-field\` with advanced tab
             role="tab"
             tabindex="0"
           >
-            
       Simple editor
-    
           </a>
-            
           <a
             aria-selected="false"
             class="v-tab"
@@ -53,11 +49,8 @@ exports[`pattern-editor-field Renders \`pattern-editor-field\` with advanced tab
             role="tab"
             tabindex="0"
           >
-            
       Advanced editor
-    
           </a>
-           
         </div>
       </div>
       <div
@@ -97,20 +90,16 @@ exports[`pattern-editor-field Renders \`pattern-editor-field\` with advanced tab
       </div>
     </div>
   </div>
-   
   <div
     class="layout align-center justify-end"
   >
     <!---->
-     
     <!---->
   </div>
-   
   <div
     class="flex"
   >
     <!---->
-     
     <transition-stub
       name="fade-transition"
     >
@@ -154,7 +143,6 @@ exports[`pattern-editor-field Renders \`pattern-editor-field\` with custom props
     type="alarm"
     value="pattern-id"
   />
-   
   <div
     class="v-tabs v-tabs--centered theme--light"
   >
@@ -190,11 +178,8 @@ exports[`pattern-editor-field Renders \`pattern-editor-field\` with custom props
             role="tab"
             tabindex="0"
           >
-            
       Simple editor
-    
           </a>
-            
           <a
             aria-selected="false"
             class="v-tab"
@@ -202,11 +187,8 @@ exports[`pattern-editor-field Renders \`pattern-editor-field\` with custom props
             role="tab"
             tabindex="0"
           >
-            
       Advanced editor
-    
           </a>
-           
         </div>
       </div>
       <div
@@ -250,7 +232,6 @@ exports[`pattern-editor-field Renders \`pattern-editor-field\` with custom props
       </div>
     </div>
   </div>
-   
   <!---->
 </div>
 `;
@@ -260,7 +241,6 @@ exports[`pattern-editor-field Renders \`pattern-editor-field\` with default prop
   class="layout column"
 >
   <!---->
-   
   <div
     class="v-tabs v-tabs--centered theme--light"
   >
@@ -296,11 +276,8 @@ exports[`pattern-editor-field Renders \`pattern-editor-field\` with default prop
             role="tab"
             tabindex="0"
           >
-            
       Simple editor
-    
           </a>
-            
           <a
             aria-selected="false"
             class="v-tab"
@@ -308,11 +285,8 @@ exports[`pattern-editor-field Renders \`pattern-editor-field\` with default prop
             role="tab"
             tabindex="0"
           >
-            
       Advanced editor
-    
           </a>
-           
         </div>
       </div>
       <div
@@ -352,20 +326,16 @@ exports[`pattern-editor-field Renders \`pattern-editor-field\` with default prop
       </div>
     </div>
   </div>
-   
   <div
     class="layout align-center justify-end"
   >
     <!---->
-     
     <!---->
   </div>
-   
   <div
     class="flex"
   >
     <!---->
-     
     <transition-stub
       name="fade-transition"
     >

@@ -16,12 +16,10 @@ exports[`create-declare-ticket-event Renders \`create-declare-ticket-event\` 1`]
         Declare ticket
       </span>
     </div>
-     
     <div
       class="text"
     >
       <!---->
-       
       <declare-ticket-events-form-stub
         alarms="[object Object]"
         alarmsbytickets="[object Object]"
@@ -31,7 +29,6 @@ exports[`create-declare-ticket-event Renders \`create-declare-ticket-event\` 1`]
         ticketsbyalarms="[object Object]"
       />
     </div>
-     
     <div
       class="actions"
     >
@@ -42,12 +39,9 @@ exports[`create-declare-ticket-event Renders \`create-declare-ticket-event\` 1`]
         <span
           class="v-btn__content"
         >
-          
         Cancel
-      
         </span>
       </button>
-       
       <button
         class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
@@ -55,9 +49,7 @@ exports[`create-declare-ticket-event Renders \`create-declare-ticket-event\` 1`]
         <span
           class="v-btn__content"
         >
-          
         Submit
-      
         </span>
       </button>
     </div>

@@ -21,11 +21,8 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with default slot 1`] = `
           <div
             class="v-list-item__title white--text text-subtitle-1"
           >
-            
           Alarm list settings
-        
           </div>
-           
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
@@ -43,14 +40,12 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with default slot 1`] = `
           </button>
         </div>
       </div>
-       
       <hr
         aria-orientation="horizontal"
         class="v-divider theme--light"
         role="separator"
       />
     </div>
-     
     <div
       class="default-slot"
     />
@@ -82,11 +77,8 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: alarm-settings 1
           <div
             class="v-list-item__title white--text text-subtitle-1"
           >
-            
           Alarm list settings
-        
           </div>
-           
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
@@ -104,14 +96,12 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: alarm-settings 1
           </button>
         </div>
       </div>
-       
       <hr
         aria-orientation="horizontal"
         class="v-divider theme--light"
         role="separator"
       />
     </div>
-     
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -140,11 +130,8 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: alarm-statistics
           <div
             class="v-list-item__title white--text text-subtitle-1"
           >
-            
           Alarm statistics settings
-        
           </div>
-           
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
@@ -162,14 +149,12 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: alarm-statistics
           </button>
         </div>
       </div>
-       
       <hr
         aria-orientation="horizontal"
         class="v-divider theme--light"
         role="separator"
       />
     </div>
-     
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -198,11 +183,8 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: bar-chart-settin
           <div
             class="v-list-item__title white--text text-subtitle-1"
           >
-            
           Bar chart settings
-        
           </div>
-           
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
@@ -220,14 +202,12 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: bar-chart-settin
           </button>
         </div>
       </div>
-       
       <hr
         aria-orientation="horizontal"
         class="v-divider theme--light"
         role="separator"
       />
     </div>
-     
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -256,11 +236,8 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: context-settings
           <div
             class="v-list-item__title white--text text-subtitle-1"
           >
-            
           Context table settings
-        
           </div>
-           
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
@@ -278,14 +255,12 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: context-settings
           </button>
         </div>
       </div>
-       
       <hr
         aria-orientation="horizontal"
         class="v-divider theme--light"
         role="separator"
       />
     </div>
-     
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -314,11 +289,8 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: counter-settings
           <div
             class="v-list-item__title white--text text-subtitle-1"
           >
-            
           Counter settings
-        
           </div>
-           
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
@@ -336,14 +308,12 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: counter-settings
           </button>
         </div>
       </div>
-       
       <hr
         aria-orientation="horizontal"
         class="v-divider theme--light"
         role="separator"
       />
     </div>
-     
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -372,11 +342,8 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: line-chart-setti
           <div
             class="v-list-item__title white--text text-subtitle-1"
           >
-            
           Line chart settings
-        
           </div>
-           
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
@@ -394,14 +361,12 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: line-chart-setti
           </button>
         </div>
       </div>
-       
       <hr
         aria-orientation="horizontal"
         class="v-divider theme--light"
         role="separator"
       />
     </div>
-     
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -430,11 +395,8 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: map-settings 1`]
           <div
             class="v-list-item__title white--text text-subtitle-1"
           >
-            
           Mapping widget settings
-        
           </div>
-           
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
@@ -452,14 +414,12 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: map-settings 1`]
           </button>
         </div>
       </div>
-       
       <hr
         aria-orientation="horizontal"
         class="v-divider theme--light"
         role="separator"
       />
     </div>
-     
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -488,11 +448,8 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: numbers-settings
           <div
             class="v-list-item__title white--text text-subtitle-1"
           >
-            
           Numbers settings
-        
           </div>
-           
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
@@ -510,14 +467,12 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: numbers-settings
           </button>
         </div>
       </div>
-       
       <hr
         aria-orientation="horizontal"
         class="v-divider theme--light"
         role="separator"
       />
     </div>
-     
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -546,11 +501,8 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: pie-chart-settin
           <div
             class="v-list-item__title white--text text-subtitle-1"
           >
-            
           Pie chart settings
-        
           </div>
-           
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
@@ -568,14 +520,12 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: pie-chart-settin
           </button>
         </div>
       </div>
-       
       <hr
         aria-orientation="horizontal"
         class="v-divider theme--light"
         role="separator"
       />
     </div>
-     
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -604,11 +554,8 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: service-weather-
           <div
             class="v-list-item__title white--text text-subtitle-1"
           >
-            
           Service weather settings
-        
           </div>
-           
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
@@ -626,14 +573,12 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: service-weather-
           </button>
         </div>
       </div>
-       
       <hr
         aria-orientation="horizontal"
         class="v-divider theme--light"
         role="separator"
       />
     </div>
-     
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -662,11 +607,8 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: stats-calendar-s
           <div
             class="v-list-item__title white--text text-subtitle-1"
           >
-            
           Stats calendar settings
-        
           </div>
-           
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
@@ -684,14 +626,12 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: stats-calendar-s
           </button>
         </div>
       </div>
-       
       <hr
         aria-orientation="horizontal"
         class="v-divider theme--light"
         role="separator"
       />
     </div>
-     
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -720,11 +660,8 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: testing-weather-
           <div
             class="v-list-item__title white--text text-subtitle-1"
           >
-            
           Testing weather
-        
           </div>
-           
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
@@ -742,14 +679,12 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: testing-weather-
           </button>
         </div>
       </div>
-       
       <hr
         aria-orientation="horizontal"
         class="v-divider theme--light"
         role="separator"
       />
     </div>
-     
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -778,11 +713,8 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: text-settings 1`
           <div
             class="v-list-item__title white--text text-subtitle-1"
           >
-            
           Text settings
-        
           </div>
-           
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
@@ -800,14 +732,12 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: text-settings 1`
           </button>
         </div>
       </div>
-       
       <hr
         aria-orientation="horizontal"
         class="v-divider theme--light"
         role="separator"
       />
     </div>
-     
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -836,11 +766,8 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: user-statistics-
           <div
             class="v-list-item__title white--text text-subtitle-1"
           >
-            
           User statistics settings
-        
           </div>
-           
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
@@ -858,14 +785,12 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: user-statistics-
           </button>
         </div>
       </div>
-       
       <hr
         aria-orientation="horizontal"
         class="v-divider theme--light"
         role="separator"
       />
     </div>
-     
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -882,7 +807,6 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` without sidebar name 1`] = 
     class="v-navigation-drawer__content"
   >
     <!---->
-     
     <div
       class="default-slot"
     />

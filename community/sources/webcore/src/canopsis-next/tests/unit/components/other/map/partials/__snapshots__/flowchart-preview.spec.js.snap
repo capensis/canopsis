@@ -19,9 +19,7 @@ exports[`flowchart-preview Renders \`flowchart-preview\` with custom props 1`] =
       popuptemplate="template"
       shapes="[object Object]"
     />
-     
   </div>
-   
   <c-help-icon-stub
     color="secondary"
     icon="help"
@@ -54,9 +52,7 @@ exports[`flowchart-preview Renders \`flowchart-preview\` with required props 1`]
       points="[object Object],[object Object],[object Object],[object Object]"
       shapes="[object Object]"
     />
-     
   </div>
-   
   <c-help-icon-stub
     color="secondary"
     icon="help"

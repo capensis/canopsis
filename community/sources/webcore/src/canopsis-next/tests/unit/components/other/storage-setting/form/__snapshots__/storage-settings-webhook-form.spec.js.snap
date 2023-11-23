@@ -13,11 +13,8 @@ exports[`storage-settings-webhook-form Renders \`storage-settings-webhook-form\`
       <div
         class="text-subtitle-1 font-weight-bold"
       >
-        
       Webhooks data storage
-    
       </div>
-       
       <c-help-icon-stub
         color="info"
         icon-class="ml-2"
@@ -26,7 +23,6 @@ exports[`storage-settings-webhook-form Renders \`storage-settings-webhook-form\`
         top=""
       />
     </div>
-     
     <div
       class="layout mt-2"
     >
@@ -38,14 +34,12 @@ exports[`storage-settings-webhook-form Renders \`storage-settings-webhook-form\`
         />
       </span>
     </div>
-      
     <c-enabled-duration-field-stub
       help-text="All webhook requests history older than the defined time period will be deleted"
       label="Clear webhooks logs after"
       name="webhook.delete_after"
       value="[object Object]"
     />
-     
     <c-enabled-field-stub
       name="webhook.log_credentials"
       value="true"
@@ -67,11 +61,8 @@ exports[`storage-settings-webhook-form Renders \`storage-settings-webhook-form\`
       <div
         class="text-subtitle-1 font-weight-bold"
       >
-        
       Webhooks data storage
-    
       </div>
-       
       <c-help-icon-stub
         color="info"
         icon-class="ml-2"
@@ -80,16 +71,13 @@ exports[`storage-settings-webhook-form Renders \`storage-settings-webhook-form\`
         top=""
       />
     </div>
-     
     <!---->
-      
     <c-enabled-duration-field-stub
       help-text="All webhook requests history older than the defined time period will be deleted"
       label="Clear webhooks logs after"
       name="webhook.delete_after"
       value="[object Object]"
     />
-     
     <c-enabled-field-stub
       name="webhook.log_credentials"
     />

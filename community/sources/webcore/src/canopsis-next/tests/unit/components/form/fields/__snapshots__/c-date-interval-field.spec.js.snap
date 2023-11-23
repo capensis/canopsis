@@ -11,7 +11,6 @@ exports[`c-date-interval-field Renders \`c-date-interval-field\` with custom pro
     label="From"
     value="today-2d"
   />
-   
   <c-date-picker-field-stub
     allowed-dates="() => {}"
     content-class="[object Object]"
@@ -32,7 +31,6 @@ exports[`c-date-interval-field Renders \`c-date-interval-field\` with default pr
     label="From"
     value="now-12h"
   />
-   
   <c-date-picker-field-stub
     content-class="[object Object]"
     hide-details=""

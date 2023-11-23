@@ -16,13 +16,11 @@ exports[`c-links-list Renders \`c-links-list\` with links 1`] = `
     >
       FirstCategory
     </span>
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <div>
       <div
         class="pa-2 text-right"
@@ -31,9 +29,7 @@ exports[`c-links-list Renders \`c-links-list\` with links 1`] = `
           href="FirstCategoryLink1"
           target="_blank"
         >
-          
           FirstCategoryLinkLabel1
-        
         </a>
       </div>
     </div>
@@ -45,9 +41,7 @@ exports[`c-links-list Renders \`c-links-list\` with links 1`] = `
           href="FirstCategoryLink2"
           target="_blank"
         >
-          
           FirstCategoryLinkLabel2
-        
         </a>
       </div>
     </div>
@@ -59,9 +53,7 @@ exports[`c-links-list Renders \`c-links-list\` with links 1`] = `
           href="FirstCategoryLink3"
           target="_blank"
         >
-          
           FirstCategoryLinkLabel3
-        
         </a>
       </div>
     </div>
@@ -73,9 +65,7 @@ exports[`c-links-list Renders \`c-links-list\` with links 1`] = `
           href="FirstCategoryLink4"
           target="_blank"
         >
-          
           FirstCategoryLinkLabel4
-        
         </a>
       </div>
     </div>
@@ -86,13 +76,11 @@ exports[`c-links-list Renders \`c-links-list\` with links 1`] = `
     >
       SecondCategory
     </span>
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <div>
       <div
         class="pa-2 text-right"
@@ -101,9 +89,7 @@ exports[`c-links-list Renders \`c-links-list\` with links 1`] = `
           href="SecondCategoryLink1"
           target="_blank"
         >
-          
           SecondCategoryLinkLabel1
-        
         </a>
       </div>
     </div>
@@ -114,13 +100,11 @@ exports[`c-links-list Renders \`c-links-list\` with links 1`] = `
     >
       ThirdCategory
     </span>
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <div>
       <div
         class="pa-2 text-right"
@@ -129,9 +113,7 @@ exports[`c-links-list Renders \`c-links-list\` with links 1`] = `
           href="ThirdCategoryLink1"
           target="_blank"
         >
-          
           ThirdCategoryLinkLabel1
-        
         </a>
       </div>
     </div>
@@ -149,13 +131,11 @@ exports[`c-links-list Renders \`c-links-list\` with links and category 1`] = `
     >
       SecondCategory
     </span>
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <div>
       <div
         class="pa-2 text-right"
@@ -164,9 +144,7 @@ exports[`c-links-list Renders \`c-links-list\` with links and category 1`] = `
           href="SecondCategoryLink1"
           target="_blank"
         >
-          
           SecondCategoryLinkLabel1
-        
         </a>
       </div>
     </div>
@@ -184,13 +162,11 @@ exports[`c-links-list Renders \`c-links-list\` with links with copy action 1`] =
     >
       FirstCategory
     </span>
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <div>
       <div
         class="pa-2 text-right"
@@ -198,9 +174,7 @@ exports[`c-links-list Renders \`c-links-list\` with links with copy action 1`] =
         <c-copy-wrapper-stub
           value="FirstCategoryLink1"
         >
-          
           FirstCategoryLinkLabel1
-        
         </c-copy-wrapper-stub>
       </div>
     </div>
@@ -211,9 +185,7 @@ exports[`c-links-list Renders \`c-links-list\` with links with copy action 1`] =
         <c-copy-wrapper-stub
           value="FirstCategoryLink2"
         >
-          
           FirstCategoryLinkLabel2
-        
         </c-copy-wrapper-stub>
       </div>
     </div>
@@ -224,9 +196,7 @@ exports[`c-links-list Renders \`c-links-list\` with links with copy action 1`] =
         <c-copy-wrapper-stub
           value="FirstCategoryLink3"
         >
-          
           FirstCategoryLinkLabel3
-        
         </c-copy-wrapper-stub>
       </div>
     </div>
@@ -237,9 +207,7 @@ exports[`c-links-list Renders \`c-links-list\` with links with copy action 1`] =
         <c-copy-wrapper-stub
           value="FirstCategoryLink4"
         >
-          
           FirstCategoryLinkLabel4
-        
         </c-copy-wrapper-stub>
       </div>
     </div>
@@ -250,13 +218,11 @@ exports[`c-links-list Renders \`c-links-list\` with links with copy action 1`] =
     >
       SecondCategory
     </span>
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <div>
       <div
         class="pa-2 text-right"
@@ -265,9 +231,7 @@ exports[`c-links-list Renders \`c-links-list\` with links with copy action 1`] =
           href="SecondCategoryLink1"
           target="_blank"
         >
-          
           SecondCategoryLinkLabel1
-        
         </a>
       </div>
     </div>
@@ -278,13 +242,11 @@ exports[`c-links-list Renders \`c-links-list\` with links with copy action 1`] =
     >
       ThirdCategory
     </span>
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <div>
       <div
         class="pa-2 text-right"
@@ -293,9 +255,7 @@ exports[`c-links-list Renders \`c-links-list\` with links with copy action 1`] =
           href="ThirdCategoryLink1"
           target="_blank"
         >
-          
           ThirdCategoryLinkLabel1
-        
         </a>
       </div>
     </div>

@@ -69,7 +69,6 @@ exports[`manual-meta-alarm-form Renders \`manual-meta-alarm-form\` with alarms 1
       </div>
     </div>
   </div>
-   
   <div
     class="v-input theme--light v-text-field"
   >
@@ -108,7 +107,6 @@ exports[`manual-meta-alarm-form Renders \`manual-meta-alarm-form\` with alarms 1
       </div>
     </div>
   </div>
-   
   <c-enabled-field-stub
     label="Auto resolve"
   />
@@ -187,7 +185,6 @@ exports[`manual-meta-alarm-form Renders \`manual-meta-alarm-form\` with default 
       </div>
     </div>
   </div>
-   
   <div
     class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field"
   >
@@ -226,7 +223,6 @@ exports[`manual-meta-alarm-form Renders \`manual-meta-alarm-form\` with default 
       </div>
     </div>
   </div>
-   
   <c-enabled-field-stub
     label="Auto resolve"
     value="true"

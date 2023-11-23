@@ -14,7 +14,6 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
         value="Tag"
       />
     </div>
-      
     <div
       class="flex xs12"
     >
@@ -25,7 +24,6 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
       </transition-stub>
     </div>
   </div>
-   
   <div
     class="v-data-table theme--light v-data-table--selectable"
     header-text="text"
@@ -350,9 +348,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               class="text-start"
             >
               <c-alarm-action-chip-stub>
-                
       pattern-value-0
-    
               </c-alarm-action-chip-stub>
             </td>
             <td
@@ -365,23 +361,17 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 10:58:08
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:48
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-0
-      
             </td>
             <td
               class="text-start"
@@ -392,11 +382,9 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   tooltip="Delete"
                   type="delete"
@@ -445,9 +433,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               class="text-start"
             >
               <c-alarm-action-chip-stub>
-                
       pattern-value-1
-    
               </c-alarm-action-chip-stub>
             </td>
             <td
@@ -460,23 +446,17 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 10:58:09
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:49
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-1
-      
             </td>
             <td
               class="text-start"
@@ -487,11 +467,9 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   tooltip="Delete"
                   type="delete"
@@ -540,9 +518,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               class="text-start"
             >
               <c-alarm-action-chip-stub>
-                
       pattern-value-2
-    
               </c-alarm-action-chip-stub>
             </td>
             <td
@@ -555,23 +531,17 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 10:58:10
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:50
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-2
-      
             </td>
             <td
               class="text-start"
@@ -582,11 +552,9 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   tooltip="Delete"
                   type="delete"
@@ -635,9 +603,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               class="text-start"
             >
               <c-alarm-action-chip-stub>
-                
       pattern-value-3
-    
               </c-alarm-action-chip-stub>
             </td>
             <td
@@ -650,23 +616,17 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 10:58:11
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:51
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-3
-      
             </td>
             <td
               class="text-start"
@@ -677,11 +637,9 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   tooltip="Delete"
                   type="delete"
@@ -730,9 +688,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               class="text-start"
             >
               <c-alarm-action-chip-stub>
-                
       pattern-value-4
-    
               </c-alarm-action-chip-stub>
             </td>
             <td
@@ -745,23 +701,17 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 10:58:12
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:52
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-4
-      
             </td>
             <td
               class="text-start"
@@ -772,11 +722,9 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   tooltip="Delete"
                   type="delete"
@@ -825,9 +773,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               class="text-start"
             >
               <c-alarm-action-chip-stub>
-                
       pattern-value-5
-    
               </c-alarm-action-chip-stub>
             </td>
             <td
@@ -840,23 +786,17 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 10:58:13
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:53
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-5
-      
             </td>
             <td
               class="text-start"
@@ -867,11 +807,9 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   tooltip="Delete"
                   type="delete"
@@ -920,9 +858,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               class="text-start"
             >
               <c-alarm-action-chip-stub>
-                
       pattern-value-6
-    
               </c-alarm-action-chip-stub>
             </td>
             <td
@@ -935,23 +871,17 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 10:58:14
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:54
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-6
-      
             </td>
             <td
               class="text-start"
@@ -962,11 +892,9 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   tooltip="Delete"
                   type="delete"
@@ -1015,9 +943,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               class="text-start"
             >
               <c-alarm-action-chip-stub>
-                
       pattern-value-7
-    
               </c-alarm-action-chip-stub>
             </td>
             <td
@@ -1030,23 +956,17 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 10:58:15
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:55
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-7
-      
             </td>
             <td
               class="text-start"
@@ -1057,11 +977,9 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   tooltip="Delete"
                   type="delete"
@@ -1110,9 +1028,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               class="text-start"
             >
               <c-alarm-action-chip-stub>
-                
       pattern-value-8
-    
               </c-alarm-action-chip-stub>
             </td>
             <td
@@ -1125,23 +1041,17 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 10:58:16
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:56
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-8
-      
             </td>
             <td
               class="text-start"
@@ -1152,11 +1062,9 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   tooltip="Delete"
                   type="delete"
@@ -1205,9 +1113,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               class="text-start"
             >
               <c-alarm-action-chip-stub>
-                
       pattern-value-9
-    
               </c-alarm-action-chip-stub>
             </td>
             <td
@@ -1220,23 +1126,17 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 10:58:17
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:57
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-9
-      
             </td>
             <td
               class="text-start"
@@ -1247,11 +1147,9 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   tooltip="Delete"
                   type="delete"
@@ -1266,7 +1164,6 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
       </table>
     </div>
   </div>
-   
   <c-table-pagination-stub
     items-per-page="10"
     page="2"
@@ -1287,7 +1184,6 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
     >
       <c-search-field-stub />
     </div>
-      
     <div
       class="flex xs12"
     >
@@ -1298,7 +1194,6 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
       </transition-stub>
     </div>
   </div>
-   
   <div
     class="v-data-table theme--light"
     header-text="text"
@@ -1521,9 +1416,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               class="text-start"
             >
               <c-alarm-action-chip-stub>
-                
       pattern-value-0
-    
               </c-alarm-action-chip-stub>
             </td>
             <td
@@ -1536,23 +1429,17 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 10:58:08
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:48
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-0
-      
             </td>
             <td
               class="text-start"
@@ -1561,9 +1448,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
                 class="layout"
               >
                 <!---->
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -1588,9 +1473,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               class="text-start"
             >
               <c-alarm-action-chip-stub>
-                
       pattern-value-1
-    
               </c-alarm-action-chip-stub>
             </td>
             <td
@@ -1603,23 +1486,17 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 10:58:09
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:49
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-1
-      
             </td>
             <td
               class="text-start"
@@ -1628,9 +1505,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
                 class="layout"
               >
                 <!---->
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -1655,9 +1530,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               class="text-start"
             >
               <c-alarm-action-chip-stub>
-                
       pattern-value-2
-    
               </c-alarm-action-chip-stub>
             </td>
             <td
@@ -1670,23 +1543,17 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 10:58:10
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:50
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-2
-      
             </td>
             <td
               class="text-start"
@@ -1695,9 +1562,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
                 class="layout"
               >
                 <!---->
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -1722,9 +1587,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               class="text-start"
             >
               <c-alarm-action-chip-stub>
-                
       pattern-value-3
-    
               </c-alarm-action-chip-stub>
             </td>
             <td
@@ -1737,23 +1600,17 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 10:58:11
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:51
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-3
-      
             </td>
             <td
               class="text-start"
@@ -1762,9 +1619,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
                 class="layout"
               >
                 <!---->
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -1789,9 +1644,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               class="text-start"
             >
               <c-alarm-action-chip-stub>
-                
       pattern-value-4
-    
               </c-alarm-action-chip-stub>
             </td>
             <td
@@ -1804,23 +1657,17 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 10:58:12
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:52
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-4
-      
             </td>
             <td
               class="text-start"
@@ -1829,9 +1676,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
                 class="layout"
               >
                 <!---->
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -1856,9 +1701,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               class="text-start"
             >
               <c-alarm-action-chip-stub>
-                
       pattern-value-5
-    
               </c-alarm-action-chip-stub>
             </td>
             <td
@@ -1871,23 +1714,17 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 10:58:13
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:53
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-5
-      
             </td>
             <td
               class="text-start"
@@ -1896,9 +1733,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
                 class="layout"
               >
                 <!---->
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -1923,9 +1758,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               class="text-start"
             >
               <c-alarm-action-chip-stub>
-                
       pattern-value-6
-    
               </c-alarm-action-chip-stub>
             </td>
             <td
@@ -1938,23 +1771,17 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 10:58:14
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:54
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-6
-      
             </td>
             <td
               class="text-start"
@@ -1963,9 +1790,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
                 class="layout"
               >
                 <!---->
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -1990,9 +1815,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               class="text-start"
             >
               <c-alarm-action-chip-stub>
-                
       pattern-value-7
-    
               </c-alarm-action-chip-stub>
             </td>
             <td
@@ -2005,23 +1828,17 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 10:58:15
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:55
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-7
-      
             </td>
             <td
               class="text-start"
@@ -2030,9 +1847,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
                 class="layout"
               >
                 <!---->
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -2057,9 +1872,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               class="text-start"
             >
               <c-alarm-action-chip-stub>
-                
       pattern-value-8
-    
               </c-alarm-action-chip-stub>
             </td>
             <td
@@ -2072,23 +1885,17 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 10:58:16
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:56
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-8
-      
             </td>
             <td
               class="text-start"
@@ -2097,9 +1904,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
                 class="layout"
               >
                 <!---->
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -2124,9 +1929,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               class="text-start"
             >
               <c-alarm-action-chip-stub>
-                
       pattern-value-9
-    
               </c-alarm-action-chip-stub>
             </td>
             <td
@@ -2139,23 +1942,17 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
     04/03/2021 10:58:17
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:57
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-9
-      
             </td>
             <td
               class="text-start"
@@ -2164,9 +1961,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
                 class="layout"
               >
                 <!---->
-                 
                 <!---->
-                 
                 <!---->
               </div>
             </td>
@@ -2178,7 +1973,6 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
       </table>
     </div>
   </div>
-   
   <c-table-pagination-stub />
 </div>
 `;

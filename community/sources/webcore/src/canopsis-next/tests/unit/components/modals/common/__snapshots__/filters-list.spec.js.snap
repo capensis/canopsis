@@ -12,12 +12,10 @@ exports[`filters-list Renders \`filters-list\` with all parameters 1`] = `
       Filters
     </span>
   </div>
-   
   <div
     class="text"
   >
     <c-progress-overlay-stub />
-     
     <filters-list-component-stub
       addable="true"
       editable="true"
@@ -25,7 +23,6 @@ exports[`filters-list Renders \`filters-list\` with all parameters 1`] = `
       name="filters"
     />
   </div>
-   
   <div
     class="actions"
   />
@@ -44,12 +41,10 @@ exports[`filters-list Renders \`filters-list\` with empty modal 1`] = `
       Filters
     </span>
   </div>
-   
   <div
     class="text"
   >
     <c-progress-overlay-stub />
-     
     <filters-list-component-stub
       addable="true"
       editable="true"
@@ -57,7 +52,6 @@ exports[`filters-list Renders \`filters-list\` with empty modal 1`] = `
       name="filters"
     />
   </div>
-   
   <div
     class="actions"
   />

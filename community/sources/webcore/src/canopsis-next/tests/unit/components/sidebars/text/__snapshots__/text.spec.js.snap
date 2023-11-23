@@ -6,19 +6,16 @@ exports[`text Renders \`text\` widget settings with custom props 1`] = `
     name="title"
     value="Text widget"
   />
-   
   <hr
     aria-orientation="horizontal"
     class="v-divider theme--light"
     role="separator"
   />
-   
   <field-text-editor-stub
     defaultvalue=""
     title="Template"
     value="<p>1</p><p>2</p><p>3<br></p>"
   />
-   
   <hr
     aria-orientation="horizontal"
     class="v-divider theme--light"
@@ -33,19 +30,16 @@ exports[`text Renders \`text\` widget settings with default props 1`] = `
     name="title"
     value=""
   />
-   
   <hr
     aria-orientation="horizontal"
     class="v-divider theme--light"
     role="separator"
   />
-   
   <field-text-editor-stub
     defaultvalue=""
     title="Template"
     value=""
   />
-   
   <hr
     aria-orientation="horizontal"
     class="v-divider theme--light"

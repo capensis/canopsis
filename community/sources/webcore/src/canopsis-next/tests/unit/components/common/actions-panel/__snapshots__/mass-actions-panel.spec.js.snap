@@ -3,7 +3,6 @@
 exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the mobile size 1`] = `
 <div>
   <!---->
-   
   <div>
     <div
       class="v-menu"
@@ -34,7 +33,6 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctl
 exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the tablet size 1`] = `
 <div>
   <!---->
-   
   <div>
     <div
       class="v-menu"
@@ -76,7 +74,6 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions on the l
       tooltip="Delete title"
     />
   </div>
-   
   <!---->
 </div>
 `;

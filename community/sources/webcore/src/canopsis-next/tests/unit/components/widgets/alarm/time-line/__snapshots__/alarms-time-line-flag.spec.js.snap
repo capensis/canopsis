@@ -4,7 +4,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with state: cri
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -43,7 +42,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with state: maj
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -82,7 +80,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with state: min
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -121,7 +118,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with state: ok 
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -160,7 +156,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with status: ca
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -199,7 +194,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with status: cl
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -238,7 +232,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with status: fl
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -277,7 +270,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with status: no
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -316,7 +308,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with status: on
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -355,7 +346,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with status: st
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -394,7 +384,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: ack 
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -433,7 +422,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: ackR
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -472,7 +460,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: asso
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -510,7 +497,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: auto
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -548,7 +534,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: auto
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -586,7 +571,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: auto
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -624,7 +608,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: auto
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -662,7 +645,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: canc
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -700,7 +682,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: chan
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -738,7 +719,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: chec
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -777,7 +757,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: comm
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -816,7 +795,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: crea
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -854,7 +832,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: decl
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -892,7 +869,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: decl
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -930,7 +906,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: dele
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -968,7 +943,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: exec
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -1006,7 +980,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: fast
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -1044,7 +1017,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: grou
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -1083,7 +1055,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: inst
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -1121,7 +1092,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: inst
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -1159,7 +1129,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: inst
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -1197,7 +1166,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: inst
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -1235,7 +1203,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: inst
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -1273,7 +1240,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: inst
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -1311,7 +1277,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: inst
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -1349,7 +1314,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: inst
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -1387,7 +1351,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: inst
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -1425,7 +1388,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: inst
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -1463,7 +1425,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: inva
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -1501,7 +1462,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: juni
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -1539,7 +1499,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: juni
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -1577,7 +1536,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: meta
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -1616,7 +1574,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: paus
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -1654,7 +1611,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: pbeh
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -1692,7 +1648,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: pbeh
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -1730,7 +1685,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: pbhe
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -1769,7 +1723,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: pbhl
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -1808,7 +1761,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: play
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -1846,7 +1798,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: remo
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -1884,7 +1835,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: remo
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -1922,7 +1872,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: snoo
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -1961,7 +1910,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: stat
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -2000,7 +1948,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: stat
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -2039,7 +1986,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: stat
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -2078,7 +2024,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: stat
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -2117,7 +2062,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: unca
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -2155,7 +2099,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: unso
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -2194,7 +2137,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: vali
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -2232,7 +2174,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: webh
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -2270,7 +2211,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: webh
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
@@ -2308,7 +2248,6 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: webh
 <span
   class="v-badge time-line-flag v-badge--overlap theme--light"
 >
-   
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"

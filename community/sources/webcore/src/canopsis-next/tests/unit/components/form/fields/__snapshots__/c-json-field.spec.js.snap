@@ -42,7 +42,6 @@ exports[`c-json-field Renders \`c-json-field\` with custom props correctly 1`] =
       </div>
     </div>
   </div>
-   
   <div
     class="flex xs12"
   >
@@ -54,12 +53,9 @@ exports[`c-json-field Renders \`c-json-field\` with custom props correctly 1`] =
       <span
         class="v-btn__content"
       >
-        
       Parse
-    
       </span>
     </button>
-     
     <button
       class="v-btn-legacy-m--x v-btn v-btn--disabled v-btn--outlined theme--light v-size--default"
       disabled="disabled"
@@ -68,9 +64,7 @@ exports[`c-json-field Renders \`c-json-field\` with custom props correctly 1`] =
       <span
         class="v-btn__content"
       >
-        
       Reset
-    
       </span>
     </button>
   </div>
@@ -120,7 +114,6 @@ exports[`c-json-field Renders \`c-json-field\` with custom props correctly 2`] =
       </div>
     </div>
   </div>
-   
   <!---->
 </div>
 `;
@@ -196,7 +189,6 @@ exports[`c-json-field Renders \`c-json-field\` with custom props correctly 3`] =
       </div>
     </div>
   </div>
-   
   <div
     class="flex xs12"
   >
@@ -208,12 +200,9 @@ exports[`c-json-field Renders \`c-json-field\` with custom props correctly 3`] =
       <span
         class="v-btn__content"
       >
-        
       Parse
-    
       </span>
     </button>
-     
     <button
       class="v-btn-legacy-m--x v-btn v-btn--disabled v-btn--outlined theme--light v-size--default"
       disabled="disabled"
@@ -222,9 +211,7 @@ exports[`c-json-field Renders \`c-json-field\` with custom props correctly 3`] =
       <span
         class="v-btn__content"
       >
-        
       Reset
-    
       </span>
     </button>
   </div>
@@ -273,7 +260,6 @@ exports[`c-json-field Renders \`c-json-field\` with default props and changed va
       </div>
     </div>
   </div>
-   
   <div
     class="flex xs12"
   >
@@ -284,12 +270,9 @@ exports[`c-json-field Renders \`c-json-field\` with default props and changed va
       <span
         class="v-btn__content"
       >
-        
       Parse
-    
       </span>
     </button>
-     
     <button
       class="v-btn-legacy-m--x v-btn v-btn--outlined theme--light v-size--default grey--text text--darken-1"
       type="button"
@@ -297,9 +280,7 @@ exports[`c-json-field Renders \`c-json-field\` with default props and changed va
       <span
         class="v-btn__content"
       >
-        
       Reset
-    
       </span>
     </button>
   </div>
@@ -355,7 +336,6 @@ exports[`c-json-field Renders \`c-json-field\` with default props and incorrect 
       </div>
     </div>
   </div>
-   
   <!---->
 </div>
 `;
@@ -402,7 +382,6 @@ exports[`c-json-field Renders \`c-json-field\` with default props correctly 1`] 
       </div>
     </div>
   </div>
-   
   <!---->
 </div>
 `;

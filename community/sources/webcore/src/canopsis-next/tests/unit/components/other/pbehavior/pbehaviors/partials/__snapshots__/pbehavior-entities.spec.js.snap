@@ -14,10 +14,8 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
         value=""
       />
     </div>
-      
     <!---->
   </div>
-   
   <div
     class="v-data-table v-data-table--has-bottom theme--light"
     header-text="text"
@@ -205,7 +203,6 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
       </div>
     </div>
   </div>
-   
   <!---->
 </div>
 `;
@@ -224,10 +221,8 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` without entities 1`] 
         value=""
       />
     </div>
-      
     <!---->
   </div>
-   
   <div
     class="v-data-table v-data-table--has-bottom theme--light"
     header-text="text"
@@ -415,7 +410,6 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` without entities 1`] 
       </div>
     </div>
   </div>
-   
   <!---->
 </div>
 `;

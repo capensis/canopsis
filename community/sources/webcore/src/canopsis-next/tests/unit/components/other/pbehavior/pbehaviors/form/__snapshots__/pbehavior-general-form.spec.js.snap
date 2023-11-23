@@ -5,12 +5,10 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with custom p
   class="layout column"
 >
   <!---->
-   
   <c-name-field-stub
     required=""
     value="pbehavior"
   />
-   
   <div
     class="flex mt-3 xs12"
   >
@@ -20,12 +18,10 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with custom p
       label="Start on trigger"
       value="true"
     />
-     
     <c-duration-field-stub
       required=""
       value="[object Object]"
     />
-     
     <div
       class="layout"
     >
@@ -39,7 +35,6 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with custom p
           value="[object Object]"
         />
       </div>
-       
       <div
         class="flex xs6"
       >
@@ -62,17 +57,14 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with required
   <c-enabled-field-stub
     hide-details=""
   />
-   
   <c-name-field-stub
     required=""
     value="pbehavior"
   />
-   
   <div
     class="flex mt-3 xs12"
   >
     <!---->
-     
     <div
       class="layout align-center"
     >
@@ -117,9 +109,7 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with required
           </div>
         </div>
       </div>
-       
       <!---->
-       
       <div
         class="flex xs6"
       >
@@ -136,7 +126,6 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with required
         />
       </div>
     </div>
-     
     <div
       class="layout"
     >
@@ -150,7 +139,6 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with required
           value="[object Object]"
         />
       </div>
-       
       <div
         class="flex xs6"
       >

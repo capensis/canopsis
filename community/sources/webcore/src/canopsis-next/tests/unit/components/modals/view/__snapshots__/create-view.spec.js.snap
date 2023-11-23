@@ -15,7 +15,6 @@ exports[`create-view Renders \`create-view\` with empty modal 1`] = `
         Create a view
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -44,13 +43,10 @@ exports[`create-view Renders \`create-view\` with empty modal 1`] = `
                 <div
                   class="v-alert__content"
                 >
-                  
               You're duplicating a view. All duplicated view's rows/widgets will be copied on the new view.
-            
                 </div>
               </div>
             </div>
-             
             <view-form-stub
               form="[object Object]"
               groups=""
@@ -59,7 +55,6 @@ exports[`create-view Renders \`create-view\` with empty modal 1`] = `
         </div>
       </transition-stub>
     </div>
-     
     <div
       class="actions"
     >
@@ -69,13 +64,9 @@ exports[`create-view Renders \`create-view\` with empty modal 1`] = `
         text=""
         type="button"
       >
-        
         Cancel
-      
       </button>
-       
       <!---->
-       
       <!---->
     </div>
   </div>
@@ -97,7 +88,6 @@ exports[`create-view Renders \`create-view\` with title 1`] = `
         Create view custom title
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -126,13 +116,10 @@ exports[`create-view Renders \`create-view\` with title 1`] = `
                 <div
                   class="v-alert__content"
                 >
-                  
               You're duplicating a view. All duplicated view's rows/widgets will be copied on the new view.
-            
                 </div>
               </div>
             </div>
-             
             <view-form-stub
               form="[object Object]"
               groups=""
@@ -141,7 +128,6 @@ exports[`create-view Renders \`create-view\` with title 1`] = `
         </div>
       </transition-stub>
     </div>
-     
     <div
       class="actions"
     >
@@ -151,20 +137,14 @@ exports[`create-view Renders \`create-view\` with title 1`] = `
         text=""
         type="button"
       >
-        
         Cancel
-      
       </button>
-       
       <button
         class="v-btn primary"
         type="submit"
       >
-        
         Submit
-      
       </button>
-       
       <!---->
     </div>
   </div>
@@ -186,7 +166,6 @@ exports[`create-view Renders \`create-view\` without rights 1`] = `
         Create a view
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -215,13 +194,10 @@ exports[`create-view Renders \`create-view\` without rights 1`] = `
                 <div
                   class="v-alert__content"
                 >
-                  
               You're duplicating a view. All duplicated view's rows/widgets will be copied on the new view.
-            
                 </div>
               </div>
             </div>
-             
             <view-form-stub
               form="[object Object]"
               groups=""
@@ -230,7 +206,6 @@ exports[`create-view Renders \`create-view\` without rights 1`] = `
         </div>
       </transition-stub>
     </div>
-     
     <div
       class="actions"
     >
@@ -240,13 +215,9 @@ exports[`create-view Renders \`create-view\` without rights 1`] = `
         text=""
         type="button"
       >
-        
         Cancel
-      
       </button>
-       
       <!---->
-       
       <!---->
     </div>
   </div>

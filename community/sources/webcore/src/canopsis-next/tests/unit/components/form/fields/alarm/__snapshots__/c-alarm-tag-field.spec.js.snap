@@ -36,9 +36,7 @@ exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with custom props 1`] =
             ellipsis=""
             title="Tag 1"
           >
-            
       Tag 1
-    
           </c-alarm-action-chip-stub>
           <input
             autocomplete="off"

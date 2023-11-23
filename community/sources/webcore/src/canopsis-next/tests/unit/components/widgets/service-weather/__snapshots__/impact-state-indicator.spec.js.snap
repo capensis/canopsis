@@ -9,7 +9,6 @@ exports[`impact-state-indicator Renders \`impact-state-indicator\` with custom p
   >
     8
   </span>
-   
   <div
     class="pointer-wrapper"
   >
@@ -17,7 +16,6 @@ exports[`impact-state-indicator Renders \`impact-state-indicator\` with custom p
       class="pointer"
       style="left: 4px;"
     />
-     
     <div
       class="section-wrapper"
     >
@@ -159,7 +157,6 @@ exports[`impact-state-indicator Renders \`impact-state-indicator\` with default 
   >
     0
   </span>
-   
   <div
     class="pointer-wrapper"
   >
@@ -167,7 +164,6 @@ exports[`impact-state-indicator Renders \`impact-state-indicator\` with default 
       class="pointer"
       style="left: -4px;"
     />
-     
     <div
       class="section-wrapper"
     >

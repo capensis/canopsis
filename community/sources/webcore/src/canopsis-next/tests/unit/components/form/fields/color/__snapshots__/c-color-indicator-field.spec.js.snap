@@ -46,7 +46,6 @@ exports[`c-color-indicator-field Renders \`c-color-indicator-field\` with impact
             Display as severity
           </label>
         </div>
-         
         <div
           class="v-radio theme--light v-item--active"
         >
@@ -138,7 +137,6 @@ exports[`c-color-indicator-field Renders \`c-color-indicator-field\` with state 
             Display as severity
           </label>
         </div>
-         
         <div
           class="v-radio theme--light"
         >

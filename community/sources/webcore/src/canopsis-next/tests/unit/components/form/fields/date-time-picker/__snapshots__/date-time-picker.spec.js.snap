@@ -13,7 +13,6 @@ exports[`date-time-picker Renders \`date-time-picker\` with custom props 1`] = `
       label
     </span>
   </div>
-   
   <div
     class="date-time-picker__body"
   >
@@ -29,7 +28,6 @@ exports[`date-time-picker Renders \`date-time-picker\` with custom props 1`] = `
           07/12/2013 18:00:00
         </span>
       </div>
-       
       <div
         class="flex v-date-time-picker__subtitle-wrapper"
       >
@@ -41,7 +39,6 @@ exports[`date-time-picker Renders \`date-time-picker\` with custom props 1`] = `
         />
       </div>
     </div>
-     
     <div>
       <div
         class="v-picker v-card v-picker--date theme--light"
@@ -245,13 +242,11 @@ exports[`date-time-picker Renders \`date-time-picker\` with custom props 1`] = `
       </div>
     </div>
   </div>
-   
   <hr
     aria-orientation="horizontal"
     class="v-divider theme--light"
     role="separator"
   />
-   
   <div
     class="layout mt-1 py-2 justify-space-around"
   >
@@ -262,12 +257,9 @@ exports[`date-time-picker Renders \`date-time-picker\` with custom props 1`] = `
       <span
         class="v-btn__content"
       >
-        
         Cancel
-      
       </span>
     </button>
-     
     <button
       class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
       type="button"
@@ -275,9 +267,7 @@ exports[`date-time-picker Renders \`date-time-picker\` with custom props 1`] = `
       <span
         class="v-btn__content"
       >
-        
         Apply
-      
       </span>
     </button>
   </div>
@@ -289,7 +279,6 @@ exports[`date-time-picker Renders \`date-time-picker\` with default props 1`] = 
   class="v-sheet theme--light"
 >
   <!---->
-   
   <div
     class="date-time-picker__body"
   >
@@ -305,7 +294,6 @@ exports[`date-time-picker Renders \`date-time-picker\` with default props 1`] = 
           07/12/2013
         </span>
       </div>
-       
       <div
         class="flex v-date-time-picker__subtitle-wrapper"
       >
@@ -316,7 +304,6 @@ exports[`date-time-picker Renders \`date-time-picker\` with default props 1`] = 
         />
       </div>
     </div>
-     
     <div>
       <div
         class="v-picker v-card v-picker--date theme--light"
@@ -520,13 +507,11 @@ exports[`date-time-picker Renders \`date-time-picker\` with default props 1`] = 
       </div>
     </div>
   </div>
-   
   <hr
     aria-orientation="horizontal"
     class="v-divider theme--light"
     role="separator"
   />
-   
   <div
     class="layout mt-1 py-2 justify-space-around"
   >
@@ -537,12 +522,9 @@ exports[`date-time-picker Renders \`date-time-picker\` with default props 1`] = 
       <span
         class="v-btn__content"
       >
-        
         Cancel
-      
       </span>
     </button>
-     
     <button
       class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
       type="button"
@@ -550,9 +532,7 @@ exports[`date-time-picker Renders \`date-time-picker\` with default props 1`] = 
       <span
         class="v-btn__content"
       >
-        
         Apply
-      
       </span>
     </button>
   </div>
@@ -564,7 +544,6 @@ exports[`date-time-picker Renders \`date-time-picker\` without value 1`] = `
   class="v-sheet theme--light"
 >
   <!---->
-   
   <div
     class="date-time-picker__body"
   >
@@ -580,7 +559,6 @@ exports[`date-time-picker Renders \`date-time-picker\` without value 1`] = `
           −−/−−/−−−−
         </span>
       </div>
-       
       <div
         class="flex v-date-time-picker__subtitle-wrapper"
       >
@@ -590,7 +568,6 @@ exports[`date-time-picker Renders \`date-time-picker\` without value 1`] = `
         />
       </div>
     </div>
-     
     <div>
       <div
         class="v-picker v-card v-picker--date theme--light"
@@ -794,13 +771,11 @@ exports[`date-time-picker Renders \`date-time-picker\` without value 1`] = `
       </div>
     </div>
   </div>
-   
   <hr
     aria-orientation="horizontal"
     class="v-divider theme--light"
     role="separator"
   />
-   
   <div
     class="layout mt-1 py-2 justify-space-around"
   >
@@ -811,12 +786,9 @@ exports[`date-time-picker Renders \`date-time-picker\` without value 1`] = `
       <span
         class="v-btn__content"
       >
-        
         Cancel
-      
       </span>
     </button>
-     
     <button
       class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
       type="button"
@@ -824,9 +796,7 @@ exports[`date-time-picker Renders \`date-time-picker\` without value 1`] = `
       <span
         class="v-btn__content"
       >
-        
         Apply
-      
       </span>
     </button>
   </div>

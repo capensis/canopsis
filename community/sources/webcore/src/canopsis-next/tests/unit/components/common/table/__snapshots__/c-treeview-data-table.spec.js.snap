@@ -33,11 +33,8 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                   class="v-avatar white--text primary"
                   style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  
               0
-            
                 </div>
-                 
               </div>
             </div>
           </div>
@@ -65,11 +62,8 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                   class="v-avatar white--text primary"
                   style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  
               3
-            
                 </div>
-                 
               </div>
             </div>
           </div>
@@ -99,11 +93,8 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                       class="v-avatar white--text primary"
                       style="height: 32px; min-width: 32px; width: 32px;"
                     >
-                      
               0
-            
                     </div>
-                     
                   </div>
                 </div>
               </div>
@@ -134,11 +125,8 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                       class="v-avatar white--text primary"
                       style="height: 32px; min-width: 32px; width: 32px;"
                     >
-                      
               3
-            
                     </div>
-                     
                   </div>
                 </div>
               </div>
@@ -171,11 +159,8 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                           class="v-avatar white--text primary"
                           style="height: 32px; min-width: 32px; width: 32px;"
                         >
-                          
               0
-            
                         </div>
-                         
                       </div>
                     </div>
                   </div>
@@ -206,11 +191,8 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                           class="v-avatar white--text primary"
                           style="height: 32px; min-width: 32px; width: 32px;"
                         >
-                          
               0
-            
                         </div>
-                         
                       </div>
                     </div>
                   </div>
@@ -241,11 +223,8 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                           class="v-avatar white--text primary"
                           style="height: 32px; min-width: 32px; width: 32px;"
                         >
-                          
               0
-            
                         </div>
-                         
                       </div>
                     </div>
                   </div>
@@ -275,11 +254,8 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                       class="v-avatar white--text primary"
                       style="height: 32px; min-width: 32px; width: 32px;"
                     >
-                      
               0
-            
                     </div>
-                     
                   </div>
                 </div>
               </div>
@@ -306,18 +282,14 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
                   class="v-avatar white--text primary"
                   style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  
               0
-            
                 </div>
-                 
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-     
     <div
       class="flex"
     >
@@ -684,11 +656,8 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                   class="v-avatar white--text primary"
                   style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  
               0
-            
                 </div>
-                 
               </div>
             </div>
           </div>
@@ -716,11 +685,8 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                   class="v-avatar white--text primary"
                   style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  
               3
-            
                 </div>
-                 
               </div>
             </div>
           </div>
@@ -745,18 +711,14 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                   class="v-avatar white--text primary"
                   style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  
               0
-            
                 </div>
-                 
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-     
     <div
       class="flex"
     >
@@ -1018,7 +980,6 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                 <div
                   class="expand-slot"
                 />
-                 
                 <div
                   class="expand-append-slot"
                 />
@@ -1048,7 +1009,6 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                 <div
                   class="expand-slot"
                 />
-                 
                 <div
                   class="expand-append-slot"
                 />
@@ -1075,7 +1035,6 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                 <div
                   class="expand-slot"
                 />
-                 
                 <div
                   class="expand-append-slot"
                 />
@@ -1085,7 +1044,6 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
         </div>
       </div>
     </div>
-     
     <div
       class="flex"
     >
@@ -1308,11 +1266,8 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   class="v-avatar white--text primary"
                   style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  
               0
-            
                 </div>
-                 
               </div>
             </div>
           </div>
@@ -1340,11 +1295,8 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   class="v-avatar white--text primary"
                   style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  
               3
-            
                 </div>
-                 
               </div>
             </div>
           </div>
@@ -1369,18 +1321,14 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   class="v-avatar white--text primary"
                   style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  
               0
-            
                 </div>
-                 
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-     
     <div
       class="flex"
     >
@@ -1566,11 +1514,8 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   class="v-avatar white--text primary"
                   style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  
               0
-            
                 </div>
-                 
               </div>
             </div>
           </div>
@@ -1598,11 +1543,8 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   class="v-avatar white--text primary"
                   style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  
               3
-            
                 </div>
-                 
               </div>
             </div>
           </div>
@@ -1627,18 +1569,14 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   class="v-avatar white--text primary"
                   style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  
               0
-            
                 </div>
-                 
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-     
     <div
       class="flex"
     >
@@ -1861,11 +1799,8 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   class="v-avatar white--text primary"
                   style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  
               0
-            
                 </div>
-                 
               </div>
             </div>
           </div>
@@ -1893,11 +1828,8 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   class="v-avatar white--text primary"
                   style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  
               3
-            
                 </div>
-                 
               </div>
             </div>
           </div>
@@ -1922,18 +1854,14 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   class="v-avatar white--text primary"
                   style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  
               0
-            
                 </div>
-                 
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-     
     <div
       class="flex"
     >
@@ -2156,11 +2084,8 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   class="v-avatar white--text primary"
                   style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  
               0
-            
                 </div>
-                 
               </div>
             </div>
           </div>
@@ -2188,11 +2113,8 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   class="v-avatar white--text primary"
                   style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  
               3
-            
                 </div>
-                 
               </div>
             </div>
           </div>
@@ -2222,11 +2144,8 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                       class="v-avatar white--text primary"
                       style="height: 32px; min-width: 32px; width: 32px;"
                     >
-                      
               0
-            
                     </div>
-                     
                   </div>
                 </div>
               </div>
@@ -2257,11 +2176,8 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                       class="v-avatar white--text primary"
                       style="height: 32px; min-width: 32px; width: 32px;"
                     >
-                      
               3
-            
                     </div>
-                     
                   </div>
                 </div>
               </div>
@@ -2294,11 +2210,8 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                           class="v-avatar white--text primary"
                           style="height: 32px; min-width: 32px; width: 32px;"
                         >
-                          
               0
-            
                         </div>
-                         
                       </div>
                     </div>
                   </div>
@@ -2329,11 +2242,8 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                           class="v-avatar white--text primary"
                           style="height: 32px; min-width: 32px; width: 32px;"
                         >
-                          
               0
-            
                         </div>
-                         
                       </div>
                     </div>
                   </div>
@@ -2364,11 +2274,8 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                           class="v-avatar white--text primary"
                           style="height: 32px; min-width: 32px; width: 32px;"
                         >
-                          
               0
-            
                         </div>
-                         
                       </div>
                     </div>
                   </div>
@@ -2398,11 +2305,8 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                       class="v-avatar white--text primary"
                       style="height: 32px; min-width: 32px; width: 32px;"
                     >
-                      
               0
-            
                     </div>
-                     
                   </div>
                 </div>
               </div>
@@ -2429,18 +2333,14 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
                   class="v-avatar white--text primary"
                   style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  
               0
-            
                 </div>
-                 
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-     
     <div
       class="flex"
     >
@@ -2807,11 +2707,8 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                   class="v-avatar white--text primary"
                   style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  
               0
-            
                 </div>
-                 
               </div>
             </div>
           </div>
@@ -2839,11 +2736,8 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                   class="v-avatar white--text primary"
                   style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  
               3
-            
                 </div>
-                 
               </div>
             </div>
           </div>
@@ -2868,18 +2762,14 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                   class="v-avatar white--text primary"
                   style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  
               0
-            
                 </div>
-                 
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-     
     <div
       class="flex"
     >
@@ -3102,11 +2992,8 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                   class="v-avatar white--text primary"
                   style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  
               0
-            
                 </div>
-                 
               </div>
             </div>
           </div>
@@ -3134,11 +3021,8 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                   class="v-avatar white--text primary"
                   style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  
               3
-            
                 </div>
-                 
               </div>
             </div>
           </div>
@@ -3163,18 +3047,14 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
                   class="v-avatar white--text primary"
                   style="height: 32px; min-width: 32px; width: 32px;"
                 >
-                  
               0
-            
                 </div>
-                 
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-     
     <div
       class="flex"
     >

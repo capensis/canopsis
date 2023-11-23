@@ -15,20 +15,17 @@ exports[`geomap-editor Renders \`geomap-editor\` with custom props 1`] = `
         options="[object Object]"
         position="topleft"
       />
-       
       <geomap-control-layers-stub
         autozindex="true"
         collapsed="true"
         options="[object Object]"
         position="topright"
       />
-       
       <div
         class="geomap-contextmenu"
         items="[object Object]"
         marker-items="[object Object],[object Object]"
       />
-       
       <geomap-control-stub
         disableclickpropagation="true"
         options="[object Object]"
@@ -55,7 +52,6 @@ exports[`geomap-editor Renders \`geomap-editor\` with custom props 1`] = `
           </button>
         </span>
       </geomap-control-stub>
-       
       <geomap-control-stub
         disableclickpropagation="true"
         options="[object Object]"
@@ -71,7 +67,6 @@ Left mouse click + drag - pan the area"
           top=""
         />
       </geomap-control-stub>
-       
       <geomap-tile-layer-stub
         layertype="base"
         name="Open street map"
@@ -86,7 +81,6 @@ Left mouse click + drag - pan the area"
         visible="true"
         zindex="1"
       />
-       
       <div
         class="geomap-cluster-group"
         layer-type="overlay"
@@ -117,9 +111,7 @@ Left mouse click + drag - pan the area"
           </geomap-icon-stub>
         </geomap-marker-stub>
       </div>
-       
       <!---->
-       
       <div
         class="v-menu"
         coordinates=""
@@ -127,7 +119,6 @@ Left mouse click + drag - pan the area"
         <!---->
       </div>
     </div>
-     
     <!---->
   </div>
 </c-zoom-overlay-stub>
@@ -148,20 +139,17 @@ exports[`geomap-editor Renders \`geomap-editor\` with form 1`] = `
         options="[object Object]"
         position="topleft"
       />
-       
       <geomap-control-layers-stub
         autozindex="true"
         collapsed="true"
         options="[object Object]"
         position="topright"
       />
-       
       <div
         class="geomap-contextmenu"
         items="[object Object]"
         marker-items="[object Object],[object Object]"
       />
-       
       <geomap-control-stub
         disableclickpropagation="true"
         options="[object Object]"
@@ -188,7 +176,6 @@ exports[`geomap-editor Renders \`geomap-editor\` with form 1`] = `
           </button>
         </span>
       </geomap-control-stub>
-       
       <geomap-control-stub
         disableclickpropagation="true"
         options="[object Object]"
@@ -204,7 +191,6 @@ Left mouse click + drag - pan the area"
           top=""
         />
       </geomap-control-stub>
-       
       <geomap-tile-layer-stub
         layertype="base"
         name="Open street map"
@@ -219,15 +205,12 @@ Left mouse click + drag - pan the area"
         visible="true"
         zindex="1"
       />
-       
       <div
         class="geomap-cluster-group"
         layer-type="overlay"
         name="Points"
       />
-       
       <!---->
-       
       <div
         class="v-menu"
         coordinates=""
@@ -235,7 +218,6 @@ Left mouse click + drag - pan the area"
         <!---->
       </div>
     </div>
-     
     <!---->
   </div>
 </c-zoom-overlay-stub>
@@ -257,20 +239,17 @@ exports[`geomap-editor Renders \`geomap-editor\` with validation errors  1`] = `
         options="[object Object]"
         position="topleft"
       />
-       
       <geomap-control-layers-stub
         autozindex="true"
         collapsed="true"
         options="[object Object]"
         position="topright"
       />
-       
       <div
         class="geomap-contextmenu"
         items="[object Object]"
         marker-items="[object Object],[object Object]"
       />
-       
       <geomap-control-stub
         disableclickpropagation="true"
         options="[object Object]"
@@ -297,7 +276,6 @@ exports[`geomap-editor Renders \`geomap-editor\` with validation errors  1`] = `
           <!---->
         </span>
       </geomap-control-stub>
-       
       <geomap-control-stub
         disableclickpropagation="true"
         options="[object Object]"
@@ -313,7 +291,6 @@ Left mouse click + drag - pan the area"
           top=""
         />
       </geomap-control-stub>
-       
       <geomap-tile-layer-stub
         layertype="base"
         name="Open street map"
@@ -328,15 +305,12 @@ Left mouse click + drag - pan the area"
         visible="true"
         zindex="1"
       />
-       
       <div
         class="geomap-cluster-group"
         layer-type="overlay"
         name="Points"
       />
-       
       <!---->
-       
       <div
         class="v-menu"
         coordinates=""
@@ -344,7 +318,6 @@ Left mouse click + drag - pan the area"
         <!---->
       </div>
     </div>
-     
     <div
       class="v-messages theme--light error--text"
     >

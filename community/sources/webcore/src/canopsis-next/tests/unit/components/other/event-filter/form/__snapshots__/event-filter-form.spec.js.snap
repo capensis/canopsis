@@ -14,7 +14,6 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`break\` type 1`]
         value="event-filter-id"
       />
     </div>
-     
     <div
       class="flex xs4"
     >
@@ -24,24 +23,20 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`break\` type 1`]
       />
     </div>
   </div>
-   
   <c-description-field-stub
     required=""
     value="event-filter-description"
   />
-   
   <div
     class="layout justify-space-between"
   >
     <c-enabled-field-stub
       value="true"
     />
-     
     <c-priority-field-stub
       value="2"
     />
   </div>
-   
   <c-information-block-stub
     title="Applied during this period only"
   >
@@ -49,12 +44,10 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`break\` type 1`]
       form="[object Object]"
     />
   </c-information-block-stub>
-   
   <pbehavior-recurrence-rule-field-stub
     class="mb-3"
     form="[object Object]"
   />
-   
   <c-patterns-field-stub
     entity-counters-type=""
     some-required=""
@@ -62,7 +55,6 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`break\` type 1`]
     with-entity=""
     with-event=""
   />
-   
   <!---->
 </div>
 `;
@@ -81,7 +73,6 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`change_entity\` 
         value="event-filter-id"
       />
     </div>
-     
     <div
       class="flex xs4"
     >
@@ -91,24 +82,20 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`change_entity\` 
       />
     </div>
   </div>
-   
   <c-description-field-stub
     required=""
     value="event-filter-description"
   />
-   
   <div
     class="layout justify-space-between"
   >
     <c-enabled-field-stub
       value="true"
     />
-     
     <c-priority-field-stub
       value="2"
     />
   </div>
-   
   <c-information-block-stub
     title="Applied during this period only"
   >
@@ -116,12 +103,10 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`change_entity\` 
       form="[object Object]"
     />
   </c-information-block-stub>
-   
   <pbehavior-recurrence-rule-field-stub
     class="mb-3"
     form="[object Object]"
   />
-   
   <c-patterns-field-stub
     entity-counters-type=""
     some-required=""
@@ -129,13 +114,11 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`change_entity\` 
     with-entity=""
     with-event=""
   />
-   
   <hr
     aria-orientation="horizontal"
     class="my-3 v-divider theme--light"
     role="separator"
   />
-   
   <c-information-block-stub
     title="Change entity options"
   >
@@ -150,7 +133,6 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`change_entity\` 
         variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       />
     </c-collapse-panel-stub>
-     
     <event-filter-change-entity-form-stub
       form="[object Object]"
       name="config"
@@ -174,7 +156,6 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`drop\` type 1`] 
         value="event-filter-id"
       />
     </div>
-     
     <div
       class="flex xs4"
     >
@@ -184,24 +165,20 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`drop\` type 1`] 
       />
     </div>
   </div>
-   
   <c-description-field-stub
     required=""
     value="event-filter-description"
   />
-   
   <div
     class="layout justify-space-between"
   >
     <c-enabled-field-stub
       value="true"
     />
-     
     <c-priority-field-stub
       value="2"
     />
   </div>
-   
   <c-information-block-stub
     title="Applied during this period only"
   >
@@ -209,12 +186,10 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`drop\` type 1`] 
       form="[object Object]"
     />
   </c-information-block-stub>
-   
   <pbehavior-recurrence-rule-field-stub
     class="mb-3"
     form="[object Object]"
   />
-   
   <c-patterns-field-stub
     entity-counters-type=""
     some-required=""
@@ -222,7 +197,6 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`drop\` type 1`] 
     with-entity=""
     with-event=""
   />
-   
   <!---->
 </div>
 `;
@@ -241,7 +215,6 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`enrichment\` typ
         value="event-filter-id"
       />
     </div>
-     
     <div
       class="flex xs4"
     >
@@ -251,24 +224,20 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`enrichment\` typ
       />
     </div>
   </div>
-   
   <c-description-field-stub
     required=""
     value="event-filter-description"
   />
-   
   <div
     class="layout justify-space-between"
   >
     <c-enabled-field-stub
       value="true"
     />
-     
     <c-priority-field-stub
       value="2"
     />
   </div>
-   
   <c-information-block-stub
     title="Applied during this period only"
   >
@@ -276,12 +245,10 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`enrichment\` typ
       form="[object Object]"
     />
   </c-information-block-stub>
-   
   <pbehavior-recurrence-rule-field-stub
     class="mb-3"
     form="[object Object]"
   />
-   
   <c-patterns-field-stub
     entity-counters-type=""
     some-required=""
@@ -289,13 +256,11 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`enrichment\` typ
     with-entity=""
     with-event=""
   />
-   
   <hr
     aria-orientation="horizontal"
     class="my-3 v-divider theme--light"
     role="separator"
   />
-   
   <c-information-block-stub
     title="Enrichment options"
   >
@@ -310,7 +275,6 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`enrichment\` typ
         variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       />
     </c-collapse-panel-stub>
-     
     <event-filter-enrichment-form-stub
       form="[object Object]"
       name="config.actions"
@@ -334,7 +298,6 @@ exports[`event-filter-form Renders \`event-filter-form\` with custom props 1`] =
         value="event-filter-id"
       />
     </div>
-     
     <div
       class="flex xs4"
     >
@@ -344,24 +307,20 @@ exports[`event-filter-form Renders \`event-filter-form\` with custom props 1`] =
       />
     </div>
   </div>
-   
   <c-description-field-stub
     required=""
     value="event-filter-description"
   />
-   
   <div
     class="layout justify-space-between"
   >
     <c-enabled-field-stub
       value="true"
     />
-     
     <c-priority-field-stub
       value="2"
     />
   </div>
-   
   <c-information-block-stub
     title="Applied during this period only"
   >
@@ -369,12 +328,10 @@ exports[`event-filter-form Renders \`event-filter-form\` with custom props 1`] =
       form="[object Object]"
     />
   </c-information-block-stub>
-   
   <pbehavior-recurrence-rule-field-stub
     class="mb-3"
     form="[object Object]"
   />
-   
   <c-patterns-field-stub
     entity-counters-type=""
     some-required=""
@@ -382,7 +339,6 @@ exports[`event-filter-form Renders \`event-filter-form\` with custom props 1`] =
     with-entity=""
     with-event=""
   />
-   
   <!---->
 </div>
 `;
@@ -400,7 +356,6 @@ exports[`event-filter-form Renders \`event-filter-form\` with default props 1`] 
         help-text="If no id is specified, a unique id will be generated automatically on rule creation"
       />
     </div>
-     
     <div
       class="flex xs4"
     >
@@ -409,19 +364,15 @@ exports[`event-filter-form Renders \`event-filter-form\` with default props 1`] 
       />
     </div>
   </div>
-   
   <c-description-field-stub
     required=""
   />
-   
   <div
     class="layout justify-space-between"
   >
     <c-enabled-field-stub />
-     
     <c-priority-field-stub />
   </div>
-   
   <c-information-block-stub
     title="Applied during this period only"
   >
@@ -429,19 +380,16 @@ exports[`event-filter-form Renders \`event-filter-form\` with default props 1`] 
       form="[object Object]"
     />
   </c-information-block-stub>
-   
   <pbehavior-recurrence-rule-field-stub
     class="mb-3"
     form="[object Object]"
   />
-   
   <c-patterns-field-stub
     entity-counters-type=""
     some-required=""
     with-entity=""
     with-event=""
   />
-   
   <!---->
 </div>
 `;

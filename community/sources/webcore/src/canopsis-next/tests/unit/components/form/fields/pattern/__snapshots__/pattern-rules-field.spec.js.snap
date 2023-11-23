@@ -23,7 +23,6 @@ exports[`pattern-rules-field Renders \`pattern-rules-field\` with custom props 1
         type="string"
       />
     </div>
-     
     <c-action-btn-stub
       disabled="true"
       tooltip="Remove rule"
@@ -48,7 +47,6 @@ exports[`pattern-rules-field Renders \`pattern-rules-field\` with custom props 1
         type="string"
       />
     </div>
-     
     <c-action-btn-stub
       disabled="true"
       tooltip="Remove rule"
@@ -73,7 +71,6 @@ exports[`pattern-rules-field Renders \`pattern-rules-field\` with custom props 1
         type="string"
       />
     </div>
-     
     <c-action-btn-stub
       disabled="true"
       tooltip="Remove rule"
@@ -99,14 +96,12 @@ exports[`pattern-rules-field Renders \`pattern-rules-field\` with custom props 1
         type="string"
       />
     </div>
-     
     <c-action-btn-stub
       disabled="true"
       tooltip="Remove rule"
       type="delete"
     />
   </div>
-   
   <div
     class="layout mt-2 align-center"
   >
@@ -118,19 +113,14 @@ exports[`pattern-rules-field Renders \`pattern-rules-field\` with custom props 1
       <span
         class="v-btn__content"
       >
-        
       Add rule
-    
       </span>
     </button>
-     
     <span
       class="error--text"
       style="display: none;"
     >
-      
       The rules include excluded rule.
-    
     </span>
   </div>
 </div>
@@ -140,7 +130,6 @@ exports[`pattern-rules-field Renders \`pattern-rules-field\` with default props 
 <div
   class="layout column"
 >
-   
   <div
     class="layout mt-2 align-center"
   >
@@ -151,19 +140,14 @@ exports[`pattern-rules-field Renders \`pattern-rules-field\` with default props 
       <span
         class="v-btn__content"
       >
-        
       Add rule
-    
       </span>
     </button>
-     
     <span
       class="error--text"
       style="display: none;"
     >
-      
       The rules include excluded rule.
-    
     </span>
   </div>
 </div>

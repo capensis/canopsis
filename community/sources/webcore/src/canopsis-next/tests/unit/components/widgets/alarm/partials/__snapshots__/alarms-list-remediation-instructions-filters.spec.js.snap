@@ -8,13 +8,11 @@ exports[`alarms-list-remediation-instructions-filters Renders \`alarms-list-reme
     closable="true"
     filters=""
   />
-   
   <remediation-instructions-filters-list-stub
     closable="true"
     editable="true"
     filters=""
   />
-   
   <span
     class="v-tooltip v-tooltip--bottom"
   >
@@ -46,13 +44,11 @@ exports[`alarms-list-remediation-instructions-filters Renders \`alarms-list-reme
     closable="true"
     filters="[object Object],[object Object]"
   />
-   
   <remediation-instructions-filters-list-stub
     closable="true"
     editable="true"
     filters="[object Object],[object Object]"
   />
-   
   <span
     class="v-tooltip v-tooltip--bottom"
   >
@@ -83,11 +79,9 @@ exports[`alarms-list-remediation-instructions-filters Renders \`alarms-list-reme
   <remediation-instructions-filters-list-stub
     filters=""
   />
-   
   <remediation-instructions-filters-list-stub
     filters=""
   />
-   
   <!---->
 </div>
 `;
@@ -99,11 +93,9 @@ exports[`alarms-list-remediation-instructions-filters Renders \`alarms-list-reme
   <remediation-instructions-filters-list-stub
     filters="[object Object],[object Object]"
   />
-   
   <remediation-instructions-filters-list-stub
     filters=""
   />
-   
   <span
     class="v-tooltip v-tooltip--bottom"
   >

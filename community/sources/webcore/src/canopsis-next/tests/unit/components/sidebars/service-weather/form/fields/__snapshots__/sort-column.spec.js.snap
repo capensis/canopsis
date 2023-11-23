@@ -73,7 +73,6 @@ exports[`field-sort-column Renders \`field-sort-column\` with custom props 1`] =
       </div>
     </div>
   </div>
-   
   <div
     class="layout"
   >
@@ -225,7 +224,6 @@ exports[`field-sort-column Renders \`field-sort-column\` with default props 1`] 
       </div>
     </div>
   </div>
-   
   <div
     class="layout"
   >

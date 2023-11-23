@@ -15,28 +15,21 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with isHtmlEnabled 1`] = 
           <div
             class="date"
           >
-            
           13/07/2021
-        
           </div>
         </div>
-         
         <div
           class="alarms-timeline-steps-card"
         >
           <div
             class="time text--disabled"
           >
-            
           8:54:22
-        
           </div>
-           
           <alarms-time-line-flag-stub
             class="flag"
             step="[object Object]"
           />
-           
           <alarms-time-line-card-stub
             ishtmlenabled="true"
             step="[object Object]"
@@ -51,28 +44,21 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with isHtmlEnabled 1`] = 
           <div
             class="date"
           >
-            
           13/07/2021
-        
           </div>
         </div>
-         
         <div
           class="alarms-timeline-steps-card"
         >
           <div
             class="time text--disabled"
           >
-            
           8:54:22
-        
           </div>
-           
           <alarms-time-line-flag-stub
             class="flag"
             step="[object Object]"
           />
-           
           <alarms-time-line-card-stub
             ishtmlenabled="true"
             step="[object Object]"
@@ -88,28 +74,21 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with isHtmlEnabled 1`] = 
           <div
             class="date"
           >
-            
           30/07/2021
-        
           </div>
         </div>
-         
         <div
           class="alarms-timeline-steps-card"
         >
           <div
             class="time text--disabled"
           >
-            
           12:46:25
-        
           </div>
-           
           <alarms-time-line-flag-stub
             class="flag"
             step="[object Object]"
           />
-           
           <alarms-time-line-card-stub
             ishtmlenabled="true"
             step="[object Object]"
@@ -125,28 +104,21 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with isHtmlEnabled 1`] = 
           <div
             class="date"
           >
-            
           27/09/2021
-        
           </div>
         </div>
-         
         <div
           class="alarms-timeline-steps-card"
         >
           <div
             class="time text--disabled"
           >
-            
           8:17:21
-        
           </div>
-           
           <alarms-time-line-flag-stub
             class="flag"
             step="[object Object]"
           />
-           
           <alarms-time-line-card-stub
             ishtmlenabled="true"
             step="[object Object]"
@@ -161,28 +133,21 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with isHtmlEnabled 1`] = 
           <div
             class="date"
           >
-            
           27/09/2021
-        
           </div>
         </div>
-         
         <div
           class="alarms-timeline-steps-card"
         >
           <div
             class="time text--disabled"
           >
-            
           8:47:33
-        
           </div>
-           
           <alarms-time-line-flag-stub
             class="flag"
             step="[object Object]"
           />
-           
           <alarms-time-line-card-stub
             ishtmlenabled="true"
             step="[object Object]"
@@ -198,28 +163,21 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with isHtmlEnabled 1`] = 
           <div
             class="date"
           >
-            
           30/09/2021
-        
           </div>
         </div>
-         
         <div
           class="alarms-timeline-steps-card"
         >
           <div
             class="time text--disabled"
           >
-            
           6:54:10
-        
           </div>
-           
           <alarms-time-line-flag-stub
             class="flag"
             step="[object Object]"
           />
-           
           <alarms-time-line-card-stub
             ishtmlenabled="true"
             step="[object Object]"
@@ -235,28 +193,21 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with isHtmlEnabled 1`] = 
           <div
             class="date"
           >
-            
           18/10/2021
-        
           </div>
         </div>
-         
         <div
           class="alarms-timeline-steps-card"
         >
           <div
             class="time text--disabled"
           >
-            
           12:35:10
-        
           </div>
-           
           <alarms-time-line-flag-stub
             class="flag"
             step="[object Object]"
           />
-           
           <alarms-time-line-card-stub
             ishtmlenabled="true"
             step="[object Object]"
@@ -265,7 +216,6 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with isHtmlEnabled 1`] = 
       </li>
     </ul>
   </div>
-   
   <c-pagination-stub
     limit="10"
     page="1"
@@ -289,28 +239,21 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with required props 1`] =
           <div
             class="date"
           >
-            
           13/07/2021
-        
           </div>
         </div>
-         
         <div
           class="alarms-timeline-steps-card"
         >
           <div
             class="time text--disabled"
           >
-            
           8:54:22
-        
           </div>
-           
           <alarms-time-line-flag-stub
             class="flag"
             step="[object Object]"
           />
-           
           <alarms-time-line-card-stub
             step="[object Object]"
           />
@@ -324,28 +267,21 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with required props 1`] =
           <div
             class="date"
           >
-            
           13/07/2021
-        
           </div>
         </div>
-         
         <div
           class="alarms-timeline-steps-card"
         >
           <div
             class="time text--disabled"
           >
-            
           8:54:22
-        
           </div>
-           
           <alarms-time-line-flag-stub
             class="flag"
             step="[object Object]"
           />
-           
           <alarms-time-line-card-stub
             step="[object Object]"
           />
@@ -360,28 +296,21 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with required props 1`] =
           <div
             class="date"
           >
-            
           30/07/2021
-        
           </div>
         </div>
-         
         <div
           class="alarms-timeline-steps-card"
         >
           <div
             class="time text--disabled"
           >
-            
           12:46:25
-        
           </div>
-           
           <alarms-time-line-flag-stub
             class="flag"
             step="[object Object]"
           />
-           
           <alarms-time-line-card-stub
             step="[object Object]"
           />
@@ -396,28 +325,21 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with required props 1`] =
           <div
             class="date"
           >
-            
           27/09/2021
-        
           </div>
         </div>
-         
         <div
           class="alarms-timeline-steps-card"
         >
           <div
             class="time text--disabled"
           >
-            
           8:17:21
-        
           </div>
-           
           <alarms-time-line-flag-stub
             class="flag"
             step="[object Object]"
           />
-           
           <alarms-time-line-card-stub
             step="[object Object]"
           />
@@ -431,28 +353,21 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with required props 1`] =
           <div
             class="date"
           >
-            
           27/09/2021
-        
           </div>
         </div>
-         
         <div
           class="alarms-timeline-steps-card"
         >
           <div
             class="time text--disabled"
           >
-            
           8:47:33
-        
           </div>
-           
           <alarms-time-line-flag-stub
             class="flag"
             step="[object Object]"
           />
-           
           <alarms-time-line-card-stub
             step="[object Object]"
           />
@@ -467,28 +382,21 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with required props 1`] =
           <div
             class="date"
           >
-            
           30/09/2021
-        
           </div>
         </div>
-         
         <div
           class="alarms-timeline-steps-card"
         >
           <div
             class="time text--disabled"
           >
-            
           6:54:10
-        
           </div>
-           
           <alarms-time-line-flag-stub
             class="flag"
             step="[object Object]"
           />
-           
           <alarms-time-line-card-stub
             step="[object Object]"
           />
@@ -503,28 +411,21 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with required props 1`] =
           <div
             class="date"
           >
-            
           18/10/2021
-        
           </div>
         </div>
-         
         <div
           class="alarms-timeline-steps-card"
         >
           <div
             class="time text--disabled"
           >
-            
           12:35:10
-        
           </div>
-           
           <alarms-time-line-flag-stub
             class="flag"
             step="[object Object]"
           />
-           
           <alarms-time-line-card-stub
             step="[object Object]"
           />
@@ -532,7 +433,6 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with required props 1`] =
       </li>
     </ul>
   </div>
-   
   <c-pagination-stub
     limit="10"
     page="1"

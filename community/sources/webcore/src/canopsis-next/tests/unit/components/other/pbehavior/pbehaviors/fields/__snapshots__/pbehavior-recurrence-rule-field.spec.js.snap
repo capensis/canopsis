@@ -11,12 +11,9 @@ exports[`pbehavior-recurrence-rule-field Renders \`pbehavior-recurrence-rule-fie
     <span
       class="v-btn__content"
     >
-      
     Edit recurrence rule
-  
     </span>
   </button>
-   
   <span
     class="v-tooltip v-tooltip--top"
     fixed=""
@@ -38,7 +35,6 @@ exports[`pbehavior-recurrence-rule-field Renders \`pbehavior-recurrence-rule-fie
       </span>
     </button>
   </span>
-   
   <c-action-btn-stub
     type="delete"
   />
@@ -56,12 +52,9 @@ exports[`pbehavior-recurrence-rule-field Renders \`pbehavior-recurrence-rule-fie
     <span
       class="v-btn__content"
     >
-      
     Add recurrence rule
-  
     </span>
   </button>
-   
   <!---->
 </div>
 `;

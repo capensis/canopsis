@@ -18,7 +18,6 @@ exports[`kpi-chart-export-actions Renders \`kpi-chart-export-actions\` with cust
       >
         file_download
       </i>
-       
       <span>
         Export as csv
       </span>
@@ -55,7 +54,6 @@ exports[`kpi-chart-export-actions Renders \`kpi-chart-export-actions\` with cust
       </div>
     </span>
   </button>
-   
   <button
     class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--small primary"
     type="button"
@@ -70,7 +68,6 @@ exports[`kpi-chart-export-actions Renders \`kpi-chart-export-actions\` with cust
       >
         file_download
       </i>
-       
       <span>
         Download as PNG
       </span>
@@ -99,13 +96,11 @@ exports[`kpi-chart-export-actions Renders \`kpi-chart-export-actions\` without p
       >
         file_download
       </i>
-       
       <span>
         Export as csv
       </span>
     </span>
   </button>
-   
   <button
     class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--small primary"
     type="button"
@@ -120,7 +115,6 @@ exports[`kpi-chart-export-actions Renders \`kpi-chart-export-actions\` without p
       >
         file_download
       </i>
-       
       <span>
         Download as PNG
       </span>
