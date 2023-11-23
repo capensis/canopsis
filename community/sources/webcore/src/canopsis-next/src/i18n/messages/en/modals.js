@@ -199,6 +199,7 @@ export default {
   service: {
     refreshEntities: 'Refresh entities list',
     editPbehaviors: 'Edit pbehaviors',
+    massActionsDescription: 'You can choose entities to perform actions',
     entity: {
       tabs: {
         info: 'Info',
