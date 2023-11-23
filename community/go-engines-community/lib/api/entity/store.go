@@ -11,6 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/perfdata"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -23,25 +24,28 @@ type Store interface {
 	Toggle(ctx context.Context, id string, enabled bool) (bool, SimplifiedEntity, error)
 	GetContextGraph(ctx context.Context, id string) (*ContextGraphResponse, error)
 	Export(ctx context.Context, t export.Task) (export.DataCursor, error)
+	CheckStateSetting(ctx context.Context, r CheckStateSettingRequest) (CheckStateSettingResponse, error)
 }
 
 type store struct {
-	db                     mongo.DbClient
-	dbExport               mongo.DbClient
-	mainCollection         mongo.DbCollection
-	archivedCollection     mongo.DbCollection
-	timezoneConfigProvider config.TimezoneConfigProvider
-	decoder                encoding.Decoder
+	db                      mongo.DbClient
+	dbExport                mongo.DbClient
+	mainCollection          mongo.DbCollection
+	archivedCollection      mongo.DbCollection
+	stateSettingsCollection mongo.DbCollection
+	timezoneConfigProvider  config.TimezoneConfigProvider
+	decoder                 encoding.Decoder
 }
 
 func NewStore(db, dbExport mongo.DbClient, timezoneConfigProvider config.TimezoneConfigProvider, decoder encoding.Decoder) Store {
 	return &store{
-		db:                     db,
-		dbExport:               dbExport,
-		mainCollection:         db.Collection(mongo.EntityMongoCollection),
-		archivedCollection:     db.Collection(mongo.ArchivedEntitiesMongoCollection),
-		timezoneConfigProvider: timezoneConfigProvider,
-		decoder:                decoder,
+		db:                      db,
+		dbExport:                dbExport,
+		mainCollection:          db.Collection(mongo.EntityMongoCollection),
+		archivedCollection:      db.Collection(mongo.ArchivedEntitiesMongoCollection),
+		stateSettingsCollection: db.Collection(mongo.StateSettingsMongoCollection),
+		timezoneConfigProvider:  timezoneConfigProvider,
+		decoder:                 decoder,
 	}
 }
 
@@ -384,6 +388,56 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 	}
 
 	return export.NewMongoCursor(cursor, t.Fields.Fields(), nil), nil
+}
+
+func (s *store) CheckStateSetting(ctx context.Context, r CheckStateSettingRequest) (CheckStateSettingResponse, error) {
+	response := CheckStateSettingResponse{}
+
+	cursor, err := s.stateSettingsCollection.Find(
+		ctx,
+		bson.M{
+			"enabled": true,
+			"method": bson.M{
+				"$in": []string{statesetting.MethodInherited, statesetting.MethodDependencies},
+			},
+		},
+		options.Find().SetSort(bson.M{"priority": 1}).SetProjection(bson.M{"title": 1, "entity_pattern": 1}),
+	)
+	if err != nil {
+		return response, err
+	}
+
+	defer cursor.Close(ctx)
+
+	ent := types.Entity{
+		ID:          r.ID,
+		Name:        r.Name,
+		Connector:   r.Connector,
+		Type:        r.Type,
+		Infos:       TransformInfosRequest(r.Infos),
+		Category:    r.Category,
+		ImpactLevel: r.ImpactLevel,
+	}
+
+	for cursor.Next(ctx) {
+		var stateSetting statesetting.StateSetting
+		err = cursor.Decode(&stateSetting)
+		if err != nil {
+			return response, err
+		}
+
+		match, err := stateSetting.EntityPattern.Match(ent)
+		if err != nil {
+			return response, err
+		}
+
+		if match {
+			response.Title = stateSetting.Title
+			return response, nil
+		}
+	}
+
+	return response, nil
 }
 
 func (s *store) fillConnectorType(result *AggregationResult) {
