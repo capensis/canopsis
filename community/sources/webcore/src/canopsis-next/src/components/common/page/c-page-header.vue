@@ -14,7 +14,7 @@
       </v-btn>
     </h2>
     <v-expand-transition>
-      <div v-if="hasMessage && shownMessage">
+      <div v-show="hasMessage && shownMessage">
         <v-layout
           class="pb-2"
           justify-center
@@ -26,11 +26,12 @@
         </v-layout>
         <v-layout
           class="pb-2"
-          v-show="!messageWasHidden"
+          v-if="!messageWasHidden"
           justify-center
         >
           <v-btn
             class="my-2"
+            :loading="isHidePending"
             color="primary"
             @click="hideMessage"
           >
@@ -69,6 +70,7 @@ export default {
   data() {
     return {
       shownMessage: false,
+      isHidePending: false,
     };
   },
   computed: {
@@ -108,10 +110,13 @@ export default {
     },
 
     async hideMessage() {
+      this.isHidePending = true;
+
       if (!this.messageWasHidden) {
         await this.finishTourByName(this.name);
       }
 
+      this.isHidePending = false;
       this.shownMessage = false;
     },
   },

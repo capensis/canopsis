@@ -159,12 +159,6 @@ export default {
 <style lang="scss" scoped>
 .treeview-data-table {
   ::v-deep .v-treeview-node {
-    margin-left: 34px;
-
-    &--leaf {
-      margin-left: 58px;
-    }
-
     &__root {
       height: 48px;
     }
@@ -174,10 +168,6 @@ export default {
         padding-right: 0;
       }
     }
-  }
-
-  ::v-deep .v-treeview > .v-treeview-node {
-    margin-left: 0;
   }
 
   &--tree {
