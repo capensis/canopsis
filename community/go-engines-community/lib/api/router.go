@@ -578,6 +578,12 @@ func RegisterRoutes(
 				entityAPI.GetContextGraph,
 			)
 
+			entityRouter.POST(
+				"/check-state-setting",
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionRead, enforcer),
+				entityAPI.CheckStateSetting,
+			)
+
 			entityRouter.GET(
 				"/pbehaviors",
 				middleware.Authorize(apisecurity.ObjEntity, model.PermissionRead, enforcer),
