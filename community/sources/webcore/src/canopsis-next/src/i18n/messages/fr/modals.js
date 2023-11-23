@@ -213,6 +213,7 @@ export default {
   service: {
     refreshEntities: 'Rafraîchir la liste des entités',
     editPbehaviors: 'Éditer les comportements périodiques',
+    massActionsDescription: 'Vous pouvez choisir des entités pour effectuer des actions',
     entity: {
       tabs: {
         info: 'Info',
