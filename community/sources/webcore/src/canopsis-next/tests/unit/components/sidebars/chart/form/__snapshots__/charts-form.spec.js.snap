@@ -12,12 +12,14 @@ exports[`charts-form Renders \`charts-form\` with custom props 1`] = `
       items="[object Object],[object Object],[object Object]"
       itemtext="text"
     />
+     
     <v-menu-stub
       bottom="true"
       closedelay="0"
       closeonclick="true"
       closeoncontentclick="true"
       contentclass=""
+      contentprops="[object Object]"
       maxheight="auto"
       maxwidth="auto"
       nudgebottom="0"
@@ -30,16 +32,21 @@ exports[`charts-form Renders \`charts-form\` with custom props 1`] = `
       origin="top left"
       transition="v-menu-transition"
     >
-      <v-list-stub>
+       
+      <v-list-stub
+        tag="div"
+      >
         <v-list-item-stub
-          activeclass="primary--text"
+          activeclass=""
+          tag="div"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--light"
+            class="v-icon notranslate material-icons theme--light"
           >
             stacked_bar_chart
           </i>
+           
           <span
             class="ml-3"
           >
@@ -47,14 +54,16 @@ exports[`charts-form Renders \`charts-form\` with custom props 1`] = `
           </span>
         </v-list-item-stub>
         <v-list-item-stub
-          activeclass="primary--text"
+          activeclass=""
+          tag="div"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--light"
+            class="v-icon notranslate material-icons theme--light"
           >
             show_chart
           </i>
+           
           <span
             class="ml-3"
           >
@@ -62,14 +71,16 @@ exports[`charts-form Renders \`charts-form\` with custom props 1`] = `
           </span>
         </v-list-item-stub>
         <v-list-item-stub
-          activeclass="primary--text"
+          activeclass=""
+          tag="div"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--light"
+            class="v-icon notranslate material-icons theme--light"
           >
             functions
           </i>
+           
           <span
             class="ml-3"
           >
@@ -96,12 +107,14 @@ exports[`charts-form Renders \`charts-form\` with default props 1`] = `
       items=""
       itemtext="text"
     />
+     
     <v-menu-stub
       bottom="true"
       closedelay="0"
       closeonclick="true"
       closeoncontentclick="true"
       contentclass=""
+      contentprops="[object Object]"
       maxheight="auto"
       maxwidth="auto"
       nudgebottom="0"
@@ -114,16 +127,21 @@ exports[`charts-form Renders \`charts-form\` with default props 1`] = `
       origin="top left"
       transition="v-menu-transition"
     >
-      <v-list-stub>
+       
+      <v-list-stub
+        tag="div"
+      >
         <v-list-item-stub
-          activeclass="primary--text"
+          activeclass=""
+          tag="div"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--light"
+            class="v-icon notranslate material-icons theme--light"
           >
             stacked_bar_chart
           </i>
+           
           <span
             class="ml-3"
           >
@@ -131,14 +149,16 @@ exports[`charts-form Renders \`charts-form\` with default props 1`] = `
           </span>
         </v-list-item-stub>
         <v-list-item-stub
-          activeclass="primary--text"
+          activeclass=""
+          tag="div"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--light"
+            class="v-icon notranslate material-icons theme--light"
           >
             show_chart
           </i>
+           
           <span
             class="ml-3"
           >
@@ -146,14 +166,16 @@ exports[`charts-form Renders \`charts-form\` with default props 1`] = `
           </span>
         </v-list-item-stub>
         <v-list-item-stub
-          activeclass="primary--text"
+          activeclass=""
+          tag="div"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--light"
+            class="v-icon notranslate material-icons theme--light"
           >
             functions
           </i>
+           
           <span
             class="ml-3"
           >

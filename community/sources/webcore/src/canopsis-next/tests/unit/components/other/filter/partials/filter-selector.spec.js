@@ -78,7 +78,7 @@ describe('filter-selector', () => {
 
     const menuContent = wrapper.find('.v-menu__content');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
   });
 
@@ -95,7 +95,7 @@ describe('filter-selector', () => {
 
     const menuContent = wrapper.find('.v-menu__content');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
   });
 
@@ -112,7 +112,7 @@ describe('filter-selector', () => {
 
     const menuContent = wrapper.find('.v-menu__content');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
   });
 
@@ -127,7 +127,7 @@ describe('filter-selector', () => {
 
     const menuContent = wrapper.find('.v-menu__content');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
   });
 
@@ -141,7 +141,7 @@ describe('filter-selector', () => {
 
     const menuContent = wrapper.find('.v-menu__content');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
   });
 });

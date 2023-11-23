@@ -10,7 +10,6 @@ exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with custom p
     <div
       aria-expanded="false"
       aria-haspopup="listbox"
-      aria-owns="list-43"
       class="v-input__slot"
       role="button"
     >
@@ -23,7 +22,6 @@ exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with custom p
           <input
             aria-readonly="false"
             autocomplete="off"
-            id="input-43"
             readonly="readonly"
             type="text"
           />
@@ -57,7 +55,71 @@ exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with custom p
 </div>
 `;
 
-exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with custom props 2`] = `undefined`;
+exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with custom props 2`] = `
+<div
+  class="v-menu__content theme--light menuable__content__active "
+  style="max-height: 304px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8; display: none;"
+>
+  <div
+    class="v-list v-select-list v-sheet theme--light v-list--dense theme--light"
+    id="list-52"
+    role="listbox"
+    tabindex="-1"
+  >
+    <div
+      aria-selected="false"
+      class="v-list-item v-list-item--link theme--light"
+      id="list-item-57-0"
+      role="option"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__content"
+      >
+        <div
+          class="v-list-item__title"
+        >
+          2
+        </div>
+      </div>
+    </div>
+    <div
+      aria-selected="false"
+      class="v-list-item v-list-item--link theme--light"
+      id="list-item-57-1"
+      role="option"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__content"
+      >
+        <div
+          class="v-list-item__title"
+        >
+          4
+        </div>
+      </div>
+    </div>
+    <div
+      aria-selected="false"
+      class="v-list-item v-list-item--link theme--light"
+      id="list-item-57-2"
+      role="option"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__content"
+      >
+        <div
+          class="v-list-item__title"
+        >
+          6
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
 
 exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with default props 1`] = `
 <div
@@ -69,7 +131,6 @@ exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with default 
     <div
       aria-expanded="false"
       aria-haspopup="listbox"
-      aria-owns="list-37"
       class="v-input__slot"
       role="button"
     >
@@ -87,7 +148,6 @@ exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with default 
           <input
             aria-readonly="false"
             autocomplete="off"
-            id="input-37"
             readonly="readonly"
             type="text"
           />
@@ -121,272 +181,100 @@ exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with default 
 </div>
 `;
 
-exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with default props 2`] = `undefined`;
-
-exports[`c-records-per-page-field Renders \`c-records-per-page-field\` with custom props 1`] = `
+exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with default props 2`] = `
 <div
-  class="v-input select v-text-field v-text-field--single-line v-select v-input--hide-details theme--light"
-  role="combobox"
+  class="v-menu__content theme--light menuable__content__active "
+  style="max-height: 304px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8; display: none;"
 >
   <div
-    class="v-input__control"
+    class="v-list v-select-list v-sheet theme--light v-list--dense theme--light"
+    id="list-37"
+    role="listbox"
+    tabindex="-1"
   >
     <div
-      class="v-input__slot"
+      aria-selected="false"
+      class="v-list-item v-list-item--link theme--light"
+      id="list-item-42-0"
+      role="option"
+      tabindex="0"
     >
       <div
-        class="v-select__slot"
+        class="v-list-item__content"
       >
         <div
-          class="v-select__selections"
+          class="v-list-item__title"
         >
-          <input
-            aria-readonly="false"
-            autocomplete="on"
-            readonly="readonly"
-            type="text"
-          />
+          5
         </div>
-        <div
-          class="v-input__append-inner"
-        >
-          <div
-            class="v-input__icon v-input__icon--append"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              arrow_drop_down
-            </i>
-          </div>
-        </div>
-      </div>
-      <div
-        class="v-menu"
-      />
-    </div>
-  </div>
-</div>
-`;
-
-exports[`c-records-per-page-field Renders \`c-records-per-page-field\` with custom props 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-select-list v-card theme--light"
-  >
-    <div
-      class="v-list v-list--dense theme--light"
-      role="list"
-    >
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              2
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              4
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              6
-            </div>
-          </div>
-        </a>
       </div>
     </div>
-  </div>
-</div>
-`;
-
-exports[`c-records-per-page-field Renders \`c-records-per-page-field\` with default props 1`] = `
-<div
-  class="v-input select v-text-field v-text-field--single-line v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
-  role="combobox"
->
-  <div
-    class="v-input__control"
-  >
     <div
-      class="v-input__slot"
+      aria-selected="true"
+      class="v-list-item primary--text v-list-item--active v-list-item--link theme--light"
+      id="list-item-42-1"
+      role="option"
+      tabindex="0"
     >
       <div
-        class="v-select__slot"
+        class="v-list-item__content"
       >
         <div
-          class="v-select__selections"
+          class="v-list-item__title"
         >
-          <div
-            class="v-select__selection v-select__selection--comma"
-          >
-            10
-          </div>
-          <input
-            aria-readonly="false"
-            autocomplete="on"
-            readonly="readonly"
-            type="text"
-          />
-        </div>
-        <div
-          class="v-input__append-inner"
-        >
-          <div
-            class="v-input__icon v-input__icon--append"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              arrow_drop_down
-            </i>
-          </div>
+          10
         </div>
       </div>
-      <div
-        class="v-menu"
-      />
     </div>
-  </div>
-</div>
-`;
-
-exports[`c-records-per-page-field Renders \`c-records-per-page-field\` with default props 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-select-list v-card theme--light"
-  >
     <div
-      class="v-list v-list--dense theme--light"
-      role="list"
+      aria-selected="false"
+      class="v-list-item v-list-item--link theme--light"
+      id="list-item-42-2"
+      role="option"
+      tabindex="0"
     >
       <div
-        role="listitem"
+        class="v-list-item__content"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
+        <div
+          class="v-list-item__title"
         >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              5
-            </div>
-          </div>
-        </a>
+          20
+        </div>
       </div>
+    </div>
+    <div
+      aria-selected="false"
+      class="v-list-item v-list-item--link theme--light"
+      id="list-item-42-3"
+      role="option"
+      tabindex="0"
+    >
       <div
-        class="primary--text"
-        role="listitem"
+        class="v-list-item__content"
       >
-        <a
-          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
+        <div
+          class="v-list-item__title"
         >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              10
-            </div>
-          </div>
-        </a>
+          50
+        </div>
       </div>
+    </div>
+    <div
+      aria-selected="false"
+      class="v-list-item v-list-item--link theme--light"
+      id="list-item-42-4"
+      role="option"
+      tabindex="0"
+    >
       <div
-        role="listitem"
+        class="v-list-item__content"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
+        <div
+          class="v-list-item__title"
         >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              20
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              50
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              100
-            </div>
-          </div>
-        </a>
+          100
+        </div>
       </div>
     </div>
   </div>

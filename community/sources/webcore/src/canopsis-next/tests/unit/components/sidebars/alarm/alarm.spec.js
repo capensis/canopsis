@@ -1303,7 +1303,7 @@ describe('alarm', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `alarm` widget settings with all rights', async () => {
@@ -1346,7 +1346,7 @@ describe('alarm', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `alarm` widget settings with custom props', async () => {
@@ -1397,6 +1397,6 @@ describe('alarm', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -36,7 +36,7 @@ describe('service-template', () => {
     stubs,
     propsData: {
       service,
-      pagination: {},
+      options: {},
     },
   });
 
@@ -77,9 +77,9 @@ describe('service-template', () => {
       page: Faker.datatype.number(),
     };
 
-    await entitiesList.vm.$emit('update:pagination', newPagination);
+    await entitiesList.vm.$emit('update:options', newPagination);
 
-    expect(wrapper).toEmit('update:pagination', newPagination);
+    expect(wrapper).toEmit('update:options', newPagination);
   });
 
   test('Renders `service-template` with required props', async () => {
@@ -87,7 +87,7 @@ describe('service-template', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `service-template` with custom props', async () => {
@@ -104,6 +104,6 @@ describe('service-template', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

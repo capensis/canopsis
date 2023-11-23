@@ -112,7 +112,7 @@ describe('kpi-rating-settings', () => {
     const itemsPerPage = Faker.datatype.number({ max: initialItemsPerPage });
     const page = Faker.datatype.number();
 
-    kpiRatingSettingsListElement.vm.$emit('update:pagination', {
+    kpiRatingSettingsListElement.vm.$emit('update:options', {
       itemsPerPage,
       page,
     });
@@ -137,7 +137,7 @@ describe('kpi-rating-settings', () => {
       store: defaultStore,
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `kpi-rating-settings` with full permissions', () => {
@@ -169,6 +169,6 @@ describe('kpi-rating-settings', () => {
       }]),
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

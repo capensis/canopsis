@@ -8,7 +8,6 @@ import featuresService from '@/services/features';
 import AlarmsListRow from '@/components/widgets/alarm/partials/alarms-list-row.vue';
 
 const stubs = {
-  'v-checkbox-functional': true,
   'alarms-list-row-instructions-icon': true,
   'alarms-list-row-bookmark-icon': true,
   'alarms-expand-panel-btn': true,
@@ -18,7 +17,7 @@ const stubs = {
 
 const selectExpandButton = wrapper => wrapper.find('alarms-expand-panel-btn-stub');
 const selectTableRow = wrapper => wrapper.find('tr');
-const selectCheckbox = wrapper => wrapper.find('v-checkbox-functional-stub');
+const selectCheckbox = wrapper => wrapper.find('.v-simple-checkbox');
 
 describe('alarms-list-row', () => {
   const fetchItem = jest.fn();
@@ -87,9 +86,7 @@ describe('alarms-list-row', () => {
       },
     });
 
-    const checkbox = selectCheckbox(wrapper);
-
-    checkbox.vm.$emit('change', true);
+    selectCheckbox(wrapper).trigger('click');
 
     const inputEvents = wrapper.emitted('input');
 
@@ -144,9 +141,10 @@ describe('alarms-list-row', () => {
         status: {},
       },
     };
+    const expand = jest.fn();
     const row = {
       item: alarm,
-      expanded: false,
+      expand,
     };
     const wrapper = factory({
       store: createMockedStoreModules([
@@ -168,7 +166,7 @@ describe('alarms-list-row', () => {
 
     await flushPromises();
 
-    expect(row.expanded).toBe(true);
+    expect(expand).toBeCalledWith(true);
   });
 
   it('Row closed after trigger expand button with expanded: true', async () => {
@@ -178,9 +176,10 @@ describe('alarms-list-row', () => {
         status: {},
       },
     };
+    const expand = jest.fn();
     const row = {
       item: alarm,
-      expanded: true,
+      expand,
     };
     const wrapper = factory({
       propsData: {
@@ -197,7 +196,7 @@ describe('alarms-list-row', () => {
 
     await flushPromises();
 
-    expect(row.expanded).toBe(false);
+    expect(expand).toBeCalledWith(false);
   });
 
   it('Renders `alarms-list-row` with default and required props', () => {
@@ -210,13 +209,13 @@ describe('alarms-list-row', () => {
               status: {},
             },
           },
-          expanded: false,
+          isExpanded: false,
         },
         headers: [{ value: 'value1' }, { value: 'value2' }, { value: 'actions' }],
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-row` with custom props', () => {
@@ -241,7 +240,7 @@ describe('alarms-list-row', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-row` with resolved alarm', () => {
@@ -264,7 +263,7 @@ describe('alarms-list-row', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-row` with expand button', () => {
@@ -285,7 +284,7 @@ describe('alarms-list-row', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-row` with instructions', () => {
@@ -308,7 +307,7 @@ describe('alarms-list-row', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-row` with filtered children in parent alarm', () => {
@@ -335,7 +334,7 @@ describe('alarms-list-row', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-row` with bookmarked alarm', () => {
@@ -356,7 +355,7 @@ describe('alarms-list-row', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-row` with feature classes', () => {
@@ -383,7 +382,7 @@ describe('alarms-list-row', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
 
     hasFeatureSpy.mockClear();
     callFeatureSpy.mockClear();

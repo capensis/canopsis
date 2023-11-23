@@ -8,14 +8,17 @@ exports[`pie-chart-widget-form Renders \`pie-chart-widget-form\` widget settings
     name="title"
     value="Map widget"
   />
+   
   <field-periodic-refresh-stub
     form="[object Object]"
   />
+   
   <field-preset-stub
     name="preset"
     parameters="[object Object]"
     type="PieChart"
   />
+   
   <widget-settings-group-stub
     title="Metrics display"
   >
@@ -25,11 +28,13 @@ exports[`pie-chart-widget-form Renders \`pie-chart-widget-form\` widget settings
       value="[object Object]"
       withcolor="true"
     />
+     
     <field-pie-show-mode-stub
       name="show_mode"
       value="numbers"
     />
   </widget-settings-group-stub>
+   
   <widget-settings-group-stub
     title="Advanced settings"
   >
@@ -39,15 +44,19 @@ exports[`pie-chart-widget-form Renders \`pie-chart-widget-form\` widget settings
       placeholder="Header title"
       value="Chart title"
     />
+     
     <field-quick-date-interval-type-stub
       value="last30Days"
     />
+     
     <field-sampling-stub
       value="day"
     />
+     
     <field-alarm-metric-aggregate-function-stub
       value="avg"
     />
+     
     <field-filters-stub
       addable="true"
       editable="true"
@@ -67,8 +76,11 @@ exports[`pie-chart-widget-form Renders \`pie-chart-widget-form\` widget settings
     name="title"
     value=""
   />
+   
   <!---->
+   
   <!---->
+   
   <widget-settings-group-stub
     title="Metrics display"
   >
@@ -78,11 +90,13 @@ exports[`pie-chart-widget-form Renders \`pie-chart-widget-form\` widget settings
       value=""
       withcolor="true"
     />
+     
     <field-pie-show-mode-stub
       name="show_mode"
       value="numbers"
     />
   </widget-settings-group-stub>
+   
   <widget-settings-group-stub
     title="Advanced settings"
   >
@@ -92,15 +106,19 @@ exports[`pie-chart-widget-form Renders \`pie-chart-widget-form\` widget settings
       placeholder="Header title"
       value=""
     />
+     
     <field-quick-date-interval-type-stub
       value="last30Days"
     />
+     
     <field-sampling-stub
       value="day"
     />
+     
     <field-alarm-metric-aggregate-function-stub
       value="avg"
     />
+     
     <!---->
   </widget-settings-group-stub>
 </div>

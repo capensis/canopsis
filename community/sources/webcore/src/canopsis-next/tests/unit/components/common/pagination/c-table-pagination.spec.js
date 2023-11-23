@@ -73,6 +73,6 @@ describe('c-table-pagination', () => {
       propsData: { page: 3, itemsPerPage: 10, totalItems: 100 },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

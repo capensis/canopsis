@@ -170,7 +170,7 @@ describe('base-login', () => {
   it('Renders `base-login` with default state', () => {
     const wrapper = snapshotFactory({ store });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `base-login` with custom state', () => {
@@ -184,7 +184,7 @@ describe('base-login', () => {
       ]),
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `base-login` with error', async () => {
@@ -198,6 +198,6 @@ describe('base-login', () => {
 
     await wrapper.setData({ serverErrorMessage: 'Server error message' });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

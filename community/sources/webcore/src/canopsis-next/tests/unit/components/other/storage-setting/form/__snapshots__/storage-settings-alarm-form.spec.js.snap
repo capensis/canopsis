@@ -5,23 +5,27 @@ exports[`storage-settings-alarm-form Renders \`storage-settings-alarm-form\` wit
   class="layout c-information-block column"
 >
   <div
-    class="layout row"
+    class="layout"
   >
     <div
-      class="subheading font-weight-bold"
+      class="text-subtitle-1 font-weight-bold"
     >
+      
       Alarm data storage
+    
     </div>
+     
     <c-help-icon-stub
       color="info"
       icon-class="ml-2"
       max-width="300"
       text="When switched on, the resolved alarms data will be archived and/or deleted after the defined time period."
-      top="top"
+      top=""
     />
   </div>
+   
   <div
-    class="layout mt-2 row"
+    class="layout mt-2"
   >
     <span
       class="text--secondary"
@@ -33,11 +37,13 @@ exports[`storage-settings-alarm-form Renders \`storage-settings-alarm-form\` wit
       />
     </span>
   </div>
+    
   <c-enabled-duration-field-stub
     label="Archive resolved alarms data after"
     name="alarm.archive_after"
     value="[object Object]"
   />
+   
   <c-enabled-duration-field-stub
     label="Delete resolved alarms data after"
     name="alarm.delete_after"
@@ -51,27 +57,33 @@ exports[`storage-settings-alarm-form Renders \`storage-settings-alarm-form\` wit
   class="layout c-information-block column"
 >
   <div
-    class="layout row"
+    class="layout"
   >
     <div
-      class="subheading font-weight-bold"
+      class="text-subtitle-1 font-weight-bold"
     >
+      
       Alarm data storage
+    
     </div>
+     
     <c-help-icon-stub
       color="info"
       icon-class="ml-2"
       max-width="300"
       text="When switched on, the resolved alarms data will be archived and/or deleted after the defined time period."
-      top="top"
+      top=""
     />
   </div>
+   
   <!---->
+    
   <c-enabled-duration-field-stub
     label="Archive resolved alarms data after"
     name="alarm.archive_after"
     value="[object Object]"
   />
+   
   <c-enabled-duration-field-stub
     label="Delete resolved alarms data after"
     name="alarm.delete_after"

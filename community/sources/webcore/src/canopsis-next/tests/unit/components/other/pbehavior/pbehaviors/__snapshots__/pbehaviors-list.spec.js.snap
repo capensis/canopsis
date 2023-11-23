@@ -13,23 +13,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
       <c-advanced-search-field-stub
         columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
         query="[object Object]"
-        tooltip=<span>Help on the advanced research :</span>
+        tooltip="<span>Help on the advanced research :</span>
 <p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]
-<p>The "-" before the research is required</p>
+<p>The \\"-\\" before the research is required</p>
 <p>Operators : <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>
-<p>For querying patterns, use "pattern" keyword as the &lt;ColumnName&gt; alias</p>
-<p>Value's type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>
-<dl> <dt>Examples :</dt> <dt>- name = "name_1"</dt>
-  <dd>Pbehavior name are "name_1"</dd>
-  <dt>- rrule = "rrule_1"</dt>
-  <dd>Pbehavior rrule are "rrule_1"</dd>
-  <dt>- filter = "filter_1"</dt>
-  <dd>Pbehavior filter are "filter_1"</dd>
-  <dt>- type.name = "type_name_1"</dt>
-  <dd>Pbehavior type name are "type_name_1"</dd>
-  <dt>- reason.name = "reason_name_1"</dt>
-  <dd>Pbehavior reason name are "reason_name_1"</dd>
-</dl>
+<p>For querying patterns, use \\"pattern\\" keyword as the &lt;ColumnName&gt; alias</p>
+<p>Value's type : String between quote, Boolean (\\"TRUE\\", \\"FALSE\\"), Integer, Float, \\"NULL\\"</p>
+<dl>  <dt>Examples :</dt>  <dt>- name = \\"name_1\\"</dt>
+  <dd>Pbehavior name are \\"name_1\\"</dd>
+  <dt>- rrule = \\"rrule_1\\"</dt>
+  <dd>Pbehavior rrule are \\"rrule_1\\"</dd>
+  <dt>- filter = \\"filter_1\\"</dt>
+  <dd>Pbehavior filter are \\"filter_1\\"</dd>
+  <dt>- type.name = \\"type_name_1\\"</dt>
+  <dd>Pbehavior type name are \\"type_name_1\\"</dd>
+  <dt>- reason.name = \\"reason_name_1\\"</dt>
+  <dd>Pbehavior reason name are \\"reason_name_1\\"</dd></dl>"
       />
     </div>
       
@@ -52,6 +51,56 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
     <div
       class="v-data-table__wrapper"
     >
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="17"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="17"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="17"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="17"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="17"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="17"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="17"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="17"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="17"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="17"
+        tag="td"
+      />
       <table>
         <colgroup>
           <col
@@ -131,7 +180,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
                     check_box_outline_blank
                   </i>
                   <div
-                    class="v-input--selection-controls__ripple"
+                    class="v-input--selection-controls__ripple primary--text"
                   />
                 </div>
               </div>
@@ -477,7 +526,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
                     check_box_outline_blank
                   </i>
                   <div
-                    class="v-input--selection-controls__ripple"
+                    class="v-input--selection-controls__ripple primary--text"
                   />
                 </div>
               </div>
@@ -671,13 +720,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="17"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -697,7 +740,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
                     check_box_outline_blank
                   </i>
                   <div
-                    class="v-input--selection-controls__ripple"
+                    class="v-input--selection-controls__ripple primary--text"
                   />
                 </div>
               </div>
@@ -893,13 +936,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="17"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -919,7 +956,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
                     check_box_outline_blank
                   </i>
                   <div
-                    class="v-input--selection-controls__ripple"
+                    class="v-input--selection-controls__ripple primary--text"
                   />
                 </div>
               </div>
@@ -1113,13 +1150,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="17"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -1139,7 +1170,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
                     check_box_outline_blank
                   </i>
                   <div
-                    class="v-input--selection-controls__ripple"
+                    class="v-input--selection-controls__ripple primary--text"
                   />
                 </div>
               </div>
@@ -1335,13 +1366,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="17"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -1361,7 +1386,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
                     check_box_outline_blank
                   </i>
                   <div
-                    class="v-input--selection-controls__ripple"
+                    class="v-input--selection-controls__ripple primary--text"
                   />
                 </div>
               </div>
@@ -1555,13 +1580,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="17"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -1581,7 +1600,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
                     check_box_outline_blank
                   </i>
                   <div
-                    class="v-input--selection-controls__ripple"
+                    class="v-input--selection-controls__ripple primary--text"
                   />
                 </div>
               </div>
@@ -1777,13 +1796,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="17"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -1803,7 +1816,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
                     check_box_outline_blank
                   </i>
                   <div
-                    class="v-input--selection-controls__ripple"
+                    class="v-input--selection-controls__ripple primary--text"
                   />
                 </div>
               </div>
@@ -1997,13 +2010,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="17"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -2023,7 +2030,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
                     check_box_outline_blank
                   </i>
                   <div
-                    class="v-input--selection-controls__ripple"
+                    class="v-input--selection-controls__ripple primary--text"
                   />
                 </div>
               </div>
@@ -2219,13 +2226,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="17"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -2245,7 +2246,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
                     check_box_outline_blank
                   </i>
                   <div
-                    class="v-input--selection-controls__ripple"
+                    class="v-input--selection-controls__ripple primary--text"
                   />
                 </div>
               </div>
@@ -2439,13 +2440,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="17"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -2465,7 +2460,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
                     check_box_outline_blank
                   </i>
                   <div
-                    class="v-input--selection-controls__ripple"
+                    class="v-input--selection-controls__ripple primary--text"
                   />
                 </div>
               </div>
@@ -2661,13 +2656,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="17"
-              tag="td"
-            />
-          </tr>
+          />
         </tbody>
       </table>
     </div>
@@ -2694,23 +2683,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
       <c-advanced-search-field-stub
         columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
         query="[object Object]"
-        tooltip=<span>Help on the advanced research :</span>
+        tooltip="<span>Help on the advanced research :</span>
 <p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]
-<p>The "-" before the research is required</p>
+<p>The \\"-\\" before the research is required</p>
 <p>Operators : <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>
-<p>For querying patterns, use "pattern" keyword as the &lt;ColumnName&gt; alias</p>
-<p>Value's type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>
-<dl> <dt>Examples :</dt> <dt>- name = "name_1"</dt>
-  <dd>Pbehavior name are "name_1"</dd>
-  <dt>- rrule = "rrule_1"</dt>
-  <dd>Pbehavior rrule are "rrule_1"</dd>
-  <dt>- filter = "filter_1"</dt>
-  <dd>Pbehavior filter are "filter_1"</dd>
-  <dt>- type.name = "type_name_1"</dt>
-  <dd>Pbehavior type name are "type_name_1"</dd>
-  <dt>- reason.name = "reason_name_1"</dt>
-  <dd>Pbehavior reason name are "reason_name_1"</dd>
-</dl>
+<p>For querying patterns, use \\"pattern\\" keyword as the &lt;ColumnName&gt; alias</p>
+<p>Value's type : String between quote, Boolean (\\"TRUE\\", \\"FALSE\\"), Integer, Float, \\"NULL\\"</p>
+<dl>  <dt>Examples :</dt>  <dt>- name = \\"name_1\\"</dt>
+  <dd>Pbehavior name are \\"name_1\\"</dd>
+  <dt>- rrule = \\"rrule_1\\"</dt>
+  <dd>Pbehavior rrule are \\"rrule_1\\"</dd>
+  <dt>- filter = \\"filter_1\\"</dt>
+  <dd>Pbehavior filter are \\"filter_1\\"</dd>
+  <dt>- type.name = \\"type_name_1\\"</dt>
+  <dd>Pbehavior type name are \\"type_name_1\\"</dd>
+  <dt>- reason.name = \\"reason_name_1\\"</dt>
+  <dd>Pbehavior reason name are \\"reason_name_1\\"</dd></dl>"
       />
     </div>
       
@@ -3101,23 +3089,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
       <c-advanced-search-field-stub
         columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
         query="[object Object]"
-        tooltip=<span>Help on the advanced research :</span>
+        tooltip="<span>Help on the advanced research :</span>
 <p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]
-<p>The "-" before the research is required</p>
+<p>The \\"-\\" before the research is required</p>
 <p>Operators : <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>
-<p>For querying patterns, use "pattern" keyword as the &lt;ColumnName&gt; alias</p>
-<p>Value's type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>
-<dl> <dt>Examples :</dt> <dt>- name = "name_1"</dt>
-  <dd>Pbehavior name are "name_1"</dd>
-  <dt>- rrule = "rrule_1"</dt>
-  <dd>Pbehavior rrule are "rrule_1"</dd>
-  <dt>- filter = "filter_1"</dt>
-  <dd>Pbehavior filter are "filter_1"</dd>
-  <dt>- type.name = "type_name_1"</dt>
-  <dd>Pbehavior type name are "type_name_1"</dd>
-  <dt>- reason.name = "reason_name_1"</dt>
-  <dd>Pbehavior reason name are "reason_name_1"</dd>
-</dl>
+<p>For querying patterns, use \\"pattern\\" keyword as the &lt;ColumnName&gt; alias</p>
+<p>Value's type : String between quote, Boolean (\\"TRUE\\", \\"FALSE\\"), Integer, Float, \\"NULL\\"</p>
+<dl>  <dt>Examples :</dt>  <dt>- name = \\"name_1\\"</dt>
+  <dd>Pbehavior name are \\"name_1\\"</dd>
+  <dt>- rrule = \\"rrule_1\\"</dt>
+  <dd>Pbehavior rrule are \\"rrule_1\\"</dd>
+  <dt>- filter = \\"filter_1\\"</dt>
+  <dd>Pbehavior filter are \\"filter_1\\"</dd>
+  <dt>- type.name = \\"type_name_1\\"</dt>
+  <dd>Pbehavior type name are \\"type_name_1\\"</dd>
+  <dt>- reason.name = \\"reason_name_1\\"</dt>
+  <dd>Pbehavior reason name are \\"reason_name_1\\"</dd></dl>"
       />
     </div>
       
@@ -3140,6 +3127,56 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
     <div
       class="v-data-table__wrapper"
     >
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="16"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="16"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="16"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="16"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="16"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="16"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="16"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="16"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="16"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="16"
+        tag="td"
+      />
       <table>
         <colgroup>
           <col
@@ -3661,13 +3698,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="16"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -3854,13 +3885,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="16"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -4045,13 +4070,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="16"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -4238,13 +4257,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="16"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -4429,13 +4442,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="16"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -4622,13 +4629,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="16"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -4813,13 +4814,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="16"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -5006,13 +5001,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="16"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -5197,13 +5186,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="16"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -5390,13 +5373,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="16"
-              tag="td"
-            />
-          </tr>
+          />
         </tbody>
       </table>
     </div>
@@ -5423,23 +5400,22 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
       <c-advanced-search-field-stub
         columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
         query="[object Object]"
-        tooltip=<span>Help on the advanced research :</span>
+        tooltip="<span>Help on the advanced research :</span>
 <p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]
-<p>The "-" before the research is required</p>
+<p>The \\"-\\" before the research is required</p>
 <p>Operators : <=, <,=, !=,>=, >, LIKE (For MongoDB regular expression)</p>
-<p>For querying patterns, use "pattern" keyword as the &lt;ColumnName&gt; alias</p>
-<p>Value's type : String between quote, Boolean ("TRUE", "FALSE"), Integer, Float, "NULL"</p>
-<dl> <dt>Examples :</dt> <dt>- name = "name_1"</dt>
-  <dd>Pbehavior name are "name_1"</dd>
-  <dt>- rrule = "rrule_1"</dt>
-  <dd>Pbehavior rrule are "rrule_1"</dd>
-  <dt>- filter = "filter_1"</dt>
-  <dd>Pbehavior filter are "filter_1"</dd>
-  <dt>- type.name = "type_name_1"</dt>
-  <dd>Pbehavior type name are "type_name_1"</dd>
-  <dt>- reason.name = "reason_name_1"</dt>
-  <dd>Pbehavior reason name are "reason_name_1"</dd>
-</dl>
+<p>For querying patterns, use \\"pattern\\" keyword as the &lt;ColumnName&gt; alias</p>
+<p>Value's type : String between quote, Boolean (\\"TRUE\\", \\"FALSE\\"), Integer, Float, \\"NULL\\"</p>
+<dl>  <dt>Examples :</dt>  <dt>- name = \\"name_1\\"</dt>
+  <dd>Pbehavior name are \\"name_1\\"</dd>
+  <dt>- rrule = \\"rrule_1\\"</dt>
+  <dd>Pbehavior rrule are \\"rrule_1\\"</dd>
+  <dt>- filter = \\"filter_1\\"</dt>
+  <dd>Pbehavior filter are \\"filter_1\\"</dd>
+  <dt>- type.name = \\"type_name_1\\"</dt>
+  <dd>Pbehavior type name are \\"type_name_1\\"</dd>
+  <dt>- reason.name = \\"reason_name_1\\"</dt>
+  <dd>Pbehavior reason name are \\"reason_name_1\\"</dd></dl>"
       />
     </div>
       
@@ -5462,6 +5438,56 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
     <div
       class="v-data-table__wrapper"
     >
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="16"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="16"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="16"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="16"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="16"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="16"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="16"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="16"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="16"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="16"
+        tag="td"
+      />
       <table>
         <colgroup>
           <col
@@ -5987,13 +6013,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="16"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -6184,13 +6204,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="16"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -6379,13 +6393,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="16"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -6576,13 +6584,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="16"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -6771,13 +6773,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="16"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -6968,13 +6964,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="16"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -7163,13 +7153,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="16"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -7360,13 +7344,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="16"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -7555,13 +7533,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="16"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -7752,13 +7724,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="16"
-              tag="td"
-            />
-          </tr>
+          />
         </tbody>
       </table>
     </div>

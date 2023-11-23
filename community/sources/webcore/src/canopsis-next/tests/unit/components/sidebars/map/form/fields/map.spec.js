@@ -55,7 +55,7 @@ describe('field-map', () => {
   it('Renders `field-map` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `field-map` with custom props', () => {
@@ -65,6 +65,6 @@ describe('field-map', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

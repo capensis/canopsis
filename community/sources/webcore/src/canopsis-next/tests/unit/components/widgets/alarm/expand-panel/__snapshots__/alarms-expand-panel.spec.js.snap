@@ -2,85 +2,107 @@
 
 exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1`] = `
 <div
-  class="v-tabs expand-panel secondary lighten-2"
+  class="v-tabs expand-panel secondary lighten-2 v-tabs--centered theme--dark"
   editing="true"
 >
   <div
-    class="v-tabs__bar theme--dark secondary lighten-1"
+    class="v-item-group theme--dark v-slide-group v-tabs-bar v-tabs-bar--is-mobile white--text secondary lighten-1"
+    role="tablist"
   >
-    <transition-stub
-      name="fade-transition"
-    />
     <div
-      class="v-tabs__wrapper"
+      class="v-slide-group__prev v-slide-group__prev--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+    <div
+      class="v-slide-group__wrapper"
     >
       <div
-        class="v-tabs__container v-tabs__container--centered"
+        class="v-slide-group__content v-tabs-bar__content"
       >
         <div
-          class="v-tabs__slider-wrapper"
+          class="v-tabs-slider-wrapper"
           style="transition: none;"
         >
           <div
-            class="v-tabs__slider primary"
+            class="v-tabs-slider primary"
           />
         </div>
-        <div
-          class="v-tabs__div v-tour-alarmsExpandPanel-step-2"
+        <a
+          aria-selected="true"
+          class="v-tab v-tab--active v-tour-alarmsExpandPanel-step-2"
+          href="#moreInfos"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item v-tabs__item--active"
-            href="#moreInfos"
-          >
-            More infos
-          </a>
-        </div>
-        <div
-          class="v-tabs__div v-tour-alarmsExpandPanel-step-3"
+          
+    More infos
+  
+        </a>
+         
+        <a
+          aria-selected="false"
+          class="v-tab v-tour-alarmsExpandPanel-step-3"
+          href="#timeLine"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item"
-            href="#timeLine"
-          >
-            Timeline
-          </a>
-        </div>
+          
+    Timeline
+  
+        </a>
+         
         <!---->
+         
         <!---->
-        <div
-          class="v-tabs__div"
+         
+        <a
+          aria-selected="false"
+          class="v-tab"
+          href="#pbehavior"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item"
-            href="#pbehavior"
-          >
-            Pbehaviors
-          </a>
-        </div>
+          
+    Pbehaviors
+  
+        </a>
+         
         <!---->
+         
         <!---->
+         
         <!---->
+         
         <!---->
+         
       </div>
     </div>
-    <transition-stub
-      name="fade-transition"
-    />
+    <div
+      class="v-slide-group__next v-slide-group__next--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
   </div>
   <div
-    class="v-window"
+    class="v-window v-item-group theme--light v-tabs-items"
   >
     <div
       class="v-window__container"
     >
       <transition-stub
-        name=""
+        name="v-window-x-transition"
       >
         <div
-          class="v-window-item"
+          class="v-window-item v-window-item--active"
+          id="moreInfos"
         >
           <div
-            class="layout pa-3 row"
+            class="layout pa-3"
           >
             <div
               class="flex offset-xs0 xs12"
@@ -94,7 +116,9 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
                   <div
                     class="more-infos"
                   >
-                    <div />
+                    <div>
+                      template
+                    </div>
                   </div>
                 </div>
               </div>
@@ -102,15 +126,17 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
           </div>
         </div>
       </transition-stub>
+       
       <transition-stub
-        name=""
+        name="v-window-x-transition"
       >
         <div
           class="v-window-item"
+          id="timeLine"
           style="display: none;"
         >
           <div
-            class="layout pa-3 row"
+            class="layout pa-3"
           >
             <div
               class="flex offset-xs0 xs12"
@@ -121,37 +147,34 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
                 <div
                   aria-valuemax="100"
                   aria-valuemin="0"
-                  class="v-progress-linear"
+                  class="v-progress-linear v-progress-linear--visible theme--light"
                   role="progressbar"
-                  style="height: 3px;"
+                  style="height: 0px;"
                 >
                   <div
                     class="v-progress-linear__background primary"
-                    style="height: 0px; opacity: 0.3; width: 100%;"
+                    style="opacity: 0.3; left: 0%; width: 100%;"
                   />
                   <div
-                    class="v-progress-linear__bar"
+                    class="v-progress-linear__buffer"
                     style="height: 0px;"
+                  />
+                  <transition-stub
+                    name="fade-transition"
                   >
-                    <transition-stub
-                      name="fade-transition"
+                    <div
+                      class="v-progress-linear__indeterminate"
                     >
                       <div
-                        class="v-progress-linear__bar__indeterminate"
-                      >
-                        <div
-                          class="v-progress-linear__bar__indeterminate long primary"
-                        />
-                        <div
-                          class="v-progress-linear__bar__indeterminate short primary"
-                        />
-                      </div>
-                    </transition-stub>
-                    <transition-stub
-                      name="slide-x-transition"
-                    />
-                  </div>
+                        class="v-progress-linear__indeterminate long primary"
+                      />
+                      <div
+                        class="v-progress-linear__indeterminate short primary"
+                      />
+                    </div>
+                  </transition-stub>
                 </div>
+                 
                 <div
                   class="v-card__text"
                 >
@@ -164,17 +187,21 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
           </div>
         </div>
       </transition-stub>
+       
       <!---->
+       
       <!---->
+       
       <transition-stub
-        name=""
+        name="v-window-x-transition"
       >
         <div
           class="v-window-item"
+          id="pbehavior"
           style="display: none;"
         >
           <div
-            class="layout pa-3 secondary lighten-2 row"
+            class="layout pa-3 secondary lighten-2"
           >
             <div
               class="flex offset-xs0 xs12"
@@ -194,9 +221,13 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
           </div>
         </div>
       </transition-stub>
+       
       <!---->
+       
       <!---->
+       
       <!---->
+       
       <!---->
     </div>
   </div>
@@ -205,111 +236,136 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
 
 exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`] = `
 <div
-  class="v-tabs expand-panel secondary lighten-2"
+  class="v-tabs expand-panel secondary lighten-2 v-tabs--centered theme--dark"
 >
   <div
-    class="v-tabs__bar theme--dark secondary lighten-1"
+    class="v-item-group theme--dark v-slide-group v-tabs-bar v-tabs-bar--is-mobile white--text secondary lighten-1"
+    role="tablist"
   >
-    <transition-stub
-      name="fade-transition"
-    />
     <div
-      class="v-tabs__wrapper"
+      class="v-slide-group__prev v-slide-group__prev--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+    <div
+      class="v-slide-group__wrapper"
     >
       <div
-        class="v-tabs__container v-tabs__container--centered"
+        class="v-slide-group__content v-tabs-bar__content"
       >
         <div
-          class="v-tabs__slider-wrapper"
+          class="v-tabs-slider-wrapper"
           style="transition: none;"
         >
           <div
-            class="v-tabs__slider primary"
+            class="v-tabs-slider primary"
           />
         </div>
-        <div
-          class="v-tabs__div"
+        <a
+          aria-selected="true"
+          class="v-tab v-tab--active"
+          href="#moreInfos"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item v-tabs__item--active"
-            href="#moreInfos"
-          >
-            More infos
-          </a>
-        </div>
-        <div
-          class="v-tabs__div"
+          
+    More infos
+  
+        </a>
+         
+        <a
+          aria-selected="false"
+          class="v-tab"
+          href="#timeLine"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item"
-            href="#timeLine"
-          >
-            Timeline
-          </a>
-        </div>
+          
+    Timeline
+  
+        </a>
+         
         <!---->
-        <div
-          class="v-tabs__div"
+         
+        <a
+          aria-selected="false"
+          class="v-tab"
+          href="#ticketsDeclared"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item"
-            href="#ticketsDeclared"
-          >
-            Tickets declared
-          </a>
-        </div>
-        <div
-          class="v-tabs__div"
+          
+    Tickets declared
+  
+        </a>
+         
+        <a
+          aria-selected="false"
+          class="v-tab"
+          href="#pbehavior"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item"
-            href="#pbehavior"
-          >
-            Pbehaviors
-          </a>
-        </div>
+          
+    Pbehaviors
+  
+        </a>
+         
         <!---->
-        <div
-          class="v-tabs__div"
+         
+        <a
+          aria-selected="false"
+          class="v-tab"
+          href="#trackSource"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item"
-            href="#trackSource"
-          >
-            Track source
-          </a>
-        </div>
-        <div
-          class="v-tabs__div"
+          
+    Track source
+  
+        </a>
+         
+        <a
+          aria-selected="false"
+          class="v-tab"
+          href="#impactChain"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item"
-            href="#impactChain"
-          >
-            Impact chain
-          </a>
-        </div>
+          
+    Impact chain
+  
+        </a>
+         
         <!---->
+         
       </div>
     </div>
-    <transition-stub
-      name="fade-transition"
-    />
+    <div
+      class="v-slide-group__next v-slide-group__next--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
   </div>
   <div
-    class="v-window"
+    class="v-window v-item-group theme--light v-tabs-items"
   >
     <div
       class="v-window__container"
     >
       <transition-stub
-        name=""
+        name="v-window-x-transition"
       >
         <div
-          class="v-window-item"
+          class="v-window-item v-window-item--active"
+          id="moreInfos"
         >
           <div
-            class="layout pa-3 row"
+            class="layout pa-3"
           >
             <div
               class="flex offset-xs0 xs12"
@@ -323,7 +379,9 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
                   <div
                     class="more-infos"
                   >
-                    <div />
+                    <div>
+                      template
+                    </div>
                   </div>
                 </div>
               </div>
@@ -331,15 +389,17 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           </div>
         </div>
       </transition-stub>
+       
       <transition-stub
-        name=""
+        name="v-window-x-transition"
       >
         <div
           class="v-window-item"
+          id="timeLine"
           style="display: none;"
         >
           <div
-            class="layout pa-3 row"
+            class="layout pa-3"
           >
             <div
               class="flex offset-xs0 xs12"
@@ -350,37 +410,34 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
                 <div
                   aria-valuemax="100"
                   aria-valuemin="0"
-                  class="v-progress-linear"
+                  class="v-progress-linear v-progress-linear--visible theme--light"
                   role="progressbar"
-                  style="height: 3px;"
+                  style="height: 0px;"
                 >
                   <div
                     class="v-progress-linear__background primary"
-                    style="height: 0px; opacity: 0.3; width: 100%;"
+                    style="opacity: 0.3; left: 0%; width: 100%;"
                   />
                   <div
-                    class="v-progress-linear__bar"
+                    class="v-progress-linear__buffer"
                     style="height: 0px;"
+                  />
+                  <transition-stub
+                    name="fade-transition"
                   >
-                    <transition-stub
-                      name="fade-transition"
+                    <div
+                      class="v-progress-linear__indeterminate"
                     >
                       <div
-                        class="v-progress-linear__bar__indeterminate"
-                      >
-                        <div
-                          class="v-progress-linear__bar__indeterminate long primary"
-                        />
-                        <div
-                          class="v-progress-linear__bar__indeterminate short primary"
-                        />
-                      </div>
-                    </transition-stub>
-                    <transition-stub
-                      name="slide-x-transition"
-                    />
-                  </div>
+                        class="v-progress-linear__indeterminate long primary"
+                      />
+                      <div
+                        class="v-progress-linear__indeterminate short primary"
+                      />
+                    </div>
+                  </transition-stub>
                 </div>
+                 
                 <div
                   class="v-card__text"
                 >
@@ -393,15 +450,17 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           </div>
         </div>
       </transition-stub>
+       
       <transition-stub
-        name=""
+        name="v-window-x-transition"
       >
         <div
           class="v-window-item"
+          id="ticketsDeclared"
           style="display: none;"
         >
           <div
-            class="layout pa-3 row"
+            class="layout pa-3"
           >
             <div
               class="flex offset-xs0 xs12"
@@ -421,16 +480,19 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           </div>
         </div>
       </transition-stub>
+       
       <!---->
+       
       <transition-stub
-        name=""
+        name="v-window-x-transition"
       >
         <div
           class="v-window-item"
+          id="pbehavior"
           style="display: none;"
         >
           <div
-            class="layout pa-3 secondary lighten-2 row"
+            class="layout pa-3 secondary lighten-2"
           >
             <div
               class="flex offset-xs0 xs12"
@@ -450,16 +512,19 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           </div>
         </div>
       </transition-stub>
+       
       <!---->
+       
       <transition-stub
-        name=""
+        name="v-window-x-transition"
       >
         <div
           class="v-window-item"
+          id="trackSource"
           style="display: none;"
         >
           <div
-            class="layout pa-3 secondary lighten-2 row"
+            class="layout pa-3 secondary lighten-2"
           >
             <div
               class="flex offset-xs0 xs12"
@@ -482,15 +547,17 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           </div>
         </div>
       </transition-stub>
+       
       <transition-stub
-        name=""
+        name="v-window-x-transition"
       >
         <div
           class="v-window-item"
+          id="impactChain"
           style="display: none;"
         >
           <div
-            class="layout pa-3 secondary lighten-2 row"
+            class="layout pa-3 secondary lighten-2"
           >
             <div
               class="flex offset-xs0 xs12"
@@ -514,6 +581,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           </div>
         </div>
       </transition-stub>
+       
       <!---->
     </div>
   </div>
@@ -522,81 +590,103 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
 
 exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
 <div
-  class="v-tabs expand-panel secondary lighten-2"
+  class="v-tabs expand-panel secondary lighten-2 v-tabs--centered theme--dark"
 >
   <div
-    class="v-tabs__bar theme--dark secondary lighten-1"
+    class="v-item-group theme--dark v-slide-group v-tabs-bar v-tabs-bar--is-mobile white--text secondary lighten-1"
+    role="tablist"
   >
-    <transition-stub
-      name="fade-transition"
-    />
     <div
-      class="v-tabs__wrapper"
+      class="v-slide-group__prev v-slide-group__prev--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+    <div
+      class="v-slide-group__wrapper"
     >
       <div
-        class="v-tabs__container v-tabs__container--centered"
+        class="v-slide-group__content v-tabs-bar__content"
       >
         <div
-          class="v-tabs__slider-wrapper"
+          class="v-tabs-slider-wrapper"
           style="transition: none;"
         >
           <div
-            class="v-tabs__slider primary"
+            class="v-tabs-slider primary"
           />
         </div>
-        <div
-          class="v-tabs__div"
+        <a
+          aria-selected="true"
+          class="v-tab v-tab--active"
+          href="#moreInfos"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item v-tabs__item--active"
-            href="#moreInfos"
-          >
-            More infos
-          </a>
-        </div>
-        <div
-          class="v-tabs__div"
+          
+    More infos
+  
+        </a>
+         
+        <a
+          aria-selected="false"
+          class="v-tab"
+          href="#timeLine"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item"
-            href="#timeLine"
-          >
-            Timeline
-          </a>
-        </div>
+          
+    Timeline
+  
+        </a>
+         
         <!---->
+         
         <!---->
-        <div
-          class="v-tabs__div"
+         
+        <a
+          aria-selected="false"
+          class="v-tab"
+          href="#pbehavior"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item"
-            href="#pbehavior"
-          >
-            Pbehaviors
-          </a>
-        </div>
+          
+    Pbehaviors
+  
+        </a>
+         
         <!---->
+         
         <!---->
+         
         <!---->
-        <div
-          class="v-tabs__div"
+         
+        <a
+          aria-selected="false"
+          class="v-tab"
+          href="#entityGantt"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item"
-            href="#entityGantt"
-          >
-            Gantt chart
-          </a>
-        </div>
+          
+    Gantt chart
+  
+        </a>
+         
       </div>
     </div>
-    <transition-stub
-      name="fade-transition"
-    />
+    <div
+      class="v-slide-group__next v-slide-group__next--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
   </div>
   <div
-    class="v-window"
+    class="v-window v-item-group theme--light v-tabs-items"
   >
     <div
       class="v-window__container"
@@ -605,10 +695,11 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
         name=""
       >
         <div
-          class="v-window-item"
+          class="v-window-item v-window-item--active"
+          id="moreInfos"
         >
           <div
-            class="layout pa-3 row"
+            class="layout pa-3"
           >
             <div
               class="flex offset-xs0 xs12"
@@ -622,7 +713,9 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
                   <div
                     class="more-infos"
                   >
-                    <div />
+                    <div>
+                      template
+                    </div>
                   </div>
                 </div>
               </div>
@@ -630,15 +723,17 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
           </div>
         </div>
       </transition-stub>
+       
       <transition-stub
         name=""
       >
         <div
           class="v-window-item"
+          id="timeLine"
           style="display: none;"
         >
           <div
-            class="layout pa-3 row"
+            class="layout pa-3"
           >
             <div
               class="flex offset-xs0 xs12"
@@ -649,37 +744,34 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
                 <div
                   aria-valuemax="100"
                   aria-valuemin="0"
-                  class="v-progress-linear"
+                  class="v-progress-linear v-progress-linear--visible theme--light"
                   role="progressbar"
-                  style="height: 3px;"
+                  style="height: 0px;"
                 >
                   <div
                     class="v-progress-linear__background primary"
-                    style="height: 0px; opacity: 0.3; width: 100%;"
+                    style="opacity: 0.3; left: 0%; width: 100%;"
                   />
                   <div
-                    class="v-progress-linear__bar"
+                    class="v-progress-linear__buffer"
                     style="height: 0px;"
+                  />
+                  <transition-stub
+                    name="fade-transition"
                   >
-                    <transition-stub
-                      name="fade-transition"
+                    <div
+                      class="v-progress-linear__indeterminate"
                     >
                       <div
-                        class="v-progress-linear__bar__indeterminate"
-                      >
-                        <div
-                          class="v-progress-linear__bar__indeterminate long primary"
-                        />
-                        <div
-                          class="v-progress-linear__bar__indeterminate short primary"
-                        />
-                      </div>
-                    </transition-stub>
-                    <transition-stub
-                      name="slide-x-transition"
-                    />
-                  </div>
+                        class="v-progress-linear__indeterminate long primary"
+                      />
+                      <div
+                        class="v-progress-linear__indeterminate short primary"
+                      />
+                    </div>
+                  </transition-stub>
                 </div>
+                 
                 <div
                   class="v-card__text"
                 >
@@ -692,17 +784,21 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
           </div>
         </div>
       </transition-stub>
+       
       <!---->
+       
       <!---->
+       
       <transition-stub
         name=""
       >
         <div
           class="v-window-item"
+          id="pbehavior"
           style="display: none;"
         >
           <div
-            class="layout pa-3 secondary lighten-2 row"
+            class="layout pa-3 secondary lighten-2"
           >
             <div
               class="flex offset-xs0 xs12"
@@ -722,16 +818,41 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
           </div>
         </div>
       </transition-stub>
+       
       <!---->
+       
       <!---->
+       
       <!---->
+       
       <transition-stub
         name=""
       >
         <div
           class="v-window-item"
+          id="entityGantt"
           style="display: none;"
-        />
+        >
+          <div
+            class="layout pa-3 secondary lighten-2"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <entity-gantt-stub
+                    alarm="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </transition-stub>
     </div>
   </div>
@@ -740,72 +861,93 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
 
 exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props 1`] = `
 <div
-  class="v-tabs expand-panel secondary lighten-2"
+  class="v-tabs expand-panel secondary lighten-2 v-tabs--centered theme--dark"
 >
   <div
-    class="v-tabs__bar theme--dark secondary lighten-1"
+    class="v-item-group theme--dark v-slide-group v-tabs-bar v-tabs-bar--is-mobile white--text secondary lighten-1"
+    role="tablist"
   >
-    <transition-stub
-      name="fade-transition"
-    />
     <div
-      class="v-tabs__wrapper"
+      class="v-slide-group__prev v-slide-group__prev--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+    <div
+      class="v-slide-group__wrapper"
     >
       <div
-        class="v-tabs__container v-tabs__container--centered"
+        class="v-slide-group__content v-tabs-bar__content"
       >
         <div
-          class="v-tabs__slider-wrapper"
+          class="v-tabs-slider-wrapper"
           style="transition: none;"
         >
           <div
-            class="v-tabs__slider primary"
+            class="v-tabs-slider primary"
           />
         </div>
-        <div
-          class="v-tabs__div"
+        <a
+          aria-selected="true"
+          class="v-tab v-tab--active"
+          href="#moreInfos"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item v-tabs__item--active"
-            href="#moreInfos"
-          >
-            More infos
-          </a>
-        </div>
-        <div
-          class="v-tabs__div"
+          
+    More infos
+  
+        </a>
+         
+        <a
+          aria-selected="false"
+          class="v-tab"
+          href="#timeLine"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item"
-            href="#timeLine"
-          >
-            Timeline
-          </a>
-        </div>
+          
+    Timeline
+  
+        </a>
+         
         <!---->
+         
         <!---->
-        <div
-          class="v-tabs__div"
+         
+        <a
+          aria-selected="false"
+          class="v-tab"
+          href="#pbehavior"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item"
-            href="#pbehavior"
-          >
-            Pbehaviors
-          </a>
-        </div>
+          
+    Pbehaviors
+  
+        </a>
+         
         <!---->
+         
         <!---->
+         
         <!---->
+         
         <!---->
+         
       </div>
     </div>
-    <transition-stub
-      name="fade-transition"
-    />
+    <div
+      class="v-slide-group__next v-slide-group__next--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
   </div>
   <div
-    class="v-window"
+    class="v-window v-item-group theme--light v-tabs-items"
   >
     <div
       class="v-window__container"
@@ -814,10 +956,11 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
         name=""
       >
         <div
-          class="v-window-item"
+          class="v-window-item v-window-item--active"
+          id="moreInfos"
         >
           <div
-            class="layout pa-3 row"
+            class="layout pa-3"
           >
             <div
               class="flex offset-xs0 xs12"
@@ -831,7 +974,9 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
                   <div
                     class="more-infos"
                   >
-                    <div />
+                    <div>
+                      template
+                    </div>
                   </div>
                 </div>
               </div>
@@ -839,15 +984,17 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
           </div>
         </div>
       </transition-stub>
+       
       <transition-stub
         name=""
       >
         <div
           class="v-window-item"
+          id="timeLine"
           style="display: none;"
         >
           <div
-            class="layout pa-3 row"
+            class="layout pa-3"
           >
             <div
               class="flex offset-xs0 xs12"
@@ -858,37 +1005,34 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
                 <div
                   aria-valuemax="100"
                   aria-valuemin="0"
-                  class="v-progress-linear"
+                  class="v-progress-linear v-progress-linear--visible theme--light"
                   role="progressbar"
-                  style="height: 3px;"
+                  style="height: 0px;"
                 >
                   <div
                     class="v-progress-linear__background primary"
-                    style="height: 0px; opacity: 0.3; width: 100%;"
+                    style="opacity: 0.3; left: 0%; width: 100%;"
                   />
                   <div
-                    class="v-progress-linear__bar"
+                    class="v-progress-linear__buffer"
                     style="height: 0px;"
+                  />
+                  <transition-stub
+                    name="fade-transition"
                   >
-                    <transition-stub
-                      name="fade-transition"
+                    <div
+                      class="v-progress-linear__indeterminate"
                     >
                       <div
-                        class="v-progress-linear__bar__indeterminate"
-                      >
-                        <div
-                          class="v-progress-linear__bar__indeterminate long primary"
-                        />
-                        <div
-                          class="v-progress-linear__bar__indeterminate short primary"
-                        />
-                      </div>
-                    </transition-stub>
-                    <transition-stub
-                      name="slide-x-transition"
-                    />
-                  </div>
+                        class="v-progress-linear__indeterminate long primary"
+                      />
+                      <div
+                        class="v-progress-linear__indeterminate short primary"
+                      />
+                    </div>
+                  </transition-stub>
                 </div>
+                 
                 <div
                   class="v-card__text"
                 >
@@ -901,17 +1045,21 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
           </div>
         </div>
       </transition-stub>
+       
       <!---->
+       
       <!---->
+       
       <transition-stub
         name=""
       >
         <div
           class="v-window-item"
+          id="pbehavior"
           style="display: none;"
         >
           <div
-            class="layout pa-3 secondary lighten-2 row"
+            class="layout pa-3 secondary lighten-2"
           >
             <div
               class="flex offset-xs0 xs12"
@@ -931,9 +1079,13 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
           </div>
         </div>
       </transition-stub>
+       
       <!---->
+       
       <!---->
+       
       <!---->
+       
       <!---->
     </div>
   </div>

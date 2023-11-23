@@ -100,7 +100,7 @@ describe('flowchart-points-preview', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `flowchart-points-preview` with custom props', async () => {
@@ -122,6 +122,6 @@ describe('flowchart-points-preview', () => {
       width: 5,
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

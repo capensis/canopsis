@@ -10,6 +10,7 @@ exports[`pattern-form Renders \`pattern-form\` with alarm type 1`] = `
     label="Title"
     name="title"
   />
+   
   <c-alarm-patterns-field-stub
     check-count-name="alarm_pattern"
     name="alarm_pattern"
@@ -28,6 +29,7 @@ exports[`pattern-form Renders \`pattern-form\` with default props 1`] = `
     label="Title"
     name="title"
   />
+   
   <!---->
 </div>
 `;
@@ -42,6 +44,7 @@ exports[`pattern-form Renders \`pattern-form\` with entity type 1`] = `
     label="Title"
     name="title"
   />
+   
   <c-entity-patterns-field-stub
     check-count-name="entity_pattern"
     name="entity_pattern"
@@ -60,6 +63,7 @@ exports[`pattern-form Renders \`pattern-form\` with entity type 2`] = `
     label="Title"
     name="title"
   />
+   
   <c-pbehavior-patterns-field-stub
     check-count-name="pbehavior_pattern"
     name="pbehavior_pattern"
@@ -78,6 +82,7 @@ exports[`pattern-form Renders \`pattern-form\` with errors 1`] = `
     label="Title"
     name="title"
   />
+   
   <!---->
 </div>
 `;

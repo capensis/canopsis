@@ -2,9 +2,9 @@
 
 exports[`pattern-attribute-field Renders \`pattern-attribute-field\` with custom props 1`] = `
 <c-select-field-stub
-  autocomplete="autocomplete"
+  autocomplete=""
   disabled="true"
-  ellipsis="ellipsis"
+  ellipsis=""
   error-messages=""
   item-disabled="options.disabled"
   items="[object Object]"
@@ -18,8 +18,8 @@ exports[`pattern-attribute-field Renders \`pattern-attribute-field\` with custom
 
 exports[`pattern-attribute-field Renders \`pattern-attribute-field\` with default props 1`] = `
 <c-select-field-stub
-  autocomplete="autocomplete"
-  ellipsis="ellipsis"
+  autocomplete=""
+  ellipsis=""
   error-messages=""
   item-disabled="options.disabled"
   items=""

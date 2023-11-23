@@ -1,5 +1,3 @@
-import flushPromises from 'flush-promises';
-
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createInputStub } from '@unit/stubs/input';
 import { COLORS } from '@/config';
@@ -20,12 +18,10 @@ const selectTextField = wrapper => wrapper.find('.v-text-field');
 
 describe('c-date-picker-field', () => {
   const factory = generateShallowRenderer(CDatePickerField, {
-
     stubs,
     attachTo: document.body,
   });
   const snapshotFactory = generateRenderer(CDatePickerField, {
-
     attachTo: document.body,
   });
 
@@ -72,9 +68,8 @@ describe('c-date-picker-field', () => {
   test('Renders `c-date-picker-field` with default props', async () => {
     const wrapper = snapshotFactory();
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -96,9 +91,8 @@ describe('c-date-picker-field', () => {
       },
     });
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -109,9 +103,8 @@ describe('c-date-picker-field', () => {
       },
     });
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -136,9 +129,8 @@ describe('c-date-picker-field', () => {
       },
     ]);
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
     expect(wrapper).toMatchMenuSnapshot();
   });
 });

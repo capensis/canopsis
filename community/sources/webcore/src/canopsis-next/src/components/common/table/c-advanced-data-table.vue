@@ -65,6 +65,7 @@
       :table-class="tableClass"
       :dense="dense"
       :loader-height="loaderHeight"
+      checkbox-color="primary"
       @update:options="updateOptions"
     >
       <template

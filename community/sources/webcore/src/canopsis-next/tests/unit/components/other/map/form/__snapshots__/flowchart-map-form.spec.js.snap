@@ -5,9 +5,10 @@ exports[`flowchart-map-form Renders \`flowchart-map-form\` with form 1`] = `
   class="layout geomap-map-form column"
 >
   <c-name-field-stub
-    required="required"
+    required=""
     value="Mermaid"
   />
+   
   <flowchart-editor-stub
     form="[object Object]"
     name="parameters"

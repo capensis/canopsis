@@ -102,7 +102,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
       template="Symbol(custom)"
       templates=""
       title="Template - Weather item"
-      value=<div>block-template</div>
+      value="<div>block-template</div>"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
      
@@ -117,7 +117,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
       template="Symbol(custom)"
       templates=""
       title="Template - Modal"
-      value=<div>modal-template</div>
+      value="<div>modal-template</div>"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
      
@@ -132,7 +132,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
       template="Symbol(custom)"
       templates=""
       title="Template - Entities"
-      value=<div>entity-template</div>
+      value="<div>entity-template</div>"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
      
@@ -350,10 +350,10 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
       template="Symbol(custom)"
       templates=""
       title="Template - Weather item"
-      value=<p><strong><span style="font-size: 18px;">{{entity.name}}</span></strong></p>
-<hr id="null">
+      value="<p><strong><span style=\\"font-size: 18px;\\">{{entity.name}}</span></strong></p>
+<hr id=\\"null\\">
 <p>{{ entity.output }}</p>
-<p> Dernière mise à jour : {{ timestamp entity.last_update_date }}</p>
+<p> Dernière mise à jour : {{ timestamp entity.last_update_date }}</p>"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
      
@@ -383,9 +383,9 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
       template="Symbol(custom)"
       templates=""
       title="Template - Entities"
-      value=<ul>
-  <li><strong>Libellé</strong> : {{entity.name}}</li>
-</ul>
+      value="<ul>
+    <li><strong>Libellé</strong> : {{entity.name}}</li>
+</ul>"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
      

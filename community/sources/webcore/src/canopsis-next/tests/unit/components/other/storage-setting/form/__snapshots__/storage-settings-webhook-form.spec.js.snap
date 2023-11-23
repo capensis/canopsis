@@ -8,23 +8,27 @@ exports[`storage-settings-webhook-form Renders \`storage-settings-webhook-form\`
     class="layout c-information-block column"
   >
     <div
-      class="layout row"
+      class="layout"
     >
       <div
-        class="subheading font-weight-bold"
+        class="text-subtitle-1 font-weight-bold"
       >
-        Webhooks data storage
+        
+      Webhooks data storage
+    
       </div>
+       
       <c-help-icon-stub
         color="info"
         icon-class="ml-2"
         max-width="300"
         text="All webhook requests history is kept in logs"
-        top="top"
+        top=""
       />
     </div>
+     
     <div
-      class="layout mt-2 row"
+      class="layout mt-2"
     >
       <span
         class="text--secondary"
@@ -34,14 +38,15 @@ exports[`storage-settings-webhook-form Renders \`storage-settings-webhook-form\`
         />
       </span>
     </div>
+      
     <c-enabled-duration-field-stub
       help-text="All webhook requests history older than the defined time period will be deleted"
       label="Clear webhooks logs after"
       name="webhook.delete_after"
       value="[object Object]"
     />
+     
     <c-enabled-field-stub
-      label="Open auth data in logs"
       name="webhook.log_credentials"
       value="true"
     />
@@ -57,30 +62,35 @@ exports[`storage-settings-webhook-form Renders \`storage-settings-webhook-form\`
     class="layout c-information-block column"
   >
     <div
-      class="layout row"
+      class="layout"
     >
       <div
-        class="subheading font-weight-bold"
+        class="text-subtitle-1 font-weight-bold"
       >
-        Webhooks data storage
+        
+      Webhooks data storage
+    
       </div>
+       
       <c-help-icon-stub
         color="info"
         icon-class="ml-2"
         max-width="300"
         text="All webhook requests history is kept in logs"
-        top="top"
+        top=""
       />
     </div>
+     
     <!---->
+      
     <c-enabled-duration-field-stub
       help-text="All webhook requests history older than the defined time period will be deleted"
       label="Clear webhooks logs after"
       name="webhook.delete_after"
       value="[object Object]"
     />
+     
     <c-enabled-field-stub
-      label="Open auth data in logs"
       name="webhook.log_credentials"
     />
   </div>

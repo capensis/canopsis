@@ -14,9 +14,10 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
       readonly="true"
       required="true"
       value="[object Object]"
-      with-type="with-type"
+      with-type=""
     />
   </c-collapse-panel-stub>
+   
   <c-collapse-panel-stub
     outline-color="var(--v-error-base)"
     title="Entity patterns"
@@ -27,9 +28,10 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
       readonly="true"
       required="true"
       value="[object Object]"
-      with-type="with-type"
+      with-type=""
     />
   </c-collapse-panel-stub>
+   
   <c-collapse-panel-stub
     outline-color="var(--v-error-base)"
     title="Pbehavior patterns"
@@ -40,9 +42,10 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
       readonly="true"
       required="true"
       value="[object Object]"
-      with-type="with-type"
+      with-type=""
     />
   </c-collapse-panel-stub>
+   
   <c-collapse-panel-stub
     outline-color="var(--v-error-base)"
     title="Event patterns"
@@ -54,6 +57,7 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
       required="true"
     />
   </c-collapse-panel-stub>
+   
   <c-collapse-panel-stub
     outline-color="var(--v-error-base)"
     title="Total entity patterns"
@@ -63,9 +67,10 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
       name="name.total_entity_pattern"
       readonly="true"
       required="true"
-      with-type="with-type"
+      with-type=""
     />
   </c-collapse-panel-stub>
+   
   <c-collapse-panel-stub
     outline-color="var(--v-error-base)"
     title="Service weather patterns"
@@ -76,6 +81,7 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
       required="true"
     />
   </c-collapse-panel-stub>
+   
   <c-alert-stub
     transition="fade-transition"
     type="warning"
@@ -84,25 +90,30 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
       The patterns you've defined targets about 0 items. It can affect performance, are you sure ?
     </span>
   </c-alert-stub>
+   
   <div
-    class="layout row justify-end align-center"
+    class="layout justify-end align-center"
   >
     <span
-      class="caption text--secondary error--text"
+      class="text-caption text--secondary error--text"
     >
       At least one pattern has to be defined. Please define filter patterns for rule
     </span>
+     
     <!---->
+     
     <button
-      class="mr-0 ml-4 v-btn v-btn--disabled theme--light primary--text"
+      class="mr-0 ml-4 v-btn v-btn--disabled v-btn--has-bg theme--light v-size--default"
       disabled="disabled"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        Check filter
-      </div>
+        
+      Check filter
+    
+      </span>
     </button>
   </div>
 </div>
@@ -113,11 +124,17 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with default props 1`] = 
   class="layout c-patterns-field column"
 >
   <!---->
+   
   <!---->
+   
   <!---->
+   
   <!---->
+   
   <!---->
+   
   <!---->
+   
   <c-alert-stub
     transition="fade-transition"
     type="warning"
@@ -126,25 +143,28 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with default props 1`] = 
       The patterns you've defined targets about 0 items. It can affect performance, are you sure ?
     </span>
   </c-alert-stub>
+   
   <div
-    class="layout row justify-end align-center"
+    class="layout justify-end align-center"
   >
     <span
-      class="caption text--secondary"
-    >
-      
-    </span>
+      class="text-caption text--secondary"
+    />
+     
     <!---->
+     
     <button
-      class="mr-0 ml-4 v-btn v-btn--disabled theme--light primary--text"
+      class="mr-0 ml-4 v-btn v-btn--disabled v-btn--has-bg theme--light v-size--default"
       disabled="disabled"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        Check filter
-      </div>
+        
+      Check filter
+    
+      </span>
     </button>
   </div>
 </div>

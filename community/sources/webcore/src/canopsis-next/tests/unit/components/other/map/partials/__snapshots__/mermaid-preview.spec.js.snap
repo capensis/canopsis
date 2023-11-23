@@ -2,8 +2,8 @@
 
 exports[`mermaid-preview Renders \`mermaid-preview\` with custom props 1`] = `
 <c-zoom-overlay-stub
-  skip-alt="skip-alt"
-  skip-shift="skip-shift"
+  skip-alt=""
+  skip-shift=""
 >
   <panzoom-stub
     class="mermaid-preview"
@@ -24,6 +24,7 @@ Ctrl + Left mouse click + drag - pan the area"
       name="mermaid"
       value="code"
     />
+     
     <mermaid-points-preview-stub
       class="mermaid-preview__points"
       colorindicator="state"
@@ -39,8 +40,8 @@ Ctrl + Left mouse click + drag - pan the area"
 
 exports[`mermaid-preview Renders \`mermaid-preview\` with required props 1`] = `
 <c-zoom-overlay-stub
-  skip-alt="skip-alt"
-  skip-shift="skip-shift"
+  skip-alt=""
+  skip-shift=""
 >
   <panzoom-stub
     class="mermaid-preview"
@@ -61,6 +62,7 @@ Ctrl + Left mouse click + drag - pan the area"
       name="mermaid"
       value="code"
     />
+     
     <mermaid-points-preview-stub
       class="mermaid-preview__points"
       iconsize="24"

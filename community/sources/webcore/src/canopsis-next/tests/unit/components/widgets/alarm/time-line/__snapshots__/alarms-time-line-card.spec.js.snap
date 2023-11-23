@@ -8,10 +8,12 @@ exports[`alarms-time-line-card Renders \`alarms-time-line-card\` with html as me
     class="time-line-card__header text--secondary"
   >
     <!---->
+     
     <p>
       Periodic behavior enabled by system
     </p>
   </div>
+   
   <div
     class="time-line-card__content text--disabled"
   >
@@ -36,15 +38,19 @@ exports[`alarms-time-line-card Renders \`alarms-time-line-card\` with state but 
       type="state"
       value="3"
     />
+     
     <p>
       State increased by root
     </p>
   </div>
+   
   <div
     class="time-line-card__content text--disabled"
   >
     <p>
-      Idle rule Test all resource
+      
+        Idle rule Test all resource
+      
     </p>
   </div>
 </div>
@@ -62,15 +68,19 @@ exports[`alarms-time-line-card Renders \`alarms-time-line-card\` with state but 
       type="status"
       value="3"
     />
+     
     <p>
       Status decreased by system (role)
     </p>
   </div>
+   
   <div
     class="time-line-card__content text--disabled"
   >
     <p>
-      Status dec
+      
+        Status dec
+      
     </p>
   </div>
 </div>
@@ -84,29 +94,34 @@ exports[`alarms-time-line-card Renders \`alarms-time-line-card\` with state coun
     class="time-line-card__header text--secondary"
   >
     <p>
+      
       Cropped Severity (since last change of status)
+    
     </p>
   </div>
+   
   <div
     class="time-line-card__content text--disabled"
   >
     <table>
-      <tr>
-        <td>
-          State increased :
-        </td>
-        <td>
-          
-        </td>
-      </tr>
-      <tr>
-        <td>
-          State decreases :
-        </td>
-        <td>
-          
-        </td>
-      </tr>
+      <tbody>
+        <tr>
+          <td>
+            State increased :
+          </td>
+           
+          <td />
+        </tr>
+         
+        <tr>
+          <td>
+            State decreases :
+          </td>
+           
+          <td />
+        </tr>
+         
+      </tbody>
     </table>
   </div>
 </div>
@@ -120,61 +135,70 @@ exports[`alarms-time-line-card Renders \`alarms-time-line-card\` with states 1`]
     class="time-line-card__header text--secondary"
   >
     <p>
+      
       Cropped Severity (since last change of status)
+    
     </p>
   </div>
+   
   <div
     class="time-line-card__content text--disabled"
   >
     <table>
-      <tr>
-        <td>
-          State increased :
-        </td>
-        <td>
-          
-        </td>
-      </tr>
-      <tr>
-        <td>
-          State decreases :
-        </td>
-        <td>
-          
-        </td>
-      </tr>
-      <tr>
-        <td>
-          Severity critical :
-        </td>
-        <td>
-          critical
-        </td>
-      </tr>
-      <tr>
-        <td>
-          Severity major :
-        </td>
-        <td>
-          major
-        </td>
-      </tr>
-      <tr>
-        <td>
-          Severity minor :
-        </td>
-        <td>
-          minor
-        </td>
-      </tr>
-      <tr>
-        <td>
-          Severity ok :
-        </td>
-        <td>
-          ok
-        </td>
-      </tr>
+      <tbody>
+        <tr>
+          <td>
+            State increased :
+          </td>
+           
+          <td />
+        </tr>
+         
+        <tr>
+          <td>
+            State decreases :
+          </td>
+           
+          <td />
+        </tr>
+         
+        <tr>
+          <td>
+            Severity critical :
+          </td>
+           
+          <td>
+            critical
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Severity major :
+          </td>
+           
+          <td>
+            major
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Severity minor :
+          </td>
+           
+          <td>
+            minor
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Severity ok :
+          </td>
+           
+          <td>
+            ok
+          </td>
+        </tr>
+      </tbody>
     </table>
   </div>
 </div>
@@ -188,15 +212,19 @@ exports[`alarms-time-line-card Renders \`alarms-time-line-card\` without transla
     class="time-line-card__header text--secondary"
   >
     <!---->
+     
     <p>
       Periodic behavior enabled by system
     </p>
   </div>
+   
   <div
     class="time-line-card__content text--disabled"
   >
     <p>
-      Pbehavior Name pbh. Type: Default pause. Reason: Test reason
+      
+        Pbehavior Name pbh. Type: Default pause. Reason: Test reason
+      
     </p>
   </div>
 </div>

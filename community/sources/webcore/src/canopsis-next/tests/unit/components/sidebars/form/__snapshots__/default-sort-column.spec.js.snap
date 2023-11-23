@@ -56,7 +56,6 @@ exports[`default-sort-column Renders \`default-sort-column\` with custom props 1
               <div
                 aria-expanded="false"
                 aria-haspopup="listbox"
-                aria-owns="list-40"
                 class="v-input__slot"
                 role="button"
               >
@@ -65,7 +64,6 @@ exports[`default-sort-column Renders \`default-sort-column\` with custom props 1
                 >
                   <label
                     class="v-label v-label--active theme--light"
-                    for="input-40"
                     style="left: 0px; position: absolute;"
                   >
                     Columns label
@@ -81,7 +79,6 @@ exports[`default-sort-column Renders \`default-sort-column\` with custom props 1
                     <input
                       aria-readonly="false"
                       autocomplete="off"
-                      id="input-40"
                       readonly="readonly"
                       type="text"
                     />
@@ -140,7 +137,6 @@ exports[`default-sort-column Renders \`default-sort-column\` with custom props 1
               <div
                 aria-expanded="false"
                 aria-haspopup="listbox"
-                aria-owns="list-45"
                 class="v-input__slot"
                 role="button"
               >
@@ -158,7 +154,6 @@ exports[`default-sort-column Renders \`default-sort-column\` with custom props 1
                     <input
                       aria-readonly="false"
                       autocomplete="off"
-                      id="input-45"
                       readonly="readonly"
                       type="text"
                     />
@@ -266,7 +261,6 @@ exports[`default-sort-column Renders \`default-sort-column\` with default props 
               <div
                 aria-expanded="false"
                 aria-haspopup="listbox"
-                aria-owns="list-22"
                 class="v-input__slot"
                 role="button"
               >
@@ -279,7 +273,6 @@ exports[`default-sort-column Renders \`default-sort-column\` with default props 
                     <input
                       aria-readonly="false"
                       autocomplete="off"
-                      id="input-22"
                       readonly="readonly"
                       type="text"
                     />
@@ -337,7 +330,6 @@ exports[`default-sort-column Renders \`default-sort-column\` with default props 
               <div
                 aria-expanded="false"
                 aria-haspopup="listbox"
-                aria-owns="list-27"
                 class="v-input__slot"
                 role="button"
               >
@@ -355,7 +347,6 @@ exports[`default-sort-column Renders \`default-sort-column\` with default props 
                     <input
                       aria-readonly="false"
                       autocomplete="off"
-                      id="input-27"
                       readonly="readonly"
                       type="text"
                     />

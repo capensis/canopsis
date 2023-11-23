@@ -138,7 +138,7 @@ describe('variables-list', () => {
   test('Renders `variables-list` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `variables-list` with custom props', () => {
@@ -161,6 +161,6 @@ describe('variables-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

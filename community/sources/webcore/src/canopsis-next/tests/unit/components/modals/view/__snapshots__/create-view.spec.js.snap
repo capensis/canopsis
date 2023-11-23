@@ -6,7 +6,7 @@ exports[`create-view Renders \`create-view\` with empty modal 1`] = `
 >
   <div
     class="modal-wrapper"
-    close="close"
+    close=""
   >
     <div
       class="title"
@@ -29,19 +29,28 @@ exports[`create-view Renders \`create-view\` with empty modal 1`] = `
             class="flex xs12"
           >
             <div
-              class="v-alert info"
-              style="display: none;"
+              class="v-alert v-sheet theme--dark info"
+              role="alert"
             >
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light v-alert__icon"
+              <div
+                class="v-alert__wrapper"
               >
-                info
-              </i>
-              <div>
-                You're duplicating a view. All duplicated view's rows/widgets will be copied on the new view.
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-alert__icon material-icons theme--dark"
+                >
+                  info
+                </i>
+                <div
+                  class="v-alert__content"
+                >
+                  
+              You're duplicating a view. All duplicated view's rows/widgets will be copied on the new view.
+            
+                </div>
               </div>
             </div>
+             
             <view-form-stub
               form="[object Object]"
               groups=""
@@ -56,13 +65,17 @@ exports[`create-view Renders \`create-view\` with empty modal 1`] = `
     >
       <button
         class="v-btn"
-        depressed="depressed"
-        flat="flat"
+        depressed=""
+        text=""
         type="button"
       >
+        
         Cancel
+      
       </button>
+       
       <!---->
+       
       <!---->
     </div>
   </div>
@@ -75,7 +88,7 @@ exports[`create-view Renders \`create-view\` with title 1`] = `
 >
   <div
     class="modal-wrapper"
-    close="close"
+    close=""
   >
     <div
       class="title"
@@ -98,19 +111,28 @@ exports[`create-view Renders \`create-view\` with title 1`] = `
             class="flex xs12"
           >
             <div
-              class="v-alert info"
-              style="display: none;"
+              class="v-alert v-sheet theme--dark info"
+              role="alert"
             >
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light v-alert__icon"
+              <div
+                class="v-alert__wrapper"
               >
-                info
-              </i>
-              <div>
-                You're duplicating a view. All duplicated view's rows/widgets will be copied on the new view.
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-alert__icon material-icons theme--dark"
+                >
+                  info
+                </i>
+                <div
+                  class="v-alert__content"
+                >
+                  
+              You're duplicating a view. All duplicated view's rows/widgets will be copied on the new view.
+            
+                </div>
               </div>
             </div>
+             
             <view-form-stub
               form="[object Object]"
               groups=""
@@ -125,18 +147,24 @@ exports[`create-view Renders \`create-view\` with title 1`] = `
     >
       <button
         class="v-btn"
-        depressed="depressed"
-        flat="flat"
+        depressed=""
+        text=""
         type="button"
       >
+        
         Cancel
+      
       </button>
+       
       <button
         class="v-btn primary"
         type="submit"
       >
+        
         Submit
+      
       </button>
+       
       <!---->
     </div>
   </div>
@@ -149,7 +177,7 @@ exports[`create-view Renders \`create-view\` without rights 1`] = `
 >
   <div
     class="modal-wrapper"
-    close="close"
+    close=""
   >
     <div
       class="title"
@@ -172,19 +200,28 @@ exports[`create-view Renders \`create-view\` without rights 1`] = `
             class="flex xs12"
           >
             <div
-              class="v-alert info"
-              style="display: none;"
+              class="v-alert v-sheet theme--dark info"
+              role="alert"
             >
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light v-alert__icon"
+              <div
+                class="v-alert__wrapper"
               >
-                info
-              </i>
-              <div>
-                You're duplicating a view. All duplicated view's rows/widgets will be copied on the new view.
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-alert__icon material-icons theme--dark"
+                >
+                  info
+                </i>
+                <div
+                  class="v-alert__content"
+                >
+                  
+              You're duplicating a view. All duplicated view's rows/widgets will be copied on the new view.
+            
+                </div>
               </div>
             </div>
+             
             <view-form-stub
               form="[object Object]"
               groups=""
@@ -199,13 +236,17 @@ exports[`create-view Renders \`create-view\` without rights 1`] = `
     >
       <button
         class="v-btn"
-        depressed="depressed"
-        flat="flat"
+        depressed=""
+        text=""
         type="button"
       >
+        
         Cancel
+      
       </button>
+       
       <!---->
+       
       <!---->
     </div>
   </div>

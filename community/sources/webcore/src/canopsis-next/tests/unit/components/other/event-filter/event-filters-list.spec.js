@@ -10,7 +10,6 @@ const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,
   'c-search-field': true,
   'v-checkbox': true,
-  'v-checkbox-functional': true,
   'c-expand-btn': true,
   'c-action-btn': true,
   'c-enabled': true,
@@ -45,7 +44,7 @@ describe('event-filters-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `event-filters-list` with custom props', () => {
@@ -67,7 +66,7 @@ describe('event-filters-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `event-filters-list` with expanded panel', async () => {
@@ -92,7 +91,7 @@ describe('event-filters-list', () => {
 
     await expandButton.vm.$emit('expand');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `event-filters-list` with updatable and old_patterns', async () => {
@@ -111,6 +110,6 @@ describe('event-filters-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

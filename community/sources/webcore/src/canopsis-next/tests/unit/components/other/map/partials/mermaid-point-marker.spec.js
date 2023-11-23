@@ -40,7 +40,7 @@ describe('mermaid-point-marker', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `mermaid-point-marker` with custom props', () => {
@@ -57,6 +57,6 @@ describe('mermaid-point-marker', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });
