@@ -48,6 +48,7 @@
             :loading="loading"
             :small="small"
             :color="btnColor"
+            :dark="dark"
             icon
             @click.stop.prevent="$listeners.click"
           >
@@ -64,6 +65,7 @@
           :loading="loading"
           :small="small"
           :color="btnColor"
+          :dark="dark"
           icon
           @click.stop.prevent="$listeners.click"
         >
@@ -148,7 +150,7 @@ export default {
       type: String,
       default: '',
     },
-    customTooltipActivator: {
+    dark: {
       type: Boolean,
       default: false,
     },
