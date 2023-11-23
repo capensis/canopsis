@@ -44,7 +44,6 @@ exports[`pbehavior-comment-field Renders \`pbehavior-comment-field\` with custom
         </div>
       </div>
     </div>
-     
     <c-action-btn-stub
       type="delete"
     />
@@ -96,7 +95,6 @@ exports[`pbehavior-comment-field Renders \`pbehavior-comment-field\` with defaul
         </div>
       </div>
     </div>
-     
     <c-action-btn-stub
       type="delete"
     />

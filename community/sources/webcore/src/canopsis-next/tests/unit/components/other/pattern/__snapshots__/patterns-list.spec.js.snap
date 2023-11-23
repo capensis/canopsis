@@ -17,7 +17,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
         value="Filter"
       />
     </div>
-      
     <div
       class="flex xs12"
     >
@@ -28,7 +27,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
       </transition-stub>
     </div>
   </div>
-   
   <div
     class="v-data-table theme--light v-data-table--selectable"
     header-text="text"
@@ -237,9 +235,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -258,9 +253,7 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
         author-0
-      
             </td>
             <td
               class="text-start"
@@ -271,7 +264,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -305,9 +297,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -326,9 +315,7 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
         author-1
-      
             </td>
             <td
               class="text-start"
@@ -339,7 +326,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -373,9 +359,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -394,9 +377,7 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
         author-2
-      
             </td>
             <td
               class="text-start"
@@ -407,7 +388,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -441,9 +421,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -462,9 +439,7 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
         author-3
-      
             </td>
             <td
               class="text-start"
@@ -475,7 +450,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -509,9 +483,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -530,9 +501,7 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
         author-4
-      
             </td>
             <td
               class="text-start"
@@ -543,7 +512,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -577,9 +545,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -598,9 +563,7 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
         author-5
-      
             </td>
             <td
               class="text-start"
@@ -611,7 +574,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -645,9 +607,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -666,9 +625,7 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
         author-6
-      
             </td>
             <td
               class="text-start"
@@ -679,7 +636,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -713,9 +669,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -734,9 +687,7 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
         author-7
-      
             </td>
             <td
               class="text-start"
@@ -747,7 +698,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -781,9 +731,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -802,9 +749,7 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
         author-8
-      
             </td>
             <td
               class="text-start"
@@ -815,7 +760,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -849,9 +793,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -870,9 +811,7 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              
         author-9
-      
             </td>
             <td
               class="text-start"
@@ -883,7 +822,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -894,7 +832,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
       </table>
     </div>
   </div>
-   
   <c-table-pagination-stub
     items-per-page="10"
     page="2"
@@ -915,7 +852,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
     >
       <c-search-field-stub />
     </div>
-      
     <div
       class="flex xs12"
     >
@@ -926,7 +862,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
       </transition-stub>
     </div>
   </div>
-   
   <div
     class="v-data-table theme--light v-data-table--selectable"
     header-text="text"
@@ -1073,9 +1008,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -1100,7 +1032,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -1134,9 +1065,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -1161,7 +1089,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -1195,9 +1122,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -1222,7 +1146,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -1256,9 +1179,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -1283,7 +1203,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -1317,9 +1236,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -1344,7 +1260,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -1378,9 +1293,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -1405,7 +1317,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -1439,9 +1350,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -1466,7 +1374,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -1500,9 +1407,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -1527,7 +1431,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -1561,9 +1464,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -1588,7 +1488,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -1622,9 +1521,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              
-        
-      
             </td>
             <td
               class="text-start"
@@ -1649,7 +1545,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -1660,7 +1555,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
       </table>
     </div>
   </div>
-   
   <c-table-pagination-stub />
 </div>
 `;

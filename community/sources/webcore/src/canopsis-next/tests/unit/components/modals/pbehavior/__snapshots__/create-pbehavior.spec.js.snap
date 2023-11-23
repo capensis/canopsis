@@ -16,7 +16,6 @@ exports[`create-pbehavior Renders \`create-pbehavior\` with empty modal 1`] = `
         Create periodical behavior
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -24,7 +23,6 @@ exports[`create-pbehavior Renders \`create-pbehavior\` with empty modal 1`] = `
         form="[object Object]"
       />
     </div>
-     
     <div
       class="actions"
     >
@@ -35,12 +33,9 @@ exports[`create-pbehavior Renders \`create-pbehavior\` with empty modal 1`] = `
         <span
           class="v-btn__content"
         >
-          
         Cancel
-      
         </span>
       </button>
-       
       <button
         class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
@@ -48,9 +43,7 @@ exports[`create-pbehavior Renders \`create-pbehavior\` with empty modal 1`] = `
         <span
           class="v-btn__content"
         >
-          
         Submit
-      
         </span>
       </button>
     </div>
@@ -74,7 +67,6 @@ exports[`create-pbehavior Renders \`create-pbehavior\` with pbehavior 1`] = `
         Custom create pbehavior title
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -83,7 +75,6 @@ exports[`create-pbehavior Renders \`create-pbehavior\` with pbehavior 1`] = `
         nopattern="true"
       />
     </div>
-     
     <div
       class="actions"
     >
@@ -94,12 +85,9 @@ exports[`create-pbehavior Renders \`create-pbehavior\` with pbehavior 1`] = `
         <span
           class="v-btn__content"
         >
-          
         Cancel
-      
         </span>
       </button>
-       
       <button
         class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
@@ -107,9 +95,7 @@ exports[`create-pbehavior Renders \`create-pbehavior\` with pbehavior 1`] = `
         <span
           class="v-btn__content"
         >
-          
         Submit
-      
         </span>
       </button>
     </div>

@@ -7,7 +7,6 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
   >
     General
   </div>
-   
   <div
     class="v-data-table theme--light"
   >
@@ -154,7 +153,6 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
   >
     General
   </div>
-   
   <div
     class="v-data-table theme--light"
   >

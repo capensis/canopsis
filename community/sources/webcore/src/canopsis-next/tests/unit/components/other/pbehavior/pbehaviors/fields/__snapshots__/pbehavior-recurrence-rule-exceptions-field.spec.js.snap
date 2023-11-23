@@ -5,15 +5,11 @@ exports[`pbehavior-recurrence-rule-exceptions-field Renders \`pbehavior-exceptio
   <h3
     class="text--secondary"
   >
-    
     Exception dates
-  
   </h3>
-   
   <pbehavior-exceptions-list-stub
     exceptions="[object Object]"
   />
-   
   <div
     disabled="disabled"
     value="[object Object],[object Object]"
@@ -22,11 +18,8 @@ exports[`pbehavior-recurrence-rule-exceptions-field Renders \`pbehavior-exceptio
     <c-alert-stub
       type="info"
     >
-      
         No exceptions added yet
-      
     </c-alert-stub>
-     
     <button
       class="mr-2 v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
       type="button"
@@ -34,12 +27,9 @@ exports[`pbehavior-recurrence-rule-exceptions-field Renders \`pbehavior-exceptio
       <span
         class="v-btn__content"
       >
-        
         Add an exception date
-      
       </span>
     </button>
-     
     <pbehavior-recurrence-rule-exceptions-list-menu-stub
       value="[object Object]"
     />
@@ -52,13 +42,9 @@ exports[`pbehavior-recurrence-rule-exceptions-field Renders \`pbehavior-exceptio
   <h3
     class="text--secondary"
   >
-    
     Exception dates
-  
   </h3>
-   
   <!---->
-   
   <div
     value=""
   >
@@ -66,11 +52,8 @@ exports[`pbehavior-recurrence-rule-exceptions-field Renders \`pbehavior-exceptio
       type="info"
       value="true"
     >
-      
         No exceptions added yet
-      
     </c-alert-stub>
-     
     <button
       class="mr-2 v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
       type="button"
@@ -78,12 +61,9 @@ exports[`pbehavior-recurrence-rule-exceptions-field Renders \`pbehavior-exceptio
       <span
         class="v-btn__content"
       >
-        
         Add an exception date
-      
       </span>
     </button>
-     
     <pbehavior-recurrence-rule-exceptions-list-menu-stub
       value=""
     />

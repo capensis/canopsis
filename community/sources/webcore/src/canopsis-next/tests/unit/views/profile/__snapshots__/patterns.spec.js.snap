@@ -5,7 +5,6 @@ exports[`patterns Renders \`patterns\` corporate tab with permissions 1`] = `
   <c-page-header-stub>
     Patterns
   </c-page-header-stub>
-   
   <div
     class="layout wrap"
   >
@@ -50,11 +49,8 @@ exports[`patterns Renders \`patterns\` corporate tab with permissions 1`] = `
                   role="tab"
                   tabindex="0"
                 >
-                  
             My patterns
-          
                 </a>
-                  
                 <a
                   aria-selected="false"
                   class="v-tab"
@@ -62,11 +58,8 @@ exports[`patterns Renders \`patterns\` corporate tab with permissions 1`] = `
                   role="tab"
                   tabindex="0"
                 >
-                  
             Shared patterns
-          
                 </a>
-                 
               </div>
             </div>
             <div
@@ -104,7 +97,6 @@ exports[`patterns Renders \`patterns\` corporate tab with permissions 1`] = `
       </div>
     </div>
   </div>
-   
   <c-fab-expand-btn-stub
     has-access="true"
   >
@@ -114,14 +106,12 @@ exports[`patterns Renders \`patterns\` corporate tab with permissions 1`] = `
       tooltip="Create shared pbehavior filter"
       top=""
     />
-     
     <c-action-fab-btn-stub
       color="blue"
       icon="perm_identity"
       tooltip="Create shared entity filter"
       top=""
     />
-     
     <c-action-fab-btn-stub
       color="error"
       icon="notification_important"
@@ -137,7 +127,6 @@ exports[`patterns Renders \`patterns\` with permissions 1`] = `
   <c-page-header-stub>
     Patterns
   </c-page-header-stub>
-   
   <div
     class="layout wrap"
   >
@@ -182,11 +171,8 @@ exports[`patterns Renders \`patterns\` with permissions 1`] = `
                   role="tab"
                   tabindex="0"
                 >
-                  
             My patterns
-          
                 </a>
-                  
                 <a
                   aria-selected="false"
                   class="v-tab"
@@ -194,11 +180,8 @@ exports[`patterns Renders \`patterns\` with permissions 1`] = `
                   role="tab"
                   tabindex="0"
                 >
-                  
             Shared patterns
-          
                 </a>
-                 
               </div>
             </div>
             <div
@@ -236,7 +219,6 @@ exports[`patterns Renders \`patterns\` with permissions 1`] = `
       </div>
     </div>
   </div>
-   
   <c-fab-expand-btn-stub
     has-access="true"
   >
@@ -246,14 +228,12 @@ exports[`patterns Renders \`patterns\` with permissions 1`] = `
       tooltip="Create pbehavior filter"
       top=""
     />
-     
     <c-action-fab-btn-stub
       color="blue"
       icon="perm_identity"
       tooltip="Create entity filter"
       top=""
     />
-     
     <c-action-fab-btn-stub
       color="error"
       icon="notification_important"
@@ -269,7 +249,6 @@ exports[`patterns Renders \`patterns\` without permissions 1`] = `
   <c-page-header-stub>
     Patterns
   </c-page-header-stub>
-   
   <div
     class="layout wrap"
   >
@@ -283,7 +262,6 @@ exports[`patterns Renders \`patterns\` without permissions 1`] = `
       </div>
     </div>
   </div>
-   
   <c-fab-expand-btn-stub
     has-access="true"
   >
@@ -293,14 +271,12 @@ exports[`patterns Renders \`patterns\` without permissions 1`] = `
       tooltip="Create pbehavior filter"
       top=""
     />
-     
     <c-action-fab-btn-stub
       color="blue"
       icon="perm_identity"
       tooltip="Create entity filter"
       top=""
     />
-     
     <c-action-fab-btn-stub
       color="error"
       icon="notification_important"

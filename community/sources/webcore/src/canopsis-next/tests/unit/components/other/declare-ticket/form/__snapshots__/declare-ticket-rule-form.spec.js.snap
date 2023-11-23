@@ -35,22 +35,16 @@ exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with cust
           role="tab"
           tabindex="0"
         >
-          
     General
-  
         </div>
-         
         <div
           aria-selected="false"
           class="v-tab"
           role="tab"
           tabindex="0"
         >
-          
     Pattern
-  
         </div>
-         
         <div
           aria-selected="false"
           class="v-tab"
@@ -59,7 +53,6 @@ exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with cust
         >
           Test query
         </div>
-           
       </div>
     </div>
     <div
@@ -147,22 +140,16 @@ exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with defa
           role="tab"
           tabindex="0"
         >
-          
     General
-  
         </div>
-         
         <div
           aria-selected="false"
           class="v-tab"
           role="tab"
           tabindex="0"
         >
-          
     Pattern
-  
         </div>
-         
         <div
           aria-selected="false"
           class="v-tab"
@@ -171,7 +158,6 @@ exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with defa
         >
           Test query
         </div>
-           
       </div>
     </div>
     <div
@@ -259,22 +245,16 @@ exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with erro
           role="tab"
           tabindex="0"
         >
-          
     General
-  
         </div>
-         
         <div
           aria-selected="false"
           class="v-tab error--text"
           role="tab"
           tabindex="0"
         >
-          
     Pattern
-  
         </div>
-         
         <div
           aria-selected="true"
           class="v-tab v-tab--active"
@@ -283,7 +263,6 @@ exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with erro
         >
           Test query
         </div>
-           
       </div>
     </div>
     <div

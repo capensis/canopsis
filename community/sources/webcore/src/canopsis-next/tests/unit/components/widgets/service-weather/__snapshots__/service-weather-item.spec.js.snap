@@ -18,7 +18,6 @@ exports[`service-weather-item Renders \`service-weather-item\` with custom props
           class="service-weather-item__template pa-3"
         />
       </div>
-       
       <div
         class="layout service-weather-item__toolbar pt-1 pr-1 align-center"
       >
@@ -26,24 +25,19 @@ exports[`service-weather-item Renders \`service-weather-item\` with custom props
           color="white"
           top=""
         />
-         
         <impact-state-indicator-stub
           class="mr-1"
           value="3"
         />
       </div>
-       
       <i
         aria-hidden="true"
         class="v-icon notranslate service-weather-item__background material-icons theme--light white--text"
         style="font-size: 5em;"
       />
-       
       <!---->
     </div>
-     
     <!---->
-     
     <!---->
   </div>
 </card-with-see-alarms-btn-stub>
@@ -73,19 +67,15 @@ exports[`service-weather-item Renders \`service-weather-item\` with full access 
               />
             </strong>
           </p>
-           
           <hr
             id="null"
           />
-           
           <p />
-           
           <p>
              Dernière mise à jour : 
           </p>
         </div>
       </div>
-       
       <div
         class="layout service-weather-item__toolbar pt-1 pr-1 align-center"
       >
@@ -93,24 +83,19 @@ exports[`service-weather-item Renders \`service-weather-item\` with full access 
           color="white"
           top=""
         />
-         
         <impact-state-indicator-stub
           class="mr-1"
           value="0"
         />
       </div>
-       
       <i
         aria-hidden="true"
         class="v-icon notranslate service-weather-item__background material-icons theme--light white--text"
         style="font-size: 5em;"
       />
-       
       <!---->
     </div>
-     
     <!---->
-     
     <alarm-state-counters-stub
       counters="[object Object]"
       types="state-types"

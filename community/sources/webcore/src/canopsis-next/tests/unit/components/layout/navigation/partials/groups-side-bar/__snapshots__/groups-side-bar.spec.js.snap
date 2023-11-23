@@ -15,11 +15,9 @@ exports[`groups-side-bar Renders \`groups-side-bar\` with custom data 1`] = `
         <app-logo-stub
           class="logo"
         />
-         
         <logged-users-count-stub
           badgecolor="primary"
         />
-         
         <app-version-stub
           class="version"
         />
@@ -28,7 +26,6 @@ exports[`groups-side-bar Renders \`groups-side-bar\` with custom data 1`] = `
     <div
       class="v-navigation-drawer__content"
     >
-       
       <section
         class="side-bar__links"
       >
@@ -46,16 +43,13 @@ exports[`groups-side-bar Renders \`groups-side-bar\` with custom data 1`] = `
             group="[object Object]"
           />
         </c-draggable-list-field-stub>
-         
         <hr
           aria-orientation="horizontal"
           class="v-divider theme--light"
           role="separator"
         />
-         
         <groups-side-bar-playlists-stub />
       </section>
-       
       <groups-settings-button-stub
         buttonprops="[object Object]"
         tooltipright="true"
@@ -66,7 +60,6 @@ exports[`groups-side-bar Renders \`groups-side-bar\` with custom data 1`] = `
       class="v-navigation-drawer__border"
     />
   </nav>
-   
   <transition-stub
     name="fade-transition"
   >
@@ -98,11 +91,9 @@ exports[`groups-side-bar Renders \`groups-side-bar\` with default data 1`] = `
         <app-logo-stub
           class="logo"
         />
-         
         <logged-users-count-stub
           badgecolor="primary"
         />
-         
         <app-version-stub
           class="version"
         />
@@ -111,7 +102,6 @@ exports[`groups-side-bar Renders \`groups-side-bar\` with default data 1`] = `
     <div
       class="v-navigation-drawer__content"
     >
-       
       <section
         class="side-bar__links"
       >
@@ -122,16 +112,13 @@ exports[`groups-side-bar Renders \`groups-side-bar\` with default data 1`] = `
           disabled="true"
           value=""
         />
-         
         <hr
           aria-orientation="horizontal"
           class="v-divider theme--light"
           role="separator"
         />
-         
         <groups-side-bar-playlists-stub />
       </section>
-       
       <groups-settings-button-stub
         buttonprops="[object Object]"
         tooltipright="true"
@@ -142,7 +129,6 @@ exports[`groups-side-bar Renders \`groups-side-bar\` with default data 1`] = `
       class="v-navigation-drawer__border"
     />
   </nav>
-   
   <transition-stub
     name="fade-transition"
   >

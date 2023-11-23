@@ -34,7 +34,6 @@ exports[`groups-side-bar-playlists Renders \`groups-side-bar-playlists\` with cu
         </div>
       </transition-stub>
     </button>
-     
     <transition-stub
       name="expand-transition"
     >

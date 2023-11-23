@@ -12,16 +12,13 @@ exports[`kpi-rating-filters Renders \`kpi-rating-filters\` with query 1`] = `
       quick-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       value="[object Object]"
     />
-     
     <c-filter-field-stub
       class="mr-4 kpi-rating-toolbar__filters"
     />
-     
     <kpi-rating-criteria-field-stub
       class="mr-4 kpi-rating-toolbar__criteria"
       mandatory="true"
     />
-     
     <kpi-rating-metric-field-stub
       class="mr-4 kpi-rating-toolbar__metric"
       hidedetails="true"
@@ -29,7 +26,6 @@ exports[`kpi-rating-filters Renders \`kpi-rating-filters\` with query 1`] = `
       type="0"
       value="ticket_active_alarms"
     />
-     
     <c-items-per-page-field-stub
       class="mt-4"
       value="5"
@@ -50,17 +46,14 @@ exports[`kpi-rating-filters Renders \`kpi-rating-filters\` with total user activ
       quick-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       value="[object Object]"
     />
-     
     <c-filter-field-stub
       class="mr-4 kpi-rating-toolbar__filters"
       disabled="true"
     />
-     
     <kpi-rating-criteria-field-stub
       class="mr-4 kpi-rating-toolbar__criteria"
       mandatory="true"
     />
-     
     <kpi-rating-metric-field-stub
       class="mr-4 kpi-rating-toolbar__metric"
       hidedetails="true"
@@ -68,7 +61,6 @@ exports[`kpi-rating-filters Renders \`kpi-rating-filters\` with total user activ
       type="0"
       value="total_user_activity"
     />
-     
     <c-items-per-page-field-stub
       class="mt-4"
       value="5"

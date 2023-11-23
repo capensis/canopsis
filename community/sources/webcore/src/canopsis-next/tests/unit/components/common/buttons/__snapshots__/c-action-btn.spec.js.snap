@@ -8,7 +8,6 @@ exports[`c-action-btn Renders \`c-action-btn\` with badge. 1`] = `
   <span
     class="v-badge c-action-btn__badge v-badge--overlap theme--light"
   >
-     
     <button
       class="v-btn ma-0 c-action-btn__button"
       icon=""
@@ -44,7 +43,6 @@ exports[`c-action-btn Renders \`c-action-btn\` with badge. 1`] = `
             >
               priority_high
             </i>
-              
             <span>
               BADGE TOOLTIP
             </span>
@@ -53,7 +51,6 @@ exports[`c-action-btn Renders \`c-action-btn\` with badge. 1`] = `
       </transition-stub>
     </span>
   </span>
-    
   <span>
     TOOLTIP
   </span>
@@ -78,7 +75,6 @@ exports[`c-action-btn Renders \`c-action-btn\` with custom type correctly. 1`] =
       test_icon
     </i>
   </button>
-    
   <span>
     tooltip
   </span>
@@ -103,7 +99,6 @@ exports[`c-action-btn Renders \`c-action-btn\` with default delete type correctl
       delete
     </i>
   </button>
-    
   <span>
     Delete
   </span>
@@ -128,7 +123,6 @@ exports[`c-action-btn Renders \`c-action-btn\` with default duplicate type corre
       file_copy
     </i>
   </button>
-    
   <span>
     Duplicate
   </span>
@@ -153,7 +147,6 @@ exports[`c-action-btn Renders \`c-action-btn\` with default edit type correctly.
       edit
     </i>
   </button>
-    
   <span>
     Edit
   </span>

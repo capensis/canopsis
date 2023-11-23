@@ -16,7 +16,6 @@ exports[`c-duration-field Renders \`c-duration-field\` with custom props 1`] = `
       value="12"
     />
   </div>
-   
   <div
     class="flex xs5"
   >
@@ -136,7 +135,6 @@ exports[`c-duration-field Renders \`c-duration-field\` with default props 1`] = 
       value="1"
     />
   </div>
-   
   <div
     class="flex xs5"
   >
@@ -232,7 +230,6 @@ exports[`c-duration-field Renders \`c-duration-field\` with duration value as st
       value="asd"
     />
   </div>
-   
   <div
     class="flex xs5"
   >
@@ -325,7 +322,6 @@ exports[`c-duration-field Renders \`c-duration-field\` with duration value as un
       required="true"
     />
   </div>
-   
   <div
     class="flex xs5"
   >
@@ -420,7 +416,6 @@ exports[`c-duration-field Renders \`c-duration-field\` with errors 1`] = `
       value="1"
     />
   </div>
-   
   <div
     class="flex xs5"
   >
@@ -516,7 +511,6 @@ exports[`c-duration-field Renders \`c-duration-field\` with long time list 1`] =
       value="1"
     />
   </div>
-   
   <div
     class="flex xs5"
   >
@@ -612,7 +606,6 @@ exports[`c-duration-field Renders \`c-duration-field\` with value is greater tha
       value="101"
     />
   </div>
-   
   <div
     class="flex xs5"
   >

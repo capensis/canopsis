@@ -14,7 +14,6 @@ exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-
         value="true"
       />
     </div>
-     
     <div
       class="flex xs6"
     >
@@ -24,7 +23,6 @@ exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-
       />
     </div>
   </div>
-   
   <div
     class="layout mb-2"
   >
@@ -36,7 +34,6 @@ exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-
         value=""
       />
     </div>
-     
     <div
       class="flex xs4"
     >
@@ -47,7 +44,6 @@ exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-
       />
     </div>
   </div>
-   
   <declare-ticket-rule-webhooks-field-stub
     name="webhooks"
     webhooks=""
@@ -69,7 +65,6 @@ exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-
         value="true"
       />
     </div>
-     
     <div
       class="flex xs6"
     >
@@ -79,7 +74,6 @@ exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-
       />
     </div>
   </div>
-   
   <div
     class="layout mb-2"
   >
@@ -91,7 +85,6 @@ exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-
         value="name"
       />
     </div>
-     
     <div
       class="flex xs4"
     >
@@ -102,7 +95,6 @@ exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-
       />
     </div>
   </div>
-   
   <declare-ticket-rule-webhooks-field-stub
     name="webhooks"
     webhooks="[object Object]"

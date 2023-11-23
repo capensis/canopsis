@@ -11,14 +11,12 @@ exports[`geomap-preview Renders \`geomap-preview\` with all point types and colo
       options="[object Object]"
       position="topleft"
     />
-     
     <geomap-control-layers-stub
       autozindex="true"
       collapsed="true"
       options="[object Object]"
       position="topright"
     />
-     
     <geomap-tile-layer-stub
       layertype="base"
       name="Open street map"
@@ -33,7 +31,6 @@ exports[`geomap-preview Renders \`geomap-preview\` with all point types and colo
       visible="true"
       zindex="1"
     />
-     
     <geomap-control-stub
       disableclickpropagation="true"
       options="[object Object]"
@@ -49,7 +46,6 @@ Left mouse click + drag - pan the area"
         top=""
       />
     </geomap-control-stub>
-     
     <geomap-cluster-group-stub
       clusterstyle="[object Object]"
       layertype="overlay"
@@ -168,7 +164,6 @@ Left mouse click + drag - pan the area"
         </geomap-icon-stub>
       </geomap-marker-stub>
     </geomap-cluster-group-stub>
-     
     <!---->
   </div>
 </c-zoom-overlay-stub>
@@ -185,14 +180,12 @@ exports[`geomap-preview Renders \`geomap-preview\` with all point types and colo
       options="[object Object]"
       position="topleft"
     />
-     
     <geomap-control-layers-stub
       autozindex="true"
       collapsed="true"
       options="[object Object]"
       position="topright"
     />
-     
     <geomap-tile-layer-stub
       layertype="base"
       name="Open street map"
@@ -207,7 +200,6 @@ exports[`geomap-preview Renders \`geomap-preview\` with all point types and colo
       visible="true"
       zindex="1"
     />
-     
     <geomap-control-stub
       disableclickpropagation="true"
       options="[object Object]"
@@ -223,7 +215,6 @@ Left mouse click + drag - pan the area"
         top=""
       />
     </geomap-control-stub>
-     
     <geomap-cluster-group-stub
       clusterstyle="[object Object]"
       layertype="overlay"
@@ -350,7 +341,6 @@ Left mouse click + drag - pan the area"
         </geomap-icon-stub>
       </geomap-marker-stub>
     </geomap-cluster-group-stub>
-     
     <!---->
   </div>
 </c-zoom-overlay-stub>
@@ -367,14 +357,12 @@ exports[`geomap-preview Renders \`geomap-preview\` with all point types and pbeh
       options="[object Object]"
       position="topleft"
     />
-     
     <geomap-control-layers-stub
       autozindex="true"
       collapsed="true"
       options="[object Object]"
       position="topright"
     />
-     
     <geomap-tile-layer-stub
       layertype="base"
       name="Open street map"
@@ -389,7 +377,6 @@ exports[`geomap-preview Renders \`geomap-preview\` with all point types and pbeh
       visible="true"
       zindex="1"
     />
-     
     <geomap-control-stub
       disableclickpropagation="true"
       options="[object Object]"
@@ -405,7 +392,6 @@ Left mouse click + drag - pan the area"
         top=""
       />
     </geomap-control-stub>
-     
     <geomap-cluster-group-stub
       clusterstyle="[object Object]"
       layertype="overlay"
@@ -531,7 +517,6 @@ Left mouse click + drag - pan the area"
         </geomap-icon-stub>
       </geomap-marker-stub>
     </geomap-cluster-group-stub>
-     
     <!---->
   </div>
 </c-zoom-overlay-stub>
@@ -550,7 +535,6 @@ exports[`geomap-preview Renders \`geomap-preview\` with custom props 1`] = `
       options="[object Object]"
       position="topleft"
     />
-     
     <geomap-control-layers-stub
       autozindex="true"
       collapsed="true"
@@ -558,7 +542,6 @@ exports[`geomap-preview Renders \`geomap-preview\` with custom props 1`] = `
       options="[object Object]"
       position="topright"
     />
-     
     <geomap-tile-layer-stub
       layertype="base"
       name="Open street map"
@@ -573,7 +556,6 @@ exports[`geomap-preview Renders \`geomap-preview\` with custom props 1`] = `
       visible="true"
       zindex="1"
     />
-     
     <geomap-control-stub
       disableclickpropagation="true"
       options="[object Object]"
@@ -589,7 +571,6 @@ Left mouse click + drag - pan the area"
         top=""
       />
     </geomap-control-stub>
-     
     <geomap-cluster-group-stub
       layertype="overlay"
       name="Map"
@@ -622,7 +603,6 @@ Left mouse click + drag - pan the area"
         </geomap-icon-stub>
       </geomap-marker-stub>
     </geomap-cluster-group-stub>
-     
     <point-popup-dialog-stub
       colorindicator="impact_state"
       point="[object Object]"
@@ -646,14 +626,12 @@ exports[`geomap-preview Renders \`geomap-preview\` with required props 1`] = `
       options="[object Object]"
       position="topleft"
     />
-     
     <geomap-control-layers-stub
       autozindex="true"
       collapsed="true"
       options="[object Object]"
       position="topright"
     />
-     
     <geomap-tile-layer-stub
       layertype="base"
       name="Open street map"
@@ -668,7 +646,6 @@ exports[`geomap-preview Renders \`geomap-preview\` with required props 1`] = `
       visible="true"
       zindex="1"
     />
-     
     <geomap-control-stub
       disableclickpropagation="true"
       options="[object Object]"
@@ -684,14 +661,12 @@ Left mouse click + drag - pan the area"
         top=""
       />
     </geomap-control-stub>
-     
     <geomap-cluster-group-stub
       layertype="overlay"
       name="Points"
       pane="overlayPane"
       visible="true"
     />
-     
     <!---->
   </div>
 </c-zoom-overlay-stub>

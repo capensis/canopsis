@@ -25,7 +25,6 @@ exports[`service-entity-header Renders \`service-entity-header\` with custom pro
       </div>
     </div>
   </div>
-   
   <div
     class="flex pa-2"
   >
@@ -35,7 +34,6 @@ exports[`service-entity-header Renders \`service-entity-header\` with custom pro
       style="font-size: 16px;"
     />
   </div>
-   
   <div
     class="flex pl-1 white--text text-subtitle-1 xs12"
   >
@@ -45,11 +43,8 @@ exports[`service-entity-header Renders \`service-entity-header\` with custom pro
       <div
         class="mr-1 entity-name"
       >
-        
         entity_name_field
-      
       </div>
-       
       <button
         class="mx-1 v-btn v-btn--icon v-btn--round theme--dark v-size--small purple--text"
         type="button"
@@ -98,12 +93,10 @@ exports[`service-entity-header Renders \`service-entity-header\` with custom pro
           </i>
         </span>
       </button>
-       
       <c-no-events-icon-stub
         color="white"
         top=""
       />
-       
       <div>
         <div
           class="v-alert entity-alert ma-0 px-2 py-1 v-sheet theme--light black"
@@ -115,9 +108,7 @@ exports[`service-entity-header Renders \`service-entity-header\` with custom pro
             <div
               class="v-alert__content"
             >
-              
           This action cannot be applied
-        
             </div>
             <button
               aria-label="Close"
@@ -165,7 +156,6 @@ exports[`service-entity-header Renders \`service-entity-header\` with default pr
       </div>
     </div>
   </div>
-   
   <div
     class="flex pa-2"
   >
@@ -175,7 +165,6 @@ exports[`service-entity-header Renders \`service-entity-header\` with default pr
       style="font-size: 16px;"
     />
   </div>
-   
   <div
     class="flex pl-1 white--text text-subtitle-1 xs12"
   >
@@ -185,16 +174,12 @@ exports[`service-entity-header Renders \`service-entity-header\` with default pr
       <div
         class="mr-1 entity-name"
       >
-        
         name
-      
       </div>
-        
       <c-no-events-icon-stub
         color="white"
         top=""
       />
-       
       <div>
         <!---->
       </div>

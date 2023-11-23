@@ -21,7 +21,6 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with cu
         startrules="[object Object]"
       />
     </div>
-     
     <div
       class="flex pl-2"
     >
@@ -32,10 +31,8 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with cu
         value=""
       />
     </div>
-     
     <!---->
   </div>
-   
   <div
     class="layout"
   >
@@ -78,7 +75,6 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with cu
         startlabel="Begin"
       />
     </div>
-     
     <div
       class="flex pl-2"
     >
@@ -86,10 +82,8 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with cu
         value="type"
       />
     </div>
-     
     <!---->
   </div>
-   
   <div
     class="layout"
   >
@@ -133,9 +127,7 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with de
         startrules="[object Object]"
       />
     </div>
-     
     <!---->
-     
     <div
       class="flex pbehavior-exception-field__actions"
     >
@@ -152,7 +144,6 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with de
           >
             edit
           </i>
-           
           <i
             aria-hidden="true"
             class="v-icon notranslate material-icons theme--light primary--text"
@@ -161,7 +152,6 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with de
           </i>
         </span>
       </button>
-       
       <button
         class="v-btn-legacy-m--y v-btn v-btn--icon v-btn--round theme--light v-size--default error--text"
         type="button"
@@ -179,7 +169,6 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with de
       </button>
     </div>
   </div>
-   
   <div
     class="layout"
   >

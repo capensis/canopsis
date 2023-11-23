@@ -16,7 +16,6 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with empty modal 
         Assign patterns
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -28,7 +27,6 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with empty modal 
         with-alarm=""
         with-entity=""
       />
-       
       <c-collapse-panel-stub
         class="mt-3"
         title="Pbehavior types"
@@ -38,7 +36,6 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with empty modal 
         />
       </c-collapse-panel-stub>
     </div>
-     
     <div
       class="actions"
     >
@@ -49,12 +46,9 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with empty modal 
         <span
           class="v-btn__content"
         >
-          
         Cancel
-      
         </span>
       </button>
-       
       <button
         class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
@@ -62,9 +56,7 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with empty modal 
         <span
           class="v-btn__content"
         >
-          
         Submit
-      
         </span>
       </button>
     </div>
@@ -88,7 +80,6 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with instruction 
         Assign patterns
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -100,7 +91,6 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with instruction 
         with-alarm=""
         with-entity=""
       />
-       
       <c-collapse-panel-stub
         class="mt-3"
         title="Pbehavior types"
@@ -110,7 +100,6 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with instruction 
         />
       </c-collapse-panel-stub>
     </div>
-     
     <div
       class="actions"
     >
@@ -121,12 +110,9 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with instruction 
         <span
           class="v-btn__content"
         >
-          
         Cancel
-      
         </span>
       </button>
-       
       <button
         class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
@@ -134,9 +120,7 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with instruction 
         <span
           class="v-btn__content"
         >
-          
         Submit
-      
         </span>
       </button>
     </div>
@@ -160,7 +144,6 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with title 1`] = 
         Remediation patterns title
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -172,7 +155,6 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with title 1`] = 
         with-alarm=""
         with-entity=""
       />
-       
       <c-collapse-panel-stub
         class="mt-3"
         title="Pbehavior types"
@@ -182,7 +164,6 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with title 1`] = 
         />
       </c-collapse-panel-stub>
     </div>
-     
     <div
       class="actions"
     >
@@ -193,12 +174,9 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with title 1`] = 
         <span
           class="v-btn__content"
         >
-          
         Cancel
-      
         </span>
       </button>
-       
       <button
         class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
@@ -206,9 +184,7 @@ exports[`remediation-patterns Renders \`remediation-patterns\` with title 1`] = 
         <span
           class="v-btn__content"
         >
-          
         Submit
-      
         </span>
       </button>
     </div>

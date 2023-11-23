@@ -12,7 +12,6 @@ exports[`confirm-ack-with-ticket Renders \`confirm-ack-with-ticket\` with empty 
       Are you sure?
     </span>
   </div>
-   
   <div
     class="text"
   >
@@ -32,18 +31,15 @@ exports[`confirm-ack-with-ticket Renders \`confirm-ack-with-ticket\` with empty 
         <div
           class="v-alert__content"
         >
-          
       A ticket number has been specified.
         Maybe you wanted to associate this ticket number to the alarm.
         If so, click on "Continue and associate ticket" button.
         To continue the ack action without taking ticket number into account,
         click on "Continue" button.
-    
         </div>
       </div>
     </div>
   </div>
-   
   <div
     class="actions"
   >
@@ -54,12 +50,9 @@ exports[`confirm-ack-with-ticket Renders \`confirm-ack-with-ticket\` with empty 
       <span
         class="v-btn__content"
       >
-        
       Cancel
-    
       </span>
     </button>
-     
     <button
       class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
       type="button"
@@ -67,12 +60,9 @@ exports[`confirm-ack-with-ticket Renders \`confirm-ack-with-ticket\` with empty 
       <span
         class="v-btn__content"
       >
-        
       Continue
-    
       </span>
     </button>
-     
     <button
       class="warning v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
       type="button"
@@ -80,9 +70,7 @@ exports[`confirm-ack-with-ticket Renders \`confirm-ack-with-ticket\` with empty 
       <span
         class="v-btn__content"
       >
-        
       Continue and associate ticket
-    
       </span>
     </button>
   </div>

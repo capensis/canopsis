@@ -24,7 +24,6 @@ Ctrl + Left mouse click + drag - pan the area"
       name="mermaid"
       value="code"
     />
-     
     <mermaid-points-preview-stub
       class="mermaid-preview__points"
       colorindicator="state"
@@ -62,7 +61,6 @@ Ctrl + Left mouse click + drag - pan the area"
       name="mermaid"
       value="code"
     />
-     
     <mermaid-points-preview-stub
       class="mermaid-preview__points"
       iconsize="24"

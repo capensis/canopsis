@@ -2,7 +2,6 @@
 
 exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\` with custom props 1`] = `
 <div>
-   
   <div
     class="my-2 v-card v-sheet theme--light"
   >
@@ -31,7 +30,6 @@ exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\`
               </i>
             </span>
           </button>
-           
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
@@ -49,7 +47,6 @@ exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\`
           </button>
         </span>
       </div>
-       
       <div
         class="flex text-right pr-2 xs3"
       >
@@ -70,7 +67,6 @@ exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\`
         </button>
       </div>
     </div>
-     
     <div
       class="layout px-3 pb-3 justify-center column"
     />
@@ -102,7 +98,6 @@ exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\`
               </i>
             </span>
           </button>
-           
           <button
             class="v-btn v-btn--disabled v-btn--icon v-btn--round theme--light v-size--default"
             disabled="disabled"
@@ -121,7 +116,6 @@ exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\`
           </button>
         </span>
       </div>
-       
       <div
         class="flex text-right pr-2 xs3"
       >
@@ -142,12 +136,10 @@ exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\`
         </button>
       </div>
     </div>
-     
     <div
       class="layout px-3 pb-3 justify-center column"
     />
   </div>
-    
   <div
     class="layout wrap"
   >
@@ -158,24 +150,19 @@ exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\`
       <span
         class="v-btn__content"
       >
-        
       Add
-    
       </span>
     </button>
-     
   </div>
 </div>
 `;
 
 exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\` with default props 1`] = `
 <div>
-     
   <div
     class="layout wrap"
   >
     <!---->
-     
   </div>
 </div>
 `;
@@ -185,7 +172,6 @@ exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\`
   <div
     class="prepend-slot"
   />
-   
   <div
     class="my-2 v-card v-sheet theme--light"
   >
@@ -214,7 +200,6 @@ exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\`
               </i>
             </span>
           </button>
-           
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
@@ -232,7 +217,6 @@ exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\`
           </button>
         </span>
       </div>
-       
       <div
         class="flex text-right pr-2 xs3"
       >
@@ -253,7 +237,6 @@ exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\`
         </button>
       </div>
     </div>
-     
     <div
       class="layout px-3 pb-3 justify-center column"
     >
@@ -291,7 +274,6 @@ exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\`
               </i>
             </span>
           </button>
-           
           <button
             class="v-btn v-btn--disabled v-btn--icon v-btn--round theme--light v-size--default"
             disabled="disabled"
@@ -310,7 +292,6 @@ exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\`
           </button>
         </span>
       </div>
-       
       <div
         class="flex text-right pr-2 xs3"
       >
@@ -331,7 +312,6 @@ exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\`
         </button>
       </div>
     </div>
-     
     <div
       class="layout px-3 pb-3 justify-center column"
     >
@@ -342,11 +322,9 @@ exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\`
       </div>
     </div>
   </div>
-   
   <div
     class="append-slot"
   />
-   
   <div
     class="layout wrap"
   >
@@ -357,12 +335,9 @@ exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\`
       <span
         class="v-btn__content"
       >
-        
       Add
-    
       </span>
     </button>
-     
   </div>
 </div>
 `;

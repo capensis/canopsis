@@ -9,10 +9,8 @@ exports[`service-entities-list Renders \`service-entities-list\` with custom pro
       class="v-simple-checkbox ml-4 pa-0"
       type="checkbox"
     />
-     
     <!---->
   </div>
-   
   <div
     class="mt-2"
   >
@@ -33,7 +31,6 @@ exports[`service-entities-list Renders \`service-entities-list\` with custom pro
       widgetparameters="[object Object]"
     />
   </div>
-   
   <!---->
 </div>
 `;
@@ -41,7 +38,6 @@ exports[`service-entities-list Renders \`service-entities-list\` with custom pro
 exports[`service-entities-list Renders \`service-entities-list\` with default props 1`] = `
 <div>
   <!---->
-    
   <!---->
 </div>
 `;
@@ -55,14 +51,12 @@ exports[`service-entities-list Renders \`service-entities-list\` with selected e
       class="v-simple-checkbox ml-4 pa-0"
       type="checkbox"
     />
-     
     <service-entity-actions-stub
       actions="[object Object],[object Object]"
       assignedinstructions=""
       entity="[object Object]"
     />
   </div>
-   
   <div
     class="mt-2"
   >
@@ -84,7 +78,6 @@ exports[`service-entities-list Renders \`service-entities-list\` with selected e
       widgetparameters="[object Object]"
     />
   </div>
-   
   <!---->
 </div>
 `;

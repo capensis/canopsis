@@ -18,7 +18,6 @@ exports[`alarm-pbehavior-counters Renders \`alarm-pbehavior-counters\` with cust
       >
         assignment_returned
       </i>
-       
       <span
         class="text-caption"
       >
@@ -40,7 +39,6 @@ exports[`alarm-pbehavior-counters Renders \`alarm-pbehavior-counters\` with cust
       >
         add_photo_alternate
       </i>
-       
       <span
         class="text-caption"
       >
@@ -48,7 +46,6 @@ exports[`alarm-pbehavior-counters Renders \`alarm-pbehavior-counters\` with cust
       </span>
     </div>
   </span>
-   
   <span
     class="v-tooltip v-tooltip--top"
   >
@@ -63,7 +60,6 @@ exports[`alarm-pbehavior-counters Renders \`alarm-pbehavior-counters\` with cust
       >
         more_horiz
       </i>
-       
       <span
         class="text-caption"
       >
@@ -80,7 +76,6 @@ exports[`alarm-pbehavior-counters Renders \`alarm-pbehavior-counters\` with defa
 <div
   class="layout alarm-counters column"
 >
-   
   <!---->
 </div>
 `;

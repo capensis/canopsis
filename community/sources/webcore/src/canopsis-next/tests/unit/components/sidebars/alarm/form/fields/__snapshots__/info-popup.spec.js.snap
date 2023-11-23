@@ -11,12 +11,9 @@ exports[`info-popup Renders \`info-popup\` with custom props 1`] = `
     <div
       class="v-list-item__title"
     >
-      
       Info popup
-    
     </div>
   </div>
-   
   <div
     class="v-list-item__action mr-3"
   >
@@ -27,9 +24,7 @@ exports[`info-popup Renders \`info-popup\` with custom props 1`] = `
       <span
         class="v-btn__content"
       >
-        
       Create/Edit
-    
       </span>
     </button>
   </div>
@@ -47,12 +42,9 @@ exports[`info-popup Renders \`info-popup\` with default props 1`] = `
     <div
       class="v-list-item__title"
     >
-      
       Info popup
-    
     </div>
   </div>
-   
   <div
     class="v-list-item__action mr-3"
   >
@@ -63,9 +55,7 @@ exports[`info-popup Renders \`info-popup\` with default props 1`] = `
       <span
         class="v-btn__content"
       >
-        
       Create/Edit
-    
       </span>
     </button>
   </div>

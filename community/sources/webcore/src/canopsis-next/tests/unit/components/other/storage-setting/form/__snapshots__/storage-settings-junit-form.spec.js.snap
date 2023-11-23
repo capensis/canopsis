@@ -13,14 +13,10 @@ exports[`storage-settings-junit-form Renders \`storage-settings-junit-form\` wit
       <div
         class="text-subtitle-1 font-weight-bold"
       >
-        
       JUnit data storage
-    
       </div>
-       
       <!---->
     </div>
-     
     <div
       class="layout mt-2"
     >
@@ -32,7 +28,6 @@ exports[`storage-settings-junit-form Renders \`storage-settings-junit-form\` wit
         />
       </span>
     </div>
-      
     <c-enabled-duration-field-stub
       help-text="When switched on, the JUnit test suites data (XMLs, screenshots and videos) will be deleted after the defined time period."
       label="Delete test suites data after"
@@ -55,16 +50,11 @@ exports[`storage-settings-junit-form Renders \`storage-settings-junit-form\` wit
       <div
         class="text-subtitle-1 font-weight-bold"
       >
-        
       JUnit data storage
-    
       </div>
-       
       <!---->
     </div>
-     
     <!---->
-      
     <c-enabled-duration-field-stub
       help-text="When switched on, the JUnit test suites data (XMLs, screenshots and videos) will be deleted after the defined time period."
       label="Delete test suites data after"

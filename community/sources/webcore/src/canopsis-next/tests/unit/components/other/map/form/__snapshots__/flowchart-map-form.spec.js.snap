@@ -8,7 +8,6 @@ exports[`flowchart-map-form Renders \`flowchart-map-form\` with form 1`] = `
     required=""
     value="Mermaid"
   />
-   
   <flowchart-editor-stub
     form="[object Object]"
     name="parameters"

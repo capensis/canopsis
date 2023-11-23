@@ -18,14 +18,12 @@ exports[`filter-tile Renders \`filter-tile\` with custom props 1`] = `
       >
         drag_indicator
       </i>
-       
       <div
         class="v-list-item__content"
       >
         Filter title
       </div>
     </div>
-     
     <div
       class="v-list-item__action"
     >
@@ -36,7 +34,6 @@ exports[`filter-tile Renders \`filter-tile\` with custom props 1`] = `
           badge-tooltip="Filter patterns are not migrated"
           type="edit"
         />
-         
         <c-action-btn-stub
           type="delete"
         />
@@ -58,12 +55,10 @@ exports[`filter-tile Renders \`filter-tile\` with default props 1`] = `
       class="layout align-center"
     >
       <!---->
-       
       <div
         class="v-list-item__content"
       />
     </div>
-     
     <!---->
   </div>
 </div>
@@ -87,14 +82,12 @@ exports[`filter-tile Renders \`filter-tile\` with old pattern 1`] = `
       >
         drag_indicator
       </i>
-       
       <div
         class="v-list-item__content"
       >
         Filter title
       </div>
     </div>
-     
     <div
       class="v-list-item__action"
     >
@@ -106,7 +99,6 @@ exports[`filter-tile Renders \`filter-tile\` with old pattern 1`] = `
           badge-value="true"
           type="edit"
         />
-         
         <c-action-btn-stub
           type="delete"
         />

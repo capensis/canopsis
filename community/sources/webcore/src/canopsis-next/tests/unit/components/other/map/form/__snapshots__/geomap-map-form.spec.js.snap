@@ -8,7 +8,6 @@ exports[`geomap-map-form Renders \`geomap-map-form\` with form 1`] = `
     required=""
     value="Geomap"
   />
-   
   <geomap-editor-stub
     form="[object Object]"
     iconsize="24"

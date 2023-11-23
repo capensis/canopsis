@@ -16,7 +16,6 @@ exports[`group-view-panel Renders \`group-view-panel\` with custom props 1`] = `
         TITLE
       </div>
     </div>
-     
     <div
       class="panel-item-content__actions"
     >
@@ -37,7 +36,6 @@ exports[`group-view-panel Renders \`group-view-panel\` with custom props 1`] = `
           </i>
         </span>
       </button>
-       
       <button
         class="v-btn v-btn--disabled v-btn--icon v-btn--round theme--light v-size--small"
         disabled="disabled"
@@ -57,7 +55,6 @@ exports[`group-view-panel Renders \`group-view-panel\` with custom props 1`] = `
       </button>
     </div>
   </div>
-   
   <hr
     aria-orientation="horizontal"
     class="v-divider theme--light"
@@ -76,14 +73,10 @@ exports[`group-view-panel Renders \`group-view-panel\` with required props 1`] =
     <div
       class="panel-item-content__title pl-2 text-truncate"
     >
-      
         View title
-      
     </div>
-     
     <!---->
   </div>
-   
   <hr
     aria-orientation="horizontal"
     class="v-divider theme--light"

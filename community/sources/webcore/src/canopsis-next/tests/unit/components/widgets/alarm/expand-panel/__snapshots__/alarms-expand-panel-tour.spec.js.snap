@@ -17,7 +17,6 @@ exports[`alarms-expand-panel-tour Renders \`alarms-expand-panel-tour\` with firs
     id="v-step-b2b95c8a"
   >
     <!---->
-     
     <div
       class="v-step__content"
     >
@@ -25,7 +24,6 @@ exports[`alarms-expand-panel-tour Renders \`alarms-expand-panel-tour\` with firs
         Details
       </div>
     </div>
-     
     <div
       class="v-step__buttons"
     >
@@ -34,18 +32,14 @@ exports[`alarms-expand-panel-tour Renders \`alarms-expand-panel-tour\` with firs
       >
         Skip tour
       </button>
-       
       <!---->
-       
       <button
         class="v-step__button v-step__button-next"
       >
         Next
       </button>
-       
       <!---->
     </div>
-     
     <div
       class="v-step__arrow"
     />
@@ -62,7 +56,6 @@ exports[`alarms-expand-panel-tour Renders \`alarms-expand-panel-tour\` with seco
     id="v-step-b2b95c88"
   >
     <!---->
-     
     <div
       class="v-step__content"
     >
@@ -70,7 +63,6 @@ exports[`alarms-expand-panel-tour Renders \`alarms-expand-panel-tour\` with seco
         MoreInfos tab (Displayed only in case of existing confguration)
       </div>
     </div>
-     
     <div
       class="v-step__buttons"
     >
@@ -79,22 +71,18 @@ exports[`alarms-expand-panel-tour Renders \`alarms-expand-panel-tour\` with seco
       >
         Skip tour
       </button>
-       
       <button
         class="v-step__button v-step__button-previous"
       >
         Previous
       </button>
-       
       <button
         class="v-step__button v-step__button-next"
       >
         Next
       </button>
-       
       <!---->
     </div>
-     
     <div
       class="v-step__arrow"
     />
@@ -111,7 +99,6 @@ exports[`alarms-expand-panel-tour Renders \`alarms-expand-panel-tour\` with thir
     id="v-step-b2b95c86"
   >
     <!---->
-     
     <div
       class="v-step__content"
     >
@@ -119,27 +106,22 @@ exports[`alarms-expand-panel-tour Renders \`alarms-expand-panel-tour\` with thir
         Timeline tab
       </div>
     </div>
-     
     <div
       class="v-step__buttons"
     >
       <!---->
-       
       <button
         class="v-step__button v-step__button-previous"
       >
         Previous
       </button>
-       
       <!---->
-       
       <button
         class="v-step__button v-step__button-stop"
       >
         Finish
       </button>
     </div>
-     
     <div
       class="v-step__arrow"
     />

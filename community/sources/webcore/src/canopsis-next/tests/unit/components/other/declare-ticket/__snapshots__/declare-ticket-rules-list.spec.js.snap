@@ -14,7 +14,6 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
         value="Rule"
       />
     </div>
-      
     <div
       class="flex xs12"
     >
@@ -25,7 +24,6 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
       </transition-stub>
     </div>
   </div>
-   
   <div
     class="v-data-table theme--light v-data-table--selectable"
     header-text="text"
@@ -286,16 +284,12 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
             <td
               class="text-start"
             >
-              
         name-0
-      
             </td>
             <td
               class="text-start"
             >
-              
         system-name-0
-      
             </td>
             <td
               class="text-start"
@@ -305,23 +299,17 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:48
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:48
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-name-0
-      
             </td>
             <td
               class="text-start"
@@ -332,11 +320,9 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -370,16 +356,12 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
             <td
               class="text-start"
             >
-              
         name-1
-      
             </td>
             <td
               class="text-start"
             >
-              
         system-name-1
-      
             </td>
             <td
               class="text-start"
@@ -391,23 +373,17 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:49
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:49
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-name-1
-      
             </td>
             <td
               class="text-start"
@@ -418,11 +394,9 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -456,16 +430,12 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
             <td
               class="text-start"
             >
-              
         name-2
-      
             </td>
             <td
               class="text-start"
             >
-              
         system-name-2
-      
             </td>
             <td
               class="text-start"
@@ -475,23 +445,17 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:50
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:50
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-name-2
-      
             </td>
             <td
               class="text-start"
@@ -502,11 +466,9 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -540,16 +502,12 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
             <td
               class="text-start"
             >
-              
         name-3
-      
             </td>
             <td
               class="text-start"
             >
-              
         system-name-3
-      
             </td>
             <td
               class="text-start"
@@ -561,23 +519,17 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:51
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:51
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-name-3
-      
             </td>
             <td
               class="text-start"
@@ -588,11 +540,9 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -626,16 +576,12 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
             <td
               class="text-start"
             >
-              
         name-4
-      
             </td>
             <td
               class="text-start"
             >
-              
         system-name-4
-      
             </td>
             <td
               class="text-start"
@@ -645,23 +591,17 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:52
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:52
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-name-4
-      
             </td>
             <td
               class="text-start"
@@ -672,11 +612,9 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -710,16 +648,12 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
             <td
               class="text-start"
             >
-              
         name-5
-      
             </td>
             <td
               class="text-start"
             >
-              
         system-name-5
-      
             </td>
             <td
               class="text-start"
@@ -731,23 +665,17 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:53
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:53
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-name-5
-      
             </td>
             <td
               class="text-start"
@@ -758,11 +686,9 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -796,16 +722,12 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
             <td
               class="text-start"
             >
-              
         name-6
-      
             </td>
             <td
               class="text-start"
             >
-              
         system-name-6
-      
             </td>
             <td
               class="text-start"
@@ -815,23 +737,17 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:54
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:54
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-name-6
-      
             </td>
             <td
               class="text-start"
@@ -842,11 +758,9 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -880,16 +794,12 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
             <td
               class="text-start"
             >
-              
         name-7
-      
             </td>
             <td
               class="text-start"
             >
-              
         system-name-7
-      
             </td>
             <td
               class="text-start"
@@ -901,23 +811,17 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:55
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:55
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-name-7
-      
             </td>
             <td
               class="text-start"
@@ -928,11 +832,9 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -966,16 +868,12 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
             <td
               class="text-start"
             >
-              
         name-8
-      
             </td>
             <td
               class="text-start"
             >
-              
         system-name-8
-      
             </td>
             <td
               class="text-start"
@@ -985,23 +883,17 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:56
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:56
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-name-8
-      
             </td>
             <td
               class="text-start"
@@ -1012,11 +904,9 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -1050,16 +940,12 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
             <td
               class="text-start"
             >
-              
         name-9
-      
             </td>
             <td
               class="text-start"
             >
-              
         system-name-9
-      
             </td>
             <td
               class="text-start"
@@ -1071,23 +957,17 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:57
-  
             </td>
             <td
               class="text-start"
             >
-              
     04/03/2021 13:44:57
-  
             </td>
             <td
               class="text-start"
             >
-              
         author-name-9
-      
             </td>
             <td
               class="text-start"
@@ -1098,11 +978,9 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 <c-action-btn-stub
                   type="edit"
                 />
-                 
                 <c-action-btn-stub
                   type="duplicate"
                 />
-                 
                 <c-action-btn-stub
                   type="delete"
                 />
@@ -1113,7 +991,6 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
       </table>
     </div>
   </div>
-   
   <c-table-pagination-stub
     items-per-page="10"
     page="2"
@@ -1134,7 +1011,6 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
     >
       <c-search-field-stub />
     </div>
-      
     <div
       class="flex xs12"
     >
@@ -1145,7 +1021,6 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
       </transition-stub>
     </div>
   </div>
-   
   <div
     class="v-data-table theme--light"
     header-text="text"
@@ -1323,7 +1198,6 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
       </table>
     </div>
   </div>
-   
   <c-table-pagination-stub />
 </div>
 `;

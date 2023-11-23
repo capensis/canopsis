@@ -16,7 +16,6 @@ exports[`create-ack-event Renders \`create-ack-event\` with config data 1`] = `
         Ack
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -26,19 +25,16 @@ exports[`create-ack-event Renders \`create-ack-event\` with config data 1`] = `
         <alarm-general-table-stub
           items="[object Object]"
         />
-         
         <hr
           aria-orientation="horizontal"
           class="v-divider theme--light"
           role="separator"
         />
-         
         <ack-event-form-stub
           form="[object Object]"
           hideackresources="true"
           isnoterequired="true"
         />
-         
         <div
           class="v-input v-input--hide-details theme--light v-input--selection-controls v-input--radio-group v-input--radio-group--column"
         >
@@ -126,7 +122,6 @@ exports[`create-ack-event Renders \`create-ack-event\` with config data 1`] = `
         </div>
       </div>
     </div>
-     
     <div
       class="actions"
     >
@@ -137,12 +132,9 @@ exports[`create-ack-event Renders \`create-ack-event\` with config data 1`] = `
         <span
           class="v-btn__content"
         >
-          
         Cancel
-      
         </span>
       </button>
-       
       <button
         class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
@@ -150,9 +142,7 @@ exports[`create-ack-event Renders \`create-ack-event\` with config data 1`] = `
         <span
           class="v-btn__content"
         >
-          
         Submit
-      
         </span>
       </button>
     </div>
@@ -176,7 +166,6 @@ exports[`create-ack-event Renders \`create-ack-event\` with empty modal 1`] = `
         Ack
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -186,18 +175,15 @@ exports[`create-ack-event Renders \`create-ack-event\` with empty modal 1`] = `
         <alarm-general-table-stub
           items="[object Object]"
         />
-         
         <hr
           aria-orientation="horizontal"
           class="v-divider theme--light"
           role="separator"
         />
-         
         <ack-event-form-stub
           form="[object Object]"
           hideackresources="true"
         />
-         
         <div
           class="v-input v-input--hide-details theme--light v-input--selection-controls v-input--radio-group v-input--radio-group--column"
         >
@@ -285,7 +271,6 @@ exports[`create-ack-event Renders \`create-ack-event\` with empty modal 1`] = `
         </div>
       </div>
     </div>
-     
     <div
       class="actions"
     >
@@ -296,12 +281,9 @@ exports[`create-ack-event Renders \`create-ack-event\` with empty modal 1`] = `
         <span
           class="v-btn__content"
         >
-          
         Cancel
-      
         </span>
       </button>
-       
       <button
         class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
@@ -309,9 +291,7 @@ exports[`create-ack-event Renders \`create-ack-event\` with empty modal 1`] = `
         <span
           class="v-btn__content"
         >
-          
         Submit
-      
         </span>
       </button>
     </div>

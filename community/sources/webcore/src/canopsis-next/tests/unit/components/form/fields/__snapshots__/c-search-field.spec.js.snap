@@ -23,17 +23,14 @@ exports[`c-search-field Renders \`c-search-field\` correctly 1`] = `
       </div>
     </div>
   </div>
-   
   <c-action-btn-stub
     icon="search"
     tooltip="Search"
   />
-   
   <c-action-btn-stub
     icon="clear"
     tooltip="Clear search input"
   />
-   
 </div>
 `;
 
@@ -73,17 +70,14 @@ exports[`c-search-field Renders \`c-search-field\` correctly with combobox and i
       </div>
     </div>
   </div>
-   
   <c-action-btn-stub
     icon="search"
     tooltip="Search"
   />
-   
   <c-action-btn-stub
     icon="clear"
     tooltip="Clear search input"
   />
-   
 </div>
 `;
 

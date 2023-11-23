@@ -30,11 +30,8 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
 </dl>"
       />
     </div>
-     
     <!---->
-     
     <!---->
-     
     <div
       class="flex"
     >
@@ -50,13 +47,10 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
           label="Select a filter"
           lockedfilters=""
         />
-         
         <!---->
       </div>
     </div>
-     
     <!---->
-     
     <div
       class="flex"
     >
@@ -65,7 +59,6 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
         lockedfilters=""
       />
     </div>
-     
     <div
       class="flex"
     >
@@ -75,9 +68,7 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
         <span
           class="v-chip__content"
         >
-          
         Last 1 year
-      
           <button
             aria-label="Close"
             class="v-icon notranslate v-chip__close v-icon--link v-icon--right material-icons theme--light"
@@ -88,17 +79,14 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
           </button>
         </span>
       </span>
-       
       <c-action-btn-stub
         color="primary"
         icon="schedule"
         tooltip="Set a custom date range"
       />
     </div>
-     
     <!---->
   </div>
-   
   <alarms-list-table-stub
     alarms="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     cellscontentbehavior="wrap"
@@ -121,7 +109,6 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
     totalitems="10"
     widget="[object Object]"
   />
-   
   <alarms-expand-panel-tour-stub
     callbacks="[object Object]"
   />
@@ -158,19 +145,14 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
 </dl>"
       />
     </div>
-     
     <!---->
-     
     <!---->
-     
     <div
       class="flex"
     >
       <!---->
     </div>
-     
     <!---->
-     
     <div
       class="flex"
     >
@@ -179,7 +161,6 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
         lockedfilters=""
       />
     </div>
-     
     <div
       class="flex"
     >
@@ -189,9 +170,7 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
         <span
           class="v-chip__content"
         >
-          
         Last 1 year
-      
           <button
             aria-label="Close"
             class="v-icon notranslate v-chip__close v-icon--link v-icon--right material-icons theme--light"
@@ -202,17 +181,14 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
           </button>
         </span>
       </span>
-       
       <c-action-btn-stub
         color="primary"
         icon="schedule"
         tooltip="Set a custom date range"
       />
     </div>
-     
     <!---->
   </div>
-   
   <alarms-list-table-stub
     alarms="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     cellscontentbehavior="wrap"
@@ -235,7 +211,6 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
     totalitems="10"
     widget="[object Object]"
   />
-   
   <alarms-expand-panel-tour-stub
     callbacks="[object Object]"
   />
@@ -272,9 +247,7 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
 </dl>"
       />
     </div>
-     
     <!---->
-     
     <div
       class="flex"
     >
@@ -293,7 +266,6 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
         valuecomparator="[Function]"
       />
     </div>
-     
     <div
       class="flex"
     >
@@ -310,11 +282,9 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
           label="Select a filter"
           lockedfilters=""
         />
-         
         <!---->
       </div>
     </div>
-     
     <div
       class="flex"
     >
@@ -333,7 +303,6 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
         valuecomparator="[Function]"
       />
     </div>
-     
     <div
       class="flex"
     >
@@ -342,7 +311,6 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
         lockedfilters=""
       />
     </div>
-     
     <div
       class="flex"
     >
@@ -352,9 +320,7 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
         <span
           class="v-chip__content"
         >
-          
         Last 1 year
-      
           <button
             aria-label="Close"
             class="v-icon notranslate v-chip__close v-icon--link v-icon--right material-icons theme--light"
@@ -365,17 +331,14 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
           </button>
         </span>
       </span>
-       
       <c-action-btn-stub
         color="primary"
         icon="schedule"
         tooltip="Set a custom date range"
       />
     </div>
-     
     <!---->
   </div>
-   
   <alarms-list-table-stub
     alarms="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     cellscontentbehavior="wrap"
@@ -398,7 +361,6 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
     totalitems="10"
     widget="[object Object]"
   />
-   
   <alarms-expand-panel-tour-stub
     callbacks="[object Object]"
   />

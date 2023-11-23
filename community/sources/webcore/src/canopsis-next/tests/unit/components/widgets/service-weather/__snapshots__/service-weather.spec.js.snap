@@ -8,7 +8,6 @@ exports[`service-weather Renders \`service-weather\` with default props 1`] = `
     class="layout mx-1 wrap"
   >
     <!---->
-     
     <div
       class="flex xs5"
     >
@@ -16,7 +15,6 @@ exports[`service-weather Renders \`service-weather\` with default props 1`] = `
         class="layout align-center"
       >
         <!---->
-         
         <c-enabled-field-stub
           class="ml-3"
           label="Hide gray"
@@ -24,9 +22,7 @@ exports[`service-weather Renders \`service-weather\` with default props 1`] = `
       </div>
     </div>
   </div>
-   
   <!---->
-   
   <div
     class="layout fill-height wrap"
   >
@@ -34,7 +30,6 @@ exports[`service-weather Renders \`service-weather\` with default props 1`] = `
       class="layout justify-center"
     >
       <!---->
-       
       <div
         class="v-alert v-sheet theme--dark info"
         role="alert"
@@ -51,9 +46,7 @@ exports[`service-weather Renders \`service-weather\` with default props 1`] = `
           <div
             class="v-alert__content"
           >
-            
         No data
-      
           </div>
         </div>
       </div>
@@ -72,7 +65,6 @@ exports[`service-weather Renders \`service-weather\` with errors 1`] = `
     class="layout mx-1 wrap"
   >
     <!---->
-     
     <div
       class="flex xs5"
     >
@@ -80,7 +72,6 @@ exports[`service-weather Renders \`service-weather\` with errors 1`] = `
         class="layout align-center"
       >
         <!---->
-         
         <c-enabled-field-stub
           class="ml-3"
           label="Hide gray"
@@ -88,9 +79,7 @@ exports[`service-weather Renders \`service-weather\` with errors 1`] = `
       </div>
     </div>
   </div>
-   
   <!---->
-   
   <div
     class="layout fill-height wrap"
   >
@@ -119,32 +108,23 @@ exports[`service-weather Renders \`service-weather\` with errors 1`] = `
               <div
                 class="mr-4"
               >
-                
             Something went wrong...
-          
               </div>
-               
               <c-help-icon-stub
                 icon="help"
                 top=""
               >
                 <div>
-                  
               Name: Service name error
-            
                 </div>
-                 
                 <div>
-                  
               Description: Service description error
-            
                 </div>
               </c-help-icon-stub>
             </div>
           </div>
         </div>
       </div>
-       
       <div
         class="v-alert v-sheet theme--dark info"
         role="alert"
@@ -161,9 +141,7 @@ exports[`service-weather Renders \`service-weather\` with errors 1`] = `
           <div
             class="v-alert__content"
           >
-            
         No data
-      
           </div>
         </div>
       </div>
@@ -188,7 +166,6 @@ exports[`service-weather Renders \`service-weather\` with full access 1`] = `
         class="mr-3"
       />
     </div>
-     
     <div
       class="flex xs5"
     >
@@ -204,7 +181,6 @@ exports[`service-weather Renders \`service-weather\` with full access 1`] = `
           label="Select a filter"
           lockedfilters=""
         />
-         
         <filters-list-btn-stub
           addable="true"
           editable="true"
@@ -215,7 +191,6 @@ exports[`service-weather Renders \`service-weather\` with full access 1`] = `
           withentity="true"
           withserviceweather="true"
         />
-         
         <c-enabled-field-stub
           class="ml-3"
           label="Hide gray"
@@ -223,9 +198,7 @@ exports[`service-weather Renders \`service-weather\` with full access 1`] = `
       </div>
     </div>
   </div>
-   
   <!---->
-   
   <div
     class="layout fill-height wrap"
   >

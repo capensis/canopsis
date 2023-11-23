@@ -19,16 +19,13 @@ exports[`filter-selector Renders \`filter-selector\` with array value 1`] = `
         <div
           class="v-select__selections"
         >
-           
           <span
             class="v-chip v-chip--no-color v-chip--removable theme--light v-size--small"
           >
             <span
               class="v-chip__content"
             >
-              
       Filter 1
-    
               <button
                 aria-label="Close"
                 class="v-icon notranslate v-chip__close v-icon--link v-icon--right material-icons theme--light"
@@ -109,7 +106,6 @@ exports[`filter-selector Renders \`filter-selector\` with badges 1`] = `
         <div
           class="v-select__selections"
         >
-           
           <input
             aria-readonly="false"
             autocomplete="off"
@@ -186,16 +182,13 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 1`] = `
         <div
           class="v-select__selections"
         >
-           
           <span
             class="v-chip v-chip--no-color v-chip--removable theme--light v-size--small"
           >
             <span
               class="v-chip__content"
             >
-              
       Filter 1
-    
               <button
                 aria-label="Close"
                 class="v-icon notranslate v-chip__close v-icon--link v-icon--right material-icons theme--light"
@@ -276,16 +269,13 @@ exports[`filter-selector Renders \`filter-selector\` with custom props 2 1`] = `
         <div
           class="v-select__selections"
         >
-           
           <span
             class="v-chip v-chip--no-color theme--light v-size--small"
           >
             <span
               class="v-chip__content"
             >
-              
       Filter 1
-    
             </span>
           </span>
           <input
@@ -358,7 +348,6 @@ exports[`filter-selector Renders \`filter-selector\` with default props 1`] = `
         <div
           class="v-select__selections"
         >
-           
           <input
             aria-readonly="false"
             autocomplete="off"

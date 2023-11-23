@@ -16,7 +16,6 @@ exports[`text-editor Renders \`text-editor\` with empty modal 1`] = `
         Text editor
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -26,7 +25,6 @@ exports[`text-editor Renders \`text-editor\` with empty modal 1`] = `
         value=""
       />
     </div>
-     
     <div
       class="actions"
     >
@@ -37,12 +35,9 @@ exports[`text-editor Renders \`text-editor\` with empty modal 1`] = `
         <span
           class="v-btn__content"
         >
-          
         Cancel
-      
         </span>
       </button>
-       
       <button
         class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
@@ -50,9 +45,7 @@ exports[`text-editor Renders \`text-editor\` with empty modal 1`] = `
         <span
           class="v-btn__content"
         >
-          
         Submit
-      
         </span>
       </button>
     </div>

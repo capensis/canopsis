@@ -13,9 +13,7 @@ exports[`c-empty-data-table-columns Renders \`c-empty-data-table-columns\` corre
           <td
             class="text-center"
           >
-            
             You have to select at least 1 column
-          
           </td>
         </tr>
       </tbody>

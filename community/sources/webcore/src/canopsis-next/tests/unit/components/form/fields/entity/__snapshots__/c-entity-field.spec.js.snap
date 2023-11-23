@@ -249,9 +249,7 @@ exports[`c-entity-field Renders \`c-entity-field\` with custom props 1`] = `
         <div
           class="v-select__selections"
         >
-          
         Text 3
-      
           <input
             autocomplete="off"
             disabled="disabled"

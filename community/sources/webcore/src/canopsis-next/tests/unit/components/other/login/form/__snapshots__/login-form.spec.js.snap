@@ -18,7 +18,6 @@ exports[`login-form Renders \`login-form\` with custom props 1`] = `
       outlined=""
     />
   </div>
-   
   <div
     class="flex"
   >
@@ -50,7 +49,6 @@ exports[`login-form Renders \`login-form\` with default props 1`] = `
       outlined=""
     />
   </div>
-   
   <div
     class="flex"
   >

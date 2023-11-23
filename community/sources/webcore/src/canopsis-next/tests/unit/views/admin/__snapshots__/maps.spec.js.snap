@@ -3,7 +3,6 @@
 exports[`maps Renders \`maps\` with permissions 1`] = `
 <div>
   <c-page-header-stub />
-   
   <div
     class="ma-4 mt-0 v-card v-sheet theme--light"
   >
@@ -16,7 +15,6 @@ exports[`maps Renders \`maps\` with permissions 1`] = `
       updatable="true"
     />
   </div>
-   
   <c-fab-btn-stub
     has-access="true"
   >
@@ -30,7 +28,6 @@ exports[`maps Renders \`maps\` with permissions 1`] = `
 exports[`maps Renders \`maps\` without permissions 1`] = `
 <div>
   <c-page-header-stub />
-   
   <div
     class="ma-4 mt-0 v-card v-sheet theme--light"
   >
@@ -40,7 +37,6 @@ exports[`maps Renders \`maps\` without permissions 1`] = `
       totalitems="0"
     />
   </div>
-   
   <c-fab-btn-stub>
     <span>
       Create a map

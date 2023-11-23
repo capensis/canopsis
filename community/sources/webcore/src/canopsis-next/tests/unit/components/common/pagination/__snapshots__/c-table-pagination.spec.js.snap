@@ -14,11 +14,9 @@ exports[`c-table-pagination Renders \`c-table-pagination\` with custom props 1`]
       type="bottom"
     />
   </div>
-   
   <div
     class="spacer"
   />
-   
   <div
     class="flex xs2"
   >

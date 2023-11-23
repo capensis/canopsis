@@ -18,7 +18,6 @@ exports[`add-location-btn Renders \`add-location-btn\` with custom props 1`] = `
       >
         add_location
       </i>
-       
       <span>
         Add point
       </span>

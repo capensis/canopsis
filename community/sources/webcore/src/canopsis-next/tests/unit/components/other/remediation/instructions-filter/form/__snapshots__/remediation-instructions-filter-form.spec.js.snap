@@ -53,7 +53,6 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
               Show alarms with selected instructions
             </label>
           </div>
-           
           <div
             class="v-radio theme--light"
           >
@@ -88,7 +87,6 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
       </div>
     </div>
   </div>
-   
   <div
     class="v-input v-input--is-label-active v-input--is-dirty theme--light v-input--selection-controls v-input--switch primary--text"
   >
@@ -141,7 +139,6 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
       </div>
     </div>
   </div>
-   
   <div
     class="layout"
   >
@@ -196,7 +193,6 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
         </div>
       </div>
     </div>
-     
     <div
       class="v-input v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light v-input--selection-controls v-input--checkbox"
     >
@@ -245,7 +241,6 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
       </div>
     </div>
   </div>
-   
   <div
     class="v-input v-input--is-disabled theme--light v-text-field v-select v-select--is-multi"
   >
@@ -332,7 +327,6 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
       />
     </div>
   </div>
-   
   <div
     class="v-input v-input--hide-details theme--light v-input--selection-controls v-input--radio-group v-input--radio-group--column"
   >
@@ -384,7 +378,6 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
               Show all filtered alarms
             </label>
           </div>
-           
           <div
             class="v-radio theme--light"
           >
@@ -415,7 +408,6 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
               Show filtered alarms with instructions in progress
             </label>
           </div>
-           
           <div
             class="v-radio theme--light"
           >
@@ -506,7 +498,6 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
               Show alarms with selected instructions
             </label>
           </div>
-           
           <div
             class="v-radio theme--light"
           >
@@ -541,7 +532,6 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
       </div>
     </div>
   </div>
-   
   <div
     class="v-input theme--light v-input--selection-controls v-input--switch"
   >
@@ -594,7 +584,6 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
       </div>
     </div>
   </div>
-   
   <div
     class="layout"
   >
@@ -648,7 +637,6 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
         </div>
       </div>
     </div>
-     
     <div
       class="v-input theme--light v-input--selection-controls v-input--checkbox"
     >
@@ -696,7 +684,6 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
       </div>
     </div>
   </div>
-   
   <div
     class="v-input theme--light v-text-field v-select v-select--is-multi"
   >
@@ -782,7 +769,6 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
       />
     </div>
   </div>
-   
   <div
     class="v-input v-input--hide-details theme--light v-input--selection-controls v-input--radio-group v-input--radio-group--column"
   >
@@ -834,7 +820,6 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
               Show all filtered alarms
             </label>
           </div>
-           
           <div
             class="v-radio theme--light"
           >
@@ -865,7 +850,6 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
               Show filtered alarms without instructions in progress
             </label>
           </div>
-           
           <div
             class="v-radio theme--light"
           >

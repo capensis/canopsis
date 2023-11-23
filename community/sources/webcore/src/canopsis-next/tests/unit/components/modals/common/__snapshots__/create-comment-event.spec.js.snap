@@ -16,7 +16,6 @@ exports[`create-comment-event Renders \`create-comment-event\` with empty modal 
         Add comment
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -24,7 +23,6 @@ exports[`create-comment-event Renders \`create-comment-event\` with empty modal 
         class="layout column"
       >
         <!---->
-         
         <c-name-field
           label="Comment"
           name="comment"
@@ -32,7 +30,6 @@ exports[`create-comment-event Renders \`create-comment-event\` with empty modal 
         />
       </div>
     </div>
-     
     <div
       class="actions"
     >
@@ -43,12 +40,9 @@ exports[`create-comment-event Renders \`create-comment-event\` with empty modal 
         <span
           class="v-btn__content"
         >
-          
         Cancel
-      
         </span>
       </button>
-       
       <button
         class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
@@ -56,9 +50,7 @@ exports[`create-comment-event Renders \`create-comment-event\` with empty modal 
         <span
           class="v-btn__content"
         >
-          
         Save changes
-      
         </span>
       </button>
     </div>
@@ -82,7 +74,6 @@ exports[`create-comment-event Renders \`create-comment-event\` with items 1`] = 
         Add comment
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -92,13 +83,11 @@ exports[`create-comment-event Renders \`create-comment-event\` with items 1`] = 
         <alarm-general-table-stub
           items="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
         />
-         
         <hr
           aria-orientation="horizontal"
           class="my-3 v-divider theme--light"
           role="separator"
         />
-         
         <c-name-field
           label="Comment"
           name="comment"
@@ -106,7 +95,6 @@ exports[`create-comment-event Renders \`create-comment-event\` with items 1`] = 
         />
       </div>
     </div>
-     
     <div
       class="actions"
     >
@@ -117,12 +105,9 @@ exports[`create-comment-event Renders \`create-comment-event\` with items 1`] = 
         <span
           class="v-btn__content"
         >
-          
         Cancel
-      
         </span>
       </button>
-       
       <button
         class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
@@ -130,9 +115,7 @@ exports[`create-comment-event Renders \`create-comment-event\` with items 1`] = 
         <span
           class="v-btn__content"
         >
-          
         Save changes
-      
         </span>
       </button>
     </div>

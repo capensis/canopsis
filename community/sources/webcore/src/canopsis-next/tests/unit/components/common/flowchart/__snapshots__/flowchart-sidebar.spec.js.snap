@@ -12,7 +12,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
     <div
       class="layout column"
     >
-       
       <flowchart-color-field-stub
         class="flowchart-sidebar__additional-item px-6"
         hidecheckbox="true"
@@ -21,13 +20,11 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
         value="#000"
       />
     </div>
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <div
       class="v-item-group theme--light v-expansion-panels v-expansion-panels--accordion v-expansion-panels--flat"
       color="grey"
@@ -60,13 +57,11 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
             </div>
           </transition-stub>
         </button>
-         
         <hr
           aria-orientation="horizontal"
           class="v-divider theme--light"
           role="separator"
         />
-         
         <transition-stub
           name="expand-transition"
         >
@@ -323,7 +318,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                         x="8.15039"
                         y="1.17773"
                       />
-                       
                       <path
                         d="M0.5 9.22756C0.5 4.94968 3.83693 1.45118 8.04983 1.19301V35.1625C3.83693 34.9043 0.5 31.4058
     0.5 27.1279V9.22756Z"
@@ -331,7 +325,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                         fill-opacity="0.6"
                         stroke="currentColor"
                       />
-                       
                       <path
                         d="M36.9492 1.19301C41.1621 1.45118 44.499 4.94968 44.499 9.22757V27.1279C44.499 31.4058 41.1621
     34.9043 36.9492 35.1625V1.19301Z"
@@ -457,7 +450,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                         d="M33 0 l12 6 l-12 6 l3 -6 Z"
                         fill="currentColor"
                       />
-                       
                       <path
                         d="M 0 44
     Q 45 44 22.5 22.5
@@ -493,12 +485,10 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                         d="M33 0 l12 6 l-12 6 l3 -6 Z"
                         fill="currentColor"
                       />
-                       
                       <path
                         d="M0 38 l12 -6 l-3 6 l3 6 Z"
                         fill="currentColor"
                       />
-                       
                       <path
                         d="M 9 38
     Q 45 38 22.5 22.5
@@ -569,7 +559,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                         stroke-miterlimit="10"
                         stroke-width="2"
                       />
-                       
                       <path
                         d="M 44 1 L 41 12 L 40 5 L 33 4 Z"
                         fill="currentColor"
@@ -607,7 +596,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                         stroke="currentColor"
                         stroke-miterlimit="10"
                       />
-                       
                       <path
                         d="M 1 44 L 40 5"
                         fill="none"
@@ -616,7 +604,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                         stroke-miterlimit="10"
                         stroke-width="2"
                       />
-                       
                       <path
                         d="M 44 1 L 41 12 L 40 5 L 33 4 Z"
                         fill="currentColor"
@@ -655,7 +642,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                         x="2"
                         y="2"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -663,7 +649,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                         x="0"
                         y="0"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -671,7 +656,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                         x="0"
                         y="20.5"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -679,7 +663,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                         x="0"
                         y="41"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -687,7 +670,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                         x="20.5"
                         y="0"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -695,7 +677,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                         x="20.5"
                         y="41"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -703,7 +684,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                         x="41"
                         y="20.5"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -711,7 +691,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                         x="41"
                         y="0"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -719,7 +698,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                         x="41"
                         y="41"
                       />
-                       
                       <text
                         fill="currentColor"
                         font-size="14px"
@@ -759,7 +737,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                         x="2"
                         y="2"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -767,7 +744,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                         x="0"
                         y="0"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -775,7 +751,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                         x="0"
                         y="20.5"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -783,7 +758,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                         x="0"
                         y="41"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -791,7 +765,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                         x="20.5"
                         y="0"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -799,7 +772,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                         x="20.5"
                         y="41"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -807,7 +779,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                         x="41"
                         y="20.5"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -815,7 +786,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                         x="41"
                         y="0"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -823,7 +793,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                         x="41"
                         y="41"
                       />
-                       
                       <text
                         fill="currentColor"
                         font-size="9px"
@@ -833,7 +802,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                       >
                         Header
                       </text>
-                       
                       <text
                         fill="currentColor"
                         font-size="8px"
@@ -845,13 +813,11 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                     </svg>
                   </span>
                 </button>
-                 
                 <file-selector-stub
                   errormessages=""
                   hidedetails="true"
                 />
               </div>
-               
               <hr
                 aria-orientation="horizontal"
                 class="v-divider theme--light"
@@ -861,7 +827,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
           </div>
         </transition-stub>
       </div>
-       
       <div
         aria-expanded="false"
         class="v-expansion-panel"
@@ -890,13 +855,11 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
             </div>
           </transition-stub>
         </button>
-         
         <hr
           aria-orientation="horizontal"
           class="v-divider theme--light"
           role="separator"
         />
-         
         <transition-stub
           name="expand-transition"
         >
@@ -928,7 +891,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                     </span>
                   </span>
                 </button>
-                 
                 <div
                   class="flex xs12"
                 >
@@ -960,7 +922,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                     </span>
                   </span>
                 </button>
-                 
                 <div
                   class="flex xs12"
                 >
@@ -971,7 +932,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                   />
                 </div>
               </div>
-               
               <hr
                 aria-orientation="horizontal"
                 class="v-divider theme--light"
@@ -1000,7 +960,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
     <div
       class="layout column"
     >
-       
       <flowchart-color-field-stub
         class="flowchart-sidebar__additional-item px-6"
         hidecheckbox="true"
@@ -1009,13 +968,11 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
         value="transparent"
       />
     </div>
-     
     <hr
       aria-orientation="horizontal"
       class="v-divider theme--light"
       role="separator"
     />
-     
     <div
       class="v-item-group theme--light v-expansion-panels v-expansion-panels--accordion v-expansion-panels--flat"
       color="grey"
@@ -1048,13 +1005,11 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
             </div>
           </transition-stub>
         </button>
-         
         <hr
           aria-orientation="horizontal"
           class="v-divider theme--light"
           role="separator"
         />
-         
         <transition-stub
           name="expand-transition"
         >
@@ -1311,7 +1266,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                         x="8.15039"
                         y="1.17773"
                       />
-                       
                       <path
                         d="M0.5 9.22756C0.5 4.94968 3.83693 1.45118 8.04983 1.19301V35.1625C3.83693 34.9043 0.5 31.4058
     0.5 27.1279V9.22756Z"
@@ -1319,7 +1273,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                         fill-opacity="0.6"
                         stroke="currentColor"
                       />
-                       
                       <path
                         d="M36.9492 1.19301C41.1621 1.45118 44.499 4.94968 44.499 9.22757V27.1279C44.499 31.4058 41.1621
     34.9043 36.9492 35.1625V1.19301Z"
@@ -1445,7 +1398,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                         d="M33 0 l12 6 l-12 6 l3 -6 Z"
                         fill="currentColor"
                       />
-                       
                       <path
                         d="M 0 44
     Q 45 44 22.5 22.5
@@ -1481,12 +1433,10 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                         d="M33 0 l12 6 l-12 6 l3 -6 Z"
                         fill="currentColor"
                       />
-                       
                       <path
                         d="M0 38 l12 -6 l-3 6 l3 6 Z"
                         fill="currentColor"
                       />
-                       
                       <path
                         d="M 9 38
     Q 45 38 22.5 22.5
@@ -1557,7 +1507,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                         stroke-miterlimit="10"
                         stroke-width="2"
                       />
-                       
                       <path
                         d="M 44 1 L 41 12 L 40 5 L 33 4 Z"
                         fill="currentColor"
@@ -1595,7 +1544,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                         stroke="currentColor"
                         stroke-miterlimit="10"
                       />
-                       
                       <path
                         d="M 1 44 L 40 5"
                         fill="none"
@@ -1604,7 +1552,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                         stroke-miterlimit="10"
                         stroke-width="2"
                       />
-                       
                       <path
                         d="M 44 1 L 41 12 L 40 5 L 33 4 Z"
                         fill="currentColor"
@@ -1643,7 +1590,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                         x="2"
                         y="2"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -1651,7 +1597,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                         x="0"
                         y="0"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -1659,7 +1604,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                         x="0"
                         y="20.5"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -1667,7 +1611,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                         x="0"
                         y="41"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -1675,7 +1618,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                         x="20.5"
                         y="0"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -1683,7 +1625,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                         x="20.5"
                         y="41"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -1691,7 +1632,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                         x="41"
                         y="20.5"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -1699,7 +1639,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                         x="41"
                         y="0"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -1707,7 +1646,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                         x="41"
                         y="41"
                       />
-                       
                       <text
                         fill="currentColor"
                         font-size="14px"
@@ -1747,7 +1685,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                         x="2"
                         y="2"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -1755,7 +1692,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                         x="0"
                         y="0"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -1763,7 +1699,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                         x="0"
                         y="20.5"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -1771,7 +1706,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                         x="0"
                         y="41"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -1779,7 +1713,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                         x="20.5"
                         y="0"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -1787,7 +1720,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                         x="20.5"
                         y="41"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -1795,7 +1727,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                         x="41"
                         y="20.5"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -1803,7 +1734,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                         x="41"
                         y="0"
                       />
-                       
                       <rect
                         height="4"
                         stroke="currentColor"
@@ -1811,7 +1741,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                         x="41"
                         y="41"
                       />
-                       
                       <text
                         fill="currentColor"
                         font-size="9px"
@@ -1821,7 +1750,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                       >
                         Header
                       </text>
-                       
                       <text
                         fill="currentColor"
                         font-size="8px"
@@ -1833,13 +1761,11 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                     </svg>
                   </span>
                 </button>
-                 
                 <file-selector-stub
                   errormessages=""
                   hidedetails="true"
                 />
               </div>
-               
               <hr
                 aria-orientation="horizontal"
                 class="v-divider theme--light"
@@ -1849,7 +1775,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
           </div>
         </transition-stub>
       </div>
-       
       <div
         aria-expanded="false"
         class="v-expansion-panel"
@@ -1878,13 +1803,11 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
             </div>
           </transition-stub>
         </button>
-         
         <hr
           aria-orientation="horizontal"
           class="v-divider theme--light"
           role="separator"
         />
-         
         <transition-stub
           name="expand-transition"
         >
@@ -1916,7 +1839,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                     </span>
                   </span>
                 </button>
-                 
                 <div
                   class="flex xs12"
                 >
@@ -1948,7 +1870,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                     </span>
                   </span>
                 </button>
-                 
                 <div
                   class="flex xs12"
                 >
@@ -1959,7 +1880,6 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                   />
                 </div>
               </div>
-               
               <hr
                 aria-orientation="horizontal"
                 class="v-divider theme--light"

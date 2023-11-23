@@ -8,17 +8,14 @@ exports[`numbers-widget-form Renders \`numbers-widget-form\` widget settings wit
     name="title"
     value="Map widget"
   />
-   
   <field-periodic-refresh-stub
     form="[object Object]"
   />
-   
   <field-preset-stub
     name="preset"
     parameters="[object Object]"
     type="Numbers"
   />
-   
   <widget-settings-group-stub
     title="Metrics display"
   >
@@ -29,29 +26,24 @@ exports[`numbers-widget-form Renders \`numbers-widget-form\` widget settings wit
       withexternal="true"
     />
   </widget-settings-group-stub>
-   
   <widget-settings-group-stub
     title="Advanced settings"
   >
     <field-font-size-stub
       name="font_size"
     />
-     
     <field-title-stub
       label="Header"
       name="title"
       placeholder="Header title"
       value="Chart title"
     />
-     
     <field-quick-date-interval-type-stub
       value="last30Days"
     />
-     
     <field-sampling-stub
       value="day"
     />
-     
     <field-filters-stub
       addable="true"
       editable="true"
@@ -59,7 +51,6 @@ exports[`numbers-widget-form Renders \`numbers-widget-form\` widget settings wit
       hideselector="true"
       withentity="true"
     />
-     
     <field-switcher-stub
       title="Show trend"
       value="true"
@@ -76,11 +67,8 @@ exports[`numbers-widget-form Renders \`numbers-widget-form\` widget settings wit
     name="title"
     value=""
   />
-   
   <!---->
-   
   <!---->
-   
   <widget-settings-group-stub
     title="Metrics display"
   >
@@ -91,31 +79,25 @@ exports[`numbers-widget-form Renders \`numbers-widget-form\` widget settings wit
       withexternal="true"
     />
   </widget-settings-group-stub>
-   
   <widget-settings-group-stub
     title="Advanced settings"
   >
     <field-font-size-stub
       name="font_size"
     />
-     
     <field-title-stub
       label="Header"
       name="title"
       placeholder="Header title"
       value=""
     />
-     
     <field-quick-date-interval-type-stub
       value="last30Days"
     />
-     
     <field-sampling-stub
       value="day"
     />
-     
     <!---->
-     
     <field-switcher-stub
       title="Show trend"
     />
