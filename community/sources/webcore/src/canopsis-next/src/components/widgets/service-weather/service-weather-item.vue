@@ -245,6 +245,8 @@ export default {
 
 <style lang="scss" scoped>
 .weather-item {
+  overflow: hidden;
+
   &__toolbar {
     position: absolute;
     top: 0;
