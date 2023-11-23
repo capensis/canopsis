@@ -108,6 +108,8 @@ Wrapper.prototype.activateVuetifyElements = async function activateVuetifyElemen
     }
   });
 
+  await this.vm.$nextTick();
+
   return flushPromises();
 };
 Wrapper.prototype.openAllTreeviewNodes = async function openAllTreeviewNodes() {

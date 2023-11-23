@@ -11,9 +11,9 @@ const localVue = createVueInstance();
 const stubs = {
   'c-action-btn': true,
   'c-progress-overlay': true,
+  'c-calendar': true,
   'pbehavior-create-event': true,
   'pbehavior-planning-calendar-legend': true,
-  'calendar-app-period-picker': true,
 };
 
 describe('pbehavior-planning-calendar', () => {
