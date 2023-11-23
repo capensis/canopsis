@@ -16,8 +16,9 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
       x="0"
       y="0"
     />
+     
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -38,12 +39,14 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
     </foreignobject>
   </g>
   <g>
+     
     <path
       d="M 0 100L 100 0"
       data-type="line"
       fill="transparent"
       pointer-events="stroke"
     />
+     
     <path
       cursor="move"
       d="M 0 100L 100 0"
@@ -51,8 +54,9 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
       pointer-events="stroke"
       stroke-width="10"
     />
+     
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -86,6 +90,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
         d="M0 0L5 10L0 20L20 10Z"
       />
     </marker>
+     
     <path
       d="M 0 100L 100 0"
       data-type="arrow-line"
@@ -93,6 +98,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
       marker-end="url(#arrow-line-end)"
       pointer-events="stroke"
     />
+     
     <path
       cursor="move"
       d="M 0 100L 100 0"
@@ -100,8 +106,9 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
       pointer-events="stroke"
       stroke-width="10"
     />
+     
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -135,6 +142,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
         d="M0 0L5 10L0 20L20 10Z"
       />
     </marker>
+     
     <marker
       id="bidirectional-arrow-line-start"
       markerHeight="60"
@@ -148,6 +156,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
         d="M0 0L5 10L0 20L20 10Z"
       />
     </marker>
+     
     <path
       d="M 0 100L 100 0"
       data-type="bidirectional-arrow-line"
@@ -156,6 +165,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
       marker-start="url(#bidirectional-arrow-line-start)"
       pointer-events="stroke"
     />
+     
     <path
       cursor="move"
       d="M 0 100L 100 0"
@@ -163,8 +173,9 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
       pointer-events="stroke"
       stroke-width="10"
     />
+     
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -192,8 +203,9 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
       data-type="circle"
       r="50"
     />
+     
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -222,8 +234,9 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
       rx="65"
       ry="65"
     />
+     
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -249,8 +262,9 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
       d="M0 65l65 -65l65 65l-65 65Z"
       data-type="rhombus"
     />
+     
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -276,8 +290,9 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
       d="M50 0l80 0l-50,130l-80 0Z"
       data-type="parallelogram"
     />
+     
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -310,14 +325,16 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
         x="0"
         y="0"
       />
+       
       <path
         d="M 20 0 v 130 M 110 0 v 130"
         pointer-events="none"
         stroke-width="0"
       />
     </g>
+     
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -343,8 +360,9 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
       d="M 0 0l 130 0l 0 120q -32.5 -20 -65 0q -32.5,20 -65 0Z"
       data-type="document"
     />
+     
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -370,8 +388,9 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
       d="M 0 20a 65 20 0 1, 0 130, 0a 65 20 0 1, 0 -130, 0l 0 90a 65,20 0 1, 0 130, 0l 0 -90"
       data-type="storage"
     />
+     
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -401,6 +420,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
       x="0"
       y="0"
     />
+     
     <image
       cursor="move"
       height="40"
@@ -408,8 +428,9 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
       x="0"
       y="0"
     />
+     
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -429,8 +450,10 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
       </div>
     </foreignobject>
   </g>
+   
   <g>
     <!---->
+     
     <!---->
   </g>
   <!---->
@@ -438,37 +461,47 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
   <!---->
   <g>
     <!---->
+     
     <!---->
   </g>
   <g>
     <!---->
+     
     <!---->
   </g>
   <g>
     <!---->
+     
     <!---->
   </g>
   <g>
     <!---->
+     
     <!---->
   </g>
   <g>
     <!---->
+     
     <!---->
   </g>
   <g>
     <!---->
+     
     <!---->
   </g>
   <g>
     <!---->
+     
     <!---->
   </g>
   <g>
     <!---->
+     
     <!---->
   </g>
+   
   <!---->
+   
 </svg>
 `;
 
@@ -489,8 +522,9 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
       x="0"
       y="0"
     />
+     
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -511,12 +545,14 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
     </foreignobject>
   </g>
   <g>
+     
     <path
       d="M 0 100L 100 0"
       data-type="line"
       fill="transparent"
       pointer-events="stroke"
     />
+     
     <path
       cursor=""
       d="M 0 100L 100 0"
@@ -524,8 +560,9 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
       pointer-events="stroke"
       stroke-width="10"
     />
+     
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -559,6 +596,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
         d="M0 0L5 10L0 20L20 10Z"
       />
     </marker>
+     
     <path
       d="M 0 100L 100 0"
       data-type="arrow-line"
@@ -566,6 +604,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
       marker-end="url(#arrow-line-end)"
       pointer-events="stroke"
     />
+     
     <path
       cursor=""
       d="M 0 100L 100 0"
@@ -573,8 +612,9 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
       pointer-events="stroke"
       stroke-width="10"
     />
+     
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -608,6 +648,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
         d="M0 0L5 10L0 20L20 10Z"
       />
     </marker>
+     
     <marker
       id="bidirectional-arrow-line-start"
       markerHeight="60"
@@ -621,6 +662,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
         d="M0 0L5 10L0 20L20 10Z"
       />
     </marker>
+     
     <path
       d="M 0 100L 100 0"
       data-type="bidirectional-arrow-line"
@@ -629,6 +671,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
       marker-start="url(#bidirectional-arrow-line-start)"
       pointer-events="stroke"
     />
+     
     <path
       cursor=""
       d="M 0 100L 100 0"
@@ -636,8 +679,9 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
       pointer-events="stroke"
       stroke-width="10"
     />
+     
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -665,8 +709,9 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
       data-type="circle"
       r="50"
     />
+     
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -695,8 +740,9 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
       rx="65"
       ry="65"
     />
+     
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -722,8 +768,9 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
       d="M0 65l65 -65l65 65l-65 65Z"
       data-type="rhombus"
     />
+     
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -749,8 +796,9 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
       d="M50 0l80 0l-50,130l-80 0Z"
       data-type="parallelogram"
     />
+     
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -783,14 +831,16 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
         x="0"
         y="0"
       />
+       
       <path
         d="M 20 0 v 130 M 110 0 v 130"
         pointer-events="none"
         stroke-width="0"
       />
     </g>
+     
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -816,8 +866,9 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
       d="M 0 0l 130 0l 0 120q -32.5 -20 -65 0q -32.5,20 -65 0Z"
       data-type="document"
     />
+     
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -843,8 +894,9 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
       d="M 0 20a 65 20 0 1, 0 130, 0a 65 20 0 1, 0 -130, 0l 0 90a 65,20 0 1, 0 130, 0l 0 -90"
       data-type="storage"
     />
+     
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -874,6 +926,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
       x="0"
       y="0"
     />
+     
     <image
       cursor=""
       height="40"
@@ -881,8 +934,9 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
       x="0"
       y="0"
     />
+     
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -902,6 +956,8 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
       </div>
     </foreignobject>
   </g>
+   
   <!---->
+   
 </svg>
 `;

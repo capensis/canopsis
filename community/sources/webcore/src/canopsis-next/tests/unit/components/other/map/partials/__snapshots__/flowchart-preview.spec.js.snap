@@ -21,6 +21,7 @@ exports[`flowchart-preview Renders \`flowchart-preview\` with custom props 1`] =
     />
      
   </div>
+   
   <c-help-icon-stub
     color="secondary"
     icon="help"
@@ -33,7 +34,7 @@ Middle mouse click + drag - pan the area
 Shift + mouse wheel - horizontal scroll
 Alt + mouse wheel - vertical scroll
 "
-    top="top"
+    top=""
   />
 </div>
 `;
@@ -55,6 +56,7 @@ exports[`flowchart-preview Renders \`flowchart-preview\` with required props 1`]
     />
      
   </div>
+   
   <c-help-icon-stub
     color="secondary"
     icon="help"
@@ -67,7 +69,7 @@ Middle mouse click + drag - pan the area
 Shift + mouse wheel - horizontal scroll
 Alt + mouse wheel - vertical scroll
 "
-    top="top"
+    top=""
   />
 </div>
 `;

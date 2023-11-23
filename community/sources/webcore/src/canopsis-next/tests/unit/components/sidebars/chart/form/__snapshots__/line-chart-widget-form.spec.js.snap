@@ -8,9 +8,11 @@ exports[`line-chart-widget-form Renders \`line-chart-widget-form\` widget settin
     name="title"
     value="Map widget"
   />
+   
   <field-periodic-refresh-stub
     form="[object Object]"
   />
+   
   <widget-settings-group-stub
     title="Metrics display"
   >
@@ -20,6 +22,7 @@ exports[`line-chart-widget-form Renders \`line-chart-widget-form\` widget settin
       withexternal="true"
     />
   </widget-settings-group-stub>
+   
   <widget-settings-group-stub
     title="Advanced settings"
   >
@@ -29,12 +32,15 @@ exports[`line-chart-widget-form Renders \`line-chart-widget-form\` widget settin
       placeholder="Header title"
       value="Chart title"
     />
+     
     <field-quick-date-interval-type-stub
       value="last30Days"
     />
+     
     <field-sampling-stub
       value="day"
     />
+     
     <field-filters-stub
       addable="true"
       editable="true"
@@ -42,6 +48,7 @@ exports[`line-chart-widget-form Renders \`line-chart-widget-form\` widget settin
       hideselector="true"
       withentity="true"
     />
+     
     <field-switcher-stub
       title="Show comparison"
     />
@@ -57,7 +64,9 @@ exports[`line-chart-widget-form Renders \`line-chart-widget-form\` widget settin
     name="title"
     value=""
   />
+   
   <!---->
+   
   <widget-settings-group-stub
     title="Metrics display"
   >
@@ -67,6 +76,7 @@ exports[`line-chart-widget-form Renders \`line-chart-widget-form\` widget settin
       withexternal="true"
     />
   </widget-settings-group-stub>
+   
   <widget-settings-group-stub
     title="Advanced settings"
   >
@@ -76,13 +86,17 @@ exports[`line-chart-widget-form Renders \`line-chart-widget-form\` widget settin
       placeholder="Header title"
       value=""
     />
+     
     <field-quick-date-interval-type-stub
       value="last30Days"
     />
+     
     <field-sampling-stub
       value="day"
     />
+     
     <!---->
+     
     <field-switcher-stub
       title="Show comparison"
     />

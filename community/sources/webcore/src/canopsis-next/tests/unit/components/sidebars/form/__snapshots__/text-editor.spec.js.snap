@@ -1,23 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`text-editor Renders \`text-editor\` with custom props 1`] = `
-<settings-button-field-stub>
-  <div
-    class="subheading"
-  >
-    Custom title
-  </div>
-</settings-button-field-stub>
+<settings-button-field-stub
+  title="Custom title"
+/>
 `;
 
 exports[`text-editor Renders \`text-editor\` with default props 1`] = `
 <settings-button-field-stub
   isempty="true"
->
-  <div
-    class="subheading"
-  >
-    
-  </div>
-</settings-button-field-stub>
+  title=""
+/>
 `;

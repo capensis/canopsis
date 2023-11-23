@@ -6,7 +6,7 @@ exports[`service-weather-item Renders \`service-weather-item\` with custom props
   style="height: 4em; color: white;"
 >
   <div
-    class="layout fill-height service-weather-item__content row justify-space-between"
+    class="layout fill-height service-weather-item__content justify-space-between"
   >
     <div
       class="flex position-relative fill-height"
@@ -18,26 +18,32 @@ exports[`service-weather-item Renders \`service-weather-item\` with custom props
           class="service-weather-item__template pa-3"
         />
       </div>
+       
       <div
-        class="layout service-weather-item__toolbar pt-1 pr-1 row align-center"
+        class="layout service-weather-item__toolbar pt-1 pr-1 align-center"
       >
         <c-no-events-icon-stub
           color="white"
-          top="top"
+          top=""
         />
+         
         <impact-state-indicator-stub
           class="mr-1"
           value="3"
         />
       </div>
+       
       <i
         aria-hidden="true"
-        class="v-icon service-weather-item__background material-icons theme--light white--text"
+        class="v-icon notranslate service-weather-item__background material-icons theme--light white--text"
         style="font-size: 5em;"
       />
+       
       <!---->
     </div>
+     
     <!---->
+     
     <!---->
   </div>
 </card-with-see-alarms-btn-stub>
@@ -49,7 +55,7 @@ exports[`service-weather-item Renders \`service-weather-item\` with full access 
   style="height: 16em; color: white;"
 >
   <div
-    class="layout fill-height service-weather-item__content row justify-space-between"
+    class="layout fill-height service-weather-item__content justify-space-between"
   >
     <div
       class="flex position-relative fill-height"
@@ -79,26 +85,32 @@ exports[`service-weather-item Renders \`service-weather-item\` with full access 
           </p>
         </div>
       </div>
+       
       <div
-        class="layout service-weather-item__toolbar pt-1 pr-1 row align-center"
+        class="layout service-weather-item__toolbar pt-1 pr-1 align-center"
       >
         <c-no-events-icon-stub
           color="white"
-          top="top"
+          top=""
         />
+         
         <impact-state-indicator-stub
           class="mr-1"
           value="0"
         />
       </div>
+       
       <i
         aria-hidden="true"
-        class="v-icon service-weather-item__background material-icons theme--light white--text"
+        class="v-icon notranslate service-weather-item__background material-icons theme--light white--text"
         style="font-size: 5em;"
       />
+       
       <!---->
     </div>
+     
     <!---->
+     
     <alarm-state-counters-stub
       counters="[object Object]"
       types="state-types"

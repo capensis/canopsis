@@ -123,7 +123,7 @@ describe('view-form', () => {
   test('Renders `view-form` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `view-form` with custom props', () => {
@@ -143,6 +143,6 @@ describe('view-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -7,8 +7,8 @@
     />
     <remediation-statistics-chart
       :metrics="metrics"
-      :data-type="options.type"
-      :sampling="options.sampling"
+      :data-type="query.type"
+      :sampling="query.sampling"
       :min-date="minDate"
       :downloading="downloading"
       responsive

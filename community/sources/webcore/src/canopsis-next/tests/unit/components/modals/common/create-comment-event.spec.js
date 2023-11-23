@@ -119,6 +119,9 @@ describe('create-comment-event', () => {
 
     expect(action).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
+
+    validator.detach('name');
+    wrapper.destroy();
   });
 
   test('Errors added after trigger submit button with action errors', async () => {
@@ -208,9 +211,7 @@ describe('create-comment-event', () => {
       },
     });
 
-    const cancelButton = selectCancelButton(wrapper);
-
-    cancelButton.trigger('click');
+    selectCancelButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -229,7 +230,7 @@ describe('create-comment-event', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `create-comment-event` with items', () => {
@@ -246,6 +247,6 @@ describe('create-comment-event', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

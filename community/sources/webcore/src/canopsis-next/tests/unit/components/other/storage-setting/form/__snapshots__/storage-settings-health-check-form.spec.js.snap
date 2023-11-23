@@ -8,17 +8,21 @@ exports[`storage-settings-health-check-form Renders \`storage-settings-health-ch
     class="layout c-information-block column"
   >
     <div
-      class="layout row"
+      class="layout"
     >
       <div
-        class="subheading font-weight-bold"
+        class="text-subtitle-1 font-weight-bold"
       >
-        Healthcheck data storage
+        
+      Healthcheck data storage
+    
       </div>
+       
       <!---->
     </div>
+     
     <div
-      class="layout mt-2 row"
+      class="layout mt-2"
     >
       <span
         class="text--secondary"
@@ -28,6 +32,7 @@ exports[`storage-settings-health-check-form Renders \`storage-settings-health-ch
         />
       </span>
     </div>
+      
     <c-enabled-duration-field-stub
       label="Delete FIFO incoming flow data after"
       name="health_check.delete_after"
@@ -45,16 +50,21 @@ exports[`storage-settings-health-check-form Renders \`storage-settings-health-ch
     class="layout c-information-block column"
   >
     <div
-      class="layout row"
+      class="layout"
     >
       <div
-        class="subheading font-weight-bold"
+        class="text-subtitle-1 font-weight-bold"
       >
-        Healthcheck data storage
+        
+      Healthcheck data storage
+    
       </div>
+       
       <!---->
     </div>
+     
     <!---->
+      
     <c-enabled-duration-field-stub
       label="Delete FIFO incoming flow data after"
       name="health_check.delete_after"

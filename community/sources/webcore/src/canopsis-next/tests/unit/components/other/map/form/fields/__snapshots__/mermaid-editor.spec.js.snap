@@ -16,15 +16,17 @@ exports[`mermaid-editor Renders \`mermaid-editor\` with custom props 1`] = `
         value=""
       />
     </div>
+     
     <div
       class="flex mermaid-editor__content"
     >
       <div
-        class="layout mermaid-editor__toolbar px-2 row align-center justify-end"
+        class="layout mermaid-editor__toolbar px-2 align-center justify-end"
       >
         <add-location-btn-stub
           class="mr-2"
         />
+         
         <mermaid-theme-field-stub
           class="mermaid-editor__theme-picker"
           label=""
@@ -32,6 +34,7 @@ exports[`mermaid-editor Renders \`mermaid-editor\` with custom props 1`] = `
           value="base"
         />
       </div>
+       
       <div
         class="mermaid-editor__preview"
       >
@@ -41,6 +44,7 @@ exports[`mermaid-editor Renders \`mermaid-editor\` with custom props 1`] = `
           theme="base"
           value=""
         />
+         
         <mermaid-points-editor-stub
           class="mermaid-editor__points"
           markersize="24"
@@ -49,6 +53,7 @@ exports[`mermaid-editor Renders \`mermaid-editor\` with custom props 1`] = `
       </div>
     </div>
   </div>
+   
   <!---->
 </div>
 `;
@@ -69,15 +74,17 @@ exports[`mermaid-editor Renders \`mermaid-editor\` with form 1`] = `
         value=""
       />
     </div>
+     
     <div
       class="flex mermaid-editor__content"
     >
       <div
-        class="layout mermaid-editor__toolbar px-2 row align-center justify-end"
+        class="layout mermaid-editor__toolbar px-2 align-center justify-end"
       >
         <add-location-btn-stub
           class="mr-2"
         />
+         
         <mermaid-theme-field-stub
           class="mermaid-editor__theme-picker"
           label=""
@@ -85,6 +92,7 @@ exports[`mermaid-editor Renders \`mermaid-editor\` with form 1`] = `
           value="base"
         />
       </div>
+       
       <div
         class="mermaid-editor__preview"
       >
@@ -94,6 +102,7 @@ exports[`mermaid-editor Renders \`mermaid-editor\` with form 1`] = `
           theme="base"
           value=""
         />
+         
         <mermaid-points-editor-stub
           class="mermaid-editor__points"
           markersize="24"
@@ -102,6 +111,7 @@ exports[`mermaid-editor Renders \`mermaid-editor\` with form 1`] = `
       </div>
     </div>
   </div>
+   
   <!---->
 </div>
 `;
@@ -122,15 +132,17 @@ exports[`mermaid-editor Renders \`mermaid-editor\` with validation errors  1`] =
         value=""
       />
     </div>
+     
     <div
       class="flex mermaid-editor__content"
     >
       <div
-        class="layout mermaid-editor__toolbar px-2 row align-center justify-end"
+        class="layout mermaid-editor__toolbar px-2 align-center justify-end"
       >
         <add-location-btn-stub
           class="mr-2"
         />
+         
         <mermaid-theme-field-stub
           class="mermaid-editor__theme-picker"
           label=""
@@ -138,6 +150,7 @@ exports[`mermaid-editor Renders \`mermaid-editor\` with validation errors  1`] =
           value="base"
         />
       </div>
+       
       <div
         class="mermaid-editor__preview"
       >
@@ -147,6 +160,7 @@ exports[`mermaid-editor Renders \`mermaid-editor\` with validation errors  1`] =
           theme="base"
           value=""
         />
+         
         <mermaid-points-editor-stub
           class="mermaid-editor__points"
           markersize="24"
@@ -155,6 +169,7 @@ exports[`mermaid-editor Renders \`mermaid-editor\` with validation errors  1`] =
       </div>
     </div>
   </div>
+   
   <div
     class="v-messages theme--light error--text"
   >

@@ -61,7 +61,7 @@ describe('pbehaviors-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pbehaviors-list` with custom props', () => {
@@ -85,7 +85,7 @@ describe('pbehaviors-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pbehaviors-list` with expanded panel', async () => {
@@ -105,7 +105,7 @@ describe('pbehaviors-list', () => {
 
     await selectExpandButtonByRow(wrapper, 0).vm.$emit('expand');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pbehaviors-list` with updatable and old_mongo_query', async () => {
@@ -126,6 +126,6 @@ describe('pbehaviors-list', () => {
 
     await selectExpandButtonByRow(wrapper, 0).vm.$emit('expand');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

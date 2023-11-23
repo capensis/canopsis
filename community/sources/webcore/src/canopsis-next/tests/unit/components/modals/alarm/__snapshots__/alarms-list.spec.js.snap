@@ -3,7 +3,7 @@
 exports[`alarms-list Renders \`alarms-list\` 1`] = `
 <div
   class="modal-wrapper"
-  close="close"
+  close=""
 >
   <div
     class="title"

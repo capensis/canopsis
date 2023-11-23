@@ -8,22 +8,26 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with bookmarked alarm 1`] =
     class="alarm-list-row__icons pr-0"
   >
     <div
-      class="layout row align-center justify-space-between"
+      class="layout align-center justify-space-between"
     >
       <div
         class="layout alarm-list-row__checkbox"
       >
         <!---->
       </div>
+       
       <!---->
+       
       <div
         class="layout align-center"
       >
         <alarms-list-row-bookmark-icon-stub />
       </div>
+       
       <!---->
     </div>
   </td>
+   
   <td
     class="alarm-list-row__cell"
   >
@@ -32,6 +36,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with bookmarked alarm 1`] =
       refreshalarmslist="[Function]"
       widget="[object Object]"
     />
+     
     <!---->
   </td>
 </tr>
@@ -45,20 +50,35 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
     class="alarm-list-row__icons pr-0"
   >
     <div
-      class="layout row align-center justify-space-between"
+      class="layout align-center justify-space-between"
     >
       <div
         class="layout alarm-list-row__checkbox"
       >
-        <v-checkbox-functional-stub
-          class="ma-0"
-          hidedetails="true"
-          inputvalue="true"
-          label=""
-        />
+        <div
+          class="ma-0 v-simple-checkbox"
+          hide-details=""
+        >
+          <div
+            class="v-input--selection-controls__input"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light primary--text"
+            >
+              check_box
+            </i>
+            <div
+              class="v-input--selection-controls__ripple primary--text"
+            />
+          </div>
+        </div>
       </div>
+       
       <!---->
+       
       <!---->
+       
       <alarms-expand-panel-btn-stub
         alarm="[object Object]"
         istourenabled="true"
@@ -67,6 +87,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
       />
     </div>
   </td>
+   
   <td
     class="alarm-list-row__cell"
   >
@@ -76,6 +97,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
       selectedtag="tag"
       widget="[object Object]"
     />
+     
     <!---->
   </td>
   <td
@@ -87,6 +109,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
       selectedtag="tag"
       widget="[object Object]"
     />
+     
     <!---->
   </td>
   <td
@@ -97,6 +120,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
       refreshalarmslist="[Function]"
       widget="[object Object]"
     />
+     
     <!---->
   </td>
 </tr>
@@ -107,6 +131,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with default and required p
   class="alarm-list-row"
 >
   <!---->
+   
   <td
     class="alarm-list-row__cell"
   >
@@ -116,6 +141,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with default and required p
       selectedtag=""
       widget="[object Object]"
     />
+     
     <!---->
   </td>
   <td
@@ -127,6 +153,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with default and required p
       selectedtag=""
       widget="[object Object]"
     />
+     
     <!---->
   </td>
   <td
@@ -137,6 +164,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with default and required p
       refreshalarmslist="[Function]"
       widget="[object Object]"
     />
+     
     <!---->
   </td>
 </tr>
@@ -150,15 +178,18 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with expand button 1`] = `
     class="alarm-list-row__icons pr-0"
   >
     <div
-      class="layout row align-center justify-space-between"
+      class="layout align-center justify-space-between"
     >
       <div
         class="layout alarm-list-row__checkbox"
       >
         <!---->
       </div>
+       
       <!---->
+       
       <!---->
+       
       <alarms-expand-panel-btn-stub
         alarm="[object Object]"
         search=""
@@ -166,6 +197,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with expand button 1`] = `
       />
     </div>
   </td>
+   
   <td
     class="alarm-list-row__cell"
   >
@@ -174,6 +206,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with expand button 1`] = `
       refreshalarmslist="[Function]"
       widget="[object Object]"
     />
+     
     <!---->
   </td>
 </tr>
@@ -187,18 +220,22 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with feature classes 1`] = 
     class="alarm-list-row__icons pr-0"
   >
     <div
-      class="layout row align-center justify-space-between"
+      class="layout align-center justify-space-between"
     >
       <div
         class="layout alarm-list-row__checkbox"
       >
         <!---->
       </div>
+       
       <!---->
+       
       <!---->
+       
       <!---->
     </div>
   </td>
+   
   <td
     class="alarm-list-row__cell"
   >
@@ -207,6 +244,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with feature classes 1`] = 
       refreshalarmslist="[Function]"
       widget="[object Object]"
     />
+     
     <!---->
   </td>
 </tr>
@@ -220,13 +258,14 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with filtered children in p
     class="alarm-list-row__icons pr-0"
   >
     <div
-      class="layout row align-center justify-space-between"
+      class="layout align-center justify-space-between"
     >
       <div
         class="layout alarm-list-row__checkbox"
       >
         <!---->
       </div>
+       
       <div
         class="layout align-center"
       >
@@ -234,10 +273,13 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with filtered children in p
           alarm="[object Object]"
         />
       </div>
+       
       <!---->
+       
       <!---->
     </div>
   </td>
+   
   <td
     class="alarm-list-row__cell"
   >
@@ -247,6 +289,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with filtered children in p
       refreshalarmslist="[Function]"
       widget="[object Object]"
     />
+     
     <!---->
   </td>
 </tr>
@@ -257,6 +300,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with instructions 1`] = `
   class="alarm-list-row"
 >
   <!---->
+   
   <td
     class="alarm-list-row__cell"
   >
@@ -266,6 +310,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with instructions 1`] = `
       refreshalarmslist="[Function]"
       widget="[object Object]"
     />
+     
     <!---->
   </td>
 </tr>
@@ -279,22 +324,36 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with resolved alarm 1`] = `
     class="alarm-list-row__icons pr-0"
   >
     <div
-      class="layout row align-center justify-space-between"
+      class="layout align-center justify-space-between"
     >
       <div
         class="layout alarm-list-row__checkbox"
       >
-        <v-checkbox-functional-stub
-          disabled="true"
-          hidedetails="true"
-          label=""
-        />
+        <div
+          class="v-simple-checkbox v-simple-checkbox--disabled"
+          hide-details=""
+        >
+          <div
+            class="v-input--selection-controls__input"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate v-icon--disabled material-icons theme--light"
+            >
+              check_box_outline_blank
+            </i>
+          </div>
+        </div>
       </div>
+       
       <!---->
+       
       <!---->
+       
       <!---->
     </div>
   </td>
+   
   <td
     class="alarm-list-row__cell"
   >
@@ -303,6 +362,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with resolved alarm 1`] = `
       refreshalarmslist="[Function]"
       widget="[object Object]"
     />
+     
     <!---->
   </td>
 </tr>

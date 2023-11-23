@@ -221,21 +221,6 @@ html {
   animation: blink 2s linear infinite;
 }
 
-.v-list__tile__title.v-list-badge__tile__title {
-  overflow: visible;
-
-  .v-badge__badge {
-    top: -5px;
-    right: -11px;
-    height: 16px;
-    width: 16px;
-
-    .v-icon {
-      font-size: 11px;
-    }
-  }
-}
-
 .kpi-widget {
   &__title {
     font-size: 18px;

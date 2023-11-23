@@ -5,30 +5,31 @@ exports[`kpi-chart-export-actions Renders \`kpi-chart-export-actions\` with cust
   class="layout kpi-chart-export-actions justify-end wrap"
 >
   <button
-    class="ma-0 v-btn v-btn--loader v-btn--small theme--light primary"
+    class="v-btn v-btn--is-elevated v-btn--has-bg v-btn--loading theme--light v-size--small primary"
     type="button"
   >
-    <div
+    <span
       class="v-btn__content"
     >
       <i
         aria-hidden="true"
-        class="v-icon v-icon--left material-icons theme--light"
+        class="v-icon notranslate v-icon--left material-icons theme--light"
         style="font-size: 16px;"
       >
         file_download
       </i>
+       
       <span>
         Export as csv
       </span>
-    </div>
+    </span>
     <span
-      class="v-btn__loading"
+      class="v-btn__loader"
     >
       <div
         aria-valuemax="100"
         aria-valuemin="0"
-        class="v-progress-circular v-progress-circular--indeterminate"
+        class="v-progress-circular v-progress-circular--visible v-progress-circular--indeterminate"
         role="progressbar"
         style="height: 23px; width: 23px;"
       >
@@ -54,24 +55,26 @@ exports[`kpi-chart-export-actions Renders \`kpi-chart-export-actions\` with cust
       </div>
     </span>
   </button>
+   
   <button
-    class="ma-0 v-btn v-btn--small theme--light primary"
+    class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--small primary"
     type="button"
   >
-    <div
+    <span
       class="v-btn__content"
     >
       <i
         aria-hidden="true"
-        class="v-icon v-icon--left material-icons theme--light"
+        class="v-icon notranslate v-icon--left material-icons theme--light"
         style="font-size: 16px;"
       >
         file_download
       </i>
+       
       <span>
         Download as PNG
       </span>
-    </div>
+    </span>
   </button>
 </div>
 `;
@@ -83,42 +86,45 @@ exports[`kpi-chart-export-actions Renders \`kpi-chart-export-actions\` without p
   class="layout kpi-chart-export-actions justify-end wrap"
 >
   <button
-    class="ma-0 v-btn v-btn--small theme--light primary"
+    class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--small primary"
     type="button"
   >
-    <div
+    <span
       class="v-btn__content"
     >
       <i
         aria-hidden="true"
-        class="v-icon v-icon--left material-icons theme--light"
+        class="v-icon notranslate v-icon--left material-icons theme--light"
         style="font-size: 16px;"
       >
         file_download
       </i>
+       
       <span>
         Export as csv
       </span>
-    </div>
+    </span>
   </button>
+   
   <button
-    class="ma-0 v-btn v-btn--small theme--light primary"
+    class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--small primary"
     type="button"
   >
-    <div
+    <span
       class="v-btn__content"
     >
       <i
         aria-hidden="true"
-        class="v-icon v-icon--left material-icons theme--light"
+        class="v-icon notranslate v-icon--left material-icons theme--light"
         style="font-size: 16px;"
       >
         file_download
       </i>
+       
       <span>
         Download as PNG
       </span>
-    </div>
+    </span>
   </button>
 </div>
 `;

@@ -275,7 +275,7 @@ describe('junit-gantt-chart', () => {
 
     wrapper.vm.getTooltip({ tooltip: tooltipFactory(0) });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `junit-gantt-chart` tooltip without.', async () => {
@@ -289,7 +289,7 @@ describe('junit-gantt-chart', () => {
 
     wrapper.vm.getTooltip({ tooltip: tooltipFactory(4) });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `junit-gantt-chart` tooltip with opacity 0.', async () => {
@@ -309,7 +309,7 @@ describe('junit-gantt-chart', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `junit-gantt-chart` historical and tooltip (no icon).', async () => {

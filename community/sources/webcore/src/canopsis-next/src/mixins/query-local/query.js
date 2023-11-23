@@ -28,9 +28,9 @@ export const localQueryMixin = {
   computed: {
     options: {
       get() {
-        const { page = 1, itemsPerPage = PAGINATION_LIMIT, sortBy = [], sortDesc = [] } = this.query;
+        const { page = 1, itemsPerPage = PAGINATION_LIMIT, sortBy = [], sortDesc = [], search } = this.query;
 
-        return { page, itemsPerPage, sortBy, sortDesc };
+        return { page, itemsPerPage, sortBy, sortDesc, search };
       },
       set(value) {
         this.query = {

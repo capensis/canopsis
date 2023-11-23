@@ -5,18 +5,19 @@ exports[`c-change-state-field Renders \`c-change-state-field\` after validate co
   class="mt-3"
 >
   <div
-    class="layout row"
+    class="layout"
   >
     <state-criticity-field-stub
       statevalues="[object Object]"
       value="2"
     />
   </div>
+   
   <div
-    class="layout mt-4 row"
+    class="layout mt-4"
   >
     <div
-      class="v-input v-textarea v-text-field v-input--has-state theme--light error--text"
+      class="v-input v-textarea v-input--has-state theme--light v-text-field error--text"
     >
       <div
         class="v-input__control"
@@ -28,14 +29,12 @@ exports[`c-change-state-field Renders \`c-change-state-field\` after validate co
             class="v-text-field__slot"
           >
             <label
-              aria-hidden="true"
               class="v-label theme--light error--text"
               style="left: 0px; position: absolute;"
             >
               Note
             </label>
             <textarea
-              aria-label="Note"
               name="changeState.output"
               rows="5"
             />
@@ -46,6 +45,7 @@ exports[`c-change-state-field Renders \`c-change-state-field\` after validate co
         >
           <div
             class="v-messages theme--light error--text"
+            role="alert"
           >
             <transition-group-stub
               class="v-messages__wrapper"
@@ -71,18 +71,19 @@ exports[`c-change-state-field Renders \`c-change-state-field\` with allowed chan
   class="mt-3"
 >
   <div
-    class="layout row"
+    class="layout"
   >
     <state-criticity-field-stub
       statevalues="[object Object]"
       value="0"
     />
   </div>
+   
   <div
-    class="layout mt-4 row"
+    class="layout mt-4"
   >
     <div
-      class="v-input v-textarea v-text-field v-input--is-label-active v-input--is-dirty theme--light"
+      class="v-input v-textarea v-input--is-label-active v-input--is-dirty theme--light v-text-field"
     >
       <div
         class="v-input__control"
@@ -94,14 +95,12 @@ exports[`c-change-state-field Renders \`c-change-state-field\` with allowed chan
             class="v-text-field__slot"
           >
             <label
-              aria-hidden="true"
               class="v-label v-label--active theme--light"
               style="left: 0px; position: absolute;"
             >
               Custom label
             </label>
             <textarea
-              aria-label="Custom label"
               name="customLabelFieldName.output"
               rows="5"
             />
@@ -131,18 +130,19 @@ exports[`c-change-state-field Renders \`c-change-state-field\` with custom label
   class="mt-3"
 >
   <div
-    class="layout row"
+    class="layout"
   >
     <state-criticity-field-stub
       statevalues="[object Object]"
       value="0"
     />
   </div>
+   
   <div
-    class="layout mt-4 row"
+    class="layout mt-4"
   >
     <div
-      class="v-input v-textarea v-text-field v-input--is-label-active v-input--is-dirty theme--light"
+      class="v-input v-textarea v-input--is-label-active v-input--is-dirty theme--light v-text-field"
     >
       <div
         class="v-input__control"
@@ -154,14 +154,12 @@ exports[`c-change-state-field Renders \`c-change-state-field\` with custom label
             class="v-text-field__slot"
           >
             <label
-              aria-hidden="true"
               class="v-label v-label--active theme--light"
               style="left: 0px; position: absolute;"
             >
               Note
             </label>
             <textarea
-              aria-label="Note"
               name="customLabelFieldName.output"
               rows="5"
             />
@@ -191,18 +189,19 @@ exports[`c-change-state-field Renders \`c-change-state-field\` with errors corre
   class="mt-3"
 >
   <div
-    class="layout row"
+    class="layout"
   >
     <state-criticity-field-stub
       statevalues="[object Object]"
       value="0"
     />
   </div>
+   
   <div
-    class="layout mt-4 row"
+    class="layout mt-4"
   >
     <div
-      class="v-input v-textarea v-text-field v-input--has-state v-input--is-label-active v-input--is-dirty theme--light error--text"
+      class="v-input v-textarea v-input--has-state v-input--is-label-active v-input--is-dirty theme--light v-text-field error--text"
     >
       <div
         class="v-input__control"
@@ -214,14 +213,12 @@ exports[`c-change-state-field Renders \`c-change-state-field\` with errors corre
             class="v-text-field__slot"
           >
             <label
-              aria-hidden="true"
               class="v-label v-label--active theme--light error--text"
               style="left: 0px; position: absolute;"
             >
               Note
             </label>
             <textarea
-              aria-label="Note"
               name="customName.output"
               rows="5"
             />
@@ -232,6 +229,7 @@ exports[`c-change-state-field Renders \`c-change-state-field\` with errors corre
         >
           <div
             class="v-messages theme--light error--text"
+            role="alert"
           >
             <transition-group-stub
               class="v-messages__wrapper"
@@ -257,18 +255,19 @@ exports[`c-change-state-field Renders \`c-change-state-field\` without allowed c
   class="mt-3"
 >
   <div
-    class="layout row"
+    class="layout"
   >
     <state-criticity-field-stub
       statevalues="[object Object]"
       value="0"
     />
   </div>
+   
   <div
-    class="layout mt-4 row"
+    class="layout mt-4"
   >
     <div
-      class="v-input v-textarea v-text-field v-input--is-label-active v-input--is-dirty theme--light"
+      class="v-input v-textarea v-input--is-label-active v-input--is-dirty theme--light v-text-field"
     >
       <div
         class="v-input__control"
@@ -280,14 +279,12 @@ exports[`c-change-state-field Renders \`c-change-state-field\` without allowed c
             class="v-text-field__slot"
           >
             <label
-              aria-hidden="true"
               class="v-label v-label--active theme--light"
               style="left: 0px; position: absolute;"
             >
               Custom label
             </label>
             <textarea
-              aria-label="Custom label"
               name="changeState.output"
               rows="5"
             />

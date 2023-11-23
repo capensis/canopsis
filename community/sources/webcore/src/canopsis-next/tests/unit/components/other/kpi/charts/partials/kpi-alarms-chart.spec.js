@@ -635,7 +635,7 @@ describe('kpi-alarms-chart', () => {
     const canvas = wrapper.find('canvas');
 
     expect(canvas.element).toMatchCanvasSnapshot();
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `kpi-alarms-chart` with downloading true', async () => {
@@ -649,6 +649,6 @@ describe('kpi-alarms-chart', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

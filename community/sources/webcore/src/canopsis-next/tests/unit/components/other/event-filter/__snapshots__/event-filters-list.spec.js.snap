@@ -34,6 +34,61 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
     <div
       class="v-data-table__wrapper"
     >
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="12"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="12"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="12"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="12"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="12"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="12"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="12"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="12"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="12"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="12"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="12"
+        tag="td"
+      />
       <table>
         <colgroup>
           <col
@@ -98,7 +153,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
                     check_box_outline_blank
                   </i>
                   <div
-                    class="v-input--selection-controls__ripple"
+                    class="v-input--selection-controls__ripple primary--text"
                   />
                 </div>
               </div>
@@ -333,7 +388,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
                     check_box_outline_blank
                   </i>
                   <div
-                    class="v-input--selection-controls__ripple"
+                    class="v-input--selection-controls__ripple primary--text"
                   />
                 </div>
               </div>
@@ -443,13 +498,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="12"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -469,7 +518,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
                     check_box_outline_blank
                   </i>
                   <div
-                    class="v-input--selection-controls__ripple"
+                    class="v-input--selection-controls__ripple primary--text"
                   />
                 </div>
               </div>
@@ -581,13 +630,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="12"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -607,7 +650,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
                     check_box_outline_blank
                   </i>
                   <div
-                    class="v-input--selection-controls__ripple"
+                    class="v-input--selection-controls__ripple primary--text"
                   />
                 </div>
               </div>
@@ -717,13 +760,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="12"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -743,7 +780,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
                     check_box_outline_blank
                   </i>
                   <div
-                    class="v-input--selection-controls__ripple"
+                    class="v-input--selection-controls__ripple primary--text"
                   />
                 </div>
               </div>
@@ -855,13 +892,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="12"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -881,7 +912,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
                     check_box_outline_blank
                   </i>
                   <div
-                    class="v-input--selection-controls__ripple"
+                    class="v-input--selection-controls__ripple primary--text"
                   />
                 </div>
               </div>
@@ -991,13 +1022,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="12"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -1017,7 +1042,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
                     check_box_outline_blank
                   </i>
                   <div
-                    class="v-input--selection-controls__ripple"
+                    class="v-input--selection-controls__ripple primary--text"
                   />
                 </div>
               </div>
@@ -1129,13 +1154,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="12"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -1155,7 +1174,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
                     check_box_outline_blank
                   </i>
                   <div
-                    class="v-input--selection-controls__ripple"
+                    class="v-input--selection-controls__ripple primary--text"
                   />
                 </div>
               </div>
@@ -1265,13 +1284,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="12"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -1291,7 +1304,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
                     check_box_outline_blank
                   </i>
                   <div
-                    class="v-input--selection-controls__ripple"
+                    class="v-input--selection-controls__ripple primary--text"
                   />
                 </div>
               </div>
@@ -1403,13 +1416,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="12"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -1429,7 +1436,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
                     check_box_outline_blank
                   </i>
                   <div
-                    class="v-input--selection-controls__ripple"
+                    class="v-input--selection-controls__ripple primary--text"
                   />
                 </div>
               </div>
@@ -1539,13 +1546,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="12"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -1565,7 +1566,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
                     check_box_outline_blank
                   </i>
                   <div
-                    class="v-input--selection-controls__ripple"
+                    class="v-input--selection-controls__ripple primary--text"
                   />
                 </div>
               </div>
@@ -1677,13 +1678,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="12"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -1703,7 +1698,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
                     check_box_outline_blank
                   </i>
                   <div
-                    class="v-input--selection-controls__ripple"
+                    class="v-input--selection-controls__ripple primary--text"
                   />
                 </div>
               </div>
@@ -1813,13 +1808,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="12"
-              tag="td"
-            />
-          </tr>
+          />
         </tbody>
       </table>
     </div>
@@ -2167,6 +2156,56 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
     <div
       class="v-data-table__wrapper"
     >
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
       <table>
         <colgroup>
           <col
@@ -2519,13 +2558,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -2629,13 +2662,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -2737,13 +2764,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -2847,13 +2868,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -2955,13 +2970,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -3065,13 +3074,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -3173,13 +3176,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -3283,13 +3280,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -3391,13 +3382,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -3501,13 +3486,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
+          />
         </tbody>
       </table>
     </div>
@@ -3555,6 +3534,56 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
     <div
       class="v-data-table__wrapper"
     >
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
       <table>
         <colgroup>
           <col
@@ -3911,13 +3940,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -4025,13 +4048,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -4137,13 +4154,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -4251,13 +4262,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -4363,13 +4368,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -4477,13 +4476,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -4589,13 +4582,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -4703,13 +4690,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -4815,13 +4796,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
+          />
           <tr
             class=""
           >
@@ -4929,13 +4904,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
           </tr>
           <tr
             class="v-data-table__expanded v-data-table__expanded__content"
-          >
-            <transition-group-stub
-              class="v-data-table__expanded__col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
+          />
         </tbody>
       </table>
     </div>

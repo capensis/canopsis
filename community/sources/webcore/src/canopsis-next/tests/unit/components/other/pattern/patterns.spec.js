@@ -92,7 +92,7 @@ describe('patterns', () => {
     const itemsPerPage = Faker.datatype.number({ max: initialItemsPerPage });
     const page = Faker.datatype.number();
 
-    patternsListNode.$emit('update:pagination', {
+    patternsListNode.$emit('update:options', {
       itemsPerPage,
       page,
     });
@@ -178,7 +178,7 @@ describe('patterns', () => {
   it('Renders `patterns` without patterns', () => {
     const wrapper = snapshotFactory({ store, listeners });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `patterns` with patterns', () => {
@@ -196,6 +196,6 @@ describe('patterns', () => {
       listeners,
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

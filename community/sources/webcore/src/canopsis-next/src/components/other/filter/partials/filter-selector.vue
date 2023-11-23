@@ -69,34 +69,15 @@
           />
         </v-list-item-action>
         <v-list-item-content>
-          <v-list-item-title class="v-list-badge__tile__title">
+          <v-list-item-title>
             <span>{{ item.title }}</span>
-            <v-badge
-              :value="isOldPattern(item)"
-              color="error"
-              overlap
+            <v-icon
+              class="ml-2"
+              :color="attrs.value ? parent.color : ''"
+              small
             >
-              <template #badge="">
-                <v-tooltip top>
-                  <template #activator="{ on: badgeTooltipOn }">
-                    <v-icon
-                      v-on="badgeTooltipOn"
-                      color="white"
-                    >
-                      priority_high
-                    </v-icon>
-                  </template>
-                  <span>{{ $t('pattern.oldPatternTooltip') }}</span>
-                </v-tooltip>
-              </template>
-              <v-icon
-                class="ml-2"
-                :color="attrs.value ? parent.color : ''"
-                small
-              >
-                {{ getItemIcon(item) }}
-              </v-icon>
-            </v-badge>
+              {{ getItemIcon(item) }}
+            </v-icon>
           </v-list-item-title>
         </v-list-item-content>
       </v-list-item>

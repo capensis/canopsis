@@ -307,7 +307,7 @@ describe('filters-list', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `filters-list` with all parameters', async () => {
@@ -324,6 +324,6 @@ describe('filters-list', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -7,7 +7,7 @@ exports[`create-remediation-instructions-filter Renders \`create-remediation-ins
 >
   <div
     class="modal-wrapper"
-    close="close"
+    close=""
   >
     <div
       class="title"
@@ -30,24 +30,29 @@ exports[`create-remediation-instructions-filter Renders \`create-remediation-ins
       class="actions"
     >
       <button
-        class="v-btn v-btn--flat theme--light"
+        class="v-btn v-btn--text theme--light v-size--default"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Cancel
-        </div>
+          
+        Cancel
+      
+        </span>
       </button>
+       
       <button
-        class="primary v-btn theme--light"
+        class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Submit
-        </div>
+          
+        Submit
+      
+        </span>
       </button>
     </div>
   </div>
@@ -61,7 +66,7 @@ exports[`create-remediation-instructions-filter Renders \`create-remediation-ins
 >
   <div
     class="modal-wrapper"
-    close="close"
+    close=""
   >
     <div
       class="title"
@@ -84,24 +89,29 @@ exports[`create-remediation-instructions-filter Renders \`create-remediation-ins
       class="actions"
     >
       <button
-        class="v-btn v-btn--flat theme--light"
+        class="v-btn v-btn--text theme--light v-size--default"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Cancel
-        </div>
+          
+        Cancel
+      
+        </span>
       </button>
+       
       <button
-        class="primary v-btn theme--light"
+        class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Submit
-        </div>
+          
+        Submit
+      
+        </span>
       </button>
     </div>
   </div>
@@ -115,7 +125,7 @@ exports[`create-remediation-instructions-filter Renders \`create-remediation-ins
 >
   <div
     class="modal-wrapper"
-    close="close"
+    close=""
   >
     <div
       class="title"
@@ -138,24 +148,29 @@ exports[`create-remediation-instructions-filter Renders \`create-remediation-ins
       class="actions"
     >
       <button
-        class="v-btn v-btn--flat theme--light"
+        class="v-btn v-btn--text theme--light v-size--default"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Cancel
-        </div>
+          
+        Cancel
+      
+        </span>
       </button>
+       
       <button
-        class="primary v-btn theme--light"
+        class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Submit
-        </div>
+          
+        Submit
+      
+        </span>
       </button>
     </div>
   </div>

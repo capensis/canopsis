@@ -36,18 +36,18 @@ describe('declare-ticket-rules-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         declareTicketRules: [],
-        pagination: {},
+        options: {},
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `declare-ticket-rules-list` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         declareTicketRules,
-        pagination: {
+        options: {
           page: 2,
           itemsPerPage: 10,
           search: 'Rule',
@@ -62,6 +62,6 @@ describe('declare-ticket-rules-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

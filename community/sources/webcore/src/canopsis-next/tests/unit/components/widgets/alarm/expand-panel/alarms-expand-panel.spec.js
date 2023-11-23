@@ -153,7 +153,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
     expect(prevKey !== selectTabs(wrapper).$vnode.key).toBe(true);
   });
 
-  it('Renders `alarms-expand-panel` with required props', () => {
+  it('Renders `alarms-expand-panel` with required props', async () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
@@ -175,10 +175,12 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    await wrapper.activateAllTabs();
+
+    expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `alarms-expand-panel` with custom props', () => {
+  it('Renders `alarms-expand-panel` with custom props', async () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
@@ -205,10 +207,12 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    await wrapper.activateAllTabs();
+
+    expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `alarms-expand-panel` with full alarm', () => {
+  it('Renders `alarms-expand-panel` with full alarm', async () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
@@ -237,10 +241,12 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    await wrapper.activateAllTabs();
+
+    expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `alarms-expand-panel` with gantt', () => {
+  it('Renders `alarms-expand-panel` with gantt', async () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         alarmModule,
@@ -268,6 +274,8 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    await wrapper.activateAllTabs();
+
+    expect(wrapper).toMatchSnapshot();
   });
 });

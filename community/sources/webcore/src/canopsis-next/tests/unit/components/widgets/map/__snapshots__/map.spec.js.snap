@@ -8,13 +8,17 @@ exports[`map Renders \`map\` with default props 1`] = `
     class="layout mx-1 wrap"
   >
     <!---->
+     
     <!---->
   </div>
+   
   <!---->
+   
   <!---->
+   
   <geomap-preview-stub
     map="[object Object]"
-    popup-actions="popup-actions"
+    popup-actions=""
   />
 </div>
 `;
@@ -33,11 +37,12 @@ exports[`map Renders flowchart \`map\` with state 1`] = `
         class="mr-3"
       />
     </div>
+     
     <div
       class="flex xs4"
     >
       <div
-        class="layout row align-center"
+        class="layout align-center"
       >
         <filter-selector-stub
           clearable="true"
@@ -47,6 +52,7 @@ exports[`map Renders flowchart \`map\` with state 1`] = `
           label="Select a filter"
           lockedfilters=""
         />
+         
         <filters-list-btn-stub
           addable="true"
           editable="true"
@@ -58,13 +64,16 @@ exports[`map Renders flowchart \`map\` with state 1`] = `
       </div>
     </div>
   </div>
+   
   <!---->
+   
   <!---->
+   
   <flowchart-preview-stub
     color-indicator="color_indicator"
     map="[object Object]"
     pbehavior-enabled="true"
-    popup-actions="popup-actions"
+    popup-actions=""
     popup-template="entity_info_template"
   />
 </div>
@@ -84,11 +93,12 @@ exports[`map Renders geo \`map\` with state 1`] = `
         class="mr-3"
       />
     </div>
+     
     <div
       class="flex xs4"
     >
       <div
-        class="layout row align-center"
+        class="layout align-center"
       >
         <filter-selector-stub
           clearable="true"
@@ -98,6 +108,7 @@ exports[`map Renders geo \`map\` with state 1`] = `
           label="Select a filter"
           lockedfilters=""
         />
+         
         <filters-list-btn-stub
           addable="true"
           editable="true"
@@ -109,13 +120,16 @@ exports[`map Renders geo \`map\` with state 1`] = `
       </div>
     </div>
   </div>
+   
   <!---->
+   
   <!---->
+   
   <geomap-preview-stub
     color-indicator="color_indicator"
     map="[object Object]"
     pbehavior-enabled="true"
-    popup-actions="popup-actions"
+    popup-actions=""
     popup-template="entity_info_template"
   />
 </div>
@@ -135,11 +149,12 @@ exports[`map Renders mermaid \`map\` with state 1`] = `
         class="mr-3"
       />
     </div>
+     
     <div
       class="flex xs4"
     >
       <div
-        class="layout row align-center"
+        class="layout align-center"
       >
         <filter-selector-stub
           clearable="true"
@@ -149,6 +164,7 @@ exports[`map Renders mermaid \`map\` with state 1`] = `
           label="Select a filter"
           lockedfilters=""
         />
+         
         <filters-list-btn-stub
           addable="true"
           editable="true"
@@ -160,13 +176,16 @@ exports[`map Renders mermaid \`map\` with state 1`] = `
       </div>
     </div>
   </div>
+   
   <!---->
+   
   <!---->
+   
   <mermaid-preview-stub
     color-indicator="color_indicator"
     map="[object Object]"
     pbehavior-enabled="true"
-    popup-actions="popup-actions"
+    popup-actions=""
     popup-template="entity_info_template"
   />
 </div>
@@ -186,11 +205,12 @@ exports[`map Renders treeofdeps \`map\` with state 1`] = `
         class="mr-3"
       />
     </div>
+     
     <div
       class="flex xs4"
     >
       <div
-        class="layout row align-center"
+        class="layout align-center"
       >
         <filter-selector-stub
           clearable="true"
@@ -200,6 +220,7 @@ exports[`map Renders treeofdeps \`map\` with state 1`] = `
           label="Select a filter"
           lockedfilters=""
         />
+         
         <filters-list-btn-stub
           addable="true"
           editable="true"
@@ -211,13 +232,16 @@ exports[`map Renders treeofdeps \`map\` with state 1`] = `
       </div>
     </div>
   </div>
+   
   <!---->
+   
   <!---->
+   
   <tree-of-dependencies-preview-stub
     color-indicator="color_indicator"
     map="[object Object]"
     pbehavior-enabled="true"
-    popup-actions="popup-actions"
+    popup-actions=""
     popup-template="entity_info_template"
   />
 </div>

@@ -7,7 +7,7 @@ exports[`info-popup-setting Renders \`info-popup-setting\` with empty modal 1`] 
 >
   <div
     class="modal-wrapper"
-    close="close"
+    close=""
   >
     <div
       class="title"
@@ -24,21 +24,22 @@ exports[`info-popup-setting Renders \`info-popup-setting\` with empty modal 1`] 
         class="layout justify-end"
       >
         <button
-          class="v-btn v-btn--floating v-btn--icon v-btn--small theme--light secondary"
+          class="v-btn v-btn--fab v-btn--icon v-btn--round theme--light v-size--small secondary--text"
           type="button"
         >
-          <div
+          <span
             class="v-btn__content"
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light"
+              class="v-icon notranslate material-icons theme--light"
             >
               add
             </i>
-          </div>
+          </span>
         </button>
       </div>
+       
       <div
         class="layout column"
       />
@@ -48,24 +49,29 @@ exports[`info-popup-setting Renders \`info-popup-setting\` with empty modal 1`] 
       class="actions"
     >
       <button
-        class="v-btn v-btn--flat theme--light"
+        class="v-btn v-btn--text theme--light v-size--default"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Cancel
-        </div>
+          
+        Cancel
+      
+        </span>
       </button>
+       
       <button
-        class="primary v-btn theme--light"
+        class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Submit
-        </div>
+          
+        Submit
+      
+        </span>
       </button>
     </div>
   </div>
@@ -79,7 +85,7 @@ exports[`info-popup-setting Renders \`info-popup-setting\` with interval 1`] = `
 >
   <div
     class="modal-wrapper"
-    close="close"
+    close=""
   >
     <div
       class="title"
@@ -96,21 +102,22 @@ exports[`info-popup-setting Renders \`info-popup-setting\` with interval 1`] = `
         class="layout justify-end"
       >
         <button
-          class="v-btn v-btn--floating v-btn--icon v-btn--small theme--light secondary"
+          class="v-btn v-btn--fab v-btn--icon v-btn--round theme--light v-size--small secondary--text"
           type="button"
         >
-          <div
+          <span
             class="v-btn__content"
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light"
+              class="v-icon notranslate material-icons theme--light"
             >
               add
             </i>
-          </div>
+          </span>
         </button>
       </div>
+       
       <div
         class="layout column"
       >
@@ -126,48 +133,52 @@ exports[`info-popup-setting Renders \`info-popup-setting\` with interval 1`] = `
               <div>
                 Column: alarm.v.connector
               </div>
+               
               <div>
                 <button
-                  class="v-btn v-btn--icon v-btn--small theme--light"
+                  class="v-btn v-btn--icon v-btn--round theme--light v-size--small"
                   type="button"
                 >
-                  <div
+                  <span
                     class="v-btn__content"
                   >
                     <i
                       aria-hidden="true"
-                      class="v-icon material-icons theme--light error--text"
+                      class="v-icon notranslate material-icons theme--light error--text"
                     >
                       delete
                     </i>
-                  </div>
+                  </span>
                 </button>
+                 
                 <button
-                  class="v-btn v-btn--icon v-btn--small theme--light"
+                  class="v-btn v-btn--icon v-btn--round theme--light v-size--small"
                   type="button"
                 >
-                  <div
+                  <span
                     class="v-btn__content"
                   >
                     <i
                       aria-hidden="true"
-                      class="v-icon material-icons theme--light primary--text"
+                      class="v-icon notranslate material-icons theme--light primary--text"
                     >
                       edit
                     </i>
-                  </div>
+                  </span>
                 </button>
               </div>
             </div>
           </div>
+           
           <div
             class="v-card__text"
           >
             <p>
               Template:
             </p>
+             
             <div
-              class="v-input v-textarea v-text-field v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--dark"
+              class="v-input v-textarea v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--dark v-text-field"
             >
               <div
                 class="v-input__control"
@@ -213,48 +224,52 @@ exports[`info-popup-setting Renders \`info-popup-setting\` with interval 1`] = `
               <div>
                 Column: extra_details
               </div>
+               
               <div>
                 <button
-                  class="v-btn v-btn--icon v-btn--small theme--light"
+                  class="v-btn v-btn--icon v-btn--round theme--light v-size--small"
                   type="button"
                 >
-                  <div
+                  <span
                     class="v-btn__content"
                   >
                     <i
                       aria-hidden="true"
-                      class="v-icon material-icons theme--light error--text"
+                      class="v-icon notranslate material-icons theme--light error--text"
                     >
                       delete
                     </i>
-                  </div>
+                  </span>
                 </button>
+                 
                 <button
-                  class="v-btn v-btn--icon v-btn--small theme--light"
+                  class="v-btn v-btn--icon v-btn--round theme--light v-size--small"
                   type="button"
                 >
-                  <div
+                  <span
                     class="v-btn__content"
                   >
                     <i
                       aria-hidden="true"
-                      class="v-icon material-icons theme--light primary--text"
+                      class="v-icon notranslate material-icons theme--light primary--text"
                     >
                       edit
                     </i>
-                  </div>
+                  </span>
                 </button>
               </div>
             </div>
           </div>
+           
           <div
             class="v-card__text"
           >
             <p>
               Template:
             </p>
+             
             <div
-              class="v-input v-textarea v-text-field v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--dark"
+              class="v-input v-textarea v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--dark v-text-field"
             >
               <div
                 class="v-input__control"
@@ -295,24 +310,29 @@ exports[`info-popup-setting Renders \`info-popup-setting\` with interval 1`] = `
       class="actions"
     >
       <button
-        class="v-btn v-btn--flat theme--light"
+        class="v-btn v-btn--text theme--light v-size--default"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Cancel
-        </div>
+          
+        Cancel
+      
+        </span>
       </button>
+       
       <button
-        class="primary v-btn theme--light"
+        class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Submit
-        </div>
+          
+        Submit
+      
+        </span>
       </button>
     </div>
   </div>

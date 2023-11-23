@@ -11,6 +11,7 @@ exports[`pattern-group-field Renders \`pattern-group-field\` with custom props 1
       And
     </pattern-operator-information-stub>
   </div>
+   
   <div
     class="flex xs11"
   >
@@ -39,6 +40,7 @@ exports[`pattern-group-field Renders \`pattern-group-field\` with default props 
       And
     </pattern-operator-information-stub>
   </div>
+   
   <div
     class="flex xs11"
   >

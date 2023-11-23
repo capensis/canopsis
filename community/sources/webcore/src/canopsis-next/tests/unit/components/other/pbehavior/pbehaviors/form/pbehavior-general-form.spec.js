@@ -499,7 +499,7 @@ describe('pbehavior-general-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pbehavior-general-form` with custom props', () => {
@@ -522,6 +522,6 @@ describe('pbehavior-general-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -11,6 +11,7 @@ exports[`c-date-time-interval-field Renders \`c-date-time-interval-field\` with 
     name="custom_name.from"
     value="1386435600000"
   />
+   
   <date-time-picker-field-stub
     class="pl-3"
     disabled="true"
@@ -31,6 +32,7 @@ exports[`c-date-time-interval-field Renders \`c-date-time-interval-field\` with 
     name="interval.from"
     value="Sat Dec 07 2013 18:00:00 GMT+0100 (Central European Standard Time)"
   />
+   
   <date-time-picker-field-stub
     class="pl-3"
     label="To"

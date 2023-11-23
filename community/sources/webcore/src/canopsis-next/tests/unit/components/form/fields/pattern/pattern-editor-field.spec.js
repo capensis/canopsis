@@ -20,7 +20,7 @@ const stubs = {
   'pattern-advanced-editor-field': true,
 };
 
-const selectTabItems = wrapper => wrapper.findAll('a.v-tabs__item');
+const selectTabItems = wrapper => wrapper.findAll('.v-tab');
 const selectAdvancedTab = wrapper => selectTabItems(wrapper).at(1);
 const selectPatternField = wrapper => wrapper.find('c-pattern-field-stub');
 const selectEditButton = wrapper => wrapper.find('v-btn-stub');
@@ -234,7 +234,7 @@ describe('pattern-editor-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-editor-field` with custom props', () => {
@@ -258,7 +258,7 @@ describe('pattern-editor-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-editor-field` with advanced tab', async () => {
@@ -272,10 +272,8 @@ describe('pattern-editor-field', () => {
       },
     });
 
-    const advancedTab = selectAdvancedTab(wrapper);
+    await selectAdvancedTab(wrapper).trigger('click');
 
-    await advancedTab.trigger('click');
-
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

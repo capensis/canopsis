@@ -126,7 +126,7 @@ describe('alarms-list-table', () => {
     const wrapper = factory({
       store,
       propsData: {
-        pagination: {},
+        options: {},
         alarms,
         columns,
         widget: defaultWidget,
@@ -142,7 +142,7 @@ describe('alarms-list-table', () => {
     const wrapper = factory({
       store,
       propsData: {
-        pagination: {},
+        options: {},
         columns,
         widget: defaultWidget,
         alarms: [],
@@ -306,7 +306,7 @@ describe('alarms-list-table', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        pagination: {},
+        options: {},
         columns,
         widget: defaultWidget,
         alarms: [],
@@ -346,7 +346,7 @@ describe('alarms-list-table', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        pagination: {},
+        options: {},
         columns,
         widget: defaultWidget,
         alarms: [],
@@ -414,7 +414,7 @@ describe('alarms-list-table', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        pagination: {},
+        options: {},
         widget: defaultWidget,
         alarms,
         columns,
@@ -447,7 +447,7 @@ describe('alarms-list-table', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        pagination: {},
+        options: {},
         widget: defaultWidget,
         alarms,
         columns,
@@ -482,7 +482,7 @@ describe('alarms-list-table', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        pagination: {},
+        options: {},
         widget: defaultWidget,
         alarms,
         columns,
@@ -511,7 +511,7 @@ describe('alarms-list-table', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        pagination: {},
+        options: {},
         widget: defaultWidget,
         alarms: [],
         totalItems: 0,
@@ -519,7 +519,7 @@ describe('alarms-list-table', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-table` with custom props', async () => {
@@ -530,7 +530,7 @@ describe('alarms-list-table', () => {
         columns,
         totalItems,
         widget: defaultWidget,
-        pagination: {
+        options: {
           page: 1,
           limit: 10,
         },
@@ -552,7 +552,7 @@ describe('alarms-list-table', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-table` with expandable, but without selectable', async () => {
@@ -563,7 +563,7 @@ describe('alarms-list-table', () => {
         widget: defaultWidget,
         columns,
         totalItems,
-        pagination: {},
+        options: {},
         selectable: false,
         expandable: true,
       },
@@ -571,14 +571,14 @@ describe('alarms-list-table', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-table` with default and required props with compact mode', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        pagination: {},
+        options: {},
         widget: {
           ...defaultWidget,
           parameters: {
@@ -592,14 +592,14 @@ describe('alarms-list-table', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-table` with default and required props with links column with links in row count', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        pagination: {},
+        options: {},
         widget: {
           ...defaultWidget,
           parameters: {
@@ -617,14 +617,14 @@ describe('alarms-list-table', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-table` with default and required props with simulate ctrl keydown with selectable = false', async () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        pagination: {},
+        options: {},
         widget: defaultWidget,
         alarms: [],
         totalItems: 0,
@@ -637,14 +637,14 @@ describe('alarms-list-table', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-table` with default and required props with simulate ctrl keydown with selectable = true', async () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
-        pagination: {},
+        options: {},
         widget: defaultWidget,
         alarms: [],
         totalItems: 0,
@@ -657,6 +657,6 @@ describe('alarms-list-table', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

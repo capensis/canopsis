@@ -8,15 +8,17 @@ exports[`service-entity-info-tab Renders \`service-entity-info-tab\` with custom
     <div>
       Actions:
     </div>
+     
     <service-entity-actions-stub
       actions="[object Object]"
       assignedinstructions="[object Object]"
       entity="[object Object]"
     />
   </div>
+   
   <service-entity-template-stub
     entity="[object Object]"
-    template=<div>Template</div>
+    template="<div>Template</div>"
   />
 </div>
 `;
@@ -24,6 +26,7 @@ exports[`service-entity-info-tab Renders \`service-entity-info-tab\` with custom
 exports[`service-entity-info-tab Renders \`service-entity-info-tab\` with default props 1`] = `
 <div>
   <!---->
+   
   <service-entity-template-stub
     entity="[object Object]"
     template=""

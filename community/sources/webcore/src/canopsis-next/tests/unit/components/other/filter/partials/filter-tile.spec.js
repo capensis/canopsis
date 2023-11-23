@@ -48,7 +48,7 @@ describe('filter-tile', () => {
   it('Renders `filter-tile` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `filter-tile` with custom props', () => {
@@ -61,7 +61,7 @@ describe('filter-tile', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `filter-tile` with old pattern', () => {
@@ -75,6 +75,6 @@ describe('filter-tile', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

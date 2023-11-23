@@ -3,7 +3,7 @@
 exports[`filters-list Renders \`filters-list\` with all parameters 1`] = `
 <div
   class="modal-wrapper"
-  close="close"
+  close=""
 >
   <div
     class="title"
@@ -17,6 +17,7 @@ exports[`filters-list Renders \`filters-list\` with all parameters 1`] = `
     class="text"
   >
     <c-progress-overlay-stub />
+     
     <filters-list-component-stub
       addable="true"
       editable="true"
@@ -34,7 +35,7 @@ exports[`filters-list Renders \`filters-list\` with all parameters 1`] = `
 exports[`filters-list Renders \`filters-list\` with empty modal 1`] = `
 <div
   class="modal-wrapper"
-  close="close"
+  close=""
 >
   <div
     class="title"
@@ -48,6 +49,7 @@ exports[`filters-list Renders \`filters-list\` with empty modal 1`] = `
     class="text"
   >
     <c-progress-overlay-stub />
+     
     <filters-list-component-stub
       addable="true"
       editable="true"

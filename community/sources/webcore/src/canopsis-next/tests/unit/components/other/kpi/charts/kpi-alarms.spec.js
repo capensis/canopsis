@@ -154,7 +154,7 @@ describe('kpi-alarms', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `kpi-alarms` with fetching error', async () => {
@@ -169,6 +169,6 @@ describe('kpi-alarms', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

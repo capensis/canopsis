@@ -28,7 +28,7 @@ const DEFAULT_SANITIZE_OPTIONS = {
     'c-links-list': [':links', ':category'],
     'service-entities-list': [
       ':service', ':service-entities', ':widget-parameters', ':options', ':total-items', 'entity-name-field',
-      '@refresh', '@update:pagination',
+      '@refresh', '@update:options',
     ],
   },
 };

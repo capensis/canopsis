@@ -9,8 +9,11 @@ exports[`text-editor Renders \`text-editor\` with custom props 1`] = `
     class="v-label theme--light"
     style="left: 0px; position: relative;"
   >
+    
     Text editor label
+  
   </label>
+   
   <div
     class="text-editor error--text"
   >
@@ -303,7 +306,9 @@ exports[`text-editor Renders \`text-editor\` with custom props 1`] = `
         </p>
       </div>
     </div>
+     
     <!---->
+     
     <div
       class="text-editor__details"
     >
@@ -334,10 +339,13 @@ exports[`text-editor Renders \`text-editor\` with default props 1`] = `
   <label
     aria-hidden="true"
     class="v-label theme--light"
-    style="left: 0px; position: relative;"
+    style="left: 0px; position: relative; display: none;"
   >
     
+    
+  
   </label>
+   
   <div
     class="text-editor"
   >
@@ -913,7 +921,9 @@ exports[`text-editor Renders \`text-editor\` with default props 1`] = `
     <div
       style="display: none;"
     />
+     
     <!---->
+     
     <div
       class="text-editor__details"
     >
@@ -938,10 +948,13 @@ exports[`text-editor Renders \`text-editor\` with files 1`] = `
   <label
     aria-hidden="true"
     class="v-label theme--light"
-    style="left: 0px; position: relative;"
+    style="left: 0px; position: relative; display: none;"
   >
     
+    
+  
   </label>
+   
   <div
     class="text-editor"
   >
@@ -1517,7 +1530,9 @@ exports[`text-editor Renders \`text-editor\` with files 1`] = `
     <div
       style="display: none;"
     />
+     
     <!---->
+     
     <div
       class="text-editor__details"
     >
@@ -1542,10 +1557,13 @@ exports[`text-editor Renders \`text-editor\` with variables 1`] = `
   <label
     aria-hidden="true"
     class="v-label theme--light"
-    style="left: 0px; position: relative;"
+    style="left: 0px; position: relative; display: none;"
   >
     
+    
+  
   </label>
+   
   <div
     class="text-editor"
   >
@@ -2132,6 +2150,7 @@ exports[`text-editor Renders \`text-editor\` with variables 1`] = `
     >
       {{ test.test }}
     </div>
+     
     <variables-menu-stub
       positionx="112"
       positiony="189"
@@ -2139,6 +2158,7 @@ exports[`text-editor Renders \`text-editor\` with variables 1`] = `
       variables="[object Object]"
       visible="true"
     />
+     
     <div
       class="text-editor__details"
     >

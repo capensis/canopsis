@@ -5,9 +5,10 @@ exports[`geomap-map-form Renders \`geomap-map-form\` with form 1`] = `
   class="layout column"
 >
   <c-name-field-stub
-    required="required"
+    required=""
     value="Geomap"
   />
+   
   <geomap-editor-stub
     form="[object Object]"
     iconsize="24"

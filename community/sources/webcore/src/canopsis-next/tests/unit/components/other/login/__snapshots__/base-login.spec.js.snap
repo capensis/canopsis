@@ -13,12 +13,15 @@ exports[`base-login Renders \`base-login\` with custom state 1`] = `
       <h3>
         Login
       </h3>
+       
       <img
+        alt=""
         class="secondaryLogo"
         src="@/assets/canopsis.png"
       />
     </div>
   </div>
+   
   <div
     class="v-card__text"
   >
@@ -27,9 +30,11 @@ exports[`base-login Renders \`base-login\` with custom state 1`] = `
       novalidate="novalidate"
     >
       <ldap-login-information-stub />
+       
       <login-form-stub
         form="[object Object]"
       />
+       
       <div
         class="flex"
       >
@@ -37,15 +42,18 @@ exports[`base-login Renders \`base-login\` with custom state 1`] = `
           class="layout mb-1 justify-space-between align-center"
         >
           <button
-            class="ma-0 v-btn theme--light primary"
+            class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
             type="submit"
           >
-            <div
+            <span
               class="v-btn__content"
             >
-              Connect
-            </div>
+              
+            Connect
+          
+            </span>
           </button>
+           
           <div
             class="flex xs9"
           >
@@ -54,12 +62,18 @@ exports[`base-login Renders \`base-login\` with custom state 1`] = `
               type="error"
             >
               
+              
+            
             </c-alert-stub>
           </div>
         </div>
+         
         <hr
+          aria-orientation="horizontal"
           class="my-2 v-divider theme--light"
+          role="separator"
         />
+         
         <div
           class="layout"
         >
@@ -86,12 +100,15 @@ exports[`base-login Renders \`base-login\` with default state 1`] = `
       <h3>
         Login
       </h3>
+       
       <img
+        alt=""
         class="secondaryLogo"
         src="@/assets/canopsis.png"
       />
     </div>
   </div>
+   
   <div
     class="v-card__text"
   >
@@ -100,9 +117,11 @@ exports[`base-login Renders \`base-login\` with default state 1`] = `
       novalidate="novalidate"
     >
       <!---->
+       
       <login-form-stub
         form="[object Object]"
       />
+       
       <div
         class="flex"
       >
@@ -110,15 +129,18 @@ exports[`base-login Renders \`base-login\` with default state 1`] = `
           class="layout mb-1 justify-space-between align-center"
         >
           <button
-            class="ma-0 v-btn theme--light primary"
+            class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
             type="submit"
           >
-            <div
+            <span
               class="v-btn__content"
             >
-              Connect
-            </div>
+              
+            Connect
+          
+            </span>
           </button>
+           
           <div
             class="flex xs9"
           >
@@ -127,9 +149,12 @@ exports[`base-login Renders \`base-login\` with default state 1`] = `
               type="error"
             >
               
+              
+            
             </c-alert-stub>
           </div>
         </div>
+         
         <!---->
       </div>
     </form>
@@ -150,12 +175,15 @@ exports[`base-login Renders \`base-login\` with error 1`] = `
       <h3>
         Login
       </h3>
+       
       <img
+        alt=""
         class="secondaryLogo"
         src="@/assets/canopsis.png"
       />
     </div>
   </div>
+   
   <div
     class="v-card__text"
   >
@@ -164,9 +192,11 @@ exports[`base-login Renders \`base-login\` with error 1`] = `
       novalidate="novalidate"
     >
       <!---->
+       
       <login-form-stub
         form="[object Object]"
       />
+       
       <div
         class="flex"
       >
@@ -174,15 +204,18 @@ exports[`base-login Renders \`base-login\` with error 1`] = `
           class="layout mb-1 justify-space-between align-center"
         >
           <button
-            class="ma-0 v-btn theme--light primary"
+            class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
             type="submit"
           >
-            <div
+            <span
               class="v-btn__content"
             >
-              Connect
-            </div>
+              
+            Connect
+          
+            </span>
           </button>
+           
           <div
             class="flex xs9"
           >
@@ -191,10 +224,13 @@ exports[`base-login Renders \`base-login\` with error 1`] = `
               type="error"
               value="true"
             >
+              
               Server error message
+            
             </c-alert-stub>
           </div>
         </div>
+         
         <!---->
       </div>
     </form>

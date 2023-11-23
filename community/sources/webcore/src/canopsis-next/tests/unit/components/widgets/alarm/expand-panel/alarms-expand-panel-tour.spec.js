@@ -240,7 +240,7 @@ describe('alarms-expand-panel-tour', () => {
     jest.runAllTimers();
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-expand-panel-tour` with second step', async () => {
@@ -254,7 +254,7 @@ describe('alarms-expand-panel-tour', () => {
     jest.runAllTimers();
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-expand-panel-tour` with third step', async () => {
@@ -271,7 +271,7 @@ describe('alarms-expand-panel-tour', () => {
     jest.runAllTimers();
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-expand-panel-tour` after finish', async () => {
@@ -293,6 +293,6 @@ describe('alarms-expand-panel-tour', () => {
     jest.runAllTimers();
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

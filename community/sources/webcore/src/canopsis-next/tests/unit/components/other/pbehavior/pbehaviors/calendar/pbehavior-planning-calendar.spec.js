@@ -46,6 +46,6 @@ describe('pbehavior-planning-calendar', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });
