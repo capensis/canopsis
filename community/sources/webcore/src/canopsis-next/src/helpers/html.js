@@ -2,17 +2,15 @@ import linkifyHtmlLib from 'linkify-html';
 import sanitizeHtmlLib from 'sanitize-html';
 
 const DEFAULT_SANITIZE_OPTIONS = {
-  allowedTags: [
-    'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol', 'nl', 'li', 'b', 'i', 'strong', 'em',
-    'code', 'hr', 'br', 'div', 'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre', 'span', 'font', 'u',
-    'img', 'video', 'audio', 'abbr', 'address', 'bdo', 'cite', 'q', 'dfn', 'var', 'area', 'map', 'dl', 'dt', 'dd',
-    'section', 'article', 'colgroup', 'col', 'strike', 'button',
+  allowedTags: sanitizeHtmlLib.defaults.allowedTags.concat([
+    'h1', 'h2', 'u', 'nl', 'font', 'img', 'video', 'audio', 'area', 'map', 'strike', 'button', 'span', 'address',
+    'bdo', 'cite', 'q', 'dfn', 'var', 'dl', 'dt', 'dd', 'section', 'article', 'colgroup', 'col',
 
     /**
      * VUE COMPONENTS
      */
     'router-link', 'c-alarm-chip', 'c-alarm-tags-chips', 'c-copy-wrapper', 'c-links-list', 'service-entities-list',
-  ],
+  ]),
   allowedAttributes: {
     '*': [
       'style', 'title', 'class', 'id', 'v-if', 'autoplay', 'colspan', 'controls', 'dir', 'align', 'width', 'height',
@@ -31,6 +29,7 @@ const DEFAULT_SANITIZE_OPTIONS = {
       '@refresh', '@update:pagination',
     ],
   },
+  allowedSchemes: sanitizeHtmlLib.defaults.allowedSchemes.concat(['data']),
 };
 
 const DEFAULT_LINKIFY_OPTIONS = { target: '_blank' };

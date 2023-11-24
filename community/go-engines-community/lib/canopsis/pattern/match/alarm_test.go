@@ -148,6 +148,21 @@ func getMatchAlarmPatternDataSets() map[string]alarmDataSet {
 			},
 			matchResult: false,
 		},
+		"given string info ne condition and not exist info should not match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.infos.info_name",
+						FieldType: pattern.FieldTypeString,
+						Condition: pattern.NewStringCondition(pattern.ConditionNotEqual, "test name"),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Value: types.AlarmValue{},
+			},
+			matchResult: false,
+		},
 		"given string info condition and not string info should not match": {
 			pattern: pattern.Alarm{
 				{
