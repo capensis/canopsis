@@ -37,7 +37,7 @@ func PbehaviorInfoPatternToMongoQuery(p pattern.PbehaviorInfo, prefix string) (b
 			}
 
 			if _, ok := emptyPbhInfo.GetStringField(fieldCond.Field); ok {
-				condQueries[j], err = cond.StringToMongoQuery(mongoField)
+				condQueries[j], err = cond.StringToMongoQuery(mongoField, false)
 			} else {
 				err = pattern.ErrUnsupportedField
 			}
