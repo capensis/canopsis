@@ -763,6 +763,73 @@ describe('actions-panel', () => {
     );
   });
 
+  it('Fast cancel and cancel action available when status is flapping and state is ok', async () => {
+    const flappingAlarm = {
+      ...alarm,
+      v: {
+        connector: 'alarm-connector',
+        connector_name: 'alarm-connector-name',
+        component: 'alarm-component',
+        resource: 'alarm-resource',
+        status: {
+          val: ENTITIES_STATUSES.flapping,
+        },
+        state: {
+          val: ENTITIES_STATES.ok,
+        },
+      },
+    };
+
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        alarmModule,
+        manualMetaAlarmModule,
+      ]),
+      propsData: {
+        item: flappingAlarm,
+        widget,
+        parentAlarm,
+      },
+    });
+
+    expect(selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.fastCancel).exists()).toBeTruthy();
+    expect(selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.cancel).exists()).toBeTruthy();
+  });
+
+  it('Fast cancel and cancel action available when alarm is not resolved and state is ok', async () => {
+    const flappingAlarm = {
+      ...alarm,
+      v: {
+        connector: 'alarm-connector',
+        connector_name: 'alarm-connector-name',
+        component: 'alarm-component',
+        resource: 'alarm-resource',
+        resolved: null,
+        status: {},
+        state: {
+          val: ENTITIES_STATES.ok,
+        },
+      },
+    };
+
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        alarmModule,
+        manualMetaAlarmModule,
+      ]),
+      propsData: {
+        item: flappingAlarm,
+        widget,
+        parentAlarm,
+      },
+    });
+
+    expect(selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.fastCancel).exists()).toBeTruthy();
+    expect(selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.cancel).exists()).toBeTruthy();
+  });
+
   it('Variables modal showed after trigger variables help action', () => {
     const widgetData = {
       _id: Faker.datatype.string(),

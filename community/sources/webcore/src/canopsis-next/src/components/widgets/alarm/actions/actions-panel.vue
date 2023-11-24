@@ -28,6 +28,7 @@ import {
   isAlarmStatusClosed,
   isAlarmStatusFlapping,
   isAlarmStatusOngoing,
+  isActionAvailableForAlarm,
 } from '@/helpers/entities/alarm/form';
 
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
@@ -337,36 +338,24 @@ export default {
         }
       }
 
-      if (
-        (this.isAlarmStatusClosed && this.isActionsAllowWithOkState)
+      const isAckAndChangeStateAvailable = (this.isAlarmStatusClosed && this.isActionsAllowWithOkState)
         || this.isAlarmStatusOngoing
-        || this.isAlarmStatusFlapping
-      ) {
-        const ackAction = {
-          type: ALARM_LIST_ACTIONS_TYPES.ack,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.ack),
-          title: this.$t('alarm.actions.titles.ack'),
-          method: this.showAckModal,
-        };
+        || this.isAlarmStatusFlapping;
 
+      const ackAction = {
+        type: ALARM_LIST_ACTIONS_TYPES.ack,
+        icon: getEntityEventIcon(EVENT_ENTITY_TYPES.ack),
+        title: this.$t('alarm.actions.titles.ack'),
+        method: this.showAckModal,
+      };
+
+      if (isAckAndChangeStateAvailable) {
         if (this.item.v.ack) {
           if (this.widget.parameters.isMultiAckEnabled) {
             actions.unshift(ackAction);
           }
 
           actions.unshift(
-            {
-              type: ALARM_LIST_ACTIONS_TYPES.cancel,
-              icon: '$vuetify.icons.list_delete',
-              title: this.$t('alarm.actions.titles.cancel'),
-              method: this.showCancelModal,
-            },
-            {
-              type: ALARM_LIST_ACTIONS_TYPES.fastCancel,
-              icon: 'delete',
-              title: this.$t('alarm.actions.titles.fastCancel'),
-              method: this.createFastCancel,
-            },
             {
               type: ALARM_LIST_ACTIONS_TYPES.ackRemove,
               icon: getEntityEventIcon(EVENT_ENTITY_TYPES.ackRemove),
@@ -380,8 +369,6 @@ export default {
               method: this.showCreateChangeStateEventModal,
             },
           );
-
-          actions.unshift(...this.ticketsActions);
         } else {
           actions.unshift(
             ackAction,
@@ -393,6 +380,36 @@ export default {
             },
           );
         }
+      }
+
+      if (
+        /**
+         * Save previous behavior
+         */
+        (isAckAndChangeStateAvailable && this.item.v.ack)
+        /**
+         * Add behavior like in mass actions
+         */
+        || isActionAvailableForAlarm(this.item)
+      ) {
+        actions.unshift(
+          {
+            type: ALARM_LIST_ACTIONS_TYPES.cancel,
+            icon: '$vuetify.icons.list_delete',
+            title: this.$t('alarm.actions.titles.cancel'),
+            method: this.showCancelModal,
+          },
+          {
+            type: ALARM_LIST_ACTIONS_TYPES.fastCancel,
+            icon: 'delete',
+            title: this.$t('alarm.actions.titles.fastCancel'),
+            method: this.createFastCancel,
+          },
+        );
+      }
+
+      if (isAckAndChangeStateAvailable && this.item.v.ack) {
+        actions.unshift(...this.ticketsActions);
       }
 
       actions.push(...this.linksActions);
