@@ -2,12 +2,14 @@
   div
     v-layout.d-inline-flex(v-if="serviceEntities.length", align-center, row)
       v-checkbox-functional.ml-3.pa-0(v-model="isAllSelected", :disabled="!entitiesWithActions.length")
-      service-entity-actions(
-        v-if="selectedEntities.length",
-        :actions="actions",
-        :entity="service",
-        @apply="applyActionForSelected"
-      )
+      v-fade-transition(mode="out-in")
+        span.font-italic(v-if="!selectedEntities.length") {{ $t('modals.service.massActionsDescription') }}
+        service-entity-actions(
+          v-else,
+          :actions="actions",
+          :entity="service",
+          @apply="applyActionForSelected"
+        )
     div.mt-2(v-for="serviceEntity in serviceEntities", :key="serviceEntity.key")
       service-entity(
         :service-id="service._id",
