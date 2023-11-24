@@ -112,4 +112,6 @@ export const MODALS = {
   entitiesList: 'entities-list',
 
   createTheme: 'create-theme',
+
+  archiveDisabledEntities: 'archive-disabled-entities',
 };

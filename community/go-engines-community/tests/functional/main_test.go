@@ -331,6 +331,7 @@ func clearStores(
 		testfixtures.Dialect("timescaledb"),
 		testfixtures.UseAlterConstraint(),
 		testfixtures.Paths(flags.timescaleFixtures...),
+		testfixtures.DangerousSkipTestDatabaseCheck(),
 	)
 	if err != nil {
 		return fmt.Errorf("cannot init timescale fixtures: %w", err)

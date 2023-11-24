@@ -135,7 +135,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Entity, bool, error
 		}
 
 		updatedEntity, err = s.GetOneBy(ctx, r.ID)
-		if err != nil {
+		if err != nil || updatedEntity == nil {
 			return err
 		}
 

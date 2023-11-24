@@ -415,7 +415,7 @@ func (c *Condition) MatchDuration(value int64) (bool, error) {
 	return false, ErrUnsupportedConditionType
 }
 
-func (c *Condition) StringToMongoQuery(f string) (bson.M, error) {
+func (c *Condition) StringToMongoQuery(f string, checkExists bool) (bson.M, error) {
 	switch c.Type {
 	case ConditionEqual:
 		if c.valueStr == nil {
@@ -428,6 +428,10 @@ func (c *Condition) StringToMongoQuery(f string) (bson.M, error) {
 			return nil, ErrWrongConditionValue
 		}
 
+		if checkExists {
+			return bson.M{f: bson.M{"$nin": bson.A{*c.valueStr, nil}}}, nil
+		}
+
 		return bson.M{f: bson.M{"$ne": *c.valueStr}}, nil
 	case ConditionIsOneOf:
 		if len(c.valueStrArray) == 0 {
@@ -438,6 +442,13 @@ func (c *Condition) StringToMongoQuery(f string) (bson.M, error) {
 	case ConditionIsNotOneOf:
 		if len(c.valueStrArray) == 0 {
 			return nil, ErrWrongConditionValue
+		}
+
+		if checkExists {
+			return bson.M{f: bson.M{
+				"$nin": c.valueStrArray,
+				"$ne":  nil,
+			}}, nil
 		}
 
 		return bson.M{f: bson.M{"$nin": c.valueStrArray}}, nil
@@ -475,7 +486,7 @@ func (c *Condition) StringToMongoQuery(f string) (bson.M, error) {
 	}
 }
 
-func (c *Condition) IntToMongoQuery(f string) (bson.M, error) {
+func (c *Condition) IntToMongoQuery(f string, checkExists bool) (bson.M, error) {
 	switch c.Type {
 	case ConditionEqual:
 		if c.valueInt == nil {
@@ -486,6 +497,10 @@ func (c *Condition) IntToMongoQuery(f string) (bson.M, error) {
 	case ConditionNotEqual:
 		if c.valueInt == nil {
 			return nil, ErrWrongConditionValue
+		}
+
+		if checkExists {
+			return bson.M{f: bson.M{"$nin": bson.A{*c.valueInt, nil}}}, nil
 		}
 
 		return bson.M{f: bson.M{"$ne": *c.valueInt}}, nil
@@ -542,7 +557,7 @@ func (c *Condition) RefToMongoQuery(f string) (bson.M, error) {
 	}
 }
 
-func (c *Condition) StringArrayToMongoQuery(f string) (bson.M, error) {
+func (c *Condition) StringArrayToMongoQuery(f string, checkExists bool) (bson.M, error) {
 	switch c.Type {
 	case ConditionIsEmpty:
 		if c.valueBool == nil {
@@ -569,6 +584,13 @@ func (c *Condition) StringArrayToMongoQuery(f string) (bson.M, error) {
 	case ConditionHasNot:
 		if len(c.valueStrArray) == 0 {
 			return nil, ErrWrongConditionValue
+		}
+
+		if checkExists {
+			return bson.M{f: bson.M{
+				"$nin": c.valueStrArray,
+				"$ne":  nil,
+			}}, nil
 		}
 
 		return bson.M{f: bson.M{"$nin": c.valueStrArray}}, nil
