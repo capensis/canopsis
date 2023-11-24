@@ -248,7 +248,7 @@ export default {
         });
       }
 
-      if (this.isOpenedAlarm) {
+      if (!this.isResolvedAlarm && this.isOpenedAlarm) {
         actions.push(
           {
             type: ALARM_LIST_ACTIONS_TYPES.snooze,
@@ -281,7 +281,7 @@ export default {
           },
       );
 
-      if (this.isAlarmOpenedOrActionAllowedWithStateOk) {
+      if (!this.isResolvedAlarm && this.isAlarmOpenedOrActionAllowedWithStateOk) {
         actions.push(
           {
             type: ALARM_LIST_ACTIONS_TYPES.comment,
@@ -292,7 +292,7 @@ export default {
         );
       }
 
-      if (this.isOpenedAlarm && this.item.entity) {
+      if (!this.isResolvedAlarm && this.isOpenedAlarm && this.item.entity) {
         actions.push({
           type: ALARM_LIST_ACTIONS_TYPES.history,
           icon: 'history',
@@ -305,7 +305,7 @@ export default {
         actions.push(variablesHelpAction, exportPdfAction);
       }
 
-      if (this.isAlarmOpenedOrActionAllowedWithStateOk && this.isParentAlarmManualMetaAlarm) {
+      if (!this.isResolvedAlarm && this.isAlarmOpenedOrActionAllowedWithStateOk && this.isParentAlarmManualMetaAlarm) {
         actions.push({
           type: ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm,
           icon: getEntityEventIcon(EVENT_ENTITY_TYPES.removeAlarmsFromManualMetaAlarm),
@@ -314,7 +314,7 @@ export default {
         });
       }
 
-      if (this.isAlarmOpenedOrActionAllowedWithStateOk && this.isParentAlarmAutoMetaAlarm) {
+      if (!this.isResolvedAlarm && this.isAlarmOpenedOrActionAllowedWithStateOk && this.isParentAlarmAutoMetaAlarm) {
         actions.push({
           type: ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromAutoMetaAlarm,
           icon: getEntityEventIcon(EVENT_ENTITY_TYPES.removeAlarmsFromAutoMetaAlarm),
@@ -349,7 +349,7 @@ export default {
         method: this.showAckModal,
       };
 
-      if (isAckAndChangeStateAvailable) {
+      if (!this.isResolvedAlarm && isAckAndChangeStateAvailable) {
         if (this.item.v.ack) {
           if (this.widget.parameters.isMultiAckEnabled) {
             actions.unshift(ackAction);
@@ -383,14 +383,16 @@ export default {
       }
 
       if (
-        /**
-         * Save previous behavior
-         */
-        (isAckAndChangeStateAvailable && this.item.v.ack)
-        /**
-         * Add behavior like in mass actions
-         */
-        || isActionAvailableForAlarm(this.item)
+        !this.isResolvedAlarm && (
+          /**
+           * Save previous behavior
+           */
+          (isAckAndChangeStateAvailable && this.item.v.ack)
+          /**
+           * Add behavior like in mass actions
+           */
+          || isActionAvailableForAlarm(this.item)
+        )
       ) {
         actions.unshift(
           {
@@ -408,13 +410,13 @@ export default {
         );
       }
 
-      if (isAckAndChangeStateAvailable && this.item.v.ack) {
+      if (!this.isResolvedAlarm && isAckAndChangeStateAvailable && this.item.v.ack) {
         actions.unshift(...this.ticketsActions);
       }
 
       actions.push(...this.linksActions);
 
-      if (this.isOpenedAlarm) {
+      if (!this.isResolvedAlarm && this.isOpenedAlarm) {
         actions.push(...this.instructionsActions);
       } else {
         actions.push(variablesHelpAction, exportPdfAction);
