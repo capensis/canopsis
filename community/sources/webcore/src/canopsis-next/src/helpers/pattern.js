@@ -214,17 +214,45 @@ export const isNumberPatternRuleField = value => [
  * @return {boolean}
  */
 export const isArrayPatternRuleField = value => [
+  ALARM_PATTERN_FIELDS.displayName,
+  ALARM_PATTERN_FIELDS.output,
+  ALARM_PATTERN_FIELDS.longOutput,
+  ALARM_PATTERN_FIELDS.initialOutput,
+  ALARM_PATTERN_FIELDS.initialLongOutput,
   ALARM_PATTERN_FIELDS.component,
   ALARM_PATTERN_FIELDS.connector,
   ALARM_PATTERN_FIELDS.connectorName,
   ALARM_PATTERN_FIELDS.resource,
   ALARM_PATTERN_FIELDS.tags,
+  ALARM_PATTERN_FIELDS.lastComment,
+  ALARM_PATTERN_FIELDS.ticketMessage,
+  ALARM_PATTERN_FIELDS.ticketValue,
+  ALARM_PATTERN_FIELDS.ticketData,
+  ALARM_PATTERN_FIELDS.ackBy,
+  ALARM_PATTERN_FIELDS.ackMessage,
+  ALARM_PATTERN_FIELDS.ackInitiator,
   ENTITY_PATTERN_FIELDS.id,
+  ENTITY_PATTERN_FIELDS.name,
+  ENTITY_PATTERN_FIELDS.category,
+  ENTITY_PATTERN_FIELDS.type,
+  ENTITY_PATTERN_FIELDS.connector,
+  ENTITY_PATTERN_FIELDS.component,
   EVENT_FILTER_PATTERN_FIELDS.component,
   EVENT_FILTER_PATTERN_FIELDS.connector,
   EVENT_FILTER_PATTERN_FIELDS.connectorName,
   EVENT_FILTER_PATTERN_FIELDS.resource,
-].includes(value);
+  EVENT_FILTER_PATTERN_FIELDS.output,
+  EVENT_FILTER_PATTERN_FIELDS.longOutput,
+  EVENT_FILTER_PATTERN_FIELDS.eventType,
+  EVENT_FILTER_PATTERN_FIELDS.sourceType,
+].some((field) => {
+  /**
+   * @TODO: update babel-eslint for resolving problem with templates inside optional chaiging function call
+   */
+  const start = `${field}.`;
+
+  return value === field || value?.startsWith(start);
+});
 
 /**
  * Check pattern field is infos
@@ -322,7 +350,7 @@ export const isValidRuleValueWithoutFieldType = (rule) => {
 
   if (isArrayPatternRuleField(field)) {
     if (isArrayCondition(cond.type)) {
-      return isArray(cond.value);
+      return isArray(cond.value) || (isBoolean(cond.value) && cond.type === PATTERN_CONDITIONS.isEmpty);
     }
   }
 
@@ -477,16 +505,24 @@ export const getOperatorsByRule = (rule, ruleType) => {
     return PATTERN_DURATION_OPERATORS;
   }
 
-  if (
-    (isInfosRuleType(ruleType) || isExtraInfosRuleType(ruleType))
-    && rule.field === PATTERN_RULE_INFOS_FIELDS.name
-  ) {
+  const isAnyInfosType = isInfosRuleType(ruleType) || isExtraInfosRuleType(ruleType);
+
+  if (isAnyInfosType && rule.field === PATTERN_RULE_INFOS_FIELDS.name) {
     return PATTERN_INFOS_NAME_OPERATORS;
   }
 
   const fieldType = getFieldType(rule.value);
+  let operators = getOperatorsByFieldType(fieldType);
 
-  return getOperatorsByFieldType(fieldType);
+  if (isAnyInfosType || isObjectRuleType(ruleType)) {
+    operators = [
+      ...operators,
+      PATTERN_OPERATORS.isOneOf,
+      PATTERN_OPERATORS.isNotOneOf,
+    ];
+  }
+
+  return operators;
 };
 
 /**

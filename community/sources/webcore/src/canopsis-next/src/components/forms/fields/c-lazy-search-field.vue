@@ -10,9 +10,9 @@
     :item-text="getItemText",
     :item-value="itemValue",
     :item-disabled="itemDisabled",
-    :multiple="isMultiply",
-    :deletable-chips="isMultiply",
-    :small-chips="isMultiply",
+    :multiple="isMultiple",
+    :deletable-chips="isMultiple",
+    :small-chips="isMultiple",
     :error-messages="errors.collect(name)",
     :disabled="disabled",
     :menu-props="{ contentClass: 'c-lazy-search-field__list' }",
@@ -34,7 +34,7 @@
         span.ml-4.grey--text {{ item.type }}
     template(#append-item="")
       div.c-lazy-search-field__append(ref="append")
-    template(v-if="isMultiply", #selection="{ item, index }")
+    template(v-if="isMultiple", #selection="{ item, index }")
       v-chip.c-lazy-search-field__chip(small, close, @input="removeItemFromArray(index)")
         span.ellipsis {{ getItemText(item) }}
 </template>
@@ -135,7 +135,7 @@ export default {
       };
     },
 
-    isMultiply() {
+    isMultiple() {
       return isArray(this.value);
     },
   },
