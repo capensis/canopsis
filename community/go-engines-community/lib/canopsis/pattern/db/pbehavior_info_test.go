@@ -6,6 +6,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/kylelemons/godebug/pretty"
 	"go.mongodb.org/mongo-driver/bson"
@@ -137,6 +138,66 @@ func getPbehaviorInfoMongoQueryDataSets() map[string]PbehaviorInfoDataSet {
 			mongoQueryResult: bson.M{"$or": []bson.M{
 				{"$and": []bson.M{
 					{"alarm.pbehavior_info.canonical_type": bson.M{"$nin": bson.A{nil, types.PbhCanonicalTypeActive}}},
+				}},
+			}},
+		},
+		"given is_one_of without canonical type condition": {
+			pattern: pattern.PbehaviorInfo{
+				{
+					{
+						Field:     "pbehavior_info.canonical_type",
+						Condition: pattern.NewStringArrayCondition(pattern.ConditionIsOneOf, []string{pbehavior.TypePause, pbehavior.TypeMaintenance}),
+					},
+				},
+			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"alarm.pbehavior_info.canonical_type": bson.M{"$in": bson.A{pbehavior.TypePause, pbehavior.TypeMaintenance}}},
+				}},
+			}},
+		},
+		"given is_not_one_of without canonical type condition": {
+			pattern: pattern.PbehaviorInfo{
+				{
+					{
+						Field:     "pbehavior_info.canonical_type",
+						Condition: pattern.NewStringArrayCondition(pattern.ConditionIsNotOneOf, []string{pbehavior.TypePause, pbehavior.TypeMaintenance}),
+					},
+				},
+			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"alarm.pbehavior_info.canonical_type": bson.M{"$nin": bson.A{pbehavior.TypePause, pbehavior.TypeMaintenance}}},
+				}},
+			}},
+		},
+		"given is_one_of with active canonical type condition": {
+			pattern: pattern.PbehaviorInfo{
+				{
+					{
+						Field:     "pbehavior_info.canonical_type",
+						Condition: pattern.NewStringArrayCondition(pattern.ConditionIsOneOf, []string{types.PbhCanonicalTypeActive, pbehavior.TypeMaintenance}),
+					},
+				},
+			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"alarm.pbehavior_info.canonical_type": bson.M{"$in": bson.A{types.PbhCanonicalTypeActive, pbehavior.TypeMaintenance, nil}}},
+				}},
+			}},
+		},
+		"given is_not_one_of with active canonical type condition": {
+			pattern: pattern.PbehaviorInfo{
+				{
+					{
+						Field:     "pbehavior_info.canonical_type",
+						Condition: pattern.NewStringArrayCondition(pattern.ConditionIsNotOneOf, []string{types.PbhCanonicalTypeActive, pbehavior.TypeMaintenance}),
+					},
+				},
+			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"alarm.pbehavior_info.canonical_type": bson.M{"$nin": bson.A{types.PbhCanonicalTypeActive, pbehavior.TypeMaintenance, nil}}},
 				}},
 			}},
 		},
