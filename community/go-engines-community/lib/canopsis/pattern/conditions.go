@@ -1064,6 +1064,65 @@ func (c *Condition) parseValue() {
 	}
 }
 
+// ValidateInfoCondition is a helper function to validate FieldCondition when it's used to match various infos fields.
+func (c *FieldCondition) ValidateInfoCondition() bool {
+	var err error
+
+	switch c.FieldType {
+	case FieldTypeString:
+		_, err = c.Condition.MatchString("")
+	case FieldTypeInt:
+		_, err = c.Condition.MatchInt(0)
+	case FieldTypeBool:
+		_, err = c.Condition.MatchBool(false)
+	case FieldTypeStringArray:
+		_, err = c.Condition.MatchStringArray([]string{})
+	case "":
+		_, err = c.Condition.MatchRef(nil)
+	default:
+		return false
+	}
+
+	return err == nil
+}
+
+// MatchInfoCondition is a helper function to match FieldCondition when it's used to match various infos fields.
+func (c *FieldCondition) MatchInfoCondition(infoVal any, infoExists bool) (bool, error) {
+	var matched bool
+	var err error
+
+	if c.FieldType == "" {
+		matched, err = c.Condition.MatchRef(infoVal)
+	} else if infoExists {
+		switch c.FieldType {
+		case FieldTypeString:
+			var s string
+			if s, err = GetStringValue(infoVal); err == nil {
+				matched, err = c.Condition.MatchString(s)
+			}
+		case FieldTypeInt:
+			var i int64
+			if i, err = GetIntValue(infoVal); err == nil {
+				matched, err = c.Condition.MatchInt(i)
+			}
+		case FieldTypeBool:
+			var b bool
+			if b, err = GetBoolValue(infoVal); err == nil {
+				matched, err = c.Condition.MatchBool(b)
+			}
+		case FieldTypeStringArray:
+			var a []string
+			if a, err = GetStringArrayValue(infoVal); err == nil {
+				matched, err = c.Condition.MatchStringArray(a)
+			}
+		default:
+			return false, fmt.Errorf("invalid field type for %q field: %s", c.Field, c.FieldType)
+		}
+	}
+
+	return matched, err
+}
+
 func GetStringValue(v interface{}) (string, error) {
 	if s, ok := v.(string); ok {
 		return s, nil
@@ -1080,23 +1139,25 @@ func GetIntValue(v interface{}) (int64, error) {
 		return int64(i), nil
 	case int64:
 		return i, nil
+	case uint:
+		return int64(i), nil
+	case uint32:
+		return int64(i), nil
+	case uint64:
+		return int64(i), nil
 	case float32:
 		a, b := math.Modf(float64(i))
 		if b == 0 {
 			return int64(a), nil
 		}
-
-		return 0, ErrWrongConditionValue
 	case float64:
 		a, b := math.Modf(i)
 		if b == 0 {
 			return int64(a), nil
 		}
-
-		return 0, ErrWrongConditionValue
-	default:
-		return 0, ErrWrongConditionValue
 	}
+
+	return 0, ErrWrongConditionValue
 }
 
 func GetBoolValue(v interface{}) (bool, error) {

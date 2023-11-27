@@ -15,15 +15,7 @@ func TestMatchEventPattern(t *testing.T) {
 
 	for name, data := range dataSets {
 		t.Run(name, func(t *testing.T) {
-			ok, err := match.MatchEventPattern(data.pattern, &data.event)
-			if !errors.Is(err, data.matchErr) {
-				t.Errorf("expected error %v but got %v", data.matchErr, err)
-			}
-			if ok != data.matchResult {
-				t.Errorf("expected result %v but got %v", data.matchResult, ok)
-			}
-
-			ok, _, err = match.MatchEventPatternWithRegexMatches(data.pattern, &data.event)
+			ok, _, err := match.MatchEventPatternWithRegexMatches(data.pattern, &data.event)
 			if !errors.Is(err, data.matchErr) {
 				t.Errorf("expected error %v but got %v", data.matchErr, err)
 			}
@@ -187,7 +179,7 @@ type eventDataSet struct {
 func BenchmarkMatchEventPattern_Equal(b *testing.B) {
 	cond := pattern.FieldCondition{
 		Field:     "resource",
-		Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name"),
+		Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test name 2"),
 	}
 	event := types.Event{
 		Resource: "test name",
@@ -307,7 +299,7 @@ func benchmarkMatchEventPattern(b *testing.B, fieldCond pattern.FieldCondition, 
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		_, err := match.MatchEventPattern(p, &event)
+		_, _, err := match.MatchEventPatternWithRegexMatches(p, &event)
 		if err != nil {
 			b.Fatalf("unexpected error %v", err)
 		}
@@ -338,7 +330,7 @@ func benchmarkMatchEventPatternUnmarshalBson(b *testing.B, fieldCond pattern.Fie
 			b.Fatalf("unexpected error %v", err)
 		}
 
-		_, err = match.MatchEventPattern(w.Pattern, &event)
+		_, _, err = match.MatchEventPatternWithRegexMatches(w.Pattern, &event)
 		if err != nil {
 			b.Fatalf("unexpected error %v", err)
 		}
