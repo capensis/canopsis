@@ -416,8 +416,10 @@ export default {
 
       actions.push(...this.linksActions);
 
-      if (!this.isResolvedAlarm && this.isOpenedAlarm) {
-        actions.push(...this.instructionsActions);
+      if (this.isOpenedAlarm) {
+        if (!this.isResolvedAlarm) {
+          actions.push(...this.instructionsActions);
+        }
       } else {
         actions.push(variablesHelpAction, exportPdfAction);
       }
