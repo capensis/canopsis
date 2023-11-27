@@ -119,7 +119,7 @@ export default {
         return this.label;
       }
 
-      if (this.isMultiply) {
+      if (this.isMultiple) {
         return this.$tc('common.entity', this.value.length);
       }
 
