@@ -487,17 +487,9 @@ func (a *Alarm) GetStringField(f string) (string, bool) {
 
 		return a.Value.ACK.Message, true
 	case "v.ack.initiator":
-		if a.Value.ACK == nil {
-			return "", true
-		}
-
-		return a.Value.ACK.Initiator, true
+		return a.Value.ACK.GetInitiator(), true
 	case "v.canceled.initiator":
-		if a.Value.Canceled == nil {
-			return "", true
-		}
-
-		return a.Value.Canceled.Initiator, true
+		return a.Value.Canceled.GetInitiator(), true
 	default:
 		if n := strings.TrimPrefix(f, "v.ticket.ticket_data."); n != f {
 			if a.Value.Ticket == nil || a.Value.Ticket.TicketData == nil {

@@ -45,6 +45,14 @@ type AlarmStep struct {
 	TicketInfo `bson:",inline"`
 }
 
+func (s *AlarmStep) GetInitiator() string {
+	if s == nil {
+		return ""
+	}
+
+	return s.Initiator
+}
+
 type TicketInfo struct {
 	Ticket            string            `bson:"ticket,omitempty" json:"ticket,omitempty"`
 	TicketURL         string            `bson:"ticket_url,omitempty" json:"ticket_url,omitempty"`
