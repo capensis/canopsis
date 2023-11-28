@@ -2,6 +2,7 @@ package appinfo
 
 import (
 	"context"
+	"errors"
 	"sort"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
@@ -76,7 +77,7 @@ func (s *store) RetrieveUserInterfaceConfig(ctx context.Context) (UserInterfaceC
 
 	var conf UserInterfaceConf
 	err := s.configCollection.FindOne(ctx, filter).Decode(&conf)
-	if err == mongodriver.ErrNoDocuments {
+	if errors.Is(err, mongodriver.ErrNoDocuments) {
 		return conf, nil
 	}
 
@@ -90,7 +91,7 @@ func (s *store) RetrieveVersionConfig(ctx context.Context) (VersionConf, error) 
 
 	var version VersionConf
 	err := s.configCollection.FindOne(ctx, filter).Decode(&version)
-	if err == mongodriver.ErrNoDocuments {
+	if errors.Is(err, mongodriver.ErrNoDocuments) {
 		return version, nil
 	}
 
@@ -105,7 +106,7 @@ func (s *store) RetrieveGlobalConfig(ctx context.Context) (GlobalConf, error) {
 	}
 	err := s.configCollection.FindOne(ctx, bson.M{"_id": config.ConfigKeyName}).Decode(&conf)
 	if err != nil {
-		if err == mongodriver.ErrNoDocuments {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return GlobalConf{}, nil
 		}
 
@@ -124,7 +125,7 @@ func (s *store) RetrieveRemediationConfig(ctx context.Context) (RemediationConf,
 	result := RemediationConf{}
 	err := s.configCollection.FindOne(ctx, bson.M{"_id": config.RemediationKeyName}).Decode(&conf)
 	if err != nil {
-		if err == mongodriver.ErrNoDocuments {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return result, nil
 		}
 

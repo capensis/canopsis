@@ -2,6 +2,7 @@ package messageratestats
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -78,7 +79,7 @@ func (s *store) GetDeletedBeforeForHours(ctx context.Context) (*types.CpsTime, e
 	}{}
 
 	err := s.db.Collection(mongo.MessageRateStatsHourCollectionName).FindOne(ctx, bson.M{}, options.FindOne().SetSort(bson.M{"_id": 1})).Decode(&res)
-	if err == mongodriver.ErrNoDocuments {
+	if errors.Is(err, mongodriver.ErrNoDocuments) {
 		return nil, nil
 	}
 

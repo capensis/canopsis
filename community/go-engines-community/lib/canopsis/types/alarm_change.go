@@ -78,20 +78,20 @@ const (
 
 const MinimalEventsCountThreshold = 2
 
-// AlarmChange is a struct containing the type of change that occured on an
+// AlarmChange is a struct containing the type of change that occurred on an
 // alarm, as well as its previous state.
 type AlarmChange struct {
-	Type                            AlarmChangeType
-	PreviousState                   CpsNumber
-	PreviousStateChange             CpsTime
-	PreviousStatus                  CpsNumber
-	PreviousStatusChange            CpsTime
-	PreviousPbehaviorTime           *CpsTime
-	PreviousEntityPbehaviorTime     *CpsTime
-	PreviousPbehaviorTypeID         string
-	PreviousPbehaviorCannonicalType string
+	Type                            AlarmChangeType `json:"Type"`
+	PreviousState                   CpsNumber       `json:"PreviousState"`
+	PreviousStateChange             CpsTime         `json:"PreviousStateChange"`
+	PreviousStatus                  CpsNumber       `json:"PreviousStatus"`
+	PreviousStatusChange            CpsTime         `json:"PreviousStatusChange"`
+	PreviousPbehaviorTime           *CpsTime        `json:"PreviousPbehaviorTime"`
+	PreviousEntityPbehaviorTime     *CpsTime        `json:"PreviousEntityPbehaviorTime"`
+	PreviousPbehaviorTypeID         string          `json:"PreviousPbehaviorTypeID"`
+	PreviousPbehaviorCannonicalType string          `json:"PreviousPbehaviorCannonicalType"`
 
-	EventsCount int
+	EventsCount int `json:"EventsCount"`
 }
 
 func NewAlarmChange() AlarmChange {
