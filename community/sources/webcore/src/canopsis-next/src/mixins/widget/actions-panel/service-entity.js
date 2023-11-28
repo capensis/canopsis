@@ -1,5 +1,5 @@
-import { createNamespacedHelpers } from 'vuex';
 import { isEmpty, pick } from 'lodash';
+import { createNamespacedHelpers } from 'vuex';
 
 import {
   MODALS,
@@ -23,6 +23,7 @@ import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket
 const { mapActions: mapAlarmActions } = createNamespacedHelpers('alarm');
 
 export const widgetActionPanelServiceEntityMixin = {
+  inject: ['$actionsRequests'],
   mixins: [
     authMixin,
     entitiesPbehaviorTypeMixin,
@@ -72,8 +73,18 @@ export const widgetActionPanelServiceEntityMixin = {
       bulkCreateAlarmChangestateEvent: 'bulkCreateAlarmChangestateEvent',
     }),
 
-    refreshEntities() {
-      this.$emit('refresh');
+    async runAction(actionType, action) {
+      if (this.widgetParameters.stackedEntitiesActions) {
+        this.$actionsRequests.push({ actionType, action, entityId: this.entity?._id });
+
+        return Promise.resolve();
+      }
+
+      return action();
+    },
+
+    refreshEntities(important = false) {
+      this.$emit('refresh', important);
     },
 
     fetchAlarmsByEntities(entities) {
@@ -179,7 +190,10 @@ export const widgetActionPanelServiceEntityMixin = {
         ({ alarm_id: alarmId }) => ({ _id: alarmId, comment: WEATHER_ACK_EVENT_OUTPUT.ack }),
       );
 
-      await this.bulkCreateAlarmAckEvent({ data: preparedRequestData });
+      await this.runAction(
+        WEATHER_ACTIONS_TYPES.entityAck,
+        () => this.bulkCreateAlarmAckEvent({ data: preparedRequestData }),
+      );
 
       this.refreshEntities();
 
@@ -206,7 +220,10 @@ export const widgetActionPanelServiceEntityMixin = {
               ({ alarm_id: alarmId }) => ({ _id: alarmId, comment }),
             );
 
-            await this.bulkCreateAlarmAckremoveEvent({ data: preparedRequestData });
+            await this.runAction(
+              WEATHER_ACTIONS_TYPES.entityAckRemove,
+              () => this.bulkCreateAlarmAckremoveEvent({ data: preparedRequestData }),
+            );
 
             this.refreshEntities();
           },
@@ -230,17 +247,23 @@ export const widgetActionPanelServiceEntityMixin = {
                 entities,
               );
 
-              await this.bulkCreateAlarmAckEvent({
-                data: availableEntities.map(
-                  ({ alarm_id: alarmId }) => ({ _id: alarmId, comment: WEATHER_ACK_EVENT_OUTPUT.ack }),
-                ),
-              });
+              await this.runAction(
+                WEATHER_ACTIONS_TYPES.entityAssocTicket,
+                () => this.bulkCreateAlarmAckEvent({
+                  data: availableEntities.map(
+                    ({ alarm_id: alarmId }) => ({ _id: alarmId, comment: WEATHER_ACK_EVENT_OUTPUT.ack }),
+                  ),
+                }),
+              );
 
-              await this.bulkCreateAlarmAssocticketEvent({
-                data: availableEntities.map(
-                  ({ alarm_id: alarmId }) => ({ _id: alarmId, ...event }),
-                ),
-              });
+              await this.runAction(
+                WEATHER_ACTIONS_TYPES.entityAssocTicket,
+                () => this.bulkCreateAlarmAssocticketEvent({
+                  data: availableEntities.map(
+                    ({ alarm_id: alarmId }) => ({ _id: alarmId, ...event }),
+                  ),
+                }),
+              );
 
               this.refreshEntities();
             },
@@ -285,7 +308,7 @@ export const widgetActionPanelServiceEntityMixin = {
                     name: alarmsByTickets[id].name,
                   })),
                   alarms,
-                  onExecute: () => this.refreshEntities(),
+                  onExecute: () => this.refreshEntities(true),
                 },
               });
             },
@@ -310,7 +333,10 @@ export const widgetActionPanelServiceEntityMixin = {
 
             const preparedRequestData = availableEntities.map(({ alarm_id: alarmId }) => ({ _id: alarmId, comment }));
 
-            await this.bulkCreateAlarmCommentEvent({ data: preparedRequestData });
+            await this.runAction(
+              WEATHER_ACTIONS_TYPES.entityComment,
+              () => this.bulkCreateAlarmCommentEvent({ data: preparedRequestData }),
+            );
 
             this.refreshEntities();
           },
@@ -326,20 +352,27 @@ export const widgetActionPanelServiceEntityMixin = {
         entities,
       );
 
-      await this.bulkCreateAlarmAckEvent({
-        data: availableEntities.map(
-          ({ alarm_id: alarmId }) => ({ _id: alarmId, comment: WEATHER_ACK_EVENT_OUTPUT.validateOk }),
-        ),
-      });
-      await this.bulkCreateAlarmChangestateEvent({
-        data: availableEntities.map(
-          ({ alarm_id: alarmId }) => ({
-            _id: alarmId,
-            state: ENTITIES_STATES.critical,
-            comment: WEATHER_ACK_EVENT_OUTPUT.validateOk,
-          }),
-        ),
-      });
+      await this.runAction(
+        WEATHER_ACTIONS_TYPES.entityValidate,
+        () => this.bulkCreateAlarmAckEvent({
+          data: availableEntities.map(
+            ({ alarm_id: alarmId }) => ({ _id: alarmId, comment: WEATHER_ACK_EVENT_OUTPUT.validateOk }),
+          ),
+        }),
+      );
+
+      await this.runAction(
+        WEATHER_ACTIONS_TYPES.entityValidate,
+        () => this.bulkCreateAlarmChangestateEvent({
+          data: availableEntities.map(
+            ({ alarm_id: alarmId }) => ({
+              _id: alarmId,
+              state: ENTITIES_STATES.critical,
+              comment: WEATHER_ACK_EVENT_OUTPUT.validateOk,
+            }),
+          ),
+        }),
+      );
 
       this.refreshEntities();
 
@@ -351,20 +384,26 @@ export const widgetActionPanelServiceEntityMixin = {
 
       const availableEntities = this.getAvailableEntitiesByActionType(WEATHER_ACTIONS_TYPES.entityInvalidate, entities);
 
-      await this.bulkCreateAlarmAckEvent({
-        data: availableEntities.map(
-          ({ alarm_id: alarmId }) => ({ _id: alarmId, comment: WEATHER_ACK_EVENT_OUTPUT.ack }),
-        ),
-      });
+      await this.runAction(
+        WEATHER_ACTIONS_TYPES.entityInvalidate,
+        () => this.bulkCreateAlarmAckEvent({
+          data: availableEntities.map(
+            ({ alarm_id: alarmId }) => ({ _id: alarmId, comment: WEATHER_ACK_EVENT_OUTPUT.ack }),
+          ),
+        }),
+      );
 
-      await this.bulkCreateAlarmCancelEvent({
-        data: availableEntities.map(
-          ({ alarm_id: alarmId }) => ({
-            _id: alarmId,
-            comment: WEATHER_ACK_EVENT_OUTPUT.validateCancel,
-          }),
-        ),
-      });
+      await this.runAction(
+        WEATHER_ACTIONS_TYPES.entityInvalidate,
+        () => this.bulkCreateAlarmCancelEvent({
+          data: availableEntities.map(
+            ({ alarm_id: alarmId }) => ({
+              _id: alarmId,
+              comment: WEATHER_ACK_EVENT_OUTPUT.validateCancel,
+            }),
+          ),
+        }),
+      );
 
       this.refreshEntities();
 
@@ -380,11 +419,14 @@ export const widgetActionPanelServiceEntityMixin = {
 
             const pauseType = defaultPbehaviorTypes.find(({ type }) => type === PBEHAVIOR_TYPE_TYPES.pause);
 
-            await this.createPauseEvent(entities, {
-              comment: pause.comment,
-              reason: pause.reason,
-              type: pauseType,
-            });
+            await this.runAction(
+              WEATHER_ACTIONS_TYPES.entityPause,
+              () => this.createPauseEvent(entities, {
+                comment: pause.comment,
+                reason: pause.reason,
+                type: pauseType,
+              }),
+            );
 
             this.refreshEntities();
           },
@@ -395,7 +437,7 @@ export const widgetActionPanelServiceEntityMixin = {
     async applyPlayAction(entities) {
       this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityPlay, true);
 
-      await this.createPlayEvent(entities);
+      await this.runAction(WEATHER_ACTIONS_TYPES.entityPlay, () => this.createPlayEvent(entities));
 
       this.refreshEntities();
 
@@ -417,7 +459,10 @@ export const widgetActionPanelServiceEntityMixin = {
               ({ alarm_id: alarmId }) => ({ _id: alarmId, comment }),
             );
 
-            await this.bulkCreateAlarmCancelEvent({ data: preparedRequestData });
+            await this.runAction(
+              WEATHER_ACTIONS_TYPES.entityCancel,
+              () => this.bulkCreateAlarmCancelEvent({ data: preparedRequestData }),
+            );
 
             this.refreshEntities();
           },

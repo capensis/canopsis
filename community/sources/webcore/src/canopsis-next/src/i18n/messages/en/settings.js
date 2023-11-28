@@ -294,4 +294,5 @@ export default {
   statisticsWidgetColumn: {
     split: 'Split data by value path',
   },
+  stackEntitiesActions: 'Stack entities actions and apply simultaneously',
 };
