@@ -145,3 +145,25 @@ export const getAvailableActionsByEntities = (
 
   return uniq(types).map(convertEntityActionTypeToAction);
 };
+
+/**
+ * Is disabled action for entity by actions requests
+ *
+ * @param {string} entityId
+ * @param {Object[]} actionsRequests
+ * @param {string} actionType
+ * @returns {boolean}
+ */
+export const isDisabledActionForEntityByActionsRequests = (entityId, actionType, actionsRequests) => {
+  switch (actionType) {
+    case WEATHER_ACTIONS_TYPES.declareTicket:
+    case WEATHER_ACTIONS_TYPES.entityAssocTicket:
+    case WEATHER_ACTIONS_TYPES.entityComment:
+    case WEATHER_ACTIONS_TYPES.executeInstruction:
+      return false;
+    default:
+      return actionsRequests.some(({ actionType: requestActionType, entityId: requestEntityId }) => (
+        requestActionType === actionType && requestEntityId === entityId
+      ));
+  }
+};
