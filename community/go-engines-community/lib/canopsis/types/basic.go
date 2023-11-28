@@ -81,7 +81,7 @@ func (t CpsTime) MarshalJSON() ([]byte, error) {
 		return []byte("null"), nil
 	}
 
-	stamp := fmt.Sprint(ts)
+	stamp := strconv.FormatInt(ts, 10)
 
 	return []byte(stamp), nil
 }
@@ -421,7 +421,7 @@ func listOfInterfaceToString(v []interface{}) (string, error) {
 	for i, vv := range v {
 		sval, err := InterfaceToString(vv)
 		if err != nil {
-			return "", fmt.Errorf("list of: %v", err)
+			return "", fmt.Errorf("list of: %w", err)
 		}
 		values[i] = sval
 	}
@@ -434,7 +434,7 @@ func listOfInterfaceToStringSlice(v []interface{}) ([]string, error) {
 	for i, vv := range v {
 		sval, err := InterfaceToString(vv)
 		if err != nil {
-			return []string{}, fmt.Errorf("list of: %v", err)
+			return []string{}, fmt.Errorf("list of: %w", err)
 		}
 		values[i] = sval
 	}

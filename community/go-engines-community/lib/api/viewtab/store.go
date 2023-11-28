@@ -271,7 +271,7 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 			return err
 		}
 		if isLinked {
-			return ValidationErr{error: errors.New("view tab is linked to playlist")}
+			return ValidationError{error: errors.New("view tab is linked to playlist")}
 		}
 
 		delCount, err := s.collection.DeleteOne(ctx, bson.M{"_id": id})
@@ -389,7 +389,7 @@ func (s *store) UpdatePositions(ctx context.Context, tabs []Response) (bool, err
 		if viewId == "" {
 			viewId = tab.View
 		} else if viewId != tab.View {
-			return false, ValidationErr{error: errors.New("view tabs are related to different views")}
+			return false, ValidationError{error: errors.New("view tabs are related to different views")}
 		}
 	}
 
@@ -401,7 +401,7 @@ func (s *store) UpdatePositions(ctx context.Context, tabs []Response) (bool, err
 			return err
 		}
 		if count != int64(len(tabs)) {
-			return ValidationErr{error: errors.New("view tabs are missing")}
+			return ValidationError{error: errors.New("view tabs are missing")}
 		}
 
 		writeModels := make([]mongodriver.WriteModel, len(tabs))

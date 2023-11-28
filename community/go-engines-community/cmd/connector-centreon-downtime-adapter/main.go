@@ -79,7 +79,13 @@ func run(ctx context.Context, flags Flags, logger zerolog.Logger) (resErr error)
 		return fmt.Errorf("cannot modify rmq channel: %w", err)
 	}
 
-	transport := http.DefaultTransport.(*http.Transport).Clone()
+	var transport *http.Transport
+	if d, ok := http.DefaultTransport.(*http.Transport); ok {
+		transport = d.Clone()
+	} else {
+		transport = &http.Transport{}
+	}
+
 	if config.Api.InsecureSkipverify {
 		logger.Warn().Msg("adapter accepts any certificate from canopsis api")
 		transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}

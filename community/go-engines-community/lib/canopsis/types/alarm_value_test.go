@@ -118,7 +118,6 @@ func TestAlarmSteps_Crop_GivenGreaterThenLimitSteps_ShouldCropSteps(t *testing.T
 	if diff := pretty.Compare(steps[1].StateCounter, expectedCounter); diff != "" {
 		t.Fatalf("unexpected counter %s", diff)
 	}
-
 }
 
 func TestAlarmSteps_Crop_GivenCounterStep_ShouldSaveInDB(t *testing.T) {

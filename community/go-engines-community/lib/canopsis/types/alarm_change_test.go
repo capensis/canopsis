@@ -26,7 +26,5 @@ func TestComparison(t *testing.T) {
 			}
 			So(len(alarmChangeTypeNone.GetTriggers()), ShouldEqual, 0)
 		})
-
 	})
-
 }

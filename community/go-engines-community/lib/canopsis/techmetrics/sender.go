@@ -162,7 +162,6 @@ func (s *sender) SendAxeEvent(metric AxeEventMetric) {
 		metric.EntityType,
 		metric.AlarmChangeType,
 	})
-
 }
 
 func (s *sender) SendCorrelationRetries(metric CorrelationRetriesMetric) {

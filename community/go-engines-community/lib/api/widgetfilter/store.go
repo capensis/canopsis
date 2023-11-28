@@ -358,12 +358,12 @@ func (s *store) UpdatePositions(ctx context.Context, ids []string, widgetId, use
 			if _, ok := notFoundIds[filter.ID]; ok {
 				delete(notFoundIds, filter.ID)
 			} else {
-				return ValidationErr{error: errors.New("filters are related to different widgets or users")}
+				return ValidationError{error: errors.New("filters are related to different widgets or users")}
 			}
 		}
 
 		if len(notFoundIds) > 0 {
-			return ValidationErr{error: errors.New("filters are related to different widgets or users")}
+			return ValidationError{error: errors.New("filters are related to different widgets or users")}
 		}
 
 		writeModels := make([]mongodriver.WriteModel, len(ids))

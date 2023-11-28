@@ -81,20 +81,20 @@ func (w *worker) processTask(ctx context.Context, task CleanTask) {
 		}
 	}()
 
-	lockCtx, cancel := context.WithCancel(context.Background())
+	done := make(chan struct{})
 	go func() {
 		w.doTask(ctx, task)
-		cancel()
+		close(done)
 	}()
 
 	ticker := time.NewTicker(lockTickInterval)
 	defer ticker.Stop()
 	for {
 		select {
-		case <-lockCtx.Done():
+		case <-done:
 			return
 		case <-ticker.C:
-			err := w.redisClient.SetEx(lockCtx, libredis.ApiCleanEntitiesLockKey, lockValue, lockExpirationTime).Err()
+			err := w.redisClient.SetEx(ctx, libredis.ApiCleanEntitiesLockKey, lockValue, lockExpirationTime).Err()
 			if err != nil {
 				w.logger.Err(err).Msg("cannot update redis lock")
 			}

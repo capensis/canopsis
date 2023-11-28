@@ -8,8 +8,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/rs/zerolog"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
@@ -20,6 +18,7 @@ import (
 	mock_encoding "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/encoding"
 	"github.com/golang/mock/gomock"
 	amqp "github.com/rabbitmq/amqp091-go"
+	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -193,7 +192,7 @@ func TestService_ListenScenarioFinish(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
-			ctx, cancel := context.WithCancel(context.Background())
+			ctx, cancel := context.WithCancel(timerCtx)
 			defer cancel()
 
 			scenarioExecChan := make(chan action.ExecuteScenariosTask)
@@ -265,7 +264,6 @@ func TestService_ListenScenarioFinish(t *testing.T) {
 				for _, info := range dataset.scenarioInfos {
 					select {
 					case <-ctx.Done():
-					case <-timerCtx.Done():
 					case scenarioInfoChannel <- info:
 					}
 				}

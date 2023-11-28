@@ -78,11 +78,12 @@ func (a *Alarm) AddUpdate(key string, update bson.M) {
 	}
 
 	if _, ok := a.update[key]; ok {
-		mergedUpdate := a.update[key].(bson.M)
-		for k, v := range update {
-			mergedUpdate[k] = v
+		if mergedUpdate, ok := a.update[key].(bson.M); ok {
+			for k, v := range update {
+				mergedUpdate[k] = v
+			}
+			a.update[key] = mergedUpdate
 		}
-		a.update[key] = mergedUpdate
 	} else {
 		a.update[key] = update
 	}
