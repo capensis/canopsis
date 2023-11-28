@@ -61,7 +61,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
 exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-field\` with custom props 2`] = `
 <div
   class="v-menu__content theme--light menuable__content__active v-autocomplete__content"
-  style="max-height: 304px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8; display: none;"
+  style="max-height: 304px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8;"
 >
   <div
     class="v-list v-select-list v-sheet theme--light theme--light"
@@ -101,7 +101,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <input
                   aria-checked="false"
                   disabled="disabled"
-                  id="input-127"
                   role="checkbox"
                   type="checkbox"
                   value=""
@@ -123,7 +122,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           </div>
         </div>
       </div>
-       
       <div
         class="v-list-item__content"
       >
@@ -166,7 +164,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <input
                   aria-checked="false"
                   disabled="disabled"
-                  id="input-132"
                   role="checkbox"
                   type="checkbox"
                   value=""
@@ -188,7 +185,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           </div>
         </div>
       </div>
-       
       <div
         class="v-list-item__content"
       >
@@ -231,7 +227,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <input
                   aria-checked="false"
                   disabled="disabled"
-                  id="input-137"
                   role="checkbox"
                   type="checkbox"
                   value=""
@@ -253,7 +248,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           </div>
         </div>
       </div>
-       
       <div
         class="v-list-item__content"
       >
@@ -342,7 +336,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
 exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-field\` with default props 2`] = `
 <div
   class="v-menu__content theme--light menuable__content__active v-autocomplete__content"
-  style="max-height: 304px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8; display: none;"
+  style="max-height: 304px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8;"
 >
   <div
     class="v-list v-select-list v-sheet theme--light theme--light"
@@ -380,7 +374,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 </i>
                 <input
                   aria-checked="false"
-                  id="input-18"
                   role="checkbox"
                   type="checkbox"
                   value=""
@@ -402,7 +395,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           </div>
         </div>
       </div>
-       
       <div
         class="v-list-item__content"
       >
@@ -445,7 +437,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 <input
                   aria-checked="false"
                   disabled="disabled"
-                  id="input-23"
                   role="checkbox"
                   type="checkbox"
                   value=""
@@ -467,7 +458,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           </div>
         </div>
       </div>
-       
       <div
         class="v-list-item__content"
       >
@@ -508,7 +498,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 </i>
                 <input
                   aria-checked="false"
-                  id="input-28"
                   role="checkbox"
                   type="checkbox"
                   value=""
@@ -530,7 +519,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           </div>
         </div>
       </div>
-       
       <div
         class="v-list-item__content"
       >
@@ -571,7 +559,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 </i>
                 <input
                   aria-checked="false"
-                  id="input-33"
                   role="checkbox"
                   type="checkbox"
                   value=""
@@ -593,7 +580,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           </div>
         </div>
       </div>
-       
       <div
         class="v-list-item__content"
       >
@@ -634,7 +620,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 </i>
                 <input
                   aria-checked="false"
-                  id="input-38"
                   role="checkbox"
                   type="checkbox"
                   value=""
@@ -656,7 +641,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           </div>
         </div>
       </div>
-       
       <div
         class="v-list-item__content"
       >
@@ -697,7 +681,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 </i>
                 <input
                   aria-checked="false"
-                  id="input-43"
                   role="checkbox"
                   type="checkbox"
                   value=""
@@ -719,7 +702,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           </div>
         </div>
       </div>
-       
       <div
         class="v-list-item__content"
       >
@@ -760,7 +742,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 </i>
                 <input
                   aria-checked="false"
-                  id="input-48"
                   role="checkbox"
                   type="checkbox"
                   value=""
@@ -782,7 +763,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           </div>
         </div>
       </div>
-       
       <div
         class="v-list-item__content"
       >
@@ -823,7 +803,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 </i>
                 <input
                   aria-checked="false"
-                  id="input-53"
                   role="checkbox"
                   type="checkbox"
                   value=""
@@ -845,7 +824,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           </div>
         </div>
       </div>
-       
       <div
         class="v-list-item__content"
       >
@@ -886,7 +864,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 </i>
                 <input
                   aria-checked="false"
-                  id="input-58"
                   role="checkbox"
                   type="checkbox"
                   value=""
@@ -908,7 +885,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           </div>
         </div>
       </div>
-       
       <div
         class="v-list-item__content"
       >
@@ -949,7 +925,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 </i>
                 <input
                   aria-checked="false"
-                  id="input-63"
                   role="checkbox"
                   type="checkbox"
                   value=""
@@ -971,7 +946,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           </div>
         </div>
       </div>
-       
       <div
         class="v-list-item__content"
       >
@@ -1012,7 +986,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 </i>
                 <input
                   aria-checked="false"
-                  id="input-68"
                   role="checkbox"
                   type="checkbox"
                   value=""
@@ -1034,7 +1007,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           </div>
         </div>
       </div>
-       
       <div
         class="v-list-item__content"
       >
@@ -1075,7 +1047,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 </i>
                 <input
                   aria-checked="false"
-                  id="input-73"
                   role="checkbox"
                   type="checkbox"
                   value=""
@@ -1097,7 +1068,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           </div>
         </div>
       </div>
-       
       <div
         class="v-list-item__content"
       >
@@ -1138,7 +1108,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 </i>
                 <input
                   aria-checked="false"
-                  id="input-78"
                   role="checkbox"
                   type="checkbox"
                   value=""
@@ -1160,7 +1129,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           </div>
         </div>
       </div>
-       
       <div
         class="v-list-item__content"
       >
@@ -1201,7 +1169,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 </i>
                 <input
                   aria-checked="false"
-                  id="input-83"
                   role="checkbox"
                   type="checkbox"
                   value=""
@@ -1223,7 +1190,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           </div>
         </div>
       </div>
-       
       <div
         class="v-list-item__content"
       >
@@ -1264,7 +1230,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 </i>
                 <input
                   aria-checked="false"
-                  id="input-88"
                   role="checkbox"
                   type="checkbox"
                   value=""
@@ -1286,7 +1251,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           </div>
         </div>
       </div>
-       
       <div
         class="v-list-item__content"
       >
@@ -1327,7 +1291,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 </i>
                 <input
                   aria-checked="false"
-                  id="input-93"
                   role="checkbox"
                   type="checkbox"
                   value=""
@@ -1349,7 +1312,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           </div>
         </div>
       </div>
-       
       <div
         class="v-list-item__content"
       >
@@ -1390,7 +1352,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 </i>
                 <input
                   aria-checked="false"
-                  id="input-98"
                   role="checkbox"
                   type="checkbox"
                   value=""
@@ -1412,7 +1373,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           </div>
         </div>
       </div>
-       
       <div
         class="v-list-item__content"
       >
@@ -1453,7 +1413,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 </i>
                 <input
                   aria-checked="false"
-                  id="input-103"
                   role="checkbox"
                   type="checkbox"
                   value=""
@@ -1475,7 +1434,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           </div>
         </div>
       </div>
-       
       <div
         class="v-list-item__content"
       >
@@ -1516,7 +1474,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 </i>
                 <input
                   aria-checked="false"
-                  id="input-108"
                   role="checkbox"
                   type="checkbox"
                   value=""
@@ -1538,7 +1495,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           </div>
         </div>
       </div>
-       
       <div
         class="v-list-item__content"
       >
@@ -1579,7 +1535,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
                 </i>
                 <input
                   aria-checked="false"
-                  id="input-113"
                   role="checkbox"
                   type="checkbox"
                   value=""
@@ -1601,7 +1556,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
           </div>
         </div>
       </div>
-       
       <div
         class="v-list-item__content"
       >
@@ -1687,7 +1641,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
 exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-field\` with external metrics 2`] = `
 <div
   class="v-menu__content theme--light menuable__content__active v-autocomplete__content"
-  style="max-height: 304px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8; display: none;"
+  style="max-height: 304px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8;"
 >
   <div
     class="v-list v-select-list v-sheet theme--light theme--light"
