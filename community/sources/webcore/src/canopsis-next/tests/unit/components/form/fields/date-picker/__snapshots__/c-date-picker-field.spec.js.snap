@@ -55,9 +55,8 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with custom props 2
 <div
   class="v-menu__content theme--light menuable__content__active date-picker"
   role="menu"
-  style="max-height: auto; min-width: 0px; max-width: 290px; top: 12px; left: 0px; transform-origin: top left; z-index: 8; display: none;"
+  style="max-height: auto; min-width: 0px; max-width: 290px; top: 12px; left: 0px; transform-origin: top left; z-index: 8;"
 >
-   
   <!---->
 </div>
 `;
@@ -108,9 +107,8 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with default props 
 <div
   class="v-menu__content theme--light menuable__content__active date-picker"
   role="menu"
-  style="max-height: auto; min-width: 0px; max-width: 290px; top: 12px; left: 0px; transform-origin: top left; z-index: 8; display: none;"
+  style="max-height: auto; min-width: 0px; max-width: 290px; top: 12px; left: 0px; transform-origin: top left; z-index: 8;"
 >
-   
   <div
     class="v-picker v-card v-picker--date date-picker theme--light"
     opened="true"
@@ -133,7 +131,6 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with default props 
             name="picker-transition"
           >
             <div>
-               
             </div>
           </transition-stub>
         </div>
@@ -509,7 +506,7 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with default props 
                     </td>
                     <td>
                       <button
-                        class="v-btn v-date-picker-table__current v-btn--rounded v-btn--outlined theme--light primary--text"
+                        class="v-btn v-btn--text v-btn--rounded theme--light"
                         type="button"
                       >
                         <div
@@ -571,7 +568,7 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with default props 
                     </td>
                     <td>
                       <button
-                        class="v-btn v-btn--text v-btn--rounded theme--light"
+                        class="v-btn v-date-picker-table__current v-btn--rounded v-btn--outlined theme--light primary--text"
                         type="button"
                       >
                         <div
@@ -666,9 +663,8 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with errors 2`] = `
 <div
   class="v-menu__content theme--light menuable__content__active date-picker"
   role="menu"
-  style="max-height: auto; min-width: 0px; max-width: 290px; top: 12px; left: 0px; transform-origin: top left; z-index: 8; display: none;"
+  style="max-height: auto; min-width: 0px; max-width: 290px; top: 12px; left: 0px; transform-origin: top left; z-index: 8;"
 >
-   
   <div
     class="v-picker v-card v-picker--date date-picker theme--light"
     opened="true"
@@ -1250,9 +1246,8 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with slots 2`] = `
 <div
   class="v-menu__content theme--light menuable__content__active date-picker"
   role="menu"
-  style="max-height: auto; min-width: 0px; max-width: 290px; top: 12px; left: 0px; transform-origin: top left; z-index: 8; display: none;"
+  style="max-height: auto; min-width: 0px; max-width: 290px; top: 12px; left: 0px; transform-origin: top left; z-index: 8;"
 >
-   
   <div
     class="v-picker v-card v-picker--date date-picker theme--light"
     opened="true"
@@ -1275,7 +1270,6 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with slots 2`] = `
             name="picker-transition"
           >
             <div>
-               
             </div>
           </transition-stub>
         </div>
@@ -1651,7 +1645,7 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with slots 2`] = `
                     </td>
                     <td>
                       <button
-                        class="v-btn v-date-picker-table__current v-btn--rounded v-btn--outlined theme--light primary--text"
+                        class="v-btn v-btn--text v-btn--rounded theme--light"
                         type="button"
                       >
                         <div
@@ -1713,7 +1707,7 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with slots 2`] = `
                     </td>
                     <td>
                       <button
-                        class="v-btn v-btn--text v-btn--rounded theme--light"
+                        class="v-btn v-date-picker-table__current v-btn--rounded v-btn--outlined theme--light primary--text"
                         type="button"
                       >
                         <div

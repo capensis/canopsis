@@ -52,9 +52,8 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` with full tickets
 exports[`extra-details-ticket Renders \`extra-details-ticket\` with full tickets 2`] = `
 <div
   class="v-tooltip__content menuable__content__active"
-  style="left: 0px; max-width: auto; top: 12px; z-index: 8; display: none;"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
 >
-   
   <div
     class="layout extra-details-ticket__list column"
   >
@@ -64,25 +63,17 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` with full tickets
       <strong>
         ticket-rule-name-1 Ok
       </strong>
-       
       <div>
         By : ticket-author-1
       </div>
-       
       <div>
         Date : 6:00:00
       </div>
-       
       <div>
-        
           Ticket number : ticket-1
-        
       </div>
-       
       <div>
-        
           Comment : ticket-comment-1
-        
       </div>
     </div>
     <div
@@ -91,21 +82,16 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` with full tickets
       <strong>
         ticket-rule-name-2 Failed
       </strong>
-       
       <div>
         By : ticket-author-2
       </div>
-       
       <div>
         Date : 07/08/2013 19:00:00
       </div>
-       
       <!---->
-       
       <!---->
     </div>
   </div>
-   
   <div
     class="mt-2"
   >
@@ -166,9 +152,8 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` with full tickets
 exports[`extra-details-ticket Renders \`extra-details-ticket\` with full tickets and without failed last ticket 2`] = `
 <div
   class="v-tooltip__content menuable__content__active"
-  style="left: 0px; max-width: auto; top: 12px; z-index: 8; display: none;"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
 >
-   
   <div
     class="layout extra-details-ticket__list column"
   >
@@ -178,17 +163,13 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` with full tickets
       <strong>
         ticket-rule-name-2 Failed
       </strong>
-       
       <div>
         By : ticket-author-2
       </div>
-       
       <div>
         Date : 07/08/2013 19:00:00
       </div>
-       
       <!---->
-       
       <!---->
     </div>
     <div
@@ -197,29 +178,20 @@ exports[`extra-details-ticket Renders \`extra-details-ticket\` with full tickets
       <strong>
         ticket-rule-name-1 Ok
       </strong>
-       
       <div>
         By : ticket-author-1
       </div>
-       
       <div>
         Date : 6:00:00
       </div>
-       
       <div>
-        
           Ticket number : ticket-1
-        
       </div>
-       
       <div>
-        
           Comment : ticket-comment-1
-        
       </div>
     </div>
   </div>
-   
   <div
     class="mt-2"
   >

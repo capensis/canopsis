@@ -24,46 +24,36 @@ exports[`extra-details-parents Renders \`extra-details-parents\` with full paren
 exports[`extra-details-parents Renders \`extra-details-parents\` with full parents 2`] = `
 <div
   class="v-tooltip__content menuable__content__active"
-  style="left: 0px; max-width: auto; top: 12px; z-index: 8; display: none;"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
 >
-   
   <div
     class="text-md-center"
   >
     <strong>
       Meta alarm
     </strong>
-     
     <div
       class="layout column"
     >
       <div>
         Rules :
       </div>
-       
       <div
         class="rule-name"
       >
-        
            parent-rule-1-name
-        
       </div>
       <div
         class="rule-name"
       >
-        
            parent-rule-2-name
-        
       </div>
       <div
         class="rule-name"
       >
-        
            parent-rule-3-name
-        
       </div>
     </div>
-     
     <div>
       Causes : 3
     </div>
@@ -95,25 +85,21 @@ exports[`extra-details-parents Renders \`extra-details-parents\` without rules 1
 exports[`extra-details-parents Renders \`extra-details-parents\` without rules 2`] = `
 <div
   class="v-tooltip__content menuable__content__active"
-  style="left: 0px; max-width: auto; top: 12px; z-index: 8; display: none;"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
 >
-   
   <div
     class="text-md-center"
   >
     <strong>
       Meta alarm
     </strong>
-     
     <div
       class="layout column"
     >
       <div>
         Rules :
       </div>
-       
     </div>
-     
     <div>
       Causes : 3
     </div>

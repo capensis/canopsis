@@ -12,7 +12,11 @@ module.exports = {
     return isHtmlString(received) || isVueWrapper(received);
   },
   serialize(received) {
-    const html = (isVueWrapper(received) ? received.element.outerHTML : received) || '';
+    const html = (isVueWrapper(received) ? received.element?.outerHTML : received);
+
+    if (!html) {
+      return 'undefined';
+    }
 
     const preparedHTML = html
       .replace(/ aria-owns="[-\w]+"/g, '')

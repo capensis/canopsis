@@ -144,7 +144,6 @@ exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with custom props 2`] =
                 </i>
                 <input
                   aria-checked="false"
-                  id="input-53"
                   role="checkbox"
                   type="checkbox"
                   value=""
@@ -166,13 +165,10 @@ exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with custom props 2`] =
           </div>
         </div>
       </div>
-       
       <div
         class="v-list-item__content c-word-break-all"
       >
-        
         Tag 1
-      
       </div>
     </div>
     <div
