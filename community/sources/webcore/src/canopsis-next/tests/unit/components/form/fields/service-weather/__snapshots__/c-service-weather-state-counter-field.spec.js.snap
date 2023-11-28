@@ -99,7 +99,7 @@ exports[`c-service-weather-state-counter-field Renders \`c-service-weather-state
 exports[`c-service-weather-state-counter-field Renders \`c-service-weather-state-counter-field\` with custom props 2`] = `
 <div
   class="v-menu__content theme--light menuable__content__active "
-  style="max-height: 304px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8; display: none;"
+  style="max-height: 304px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8;"
 >
   <div
     class="v-list v-select-list v-sheet theme--light theme--light"
@@ -582,7 +582,7 @@ exports[`c-service-weather-state-counter-field Renders \`c-service-weather-state
 exports[`c-service-weather-state-counter-field Renders \`c-service-weather-state-counter-field\` with default props 2`] = `
 <div
   class="v-menu__content theme--light menuable__content__active "
-  style="max-height: 304px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8; display: none;"
+  style="max-height: 304px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8;"
 >
   <div
     class="v-list v-select-list v-sheet theme--light theme--light"

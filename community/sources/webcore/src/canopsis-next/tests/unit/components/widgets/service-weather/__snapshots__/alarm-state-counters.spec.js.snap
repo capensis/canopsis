@@ -295,9 +295,8 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
 exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props 2`] = `
 <div
   class="v-tooltip__content menuable__content__active"
-  style="left: 0px; max-width: auto; top: 12px; z-index: 8; display: none;"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
 >
-   
   <div
     class="layout column"
   >
@@ -352,9 +351,8 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with default prop
 exports[`alarm-state-counters Renders \`alarm-state-counters\` with default props 2`] = `
 <div
   class="v-tooltip__content menuable__content__active"
-  style="left: 0px; max-width: auto; top: 12px; z-index: 8; display: none;"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
 >
-   
   <div
     class="layout column"
   />

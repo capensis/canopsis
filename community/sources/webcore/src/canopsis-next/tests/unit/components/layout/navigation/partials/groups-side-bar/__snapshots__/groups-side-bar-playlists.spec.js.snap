@@ -111,4 +111,4 @@ exports[`groups-side-bar-playlists Renders \`groups-side-bar-playlists\` with cu
 </div>
 `;
 
-exports[`groups-side-bar-playlists Renders \`groups-side-bar-playlists\` with required props 1`] = `null`;
+exports[`groups-side-bar-playlists Renders \`groups-side-bar-playlists\` with required props 1`] = `undefined`;

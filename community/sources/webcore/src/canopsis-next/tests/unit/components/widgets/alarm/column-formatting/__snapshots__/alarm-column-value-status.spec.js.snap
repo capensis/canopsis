@@ -18,9 +18,8 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with on
 exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: critical 2`] = `
 <div
   class="v-tooltip__content menuable__content__active"
-  style="left: 0px; max-width: auto; top: 12px; z-index: 8; display: none;"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
 >
-   
   <span>
     Ongoing
   </span>
@@ -45,9 +44,8 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with on
 exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: major 2`] = `
 <div
   class="v-tooltip__content menuable__content__active"
-  style="left: 0px; max-width: auto; top: 12px; z-index: 8; display: none;"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
 >
-   
   <span>
     Ongoing
   </span>
@@ -72,9 +70,8 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with on
 exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: minor 2`] = `
 <div
   class="v-tooltip__content menuable__content__active"
-  style="left: 0px; max-width: auto; top: 12px; z-index: 8; display: none;"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
 >
-   
   <span>
     Ongoing
   </span>
@@ -99,9 +96,8 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with on
 exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: ok 2`] = `
 <div
   class="v-tooltip__content menuable__content__active"
-  style="left: 0px; max-width: auto; top: 12px; z-index: 8; display: none;"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
 >
-   
   <span>
     Ongoing
   </span>
@@ -126,9 +122,8 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with st
 exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: cancelled 2`] = `
 <div
   class="v-tooltip__content menuable__content__active"
-  style="left: 0px; max-width: auto; top: 12px; z-index: 8; display: none;"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
 >
-   
   <span>
     Canceled
   </span>
@@ -153,9 +148,8 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with st
 exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: closed 2`] = `
 <div
   class="v-tooltip__content menuable__content__active"
-  style="left: 0px; max-width: auto; top: 12px; z-index: 8; display: none;"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
 >
-   
   <span>
     Closed
   </span>
@@ -180,9 +174,8 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with st
 exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: flapping 2`] = `
 <div
   class="v-tooltip__content menuable__content__active"
-  style="left: 0px; max-width: auto; top: 12px; z-index: 8; display: none;"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
 >
-   
   <span>
     Flapping
   </span>
@@ -217,9 +210,8 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with st
 exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: stealthy 2`] = `
 <div
   class="v-tooltip__content menuable__content__active"
-  style="left: 0px; max-width: auto; top: 12px; z-index: 8; display: none;"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
 >
-   
   <span>
     Stealth
   </span>

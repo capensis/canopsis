@@ -98,15 +98,24 @@ Wrapper.prototype.findTooltip = function findTooltip() {
 Wrapper.prototype.findRoot = function findRoot() {
   return this.vm.$children[0];
 };
-Wrapper.prototype.activateVuetifyElements = async function activateVuetifyElements(name, property = 'isActive') {
+Wrapper.prototype.activateVuetifyElements = async function activateVuetifyElements(name, properties = ['isActive', 'isBooted', 'isContentActive']) {
+  jest.useFakeTimers();
+
   const components = this.findAllComponents({ name });
 
   components?.wrappers?.forEach((componentWrapper) => {
     if (componentWrapper && componentWrapper.vm) {
-      // eslint-disable-next-line no-param-reassign
-      componentWrapper.vm[property] = true;
+      properties.forEach((property) => {
+        if (property in componentWrapper.vm) {
+          // eslint-disable-next-line no-param-reassign
+          componentWrapper.vm[property] = true;
+        }
+      });
     }
   });
+
+  jest.runAllTimers();
+  jest.useRealTimers();
 
   await this.vm.$nextTick();
 
@@ -121,7 +130,7 @@ Wrapper.prototype.openAllTreeviewNodes = async function openAllTreeviewNodes() {
     return Promise.resolve();
   }
 
-  await this.activateVuetifyElements(name, 'isOpen');
+  await this.activateVuetifyElements(name, ['isOpen']);
 
   return this.openAllTreeviewNodes();
 };
