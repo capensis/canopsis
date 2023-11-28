@@ -69,6 +69,7 @@ import { alarmListBaseParametersToForm, formToAlarmListBaseParameters } from './
  * @property {boolean} isPriorityEnabled
  * @property {AlarmListBaseParameters} alarmsList
  * @property {ServiceWeatherActionRequiredSettings} actionRequiredSettings
+ * @property {boolean} stackedEntitiesActions
  */
 
 /**
@@ -130,6 +131,7 @@ export const serviceWeatherWidgetParametersToForm = (parameters = {}) => ({
     },
   isPriorityEnabled: parameters.isPriorityEnabled ?? true,
   actionRequiredSettings: actionRequiredSettingsToForm(parameters.actionRequiredSettings),
+  stackedEntitiesActions: parameters.stackedEntitiesActions ?? false,
 });
 
 /**
