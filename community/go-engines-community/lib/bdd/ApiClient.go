@@ -208,7 +208,7 @@ func (a *ApiClient) TheResponseBodyShouldContain(ctx context.Context, doc string
 	// Try to umarshal expected body as json
 	expectedBody, err := unmarshalJson(content)
 	if err != nil {
-		return fmt.Errorf("cannot unmarshal json %v: %s", err, content)
+		return fmt.Errorf("cannot unmarshal json %w: %s", err, content)
 	}
 
 	partialBody := getPartialResponse(responseBody, expectedBody)
@@ -398,11 +398,11 @@ Step example:
 func (a *ApiClient) TheDifferenceBetweenValues(ctx context.Context, var1, var2 string, left, right float64) error {
 	val1, err := parseFloatVar(ctx, var1)
 	if err != nil {
-		return fmt.Errorf("first variable %s", err)
+		return fmt.Errorf("first variable %w", err)
 	}
 	val2, err := parseFloatVar(ctx, var2)
 	if err != nil {
-		return fmt.Errorf("second variable %s", err)
+		return fmt.Errorf("second variable %w", err)
 	}
 	d := val1 - val2
 	if d < left || right < d {
@@ -893,7 +893,7 @@ func (a *ApiClient) IAm(ctx context.Context, role string) (context.Context, erro
 	if err != nil {
 		return ctx, err
 	}
-	request, err := http.NewRequest(http.MethodPost, uri, bytes.NewReader(body))
+	request, err := http.NewRequestWithContext(ctx, http.MethodPost, uri, bytes.NewReader(body))
 	if err != nil {
 		return ctx, fmt.Errorf("cannot create login request: %w", err)
 	}
@@ -905,6 +905,7 @@ func (a *ApiClient) IAm(ctx context.Context, role string) (context.Context, erro
 		return ctx, fmt.Errorf("cannot do login request: %w", err)
 	}
 
+	defer response.Body.Close()
 	buf, err := io.ReadAll(response.Body)
 	if err != nil {
 		return ctx, fmt.Errorf("cannot fetch login response: %w", err)
@@ -997,7 +998,7 @@ func (a *ApiClient) ISendAnEvent(ctx context.Context, doc string) (context.Conte
 	if err != nil {
 		return ctx, err
 	}
-	req, err := http.NewRequest(http.MethodPost, uri, bytes.NewBuffer(body))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, uri, bytes.NewBuffer(body))
 	if err != nil {
 		return ctx, fmt.Errorf("cannot create event request: %w", err)
 	}
@@ -1471,7 +1472,7 @@ func (a *ApiClient) createRequest(ctx context.Context, method, uri, body string)
 		}
 	}
 
-	req, err := http.NewRequest(method, uri, r)
+	req, err := http.NewRequestWithContext(ctx, method, uri, r)
 	if err != nil {
 		return nil, fmt.Errorf("cannot create request: %w", err)
 	}
@@ -1505,7 +1506,7 @@ func (a *ApiClient) createRequestWithSavedRequest(ctx context.Context, method, u
 		ctx = setRequestBody(ctx, "")
 	}
 
-	req, err := http.NewRequest(method, uri, r)
+	req, err := http.NewRequestWithContext(ctx, method, uri, r)
 	if err != nil {
 		return nil, ctx, fmt.Errorf("cannot create request: %w", err)
 	}
@@ -1556,6 +1557,7 @@ func (a *ApiClient) doRequest(ctx context.Context, req *http.Request) (context.C
 		return ctx, fmt.Errorf("cannot do request: %w", err)
 	}
 
+	defer response.Body.Close()
 	dumpRes, _ := httputil.DumpResponse(response, true)
 	a.requestLogger.Info().
 		Str("file", scUri).
@@ -1732,7 +1734,7 @@ func getPartialResponse(received, expected interface{}) interface{} {
 // checkResponse returns error which contains differences between received and expected.
 func checkResponse(received, expected interface{}) error {
 	if diff := pretty.Compare(received, expected); diff != "" {
-		return fmt.Errorf("response doesn't match expected response body:\n%s\n", diff)
+		return fmt.Errorf("response doesn't match expected response body:\n%s\n", diff) //nolint:stylecheck
 	}
 
 	return nil

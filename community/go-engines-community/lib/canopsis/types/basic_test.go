@@ -3,6 +3,7 @@ package types_test
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"testing"
 	"time"
 
@@ -13,7 +14,6 @@ import (
 
 func TestInterfaceToString(t *testing.T) {
 	Convey("Given some values to convert", t, func() {
-
 		Convey("I don't know how to convert a list", func() {
 			vlstring := make([]string, 1)
 			vlstring[0] = "bla"
@@ -144,7 +144,7 @@ func TestCpsTime(t *testing.T) {
 		}
 
 		tnow := time.Now()
-		stsnow := fmt.Sprint(tnow.Unix())
+		stsnow := strconv.FormatInt(tnow.Unix(), 10)
 		mt := MyTime{
 			TheTime: types.CpsTime{Time: tnow},
 		}
@@ -187,7 +187,6 @@ func TestCpsTime(t *testing.T) {
 
 func TestCpsNumber(t *testing.T) {
 	Convey("Setup", t, func() {
-
 		type MyEvent struct {
 			State types.CpsNumber `json:"state" bson:"state"`
 		}

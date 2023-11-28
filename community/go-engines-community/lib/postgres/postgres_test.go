@@ -195,6 +195,7 @@ func TestPool_Query_GivenNotConnectionError_ShouldRetryMaxTries(t *testing.T) {
 
 	if rows != nil {
 		t.Errorf("expected nil result but got %+v", rows)
+		rows.Close()
 	}
 }
 
@@ -233,6 +234,7 @@ func TestPool_Query_GivenConnectionError_ShouldReturnError(t *testing.T) {
 
 	if rows != nil {
 		t.Errorf("expected nil result but got %+v", rows)
+		rows.Close()
 	}
 }
 
@@ -275,6 +277,8 @@ func TestPool_Query_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.T) {
 
 	if rows == nil {
 		t.Errorf("expected result but got nil")
+	} else {
+		rows.Close()
 	}
 }
 

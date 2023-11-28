@@ -196,7 +196,7 @@ func (w *worker) parseFile(ctx context.Context, filename, source string, withEve
 
 	t, err := decoder.Token()
 	if err != nil {
-		if err == io.EOF {
+		if errors.Is(err, io.EOF) {
 			return res, nil
 		}
 
@@ -469,10 +469,7 @@ func (w *worker) parseEntities(
 			case types.EntityTypeService:
 				serviceEvents = append(serviceEvents, w.createServiceEvent(oldEntity.EntityConfiguration, eventType, now))
 			default:
-				event, err := w.createBasicEntityEvent(eventType, ci.Type, ci.ID, ci.Component, now)
-				if err != nil {
-					return res, err
-				}
+				event := w.createBasicEntityEvent(eventType, ci.Type, ci.ID, ci.Component, now)
 				if event.EventType != "" {
 					basicEntityEvents = append(basicEntityEvents, event)
 				}
@@ -493,11 +490,11 @@ func (w *worker) parseEntities(
 			var oldEntity types.Entity
 			updatedIds = append(updatedIds, componentName)
 			err := w.entityCollection.FindOne(ctx, bson.M{"_id": componentName, "soft_deleted": bson.M{"$exists": false}}).Decode(&oldEntity)
-			if err != nil && err != mongo.ErrNoDocuments {
+			if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
 				return res, err
 			}
 
-			if err == mongo.ErrNoDocuments {
+			if errors.Is(err, mongo.ErrNoDocuments) {
 				ci := importcontextgraph.EntityConfiguration{
 					ID:           componentName,
 					Name:         componentName,
@@ -752,7 +749,7 @@ func (w *worker) createServiceEvent(ci importcontextgraph.EntityConfiguration, e
 	}
 }
 
-func (w *worker) createBasicEntityEvent(eventType string, t, name, component string, now types.CpsTime) (types.Event, error) {
+func (w *worker) createBasicEntityEvent(eventType string, t, name, component string, now types.CpsTime) types.Event {
 	event := types.Event{
 		Connector:     defaultConnector,
 		ConnectorName: defaultConnectorName,
@@ -772,5 +769,5 @@ func (w *worker) createBasicEntityEvent(eventType string, t, name, component str
 		event.SourceType = types.SourceTypeResource
 	}
 
-	return event, nil
+	return event
 }

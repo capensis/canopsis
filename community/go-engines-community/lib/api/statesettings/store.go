@@ -2,6 +2,8 @@ package statesettings
 
 import (
 	"context"
+	"errors"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -66,7 +68,7 @@ func (s *store) Update(ctx context.Context, r StateSettingRequest) (*StateSettin
 	)
 
 	if err := res.Err(); err != nil {
-		if err == mongodriver.ErrNoDocuments {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return nil, nil
 		}
 		return nil, err

@@ -170,7 +170,7 @@ func (s *store) Update(ctx context.Context, model *Exception) (bool, error) {
 	}})
 
 	if err := res.Err(); err != nil {
-		if err == mongodriver.ErrNoDocuments {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return false, nil
 		}
 
@@ -207,7 +207,7 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 func (s *store) IsLinked(ctx context.Context, id string) (bool, error) {
 	res := s.pbehaviorDbCollection.FindOne(ctx, bson.M{"exceptions": id})
 	if err := res.Err(); err != nil {
-		if err == mongodriver.ErrNoDocuments {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return false, nil
 		}
 

@@ -2,6 +2,7 @@ package datastorage
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -24,7 +25,7 @@ func (a *adapter) Get(ctx context.Context) (DataStorage, error) {
 	data := DataStorage{}
 	err := a.collection.FindOne(ctx, bson.M{"_id": ID}).Decode(&data)
 	if err != nil {
-		if err == mongodriver.ErrNoDocuments {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return data, nil
 		}
 

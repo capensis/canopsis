@@ -2,6 +2,7 @@ package datastorage
 
 import (
 	"context"
+	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
@@ -37,7 +38,7 @@ func (s *store) Get(ctx context.Context) (datastorage.DataStorage, error) {
 	data := datastorage.DataStorage{}
 	err := s.collection.FindOne(ctx, bson.M{"_id": datastorage.ID}).Decode(&data)
 	if err != nil {
-		if err == mongodriver.ErrNoDocuments {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return data, nil
 		}
 

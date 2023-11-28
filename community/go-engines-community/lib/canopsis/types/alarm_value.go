@@ -187,7 +187,6 @@ func (s *AlarmSteps) Add(step AlarmStep) error {
 		step.Type == AlarmStepStatusDecrease && step.Value == AlarmStateOK ||
 		step.Type == AlarmStepCancel ||
 		step.Type == AlarmStepStatusIncrease && step.Value == AlarmStatusCancelled {
-
 		*s = append(*s, step)
 		return nil
 	}
@@ -294,7 +293,6 @@ func (s AlarmSteps) UpdateStateCounter(currentStatus *AlarmStep, currentStatusId
 	s[counterIdx].StateCounter.MergeCounter(counter)
 
 	return s
-
 }
 
 // Last returns the last step, if any, or returns an error.
@@ -422,7 +420,7 @@ type AlarmValue struct {
 	Infos map[string]map[string]interface{} `bson:"infos" json:"infos"`
 
 	// store version of dynamic-infos rule
-	RuleVersion map[string]string `bson:"infos_rule_version"`
+	RuleVersion map[string]string `bson:"infos_rule_version" json:"infos_rule_version"`
 
 	// InactiveStart represents start of snooze or maintenance, pause, inactive pbehavior interval.
 	// It's used only to compute InactiveDuration.

@@ -47,12 +47,11 @@ func Example() {
 	err := IReturnAnError()
 
 	if err != nil {
-		switch referr := err.(type) {
-		case MyError:
-			fmt.Printf("i have more infos: %v", referr.MoreInfos())
-
-		default:
-			fmt.Printf("unknown error: %v", referr)
+		var myErr MyError
+		if errors.As(err, &myErr) {
+			fmt.Printf("i have more infos: %v", myErr.MoreInfos())
+		} else {
+			fmt.Printf("unknown error: %v", myErr)
 		}
 	}
 }
