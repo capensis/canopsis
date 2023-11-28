@@ -24,8 +24,6 @@
 </template>
 
 <script>
-import { formMixin } from '@/mixins/form';
-
 import PbehaviorGeneralForm from './pbehavior-general-form.vue';
 import PbehaviorPatternsForm from './pbehavior-patterns-form.vue';
 
@@ -35,7 +33,6 @@ export default {
     PbehaviorGeneralForm,
     PbehaviorPatternsForm,
   },
-  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',
