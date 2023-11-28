@@ -26,12 +26,25 @@
             dense
           )
     template(#actions="")
+      v-alert.my-0.mr-2.pa-1.pr-2(
+        :value="actionsRequests.length",
+        type="info",
+        dismissible,
+        @input="clearActions"
+      ) {{ actionsRequests.length }} {{ $t('modals.service.actionPending') }}
       v-tooltip.mx-2(top)
         template(#activator="{ on }")
           v-btn.secondary(v-on="on", @click="refresh")
             v-icon refresh
         span {{ $t('modals.service.refreshEntities') }}
       v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.close') }}
+      v-btn.primary(
+        v-if="stackedEntitiesActions",
+        :loading="submitting",
+        :disabled="submitting || !actionsRequests.length",
+        type="submit",
+        @click="submit"
+      ) {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -44,6 +57,8 @@ import { authMixin } from '@/mixins/auth';
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesServiceEntityMixin } from '@/mixins/entities/service-entity';
 import { localQueryMixin } from '@/mixins/query-local/query';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import ServiceTemplate from '@/components/other/service/partials/service-template.vue';
 import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/pbehaviors-simple-list.vue';
@@ -55,6 +70,7 @@ export default {
   provide() {
     return {
       $periodicRefresh: this.$periodicRefresh,
+      $actionsRequests: this.actionsRequests,
     };
   },
   inject: ['$system'],
@@ -64,11 +80,14 @@ export default {
     localQueryMixin,
     modalInnerMixin,
     entitiesServiceEntityMixin,
+    submittableMixinCreator(),
+    confirmableModalMixinCreator({ field: 'actionsRequests' }),
   ],
   data() {
     return {
       pending: true,
       unavailableEntitiesAction: {},
+      actionsRequests: [],
       query: {
         rowsPerPage: this.modal.config.widgetParameters.modalItemsPerPage ?? PAGINATION_LIMIT,
         sortKey: 'state',
@@ -87,6 +106,10 @@ export default {
 
     widgetParameters() {
       return this.config.widgetParameters;
+    },
+
+    stackedEntitiesActions() {
+      return this.widgetParameters?.stackedEntitiesActions ?? false;
     },
 
     serviceEntitiesWithKey() {
@@ -118,8 +141,18 @@ export default {
   },
 
   methods: {
-    refresh() {
+    refresh(immediate = false) {
+      if (!immediate && this.stackedEntitiesActions) {
+        return Promise.resolve();
+      }
+
       return this.$periodicRefresh.notify();
+    },
+
+    clearActions(value) {
+      if (!value) {
+        this.actionsRequests = [];
+      }
     },
 
     async fetchList() {
@@ -132,6 +165,12 @@ export default {
       await this.fetchServiceEntitiesList({ id: this.service._id, params });
 
       this.pending = false;
+    },
+
+    async submit() {
+      await Promise.all(this.actionsRequests.map(({ action }) => action()));
+
+      this.$modals.hide();
     },
   },
 };
