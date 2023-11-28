@@ -658,7 +658,7 @@ func (g *generator) processExternalData(
 				return nil, fmt.Errorf("cannot compile %q regexp %q: %w", field, regexpStr, err)
 			}
 
-			matched = re.Match([]byte(v))
+			matched = re.MatchString(v)
 			if !matched {
 				break
 			}

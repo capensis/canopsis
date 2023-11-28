@@ -63,7 +63,7 @@ func (c *WebsocketClient) IConnect(ctx context.Context) (context.Context, error)
 		return ctx, errors.New("websocket connection already exists")
 	}
 
-	conn, _, err := websocket.DefaultDialer.Dial(c.apiURL, nil)
+	conn, _, err := websocket.DefaultDialer.Dial(c.apiURL, nil) //nolint:bodyclose
 	if err != nil {
 		return ctx, err
 	}
@@ -299,7 +299,7 @@ func (c *WebsocketClient) iWaitMessage(
 	case <-timer.C:
 		msgsMx.Lock()
 		defer msgsMx.Unlock()
-		return fmt.Errorf("reached timeout: caught %d messages but none of them matches to expected message\n%s\n",
+		return fmt.Errorf("reached timeout: caught %d messages but none of them matches to expected message\n%s\n", //nolint:stylecheck
 			len(caughtMsgs), pretty.Compare(caughtMsgs, []any{expectedMsg}))
 	}
 }
@@ -455,7 +455,7 @@ func (c *WebsocketClient) iWaitMessageFromRoom(
 	case <-timer.C:
 		msgsMx.Lock()
 		defer msgsMx.Unlock()
-		return fmt.Errorf("reached timeout: caught %d messages from %q room but none of them matches to expected message\n%s\n",
+		return fmt.Errorf("reached timeout: caught %d messages from %q room but none of them matches to expected message\n%s\n", //nolint:stylecheck
 			len(caughtMsgs), room, pretty.Compare(caughtMsgs, []any{expectedMsg}))
 	}
 }

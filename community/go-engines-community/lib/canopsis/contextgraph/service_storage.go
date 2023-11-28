@@ -2,6 +2,7 @@ package contextgraph
 
 import (
 	"context"
+	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -36,7 +37,7 @@ func (s *storage) Get(ctx context.Context, serviceID string) (entityservice.Enti
 
 	err := s.collection.FindOne(ctx, bson.M{"_id": serviceID}).Decode(&service)
 	if err != nil {
-		if err == mongodriver.ErrNoDocuments {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return entityservice.EntityService{}, nil
 		}
 	}

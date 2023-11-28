@@ -276,8 +276,6 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string) (types
 		return m.processDisabledService(ctx, service, serviceID)
 	}
 
-	var updatedEntities []types.Entity
-
 	query, negativeQuery, err := getServiceQueries(service)
 	if err != nil {
 		return types.Entity{}, nil, err
@@ -305,6 +303,7 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string) (types
 		return types.Entity{}, nil, err
 	}
 
+	updatedEntities := make([]types.Entity, 0, len(entitiesToRemove))
 	entitiesToRemoveMap := make(map[string]bool, len(entitiesToRemove))
 	for _, ent := range entitiesToRemove {
 		entitiesToRemoveMap[ent.ID] = true
@@ -804,7 +803,7 @@ func (m *manager) processDisabledService(ctx context.Context, service entityserv
 func (m *manager) entityExist(ctx context.Context, id string) (bool, error) {
 	err := m.collection.FindOne(ctx, bson.M{"_id": id}, options.FindOne().SetProjection(bson.M{"_id": 1})).Err()
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return false, nil
 		}
 

@@ -59,7 +59,7 @@ func getTplFuncs(location *time.Location) template.FuncMap {
 		// For the strings it escapes newline and quote chars
 		"json": func(v any) string {
 			sv := struct {
-				V any
+				V any `json:"v"`
 			}{V: v}
 			b, err := json.Marshal(sv)
 			if err != nil {

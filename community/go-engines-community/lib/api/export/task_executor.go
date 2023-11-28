@@ -209,7 +209,7 @@ func (e *taskExecutor) StartExecute(ctx context.Context, params TaskParameters) 
 func (e *taskExecutor) Get(ctx context.Context, id string) (*Task, error) {
 	res := e.collection.FindOne(ctx, bson.M{"_id": id})
 	if err := res.Err(); err != nil {
-		if err == mongodriver.ErrNoDocuments {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return nil, nil
 		}
 

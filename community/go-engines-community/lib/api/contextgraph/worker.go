@@ -7,10 +7,9 @@ import (
 	"sync"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 )
 
@@ -124,20 +123,20 @@ func (w *worker) processFirstJob(ctx context.Context) {
 		return
 	}
 
-	reportCtx, cancel := context.WithCancel(context.Background())
+	done := make(chan struct{})
 	go func() {
 		w.processJob(ctx, job)
-		cancel()
+		close(done)
 	}()
 
 	ticket := time.NewTicker(abandonedTickInterval)
 	defer ticket.Stop()
 	for {
 		select {
-		case <-reportCtx.Done():
+		case <-done:
 			return
 		case <-ticket.C:
-			err := w.reporter.ReportOngoing(reportCtx, job)
+			err := w.reporter.ReportOngoing(ctx, job)
 			if err != nil {
 				w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to update import info")
 			}

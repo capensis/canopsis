@@ -90,7 +90,7 @@ func (s *storage) DeleteByName(name string) (bool, error) {
 		var pathError *os.PathError
 		if errors.As(err, &pathError) {
 			err = pathError.Err
-			if err == syscall.ENOTEMPTY {
+			if errors.Is(err, syscall.ENOTEMPTY) {
 				return false, nil
 			}
 		}

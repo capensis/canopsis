@@ -50,11 +50,11 @@ func MoveFile(src, dest string) error {
 		if errors.As(err, &linkError) {
 			srcStat, err := os.Stat(src)
 			if err != nil {
-				return fmt.Errorf("link error %s %s; %s",
+				return fmt.Errorf("link error %s %w; %s",
 					linkError.Op, linkError.Err, dest)
 			}
 
-			return fmt.Errorf("link error %s %s; %s; %#v",
+			return fmt.Errorf("link error %s %w; %s; %#v",
 				linkError.Op, linkError.Err, dest, srcStat)
 		}
 	}

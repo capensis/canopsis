@@ -508,7 +508,7 @@ func (s *store) UpdateGridPositions(ctx context.Context, items []EditGridPositio
 			if tabId == "" {
 				tabId = w.Tab
 			} else if tabId != w.Tab {
-				return ValidationErr{error: errors.New("widgets are related to different view tabs")}
+				return ValidationError{error: errors.New("widgets are related to different view tabs")}
 			}
 		}
 
@@ -517,7 +517,7 @@ func (s *store) UpdateGridPositions(ctx context.Context, items []EditGridPositio
 			return err
 		}
 		if count != int64(len(items)) {
-			return ValidationErr{error: errors.New("widgets are missing")}
+			return ValidationError{error: errors.New("widgets are missing")}
 		}
 
 		writeModels := make([]mongodriver.WriteModel, len(widgets))
