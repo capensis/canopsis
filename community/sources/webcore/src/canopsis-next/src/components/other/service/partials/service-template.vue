@@ -70,8 +70,8 @@ export default {
       this.$emit('update:pagination', pagination);
     },
 
-    refreshEntities() {
-      this.$emit('refresh');
+    refreshEntities(immediate = false) {
+      this.$emit('refresh', immediate);
     },
   },
 };
