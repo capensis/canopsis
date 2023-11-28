@@ -219,8 +219,9 @@ func TestAddEnvVarsToData(t *testing.T) {
 	envVars := map[string]any{
 		"Location": "FR",
 	}
+	// the interface needed to test reflection in templates.
 	type Activatable interface {
-		Activate()
+		IsActivated() bool
 	}
 	type activatableWithEnabled struct {
 		Activatable
