@@ -229,7 +229,7 @@ Feature: execute action on trigger
         "_t": "declareticketfail",
         "a": "system",
         "initiator": "system",
-        "m": "Scenario: test-scenario-action-webhook-second-1-3-name. Fail reason: ticket_id is emtpy, response has nothing in _id.",
+        "m": "Scenario: test-scenario-action-webhook-second-1-3-name. Fail reason: ticket_id is empty, response has nothing in _id.",
         "ticket_rule_id": "{{ .scenarioId3 }}",
         "ticket_rule_name": "Scenario: test-scenario-action-webhook-second-1-3-name",
         "ticket_system_name": "test-scenario-action-webhook-second-1-3-system-name",
@@ -335,7 +335,7 @@ Feature: execute action on trigger
         "a": "system",
         "user_id": "",
         "initiator": "system",
-        "m": "Scenario: test-scenario-action-webhook-second-1-3-name. Fail reason: ticket_id is emtpy, response has nothing in _id."
+        "m": "Scenario: test-scenario-action-webhook-second-1-3-name. Fail reason: ticket_id is empty, response has nothing in _id."
       },
       {
         "_t": "webhookstart",
@@ -518,7 +518,7 @@ Feature: execute action on trigger
     """
 
   @concurrent
-  Scenario: given scenario with emtpy response webhook should add steps
+  Scenario: given scenario with empty response webhook should add steps
     Given I am admin
     When I do POST /api/v4/scenarios:
     """json
@@ -613,7 +613,7 @@ Feature: execute action on trigger
     """
 
   @concurrent
-  Scenario: given scenario with emtpy response webhook should add ticket
+  Scenario: given scenario with empty response webhook should add ticket
     Given I am admin
     When I do POST /api/v4/scenarios:
     """json
