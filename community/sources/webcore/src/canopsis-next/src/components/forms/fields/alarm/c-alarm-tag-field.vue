@@ -184,12 +184,12 @@ $selectIconsWidth: 56px;
     max-width: 400px;
   }
 
-  &__list-item .v-list__tile__action {
+  &__list-item .v-list-item__action {
     height: 40px !important;
     width: 40px !important;
   }
 
-  &__list-item .v-list__tile {
+  &__list-item .v-list-item {
     height: unset !important;
   }
 }
