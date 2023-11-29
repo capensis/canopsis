@@ -103,14 +103,12 @@ exports[`c-pbehavior-type-field Renders \`c-pbehavior-type-field\` with custom p
 >
   <div
     class="v-list v-select-list v-sheet theme--light theme--light"
-    id="list-28"
     role="listbox"
     tabindex="-1"
   >
     <div
       aria-selected="true"
       class="v-list-item primary--text v-list-item--active v-list-item--link theme--light v-list-item--highlighted"
-      id="list-item-37-0"
       role="option"
       tabindex="0"
     >
@@ -145,7 +143,6 @@ exports[`c-pbehavior-type-field Renders \`c-pbehavior-type-field\` with custom p
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-37-1"
       role="option"
       tabindex="0"
     >
@@ -180,7 +177,6 @@ exports[`c-pbehavior-type-field Renders \`c-pbehavior-type-field\` with custom p
     <div
       aria-selected="true"
       class="v-list-item primary--text v-list-item--active v-list-item--link theme--light"
-      id="list-item-37-2"
       role="option"
       tabindex="0"
     >
@@ -297,7 +293,6 @@ exports[`c-pbehavior-type-field Renders \`c-pbehavior-type-field\` with default 
 >
   <div
     class="v-list v-select-list v-sheet theme--light theme--light"
-    id="list-13"
     role="listbox"
     tabindex="-1"
   >
@@ -406,14 +401,12 @@ exports[`c-pbehavior-type-field Renders \`c-pbehavior-type-field\` with max prop
 >
   <div
     class="v-list v-select-list v-sheet theme--light theme--light"
-    id="list-50"
     role="listbox"
     tabindex="-1"
   >
     <div
       aria-selected="true"
       class="v-list-item primary--text v-list-item--active v-list-item--link theme--light v-list-item--highlighted"
-      id="list-item-57-0"
       role="option"
       tabindex="0"
     >
@@ -430,7 +423,6 @@ exports[`c-pbehavior-type-field Renders \`c-pbehavior-type-field\` with max prop
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-57-1"
       role="option"
       tabindex="0"
     >
@@ -447,7 +439,6 @@ exports[`c-pbehavior-type-field Renders \`c-pbehavior-type-field\` with max prop
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-57-2"
       role="option"
       tabindex="0"
     >

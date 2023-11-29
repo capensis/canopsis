@@ -99,7 +99,7 @@ Wrapper.prototype.findRoot = function findRoot() {
   return this.vm.$children[0];
 };
 Wrapper.prototype.activateVuetifyElements = async function activateVuetifyElements(name, properties = ['isActive', 'isBooted', 'isContentActive']) {
-  jest.useFakeTimers();
+  await flushPromises();
 
   const components = this.findAllComponents({ name });
 
@@ -113,9 +113,6 @@ Wrapper.prototype.activateVuetifyElements = async function activateVuetifyElemen
       });
     }
   });
-
-  jest.runAllTimers();
-  jest.useRealTimers();
 
   await this.vm.$nextTick();
 
@@ -143,7 +140,9 @@ Wrapper.prototype.openAllExpansionPanels = function openAllExpansionPanels() {
 Wrapper.prototype.activateAllTooltips = function activateAllTooltips() {
   return this.activateVuetifyElements('VTooltip');
 };
-Wrapper.prototype.activateAllTabs = function activateAllTabs() {
+Wrapper.prototype.activateAllTabs = async function activateAllTabs() {
+  await this.activateVuetifyElements('VTabsItems', ['isBooted']);
+
   return this.activateVuetifyElements('VTabItem');
 };
 Wrapper.prototype.clickOutside = function clickOutside() {

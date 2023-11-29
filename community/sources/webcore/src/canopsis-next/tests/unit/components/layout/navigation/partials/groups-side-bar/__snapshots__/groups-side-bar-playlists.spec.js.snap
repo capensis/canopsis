@@ -5,11 +5,12 @@ exports[`groups-side-bar-playlists Renders \`groups-side-bar-playlists\` with cu
   class="groups-side-bar-playlists v-item-group theme--dark v-expansion-panels"
 >
   <div
-    aria-expanded="false"
-    class="v-expansion-panel secondary lighten-1"
+    aria-expanded="true"
+    class="v-expansion-panel secondary lighten-1 v-expansion-panel--active v-item--active"
   >
     <button
-      class="v-expansion-panel-header"
+      aria-expanded="true"
+      class="v-expansion-panel-header v-expansion-panel-header--active"
       type="button"
     >
       <div
@@ -39,7 +40,7 @@ exports[`groups-side-bar-playlists Renders \`groups-side-bar-playlists\` with cu
     >
       <div
         class="v-expansion-panel-content"
-        style="display: none;"
+        style=""
       >
         <div
           class="v-expansion-panel-content__wrap"
