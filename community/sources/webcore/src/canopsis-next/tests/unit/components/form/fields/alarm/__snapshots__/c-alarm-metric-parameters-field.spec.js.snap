@@ -65,7 +65,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
 >
   <div
     class="v-list v-select-list v-sheet theme--light theme--light"
-    id="list-120"
     role="listbox"
     tabindex="-1"
   >
@@ -73,7 +72,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
       aria-disabled="true"
       aria-selected="true"
       class="v-list-item primary--text v-list-item--active v-list-item--disabled theme--light v-list-item--highlighted"
-      id="list-item-124-0"
       role="option"
       tabindex="-1"
     >
@@ -136,7 +134,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
       aria-disabled="true"
       aria-selected="true"
       class="v-list-item primary--text v-list-item--active v-list-item--disabled theme--light"
-      id="list-item-124-1"
       role="option"
       tabindex="-1"
     >
@@ -199,7 +196,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
       aria-disabled="true"
       aria-selected="false"
       class="v-list-item v-list-item--disabled theme--light"
-      id="list-item-124-2"
       role="option"
       tabindex="-1"
     >
@@ -340,14 +336,12 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
 >
   <div
     class="v-list v-select-list v-sheet theme--light theme--light"
-    id="list-9"
     role="listbox"
     tabindex="-1"
   >
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-15-0"
       role="option"
       tabindex="0"
     >
@@ -408,8 +402,7 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
     <div
       aria-disabled="true"
       aria-selected="true"
-      class="v-list-item primary--text v-list-item--active v-list-item--disabled theme--light"
-      id="list-item-15-1"
+      class="v-list-item primary--text v-list-item--active v-list-item--disabled theme--light v-list-item--highlighted"
       role="option"
       tabindex="-1"
     >
@@ -471,7 +464,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-15-2"
       role="option"
       tabindex="0"
     >
@@ -532,7 +524,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-15-3"
       role="option"
       tabindex="0"
     >
@@ -593,7 +584,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-15-4"
       role="option"
       tabindex="0"
     >
@@ -654,7 +644,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-15-5"
       role="option"
       tabindex="0"
     >
@@ -715,7 +704,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-15-6"
       role="option"
       tabindex="0"
     >
@@ -776,7 +764,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-15-7"
       role="option"
       tabindex="0"
     >
@@ -837,7 +824,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-15-8"
       role="option"
       tabindex="0"
     >
@@ -898,7 +884,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-15-9"
       role="option"
       tabindex="0"
     >
@@ -959,7 +944,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-15-10"
       role="option"
       tabindex="0"
     >
@@ -1020,7 +1004,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-15-11"
       role="option"
       tabindex="0"
     >
@@ -1081,7 +1064,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-15-12"
       role="option"
       tabindex="0"
     >
@@ -1142,7 +1124,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-15-13"
       role="option"
       tabindex="0"
     >
@@ -1203,7 +1184,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-15-14"
       role="option"
       tabindex="0"
     >
@@ -1264,7 +1244,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-15-15"
       role="option"
       tabindex="0"
     >
@@ -1325,7 +1304,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-15-16"
       role="option"
       tabindex="0"
     >
@@ -1386,7 +1364,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-15-17"
       role="option"
       tabindex="0"
     >
@@ -1447,7 +1424,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-15-18"
       role="option"
       tabindex="0"
     >
@@ -1508,7 +1484,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-15-19"
       role="option"
       tabindex="0"
     >
@@ -1645,7 +1620,6 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
 >
   <div
     class="v-list v-select-list v-sheet theme--light theme--light"
-    id="list-144"
     role="listbox"
     tabindex="-1"
   >

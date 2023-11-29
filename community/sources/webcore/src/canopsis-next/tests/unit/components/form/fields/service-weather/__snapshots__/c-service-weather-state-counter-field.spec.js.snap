@@ -103,14 +103,12 @@ exports[`c-service-weather-state-counter-field Renders \`c-service-weather-state
 >
   <div
     class="v-list v-select-list v-sheet theme--light theme--light"
-    id="list-43"
     role="listbox"
     tabindex="-1"
   >
     <div
       aria-selected="true"
       class="v-list-item primary--text v-list-item--active v-list-item--link theme--light v-list-item--highlighted"
-      id="list-item-52-0"
       role="option"
       tabindex="0"
     >
@@ -146,7 +144,6 @@ exports[`c-service-weather-state-counter-field Renders \`c-service-weather-state
       aria-disabled="true"
       aria-selected="false"
       class="v-list-item v-list-item--disabled theme--light"
-      id="list-item-52-1"
       role="option"
       tabindex="-1"
     >
@@ -182,7 +179,6 @@ exports[`c-service-weather-state-counter-field Renders \`c-service-weather-state
       aria-disabled="true"
       aria-selected="false"
       class="v-list-item v-list-item--disabled theme--light"
-      id="list-item-52-2"
       role="option"
       tabindex="-1"
     >
@@ -218,7 +214,6 @@ exports[`c-service-weather-state-counter-field Renders \`c-service-weather-state
       aria-disabled="true"
       aria-selected="false"
       class="v-list-item v-list-item--disabled theme--light"
-      id="list-item-52-3"
       role="option"
       tabindex="-1"
     >
@@ -254,7 +249,6 @@ exports[`c-service-weather-state-counter-field Renders \`c-service-weather-state
       aria-disabled="true"
       aria-selected="false"
       class="v-list-item v-list-item--disabled theme--light"
-      id="list-item-52-4"
       role="option"
       tabindex="-1"
     >
@@ -290,7 +284,6 @@ exports[`c-service-weather-state-counter-field Renders \`c-service-weather-state
       aria-disabled="true"
       aria-selected="false"
       class="v-list-item v-list-item--disabled theme--light"
-      id="list-item-52-5"
       role="option"
       tabindex="-1"
     >
@@ -326,7 +319,6 @@ exports[`c-service-weather-state-counter-field Renders \`c-service-weather-state
       aria-disabled="true"
       aria-selected="false"
       class="v-list-item v-list-item--disabled theme--light"
-      id="list-item-52-6"
       role="option"
       tabindex="-1"
     >
@@ -361,7 +353,6 @@ exports[`c-service-weather-state-counter-field Renders \`c-service-weather-state
     <div
       aria-selected="true"
       class="v-list-item primary--text v-list-item--active v-list-item--link theme--light"
-      id="list-item-52-7"
       role="option"
       tabindex="0"
     >
@@ -397,7 +388,6 @@ exports[`c-service-weather-state-counter-field Renders \`c-service-weather-state
       aria-disabled="true"
       aria-selected="false"
       class="v-list-item v-list-item--disabled theme--light"
-      id="list-item-52-8"
       role="option"
       tabindex="-1"
     >
@@ -433,7 +423,6 @@ exports[`c-service-weather-state-counter-field Renders \`c-service-weather-state
       aria-disabled="true"
       aria-selected="false"
       class="v-list-item v-list-item--disabled theme--light"
-      id="list-item-52-9"
       role="option"
       tabindex="-1"
     >
@@ -469,7 +458,6 @@ exports[`c-service-weather-state-counter-field Renders \`c-service-weather-state
       aria-disabled="true"
       aria-selected="false"
       class="v-list-item v-list-item--disabled theme--light"
-      id="list-item-52-10"
       role="option"
       tabindex="-1"
     >
@@ -586,14 +574,12 @@ exports[`c-service-weather-state-counter-field Renders \`c-service-weather-state
 >
   <div
     class="v-list v-select-list v-sheet theme--light theme--light"
-    id="list-9"
     role="listbox"
     tabindex="-1"
   >
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-16-0"
       role="option"
       tabindex="0"
     >
@@ -628,7 +614,6 @@ exports[`c-service-weather-state-counter-field Renders \`c-service-weather-state
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-16-1"
       role="option"
       tabindex="0"
     >
@@ -663,7 +648,6 @@ exports[`c-service-weather-state-counter-field Renders \`c-service-weather-state
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-16-2"
       role="option"
       tabindex="0"
     >
@@ -698,7 +682,6 @@ exports[`c-service-weather-state-counter-field Renders \`c-service-weather-state
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-16-3"
       role="option"
       tabindex="0"
     >
@@ -733,7 +716,6 @@ exports[`c-service-weather-state-counter-field Renders \`c-service-weather-state
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-16-4"
       role="option"
       tabindex="0"
     >
@@ -768,7 +750,6 @@ exports[`c-service-weather-state-counter-field Renders \`c-service-weather-state
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-16-5"
       role="option"
       tabindex="0"
     >
@@ -803,7 +784,6 @@ exports[`c-service-weather-state-counter-field Renders \`c-service-weather-state
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-16-6"
       role="option"
       tabindex="0"
     >
@@ -838,7 +818,6 @@ exports[`c-service-weather-state-counter-field Renders \`c-service-weather-state
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-16-7"
       role="option"
       tabindex="0"
     >
@@ -873,7 +852,6 @@ exports[`c-service-weather-state-counter-field Renders \`c-service-weather-state
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-16-8"
       role="option"
       tabindex="0"
     >
@@ -908,7 +886,6 @@ exports[`c-service-weather-state-counter-field Renders \`c-service-weather-state
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-16-9"
       role="option"
       tabindex="0"
     >
@@ -943,7 +920,6 @@ exports[`c-service-weather-state-counter-field Renders \`c-service-weather-state
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-16-10"
       role="option"
       tabindex="0"
     >

@@ -568,7 +568,7 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with default props 
                     </td>
                     <td>
                       <button
-                        class="v-btn v-date-picker-table__current v-btn--rounded v-btn--outlined theme--light primary--text"
+                        class="v-btn v-btn--text v-btn--rounded theme--light"
                         type="button"
                       >
                         <div
@@ -1707,7 +1707,7 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with slots 2`] = `
                     </td>
                     <td>
                       <button
-                        class="v-btn v-date-picker-table__current v-btn--rounded v-btn--outlined theme--light primary--text"
+                        class="v-btn v-btn--text v-btn--rounded theme--light"
                         type="button"
                       >
                         <div

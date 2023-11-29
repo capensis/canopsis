@@ -21,6 +21,8 @@ module.exports = {
     const preparedHTML = html
       .replace(/ aria-owns="[-\w]+"/g, '')
       .replace(/ id="input-[-\d]+"/g, '')
+      .replace(/ id="list-[-\d]+"/g, '')
+      .replace(/ id="list-item-[-\d]+"/g, '')
       .replace(/ data-v[-\w]+=""/g, '')
       .replace(/ for="input-[-\d]+"/g, '')
       .replace(/ v-text-field--is-booted/g, '')

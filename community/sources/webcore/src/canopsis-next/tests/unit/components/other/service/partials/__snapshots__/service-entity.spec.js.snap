@@ -53,11 +53,12 @@ exports[`service-entity Renders \`service-entity\` with custom props 1`] = `
     class="v-item-group theme--light v-expansion-panels"
   >
     <div
-      aria-expanded="false"
-      class="v-expansion-panel"
+      aria-expanded="true"
+      class="v-expansion-panel v-expansion-panel--active v-item--active"
     >
       <button
-        class="v-expansion-panel-header"
+        aria-expanded="true"
+        class="v-expansion-panel-header v-expansion-panel-header--active"
         type="button"
       >
         <service-entity-header-stub
@@ -87,7 +88,7 @@ exports[`service-entity Renders \`service-entity\` with custom props 1`] = `
       >
         <div
           class="v-expansion-panel-content"
-          style="display: none;"
+          style=""
         >
           <div
             class="v-expansion-panel-content__wrap"
@@ -121,11 +122,12 @@ exports[`service-entity Renders \`service-entity\` with default props 1`] = `
     class="v-item-group theme--light v-expansion-panels"
   >
     <div
-      aria-expanded="false"
-      class="v-expansion-panel"
+      aria-expanded="true"
+      class="v-expansion-panel v-expansion-panel--active v-item--active"
     >
       <button
-        class="v-expansion-panel-header"
+        aria-expanded="true"
+        class="v-expansion-panel-header v-expansion-panel-header--active"
         type="button"
       >
         <service-entity-header-stub
@@ -153,7 +155,7 @@ exports[`service-entity Renders \`service-entity\` with default props 1`] = `
       >
         <div
           class="v-expansion-panel-content"
-          style="display: none;"
+          style=""
         >
           <div
             class="v-expansion-panel-content__wrap"
@@ -264,11 +266,12 @@ exports[`service-entity Renders \`service-entity\` with pbehaviors tab 1`] = `
     class="v-item-group theme--light v-expansion-panels"
   >
     <div
-      aria-expanded="false"
-      class="v-expansion-panel"
+      aria-expanded="true"
+      class="v-expansion-panel v-expansion-panel--active v-item--active"
     >
       <button
-        class="v-expansion-panel-header"
+        aria-expanded="true"
+        class="v-expansion-panel-header v-expansion-panel-header--active"
         type="button"
       >
         <service-entity-header-stub
@@ -296,7 +299,7 @@ exports[`service-entity Renders \`service-entity\` with pbehaviors tab 1`] = `
       >
         <div
           class="v-expansion-panel-content"
-          style="display: none;"
+          style=""
         >
           <div
             class="v-expansion-panel-content__wrap"
@@ -376,7 +379,7 @@ exports[`service-entity Renders \`service-entity\` with pbehaviors tab 1`] = `
                       class="v-window__container"
                     >
                       <transition-stub
-                        name="v-window-x-reverse-transition"
+                        name=""
                       >
                         <div
                           class="v-window-item v-window-item--active"
@@ -389,12 +392,12 @@ exports[`service-entity Renders \`service-entity\` with pbehaviors tab 1`] = `
                         </div>
                       </transition-stub>
                       <transition-stub
-                        name="v-window-x-reverse-transition"
+                        name=""
                       >
                         <!---->
                       </transition-stub>
                       <transition-stub
-                        name="v-window-x-reverse-transition"
+                        name=""
                       >
                         <!---->
                       </transition-stub>
@@ -419,11 +422,12 @@ exports[`service-entity Renders \`service-entity\` with tree of deps tab 1`] = `
     class="v-item-group theme--light v-expansion-panels"
   >
     <div
-      aria-expanded="false"
-      class="v-expansion-panel"
+      aria-expanded="true"
+      class="v-expansion-panel v-expansion-panel--active v-item--active"
     >
       <button
-        class="v-expansion-panel-header"
+        aria-expanded="true"
+        class="v-expansion-panel-header v-expansion-panel-header--active"
         type="button"
       >
         <service-entity-header-stub
@@ -451,7 +455,7 @@ exports[`service-entity Renders \`service-entity\` with tree of deps tab 1`] = `
       >
         <div
           class="v-expansion-panel-content"
-          style="display: none;"
+          style=""
         >
           <div
             class="v-expansion-panel-content__wrap"

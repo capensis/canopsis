@@ -1,3 +1,5 @@
+import flushPromises from 'flush-promises';
+
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createInputStub } from '@unit/stubs/input';
 import { COLORS } from '@/config';
@@ -15,6 +17,12 @@ const stubs = {
 
 const selectDatePicker = wrapper => wrapper.find('.v-date-picker');
 const selectTextField = wrapper => wrapper.find('.v-text-field');
+
+const mockDatePickerCurrentTime = async (wrapper) => {
+  wrapper.findComponent({ name: 'VDatePicker' }).vm.now = new Date(123456789);
+
+  await flushPromises();
+};
 
 describe('c-date-picker-field', () => {
   const factory = generateShallowRenderer(CDatePickerField, {
@@ -69,7 +77,10 @@ describe('c-date-picker-field', () => {
     const wrapper = snapshotFactory();
 
     expect(wrapper).toMatchSnapshot();
+
     await wrapper.activateAllMenus();
+    await mockDatePickerCurrentTime(wrapper);
+
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -92,7 +103,10 @@ describe('c-date-picker-field', () => {
     });
 
     expect(wrapper).toMatchSnapshot();
+
     await wrapper.activateAllMenus();
+    await mockDatePickerCurrentTime(wrapper);
+
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -104,7 +118,10 @@ describe('c-date-picker-field', () => {
     });
 
     expect(wrapper).toMatchSnapshot();
+
     await wrapper.activateAllMenus();
+    await mockDatePickerCurrentTime(wrapper);
+
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -130,7 +147,10 @@ describe('c-date-picker-field', () => {
     ]);
 
     expect(wrapper).toMatchSnapshot();
+
     await wrapper.activateAllMenus();
+    await mockDatePickerCurrentTime(wrapper);
+
     expect(wrapper).toMatchMenuSnapshot();
   });
 });

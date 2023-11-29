@@ -115,9 +115,8 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
         name="v-window-x-transition"
       >
         <div
-          class="v-window-item"
+          class="v-window-item v-window-item--active"
           id="timeLine"
-          style="display: none;"
         >
           <div
             class="layout pa-3"
@@ -176,9 +175,8 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
         name="v-window-x-transition"
       >
         <div
-          class="v-window-item"
+          class="v-window-item v-window-item--active"
           id="pbehavior"
-          style="display: none;"
         >
           <div
             class="layout pa-3 secondary lighten-2"
@@ -348,9 +346,8 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
         name="v-window-x-transition"
       >
         <div
-          class="v-window-item"
+          class="v-window-item v-window-item--active"
           id="timeLine"
-          style="display: none;"
         >
           <div
             class="layout pa-3"
@@ -407,9 +404,8 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
         name="v-window-x-transition"
       >
         <div
-          class="v-window-item"
+          class="v-window-item v-window-item--active"
           id="ticketsDeclared"
-          style="display: none;"
         >
           <div
             class="layout pa-3"
@@ -437,9 +433,8 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
         name="v-window-x-transition"
       >
         <div
-          class="v-window-item"
+          class="v-window-item v-window-item--active"
           id="pbehavior"
-          style="display: none;"
         >
           <div
             class="layout pa-3 secondary lighten-2"
@@ -467,9 +462,8 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
         name="v-window-x-transition"
       >
         <div
-          class="v-window-item"
+          class="v-window-item v-window-item--active"
           id="trackSource"
-          style="display: none;"
         >
           <div
             class="layout pa-3 secondary lighten-2"
@@ -499,9 +493,8 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
         name="v-window-x-transition"
       >
         <div
-          class="v-window-item"
+          class="v-window-item v-window-item--active"
           id="impactChain"
-          style="display: none;"
         >
           <div
             class="layout pa-3 secondary lighten-2"
@@ -621,7 +614,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
       class="v-window__container"
     >
       <transition-stub
-        name=""
+        name="v-window-x-transition"
       >
         <div
           class="v-window-item v-window-item--active"
@@ -653,12 +646,11 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
         </div>
       </transition-stub>
       <transition-stub
-        name=""
+        name="v-window-x-transition"
       >
         <div
-          class="v-window-item"
+          class="v-window-item v-window-item--active"
           id="timeLine"
-          style="display: none;"
         >
           <div
             class="layout pa-3"
@@ -714,12 +706,11 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
       <!---->
       <!---->
       <transition-stub
-        name=""
+        name="v-window-x-transition"
       >
         <div
-          class="v-window-item"
+          class="v-window-item v-window-item--active"
           id="pbehavior"
-          style="display: none;"
         >
           <div
             class="layout pa-3 secondary lighten-2"
@@ -746,12 +737,11 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
       <!---->
       <!---->
       <transition-stub
-        name=""
+        name="v-window-x-transition"
       >
         <div
-          class="v-window-item"
+          class="v-window-item v-window-item--active"
           id="entityGantt"
-          style="display: none;"
         >
           <div
             class="layout pa-3 secondary lighten-2"
@@ -858,7 +848,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
       class="v-window__container"
     >
       <transition-stub
-        name=""
+        name="v-window-x-transition"
       >
         <div
           class="v-window-item v-window-item--active"
@@ -890,12 +880,11 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
         </div>
       </transition-stub>
       <transition-stub
-        name=""
+        name="v-window-x-transition"
       >
         <div
-          class="v-window-item"
+          class="v-window-item v-window-item--active"
           id="timeLine"
-          style="display: none;"
         >
           <div
             class="layout pa-3"
@@ -951,12 +940,11 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
       <!---->
       <!---->
       <transition-stub
-        name=""
+        name="v-window-x-transition"
       >
         <div
-          class="v-window-item"
+          class="v-window-item v-window-item--active"
           id="pbehavior"
-          style="display: none;"
         >
           <div
             class="layout pa-3 secondary lighten-2"

@@ -30,11 +30,12 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
       color="grey"
     >
       <div
-        aria-expanded="false"
-        class="v-expansion-panel"
+        aria-expanded="true"
+        class="v-expansion-panel v-expansion-panel--active v-item--active"
       >
         <button
-          class="v-expansion-panel-header"
+          aria-expanded="true"
+          class="v-expansion-panel-header v-expansion-panel-header--active"
           type="button"
         >
           <span
@@ -67,7 +68,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
         >
           <div
             class="v-expansion-panel-content"
-            style="display: none;"
+            style=""
           >
             <div
               class="v-expansion-panel-content__wrap"
@@ -828,11 +829,12 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
         </transition-stub>
       </div>
       <div
-        aria-expanded="false"
-        class="v-expansion-panel"
+        aria-expanded="true"
+        class="v-expansion-panel v-expansion-panel--active v-item--active"
       >
         <button
-          class="v-expansion-panel-header"
+          aria-expanded="true"
+          class="v-expansion-panel-header v-expansion-panel-header--active"
           type="button"
         >
           <span
@@ -865,7 +867,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
         >
           <div
             class="v-expansion-panel-content"
-            style="display: none;"
+            style=""
           >
             <div
               class="v-expansion-panel-content__wrap"
@@ -978,11 +980,12 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
       color="grey"
     >
       <div
-        aria-expanded="false"
-        class="v-expansion-panel"
+        aria-expanded="true"
+        class="v-expansion-panel v-expansion-panel--active v-item--active"
       >
         <button
-          class="v-expansion-panel-header"
+          aria-expanded="true"
+          class="v-expansion-panel-header v-expansion-panel-header--active"
           type="button"
         >
           <span
@@ -1015,7 +1018,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
         >
           <div
             class="v-expansion-panel-content"
-            style="display: none;"
+            style=""
           >
             <div
               class="v-expansion-panel-content__wrap"
@@ -1776,11 +1779,12 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
         </transition-stub>
       </div>
       <div
-        aria-expanded="false"
-        class="v-expansion-panel"
+        aria-expanded="true"
+        class="v-expansion-panel v-expansion-panel--active v-item--active"
       >
         <button
-          class="v-expansion-panel-header"
+          aria-expanded="true"
+          class="v-expansion-panel-header v-expansion-panel-header--active"
           type="button"
         >
           <span
@@ -1813,7 +1817,7 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
         >
           <div
             class="v-expansion-panel-content"
-            style="display: none;"
+            style=""
           >
             <div
               class="v-expansion-panel-content__wrap"

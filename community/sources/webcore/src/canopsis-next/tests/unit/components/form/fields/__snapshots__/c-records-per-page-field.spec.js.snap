@@ -62,14 +62,12 @@ exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with custom p
 >
   <div
     class="v-list v-select-list v-sheet theme--light v-list--dense theme--light"
-    id="list-52"
     role="listbox"
     tabindex="-1"
   >
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-57-0"
       role="option"
       tabindex="0"
     >
@@ -86,7 +84,6 @@ exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with custom p
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-57-1"
       role="option"
       tabindex="0"
     >
@@ -103,7 +100,6 @@ exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with custom p
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-57-2"
       role="option"
       tabindex="0"
     >
@@ -188,14 +184,12 @@ exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with default 
 >
   <div
     class="v-list v-select-list v-sheet theme--light v-list--dense theme--light"
-    id="list-37"
     role="listbox"
     tabindex="-1"
   >
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-42-0"
       role="option"
       tabindex="0"
     >
@@ -211,8 +205,7 @@ exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with default 
     </div>
     <div
       aria-selected="true"
-      class="v-list-item primary--text v-list-item--active v-list-item--link theme--light"
-      id="list-item-42-1"
+      class="v-list-item primary--text v-list-item--active v-list-item--link theme--light v-list-item--highlighted"
       role="option"
       tabindex="0"
     >
@@ -229,7 +222,6 @@ exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with default 
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-42-2"
       role="option"
       tabindex="0"
     >
@@ -246,7 +238,6 @@ exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with default 
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-42-3"
       role="option"
       tabindex="0"
     >
@@ -263,7 +254,6 @@ exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with default 
     <div
       aria-selected="false"
       class="v-list-item v-list-item--link theme--light"
-      id="list-item-42-4"
       role="option"
       tabindex="0"
     >
