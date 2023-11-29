@@ -578,7 +578,7 @@ func (c *AmqpClient) executeRPC(ctx context.Context, queue string, body []byte) 
 		return nil, fmt.Errorf("cannot consume queue: %w", err)
 	}
 
-	corrID := fmt.Sprintf("test-%d", rand.Int())
+	corrID := fmt.Sprintf("test-%d", rand.Int()) //nolint:gosec
 	err = publishCh.PublishWithContext(
 		ctx,
 		"",    // exchange

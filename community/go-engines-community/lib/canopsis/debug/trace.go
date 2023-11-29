@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	_ "net/http/pprof"
+	_ "net/http/pprof" //nolint:gosec
 	"os"
 	"path/filepath"
 	"runtime"
@@ -154,7 +154,7 @@ func Start(logger zerolog.Logger) Trace {
 		runtime.SetMutexProfileFraction(1)
 		logger.Info().Msg("Profiling web ENABLED")
 		go func() {
-			err := http.ListenAndServe("localhost:6060", nil)
+			err := http.ListenAndServe("localhost:6060", nil) //nolint:gosec
 			if err != nil {
 				logger.Err(err).Msg("fail to start pprof server")
 			}

@@ -36,7 +36,7 @@ func IsImage(mediaType, filename string) bool {
 
 // GetHashPath returns hash path to store file.
 func GetHashPath() string {
-	return string('a' + rune(rand.Intn(26)))
+	return string('a' + rune(rand.Intn(26))) //nolint:gosec
 }
 
 // MoveFile moves file from src to dest.
