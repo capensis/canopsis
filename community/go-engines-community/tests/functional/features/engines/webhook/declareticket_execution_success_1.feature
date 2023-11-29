@@ -1501,7 +1501,7 @@ Feature: run a declare ticket rule
         "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "initiator": "user",
-        "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-7-name. Fail reason: ticket_id is emtpy, response has nothing in not_exist_field."
+        "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-7-name. Fail reason: ticket_id is empty, response has nothing in not_exist_field."
       }
     ]
     """
