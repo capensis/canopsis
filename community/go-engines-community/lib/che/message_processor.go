@@ -332,6 +332,7 @@ func (p *messageProcessor) postProcessUpdatedEntities(
 	updatedEntityIdsForMetrics []string,
 ) {
 	for _, ent := range entitiesForEvent {
+		ent := ent
 		if (len(ent.ServicesToAdd) != 0 || len(ent.ServicesToRemove) != 0) && ent.ID != event.GetEID() && ent.Type != types.EntityTypeService {
 			var updateCountersEvent types.Event
 

@@ -88,7 +88,7 @@ func run(ctx context.Context, flags Flags, logger zerolog.Logger) (resErr error)
 
 	if config.Api.InsecureSkipverify {
 		logger.Warn().Msg("adapter accepts any certificate from canopsis api")
-		transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+		transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true} //nolint:gosec
 	}
 	httpClient := &http.Client{Transport: transport}
 

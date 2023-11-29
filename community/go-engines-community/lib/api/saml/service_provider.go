@@ -101,7 +101,7 @@ func NewServiceProvider(
 			tr = &http.Transport{}
 		}
 
-		tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: config.Security.Saml.InsecureSkipVerify}
+		tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: config.Security.Saml.InsecureSkipVerify} //nolint:gosec
 
 		hc := &http.Client{Timeout: MetadataReqTimeout, Transport: tr}
 		req, err := http.NewRequestWithContext(ctx, http.MethodGet, config.Security.Saml.IdpMetadataUrl, nil)
