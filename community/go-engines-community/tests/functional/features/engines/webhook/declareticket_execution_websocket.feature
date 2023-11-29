@@ -329,7 +329,7 @@ Feature: get a declare ticket status
     {
       "_id": "{{ .executionID }}",
       "status": 3,
-      "fail_reason": "ticket_id is emtpy, response has nothing in not_exist_field"
+      "fail_reason": "ticket_id is empty, response has nothing in not_exist_field"
     }
     """
     When I do GET /api/v4/cat/declare-ticket-executions/{{ .executionID }}
@@ -339,7 +339,7 @@ Feature: get a declare ticket status
     {
       "_id": "{{ .executionID }}",
       "status": 3,
-      "fail_reason": "ticket_id is emtpy, response has nothing in not_exist_field"
+      "fail_reason": "ticket_id is empty, response has nothing in not_exist_field"
     }
     """
 
