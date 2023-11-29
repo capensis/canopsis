@@ -79,6 +79,9 @@ func (f *Faker) JWT() (string, error) {
 	return jwt.NewWithClaims(jwt.SigningMethodHS256, registeredClaims).SignedString([]byte(""))
 }
 
+// GenerateExdates
+//
+//nolint:gosec
 func (*Faker) GenerateExdates(count int) interface{} {
 	exdates := make([]types.Exdate, count)
 	now := time.Now()

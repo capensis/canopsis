@@ -26,7 +26,7 @@ import (
 	"github.com/rs/zerolog"
 )
 
-const JwtSecretEnv = "CPS_JWT_SECRET"
+const JwtSecretEnv = "CPS_JWT_SECRET" //nolint:gosec
 const sessionStoreSessionMaxAge = 24 * time.Hour
 
 // Security is used to init auth methods by config.
