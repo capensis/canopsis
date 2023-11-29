@@ -98,7 +98,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.scenario-info-type ::v-deep .v-list__tile {
+.scenario-info-type ::v-deep .v-list-item {
   height: 30px;
 }
 </style>
