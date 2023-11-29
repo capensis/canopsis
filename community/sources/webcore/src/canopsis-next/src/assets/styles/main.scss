@@ -17,8 +17,8 @@ html {
   z-index: 9;
 }
 
-.v-list .v-list__tile {
-  > *:not(.v-list__tile__action) {
+.v-list .v-list-item {
+  > *:not(.v-list-item__action) {
     .v-input {
       &, &__slot {
         margin-top: 4px;

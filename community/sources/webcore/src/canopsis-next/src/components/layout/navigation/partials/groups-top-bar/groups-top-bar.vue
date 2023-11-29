@@ -79,7 +79,7 @@ export default {
     .v-list {
       background-color: inherit;
 
-      .v-list__tile__title {
+      .v-list-item__title {
         height: 28px;
         line-height: 28px;
       }

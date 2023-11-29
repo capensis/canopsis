@@ -14,6 +14,7 @@
     :style="textareaStyle"
     :error="!!linesErrors.length"
     auto-grow
+    @blur="handleBlur"
     @input="debouncedOnSelectionChange"
   >
     <template #prepend-inner="">

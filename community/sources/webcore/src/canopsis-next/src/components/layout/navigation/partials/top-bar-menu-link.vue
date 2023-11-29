@@ -45,7 +45,7 @@ export default {
   text-decoration: none;
   color: inherit;
 
-  .v-list__tile__avatar {
+  .v-list-item__avatar {
     min-width: unset;
   }
 }
