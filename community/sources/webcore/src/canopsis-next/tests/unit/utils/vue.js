@@ -103,18 +103,20 @@ Wrapper.prototype.activateVuetifyElements = async function activateVuetifyElemen
 
   const components = this.findAllComponents({ name });
 
-  components?.wrappers?.forEach((componentWrapper) => {
+  const promises = components?.wrappers?.map(async (componentWrapper) => {
     if (componentWrapper && componentWrapper.vm) {
       properties.forEach((property) => {
         if (property in componentWrapper.vm) {
           // eslint-disable-next-line no-param-reassign
           componentWrapper.vm[property] = true;
         }
+
+        return componentWrapper.vm.$nextTick();
       });
     }
   });
 
-  await this.vm.$nextTick();
+  await Promise.all(promises);
 
   return flushPromises();
 };
@@ -141,9 +143,14 @@ Wrapper.prototype.activateAllTooltips = function activateAllTooltips() {
   return this.activateVuetifyElements('VTooltip');
 };
 Wrapper.prototype.activateAllTabs = async function activateAllTabs() {
+  await this.activateVuetifyElements('VTabItem');
   await this.activateVuetifyElements('VTabsItems', ['isBooted']);
 
-  return this.activateVuetifyElements('VTabItem');
+  const tabsWrapper = this.findComponent({ name: 'VTabs' });
+
+  tabsWrapper.vm.callSlider();
+
+  return tabsWrapper.vm.$nextTick();
 };
 Wrapper.prototype.clickOutside = function clickOutside() {
   const elementZIndex = +document.body.style.zIndex;

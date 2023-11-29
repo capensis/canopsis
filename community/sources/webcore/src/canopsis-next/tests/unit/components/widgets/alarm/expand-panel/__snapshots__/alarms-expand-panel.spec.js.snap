@@ -24,7 +24,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
       >
         <div
           class="v-tabs-slider-wrapper"
-          style="transition: none;"
+          style="height: 2px; left: 0px; width: 0px;"
         >
           <div
             class="v-tabs-slider primary"
@@ -231,7 +231,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
       >
         <div
           class="v-tabs-slider-wrapper"
-          style="transition: none;"
+          style="height: 2px; left: 0px; width: 0px;"
         >
           <div
             class="v-tabs-slider primary"
@@ -550,7 +550,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
       >
         <div
           class="v-tabs-slider-wrapper"
-          style="transition: none;"
+          style="height: 2px; left: 0px; width: 0px;"
         >
           <div
             class="v-tabs-slider primary"
@@ -792,7 +792,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
       >
         <div
           class="v-tabs-slider-wrapper"
-          style="transition: none;"
+          style="height: 2px; left: 0px; width: 0px;"
         >
           <div
             class="v-tabs-slider primary"
