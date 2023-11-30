@@ -29,6 +29,8 @@ const (
 	entityInfosPrefix        = "entity.infos"
 )
 
+var ErrUnknownQuery = fmt.Errorf("unknown query type")
+
 type MongoQueryBuilder struct {
 	filterCollection      mongo.DbCollection
 	instructionCollection mongo.DbCollection
@@ -327,7 +329,7 @@ func (q *MongoQueryBuilder) CreateChildrenAggregationPipeline(
 			query := expr.ExprQuery()
 			resolvedQuery, ok := q.resolveAliasesInQuery(query).(bson.M)
 			if !ok {
-				return nil, fmt.Errorf("unknown query type")
+				return nil, ErrUnknownQuery
 			}
 
 			b, err := json.Marshal(resolvedQuery)
@@ -692,7 +694,7 @@ func (q *MongoQueryBuilder) addSearchFilter(r FilterRequest) (bson.M, bool, erro
 		query := expr.Query()
 		resolvedQuery, ok := q.resolveAliasesInQuery(query).(bson.M)
 		if !ok {
-			return nil, false, fmt.Errorf("unknown query type")
+			return nil, false, ErrUnknownQuery
 		}
 
 		b, err := json.Marshal(resolvedQuery)
