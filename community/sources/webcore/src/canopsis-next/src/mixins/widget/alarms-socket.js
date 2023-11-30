@@ -98,8 +98,8 @@ export const widgetAlarmsSocketMixin = {
         .removeListener(this.updateAlarmDetailsInStore);
     },
 
-    toggleSubscription(enable) {
-      if (enable) {
+    toggleSubscription() {
+      if (this.visible && this.liveWatching) {
         this.joinToAlarmsSocketRoom(this.alarms);
         this.joinToAlarmDetailsSocketRoom(this.allAlarmDetailsQueries);
 
