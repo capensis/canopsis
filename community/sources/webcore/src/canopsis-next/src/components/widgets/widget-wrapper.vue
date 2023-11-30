@@ -7,11 +7,12 @@
             h4.ml-2.font-weight-regular {{ widget.title }}
           v-spacer
       v-divider
-    v-card-text.pa-0.position-relative
+    v-card-text.pa-0.position-relative(v-show="visible")
       component(
         v-bind="widgetProps",
         :widget="preparedWidget",
-        :tab-id="tab._id"
+        :tab-id="tab._id",
+        :visible="visible"
       )
 </template>
 
@@ -78,6 +79,10 @@ export default {
       default: false,
     },
     kiosk: {
+      type: Boolean,
+      default: false,
+    },
+    visible: {
       type: Boolean,
       default: false,
     },

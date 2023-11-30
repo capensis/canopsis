@@ -11,6 +11,7 @@
         :color="action.iconColor",
         :badge-value="action.badgeValue",
         :badge-tooltip="action.badgeTooltip",
+        lazy,
         @click="action.method"
       )
       span(v-if="preparedActions.dropDown.length")
@@ -18,6 +19,7 @@
           key="dropdown-menu",
           bottom,
           left,
+          lazy,
           @click.native.stop=""
         )
           template(#activator="{ on }")
