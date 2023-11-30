@@ -64,7 +64,7 @@
                       @change="selectViewHandler(view, $event)"
                     >
                       <template #label>
-                        <span class="text-truncate">
+                        <span class="text-truncate fill-width">
                           {{ view.title }}
                           <span
                             class="ml-1"

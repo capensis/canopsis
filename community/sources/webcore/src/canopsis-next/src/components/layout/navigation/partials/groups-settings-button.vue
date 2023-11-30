@@ -1,6 +1,7 @@
 <template>
   <c-speed-dial
-    v-if="hasCreateAnyViewAccess || hasUpdateAnyViewAccess || hasDeleteAnyViewAccess"
+    v-if="hasAccessToPrivateView || hasCreateAnyViewAccess || hasUpdateAnyViewAccess || hasDeleteAnyViewAccess"
+    v-model="isVSpeedDialOpen"
     v-bind="wrapperProps"
     transition="slide-y-reverse-transition"
   >
@@ -28,7 +29,7 @@
       </v-tooltip>
     </template>
     <v-tooltip
-      v-if="hasUpdateAnyViewAccess || hasDeleteAnyViewAccess"
+      v-if="hasAccessToPrivateView || hasUpdateAnyViewAccess || hasDeleteAnyViewAccess"
       :right="tooltipRight"
       :left="tooltipLeft"
       z-index="10"
@@ -84,6 +85,28 @@
       </template>
       <span>{{ $t('layout.sideBar.buttons.create') }}</span>
     </v-tooltip>
+    <v-tooltip
+      v-if="hasAccessToPrivateView"
+      :right="tooltipRight"
+      :left="tooltipLeft"
+      z-index="10"
+    >
+      <template #activator="{ on }">
+        <v-btn
+          v-on="on"
+          color="blue darken-3"
+          small
+          dark
+          fab
+          @click.stop="showCreatePrivateViewModal"
+        >
+          <v-icon dark>
+            $vuetify.icons.person_lock
+          </v-icon>
+        </v-btn>
+      </template>
+      <span>{{ $t('layout.sideBar.buttons.createPrivateView') }}</span>
+    </v-tooltip>
   </c-speed-dial>
 </template>
 
@@ -91,12 +114,16 @@
 import { MODALS } from '@/constants';
 
 import { permissionsTechnicalViewMixin } from '@/mixins/permissions/technical/view';
-import layoutNavigationEditingModeMixin from '@/mixins/layout/navigation/editing-mode';
+import { layoutNavigationEditingModeMixin } from '@/mixins/layout/navigation/editing-mode';
+import { entitiesViewMixin } from '@/mixins/entities/view';
+import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 
 export default {
   mixins: [
     permissionsTechnicalViewMixin,
     layoutNavigationEditingModeMixin,
+    entitiesViewMixin,
+    entitiesViewGroupMixin,
   ],
   props: {
     tooltipRight: {
@@ -130,9 +157,31 @@ export default {
     };
   },
   methods: {
+    async createViewModalCallback(data) {
+      await this.createViewWithPopup({ data });
+
+      return this.fetchAllGroupsListWithWidgetsWithCurrentUser();
+    },
+
     showCreateViewModal() {
       this.$modals.show({
         name: MODALS.createView,
+        config: {
+          action: this.createViewModalCallback,
+        },
+      });
+    },
+
+    showCreatePrivateViewModal() {
+      this.$modals.show({
+        name: MODALS.createView,
+        config: {
+          view: {
+            is_private: true,
+          },
+          title: this.$t('modals.view.create.privateTitle'),
+          action: this.createViewModalCallback,
+        },
       });
     },
   },

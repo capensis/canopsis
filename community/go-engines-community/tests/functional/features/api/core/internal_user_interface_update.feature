@@ -24,7 +24,8 @@ Feature: update user interface
       "login_page_description": "Test login",
       "max_matched_items": 10000,
       "check_count_request_timeout": 30,
-      "show_header_on_kiosk_mode": true
+      "show_header_on_kiosk_mode": true,
+      "required_instruction_approve": true
     }
     """
     Then the response code should be 200
@@ -39,6 +40,7 @@ Feature: update user interface
       "max_matched_items": 10000,
       "check_count_request_timeout": 30,
       "show_header_on_kiosk_mode": true,
+      "required_instruction_approve": true,
       "popup_timeout": {
         "error": {
           "value": 3,
@@ -136,6 +138,7 @@ Feature: update user interface
       "max_matched_items": 100,
       "check_count_request_timeout": 100,
       "show_header_on_kiosk_mode": false,
+      "required_instruction_approve": false,
       "popup_timeout": {
         "error": {
           "value": 3,

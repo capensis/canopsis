@@ -1235,3 +1235,274 @@ Feature: Manual meta alarms
       }
     ]
     """
+
+  @concurrent
+  Scenario: given manual meta alarm should add alarm to it/remove alarm from it and not change last event date
+    When I am admin
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "event_type": "check",
+      "state": 1,
+      "output": "test-output-manual-correlation-7",
+      "connector": "test-connector-manual-correlation-7",
+      "connector_name": "test-connector-name-manual-correlation-7",
+      "component": "test-component-manual-correlation-7",
+      "resource": "test-resource-manual-correlation-7-1",
+      "source_type": "resource"
+    }
+    """
+    When I wait 1s
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "event_type": "check",
+      "state": 1,
+      "output": "test-output-manual-correlation-7",
+      "connector": "test-connector-manual-correlation-7",
+      "connector_name": "test-connector-name-manual-correlation-7",
+      "component": "test-component-manual-correlation-7",
+      "resource": "test-resource-manual-correlation-7-2",
+      "source_type": "resource"
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-resource-manual-correlation-7&sort_by=v.resource&sort=asc
+    Then the response code should be 200
+    When I save response alarmId1={{ (index .lastResponse.data 0)._id }}
+    When I save response alarmId2={{ (index .lastResponse.data 1)._id }}
+    When I save response alarmLastEventDate2={{ (index .lastResponse.data 1).v.last_event_date }}
+    When I do POST /api/v4/cat/manual-meta-alarms:
+    """json
+    {
+      "name": "test-metaalarm-manual-correlation-7",
+      "comment": "test-metaalarm-manual-correlation-7-1-comment",
+      "alarms": ["{{ .alarmId2 }}"]
+    }
+    """
+    Then the response code should be 204
+    When I do GET /api/v4/alarms?search=test-resource-manual-correlation-7&correlation=true&sort_by=v.meta&sort=desc until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "children": 1,
+          "v": {
+            "last_event_date": {{ .alarmLastEventDate2 }},
+            "display_name": "test-metaalarm-manual-correlation-7"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-manual-correlation-7-1"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I save response metaAlarmId={{ (index .lastResponse.data 0)._id }}
+    When I do PUT /api/v4/cat/manual-meta-alarms/{{ .metaAlarmId }}/add:
+    """json
+    {
+      "comment": "test-metaalarm-manual-correlation-7-2-comment",
+      "alarms": ["{{ .alarmId1 }}"]
+    }
+    """
+    Then the response code should be 204
+    When I do GET /api/v4/alarms?search=test-resource-manual-correlation-7&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "children": 2,
+          "v": {
+            "last_event_date": {{ .alarmLastEventDate2 }},
+            "display_name": "test-metaalarm-manual-correlation-7"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do PUT /api/v4/cat/manual-meta-alarms/{{ .metaAlarmId }}/remove:
+    """json
+    {
+      "comment": "test-metaalarm-manual-correlation-7-2-comment",
+      "alarms": ["{{ .alarmId1 }}"]
+    }
+    """
+    Then the response code should be 204
+    When I do GET /api/v4/alarms?search=test-resource-manual-correlation-7&correlation=true&sort_by=v.meta&sort=desc until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "children": 1,
+          "v": {
+            "last_event_date": {{ .alarmLastEventDate2 }},
+            "display_name": "test-metaalarm-manual-correlation-7"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-manual-correlation-7-1"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+
+  @concurrent
+  Scenario: given manual meta alarm should add alarm to it/remove alarm from it and change last event date
+    When I am admin
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "event_type": "check",
+      "state": 1,
+      "output": "test-output-manual-correlation-8",
+      "connector": "test-connector-manual-correlation-8",
+      "connector_name": "test-connector-name-manual-correlation-8",
+      "component": "test-component-manual-correlation-8",
+      "resource": "test-resource-manual-correlation-8-1",
+      "source_type": "resource"
+    }
+    """
+    When I wait 1s
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "event_type": "check",
+      "state": 2,
+      "output": "test-output-manual-correlation-8",
+      "connector": "test-connector-manual-correlation-8",
+      "connector_name": "test-connector-name-manual-correlation-8",
+      "component": "test-component-manual-correlation-8",
+      "resource": "test-resource-manual-correlation-8-2",
+      "source_type": "resource"
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-resource-manual-correlation-8&sort_by=v.resource&sort=asc
+    Then the response code should be 200
+    When I save response alarmId1={{ (index .lastResponse.data 0)._id }}
+    When I save response alarmLastEventDate1={{ (index .lastResponse.data 0).v.last_event_date }}
+    When I save response alarmId2={{ (index .lastResponse.data 1)._id }}
+    When I save response alarmLastEventDate2={{ (index .lastResponse.data 1).v.last_event_date }}
+    When I do POST /api/v4/cat/manual-meta-alarms:
+    """json
+    {
+      "name": "test-metaalarm-manual-correlation-8",
+      "comment": "test-metaalarm-manual-correlation-8-1-comment",
+      "alarms": ["{{ .alarmId1 }}"]
+    }
+    """
+    Then the response code should be 204
+    When I do GET /api/v4/alarms?search=test-resource-manual-correlation-8&correlation=true&sort_by=v.meta&sort=desc until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "children": 1,
+          "v": {
+            "last_event_date": {{ .alarmLastEventDate1 }},
+            "display_name": "test-metaalarm-manual-correlation-8"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-manual-correlation-8-2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I save response metaAlarmId={{ (index .lastResponse.data 0)._id }}
+    When I do PUT /api/v4/cat/manual-meta-alarms/{{ .metaAlarmId }}/add:
+    """json
+    {
+      "comment": "test-metaalarm-manual-correlation-8-2-comment",
+      "alarms": ["{{ .alarmId2 }}"]
+    }
+    """
+    Then the response code should be 204
+    When I do GET /api/v4/alarms?search=test-resource-manual-correlation-8&correlation=true response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "children": 2,
+          "v": {
+            "last_event_date": {{ .alarmLastEventDate2 }},
+            "display_name": "test-metaalarm-manual-correlation-8"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do PUT /api/v4/cat/manual-meta-alarms/{{ .metaAlarmId }}/remove:
+    """json
+    {
+      "comment": "test-metaalarm-manual-correlation-8-2-comment",
+      "alarms": ["{{ .alarmId2 }}"]
+    }
+    """
+    Then the response code should be 204
+    When I do GET /api/v4/alarms?search=test-resource-manual-correlation-8&correlation=true&sort_by=v.meta&sort=desc until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "children": 1,
+          "v": {
+            "last_event_date": {{ .alarmLastEventDate1 }},
+            "display_name": "test-metaalarm-manual-correlation-8"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-manual-correlation-8-2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """

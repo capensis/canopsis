@@ -92,6 +92,12 @@ func (a *api) List(c *gin.Context) {
 
 	entities, err := a.store.Find(c, query)
 	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+
 		panic(err)
 	}
 
@@ -284,6 +290,8 @@ func (a *api) toggle(c *gin.Context, enabled bool) {
 		if isToggled {
 			msg := entityservice.ChangeEntityMessage{
 				ID:         simplifiedEntity.ID,
+				Name:       simplifiedEntity.Name,
+				Component:  simplifiedEntity.Component,
 				EntityType: simplifiedEntity.Type,
 				IsToggled:  isToggled,
 			}

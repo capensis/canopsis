@@ -33,7 +33,6 @@ const stubs = {
   'c-pagination': true,
   'c-density-btn-toggle': true,
   'c-table-pagination': true,
-  'alarms-expand-panel-tour': true,
   'mass-actions-panel': true,
   'alarms-list-table': {
     template: `
@@ -56,7 +55,6 @@ const snapshotStubs = {
   'alarms-list-table': true,
   'c-table-pagination': true,
   'c-density-btn-toggle': true,
-  'alarms-expand-panel-tour': true,
   'mass-actions-panel': true,
 };
 
@@ -68,7 +66,6 @@ const selectLiveReportingButton = wrapper => wrapper.findAll('c-action-btn-stub'
 const selectInstructionsFiltersField = wrapper => wrapper.find('alarms-list-remediation-instructions-filters-stub');
 const selectRemoveHistoryButton = wrapper => wrapper.find('v-chip-stub');
 const selectAlarmsListTable = wrapper => wrapper.find('.alarms-list-table');
-const selectAlarmsExpandPanelTour = wrapper => wrapper.find('alarms-expand-panel-tour-stub');
 
 describe('alarms-list', () => {
   const $popups = mockPopups();
@@ -1400,73 +1397,6 @@ describe('alarms-list', () => {
     });
 
     jest.useRealTimers();
-  });
-
-  it('First alarm expanded after click on the prev step with first step', async () => {
-    const wrapper = factory({
-      store,
-      propsData: {
-        widget,
-      },
-    });
-
-    const alarmsExpandPanelTour = selectAlarmsExpandPanelTour(wrapper);
-
-    alarmsExpandPanelTour.vm.callbacks.onPreviousStep(1);
-  });
-
-  it('First alarm not expanded after click on the next step with already expanded alarm', async () => {
-    const expanded = {
-      [alarms[0]._id]: true,
-    };
-    const wrapper = factory({
-      store,
-      stubs: {
-        ...stubs,
-        'alarms-list-table': {
-          template: '<div />',
-          data: () => ({
-            expanded,
-          }),
-        },
-      },
-      propsData: {
-        widget,
-      },
-    });
-
-    const alarmsExpandPanelTour = selectAlarmsExpandPanelTour(wrapper);
-
-    alarmsExpandPanelTour.vm.callbacks.onNextStep();
-
-    expect(expanded).toBe(expanded);
-  });
-
-  it('First alarm not expanded after click on the prev step with second step', async () => {
-    const expanded = {};
-    const wrapper = factory({
-      store,
-      stubs: {
-        ...stubs,
-        'alarms-list-table': {
-          template: '<div />',
-          data: () => ({
-            expanded,
-          }),
-        },
-      },
-      propsData: {
-        widget,
-      },
-    });
-
-    const alarmsExpandPanelTour = selectAlarmsExpandPanelTour(wrapper);
-
-    alarmsExpandPanelTour.vm.callbacks.onPreviousStep(2);
-
-    expect(expanded).toEqual({
-      [alarms[0]._id]: true,
-    });
   });
 
   it('Alarms not fetched after change query without columns', async () => {

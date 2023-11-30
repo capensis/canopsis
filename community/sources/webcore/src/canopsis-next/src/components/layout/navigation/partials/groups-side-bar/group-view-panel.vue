@@ -1,6 +1,6 @@
 <template>
   <v-card :color="cardColor">
-    <div class="panel-item-content">
+    <v-card-text class="panel-item-content">
       <div
         :class="['panel-item-content__title pl-2', {
           'panel-view__title--editing': isEditing,
@@ -16,32 +16,40 @@
         v-if="allowEditing"
         class="panel-item-content__actions"
       >
-        <v-btn
-          v-show="hasEditAccess"
-          :disabled="isOrderChanged"
-          depressed
+        <v-icon
+          v-if="view.is_private"
           small
-          icon
-          @click.prevent="$emit('change')"
         >
-          <v-icon small>
-            edit
-          </v-icon>
-        </v-btn>
-        <v-btn
-          v-show="isEditing"
-          :disabled="isOrderChanged"
-          depressed
-          small
-          icon
-          @click.prevent="$emit('duplicate')"
-        >
-          <v-icon small>
-            file_copy
-          </v-icon>
-        </v-btn>
+          lock
+        </v-icon>
+        <template v-if="editable || duplicable">
+          <v-btn
+            v-if="editable"
+            :disabled="isOrderChanged"
+            depressed
+            small
+            icon
+            @click.prevent="$emit('change')"
+          >
+            <v-icon small>
+              edit
+            </v-icon>
+          </v-btn>
+          <v-btn
+            v-if="duplicable"
+            :disabled="isOrderChanged"
+            depressed
+            small
+            icon
+            @click.prevent="$emit('duplicate')"
+          >
+            <v-icon small>
+              file_copy
+            </v-icon>
+          </v-btn>
+        </template>
       </div>
-    </div>
+    </v-card-text>
     <v-divider />
   </v-card>
 </template>
@@ -53,15 +61,11 @@ export default {
       type: Object,
       required: true,
     },
-    allowEditing: {
+    editable: {
       type: Boolean,
       default: false,
     },
-    hasEditAccess: {
-      type: Boolean,
-      default: false,
-    },
-    isEditing: {
+    duplicable: {
       type: Boolean,
       default: false,
     },
@@ -87,28 +91,28 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .panel-item-content {
-    display: flex;
-    cursor: pointer;
-    align-items: center;
-    justify-content: space-between;
-    position: relative;
-    padding: 12px 24px;
-    height: 48px;
+.panel-item-content {
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  padding: 12px 24px;
+  height: 48px;
 
-    &__title {
-      width: 100%;
-    }
-
-    &__actions {
-      flex-shrink: 0;
-
-      display: flex;
-      align-items: center;
-    }
-
-    & ::v-deep .v-btn:not(:last-child) {
-      margin-right: 0;
-    }
+  &__title {
+    width: 100%;
   }
+
+  &__actions {
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+  }
+
+  & ::v-deep .v-btn:not(:last-child) {
+    margin-right: 0;
+  }
+}
 </style>

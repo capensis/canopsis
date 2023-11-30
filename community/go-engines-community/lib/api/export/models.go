@@ -36,14 +36,17 @@ type Task struct {
 type Fields []Field
 
 type Field struct {
-	Name  string `bson:"name" json:"name"`
-	Label string `bson:"label" json:"label"`
+	Name     string `bson:"name" json:"name"`
+	Label    string `bson:"label" json:"label"`
+	Template string `bson:"template" json:"template"`
 }
 
 func (f *Fields) Fields() []string {
-	fields := make([]string, len(*f))
-	for i, field := range *f {
-		fields[i] = field.Name
+	fields := make([]string, 0, len(*f))
+	for _, field := range *f {
+		if field.Name != "" {
+			fields = append(fields, field.Name)
+		}
 	}
 
 	return fields

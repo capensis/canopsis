@@ -176,7 +176,7 @@ func (p *noEventsProcessor) createAlarm(ctx context.Context, entity types.Entity
 		if pbehaviorInfo.IsActive() {
 			alarm.NotAckedSince = &alarm.Time
 		} else {
-			alarm.Value.InactiveStart = &params.Timestamp
+			alarm.Value.InactiveStart = &now
 		}
 
 		pbhOutput := fmt.Sprintf(

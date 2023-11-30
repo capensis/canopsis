@@ -8,11 +8,10 @@
   >
     <group-view-panel
       :view="view"
-      :is-editing="isNavigationEditingMode"
       :is-order-changed="isGroupsOrderChanged"
       :is-view-active="isViewActive"
-      :has-edit-access="hasViewEditButtonAccess"
-      allow-editing
+      :editable="(isViewPrivate || hasViewEditButtonAccess) && isNavigationEditingMode"
+      :duplicable="(isViewPrivate || hasCreateAnyViewAccess) && isNavigationEditingMode"
       @duplicate="showDuplicateViewModal"
       @change="showEditViewModal"
     />
@@ -36,6 +35,10 @@ export default {
   computed: {
     isViewActive() {
       return this.$route?.params?.id === this.view._id;
+    },
+
+    isViewPrivate() {
+      return this.view.is_private;
     },
 
     routerLinkEvents() {

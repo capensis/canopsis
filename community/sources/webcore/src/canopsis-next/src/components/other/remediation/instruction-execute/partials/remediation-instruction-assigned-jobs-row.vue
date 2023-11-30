@@ -41,10 +41,9 @@
           </template>
           <div v-if="job.fail_reason">
             <span>{{ $t('remediation.instructionExecute.jobs.failedReason') }}:&nbsp;</span>
-            <c-compiled-template
+            <span
               class="pre-wrap"
-              :template="job.fail_reason"
-              parent-element="span"
+              v-html="job.fail_reason"
             />
           </div>
         </v-tooltip>

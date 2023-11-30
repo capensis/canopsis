@@ -15,6 +15,8 @@ configuration:
     login_page_description: Test login
     max_matched_items: 4
     allow_change_severity_to_info: true
+    show_header_on_kiosk_mode: false
+    required_instruction_approve: false
 
   configuration_global:
     _id: global_config
@@ -34,9 +36,11 @@ configuration:
       tokensigningmethod: HS256
       exportmongoclienttimeout: 1m
       authorscheme: ["$username", " ", "$firstname", " ", "$lastname", " ", "$email"]
-      metricscachexpiration: 24h
+      metricscacheexpiration: 24h
     data_storage:
       timetoexecute: ""
+      maxupdates: 100000
+      mongoclienttimeout: 1m
     file:
       junit: /tmp/canopsis/junit
       junitapi: /tmp/canopsis/junitapi
@@ -218,6 +222,7 @@ configuration:
 
   configuration_healthcheck:
     _id: health_check
+    update_interval: 10s
     engine_order:
     - from: engine-fifo
       to: engine-che

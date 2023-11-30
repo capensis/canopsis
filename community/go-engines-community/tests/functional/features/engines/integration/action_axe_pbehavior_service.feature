@@ -32,8 +32,6 @@ Feature: update service when alarm is updated by action pbehavior
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },

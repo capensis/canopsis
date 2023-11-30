@@ -44,26 +44,15 @@ AWX.
 
 Lorsqu'un job est déclenché depuis une consigne dans Canopsis, il est placé
 dans une file d'attente.  
-Cette file d'attente est parcourue par un exécuteur de job,
-`external-job-executor`.
+Cette file d'attente est parcourue par le moteur `engine-remediation`.
 
-```sh
-# ./external-job-executor -h
-Usage of ./external-job-executor:
-  -c string
-    	Configuration file path (default "/opt/canopsis/share/config/external-job-executor/externalapi.yml")
-  -d	debug
-```
-
-C'est ce composant qui est chargé de déclencher l'exécution du job auprès des
-ordonnanceurs de tâches, selon les différentes configurations définies.
 ## Configuration des ordonnanceurs
 
 Cette section présente la configuration à réaliser dans l'ordonnanceur et la
 liaison à ajouter dans Canopsis.
 
 Les opérations sont décrites séparément pour les deux ordonnanceurs supportés :
-Rundeck et AWX.
+Rundeck, AWX, jennkins, et Visual Tom. (La documentation `Visual Tom` est en cours de rédaction).
 
 ### Configuration pour Rundeck
 

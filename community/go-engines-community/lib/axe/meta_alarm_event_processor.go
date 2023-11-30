@@ -7,8 +7,6 @@ import (
 	"math"
 	"strings"
 
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
@@ -25,6 +23,7 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -147,7 +146,7 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event rpc
 		eventsCount := types.CpsNumber(0)
 
 		if len(childEntityIDs) > 0 {
-			childAlarms, err := p.getAlarmsWithEntityByEntityIDs(ctx, childEntityIDs)
+			childAlarms, err := p.getAlarmsWithEntityByEntityIds(ctx, childEntityIDs)
 			if err != nil {
 				return fmt.Errorf("cannot fetch children alarms: %w", err)
 			}
@@ -259,12 +258,12 @@ func (p *metaAlarmEventProcessor) AttachChildrenToMetaAlarm(ctx context.Context,
 			return fmt.Errorf("meta alarm rule id=%q not found", event.Parameters.MetaAlarmRuleID)
 		}
 
-		alarms, err := p.getAlarmsWithEntityByEntityIDs(ctx, event.Parameters.MetaAlarmChildren)
+		alarms, err := p.getAlarmsWithEntityByEntityIds(ctx, event.Parameters.MetaAlarmChildren)
 		if err != nil {
 			return err
 		}
 
-		var lastEventDate types.CpsTime
+		lastEventDate := metaAlarm.Value.LastEventDate
 		newStep := types.NewMetaAlarmAttachStep(metaAlarm, rule.Name)
 		worstState := types.CpsNumber(types.AlarmStateOK)
 		eventsCount := types.CpsNumber(0)
@@ -302,9 +301,11 @@ func (p *metaAlarmEventProcessor) AttachChildrenToMetaAlarm(ctx context.Context,
 			metaAlarm.SetMetaValuePath(event.Parameters.MetaAlarmValuePath)
 		}
 
-		metaAlarm.PartialUpdateLastEventDate(lastEventDate)
-		metaAlarm.IncrementEventsCount(eventsCount)
+		if metaAlarm.Value.LastEventDate.Unix() != lastEventDate.Unix() {
+			metaAlarm.PartialUpdateLastEventDate(lastEventDate)
+		}
 
+		metaAlarm.IncrementEventsCount(eventsCount)
 		if worstState > metaAlarm.CurrentState() {
 			err = updateMetaAlarmState(&metaAlarm, *event.Entity, event.Parameters.Timestamp, worstState, metaAlarm.Value.Output, p.alarmStatusService)
 			if err != nil {
@@ -379,7 +380,7 @@ func (p *metaAlarmEventProcessor) DetachChildrenFromMetaAlarm(ctx context.Contex
 			return fmt.Errorf("meta alarm rule id=%q not found", event.Parameters.MetaAlarmRuleID)
 		}
 
-		alarms, err := p.getAlarmsWithEntityByEntityIDs(ctx, event.Parameters.MetaAlarmChildren)
+		alarms, err := p.getAlarmsWithEntityByParentIdAndEntityIds(ctx, metaAlarm.EntityID, event.Parameters.MetaAlarmChildren)
 		if err != nil {
 			return err
 		}
@@ -398,7 +399,7 @@ func (p *metaAlarmEventProcessor) DetachChildrenFromMetaAlarm(ctx context.Contex
 			return nil
 		}
 
-		metaAlarmChildren, err := p.getAlarmsWithEntityByEntityIDs(ctx, metaAlarm.Value.Children)
+		metaAlarmChildren, err := p.getAlarmsWithEntityByParentIdAndEntityIds(ctx, metaAlarm.EntityID, metaAlarm.Value.Children)
 		if err != nil {
 			return err
 		}
@@ -887,38 +888,40 @@ func (p *metaAlarmEventProcessor) sendToFifo(ctx context.Context, event types.Ev
 	return nil
 }
 
-func (p *metaAlarmEventProcessor) getAlarmsWithEntityByEntityIDs(ctx context.Context, entityIDs []string) ([]types.AlarmWithEntity, error) {
+func (p *metaAlarmEventProcessor) getAlarmsWithEntityByEntityIds(ctx context.Context, entityIDs []string) ([]types.AlarmWithEntity, error) {
+	return p.getAlarmsWithEntityByMatch(ctx, bson.M{
+		"d":          bson.M{"$in": entityIDs},
+		"v.resolved": nil,
+	})
+}
+
+func (p *metaAlarmEventProcessor) getAlarmsWithEntityByParentIdAndEntityIds(ctx context.Context, parentId string, entityIDs []string) ([]types.AlarmWithEntity, error) {
+	return p.getAlarmsWithEntityByMatch(ctx, bson.M{
+		"v.parents":  parentId,
+		"d":          bson.M{"$in": entityIDs},
+		"v.resolved": nil,
+	})
+}
+
+func (p *metaAlarmEventProcessor) getAlarmsWithEntityByMatch(ctx context.Context, match bson.M) ([]types.AlarmWithEntity, error) {
 	var alarms []types.AlarmWithEntity
 
 	cursor, err := p.alarmCollection.Aggregate(ctx, []bson.M{
-		{
-			"$match": bson.M{
-				"d":          bson.M{"$in": entityIDs},
-				"v.resolved": nil,
-			},
-		},
-		{
-			"$project": bson.M{
-				"alarm": "$$ROOT",
-				"_id":   0,
-			},
-		},
-		{
-			"$lookup": bson.M{
-				"from":         mongo.EntityMongoCollection,
-				"localField":   "alarm.d",
-				"foreignField": "_id",
-				"as":           "entity",
-			},
-		},
-		{
-			"$unwind": "$entity",
-		},
-		{
-			"$sort": bson.M{
-				"alarm.v.last_update_date": 1,
-			},
-		},
+		{"$match": match},
+		{"$project": bson.M{
+			"alarm": "$$ROOT",
+			"_id":   0,
+		}},
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "alarm.d",
+			"foreignField": "_id",
+			"as":           "entity",
+		}},
+		{"$unwind": "$entity"},
+		{"$sort": bson.M{
+			"alarm.v.last_update_date": 1,
+		}},
 	})
 	if err != nil {
 		return nil, err

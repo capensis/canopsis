@@ -10,7 +10,7 @@ Feature: Get alarms
     """json
     {
       "errors": {
-        "filter": "Filter doesn't exist."
+        "filters.0": "Filter doesn't exist."
       }
     }
     """

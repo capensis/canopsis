@@ -2,6 +2,7 @@ Feature: Update widget filter positions
   I need to be able to widget filter positions
   Only admin should be able to widget filter positions
 
+  @concurrent
   Scenario: given update private filters request should return ok
     When I am test-role-to-filter-update-position-1
     When I do POST /api/v4/widget-filters:
@@ -9,7 +10,7 @@ Feature: Update widget filter positions
     {
       "title": "test-widgetfilter-to-update-position-1-1-title",
       "widget": "test-widget-to-filter-update-position-1",
-      "is_private": true,
+      "is_user_preference": true,
       "alarm_pattern": [
         [
           {
@@ -30,7 +31,7 @@ Feature: Update widget filter positions
     {
       "title": "test-widgetfilter-to-update-position-1-2-title",
       "widget": "test-widget-to-filter-update-position-1",
-      "is_private": true,
+      "is_user_preference": true,
       "alarm_pattern": [
         [
           {
@@ -51,7 +52,7 @@ Feature: Update widget filter positions
     {
       "title": "test-widgetfilter-to-update-position-1-3-title",
       "widget": "test-widget-to-filter-update-position-1",
-      "is_private": true,
+      "is_user_preference": true,
       "alarm_pattern": [
         [
           {
@@ -103,6 +104,7 @@ Feature: Update widget filter positions
     }
     """
 
+  @concurrent
   Scenario: given update public filters request should return ok
     When I am test-role-to-filter-update-position-2
     When I do POST /api/v4/widgets:
@@ -266,15 +268,18 @@ Feature: Update widget filter positions
     }
     """
 
+  @concurrent
   Scenario: given update request and no auth user should not allow access
     When I do PUT /api/v4/widget-filter-positions
     Then the response code should be 401
 
+  @concurrent
   Scenario: given update request and auth user without view permission should not allow access
     When I am noperms
     When I do PUT /api/v4/widget-filter-positions
     Then the response code should be 403
 
+  @concurrent
   Scenario: given invalid request should return error
     When I am test-role-to-filter-update-position-2
     When I do PUT /api/v4/widget-filter-positions:
@@ -391,3 +396,207 @@ Feature: Update widget filter positions
     ]
     """
     Then the response code should be 403
+
+  @concurrent
+  Scenario: given update private filters for private widget request should update positions
+    When I am admin
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-private-widgetfilter-to-update-position-1-1-title",
+      "widget": "test-private-widget-to-private-filter-update-position-1",
+      "is_user_preference": true,
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-private-widgetfilter-to-update-position-1-1-pattern"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response filter1={{ .lastResponse._id }}
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-private-widgetfilter-to-update-position-1-2-title",
+      "widget": "test-private-widget-to-private-filter-update-position-1",
+      "is_user_preference": true,
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-private-widgetfilter-to-update-position-1-2-pattern"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response filter2={{ .lastResponse._id }}
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-private-widgetfilter-to-update-position-1-3-title",
+      "widget": "test-private-widget-to-private-filter-update-position-1",
+      "is_user_preference": true,
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-private-widgetfilter-to-update-position-1-3-pattern"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response filter3={{ .lastResponse._id }}
+    # Test created positions
+    When I do GET /api/v4/user-preferences/test-private-widget-to-private-filter-update-position-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "filters": [
+        { "_id": "{{ .filter1 }}" },
+        { "_id": "{{ .filter2 }}" },
+        { "_id": "{{ .filter3 }}" }
+      ]
+    }
+    """
+    # Test updated positions
+    When I do PUT /api/v4/widget-filter-positions:
+    """json
+    [
+      "{{ .filter3 }}",
+      "{{ .filter1 }}",
+      "{{ .filter2 }}"
+    ]
+    """
+    Then the response code should be 204
+    When I do GET /api/v4/user-preferences/test-private-widget-to-private-filter-update-position-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "filters": [
+        { "_id": "{{ .filter3 }}" },
+        { "_id": "{{ .filter1 }}" },
+        { "_id": "{{ .filter2 }}" }
+      ]
+    }
+    """
+
+  @concurrent
+  Scenario: given update filters for private widget request with api_private_view_groups
+    but without api_view permissions should update positions
+    When I am test-role-to-private-views-without-view-perm
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-private-widgetfilter-to-update-position-2-1-title",
+      "widget": "test-private-widget-to-private-filter-update-position-2",
+      "is_user_preference": false,
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-private-widgetfilter-to-update-position-2-1-pattern"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response filter1={{ .lastResponse._id }}
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-private-widgetfilter-to-update-position-2-2-title",
+      "widget": "test-private-widget-to-private-filter-update-position-2",
+      "is_user_preference": false,
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-private-widgetfilter-to-update-position-2-2-pattern"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response filter2={{ .lastResponse._id }}
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-private-widgetfilter-to-update-position-2-3-title",
+      "widget": "test-private-widget-to-private-filter-update-position-2",
+      "is_user_preference": false,
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-private-widgetfilter-to-update-position-2-3-pattern"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response filter3={{ .lastResponse._id }}
+    When I do GET /api/v4/widgets/test-private-widget-to-private-filter-update-position-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "filters": [
+        { "_id": "{{ .filter1 }}" },
+        { "_id": "{{ .filter2 }}" },
+        { "_id": "{{ .filter3 }}" }
+      ]
+    }
+    """
+    # Test updated positions
+    When I do PUT /api/v4/widget-filter-positions:
+    """json
+    [
+      "{{ .filter3 }}",
+      "{{ .filter1 }}",
+      "{{ .filter2 }}"
+    ]
+    """
+    Then the response code should be 204
+    When I do GET /api/v4/widgets/test-private-widget-to-private-filter-update-position-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "filters": [
+        { "_id": "{{ .filter3 }}" },
+        { "_id": "{{ .filter1 }}" },
+        { "_id": "{{ .filter2 }}" }
+      ]
+    }
+    """

@@ -15,24 +15,9 @@
         hide-deleted
       />
     </template>
-    <v-checkbox
-      v-field="form.with_dependencies"
-      color="primary"
-    >
-      <template #label="">
-        {{ $t('storageSetting.entity.archiveDependencies') }}
-        <c-help-icon
-          :text="$t('storageSetting.entity.archiveDependenciesHelp')"
-          icon-class="ml-2"
-          color="info"
-          max-width="300"
-          top
-        />
-      </template>
-    </v-checkbox>
     <v-flex>
       <v-btn
-        class="ma-0 mb-4"
+        class="ma-0 my-4"
         color="primary"
         @click="$emit('archive')"
       >
@@ -52,10 +37,6 @@ export default {
     event: 'input',
   },
   props: {
-    form: {
-      type: Object,
-      required: true,
-    },
     history: {
       type: Object,
       required: false,

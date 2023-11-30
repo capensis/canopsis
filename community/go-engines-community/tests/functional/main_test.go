@@ -140,7 +140,7 @@ func TestMain(m *testing.M) {
 	wsUrl.Path = websocketRoute
 	websocketClient := bdd.NewWebsocketClient(wsUrl.String(), templater)
 
-	if !flags.clearOnScenario {
+	if !flags.clearOnScenario && !flags.withoutFixtures {
 		err := clearStores(ctx, flags, loader, redisClient, logger)
 		if err != nil {
 			logger.Fatal().Err(err).Send()
@@ -161,7 +161,7 @@ func TestMain(m *testing.M) {
 		status = st
 	}
 
-	if !flags.keepStoresOnFail || status == 0 {
+	if !flags.withoutFixtures && (!flags.keepStoresOnFail || status == 0) {
 		err = clearStores(ctx, flags, loader, redisClient, logger)
 		if err != nil {
 			logger.Fatal().Err(err).Send()
@@ -331,6 +331,7 @@ func clearStores(
 		testfixtures.Dialect("timescaledb"),
 		testfixtures.UseAlterConstraint(),
 		testfixtures.Paths(flags.timescaleFixtures...),
+		testfixtures.DangerousSkipTestDatabaseCheck(),
 	)
 	if err != nil {
 		return fmt.Errorf("cannot init timescale fixtures: %w", err)

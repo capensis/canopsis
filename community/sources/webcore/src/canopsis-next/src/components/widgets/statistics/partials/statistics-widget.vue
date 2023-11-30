@@ -178,6 +178,10 @@ export default {
     },
 
     preparedGroupMetrics() {
+      if (!this.query.parameters?.length) {
+        return [];
+      }
+
       return this.groupMetrics.map(({ title, data = [] }) => {
         const preparedMetrics = Object.values(data)
           .reduce((acc, value, index) => {

@@ -52,6 +52,7 @@ export default {
   view: {
     create: {
       title: 'Create a view',
+      privateTitle: 'Create a private view',
     },
     edit: {
       title: 'Edit the view',
@@ -59,12 +60,6 @@ export default {
     duplicate: {
       title: 'Duplicate the view - {viewTitle}',
       infoMessage: 'You\'re duplicating a view. All duplicated view\'s rows/widgets will be copied on the new view.',
-    },
-    noData: 'No group corresponding. Press <kbd>enter</kbd> to create a new one',
-    fields: {
-      periodicRefresh: 'Periodic refresh',
-      groupIds: 'Choose a group, or create a new one',
-      groupTags: 'Group tags',
     },
     success: {
       create: 'New view created!',
@@ -77,11 +72,6 @@ export default {
       edit: 'View edition failed...',
       duplicate: 'View duplication failed...',
       delete: 'View deletion failed...',
-    },
-  },
-  createEvent: {
-    fields: {
-      output: 'Note',
     },
   },
   confirmAckWithTicket: {
@@ -209,6 +199,7 @@ export default {
   service: {
     refreshEntities: 'Refresh entities list',
     editPbehaviors: 'Edit pbehaviors',
+    massActionsDescription: 'You can choose entities to perform actions',
     entity: {
       tabs: {
         info: 'Info',
@@ -992,5 +983,8 @@ export default {
     duplicate: {
       title: 'Duplicate theme',
     },
+  },
+  archiveDisabledEntities: {
+    text: 'Are you sure you want to archive disabled entities?\nThis action cannot be undone',
   },
 };

@@ -37,8 +37,6 @@ Feature: Get a scenario
                   }
                 ]
               ],
-              "old_entity_patterns": null,
-              "old_alarm_patterns": null,
               "drop_scenario_if_not_matched": false,
               "emit_trigger": false,
               "type": "ack",
@@ -60,8 +58,6 @@ Feature: Get a scenario
                   }
                 ]
               ],
-              "old_entity_patterns": null,
-              "old_alarm_patterns": null,
               "drop_scenario_if_not_matched": false,
               "emit_trigger": false,
               "type": "pbehavior",
@@ -115,8 +111,6 @@ Feature: Get a scenario
                   }
                 ]
               ],
-              "old_entity_patterns": null,
-              "old_alarm_patterns": null,
               "drop_scenario_if_not_matched": false,
               "emit_trigger": false,
               "type": "ack",
@@ -197,8 +191,6 @@ Feature: Get a scenario
               }
             ]
           ],
-          "old_entity_patterns": null,
-          "old_alarm_patterns": null,
           "drop_scenario_if_not_matched": false,
           "emit_trigger": false,
           "type": "ack",
@@ -220,8 +212,6 @@ Feature: Get a scenario
               }
             ]
           ],
-          "old_entity_patterns": null,
-          "old_alarm_patterns": null,
           "drop_scenario_if_not_matched": false,
           "emit_trigger": false,
           "type": "pbehavior",
@@ -257,53 +247,6 @@ Feature: Get a scenario
       "triggers": [
         {
           "type": "create"
-        }
-      ]
-    }
-    """
-
-  @concurrent
-  Scenario: given get request should return scenario with old patterns
-    When I am admin
-    When I do GET /api/v4/scenarios/test-scenario-backward-compatibility-to-get-1
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "_id": "test-scenario-backward-compatibility-to-get-1",
-      "name": "test-scenario-backward-compatibility-to-get-1",
-      "author": {
-        "_id": "root",
-        "name": "root",
-        "display_name": "root John Doe admin@canopsis.net"
-      },
-      "enabled": true,
-      "disable_during_periods": null,
-      "triggers": [
-        {
-          "type": "create"
-        }
-      ],
-      "actions": [
-        {
-          "type": "ack",
-          "comment": "",
-          "parameters": {
-            "output": "test-scenario-backward-compatibility-to-get-1-action-1-output",
-            "author": "test-scenario-backward-compatibility-to-get-1-action-1-author"
-          },
-          "old_alarm_patterns": [
-            {
-              "_id": "test-scenario-backward-compatibility-to-get-1-action-1-alarm"
-            }
-          ],
-          "old_entity_patterns": [
-            {
-              "name": "test-scenario-backward-compatibility-to-get-1-action-1-name"
-            }
-          ],
-          "drop_scenario_if_not_matched": false,
-          "emit_trigger": false
         }
       ]
     }

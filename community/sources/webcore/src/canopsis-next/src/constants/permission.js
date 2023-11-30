@@ -89,6 +89,7 @@ export const USER_PERMISSIONS_PREFIXES = {
 export const USERS_PERMISSIONS = {
   technical: {
     view: `${USER_PERMISSIONS_PREFIXES.technical.admin}_userview`,
+    privateView: `${USER_PERMISSIONS_PREFIXES.technical.admin}_privateView`,
     role: `${USER_PERMISSIONS_PREFIXES.technical.admin}_role`,
     permission: `${USER_PERMISSIONS_PREFIXES.technical.admin}_permission`,
     user: `${USER_PERMISSIONS_PREFIXES.technical.admin}_user`,
@@ -236,6 +237,8 @@ export const USERS_PERMISSIONS = {
         userFilter: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_userFilter`,
 
         category: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_category`,
+
+        variablesHelp: `${USER_PERMISSIONS_PREFIXES.business.common}_variablesHelp`,
       },
     },
     counter: {
@@ -343,6 +346,7 @@ export const USERS_PERMISSIONS = {
       event: `${USER_PERMISSIONS_PREFIXES.api}_event`,
       view: `${USER_PERMISSIONS_PREFIXES.api}_view`,
       viewgroup: `${USER_PERMISSIONS_PREFIXES.api}_viewgroup`,
+      privateViewGroups: `${USER_PERMISSIONS_PREFIXES.api}_private_view_groups`,
       userInterfaceUpdate: `${USER_PERMISSIONS_PREFIXES.api}_user_interface_update`,
       userInterfaceDelete: `${USER_PERMISSIONS_PREFIXES.api}_user_interface_delete`,
       datastorageRead: `${USER_PERMISSIONS_PREFIXES.api}_datastorage_read`,

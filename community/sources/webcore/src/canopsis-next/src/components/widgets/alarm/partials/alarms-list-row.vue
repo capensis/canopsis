@@ -45,7 +45,6 @@
           :expanded="row.isExpanded"
           :alarm="alarm"
           :widget="widget"
-          :is-tour-enabled="isTourEnabled"
           :small="small"
           :search="search"
           @input="updateExpanded"
@@ -144,10 +143,6 @@ export default {
     columnsFilters: {
       type: Array,
       default: () => [],
-    },
-    isTourEnabled: {
-      type: Boolean,
-      default: false,
     },
     parentAlarm: {
       type: Object,

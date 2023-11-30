@@ -2,10 +2,16 @@
   <v-list-item :to="viewLink">
     <v-list-item-title>
       <span>{{ view.title }}</span>
+      <v-icon
+        v-if="view.is_private"
+        color="white"
+        small
+      >
+        lock
+      </v-icon>
       <v-btn
         class="edit-view-button"
-        :data-test="`editViewButton-view-${view._id}`"
-        v-show="hasViewEditButtonAccess"
+        v-show="view.is_private || hasViewEditButtonAccess"
         color="grey darken-2"
         depressed
         small
@@ -18,12 +24,11 @@
       </v-btn>
       <v-btn
         class="duplicate-view-button"
-        :data-test="`copyViewButton-view-${view._id}`"
-        v-show="isNavigationEditingMode"
+        v-show="view.is_private || isNavigationEditingMode"
+        color="grey darken-2"
         depressed
         small
         icon
-        color="grey darken-2"
         @click.prevent="showDuplicateViewModal"
       >
         <v-icon small>

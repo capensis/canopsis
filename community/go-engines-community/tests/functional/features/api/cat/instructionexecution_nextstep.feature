@@ -58,7 +58,7 @@ Feature: move a instruction execution to next step
     When I do POST /api/v4/cat/executions:
     """json
     {
-      "alarm": "test-alarm-instruction-execution-next-step-1",
+      "alarm": "test-alarm-to-instruction-execution-next-step-1",
       "instruction": "{{ .lastResponse._id }}"
     }
     """
@@ -171,7 +171,7 @@ Feature: move a instruction execution to next step
     When I do POST /api/v4/cat/executions:
     """json
     {
-      "alarm": "test-alarm-instruction-execution-next-step-2",
+      "alarm": "test-alarm-to-instruction-execution-next-step-2",
       "instruction": "{{ .lastResponse._id }}"
     }
     """
@@ -294,7 +294,7 @@ Feature: move a instruction execution to next step
     When I do POST /api/v4/cat/executions:
     """json
     {
-      "alarm": "test-alarm-instruction-execution-next-step-3",
+      "alarm": "test-alarm-to-instruction-execution-next-step-3",
       "instruction": "{{ .lastResponse._id }}"
     }
     """
@@ -428,7 +428,7 @@ Feature: move a instruction execution to next step
     When I do POST /api/v4/cat/executions:
     """json
     {
-      "alarm": "test-alarm-instruction-execution-next-step-4",
+      "alarm": "test-alarm-to-instruction-execution-next-step-4",
       "instruction": "{{ .instructionID }}"
     }
     """
@@ -564,7 +564,7 @@ Feature: move a instruction execution to next step
     When I do POST /api/v4/cat/executions:
     """json
     {
-      "alarm": "test-alarm-instruction-execution-next-step-5",
+      "alarm": "test-alarm-to-instruction-execution-next-step-5",
       "instruction": "{{ .lastResponse._id }}"
     }
     """
@@ -697,7 +697,7 @@ Feature: move a instruction execution to next step
     When I do POST /api/v4/cat/executions:
     """json
     {
-      "alarm": "test-alarm-instruction-execution-next-step-6",
+      "alarm": "test-alarm-to-instruction-execution-next-step-6",
       "instruction": "{{ .lastResponse._id }}"
     }
     """
@@ -850,7 +850,7 @@ Feature: move a instruction execution to next step
     When I do POST /api/v4/cat/executions:
     """json
     {
-      "alarm": "test-alarm-instruction-execution-next-step-7",
+      "alarm": "test-alarm-to-instruction-execution-next-step-7",
       "instruction": "{{ .instructionID }}"
     }
     """

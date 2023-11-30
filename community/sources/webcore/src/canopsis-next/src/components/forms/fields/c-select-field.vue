@@ -1,17 +1,17 @@
 <template>
   <component
     class="c-select-field"
-    :value="value"
+    ref="select"
     v-bind="$attrs"
     v-on="$listeners"
     v-validate="rules"
+    :value="value"
     :class="{ 'c-select-field--ellipsis': ellipsis }"
     :is="component"
     :item-text="itemText"
     :item-value="itemValue"
     :name="name"
     :error-messages="errors.collect(name)"
-    ref="select"
   >
     <template
       v-if="$scopedSlots.selection || ellipsis"

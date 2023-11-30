@@ -118,7 +118,6 @@
       :total-items="alarmsMeta.total_count"
       :options.sync="options"
       :loading="alarmsPending"
-      :is-tour-enabled="isTourEnabled"
       :hide-children="!query.correlation"
       :columns="widget.parameters.widgetColumns"
       :sticky-header="widget.parameters.sticky_header"
@@ -141,17 +140,13 @@
       @update:columns-settings="updateColumnsSettings"
       @clear:tag="clearTag"
     />
-    <alarms-expand-panel-tour
-      v-if="isTourEnabled"
-      :callbacks="tourCallbacks"
-    />
   </div>
 </template>
 
 <script>
 import { omit, pick, isObject, isEqual } from 'lodash';
 
-import { MODALS, TOURS, USERS_PERMISSIONS } from '@/constants';
+import { MODALS, USERS_PERMISSIONS } from '@/constants';
 
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 import { getAlarmListExportDownloadFileUrl } from '@/helpers/entities/alarm/url';
@@ -179,7 +174,6 @@ import FilterSelector from '@/components/other/filter/partials/filter-selector.v
 import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
 
 import AlarmsListTable from './partials/alarms-list-table.vue';
-import AlarmsExpandPanelTour from './expand-panel/alarms-expand-panel-tour.vue';
 import AlarmsListRemediationInstructionsFilters from './partials/alarms-list-remediation-instructions-filters.vue';
 
 /**
@@ -196,7 +190,6 @@ export default {
     FilterSelector,
     FiltersListBtn,
     AlarmsListTable,
-    AlarmsExpandPanelTour,
     AlarmsListRemediationInstructionsFilters,
   },
   mixins: [
@@ -248,18 +241,6 @@ export default {
     };
   },
   computed: {
-    tourCallbacks() {
-      return {
-        onPreviousStep: this.onTourPreviousStep,
-        onNextStep: this.onTourNextStep,
-      };
-    },
-
-    isTourEnabled() {
-      return this.checkIsTourEnabled(TOURS.alarmsExpandPanel)
-        && !!this.alarms.length;
-    },
-
     activeRange() {
       const { tstart, tstop } = this.query;
 
@@ -387,20 +368,6 @@ export default {
       }
     },
 
-    onTourPreviousStep(currentStep) {
-      if (currentStep !== 1) {
-        this.expandFirstAlarm();
-      }
-
-      return this.$nextTick();
-    },
-
-    onTourNextStep() {
-      this.expandFirstAlarm();
-
-      return this.$nextTick();
-    },
-
     removeHistoryFilter() {
       const newQuery = omit(this.query, ['tstart', 'tstop']);
 
@@ -445,15 +412,28 @@ export default {
       }
     },
 
-    getExportQuery() {
-      const query = this.getQuery();
+    getExportQueryColumns() {
       const {
         widgetExportColumns,
         widgetColumns,
+      } = this.widget.parameters;
+
+      const hasExportColumns = !!widgetExportColumns?.length;
+      const columns = hasExportColumns ? widgetExportColumns : widgetColumns;
+
+      return columns.map(({ value, text, template }) => ({
+        name: value,
+        label: text,
+        template: hasExportColumns ? template : undefined,
+      }));
+    },
+
+    getExportQuery() {
+      const query = this.getQuery();
+      const {
         exportCsvSeparator,
         exportCsvDatetimeFormat,
       } = this.widget.parameters;
-      const columns = widgetExportColumns?.length ? widgetExportColumns : widgetColumns;
 
       return {
         ...pick(query, [
@@ -466,7 +446,7 @@ export default {
           'only_bookmarks',
         ]),
 
-        fields: columns.map(({ value, text }) => ({ name: value, label: text })),
+        fields: this.getExportQueryColumns(),
         filters: query.filters,
         separator: exportCsvSeparator,
         /**

@@ -1,7 +1,7 @@
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 import { permissionsTechnicalViewMixin } from '@/mixins/permissions/technical/view';
 
-import layoutNavigationEditingModeMixin from './editing-mode';
+import { layoutNavigationEditingModeMixin } from './editing-mode';
 
 export const layoutNavigationGroupsBarMixin = {
   mixins: [

@@ -7,7 +7,7 @@ import { MqLayout } from '@unit/stubs/mq';
 import UpdateFieldPlugin from '@/plugins/update-field';
 import ValidatorPlugin from '@/plugins/validator';
 import { createVuetify } from '@/plugins/vuetify';
-import ToursPlugin from '@/plugins/tours';
+
 import * as constants from '@/constants';
 import * as config from '@/config';
 import i18n from '@/i18n';
@@ -37,7 +37,6 @@ Vue.use(Vuex);
 Vue.use(UpdateFieldPlugin);
 Vue.use(ValidatorPlugin, { i18n });
 Vue.use(SetSeveralPlugin);
-Vue.use(ToursPlugin);
 
 Vue.filter('get', get);
 Vue.filter('date', convertDateToString);

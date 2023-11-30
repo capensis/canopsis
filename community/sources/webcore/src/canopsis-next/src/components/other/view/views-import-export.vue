@@ -12,7 +12,7 @@
         />
         <views-export-expansion-panel
           v-model="selected"
-          :groups="groups"
+          :groups="availableGroups"
         />
       </v-flex>
       <v-flex xs2>
@@ -94,12 +94,16 @@ export default {
       return !this.selected.groups.length && !this.selected.views.length;
     },
 
+    availableGroups() {
+      return this.groups.filter(group => !group.is_private);
+    },
+
     groupIds() {
-      return this.groups.map(({ _id }) => _id);
+      return this.availableGroups.map(({ _id }) => _id);
     },
 
     viewIds() {
-      return getAllViewsFromGroups(this.groups).map(({ _id }) => _id);
+      return getAllViewsFromGroups(this.availableGroups).map(({ _id }) => _id);
     },
 
     isAllSelected: {

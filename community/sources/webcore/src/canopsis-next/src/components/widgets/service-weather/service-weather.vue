@@ -104,6 +104,7 @@
             :action-required-color="actionRequiredSettings.color"
             :action-required-icon="actionRequiredSettings.icon_name"
             :show-alarms-button="isBothModalType && hasAlarmsListAccess"
+            :show-variables-help-button="hasVariablesHelpAccess"
             :template="widget.parameters.blockTemplate"
             :height-factor="widget.parameters.heightFactor"
             :color-indicator="widget.parameters.colorIndicator"
@@ -181,6 +182,10 @@ export default {
 
     hasAlarmsListAccess() {
       return this.checkAccess(USERS_PERMISSIONS.business.serviceWeather.actions.alarmsList);
+    },
+
+    hasVariablesHelpAccess() {
+      return this.checkAccess(USERS_PERMISSIONS.business.serviceWeather.actions.variablesHelp);
     },
 
     actionRequiredSettings() {
