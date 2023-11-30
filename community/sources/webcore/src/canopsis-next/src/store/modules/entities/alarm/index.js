@@ -92,6 +92,7 @@ export default {
             route: API_ROUTES.alarms.list,
             schema: [alarmSchema],
             params,
+            withCompare: true,
             cancelToken: source.token,
             dataPreparer: d => d.data,
             afterCommit: ({ normalizedData, data }) => {
