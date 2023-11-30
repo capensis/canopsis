@@ -216,7 +216,7 @@ func NewSession(ctx context.Context, db int, logger zerolog.Logger, reconnectCou
 }
 
 func IsConnectionError(err error) bool {
-	var netErr net.Error
+	netErr := &net.OpError{}
 	if errors.As(err, &netErr) {
 		return true
 	}
