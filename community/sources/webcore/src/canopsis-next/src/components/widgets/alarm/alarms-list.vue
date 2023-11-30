@@ -210,6 +210,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    visible: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
