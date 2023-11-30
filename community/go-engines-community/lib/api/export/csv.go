@@ -166,14 +166,8 @@ func toString(v any) (string, error) {
 			return "", err
 		}
 		str = string(b)
-	case reflect.Float32:
-		if f, ok := v.(float32); ok {
-			str = strconv.FormatFloat(float64(f), 'f', -1, 64)
-		}
-	case reflect.Float64:
-		if f, ok := v.(float64); ok {
-			str = strconv.FormatFloat(f, 'f', -1, 64)
-		}
+	case reflect.Float32, reflect.Float64:
+		str = strconv.FormatFloat(rv.Float(), 'f', -1, 64)
 	default:
 		str = fmt.Sprintf("%v", v)
 	}

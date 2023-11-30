@@ -462,7 +462,7 @@ func InterfaceToString(v interface{}) (string, error) {
 	case string:
 		return vt, nil
 	case int:
-		return strconv.FormatInt(int64(vt), 10), nil
+		return strconv.Itoa(vt), nil
 	case int64:
 		return strconv.FormatInt(vt, 10), nil
 	case uint:
