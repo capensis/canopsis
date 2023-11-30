@@ -73,11 +73,13 @@ func PreProcessBulk(configProvider config.ApiConfigProvider, addAuthor bool) fun
 		}
 
 		if addAuthor {
-			userId := c.MustGet(auth.UserKey)
+			userId, ok := c.MustGet(auth.UserKey).(string)
+			if !ok {
+				panic(fmt.Errorf("unknown type of %s", auth.UserKey))
+			}
+
 			for _, object := range rawObjects {
-				if s, ok := userId.(string); ok {
-					object.Set("author", ar.NewString(s))
-				}
+				object.Set("author", ar.NewString(userId))
 			}
 		}
 

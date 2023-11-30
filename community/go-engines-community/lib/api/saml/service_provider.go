@@ -94,13 +94,12 @@ func NewServiceProvider(
 
 	idpMetadata := &samltypes.EntityDescriptor{}
 	if config.Security.Saml.IdpMetadataUrl != "" {
-		var tr *http.Transport
-		if d, ok := http.DefaultTransport.(*http.Transport); ok {
-			tr = d.Clone()
-		} else {
-			tr = &http.Transport{}
+		dt, ok := http.DefaultTransport.(*http.Transport)
+		if !ok {
+			return nil, errors.New("unknown type of http.DefaultTransport")
 		}
 
+		tr := dt.Clone()
 		tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: config.Security.Saml.InsecureSkipVerify} //nolint:gosec
 
 		hc := &http.Client{Timeout: MetadataReqTimeout, Transport: tr}
