@@ -96,7 +96,7 @@ func (e *executor) ExecuteByTpl(tpl *template.Template, data any) (string, error
 	buf.Reset()
 	err := tpl.Execute(buf, addEnvVarsToData(data, e.templateConfigProvider.Get().Vars))
 	if err != nil {
-		return "", fmt.Errorf("cannot execute template: %w", err)
+		return "", err
 	}
 
 	return buf.String(), nil

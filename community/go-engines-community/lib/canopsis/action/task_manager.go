@@ -567,9 +567,9 @@ func (e *redisBasedManager) startExecution(
 ) {
 	e.logger.Debug().Msgf("Execute scenario = %s for alarm = %s", scenario.ID, alarm.ID)
 	executions := make([]Execution, len(scenario.Actions))
-	for i, action := range scenario.Actions {
+	for i := range scenario.Actions {
 		executions[i] = Execution{
-			Action:   action,
+			Action:   scenario.Actions[i],
 			Executed: false,
 		}
 	}
