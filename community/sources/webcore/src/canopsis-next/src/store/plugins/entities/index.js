@@ -5,6 +5,9 @@ import {
   uniqWith,
   mergeWith,
   isEqual,
+  isObject,
+  difference,
+  isArray,
 } from 'lodash';
 import { normalize, denormalize } from 'normalizr';
 
@@ -28,6 +31,50 @@ const internalTypes = {
 };
 
 let registeredGetters = [];
+
+const updateChangedFields = (oldData, newData) => {
+  if (isArray(newData)) {
+    if (oldData.length !== newData.length) {
+      return newData;
+    }
+
+    if (oldData.length === 0 && newData.length === 0) {
+      return oldData;
+    }
+
+    // eslint-disable-next-line no-plusplus
+    for (let index = 0; index < newData.length; index++) {
+      // eslint-disable-next-line no-param-reassign
+      oldData[index] = updateChangedFields(oldData[index], newData[index]);
+    }
+
+    return oldData;
+  }
+
+  if (!isObject(newData)) {
+    return newData;
+  }
+
+  const oldKeys = Object.keys(oldData);
+  const newKeys = Object.keys(newData);
+
+  const removedKeys = difference(oldKeys, newKeys);
+
+  for (const removedKey of removedKeys) {
+    // eslint-disable-next-line no-param-reassign
+    delete oldData[removedKey];
+  }
+
+  for (const key of newKeys) {
+    const oldValue = oldData[key];
+    const newValue = newData[key];
+
+    // eslint-disable-next-line no-param-reassign
+    oldData[key] = updateChangedFields(oldValue, newValue);
+  }
+
+  return oldData;
+};
 
 export const entitiesModule = {
   namespaced: true,
@@ -128,13 +175,19 @@ export const entitiesModule = {
           Vue.set(state, type, entities[type]);
         } else {
           Object.entries(entities[type]).forEach(([key, entity]) => {
-            cache.clearForEntity(state, entity);
+            const oldEntity = state[type][key];
 
-            if (state[type][key]) {
-              cache.clearForEntity(state, state[type][key]);
+            const data = oldEntity
+              ? updateChangedFields(oldEntity, entity)
+              : entity;
+
+            cache.clearForEntity(state, data);
+
+            if (oldEntity) {
+              cache.clearForEntity(state, oldEntity);
             }
 
-            Vue.set(state[type], key, entity);
+            Vue.set(state[type], key, data);
           });
         }
       });
