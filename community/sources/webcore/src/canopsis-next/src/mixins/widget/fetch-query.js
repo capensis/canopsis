@@ -11,13 +11,13 @@ export const widgetFetchQueryMixin = {
   mixins: [queryWidgetMixin],
   watch: {
     query(value, oldValue) {
-      if (!isEqual(value, oldValue) && !isEmpty(value)) {
+      if (!isEqual(value, oldValue) && !isEmpty(value) && this.visible) {
         this.fetchList();
       }
     },
 
     tabQueryNonce(value, oldValue) {
-      if (value > oldValue) {
+      if (value > oldValue && this.visible) {
         this.fetchList();
       }
     },
