@@ -37,8 +37,8 @@ Feature: Get entities
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceId }}",
         "source_type": "service"
       },
@@ -82,8 +82,8 @@ Feature: Get entities
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .nestedServiceId1 }}",
         "source_type": "service"
       },
@@ -133,8 +133,8 @@ Feature: Get entities
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .nestedServiceId2 }}",
         "source_type": "service"
       },
@@ -184,8 +184,8 @@ Feature: Get entities
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .nestedServiceId3 }}",
         "source_type": "service"
       },
@@ -881,8 +881,8 @@ Feature: Get entities
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceId1 }}",
         "source_type": "service"
       },
@@ -926,8 +926,8 @@ Feature: Get entities
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceId2 }}",
         "source_type": "service"
       },
@@ -1053,8 +1053,8 @@ Feature: Get entities
     [
       {
         "event_type": "entityupdated",
-        "connector": "test-connector-entity-get-2",
-        "connector_name": "test-connector-name-entity-get-2",
+        "connector": "api",
+        "connector_name": "api",
         "component": "test-component-entity-get-2",
         "resource": "test-resource-entity-get-2-1",
         "source_type": "resource"
@@ -1139,8 +1139,8 @@ Feature: Get entities
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceId1 }}",
         "source_type": "service"
       },
@@ -1184,8 +1184,8 @@ Feature: Get entities
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceId2 }}",
         "source_type": "service"
       },

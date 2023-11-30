@@ -27,12 +27,10 @@ import (
 	apitechmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
-	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	libcontextgraphV1 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph/v1"
@@ -167,14 +165,11 @@ func Default(
 	// Create pbehavior computer.
 	pbhComputeChan := make(chan []string, chanBuf)
 	pbhStore := libpbehavior.NewStore(pbhRedisSession, json.NewEncoder(), json.NewDecoder())
-	pbhEntityTypeResolver := libpbehavior.NewEntityTypeResolver(pbhStore, libpbehavior.NewEntityMatcher(dbClient), logger)
+	pbhEntityTypeResolver := libpbehavior.NewEntityTypeResolver(pbhStore, logger)
 	// Create entity service event publisher.
 	entityPublChan := make(chan entityservice.ChangeEntityMessage, chanBuf)
-	entityServiceEventPublisher := entityservice.NewEventPublisher(
-		alarm.NewAdapter(dbClient), libentity.NewAdapter(dbClient), amqpChannel,
-		json.NewEncoder(), canopsis.JsonContentType,
-		canopsis.FIFOAckExchangeName, canopsis.FIFOQueueName, logger,
-	)
+	entityServiceEventPublisher := entityservice.NewEventPublisher(amqpChannel, json.NewEncoder(),
+		canopsis.JsonContentType, canopsis.FIFOAckExchangeName, canopsis.FIFOQueueName, logger)
 
 	importWorker := contextgraph.NewImportWorker(
 		cfg,
@@ -217,8 +212,9 @@ func Default(
 		exportExecutor = export.NewTaskExecutor(dbClient, p.TimezoneConfigProvider, logger)
 	}
 
+	tplExecutor := template.NewExecutor(p.TemplateConfigProvider, p.TimezoneConfigProvider)
 	alarmStore := alarmapi.NewStore(dbClient, dbExportClient, linkGenerator, p.TimezoneConfigProvider,
-		author.NewProvider(dbClient, p.ApiConfigProvider), json.NewDecoder(), logger)
+		author.NewProvider(dbClient, p.ApiConfigProvider), tplExecutor, json.NewDecoder(), logger)
 	websocketStore := websocket.NewStore(dbClient, flags.IntegrationPeriodicalWaitTime)
 	websocketHub, err := newWebsocketHub(enforcer, security.GetTokenProviders(), flags.IntegrationPeriodicalWaitTime,
 		dbClient, alarmStore, logger)
@@ -296,7 +292,7 @@ func Default(
 	legacyUrl := GetLegacyURL(logger)
 	if linkGenerator == nil {
 		linkGenerators := []link.Generator{
-			linkv2.NewGenerator(dbClient, template.NewExecutor(p.TemplateConfigProvider, p.TimezoneConfigProvider), logger),
+			linkv2.NewGenerator(dbClient, tplExecutor, logger),
 		}
 		if legacyUrl != nil {
 			linkGenerators = append(linkGenerators, linkv1.NewGenerator(legacyUrl.String(), dbClient, &http.Client{Timeout: linkFetchTimeout}, json.NewEncoder(), json.NewDecoder()))
@@ -350,6 +346,7 @@ func Default(
 			metricsUserMetaUpdater,
 			author.NewProvider(dbClient, p.ApiConfigProvider),
 			healthcheckStore,
+			tplExecutor,
 			logger,
 		)
 	})

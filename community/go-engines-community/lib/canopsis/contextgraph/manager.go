@@ -10,7 +10,6 @@ import (
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
@@ -156,21 +155,13 @@ func (m *manager) CheckServices(ctx context.Context, entities []types.Entity) ([
 
 		for _, serv := range services {
 			serviceID := serv.ID
-
 			_, found := servicesMap[serviceID]
-
 			match := false
 			if len(serv.EntityPattern) > 0 {
 				var err error
 				match, err = serv.EntityPattern.Match(ent)
 				if err != nil {
 					m.logger.Err(err).Str("service", serviceID).Msgf("service has invalid pattern")
-				}
-			} else if serv.OldEntityPatterns.IsSet() {
-				if serv.OldEntityPatterns.IsValid() {
-					match = serv.OldEntityPatterns.Matches(&ent)
-				} else {
-					m.logger.Err(pattern.ErrInvalidOldEntityPattern).Str("service", serviceID).Msgf("service has invalid pattern")
 				}
 			}
 
@@ -837,12 +828,6 @@ func getServiceQueries(service entityservice.EntityService) (interface{}, interf
 		if err != nil {
 			return nil, nil, err
 		}
-	} else if service.OldEntityPatterns.IsSet() {
-		if !service.OldEntityPatterns.IsValid() {
-			return nil, nil, pattern.ErrInvalidOldEntityPattern
-		}
-		query = service.OldEntityPatterns.AsMongoDriverQuery()
-		negativeQuery = service.OldEntityPatterns.AsNegativeMongoDriverQuery()
 	}
 
 	return query, negativeQuery, nil

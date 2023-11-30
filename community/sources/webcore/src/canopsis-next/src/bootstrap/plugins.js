@@ -3,8 +3,6 @@ import VueFullScreen from 'vue-fullscreen';
 import VueClipboard from 'vue-clipboard2';
 import PortalVue from 'portal-vue';
 
-import 'vue-tour/dist/vue-tour.css';
-
 import { MODALS } from '@/constants';
 import { MEDIA_QUERIES_BREAKPOINTS } from '@/config';
 
@@ -14,7 +12,6 @@ import PopupsPlugin from '@/plugins/popups';
 import SidebarPlugin from '@/plugins/sidebar';
 import SetSeveralPlugin from '@/plugins/set-several';
 import UpdateFieldPlugin from '@/plugins/update-field';
-import ToursPlugin from '@/plugins/tours';
 import SocketPlugin from '@/plugins/socket';
 
 import featuresService from '@/services/features';
@@ -116,6 +113,5 @@ export const bootstrapApplicationPlugins = (Vue) => {
   });
   Vue.use(SetSeveralPlugin);
   Vue.use(UpdateFieldPlugin);
-  Vue.use(ToursPlugin);
   Vue.use(SocketPlugin);
 };

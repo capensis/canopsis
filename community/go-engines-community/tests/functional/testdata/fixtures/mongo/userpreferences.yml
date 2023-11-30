@@ -1,5 +1,5 @@
 userpreferences:
-  userpreferences_1:
+  userpreferences_to_get_1:
     _id: test-user-preferences-to-get-1
     content:
       test-array:
@@ -12,7 +12,7 @@ userpreferences:
     updated: 1611229670
     user: test-user-to-user-preferences-edit
     widget: test-widget-to-user-preferences-get-1
-  userpreferences_2:
+  userpreferences_to_get_2:
     _id: test-user-preferences-to-get-2
     content:
       test-array:

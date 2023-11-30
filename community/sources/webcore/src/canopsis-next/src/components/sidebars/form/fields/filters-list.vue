@@ -108,7 +108,7 @@ export default {
 
             _id: uuid('filter'),
             widget: this.widgetId,
-            is_private: false,
+            is_user_preference: false,
           }),
         },
       });

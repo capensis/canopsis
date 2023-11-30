@@ -9,7 +9,7 @@ const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,
   'c-advanced-search-field': true,
   'c-expand-btn': true,
-  'c-action-btn': true,
+  'pbehavior-actions': true,
   'c-table-pagination': true,
   'c-ellipsis': true,
   'c-enabled': true,
@@ -99,27 +99,6 @@ describe('pbehaviors-list', () => {
           sortBy: [],
           sortDesc: [],
         },
-        totalItems: 50,
-      },
-    });
-
-    await selectExpandButtonByRow(wrapper, 0).vm.$emit('expand');
-
-    expect(wrapper.element).toMatchSnapshot();
-  });
-
-  test('Renders `pbehaviors-list` with updatable and old_mongo_query', async () => {
-    const wrapper = snapshotFactory({
-      propsData: {
-        pbehaviors: pbehaviorsItems.map(item => ({ ...item, old_mongo_query: true })),
-        options: {
-          page: 1,
-          itemsPerPage: 10,
-          search: '',
-          sortBy: [],
-          sortDesc: [],
-        },
-        updatable: true,
         totalItems: 50,
       },
     });

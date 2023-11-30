@@ -1,9 +1,9 @@
 <template>
   <modal-wrapper close>
-    <template #title>
+    <template #title="">
       <span>{{ config.title }}</span>
     </template>
-    <template #text>
+    <template #text="">
       <div v-html="config.text" />
     </template>
   </modal-wrapper>

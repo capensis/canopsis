@@ -2,7 +2,6 @@
 package idlerule
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -22,25 +21,23 @@ type Operation struct {
 
 // Rule represents alarm modification condition and operation.
 type Rule struct {
-	ID                string                       `bson:"_id,omitempty" json:"_id"`
-	Name              string                       `bson:"name" json:"name"`
-	Description       string                       `bson:"description" json:"description"`
-	Author            string                       `bson:"author" json:"author"`
-	Enabled           bool                         `bson:"enabled" json:"enabled"`
-	Type              string                       `bson:"type" json:"type"`
-	Priority          int64                        `bson:"priority" json:"priority"`
-	Duration          types.DurationWithUnit       `bson:"duration" json:"duration"`
-	Comment           string                       `bson:"comment" json:"comment"`
-	OldEntityPatterns oldpattern.EntityPatternList `bson:"old_entity_patterns,omitempty" json:"old_entity_patterns,omitempty"`
+	ID          string                 `bson:"_id,omitempty" json:"_id"`
+	Name        string                 `bson:"name" json:"name"`
+	Description string                 `bson:"description" json:"description"`
+	Author      string                 `bson:"author" json:"author"`
+	Enabled     bool                   `bson:"enabled" json:"enabled"`
+	Type        string                 `bson:"type" json:"type"`
+	Priority    int64                  `bson:"priority" json:"priority"`
+	Duration    types.DurationWithUnit `bson:"duration" json:"duration"`
+	Comment     string                 `bson:"comment" json:"comment"`
 	// DisableDuringPeriods is an option that allows to disable the rule
 	// when entity is in listed periods due pbehavior schedule.
 	DisableDuringPeriods []string      `bson:"disable_during_periods" json:"disable_during_periods"`
 	Created              types.CpsTime `bson:"created,omitempty" json:"created,omitempty"`
 	Updated              types.CpsTime `bson:"updated,omitempty" json:"updated,omitempty"`
 	// Only for Alarm rules
-	OldAlarmPatterns oldpattern.AlarmPatternList `bson:"alarm_patterns,omitempty" json:"alarm_patterns,omitempty"`
-	AlarmCondition   string                      `bson:"alarm_condition,omitempty" json:"alarm_condition,omitempty"`
-	Operation        *Operation                  `bson:"operation,omitempty" json:"operation,omitempty"`
+	AlarmCondition string     `bson:"alarm_condition,omitempty" json:"alarm_condition,omitempty"`
+	Operation      *Operation `bson:"operation,omitempty" json:"operation,omitempty"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
 	savedpattern.AlarmPatternFields  `bson:",inline"`
@@ -77,7 +74,7 @@ func (r *Rule) Matches(alarmWithEntity types.AlarmWithEntity, now types.CpsTime)
 	alarm := alarmWithEntity.Alarm
 	entity := alarmWithEntity.Entity
 
-	matched, err := pattern.Match(alarmWithEntity.Entity, alarmWithEntity.Alarm, r.EntityPattern, r.AlarmPattern, r.OldEntityPatterns, r.OldAlarmPatterns)
+	matched, err := pattern.Match(alarmWithEntity.Entity, alarmWithEntity.Alarm, r.EntityPattern, r.AlarmPattern)
 	if err != nil {
 		return false, err
 	}

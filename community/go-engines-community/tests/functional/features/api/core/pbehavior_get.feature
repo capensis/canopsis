@@ -119,19 +119,23 @@ Feature: get a PBehavior
             "display_name": "root John Doe admin@canopsis.net"
           },
           "comments": [],
-          "color": "",
+          "color": "#FFFFFF",
           "created": 1592215337,
           "updated": 1592215337,
           "enabled": true,
           "exceptions": [],
           "exdates": [],
-          "old_mongo_query": {
-            "$and": [
+          "entity_pattern": [
+            [
               {
-                "name": "test filter"
+                "field": "_id",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-pbehavior-to-get-by-name-2-pattern"
+                }
               }
             ]
-          },
+          ],
           "name": "test-pbehavior-to-get-by-name-2-name",
           "reason": {
             "_id": "test-reason-to-pbh-edit",
@@ -150,53 +154,7 @@ Feature: get a PBehavior
             "type": "pause"
           },
           "last_alarm_date": null,
-          "origin": "",
-          "editable": true
-        },
-        {
-          "_id": "test-pbehavior-to-get-by-name-3",
-          "author": {
-            "_id": "root",
-            "name": "root",
-            "display_name": "root John Doe admin@canopsis.net"
-          },
-          "comments": [],
-          "color": "#FFFFFF",
-          "created": 1592215337,
-          "updated": 1592215337,
-          "enabled": true,
-          "exceptions": [],
-          "exdates": [],
-          "entity_pattern": [
-            [
-              {
-                "field": "_id",
-                "cond": {
-                  "type": "eq",
-                  "value": "test-pbehavior-to-get-by-name-3-pattern"
-                }
-              }
-            ]
-          ],
-          "name": "test-pbehavior-to-get-by-name-3-name",
-          "reason": {
-            "_id": "test-reason-to-pbh-edit",
-            "name": "test-reason-to-pbh-edit-name",
-            "description": "test-reason-to-pbh-edit-description"
-          },
-          "rrule": "",
-          "tstart": 1591172881,
-          "tstop": null,
-          "type": {
-            "_id": "test-type-to-pbh-edit-2",
-            "description": "Pbh edit 2 State type",
-            "icon_name": "test-to-pbh-edit-2-icon",
-            "name": "Pbh edit 2 State",
-            "priority": 12,
-            "type": "pause"
-          },
-          "last_alarm_date": null,
-          "origin": "test-pbehavior-to-get-by-name-3-origin",
+          "origin": "test-pbehavior-to-get-by-name-2-origin",
           "editable": false
         }
       ],
@@ -204,7 +162,7 @@ Feature: get a PBehavior
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 3
+        "total_count": 2
       }
     }
     """
@@ -323,9 +281,6 @@ Feature: get a PBehavior
           "_id": "test-pbehavior-to-get-by-name-2"
         },
         {
-          "_id": "test-pbehavior-to-get-by-name-3"
-        },
-        {
           "_id": "test-pbehavior-to-get-by-name-1"
         }
       ],
@@ -333,7 +288,7 @@ Feature: get a PBehavior
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 3
+        "total_count": 2
       }
     }
     """

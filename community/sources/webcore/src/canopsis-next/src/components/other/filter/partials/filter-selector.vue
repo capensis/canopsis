@@ -71,32 +71,13 @@
         <v-list-item-content>
           <v-list-item-title class="v-list-badge__tile__title">
             <span>{{ item.title }}</span>
-            <v-badge
-              :value="isOldPattern(item)"
-              color="error"
-              overlap
+            <v-icon
+              class="ml-2"
+              :color="attrs.value ? parent.color : ''"
+              small
             >
-              <template #badge="">
-                <v-tooltip top>
-                  <template #activator="{ on: badgeTooltipOn }">
-                    <v-icon
-                      v-on="badgeTooltipOn"
-                      color="white"
-                    >
-                      priority_high
-                    </v-icon>
-                  </template>
-                  <span>{{ $t('pattern.oldPatternTooltip') }}</span>
-                </v-tooltip>
-              </template>
-              <v-icon
-                class="ml-2"
-                :color="attrs.value ? parent.color : ''"
-                small
-              >
-                {{ getItemIcon(item) }}
-              </v-icon>
-            </v-badge>
+              {{ getItemIcon(item) }}
+            </v-icon>
           </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
@@ -106,8 +87,6 @@
 
 <script>
 import { isArray } from 'lodash';
-
-import { isOldPattern } from '@/helpers/entities/pattern/form';
 
 import { formArrayMixin } from '@/mixins/form';
 
@@ -220,11 +199,7 @@ export default {
     },
 
     getItemIcon(item) {
-      return item.is_private ? 'person' : 'lock';
-    },
-
-    isOldPattern(filter) {
-      return isOldPattern(filter);
+      return item.is_user_preference ? 'person' : 'lock';
     },
 
     isFilterItemDisabled(filter) {

@@ -70,7 +70,7 @@ export default {
       const { retry_delay: retryDelay, retry_count: retryCount } = this.value;
 
       return this.required
-        || isNumber(retryCount)
+        || (isNumber(retryCount) && retryCount > 0)
         || isNumber(retryDelay?.value)
         || Boolean(retryDelay?.unit);
     },

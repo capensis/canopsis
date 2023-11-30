@@ -20,7 +20,6 @@
             class="group-checkbox mt-0 pt-0"
             :input-value="selected.groups"
             :value="group._id"
-            :label="group.title"
             color="primary"
             @change="changeGroup(group, $event)"
           />
@@ -42,7 +41,7 @@
               color="primary"
             >
               <template #label>
-                <span class="text-truncate">
+                <span class="text-truncate fill-width">
                   {{ view.title }}
                   <span
                     class="ml-1"

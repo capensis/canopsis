@@ -37,8 +37,6 @@
       <v-layout>
         <c-action-btn
           v-if="updatable"
-          :badge-value="isOldPattern(item)"
-          :badge-tooltip="$t('pattern.oldPatternTooltip')"
           type="edit"
           @click="$emit('edit', item)"
         />
@@ -61,10 +59,6 @@
 </template>
 
 <script>
-import { OLD_PATTERNS_FIELDS } from '@/constants';
-
-import { isOldPattern } from '@/helpers/entities/pattern/form';
-
 import IdleRulesListExpandItem from './partials/idle-rules-list-expand-item.vue';
 
 export default {
@@ -115,11 +109,6 @@ export default {
           sortable: false,
         },
       ];
-    },
-  },
-  methods: {
-    isOldPattern(item) {
-      return isOldPattern(item, [OLD_PATTERNS_FIELDS.entity, OLD_PATTERNS_FIELDS.alarm]);
     },
   },
 };

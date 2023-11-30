@@ -285,6 +285,7 @@ export default {
   seeEntities: 'See entities',
   new: 'New',
   regexp: 'Regexp',
+  archive: 'Archive',
   variableTypes: {
     string: 'String',
     number: 'Number',

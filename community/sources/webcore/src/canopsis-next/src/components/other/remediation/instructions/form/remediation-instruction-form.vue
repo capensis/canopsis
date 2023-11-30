@@ -73,6 +73,7 @@
       v-if="!disabledCommon"
       v-field="form.approval"
       :disabled="disabled"
+      :required="requiredApprove"
     />
   </div>
 </template>
@@ -111,6 +112,10 @@ export default {
       default: false,
     },
     isNew: {
+      type: Boolean,
+      default: false,
+    },
+    requiredApprove: {
       type: Boolean,
       default: false,
     },

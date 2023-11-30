@@ -144,6 +144,14 @@ Feature: run a job
       "error": "job is already running for operation"
     }
     """
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "trigger",
+      "resource": "test-resource-to-job-execution-start-fail-1",
+      "source_type": "resource"
+    }
+    """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/next-step
     Then the response code should be 200
 

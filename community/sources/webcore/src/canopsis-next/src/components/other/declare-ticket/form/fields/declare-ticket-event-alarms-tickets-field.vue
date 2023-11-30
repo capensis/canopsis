@@ -28,6 +28,7 @@
         </td>
         <td v-if="!hideTickets">
           <declare-ticket-event-tickets-field
+            :alarm-tickets="item.v.tickets"
             :value="activeTicketsByAlarms[item._id]"
             :tickets="ticketsByAlarms[item._id]"
             @input="updateTickets(item._id, $event)"

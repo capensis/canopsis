@@ -1,8 +1,8 @@
 <template>
   <c-select-field
     class="c-lazy-search-field mt-4"
-    v-validate="rules"
     v-field="value"
+    v-validate="rules"
     :search-input="search"
     :label="label"
     :loading="loading"
@@ -11,9 +11,9 @@
     :item-text="getItemText"
     :item-value="itemValue"
     :item-disabled="itemDisabled"
-    :multiple="isMultiply"
-    :deletable-chips="isMultiply"
-    :small-chips="isMultiply"
+    :multiple="isMultiple"
+    :deletable-chips="isMultiple"
+    :small-chips="isMultiple"
     :error-messages="errors.collect(name)"
     :disabled="disabled"
     :menu-props="{ contentClass: 'c-lazy-search-field__list', eager: true }"
@@ -66,7 +66,7 @@
       >
         <v-chip
           class="c-lazy-search-field__chip"
-          v-if="isMultiply"
+          v-if="isMultiple"
           small
           close
           @input="removeItemFromArray(index)"
@@ -181,7 +181,7 @@ export default {
       };
     },
 
-    isMultiply() {
+    isMultiple() {
       return isArray(this.value);
     },
   },

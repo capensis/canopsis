@@ -80,7 +80,9 @@ export const widgetColumnToForm = ({
   const infosColumn = getInfosWidgetColumn(value) ?? '';
 
   if (infosColumn === ALARM_FIELDS.infos) {
-    const [rule, dictionary] = value.replace(`${infosColumn}.`, '').split('.');
+    const [rule, dictionary] = value === ALARM_FIELDS.infos
+      ? ['', '']
+      : value.replace(`${infosColumn}.`, '').split('.');
 
     result.column = infosColumn;
     result.rule = rule;
@@ -125,7 +127,7 @@ export const formToWidgetColumns = (form = []) => (
     };
 
     if (column === ALARM_FIELDS.infos) {
-      result.value = `${column}.${rule}.${dictionary}`;
+      result.value = [column, rule, dictionary].filter(Boolean).join('.');
     } else if (getInfosWidgetColumn(column)) {
       result.value = `${column}.${dictionary}.${field}`;
     } else if (isLinksWidgetColumn(column)) {

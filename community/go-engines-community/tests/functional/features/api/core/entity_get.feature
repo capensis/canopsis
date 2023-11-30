@@ -16,7 +16,6 @@ Feature: Get entities
             "name": "test-category-to-entity-get-2-name"
           },
           "enabled": true,
-          "old_entity_patterns": null,
           "connector": "test-connector-to-entity-get/test-connector-name-to-entity-get",
           "impact_level": 2,
           "infos": {},
@@ -36,7 +35,6 @@ Feature: Get entities
             "name": "test-category-to-entity-get-1-name"
           },
           "enabled": true,
-          "old_entity_patterns": null,
           "impact_level": 1,
           "infos": {},
           "name": "test-connector-name-to-entity-get",
@@ -56,7 +54,6 @@ Feature: Get entities
           },
           "connector": "test-connector-to-entity-get/test-connector-name-to-entity-get",
           "enabled": true,
-          "old_entity_patterns": null,
           "component": "test-component-to-entity-get",
           "impact_level": 3,
           "infos": {
@@ -114,7 +111,6 @@ Feature: Get entities
           "category": null,
           "connector": "test-connector-to-entity-get/test-connector-name-to-entity-get",
           "enabled": true,
-          "old_entity_patterns": null,
           "component": "test-component-to-entity-get",
           "impact_level": 1,
           "infos": {},
@@ -259,27 +255,6 @@ Feature: Get entities
   Scenario: given get filter request should return entities which are matched to the filter
     When I am admin
     When I do GET /api/v4/entities?filters[]=test-widgetfilter-to-entity-get-1
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "data": [
-        {
-          "_id": "test-resource-to-entity-get-1/test-component-to-entity-get"
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
-      }
-    }
-    """
-
-  Scenario: given get filter request with old mongo query should return entities which are matched to the filter
-    When I am admin
-    When I do GET /api/v4/entities?filters[]=test-widgetfilter-to-entity-get-2
     Then the response code should be 200
     Then the response body should contain:
     """json

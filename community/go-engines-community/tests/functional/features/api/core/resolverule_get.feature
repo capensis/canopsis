@@ -34,8 +34,6 @@ Feature: Get a resolve rule
               }
             ]
           ],
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "author": {
             "_id": "root",
             "name": "root",
@@ -75,8 +73,6 @@ Feature: Get a resolve rule
               }
             ]
           ],
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "author": {
             "_id": "root",
             "name": "root",
@@ -132,8 +128,6 @@ Feature: Get a resolve rule
           }
         ]
       ],
-      "old_alarm_patterns": null,
-      "old_entity_patterns": null,
       "author": {
         "_id": "root",
         "name": "root",

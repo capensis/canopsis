@@ -1,5 +1,6 @@
 <template>
   <c-compiled-template
+    class="alarm-column-value"
     v-if="column.template"
     :template="column.template"
     :context="templateContext"
