@@ -5,7 +5,7 @@ Feature: Get user preferences
     When I am test-role-to-user-preferences-edit
     When I do GET /api/v4/user-preferences/test-widget-to-user-preferences-get-1
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "widget": "test-widget-to-user-preferences-get-1",
@@ -21,7 +21,7 @@ Feature: Get user preferences
         {
           "_id": "test-widgetfilter-to-user-preferences-get-1",
           "title": "test-widgetfilter-to-user-preferences-get-1-title",
-          "is_private": true,
+          "is_user_preference": true,
           "author": {
             "_id": "test-user-to-user-preferences-edit",
             "name": "test-user-to-user-preferences-edit",
@@ -44,7 +44,7 @@ Feature: Get user preferences
         {
           "_id": "test-widgetfilter-to-user-preferences-get-2",
           "title": "test-widgetfilter-to-user-preferences-get-2-title",
-          "is_private": true,
+          "is_user_preference": true,
           "author": {
             "_id": "test-user-to-user-preferences-edit",
             "name": "test-user-to-user-preferences-edit",

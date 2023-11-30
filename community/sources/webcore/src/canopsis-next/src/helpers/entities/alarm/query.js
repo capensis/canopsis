@@ -12,7 +12,7 @@ import { PAGINATION_LIMIT } from '@/config';
 import { isResolvedAlarm } from '@/helpers/entities/alarm/form';
 import { convertWidgetChartsToPerfDataQuery } from '@/helpers/entities/metric/query';
 import { convertSortToRequest } from '@/helpers/entities/shared/query';
-import { getTemplateVariables } from '@/helpers/handlebars';
+import { getTemplateVariables } from '@/helpers/handlebars/variables';
 
 /**
  *  This function converts widget.parameters.opened to query Object
@@ -179,6 +179,7 @@ export const prepareAlarmDetailsQuery = (alarm, widget, search) => {
     with_instructions: true,
     with_declare_tickets: true,
     with_links: true,
+    with_dependencies: true,
     opened: isResolvedAlarm(alarm) ? false : widget.parameters.opened,
     perf_data: convertWidgetChartsToPerfDataQuery(charts),
     steps: {

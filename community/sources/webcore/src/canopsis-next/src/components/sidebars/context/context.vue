@@ -74,6 +74,7 @@
         :type="$constants.ENTITIES_TYPES.entity"
         :templates="entityColumnsWidgetTemplates"
         :templates-pending="widgetTemplatesPending"
+        without-infos-attributes
       />
     </widget-settings-group>
     <v-divider />

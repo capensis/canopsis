@@ -110,7 +110,7 @@ export default {
                 ...newFilter,
 
                 widget: this.widgetId,
-                is_private: true,
+                is_user_preference: true,
               },
             });
 

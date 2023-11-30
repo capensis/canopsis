@@ -9,6 +9,7 @@
           v-model="form"
           :disabled="disabled"
           :is-new="isNew"
+          :required-approve="requiredInstructionApprove"
         />
       </template>
       <template #actions="">
@@ -33,6 +34,8 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
+
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import {
@@ -49,6 +52,8 @@ import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 import RemediationInstructionForm from '@/components/other/remediation/instructions/form/remediation-instruction-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
+
+const { mapGetters } = createNamespacedHelpers('info');
 
 export default {
   name: MODALS.createRemediationInstruction,
@@ -72,6 +77,10 @@ export default {
     };
   },
   computed: {
+    ...mapGetters({
+      requiredInstructionApprove: 'requiredInstructionApprove',
+    }),
+
     title() {
       return this.config.title || this.$t('modals.createRemediationInstruction.create.title');
     },
@@ -96,7 +105,7 @@ export default {
 
           this.$modals.hide();
         } catch (err) {
-          this.setFormErrors(remediationInstructionErrorsToForm(err));
+          this.setFormErrors(remediationInstructionErrorsToForm(err, this.form));
         }
       }
     },

@@ -132,7 +132,6 @@
             :widget="widget"
             :headers="headers"
             :parent-alarm="parentAlarm"
-            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(props.index)"
             :refresh-alarms-list="refreshAlarmsList"
             :selecting="selecting"
             :selected-tag="selectedTag"
@@ -147,14 +146,13 @@
             @input="props.select"
           />
         </template>
-        <template #expanded-item="{ item, index }">
+        <template #expanded-item="{ item }">
           <alarms-expand-panel
             :alarm="item"
             :parent-alarm-id="parentAlarmId"
             :widget="widget"
             :search="search"
             :hide-children="hideChildren"
-            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(index)"
             @select:tag="$emit('select:tag', $event)"
           />
         </template>
@@ -241,10 +239,6 @@ export default {
     columns: {
       type: Array,
       default: () => [],
-    },
-    isTourEnabled: {
-      type: Boolean,
-      default: false,
     },
     loading: {
       type: Boolean,
@@ -569,16 +563,20 @@ export default {
         this.calculateRowsPositions();
       }
     },
-
-    checkIsTourEnabledForAlarmByIndex(index) {
-      return this.isTourEnabled && index === 0;
-    },
   },
 };
 </script>
 
 <style lang="scss">
 .alarms-list-table {
+  .theme--light & {
+    --alarms-list-table-border-color: rgba(0, 0, 0, 0.12);
+  }
+
+  .theme--dark & {
+    --alarms-list-table-border-color: rgba(255, 255, 255, 0.12);
+  }
+
   &__top-pagination {
     position: relative;
     min-height: 48px;
@@ -735,8 +733,17 @@ export default {
   }
 
   &--truncated {
+    .color-indicator {
+      max-width: 100%;
+    }
+
+    .alarms-column-cell__layout .alarm-column-cell__text {
+      display: grid;
+    }
+
     .alarm-list-row__cell {
-      .alarm-column-cell__text > span {
+      .alarm-column-cell__text > span,
+      .alarm-column-value {
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
@@ -747,6 +754,20 @@ export default {
 
   tbody {
     position: relative;
+
+    tr:not(.v-datatable__expand-row):not(:first-child) {
+      border-top: unset !important;
+
+      td:first-child:after {
+        content: ' ';
+        position: absolute;
+        background: var(--alarms-list-table-border-color);
+        height: 1px;
+        right: 0;
+        top: 0;
+        left: 0;
+      }
+    }
   }
 
   thead {
@@ -755,10 +776,27 @@ export default {
     transition-property: opacity, background-color;
     z-index: 1;
 
+    tr:first-child {
+      border-bottom: unset !important;
+
+      &:after {
+        content: ' ';
+        position: absolute;
+        background: var(--alarms-list-table-border-color);
+        height: 1px;
+        right: 0;
+        bottom: 0;
+        left: 0;
+      }
+    }
+
     &.head-shadow {
       tr:first-child {
-        border-bottom: none !important;
         box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.12) !important;
+
+        &:after {
+          content: unset;
+        }
       }
     }
 

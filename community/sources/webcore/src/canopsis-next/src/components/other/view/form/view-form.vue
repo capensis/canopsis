@@ -1,5 +1,9 @@
 <template>
   <v-layout column>
+    <view-duplicate-private-field
+      v-if="duplicatePrivate"
+      v-field="form.is_private"
+    />
     <c-name-field
       v-field="form.title"
       :label="$t('common.title')"
@@ -16,45 +20,24 @@
       v-field="form.periodic_refresh"
       :label="$t('modals.view.fields.periodicRefresh')"
     />
-    <v-combobox
-      v-field="form.tags"
-      :label="$t('modals.view.fields.groupTags')"
-      append-icon=""
-      tags
-      clearable
-      multiple
-      chips
-      deletable-chips
-    />
-    <v-combobox
+    <view-tags-field v-field="form.tags" />
+    <view-group-field
       v-field="form.group"
-      v-validate="'required'"
-      :items="groups"
-      :label="$t('modals.view.fields.groupIds')"
-      :error-messages="errors.collect('group')"
-      item-text="title"
-      item-value="_id"
-      name="group"
-      return-object
-      blur-on-create
-    >
-      <template #no-data="">
-        <v-list-item>
-          <v-list-item-content>
-            <v-list-item-title v-html="$t('modals.view.noData')" />
-          </v-list-item-content>
-        </v-list-item>
-      </template>
-    </v-combobox>
+      :groups="groups"
+    />
   </v-layout>
 </template>
 
 <script>
 import PeriodicRefreshField from '@/components/forms/fields/periodic-refresh-field.vue';
 
+import ViewTagsField from './fields/view-tags-field.vue';
+import ViewGroupField from './fields/view-group-field.vue';
+import ViewDuplicatePrivateField from './fields/view-duplicate-private-field.vue';
+
 export default {
   inject: ['$validator'],
-  components: { PeriodicRefreshField },
+  components: { ViewGroupField, ViewTagsField, ViewDuplicatePrivateField, PeriodicRefreshField },
   model: {
     prop: 'form',
     event: 'input',
@@ -67,6 +50,10 @@ export default {
     groups: {
       type: Array,
       default: () => [],
+    },
+    duplicatePrivate: {
+      type: Boolean,
+      default: false,
     },
   },
 };

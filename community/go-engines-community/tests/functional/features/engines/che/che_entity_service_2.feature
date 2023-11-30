@@ -35,8 +35,8 @@ Feature: create service entity
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -132,8 +132,8 @@ Feature: create service entity
     """json
     {
       "event_type": "recomputeentityservice",
-      "connector": "service",
-      "connector_name": "service",
+      "connector": "api",
+      "connector_name": "api",
       "component": "{{ .serviceID }}",
       "source_type": "service"
     }
@@ -172,97 +172,6 @@ Feature: create service entity
     """json
     [
       "test-component-che-service-second-1"
-    ]
-    """
-
-  @concurrent
-  Scenario: given service with old pattern should update service
-    Given I am admin
-    When I do PUT /api/v4/entityservices/test-entityservice-che-service-second-2:
-    """json
-    {
-      "name": "test-entityservice-che-service-second-2-name",
-      "output_template": "test-entityservice-che-service-second-2-output",
-      "impact_level": 1,
-      "enabled": true,
-      "sli_avail_state": 0
-    }
-    """
-    Then the response code should be 200
-    Then I wait the end of events processing which contain:
-    """json
-    [
-      {
-        "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
-        "component": "test-entityservice-che-service-second-2",
-        "source_type": "service"
-      },
-      {
-        "event_type": "check",
-        "connector": "service",
-        "connector_name": "service",
-        "component": "test-entityservice-che-service-second-2"
-      }
-    ]
-    """
-    When I send an event:
-    """json
-    {
-      "connector": "test-connector-che-service-second-2",
-      "connector_name": "test-connector-name-che-service-second-2",
-      "source_type": "resource",
-      "event_type": "check",
-      "component": "test-component-che-service-second-2",
-      "resource": "test-resource-che-service-second-2",
-      "state": 2,
-      "output": "test-output-che-service-second-2"
-    }
-    """
-    Then I wait the end of events processing which contain:
-    """json
-    [
-      {
-        "event_type": "activate",
-        "connector": "test-connector-che-service-second-2",
-        "connector_name": "test-connector-name-che-service-second-2",
-        "component": "test-component-che-service-second-2",
-        "resource": "test-resource-che-service-second-2",
-        "source_type": "resource"
-      },
-      {
-        "event_type": "activate",
-        "connector": "service",
-        "connector_name": "service",
-        "component": "test-entityservice-che-service-second-2"
-      }
-    ]
-    """
-    When I do GET /api/v4/entities/context-graph?_id=test-entityservice-che-service-second-2
-    Then the response code should be 200
-    Then the response body should be:
-    """json
-    {
-      "depends": [
-        "test-resource-che-service-second-2/test-component-che-service-second-2"
-      ],
-      "impact": []
-    }
-    """
-    When I do GET /api/v4/entities/context-graph?_id=test-resource-che-service-second-2/test-component-che-service-second-2
-    Then the response code should be 200
-    Then the response array key "depends" should contain:
-    """json
-    [
-      "test-connector-che-service-second-2/test-connector-name-che-service-second-2"
-    ]
-    """
-    Then the response array key "impact" should contain:
-    """json
-    [
-      "test-component-che-service-second-2",
-      "test-entityservice-che-service-second-2"
     ]
     """
 
@@ -308,8 +217,8 @@ Feature: create service entity
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -427,8 +336,8 @@ Feature: create service entity
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -524,8 +433,8 @@ Feature: create service entity
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -576,8 +485,8 @@ Feature: create service entity
     """json
     {
       "event_type": "entitytoggled",
-      "connector": "test-connector-che-service-second-4",
-      "connector_name": "test-connector-name-che-service-second-4",
+      "connector": "api",
+      "connector_name": "api",
       "component": "test-component-che-service-second-4",
       "resource": "test-resource-che-service-second-4",
       "source_type": "resource"
@@ -618,8 +527,8 @@ Feature: create service entity
     """json
     {
       "event_type": "entitytoggled",
-      "connector": "test-connector-che-service-second-4",
-      "connector_name": "test-connector-name-che-service-second-4",
+      "connector": "api",
+      "connector_name": "api",
       "component": "test-component-che-service-second-4",
       "resource": "test-resource-che-service-second-4",
       "source_type": "resource"
@@ -712,8 +621,8 @@ Feature: create service entity
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -781,16 +690,16 @@ Feature: create service entity
     [
       {
         "event_type": "entitytoggled",
-        "connector": "test-connector-che-service-second-5",
-        "connector_name": "test-connector-name-che-service-second-5",
+        "connector": "api",
+        "connector_name": "api",
         "component": "test-component-che-service-second-5",
         "resource": "test-resource-che-service-second-5-1",
         "source_type": "resource"
       },
       {
         "event_type": "entitytoggled",
-        "connector": "test-connector-che-service-second-5",
-        "connector_name": "test-connector-name-che-service-second-5",
+        "connector": "api",
+        "connector_name": "api",
         "component": "test-component-che-service-second-5",
         "resource": "test-resource-che-service-second-5-2",
         "source_type": "resource"
@@ -849,16 +758,16 @@ Feature: create service entity
     [
       {
         "event_type": "entitytoggled",
-        "connector": "test-connector-che-service-second-5",
-        "connector_name": "test-connector-name-che-service-second-5",
+        "connector": "api",
+        "connector_name": "api",
         "component": "test-component-che-service-second-5",
         "resource": "test-resource-che-service-second-5-1",
         "source_type": "resource"
       },
       {
         "event_type": "entitytoggled",
-        "connector": "test-connector-che-service-second-5",
-        "connector_name": "test-connector-name-che-service-second-5",
+        "connector": "api",
+        "connector_name": "api",
         "component": "test-component-che-service-second-5",
         "resource": "test-resource-che-service-second-5-2",
         "source_type": "resource"

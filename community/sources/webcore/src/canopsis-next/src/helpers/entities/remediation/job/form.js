@@ -1,9 +1,9 @@
-import { isNumber } from 'lodash';
+import { omit } from 'lodash';
 
 import { REMEDIATION_JOB_EXECUTION_STATUSES } from '@/constants';
 
 import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
-import { durationToForm } from '@/helpers/date/duration';
+import { durationWithEnabledToForm } from '@/helpers/date/duration';
 
 /**
  * @typedef {Object} RemediationJob
@@ -12,10 +12,9 @@ import { durationToForm } from '@/helpers/date/duration';
  * @property {string} job_id
  * @property {string} name
  * @property {boolean} multiple_executions
+ * @property {Duration} [job_wait_interval]
  * @property {string} [payload]
  * @property {Object} [query]
- * @property {number} [retry_amount]
- * @property {Duration} [retry_interval]
  */
 
 /**
@@ -96,9 +95,8 @@ export const remediationJobToForm = (remediationJob = {}) => ({
   payload: remediationJob.payload ?? '',
   multiple_executions: remediationJob.multiple_executions ?? false,
   query: remediationJob.query ? objectToTextPairs(remediationJob.query) : [],
-  retry_amount: remediationJob.retry_amount,
-  retry_interval: remediationJob.retry_interval
-    ? durationToForm(remediationJob.retry_interval)
+  job_wait_interval: remediationJob.job_wait_interval
+    ? durationWithEnabledToForm({ enabled: true, ...remediationJob.job_wait_interval })
     : { value: undefined, unit: undefined },
 });
 
@@ -110,7 +108,7 @@ export const remediationJobToForm = (remediationJob = {}) => ({
  * @return {RemediationJob}
  */
 export const formToRemediationJob = (form, configType) => {
-  const { retry_amount: retryAmount, retry_interval: retryInterval, config, payload, query, ...remediationJob } = form;
+  const { job_wait_interval: jobWaitInterval, config, payload, query, ...remediationJob } = form;
 
   if (configType?.with_body) {
     remediationJob.payload = payload;
@@ -120,15 +118,13 @@ export const formToRemediationJob = (form, configType) => {
     remediationJob.query = textPairsToObject(query);
   }
 
+  if (jobWaitInterval?.enabled) {
+    remediationJob.job_wait_interval = omit(jobWaitInterval, ['enabled']);
+  }
+
   return {
     ...remediationJob,
 
-    retry_amount: isNumber(retryAmount)
-      ? retryAmount
-      : undefined,
-    retry_interval: isNumber(retryInterval?.value)
-      ? retryInterval
-      : undefined,
     config: config._id,
   };
 };

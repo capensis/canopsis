@@ -5,7 +5,6 @@
       :history="history.alarm"
     />
     <storage-settings-entity-disabled-form
-      v-field="form.entity_disabled"
       :history="history.entity_disabled"
       @archive="$emit('archive:disabled')"
     />

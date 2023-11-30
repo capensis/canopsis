@@ -9,9 +9,6 @@
 </template>
 
 <script>
-import { TOURS } from '@/constants';
-
-import { getStepClass } from '@/helpers/tour';
 import { prepareAlarmDetailsQuery, convertAlarmDetailsQueryToRequest } from '@/helpers/entities/alarm/query';
 
 import { widgetExpandPanelAlarmDetails } from '@/mixins/widget/expand-panel/alarm/details';
@@ -36,10 +33,6 @@ export default {
       type: Object,
       required: true,
     },
-    isTourEnabled: {
-      type: Boolean,
-      default: false,
-    },
     small: {
       type: Boolean,
       default: false,
@@ -52,7 +45,6 @@ export default {
   computed: {
     expandButtonClass() {
       return {
-        [getStepClass(TOURS.alarmsExpandPanel, 1)]: this.isTourEnabled,
         'alarms-expand-panel-btn--small': this.small,
       };
     },

@@ -658,8 +658,8 @@ Feature: modify event on event filter
     """json
     {
       "event_type": "entitytoggled",
-      "connector": "test-connector-che-event-filters-6",
-      "connector_name": "test-connector-name-che-event-filters-6",
+      "connector": "api",
+      "connector_name": "api",
       "component": "test-component-che-event-filters-6",
       "resource": "test-resource-che-event-filters-6",
       "source_type": "resource"
@@ -744,7 +744,6 @@ Feature: modify event on event filter
           "component": "test-component-che-event-filters-6",
           "connector": "test-connector-che-event-filters-6/test-connector-name-che-event-filters-6",
           "enabled": false,
-          "old_entity_patterns": null,
           "impact_level": 1,
           "impact_state": 0,
           "last_event_date": {{ (index .lastResponse.data 0).last_event_date }},

@@ -2,7 +2,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 const { mapActions, mapGetters } = createNamespacedHelpers('navigation');
 
-export default {
+export const layoutNavigationEditingModeMixin = {
   computed: {
     ...mapGetters({
       isNavigationEditingMode: 'isEditingMode',

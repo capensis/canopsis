@@ -32,17 +32,6 @@ kpi_filter:
     name: test-kpi-filter-to-get-1-name
     updated: 1619083733
 
-  filter_to_get_2:
-    <<: *filter
-    _id: test-kpi-filter-to-get-2
-    author: root
-    created: 1619083733
-    entity_pattern:
-    old_entity_patterns:
-      - name: test-kpi-filter-to-get-2-resource
-    name: test-kpi-filter-to-get-2-name
-    updated: 1619083733
-
   filter_to_delete:
     <<: *filter
     _id: test-kpi-filter-to-delete
@@ -51,13 +40,6 @@ kpi_filter:
     <<: *filter
     _id: test-kpi-filter-to-update-1
     created: 1619083733
-
-  filter_to_update_2:
-    <<: *filter
-    _id: test-kpi-filter-to-update-2
-    created: 1619083733
-    old_entity_patterns:
-      - name: test-kpi-filter-to-update-2-resource
 
   filter_to_check_unique:
     <<: *filter
@@ -84,14 +66,6 @@ kpi_filter:
           cond:
             type: eq
             value: test-entity-to-alarm-metrics-get-2-infos-val
-
-  filter_to_alarm_metrics_get_by_old_pattern:
-    <<: *filter
-    _id: test-kpi-filter-to-alarm-metrics-get-by-old-pattern
-    entity_pattern:
-    old_entity_patterns:
-      - _id: test-entity-to-alarm-metrics-get-1
-      - _id: test-entity-to-alarm-metrics-get-2
 
   filter_to_all_alarm_metrics_get:
     <<: *filter

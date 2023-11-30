@@ -11,6 +11,7 @@ export default {
   showHeaderOnKioskMode: 'Show header on kiosk mode',
   maxMatchedItems: 'Max matched items',
   checkCountRequestTimeout: 'Check max matched items request timeout (seconds)',
+  requiredInstructionApprove: 'Required instruction approvement',
   tooltips: {
     maxMatchedItems: 'it need to warn user when number of items that match patterns is above this value',
     checkCountRequestTimeout: 'it need to define request timeout value for max matched items checking',

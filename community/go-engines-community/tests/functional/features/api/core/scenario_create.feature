@@ -178,8 +178,6 @@ Feature: Create a scenario
       ],
       "actions": [
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "alarm_pattern": [
             [
               {
@@ -216,8 +214,6 @@ Feature: Create a scenario
           "comment": "test comment"
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "alarm_pattern": [
             [
               {
@@ -273,8 +269,6 @@ Feature: Create a scenario
           "emit_trigger": false
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "alarm_pattern": [
             [
               {
@@ -345,8 +339,6 @@ Feature: Create a scenario
       ],
       "actions": [
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "alarm_pattern": [
             [
               {
@@ -383,8 +375,6 @@ Feature: Create a scenario
           "comment": "test comment"
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "alarm_pattern": [
             [
               {
@@ -440,8 +430,6 @@ Feature: Create a scenario
           "emit_trigger": false
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "alarm_pattern": [
             [
               {
@@ -570,8 +558,6 @@ Feature: Create a scenario
       },
       "actions": [
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "alarm_pattern": [
             [
               {
@@ -688,42 +674,6 @@ Feature: Create a scenario
           },
           "drop_scenario_if_not_matched": false,
           "emit_trigger": false
-        },
-        {
-          "old_entity_patterns": [
-            {
-              "name": "test-scenario-to-update-3-name-1"
-            }
-          ],
-          "type": "snooze",
-          "parameters": {
-            "output": "test snooze",
-            "duration": {
-              "value": 3,
-              "unit": "s"
-            }
-          },
-          "drop_scenario_if_not_matched": false,
-          "emit_trigger": false
-        },
-        {
-          "old_alarm_patterns": [
-            {
-              "v": {
-                "component": "test-scenario-to-update-3-name-1"
-              }
-            }
-          ],
-          "type": "snooze",
-          "parameters": {
-            "output": "test snooze",
-            "duration": {
-              "value": 3,
-              "unit": "s"
-            }
-          },
-          "drop_scenario_if_not_matched": false,
-          "emit_trigger": false
         }
       ]
     }
@@ -749,8 +699,6 @@ Feature: Create a scenario
       },
       "actions": [
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "alarm_pattern": [
             [
               {
@@ -787,8 +735,6 @@ Feature: Create a scenario
           "emit_trigger": false
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
           "corporate_alarm_pattern_title": "test-pattern-to-rule-edit-1-title",
           "alarm_pattern": [
@@ -825,8 +771,6 @@ Feature: Create a scenario
           "emit_trigger": false
         },
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
           "corporate_alarm_pattern_title": "test-pattern-to-rule-edit-1-title",
           "alarm_pattern": [
@@ -852,42 +796,6 @@ Feature: Create a scenario
                 }
               }
             ]
-          ],
-          "type": "snooze",
-          "parameters": {
-            "output": "test snooze",
-            "duration": {
-              "value": 3,
-              "unit": "s"
-            }
-          },
-          "drop_scenario_if_not_matched": false,
-          "emit_trigger": false
-        },
-        {
-          "old_entity_patterns": [
-            {
-              "name": "test-scenario-to-update-3-name-1"
-            }
-          ],
-          "type": "snooze",
-          "parameters": {
-            "output": "test snooze",
-            "duration": {
-              "value": 3,
-              "unit": "s"
-            }
-          },
-          "drop_scenario_if_not_matched": false,
-          "emit_trigger": false
-        },
-        {
-          "old_alarm_patterns": [
-            {
-              "v": {
-                "component": "test-scenario-to-update-3-name-1"
-              }
-            }
           ],
           "type": "snooze",
           "parameters": {
@@ -1635,8 +1543,6 @@ Feature: Create a scenario
       ],
       "actions": [
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "alarm_pattern": [
             [
               {
@@ -1684,8 +1590,6 @@ Feature: Create a scenario
       ],
       "actions": [
         {
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "alarm_pattern": [
             [
               {

@@ -16,6 +16,13 @@
         dark
       >
         <span>{{ group.title }}</span>
+        <v-icon
+          v-if="group.is_private"
+          color="white"
+          small
+        >
+          lock
+        </v-icon>
         <v-btn
           v-show="isNavigationEditingMode"
           depressed

@@ -9,6 +9,7 @@
   >
     <template #activator="{ on }">
       <v-layout
+        class="alarms-column-cell__layout"
         v-on="on"
         d-inline-flex
         align-center
@@ -134,11 +135,17 @@ export default {
 <style lang="scss">
 .alarms-column-cell {
   &__show-info-btn {
+    flex-shrink: 0 !important;
+
     &--small {
       width: 22px;
       max-width: 22px;
       height: 22px;
     }
+  }
+
+  &__layout {
+    max-width: 100%;
   }
 }
 </style>

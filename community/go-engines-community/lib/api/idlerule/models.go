@@ -4,7 +4,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
@@ -58,25 +57,23 @@ type OperationRequest struct {
 }
 
 type Rule struct {
-	ID                string                       `bson:"_id,omitempty" json:"_id"`
-	Name              string                       `bson:"name" json:"name"`
-	Description       string                       `bson:"description" json:"description"`
-	Author            *author.Author               `bson:"author" json:"author"`
-	Enabled           bool                         `bson:"enabled" json:"enabled"`
-	Type              string                       `bson:"type" json:"type"`
-	Priority          int64                        `bson:"priority" json:"priority"`
-	Duration          types.DurationWithUnit       `bson:"duration" json:"duration"`
-	Comment           string                       `bson:"comment" json:"comment"`
-	OldEntityPatterns oldpattern.EntityPatternList `bson:"old_entity_patterns,omitempty" json:"old_entity_patterns,omitempty"`
+	ID          string                 `bson:"_id,omitempty" json:"_id"`
+	Name        string                 `bson:"name" json:"name"`
+	Description string                 `bson:"description" json:"description"`
+	Author      *author.Author         `bson:"author" json:"author"`
+	Enabled     bool                   `bson:"enabled" json:"enabled"`
+	Type        string                 `bson:"type" json:"type"`
+	Priority    int64                  `bson:"priority" json:"priority"`
+	Duration    types.DurationWithUnit `bson:"duration" json:"duration"`
+	Comment     string                 `bson:"comment" json:"comment"`
 	// DisableDuringPeriods is an option that allows to disable the rule
 	// when entity is in listed periods due pbehavior schedule.
 	DisableDuringPeriods []string      `bson:"disable_during_periods" json:"disable_during_periods"`
 	Created              types.CpsTime `bson:"created" json:"created" swaggertype:"integer"`
 	Updated              types.CpsTime `bson:"updated" json:"updated" swaggertype:"integer"`
 	// Only for Alarm rules
-	OldAlarmPatterns oldpattern.AlarmPatternList `bson:"old_alarm_patterns,omitempty" json:"old_alarm_patterns,omitempty"`
-	AlarmCondition   string                      `bson:"alarm_condition,omitempty" json:"alarm_condition,omitempty"`
-	Operation        *Operation                  `bson:"operation,omitempty" json:"operation,omitempty"`
+	AlarmCondition string     `bson:"alarm_condition,omitempty" json:"alarm_condition,omitempty"`
+	Operation      *Operation `bson:"operation,omitempty" json:"operation,omitempty"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
 	savedpattern.AlarmPatternFields  `bson:",inline"`
