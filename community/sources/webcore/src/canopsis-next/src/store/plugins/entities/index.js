@@ -5,9 +5,6 @@ import {
   uniqWith,
   mergeWith,
   isEqual,
-  isObject,
-  difference,
-  isArray,
 } from 'lodash';
 import { normalize, denormalize } from 'normalizr';
 
@@ -18,63 +15,22 @@ import request from '@/services/request';
 
 import schemas from '@/store/schemas';
 
+import { mergeChangedProperties } from '@/helpers/collection';
+
 import { prepareEntitiesToDelete, cloneSchemaWithEmbedded } from './helpers';
 import cache from './cache';
 
 const entitiesModuleName = 'entities';
 
-const internalTypes = {
-  ENTITIES_UPDATE: 'ENTITIES_UPDATE',
-  ENTITIES_MERGE: 'ENTITIES_MERGE',
-  ENTITIES_REPLACE: 'ENTITIES_REPLACE',
-  ENTITIES_DELETE: 'ENTITIES_DELETE',
+export const ENTITIES_MUTATION_TYPES = {
+  update: 'ENTITIES_UPDATE',
+  smartUpdate: 'ENTITIES_SMART_UPDATE',
+  merge: 'ENTITIES_MERGE',
+  replace: 'ENTITIES_REPLACE',
+  delete: 'ENTITIES_DELETE',
 };
 
 let registeredGetters = [];
-
-const updateChangedFields = (oldData, newData) => {
-  if (isArray(newData)) {
-    if (oldData.length !== newData.length) {
-      return newData;
-    }
-
-    if (oldData.length === 0 && newData.length === 0) {
-      return oldData;
-    }
-
-    // eslint-disable-next-line no-plusplus
-    for (let index = 0; index < newData.length; index++) {
-      // eslint-disable-next-line no-param-reassign
-      oldData[index] = updateChangedFields(oldData[index], newData[index]);
-    }
-
-    return oldData;
-  }
-
-  if (!isObject(newData)) {
-    return newData;
-  }
-
-  const oldKeys = Object.keys(oldData);
-  const newKeys = Object.keys(newData);
-
-  const removedKeys = difference(oldKeys, newKeys);
-
-  for (const removedKey of removedKeys) {
-    // eslint-disable-next-line no-param-reassign
-    delete oldData[removedKey];
-  }
-
-  for (const key of newKeys) {
-    const oldValue = oldData[key];
-    const newValue = newData[key];
-
-    // eslint-disable-next-line no-param-reassign
-    oldData[key] = updateChangedFields(oldValue, newValue);
-  }
-
-  return oldData;
-};
 
 export const entitiesModule = {
   namespaced: true,
@@ -157,7 +113,7 @@ export const entitiesModule = {
      * @param {Object} state - state of the module
      * @param {Object.<string, Object>} entities - Object of entities
      */
-    [internalTypes.ENTITIES_REPLACE](state, entities) {
+    [ENTITIES_MUTATION_TYPES.replace](state, entities) {
       cache.clear();
 
       Object.keys(state).forEach((type) => {
@@ -169,7 +125,29 @@ export const entitiesModule = {
      * @param {Object} state - state of the module
      * @param {Object.<string, Object>} entities - Object of entities
      */
-    [internalTypes.ENTITIES_UPDATE](state, entities) {
+    [ENTITIES_MUTATION_TYPES.update](state, entities) {
+      Object.keys(entities).forEach((type) => {
+        if (!state[type]) {
+          Vue.set(state, type, entities[type]);
+        } else {
+          Object.entries(entities[type]).forEach(([key, entity]) => {
+            cache.clearForEntity(state, entity);
+
+            if (state[type][key]) {
+              cache.clearForEntity(state, state[type][key]);
+            }
+
+            Vue.set(state[type], key, entity);
+          });
+        }
+      });
+    },
+
+    /**
+     * @param {Object} state - state of the module
+     * @param {Object.<string, Object>} entities - Object of entities
+     */
+    [ENTITIES_MUTATION_TYPES.smartUpdate](state, entities) {
       Object.keys(entities).forEach((type) => {
         if (!state[type]) {
           Vue.set(state, type, entities[type]);
@@ -178,14 +156,8 @@ export const entitiesModule = {
             const oldEntity = state[type][key];
 
             const data = oldEntity
-              ? updateChangedFields(oldEntity, entity)
+              ? mergeChangedProperties(oldEntity, entity)
               : entity;
-
-            cache.clearForEntity(state, data);
-
-            if (oldEntity) {
-              cache.clearForEntity(state, oldEntity);
-            }
 
             Vue.set(state[type], key, data);
           });
@@ -197,7 +169,7 @@ export const entitiesModule = {
      * @param {Object} state - state of the module
      * @param {Object.<string, Object>} entities - Object of entities
      */
-    [internalTypes.ENTITIES_MERGE](state, entities) {
+    [ENTITIES_MUTATION_TYPES.merge](state, entities) {
       Object.keys(entities).forEach((type) => {
         if (!state[type]) {
           Vue.set(state, type, entities[type]);
@@ -227,7 +199,7 @@ export const entitiesModule = {
      * @param {Object} state - state of the module
      * @param {Object.<string, Object>} entities - Object of entities
      */
-    [internalTypes.ENTITIES_DELETE](state, entities) {
+    [ENTITIES_MUTATION_TYPES.delete](state, entities) {
       Object.keys(entities).forEach((type) => {
         if (state[type]) {
           Object.entries(entities[type]).forEach(([key, entity]) => {
@@ -280,7 +252,7 @@ export const entitiesModule = {
           return acc;
         }, {});
 
-      commit(internalTypes.ENTITIES_REPLACE, entities);
+      commit(ENTITIES_MUTATION_TYPES.replace, entities);
     },
 
     /**
@@ -329,7 +301,7 @@ export const entitiesModule = {
         headers = {},
         params = {},
         dataPreparer = d => d,
-        mutationType = internalTypes.ENTITIES_UPDATE,
+        mutationType = ENTITIES_MUTATION_TYPES.update,
         afterCommit,
       },
     ) {
@@ -419,7 +391,7 @@ export const entitiesModule = {
      * @param mutationType
      * @returns {*}
      */
-    addToStore({ commit }, { schema, data, mutationType = internalTypes.ENTITIES_UPDATE }) {
+    addToStore({ commit }, { schema, data, mutationType = ENTITIES_MUTATION_TYPES.update }) {
       const normalizedData = normalize(data, schema);
 
       commit(mutationType, normalizedData.entities);
@@ -457,17 +429,17 @@ export const entitiesModule = {
         };
       });
 
-      commit(internalTypes.ENTITIES_UPDATE, entitiesToMerge);
-      commit(internalTypes.ENTITIES_DELETE, entitiesToDelete);
+      commit(ENTITIES_MUTATION_TYPES.update, entitiesToMerge);
+      commit(ENTITIES_MUTATION_TYPES.delete, entitiesToDelete);
     },
   },
 };
 
 export const types = {
-  ENTITIES_UPDATE: `${entitiesModuleName}/${internalTypes.ENTITIES_UPDATE}`,
-  ENTITIES_MERGE: `${entitiesModuleName}/${internalTypes.ENTITIES_MERGE}`,
-  ENTITIES_REPLACE: `${entitiesModuleName}/${internalTypes.ENTITIES_REPLACE}`,
-  ENTITIES_DELETE: `${entitiesModuleName}/${internalTypes.ENTITIES_DELETE}`,
+  ENTITIES_UPDATE: `${entitiesModuleName}/${ENTITIES_MUTATION_TYPES.update}`,
+  ENTITIES_MERGE: `${entitiesModuleName}/${ENTITIES_MUTATION_TYPES.merge}`,
+  ENTITIES_REPLACE: `${entitiesModuleName}/${ENTITIES_MUTATION_TYPES.replace}`,
+  ENTITIES_DELETE: `${entitiesModuleName}/${ENTITIES_MUTATION_TYPES.delete}`,
 };
 
 export { default as createEntityModule } from './create-entity-module';
