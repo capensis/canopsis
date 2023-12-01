@@ -7,7 +7,7 @@
             h4.ml-2.font-weight-regular {{ widget.title }}
           v-spacer
       v-divider
-    v-card-text.pa-0.position-relative(v-show="visible")
+    v-card-text.pa-0.position-relative
       component(
         v-bind="widgetProps",
         :widget="preparedWidget",
