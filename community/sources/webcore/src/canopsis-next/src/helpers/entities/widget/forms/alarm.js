@@ -401,6 +401,7 @@ export const alarmListWidgetParametersToForm = (parameters = {}) => ({
   kiosk: kioskParametersToForm(parameters.kiosk),
   columns: columnsParametersToForm(parameters.columns),
   charts: addKeyInEntities(parameters.charts),
+  usedAlarmProperties: [],
 });
 
 /**
