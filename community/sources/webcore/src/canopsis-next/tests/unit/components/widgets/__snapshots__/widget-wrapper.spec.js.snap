@@ -7,7 +7,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with default props 1`] = `
   <!---->
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <alarms-list-widget-stub
       tabid="tab-id"
@@ -46,7 +45,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with editing mode 1`] = `
   />
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <alarms-list-widget-stub
       tabid="tab-id"
@@ -85,7 +83,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with title and editing mode 1
   />
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <alarms-list-widget-stub
       tabid="tab-id"
@@ -102,7 +99,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type AlarmStatistics and
   <!---->
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <alarm-statistics-widget-stub
       tabid="tab-id"
@@ -119,7 +115,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type AlarmStatistics and
   <!---->
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <c-alert-overlay-stub
       message="Stats widgets are not available with 'community' edition"
@@ -138,7 +133,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type AlarmsList and cat 
   <!---->
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <alarms-list-widget-stub
       tabid="tab-id"
@@ -155,7 +149,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type AlarmsList and core
   <!---->
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <alarms-list-widget-stub
       message="Stats widgets are not available with 'community' edition"
@@ -174,7 +167,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type BarChart and cat ed
   <!---->
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <bar-chart-widget-stub
       tabid="tab-id"
@@ -191,7 +183,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type BarChart and core e
   <!---->
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <bar-chart-widget-stub
       message="Stats widgets are not available with 'community' edition"
@@ -210,7 +201,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Context and cat edi
   <!---->
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <entities-list-widget-stub
       tabid="tab-id"
@@ -227,7 +217,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Context and core ed
   <!---->
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <entities-list-widget-stub
       message="Stats widgets are not available with 'community' edition"
@@ -246,7 +235,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Counter and cat edi
   <!---->
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <counter-widget-stub
       tabid="tab-id"
@@ -263,7 +251,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Counter and core ed
   <!---->
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <counter-widget-stub
       message="Stats widgets are not available with 'community' edition"
@@ -282,7 +269,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Junit and cat editi
   <!---->
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <testing-weather-widget-stub
       tabid="tab-id"
@@ -299,7 +285,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Junit and core edit
   <!---->
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <c-alert-overlay-stub
       message="Stats widgets are not available with 'community' edition"
@@ -318,7 +303,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type LineChart and cat e
   <!---->
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <line-chart-widget-stub
       tabid="tab-id"
@@ -335,7 +319,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type LineChart and core 
   <!---->
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <line-chart-widget-stub
       message="Stats widgets are not available with 'community' edition"
@@ -354,7 +337,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Map and cat edition
   <!---->
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <map-widget-stub
       tabid="tab-id"
@@ -371,7 +353,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Map and core editio
   <!---->
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <c-alert-overlay-stub
       message="Stats widgets are not available with 'community' edition"
@@ -390,7 +371,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Numbers and cat edi
   <!---->
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <numbers-widget-stub
       tabid="tab-id"
@@ -407,7 +387,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Numbers and core ed
   <!---->
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <numbers-widget-stub
       message="Stats widgets are not available with 'community' edition"
@@ -426,7 +405,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type PieChart and cat ed
   <!---->
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <pie-chart-widget-stub
       tabid="tab-id"
@@ -443,7 +421,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type PieChart and core e
   <!---->
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <pie-chart-widget-stub
       message="Stats widgets are not available with 'community' edition"
@@ -462,7 +439,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type ServiceWeather and 
   <!---->
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <service-weather-widget-stub
       tabid="tab-id"
@@ -479,7 +455,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type ServiceWeather and 
   <!---->
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <service-weather-widget-stub
       message="Stats widgets are not available with 'community' edition"
@@ -498,7 +473,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsCalendar and c
   <!---->
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <stats-calendar-widget-stub
       tabid="tab-id"
@@ -515,7 +489,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsCalendar and c
   <!---->
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <c-alert-overlay-stub
       message="Stats widgets are not available with 'community' edition"
@@ -534,7 +507,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Text and cat editio
   <!---->
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <text-widget-stub
       tab-id="tab-id"
@@ -551,7 +523,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Text and core editi
   <!---->
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <text-widget-stub
       message="Stats widgets are not available with 'community' edition"
@@ -570,7 +541,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type UserStatistics and 
   <!---->
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <user-statistics-widget-stub
       tabid="tab-id"
@@ -587,7 +557,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type UserStatistics and 
   <!---->
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <c-alert-overlay-stub
       message="Stats widgets are not available with 'community' edition"
@@ -628,7 +597,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with widget title 1`] = `
   />
   <div
     class="v-card__text pa-0 position-relative"
-    style="display: none;"
   >
     <alarms-list-widget-stub
       tabid="tab-id"
