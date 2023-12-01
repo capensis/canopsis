@@ -9,6 +9,7 @@ import request, { useRequestCancelling } from '@/services/request';
 import i18n from '@/i18n';
 
 import { alarmSchema } from '@/store/schemas';
+import { ENTITIES_MUTATION_TYPES } from '@/store/plugins/entities';
 
 import detailsModule from './details';
 import linksModule from './links';
@@ -92,9 +93,9 @@ export default {
             route: API_ROUTES.alarms.list,
             schema: [alarmSchema],
             params,
-            withCompare: true,
             cancelToken: source.token,
             dataPreparer: d => d.data,
+            mutationType: ENTITIES_MUTATION_TYPES.smartUpdate,
             afterCommit: ({ normalizedData, data }) => {
               commit(types.FETCH_LIST_COMPLETED, {
                 widgetId,
