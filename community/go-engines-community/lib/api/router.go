@@ -32,6 +32,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/healthcheck"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/icon"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/linkrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
@@ -90,6 +91,8 @@ import (
 
 const BaseUrl = "/api/v4"
 
+const mimeTypeSvg = "image/svg+xml"
+
 // RegisterRoutes
 // nolint: contextcheck
 func RegisterRoutes(
@@ -115,7 +118,6 @@ func RegisterRoutes(
 	actionLogger logger.ActionLogger,
 	publisher amqp.Publisher,
 	userInterfaceConfig config.UserInterfaceConfigProvider,
-	filesRoot string,
 	websocketHub websocket.Hub,
 	websocketStore websocket.Store,
 	broadcastMessageChan chan<- bool,
@@ -2005,7 +2007,7 @@ func RegisterRoutes(
 		fileRouter := protected.Group("/file")
 		{
 			fileAPI := file.NewApi(enforcer, file.NewStore(dbClient, libfile.NewStorage(
-				filesRoot,
+				conf.File.Upload,
 				libfile.NewEtagEncoder(),
 			), conf.File.UploadMaxSize))
 			fileRouter.POST(
@@ -2026,6 +2028,39 @@ func RegisterRoutes(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjFile, model.PermissionDelete, enforcer),
 				fileAPI.Delete,
+			)
+		}
+
+		iconRouter := protected.Group("/icons")
+		{
+			iconStore := icon.NewStore(
+				dbClient,
+				libfile.NewStorage(conf.File.Icon, libfile.NewEtagEncoder()),
+			)
+			iconApi := icon.NewApi(iconStore, actionLogger, conf.File.IconMaxSize, []string{mimeTypeSvg})
+			iconRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.PermIcon, model.PermissionCan, enforcer),
+				iconApi.Create,
+			)
+			iconRouter.GET(
+				"",
+				iconApi.List,
+			)
+			iconRouter.GET(
+				"/:id",
+				security.GetFileAuthMiddleware(),
+				iconApi.Get,
+			)
+			iconRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.PermIcon, model.PermissionCan, enforcer),
+				iconApi.Delete,
+			)
+			iconRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.PermIcon, model.PermissionCan, enforcer),
+				iconApi.Update,
 			)
 		}
 
