@@ -99,4 +99,6 @@ const (
 	MetaAlarmStatesCollection = "meta_alarm_states"
 
 	ColorThemeCollection = "color_theme"
+
+	IconCollection = "icon"
 )

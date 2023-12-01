@@ -339,7 +339,6 @@ func Default(
 			apilogger.NewActionLogger(dbClient, logger),
 			amqpChannel,
 			p.UserInterfaceConfigProvider,
-			cfg.File.Upload,
 			websocketHub,
 			websocketStore,
 			broadcastMessageChan,

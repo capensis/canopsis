@@ -1385,6 +1385,16 @@ permission:
     _id: api_color_theme
     name: <Current()._id>
     description: Color theme
+  permission_api_private_view_groups:
+    <<: *permission
+    _id: api_private_view_groups
+    name: <Current()._id>
+    description: Create private view groups
+  permission_api_icon:
+    <<: *permission
+    _id: api_icon
+    name: <Current()._id>
+    description: Create icons
 
   # Views permissions
   permission_view_open_alarms:
@@ -1402,11 +1412,6 @@ permission:
     _id: "@view_context_explorer"
     name: <Current()._id>
     description: "Rights on view: Explorateur de Contexte"
-  permission_api_private_view_groups:
-    <<: *permission
-    _id: api_private_view_groups
-    name: <Current()._id>
-    description: Create private view groups
 
 role:
   role_admin:
@@ -1626,11 +1631,12 @@ role:
       "@permission_api_link_rule": 15
       "@permission_api_alarm_tag": 15
       "@permission_api_maintenance": 1
+      "@permission_api_private_view_groups": 1
+      "@permission_api_icon": 1
       # Views permissions
       "@permission_view_open_alarms": 15
       "@permission_view_resolved_alarms": 15
       "@permission_view_context_explorer": 15
-      "@permission_api_private_view_groups": 1
 
 role_template:
   tpl_pilot:

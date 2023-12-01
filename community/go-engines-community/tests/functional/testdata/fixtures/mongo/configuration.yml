@@ -46,6 +46,8 @@ configuration:
       junitapi: /tmp/canopsis/junitapi
       upload: /tmp/canopsis/upload
       uploadmaxsize: 314572800
+      icon: /tmp/canopsis/icons
+      iconmaxsize: 10240
     global:
       prefetchcount: 10000
       prefetchsize: 0

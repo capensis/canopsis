@@ -13,18 +13,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func NewApi(enforcer security.Enforcer, store Store) Crud {
-	return &api{
-		store:    store,
-		enforcer: enforcer,
-	}
-}
-
-type Crud interface {
+type API interface {
 	List(*gin.Context)
 	Create(*gin.Context)
 	Get(*gin.Context)
 	Delete(*gin.Context)
+}
+
+func NewApi(enforcer security.Enforcer, store Store) API {
+	return &api{
+		store:    store,
+		enforcer: enforcer,
+	}
 }
 
 type api struct {
@@ -37,7 +37,8 @@ type api struct {
 func (a *api) Create(c *gin.Context) {
 	form, err := c.MultipartForm()
 	if err != nil {
-		panic(err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.ErrorResponse{Error: "Files are missing."})
+		return
 	}
 
 	request := CreateRequest{}
@@ -46,15 +47,11 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	res, err := a.store.Create(c.Request.Context(), request.Public, form)
+	res, err := a.store.Create(c, request.Public, form)
 	if err != nil {
-		validationError := ValidationError{}
+		validationError := common.ValidationError{}
 		if errors.As(err, &validationError) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.ValidationErrorResponse{
-				Errors: map[string]string{
-					validationError.field: validationError.Error(),
-				},
-			})
+			c.AbortWithStatusJSON(http.StatusBadRequest, validationError.ValidationErrorResponse())
 			return
 		}
 
@@ -65,7 +62,7 @@ func (a *api) Create(c *gin.Context) {
 }
 
 func (a *api) Get(c *gin.Context) {
-	m, err := a.store.Get(c.Request.Context(), c.Param("id"))
+	m, err := a.store.Get(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -96,9 +93,22 @@ func (a *api) Get(c *gin.Context) {
 // List
 // @Success 200 {object} []File
 func (a *api) List(c *gin.Context) {
-	res, err := a.store.List(c.Request.Context(), c.QueryArray("id"))
-	if err != nil || res == nil {
-		c.AbortWithStatus(http.StatusNotFound)
+	ids := c.QueryArray("id")
+	if len(ids) == 0 {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.ValidationErrorResponse{Errors: map[string]string{
+			"id": "ID is missing.",
+		}})
+
+		return
+	}
+
+	res, err := a.store.List(c, ids)
+	if err != nil {
+		panic(err)
+	}
+
+	if len(res) == 0 {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
 
@@ -114,6 +124,7 @@ func (a *api) List(c *gin.Context) {
 				c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
 				return
 			}
+
 			break
 		}
 	}
@@ -122,7 +133,7 @@ func (a *api) List(c *gin.Context) {
 }
 
 func (a *api) Delete(c *gin.Context) {
-	ok, err := a.store.Delete(c.Request.Context(), c.Param("id"))
+	ok, err := a.store.Delete(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}

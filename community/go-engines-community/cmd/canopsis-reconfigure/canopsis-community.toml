@@ -134,6 +134,8 @@ EventsCountTriggerDefaultThreshold = 10
 # Local storage for Upload artifacts. Upload artifacts are used in Administration -> Parameters.
 Upload = "/opt/canopsis/var/lib/upload-files"
 UploadMaxSize = 314572800 # 300Mb
+Icon = "/opt/canopsis/var/lib/icons"
+IconMaxSize = 10240 # 10Kb
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.alarm]
