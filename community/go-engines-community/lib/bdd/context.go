@@ -15,9 +15,11 @@ const (
 	contextKeyScenarioUri
 	contextKeyApiAuthToken
 	contextKeyRequestBody
+	contextKeyRequestFormField
+	contextKeyRequestFormFile
 	contextKeyResponseStatusCode
 	contextKeyResponseBody
-	contextKeyResponseBodyOutput
+	contextKeyRawResponseBody
 	contextKeyHeaders
 	contextKeyCookies
 	contextKeyVars
@@ -62,6 +64,24 @@ func setRequestBody(ctx context.Context, v string) context.Context {
 	return context.WithValue(ctx, contextKeyRequestBody, v)
 }
 
+func getRequestFormField(ctx context.Context) (map[string]string, bool) {
+	v, ok := ctx.Value(contextKeyRequestFormField).(map[string]string)
+	return v, ok
+}
+
+func setRequestFormField(ctx context.Context, v map[string]string) context.Context {
+	return context.WithValue(ctx, contextKeyRequestFormField, v)
+}
+
+func getRequestFormFile(ctx context.Context) (map[string][]string, bool) {
+	v, ok := ctx.Value(contextKeyRequestFormFile).(map[string][]string)
+	return v, ok
+}
+
+func setRequestFormFile(ctx context.Context, v map[string][]string) context.Context {
+	return context.WithValue(ctx, contextKeyRequestFormFile, v)
+}
+
 func getResponseStatusCode(ctx context.Context) (int, bool) {
 	v, ok := ctx.Value(contextKeyResponseStatusCode).(int)
 	return v, ok
@@ -71,25 +91,30 @@ func setResponseStatusCode(ctx context.Context, v int) context.Context {
 	return context.WithValue(ctx, contextKeyResponseStatusCode, v)
 }
 
-func getResponseBody(ctx context.Context) (interface{}, bool) {
+func getResponseBody(ctx context.Context) (any, bool) {
 	v := ctx.Value(contextKeyResponseBody)
 	if v == nil {
 		return nil, false
 	}
+
 	return v, true
 }
 
-func setResponseBody(ctx context.Context, v interface{}) context.Context {
+func setResponseBody(ctx context.Context, v any) context.Context {
 	return context.WithValue(ctx, contextKeyResponseBody, v)
 }
 
-func getResponseBodyOutput(ctx context.Context) (string, bool) {
-	v, ok := ctx.Value(contextKeyResponseBodyOutput).(string)
-	return v, ok
+func getRawResponseBody(ctx context.Context) ([]byte, bool) {
+	v, _ := ctx.Value(contextKeyRawResponseBody).([]byte)
+	if v == nil {
+		return nil, false
+	}
+
+	return v, true
 }
 
-func setResponseBodyOutput(ctx context.Context, v string) context.Context {
-	return context.WithValue(ctx, contextKeyResponseBodyOutput, v)
+func setRawResponseBody(ctx context.Context, v []byte) context.Context {
+	return context.WithValue(ctx, contextKeyRawResponseBody, v)
 }
 
 func getHeaders(ctx context.Context) (map[string]string, bool) {
