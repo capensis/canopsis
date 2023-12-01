@@ -27,18 +27,35 @@ func NewLoader(
 	logger zerolog.Logger,
 ) Loader {
 	return &loader{
-		client: client,
-		dirs:   dirs,
-		parser: parser,
-		logger: logger,
+		client:   client,
+		dirs:     dirs,
+		parser:   parser,
+		keepData: false,
+		logger:   logger,
+	}
+}
+
+func NewLoaderWithKeepData(
+	client mongo.DbClient,
+	dirs []string,
+	parser Parser,
+	logger zerolog.Logger,
+) Loader {
+	return &loader{
+		client:   client,
+		dirs:     dirs,
+		parser:   parser,
+		keepData: true,
+		logger:   logger,
 	}
 }
 
 type loader struct {
-	client mongo.DbClient
-	dirs   []string
-	parser Parser
-	logger zerolog.Logger
+	client   mongo.DbClient
+	dirs     []string
+	parser   Parser
+	keepData bool
+	logger   zerolog.Logger
 
 	collections []string
 }
@@ -64,13 +81,16 @@ func (l *loader) Load(ctx context.Context) error {
 			}
 
 			for collectionName, docs := range docsByCollection {
-				if !deleted[collectionName] {
-					_, err := l.client.Collection(collectionName).DeleteMany(ctx, bson.M{})
-					if err != nil {
-						return fmt.Errorf("cannot delete collection %q: %w", collectionName, err)
+				if !l.keepData {
+					if !deleted[collectionName] {
+						_, err := l.client.Collection(collectionName).DeleteMany(ctx, bson.M{})
+						if err != nil {
+							return fmt.Errorf("cannot delete collection %q: %w", collectionName, err)
+						}
+
+						deleted[collectionName] = true
+						l.collections = append(l.collections, collectionName)
 					}
-					deleted[collectionName] = true
-					l.collections = append(l.collections, collectionName)
 				}
 
 				if len(docs) > 0 {
