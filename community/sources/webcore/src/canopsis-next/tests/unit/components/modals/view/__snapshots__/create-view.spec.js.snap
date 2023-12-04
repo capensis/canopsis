@@ -18,115 +18,15 @@ exports[`create-view Renders \`create-view\` with empty modal 1`] = `
     <div
       class="text"
     >
-      <transition-stub
-        name="fade-transition"
+      <c-alert-stub
+        type="info"
       >
-        <div
-          class="layout"
-        >
-          <div
-            class="flex xs12"
-          >
-            <div
-              class="v-alert v-sheet theme--dark info"
-              role="alert"
-            >
-              <div
-                class="v-alert__wrapper"
-              >
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate v-alert__icon material-icons theme--dark"
-                >
-                  info
-                </i>
-                <div
-                  class="v-alert__content"
-                >
-              You're duplicating a view. All duplicated view's rows/widgets will be copied on the new view.
-                </div>
-              </div>
-            </div>
-            <view-form-stub
-              form="[object Object]"
-              groups=""
-            />
-          </div>
-        </div>
-      </transition-stub>
-    </div>
-    <div
-      class="actions"
-    >
-      <button
-        class="v-btn"
-        depressed=""
-        text=""
-        type="button"
-      >
-        Cancel
-      </button>
-      <!---->
-      <!---->
-    </div>
-  </div>
-</form>
-`;
-
-exports[`create-view Renders \`create-view\` with title 1`] = `
-<form
-  class="v-form"
->
-  <div
-    class="modal-wrapper"
-    close=""
-  >
-    <div
-      class="title"
-    >
-      <span>
-        Create view custom title
-      </span>
-    </div>
-    <div
-      class="text"
-    >
-      <transition-stub
-        name="fade-transition"
-      >
-        <div
-          class="layout"
-        >
-          <div
-            class="flex xs12"
-          >
-            <div
-              class="v-alert v-sheet theme--dark info"
-              role="alert"
-            >
-              <div
-                class="v-alert__wrapper"
-              >
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate v-alert__icon material-icons theme--dark"
-                >
-                  info
-                </i>
-                <div
-                  class="v-alert__content"
-                >
-              You're duplicating a view. All duplicated view's rows/widgets will be copied on the new view.
-                </div>
-              </div>
-            </div>
-            <view-form-stub
-              form="[object Object]"
-              groups=""
-            />
-          </div>
-        </div>
-      </transition-stub>
+        You're duplicating a view. All duplicated view's rows/widgets will be copied on the new view.
+      </c-alert-stub>
+      <view-form-stub
+        form="[object Object]"
+        groups=""
+      />
     </div>
     <div
       class="actions"
@@ -151,6 +51,63 @@ exports[`create-view Renders \`create-view\` with title 1`] = `
 </form>
 `;
 
+exports[`create-view Renders \`create-view\` with title 1`] = `
+<form
+  class="v-form"
+>
+  <div
+    class="modal-wrapper"
+    close=""
+  >
+    <div
+      class="title"
+    >
+      <span>
+        Create view custom title
+      </span>
+    </div>
+    <div
+      class="text"
+    >
+      <c-alert-stub
+        type="info"
+      >
+        You're duplicating a view. All duplicated view's rows/widgets will be copied on the new view.
+      </c-alert-stub>
+      <view-form-stub
+        form="[object Object]"
+        groups=""
+      />
+    </div>
+    <div
+      class="actions"
+    >
+      <button
+        class="v-btn"
+        depressed=""
+        text=""
+        type="button"
+      >
+        Cancel
+      </button>
+      <button
+        class="v-btn primary"
+        type="submit"
+      >
+        Submit
+      </button>
+      <button
+        class="v-btn"
+        color="error"
+        type="button"
+      >
+        Delete
+      </button>
+    </div>
+  </div>
+</form>
+`;
+
 exports[`create-view Renders \`create-view\` without rights 1`] = `
 <form
   class="v-form"
@@ -169,42 +126,15 @@ exports[`create-view Renders \`create-view\` without rights 1`] = `
     <div
       class="text"
     >
-      <transition-stub
-        name="fade-transition"
+      <c-alert-stub
+        type="info"
       >
-        <div
-          class="layout"
-        >
-          <div
-            class="flex xs12"
-          >
-            <div
-              class="v-alert v-sheet theme--dark info"
-              role="alert"
-            >
-              <div
-                class="v-alert__wrapper"
-              >
-                <i
-                  aria-hidden="true"
-                  class="v-icon notranslate v-alert__icon material-icons theme--dark"
-                >
-                  info
-                </i>
-                <div
-                  class="v-alert__content"
-                >
-              You're duplicating a view. All duplicated view's rows/widgets will be copied on the new view.
-                </div>
-              </div>
-            </div>
-            <view-form-stub
-              form="[object Object]"
-              groups=""
-            />
-          </div>
-        </div>
-      </transition-stub>
+        You're duplicating a view. All duplicated view's rows/widgets will be copied on the new view.
+      </c-alert-stub>
+      <view-form-stub
+        form="[object Object]"
+        groups=""
+      />
     </div>
     <div
       class="actions"
@@ -217,7 +147,12 @@ exports[`create-view Renders \`create-view\` without rights 1`] = `
       >
         Cancel
       </button>
-      <!---->
+      <button
+        class="v-btn primary"
+        type="submit"
+      >
+        Submit
+      </button>
       <!---->
     </div>
   </div>
