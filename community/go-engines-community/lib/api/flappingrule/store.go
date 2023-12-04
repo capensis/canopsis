@@ -137,27 +137,11 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 	model := transformRequestToModel(r.EditRequest)
 	model.ID = r.ID
 	model.Updated = types.NewCpsTime()
-
-	update := bson.M{"$set": model}
-
-	unset := bson.M{}
-	if r.CorporateAlarmPattern != "" || len(r.AlarmPattern) > 0 {
-		unset["old_alarm_patterns"] = 1
-	}
-
-	if r.CorporateEntityPattern != "" || len(r.EntityPattern) > 0 {
-		unset["old_entity_patterns"] = 1
-	}
-
-	if len(unset) > 0 {
-		update["$unset"] = unset
-	}
-
 	var resp *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		resp = nil
 
-		_, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": model.ID}, update)
+		_, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": model.ID}, bson.M{"$set": model})
 		if err != nil {
 			return err
 		}

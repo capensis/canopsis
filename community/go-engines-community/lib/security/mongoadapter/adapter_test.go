@@ -1,6 +1,7 @@
 package mongoadapter
 
 import (
+	"context"
 	"reflect"
 	"sort"
 	"testing"
@@ -15,19 +16,29 @@ import (
 func TestAdapter_LoadPolicy_GivenRole_ShouldAddCRUDPermissionsToRole(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockRoleCursor := createMockCursor(ctrl, []role{{
+	mockPermissionCursor := createMockCursorFindAll(ctrl, []permissionDocument{
+		{ID: "testobj1", Name: "testobj1", Type: libmodel.ObjectTypeCRUD},
+		{ID: "testobj2", Name: "testobj2", Type: libmodel.ObjectTypeCRUD},
+		{ID: "testobj3", Name: "testobj3", Type: libmodel.ObjectTypeCRUD},
+		{ID: "testobj4", Name: "testobj4", Type: libmodel.ObjectTypeCRUD},
+		{ID: "testobj5", Name: "testobj5", Type: libmodel.ObjectTypeCRUD},
+		{ID: "testobj6", Name: "testobj6", Type: libmodel.ObjectTypeCRUD},
+	})
+	mockPermissionDbCollection := mock_mongo.NewMockDbCollection(ctrl)
+	mockPermissionDbCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(mockPermissionCursor, nil)
+	mockRoleCursor := createMockCursorFindAll(ctrl, []roleDocument{{
 		ID: "testrole",
-		Permissions: map[string]permission{
-			"testobj1": {Bitmask: 15, Type: libmodel.ObjectTypeCRUD},
-			"testobj2": {Bitmask: 8, Type: libmodel.ObjectTypeCRUD},
-			"testobj3": {Bitmask: 4, Type: libmodel.ObjectTypeCRUD},
-			"testobj4": {Bitmask: 2, Type: libmodel.ObjectTypeCRUD},
-			"testobj5": {Bitmask: 1, Type: libmodel.ObjectTypeCRUD},
-			"testobj6": {Bitmask: 0, Type: libmodel.ObjectTypeCRUD},
+		Permissions: map[string]int64{
+			"testobj1": 15,
+			"testobj2": 8,
+			"testobj3": 4,
+			"testobj4": 2,
+			"testobj5": 1,
+			"testobj6": 0,
 		},
 	}})
 	mockRoleDbCollection := mock_mongo.NewMockDbCollection(ctrl)
-	mockRoleDbCollection.EXPECT().Aggregate(gomock.Any(), gomock.Any()).Return(mockRoleCursor, nil)
+	mockRoleDbCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(mockRoleCursor, nil)
 	mockSubjCursor := createMockCursor[user](ctrl, nil)
 	mockSubjDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockSubjDbCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(mockSubjCursor, nil)
@@ -38,9 +49,10 @@ func TestAdapter_LoadPolicy_GivenRole_ShouldAddCRUDPermissionsToRole(t *testing.
 			return mockRoleDbCollection
 		case mongo.UserCollection:
 			return mockSubjDbCollection
-		default:
-			return nil
+		case mongo.PermissionCollection:
+			return mockPermissionDbCollection
 		}
+		return nil
 	}).AnyTimes()
 
 	adapter := NewAdapter(mockDbClient)
@@ -72,18 +84,27 @@ func TestAdapter_LoadPolicy_GivenRole_ShouldAddCRUDPermissionsToRole(t *testing.
 func TestAdapter_LoadPolicy_GivenRole_ShouldAddRWPermissionsToRole(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockRoleCursor := createMockCursor(ctrl, []role{{
+	mockPermissionCursor := createMockCursorFindAll(ctrl, []permissionDocument{
+		{ID: "testobj1", Name: "testobj1", Type: libmodel.ObjectTypeRW},
+		{ID: "testobj2", Name: "testobj2", Type: libmodel.ObjectTypeRW},
+		{ID: "testobj3", Name: "testobj3", Type: libmodel.ObjectTypeRW},
+		{ID: "testobj4", Name: "testobj4", Type: libmodel.ObjectTypeRW},
+		{ID: "testobj5", Name: "testobj5", Type: libmodel.ObjectTypeRW},
+	})
+	mockPermissionDbCollection := mock_mongo.NewMockDbCollection(ctrl)
+	mockPermissionDbCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(mockPermissionCursor, nil)
+	mockRoleCursor := createMockCursorFindAll(ctrl, []roleDocument{{
 		ID: "testrole",
-		Permissions: map[string]permission{
-			"testobj1": {Bitmask: 7, Type: libmodel.ObjectTypeRW},
-			"testobj2": {Bitmask: 4, Type: libmodel.ObjectTypeRW},
-			"testobj3": {Bitmask: 2, Type: libmodel.ObjectTypeRW},
-			"testobj4": {Bitmask: 1, Type: libmodel.ObjectTypeRW},
-			"testobj5": {Bitmask: 0, Type: libmodel.ObjectTypeRW},
+		Permissions: map[string]int64{
+			"testobj1": 7,
+			"testobj2": 4,
+			"testobj3": 2,
+			"testobj4": 1,
+			"testobj5": 0,
 		},
 	}})
 	mockRoleDbCollection := mock_mongo.NewMockDbCollection(ctrl)
-	mockRoleDbCollection.EXPECT().Aggregate(gomock.Any(), gomock.Any()).Return(mockRoleCursor, nil)
+	mockRoleDbCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(mockRoleCursor, nil)
 	mockSubjCursor := createMockCursor[user](ctrl, nil)
 	mockSubjDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockSubjDbCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(mockSubjCursor, nil)
@@ -94,9 +115,10 @@ func TestAdapter_LoadPolicy_GivenRole_ShouldAddRWPermissionsToRole(t *testing.T)
 			return mockRoleDbCollection
 		case mongo.UserCollection:
 			return mockSubjDbCollection
-		default:
-			return nil
+		case mongo.PermissionCollection:
+			return mockPermissionDbCollection
 		}
+		return nil
 	}).AnyTimes()
 	adapter := NewAdapter(mockDbClient)
 	m := createCasbinModel()
@@ -125,15 +147,21 @@ func TestAdapter_LoadPolicy_GivenRole_ShouldAddRWPermissionsToRole(t *testing.T)
 func TestAdapter_LoadPolicy_GivenRole_ShouldAddCanPermissionsToRole(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockRoleCursor := createMockCursor(ctrl, []role{{
+	mockPermissionCursor := createMockCursorFindAll(ctrl, []permissionDocument{
+		{ID: "testobj1", Name: "testobj1"},
+		{ID: "testobj2", Name: "testobj2"},
+	})
+	mockPermissionDbCollection := mock_mongo.NewMockDbCollection(ctrl)
+	mockPermissionDbCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(mockPermissionCursor, nil)
+	mockRoleCursor := createMockCursorFindAll(ctrl, []roleDocument{{
 		ID: "testrole",
-		Permissions: map[string]permission{
-			"testobj1": {Bitmask: 1},
-			"testobj2": {Bitmask: 0},
+		Permissions: map[string]int64{
+			"testobj1": 1,
+			"testobj2": 0,
 		},
 	}})
 	mockRoleDbCollection := mock_mongo.NewMockDbCollection(ctrl)
-	mockRoleDbCollection.EXPECT().Aggregate(gomock.Any(), gomock.Any()).Return(mockRoleCursor, nil)
+	mockRoleDbCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(mockRoleCursor, nil)
 	mockSubjCursor := createMockCursor[user](ctrl, nil)
 	mockSubjDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockSubjDbCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(mockSubjCursor, nil)
@@ -144,9 +172,10 @@ func TestAdapter_LoadPolicy_GivenRole_ShouldAddCanPermissionsToRole(t *testing.T
 			return mockRoleDbCollection
 		case mongo.UserCollection:
 			return mockSubjDbCollection
-		default:
-			return nil
+		case mongo.PermissionCollection:
+			return mockPermissionDbCollection
 		}
+		return nil
 	}).AnyTimes()
 	adapter := NewAdapter(mockDbClient)
 	m := createCasbinModel()
@@ -169,7 +198,13 @@ func TestAdapter_LoadPolicy_GivenRole_ShouldAddCanPermissionsToRole(t *testing.T
 func TestAdapter_LoadPolicy_GivenUser_ShouldAddRoleToUser(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockRoleCursor := createMockCursor(ctrl, []role{
+	mockPermissionCursor := createMockCursorFindAll(ctrl, []permissionDocument{
+		{ID: "testobj1", Name: "testobj1", Type: libmodel.ObjectTypeCRUD},
+		{ID: "testobj2", Name: "testobj2", Type: libmodel.ObjectTypeCRUD},
+	})
+	mockPermissionDbCollection := mock_mongo.NewMockDbCollection(ctrl)
+	mockPermissionDbCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(mockPermissionCursor, nil)
+	mockRoleCursor := createMockCursorFindAll(ctrl, []roleDocument{
 		{ID: "testrole1"},
 		{ID: "testrole2"},
 	})
@@ -178,7 +213,7 @@ func TestAdapter_LoadPolicy_GivenUser_ShouldAddRoleToUser(t *testing.T) {
 		Roles: []string{"testrole1", "testrole2"},
 	}})
 	mockRoleDbCollection := mock_mongo.NewMockDbCollection(ctrl)
-	mockRoleDbCollection.EXPECT().Aggregate(gomock.Any(), gomock.Any()).Return(mockRoleCursor, nil)
+	mockRoleDbCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(mockRoleCursor, nil)
 	mockSubjDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockSubjDbCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(mockSubjCursor, nil)
 	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
@@ -188,9 +223,10 @@ func TestAdapter_LoadPolicy_GivenUser_ShouldAddRoleToUser(t *testing.T) {
 			return mockRoleDbCollection
 		case mongo.UserCollection:
 			return mockSubjDbCollection
-		default:
-			return nil
+		case mongo.PermissionCollection:
+			return mockPermissionDbCollection
 		}
+		return nil
 	}).AnyTimes()
 	adapter := NewAdapter(mockDbClient)
 	m := createCasbinModel()
@@ -227,6 +263,16 @@ func createMockCursor[T any](ctrl *gomock.Controller, models []T) mongo.Cursor {
 	}
 	mockCursor.EXPECT().Next(gomock.Any()).Return(false)
 	mockCursor.EXPECT().Close(gomock.Any()).Return(nil)
+
+	return mockCursor
+}
+
+func createMockCursorFindAll[T any](ctrl *gomock.Controller, models []T) mongo.Cursor {
+	mockCursor := mock_mongo.NewMockCursor(ctrl)
+	mockCursor.EXPECT().All(gomock.Any(), gomock.Any()).Do(func(ctx context.Context, results any) {
+		ents := results.(*[]T)
+		*ents = models
+	}).Return(nil)
 
 	return mockCursor
 }

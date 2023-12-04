@@ -38,8 +38,6 @@ Feature: get a instruction
               }
             ]
           ],
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "description": "test-instruction-to-get-1-description",
           "author": {
             "_id": "root",
@@ -253,8 +251,6 @@ Feature: get a instruction
               }
             ]
           ],
-          "old_alarm_patterns": null,
-          "old_entity_patterns": null,
           "description": "test-instruction-to-get-2-description",
           "author": {
             "_id": "root",
@@ -333,78 +329,13 @@ Feature: get a instruction
           "last_executed_on": 1596712203,
           "created": 1596712203,
           "last_modified": 1596712203
-        },
-        {
-          "_id": "test-instruction-to-get-3",
-          "type": 1,
-          "status": 0,
-          "name": "test-instruction-to-get-3-name",
-          "old_alarm_patterns": [
-            {
-              "_id": "test-instruction-to-get-3-pattern"
-            }
-          ],
-          "old_entity_patterns": [
-            {
-              "name": "test-instruction-to-get-3-pattern"
-            }
-          ],
-          "description": "test-instruction-to-get-3-description",
-          "author": {
-            "_id": "root",
-            "name": "root",
-            "display_name": "root John Doe admin@canopsis.net"
-          },
-          "enabled": true,
-          "jobs": [
-            {
-              "job": {
-                "_id": "test-job-to-instruction-edit-1",
-                "name": "test-job-to-instruction-edit-1-name",
-                "author": {
-                  "_id": "root",
-                  "name": "root",
-                  "display_name": "root John Doe admin@canopsis.net"
-                },
-                "config": {
-                  "_id": "test-job-config-to-edit-instruction",
-                  "name": "test-job-config-to-edit-instruction-name",
-                  "type": "rundeck",
-                  "host": "http://example.com",
-                  "author": {
-                    "_id": "root",
-                    "name": "root",
-                    "display_name": "root John Doe admin@canopsis.net"
-                  },
-                  "auth_username": "",
-                  "auth_token": "test-auth-token"
-                },
-                "job_id": "test-job-to-instruction-edit-1-external-id",
-                "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
-                "query": null,
-                "multiple_executions": false
-              }
-            }
-          ],
-          "triggers": [
-            {
-              "type": "create"
-            }
-          ],
-          "timeout_after_execution": {
-            "value": 2,
-            "unit": "s"
-          },
-          "last_executed_on": 1596712203,
-          "created": 1596712203,
-          "last_modified": 1596712203
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 3
+        "total_count": 2
       }
     }
     """
@@ -438,16 +369,13 @@ Feature: get a instruction
       "data": [
         {
           "_id": "test-instruction-to-get-2"
-        },
-        {
-          "_id": "test-instruction-to-get-3"
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 2
+        "total_count": 1
       }
     }
     """
@@ -497,8 +425,6 @@ Feature: get a instruction
           }
         ]
       ],
-      "old_alarm_patterns": null,
-      "old_entity_patterns": null,
       "description": "test-instruction-to-get-1-description",
       "author": {
         "_id": "root",

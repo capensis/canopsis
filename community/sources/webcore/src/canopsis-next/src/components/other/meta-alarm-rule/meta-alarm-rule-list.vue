@@ -41,8 +41,6 @@
       <v-layout>
         <c-action-btn
           v-if="updatable"
-          :badge-value="isOldPattern(item)"
-          :badge-tooltip="$t('pattern.oldPatternTooltip')"
           type="edit"
           @click="$emit('edit', item)"
         />
@@ -65,9 +63,6 @@
 </template>
 
 <script>
-import { OLD_PATTERNS_FIELDS } from '@/constants';
-
-import { isOldPattern } from '@/helpers/entities/pattern/form';
 import { isMetaAlarmRuleTypeHasPatterns } from '@/helpers/entities/meta-alarm/rule/form';
 
 import MetaAlarmRuleListExpandPanel from './partials/meta-alarm-rule-list-expand-panel.vue';
@@ -162,14 +157,6 @@ export default {
     },
   },
   methods: {
-    isOldPattern(item) {
-      return isOldPattern(item, [
-        OLD_PATTERNS_FIELDS.entity,
-        OLD_PATTERNS_FIELDS.alarm,
-        OLD_PATTERNS_FIELDS.totalEntity,
-      ]);
-    },
-
     hasRulePatterns({ type }) {
       return isMetaAlarmRuleTypeHasPatterns(type);
     },

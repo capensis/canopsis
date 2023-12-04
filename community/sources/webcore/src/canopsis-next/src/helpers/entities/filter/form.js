@@ -1,4 +1,4 @@
-import { OLD_PATTERNS_FIELDS, PATTERN_CUSTOM_ITEM_VALUE, PATTERNS_FIELDS } from '@/constants';
+import { PATTERN_CUSTOM_ITEM_VALUE, PATTERNS_FIELDS } from '@/constants';
 
 import { formGroupsToPatternRules, patternToForm } from '@/helpers/entities/pattern/form';
 
@@ -20,14 +20,13 @@ import { formGroupsToPatternRules, patternToForm } from '@/helpers/entities/patt
  * @property {string} [corporate_total_entity_pattern]
  *
  * @property {PatternGroups} [weather_service_pattern]
- * @property {Object} [old_mongo_query]
  */
 
 /**
  * @typedef {FilterPatterns} Filter
  * @property {string} title
  * @property {string} author
- * @property {boolean} is_private
+ * @property {boolean} is_user_preference
  */
 
 /**
@@ -53,24 +52,19 @@ import { formGroupsToPatternRules, patternToForm } from '@/helpers/entities/patt
  *
  * @param {Filter} filter
  * @param {PatternsFields} [fields = [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity, PATTERNS_FIELDS.pbehavior]]
- * @param {string[]} [oldFields = []]
  * @return {FilterPatterns}
  */
 export const filterPatternsToForm = (
   filter = {},
   fields = [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity, PATTERNS_FIELDS.pbehavior],
-  oldFields = [OLD_PATTERNS_FIELDS.alarm, OLD_PATTERNS_FIELDS.entity],
-) => fields.reduce((acc, field, index) => {
-  const oldField = oldFields[index];
+) => fields.reduce((acc, field) => {
   const {
     [`corporate_${field}`]: id,
     [field]: pattern,
-    [oldField]: oldMongoQuery,
   } = filter;
 
   acc[field] = patternToForm({
     [field]: pattern,
-    old_mongo_query: !pattern?.length ? oldMongoQuery : undefined,
     is_corporate: !!id && id !== PATTERN_CUSTOM_ITEM_VALUE,
     id,
   });
@@ -83,14 +77,12 @@ export const filterPatternsToForm = (
  *
  * @param {Object} [filter = {}]
  * @param {Array} [fields]
- * @param {Array} [oldFields]
  * @returns {FilterForm}
  */
-export const filterToForm = (filter = {}, fields, oldFields) => ({
+export const filterToForm = (filter = {}, fields) => ({
   title: filter.title ?? '',
-  old_mongo_query: filter.old_mongo_query,
-  is_private: filter.is_private ?? false,
-  ...filterPatternsToForm(filter, fields, oldFields),
+  is_user_preference: filter.is_user_preference ?? false,
+  ...filterPatternsToForm(filter, fields),
 });
 
 /**
@@ -137,6 +129,6 @@ export const formFilterToPatterns = (
  */
 export const formToFilter = (form, fields, corporate) => ({
   title: form.title,
-  is_private: form.is_private,
+  is_user_preference: form.is_user_preference,
   ...formFilterToPatterns(form, fields, corporate),
 });

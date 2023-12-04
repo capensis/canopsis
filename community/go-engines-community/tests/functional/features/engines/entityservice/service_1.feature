@@ -36,8 +36,8 @@ Feature: update service on event
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -148,7 +148,7 @@ Feature: update service on event
       }
     ]
     """
-    When I do GET /api/v4/alarms?search={{ .serviceID }}
+    When I do GET /api/v4/alarms?search={{ .serviceID }}&with_dependencies=true
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -310,8 +310,8 @@ Feature: update service on event
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -430,8 +430,8 @@ Feature: update service on event
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -670,8 +670,8 @@ Feature: update service on event
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -756,8 +756,8 @@ Feature: update service on event
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -882,8 +882,8 @@ Feature: update service on event
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -968,8 +968,8 @@ Feature: update service on event
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -1094,8 +1094,8 @@ Feature: update service on event
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -1340,8 +1340,8 @@ Feature: update service on event
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -1509,8 +1509,8 @@ Feature: update service on event
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },
@@ -1629,8 +1629,8 @@ Feature: update service on event
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
+        "connector": "api",
+        "connector_name": "api",
         "component": "{{ .serviceID }}",
         "source_type": "service"
       },

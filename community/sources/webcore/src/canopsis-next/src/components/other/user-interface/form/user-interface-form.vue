@@ -65,17 +65,15 @@
     </v-layout>
     <v-layout>
       <v-flex xs6>
-        <v-switch
+        <c-enabled-field
           v-field="form.allow_change_severity_to_info"
           :label="$t('userInterface.allowChangeSeverityToInfo')"
-          color="primary"
         />
       </v-flex>
       <v-flex xs6>
-        <v-switch
+        <c-enabled-field
           v-field="form.show_header_on_kiosk_mode"
           :label="$t('userInterface.showHeaderOnKioskMode')"
-          color="primary"
         />
       </v-flex>
     </v-layout>

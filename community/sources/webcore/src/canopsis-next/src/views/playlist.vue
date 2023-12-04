@@ -9,7 +9,9 @@
         class="playlist"
         v-else-if="playlist"
       >
-        <c-page-header>{{ playlist.name }}</c-page-header>
+        <c-page-header v-if="!isFullscreenMode">
+          {{ playlist.name }}
+        </c-page-header>
         <portal :to="$constants.PORTALS_NAMES.additionalTopBarItems">
           <v-fade-transition>
             <v-toolbar-items
@@ -55,17 +57,13 @@
                 :disabled="!activeTab"
                 :tooltip="$t('playlist.player.tooltips.fullscreen')"
                 icon="fullscreen"
-                dark
+                color="white"
                 @click="toggleFullScreenMode"
               />
             </v-toolbar-items>
           </v-fade-transition>
         </portal>
-        <div
-          class="position-relative playlist__tabs-wrapper"
-          ref="playlistTabsWrapper"
-          v-if="activeTab"
-        >
+        <div class="position-relative playlist__tabs-wrapper">
           <div
             class="playlist__play-button-wrapper"
             v-if="!played"
@@ -82,6 +80,7 @@
           </div>
           <v-fade-transition mode="out-in">
             <view-tab-widgets
+              v-if="activeTab"
               :tab="activeTab"
               :key="activeTab._id"
             />
@@ -232,8 +231,9 @@ export default {
       }
     },
 
-    toggleFullScreenMode() {
-      this.$fullscreen.toggle(this.$refs.playlistTabsWrapper, {
+    async toggleFullScreenMode() {
+      this.$fullscreen.toggle(this.$el, {
+        background: 'var(--v-application-background-base)',
         fullscreenClass: 'full-screen',
         callback: value => this.isFullscreenMode = value,
       });

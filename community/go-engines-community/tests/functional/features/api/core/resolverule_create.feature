@@ -48,8 +48,6 @@ Feature: Create an resolve rule
       },
       "name": "test-resolve-rule-to-create-1-name",
       "description": "test-resolve-rule-to-create-1-description",
-      "old_alarm_patterns": null,
-      "old_entity_patterns": null,
       "alarm_pattern": [
         [
           {
@@ -90,8 +88,6 @@ Feature: Create an resolve rule
       },
       "name": "test-resolve-rule-to-create-1-name",
       "description": "test-resolve-rule-to-create-1-description",
-      "old_alarm_patterns": null,
-      "old_entity_patterns": null,
       "alarm_pattern": [
         [
           {
@@ -164,8 +160,6 @@ Feature: Create an resolve rule
     {
       "name": "test-resolve-rule-to-create-2-priority-2-name",
       "description": "test-resolve-rule-to-create-2-priority-2-description",
-      "old_alarm_patterns": null,
-      "old_entity_patterns": null,
       "alarm_pattern": [
         [
           {
@@ -248,8 +242,6 @@ Feature: Create an resolve rule
       },
       "name": "test-resolve-rule-to-create-3-name",
       "description": "test-resolve-rule-to-create-3-description",
-      "old_alarm_patterns": null,
-      "old_entity_patterns": null,
       "alarm_pattern": [
         [
           {
@@ -318,8 +310,6 @@ Feature: Create an resolve rule
       },
       "name": "test-resolve-rule-to-create-4-name",
       "description": "test-resolve-rule-to-create-4-description",
-      "old_alarm_patterns": null,
-      "old_entity_patterns": null,
       "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
       "corporate_alarm_pattern_title": "test-pattern-to-rule-edit-1-title",
       "alarm_pattern": [
@@ -378,8 +368,6 @@ Feature: Create an resolve rule
       },
       "name": "test-resolve-rule-to-create-5-name",
       "description": "test-resolve-rule-to-create-5-description",
-      "old_alarm_patterns": null,
-      "old_entity_patterns": null,
       "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
       "corporate_alarm_pattern_title": "test-pattern-to-rule-edit-1-title",
       "alarm_pattern": [

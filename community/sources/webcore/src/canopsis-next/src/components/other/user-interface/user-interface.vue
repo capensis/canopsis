@@ -79,7 +79,7 @@ export default {
   },
   data() {
     return {
-      form: null,
+      form: userInterfaceToForm(),
     };
   },
   async mounted() {

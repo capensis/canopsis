@@ -5,20 +5,20 @@ Feature: get infos dictionary
   Scenario: given requests should return entity infos dictionary
     Given I am admin
     When I wait the next periodical process
-    When I do GET /api/v4/entity-infos-dictionary/keys?search=test-entity-infos-dictionary-key
+    When I do GET /api/v4/entity-infos-dictionary/keys?search=test-einfos-dict-key
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
-          "value": "test-entity-infos-dictionary-key-1"
+          "value": "test-einfos-dict-key-1"
         },
         {
-          "value": "test-entity-infos-dictionary-key-2"
+          "value": "test-einfos-dict-key-2"
         },
         {
-          "value": "test-entity-infos-dictionary-key-3"
+          "value": "test-einfos-dict-key-3"
         }
       ],
       "meta": {
@@ -29,14 +29,14 @@ Feature: get infos dictionary
       }
     }
     """
-    When I do GET /api/v4/entity-infos-dictionary/keys?search=test-entity-infos-dictionary-key-2
+    When I do GET /api/v4/entity-infos-dictionary/keys?search=test-einfos-dict-key-2
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
-          "value": "test-entity-infos-dictionary-key-2"
+          "value": "test-einfos-dict-key-2"
         }
       ],
       "meta": {
@@ -47,23 +47,23 @@ Feature: get infos dictionary
       }
     }
     """
-    When I do GET /api/v4/entity-infos-dictionary/values?key=test-entity-infos-dictionary-key-2
+    When I do GET /api/v4/entity-infos-dictionary/values?key=test-einfos-dict-key-2
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
-          "value": "test-entity-infos-dictionary-value-11"
+          "value": "test-einfos-dict-value-11"
         },
         {
-          "value": "test-entity-infos-dictionary-value-2"
+          "value": "test-einfos-dict-value-2"
         },
         {
-          "value": "test-entity-infos-dictionary-value-5"
+          "value": "test-einfos-dict-value-5"
         },
         {
-          "value": "test-entity-infos-dictionary-value-8"
+          "value": "test-einfos-dict-value-8"
         }
       ],
       "meta": {
@@ -74,14 +74,14 @@ Feature: get infos dictionary
       }
     }
     """
-    When I do GET /api/v4/entity-infos-dictionary/values?key=test-entity-infos-dictionary-key-2&search=test-entity-infos-dictionary-value-5
+    When I do GET /api/v4/entity-infos-dictionary/values?key=test-einfos-dict-key-2&search=test-einfos-dict-value-5
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
-          "value": "test-entity-infos-dictionary-value-5"
+          "value": "test-einfos-dict-value-5"
         }
       ],
       "meta": {
@@ -92,26 +92,26 @@ Feature: get infos dictionary
       }
     }
     """
-    When I do GET /api/v4/entity-infos-dictionary/keys?search=test-entity-infos-dictionary-should-be-ignored
+    When I do GET /api/v4/entity-infos-dictionary/keys?search=test-einfos-dict-skip
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
-          "value": "test-entity-infos-dictionary-should-be-ignored-key-1"
+          "value": "test-einfos-dict-skip-key-1"
         },
         {
-          "value": "test-entity-infos-dictionary-should-be-ignored-key-2"
+          "value": "test-einfos-dict-skip-key-2"
         },
         {
-          "value": "test-entity-infos-dictionary-should-be-ignored-key-3"
+          "value": "test-einfos-dict-skip-key-3"
         },
         {
-          "value": "test-entity-infos-dictionary-should-be-ignored-key-4"
+          "value": "test-einfos-dict-skip-key-4"
         },
         {
-          "value": "test-entity-infos-dictionary-should-be-ignored-key-5"
+          "value": "test-einfos-dict-skip-key-5"
         }
       ],
       "meta": {
@@ -122,7 +122,7 @@ Feature: get infos dictionary
       }
     }
     """
-    When I do GET /api/v4/entity-infos-dictionary/values?key=test-entity-infos-dictionary-should-be-ignored-key-1
+    When I do GET /api/v4/entity-infos-dictionary/values?key=test-einfos-dict-skip-key-1
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -136,7 +136,7 @@ Feature: get infos dictionary
       }
     }
     """
-    When I do GET /api/v4/entity-infos-dictionary/values?key=test-entity-infos-dictionary-should-be-ignored-key-2
+    When I do GET /api/v4/entity-infos-dictionary/values?key=test-einfos-dict-skip-key-2
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -150,7 +150,7 @@ Feature: get infos dictionary
       }
     }
     """
-    When I do GET /api/v4/entity-infos-dictionary/values?key=test-entity-infos-dictionary-should-be-ignored-key-3
+    When I do GET /api/v4/entity-infos-dictionary/values?key=test-einfos-dict-skip-key-3
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -164,7 +164,7 @@ Feature: get infos dictionary
       }
     }
     """
-    When I do GET /api/v4/entity-infos-dictionary/values?key=test-entity-infos-dictionary-should-be-ignored-key-4
+    When I do GET /api/v4/entity-infos-dictionary/values?key=test-einfos-dict-skip-key-4
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -178,7 +178,7 @@ Feature: get infos dictionary
       }
     }
     """
-    When I do GET /api/v4/entity-infos-dictionary/values?key=test-entity-infos-dictionary-should-be-ignored-key-5
+    When I do GET /api/v4/entity-infos-dictionary/values?key=test-einfos-dict-skip-key-5
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -212,7 +212,7 @@ Feature: get infos dictionary
           "field": "component",
           "cond": {
             "type": "eq",
-            "value": "test-component-entity-infos-dictionary-1"
+            "value": "test-component-entity-infos-dict-1"
           }
         }
       ]],
@@ -220,13 +220,13 @@ Feature: get infos dictionary
         "actions": [
           {
             "type": "set_entity_info_from_template",
-            "name": "test-resource-entity-infos-dictionary-1-key-1",
+            "name": "test-res-infos-dict-1-key-1",
             "description": "Client",
             "value": "{{ `{{ .Event.ExtraInfos.customer }}` }}"
           },
           {
             "type": "set_entity_info_from_template",
-            "name": "test-resource-entity-infos-dictionary-1-key-2",
+            "name": "test-res-infos-dict-1-key-2",
             "description": "Manager",
             "value": "{{ `{{ .Event.ExtraInfos.manager }}` }}"
           }
@@ -243,30 +243,30 @@ Feature: get infos dictionary
     When I send an event and wait the end of event processing:
     """json
     {
-      "connector": "test-connector-entity-infos-dictionary-1",
-      "connector_name": "test-connector-name-entity-infos-dictionary-1",
+      "connector": "test-connector-entity-infos-dict-1",
+      "connector_name": "test-connector-name-entity-infos-dict-1",
       "source_type": "resource",
       "event_type": "check",
-      "component": "test-component-entity-infos-dictionary-1",
-      "resource": "test-resource-entity-infos-dictionary-1",
+      "component": "test-component-entity-infos-dict-1",
+      "resource": "test-resource-entity-infos-dict-1",
       "state": 0,
-      "output": "test-output-entity-infos-dictionary-1",
-      "customer": "test-resource-entity-infos-dictionary-1-val-1",
-      "manager": "test-resource-entity-infos-dictionary-1-val-2"
+      "output": "test-output-entity-infos-dict-1",
+      "customer": "test-res-infos-dict-1-val-1",
+      "manager": "test-res-infos-dict-1-val-2"
     }
     """
     When I wait the next periodical process
-    When I do GET /api/v4/entity-infos-dictionary/keys?search=test-resource-entity-infos-dictionary
+    When I do GET /api/v4/entity-infos-dictionary/keys?search=test-res-infos-dict
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
-          "value": "test-resource-entity-infos-dictionary-1-key-1"
+          "value": "test-res-infos-dict-1-key-1"
         },
         {
-          "value": "test-resource-entity-infos-dictionary-1-key-2"
+          "value": "test-res-infos-dict-1-key-2"
         }
       ],
       "meta": {
@@ -277,14 +277,14 @@ Feature: get infos dictionary
       }
     }
     """
-    When I do GET /api/v4/entity-infos-dictionary/values?key=test-resource-entity-infos-dictionary-1-key-1
+    When I do GET /api/v4/entity-infos-dictionary/values?key=test-res-infos-dict-1-key-1
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
-          "value": "test-resource-entity-infos-dictionary-1-val-1"
+          "value": "test-res-infos-dict-1-val-1"
         }
       ],
       "meta": {
@@ -298,30 +298,30 @@ Feature: get infos dictionary
     When I send an event and wait the end of event processing:
     """json
     {
-      "connector": "test-connector-entity-infos-dictionary-1",
-      "connector_name": "test-connector-name-entity-infos-dictionary-1",
+      "connector": "test-connector-entity-infos-dict-1",
+      "connector_name": "test-connector-name-entity-infos-dict-1",
       "source_type": "resource",
       "event_type": "check",
-      "component": "test-component-entity-infos-dictionary-1",
-      "resource": "test-resource-entity-infos-dictionary-1",
+      "component": "test-component-entity-infos-dict-1",
+      "resource": "test-resource-entity-infos-dict-1",
       "state": 0,
-      "output": "test-output-entity-infos-dictionary-1",
-      "customer": "test-resource-entity-infos-dictionary-1-val-1-updated",
-      "manager": "test-resource-entity-infos-dictionary-1-val-2"
+      "output": "test-output-entity-infos-dict-1",
+      "customer": "test-res-infos-dict-1-val-1-updated",
+      "manager": "test-res-infos-dict-1-val-2"
     }
     """
     When I wait the next periodical process
-    When I do GET /api/v4/entity-infos-dictionary/keys?search=test-resource-entity-infos-dictionary
+    When I do GET /api/v4/entity-infos-dictionary/keys?search=test-res-infos-dict
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
-          "value": "test-resource-entity-infos-dictionary-1-key-1"
+          "value": "test-res-infos-dict-1-key-1"
         },
         {
-          "value": "test-resource-entity-infos-dictionary-1-key-2"
+          "value": "test-res-infos-dict-1-key-2"
         }
       ],
       "meta": {
@@ -332,14 +332,14 @@ Feature: get infos dictionary
       }
     }
     """
-    When I do GET /api/v4/entity-infos-dictionary/values?key=test-resource-entity-infos-dictionary-1-key-1
+    When I do GET /api/v4/entity-infos-dictionary/values?key=test-res-infos-dict-1-key-1
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
-          "value": "test-resource-entity-infos-dictionary-1-val-1-updated"
+          "value": "test-res-infos-dict-1-val-1-updated"
         }
       ],
       "meta": {
@@ -350,10 +350,10 @@ Feature: get infos dictionary
       }
     }
     """
-    When I do DELETE /api/v4/entitybasics?_id=test-resource-entity-infos-dictionary-1/test-component-entity-infos-dictionary-1
+    When I do DELETE /api/v4/entitybasics?_id=test-resource-entity-infos-dict-1/test-component-entity-infos-dict-1
     Then the response code should be 204
     When I wait the next periodical process
-    When I do GET /api/v4/entity-infos-dictionary/keys?search=test-resource-entity-infos-dictionary
+    When I do GET /api/v4/entity-infos-dictionary/keys?search=test-res-infos-dict
     Then the response code should be 200
     Then the response body should contain:
     """json

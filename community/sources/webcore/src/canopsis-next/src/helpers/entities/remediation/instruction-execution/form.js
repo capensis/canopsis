@@ -64,19 +64,6 @@ export const isInstructionExecutionIconSuccess = icon => [
 ].includes(icon);
 
 /**
- * Check type is success or failed and other available
- *
- * @param {number} icon
- * @returns {boolean}
- */
-export const isInstructionExecutionExecutedAndOtherAvailable = icon => [
-  INSTRUCTION_EXECUTION_ICONS.autoFailedWithManualAvailable,
-  INSTRUCTION_EXECUTION_ICONS.manualFailedWithManualAvailable,
-  INSTRUCTION_EXECUTION_ICONS.autoSuccessfulWithManualAvailable,
-  INSTRUCTION_EXECUTION_ICONS.manualSuccessfulWithManualAvailable,
-].includes(icon);
-
-/**
  * Check type is manual
  *
  * @param {number} icon

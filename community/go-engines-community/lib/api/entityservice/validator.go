@@ -3,6 +3,7 @@ package entityservice
 import (
 	"context"
 	"errors"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -14,7 +15,7 @@ import (
 type Validator interface {
 	ValidateEditRequest(ctx context.Context, sl validator.StructLevel)
 	ValidateCreateRequest(sl validator.StructLevel)
-	ValidateUpdateRequest(ctx context.Context, sl validator.StructLevel)
+	ValidateUpdateRequest(sl validator.StructLevel)
 }
 
 type basicValidator struct {
@@ -43,28 +44,16 @@ func (v *basicValidator) ValidateCreateRequest(sl validator.StructLevel) {
 	}
 }
 
-func (v *basicValidator) ValidateUpdateRequest(ctx context.Context, sl validator.StructLevel) {
-	id := ""
+func (v *basicValidator) ValidateUpdateRequest(sl validator.StructLevel) {
 	corporateEntityPattern := ""
 	var entityPattern pattern.Entity
 	switch r := sl.Current().Interface().(type) {
 	case UpdateRequest:
-		id = r.ID
 		entityPattern = r.EntityPattern
 		corporateEntityPattern = r.CorporateEntityPattern
 	case BulkUpdateRequestItem:
-		id = r.ID
 		entityPattern = r.EntityPattern
 		corporateEntityPattern = r.CorporateEntityPattern
-	}
-
-	if id != "" {
-		err := v.dbClient.Collection(mongo.EntityMongoCollection).FindOne(ctx, bson.M{"_id": id, "old_entity_patterns": bson.M{"$ne": nil}}).Err()
-		if err == nil {
-			return
-		} else if !errors.Is(err, mongodriver.ErrNoDocuments) {
-			panic(err)
-		}
 	}
 
 	if len(entityPattern) == 0 && corporateEntityPattern == "" {
@@ -77,7 +66,7 @@ func (v *basicValidator) validateCategory(ctx context.Context, sl validator.Stru
 		err := v.dbClient.Collection(mongo.EntityCategoryMongoCollection).
 			FindOne(ctx, bson.M{"_id": category}).Err()
 		if err != nil {
-			if err == mongodriver.ErrNoDocuments {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				sl.ReportError(category, "Category", "Category", "not_exist", "")
 			} else {
 				panic(err)

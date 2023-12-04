@@ -50,8 +50,6 @@
       <v-layout>
         <c-action-btn
           v-if="updatable"
-          :badge-value="isOldPattern(item)"
-          :badge-tooltip="$t('pattern.oldPatternTooltip')"
           type="edit"
           @click="$emit('edit', item)"
         />
@@ -74,9 +72,6 @@
 </template>
 
 <script>
-import { OLD_PATTERNS_FIELDS } from '@/constants';
-
-import { isOldPattern } from '@/helpers/entities/pattern/form';
 import { isDeprecatedTrigger } from '@/helpers/entities/scenario/form';
 
 import { permissionsTechnicalExploitationScenarioMixin } from '@/mixins/permissions/technical/exploitation/scenario';
@@ -163,10 +158,6 @@ export default {
   methods: {
     hasDeprecatedTrigger(item) {
       return item.triggers.some(({ type }) => isDeprecatedTrigger(type));
-    },
-
-    isOldPattern({ actions = [] }) {
-      return actions.some(action => isOldPattern(action, [OLD_PATTERNS_FIELDS.entity, OLD_PATTERNS_FIELDS.alarm]));
     },
   },
 };

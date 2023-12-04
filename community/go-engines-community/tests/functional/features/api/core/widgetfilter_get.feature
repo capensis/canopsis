@@ -2,6 +2,7 @@ Feature: Get a widget filter
   I need to be able to get a widget filter
   Only admin should be able to get a widget filter
 
+  @concurrent
   Scenario: given all request should return filters
     When I am admin
     When I do GET /api/v4/widget-filters?widget=test-widget-to-filter-get
@@ -13,6 +14,7 @@ Feature: Get a widget filter
         {
           "_id": "test-widgetfilter-to-get-1",
           "title": "test-widgetfilter-to-get-1-title",
+          "is_user_preference": false,
           "is_private": false,
           "author": {
             "_id": "nopermsuser",
@@ -56,24 +58,10 @@ Feature: Get a widget filter
           ]
         },
         {
-          "_id": "test-widgetfilter-to-get-5",
-          "title": "test-widgetfilter-to-get-5-title",
-          "is_private": false,
-          "author": {
-            "_id": "root",
-            "name": "root",
-            "display_name": "root John Doe admin@canopsis.net"
-          },
-          "created": 1605263992,
-          "updated": 1605263992,
-          "old_mongo_query": {
-            "name": "test-widgetfilter-to-get-5-pattern"
-          }
-        },
-        {
           "_id": "test-widgetfilter-to-get-2",
           "title": "test-widgetfilter-to-get-2-title",
-          "is_private": true,
+          "is_user_preference": true,
+          "is_private": false,
           "author": {
             "_id": "root",
             "name": "root",
@@ -126,11 +114,12 @@ Feature: Get a widget filter
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 3
+        "total_count": 2
       }
     }
     """
 
+  @concurrent
   Scenario: given public request should return filters
     When I am admin
     When I do GET /api/v4/widget-filters?widget=test-widget-to-filter-get&private=false
@@ -142,6 +131,7 @@ Feature: Get a widget filter
         {
           "_id": "test-widgetfilter-to-get-1",
           "title": "test-widgetfilter-to-get-1-title",
+          "is_user_preference": false,
           "is_private": false,
           "author": {
             "_id": "nopermsuser",
@@ -183,32 +173,18 @@ Feature: Get a widget filter
               }
             ]
           ]
-        },
-        {
-          "_id": "test-widgetfilter-to-get-5",
-          "title": "test-widgetfilter-to-get-5-title",
-          "is_private": false,
-          "author": {
-            "_id": "root",
-            "name": "root",
-            "display_name": "root John Doe admin@canopsis.net"
-          },
-          "created": 1605263992,
-          "updated": 1605263992,
-          "old_mongo_query": {
-            "name": "test-widgetfilter-to-get-5-pattern"
-          }
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 2
+        "total_count": 1
       }
     }
     """
 
+  @concurrent
   Scenario: given private request should return filters
     When I am admin
     When I do GET /api/v4/widget-filters?widget=test-widget-to-filter-get&private=true
@@ -220,7 +196,8 @@ Feature: Get a widget filter
         {
           "_id": "test-widgetfilter-to-get-2",
           "title": "test-widgetfilter-to-get-2-title",
-          "is_private": true,
+          "is_user_preference": true,
+          "is_private": false,
           "author": {
             "_id": "root",
             "name": "root",
@@ -278,6 +255,7 @@ Feature: Get a widget filter
     }
     """
 
+  @concurrent
   Scenario: given get invalid all request should return error
     When I am admin
     When I do GET /api/v4/widget-filters
@@ -291,25 +269,30 @@ Feature: Get a widget filter
     }
     """
 
+  @concurrent
   Scenario: given get all request and no auth user should not allow access
     When I do GET /api/v4/widget-filters
     Then the response code should be 401
 
+  @concurrent
   Scenario: given get all request and auth user without permissions should not allow access
     When I am noperms
     When I do GET /api/v4/widget-filters
     Then the response code should be 403
 
+  @concurrent
   Scenario: given get all request and auth user without view permission should not allow access
     When I am admin
     When I do GET /api/v4/widget-filters?widget=test-widget-to-filter-check-access
     Then the response code should be 403
 
+  @concurrent
   Scenario: given get all request and not exist widget should not allow access
     When I am admin
     When I do GET /api/v4/widget-filters?widget=test-widget-not-exist
     Then the response code should be 403
 
+  @concurrent
   Scenario: given get request should return ok
     When I am admin
     When I do GET /api/v4/widget-filters/test-widgetfilter-to-get-1
@@ -319,6 +302,7 @@ Feature: Get a widget filter
     {
       "_id": "test-widgetfilter-to-get-1",
       "title": "test-widgetfilter-to-get-1-title",
+      "is_user_preference": false,
       "is_private": false,
       "author": {
         "_id": "nopermsuser",
@@ -363,6 +347,7 @@ Feature: Get a widget filter
     }
     """
 
+  @concurrent
   Scenario: given get private filter request should return ok
     When I am admin
     When I do GET /api/v4/widget-filters/test-widgetfilter-to-get-2
@@ -372,7 +357,8 @@ Feature: Get a widget filter
     {
       "_id": "test-widgetfilter-to-get-2",
       "title": "test-widgetfilter-to-get-2-title",
-      "is_private": true,
+      "is_user_preference": true,
+      "is_private": false,
       "author": {
         "_id": "root",
         "name": "root",
@@ -422,49 +408,191 @@ Feature: Get a widget filter
     }
     """
 
+  @concurrent
   Scenario: given get request and no auth user should not allow access
     When I do GET /api/v4/widget-filters/test-widgetfilter-not-exist
     Then the response code should be 401
 
+  @concurrent
   Scenario: given get request and auth user without permissions should not allow access
     When I am noperms
     When I do GET /api/v4/widget-filters/test-widgetfilter-not-exist
     Then the response code should be 403
 
+  @concurrent
   Scenario: given get request and auth user without view permission should not allow access
     When I am admin
     When I do GET /api/v4/widget-filters/test-widgetfilter-to-get-3
     Then the response code should be 403
 
+  @concurrent
   Scenario: given get request and another user should return not found
     When I am admin
     When I do GET /api/v4/widget-filters/test-widgetfilter-to-get-4
     Then the response code should be 404
 
+  @concurrent
   Scenario: given get not exist filter request should not allow access
     When I am admin
     When I do GET /api/v4/widget-filters/test-widgetfilter-not-exist
     Then the response code should be 403
 
-  Scenario: given get old filter request should return ok
+  @concurrent
+  Scenario: given all private filters request should return filters only for owner
     When I am admin
-    When I do GET /api/v4/widget-filters/test-widgetfilter-to-get-5
+    When I do GET /api/v4/widget-filters?widget=test-private-widget-to-private-filter-get-1&private=false
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
-      "_id": "test-widgetfilter-to-get-5",
-      "title": "test-widgetfilter-to-get-5-title",
-      "is_private": false,
-      "author": {
-        "_id": "root",
-        "name": "root",
-        "display_name": "root John Doe admin@canopsis.net"
-      },
-      "created": 1605263992,
-      "updated": 1605263992,
-      "old_mongo_query": {
-        "name": "test-widgetfilter-to-get-5-pattern"
+      "data": [
+        {
+          "_id": "test-private-widgetfilter-to-get-1"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
       }
     }
     """
+    When I do GET /api/v4/widget-filters?widget=test-private-widget-to-private-filter-get-1&private=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-private-widgetfilter-to-get-3"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/widget-filters?widget=test-private-widget-to-private-filter-get-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-private-widgetfilter-to-get-1"
+        },
+        {
+          "_id": "test-private-widgetfilter-to-get-3"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I do GET /api/v4/widget-filters?widget=test-private-widget-to-private-filter-get-2
+    Then the response code should be 403
+
+  @concurrent
+  Scenario: given get owned filters request with api_private_view_groups
+    but without api_view permissions should return filters
+    When I am test-role-to-private-views-without-view-perm
+    When I do GET /api/v4/widget-filters?widget=test-private-widget-to-private-filter-get-4&private=false
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-private-widgetfilter-to-get-4",
+          "is_user_preference": false,
+          "is_private": true
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/widget-filters?widget=test-private-widget-to-private-filter-get-4&private=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-private-widgetfilter-to-get-5",
+          "is_user_preference": true,
+          "is_private": true
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/widget-filters?widget=test-private-widget-to-private-filter-get-4
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-private-widgetfilter-to-get-4",
+          "is_user_preference": false,
+          "is_private": true
+        },
+        {
+          "_id": "test-private-widgetfilter-to-get-5",
+          "is_user_preference": true,
+          "is_private": true
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I do GET /api/v4/widget-filters/test-private-widgetfilter-to-get-4
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-private-widgetfilter-to-get-4",
+      "is_user_preference": false,
+      "is_private": true
+    }
+    """
+    When I do GET /api/v4/widget-filters/test-private-widgetfilter-to-get-5
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-private-widgetfilter-to-get-5",
+      "is_user_preference": true,
+      "is_private": true
+    }
+    """
+
+  @concurrent
+  Scenario: given get public filters request with api_private_view_groups
+    but without api_view permissions should not allow access
+    When I am test-role-to-private-views-without-view-perm
+    When I do GET /api/v4/widget-filters?widget=test-widget-to-filter-get
+    Then the response code should be 403

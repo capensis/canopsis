@@ -152,7 +152,7 @@ type dummyResponse struct {
 	Username string
 	Password string
 
-	BodySequence      map[int]string
+	BodySequence      []string
 	BodySequenceIndex int
 }
 
@@ -261,6 +261,24 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 			Method: http.MethodGet,
 			Body:   "{\"id\":\"test-job-execution-running\",\"status\":\"running\"}",
 		},
+		"/api/35/job/test-job-succeeded-after-retry/run": {
+			Code:   http.StatusOK,
+			Method: http.MethodPost,
+			Body:   fmt.Sprintf("{\"id\":\"test-job-execution-succeeded-after-retry\",\"href\":\"/api/35/execution/test-job-execution-succeeded-after-retry\",\"permalink\":\"%s/rundeck/execution/show/test-job-execution-succeeded-after-retry\"}", addr),
+		},
+		"/api/35/execution/test-job-execution-succeeded-after-retry": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			BodySequence: []string{
+				"{\"id\":\"test-job-execution-succeeded-after-retry\",\"status\":\"running\"}",
+				"{\"id\":\"test-job-execution-succeeded-after-retry\",\"status\":\"succeeded\"}",
+			},
+		},
+		"/api/35/execution/test-job-execution-succeeded-after-retry/output": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "test-job-execution-succeeded-after-retry-output",
+		},
 		// AWX
 		"/api/v2/job_templates/test-job-succeeded/launch/": {
 			Code:   http.StatusOK,
@@ -322,6 +340,34 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 			Method: http.MethodGet,
 			Body:   "test-job-execution-params-succeeded-output",
 		},
+		"/job/test-job-succeeded-after-retry/build": {
+			Code:   http.StatusNoContent,
+			Method: http.MethodPost,
+			Headers: map[string]string{
+				"Location": "/queue/item/test-job-queue-succeeded-after-retry/",
+			},
+		},
+		"/queue/item/test-job-queue-succeeded-after-retry/api/json": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			BodySequence: []string{
+				"{}",
+				"{\"executable\":{\"url\":\"/job/test-job-succeeded-after-retry/test-job-execution-succeeded-after-retry\"}}",
+			},
+		},
+		"/job/test-job-succeeded-after-retry/test-job-execution-succeeded-after-retry/api/json": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			BodySequence: []string{
+				"{\"id\":\"test-job-execution-succeeded-after-retry\",\"result\":null}",
+				"{\"id\":\"test-job-execution-succeeded-after-retry\",\"result\":\"SUCCESS\"}",
+			},
+		},
+		"/job/test-job-succeeded-after-retry/test-job-execution-succeeded-after-retry/consoleText": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "test-job-execution-succeeded-after-retry-output",
+		},
 		// VTOM
 		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_1/jobs/test-job-succeeded/action": {
 			Code:   http.StatusOK,
@@ -330,9 +376,9 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_1/jobs/test-job-succeeded/status": {
 			Code:   http.StatusOK,
 			Method: http.MethodGet,
-			BodySequence: map[int]string{
-				0: "{\"status\":\"Waiting\"}",
-				1: "{\"status\":\"Finished\"}",
+			BodySequence: []string{
+				"{\"status\":\"Waiting\"}",
+				"{\"status\":\"Finished\"}",
 			},
 		},
 		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_1/jobs/test-job-succeeded/logs/last/stdout": {
@@ -347,9 +393,9 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_1/jobs/test-job-failed/status": {
 			Code:   http.StatusOK,
 			Method: http.MethodGet,
-			BodySequence: map[int]string{
-				0: "{\"status\":\"Waiting\"}",
-				1: "{\"status\":\"Error\"}",
+			BodySequence: []string{
+				"{\"status\":\"Waiting\"}",
+				"{\"status\":\"Error\"}",
 			},
 		},
 		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_1/jobs/test-job-failed/logs/last/stderr": {
@@ -364,9 +410,9 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_2/jobs/test-job-succeeded/status": {
 			Code:   http.StatusOK,
 			Method: http.MethodGet,
-			BodySequence: map[int]string{
-				0: "{\"status\":\"Waiting\"}",
-				1: "{\"status\":\"Finished\"}",
+			BodySequence: []string{
+				"{\"status\":\"Waiting\"}",
+				"{\"status\":\"Finished\"}",
 			},
 		},
 		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_2/jobs/test-job-succeeded/logs/last/stdout": {
@@ -381,9 +427,9 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_2/jobs/test-job-failed/status": {
 			Code:   http.StatusOK,
 			Method: http.MethodGet,
-			BodySequence: map[int]string{
-				0: "{\"status\":\"Waiting\"}",
-				1: "{\"status\":\"Error\"}",
+			BodySequence: []string{
+				"{\"status\":\"Waiting\"}",
+				"{\"status\":\"Error\"}",
 			},
 		},
 		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_2/jobs/test-job-failed/logs/last/stderr": {

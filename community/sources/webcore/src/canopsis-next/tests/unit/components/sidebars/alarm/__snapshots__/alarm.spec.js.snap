@@ -692,9 +692,12 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     <export-csv-form-stub
       datetimeformat="true"
       form="[object Object]"
+      optionalinfosattributes="true"
       templates=""
       type="alarm"
+      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       withinstructions="true"
+      withsimpletemplate="true"
     />
     <hr
       aria-orientation="horizontal"
@@ -1430,9 +1433,12 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     <export-csv-form-stub
       datetimeformat="true"
       form="[object Object]"
+      optionalinfosattributes="true"
       templates=""
       type="alarm"
+      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       withinstructions="true"
+      withsimpletemplate="true"
     />
     <hr
       aria-orientation="horizontal"
@@ -2166,9 +2172,12 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     <export-csv-form-stub
       datetimeformat="true"
       form="[object Object]"
+      optionalinfosattributes="true"
       templates=""
       type="alarm"
+      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       withinstructions="true"
+      withsimpletemplate="true"
     />
     <hr
       aria-orientation="horizontal"

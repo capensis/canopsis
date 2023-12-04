@@ -55,7 +55,10 @@
           :with-template="withTemplate"
           :with-color-indicator="withColorIndicator"
           :with-instructions="withInstructions"
+          :with-simple-template="withSimpleTemplate"
+          :optional-infos-attributes="optionalInfosAttributes"
           :without-infos-attributes="withoutInfosAttributes"
+          :variables="variables"
         />
       </v-expand-transition>
     </v-card-text>
@@ -125,6 +128,18 @@ export default {
     withoutInfosAttributes: {
       type: Boolean,
       default: false,
+    },
+    optionalInfosAttributes: {
+      type: Boolean,
+      default: false,
+    },
+    withSimpleTemplate: {
+      type: Boolean,
+      default: false,
+    },
+    variables: {
+      type: Array,
+      required: false,
     },
   },
   data() {

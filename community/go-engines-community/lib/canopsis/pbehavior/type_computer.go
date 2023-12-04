@@ -48,8 +48,7 @@ type ComputedPbehavior struct {
 	Created    int64          `json:"c"`
 	Color      string         `json:"-"`
 
-	Pattern       pattern.Entity         `json:"p,omitempty"`
-	OldMongoQuery map[string]interface{} `json:"q,omitempty"`
+	Pattern pattern.Entity `json:"p,omitempty"`
 }
 
 //easyjson:json
@@ -320,14 +319,6 @@ func (c *typeComputer) computePbehavior(
 			reasonName = reason.Name
 		}
 
-		var oldMongoQuery map[string]interface{}
-		if pbehavior.OldMongoQuery != "" {
-			err = c.decoder.Decode([]byte(pbehavior.OldMongoQuery), &oldMongoQuery)
-			if err != nil {
-				return ComputedPbehavior{}, fmt.Errorf("pbehavior has invalid old mongo query: %w", err)
-			}
-		}
-
 		return ComputedPbehavior{
 			Name:       pbehavior.Name,
 			ReasonName: reasonName,
@@ -335,9 +326,7 @@ func (c *typeComputer) computePbehavior(
 			Types:      computedTypes,
 			Created:    pbehavior.Created.Unix(),
 			Color:      pbehavior.Color,
-
-			Pattern:       pbehavior.EntityPattern,
-			OldMongoQuery: oldMongoQuery,
+			Pattern:    pbehavior.EntityPattern,
 		}, nil
 	}
 

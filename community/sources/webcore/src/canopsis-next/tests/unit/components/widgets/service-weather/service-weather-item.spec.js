@@ -120,6 +120,8 @@ describe('service-weather-item', () => {
         heightFactor: 12,
         colorIndicator: COLOR_INDICATOR_TYPES.impactState,
         template: DEFAULT_SERVICE_WEATHER_BLOCK_TEMPLATE,
+        showVariablesHelpButton: true,
+        showAlarmsButton: true,
       },
     });
 

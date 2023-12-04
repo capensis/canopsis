@@ -28,6 +28,7 @@
         v-field="form.parameters.chart_title"
         :label="$tc('common.header')"
         :placeholder="$t('settings.headerTitle')"
+        name="chart_title"
       />
       <field-quick-date-interval-type v-field="form.parameters.default_time_range" />
       <field-sampling v-field="form.parameters.default_sampling" />

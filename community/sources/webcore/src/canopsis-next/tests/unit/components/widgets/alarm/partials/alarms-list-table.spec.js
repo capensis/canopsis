@@ -534,7 +534,6 @@ describe('alarms-list-table', () => {
           page: 1,
           limit: 10,
         },
-        isTourEnabled: true,
         loading: true,
         selectable: true,
         hideChildren: true,

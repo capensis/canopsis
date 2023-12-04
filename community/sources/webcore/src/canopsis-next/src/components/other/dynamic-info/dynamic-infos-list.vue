@@ -33,8 +33,6 @@
       <v-layout>
         <c-action-btn
           v-if="updatable"
-          :badge-value="isOldPattern(item)"
-          :badge-tooltip="$t('pattern.oldPatternTooltip')"
           type="edit"
           @click="$emit('edit', item)"
         />
@@ -59,10 +57,6 @@
 </template>
 
 <script>
-import { OLD_PATTERNS_FIELDS } from '@/constants';
-
-import { isOldPattern } from '@/helpers/entities/pattern/form';
-
 import PbehaviorsCreateActionBtn from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-create-action-btn.vue';
 import PbehaviorsListActionBtn from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-list-action-btn.vue';
 
@@ -116,11 +110,6 @@ export default {
         { text: this.$t('common.updated'), value: 'updated' },
         { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },
       ];
-    },
-  },
-  methods: {
-    isOldPattern(item) {
-      return isOldPattern(item, [OLD_PATTERNS_FIELDS.entity, OLD_PATTERNS_FIELDS.alarm]);
     },
   },
 };

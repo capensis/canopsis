@@ -91,7 +91,7 @@ describe('filters-list', () => {
         ...newFilter,
         _id: filterId,
         widget: widgetId,
-        is_private: false,
+        is_user_preference: false,
       },
     ]);
   });

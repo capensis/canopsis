@@ -45,8 +45,6 @@ Feature: no update service when entity is inactive
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceID }}"
       },
       {
@@ -177,8 +175,6 @@ Feature: no update service when entity is inactive
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceID }}"
       },
       {
@@ -386,8 +382,6 @@ Feature: no update service when entity is inactive
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceID }}"
       },
       {
@@ -628,8 +622,6 @@ Feature: no update service when entity is inactive
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceID }}"
       },
       {

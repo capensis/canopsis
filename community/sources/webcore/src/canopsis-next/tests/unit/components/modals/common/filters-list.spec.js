@@ -146,7 +146,7 @@ describe('filters-list', () => {
     expect(JSON.parse(filterPostRequest.data)).toEqual({
       ...newFilter,
       widget: widgetId,
-      is_private: true,
+      is_user_preference: true,
     });
   });
 

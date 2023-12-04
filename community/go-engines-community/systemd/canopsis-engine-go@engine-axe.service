@@ -12,7 +12,7 @@ Group=canopsis
 WorkingDirectory=/opt/canopsis
 Environment=HOME=/opt/canopsis
 EnvironmentFile=/opt/canopsis/etc/go-engines-vars.conf
-ExecStart=/usr/bin/env /opt/canopsis/bin/engine-axe -publishQueue Engine_correlation -withRemediation=true
+ExecStart=/usr/bin/env /opt/canopsis/bin/engine-axe
 PIDFile=/run/canopsis-engine-go-engine-axe.pid
 Restart=always
 RestartSec=1

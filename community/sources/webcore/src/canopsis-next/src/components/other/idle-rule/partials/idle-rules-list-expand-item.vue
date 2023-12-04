@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import { OLD_PATTERNS_FIELDS, PATTERNS_FIELDS } from '@/constants';
+import { PATTERNS_FIELDS } from '@/constants';
 
 import { filterPatternsToForm } from '@/helpers/entities/filter/form';
 import { isIdleRuleEntityType } from '@/helpers/entities/idle-rule/form';
@@ -73,11 +73,7 @@ export default {
     },
 
     patterns() {
-      return filterPatternsToForm(
-        this.idleRule,
-        [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.alarm],
-        [OLD_PATTERNS_FIELDS.entity, OLD_PATTERNS_FIELDS.alarm],
-      );
+      return filterPatternsToForm(this.idleRule, [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.alarm]);
     },
   },
 };

@@ -1,6 +1,6 @@
 import { isNumber, omit } from 'lodash';
 
-import { ENTITIES_STATES, OLD_PATTERNS_FIELDS, PATTERNS_FIELDS } from '@/constants';
+import { ENTITIES_STATES, PATTERNS_FIELDS } from '@/constants';
 
 import { filterPatternsToForm, formFilterToPatterns } from '../filter/form';
 import { infosToArray } from '../shared/form';
@@ -42,7 +42,6 @@ export const serviceToForm = (service = {}) => ({
   patterns: filterPatternsToForm(
     service,
     [PATTERNS_FIELDS.entity],
-    [OLD_PATTERNS_FIELDS.entity],
   ),
   coordinates: service.coordinates ?? {
     lat: undefined,

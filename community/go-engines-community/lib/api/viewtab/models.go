@@ -9,10 +9,18 @@ import (
 )
 
 type EditRequest struct {
-	ID     string `json:"-"`
 	Title  string `json:"title" binding:"required,max=255"`
-	View   string `json:"view" binding:"required"`
 	Author string `json:"author" swaggerignore:"true"`
+}
+
+type CreateRequest struct {
+	EditRequest
+	View string `json:"view" binding:"required"`
+}
+
+type UpdateRequest struct {
+	EditRequest
+	ID string `json:"-"`
 }
 
 type EditPositionRequest struct {
@@ -36,4 +44,6 @@ type Response struct {
 	Author   *author.Author     `bson:"author" json:"author,omitempty"`
 	Created  *types.CpsTime     `bson:"created" json:"created,omitempty" swaggertype:"integer"`
 	Updated  *types.CpsTime     `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
+
+	IsPrivate bool `bson:"is_private" json:"is_private"`
 }
