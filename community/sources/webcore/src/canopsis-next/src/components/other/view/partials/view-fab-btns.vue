@@ -23,7 +23,7 @@
           </v-btn>
         </template>
         <view-share-link-btn
-          v-if="hasCreateAnyShareTokenAccess"
+          v-if="sharable"
           :view="view"
           :tab="activeTab"
         />
@@ -31,14 +31,15 @@
           :value="fullscreen"
           :toggle-full-screen="toggleFullScreen"
           left-tooltip
+          small
         />
         <view-editing-btn v-if="updatable" />
         <v-tooltip left>
           <template #activator="{ on }">
             <v-btn
+              class="view-fab-btns__add-widget-btn"
               v-if="updatable"
               v-on="on"
-              class="view-fab-btns__add-widget-btn"
               fab
               dark
               small
@@ -80,7 +81,6 @@ import { MODALS } from '@/constants';
 import { activeViewMixin } from '@/mixins/active-view';
 import { viewRouterMixin } from '@/mixins/view/router';
 import { entitiesViewTabMixin } from '@/mixins/entities/view/tab';
-import { permissionsTechnicalShareTokenMixin } from '@/mixins/permissions/technical/share-token';
 
 import ViewShareLinkBtn from './view-share-link-btn.vue';
 import ViewEditingBtn from './view-editing-btn.vue';
@@ -100,7 +100,6 @@ export default {
     activeViewMixin,
     viewRouterMixin,
     entitiesViewTabMixin,
-    permissionsTechnicalShareTokenMixin,
   ],
   props: {
     activeTab: {
@@ -108,6 +107,10 @@ export default {
       required: false,
     },
     updatable: {
+      type: Boolean,
+      default: false,
+    },
+    sharable: {
       type: Boolean,
       default: false,
     },

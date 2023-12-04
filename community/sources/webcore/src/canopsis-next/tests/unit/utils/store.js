@@ -505,7 +505,7 @@ export const createViewModule = () => {
     actions: {
       fetchList: fetchGroupsList,
       fetchListWithoutStore: fetchGroupsListWithoutStore,
-      updatePositionsView: updateViewsPositions,
+      updateViewPositions: updateViewsPositions,
       create: createGroup,
       update: updateGroup,
       remove: removeGroup,

@@ -11,14 +11,10 @@
     <v-tab
       v-if="hasMoreInfos"
       :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.moreInfos}`"
-      :class="moreInfosTabClass"
     >
       {{ $t('alarm.tabs.moreInfos') }}
     </v-tab>
-    <v-tab
-      :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.timeLine}`"
-      :class="timeLineTabClass"
-    >
+    <v-tab :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.timeLine}`">
       {{ $t('alarm.tabs.timeLine') }}
     </v-tab>
     <v-tab
@@ -251,10 +247,10 @@
 <script>
 import { isEqual, map } from 'lodash';
 
-import { ENTITY_TYPES, GRID_SIZES, TOURS, JUNIT_ALARM_CONNECTOR } from '@/constants';
+import { ENTITY_TYPES, GRID_SIZES, JUNIT_ALARM_CONNECTOR } from '@/constants';
 
 import { uid } from '@/helpers/uid';
-import { getStepClass } from '@/helpers/tour';
+import { setField } from '@/helpers/immutable';
 import { alarmToServiceDependency } from '@/helpers/entities/service-dependencies/list';
 import { convertAlarmDetailsQueryToRequest } from '@/helpers/entities/alarm/query';
 import { convertWidgetChartsToPerfDataQuery } from '@/helpers/entities/metric/query';
@@ -264,7 +260,7 @@ import { widgetExpandPanelAlarmDetails } from '@/mixins/widget/expand-panel/alar
 import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
 
 import ServiceDependencies from '@/components/other/service/partials/service-dependencies.vue';
-import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-simple-list.vue';
+import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/pbehaviors-simple-list.vue';
 import DeclaredTicketsList from '@/components/other/declare-ticket/declared-tickets-list.vue';
 import EntityCharts from '@/components/widgets/chart/entity-charts.vue';
 
@@ -307,10 +303,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    isTourEnabled: {
-      type: Boolean,
-      default: false,
-    },
     search: {
       type: String,
       default: '',
@@ -323,22 +315,6 @@ export default {
     };
   },
   computed: {
-    moreInfosTabClass() {
-      if (this.isTourEnabled) {
-        return getStepClass(TOURS.alarmsExpandPanel, 2);
-      }
-
-      return '';
-    },
-
-    timeLineTabClass() {
-      if (this.isTourEnabled) {
-        return getStepClass(TOURS.alarmsExpandPanel, 3);
-      }
-
-      return '';
-    },
-
     cardFlexClass() {
       const { expandGridRangeSize: [start, end] = [GRID_SIZES.min, GRID_SIZES.max] } = this.widget.parameters;
 
@@ -353,11 +329,16 @@ export default {
     },
 
     dependency() {
-      return alarmToServiceDependency(this.alarm);
+      const alarmWithDependenciesCounts = setField(this.alarm, 'entity', entity => ({
+        ...entity,
+        ...this.alarmDetails.entity,
+      }));
+
+      return alarmToServiceDependency(alarmWithDependenciesCounts);
     },
 
     hasMoreInfos() {
-      return this.widget.parameters.moreInfoTemplate ?? this.isTourEnabled;
+      return this.widget.parameters.moreInfoTemplate;
     },
 
     hasChildren() {
@@ -373,12 +354,9 @@ export default {
     },
 
     hasImpactsDependencies() {
-      const { impact } = this.alarm.entity;
+      const { impacts_count: impactsCount } = this.alarm.entity;
 
-      return this.hasServiceDependencies
-        ? impact?.length > 0
-        // resource and component types having one basic entity into impact
-        : impact?.length > 1;
+      return impactsCount > 0;
     },
 
     hasEntityGantt() {
@@ -429,10 +407,6 @@ export default {
           search_by: map(columns, 'value'),
         };
       },
-    },
-
-    isTourEnabled() {
-      this.refreshTabs();
     },
 
     query(query, oldQuery) {

@@ -39,11 +39,7 @@ Feature: Get a metaalarm-rule
                 }
               }
             ]
-          ],
-          "old_entity_patterns": null,
-          "old_total_entity_patterns": null,
-          "old_alarm_patterns": null,
-          "old_event_patterns": null
+          ]
         },
         {
           "_id": "test-metaalarm-to-get-2",
@@ -74,11 +70,7 @@ Feature: Get a metaalarm-rule
                 }
               }
             ]
-          ],
-          "old_entity_patterns": null,
-          "old_total_entity_patterns": null,
-          "old_alarm_patterns": null,
-          "old_event_patterns": null
+          ]
         }
       ],
       "meta": {
@@ -125,38 +117,7 @@ Feature: Get a metaalarm-rule
             }
           }
         ]
-      ],
-      "old_entity_patterns": null,
-      "old_total_entity_patterns": null,
-      "old_alarm_patterns": null,
-      "old_event_patterns": null
-    }
-    """
-
-  Scenario: given get request should return metaalarm rule with old patterns
-    When I am admin
-    When I do GET /api/v4/cat/metaalarmrules/test-metaalarm-rule-backward-compatibility-to-get
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "_id": "test-metaalarm-rule-backward-compatibility-to-get",
-      "auto_resolve": false,
-      "config": {
-        "threshold_count": 3
-      },
-      "name": "test-metaalarm-rule-backward-compatibility-to-get-name",
-      "type": "complex",
-      "old_alarm_patterns": [
-        {
-          "v": {
-            "component": "test-metaalarm-rule-backward-compatibility-component-to-get"
-          }
-        }
-      ],
-      "old_entity_patterns": null,
-      "old_total_entity_patterns": null,
-      "old_event_patterns": null
+      ]
     }
     """
 

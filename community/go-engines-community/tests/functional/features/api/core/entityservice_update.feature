@@ -82,7 +82,6 @@ Feature: Update entity service
           }
         ]
       ],
-      "old_entity_patterns": null,
       "impact_level": 2,
       "infos": {
         "test-entityservice-to-update-1-info-1-name": {
@@ -124,93 +123,6 @@ Feature: Update entity service
         "lat": 62.34960927573042,
         "lng": 74.02834455685206
       }
-    }
-    """
-
-  Scenario: given update request with old pattern should update entity
-    When I am admin
-    When I do PUT /api/v4/entityservices/test-entityservice-to-update-2:
-    """json
-    {
-      "name": "test-entityservice-to-update-2-name",
-      "output_template": "test-entityservice-to-update-2-output-updated",
-      "category": "test-category-to-entityservice-edit",
-      "impact_level": 2,
-      "enabled": true,
-      "sli_avail_state": 1,
-      "infos": []
-    }
-    """
-    Then the response code should be 200
-    Then the response body should be:
-    """json
-    {
-      "_id": "test-entityservice-to-update-2",
-      "category": {
-        "_id": "test-category-to-entityservice-edit",
-        "name": "test-category-to-entityservice-edit-name"
-      },
-      "enabled": true,
-      "old_entity_patterns": [{"name": "test-entityservice-to-update-2-pattern"}],
-      "impact_level": 2,
-      "infos": {},
-      "name": "test-entityservice-to-update-2-name",
-      "output_template": "test-entityservice-to-update-2-output-updated",
-      "sli_avail_state": 1,
-      "type": "service"
-    }
-    """
-    When I do PUT /api/v4/entityservices/test-entityservice-to-update-2:
-    """json
-    {
-      "name": "test-entityservice-to-update-2-name",
-      "output_template": "test-entityservice-to-update-2-output-updated",
-      "category": "test-category-to-entityservice-edit",
-      "impact_level": 2,
-      "enabled": true,
-      "entity_pattern": [
-        [
-          {
-            "field": "name",
-            "cond": {
-              "type": "eq",
-              "value": "test-entityservice-to-update-2-pattern-updated"
-            }
-          }
-        ]
-      ],
-      "sli_avail_state": 1,
-      "infos": []
-    }
-    """
-    Then the response code should be 200
-    Then the response body should be:
-    """json
-    {
-      "_id": "test-entityservice-to-update-2",
-      "category": {
-        "_id": "test-category-to-entityservice-edit",
-        "name": "test-category-to-entityservice-edit-name"
-      },
-      "enabled": true,
-      "entity_pattern": [
-        [
-          {
-            "field": "name",
-            "cond": {
-              "type": "eq",
-              "value": "test-entityservice-to-update-2-pattern-updated"
-            }
-          }
-        ]
-      ],
-      "old_entity_patterns": null,
-      "impact_level": 2,
-      "infos": {},
-      "name": "test-entityservice-to-update-2-name",
-      "output_template": "test-entityservice-to-update-2-output-updated",
-      "sli_avail_state": 1,
-      "type": "service"
     }
     """
 

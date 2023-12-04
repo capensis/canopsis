@@ -88,8 +88,6 @@
 <script>
 import { isArray } from 'lodash';
 
-import { isOldPattern } from '@/helpers/entities/pattern/form';
-
 import { formArrayMixin } from '@/mixins/form';
 
 export default {
@@ -201,11 +199,7 @@ export default {
     },
 
     getItemIcon(item) {
-      return item.is_private ? 'person' : 'lock';
-    },
-
-    isOldPattern(filter) {
-      return isOldPattern(filter);
+      return item.is_user_preference ? 'person' : 'lock';
     },
 
     isFilterItemDisabled(filter) {

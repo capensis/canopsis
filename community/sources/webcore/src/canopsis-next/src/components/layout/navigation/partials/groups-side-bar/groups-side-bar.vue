@@ -4,7 +4,7 @@
       class="side-bar secondary"
       v-model="isOpen"
       :width="$config.SIDE_BAR_WIDTH"
-      :class="{ editing: isNavigationEditingMode }"
+      :class="{ 'side-bar--editing': isNavigationEditingMode }"
       :ignore-click-outside="isGroupsOrderChanged || hasMaximizedModal"
       app
     >
@@ -33,14 +33,27 @@
           :class="{ 'groups-panel--ordering': isGroupsOrderChanged }"
           :component-data="{ props: expansionPanelsProps }"
           :disabled="!isNavigationEditingMode"
+          draggable="groups-panel__item--public"
           component="v-expansion-panels"
         >
           <groups-side-bar-group
+            class="groups-panel__item--public"
             v-for="(group, index) in mutatedGroups"
             :key="group._id"
             :group.sync="mutatedGroups[index]"
             :is-groups-order-changed="isGroupsOrderChanged"
           />
+          <template
+            v-if="hasAccessToPrivateView"
+            #footer=""
+          >
+            <groups-side-bar-group
+              v-for="privateGroup in privateGroups"
+              :key="privateGroup._id"
+              :group="privateGroup"
+              :is-groups-order-changed="isGroupsOrderChanged"
+            />
+          </template>
         </c-draggable-list-field>
         <v-divider />
         <groups-side-bar-playlists />
@@ -148,9 +161,17 @@ export default {
       };
     },
 
+    privateGroups() {
+      return this.availableGroups.filter(group => group.is_private);
+    },
+
+    publicGroups() {
+      return this.availableGroups.filter(group => !group.is_private);
+    },
+
     isGroupsOrderChanged() {
       return isDeepOrderChanged(
-        this.availableGroups,
+        this.publicGroups,
         this.mutatedGroups,
         '_id',
         (entity = {}, anotherEntity = {}) => isDeepOrderChanged(entity.views, anotherEntity.views),
@@ -158,7 +179,7 @@ export default {
     },
   },
   watch: {
-    availableGroups: {
+    publicGroups: {
       deep: true,
       immediate: true,
       handler(groups) {
@@ -171,7 +192,7 @@ export default {
      * Reset mutated groups method
      */
     resetMutatedGroups() {
-      this.setMutatedGroups(this.availableGroups);
+      this.setMutatedGroups(this.publicGroups);
     },
 
     /**
@@ -215,13 +236,29 @@ export default {
 
     &--ordering {
       position: absolute;
-      z-index: 11;
+      z-index: 9;
     }
   }
 
   .side-bar {
     position: fixed;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+
+    &__brand {
+      max-height: 48px;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      flex-shrink: 0;
+      padding: 0.5em 0;
+
+      & ::v-deep .logged-users-count {
+        right: 0;
+      }
+    }
 
     .v-navigation-drawer__content {
       display: flex;

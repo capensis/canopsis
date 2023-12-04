@@ -207,7 +207,7 @@ describe('pbehavior-general-form', () => {
       ...form,
 
       start_on_trigger: false,
-      tstop: new Date(1233299999),
+      tstop: new Date(1233266565),
     });
   });
 

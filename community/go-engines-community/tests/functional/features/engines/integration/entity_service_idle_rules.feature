@@ -31,8 +31,6 @@ Feature: entity_service idle_rules integration
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId }}",
         "source_type": "service"
       },
@@ -98,7 +96,7 @@ Feature: entity_service idle_rules integration
     {
       "title": "test-widgetfilter-entityservice-idle-since-integration-1",
       "widget": "test-widget-to-weather-get",
-      "is_private": true,
+      "is_user_preference": true,
       "entity_pattern": [
         [
           {
@@ -202,8 +200,6 @@ Feature: entity_service idle_rules integration
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId }}",
         "source_type": "service"
       },
@@ -260,7 +256,7 @@ Feature: entity_service idle_rules integration
     {
       "title": "test-widgetfilter-entityservice-idle-since-integration-2",
       "widget": "test-widget-to-weather-get",
-      "is_private": true,
+      "is_user_preference": true,
       "entity_pattern": [
         [
           {
@@ -326,8 +322,6 @@ Feature: entity_service idle_rules integration
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId1 }}",
         "source_type": "service"
       },
@@ -368,8 +362,6 @@ Feature: entity_service idle_rules integration
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId2 }}",
         "source_type": "service"
       },
@@ -442,7 +434,7 @@ Feature: entity_service idle_rules integration
     {
       "title": "test-widgetfilter-entityservice-idle-since-integration-3",
       "widget": "test-widget-to-weather-get",
-      "is_private": true,
+      "is_user_preference": true,
       "entity_pattern": [
         [
           {
@@ -530,8 +522,6 @@ Feature: entity_service idle_rules integration
     [
       {
         "event_type": "recomputeentityservice",
-        "connector": "service",
-        "connector_name": "service",
         "component": "{{ .serviceId }}",
         "source_type": "service"
       },
@@ -648,7 +638,7 @@ Feature: entity_service idle_rules integration
     {
       "title": "test-widgetfilter-entityservice-idle-since-integration-4",
       "widget": "test-widget-to-weather-get",
-      "is_private": true,
+      "is_user_preference": true,
       "entity_pattern": [
         [
           {

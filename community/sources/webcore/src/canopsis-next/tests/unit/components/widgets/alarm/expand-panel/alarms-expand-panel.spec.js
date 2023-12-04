@@ -88,37 +88,6 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
     jest.clearAllMocks();
   });
 
-  it('Tabs key updated after change tour enabled', async () => {
-    const wrapper = factory({
-      store,
-      propsData: {
-        alarm: {
-          _id: 'alarm-id',
-          entity: {
-            type: ENTITY_TYPES.connector,
-            impact: [],
-          },
-          v: {},
-        },
-        widget: {
-          parameters: {
-            moreInfoTemplate: 'template',
-            isHtmlEnabledOnTimeLine: false,
-            serviceDependenciesColumns: [],
-          },
-        },
-      },
-    });
-
-    const prevKey = selectTabs(wrapper).$vnode.key;
-
-    await wrapper.setProps({
-      isTourEnabled: true,
-    });
-
-    expect(prevKey !== selectTabs(wrapper).$vnode.key).toBe(true);
-  });
-
   it('Tab key updated after change moreInfoTemplate', async () => {
     const widget = {
       parameters: {
@@ -132,7 +101,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
           _id: 'alarm-id',
           entity: {
             type: ENTITY_TYPES.connector,
-            impact: [],
+            impacts_count: 0,
           },
           v: {},
         },
@@ -161,7 +130,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
           _id: 'alarm-id',
           entity: {
             type: ENTITY_TYPES.connector,
-            impact: [],
+            impacts_count: 0,
           },
           v: {},
         },
@@ -190,7 +159,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
           consequences: {},
           entity: {
             type: ENTITY_TYPES.connector,
-            impact: [],
+            impacts_count: 0,
           },
           v: {},
         },
@@ -203,7 +172,6 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
         },
         hideChildren: true,
         editing: true,
-        isTourEnabled: true,
       },
     });
 
@@ -222,7 +190,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
           consequences: {},
           entity: {
             type: ENTITY_TYPES.service,
-            impact: ['test'],
+            impacts_count: 1,
           },
           v: {
             tickets: [{}],
@@ -261,7 +229,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
           },
           entity: {
             type: ENTITY_TYPES.resource,
-            impact: [],
+            impacts_count: 0,
           },
         },
         widget: {

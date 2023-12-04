@@ -258,26 +258,12 @@ default_entities:
     coordinates:
       lat: 64.52269494598361
       lng: 54.037685420804365
-  service_to_get_2:
-    <<: *service
-    _id: test-entityservice-to-get-2
-    name: test-entityservice-to-get-2-name
-    output_template: test-entityservice-to-get-2-output
-    entity_pattern:
-    old_entity_patterns:
-      - name: test-entityservice-to-get-2-pattern
-    impact_level: 1
+
   service_to_update_1:
     <<: *service
     _id: test-entityservice-to-update-1
     created: 1619083733
-  service_to_update_2:
-    <<: *service
-    _id: test-entityservice-to-update-2
-    created: 1619083733
-    entity_pattern:
-    old_entity_patterns:
-      - name: test-entityservice-to-update-2-pattern
+
   service_to_bulk_update_1:
     <<: *service
     _id: test-entityservice-to-bulk-update-1
@@ -478,23 +464,6 @@ default_entities:
             type: regexp
             value: test-resource-service-weather-entity-7
 
-  service_to_emit_resource_entityupdated_events_on_component_infos_update:
-    <<: *service
-    entity_pattern:
-      - - field: component_infos.test
-          field_type: string
-          cond:
-            type: eq
-            value: test-entityservice-to-emit-entityupdated-on-component-info-update-val
-
-  service_to_che_service_second_2:
-    <<: *service
-    _id: test-entityservice-che-service-second-2
-    enabled: false
-    entity_pattern:
-    old_entity_patterns:
-      - name: test-resource-che-service-second-2
-
   connector_to_entity_get:
     <<: *connector
     _id: test-connector-to-entity-get/test-connector-name-to-entity-get
@@ -581,6 +550,19 @@ default_entities:
     <<: *resource
     _id: test-resource-to-stats-executions-get-with-resolved-alarms-resolved/test-component-default
     name: test-resource-to-stats-executions-get-with-resolved-alarms-resolved
+
+  resource_to_stats_executions_get_9:
+    <<: *resource
+    _id: test-resource-to-stats-executions-get-9/test-component-default
+    name: test-resource-to-stats-executions-get-9
+  resource_to_stats_executions_get_11_1:
+    <<: *resource
+    _id: test-resource-to-stats-executions-get-11-1/test-component-default
+    name: test-resource-to-stats-executions-get-11-1
+  resource_to_stats_executions_get_11_2:
+    <<: *resource
+    _id: test-resource-to-stats-executions-get-11-2/test-component-default
+    name: test-resource-to-stats-executions-get-11-2
 
   entity_to_contextgraph_import_update:
     _id: test-entity-contextgraph-import-to-update
@@ -1164,200 +1146,69 @@ default_entities:
     component: test-component-idle-since-integration-4
     connector: test-connector-idle-since-integration-4/test-connector-name-idle-since-integration-4
 
-  default_entities_34:
-    _id: test-instruction-execution-next-resource-1/test-instruction-execution-next-component
-    component: test-instruction-execution-next-component
-    enable_history:
-      - 1597030220
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-instruction-execution-next-resource-1
-    type: resource
-  default_entities_35:
-    _id: test-instruction-execution-next-resource-2/test-instruction-execution-next-component
-    component: test-instruction-execution-next-component
-    enable_history:
-      - 1597030220
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-instruction-execution-next-resource-2
-    type: resource
-  default_entities_42:
-    _id: test-instruction-execution-previous-resource-1/test-instruction-execution-previous-component
-    component: test-instruction-execution-previous-component
-    enable_history:
-      - 1597030220
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-instruction-execution-previous-resource-1
-    type: resource
-  default_entities_43:
-    _id: test-instruction-execution-previous-resource-2/test-instruction-execution-previous-component
-    component: test-instruction-execution-previous-component
-    enable_history:
-      - 1597030220
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-instruction-execution-previous-resource-2
-    type: resource
-  default_entities_44:
-    _id: test-instruction-execution-previous-resource-3/test-instruction-execution-previous-component
-    component: test-instruction-execution-previous-component
-    enable_history:
-      - 1597030220
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-instruction-execution-previous-resource-3
-    type: resource
-  default_entities_45:
-    _id: test-instruction-execution-previous-resource-4/test-instruction-execution-previous-component
-    component: test-instruction-execution-previous-component
-    enable_history:
-      - 1597030220
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-instruction-execution-previous-resource-4
-    type: resource
-  default_entities_46:
-    _id: test-instruction-execution-cancel-resource-1/test-instruction-execution-cancel-component
-    component: test-instruction-execution-cancel-component
-    enable_history:
-      - 1597030220
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-instruction-execution-cancel-resource-1
-    type: resource
-  default_entities_47:
-    _id: test-instruction-execution-cancel-resource-2/test-instruction-execution-cancel-component
-    component: test-instruction-execution-cancel-component
-    enable_history:
-      - 1597030220
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-instruction-execution-cancel-resource-2
-    type: resource
-  default_entities_48:
-    _id: test-instruction-execution-pause-resource-1/test-instruction-execution-pause-component
-    component: test-instruction-execution-pause-component
-    enable_history:
-      - 1597030220
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-instruction-execution-pause-resource-1
-    type: resource
-  default_entities_49:
-    _id: test-instruction-execution-pause-resource-2/test-instruction-execution-pause-component
-    component: test-instruction-execution-pause-component
-    enable_history:
-      - 1597030220
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-instruction-execution-pause-resource-2
-    type: resource
-  default_entities_50:
-    _id: test-instruction-execution-pause-resource-3/test-instruction-execution-pause-component
-    component: test-instruction-execution-pause-component
-    enable_history:
-      - 1597030220
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-instruction-execution-pause-resource-3
-    type: resource
-  default_entities_51:
-    _id: test-instruction-execution-pause-resource-4/test-instruction-execution-pause-component
-    component: test-instruction-execution-pause-component
-    enable_history:
-      - 1597030220
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-instruction-execution-pause-resource-4
-    type: resource
-  default_entities_52:
-    _id: test-instruction-execution-resume-resource-1/test-instruction-execution-resume-component
-    component: test-instruction-execution-resume-component
-    enable_history:
-      - 1597030220
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-instruction-execution-resume-resource-1
-    type: resource
-  default_entities_53:
-    _id: test-instruction-execution-get-resource-1/test-instruction-execution-get-component
-    component: test-instruction-execution-get-component
-    enable_history:
-      - 1597030220
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-instruction-execution-get-resource-1
-    type: resource
-  default_entities_54:
-    _id: test-instruction-execution-get-resource-2/test-instruction-execution-get-component
-    component: test-instruction-execution-get-component
-    enable_history:
-      - 1597030220
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-instruction-execution-get-resource-2
-    type: resource
-  default_entities_55:
-    _id: test-instruction-execution-get-resource-3/test-instruction-execution-get-component
-    component: test-instruction-execution-get-component
-    enable_history:
-      - 1597030220
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-instruction-execution-get-resource-3
-    type: resource
-  default_entities_56:
-    _id: test-instruction-execution-get-resource-4/test-instruction-execution-get-component
-    component: test-instruction-execution-get-component
-    enable_history:
-      - 1597030220
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-instruction-execution-get-resource-43
-    type: resource
-  default_entities_149:
-    _id: test-resource-to-not-run-auto-instruction-manually/test-component-to-not-run-auto-instruction-manually
-    enabled: true
-    impact_level: 1
-    infos: { }
+  entity_to_instruction_execution_next_1:
+    <<: *resource
+    _id: test-resource-to-instruction-execution-next-1/test-component-default
+    name: test-resource-to-instruction-execution-next-1
+  entity_to_instruction_execution_next_2:
+    <<: *resource
+    _id: test-resource-to-instruction-execution-next-2/test-component-default
+    name: test-resource-to-instruction-execution-next-2
+
+  entity_to_instruction_execution_previous_1:
+    <<: *resource
+    _id: test-resource-to-instruction-execution-previous-1/test-component-default
+    name: test-resource-to-instruction-execution-previous-1
+  entity_to_instruction_execution_previous_2:
+    <<: *resource
+    _id: test-resource-to-instruction-execution-previous-2/test-component-default
+    name: test-resource-to-instruction-execution-previous-2
+  entity_to_instruction_execution_previous_3:
+    <<: *resource
+    _id: test-resource-to-instruction-execution-previous-3/test-component-default
+    name: test-resource-to-instruction-execution-previous-3
+  entity_to_instruction_execution_previous_4:
+    <<: *resource
+    _id: test-resource-to-instruction-execution-previous-4/test-component-default
+    name: test-resource-to-instruction-execution-previous-4
+
+  entity_to_instruction_execution_cancel_1:
+    <<: *resource
+    _id: test-resource-to-instruction-execution-cancel-1/test-component-default
+    name: test-resource-to-instruction-execution-cancel-1
+  entity_to_instruction_execution_cancel_2:
+    <<: *resource
+    _id: test-resource-to-instruction-execution-cancel-2/test-component-default
+    name: test-resource-to-instruction-execution-cancel-2
+
+  entity_to_instruction_execution_pause_1:
+    <<: *resource
+    _id: test-resource-to-instruction-execution-pause-1/test-component-default
+    name: test-resource-to-instruction-execution-pause-1
+
+  entity_to_instruction_execution_resume_1:
+    <<: *resource
+    _id: test-resource-to-instruction-execution-resume-1/test-component-default
+    name: test-resource-to-instruction-execution-resume-
+
+  entity_to_instruction_execution_get_1:
+    <<: *resource
+    _id: test-resource-to-instruction-execution-get-1/test-component-default
+    name: test-resource-to-instruction-execution-get-1
+  entity_to_instruction_execution_get_2:
+    <<: *resource
+    _id: test-resource-to-instruction-execution-get-2/test-component-default
+    name: test-resource-to-instruction-execution-get-2
+  entity_to_instruction_execution_get_3:
+    <<: *resource
+    _id: test-resource-to-instruction-execution-get-3/test-component-default
+    name: test-resource-to-instruction-execution-get-3
+
+  entity_to_not_run_auto_instruction_manually:
+    <<: *resource
+    _id: test-resource-to-not-run-auto-instruction-manually/test-component-default
     name: test-resource-to-not-run-auto-instruction-manually
-    type: resource
+
   default_entities_150:
     _id: test-complex-rule-rate-1-connector/test-complex-rule-rate-1-connectorname
     enable_history:
@@ -2826,28 +2677,6 @@ default_entities:
     measurements: null
     name: test-valuegroup-rule-rate-8-resource-12
     type: resource
-  default_entities_275:
-    _id: test-alarm-time-fields-search-get-connector/test-alarm-time-fields-search-get-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-alarm-time-fields-search-get-connectorname
-    type: connector
-  default_entities_276:
-    _id: test-alarm-time-fields-search-get-component
-    enable_history:
-      - 1620915951
-    enabled: true
-    connector: test-alarm-time-fields-search-get-connector/test-alarm-time-fields-search-get-connectorname
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-alarm-time-fields-search-get-component
-    component: test-alarm-time-fields-search-get-component
-    type: component
   default_entities_297:
     _id: test-connector-entity-api-8/test-connector-name-entity-api-8
     enable_history:
@@ -2882,423 +2711,55 @@ default_entities:
     measurements: null
     name: test-resource-entity-api-8
     type: resource
-  default_entities_307:
-    _id: test-complex-rule-rate-backward-compatibility-1-connector/test-complex-rule-rate-backward-compatibility-1-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-complex-rule-rate-backward-compatibility-1-connectorname
-    type: connector
-  default_entities_308:
-    _id: test-complex-rule-rate-backward-compatibility-1-component
-    enable_history:
-      - 1620915951
-    enabled: true
-    connector: test-complex-rule-rate-backward-compatibility-1-connector/test-complex-rule-rate-backward-compatibility-1-connectorname
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-complex-rule-rate-backward-compatibility-1-component
-    component: test-complex-rule-rate-backward-compatibility-1-component
-    type: component
-  default_entities_309:
-    _id: test-complex-rule-rate-backward-compatibility-1-resource-1/test-complex-rule-rate-backward-compatibility-1-component
-    component: test-complex-rule-rate-backward-compatibility-1-component
-    connector: test-complex-rule-rate-backward-compatibility-1-connector/test-complex-rule-rate-backward-compatibility-1-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-complex-rule-rate-backward-compatibility-1-resource-1
-    type: resource
-  default_entities_310:
-    _id: test-complex-rule-rate-backward-compatibility-1-resource-2/test-complex-rule-rate-backward-compatibility-1-component
-    component: test-complex-rule-rate-backward-compatibility-1-component
-    connector: test-complex-rule-rate-backward-compatibility-1-connector/test-complex-rule-rate-backward-compatibility-1-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-complex-rule-rate-backward-compatibility-1-resource-2
-    type: resource
-  default_entities_311:
-    _id: test-complex-rule-rate-backward-compatibility-1-resource-3/test-complex-rule-rate-backward-compatibility-1-component
-    component: test-complex-rule-rate-backward-compatibility-1-component
-    connector: test-complex-rule-rate-backward-compatibility-1-connector/test-complex-rule-rate-backward-compatibility-1-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-complex-rule-rate-backward-compatibility-1-resource-3
-    type: resource
-  default_entities_312:
-    _id: test-complex-rule-rate-backward-compatibility-1-resource-4/test-complex-rule-rate-backward-compatibility-1-component
-    component: test-complex-rule-rate-backward-compatibility-1-component
-    connector: test-complex-rule-rate-backward-compatibility-1-connector/test-complex-rule-rate-backward-compatibility-1-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-complex-rule-rate-backward-compatibility-1-resource-4
-    type: resource
-  default_entities_313:
-    _id: test-complex-rule-rate-backward-compatibility-1-resource-5/test-complex-rule-rate-backward-compatibility-1-component
-    component: test-complex-rule-rate-backward-compatibility-1-component
-    connector: test-complex-rule-rate-backward-compatibility-1-connector/test-complex-rule-rate-backward-compatibility-1-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-complex-rule-rate-backward-compatibility-1-resource-5
-    type: resource
-  default_entities_314:
-    _id: test-complex-rule-rate-backward-compatibility-2-connector/test-complex-rule-rate-backward-compatibility-2-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-complex-rule-rate-backward-compatibility-2-connectorname
-    type: connector
-  default_entities_315:
-    _id: test-complex-rule-rate-backward-compatibility-2-component
-    enable_history:
-      - 1620915951
-    enabled: true
-    connector: test-complex-rule-rate-backward-compatibility-2-connector/test-complex-rule-rate-backward-compatibility-2-connectorname
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-complex-rule-rate-backward-compatibility-2-component
-    component: test-complex-rule-rate-backward-compatibility-2-component
-    type: component
-  default_entities_316:
-    _id: test-complex-rule-rate-backward-compatibility-2-resource-1/test-complex-rule-rate-backward-compatibility-2-component
-    component: test-complex-rule-rate-backward-compatibility-2-component
-    connector: test-complex-rule-rate-backward-compatibility-2-connector/test-complex-rule-rate-backward-compatibility-2-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-complex-rule-rate-backward-compatibility-2-resource-1
-    type: resource
-  default_entities_317:
-    _id: test-complex-rule-rate-backward-compatibility-2-resource-2/test-complex-rule-rate-backward-compatibility-2-component
-    component: test-complex-rule-rate-backward-compatibility-2-component
-    connector: test-complex-rule-rate-backward-compatibility-2-connector/test-complex-rule-rate-backward-compatibility-2-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-complex-rule-rate-backward-compatibility-2-resource-2
-    type: resource
-  default_entities_318:
-    _id: test-complex-rule-rate-backward-compatibility-2-resource-3/test-complex-rule-rate-backward-compatibility-2-component
-    component: test-complex-rule-rate-backward-compatibility-2-component
-    connector: test-complex-rule-rate-backward-compatibility-2-connector/test-complex-rule-rate-backward-compatibility-2-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-complex-rule-rate-backward-compatibility-2-resource-3
-    type: resource
-  default_entities_319:
-    _id: test-complex-rule-rate-backward-compatibility-2-resource-4/test-complex-rule-rate-backward-compatibility-2-component
-    component: test-complex-rule-rate-backward-compatibility-2-component
-    connector: test-complex-rule-rate-backward-compatibility-2-connector/test-complex-rule-rate-backward-compatibility-2-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-complex-rule-rate-backward-compatibility-2-resource-4
-    type: resource
-  default_entities_320:
-    _id: test-complex-rule-rate-backward-compatibility-2-resource-5/test-complex-rule-rate-backward-compatibility-2-component
-    component: test-complex-rule-rate-backward-compatibility-2-component
-    connector: test-complex-rule-rate-backward-compatibility-2-connector/test-complex-rule-rate-backward-compatibility-2-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-complex-rule-rate-backward-compatibility-2-resource-5
-    type: resource
-  default_entities_321:
-    _id: test-valuegroup-rule-rate-backward-compatibility-1-connector/test-valuegroup-rule-rate-backward-compatibility-1-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-valuegroup-rule-rate-backward-compatibility-1-connectorname
-    type: connector
-  default_entities_322:
-    _id: test-valuegroup-rule-rate-backward-compatibility-1-component
-    enable_history:
-      - 1620915951
-    enabled: true
-    connector: test-valuegroup-rule-rate-backward-compatibility-1-connector/test-valuegroup-rule-rate-backward-compatibility-1-connectorname
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-valuegroup-rule-rate-backward-compatibility-1-component
-    component: test-valuegroup-rule-rate-backward-compatibility-1-component
-    type: component
-  default_entities_323:
-    _id: test-valuegroup-rule-rate-backward-compatibility-1-resource-1/test-valuegroup-rule-rate-backward-compatibility-1-component
-    component: test-valuegroup-rule-rate-backward-compatibility-1-component
-    connector: test-valuegroup-rule-rate-backward-compatibility-1-connector/test-valuegroup-rule-rate-backward-compatibility-1-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos:
-      valuegroupRateOldPatterns1:
-        description: valuegroupRateOldPatterns1
-        name: valuegroupRateOldPatterns1
-        value: "1"
-    measurements: null
-    name: test-valuegroup-rule-rate-backward-compatibility-1-resource-1
-    type: resource
-  default_entities_324:
-    _id: test-valuegroup-rule-rate-backward-compatibility-1-resource-2/test-valuegroup-rule-rate-backward-compatibility-1-component
-    component: test-valuegroup-rule-rate-backward-compatibility-1-component
-    connector: test-valuegroup-rule-rate-backward-compatibility-1-connector/test-valuegroup-rule-rate-backward-compatibility-1-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos:
-      valuegroupRateOldPatterns1:
-        description: valuegroupRateOldPatterns1
-        name: valuegroupRateOldPatterns1
-        value: "1"
-    measurements: null
-    name: test-valuegroup-rule-rate-backward-compatibility-1-resource-2
-    type: resource
-  default_entities_325:
-    _id: test-valuegroup-rule-rate-backward-compatibility-1-resource-3/test-valuegroup-rule-rate-backward-compatibility-1-component
-    component: test-valuegroup-rule-rate-backward-compatibility-1-component
-    connector: test-valuegroup-rule-rate-backward-compatibility-1-connector/test-valuegroup-rule-rate-backward-compatibility-1-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos:
-      valuegroupRateOldPatterns1:
-        description: valuegroupRateOldPatterns1
-        name: valuegroupRateOldPatterns1
-        value: "1"
-    measurements: null
-    name: test-valuegroup-rule-rate-backward-compatibility-1-resource-3
-    type: resource
-  default_entities_326:
-    _id: test-valuegroup-rule-rate-backward-compatibility-1-resource-4/test-valuegroup-rule-rate-backward-compatibility-1-component
-    component: test-valuegroup-rule-rate-backward-compatibility-1-component
-    connector: test-valuegroup-rule-rate-backward-compatibility-1-connector/test-valuegroup-rule-rate-backward-compatibility-1-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos:
-      valuegroupRateOldPatterns1:
-        description: valuegroupRateOldPatterns1
-        name: valuegroupRateOldPatterns1
-        value: "1"
-    measurements: null
-    name: test-valuegroup-rule-rate-backward-compatibility-1-resource-4
-    type: resource
-  default_entities_327:
-    _id: test-valuegroup-rule-rate-backward-compatibility-1-resource-5/test-valuegroup-rule-rate-backward-compatibility-1-component
-    component: test-valuegroup-rule-rate-backward-compatibility-1-component
-    connector: test-valuegroup-rule-rate-backward-compatibility-1-connector/test-valuegroup-rule-rate-backward-compatibility-1-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos:
-      valuegroupRateOldPatterns1:
-        description: valuegroupRateOldPatterns1
-        name: valuegroupRateOldPatterns1
-        value: "1"
-    measurements: null
-    name: test-valuegroup-rule-rate-backward-compatibility-1-resource-5
-    type: resource
-  default_entities_328:
-    _id: test-valuegroup-rule-rate-backward-compatibility-2-connector/test-valuegroup-rule-rate-backward-compatibility-2-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-valuegroup-rule-rate-backward-compatibility-2-connectorname
-    type: connector
-  default_entities_329:
-    _id: test-valuegroup-rule-rate-backward-compatibility-2-component
-    enable_history:
-      - 1620915951
-    enabled: true
-    connector: test-valuegroup-rule-rate-backward-compatibility-2-connector/test-valuegroup-rule-rate-backward-compatibility-2-connectorname
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-valuegroup-rule-rate-backward-compatibility-2-component
-    component: test-valuegroup-rule-rate-backward-compatibility-2-component
-    type: component
-  default_entities_330:
-    _id: test-valuegroup-rule-rate-backward-compatibility-2-resource-1/test-valuegroup-rule-rate-backward-compatibility-2-component
-    component: test-valuegroup-rule-rate-backward-compatibility-2-component
-    connector: test-valuegroup-rule-rate-backward-compatibility-2-connector/test-valuegroup-rule-rate-backward-compatibility-2-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos:
-      valuegroupRateOldPatterns1:
-        description: valuegroupRateOldPatterns1
-        name: valuegroupRateOldPatterns1
-        value: "1"
-    measurements: null
-    name: test-valuegroup-rule-rate-backward-compatibility-2-resource-1
-    type: resource
-  default_entities_331:
-    _id: test-valuegroup-rule-rate-backward-compatibility-2-resource-2/test-valuegroup-rule-rate-backward-compatibility-2-component
-    component: test-valuegroup-rule-rate-backward-compatibility-2-component
-    connector: test-valuegroup-rule-rate-backward-compatibility-2-connector/test-valuegroup-rule-rate-backward-compatibility-2-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos:
-      valuegroupRateOldPatterns1:
-        description: valuegroupRateOldPatterns1
-        name: valuegroupRateOldPatterns1
-        value: "1"
-    measurements: null
-    name: test-valuegroup-rule-rate-backward-compatibility-2-resource-2
-    type: resource
-  default_entities_332:
-    _id: test-valuegroup-rule-rate-backward-compatibility-2-resource-3/test-valuegroup-rule-rate-backward-compatibility-2-component
-    component: test-valuegroup-rule-rate-backward-compatibility-2-component
-    connector: test-valuegroup-rule-rate-backward-compatibility-2-connector/test-valuegroup-rule-rate-backward-compatibility-2-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos:
-      valuegroupRateOldPatterns1:
-        description: valuegroupRateOldPatterns1
-        name: valuegroupRateOldPatterns1
-        value: "1"
-    measurements: null
-    name: test-valuegroup-rule-rate-backward-compatibility-2-resource-3
-    type: resource
-  default_entities_333:
-    _id: test-valuegroup-rule-rate-backward-compatibility-2-resource-4/test-valuegroup-rule-rate-backward-compatibility-2-component
-    component: test-valuegroup-rule-rate-backward-compatibility-2-component
-    connector: test-valuegroup-rule-rate-backward-compatibility-2-connector/test-valuegroup-rule-rate-backward-compatibility-2-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos:
-      valuegroupRateOldPatterns1:
-        description: valuegroupRateOldPatterns1
-        name: valuegroupRateOldPatterns1
-        value: "1"
-    measurements: null
-    name: test-valuegroup-rule-rate-backward-compatibility-2-resource-4
-    type: resource
-  default_entities_334:
-    _id: test-valuegroup-rule-rate-backward-compatibility-2-resource-5/test-valuegroup-rule-rate-backward-compatibility-2-component
-    component: test-valuegroup-rule-rate-backward-compatibility-2-component
-    connector: test-valuegroup-rule-rate-backward-compatibility-2-connector/test-valuegroup-rule-rate-backward-compatibility-2-connectorname
-    enable_history:
-      - 1620915951
-    enabled: true
-    impact_level: 1
-    infos:
-      valuegroupRateOldPatterns1:
-        description: valuegroupRateOldPatterns1
-        name: valuegroupRateOldPatterns1
-        value: "1"
-    measurements: null
-    name: test-valuegroup-rule-rate-backward-compatibility-2-resource-5
-    type: resource
   default_entities_335:
     <<: *resource
-    _id: test-entity-infos-dictionary-1
+    _id: test-einfos-dict-1
     infos:
-      test-entity-infos-dictionary-key-1:
-        value: test-entity-infos-dictionary-value-1
-      test-entity-infos-dictionary-key-2:
-        value: test-entity-infos-dictionary-value-2
-      test-entity-infos-dictionary-key-3:
-        value: test-entity-infos-dictionary-value-3
+      test-einfos-dict-key-1:
+        value: test-einfos-dict-value-1
+      test-einfos-dict-key-2:
+        value: test-einfos-dict-value-2
+      test-einfos-dict-key-3:
+        value: test-einfos-dict-value-3
   default_entities_336:
     <<: *resource
-    _id: test-entity-infos-dictionary-2
+    _id: test-einfos-dict-2
     infos:
-      test-entity-infos-dictionary-key-1:
-        value: test-entity-infos-dictionary-value-4
-      test-entity-infos-dictionary-key-2:
-        value: test-entity-infos-dictionary-value-5
-      test-entity-infos-dictionary-key-3:
-        value: test-entity-infos-dictionary-value-6
+      test-einfos-dict-key-1:
+        value: test-einfos-dict-value-4
+      test-einfos-dict-key-2:
+        value: test-einfos-dict-value-5
+      test-einfos-dict-key-3:
+        value: test-einfos-dict-value-6
   default_entities_337:
     <<: *resource
-    _id: test-entity-infos-dictionary-3
+    _id: test-einfos-dict-3
     infos:
-      test-entity-infos-dictionary-key-1:
+      test-einfos-dict-key-1:
         value:
-          - test-entity-infos-dictionary-value-7
-          - test-entity-infos-dictionary-value-10
-      test-entity-infos-dictionary-key-2:
+          - test-einfos-dict-value-7
+          - test-einfos-dict-value-10
+      test-einfos-dict-key-2:
         value:
-          - test-entity-infos-dictionary-value-8
-          - test-entity-infos-dictionary-value-11
-      test-entity-infos-dictionary-key-3:
+          - test-einfos-dict-value-8
+          - test-einfos-dict-value-11
+      test-einfos-dict-key-3:
         value:
-          - test-entity-infos-dictionary-value-9
-          - test-entity-infos-dictionary-value-12
+          - test-einfos-dict-value-9
+          - test-einfos-dict-value-12
   default_entities_338:
     <<: *resource
-    _id: test-entity-infos-dictionary-should-be-ignored
+    _id: test-einfos-dict-skip
     infos:
-      test-entity-infos-dictionary-should-be-ignored-key-1:
+      test-einfos-dict-skip-key-1:
         value: ab
-      test-entity-infos-dictionary-should-be-ignored-key-2:
+      test-einfos-dict-skip-key-2:
         value: a
-      test-entity-infos-dictionary-should-be-ignored-key-3:
+      test-einfos-dict-skip-key-3:
         value: 10
-      test-entity-infos-dictionary-should-be-ignored-key-4:
+      test-einfos-dict-skip-key-4:
         value: true
-      test-entity-infos-dictionary-should-be-ignored-key-5:
+      test-einfos-dict-skip-key-5:
         value:
           a: b
           c: d

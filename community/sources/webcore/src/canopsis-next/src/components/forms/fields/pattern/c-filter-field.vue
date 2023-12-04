@@ -14,9 +14,7 @@
 </template>
 
 <script>
-import { MAX_LIMIT, OLD_PATTERNS_FIELDS } from '@/constants';
-
-import { isOldPattern } from '@/helpers/entities/pattern/form';
+import { MAX_LIMIT } from '@/constants';
 
 import { entitiesFilterMixin } from '@/mixins/entities/filter';
 
@@ -44,10 +42,6 @@ export default {
     this.fetchList();
   },
   methods: {
-    isOldPattern(item) {
-      return isOldPattern(item, [OLD_PATTERNS_FIELDS.entity]);
-    },
-
     fetchList() {
       if (!this.filtersPending) {
         this.fetchFiltersList({ params: { limit: MAX_LIMIT } });

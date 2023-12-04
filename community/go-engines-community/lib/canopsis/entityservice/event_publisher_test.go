@@ -9,9 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_amqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/amqp"
-	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
 	mock_encoding "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/encoding"
-	mock_entity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/entity"
 	"github.com/golang/mock/gomock"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
@@ -19,38 +17,69 @@ import (
 
 func TestEventPublisher_Publish_GivenChangedEntity_ShouldSendEvent(t *testing.T) {
 	dataSets := map[string]struct {
-		Alarm             types.Alarm
-		Message           entityservice.ChangeEntityMessage
-		ExpectedEventType string
+		Message       entityservice.ChangeEntityMessage
+		ExpectedEvent types.Event
 	}{
-		"given updated entity should send entityupdated event": {
-			Alarm: types.Alarm{
-				Value: types.AlarmValue{
-					Connector:     "test-connector",
-					ConnectorName: "test-connector-name",
-					Component:     "test-component",
-					Resource:      "test-resource",
-				},
-			},
+		"given updated connector should send entityupdated event": {
 			Message: entityservice.ChangeEntityMessage{
-				ID: "test-entity",
+				ID:         "test-connector/test-connector-name",
+				EntityType: types.EntityTypeConnector,
+				Name:       "test-connector-name",
 			},
-			ExpectedEventType: types.EventTypeEntityUpdated,
+			ExpectedEvent: types.Event{
+				EventType:     types.EventTypeEntityUpdated,
+				Connector:     "test-connector",
+				ConnectorName: "test-connector-name",
+				SourceType:    types.SourceTypeConnector,
+			},
+		},
+		"given updated component should send entityupdated event": {
+			Message: entityservice.ChangeEntityMessage{
+				ID:         "test-component",
+				EntityType: types.EntityTypeComponent,
+				Name:       "test-component",
+				Component:  "test-component",
+			},
+			ExpectedEvent: types.Event{
+				EventType:     types.EventTypeEntityUpdated,
+				Connector:     types.ConnectorApi,
+				ConnectorName: types.ConnectorApi,
+				Component:     "test-component",
+				SourceType:    types.SourceTypeComponent,
+			},
+		},
+		"given updated resource should send entityupdated event": {
+			Message: entityservice.ChangeEntityMessage{
+				ID:         "test-resource/test-component",
+				EntityType: types.EntityTypeResource,
+				Name:       "test-resource",
+				Component:  "test-component",
+			},
+			ExpectedEvent: types.Event{
+				EventType:     types.EventTypeEntityUpdated,
+				Connector:     types.ConnectorApi,
+				ConnectorName: types.ConnectorApi,
+				Component:     "test-component",
+				Resource:      "test-resource",
+				SourceType:    types.SourceTypeResource,
+			},
 		},
 		"given toggled entity should send entitytoggled event": {
-			Alarm: types.Alarm{
-				Value: types.AlarmValue{
-					Connector:     "test-connector",
-					ConnectorName: "test-connector-name",
-					Component:     "test-component",
-					Resource:      "test-resource",
-				},
-			},
 			Message: entityservice.ChangeEntityMessage{
-				ID:        "test-entity",
-				IsToggled: true,
+				ID:         "test-resource/test-component",
+				EntityType: types.EntityTypeResource,
+				Name:       "test-resource",
+				Component:  "test-component",
+				IsToggled:  true,
 			},
-			ExpectedEventType: types.EventTypeEntityToggled,
+			ExpectedEvent: types.Event{
+				EventType:     types.EventTypeEntityToggled,
+				Connector:     types.ConnectorApi,
+				ConnectorName: types.ConnectorApi,
+				Component:     "test-component",
+				Resource:      "test-resource",
+				SourceType:    types.SourceTypeResource,
+			},
 		},
 	}
 
@@ -63,26 +92,25 @@ func TestEventPublisher_Publish_GivenChangedEntity_ShouldSendEvent(t *testing.T)
 			routingKey := canopsis.FIFOQueueName
 			logger := zerolog.Logger{}
 			body := []byte("test-body")
-			mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
-			mockAlarmAdapter.EXPECT().GetAlarmsByID(gomock.Any(), gomock.Eq(data.Message.ID)).
-				Return([]types.Alarm{data.Alarm}, nil)
-			mockEntityAdapter := mock_entity.NewMockAdapter(ctrl)
 			mockEncoder := mock_encoding.NewMockEncoder(ctrl)
 			mockEncoder.EXPECT().Encode(gomock.Any()).Do(func(event types.Event) {
-				if event.EventType != data.ExpectedEventType {
-					t.Errorf("expected event type %+v but got %+v", data.ExpectedEventType, event.EventType)
+				if event.EventType != data.ExpectedEvent.EventType {
+					t.Errorf("expected event type %+v but got %+v", data.ExpectedEvent.EventType, event.EventType)
 				}
-				if event.Connector != data.Alarm.Value.Connector {
-					t.Errorf("expected connector %+v but got %+v", data.Alarm.Value.Connector, event.Connector)
+				if event.Connector != data.ExpectedEvent.Connector {
+					t.Errorf("expected connector %+v but got %+v", data.ExpectedEvent.Connector, event.Connector)
 				}
-				if event.ConnectorName != data.Alarm.Value.ConnectorName {
-					t.Errorf("expected connector name %+v but got %+v", data.Alarm.Value.ConnectorName, event.ConnectorName)
+				if event.ConnectorName != data.ExpectedEvent.ConnectorName {
+					t.Errorf("expected connector name %+v but got %+v", data.ExpectedEvent.ConnectorName, event.ConnectorName)
 				}
-				if event.Component != data.Alarm.Value.Component {
-					t.Errorf("expected commponent %+v but got %+v", data.Alarm.Value.Component, event.Component)
+				if event.Component != data.ExpectedEvent.Component {
+					t.Errorf("expected commponent %+v but got %+v", data.ExpectedEvent.Component, event.Component)
 				}
-				if event.Resource != data.Alarm.Value.Resource {
-					t.Errorf("expected resource %+v but got %+v", data.Alarm.Value.Resource, event.Resource)
+				if event.Resource != data.ExpectedEvent.Resource {
+					t.Errorf("expected resource %+v but got %+v", data.ExpectedEvent.Resource, event.Resource)
+				}
+				if event.SourceType != data.ExpectedEvent.SourceType {
+					t.Errorf("expected source type %+v but got %+v", data.ExpectedEvent.SourceType, event.SourceType)
 				}
 			}).Return(body, nil)
 			mockPublisher := mock_amqp.NewMockPublisher(ctrl)
@@ -94,8 +122,7 @@ func TestEventPublisher_Publish_GivenChangedEntity_ShouldSendEvent(t *testing.T)
 				})).
 				Return(nil)
 
-			eventPublisher := entityservice.NewEventPublisher(mockAlarmAdapter, mockEntityAdapter, mockPublisher, mockEncoder,
-				contentType, exchange, routingKey, logger)
+			eventPublisher := entityservice.NewEventPublisher(mockPublisher, mockEncoder, contentType, exchange, routingKey, logger)
 
 			ctx, cancel := context.WithCancel(context.Background())
 			defer cancel()
@@ -115,15 +142,21 @@ func TestEventPublisher_Publish_GivenChangedEntity_ShouldSendEvent(t *testing.T)
 
 func TestEventPublisher_Publish_GivenChangedService_ShouldSendEvent(t *testing.T) {
 	dataSets := map[string]struct {
-		Message           entityservice.ChangeEntityMessage
-		ExpectedEventType string
+		Message       entityservice.ChangeEntityMessage
+		ExpectedEvent types.Event
 	}{
 		"given updated service should send entityupdated event": {
 			Message: entityservice.ChangeEntityMessage{
 				ID:         "test-service",
 				EntityType: types.EntityTypeService,
 			},
-			ExpectedEventType: types.EventTypeEntityUpdated,
+			ExpectedEvent: types.Event{
+				EventType:     types.EventTypeEntityUpdated,
+				Connector:     types.ConnectorApi,
+				ConnectorName: types.ConnectorApi,
+				Component:     "test-service",
+				SourceType:    types.SourceTypeService,
+			},
 		},
 		"given toggled service should send recomputeentityservice event": {
 			Message: entityservice.ChangeEntityMessage{
@@ -131,7 +164,13 @@ func TestEventPublisher_Publish_GivenChangedService_ShouldSendEvent(t *testing.T
 				EntityType: types.EntityTypeService,
 				IsToggled:  true,
 			},
-			ExpectedEventType: types.EventTypeRecomputeEntityService,
+			ExpectedEvent: types.Event{
+				EventType:     types.EventTypeRecomputeEntityService,
+				Connector:     types.ConnectorApi,
+				ConnectorName: types.ConnectorApi,
+				Component:     "test-service",
+				SourceType:    types.SourceTypeService,
+			},
 		},
 		"given updated service pattern should send recomputeentityservice event": {
 			Message: entityservice.ChangeEntityMessage{
@@ -139,7 +178,13 @@ func TestEventPublisher_Publish_GivenChangedService_ShouldSendEvent(t *testing.T
 				EntityType:              types.EntityTypeService,
 				IsServicePatternChanged: true,
 			},
-			ExpectedEventType: types.EventTypeRecomputeEntityService,
+			ExpectedEvent: types.Event{
+				EventType:     types.EventTypeRecomputeEntityService,
+				Connector:     types.ConnectorApi,
+				ConnectorName: types.ConnectorApi,
+				Component:     "test-service",
+				SourceType:    types.SourceTypeService,
+			},
 		},
 	}
 
@@ -152,18 +197,25 @@ func TestEventPublisher_Publish_GivenChangedService_ShouldSendEvent(t *testing.T
 			routingKey := canopsis.FIFOQueueName
 			logger := zerolog.Logger{}
 			body := []byte("test-body")
-			mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
-			mockEntityAdapter := mock_entity.NewMockAdapter(ctrl)
 			mockEncoder := mock_encoding.NewMockEncoder(ctrl)
 			mockEncoder.EXPECT().Encode(gomock.Any()).Do(func(event types.Event) {
-				if event.EventType != data.ExpectedEventType {
-					t.Errorf("expected event type %+v but got %+v", data.ExpectedEventType, event.EventType)
+				if event.EventType != data.ExpectedEvent.EventType {
+					t.Errorf("expected event type %+v but got %+v", data.ExpectedEvent.EventType, event.EventType)
 				}
-				if event.Component != data.Message.ID {
-					t.Errorf("expected commponent %+v but got %+v", data.Message.ID, event.Component)
+				if event.Connector != data.ExpectedEvent.Connector {
+					t.Errorf("expected connector %+v but got %+v", data.ExpectedEvent.Connector, event.Connector)
 				}
-				if event.Resource != "" {
-					t.Errorf("expected resource %+v but got %+v", "", event.Resource)
+				if event.ConnectorName != data.ExpectedEvent.ConnectorName {
+					t.Errorf("expected connector name %+v but got %+v", data.ExpectedEvent.ConnectorName, event.ConnectorName)
+				}
+				if event.Component != data.ExpectedEvent.Component {
+					t.Errorf("expected commponent %+v but got %+v", data.ExpectedEvent.Component, event.Component)
+				}
+				if event.Resource != data.ExpectedEvent.Resource {
+					t.Errorf("expected resource %+v but got %+v", data.ExpectedEvent.Resource, event.Resource)
+				}
+				if event.SourceType != data.ExpectedEvent.SourceType {
+					t.Errorf("expected source type %+v but got %+v", data.ExpectedEvent.SourceType, event.SourceType)
 				}
 			}).Return(body, nil)
 			mockPublisher := mock_amqp.NewMockPublisher(ctrl)
@@ -175,8 +227,7 @@ func TestEventPublisher_Publish_GivenChangedService_ShouldSendEvent(t *testing.T
 				})).
 				Return(nil)
 
-			eventPublisher := entityservice.NewEventPublisher(mockAlarmAdapter, mockEntityAdapter, mockPublisher, mockEncoder,
-				contentType, exchange, routingKey, logger)
+			eventPublisher := entityservice.NewEventPublisher(mockPublisher, mockEncoder, contentType, exchange, routingKey, logger)
 
 			ctx, cancel := context.WithCancel(context.Background())
 			defer cancel()

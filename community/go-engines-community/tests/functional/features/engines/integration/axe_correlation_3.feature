@@ -568,3 +568,197 @@ Feature: create and update meta alarm
     """
     When I wait 3s
     Then the response key "data.0.v.resolved" should not exist
+
+  @concurrent
+  Scenario: given meta alarm child and check event should update parent last event date
+    Given I am admin
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "event_type": "check",
+      "state": 1,
+      "output": "test-output-axe-correlation-third-4",
+      "connector": "test-connector-axe-correlation-third-4",
+      "connector_name": "test-connector-name-axe-correlation-third-4",
+      "component": "test-component-axe-correlation-third-4",
+      "resource": "test-resource-axe-correlation-third-4",
+      "source_type": "resource"
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-third-4&correlation=false
+    Then the response code should be 200
+    When I save response alarmLastEventDate1={{ (index .lastResponse.data 0).v.last_event_date }}
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-third-4&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "last_event_date": {{ .alarmLastEventDate1 }}
+          }
+        }
+      ]
+    }
+    """
+    When I wait 1s
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "event_type": "check",
+      "state": 1,
+      "output": "test-output-axe-correlation-third-4",
+      "connector": "test-connector-axe-correlation-third-4",
+      "connector_name": "test-connector-name-axe-correlation-third-4",
+      "component": "test-component-axe-correlation-third-4",
+      "resource": "test-resource-axe-correlation-third-4",
+      "source_type": "resource"
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-third-4&correlation=false
+    Then the response code should be 200
+    When I save response alarmLastEventDate2={{ (index .lastResponse.data 0).v.last_event_date }}
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-third-4&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "last_event_date": {{ .alarmLastEventDate2 }}
+          }
+        }
+      ]
+    }
+    """
+
+  @concurrent
+  Scenario: given meta alarm child and removed children should update parent last event date
+    Given I am admin
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "event_type": "check",
+      "state": 1,
+      "output": "test-output-axe-correlation-third-5",
+      "connector": "test-connector-axe-correlation-third-5",
+      "connector_name": "test-connector-name-axe-correlation-third-5",
+      "component": "test-component-axe-correlation-third-5",
+      "resource": "test-resource-axe-correlation-third-5-1",
+      "source_type": "resource"
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-third-5&correlation=false
+    Then the response code should be 200
+    When I save response alarmLastEventDate1={{ (index .lastResponse.data 0).v.last_event_date }}
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-third-5&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "children": 1,
+          "v": {
+            "last_event_date": {{ .alarmLastEventDate1 }}
+          }
+        }
+      ]
+    }
+    """
+    When I wait 1s
+    When I send an event and wait the end of event processing:
+    """json
+    [
+      {
+        "event_type": "check",
+        "state": 1,
+        "output": "test-output-axe-correlation-third-5",
+        "connector": "test-connector-axe-correlation-third-5",
+        "connector_name": "test-connector-name-axe-correlation-third-5",
+        "component": "test-component-axe-correlation-third-5",
+        "resource": "test-resource-axe-correlation-third-5-2",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "check",
+        "state": 1,
+        "output": "test-output-axe-correlation-third-5",
+        "connector": "test-connector-axe-correlation-third-5",
+        "connector_name": "test-connector-name-axe-correlation-third-5",
+        "component": "test-component-axe-correlation-third-5",
+        "resource": "test-resource-axe-correlation-third-5-3",
+        "source_type": "resource"
+      }
+    ]
+    """
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-third-5&correlation=false&sort_by=v.resource&sort=asc
+    Then the response code should be 200
+    When I save response alarmId2={{ (index .lastResponse.data 1)._id }}
+    When I save response alarmLastEventDate2={{ (index .lastResponse.data 1).v.last_event_date }}
+    When I save response alarmId3={{ (index .lastResponse.data 2)._id }}
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-third-5&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "children": 3,
+          "v": {
+            "last_event_date": {{ .alarmLastEventDate2 }}
+          }
+        }
+      ]
+    }
+    """
+    When I save response metaAlarmId={{ (index .lastResponse.data 0)._id }}
+    When I do PUT /api/v4/cat/meta-alarms/{{ .metaAlarmId }}/remove:
+    """json
+    {
+      "alarms": ["{{ .alarmId2 }}"]
+    }
+    """
+    Then the response code should be 204
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-third-5&correlation=true&sort_by=v.meta&sort=desc until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "children": 2,
+          "v": {
+            "last_event_date": {{ .alarmLastEventDate2 }}
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-axe-correlation-third-5-2"
+          }
+        }
+      ]
+    }
+    """
+    When I do PUT /api/v4/cat/meta-alarms/{{ .metaAlarmId }}/remove:
+    """json
+    {
+      "alarms": ["{{ .alarmId3 }}"]
+    }
+    """
+    Then the response code should be 204
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-third-5&correlation=true&multi_sort[]=v.meta,desc&multi_sort[]=v.resource,asc until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "children": 1,
+          "v": {
+            "last_event_date": {{ .alarmLastEventDate1 }}
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-axe-correlation-third-5-2"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-axe-correlation-third-5-3"
+          }
+        }
+      ]
+    }
+    """

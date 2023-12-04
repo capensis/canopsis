@@ -32,7 +32,7 @@ describe.skip('group-panel', () => {
   it('Change event emitted after trigger button', () => {
     const wrapper = factory({
       propsData: {
-        isEditing: true,
+        editable: true,
         group: {},
       },
     });
@@ -60,8 +60,8 @@ describe.skip('group-panel', () => {
         group: {
           title: 'Custom group title',
         },
+        editable: true,
         isEditing: true,
-        isGroupsOrderChanged: true,
         orderChanged: true,
         hideActions: true,
       },

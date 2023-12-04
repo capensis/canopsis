@@ -16,7 +16,7 @@
       </div>
       <div class="group-panel__actions">
         <v-btn
-          v-show="isEditing"
+          v-show="editable"
           :disabled="orderChanged"
           depressed
           small
@@ -38,6 +38,10 @@
 <script setup>
 defineProps({
   isEditing: {
+    type: Boolean,
+    default: false,
+  },
+  editable: {
     type: Boolean,
     default: false,
   },

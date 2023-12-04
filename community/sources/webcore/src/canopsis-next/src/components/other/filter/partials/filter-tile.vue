@@ -15,8 +15,6 @@
         <v-layout align-center>
           <c-action-btn
             type="edit"
-            :badge-value="isOldPattern"
-            :badge-tooltip="$t('pattern.oldPatternTooltip')"
             @click="$emit('edit')"
           />
           <c-action-btn
@@ -30,8 +28,6 @@
 </template>
 
 <script>
-import { isOldPattern } from '@/helpers/entities/pattern/form';
-
 export default {
   props: {
     filter: {
@@ -41,11 +37,6 @@ export default {
     editable: {
       type: Boolean,
       default: false,
-    },
-  },
-  computed: {
-    isOldPattern() {
-      return isOldPattern(this.filter);
     },
   },
 };

@@ -8,7 +8,7 @@
         notification_important
       </v-icon>
       <v-layout>
-        <strong>{{ approval.requested_by }}</strong>
+        <strong>{{ approval.requested_by.name }}</strong>
         <span class="ml-1">
           {{ $t('modals.remediationInstructionApproval.requested') }}
         </span>

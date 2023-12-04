@@ -14,7 +14,7 @@ describe('group-view-panel', () => {
     const wrapper = factory({
       propsData: {
         view: {},
-        allowEditing: true,
+        editable: true,
       },
     });
 
@@ -27,7 +27,8 @@ describe('group-view-panel', () => {
     const wrapper = factory({
       propsData: {
         view: {},
-        allowEditing: true,
+        editable: true,
+        duplicable: true,
       },
     });
 
@@ -54,9 +55,8 @@ describe('group-view-panel', () => {
         view: {
           title: 'Custom view title',
         },
-        allowEditing: true,
-        hasEditAccess: true,
-        isEditing: true,
+        editable: true,
+        duplicable: true,
         isOrderChanged: true,
         isViewActive: true,
       },

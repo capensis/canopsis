@@ -17,7 +17,10 @@
         :with-template="withTemplate"
         :with-color-indicator="withColorIndicator"
         :with-instructions="withInstructions"
+        :optional-infos-attributes="optionalInfosAttributes"
+        :with-simple-template="withSimpleTemplate"
         :without-infos-attributes="withoutInfosAttributes"
+        :variables="variables"
         @remove="remove(index)"
       />
     </c-draggable-list-field>
@@ -85,6 +88,18 @@ export default {
     withInstructions: {
       type: Boolean,
       default: false,
+    },
+    optionalInfosAttributes: {
+      type: Boolean,
+      default: false,
+    },
+    withSimpleTemplate: {
+      type: Boolean,
+      default: false,
+    },
+    variables: {
+      type: Array,
+      required: false,
     },
     withoutInfosAttributes: {
       type: Boolean,
