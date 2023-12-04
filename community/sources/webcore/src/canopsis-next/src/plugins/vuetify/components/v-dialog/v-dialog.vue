@@ -20,6 +20,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    absolute: {
+      type: Boolean,
+      default: false,
+    },
     contentWrapperClass: {
       type: String,
       required: false,
