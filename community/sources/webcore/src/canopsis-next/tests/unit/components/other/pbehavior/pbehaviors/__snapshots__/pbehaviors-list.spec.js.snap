@@ -37,7 +37,17 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
       <transition-stub
         name="expand-transition"
       >
-        <!---->
+        <div
+          class="layout px-2 mt-1"
+          style="display: none;"
+        >
+          <pbehaviors-mass-actions-panel-stub
+            disablable="true"
+            enablable="true"
+            items=""
+            removable="true"
+          />
+        </div>
       </transition-stub>
     </div>
   </div>
@@ -2363,7 +2373,14 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
       <transition-stub
         name="expand-transition"
       >
-        <!---->
+        <div
+          class="layout px-2 mt-1"
+          style="display: none;"
+        >
+          <pbehaviors-mass-actions-panel-stub
+            items=""
+          />
+        </div>
       </transition-stub>
     </div>
   </div>
@@ -2765,7 +2782,14 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
       <transition-stub
         name="expand-transition"
       >
-        <!---->
+        <div
+          class="layout px-2 mt-1"
+          style="display: none;"
+        >
+          <pbehaviors-mass-actions-panel-stub
+            items=""
+          />
+        </div>
       </transition-stub>
     </div>
   </div>
@@ -4782,7 +4806,14 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
       <transition-stub
         name="expand-transition"
       >
-        <!---->
+        <div
+          class="layout px-2 mt-1"
+          style="display: none;"
+        >
+          <pbehaviors-mass-actions-panel-stub
+            items=""
+          />
+        </div>
       </transition-stub>
     </div>
   </div>
