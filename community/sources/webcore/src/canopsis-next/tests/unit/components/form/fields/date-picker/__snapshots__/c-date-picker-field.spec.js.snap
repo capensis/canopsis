@@ -66,7 +66,7 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with default props 
   class="v-menu"
 >
   <div
-    class="v-input v-input--is-readonly theme--light v-text-field"
+    class="v-input v-input--is-label-active v-input--is-dirty v-input--is-readonly theme--light v-text-field"
   >
     <div
       class="v-input__control"
@@ -122,7 +122,7 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with default props 
         <div
           class="v-picker__title__btn v-date-picker-title__year"
         >
-          2023
+          2018
         </div>
         <div
           class="v-picker__title__btn v-date-picker-title__date v-picker__title__btn--active"
@@ -131,6 +131,7 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with default props 
             name="picker-transition"
           >
             <div>
+              Mon, Aug 13
             </div>
           </transition-stub>
         </div>
@@ -175,7 +176,7 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with default props 
                   <button
                     type="button"
                   >
-                    November 2023
+                    August 2018
                   </button>
                 </div>
               </transition-stub>
@@ -384,7 +385,7 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with default props 
                     </td>
                     <td>
                       <button
-                        class="v-btn v-btn--text v-btn--rounded theme--light"
+                        class="v-btn v-btn--active v-btn--rounded theme--light primary"
                         type="button"
                       >
                         <div
@@ -602,7 +603,18 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with default props 
                         </div>
                       </button>
                     </td>
-                    <td />
+                    <td>
+                      <button
+                        class="v-btn v-btn--text v-btn--rounded theme--light"
+                        type="button"
+                      >
+                        <div
+                          class="v-btn__content"
+                        >
+                          31
+                        </div>
+                      </button>
+                    </td>
                     <td />
                   </tr>
                 </tbody>
@@ -1198,7 +1210,7 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with slots 1`] = `
   class="v-menu"
 >
   <div
-    class="v-input v-input--is-readonly theme--light v-text-field"
+    class="v-input v-input--is-label-active v-input--is-dirty v-input--is-readonly theme--light v-text-field"
   >
     <div
       class="v-input__control"
@@ -1261,7 +1273,7 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with slots 2`] = `
         <div
           class="v-picker__title__btn v-date-picker-title__year"
         >
-          2023
+          2016
         </div>
         <div
           class="v-picker__title__btn v-date-picker-title__date v-picker__title__btn--active"
@@ -1270,6 +1282,7 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with slots 2`] = `
             name="picker-transition"
           >
             <div>
+              Fri, Sep 16
             </div>
           </transition-stub>
         </div>
@@ -1314,7 +1327,7 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with slots 2`] = `
                   <button
                     type="button"
                   >
-                    November 2023
+                    September 2016
                   </button>
                 </div>
               </transition-stub>
@@ -1373,6 +1386,7 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with slots 2`] = `
                     <td />
                     <td />
                     <td />
+                    <td />
                     <td>
                       <button
                         class="v-btn v-btn--text v-btn--rounded theme--light"
@@ -1409,6 +1423,8 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with slots 2`] = `
                         </div>
                       </button>
                     </td>
+                  </tr>
+                  <tr>
                     <td>
                       <button
                         class="v-btn v-btn--text v-btn--rounded theme--light"
@@ -1421,8 +1437,6 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with slots 2`] = `
                         </div>
                       </button>
                     </td>
-                  </tr>
-                  <tr>
                     <td>
                       <button
                         class="v-btn v-btn--text v-btn--rounded theme--light"
@@ -1495,6 +1509,8 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with slots 2`] = `
                         </div>
                       </button>
                     </td>
+                  </tr>
+                  <tr>
                     <td>
                       <button
                         class="v-btn v-btn--text v-btn--rounded theme--light"
@@ -1507,8 +1523,6 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with slots 2`] = `
                         </div>
                       </button>
                     </td>
-                  </tr>
-                  <tr>
                     <td>
                       <button
                         class="v-btn v-btn--text v-btn--rounded theme--light"
@@ -1559,7 +1573,7 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with slots 2`] = `
                     </td>
                     <td>
                       <button
-                        class="v-btn v-btn--text v-btn--rounded theme--light"
+                        class="v-btn v-btn--active v-btn--rounded theme--light primary"
                         type="button"
                       >
                         <div
@@ -1581,6 +1595,8 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with slots 2`] = `
                         </div>
                       </button>
                     </td>
+                  </tr>
+                  <tr>
                     <td>
                       <button
                         class="v-btn v-btn--text v-btn--rounded theme--light"
@@ -1593,8 +1609,6 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with slots 2`] = `
                         </div>
                       </button>
                     </td>
-                  </tr>
-                  <tr>
                     <td>
                       <button
                         class="v-btn v-btn--text v-btn--rounded theme--light"
@@ -1667,6 +1681,8 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with slots 2`] = `
                         </div>
                       </button>
                     </td>
+                  </tr>
+                  <tr>
                     <td>
                       <button
                         class="v-btn v-btn--text v-btn--rounded theme--light"
@@ -1679,8 +1695,6 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with slots 2`] = `
                         </div>
                       </button>
                     </td>
-                  </tr>
-                  <tr>
                     <td>
                       <button
                         class="v-btn v-btn--text v-btn--rounded theme--light"
@@ -1741,7 +1755,6 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with slots 2`] = `
                         </div>
                       </button>
                     </td>
-                    <td />
                     <td />
                   </tr>
                 </tbody>

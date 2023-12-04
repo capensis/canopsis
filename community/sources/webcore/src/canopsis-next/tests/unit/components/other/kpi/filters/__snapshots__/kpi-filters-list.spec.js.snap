@@ -252,7 +252,6 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
                 class="layout"
               >
                 <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
                   type="edit"
                 />
                 <c-action-btn-stub
@@ -302,7 +301,6 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
                 class="layout"
               >
                 <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
                   type="edit"
                 />
                 <c-action-btn-stub
@@ -352,7 +350,6 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
                 class="layout"
               >
                 <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
                   type="edit"
                 />
                 <c-action-btn-stub
@@ -402,7 +399,6 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
                 class="layout"
               >
                 <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
                   type="edit"
                 />
                 <c-action-btn-stub
@@ -452,7 +448,6 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
                 class="layout"
               >
                 <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
                   type="edit"
                 />
                 <c-action-btn-stub
@@ -502,7 +497,6 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
                 class="layout"
               >
                 <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
                   type="edit"
                 />
                 <c-action-btn-stub
@@ -552,7 +546,6 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
                 class="layout"
               >
                 <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
                   type="edit"
                 />
                 <c-action-btn-stub
@@ -602,7 +595,6 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
                 class="layout"
               >
                 <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
                   type="edit"
                 />
                 <c-action-btn-stub
@@ -652,7 +644,6 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
                 class="layout"
               >
                 <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
                   type="edit"
                 />
                 <c-action-btn-stub
@@ -702,7 +693,6 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
                 class="layout"
               >
                 <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
                   type="edit"
                 />
                 <c-action-btn-stub
@@ -1702,8 +1692,6 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
                 class="layout"
               >
                 <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  badge-value="true"
                   type="edit"
                 />
                 <!---->
@@ -1749,8 +1737,6 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
                 class="layout"
               >
                 <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  badge-value="true"
                   type="edit"
                 />
                 <!---->
@@ -1796,8 +1782,6 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
                 class="layout"
               >
                 <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  badge-value="true"
                   type="edit"
                 />
                 <!---->
@@ -1843,8 +1827,6 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
                 class="layout"
               >
                 <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  badge-value="true"
                   type="edit"
                 />
                 <!---->
@@ -1890,8 +1872,6 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
                 class="layout"
               >
                 <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  badge-value="true"
                   type="edit"
                 />
                 <!---->
@@ -1937,8 +1917,6 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
                 class="layout"
               >
                 <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  badge-value="true"
                   type="edit"
                 />
                 <!---->
@@ -1984,8 +1962,6 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
                 class="layout"
               >
                 <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  badge-value="true"
                   type="edit"
                 />
                 <!---->
@@ -2031,8 +2007,6 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
                 class="layout"
               >
                 <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  badge-value="true"
                   type="edit"
                 />
                 <!---->
@@ -2078,8 +2052,6 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
                 class="layout"
               >
                 <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  badge-value="true"
                   type="edit"
                 />
                 <!---->
@@ -2125,8 +2097,6 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
                 class="layout"
               >
                 <c-action-btn-stub
-                  badge-tooltip="Filter patterns are not migrated"
-                  badge-value="true"
                   type="edit"
                 />
                 <!---->

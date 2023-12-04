@@ -675,11 +675,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               class="text-start"
             >
               <div
-                class="layout"
+                class="layout row"
               >
                 <c-action-btn-stub
-                  disabled="true"
-                  tooltip="Cannot be modified"
+                  tooltip="pbehavior.notEditable"
                   type="edit"
                 />
                 <c-action-btn-stub
@@ -866,11 +865,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               class="text-start"
             >
               <div
-                class="layout"
+                class="layout row"
               >
                 <c-action-btn-stub
-                  disabled="true"
-                  tooltip="Cannot be modified"
+                  tooltip="pbehavior.notEditable"
                   type="edit"
                 />
                 <c-action-btn-stub
@@ -1055,11 +1053,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               class="text-start"
             >
               <div
-                class="layout"
+                class="layout row"
               >
                 <c-action-btn-stub
-                  disabled="true"
-                  tooltip="Cannot be modified"
+                  tooltip="pbehavior.notEditable"
                   type="edit"
                 />
                 <c-action-btn-stub
@@ -1246,11 +1243,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               class="text-start"
             >
               <div
-                class="layout"
+                class="layout row"
               >
                 <c-action-btn-stub
-                  disabled="true"
-                  tooltip="Cannot be modified"
+                  tooltip="pbehavior.notEditable"
                   type="edit"
                 />
                 <c-action-btn-stub
@@ -1435,11 +1431,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               class="text-start"
             >
               <div
-                class="layout"
+                class="layout row"
               >
                 <c-action-btn-stub
-                  disabled="true"
-                  tooltip="Cannot be modified"
+                  tooltip="pbehavior.notEditable"
                   type="edit"
                 />
                 <c-action-btn-stub
@@ -1626,11 +1621,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               class="text-start"
             >
               <div
-                class="layout"
+                class="layout row"
               >
                 <c-action-btn-stub
-                  disabled="true"
-                  tooltip="Cannot be modified"
+                  tooltip="pbehavior.notEditable"
                   type="edit"
                 />
                 <c-action-btn-stub
@@ -1815,11 +1809,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               class="text-start"
             >
               <div
-                class="layout"
+                class="layout row"
               >
                 <c-action-btn-stub
-                  disabled="true"
-                  tooltip="Cannot be modified"
+                  tooltip="pbehavior.notEditable"
                   type="edit"
                 />
                 <c-action-btn-stub
@@ -2006,11 +1999,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               class="text-start"
             >
               <div
-                class="layout"
+                class="layout row"
               >
                 <c-action-btn-stub
-                  disabled="true"
-                  tooltip="Cannot be modified"
+                  tooltip="pbehavior.notEditable"
                   type="edit"
                 />
                 <c-action-btn-stub
@@ -2195,11 +2187,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               class="text-start"
             >
               <div
-                class="layout"
+                class="layout row"
               >
                 <c-action-btn-stub
-                  disabled="true"
-                  tooltip="Cannot be modified"
+                  tooltip="pbehavior.notEditable"
                   type="edit"
                 />
                 <c-action-btn-stub
@@ -2386,11 +2377,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               class="text-start"
             >
               <div
-                class="layout"
+                class="layout row"
               >
                 <c-action-btn-stub
-                  disabled="true"
-                  tooltip="Cannot be modified"
+                  tooltip="pbehavior.notEditable"
                   type="edit"
                 />
                 <c-action-btn-stub
@@ -3405,7 +3395,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               class="text-start"
             >
               <div
-                class="layout"
+                class="layout row"
               >
                 <!---->
                 <!---->
@@ -3567,7 +3557,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               class="text-start"
             >
               <div
-                class="layout"
+                class="layout row"
               >
                 <!---->
                 <!---->
@@ -3727,7 +3717,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               class="text-start"
             >
               <div
-                class="layout"
+                class="layout row"
               >
                 <!---->
                 <!---->
@@ -3889,7 +3879,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               class="text-start"
             >
               <div
-                class="layout"
+                class="layout row"
               >
                 <!---->
                 <!---->
@@ -4049,7 +4039,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               class="text-start"
             >
               <div
-                class="layout"
+                class="layout row"
               >
                 <!---->
                 <!---->
@@ -4211,7 +4201,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               class="text-start"
             >
               <div
-                class="layout"
+                class="layout row"
               >
                 <!---->
                 <!---->
@@ -4371,7 +4361,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               class="text-start"
             >
               <div
-                class="layout"
+                class="layout row"
               >
                 <!---->
                 <!---->
@@ -4533,7 +4523,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               class="text-start"
             >
               <div
-                class="layout"
+                class="layout row"
               >
                 <!---->
                 <!---->
@@ -4693,7 +4683,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               class="text-start"
             >
               <div
-                class="layout"
+                class="layout row"
               >
                 <!---->
                 <!---->
@@ -4855,7 +4845,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               class="text-start"
             >
               <div
-                class="layout"
+                class="layout row"
               >
                 <!---->
                 <!---->
@@ -5463,11 +5453,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               class="text-start"
             >
               <div
-                class="layout"
+                class="layout row"
               >
                 <c-action-btn-stub
-                  disabled="true"
-                  tooltip="Cannot be modified"
+                  tooltip="pbehavior.notEditable"
                   type="edit"
                 />
                 <!---->
@@ -5629,11 +5618,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               class="text-start"
             >
               <div
-                class="layout"
+                class="layout row"
               >
                 <c-action-btn-stub
-                  disabled="true"
-                  tooltip="Cannot be modified"
+                  tooltip="pbehavior.notEditable"
                   type="edit"
                 />
                 <!---->
@@ -5793,11 +5781,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               class="text-start"
             >
               <div
-                class="layout"
+                class="layout row"
               >
                 <c-action-btn-stub
-                  disabled="true"
-                  tooltip="Cannot be modified"
+                  tooltip="pbehavior.notEditable"
                   type="edit"
                 />
                 <!---->
@@ -5959,11 +5946,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               class="text-start"
             >
               <div
-                class="layout"
+                class="layout row"
               >
                 <c-action-btn-stub
-                  disabled="true"
-                  tooltip="Cannot be modified"
+                  tooltip="pbehavior.notEditable"
                   type="edit"
                 />
                 <!---->
@@ -6123,11 +6109,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               class="text-start"
             >
               <div
-                class="layout"
+                class="layout row"
               >
                 <c-action-btn-stub
-                  disabled="true"
-                  tooltip="Cannot be modified"
+                  tooltip="pbehavior.notEditable"
                   type="edit"
                 />
                 <!---->
@@ -6289,11 +6274,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               class="text-start"
             >
               <div
-                class="layout"
+                class="layout row"
               >
                 <c-action-btn-stub
-                  disabled="true"
-                  tooltip="Cannot be modified"
+                  tooltip="pbehavior.notEditable"
                   type="edit"
                 />
                 <!---->
@@ -6453,11 +6437,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               class="text-start"
             >
               <div
-                class="layout"
+                class="layout row"
               >
                 <c-action-btn-stub
-                  disabled="true"
-                  tooltip="Cannot be modified"
+                  tooltip="pbehavior.notEditable"
                   type="edit"
                 />
                 <!---->
@@ -6619,11 +6602,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               class="text-start"
             >
               <div
-                class="layout"
+                class="layout row"
               >
                 <c-action-btn-stub
-                  disabled="true"
-                  tooltip="Cannot be modified"
+                  tooltip="pbehavior.notEditable"
                   type="edit"
                 />
                 <!---->
@@ -6783,11 +6765,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               class="text-start"
             >
               <div
-                class="layout"
+                class="layout row"
               >
                 <c-action-btn-stub
-                  disabled="true"
-                  tooltip="Cannot be modified"
+                  tooltip="pbehavior.notEditable"
                   type="edit"
                 />
                 <!---->
@@ -6949,11 +6930,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               class="text-start"
             >
               <div
-                class="layout"
+                class="layout row"
               >
                 <c-action-btn-stub
-                  disabled="true"
-                  tooltip="Cannot be modified"
+                  tooltip="pbehavior.notEditable"
                   type="edit"
                 />
                 <!---->

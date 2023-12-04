@@ -77,12 +77,193 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
         </thead>
         <tbody>
           <tr
-            class="v-data-table__empty-wrapper"
+            class=""
           >
             <td
-              colspan="3"
+              class="text-start"
             >
-              No data available
+        id-pbehavior-entity-0
+            </td>
+            <td
+              class="text-start"
+            >
+        name-pbehavior-entity-0
+            </td>
+            <td
+              class="text-start"
+            >
+        type-pbehavior-entity-0
+            </td>
+          </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+        id-pbehavior-entity-1
+            </td>
+            <td
+              class="text-start"
+            >
+        name-pbehavior-entity-1
+            </td>
+            <td
+              class="text-start"
+            >
+        type-pbehavior-entity-1
+            </td>
+          </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+        id-pbehavior-entity-2
+            </td>
+            <td
+              class="text-start"
+            >
+        name-pbehavior-entity-2
+            </td>
+            <td
+              class="text-start"
+            >
+        type-pbehavior-entity-2
+            </td>
+          </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+        id-pbehavior-entity-3
+            </td>
+            <td
+              class="text-start"
+            >
+        name-pbehavior-entity-3
+            </td>
+            <td
+              class="text-start"
+            >
+        type-pbehavior-entity-3
+            </td>
+          </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+        id-pbehavior-entity-4
+            </td>
+            <td
+              class="text-start"
+            >
+        name-pbehavior-entity-4
+            </td>
+            <td
+              class="text-start"
+            >
+        type-pbehavior-entity-4
+            </td>
+          </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+        id-pbehavior-entity-5
+            </td>
+            <td
+              class="text-start"
+            >
+        name-pbehavior-entity-5
+            </td>
+            <td
+              class="text-start"
+            >
+        type-pbehavior-entity-5
+            </td>
+          </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+        id-pbehavior-entity-6
+            </td>
+            <td
+              class="text-start"
+            >
+        name-pbehavior-entity-6
+            </td>
+            <td
+              class="text-start"
+            >
+        type-pbehavior-entity-6
+            </td>
+          </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+        id-pbehavior-entity-7
+            </td>
+            <td
+              class="text-start"
+            >
+        name-pbehavior-entity-7
+            </td>
+            <td
+              class="text-start"
+            >
+        type-pbehavior-entity-7
+            </td>
+          </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+        id-pbehavior-entity-8
+            </td>
+            <td
+              class="text-start"
+            >
+        name-pbehavior-entity-8
+            </td>
+            <td
+              class="text-start"
+            >
+        type-pbehavior-entity-8
+            </td>
+          </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+        id-pbehavior-entity-9
+            </td>
+            <td
+              class="text-start"
+            >
+        name-pbehavior-entity-9
+            </td>
+            <td
+              class="text-start"
+            >
+        type-pbehavior-entity-9
             </td>
           </tr>
         </tbody>
@@ -157,7 +338,7 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
       <div
         class="v-data-footer__pagination"
       >
-        –
+        1-10 of 11
       </div>
       <div
         class="v-data-footer__icons-before"
@@ -185,8 +366,7 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
       >
         <button
           aria-label="Next page"
-          class="v-btn v-btn--disabled v-btn--icon v-btn--round v-btn--text theme--light v-size--default"
-          disabled="disabled"
+          class="v-btn v-btn--icon v-btn--round v-btn--text theme--light v-size--default"
           type="button"
         >
           <span

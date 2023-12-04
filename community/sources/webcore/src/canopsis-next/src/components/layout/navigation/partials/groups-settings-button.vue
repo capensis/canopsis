@@ -83,7 +83,7 @@
           </v-icon>
         </v-btn>
       </template>
-      <span>{{ $t('layout.sideBar.buttons.create') }}</span>
+      <span>{{ $t('layout.sideBar.buttons.createView') }}</span>
     </v-tooltip>
     <v-tooltip
       v-if="hasAccessToPrivateView"

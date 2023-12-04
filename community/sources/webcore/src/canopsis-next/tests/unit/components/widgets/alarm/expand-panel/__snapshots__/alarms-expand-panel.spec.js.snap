@@ -32,7 +32,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
         </div>
         <a
           aria-selected="true"
-          class="v-tab v-tab--active v-tour-alarmsExpandPanel-step-2"
+          class="v-tab v-tab--active"
           href="#moreInfos"
           role="tab"
           tabindex="0"
@@ -41,7 +41,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
         </a>
         <a
           aria-selected="false"
-          class="v-tab v-tour-alarmsExpandPanel-step-3"
+          class="v-tab"
           href="#timeLine"
           role="tab"
           tabindex="0"

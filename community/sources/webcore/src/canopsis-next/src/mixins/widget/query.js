@@ -1,3 +1,5 @@
+import { isEqual, pick } from 'lodash';
+
 import { PAGINATION_LIMIT } from '@/config';
 
 import { convertDataTableOptionsToQuery, convertWidgetQueryToRequest } from '@/helpers/entities/shared/query';
@@ -46,6 +48,14 @@ export const queryWidgetMixin = {
       },
 
       set(newOptions) {
+        const paginationKeys = ['sortBy', 'sortDesc'];
+        const newPagination = pick(newOptions, paginationKeys);
+        const oldPagination = pick(this.options, paginationKeys);
+
+        if (isEqual(newPagination, oldPagination)) {
+          return;
+        }
+
         this.query = {
           ...this.query,
           ...convertDataTableOptionsToQuery(newOptions, this.options),

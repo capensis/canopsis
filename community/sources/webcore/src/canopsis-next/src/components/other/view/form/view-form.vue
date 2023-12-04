@@ -18,7 +18,7 @@
     <c-enabled-field v-field="form.enabled" />
     <periodic-refresh-field
       v-field="form.periodic_refresh"
-      :label="$t('modals.view.fields.periodicRefresh')"
+      :label="$t('view.periodicRefresh')"
     />
     <view-tags-field v-field="form.tags" />
     <view-group-field

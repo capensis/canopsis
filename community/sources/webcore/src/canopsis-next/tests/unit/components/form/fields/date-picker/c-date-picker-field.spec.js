@@ -74,7 +74,11 @@ describe('c-date-picker-field', () => {
   });
 
   test('Renders `c-date-picker-field` with default props', async () => {
-    const wrapper = snapshotFactory();
+    const wrapper = snapshotFactory({
+      propsData: {
+        value: '2018-08-13',
+      },
+    });
 
     expect(wrapper).toMatchSnapshot();
 
@@ -87,7 +91,7 @@ describe('c-date-picker-field', () => {
   test('Renders `c-date-picker-field` with custom props', async () => {
     const wrapper = snapshotFactory({
       propsData: {
-        value: 123123123,
+        value: '2022-01-12',
         label: 'Custom label',
         name: 'customName',
         color: COLORS.secondary,
@@ -112,6 +116,9 @@ describe('c-date-picker-field', () => {
 
   test('Renders `c-date-picker-field` with slots', async () => {
     const wrapper = snapshotFactory({
+      propsData: {
+        value: '2016-09-16',
+      },
       slots: {
         append: '<div class="append-slot" />',
       },
