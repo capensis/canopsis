@@ -27,7 +27,6 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
   <div
     class="v-data-table theme--light v-data-table--selectable"
     header-text="text"
-    is-disabled-item="item => !item"
   >
     <div
       class="v-data-table__wrapper"
@@ -1634,7 +1633,6 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
   <div
     class="v-data-table theme--light"
     header-text="text"
-    is-disabled-item="item => !item"
   >
     <div
       class="v-data-table__wrapper"
@@ -1934,7 +1932,6 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
   <div
     class="v-data-table theme--light"
     header-text="text"
-    is-disabled-item="item => !item"
   >
     <div
       class="v-data-table__wrapper"
@@ -3129,7 +3126,6 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
   <div
     class="v-data-table theme--light"
     header-text="text"
-    is-disabled-item="item => !item"
   >
     <div
       class="v-data-table__wrapper"

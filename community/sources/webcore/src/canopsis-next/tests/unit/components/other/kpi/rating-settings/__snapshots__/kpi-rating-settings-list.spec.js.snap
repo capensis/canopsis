@@ -28,7 +28,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
   <div
     class="v-data-table theme--light"
     header-text="text"
-    is-disabled-item="item => !item"
   >
     <div
       class="v-data-table__wrapper"
@@ -460,7 +459,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
   <div
     class="v-data-table theme--light"
     header-text="text"
-    is-disabled-item="item => !item"
   >
     <div
       class="v-data-table__wrapper"
@@ -930,7 +928,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with defa
   <div
     class="v-data-table theme--light"
     header-text="text"
-    is-disabled-item="item => !item"
   >
     <div
       class="v-data-table__wrapper"
@@ -1040,7 +1037,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
   <div
     class="v-data-table theme--light"
     header-text="text"
-    is-disabled-item="item => !item"
   >
     <div
       class="v-data-table__wrapper"
@@ -1472,7 +1468,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
   <div
     class="v-data-table theme--light"
     header-text="text"
-    is-disabled-item="item => !item"
   >
     <div
       class="v-data-table__wrapper"

@@ -470,20 +470,17 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 style="width: 1px; min-width: 1px;"
               >
                 <div
-                  class="v-data-table__checkbox v-simple-checkbox"
+                  class="v-data-table__checkbox v-simple-checkbox v-simple-checkbox--disabled"
                 >
                   <div
                     class="v-input--selection-controls__input"
                   >
                     <i
                       aria-hidden="true"
-                      class="v-icon notranslate material-icons theme--light"
+                      class="v-icon notranslate v-icon--disabled material-icons theme--light"
                     >
                       check_box_outline_blank
                     </i>
-                    <div
-                      class="v-input--selection-controls__ripple"
-                    />
                   </div>
                 </div>
               </th>
@@ -584,20 +581,17 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 style="width: 1px; min-width: 1px;"
               >
                 <div
-                  class="v-data-table__checkbox v-simple-checkbox"
+                  class="v-data-table__checkbox v-simple-checkbox v-simple-checkbox--disabled"
                 >
                   <div
                     class="v-input--selection-controls__input"
                   >
                     <i
                       aria-hidden="true"
-                      class="v-icon notranslate material-icons theme--light"
+                      class="v-icon notranslate v-icon--disabled material-icons theme--light"
                     >
                       check_box_outline_blank
                     </i>
-                    <div
-                      class="v-input--selection-controls__ripple"
-                    />
                   </div>
                 </div>
               </th>

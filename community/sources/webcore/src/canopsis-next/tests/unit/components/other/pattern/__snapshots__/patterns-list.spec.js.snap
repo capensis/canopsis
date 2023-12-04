@@ -30,7 +30,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
   <div
     class="v-data-table theme--light v-data-table--selectable"
     header-text="text"
-    is-disabled-item="item => !item"
   >
     <div
       class="v-data-table__wrapper"
@@ -865,7 +864,6 @@ exports[`patterns-list Renders \`patterns-list\` with default props 1`] = `
   <div
     class="v-data-table theme--light v-data-table--selectable"
     header-text="text"
-    is-disabled-item="item => !item"
   >
     <div
       class="v-data-table__wrapper"

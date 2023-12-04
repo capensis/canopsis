@@ -44,7 +44,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
   <div
     class="v-data-table theme--light v-data-table--selectable"
     header-text="text"
-    is-disabled-item="item => !item"
   >
     <div
       class="v-data-table__wrapper"
@@ -674,20 +673,12 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  tooltip="pbehavior.notEditable"
-                  type="edit"
-                />
-                <c-action-btn-stub
-                  type="duplicate"
-                />
-                <c-action-btn-stub
-                  type="delete"
-                />
-              </div>
+              <pbehavior-actions-stub
+                duplicable="true"
+                pbehavior="[object Object]"
+                removable="true"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -864,20 +855,12 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  tooltip="pbehavior.notEditable"
-                  type="edit"
-                />
-                <c-action-btn-stub
-                  type="duplicate"
-                />
-                <c-action-btn-stub
-                  type="delete"
-                />
-              </div>
+              <pbehavior-actions-stub
+                duplicable="true"
+                pbehavior="[object Object]"
+                removable="true"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -1052,20 +1035,12 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  tooltip="pbehavior.notEditable"
-                  type="edit"
-                />
-                <c-action-btn-stub
-                  type="duplicate"
-                />
-                <c-action-btn-stub
-                  type="delete"
-                />
-              </div>
+              <pbehavior-actions-stub
+                duplicable="true"
+                pbehavior="[object Object]"
+                removable="true"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -1242,20 +1217,12 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  tooltip="pbehavior.notEditable"
-                  type="edit"
-                />
-                <c-action-btn-stub
-                  type="duplicate"
-                />
-                <c-action-btn-stub
-                  type="delete"
-                />
-              </div>
+              <pbehavior-actions-stub
+                duplicable="true"
+                pbehavior="[object Object]"
+                removable="true"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -1430,20 +1397,12 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  tooltip="pbehavior.notEditable"
-                  type="edit"
-                />
-                <c-action-btn-stub
-                  type="duplicate"
-                />
-                <c-action-btn-stub
-                  type="delete"
-                />
-              </div>
+              <pbehavior-actions-stub
+                duplicable="true"
+                pbehavior="[object Object]"
+                removable="true"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -1620,20 +1579,12 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  tooltip="pbehavior.notEditable"
-                  type="edit"
-                />
-                <c-action-btn-stub
-                  type="duplicate"
-                />
-                <c-action-btn-stub
-                  type="delete"
-                />
-              </div>
+              <pbehavior-actions-stub
+                duplicable="true"
+                pbehavior="[object Object]"
+                removable="true"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -1808,20 +1759,12 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  tooltip="pbehavior.notEditable"
-                  type="edit"
-                />
-                <c-action-btn-stub
-                  type="duplicate"
-                />
-                <c-action-btn-stub
-                  type="delete"
-                />
-              </div>
+              <pbehavior-actions-stub
+                duplicable="true"
+                pbehavior="[object Object]"
+                removable="true"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -1998,20 +1941,12 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  tooltip="pbehavior.notEditable"
-                  type="edit"
-                />
-                <c-action-btn-stub
-                  type="duplicate"
-                />
-                <c-action-btn-stub
-                  type="delete"
-                />
-              </div>
+              <pbehavior-actions-stub
+                duplicable="true"
+                pbehavior="[object Object]"
+                removable="true"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -2186,20 +2121,12 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  tooltip="pbehavior.notEditable"
-                  type="edit"
-                />
-                <c-action-btn-stub
-                  type="duplicate"
-                />
-                <c-action-btn-stub
-                  type="delete"
-                />
-              </div>
+              <pbehavior-actions-stub
+                duplicable="true"
+                pbehavior="[object Object]"
+                removable="true"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -2376,20 +2303,12 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  tooltip="pbehavior.notEditable"
-                  type="edit"
-                />
-                <c-action-btn-stub
-                  type="duplicate"
-                />
-                <c-action-btn-stub
-                  type="delete"
-                />
-              </div>
+              <pbehavior-actions-stub
+                duplicable="true"
+                pbehavior="[object Object]"
+                removable="true"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -2451,7 +2370,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
   <div
     class="v-data-table theme--light"
     header-text="text"
-    is-disabled-item="item => !item"
   >
     <div
       class="v-data-table__wrapper"
@@ -2854,7 +2772,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
   <div
     class="v-data-table theme--light"
     header-text="text"
-    is-disabled-item="item => !item"
   >
     <div
       class="v-data-table__wrapper"
@@ -3394,13 +3311,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             <td
               class="text-start"
             >
-              <div
-                class="layout row"
-              >
-                <!---->
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+              />
             </td>
           </tr>
           <tr
@@ -3556,13 +3469,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             <td
               class="text-start"
             >
-              <div
-                class="layout row"
-              >
-                <!---->
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+              />
             </td>
           </tr>
           <tr
@@ -3716,13 +3625,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             <td
               class="text-start"
             >
-              <div
-                class="layout row"
-              >
-                <!---->
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+              />
             </td>
           </tr>
           <tr
@@ -3878,13 +3783,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             <td
               class="text-start"
             >
-              <div
-                class="layout row"
-              >
-                <!---->
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+              />
             </td>
           </tr>
           <tr
@@ -4038,13 +3939,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             <td
               class="text-start"
             >
-              <div
-                class="layout row"
-              >
-                <!---->
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+              />
             </td>
           </tr>
           <tr
@@ -4200,13 +4097,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             <td
               class="text-start"
             >
-              <div
-                class="layout row"
-              >
-                <!---->
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+              />
             </td>
           </tr>
           <tr
@@ -4360,13 +4253,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             <td
               class="text-start"
             >
-              <div
-                class="layout row"
-              >
-                <!---->
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+              />
             </td>
           </tr>
           <tr
@@ -4522,13 +4411,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             <td
               class="text-start"
             >
-              <div
-                class="layout row"
-              >
-                <!---->
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+              />
             </td>
           </tr>
           <tr
@@ -4682,13 +4567,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             <td
               class="text-start"
             >
-              <div
-                class="layout row"
-              >
-                <!---->
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+              />
             </td>
           </tr>
           <tr
@@ -4844,13 +4725,9 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             <td
               class="text-start"
             >
-              <div
-                class="layout row"
-              >
-                <!---->
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+              />
             </td>
           </tr>
           <tr
@@ -4912,7 +4789,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
   <div
     class="v-data-table theme--light"
     header-text="text"
-    is-disabled-item="item => !item"
   >
     <div
       class="v-data-table__wrapper"
@@ -5452,16 +5328,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
             <td
               class="text-start"
             >
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  tooltip="pbehavior.notEditable"
-                  type="edit"
-                />
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -5617,16 +5487,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
             <td
               class="text-start"
             >
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  tooltip="pbehavior.notEditable"
-                  type="edit"
-                />
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -5780,16 +5644,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
             <td
               class="text-start"
             >
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  tooltip="pbehavior.notEditable"
-                  type="edit"
-                />
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -5945,16 +5803,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
             <td
               class="text-start"
             >
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  tooltip="pbehavior.notEditable"
-                  type="edit"
-                />
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -6108,16 +5960,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
             <td
               class="text-start"
             >
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  tooltip="pbehavior.notEditable"
-                  type="edit"
-                />
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -6273,16 +6119,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
             <td
               class="text-start"
             >
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  tooltip="pbehavior.notEditable"
-                  type="edit"
-                />
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -6436,16 +6276,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
             <td
               class="text-start"
             >
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  tooltip="pbehavior.notEditable"
-                  type="edit"
-                />
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -6601,16 +6435,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
             <td
               class="text-start"
             >
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  tooltip="pbehavior.notEditable"
-                  type="edit"
-                />
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -6764,16 +6592,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
             <td
               class="text-start"
             >
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  tooltip="pbehavior.notEditable"
-                  type="edit"
-                />
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr
@@ -6929,16 +6751,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
             <td
               class="text-start"
             >
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  tooltip="pbehavior.notEditable"
-                  type="edit"
-                />
-                <!---->
-                <!---->
-              </div>
+              <pbehavior-actions-stub
+                pbehavior="[object Object]"
+                updatable="true"
+              />
             </td>
           </tr>
           <tr

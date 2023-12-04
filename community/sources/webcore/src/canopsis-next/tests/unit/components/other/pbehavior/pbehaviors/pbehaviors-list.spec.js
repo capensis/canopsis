@@ -14,6 +14,7 @@ const stubs = {
   'c-ellipsis': true,
   'c-enabled': true,
   'pbehaviors-mass-actions-panel': true,
+  'pbehavior-actions': true,
   'pbehaviors-list-expand-item': true,
 };
 

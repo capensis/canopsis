@@ -58,6 +58,19 @@ exports[`groups-side-bar Renders \`groups-side-bar\` with custom data 1`] = `
         tooltipright="true"
         wrapperprops="[object Object]"
       />
+      <transition-stub
+        name="fade-transition"
+      >
+        <div
+          class="v-overlay side-bar__overlay theme--dark"
+          style="z-index: 5;"
+        >
+          <div
+            class="v-overlay__scrim"
+            style="opacity: 0; background-color: rgb(33, 33, 33); border-color: #212121;"
+          />
+        </div>
+      </transition-stub>
     </div>
     <div
       class="v-navigation-drawer__border"
@@ -67,7 +80,7 @@ exports[`groups-side-bar Renders \`groups-side-bar\` with custom data 1`] = `
     name="fade-transition"
   >
     <div
-      class="v-overlay side-bar__overlay theme--dark"
+      class="v-overlay theme--dark"
       style="z-index: 10;"
     >
       <div
@@ -128,6 +141,19 @@ exports[`groups-side-bar Renders \`groups-side-bar\` with default data 1`] = `
         tooltipright="true"
         wrapperprops="[object Object]"
       />
+      <transition-stub
+        name="fade-transition"
+      >
+        <div
+          class="v-overlay side-bar__overlay theme--dark"
+          style="z-index: 5;"
+        >
+          <div
+            class="v-overlay__scrim"
+            style="opacity: 0; background-color: rgb(33, 33, 33); border-color: #212121;"
+          />
+        </div>
+      </transition-stub>
     </div>
     <div
       class="v-navigation-drawer__border"
@@ -137,7 +163,7 @@ exports[`groups-side-bar Renders \`groups-side-bar\` with default data 1`] = `
     name="fade-transition"
   >
     <div
-      class="v-overlay side-bar__overlay theme--dark"
+      class="v-overlay theme--dark"
       style="z-index: 10;"
     >
       <div

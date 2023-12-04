@@ -27,7 +27,6 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
   <div
     class="v-data-table theme--light v-data-table--selectable"
     header-text="text"
-    is-disabled-item="function () { [native code] }"
   >
     <div
       class="v-data-table__wrapper"
@@ -1197,7 +1196,6 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
   <div
     class="v-data-table theme--light"
     header-text="text"
-    is-disabled-item="function () { [native code] }"
   >
     <div
       class="v-data-table__wrapper"

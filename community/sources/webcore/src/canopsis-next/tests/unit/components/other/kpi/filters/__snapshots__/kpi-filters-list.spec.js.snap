@@ -19,7 +19,6 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
   <div
     class="v-data-table theme--light"
     header-text="text"
-    is-disabled-item="item => !item"
   >
     <div
       class="v-data-table__wrapper"
@@ -736,7 +735,6 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
   <div
     class="v-data-table theme--light"
     header-text="text"
-    is-disabled-item="item => !item"
   >
     <div
       class="v-data-table__wrapper"
@@ -880,7 +878,6 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
   <div
     class="v-data-table theme--light"
     header-text="text"
-    is-disabled-item="item => !item"
   >
     <div
       class="v-data-table__wrapper"
@@ -1499,7 +1496,6 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
   <div
     class="v-data-table theme--light"
     header-text="text"
-    is-disabled-item="item => !item"
   >
     <div
       class="v-data-table__wrapper"
