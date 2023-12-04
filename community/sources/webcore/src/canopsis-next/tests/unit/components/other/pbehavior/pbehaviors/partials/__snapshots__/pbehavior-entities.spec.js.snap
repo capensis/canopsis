@@ -19,7 +19,6 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
   <div
     class="v-data-table v-data-table--has-bottom theme--light"
     header-text="text"
-    is-disabled-item="item => !item"
   >
     <div
       class="v-data-table__wrapper"
@@ -406,7 +405,6 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` without entities 1`] 
   <div
     class="v-data-table v-data-table--has-bottom theme--light"
     header-text="text"
-    is-disabled-item="item => !item"
   >
     <div
       class="v-data-table__wrapper"
