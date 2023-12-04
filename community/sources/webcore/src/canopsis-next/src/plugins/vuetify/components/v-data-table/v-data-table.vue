@@ -14,6 +14,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    itemSelectable: {
+      type: Function,
+      required: false,
+    },
   },
   methods: {
     /**
@@ -153,6 +157,7 @@ export default {
           everyItem: this.everyItem,
           singleSelect: this.singleSelect,
           disableSort: this.disableSort,
+          disableSelect: this.selectableItems.length === 0,
         },
         on: {
           sort: props.sort,
@@ -170,6 +175,14 @@ export default {
 
       if (this.loading) children.push(this.genLoading());
       return children;
+    },
+
+    isSelectable(item) {
+      if (this.itemSelectable) {
+        return this.itemSelectable(item);
+      }
+
+      return getObjectValueByPath(item, this.selectableKey) !== false;
     },
   },
 };

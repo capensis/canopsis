@@ -60,7 +60,7 @@
       :item-key="itemKey"
       :show-select="selectAll"
       :show-expand="expand"
-      :is-disabled-item="isDisabledItem"
+      :item-selectable="isItemSelectable"
       :hide-default-footer="hideActions || advancedPagination || noPagination"
       :table-class="tableClass"
       :dense="dense"
@@ -345,6 +345,10 @@ export default {
 
     getItemSlotName(header) {
       return `item.${header.value}`;
+    },
+
+    isItemSelectable(item) {
+      return !this.isDisabledItem(item);
     },
   },
 };

@@ -24,7 +24,6 @@
         class="draggable-item"
         v-for="tab in tabs"
         :key="tab._id"
-        :disabled="changed"
         :to="getTabHrefById(tab._id)"
         exact
         ripple
@@ -32,6 +31,7 @@
         <span>{{ tab.title }}</span>
         <template v-if="updatable && editing">
           <v-btn
+            :disabled="changed"
             small
             text
             icon
@@ -42,6 +42,7 @@
             </v-icon>
           </v-btn>
           <v-btn
+            :disabled="changed"
             small
             text
             icon
@@ -52,6 +53,7 @@
             </v-icon>
           </v-btn>
           <v-btn
+            :disabled="changed"
             small
             text
             icon

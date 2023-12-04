@@ -32,7 +32,6 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
     <div
       class="v-data-table v-data-table--has-bottom theme--light"
       header-text="text"
-      is-disabled-item="item => !item"
     >
       <div
         class="v-data-table__wrapper"
@@ -1368,7 +1367,6 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` without pbeha
     <div
       class="v-data-table v-data-table--has-bottom theme--light"
       header-text="text"
-      is-disabled-item="item => !item"
     >
       <div
         class="v-data-table__wrapper"
