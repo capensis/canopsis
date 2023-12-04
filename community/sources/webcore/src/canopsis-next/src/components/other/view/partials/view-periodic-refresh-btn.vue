@@ -38,7 +38,7 @@ import { uid } from '@/helpers/uid';
 import { convertDurationToString, durationToSeconds } from '@/helpers/date/duration';
 
 import { activeViewMixin } from '@/mixins/active-view';
-import layoutNavigationEditingModeMixin from '@/mixins/layout/navigation/editing-mode';
+import { layoutNavigationEditingModeMixin } from '@/mixins/layout/navigation/editing-mode';
 
 export default {
   inject: ['$periodicRefresh'],

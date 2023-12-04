@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/rs/zerolog"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"github.com/rs/zerolog"
 )
 
 type EntityTypeResolver interface {
@@ -19,20 +19,17 @@ type EntityTypeResolver interface {
 
 func NewEntityTypeResolver(
 	store Store,
-	matcher EntityMatcher,
 	logger zerolog.Logger,
 ) EntityTypeResolver {
 	return &entityTypeResolver{
-		store:   store,
-		matcher: matcher,
-		logger:  logger,
+		store:  store,
+		logger: logger,
 	}
 }
 
 type entityTypeResolver struct {
-	matcher EntityMatcher
-	store   Store
-	logger  zerolog.Logger
+	store  Store
+	logger zerolog.Logger
 }
 
 func (r *entityTypeResolver) Resolve(
@@ -54,18 +51,6 @@ func (r *entityTypeResolver) Resolve(
 		return ResolveResult{}, err
 	}
 
-	filters := make(map[string]interface{}, len(computed.ComputedPbehaviors))
-	for id, pbehavior := range computed.ComputedPbehaviors {
-		if len(pbehavior.OldMongoQuery) > 0 {
-			filters[id] = pbehavior.OldMongoQuery
-		}
-	}
-
-	pbhIDs, err := r.matcher.MatchAll(ctx, entity.ID, filters)
-	if err != nil {
-		return ResolveResult{}, err
-	}
-
 	resolver := NewTypeResolver(
 		span,
 		computed.ComputedPbehaviors,
@@ -74,7 +59,7 @@ func (r *entityTypeResolver) Resolve(
 		r.logger,
 	)
 
-	return resolver.Resolve(ctx, t, entity, pbhIDs)
+	return resolver.Resolve(ctx, t, entity)
 }
 
 func (r *entityTypeResolver) GetPbehaviors(ctx context.Context, pbhIDs []string, t time.Time) (map[string]ResolveResult, error) {

@@ -4,7 +4,6 @@ import {
   ACTION_TYPES,
   IDLE_RULE_ALARM_CONDITIONS,
   IDLE_RULE_TYPES,
-  OLD_PATTERNS_FIELDS,
   PATTERNS_FIELDS,
   TIME_UNITS,
 } from '@/constants';
@@ -78,11 +77,7 @@ export const idleRuleToForm = (idleRule = {}) => {
       type,
       parameters,
     },
-    patterns: filterPatternsToForm(
-      idleRule,
-      [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.alarm],
-      [OLD_PATTERNS_FIELDS.entity, OLD_PATTERNS_FIELDS.alarm],
-    ),
+    patterns: filterPatternsToForm(idleRule, [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.alarm]),
   };
 };
 

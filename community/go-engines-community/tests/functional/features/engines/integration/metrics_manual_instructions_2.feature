@@ -191,7 +191,7 @@ Feature: Metrics should be added on alarm changes
         "actions": [
           {
             "type": "set_entity_info_from_template",
-            "name": "test-infos-to-manual-metrics-second-2",
+            "name": "info-manual-metrics-second-2",
             "value": "{{ `{{ .Event.Output }}` }}"
           }
         ],
@@ -211,7 +211,7 @@ Feature: Metrics should be added on alarm changes
       "entity_pattern": [
         [
           {
-            "field": "infos.test-infos-to-manual-metrics-second-2",
+            "field": "infos.info-manual-metrics-second-2",
             "field_type": "string",
             "cond": {
               "type": "eq",

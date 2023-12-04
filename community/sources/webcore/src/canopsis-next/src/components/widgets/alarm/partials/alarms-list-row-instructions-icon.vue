@@ -21,7 +21,6 @@
 import { INSTRUCTION_EXECUTION_ICONS } from '@/constants';
 
 import {
-  isInstructionExecutionExecutedAndOtherAvailable,
   isInstructionExecutionIconFailed,
   isInstructionExecutionIconInProgress,
   isInstructionExecutionIconSuccess,
@@ -52,10 +51,6 @@ export default {
       return isInstructionExecutionIconSuccess(this.alarmInstructionExecutionIcon);
     },
 
-    instructionExecutedAndOtherAvailable() {
-      return isInstructionExecutionExecutedAndOtherAvailable(this.alarmInstructionExecutionIcon);
-    },
-
     isManualInstructionIcon() {
       return isInstructionExecutionManual(this.alarmInstructionExecutionIcon);
     },
@@ -81,10 +76,6 @@ export default {
 
       if (this.someOneInstructionIsSuccessful) {
         classNames.push('instruction-icon--completed');
-      }
-
-      if (this.instructionExecutedAndOtherAvailable) {
-        classNames.push('instruction-icon--with-manual-available');
       }
 
       return classNames.join(' ');
@@ -131,18 +122,6 @@ export default {
 </script>
 
 <style lang="scss">
-@keyframes blink-with-available {
-  0% {
-    opacity: 1.0;
-  }
-  25% {
-    color: black;
-  }
-  50% {
-    opacity: 0.3;
-  }
-}
-
 .instruction-icon {
   box-sizing: content-box;
   border-width: 1px;
@@ -171,7 +150,6 @@ export default {
   &--with-manual-available {
     border-style: dashed;
     border-color: currentColor;
-    animation: blink-with-available 2s linear infinite;
   }
 }
 </style>

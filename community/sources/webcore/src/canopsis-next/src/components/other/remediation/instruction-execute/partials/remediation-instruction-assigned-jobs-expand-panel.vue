@@ -5,18 +5,16 @@
   >
     <div v-if="isFailedJob">
       {{ $t('remediation.instructionExecute.jobs.failedReason') }}:&nbsp;
-      <c-compiled-template
+      <span
         class="pre-wrap"
-        :template="job.fail_reason"
-        parent-element="span"
+        v-html="job.fail_reason"
       />
     </div>
     <div>
       {{ $t('remediation.instructionExecute.jobs.output') }}:&nbsp;
-      <c-compiled-template
-        class="pre-line"
-        :template="output"
-        parent-element="span"
+      <span
+        class="pre-wrap"
+        v-html="output"
       />
     </div>
   </v-sheet>

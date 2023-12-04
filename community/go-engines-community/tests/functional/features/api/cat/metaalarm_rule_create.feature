@@ -1501,8 +1501,6 @@ Feature: Create an metaalarmrule
         },
         "threshold_rate": 1
       },
-      "old_alarm_patterns": null,
-      "old_entity_patterns": null,
       "entity_pattern": [
         [
           {

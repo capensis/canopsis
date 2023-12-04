@@ -10,12 +10,20 @@
         v-model="isAllSelected"
         :disabled="!entitiesWithActions.length"
       />
-      <service-entity-actions
-        v-if="selectedEntities.length"
-        :actions="actions"
-        :entity="service"
-        @apply="applyActionForSelected"
-      />
+      <v-fade-transition mode="out-in">
+        <span
+          class="font-italic"
+          v-if="!selectedEntities.length"
+        >
+          {{ $t('modals.service.massActionsDescription') }}
+        </span>
+        <service-entity-actions
+          v-else
+          :actions="actions"
+          :entity="service"
+          @apply="applyActionForSelected"
+        />
+      </v-fade-transition>
     </v-layout>
     <div
       class="mt-2"
@@ -167,4 +175,6 @@ export default {
     },
   },
 };
+</script>
+<script setup>
 </script>

@@ -1168,8 +1168,6 @@ Feature: Bulk update a scenario
                   }
                 ]
               ],
-              "old_alarm_patterns": null,
-              "old_entity_patterns": null,
               "type": "snooze",
               "parameters": {
                 "output": "test snooze updated",
@@ -1214,8 +1212,6 @@ Feature: Bulk update a scenario
                   }
                 ]
               ],
-              "old_alarm_patterns": null,
-              "old_entity_patterns": null,
               "type": "snooze",
               "parameters": {
                 "output": "test snooze updated",
@@ -1248,8 +1244,6 @@ Feature: Bulk update a scenario
           },
           "actions": [
             {
-              "old_alarm_patterns": null,
-              "old_entity_patterns": null,
               "alarm_pattern": [
                 [
                   {
@@ -1286,8 +1280,6 @@ Feature: Bulk update a scenario
               "emit_trigger": false
             },
             {
-              "old_alarm_patterns": null,
-              "old_entity_patterns": null,
               "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
               "corporate_alarm_pattern_title": "test-pattern-to-rule-edit-1-title",
               "alarm_pattern": [
@@ -1324,8 +1316,6 @@ Feature: Bulk update a scenario
               "emit_trigger": false
             },
             {
-              "old_alarm_patterns": null,
-              "old_entity_patterns": null,
               "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
               "corporate_alarm_pattern_title": "test-pattern-to-rule-edit-1-title",
               "alarm_pattern": [

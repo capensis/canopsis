@@ -57,6 +57,9 @@ export const systemThemeMixin = {
     setTheme({ colors, font_size: fontSize }) {
       const { main, table, state } = colors;
 
+      const white = '#fff';
+      const black = '#000';
+
       const isDark = isDarkColor(main.background);
 
       const vuetifyVariables = merge({}, DEFAULT_THEME_COLORS, {
@@ -72,8 +75,8 @@ export const systemThemeMixin = {
       this.$vuetify.theme.themes.dark = variables;
       this.$vuetify.theme.themes.light = variables;
 
-      const lightBaseColor = isDark ? '#000' : main.active_color;
-      const darkBaseColor = isDark ? main.active_color : '#fff';
+      const lightBaseColor = isDark ? black : main.active_color;
+      const darkBaseColor = isDark ? main.active_color : white;
 
       const textLight = {
         primary: colorToRgba(lightBaseColor, 0.87),
@@ -95,11 +98,13 @@ export const systemThemeMixin = {
         focused: colorToRgba(lightBaseColor, 0.12),
       };
 
-      const stepperBaseColor = isDark ? '#000' : '#fff';
+      const active = isDark ? black : white;
+      const completed = isDark ? white : black;
+
       const stepper = {
-        active: stepperBaseColor,
-        completed: colorToRgba(stepperBaseColor, 0.87),
-        hover: colorToRgba(stepperBaseColor, isDark ? 0.75 : 0.54),
+        active,
+        completed: colorToRgba(completed, 0.87),
+        hover: colorToRgba(completed, isDark ? 0.75 : 0.54),
       };
 
       this.otherVariables = {

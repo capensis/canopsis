@@ -30,7 +30,7 @@
           {{ $t('common.submit') }}
         </v-btn>
         <v-tooltip
-          v-if="group && hasDeleteAnyViewAccess"
+          v-if="config.deletable"
           :disabled="group.deletable"
           top
         >
@@ -65,8 +65,6 @@ import { groupToRequest } from '@/helpers/entities/view/form';
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
-import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
-import { permissionsTechnicalViewMixin } from '@/mixins/permissions/technical/view';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -81,8 +79,6 @@ export default {
     modalInnerMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
-    entitiesViewGroupMixin,
-    permissionsTechnicalViewMixin,
   ],
   data() {
     return {
@@ -107,8 +103,7 @@ export default {
         config: {
           action: async () => {
             try {
-              await this.removeGroup({ id: this.group._id });
-              await this.fetchAllGroupsListWithWidgetsWithCurrentUser();
+              await this.config.remove?.();
 
               this.$modals.hide();
             } catch (err) {
@@ -123,16 +118,7 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        const data = groupToRequest({ ...this.group, ...this.form });
-
-        if (this.config.group) {
-          await this.updateGroup({ id: this.config.group._id, data });
-        } else {
-          await this.createGroup({ data });
-        }
-
-        await this.fetchCurrentUser();
-        await this.fetchAllGroupsListWithWidgetsWithCurrentUser();
+        this.config.action?.(groupToRequest({ ...this.group, ...this.form }));
 
         this.$modals.hide();
       }
