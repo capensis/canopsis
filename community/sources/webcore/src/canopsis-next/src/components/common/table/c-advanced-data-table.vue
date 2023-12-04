@@ -34,8 +34,8 @@
       >
         <v-expand-transition>
           <v-layout
-            class="px-3 mt-1"
-            v-if="selected.length"
+            class="px-2 mt-1"
+            v-show="selected.length"
           >
             <slot
               name="mass-actions"
