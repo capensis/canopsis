@@ -5,10 +5,10 @@ exports[`group-view-panel Renders \`group-view-panel\` with custom props 1`] = `
   class="v-card v-sheet theme--light secondary lighten-3"
 >
   <div
-    class="panel-item-content"
+    class="v-card__text panel-item-content"
   >
     <div
-      class="panel-item-content__title pl-2 panel-view__title--editing"
+      class="panel-item-content__title pl-2"
     >
       <div
         class="title-slot"
@@ -19,6 +19,7 @@ exports[`group-view-panel Renders \`group-view-panel\` with custom props 1`] = `
     <div
       class="panel-item-content__actions"
     >
+      <!---->
       <button
         class="v-btn v-btn--disabled v-btn--icon v-btn--round theme--light v-size--small"
         disabled="disabled"
@@ -68,14 +69,19 @@ exports[`group-view-panel Renders \`group-view-panel\` with required props 1`] =
   class="v-card v-sheet theme--light secondary lighten-1"
 >
   <div
-    class="panel-item-content"
+    class="v-card__text panel-item-content"
   >
     <div
       class="panel-item-content__title pl-2 text-truncate"
     >
         View title
     </div>
-    <!---->
+    <div
+      class="panel-item-content__actions"
+    >
+      <!---->
+      <!---->
+    </div>
   </div>
   <hr
     aria-orientation="horizontal"

@@ -42,7 +42,16 @@ export const localQueryMixin = {
           sortBy: value.sortBy || [],
           sortDesc: value.sortDesc || [],
 
-          ...omit(value, ['search', 'page', 'itemsPerPage', 'totalItems']),
+          ...omit(value, [
+            'search',
+            'page',
+            'itemsPerPage',
+            'totalItems',
+            'groupBy',
+            'groupDesc',
+            'multiSort',
+            'mustSort',
+          ]),
         };
       },
     },

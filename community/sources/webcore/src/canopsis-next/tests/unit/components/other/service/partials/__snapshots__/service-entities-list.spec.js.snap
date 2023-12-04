@@ -9,7 +9,16 @@ exports[`service-entities-list Renders \`service-entities-list\` with custom pro
       class="v-simple-checkbox ml-4 pa-0"
       type="checkbox"
     />
-    <!---->
+    <transition-stub
+      mode="out-in"
+      name="fade-transition"
+    >
+      <span
+        class="font-italic"
+      >
+        You can choose entities to perform actions
+      </span>
+    </transition-stub>
   </div>
   <div
     class="mt-2"
@@ -51,11 +60,16 @@ exports[`service-entities-list Renders \`service-entities-list\` with selected e
       class="v-simple-checkbox ml-4 pa-0"
       type="checkbox"
     />
-    <service-entity-actions-stub
-      actions="[object Object],[object Object]"
-      assignedinstructions=""
-      entity="[object Object]"
-    />
+    <transition-stub
+      mode="out-in"
+      name="fade-transition"
+    >
+      <service-entity-actions-stub
+        actions="[object Object],[object Object]"
+        assignedinstructions=""
+        entity="[object Object]"
+      />
+    </transition-stub>
   </div>
   <div
     class="mt-2"
