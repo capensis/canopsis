@@ -14,9 +14,9 @@
         d-inline-flex
         align-center
       >
-        <c-compiled-template
+        <div
           v-if="column.isHtml"
-          :template="value"
+          v-html="sanitizedValue"
         />
         <div
           v-else
@@ -43,9 +43,9 @@
       @close="hideInfoPopup"
     />
   </v-menu>
-  <c-compiled-template
+  <div
     v-else-if="column.isHtml"
-    :template="value"
+    v-html="sanitizedValue"
   />
   <div
     v-else
@@ -57,6 +57,8 @@
 
 <script>
 import { get } from 'lodash';
+
+import { sanitizeHtml, linkifyHtml } from '@/helpers/html';
 
 import ColorIndicatorWrapper from '@/components/common/table/color-indicator-wrapper.vue';
 
@@ -114,6 +116,10 @@ export default {
       const value = get(this.alarm, this.column.value, '');
 
       return this.column.filter ? this.column.filter(value) : value;
+    },
+
+    sanitizedValue() {
+      return sanitizeHtml(linkifyHtml(String(this.value ?? '')));
     },
 
     component() {
