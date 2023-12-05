@@ -38,7 +38,7 @@ func (t CpsTime) MarshalJSON() ([]byte, error) {
 		return []byte("null"), nil
 	}
 
-	stamp := fmt.Sprint(ts)
+	stamp := strconv.FormatInt(ts, 10)
 
 	return []byte(stamp), nil
 }
