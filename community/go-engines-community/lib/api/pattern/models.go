@@ -3,8 +3,8 @@ package pattern
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 type ListRequest struct {
@@ -38,8 +38,8 @@ type Response struct {
 	EntityPattern    pattern.Entity        `bson:"entity_pattern" json:"entity_pattern,omitempty"`
 	PbehaviorPattern pattern.PbehaviorInfo `bson:"pbehavior_pattern" json:"pbehavior_pattern,omitempty"`
 	Author           *author.Author        `bson:"author" json:"author"`
-	Created          types.CpsTime         `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated          types.CpsTime         `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	Created          datetime.CpsTime      `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Updated          datetime.CpsTime      `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 }
 
 type AggregationResult struct {

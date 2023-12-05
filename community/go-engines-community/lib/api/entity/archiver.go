@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -12,9 +13,9 @@ import (
 
 type Archiver interface {
 	ArchiveDisabledEntities(ctx context.Context, archiveDeps bool) (int64, error)
-	ArchiveUnlinkedResources(ctx context.Context, before types.CpsTime) (int64, error)
-	ArchiveUnlinkedComponents(ctx context.Context, before types.CpsTime) (int64, error)
-	ArchiveUnlinkedConnectors(ctx context.Context, before types.CpsTime) (int64, error)
+	ArchiveUnlinkedResources(ctx context.Context, before datetime.CpsTime) (int64, error)
+	ArchiveUnlinkedComponents(ctx context.Context, before datetime.CpsTime) (int64, error)
+	ArchiveUnlinkedConnectors(ctx context.Context, before datetime.CpsTime) (int64, error)
 	DeleteArchivedEntities(ctx context.Context) (int64, error)
 }
 
@@ -60,7 +61,7 @@ func (a *archiver) ArchiveDisabledEntities(ctx context.Context, archiveDeps bool
 	return totalArchived, nil
 }
 
-func (a *archiver) ArchiveUnlinkedResources(ctx context.Context, before types.CpsTime) (int64, error) {
+func (a *archiver) ArchiveUnlinkedResources(ctx context.Context, before datetime.CpsTime) (int64, error) {
 	cursor, err := a.mainCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
 			"type":     types.EntityTypeResource,
@@ -109,7 +110,7 @@ func (a *archiver) ArchiveUnlinkedResources(ctx context.Context, before types.Cp
 	return a.archiveUnlinked(ctx, cursor)
 }
 
-func (a *archiver) ArchiveUnlinkedComponents(ctx context.Context, before types.CpsTime) (int64, error) {
+func (a *archiver) ArchiveUnlinkedComponents(ctx context.Context, before datetime.CpsTime) (int64, error) {
 	cursor, err := a.mainCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
 			"type":     types.EntityTypeComponent,
@@ -171,7 +172,7 @@ func (a *archiver) ArchiveUnlinkedComponents(ctx context.Context, before types.C
 	return a.archiveUnlinked(ctx, cursor)
 }
 
-func (a *archiver) ArchiveUnlinkedConnectors(ctx context.Context, before types.CpsTime) (int64, error) {
+func (a *archiver) ArchiveUnlinkedConnectors(ctx context.Context, before datetime.CpsTime) (int64, error) {
 	cursor, err := a.mainCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
 			"type":     types.EntityTypeConnector,
