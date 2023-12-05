@@ -351,3 +351,139 @@ Feature: modify event on event filter
       ]
     }
     """
+
+  @concurrent
+  Scenario: given check event and enrichment event filter rule with string slice should not update entity
+    Given I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "type": "enrichment",
+      "description": "test-event-filter-che-event-filters-third-5-description",
+      "enabled": true,
+      "event_pattern": [
+        [
+          {
+            "field": "component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-che-event-filters-third-5"
+            }
+          },
+          {
+            "field": "event_type",
+            "cond": {
+              "type": "eq",
+              "value": "check"
+            }
+          }
+        ]
+      ],
+      "config": {
+        "actions": [
+          {
+            "type": "copy_to_entity_info",
+            "name": "hostgroups",
+            "description": "Hostgroups",
+            "value": "Event.ExtraInfos.hostgroups"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      }
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "event_type": "check",
+      "state": 0,
+      "hostgroups": [
+        "test-hostgroup-che-event-filters-third-5-3",
+        "test-hostgroup-che-event-filters-third-5-1",
+        "test-hostgroup-che-event-filters-third-5-2"
+      ],
+      "connector": "test-connector-che-event-filters-third-5",
+      "connector_name": "test-connector-name-che-event-filters-third-5",
+      "component": "test-component-che-event-filters-third-5",
+      "resource": "test-resource-che-event-filters-third-5",
+      "source_type": "resource"
+    }
+    """
+    When I do GET /api/v4/entities?search=test-resource-che-event-filters-third-5
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-resource-che-event-filters-third-5/test-component-che-event-filters-third-5",
+          "infos": {
+            "hostgroups": {
+              "description": "Hostgroups",
+              "name": "hostgroups",
+              "value": [
+                "test-hostgroup-che-event-filters-third-5-1",
+                "test-hostgroup-che-event-filters-third-5-2",
+                "test-hostgroup-che-event-filters-third-5-3"
+              ]
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "event_type": "check",
+      "state": 0,
+      "hostgroups": [
+        "test-hostgroup-che-event-filters-third-5-2",
+        "test-hostgroup-che-event-filters-third-5-3",
+        "test-hostgroup-che-event-filters-third-5-1"
+      ],
+      "connector": "test-connector-che-event-filters-third-5",
+      "connector_name": "test-connector-name-che-event-filters-third-5",
+      "component": "test-component-che-event-filters-third-5",
+      "resource": "test-resource-che-event-filters-third-5",
+      "source_type": "resource"
+    }
+    """
+    When I do GET /api/v4/entities?search=test-resource-che-event-filters-third-5
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-resource-che-event-filters-third-5/test-component-che-event-filters-third-5",
+          "infos": {
+            "hostgroups": {
+              "description": "Hostgroups",
+              "name": "hostgroups",
+              "value": [
+                "test-hostgroup-che-event-filters-third-5-1",
+                "test-hostgroup-che-event-filters-third-5-2",
+                "test-hostgroup-che-event-filters-third-5-3"
+              ]
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """

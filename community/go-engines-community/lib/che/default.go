@@ -193,7 +193,7 @@ func NewEngine(
 		Decoder:             json.NewDecoder(),
 		Logger:              logger,
 	}
-	engine.AddConsumer(libengine.NewDefaultConsumer(
+	engine.AddConsumer(libengine.NewConcurrentConsumer(
 		canopsis.CheConsumerName,
 		options.ConsumeFromQueue,
 		cfg.Global.PrefetchCount,
@@ -203,6 +203,7 @@ func NewEngine(
 		options.PublishToQueue,
 		options.FifoAckExchange,
 		canopsis.FIFOAckQueueName,
+		options.Workers,
 		amqpConnection,
 		mainMessageProcessor,
 		logger,
