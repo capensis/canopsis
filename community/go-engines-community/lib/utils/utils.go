@@ -15,16 +15,6 @@ const NamingCharacterSet = "abcdefghijklmnopqrstuvwxyz1234567890"
 
 var NumberOfCharacter = int64(len(NamingCharacterSet))
 
-// StringInSlice checks if a string is present in a list of strings
-func StringInSlice(a string, list []string) bool {
-	for _, b := range list {
-		if a == b {
-			return true
-		}
-	}
-	return false
-}
-
 // GetStringField read a string field in a struct, with introspection
 func GetStringField(a interface{}, field string) string {
 	r := reflect.ValueOf(a)

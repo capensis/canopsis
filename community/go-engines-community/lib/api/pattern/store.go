@@ -9,7 +9,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -90,7 +92,7 @@ func NewStore(
 }
 
 func (s *store) Insert(ctx context.Context, request EditRequest) (*Response, error) {
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	model := transformRequestToModel(request)
 	model.ID = utils.NewID()
 	model.Created = now
@@ -196,7 +198,7 @@ func (s *store) Find(ctx context.Context, request ListRequest, userId string) (*
 }
 
 func (s *store) Update(ctx context.Context, request EditRequest) (*Response, error) {
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	model := transformRequestToModel(request)
 	model.ID = request.ID
 	model.Updated = now
@@ -472,7 +474,7 @@ func (s *store) CountAlarms(ctx context.Context, r CountRequest, maxCount int64)
 	entitiesPipeline := make([]bson.M, 0)
 	var alarmPatternCount, entityPatternCount, pbhPatternCount, alarmsCount, entitiesCount Count
 	if len(r.AlarmPattern) > 0 {
-		alarmPatternQuery, err = r.AlarmPattern.ToMongoQuery("")
+		alarmPatternQuery, err = db.AlarmPatternToMongoQuery(r.AlarmPattern, "")
 		if err != nil {
 			return res, err
 		}
@@ -485,7 +487,7 @@ func (s *store) CountAlarms(ctx context.Context, r CountRequest, maxCount int64)
 		}
 	}
 	if len(r.PbehaviorPattern) > 0 {
-		pbhPatternQuery, err = r.PbehaviorPattern.ToMongoQuery("v")
+		pbhPatternQuery, err = db.PbehaviorInfoPatternToMongoQuery(r.PbehaviorPattern, "v")
 		if err != nil {
 			return res, err
 		}
@@ -498,7 +500,7 @@ func (s *store) CountAlarms(ctx context.Context, r CountRequest, maxCount int64)
 		}
 	}
 	if len(r.EntityPattern) > 0 {
-		entityPatternQuery, err = r.EntityPattern.ToMongoQuery("entity")
+		entityPatternQuery, err = db.EntityPatternToMongoQuery(r.EntityPattern, "entity")
 		if err != nil {
 			return res, err
 		}
@@ -517,7 +519,7 @@ func (s *store) CountAlarms(ctx context.Context, r CountRequest, maxCount int64)
 			)
 		}
 
-		entityPatternQueryForEntities, err := r.EntityPattern.ToMongoQuery("")
+		entityPatternQueryForEntities, err := db.EntityPatternToMongoQuery(r.EntityPattern, "")
 		if err != nil {
 			return res, err
 		}
@@ -620,7 +622,7 @@ func (s *store) CountEntities(ctx context.Context, r CountRequest, maxCount int6
 	entitiesPipeline := make([]bson.M, 0)
 	var alarmPatternCount, entityPatternCount, pbhPatternCount, entitiesCount Count
 	if len(r.EntityPattern) > 0 {
-		entityPatternQuery, err = r.EntityPattern.ToMongoQuery("")
+		entityPatternQuery, err = db.EntityPatternToMongoQuery(r.EntityPattern, "")
 		if err != nil {
 			return res, err
 		}
@@ -630,7 +632,7 @@ func (s *store) CountEntities(ctx context.Context, r CountRequest, maxCount int6
 		}
 	}
 	if len(r.PbehaviorPattern) > 0 {
-		pbhPatternQuery, err = r.PbehaviorPattern.ToMongoQuery("")
+		pbhPatternQuery, err = db.PbehaviorInfoPatternToMongoQuery(r.PbehaviorPattern, "")
 		if err != nil {
 			return res, err
 		}
@@ -640,13 +642,13 @@ func (s *store) CountEntities(ctx context.Context, r CountRequest, maxCount int6
 		}
 	}
 	if len(r.AlarmPattern) > 0 {
-		alarmPatternQuery, err = r.AlarmPattern.ToMongoQuery("")
+		alarmPatternQuery, err = db.AlarmPatternToMongoQuery(r.AlarmPattern, "")
 		if err != nil {
 			return res, err
 		}
 
 		if len(r.PbehaviorPattern) > 0 || len(r.EntityPattern) > 0 {
-			alarmPatternQueryForEntities, err := r.AlarmPattern.ToMongoQuery("alarm")
+			alarmPatternQueryForEntities, err := db.AlarmPatternToMongoQuery(r.AlarmPattern, "alarm")
 			if err != nil {
 				return res, err
 			}

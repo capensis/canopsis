@@ -4,7 +4,8 @@ import (
 	"context"
 	"sync"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
@@ -47,7 +48,7 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (type
 	defer s.rulesMutex.RUnlock()
 
 	outcome := OutcomePass
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 
 	for _, rule := range s.rules {
 		if outcome != OutcomePass {
@@ -83,9 +84,9 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (type
 		}
 
 		var err error
-		var match bool
-		var eventRegexMatches pattern.EventRegexMatches
-		var entityRegexMatches pattern.EntityRegexMatches
+		var matched bool
+		var eventRegexMatches match.EventRegexMatches
+		var entityRegexMatches match.EntityRegexMatches
 
 		if len(rule.EntityPattern) == 0 && len(rule.EventPattern) == 0 {
 			if event.Debug {
@@ -96,14 +97,14 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (type
 		}
 
 		if len(rule.EventPattern) > 0 || len(rule.EntityPattern) > 0 {
-			match, eventRegexMatches, err = rule.EventPattern.MatchWithRegexMatches(event)
+			matched, eventRegexMatches, err = match.MatchEventPatternWithRegexMatches(rule.EventPattern, &event)
 			if err != nil {
 				s.logger.Err(err).Str("rule_id", rule.ID).Msg("Event filter rule service: invalid event pattern")
 				s.failureService.Add(rule.ID, FailureTypeInvalidPattern, "invalid event pattern: "+err.Error(), nil)
 				continue
 			}
 
-			if !match {
+			if !matched {
 				if event.Debug {
 					s.logger.Info().Str("rule", rule.ID).Str("event_type", event.EventType).Str("entity", event.GetEID()).Msg("Event filter rule service: rule is not matched")
 				}
@@ -112,14 +113,14 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (type
 			}
 
 			if event.Entity != nil {
-				match, entityRegexMatches, err = rule.EntityPattern.MatchWithRegexMatches(*event.Entity)
+				matched, entityRegexMatches, err = match.MatchEntityPatternWithRegexMatches(rule.EntityPattern, event.Entity)
 				if err != nil {
 					s.logger.Err(err).Str("rule_id", rule.ID).Msg("Event filter rule service: invalid entity pattern")
 					s.failureService.Add(rule.ID, FailureTypeInvalidPattern, "invalid entity pattern: "+err.Error(), nil)
 					continue
 				}
 
-				if !match {
+				if !matched {
 					if event.Debug {
 						s.logger.Info().Str("rule", rule.ID).Str("event_type", event.EventType).Str("entity", event.GetEID()).Msg("Event filter rule service: rule is not matched")
 					}

@@ -3,8 +3,8 @@ package pbehaviorexception
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/exdate"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 type ListRequest struct {
@@ -34,18 +34,18 @@ type ExdateRequest struct {
 }
 
 type Exception struct {
-	ID          string        `bson:"_id" json:"_id"`
-	Name        string        `bson:"name" json:"name"`
-	Description string        `bson:"description" json:"description"`
-	Exdates     []Exdate      `bson:"exdates" json:"exdates"`
-	Created     types.CpsTime `bson:"created" json:"created" swaggertype:"integer"`
-	Deletable   *bool         `bson:"deletable,omitempty" json:"deletable,omitempty"`
+	ID          string           `bson:"_id" json:"_id"`
+	Name        string           `bson:"name" json:"name"`
+	Description string           `bson:"description" json:"description"`
+	Exdates     []Exdate         `bson:"exdates" json:"exdates"`
+	Created     datetime.CpsTime `bson:"created" json:"created" swaggertype:"integer"`
+	Deletable   *bool            `bson:"deletable,omitempty" json:"deletable,omitempty"`
 }
 
 type Exdate struct {
-	Begin types.CpsTime  `bson:"begin" json:"begin" swaggertype:"integer"`
-	End   types.CpsTime  `bson:"end" json:"end" swaggertype:"integer"`
-	Type  pbehavior.Type `bson:"type" json:"type"`
+	Begin datetime.CpsTime `bson:"begin" json:"begin" swaggertype:"integer"`
+	End   datetime.CpsTime `bson:"end" json:"end" swaggertype:"integer"`
+	Type  pbehavior.Type   `bson:"type" json:"type"`
 }
 
 type AggregationResult struct {
