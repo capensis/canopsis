@@ -22,6 +22,7 @@
         :is="widgetProps.is"
         :widget="preparedWidget"
         :tab-id="tab._id"
+        :visible="visible"
       />
     </v-card-text>
   </div>
@@ -90,6 +91,10 @@ export default {
       default: false,
     },
     kiosk: {
+      type: Boolean,
+      default: false,
+    },
+    visible: {
       type: Boolean,
       default: false,
     },

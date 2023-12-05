@@ -16,9 +16,9 @@
     </div>
     <div class="time-line-card__content text--disabled">
       <template v-if="isNotStateCounter">
-        <c-compiled-template
+        <div
           v-if="isHtmlEnabled"
-          :template="step.m"
+          v-html="sanitizedStepMessage"
         />
         <p v-else>
           {{ step.m }}
@@ -46,6 +46,8 @@
 </template>
 
 <script>
+import { sanitizeHtml, linkifyHtml } from '@/helpers/html';
+
 import { widgetExpandPanelAlarmTimelineCard } from '@/mixins/widget/expand-panel/alarm/timeline-card';
 
 export default {
@@ -63,6 +65,10 @@ export default {
   computed: {
     isNotStateCounter() {
       return this.step._t !== 'statecounter';
+    },
+
+    sanitizedStepMessage() {
+      return sanitizeHtml(linkifyHtml(String(this.step?.m ?? '')));
     },
   },
 };
