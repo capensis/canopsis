@@ -85,7 +85,7 @@ export default {
     pointer-events: initial;
     padding: 0;
 
-    div {
+    & > div {
       padding: 5px 16px;
     }
   }
