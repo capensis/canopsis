@@ -148,9 +148,9 @@ func (m *manager) CheckServices(ctx context.Context, entities []types.Entity) ([
 
 	entitiesData := make(map[string][2][]string) // array's indexes: 0 - added to impact, 1 - removed from impact
 
-	for _, ent := range entities {
+	for i := range entities {
+		ent := entities[i]
 		entityID := ent.ID
-
 		servicesMap := make(map[string]struct{}, len(ent.Services))
 		for _, id := range ent.Services {
 			servicesMap[id] = struct{}{}
