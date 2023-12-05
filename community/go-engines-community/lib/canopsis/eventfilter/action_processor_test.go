@@ -248,7 +248,15 @@ func TestActionProcessor(t *testing.T) {
 				Value:       primitive.A{"test2", "test"},
 			},
 			event: types.Event{
-				Entity: &types.Entity{},
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"Info 1": {
+							Name:        "Info 1",
+							Description: "Test description",
+							Value:       []string{"test"},
+						},
+					},
+				},
 			},
 			regexMatches: eventfilter.RegexMatch{},
 			externalData: map[string]interface{}{},
@@ -1207,7 +1215,7 @@ func TestActionProcessor(t *testing.T) {
 						"Info 1": {
 							Name:        "Info 1",
 							Description: "Test description",
-							Value:       []string{"test3", "test1", "test2"},
+							Value:       primitive.A{"test3", "test1", "test2"},
 						},
 					},
 				},
@@ -1220,7 +1228,7 @@ func TestActionProcessor(t *testing.T) {
 						"Info 1": {
 							Name:        "Info 1",
 							Description: "Test description",
-							Value:       []string{"test1", "test2", "test3"},
+							Value:       primitive.A{"test3", "test1", "test2"},
 						},
 					},
 					IsUpdated: false,
