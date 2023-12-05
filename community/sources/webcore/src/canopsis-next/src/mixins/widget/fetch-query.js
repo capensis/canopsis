@@ -9,6 +9,12 @@ import { queryWidgetMixin } from '@/mixins/widget/query';
  */
 export const widgetFetchQueryMixin = {
   mixins: [queryWidgetMixin],
+  props: {
+    visible: {
+      type: Boolean,
+      default: true,
+    },
+  },
   watch: {
     query(value, oldValue) {
       if (!isEqual(value, oldValue) && !isEmpty(value) && this.visible) {
