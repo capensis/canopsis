@@ -9,6 +9,7 @@
       :options="options"
       :select-all="removable"
       advanced-pagination
+      search
       @update:options="$emit('update:options', $event)"
     >
       <template #mass-actions="{ selected }">
