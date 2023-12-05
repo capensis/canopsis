@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/axe/event"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
@@ -72,7 +73,7 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 	}
 
 	if event.Parameters.Timestamp.Unix() <= 0 {
-		event.Parameters.Timestamp = types.NewCpsTime()
+		event.Parameters.Timestamp = datetime.NewCpsTime()
 	}
 
 	if event.Parameters.Initiator == "" {

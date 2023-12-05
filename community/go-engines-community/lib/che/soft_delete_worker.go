@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -18,13 +19,13 @@ import (
 const ResolveDeletedEventWaitTime = time.Hour
 
 type entityData struct {
-	ID                      string         `bson:"_id"`
-	Name                    string         `bson:"name"`
-	Component               string         `bson:"component"`
-	Type                    string         `bson:"type"`
-	ResolveDeletedEventSend *types.CpsTime `bson:"resolve_deleted_event_sent,omitempty"`
-	AlarmExists             bool           `bson:"alarm_exists"`
-	SoftDeleted             types.CpsTime  `bson:"soft_deleted"`
+	ID                      string            `bson:"_id"`
+	Name                    string            `bson:"name"`
+	Component               string            `bson:"component"`
+	Type                    string            `bson:"type"`
+	ResolveDeletedEventSend *datetime.CpsTime `bson:"resolve_deleted_event_sent,omitempty"`
+	AlarmExists             bool              `bson:"alarm_exists"`
+	SoftDeleted             datetime.CpsTime  `bson:"soft_deleted"`
 }
 
 type softDeletePeriodicalWorker struct {
@@ -41,7 +42,7 @@ func (w *softDeletePeriodicalWorker) GetInterval() time.Duration {
 }
 
 func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
-	now := types.CpsTime{Time: time.Now()}
+	now := datetime.NewCpsTime()
 
 	cursor, err := w.entityCollection.Aggregate(
 		ctx,
@@ -245,7 +246,7 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 	}
 }
 
-func (w *softDeletePeriodicalWorker) createEvent(eventType string, ent entityData, now types.CpsTime) (types.Event, error) {
+func (w *softDeletePeriodicalWorker) createEvent(eventType string, ent entityData, now datetime.CpsTime) (types.Event, error) {
 	event := types.Event{
 		Connector:     canopsis.EngineConnector,
 		ConnectorName: canopsis.CheEngineName,

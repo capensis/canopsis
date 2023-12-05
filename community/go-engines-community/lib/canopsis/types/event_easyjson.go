@@ -4,6 +4,7 @@ package types
 
 import (
 	json "encoding/json"
+	datetime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	easyjson "github.com/mailru/easyjson"
 	jlexer "github.com/mailru/easyjson/jlexer"
 	jwriter "github.com/mailru/easyjson/jwriter"
@@ -752,7 +753,7 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				out.Timestamp = nil
 			} else {
 				if out.Timestamp == nil {
-					out.Timestamp = new(CpsTime)
+					out.Timestamp = new(datetime.CpsTime)
 				}
 				if data := in.Raw(); in.Ok() {
 					in.AddError((*out.Timestamp).UnmarshalJSON(data))
@@ -875,7 +876,7 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				out.PreviousPbehaviorTime = nil
 			} else {
 				if out.PreviousPbehaviorTime == nil {
-					out.PreviousPbehaviorTime = new(CpsTime)
+					out.PreviousPbehaviorTime = new(datetime.CpsTime)
 				}
 				if data := in.Raw(); in.Ok() {
 					in.AddError((*out.PreviousPbehaviorTime).UnmarshalJSON(data))
@@ -887,7 +888,7 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				out.PreviousEntityPbehaviorTime = nil
 			} else {
 				if out.PreviousEntityPbehaviorTime == nil {
-					out.PreviousEntityPbehaviorTime = new(CpsTime)
+					out.PreviousEntityPbehaviorTime = new(datetime.CpsTime)
 				}
 				if data := in.Raw(); in.Ok() {
 					in.AddError((*out.PreviousEntityPbehaviorTime).UnmarshalJSON(data))
@@ -1006,15 +1007,15 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				in.Delim('[')
 				if out.EnableHistory == nil {
 					if !in.IsDelim(']') {
-						out.EnableHistory = make([]CpsTime, 0, 2)
+						out.EnableHistory = make([]datetime.CpsTime, 0, 2)
 					} else {
-						out.EnableHistory = []CpsTime{}
+						out.EnableHistory = []datetime.CpsTime{}
 					}
 				} else {
 					out.EnableHistory = (out.EnableHistory)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v19 CpsTime
+					var v19 datetime.CpsTime
 					if data := in.Raw(); in.Ok() {
 						in.AddError((v19).UnmarshalJSON(data))
 					}
@@ -1085,7 +1086,7 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				out.LastEventDate = nil
 			} else {
 				if out.LastEventDate == nil {
-					out.LastEventDate = new(CpsTime)
+					out.LastEventDate = new(datetime.CpsTime)
 				}
 				if data := in.Raw(); in.Ok() {
 					in.AddError((*out.LastEventDate).UnmarshalJSON(data))
@@ -1126,7 +1127,7 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				out.IdleSince = nil
 			} else {
 				if out.IdleSince == nil {
-					out.IdleSince = new(CpsTime)
+					out.IdleSince = new(datetime.CpsTime)
 				}
 				if data := in.Raw(); in.Ok() {
 					in.AddError((*out.IdleSince).UnmarshalJSON(data))
@@ -1140,7 +1141,7 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				out.Imported = nil
 			} else {
 				if out.Imported == nil {
-					out.Imported = new(CpsTime)
+					out.Imported = new(datetime.CpsTime)
 				}
 				if data := in.Raw(); in.Ok() {
 					in.AddError((*out.Imported).UnmarshalJSON(data))
@@ -1154,7 +1155,7 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				out.LastPbehaviorDate = nil
 			} else {
 				if out.LastPbehaviorDate == nil {
-					out.LastPbehaviorDate = new(CpsTime)
+					out.LastPbehaviorDate = new(datetime.CpsTime)
 				}
 				if data := in.Raw(); in.Ok() {
 					in.AddError((*out.LastPbehaviorDate).UnmarshalJSON(data))
@@ -1214,7 +1215,7 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				out.SoftDeleted = nil
 			} else {
 				if out.SoftDeleted == nil {
-					out.SoftDeleted = new(CpsTime)
+					out.SoftDeleted = new(datetime.CpsTime)
 				}
 				if data := in.Raw(); in.Ok() {
 					in.AddError((*out.SoftDeleted).UnmarshalJSON(data))
@@ -2009,7 +2010,7 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				out.ActivationDate = nil
 			} else {
 				if out.ActivationDate == nil {
-					out.ActivationDate = new(CpsTime)
+					out.ActivationDate = new(datetime.CpsTime)
 				}
 				if data := in.Raw(); in.Ok() {
 					in.AddError((*out.ActivationDate).UnmarshalJSON(data))
@@ -2076,7 +2077,7 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				out.Resolved = nil
 			} else {
 				if out.Resolved == nil {
-					out.Resolved = new(CpsTime)
+					out.Resolved = new(datetime.CpsTime)
 				}
 				if data := in.Raw(); in.Ok() {
 					in.AddError((*out.Resolved).UnmarshalJSON(data))
@@ -2227,7 +2228,7 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				out.InactiveStart = nil
 			} else {
 				if out.InactiveStart == nil {
-					out.InactiveStart = new(CpsTime)
+					out.InactiveStart = new(datetime.CpsTime)
 				}
 				if data := in.Raw(); in.Ok() {
 					in.AddError((*out.InactiveStart).UnmarshalJSON(data))
