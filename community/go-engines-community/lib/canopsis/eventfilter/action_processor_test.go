@@ -218,7 +218,7 @@ func TestActionProcessor(t *testing.T) {
 				Type:        eventfilter.ActionSetEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
-				Value:       []interface{}{"test", "test2"},
+				Value:       []interface{}{"test2", "test"},
 			},
 			event: types.Event{
 				Entity: &types.Entity{},
@@ -231,7 +231,7 @@ func TestActionProcessor(t *testing.T) {
 						"Info 1": {
 							Name:        "Info 1",
 							Description: "Test description",
-							Value:       []interface{}{"test", "test2"},
+							Value:       []string{"test", "test2"},
 						},
 					},
 					IsUpdated: true,
@@ -245,7 +245,7 @@ func TestActionProcessor(t *testing.T) {
 				Type:        eventfilter.ActionSetEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
-				Value:       primitive.A{"test", "test2"},
+				Value:       primitive.A{"test2", "test"},
 			},
 			event: types.Event{
 				Entity: &types.Entity{},
@@ -258,7 +258,7 @@ func TestActionProcessor(t *testing.T) {
 						"Info 1": {
 							Name:        "Info 1",
 							Description: "Test description",
-							Value:       primitive.A{"test", "test2"},
+							Value:       []string{"test", "test2"},
 						},
 					},
 					IsUpdated: true,
@@ -859,7 +859,7 @@ func TestActionProcessor(t *testing.T) {
 			event: types.Event{
 				Entity: &types.Entity{},
 				ExtraInfos: map[string]interface{}{
-					"Test": []interface{}{"test", "test2"},
+					"Test": []interface{}{"test2", "test"},
 				},
 			},
 			regexMatches: eventfilter.RegexMatch{},
@@ -870,13 +870,13 @@ func TestActionProcessor(t *testing.T) {
 						"Info 1": {
 							Name:        "Info 1",
 							Description: "Test description",
-							Value:       []interface{}{"test", "test2"},
+							Value:       []string{"test", "test2"},
 						},
 					},
 					IsUpdated: true,
 				},
 				ExtraInfos: map[string]interface{}{
-					"Test": []interface{}{"test", "test2"},
+					"Test": []interface{}{"test2", "test"},
 				},
 			},
 			expectedError: false,
@@ -892,7 +892,7 @@ func TestActionProcessor(t *testing.T) {
 			event: types.Event{
 				Entity: &types.Entity{},
 				ExtraInfos: map[string]interface{}{
-					"Test": primitive.A{"test", "test2"},
+					"Test": primitive.A{"test2", "test"},
 				},
 			},
 			regexMatches: eventfilter.RegexMatch{},
@@ -903,13 +903,13 @@ func TestActionProcessor(t *testing.T) {
 						"Info 1": {
 							Name:        "Info 1",
 							Description: "Test description",
-							Value:       primitive.A{"test", "test2"},
+							Value:       []string{"test", "test2"},
 						},
 					},
 					IsUpdated: true,
 				},
 				ExtraInfos: map[string]interface{}{
-					"Test": primitive.A{"test", "test2"},
+					"Test": primitive.A{"test2", "test"},
 				},
 			},
 			expectedError: false,
@@ -1192,6 +1192,41 @@ func TestActionProcessor(t *testing.T) {
 				Entity:   &types.Entity{},
 			},
 			expectedError: true,
+		},
+		{
+			testName: "given set_entity_info action with string slice with another order of items then in entity should return is updated false",
+			action: eventfilter.ParsedAction{
+				Type:        eventfilter.ActionSetEntityInfo,
+				Name:        "Info 1",
+				Description: "Test description",
+				Value:       []interface{}{"test2", "test3", "test1"},
+			},
+			event: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"Info 1": {
+							Name:        "Info 1",
+							Description: "Test description",
+							Value:       []string{"test3", "test1", "test2"},
+						},
+					},
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]interface{}{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"Info 1": {
+							Name:        "Info 1",
+							Description: "Test description",
+							Value:       []string{"test1", "test2", "test3"},
+						},
+					},
+					IsUpdated: false,
+				},
+			},
+			expectedError: false,
 		},
 	}
 
