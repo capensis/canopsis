@@ -22,14 +22,14 @@
     >
       <v-tab
         class="draggable-item"
-        v-for="tab in tabs"
-        :key="tab._id"
+        v-for="{ to, tab, title, key } in preparedTabs"
+        :key="key"
         :disabled="changed"
-        :to="getTabHrefById(tab._id)"
+        :to="to"
         exact
         ripple
       >
-        <span>{{ tab.title }}</span>
+        <span>{{ title }}</span>
         <template v-if="updatable && editing">
           <v-btn
             small
@@ -70,9 +70,9 @@
         touchless
       >
         <v-tab-item
-          v-for="tab in tabs"
-          :key="tab._id"
-          :value="getTabHrefById(tab._id)"
+          v-for="{ to, tab, key } in preparedTabs"
+          :key="key"
+          :value="to"
         >
           <slot :tab="tab" />
         </v-tab-item>
@@ -115,6 +115,15 @@ export default {
   computed: {
     vTabsKey() {
       return this.view.tabs.map(tab => tab._id).join('-');
+    },
+
+    preparedTabs() {
+      return this.tabs.map(tab => ({
+        key: tab._id,
+        to: this.getTabHrefById(tab._id),
+        title: tab.title,
+        tab,
+      }));
     },
 
     getTabHrefById() {
