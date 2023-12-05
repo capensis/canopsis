@@ -77,7 +77,10 @@
           :key="key"
           :value="to"
         >
-          <slot :tab="tab" />
+          <slot
+            :tab="tab"
+            :visible="to === $route.fullPath"
+          />
         </v-tab-item>
       </v-tabs-items>
     </template>
