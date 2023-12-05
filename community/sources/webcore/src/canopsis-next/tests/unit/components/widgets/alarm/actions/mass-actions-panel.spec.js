@@ -824,7 +824,7 @@ describe('mass-actions-panel', () => {
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
-  it('Renders `mass-actions-panel` with empty items', () => {
+  it('Renders `mass-actions-panel` with non empty items', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
@@ -832,6 +832,36 @@ describe('mass-actions-panel', () => {
       ]),
       propsData: {
         items,
+        widget,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `mass-actions-panel` with empty items', () => {
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        eventModule,
+      ]),
+      propsData: {
+        items: [],
+        widget,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `mass-actions-panel` with one item', () => {
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        eventModule,
+      ]),
+      propsData: {
+        items: [alarm],
         widget,
       },
     });
