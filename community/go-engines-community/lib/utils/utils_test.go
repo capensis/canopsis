@@ -14,20 +14,6 @@ type Station struct {
 	Population int
 }
 
-func TestStringInSlice(t *testing.T) {
-	Convey("Given an slice", t, func() {
-		s := []string{"Loup", "garou"}
-
-		Convey("A good word is in the slice", func() {
-			So(utils.StringInSlice("garou", s), ShouldBeTrue)
-		})
-
-		Convey("A bad word is not in the slice", func() {
-			So(utils.StringInSlice("count", s), ShouldBeFalse)
-		})
-	})
-}
-
 func TestFindStringSubmatchMapWithRegexExpression(t *testing.T) {
 	Convey("Given regex that's compatible with builtin regex", t, func() {
 		re, err := utils.NewRegexExpression("abc-(?P<sub1>.*)-def-(?P<sub2>\\d+)")

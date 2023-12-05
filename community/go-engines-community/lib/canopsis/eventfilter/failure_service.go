@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -22,13 +23,13 @@ const (
 )
 
 type Failure struct {
-	ID        string        `bson:"_id" json:"_id"`
-	Rule      string        `bson:"rule" json:"rule"`
-	Type      int64         `bson:"type" json:"type"`
-	Timestamp types.CpsTime `bson:"t" json:"t"`
-	Message   string        `bson:"message" json:"message"`
-	Event     *types.Event  `bson:"event,omitempty" json:"event"`
-	Unread    bool          `bson:"unread,omitempty" json:"unread"`
+	ID        string           `bson:"_id" json:"_id"`
+	Rule      string           `bson:"rule" json:"rule"`
+	Type      int64            `bson:"type" json:"type"`
+	Timestamp datetime.CpsTime `bson:"t" json:"t"`
+	Message   string           `bson:"message" json:"message"`
+	Event     *types.Event     `bson:"event,omitempty" json:"event"`
+	Unread    bool             `bson:"unread,omitempty" json:"unread"`
 }
 
 type FailureService interface {
@@ -80,7 +81,7 @@ func (s *failureService) Add(ruleID string, failureType int64, message string, e
 		ID:        utils.NewID(),
 		Rule:      ruleID,
 		Type:      failureType,
-		Timestamp: types.NewCpsTime(),
+		Timestamp: datetime.NewCpsTime(),
 		Message:   message,
 		Event:     event,
 		Unread:    true,
