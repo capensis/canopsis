@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"reflect"
+	"sort"
 	"strconv"
 	"time"
 
@@ -189,9 +190,20 @@ func (p *actionProcessor) Process(
 	return event, fmt.Errorf("action type = %s is invalid", action.Type)
 }
 
-func (p *actionProcessor) setEntityInfo(entity types.Entity, value interface{}, name, description string) types.Entity {
+func (p *actionProcessor) setEntityInfo(entity types.Entity, value any, name, description string) types.Entity {
+	if s, ok := utils.IsStringSlice(value); ok {
+		sort.Strings(s)
+		value = s
+	}
+
 	if info, ok := entity.Infos[name]; ok {
-		if reflect.DeepEqual(info.Value, value) {
+		prev := info.Value
+		if s, ok := utils.IsStringSlice(info.Value); ok {
+			sort.Strings(s)
+			prev = value
+		}
+
+		if reflect.DeepEqual(prev, value) {
 			return entity
 		}
 	}
