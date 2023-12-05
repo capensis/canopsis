@@ -19,10 +19,7 @@
       <div>{{ $t('common.date') }}: {{ date }}</div>
       <div class="c-extra-details__message">
         {{ $tc('common.comment') }}:&nbsp;
-        <c-compiled-template
-          :template="lastComment.m"
-          parent-element="span"
-        />
+        <div v-html="sanitizedLastComment" />
       </div>
     </div>
   </c-clickable-tooltip>
@@ -31,6 +28,7 @@
 <script>
 import { EVENT_ENTITY_TYPES } from '@/constants';
 
+import { sanitizeHtml, linkifyHtml } from '@/helpers/html';
 import { getEntityEventIcon } from '@/helpers/entities/entity/icons';
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 
@@ -48,6 +46,10 @@ export default {
 
     icon() {
       return getEntityEventIcon(EVENT_ENTITY_TYPES.comment);
+    },
+
+    sanitizedLastComment() {
+      return sanitizeHtml(linkifyHtml(String(this.lastComment?.m ?? '')));
     },
   },
 };
