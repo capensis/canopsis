@@ -390,6 +390,21 @@ func getAlarmMatchDataSets() map[string]alarmDataSet {
 			},
 			matchResult: false,
 		},
+		"given string info ne condition and not exist info should not match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.infos.info_name",
+						FieldType: pattern.FieldTypeString,
+						Condition: pattern.NewStringCondition(pattern.ConditionNotEqual, "test name"),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Value: types.AlarmValue{},
+			},
+			matchResult: false,
+		},
 		"given string info condition and not string info should not match": {
 			pattern: pattern.Alarm{
 				{
@@ -787,6 +802,21 @@ func getAlarmMongoQueryDataSets() map[string]alarmDataSet {
 				}},
 			}},
 		},
+		"given one ne condition": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.display_name",
+						Condition: pattern.NewStringCondition(pattern.ConditionNotEqual, "test name"),
+					},
+				},
+			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"alarm.v.display_name": bson.M{"$ne": "test name"}},
+				}},
+			}},
+		},
 		"given multiple conditions": {
 			pattern: pattern.Alarm{
 				{
@@ -896,9 +926,92 @@ func getAlarmMongoQueryDataSets() map[string]alarmDataSet {
 			},
 			mongoQueryResult: bson.M{"$or": []bson.M{
 				{"$and": []bson.M{
-					{"$and": []bson.M{
-						{"alarm.v.infos_array.v.info_name": bson.M{"$type": bson.A{"long", "int", "decimal"}}},
-						{"alarm.v.infos_array.v.info_name": bson.M{"$eq": 3}},
+					{"alarm.v.infos_array.v.info_name": bson.M{"$eq": 3}},
+				}},
+			}},
+		},
+		"given infos string neq condition": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.infos.info_name",
+						FieldType: pattern.FieldTypeString,
+						Condition: pattern.NewStringCondition(pattern.ConditionNotEqual, "test"),
+					},
+				},
+			},
+			mongoQueryFields: bson.M{
+				"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"},
+			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"alarm.v.infos_array.v.info_name": bson.M{
+						"$nin": bson.A{"test", nil},
+					}},
+				}},
+			}},
+		},
+		"given infos string nin condition": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.infos.info_name",
+						FieldType: pattern.FieldTypeString,
+						Condition: pattern.NewStringArrayCondition(pattern.ConditionIsNotOneOf, []string{"test"}),
+					},
+				},
+			},
+			mongoQueryFields: bson.M{
+				"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"},
+			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"alarm.v.infos_array.v.info_name": bson.M{
+						"$nin": []string{"test"},
+						"$ne":  nil,
+					}},
+				}},
+			}},
+		},
+		"given infos int neq condition": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.infos.info_name",
+						FieldType: pattern.FieldTypeInt,
+						Condition: pattern.NewIntCondition(pattern.ConditionNotEqual, 3),
+					},
+				},
+			},
+			mongoQueryFields: bson.M{
+				"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"},
+			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"alarm.v.infos_array.v.info_name": bson.M{
+						"$nin": bson.A{3, nil},
+					}},
+				}},
+			}},
+		},
+		"given infos string array nin condition": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.infos.info_name",
+						FieldType: pattern.FieldTypeStringArray,
+						Condition: pattern.NewStringArrayCondition(pattern.ConditionHasNot, []string{"test"}),
+					},
+				},
+			},
+			mongoQueryFields: bson.M{
+				"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"},
+			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"alarm.v.infos_array.v.info_name": bson.M{
+						"$nin": []string{"test"},
+						"$ne":  nil,
 					}},
 				}},
 			}},

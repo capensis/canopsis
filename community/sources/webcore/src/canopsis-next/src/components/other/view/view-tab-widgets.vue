@@ -34,6 +34,7 @@
           :tab="tab"
           :kiosk="kiosk"
           :editing="editing"
+          :visible="visible"
         />
       </template>
     </grid-layout>
@@ -74,6 +75,10 @@ export default {
       required: true,
     },
     kiosk: {
+      type: Boolean,
+      default: false,
+    },
+    visible: {
       type: Boolean,
       default: false,
     },
