@@ -48,11 +48,12 @@ export default {
 </script>
 
 <style lang="scss">
-.c-alarm-action-chip {
+.c-alarm-action-chip.v-chip {
   border-radius: 5px;
   font-size: 12px;
   min-height: 24px;
   height: unset !important;
+  padding: 0;
 
   &__text {
     white-space: initial;

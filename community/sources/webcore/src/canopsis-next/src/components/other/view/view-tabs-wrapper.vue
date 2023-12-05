@@ -2,7 +2,7 @@
   <div>
     <view-tabs
       class="view-tabs--absolute"
-      v-if="true"
+      v-if="view && isTabsChanged"
       :tabs.sync="tabs"
       :changed="isTabsChanged"
       :updatable="updatable"
@@ -112,7 +112,7 @@ export default {
 .view-tabs {
   &--absolute {
     position: absolute;
-    z-index: 9;
+    z-index: 11;
     width: 100%;
   }
 
