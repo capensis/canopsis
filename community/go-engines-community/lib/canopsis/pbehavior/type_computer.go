@@ -6,9 +6,9 @@ import (
 	"context"
 	"fmt"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	"golang.org/x/sync/errgroup"
 )
@@ -48,7 +48,7 @@ type ComputedPbehavior struct {
 	Created    int64          `json:"c"`
 	Color      string         `json:"-"`
 
-	Pattern pattern.Entity `json:"p,omitempty"`
+	EntityPattern pattern.Entity `json:"p,omitempty"`
 }
 
 //easyjson:json
@@ -283,11 +283,11 @@ func (c *typeComputer) computePbehavior(
 	eventComputer EventComputer,
 	models models,
 ) (ComputedPbehavior, error) {
-	var start, end types.CpsTime
+	var start, end datetime.CpsTime
 	if pbehavior.RRuleComputedStart != nil && pbehavior.RRuleComputedStart.Time.Before(span.From()) {
 		start = *pbehavior.RRuleComputedStart
 		if pbehavior.Stop != nil && pbehavior.Start != nil {
-			end = types.CpsTime{Time: start.Add(pbehavior.Stop.Sub(pbehavior.Start.Time))}
+			end = datetime.CpsTime{Time: start.Add(pbehavior.Stop.Sub(pbehavior.Start.Time))}
 		}
 	} else if pbehavior.Start != nil {
 		start = *pbehavior.Start
@@ -320,13 +320,13 @@ func (c *typeComputer) computePbehavior(
 		}
 
 		return ComputedPbehavior{
-			Name:       pbehavior.Name,
-			ReasonName: reasonName,
-			ReasonID:   reason.ID,
-			Types:      computedTypes,
-			Created:    pbehavior.Created.Unix(),
-			Color:      pbehavior.Color,
-			Pattern:    pbehavior.EntityPattern,
+			Name:          pbehavior.Name,
+			ReasonName:    reasonName,
+			ReasonID:      reason.ID,
+			Types:         computedTypes,
+			Created:       pbehavior.Created.Unix(),
+			Color:         pbehavior.Color,
+			EntityPattern: pbehavior.EntityPattern,
 		}, nil
 	}
 

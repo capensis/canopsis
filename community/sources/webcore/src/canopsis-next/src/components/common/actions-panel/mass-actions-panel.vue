@@ -11,12 +11,14 @@
         :color="action.iconColor",
         :badge-value="action.badgeValue",
         :badge-tooltip="action.badgeTooltip",
+        lazy,
         @click="action.method"
       )
     mq-layout(:mq="['m', 't']")
       v-menu(
         bottom,
         left,
+        lazy,
         @click.native.stop=""
       )
         template(#activator="{ on }")

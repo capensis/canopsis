@@ -5,8 +5,8 @@ import (
 	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"github.com/rs/zerolog"
@@ -98,7 +98,7 @@ func (s *store) updateInstructionRetentionPolicy(ctx context.Context, data datas
 		return err
 	}
 	deleteStatsAfter := data.Config.Remediation.DeleteStatsAfter
-	if types.IsDurationEnabledAndValid(deleteStatsAfter) {
+	if datetime.IsDurationEnabledAndValid(deleteStatsAfter) {
 		err = s.addRetentionPolicy(ctx, pgPool, metrics.InstructionExecutionHourly, deleteStatsAfter.String())
 		if err != nil {
 			return err
@@ -110,7 +110,7 @@ func (s *store) updateInstructionRetentionPolicy(ctx context.Context, data datas
 		return err
 	}
 	deleteModStatsAfter := data.Config.Remediation.DeleteModStatsAfter
-	if types.IsDurationEnabledAndValid(deleteModStatsAfter) {
+	if datetime.IsDurationEnabledAndValid(deleteModStatsAfter) {
 		err = s.addRetentionPolicy(ctx, pgPool, metrics.InstructionExecutionByModifiedOn, deleteStatsAfter.String())
 		if err != nil {
 			return err
@@ -147,7 +147,7 @@ func (s *store) updateMetricsRetentionPolicy(ctx context.Context, data datastora
 
 	deleteAfter := data.Config.Metrics.DeleteAfter
 	interval := ""
-	if types.IsDurationEnabledAndValid(deleteAfter) {
+	if datetime.IsDurationEnabledAndValid(deleteAfter) {
 		interval = deleteAfter.String()
 	}
 	for _, table := range tables {
@@ -172,7 +172,7 @@ func (s *store) updatePerfDataRetentionPolicy(ctx context.Context, data datastor
 		return err
 	}
 	deleteAfter := data.Config.PerfDataMetrics.DeleteAfter
-	if types.IsDurationEnabledAndValid(deleteAfter) {
+	if datetime.IsDurationEnabledAndValid(deleteAfter) {
 		err = s.addRetentionPolicy(ctx, pgPool, metrics.PerfData, deleteAfter.String())
 		if err != nil {
 			return err

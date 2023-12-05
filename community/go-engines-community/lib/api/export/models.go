@@ -1,6 +1,6 @@
 package export
 
-import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 
 const (
 	TaskStatusRunning = iota
@@ -18,19 +18,19 @@ type TaskParameters struct {
 }
 
 type Task struct {
-	ID         string         `bson:"_id"`
-	Status     int64          `bson:"status"`
-	Type       string         `bson:"type"`
-	Parameters string         `bson:"parameters"`
-	Fields     Fields         `bson:"fields"`
-	Separator  rune           `bson:"separator"`
-	File       string         `bson:"file,omitempty"`
-	Filename   string         `bson:"filename"`
-	FailReason string         `bson:"fail_reason,omitempty"`
-	User       string         `bson:"user"`
-	Created    types.CpsTime  `bson:"created"`
-	Launched   *types.CpsTime `bson:"launched,omitempty"`
-	Completed  *types.CpsTime `bson:"completed,omitempty"`
+	ID         string            `bson:"_id"`
+	Status     int64             `bson:"status"`
+	Type       string            `bson:"type"`
+	Parameters string            `bson:"parameters"`
+	Fields     Fields            `bson:"fields"`
+	Separator  rune              `bson:"separator"`
+	File       string            `bson:"file,omitempty"`
+	Filename   string            `bson:"filename"`
+	FailReason string            `bson:"fail_reason,omitempty"`
+	User       string            `bson:"user"`
+	Created    datetime.CpsTime  `bson:"created"`
+	Launched   *datetime.CpsTime `bson:"launched,omitempty"`
+	Completed  *datetime.CpsTime `bson:"completed,omitempty"`
 }
 
 type Fields []Field

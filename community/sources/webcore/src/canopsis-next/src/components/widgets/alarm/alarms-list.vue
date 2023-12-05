@@ -126,6 +126,7 @@ import { MODALS, USERS_PERMISSIONS } from '@/constants';
 
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 import { getAlarmListExportDownloadFileUrl } from '@/helpers/entities/alarm/url';
+import { setSeveralFields } from '@/helpers/immutable';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
@@ -145,6 +146,7 @@ import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widget
 import {
   permissionsWidgetsAlarmsListRemediationInstructionsFilters,
 } from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
+import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
 
 import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
 import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
@@ -176,6 +178,7 @@ export default {
     widgetPeriodicRefreshMixin,
     widgetAlarmsSocketMixin,
     widgetRemediationInstructionsFilterMixin,
+    entitiesWidgetMixin,
     entitiesAlarmMixin,
     entitiesAlarmTagMixin,
     entitiesAlarmDetailsMixin,
@@ -256,6 +259,9 @@ export default {
     draggableColumn() {
       return !!this.widget.parameters?.columns?.draggable;
     },
+  },
+  created() {
+    this.actualizeUsedProperties();
   },
   methods: {
     refreshExpanded() {
@@ -449,6 +455,21 @@ export default {
       } finally {
         this.downloading = false;
       }
+    },
+
+    actualizeUsedProperties() {
+      const unwatch = this.$watch(() => this.query.active_columns, (activeColumns) => {
+        if (!isEqual(activeColumns, this.widget.parameters.usedAlarmProperties)) {
+          this.updateWidget({
+            id: this.widget._id,
+            data: setSeveralFields(this.widget, {
+              'parameters.usedAlarmProperties': activeColumns,
+            }),
+          });
+        }
+
+        unwatch();
+      });
     },
   },
 };

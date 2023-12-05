@@ -3,7 +3,7 @@ package entitycategory
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 )
 
 type ListRequest struct {
@@ -18,19 +18,19 @@ type EditRequest struct {
 }
 
 type Category struct {
-	ID      string         `bson:"_id" json:"_id"`
-	Name    string         `bson:"name" json:"name"`
-	Author  string         `bson:"author" json:"author"`
-	Created *types.CpsTime `bson:"created" json:"created" swaggertype:"integer"`
-	Updated *types.CpsTime `bson:"updated" json:"updated" swaggertype:"integer"`
+	ID      string            `bson:"_id" json:"_id"`
+	Name    string            `bson:"name" json:"name"`
+	Author  string            `bson:"author" json:"author"`
+	Created *datetime.CpsTime `bson:"created" json:"created" swaggertype:"integer"`
+	Updated *datetime.CpsTime `bson:"updated" json:"updated" swaggertype:"integer"`
 }
 
 type Response struct {
-	ID      string         `bson:"_id" json:"_id"`
-	Name    string         `bson:"name" json:"name"`
-	Author  *author.Author `bson:"author" json:"author"`
-	Created *types.CpsTime `bson:"created" json:"created"`
-	Updated *types.CpsTime `bson:"updated" json:"updated"`
+	ID      string            `bson:"_id" json:"_id"`
+	Name    string            `bson:"name" json:"name"`
+	Author  *author.Author    `bson:"author" json:"author"`
+	Created *datetime.CpsTime `bson:"created" json:"created"`
+	Updated *datetime.CpsTime `bson:"updated" json:"updated"`
 }
 
 type AggregationResult struct {
