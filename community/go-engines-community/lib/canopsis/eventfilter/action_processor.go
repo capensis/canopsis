@@ -200,7 +200,7 @@ func (p *actionProcessor) setEntityInfo(entity types.Entity, value any, name, de
 		prev := info.Value
 		if s, ok := utils.IsStringSlice(info.Value); ok {
 			sort.Strings(s)
-			prev = value
+			prev = s
 		}
 
 		if reflect.DeepEqual(prev, value) {
