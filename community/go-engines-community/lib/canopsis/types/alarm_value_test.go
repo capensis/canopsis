@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -136,7 +137,7 @@ func TestAlarmSteps_Crop_GivenCounterStep_ShouldSaveInDB(t *testing.T) {
 		Value:     1,
 		Message:   "coucou",
 		Author:    "coucou",
-		Timestamp: types.NewCpsTime(time.Now().Unix()),
+		Timestamp: datetime.NewCpsTime(time.Now().Unix()),
 	}
 	stateCounter := types.CropCounter{}
 	stateCounter.Stateinc = 1
@@ -144,7 +145,7 @@ func TestAlarmSteps_Crop_GivenCounterStep_ShouldSaveInDB(t *testing.T) {
 	counterStep := types.AlarmStep{
 		Type:         types.AlarmStepStateCounter,
 		StateCounter: stateCounter,
-		Timestamp:    types.NewCpsTime(time.Now().Unix()),
+		Timestamp:    datetime.NewCpsTime(time.Now().Unix()),
 	}
 
 	steps := make(types.AlarmSteps, 0)
