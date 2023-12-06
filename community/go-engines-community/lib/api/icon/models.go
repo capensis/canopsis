@@ -3,7 +3,7 @@ package icon
 import (
 	"mime/multipart"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 )
 
 type EditRequest struct {
@@ -14,10 +14,10 @@ type EditRequest struct {
 }
 
 type Response struct {
-	ID      string        `bson:"_id" json:"_id"`
-	Title   string        `bson:"title" json:"title"`
-	Created types.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated types.CpsTime `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	ID      string           `bson:"_id" json:"_id"`
+	Title   string           `bson:"title" json:"title"`
+	Created datetime.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Updated datetime.CpsTime `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 
 	Storage  string `bson:"storage" json:"-"`
 	Etag     string `bson:"etag" json:"-"`
