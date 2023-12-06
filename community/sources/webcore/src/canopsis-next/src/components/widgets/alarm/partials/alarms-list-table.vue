@@ -87,8 +87,9 @@
             :key="props.item._id",
             :selectable="selectable",
             :expandable="expandable",
-            :row="props",
             :widget="widget",
+            :expanded="props.expanded",
+            :alarm="props.item",
             :headers="headers",
             :parent-alarm="parentAlarm",
             :refresh-alarms-list="refreshAlarmsList",
@@ -101,7 +102,8 @@
             :wrap-actions="resizableColumn",
             :show-instruction-icon="hasInstructionsAlarms",
             @start:resize="startColumnResize",
-            @select:tag="$emit('select:tag', $event)"
+            @select:tag="$emit('select:tag', $event)",
+            @expand="props.expanded = $event"
           )
         template(#expand="{ item, index }")
           alarms-expand-panel(
