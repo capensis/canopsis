@@ -34,7 +34,7 @@ $(BUILD_TARGET): $(CANOPSIS_ARCHIVES) $(CANOPSIS_SPECS) $(CANOPSIS_MOCK)
 	$(BUILDER_IMAGE)
 
 $(TREE):
-	mkdir -p $@ && chmod 767 $@
+	mkdir -p $@
 
 $(CANOPSIS_MOCK): $(TREE)
 	if [ "$(word 2,$(subst /, ,$@))" = "el7" ]; then \
