@@ -116,7 +116,7 @@ export default {
           },
           on: {
             input: this.updateTextFieldValue,
-            'update:searchInput': this.updateTextFieldValue,
+            'update:search-input': this.updateTextFieldValue,
           },
         };
       }
