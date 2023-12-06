@@ -7,6 +7,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -72,7 +73,7 @@ func (u *externalUpdater) update(ctx context.Context, tags map[string]string) er
 		return err
 	}
 
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 
 	return u.client.WithTransaction(ctx, func(ctx context.Context) error {
 		internalTagsToRemove, err := u.keepNewTags(ctx, tags)

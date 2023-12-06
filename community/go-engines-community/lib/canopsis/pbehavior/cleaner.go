@@ -3,7 +3,7 @@ package pbehavior
 import (
 	"context"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
@@ -11,7 +11,7 @@ import (
 )
 
 type Cleaner interface {
-	Clean(ctx context.Context, before types.CpsTime, limit int64) (int64, error)
+	Clean(ctx context.Context, before datetime.CpsTime, limit int64) (int64, error)
 }
 
 func NewCleaner(client mongo.DbClient, bulkSize int, logger zerolog.Logger) Cleaner {
@@ -28,7 +28,7 @@ type cleaner struct {
 	logger     zerolog.Logger
 }
 
-func (c *cleaner) Clean(ctx context.Context, before types.CpsTime, limit int64) (int64, error) {
+func (c *cleaner) Clean(ctx context.Context, before datetime.CpsTime, limit int64) (int64, error) {
 	opts := options.Find().SetProjection(bson.M{"_id": 1})
 	if limit > 0 {
 		opts.SetLimit(limit)

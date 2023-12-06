@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/validator"
 	"github.com/go-playground/validator/v10"
@@ -247,7 +248,7 @@ func (v ValidationError) ValidationErrorResponse() ValidationErrorResponse {
 
 type AlarmStep struct {
 	Type         string             `bson:"_t" json:"_t"`
-	Timestamp    *types.CpsTime     `bson:"t" json:"t" swaggertype:"integer"`
+	Timestamp    *datetime.CpsTime  `bson:"t" json:"t" swaggertype:"integer"`
 	Author       string             `bson:"a" json:"a"`
 	UserID       string             `bson:"user_id,omitempty" json:"user_id"`
 	Message      string             `bson:"m" json:"m"`

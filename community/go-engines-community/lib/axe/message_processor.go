@@ -6,6 +6,7 @@ import (
 	"time"
 
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/axe/event"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
@@ -144,9 +145,9 @@ func (p *MessageProcessor) transformEvent(event types.Event) rpc.AxeEvent {
 	}
 
 	if event.Duration > 0 {
-		params.Duration = &types.DurationWithUnit{
+		params.Duration = &datetime.DurationWithUnit{
 			Value: int64(event.Duration),
-			Unit:  types.DurationUnitSecond,
+			Unit:  datetime.DurationUnitSecond,
 		}
 	}
 
