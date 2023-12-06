@@ -566,15 +566,12 @@ func (e *redisBasedManager) startExecution(
 	isInstructionMatched bool,
 ) {
 	e.logger.Debug().Msgf("Execute scenario = %s for alarm = %s", scenario.ID, alarm.ID)
-	var executions []Execution
-	for _, action := range scenario.Actions {
-		executions = append(
-			executions,
-			Execution{
-				Action:   action,
-				Executed: false,
-			},
-		)
+	executions := make([]Execution, len(scenario.Actions))
+	for i := range scenario.Actions {
+		executions[i] = Execution{
+			Action:   scenario.Actions[i],
+			Executed: false,
+		}
 	}
 
 	data.RuleName = scenario.Name

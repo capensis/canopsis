@@ -86,7 +86,7 @@ func (w *watcher) StartWatch(ctx context.Context, connId, userId, roomId string,
 		}},
 	})
 	if err != nil {
-		return fmt.Errorf("cannot watch collecton: %w", err)
+		return fmt.Errorf("cannot watch collection: %w", err)
 	}
 
 	go func() {
@@ -216,7 +216,7 @@ func (w *watcher) StartWatchDetails(ctx context.Context, connId, userId, roomId 
 
 	stream, err := w.collection.Watch(ctx, pipeline, opts)
 	if err != nil {
-		return fmt.Errorf("cannot watch collecton: %w", err)
+		return fmt.Errorf("cannot watch collection: %w", err)
 	}
 
 	go func() {

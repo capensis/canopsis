@@ -1,6 +1,12 @@
 package mongostore
 
 import (
+	"errors"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+	"time"
+
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	"github.com/golang/mock/gomock"
@@ -8,10 +14,6 @@ import (
 	"github.com/gorilla/sessions"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"net/http"
-	"net/http/httptest"
-	"testing"
-	"time"
 )
 
 func TestMongoStore_New_GivenNoCookie_ShouldReturnNewSession(t *testing.T) {
@@ -31,7 +33,7 @@ func TestMongoStore_New_GivenNoCookie_ShouldReturnNewSession(t *testing.T) {
 		Return(mockDbCollection)
 
 	store := NewStore(mockDbClient, codecs)
-	req := httptest.NewRequest("GET", "/", nil)
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	session, err := store.New(req, name)
 
 	if err != nil {
@@ -77,7 +79,7 @@ func TestMongoStore_New_GivenCookie_ShouldReturnSessionFromDB(t *testing.T) {
 		Return(mockDbCollection)
 
 	store := NewStore(mockDbClient, codecs)
-	req := httptest.NewRequest("GET", "/", nil)
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	encoded, err = securecookie.EncodeMulti(name, sessionId, securecookie.CodecsFromPairs(codecs)...)
 	if err != nil {
 		t.Fatal("fail to encode session", err)
@@ -118,7 +120,7 @@ func TestMongoStore_Get_GivenNoCookie_ShouldReturnNewSession(t *testing.T) {
 		Return(mockDbCollection)
 
 	store := NewStore(mockDbClient, codecs)
-	req := httptest.NewRequest("GET", "/", nil)
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	session, err := store.Get(req, name)
 
 	if err != nil {
@@ -164,7 +166,7 @@ func TestMongoStore_Get_GivenCookie_ShouldReturnSessionFromDB(t *testing.T) {
 		Return(mockDbCollection)
 
 	store := NewStore(mockDbClient, codecs)
-	req := httptest.NewRequest("GET", "/", nil)
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	encoded, err = securecookie.EncodeMulti(name, sessionId, securecookie.CodecsFromPairs(codecs)...)
 	if err != nil {
 		t.Fatal("fail to encode session", err)
@@ -189,7 +191,7 @@ func TestMongoStore_Get_GivenCookie_ShouldReturnSessionFromDB(t *testing.T) {
 
 	nextSession, nextErr := store.Get(req, name)
 
-	if nextSession != session || nextErr != err {
+	if nextSession != session || !errors.Is(nextErr, err) {
 		t.Errorf("expected second call return the same result")
 	}
 }
@@ -215,7 +217,7 @@ func TestMongoStore_Save_GivenNoCookie_ShouldCreateNewSessionAndSaveSessionToDBA
 		Return(mockDbCollection)
 
 	store := NewStore(mockDbClient, []byte("test"))
-	req := httptest.NewRequest("GET", "/", nil)
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	name := "testsession"
 	session := sessions.NewSession(store, name)
 	if session != nil {
@@ -255,7 +257,7 @@ func TestMongoStore_Save_GivenCookie_ShouldUpdateSessionInDBAndAddCookieToRespon
 		Return(mockDbCollection)
 
 	store := NewStore(mockDbClient, []byte("test"))
-	req := httptest.NewRequest("GET", "/", nil)
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	session := sessions.NewSession(store, name)
 	session.ID = sessionId
 	session.Values["test"] = "test"
@@ -289,7 +291,7 @@ func TestMongoStore_Save_GivenCookieAndZeroMaxAge_ShouldDeleteSessionFromDBAndDe
 		Return(mockDbCollection)
 
 	store := NewStore(mockDbClient, []byte("test"))
-	req := httptest.NewRequest("GET", "/", nil)
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	session := sessions.NewSession(store, name)
 	session.ID = sessionId
 	session.Values["test"] = "test"

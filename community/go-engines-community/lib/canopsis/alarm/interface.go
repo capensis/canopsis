@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -69,11 +70,11 @@ type Adapter interface {
 	// MassPartialUpdateOpen updates opened alarms matching by list of IDs, applying partial update from alarm
 	MassPartialUpdateOpen(context.Context, *types.Alarm, []string) error
 
-	GetOpenedAlarmsWithLastDatesBefore(ctx context.Context, time types.CpsTime) (mongo.Cursor, error)
+	GetOpenedAlarmsWithLastDatesBefore(ctx context.Context, time datetime.CpsTime) (mongo.Cursor, error)
 
 	GetOpenedAlarmsByConnectorIdleRules(ctx context.Context) ([]types.Alarm, error)
 
-	GetOpenedAlarmsWithEntityAfter(ctx context.Context, createdAfter types.CpsTime) (mongo.Cursor, error)
+	GetOpenedAlarmsWithEntityAfter(ctx context.Context, createdAfter datetime.CpsTime) (mongo.Cursor, error)
 
 	CountResolvedAlarm(ctx context.Context, alarmList []string) (int, error)
 
@@ -85,17 +86,17 @@ type Adapter interface {
 	// CopyAlarmToResolvedCollection copies alarm to resolved alarm collection
 	CopyAlarmToResolvedCollection(ctx context.Context, alarm types.Alarm) error
 
-	FindToCheckPbehaviorInfo(ctx context.Context, createdBefore types.CpsTime, idsWithPbehaviors []string) (mongo.Cursor, error)
+	FindToCheckPbehaviorInfo(ctx context.Context, createdBefore datetime.CpsTime, idsWithPbehaviors []string) (mongo.Cursor, error)
 
 	GetWorstAlarmStateAndMaxLastEventDate(ctx context.Context, entityIds []string) (int64, int64, error)
 
-	UpdateLastEventDate(ctx context.Context, entityIds []string, t types.CpsTime) error
+	UpdateLastEventDate(ctx context.Context, entityIds []string, t datetime.CpsTime) error
 }
 
 type EventProcessor interface {
 	// Process processes an event and updates the corresponding
 	// alarm. It enriches the event with this alarm, and returns an AlarmChange
-	// representing the change that occured on this alarm and its previous
+	// representing the change that occurred on this alarm and its previous
 	// state.
 	Process(ctx context.Context, event *types.Event) (types.AlarmChange, error)
 }

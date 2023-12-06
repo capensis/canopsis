@@ -7,9 +7,12 @@ import (
 	"math"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
@@ -145,9 +148,9 @@ func (m *manager) CheckServices(ctx context.Context, entities []types.Entity) ([
 
 	entitiesData := make(map[string][2][]string) // array's indexes: 0 - added to impact, 1 - removed from impact
 
-	for _, ent := range entities {
+	for i := range entities {
+		ent := entities[i]
 		entityID := ent.ID
-
 		servicesMap := make(map[string]struct{}, len(ent.Services))
 		for _, id := range ent.Services {
 			servicesMap[id] = struct{}{}
@@ -156,16 +159,16 @@ func (m *manager) CheckServices(ctx context.Context, entities []types.Entity) ([
 		for _, serv := range services {
 			serviceID := serv.ID
 			_, found := servicesMap[serviceID]
-			match := false
+			matched := false
 			if len(serv.EntityPattern) > 0 {
 				var err error
-				match, err = serv.EntityPattern.Match(ent)
+				matched, err = match.MatchEntityPattern(serv.EntityPattern, &ent)
 				if err != nil {
 					m.logger.Err(err).Str("service", serviceID).Msgf("service has invalid pattern")
 				}
 			}
 
-			if match {
+			if matched {
 				if !found && ent.Enabled {
 					entData := entitiesData[entityID]
 					entData[added] = append(entData[added], serviceID)
@@ -276,8 +279,6 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string) (types
 		return m.processDisabledService(ctx, service, serviceID)
 	}
 
-	var updatedEntities []types.Entity
-
 	query, negativeQuery, err := getServiceQueries(service)
 	if err != nil {
 		return types.Entity{}, nil, err
@@ -305,6 +306,7 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string) (types
 		return types.Entity{}, nil, err
 	}
 
+	updatedEntities := make([]types.Entity, 0, len(entitiesToRemove))
 	entitiesToRemoveMap := make(map[string]bool, len(entitiesToRemove))
 	for _, ent := range entitiesToRemove {
 		entitiesToRemoveMap[ent.ID] = true
@@ -383,7 +385,7 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 		return types.Entity{}, nil, nil
 	}
 
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	if event.EventType == types.EventTypeCheck {
 		eventEntity.LastEventDate = &now
 	}
@@ -405,7 +407,7 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 					{
 						ID:            connectorID,
 						Name:          connectorName,
-						EnableHistory: []types.CpsTime{now},
+						EnableHistory: []datetime.CpsTime{now},
 						Enabled:       true,
 						Type:          types.EntityTypeConnector,
 						Infos:         map[string]types.Info{},
@@ -431,7 +433,7 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 				ID:            event.Component,
 				Name:          event.Component,
 				Connector:     connectorID,
-				EnableHistory: []types.CpsTime{now},
+				EnableHistory: []datetime.CpsTime{now},
 				Enabled:       true,
 				Type:          types.EntityTypeComponent,
 				Component:     event.Component,
@@ -463,7 +465,7 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 				{
 					ID:            connectorID,
 					Name:          connectorName,
-					EnableHistory: []types.CpsTime{now},
+					EnableHistory: []datetime.CpsTime{now},
 					Enabled:       true,
 					Type:          types.EntityTypeConnector,
 					Infos:         map[string]types.Info{},
@@ -498,7 +500,7 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 			contextGraphEntities = append(contextGraphEntities, types.Entity{
 				ID:            connectorID,
 				Name:          connectorName,
-				EnableHistory: []types.CpsTime{now},
+				EnableHistory: []datetime.CpsTime{now},
 				Enabled:       true,
 				Type:          types.EntityTypeConnector,
 				Infos:         map[string]types.Info{},
@@ -556,7 +558,7 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 				ID:            event.Component,
 				Name:          event.Component,
 				Connector:     connectorID,
-				EnableHistory: []types.CpsTime{now},
+				EnableHistory: []datetime.CpsTime{now},
 				Enabled:       true,
 				Type:          types.EntityTypeComponent,
 				Component:     event.Component,
@@ -572,7 +574,7 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 		return types.Entity{
 			ID:             event.Resource + "/" + event.Component,
 			Name:           event.Resource,
-			EnableHistory:  []types.CpsTime{now},
+			EnableHistory:  []datetime.CpsTime{now},
 			Enabled:        true,
 			Type:           types.EntityTypeResource,
 			Connector:      connectorID,
@@ -604,7 +606,7 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 		contextGraphEntities = append(contextGraphEntities, types.Entity{
 			ID:            connectorID,
 			Name:          connectorName,
-			EnableHistory: []types.CpsTime{now},
+			EnableHistory: []datetime.CpsTime{now},
 			Enabled:       true,
 			Type:          types.EntityTypeConnector,
 			Infos:         map[string]types.Info{},
@@ -733,7 +735,7 @@ func (m *manager) FillResourcesWithInfos(ctx context.Context, component types.En
 	return resources, nil
 }
 
-func (m *manager) UpdateLastEventDate(ctx context.Context, eventType string, entityID string, timestamp types.CpsTime) error {
+func (m *manager) UpdateLastEventDate(ctx context.Context, eventType string, entityID string, timestamp datetime.CpsTime) error {
 	if eventType != types.EventTypeCheck {
 		return nil
 	}
@@ -804,7 +806,7 @@ func (m *manager) processDisabledService(ctx context.Context, service entityserv
 func (m *manager) entityExist(ctx context.Context, id string) (bool, error) {
 	err := m.collection.FindOne(ctx, bson.M{"_id": id}, options.FindOne().SetProjection(bson.M{"_id": 1})).Err()
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return false, nil
 		}
 
@@ -819,12 +821,12 @@ func getServiceQueries(service entityservice.EntityService) (interface{}, interf
 	var err error
 
 	if len(service.EntityPattern) > 0 {
-		query, err = service.EntityPattern.ToMongoQuery("")
+		query, err = db.EntityPatternToMongoQuery(service.EntityPattern, "")
 		if err != nil {
 			return nil, nil, err
 		}
 
-		negativeQuery, err = service.EntityPattern.ToNegativeMongoQuery("")
+		negativeQuery, err = db.EntityPatternToNegativeMongoQuery(service.EntityPattern, "")
 		if err != nil {
 			return nil, nil, err
 		}

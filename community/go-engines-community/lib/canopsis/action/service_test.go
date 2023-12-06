@@ -8,10 +8,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/rs/zerolog"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_amqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/amqp"
@@ -20,6 +19,7 @@ import (
 	mock_encoding "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/encoding"
 	"github.com/golang/mock/gomock"
 	amqp "github.com/rabbitmq/amqp091-go"
+	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -193,7 +193,7 @@ func TestService_ListenScenarioFinish(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
-			ctx, cancel := context.WithCancel(context.Background())
+			ctx, cancel := context.WithCancel(timerCtx)
 			defer cancel()
 
 			scenarioExecChan := make(chan action.ExecuteScenariosTask)
@@ -224,7 +224,7 @@ func TestService_ListenScenarioFinish(t *testing.T) {
 
 				if info.Err == nil {
 					process := activationService.EXPECT().Process(gomock.Any(), gomock.Any(), gomock.Any()).
-						Do(func(_ context.Context, alarm types.Alarm, _ types.MicroTime) {
+						Do(func(_ context.Context, alarm types.Alarm, _ datetime.MicroTime) {
 							if alarm.ID != info.Alarm.ID {
 								t.Errorf("expected alarm %s but got %s", info.Alarm.ID, alarm.ID)
 							}
@@ -265,7 +265,6 @@ func TestService_ListenScenarioFinish(t *testing.T) {
 				for _, info := range dataset.scenarioInfos {
 					select {
 					case <-ctx.Done():
-					case <-timerCtx.Done():
 					case scenarioInfoChannel <- info:
 					}
 				}
