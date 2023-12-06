@@ -1626,7 +1626,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
             class="v-datatable__expand-row"
           >
             <transition-group-stub
-              class="v-datatable__expand-col v-datatable__expand-col--expanded"
+              class="v-datatable__expand-col"
               colspan="11"
               tag="td"
             >
