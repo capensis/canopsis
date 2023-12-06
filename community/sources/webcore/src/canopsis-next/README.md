@@ -105,7 +105,7 @@ export default {
 6. Create a new component for the widget settings in the `components/sidebars/settings`. Example: `counter-custom.vue` for the `CounterCustom` widget. In this file you must import `src/mixins/widget/settings` mixin:
 ```vue
 // file components/sidebars/settings/counter-custom.vue
-<template lang="pug">
+<template>
   // TEMPLATE
 </template>
 
@@ -225,8 +225,8 @@ export default {
 13. Create main widget component for this new widget type.
 ```vue
 // file components/widgets/counter-custom.vue
-<template lang="pug">
-  h1 CUSTOM COUNTER
+<template>
+  <h1>CUSTOM COUNTER</h1>
   // ...another code
 </template>
 
@@ -837,8 +837,8 @@ export default {
 ```
 ```jade
 // SomeComponent.vue
-<template lang="pug">
-h1 {{ $t('someWord') }}
+<template>
+<h1>{{ $t('someWord') }}</h1>
 </template>
 ```
 
