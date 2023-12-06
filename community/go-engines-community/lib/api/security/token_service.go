@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/token"
@@ -27,8 +27,8 @@ type TokenService interface {
 }
 
 type AuthMethodConf struct {
-	ExpirationInterval *types.DurationWithUnit `bson:"expiration_interval" json:"expiration_interval"`
-	InactivityInterval *types.DurationWithUnit `bson:"inactivity_interval" json:"inactivity_interval"`
+	ExpirationInterval *datetime.DurationWithUnit `bson:"expiration_interval" json:"expiration_interval"`
+	InactivityInterval *datetime.DurationWithUnit `bson:"inactivity_interval" json:"inactivity_interval"`
 }
 
 func NewTokenService(
@@ -60,8 +60,8 @@ func (s *tokenService) Create(ctx context.Context, user security.User, provider 
 		return "", err
 	}
 
-	now := types.NewCpsTime()
-	var expired types.CpsTime
+	now := datetime.NewCpsTime()
+	var expired datetime.CpsTime
 	if expirationInterval.Value > 0 {
 		expired = expirationInterval.AddTo(now)
 	}
@@ -96,8 +96,8 @@ func (s *tokenService) CreateWithExpiration(ctx context.Context, user security.U
 		return "", err
 	}
 
-	now := types.NewCpsTime()
-	minExpired := types.CpsTime{Time: expired}
+	now := datetime.NewCpsTime()
+	minExpired := datetime.CpsTime{Time: expired}
 	if expirationInterval.Value > 0 {
 		expiredByInterval := expirationInterval.AddTo(now)
 		if expiredByInterval.Before(minExpired) {
@@ -141,8 +141,8 @@ func (s *tokenService) DeleteByUserIDs(ctx context.Context, ids []string) error 
 	return s.tokenStore.DeleteByUserIDs(ctx, ids)
 }
 
-func (s *tokenService) getIntervals(ctx context.Context, user security.User, provider string) (types.DurationWithUnit, types.DurationWithUnit, error) {
-	var expirationInterval, inactivityInterval types.DurationWithUnit
+func (s *tokenService) getIntervals(ctx context.Context, user security.User, provider string) (datetime.DurationWithUnit, datetime.DurationWithUnit, error) {
+	var expirationInterval, inactivityInterval datetime.DurationWithUnit
 	roleConf := AuthMethodConf{}
 	if len(user.Roles) > 0 {
 		cursor, err := s.dbRoleCollection.Aggregate(ctx, []bson.M{
@@ -193,10 +193,10 @@ func (s *tokenService) getIntervals(ctx context.Context, user security.User, pro
 		}
 
 		if expirationInterval.Value == 0 && expirationIntervalStr != "" {
-			expirationInterval, _ = types.ParseDurationWithUnit(expirationIntervalStr)
+			expirationInterval, _ = datetime.ParseDurationWithUnit(expirationIntervalStr)
 		}
 		if inactivityInterval.Value == 0 && inactivityIntervalStr != "" {
-			inactivityInterval, _ = types.ParseDurationWithUnit(inactivityIntervalStr)
+			inactivityInterval, _ = datetime.ParseDurationWithUnit(inactivityIntervalStr)
 		}
 	}
 

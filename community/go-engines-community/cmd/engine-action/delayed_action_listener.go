@@ -7,6 +7,7 @@ import (
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -57,7 +58,7 @@ func (l *delayedScenarioListener) publishRunDelayedScenarioEvent(
 		ConnectorName: task.Alarm.Value.ConnectorName,
 		Component:     task.Alarm.Value.Component,
 		Resource:      task.Alarm.Value.Resource,
-		Timestamp:     types.CpsTime{Time: time.Now()},
+		Timestamp:     datetime.NewCpsTime(),
 		Output:        "run delayed scenario",
 		Initiator:     types.InitiatorSystem,
 

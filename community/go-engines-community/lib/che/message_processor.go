@@ -11,6 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/contextgraph"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
@@ -332,6 +333,7 @@ func (p *messageProcessor) postProcessUpdatedEntities(
 	updatedEntityIdsForMetrics []string,
 ) {
 	for _, ent := range entitiesForEvent {
+		ent := ent
 		if (len(ent.ServicesToAdd) != 0 || len(ent.ServicesToRemove) != 0) && ent.ID != event.GetEID() && ent.Type != types.EntityTypeService {
 			var updateCountersEvent types.Event
 
@@ -344,7 +346,7 @@ func (p *messageProcessor) postProcessUpdatedEntities(
 					ConnectorName: event.ConnectorName,
 					Component:     ent.Component,
 					Resource:      ent.Name,
-					Timestamp:     types.CpsTime{Time: time.Now()},
+					Timestamp:     datetime.NewCpsTime(),
 					Entity:        &ent,
 					Initiator:     types.InitiatorSystem,
 				}
@@ -355,7 +357,7 @@ func (p *messageProcessor) postProcessUpdatedEntities(
 					Connector:     event.Connector,
 					ConnectorName: event.ConnectorName,
 					Component:     ent.Component,
-					Timestamp:     types.CpsTime{Time: time.Now()},
+					Timestamp:     datetime.NewCpsTime(),
 					Entity:        &ent,
 					Initiator:     types.InitiatorSystem,
 				}
@@ -365,7 +367,7 @@ func (p *messageProcessor) postProcessUpdatedEntities(
 					SourceType:    types.SourceTypeConnector,
 					Connector:     event.Connector,
 					ConnectorName: event.ConnectorName,
-					Timestamp:     types.CpsTime{Time: time.Now()},
+					Timestamp:     datetime.NewCpsTime(),
 					Entity:        &ent,
 					Initiator:     types.InitiatorSystem,
 				}
@@ -393,7 +395,7 @@ func (p *messageProcessor) postProcessUpdatedEntities(
 		}
 	}
 
-	p.MetaUpdater.UpdateById(context.Background(), updatedEntityIdsForMetrics...)
+	p.MetaUpdater.UpdateById(ctx, updatedEntityIdsForMetrics...)
 }
 
 func (p *messageProcessor) logError(err error, errMsg string, msg []byte) {
@@ -421,7 +423,7 @@ func (p *messageProcessor) handlePerfData(ctx context.Context, event types.Event
 		go func() {
 			_, err := p.EntityCollection.UpdateOne(ctx, bson.M{"_id": event.Entity.ID}, bson.M{
 				"$addToSet": bson.M{"perf_data": bson.M{"$each": names}},
-				"$set":      bson.M{"perf_data_updated": types.CpsTime{Time: now}},
+				"$set":      bson.M{"perf_data_updated": datetime.CpsTime{Time: now}},
 			})
 			if err != nil {
 				p.Logger.Err(err).Str("entity", event.Entity.ID).Msg("cannot update entity perf data")

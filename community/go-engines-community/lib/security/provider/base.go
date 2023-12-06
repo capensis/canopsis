@@ -4,9 +4,10 @@ package provider
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
-	"strings"
 )
 
 // baseProvider implements password-based authentication.
@@ -30,7 +31,7 @@ func (p *baseProvider) GetName() string {
 func (p *baseProvider) Auth(ctx context.Context, username, password string) (*security.User, error) {
 	user, err := p.userProvider.FindByUsername(ctx, username)
 	if err != nil {
-		return nil, fmt.Errorf("cannot find user: %v", err)
+		return nil, fmt.Errorf("cannot find user: %w", err)
 	}
 
 	if user == nil || !user.IsEnabled {

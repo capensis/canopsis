@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
@@ -113,7 +114,7 @@ func (p *rpcServerMessageProcessor) createPbehavior(
 	typeCollection := p.DbClient.Collection(mongo.PbehaviorTypeMongoCollection)
 	err := typeCollection.FindOne(ctx, bson.M{"_id": params.Type}).Err()
 	if err != nil {
-		if err == mongodriver.ErrNoDocuments {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return nil, fmt.Errorf("pbehavior type not exist: %q", params.Type)
 		}
 
@@ -123,15 +124,15 @@ func (p *rpcServerMessageProcessor) createPbehavior(
 	reasonCollection := p.DbClient.Collection(mongo.PbehaviorReasonMongoCollection)
 	err = reasonCollection.FindOne(ctx, bson.M{"_id": params.Reason}).Err()
 	if err != nil {
-		if err == mongodriver.ErrNoDocuments {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return nil, fmt.Errorf("pbehavior reason not exist: %q", params.Reason)
 		}
 
 		return nil, fmt.Errorf("cannot get pbehavior reason: %w", err)
 	}
 
-	now := types.NewCpsTime()
-	var start, stop types.CpsTime
+	now := datetime.NewCpsTime()
+	var start, stop datetime.CpsTime
 	if params.Tstart != nil && params.Tstop != nil {
 		start = *params.Tstart
 		stop = *params.Tstop

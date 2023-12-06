@@ -7,6 +7,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/resolverule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
@@ -37,7 +38,7 @@ func NewService(
 }
 
 func (s *service) ResolveClosed(ctx context.Context) ([]types.Alarm, error) {
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 
 	rules, err := s.resolveRuleAdapter.Get(ctx)
 	if err != nil {
