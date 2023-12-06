@@ -9,6 +9,7 @@
  * @property {string} icon_name
  * @property {string} label
  * @property {string} url
+ * @property {boolean} [single]
  * @property {string} [rule_id]
  * @property {LinkRuleAction} [action]
  */
