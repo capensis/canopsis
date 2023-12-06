@@ -14,7 +14,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
@@ -119,7 +118,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest, withDefaultTab bool) 
 
 		if !group.IsPrivate {
 			// check the api_view create permission here, because user might not have it while having private views permission.
-			ok, err := s.enforcer.Enforce(r.Author, apisecurity.ObjView, model.PermissionCreate)
+			ok, err := s.enforcer.Enforce(r.Author, apisecurity.ObjView, securitymodel.PermissionCreate)
 			if err != nil {
 				panic(err)
 			}

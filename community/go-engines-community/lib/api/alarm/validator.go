@@ -1,9 +1,10 @@
 package alarm
 
 import (
+	"strings"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"github.com/go-playground/validator/v10"
-	"strings"
 )
 
 func ValidateListRequest(sl validator.StructLevel) {

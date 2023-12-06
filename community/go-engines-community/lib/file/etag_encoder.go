@@ -1,7 +1,7 @@
 package file
 
 import (
-	"crypto/sha1"
+	"crypto/sha1" //nolint:gosec
 	"encoding/hex"
 )
 
@@ -12,7 +12,7 @@ func NewEtagEncoder() EtagEncoder {
 }
 
 func (e *sha1Encoder) Encode(data []byte) (string, error) {
-	h := sha1.New()
+	h := sha1.New() //nolint:gosec
 	_, err := h.Write(data)
 	if err != nil {
 		return "", err

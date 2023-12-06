@@ -2,6 +2,7 @@ package scheduler
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/keymutex"
@@ -228,7 +229,7 @@ func (s *baseQueueLock) pop(ctx context.Context, lockID string) ([]byte, error) 
 	result := s.queueClient.LPop(ctx, lockID)
 
 	if err := result.Err(); err != nil {
-		if err == redismod.Nil {
+		if errors.Is(err, redismod.Nil) {
 			return nil, nil
 		}
 

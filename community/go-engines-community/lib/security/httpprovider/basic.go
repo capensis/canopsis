@@ -2,9 +2,10 @@ package httpprovider
 
 import (
 	"encoding/base64"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"net/http"
 	"strings"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 )
 
 const headerAuthorization = "Authorization"
