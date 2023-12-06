@@ -333,6 +333,7 @@ func (p *messageProcessor) postProcessUpdatedEntities(
 	updatedEntityIdsForMetrics []string,
 ) {
 	for _, ent := range entitiesForEvent {
+		ent := ent
 		if (len(ent.ServicesToAdd) != 0 || len(ent.ServicesToRemove) != 0) && ent.ID != event.GetEID() && ent.Type != types.EntityTypeService {
 			var updateCountersEvent types.Event
 
@@ -394,7 +395,7 @@ func (p *messageProcessor) postProcessUpdatedEntities(
 		}
 	}
 
-	p.MetaUpdater.UpdateById(context.Background(), updatedEntityIdsForMetrics...)
+	p.MetaUpdater.UpdateById(ctx, updatedEntityIdsForMetrics...)
 }
 
 func (p *messageProcessor) logError(err error, errMsg string, msg []byte) {

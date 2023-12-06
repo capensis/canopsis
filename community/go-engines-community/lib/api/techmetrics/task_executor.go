@@ -362,11 +362,11 @@ func (e *taskExecutor) dumpDb(
 	id int,
 	pgPool postgres.Pool,
 ) (string, error) {
+	done := make(chan struct{})
 	var err error
-	reportCtx, cancel := context.WithCancel(context.Background())
 	var dumpFilepath string
 	go func() {
-		defer cancel()
+		defer close(done)
 
 		var pgConnStr string
 		pgConnStr, err = postgres.GetTechConnStr()
@@ -393,7 +393,7 @@ func (e *taskExecutor) dumpDb(
 
 	for {
 		select {
-		case <-reportCtx.Done():
+		case <-done:
 			if err != nil {
 				return "", err
 			}
@@ -402,7 +402,7 @@ func (e *taskExecutor) dumpDb(
 			return "", ctx.Err()
 		case <-ticket.C:
 			now := time.Now().UTC()
-			_, err = pgPool.Exec(reportCtx, "UPDATE export SET last_ping = $2 WHERE id = $1", id, now)
+			_, err = pgPool.Exec(ctx, "UPDATE export SET last_ping = $2 WHERE id = $1", id, now)
 			if err != nil {
 				e.logger.Err(err).Msg("cannot update last ping")
 			}
