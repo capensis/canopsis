@@ -6,7 +6,7 @@ CANOPSIS_SPECS = $(addsuffix /SPECS/canopsis.spec, $(addprefix build/, $(BUILD_T
 CANOPSIS_MOCK = $(addsuffix /canopsis.cfg, $(addprefix build/, $(BUILD_TARGET)))
 ARCHIVE_DIRS = community
 MONOREPO_ROOT = $(abspath $(dir $(CURDIR))/../)
-BUILDER_IMAGE = docker.capensis.fr/docker/images/mock-builder:v1.0.0
+BUILDER_IMAGE = docker.capensis.fr/docker/images/mock-builder:latest
 
 include $(MONOREPO_ROOT)/community/.env
 
