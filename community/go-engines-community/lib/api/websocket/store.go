@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -36,7 +36,7 @@ type store struct {
 
 func (s *store) UpdateConnections(ctx context.Context, conns []UserConnection) error {
 	writeModels := make([]mongodriver.WriteModel, len(conns))
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	for i, conn := range conns {
 		writeModels[i] = mongodriver.NewUpdateManyModel().
 			SetFilter(bson.M{"_id": conn.ID}).
@@ -62,7 +62,7 @@ func (s *store) UpdateConnections(ctx context.Context, conns []UserConnection) e
 	}
 
 	_, err := s.collection.DeleteMany(ctx, bson.M{
-		"updated": bson.M{"$lt": types.CpsTime{Time: now.Add(-s.deleteInterval)}},
+		"updated": bson.M{"$lt": datetime.CpsTime{Time: now.Add(-s.deleteInterval)}},
 	})
 	return err
 }
@@ -71,7 +71,7 @@ func (s *store) GetConnections(ctx context.Context, ids []string) (map[string]in
 	cursor, err := s.collection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
 			"user":    bson.M{"$in": ids},
-			"updated": bson.M{"$gt": types.CpsTime{Time: time.Now().Add(-s.readInterval)}},
+			"updated": bson.M{"$gt": datetime.CpsTime{Time: time.Now().Add(-s.readInterval)}},
 		}},
 		{"$group": bson.M{
 			"_id":    "$user",
@@ -107,7 +107,7 @@ func (s *store) GetConnections(ctx context.Context, ids []string) (map[string]in
 func (s *store) GetActiveConnections(ctx context.Context) (int64, error) {
 	cursor, err := s.collection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
-			"updated": bson.M{"$gt": types.CpsTime{Time: time.Now().Add(-s.readInterval)}},
+			"updated": bson.M{"$gt": datetime.CpsTime{Time: time.Now().Add(-s.readInterval)}},
 		}},
 		{"$group": bson.M{
 			"_id":    "$user",
@@ -137,7 +137,7 @@ func (s *store) GetActiveConnections(ctx context.Context) (int64, error) {
 func (s *store) GetUsers(ctx context.Context) ([]string, error) {
 	cursor, err := s.collection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
-			"updated": bson.M{"$gt": types.CpsTime{Time: time.Now().Add(-s.readInterval)}},
+			"updated": bson.M{"$gt": datetime.CpsTime{Time: time.Now().Add(-s.readInterval)}},
 		}},
 		{"$group": bson.M{
 			"_id": "$user",

@@ -2,6 +2,7 @@ package action
 
 import (
 	"context"
+	"errors"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
@@ -220,7 +221,7 @@ func (s *service) ProcessAbandonedExecutions(ctx context.Context) error {
 	for _, execution := range abandonedExecutions {
 		alarm, err := s.alarmAdapter.GetOpenedAlarmByAlarmId(ctx, execution.AlarmID)
 		if err != nil {
-			if err == mongo.ErrNoDocuments {
+			if errors.Is(err, mongo.ErrNoDocuments) {
 				s.logger.Warn().Str("execution", execution.GetCacheKey()).Msg("Alarm for scenario execution doesn't exist or resolved. Execution will be removed")
 				err = s.executionStorage.Del(ctx, execution.GetCacheKey())
 				if err != nil {

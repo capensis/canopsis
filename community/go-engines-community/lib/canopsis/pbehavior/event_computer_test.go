@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
@@ -42,78 +43,78 @@ func BenchmarkEventComputer_Compute(b *testing.B) {
 	}
 	now := time.Now()
 	params := pbehavior.PbhEventParams{
-		Start: types.CpsTime{Time: now.Add(1 * time.Hour)},
-		End:   types.CpsTime{Time: now.Add(3 * time.Hour)},
+		Start: datetime.CpsTime{Time: now.Add(1 * time.Hour)},
+		End:   datetime.CpsTime{Time: now.Add(3 * time.Hour)},
 		RRule: "FREQ=DAILY;BYDAY=WE,TH,FR;BYHOUR=1,14,17",
 		Type:  "test-active",
 		Exdates: []pbehavior.Exdate{
 			{
 				Exdate: types.Exdate{
-					Begin: types.CpsTime{Time: now.Add(-3 * time.Hour)},
-					End:   types.CpsTime{Time: now.Add(-time.Hour)},
+					Begin: datetime.CpsTime{Time: now.Add(-3 * time.Hour)},
+					End:   datetime.CpsTime{Time: now.Add(-time.Hour)},
 				},
 				Type: "test-maintenance",
 			},
 			{
 				Exdate: types.Exdate{
-					Begin: types.CpsTime{Time: now.Add(24 * time.Hour)},
-					End:   types.CpsTime{Time: now.Add(26 * time.Hour)},
+					Begin: datetime.CpsTime{Time: now.Add(24 * time.Hour)},
+					End:   datetime.CpsTime{Time: now.Add(26 * time.Hour)},
 				},
 				Type: "test-maintenance",
 			},
 			{
 				Exdate: types.Exdate{
-					Begin: types.CpsTime{Time: now.Add(48 * time.Hour)},
-					End:   types.CpsTime{Time: now.Add(50 * time.Hour)},
+					Begin: datetime.CpsTime{Time: now.Add(48 * time.Hour)},
+					End:   datetime.CpsTime{Time: now.Add(50 * time.Hour)},
 				},
 				Type: "test-maintenance",
 			},
 			{
 				Exdate: types.Exdate{
-					Begin: types.CpsTime{Time: now.Add(49 * time.Hour)},
-					End:   types.CpsTime{Time: now.Add(53 * time.Hour)},
+					Begin: datetime.CpsTime{Time: now.Add(49 * time.Hour)},
+					End:   datetime.CpsTime{Time: now.Add(53 * time.Hour)},
 				},
 				Type: "test-pause",
 			},
 			{
 				Exdate: types.Exdate{
-					Begin: types.CpsTime{Time: now.Add(72 * time.Hour)},
-					End:   types.CpsTime{Time: now.Add(120 * time.Hour)},
+					Begin: datetime.CpsTime{Time: now.Add(72 * time.Hour)},
+					End:   datetime.CpsTime{Time: now.Add(120 * time.Hour)},
 				},
 				Type: "test-maintenance",
 			},
 			{
 				Exdate: types.Exdate{
-					Begin: types.CpsTime{Time: now.Add(-3 * time.Hour)},
-					End:   types.CpsTime{Time: now.Add(-time.Hour)},
+					Begin: datetime.CpsTime{Time: now.Add(-3 * time.Hour)},
+					End:   datetime.CpsTime{Time: now.Add(-time.Hour)},
 				},
 				Type: "test-maintenance",
 			},
 			{
 				Exdate: types.Exdate{
-					Begin: types.CpsTime{Time: now.Add(24 * time.Hour)},
-					End:   types.CpsTime{Time: now.Add(26 * time.Hour)},
+					Begin: datetime.CpsTime{Time: now.Add(24 * time.Hour)},
+					End:   datetime.CpsTime{Time: now.Add(26 * time.Hour)},
 				},
 				Type: "test-maintenance",
 			},
 			{
 				Exdate: types.Exdate{
-					Begin: types.CpsTime{Time: now.Add(48 * time.Hour)},
-					End:   types.CpsTime{Time: now.Add(50 * time.Hour)},
+					Begin: datetime.CpsTime{Time: now.Add(48 * time.Hour)},
+					End:   datetime.CpsTime{Time: now.Add(50 * time.Hour)},
 				},
 				Type: "test-maintenance",
 			},
 			{
 				Exdate: types.Exdate{
-					Begin: types.CpsTime{Time: now.Add(49 * time.Hour)},
-					End:   types.CpsTime{Time: now.Add(53 * time.Hour)},
+					Begin: datetime.CpsTime{Time: now.Add(49 * time.Hour)},
+					End:   datetime.CpsTime{Time: now.Add(53 * time.Hour)},
 				},
 				Type: "test-pause",
 			},
 			{
 				Exdate: types.Exdate{
-					Begin: types.CpsTime{Time: now.Add(72 * time.Hour)},
-					End:   types.CpsTime{Time: now.Add(120 * time.Hour)},
+					Begin: datetime.CpsTime{Time: now.Add(72 * time.Hour)},
+					End:   datetime.CpsTime{Time: now.Add(120 * time.Hour)},
 				},
 				Type: "test-maintenance",
 			},

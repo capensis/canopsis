@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
@@ -82,7 +83,7 @@ func processResolve(
 	alarmCollection, entityCollection, resolvedCollection mongo.DbCollection,
 ) (Result, map[string]statecounters.UpdatedServicesInfo, string, error) {
 	result := Result{}
-	update := getResolveAlarmUpdate(types.NewCpsTime())
+	update := getResolveAlarmUpdate(datetime.NewCpsTime())
 	var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
 	notAckedMetricType := ""
 	err := dbClient.WithTransaction(ctx, func(ctx context.Context) error {
@@ -207,7 +208,7 @@ func postProcessResolve(
 	}
 }
 
-func getResolveAlarmUpdate(t types.CpsTime) []bson.M {
+func getResolveAlarmUpdate(t datetime.CpsTime) []bson.M {
 	return []bson.M{
 		{"$set": bson.M{
 			"v.duration": bson.M{"$subtract": bson.A{
