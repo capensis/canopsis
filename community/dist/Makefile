@@ -1,6 +1,5 @@
 VERSION = HEAD
-BUILD_TARGET = el7 \
-    el8
+BUILD_TARGET = el8
 CANOPSIS_ARCHIVES = $(addsuffix /SOURCES/canopsis$(PACKAGE_PREFIX).tar.gz, $(addprefix build/, $(BUILD_TARGET)))
 CANOPSIS_SPECS = $(addsuffix /SPECS/canopsis.spec, $(addprefix build/, $(BUILD_TARGET)))
 CANOPSIS_MOCK = $(addsuffix /canopsis.cfg, $(addprefix build/, $(BUILD_TARGET)))
@@ -35,9 +34,7 @@ $(TREE):
 	mkdir -p $@
 
 $(CANOPSIS_MOCK): $(TREE)
-	if [ "$(word 2,$(subst /, ,$@))" = "el7" ]; then \
-	    cp centos-7-canopsis.cfg $@; \
-	elif [ "$(word 2,$(subst /, ,$@))" = "el8" ]; then \
+	if [ "$(word 2,$(subst /, ,$@))" = "el8" ]; then \
 	    cp almalinux-8-canopsis.cfg $@; \
 	fi
 
