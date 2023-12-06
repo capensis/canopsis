@@ -1,4 +1,4 @@
-VERSION = develop
+VERSION = HEAD
 BUILD_TARGET = el7 \
     el8
 CANOPSIS_ARCHIVES = $(addsuffix /SOURCES/canopsis$(PACKAGE_PREFIX).tar.gz, $(addprefix build/, $(BUILD_TARGET)))
@@ -51,7 +51,7 @@ $(CANOPSIS_SPECS): $(TREE)
 $(CANOPSIS_ARCHIVES): $(TREE)
 	( \
 	    cd $(MONOREPO_ROOT) && \
-	    git archive HEAD --prefix canopsis$(PACKAGE_PREFIX)-$(VERSION)/ $(ARCHIVE_DIRS) > \
+	    git archive $(VERSION) --prefix canopsis$(PACKAGE_PREFIX)-$(VERSION)/ $(ARCHIVE_DIRS) > \
 	        $(CURDIR)/$@ \
 	)
 
