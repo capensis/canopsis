@@ -1,5 +1,6 @@
 VERSION = HEAD
-BUILD_TARGET = el8
+BUILD_TARGET = el8 \
+	el9
 CANOPSIS_ARCHIVES = $(addsuffix /SOURCES/canopsis$(PACKAGE_PREFIX).tar.gz, $(addprefix build/, $(BUILD_TARGET)))
 CANOPSIS_SPECS = $(addsuffix /SPECS/canopsis.spec, $(addprefix build/, $(BUILD_TARGET)))
 CANOPSIS_MOCK = $(addsuffix /canopsis.cfg, $(addprefix build/, $(BUILD_TARGET)))
@@ -36,6 +37,8 @@ $(TREE):
 $(CANOPSIS_MOCK): $(TREE)
 	if [ "$(word 2,$(subst /, ,$@))" = "el8" ]; then \
 	    cp almalinux-8-canopsis.cfg $@; \
+	elif [ "$(word 2,$(subst /, ,$@))" = "el9" ]; then \
+	    cp almalinux-9-canopsis.cfg $@; \
 	fi
 
 $(CANOPSIS_SPECS): $(TREE)
