@@ -243,13 +243,6 @@ Feature: get service entities
         "component": "test-component-pbehavior-weather-service-entity-2",
         "resource": "test-resource-pbehavior-weather-service-entity-2",
         "source_type": "resource"
-      },
-      {
-        "event_type": "check",
-        "connector": "service",
-        "connector_name": "service",
-        "component": "{{ .serviceId }}",
-        "source_type": "service"
       }
     ]
     """
