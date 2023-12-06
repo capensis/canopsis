@@ -1,11 +1,12 @@
 package entityinfodictionary
 
 import (
+	"net/http"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
-	"net/http"
 )
 
 type API interface {

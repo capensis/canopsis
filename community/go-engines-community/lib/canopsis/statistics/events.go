@@ -2,6 +2,7 @@ package statistics
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -58,12 +59,12 @@ func (s *eventStatisticsSender) Send(ctx context.Context, entityID string, stats
 		},
 		options.FindOneAndUpdate().SetUpsert(true).SetReturnDocument(options.Before),
 	)
-	if err := res.Err(); err != nil && err != mongodriver.ErrNoDocuments {
+	if err := res.Err(); err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 		s.logger.Err(err).Msg("failed to send event statistics")
 	}
 
 	var prev = EventStatistics{}
-	if err := res.Decode(&prev); err != nil && err != mongodriver.ErrNoDocuments {
+	if err := res.Decode(&prev); err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 		s.logger.Err(err).Msg("failed to decode event statistics")
 	}
 

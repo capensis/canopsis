@@ -2,14 +2,15 @@ package engine_test
 
 import (
 	"context"
+	"testing"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	mock_engine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/engine"
 	mock_redis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/redis"
 	"github.com/bsm/redislock"
 	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
-	"testing"
-	"time"
 )
 
 func TestLockedPeriodicalWorker_Work_GivenObtainedLock_ShouldRunWorker(t *testing.T) {
