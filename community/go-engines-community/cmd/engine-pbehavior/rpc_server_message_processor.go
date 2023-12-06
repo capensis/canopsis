@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
@@ -130,8 +131,8 @@ func (p *rpcServerMessageProcessor) createPbehavior(
 		return nil, fmt.Errorf("cannot get pbehavior reason: %w", err)
 	}
 
-	now := types.NewCpsTime()
-	var start, stop types.CpsTime
+	now := datetime.NewCpsTime()
+	var start, stop datetime.CpsTime
 	if params.Tstart != nil && params.Tstop != nil {
 		start = *params.Tstart
 		stop = *params.Tstop
