@@ -100,10 +100,7 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	if err != nil {
 		return nil, err
 	}
-	err = q.handleFilter(r.ListRequest)
-	if err != nil {
-		return nil, err
-	}
+	q.handleFilter(r.ListRequest)
 	q.handleSort(r.SortRequest)
 
 	if r.WithFlags {
@@ -166,11 +163,7 @@ func (q *MongoQueryBuilder) CreateCountAggregationPipeline(ctx context.Context, 
 	if err != nil {
 		return nil, err
 	}
-	err = q.handleFilter(r.ListRequest)
-	if err != nil {
-		return nil, err
-	}
-
+	q.handleFilter(r.ListRequest)
 	beforeLimit, _ := q.createAggregationPipeline()
 
 	return beforeLimit, nil
@@ -183,10 +176,7 @@ func (q *MongoQueryBuilder) CreateOnlyListAggregationPipeline(ctx context.Contex
 	if err != nil {
 		return nil, err
 	}
-	err = q.handleFilter(r)
-	if err != nil {
-		return nil, err
-	}
+	q.handleFilter(r)
 	q.handleSort(r.SortRequest)
 
 	beforeLimit, afterLimit := q.createAggregationPipeline()
@@ -275,7 +265,7 @@ func (q *MongoQueryBuilder) addFieldsToPipeline(fieldsMap, addedFields map[strin
 	*pipeline = append(*pipeline, bson.M{"$addFields": query})
 }
 
-func (q *MongoQueryBuilder) handleFilter(r ListRequest) error {
+func (q *MongoQueryBuilder) handleFilter(r ListRequest) {
 	entityMatch := make([]bson.M, 0)
 	q.addSearchFilter(r, &entityMatch)
 	q.addCategoryFilter(r, &entityMatch)
@@ -285,8 +275,6 @@ func (q *MongoQueryBuilder) handleFilter(r ListRequest) error {
 	if len(entityMatch) > 0 {
 		q.entityMatch = append(q.entityMatch, bson.M{"$match": bson.M{"$and": entityMatch}})
 	}
-
-	return nil
 }
 
 func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListRequest, now datetime.CpsTime) error {

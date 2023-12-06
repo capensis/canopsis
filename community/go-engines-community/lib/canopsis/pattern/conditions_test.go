@@ -2,6 +2,7 @@ package pattern_test
 
 import (
 	"encoding/json"
+	"errors"
 	"testing"
 	"time"
 
@@ -122,7 +123,7 @@ func TestCondition_MatchString(t *testing.T) {
 				t.Errorf("expected %t but got %t", data.expectedResult, result)
 			}
 
-			if data.expectedErr != err {
+			if !errors.Is(err, data.expectedErr) {
 				t.Errorf("expected error %v but got %v", data.expectedErr, err)
 			}
 
@@ -131,7 +132,7 @@ func TestCondition_MatchString(t *testing.T) {
 				t.Errorf("expected %t but got %t", data.expectedResult, result)
 			}
 
-			if data.expectedErr != err {
+			if !errors.Is(err, data.expectedErr) {
 				t.Errorf("expected error %v but got %v", data.expectedErr, err)
 			}
 		})
@@ -468,7 +469,7 @@ func TestCondition_MatchInt(t *testing.T) {
 				t.Errorf("expected %t but got %t", data.expectedResult, result)
 			}
 
-			if data.expectedErr != err {
+			if !errors.Is(err, data.expectedErr) {
 				t.Errorf("expected error %v but got %v", data.expectedErr, err)
 			}
 		})
@@ -575,7 +576,7 @@ func TestCondition_MatchBool(t *testing.T) {
 				t.Errorf("expected %t but got %t", data.expectedResult, result)
 			}
 
-			if data.expectedErr != err {
+			if !errors.Is(err, data.expectedErr) {
 				t.Errorf("expected error %v but got %v", data.expectedErr, err)
 			}
 		})
@@ -740,7 +741,7 @@ func TestCondition_MatchStringArray(t *testing.T) {
 				t.Errorf("expected %t but got %t", data.expectedResult, result)
 			}
 
-			if data.expectedErr != err {
+			if !errors.Is(err, data.expectedErr) {
 				t.Errorf("expected error %v but got %v", data.expectedErr, err)
 			}
 		})
@@ -865,7 +866,7 @@ func TestCondition_MatchRef(t *testing.T) {
 				t.Errorf("expected %t but got %t", data.expectedResult, result)
 			}
 
-			if data.expectedErr != err {
+			if !errors.Is(err, data.expectedErr) {
 				t.Errorf("expected error %v but got %v", data.expectedErr, err)
 			}
 		})
@@ -1015,7 +1016,7 @@ func TestCondition_MatchTime(t *testing.T) {
 				t.Errorf("expected %t but got %t", data.expectedResult, result)
 			}
 
-			if data.expectedErr != err {
+			if !errors.Is(err, data.expectedErr) {
 				t.Errorf("expected error %v but got %v", data.expectedErr, err)
 			}
 		})
@@ -1146,7 +1147,7 @@ func TestCondition_MatchDuration(t *testing.T) {
 				t.Errorf("expected %t but got %t", data.expectedResult, result)
 			}
 
-			if data.expectedErr != err {
+			if !errors.Is(err, data.expectedErr) {
 				t.Errorf("expected error %v but got %v", data.expectedErr, err)
 			}
 		})
@@ -1207,5 +1208,5 @@ func TestCondition_UnmarshalAndMatchDuration(t *testing.T) {
 }
 
 type condWrapper struct {
-	Cond pattern.Condition `bson:"cond"`
+	Cond pattern.Condition `bson:"cond" json:"cond"`
 }

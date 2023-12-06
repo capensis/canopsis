@@ -345,10 +345,7 @@ func (p *metaAlarmEventProcessor) AttachChildrenToMetaAlarm(ctx context.Context,
 		return nil, nil, nil, nil
 	}
 
-	childrenEvents, err := p.applyActionsOnChildren(metaAlarm, updatedChildrenAlarms)
-	if err != nil {
-		return nil, nil, nil, err
-	}
+	childrenEvents := p.applyActionsOnChildren(metaAlarm, updatedChildrenAlarms)
 
 	return &metaAlarm, updatedChildrenAlarms, childrenEvents, nil
 }
@@ -455,7 +452,7 @@ func (p *metaAlarmEventProcessor) DetachChildrenFromMetaAlarm(ctx context.Contex
 	return &metaAlarm, nil
 }
 
-func (p *metaAlarmEventProcessor) applyActionsOnChildren(metaAlarm types.Alarm, childrenAlarms []types.Alarm) ([]types.Event, error) {
+func (p *metaAlarmEventProcessor) applyActionsOnChildren(metaAlarm types.Alarm, childrenAlarms []types.Alarm) []types.Event {
 	var events []types.Event
 
 	steps := metaAlarm.GetAppliedActions()
@@ -503,7 +500,7 @@ func (p *metaAlarmEventProcessor) applyActionsOnChildren(metaAlarm types.Alarm, 
 		}
 	}
 
-	return events, nil
+	return events
 }
 
 func (p *metaAlarmEventProcessor) ProcessAxeRpc(ctx context.Context, event rpc.AxeEvent, eventRes rpc.AxeResultEvent) error {
@@ -944,7 +941,7 @@ func (p *metaAlarmEventProcessor) executeOutputTpl(data correlation.EventExtraIn
 
 	res, err := p.templateExecutor.Execute(rule.OutputTemplate, data)
 	if err != nil {
-		return "", fmt.Errorf("unable to execute output template for metaalarm rule %s: %+v", rule.ID, err)
+		return "", fmt.Errorf("unable to execute output template for metaalarm rule %s: %w", rule.ID, err)
 	}
 
 	return res, nil

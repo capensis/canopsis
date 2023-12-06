@@ -71,7 +71,7 @@ func (p *rmqPublisher) SendPerfDataEvent(ctx context.Context, uuid string, stats
 func (p *rmqPublisher) sendEvent(ctx context.Context, event types.Event) error {
 	bevent, err := p.encoder.Encode(event)
 	if err != nil {
-		return fmt.Errorf("error while encoding event %+v", err)
+		return fmt.Errorf("error while encoding event %w", err)
 	}
 
 	return p.amqpPublisher.PublishWithContext(

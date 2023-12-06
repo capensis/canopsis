@@ -212,7 +212,7 @@ func (s *baseService) applyRules(
 				}
 			}
 
-			return s.applyEntityRule(ctx, rule, entity, lastAlarm, eventGenerator)
+			return s.applyEntityRule(rule, entity, lastAlarm, eventGenerator)
 		}
 	}
 
@@ -316,7 +316,6 @@ func (s *baseService) applyAlarmRule(
 // It uses alarm arg to fill event field.
 // It uses entity type and connector arg to fill event field if alarm arg is nil.
 func (s *baseService) applyEntityRule(
-	ctx context.Context,
 	rule idlerule.Rule,
 	entity types.Entity,
 	alarm *types.Alarm,

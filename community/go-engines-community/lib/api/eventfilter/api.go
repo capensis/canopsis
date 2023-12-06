@@ -111,7 +111,7 @@ func (a *api) List(c *gin.Context) {
 func (a *api) Get(c *gin.Context) {
 	evf, err := a.store.GetById(c, c.Param("id"))
 
-	if err == mongodriver.ErrNoDocuments || evf == nil {
+	if errors.Is(err, mongodriver.ErrNoDocuments) || evf == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}

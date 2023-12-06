@@ -139,7 +139,7 @@ func (p *poolWithRetries) Query(ctx context.Context, sql string, args ...interfa
 	var rows pgx.Rows
 	var err error
 	p.retry(ctx, func() error {
-		rows, err = p.pgxPool.Query(ctx, sql, args...)
+		rows, err = p.pgxPool.Query(ctx, sql, args...) //nolint:sqlclosecheck
 		return err
 	})
 
@@ -174,6 +174,8 @@ func (p *poolWithRetries) Close() {
 	p.pgxPool.Close()
 }
 
+// WithTransaction
+// nolint:wrapcheck
 func (p *poolWithRetries) WithTransaction(ctx context.Context, f func(context.Context, pgx.Tx) error) error {
 	var err error
 	p.retry(ctx, func() error {

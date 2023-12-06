@@ -30,6 +30,8 @@ const (
 	entityInfosPrefix        = "entity.infos"
 )
 
+var ErrUnknownQuery = fmt.Errorf("unknown query type")
+
 type MongoQueryBuilder struct {
 	filterCollection      mongo.DbCollection
 	instructionCollection mongo.DbCollection
@@ -313,9 +315,9 @@ func (q *MongoQueryBuilder) CreateChildrenAggregationPipeline(
 		expr, err := p.Parse(search)
 		if err == nil {
 			query := expr.ExprQuery()
-			resolvedQuery := q.resolveAliasesInQuery(query).(bson.M)
-			if err != nil {
-				return nil, err
+			resolvedQuery, ok := q.resolveAliasesInQuery(query).(bson.M)
+			if !ok {
+				return nil, ErrUnknownQuery
 			}
 
 			b, err := json.Marshal(resolvedQuery)
@@ -678,7 +680,11 @@ func (q *MongoQueryBuilder) addSearchFilter(r FilterRequest) (bson.M, bool, erro
 	expr, err := p.Parse(r.Search)
 	if err == nil {
 		query := expr.Query()
-		resolvedQuery := q.resolveAliasesInQuery(query).(bson.M)
+		resolvedQuery, ok := q.resolveAliasesInQuery(query).(bson.M)
+		if !ok {
+			return nil, false, ErrUnknownQuery
+		}
+
 		b, err := json.Marshal(resolvedQuery)
 		if err != nil {
 			return nil, false, fmt.Errorf("cannot marshal search expression: %w", err)
@@ -1137,7 +1143,9 @@ func (q *MongoQueryBuilder) resolveAliasesInQuery(query any) any {
 			val.SetMapIndex(reflect.ValueOf(newKey), mapVal)
 		}
 	case reflect.String:
-		return q.resolveAlias(val.Interface().(string))
+		if s, ok := val.Interface().(string); ok {
+			return q.resolveAlias(s)
+		}
 	}
 
 	return res
