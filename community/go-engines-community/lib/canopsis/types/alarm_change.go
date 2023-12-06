@@ -2,7 +2,8 @@ package types
 
 import (
 	"strconv"
-	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 )
 
 // AlarmChangeType is a type representing a change that can occur on an alarm.
@@ -81,15 +82,15 @@ const MinimalEventsCountThreshold = 2
 // AlarmChange is a struct containing the type of change that occurred on an
 // alarm, as well as its previous state.
 type AlarmChange struct {
-	Type                            AlarmChangeType `json:"Type"`
-	PreviousState                   CpsNumber       `json:"PreviousState"`
-	PreviousStateChange             CpsTime         `json:"PreviousStateChange"`
-	PreviousStatus                  CpsNumber       `json:"PreviousStatus"`
-	PreviousStatusChange            CpsTime         `json:"PreviousStatusChange"`
-	PreviousPbehaviorTime           *CpsTime        `json:"PreviousPbehaviorTime"`
-	PreviousEntityPbehaviorTime     *CpsTime        `json:"PreviousEntityPbehaviorTime"`
-	PreviousPbehaviorTypeID         string          `json:"PreviousPbehaviorTypeID"`
-	PreviousPbehaviorCannonicalType string          `json:"PreviousPbehaviorCannonicalType"`
+	Type                            AlarmChangeType   `json:"Type"`
+	PreviousState                   CpsNumber         `json:"PreviousState"`
+	PreviousStateChange             datetime.CpsTime  `json:"PreviousStateChange"`
+	PreviousStatus                  CpsNumber         `json:"PreviousStatus"`
+	PreviousStatusChange            datetime.CpsTime  `json:"PreviousStatusChange"`
+	PreviousPbehaviorTime           *datetime.CpsTime `json:"PreviousPbehaviorTime"`
+	PreviousEntityPbehaviorTime     *datetime.CpsTime `json:"PreviousEntityPbehaviorTime"`
+	PreviousPbehaviorTypeID         string            `json:"PreviousPbehaviorTypeID"`
+	PreviousPbehaviorCannonicalType string            `json:"PreviousPbehaviorCannonicalType"`
 
 	EventsCount int `json:"EventsCount"`
 }
@@ -98,9 +99,9 @@ func NewAlarmChange() AlarmChange {
 	return AlarmChange{
 		Type:                 AlarmChangeTypeNone,
 		PreviousState:        AlarmStateOK,
-		PreviousStateChange:  CpsTime{Time: time.Now()},
+		PreviousStateChange:  datetime.NewCpsTime(),
 		PreviousStatus:       AlarmStatusOff,
-		PreviousStatusChange: CpsTime{Time: time.Now()},
+		PreviousStatusChange: datetime.NewCpsTime(),
 	}
 }
 

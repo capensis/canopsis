@@ -6,7 +6,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
@@ -164,7 +164,7 @@ func (s *store) transformRequestToDocument(r EditRequest) Theme {
 		Name:      r.Name,
 		Colors:    r.Colors,
 		FontSize:  r.FontSize,
-		Updated:   types.NewCpsTime(),
+		Updated:   datetime.NewCpsTime(),
 		Deletable: true,
 	}
 }

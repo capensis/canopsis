@@ -1,24 +1,25 @@
 package action
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 type Scenario struct {
-	ID                   string                  `bson:"_id,omitempty" json:"_id,omitempty"`
-	Name                 string                  `bson:"name" json:"name"`
-	Author               string                  `bson:"author" json:"author"`
-	Enabled              bool                    `bson:"enabled" json:"enabled"`
-	DisableDuringPeriods []string                `bson:"disable_during_periods" json:"disable_during_periods"`
-	Triggers             []string                `bson:"triggers" json:"triggers"`
-	Actions              []Action                `bson:"actions" json:"actions"`
-	Priority             int64                   `bson:"priority" json:"priority"`
-	Delay                *types.DurationWithUnit `bson:"delay" json:"delay"`
-	Created              types.CpsTime           `bson:"created,omitempty" json:"created,omitempty"`
-	Updated              types.CpsTime           `bson:"updated,omitempty" json:"updated,omitempty"`
+	ID                   string                     `bson:"_id,omitempty" json:"_id,omitempty"`
+	Name                 string                     `bson:"name" json:"name"`
+	Author               string                     `bson:"author" json:"author"`
+	Enabled              bool                       `bson:"enabled" json:"enabled"`
+	DisableDuringPeriods []string                   `bson:"disable_during_periods" json:"disable_during_periods"`
+	Triggers             []string                   `bson:"triggers" json:"triggers"`
+	Actions              []Action                   `bson:"actions" json:"actions"`
+	Priority             int64                      `bson:"priority" json:"priority"`
+	Delay                *datetime.DurationWithUnit `bson:"delay" json:"delay"`
+	Created              datetime.CpsTime           `bson:"created,omitempty" json:"created,omitempty"`
+	Updated              datetime.CpsTime           `bson:"updated,omitempty" json:"updated,omitempty"`
 }
 
 func (s Scenario) IsTriggered(triggers []string) string {
@@ -45,8 +46,9 @@ type Action struct {
 	savedpattern.AlarmPatternFields  `bson:",inline"`
 }
 
+// TODO: change arguments to pointers, check any other places where changing event, alarm and entity structs to pointers gives a performance boost.
 func (a Action) Match(entity types.Entity, alarm types.Alarm) (bool, error) {
-	return pattern.Match(entity, alarm, a.EntityPattern, a.AlarmPattern)
+	return match.Match(&entity, &alarm, a.EntityPattern, a.AlarmPattern)
 }
 
 type Parameters struct {
@@ -70,7 +72,7 @@ type Parameters struct {
 	// TicketData is used in assocticket action.
 	TicketData map[string]string `json:"ticket_data,omitempty" bson:"ticket_data,omitempty"`
 	// Duration is used in snooze and pbehavior actions.
-	Duration *types.DurationWithUnit `json:"duration,omitempty" bson:"duration,omitempty"`
+	Duration *datetime.DurationWithUnit `json:"duration,omitempty" bson:"duration,omitempty"`
 	// Name is used in pbehavior action.
 	Name string `json:"name,omitempty" binding:"max=255" bson:"name,omitempty"`
 	// Reason is used in pbehavior action.
@@ -80,9 +82,9 @@ type Parameters struct {
 	// RRule is used in pbehavior action.
 	RRule string `json:"rrule,omitempty" bson:"rrule,omitempty"`
 	// Tstart is used in pbehavior action.
-	Tstart *types.CpsTime `json:"tstart,omitempty" bson:"tstart,omitempty" swaggertype:"integer"`
+	Tstart *datetime.CpsTime `json:"tstart,omitempty" bson:"tstart,omitempty" swaggertype:"integer"`
 	// Tstop is used in pbehavior action.
-	Tstop *types.CpsTime `json:"tstop,omitempty" bson:"tstop,omitempty" swaggertype:"integer"`
+	Tstop *datetime.CpsTime `json:"tstop,omitempty" bson:"tstop,omitempty" swaggertype:"integer"`
 	// StartOnTrigger is used in pbehavior action.
 	StartOnTrigger *bool `json:"start_on_trigger,omitempty" bson:"start_on_trigger,omitempty"`
 	// Request is used in webhook action.

@@ -2,20 +2,20 @@ package appinfo
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 )
 
 type VersionConf struct {
 	Edition string `json:"edition" bson:"edition"`
 	Stack   string `json:"stack" bson:"stack"`
 
-	Version        string         `json:"version" bson:"version"`
-	VersionUpdated *types.CpsTime `json:"version_updated" bson:"version_updated" swaggertype:"integer"`
+	Version        string            `json:"version" bson:"version"`
+	VersionUpdated *datetime.CpsTime `json:"version_updated" bson:"version_updated" swaggertype:"integer"`
 }
 
 type PopupTimeout struct {
-	Info  *types.DurationWithUnit `json:"info,omitempty" bson:"info,omitempty"`
-	Error *types.DurationWithUnit `json:"error,omitempty" bson:"error,omitempty"`
+	Info  *datetime.DurationWithUnit `json:"info,omitempty" bson:"info,omitempty"`
+	Error *datetime.DurationWithUnit `json:"error,omitempty" bson:"error,omitempty"`
 }
 
 type UserInterfaceConf struct {
