@@ -22,16 +22,16 @@ rpm: $(BUILD_TARGET)
 
 $(BUILD_TARGET): $(CANOPSIS_ARCHIVES) $(CANOPSIS_SPECS) $(CANOPSIS_MOCK)
 	docker run \
-    --rm \
-    -e MOCK_CONFIG=canopsis \
-    -e MOCK_TARGET=SPECS \
-    -v ./build/$@:/rpmbuild \
-    -v ./build/$@/canopsis.cfg:/etc/mock/canopsis.cfg \
-    -e DEFINE_version=${VERSION} \
-    -e ENABLE_NETWORK=1 \
-    --privileged=true \
-    -i \
-    $(BUILDER_IMAGE)
+	--rm \
+	-e MOCK_CONFIG=canopsis \
+	-e MOCK_TARGET=SPECS \
+	-v ./build/$@:/rpmbuild \
+	-v ./build/$@/canopsis.cfg:/etc/mock/canopsis.cfg \
+	-e DEFINE_version=${VERSION} \
+	-e ENABLE_NETWORK=1 \
+	--privileged=true \
+	-i \
+	$(BUILDER_IMAGE)
 
 $(TREE):
 	mkdir -p $@ && chmod 767 $@
