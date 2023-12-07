@@ -255,6 +255,8 @@ TimeToKeepResolvedAlarms = "720h"
 AllowDoubleAck = false
 # ActivateAlarmAfterAutoRemediation if is set then alarm will be activated only after auto remediation execution
 ActivateAlarmAfterAutoRemediation = false
+# EnableArraySortingInEntityInfos enables sorting string array infos before saving to an entity.
+EnableArraySortingInEntityInfos = true
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.timezone]
