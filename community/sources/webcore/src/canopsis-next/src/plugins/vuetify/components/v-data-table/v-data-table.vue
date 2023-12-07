@@ -4,11 +4,12 @@ import { VIcon } from 'vuetify/es5/components/VIcon';
 import { VCheckbox } from 'vuetify/es5/components/VCheckbox';
 import { consoleWarn } from 'vuetify/es5/util/console';
 import { getObjectValueByPath } from 'vuetify/es5/util/helpers';
-import ExpandTransitionGenerator from 'vuetify/es5/components/transitions/expand-transition';
 
 import { DEFAULT_MAX_MULTI_SORT_COLUMNS_COUNT } from '@/config';
 
 import { isDarkColor } from '@/helpers/color';
+
+import ExpandTransitionGenerator from '../transitions/expand-transition';
 
 export default {
   extends: VDataTable,
@@ -70,13 +71,8 @@ export default {
         children.push(expand);
       }
 
-      const classes = {
-        'v-datatable__expand-col': true,
-        'v-datatable__expand-col--expanded': this.isExpanded(props.item),
-      };
-
       const transition = this.$createElement('transition-group', {
-        class: classes,
+        class: 'v-datatable__expand-col',
         attrs: { colspan: this.headerColumns },
         props: {
           tag: 'td',

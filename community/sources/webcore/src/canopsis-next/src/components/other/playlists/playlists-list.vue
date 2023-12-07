@@ -136,7 +136,7 @@ export default {
     },
 
     onErrorCopied() {
-      this.$popups.success({ text: this.$t('errors.default') });
+      this.$popups.error({ text: this.$t('errors.default') });
     },
   },
 };

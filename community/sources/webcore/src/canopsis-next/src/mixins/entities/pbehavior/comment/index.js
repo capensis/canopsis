@@ -61,6 +61,8 @@ export const entitiesPbehaviorCommentMixin = {
       } catch (err) {
         const message = Object.values(err).join('\n');
 
+        console.error(err);
+
         this.$popups.error({ text: message || this.$t('errors.default') });
       }
     },
