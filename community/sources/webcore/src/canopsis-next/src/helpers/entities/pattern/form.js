@@ -608,7 +608,7 @@ export const getOperatorsByRule = (rule, ruleType) => {
   const fieldType = getFieldType(rule.value);
   let operators = getOperatorsByFieldType(fieldType);
 
-  if (isAnyInfosType || isObjectRuleType(ruleType)) {
+  if (isObjectRuleType(ruleType)) {
     operators = [
       ...operators,
       PATTERN_OPERATORS.isOneOf,
