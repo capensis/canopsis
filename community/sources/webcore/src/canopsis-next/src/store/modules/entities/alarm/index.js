@@ -106,6 +106,8 @@ export default {
           }, { root: true });
         }, `alarms-list-${widgetId}`);
       } catch (err) {
+        console.error(err);
+
         await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
 
         commit(types.FETCH_LIST_FAILED, { widgetId });

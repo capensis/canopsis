@@ -50,6 +50,8 @@ export default {
       try {
         await this.removePbehaviorType({ id: pbehaviorTypeId });
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: err.error || this.$t('errors.default') });
       }
     },
