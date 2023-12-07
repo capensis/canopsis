@@ -23,9 +23,9 @@ exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with custom props
           style="font-size: 16px; height: 16px; width: 16px;"
         >
           <svg
-            class="density_medium-svg-icon v-icon__component theme--light"
+            class="v-icon__component theme--light"
             enable-background="new 0 0 24 24"
-            fill="#000000"
+            fill="currentColor"
             height="24px"
             style="font-size: 16px; height: 16px; width: 16px;"
             viewBox="0 0 24 24"
@@ -78,9 +78,9 @@ exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with custom props
           style="font-size: 16px; height: 16px; width: 16px;"
         >
           <svg
-            class="density_medium-svg-icon v-icon__component theme--light"
+            class="v-icon__component theme--light"
             enable-background="new 0 0 24 24"
-            fill="#000000"
+            fill="currentColor"
             height="24px"
             style="font-size: 16px; height: 16px; width: 16px;"
             viewBox="0 0 24 24"
@@ -139,9 +139,9 @@ exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with custom props
           style="font-size: 16px; height: 16px; width: 16px;"
         >
           <svg
-            class="density_small-svg-icon v-icon__component theme--light"
+            class="v-icon__component theme--light"
             enable-background="new 0 0 24 24"
-            fill="#000000"
+            fill="currentColor"
             height="24px"
             style="font-size: 16px; height: 16px; width: 16px;"
             viewBox="0 0 24 24"
@@ -214,9 +214,9 @@ exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with default prop
           style="font-size: 16px; height: 16px; width: 16px;"
         >
           <svg
-            class="density_medium-svg-icon v-icon__component theme--light"
+            class="v-icon__component theme--light"
             enable-background="new 0 0 24 24"
-            fill="#000000"
+            fill="currentColor"
             height="24px"
             style="font-size: 16px; height: 16px; width: 16px;"
             viewBox="0 0 24 24"
@@ -269,9 +269,9 @@ exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with default prop
           style="font-size: 16px; height: 16px; width: 16px;"
         >
           <svg
-            class="density_medium-svg-icon v-icon__component theme--light"
+            class="v-icon__component theme--light"
             enable-background="new 0 0 24 24"
-            fill="#000000"
+            fill="currentColor"
             height="24px"
             style="font-size: 16px; height: 16px; width: 16px;"
             viewBox="0 0 24 24"
@@ -330,9 +330,9 @@ exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with default prop
           style="font-size: 16px; height: 16px; width: 16px;"
         >
           <svg
-            class="density_small-svg-icon v-icon__component theme--light"
+            class="v-icon__component theme--light"
             enable-background="new 0 0 24 24"
-            fill="#000000"
+            fill="currentColor"
             height="24px"
             style="font-size: 16px; height: 16px; width: 16px;"
             viewBox="0 0 24 24"
