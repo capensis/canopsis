@@ -363,7 +363,8 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                   class="v-icon notranslate theme--light primary--text"
                 >
                   <svg
-                    class="settings-sync-svg-icon v-icon__component theme--light primary--text"
+                    class="v-icon__component theme--light primary--text"
+                    fill="currentColor"
                     version="1.1"
                     viewBox="0 0 57 50"
                     xmlns="http://www.w3.org/2000/svg"
@@ -496,7 +497,8 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                   class="v-icon notranslate theme--light error--text"
                 >
                   <svg
-                    class="settings-sync-svg-icon v-icon__component theme--light error--text"
+                    class="v-icon__component theme--light error--text"
+                    fill="currentColor"
                     version="1.1"
                     viewBox="0 0 57 50"
                     xmlns="http://www.w3.org/2000/svg"
@@ -627,7 +629,8 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                   class="v-icon notranslate theme--light primary--text"
                 >
                   <svg
-                    class="settings-sync-svg-icon v-icon__component theme--light primary--text"
+                    class="v-icon__component theme--light primary--text"
+                    fill="currentColor"
                     version="1.1"
                     viewBox="0 0 57 50"
                     xmlns="http://www.w3.org/2000/svg"
@@ -760,7 +763,8 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                   class="v-icon notranslate theme--light error--text"
                 >
                   <svg
-                    class="settings-sync-svg-icon v-icon__component theme--light error--text"
+                    class="v-icon__component theme--light error--text"
+                    fill="currentColor"
                     version="1.1"
                     viewBox="0 0 57 50"
                     xmlns="http://www.w3.org/2000/svg"
@@ -891,7 +895,8 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                   class="v-icon notranslate theme--light primary--text"
                 >
                   <svg
-                    class="settings-sync-svg-icon v-icon__component theme--light primary--text"
+                    class="v-icon__component theme--light primary--text"
+                    fill="currentColor"
                     version="1.1"
                     viewBox="0 0 57 50"
                     xmlns="http://www.w3.org/2000/svg"
@@ -1024,7 +1029,8 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                   class="v-icon notranslate theme--light error--text"
                 >
                   <svg
-                    class="settings-sync-svg-icon v-icon__component theme--light error--text"
+                    class="v-icon__component theme--light error--text"
+                    fill="currentColor"
                     version="1.1"
                     viewBox="0 0 57 50"
                     xmlns="http://www.w3.org/2000/svg"
@@ -1155,7 +1161,8 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
                   class="v-icon notranslate theme--light primary--text"
                 >
                   <svg
-                    class="settings-sync-svg-icon v-icon__component theme--light primary--text"
+                    class="v-icon__component theme--light primary--text"
+                    fill="currentColor"
                     version="1.1"
                     viewBox="0 0 57 50"
                     xmlns="http://www.w3.org/2000/svg"
