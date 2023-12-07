@@ -9,6 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
 	mock_eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/eventfilter"
 	mock_techmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/techmetrics"
 	"github.com/golang/mock/gomock"
@@ -1238,11 +1239,15 @@ func TestActionProcessor(t *testing.T) {
 		},
 	}
 
+	mockAlarmConfigProvider := mock_config.NewMockAlarmConfigProvider(ctrl)
+	mockAlarmConfigProvider.EXPECT().Get().Return(config.AlarmConfig{
+		EnableArraySortingInEntityInfos: true,
+	}).AnyTimes()
 	mockFailureService := mock_eventfilter.NewMockFailureService(ctrl)
 	mockFailureService.EXPECT().Add(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
 	mockTechMetricsSender := mock_techmetrics.NewMockSender(ctrl)
 	mockTechMetricsSender.EXPECT().SendCheEntityInfo(gomock.Any(), gomock.Any()).AnyTimes()
-	processor := eventfilter.NewActionProcessor(mockFailureService, tplExecutor, mockTechMetricsSender)
+	processor := eventfilter.NewActionProcessor(mockAlarmConfigProvider, mockFailureService, tplExecutor, mockTechMetricsSender)
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
 			resultEvent, resultErr := processor.Process(context.Background(), "test", dataset.action, dataset.event, eventfilter.RegexMatchWrapper{
