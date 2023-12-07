@@ -185,6 +185,8 @@ export default {
           },
         });
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: this.$t('errors.default') });
       }
     },
