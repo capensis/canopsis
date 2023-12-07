@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -15,17 +16,20 @@ import (
 )
 
 type actionProcessor struct {
+	configProvider    config.AlarmConfigProvider
 	failureService    FailureService
 	templateExecutor  template.Executor
 	techMetricsSender techmetrics.Sender
 }
 
 func NewActionProcessor(
+	configProvider config.AlarmConfigProvider,
 	failureService FailureService,
 	templateExecutor template.Executor,
 	sender techmetrics.Sender,
 ) ActionProcessor {
 	return &actionProcessor{
+		configProvider:    configProvider,
 		failureService:    failureService,
 		templateExecutor:  templateExecutor,
 		techMetricsSender: sender,
@@ -191,16 +195,21 @@ func (p *actionProcessor) Process(
 }
 
 func (p *actionProcessor) setEntityInfo(entity types.Entity, value any, name, description string) types.Entity {
-	if s, ok := utils.IsStringSlice(value); ok {
-		sort.Strings(s)
-		value = s
+	enableSorting := p.configProvider.Get().EnableArraySortingInEntityInfos
+	if enableSorting {
+		if s, ok := utils.IsStringSlice(value); ok {
+			sort.Strings(s)
+			value = s
+		}
 	}
 
 	if info, ok := entity.Infos[name]; ok {
 		prev := info.Value
-		if s, ok := utils.IsStringSlice(info.Value); ok {
-			sort.Strings(s)
-			prev = s
+		if enableSorting {
+			if s, ok := utils.IsStringSlice(info.Value); ok {
+				sort.Strings(s)
+				prev = s
+			}
 		}
 
 		if reflect.DeepEqual(prev, value) {
