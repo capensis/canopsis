@@ -7,7 +7,18 @@ Pour l'heure, ces métriques peuvent vous être demandées par le service de sup
 
 ## Mise en oeuvre
 
-### Préparation de la base de données
+### Remarques sur la mise en place des métriques techniques
+
+L'exemple qui suit relate la mise en place sur une installation mono-noeud. Dans le cadre d'une installation
+multi-noeud, veuillez porter une attention particulière aux points suivants:
+
+* La génération d'un export depuis la webui nécessite la présence du binaire `pg_dump` du paquet `postgresql` sur·
+l'hôte exécutant le moteur `canopsis-api`.
+* L'exécution de la commande `canopsis-reconfigure` nécessite la présence du binaire `mongo` du paquet `mongodb-org-shell`·
+sur l'hôte.
+* L'accès à la base de données PostgreSQL distante est contrainte par la configuration du fichier `pg_hba.conf` de celui-ci.
+
+### Préparation de la base de données
 
 Les données collectées sont stockées dans une base `timescaledb` et donc `postgresql`.  
 
