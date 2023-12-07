@@ -611,7 +611,7 @@ export const getOperatorsByRule = (rule, ruleType) => {
   const fieldType = getFieldType(rule.value);
   let operators = getOperatorsByFieldType(fieldType);
 
-  if (isAnyInfosType || isObjectRuleType(ruleType)) {
+  if (fieldType === PATTERN_FIELD_TYPES.string || isObjectRuleType(ruleType)) {
     operators = [
       ...operators,
       PATTERN_OPERATORS.isOneOf,
@@ -663,6 +663,14 @@ export const getValueTypesByOperator = (operator) => {
  */
 export const convertValueByOperator = (value, operator) => {
   const valueType = getFieldType(value);
+
+  if (
+    valueType === PATTERN_FIELD_TYPES.string
+    && [PATTERN_OPERATORS.isOneOf, PATTERN_OPERATORS.isNotOneOf].includes(operator)
+  ) {
+    return value;
+  }
+
   const operatorsValueType = getValueTypesByOperator(operator);
 
   if (operatorsValueType.includes(valueType)) {
