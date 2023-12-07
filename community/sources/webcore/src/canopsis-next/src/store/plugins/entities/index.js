@@ -128,7 +128,7 @@ export const entitiesModule = {
     [ENTITIES_MUTATION_TYPES.update](state, entities) {
       Object.keys(entities).forEach((type) => {
         if (!state[type]) {
-          Vue.set(state, type, entities[type]);
+          state[type] = entities[type];
         } else {
           Object.entries(entities[type]).forEach(([key, entity]) => {
             cache.clearForEntity(state, entity);
@@ -346,7 +346,7 @@ export const entitiesModule = {
      * @param {EntitiesRequestConfig} config
      * @returns {Promise<EntitiesResponseData>}
      */
-    async fetch({ dispatch }, config) {
+    fetch({ dispatch }, config) {
       return dispatch('sendRequest', config);
     },
 
@@ -357,7 +357,7 @@ export const entitiesModule = {
      * @param {EntitiesRequestConfig} config
      * @returns {Promise<EntitiesResponseData>}
      */
-    async create({ dispatch }, config) {
+    create({ dispatch }, config) {
       return dispatch('sendRequest', { ...config, method: REQUEST_METHODS.post });
     },
 
@@ -368,7 +368,7 @@ export const entitiesModule = {
      * @param {EntitiesRequestConfig} config
      * @returns {Promise<EntitiesResponseData>}
      */
-    async update({ dispatch }, config) {
+    update({ dispatch }, config) {
       return dispatch('sendRequest', { ...config, method: REQUEST_METHODS.put });
     },
 
@@ -379,7 +379,7 @@ export const entitiesModule = {
      * @param {EntitiesRequestConfig} config
      * @returns {Promise<EntitiesResponseData>}
      */
-    async delete({ dispatch }, config) {
+    delete({ dispatch }, config) {
       return dispatch('sendRequest', { ...config, method: REQUEST_METHODS.delete });
     },
 
