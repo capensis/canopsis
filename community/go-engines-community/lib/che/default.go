@@ -70,7 +70,7 @@ func NewEngine(
 	))
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(
 		externalDataContainer,
-		eventfilter.NewActionProcessor(eventFilterFailureService, templateExecutor, techMetricsSender),
+		eventfilter.NewActionProcessor(alarmConfigProvider, eventFilterFailureService, templateExecutor, techMetricsSender),
 		eventFilterFailureService,
 	))
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeDrop, eventfilter.NewDropApplicator())
