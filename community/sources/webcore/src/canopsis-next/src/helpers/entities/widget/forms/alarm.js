@@ -500,7 +500,6 @@ export const prepareAlarmListWidget = (widget = {}) => setSeveralFields(widget, 
 
       sortable: false,
       text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
-      value: column.value.startsWith('entity.') ? column.value : `entity.${column.value}`,
     }))
   ),
 
