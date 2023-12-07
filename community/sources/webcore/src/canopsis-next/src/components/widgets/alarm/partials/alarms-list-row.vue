@@ -12,11 +12,12 @@
           alarms-list-row-bookmark-icon
         alarms-expand-panel-btn(
           v-if="expandable",
-          v-model="row.expanded",
+          :expanded="expanded",
           :alarm="alarm",
           :widget="widget",
           :small="small",
-          :search="search"
+          :search="search",
+          @input="$emit('expand', $event)"
         )
     td.alarm-list-row__cell(v-for="header in availableHeaders", :key="header.value")
       actions-panel(
@@ -88,7 +89,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    row: {
+    alarm: {
       type: Object,
       required: true,
     },
@@ -132,6 +133,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    expanded: {
+      type: Boolean,
+      default: false,
+    },
     wrapActions: {
       type: Boolean,
       default: false,
@@ -151,10 +156,6 @@ export default {
     };
   },
   computed: {
-    alarm() {
-      return this.row.item;
-    },
-
     hasBookmark() {
       return !!this.alarm.bookmark;
     },
