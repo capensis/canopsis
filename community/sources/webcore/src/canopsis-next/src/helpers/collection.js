@@ -80,7 +80,7 @@ export const mergeChangedProperties = (oldData, newData) => {
     return oldData;
   }
 
-  if (!isObject(newData)) {
+  if (!isObject(newData) || !isObject(oldData)) {
     return newData;
   }
 

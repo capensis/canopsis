@@ -150,7 +150,7 @@ export const entitiesModule = {
     [ENTITIES_MUTATION_TYPES.smartUpdate](state, entities) {
       Object.keys(entities).forEach((type) => {
         if (!state[type]) {
-          Vue.set(state, type, entities[type]);
+          state[type] = entities[type];
         } else {
           Object.entries(entities[type]).forEach(([key, entity]) => {
             const oldEntity = state[type][key];
@@ -172,7 +172,7 @@ export const entitiesModule = {
     [ENTITIES_MUTATION_TYPES.merge](state, entities) {
       Object.keys(entities).forEach((type) => {
         if (!state[type]) {
-          Vue.set(state, type, entities[type]);
+          state[type] = entities[type];
         } else {
           Object.entries(entities[type]).forEach(([key, entity]) => {
             const newEntity = mergeWith({}, state[type][key] || {}, entity, (objValue, srcValue) => {
