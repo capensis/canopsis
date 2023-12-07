@@ -245,6 +245,7 @@ export default {
         nodeEl.classList.add('v-btn__content', 'position-relative', 'border-radius-rounded');
         nodeEl.style.width = `${nodeSize}px`;
         nodeEl.style.height = `${nodeSize}px`;
+        nodeEl.style.justifyContent = 'center';
         nodeEl.style.background = !this.colorIndicator
           ? COLORS.secondary
           : getEntityColor(entity, this.colorIndicator);
