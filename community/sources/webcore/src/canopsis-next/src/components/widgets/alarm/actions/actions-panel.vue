@@ -429,7 +429,7 @@ export default {
   },
   methods: {
     afterSubmit() {
-      return this.refreshAlarmsList();
+      this.refreshAlarmsList();
     },
 
     showCreateChangeStateEventModal() {
