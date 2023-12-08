@@ -9,6 +9,8 @@
       :with-template="withTemplate",
       :with-html="withHtml",
       :with-color-indicator="withColorIndicator",
+      :with-alarm-display-name="withAlarmDisplayName",
+      :with-alarm-creation-date="withAlarmCreationDate",
       @update:template="updateTemplate"
     )
 </template>
@@ -56,6 +58,14 @@ export default {
       default: false,
     },
     withColorIndicator: {
+      type: Boolean,
+      default: false,
+    },
+    withAlarmDisplayName: {
+      type: Boolean,
+      default: false,
+    },
+    withAlarmCreationDate: {
       type: Boolean,
       default: false,
     },

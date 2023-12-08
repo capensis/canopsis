@@ -35,6 +35,8 @@
       :label="$t('settings.treeOfDependenciesColumnNames')",
       :type="$constants.ENTITIES_TYPES.entity",
       with-color-indicator,
+      with-alarm-creation-date,
+      with-alarm-display-name,
       @input="updateWidgetColumnsTemplate"
     )
     v-divider
