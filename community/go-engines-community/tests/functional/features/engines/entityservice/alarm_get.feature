@@ -465,13 +465,6 @@ Feature: Get alarms
         "component": "test-component-to-alarm-service-get-2-2",
         "resource": "test-resource-to-alarm-service-get-2-4",
         "source_type": "resource"
-      },
-      {
-        "event_type": "check",
-        "connector": "service",
-        "connector_name": "service",
-        "component": "{{ .serviceId }}",
-        "source_type": "service"
       }
     ]
     """
