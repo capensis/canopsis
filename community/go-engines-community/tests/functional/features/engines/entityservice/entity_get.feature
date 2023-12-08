@@ -342,12 +342,6 @@ Feature: Get entities
         "connector": "service",
         "connector_name": "service",
         "component": "{{ .nestedServiceId2 }}"
-      },
-      {
-        "event_type": "check",
-        "connector": "service",
-        "connector_name": "service",
-        "component": "{{ .serviceId }}"
       }
     ]
     """
@@ -379,12 +373,6 @@ Feature: Get entities
         "connector": "service",
         "connector_name": "service",
         "component": "{{ .nestedServiceId3 }}"
-      },
-      {
-        "event_type": "check",
-        "connector": "service",
-        "connector_name": "service",
-        "component": "{{ .serviceId }}"
       }
     ]
     """
@@ -416,12 +404,6 @@ Feature: Get entities
         "connector": "service",
         "connector_name": "service",
         "component": "{{ .nestedServiceId3 }}"
-      },
-      {
-        "event_type": "check",
-        "connector": "service",
-        "connector_name": "service",
-        "component": "{{ .serviceId }}"
       }
     ]
     """
@@ -660,7 +642,7 @@ Feature: Get entities
           "impact_state": 3,
           "status": 1,
           "enabled": true,
-          "ko_events": 6,
+          "ko_events": 3,
           "ok_events": 4,
           "deletable": true,
           "depends_count": 3,
@@ -691,7 +673,7 @@ Feature: Get entities
           "impact_state": 3,
           "status": 1,
           "enabled": true,
-          "ko_events": 6,
+          "ko_events": 3,
           "ok_events": 4,
           "deletable": true,
           "depends_count": 3,
@@ -722,7 +704,7 @@ Feature: Get entities
           "impact_state": 3,
           "status": 1,
           "enabled": true,
-          "ko_events": 6,
+          "ko_events": 3,
           "ok_events": 4,
           "deletable": true,
           "depends_count": 3,
@@ -1058,12 +1040,6 @@ Feature: Get entities
         "component": "test-component-entity-get-2",
         "resource": "test-resource-entity-get-2-1",
         "source_type": "resource"
-      },
-      {
-        "event_type": "check",
-        "connector": "service",
-        "connector_name": "service",
-        "component": "{{ .serviceId1 }}"
       }
     ]
     """

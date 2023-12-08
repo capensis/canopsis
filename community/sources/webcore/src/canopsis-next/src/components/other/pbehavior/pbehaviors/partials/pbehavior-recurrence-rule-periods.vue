@@ -172,6 +172,8 @@ export default {
           data,
         });
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: err.message || this.$t('errors.default') });
       } finally {
         this.pending = false;
