@@ -31,6 +31,7 @@ configuration:
       outputlength: 255
       stealthyinterval: 0
       timetokeepresolvedalarms: 0h
+      enablearraysortinginentityinfos: true
     api:
       bulkmaxsize: 10000
       tokensigningmethod: HS256
