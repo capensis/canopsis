@@ -252,11 +252,11 @@ Feature: get a test declare ticket status
     {
       "_id": "{{ .executionID }}",
       "status": 3,
-      "fail_reason": "ticket_id is emtpy, response has nothing in not_exist_field",
+      "fail_reason": "ticket_id is empty, response has nothing in not_exist_field",
       "webhooks": [
         {
           "status": 3,
-          "fail_reason": "ticket_id is emtpy, response has nothing in not_exist_field"
+          "fail_reason": "ticket_id is empty, response has nothing in not_exist_field"
         },
         {
           "status": 2,
@@ -272,11 +272,11 @@ Feature: get a test declare ticket status
     {
       "_id": "{{ .executionID }}",
       "status": 3,
-      "fail_reason": "ticket_id is emtpy, response has nothing in not_exist_field",
+      "fail_reason": "ticket_id is empty, response has nothing in not_exist_field",
       "webhooks": [
         {
           "status": 3,
-          "fail_reason": "ticket_id is emtpy, response has nothing in not_exist_field"
+          "fail_reason": "ticket_id is empty, response has nothing in not_exist_field"
         },
         {
           "status": 2,

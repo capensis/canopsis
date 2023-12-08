@@ -5,7 +5,7 @@ package password
 
 import (
 	"bytes"
-	"crypto/sha1"
+	"crypto/sha1" //nolint:gosec
 	"encoding/hex"
 )
 
@@ -25,7 +25,7 @@ func NewSha1Encoder() Encoder {
 }
 
 func (e *sha1Encoder) EncodePassword(password []byte) []byte {
-	h := sha1.New()
+	h := sha1.New() //nolint:gosec
 	_, err := h.Write(password)
 	if err != nil {
 		panic(err)

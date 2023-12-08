@@ -146,8 +146,8 @@ func (g *generator) GenerateCombinedForAlarmsByRule(ctx context.Context, ruleId 
 		return nil, liblink.ErrNotMatchedAlarm
 	}
 
-	for _, alarm := range alarms {
-		ok, err := match.MatchAlarmPattern(rule.AlarmPattern, &alarm.Alarm)
+	for i := range alarms {
+		ok, err := match.MatchAlarmPattern(rule.AlarmPattern, &alarms[i].Alarm)
 		if err != nil {
 			return nil, fmt.Errorf("invalid alarm pattern linkrule=%s: %w", rule.ID, err)
 		}
@@ -155,7 +155,7 @@ func (g *generator) GenerateCombinedForAlarmsByRule(ctx context.Context, ruleId 
 			return nil, liblink.ErrNotMatchedAlarm
 		}
 
-		ok, err = match.MatchEntityPattern(rule.EntityPattern, &alarm.Entity)
+		ok, err = match.MatchEntityPattern(rule.EntityPattern, &alarms[i].Entity)
 		if err != nil {
 			return nil, fmt.Errorf("invalid entity pattern linkrule=%s: %w", rule.ID, err)
 		}
@@ -423,8 +423,8 @@ func (g *generator) getEntities(ctx context.Context, ids []string) ([]entityWith
 
 func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, alarms []alarmWithData, user liblink.User) (map[string][]linkWithCategory, error) {
 	res := make(map[string][]linkWithCategory, len(alarms))
-	for _, alarm := range alarms {
-		ok, err := match.MatchAlarmPattern(rule.AlarmPattern, &alarm.Alarm)
+	for i := range alarms {
+		ok, err := match.MatchAlarmPattern(rule.AlarmPattern, &alarms[i].Alarm)
 		if err != nil {
 			g.logger.Err(err).Str("rule", rule.ID).Msg("invalid alarm pattern in link rule")
 			continue
@@ -433,7 +433,7 @@ func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, 
 			continue
 		}
 
-		ok, err = match.MatchEntityPattern(rule.EntityPattern, &alarm.Entity)
+		ok, err = match.MatchEntityPattern(rule.EntityPattern, &alarms[i].Entity)
 		if err != nil {
 			g.logger.Err(err).Str("rule", rule.ID).Msg("invalid entity pattern in link rule")
 			continue
@@ -442,8 +442,8 @@ func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, 
 			continue
 		}
 
-		argAlarms := []alarmWithData{alarm}
-		argEntities := []entityWithData{{Entity: alarm.Entity}}
+		argAlarms := []alarmWithData{alarms[i]}
+		argEntities := []entityWithData{{Entity: alarms[i].Entity}}
 		err = g.addExternalData(ctx, rule, argAlarms, argEntities)
 		if err != nil {
 			g.logger.Err(err).Str("rule", rule.ID).Msg("cannot get external data by link rule")
@@ -452,7 +452,7 @@ func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, 
 
 		if rule.CodeExecutor != nil {
 			args := g.getCodeArgs(rule, argAlarms, argEntities, user)
-			res[alarm.ID], err = g.getLinksWithCategoryByCode(ctx, rule.ID, rule.CodeExecutor, args)
+			res[alarms[i].ID], err = g.getLinksWithCategoryByCode(ctx, rule.ID, rule.CodeExecutor, args)
 			if err != nil {
 				g.logger.Err(err).Str("linkrule", rule.ID).Msg("cannot process alarm")
 			}
@@ -461,7 +461,7 @@ func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, 
 		}
 
 		data := g.getTplData(rule, argAlarms, argEntities, user)
-		res[alarm.ID], err = g.getLinksWithCategoryByTpl(rule.ID, rule.Links, rule.LinkTpls, data)
+		res[alarms[i].ID], err = g.getLinksWithCategoryByTpl(rule.ID, rule.Links, rule.LinkTpls, data)
 		if err != nil {
 			g.logger.Err(err).Str("linkrule", rule.ID).Msg("cannot process alarm")
 		}
@@ -476,8 +476,8 @@ func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule
 	}
 
 	res := make(map[string][]linkWithCategory, len(entities))
-	for _, entity := range entities {
-		ok, err := match.MatchEntityPattern(rule.EntityPattern, &entity.Entity)
+	for i := range entities {
+		ok, err := match.MatchEntityPattern(rule.EntityPattern, &entities[i].Entity)
 		if err != nil {
 			g.logger.Err(err).Str("rule", rule.ID).Msg("invalid entity pattern in link rule")
 			continue
@@ -486,7 +486,7 @@ func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule
 			continue
 		}
 
-		argsEntities := []entityWithData{entity}
+		argsEntities := []entityWithData{entities[i]}
 		err = g.addExternalDataToEntities(ctx, rule.ExternalData, rule.ExternalDataTpl, argsEntities)
 		if err != nil {
 			g.logger.Err(err).Str("rule", rule.ID).Msg("cannot get external data by link rule")
@@ -495,7 +495,7 @@ func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule
 
 		if rule.CodeExecutor != nil {
 			args := g.getCodeArgs(rule, nil, argsEntities, user)
-			res[entity.ID], err = g.getLinksWithCategoryByCode(ctx, rule.ID, rule.CodeExecutor, args)
+			res[entities[i].ID], err = g.getLinksWithCategoryByCode(ctx, rule.ID, rule.CodeExecutor, args)
 			if err != nil {
 				g.logger.Err(err).Str("linkrule", rule.ID).Msg("cannot process entity")
 			}
@@ -504,7 +504,7 @@ func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule
 		}
 
 		data := g.getTplData(rule, nil, argsEntities, user)
-		res[entity.ID], err = g.getLinksWithCategoryByTpl(rule.ID, rule.Links, rule.LinkTpls, data)
+		res[entities[i].ID], err = g.getLinksWithCategoryByTpl(rule.ID, rule.Links, rule.LinkTpls, data)
 		if err != nil {
 			g.logger.Err(err).Str("linkrule", rule.ID).Msg("cannot process entity")
 		}
@@ -659,7 +659,7 @@ func (g *generator) processExternalData(
 				return nil, fmt.Errorf("cannot compile %q regexp %q: %w", field, regexpStr, err)
 			}
 
-			matched = re.Match([]byte(v))
+			matched = re.MatchString(v)
 			if !matched {
 				break
 			}

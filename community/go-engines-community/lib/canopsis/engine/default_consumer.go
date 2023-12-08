@@ -152,7 +152,7 @@ func getConsumeChannel(
 	if purgeQueue {
 		_, err := channel.QueuePurge(queue, false)
 		if err != nil {
-			return nil, nil, fmt.Errorf("error while purging queue: %v", err)
+			return nil, nil, fmt.Errorf("error while purging queue: %w", err)
 		}
 	}
 

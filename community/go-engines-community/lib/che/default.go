@@ -2,6 +2,7 @@ package che
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -125,7 +126,7 @@ func NewEngine(
 				})
 			if err != nil {
 				// Lock is set for options.PeriodicalWaitTime TTL, other instances should skip actions below
-				if err == redislock.ErrNotObtained {
+				if errors.Is(err, redislock.ErrNotObtained) {
 					return nil
 				}
 
