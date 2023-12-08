@@ -239,7 +239,7 @@ Feature: instruction approval update
       "data": [
         {
           "_id": "test-instruction-to-update-with-approval-1",
-          "status": 1,
+          "status": 2,
           "name": "test-instruction-to-update-with-approval-1-name",
           "approval": {
             "comment": "test comment",
@@ -501,7 +501,7 @@ Feature: instruction approval update
         {
           "_id": "test-instruction-to-update-with-approval-2",
           "name": "test-instruction-to-update-with-approval-2-name",
-          "status": 1,
+          "status": 2,
           "approval": {
             "comment": "test comment",
             "role": {
