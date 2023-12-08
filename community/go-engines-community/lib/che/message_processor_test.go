@@ -201,6 +201,11 @@ func benchmarkMessageProcessorWithConfig(
 	cfg config.CanopsisConf,
 	genEvent func(i int) types.Event,
 ) {
+	defer func() {
+		if r := recover(); r != nil {
+			b.Fatal("benchmark failed due to panic:", r)
+		}
+	}()
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	dbClient, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
@@ -256,25 +261,30 @@ func benchmarkMessageProcessorWithConfig(
 
 	p := messageProcessor{
 		FeaturePrintEventOnError: true,
+		DbClient:                 dbClient,
 		AlarmConfigProvider:      config.NewAlarmConfigProvider(cfg, zerolog.Nop()),
 		ContextGraphManager:      contextgraph.NewManager(entity.NewAdapter(dbClient), dbClient, contextgraph.NewEntityServiceStorage(dbClient), metrics.NewNullMetaUpdater(), zerolog.Nop()),
 		EventFilterService:       ruleService,
+		MetricsSender:            metrics.NewNullSender(),
+		MetaUpdater:              metrics.NewNullMetaUpdater(),
 		TechMetricsSender:        techMetricsSender,
+		EntityCollection:         dbClient.Collection(mongo.EntityMongoCollection),
 		Encoder:                  json.NewEncoder(),
 		Decoder:                  json.NewDecoder(),
 		Logger:                   zerolog.Nop(),
+		// AmqpPublisher field has not accessed by test paths, otherwise it has to be initialized with mock value
 	}
-
-	encoder := json.NewEncoder()
 
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
+		b.StopTimer()
 		event := genEvent(i)
-		body, err := encoder.Encode(event)
+		body, err := p.Encoder.Encode(event)
 		if err != nil {
 			b.Fatalf("unexpected error %v", err)
 		}
+		b.StartTimer()
 		_, err = p.Process(ctx, amqp.Delivery{
 			Body: body,
 		})
