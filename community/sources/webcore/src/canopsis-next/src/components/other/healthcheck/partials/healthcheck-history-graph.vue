@@ -220,6 +220,8 @@ export default {
 
         await saveFile(chartBlob, `${HEALTHCHECK_HISTORY_FILENAME_PREFIX}${fromTime}-${toTime}`);
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: err.message || this.$t('errors.default') });
       }
     },

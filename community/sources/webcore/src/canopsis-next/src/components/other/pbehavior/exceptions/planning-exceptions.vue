@@ -42,6 +42,8 @@ export default {
       try {
         await this.removePbehaviorException({ id: pbehavioExceptionId });
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: err.error || this.$t('errors.default') });
       }
     },
