@@ -46,7 +46,7 @@ func listOfInterfaceToString(v []interface{}) (string, error) {
 	for i, vv := range v {
 		sval, err := InterfaceToString(vv)
 		if err != nil {
-			return "", fmt.Errorf("list of: %v", err)
+			return "", fmt.Errorf("list of: %w", err)
 		}
 		values[i] = sval
 	}
@@ -59,7 +59,7 @@ func listOfInterfaceToStringSlice(v []interface{}) ([]string, error) {
 	for i, vv := range v {
 		sval, err := InterfaceToString(vv)
 		if err != nil {
-			return []string{}, fmt.Errorf("list of: %v", err)
+			return []string{}, fmt.Errorf("list of: %w", err)
 		}
 		values[i] = sval
 	}
@@ -87,7 +87,7 @@ func InterfaceToString(v interface{}) (string, error) {
 	case string:
 		return vt, nil
 	case int:
-		return strconv.FormatInt(int64(vt), 10), nil
+		return strconv.Itoa(vt), nil
 	case int64:
 		return strconv.FormatInt(vt, 10), nil
 	case uint:
