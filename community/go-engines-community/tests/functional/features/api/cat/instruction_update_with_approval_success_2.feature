@@ -277,3 +277,251 @@ Feature: instruction approval update
       ]
     }
     """
+
+  @concurrent
+  Scenario: only an author should be able to update a dismissed instruction
+    When I am role-to-instruction-approve-1
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-2/approval:
+    """json
+    {
+      "approve": false,
+      "comment": "test-instruction-to-update-with-approval-second-2-dismiss-comment"
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-2/approval
+    Then the response code should be 404
+    Then the response body should be:
+    """json
+    {
+      "error": "updated instruction not found"
+    }
+    """
+    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-2-updated/approval
+    Then the response code should be 404
+    Then the response body should be:
+    """json
+    {
+      "error": "original instruction not found"
+    }
+    """
+    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-instruction-to-update-with-approval-second-2",
+      "name": "test-instruction-to-update-with-approval-second-2-name",
+      "description": "test-instruction-to-update-with-approval-second-2-description"
+    }
+    """
+    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-2-updated
+    Then the response code should be 404
+    Then the response body should be:
+    """json
+    {
+      "error": "Not found"
+    }
+    """
+    When I do GET /api/v4/cat/instructions?search=test-instruction-to-update-with-approval-second-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-instruction-to-update-with-approval-second-2",
+          "name": "test-instruction-to-update-with-approval-second-2-name",
+          "description": "test-instruction-to-update-with-approval-second-2-description"
+        }
+      ]
+    }
+    """
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-2:
+    """json
+    {
+      "name": "test-instruction-to-update-with-approval-second-2-name-updated",
+      "description": "test-instruction-to-update-with-approval-second-2-description-updated",
+      "enabled": true,
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "jobs": [
+        {
+          "stop_on_fail": false,
+          "job": "test-job-to-instruction-edit-1"
+        },
+        {
+          "stop_on_fail": false,
+          "job": "test-job-to-instruction-edit-2"
+        }
+      ],
+      "approval": {
+        "user": "user-to-instruction-approve-2",
+        "comment": "test-instruction-to-update-with-approval-second-2-comment-updated"
+      }
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "status": 0,
+      "name": "test-instruction-to-update-with-approval-second-2-name-updated",
+      "description": "test-instruction-to-update-with-approval-second-2-description-updated",
+      "enabled": true,
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
+      "timeout_after_execution": {
+        "value": 2,
+        "unit": "s"
+      },
+      "jobs": [
+        {
+          "stop_on_fail": false,
+          "job": {
+            "_id": "test-job-to-instruction-edit-1"
+          }
+        }
+      ]
+    }
+    """
+    When I am admin
+    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "status": 4,
+      "_id": "test-instruction-to-update-with-approval-second-2",
+      "name": "test-instruction-to-update-with-approval-second-2-name-updated",
+      "description": "test-instruction-to-update-with-approval-second-2-description-updated",
+      "enabled": true,
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "jobs": [
+        {
+          "stop_on_fail": false,
+          "job": {
+            "_id": "test-job-to-instruction-edit-1"
+          }
+        },
+        {
+          "job": {
+            "_id": "test-job-to-instruction-edit-2"
+          }
+        }
+      ],
+      "approval": {
+        "user": {
+          "_id": "user-to-instruction-approve-1",
+          "name": "user-to-instruction-approve-1"
+        },
+        "requested_by": {
+          "_id": "root",
+          "name": "root"
+        },
+        "comment": "test-instruction-to-update-with-approval-second-2-comment",
+        "dismissed_by": {
+          "_id": "user-to-instruction-approve-1",
+          "name": "user-to-instruction-approve-1"
+        },
+        "dismiss_comment": "test-instruction-to-update-with-approval-second-2-dismiss-comment"
+      }
+    }
+    """
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-second-2:
+    """json
+    {
+      "name": "test-instruction-to-update-with-approval-second-2-name-updated",
+      "description": "test-instruction-to-update-with-approval-second-2-description-updated",
+      "enabled": true,
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "jobs": [
+        {
+          "stop_on_fail": false,
+          "job": "test-job-to-instruction-edit-1"
+        },
+        {
+          "stop_on_fail": false,
+          "job": "test-job-to-instruction-edit-2"
+        }
+      ],
+      "approval": {
+        "user": "user-to-instruction-approve-2",
+        "comment": "test-instruction-to-update-with-approval-second-2-comment-updated"
+      }
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "status": 2,
+      "name": "test-instruction-to-update-with-approval-second-2-name-updated",
+      "description": "test-instruction-to-update-with-approval-second-2-description-updated",
+      "enabled": true,
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "jobs": [
+        {
+          "stop_on_fail": false,
+          "job": {
+            "_id": "test-job-to-instruction-edit-1"
+          }
+        },
+        {
+          "job": {
+            "_id": "test-job-to-instruction-edit-2"
+          }
+        }
+      ],
+      "approval": {
+        "user": {
+          "_id": "user-to-instruction-approve-2",
+          "name": "user-to-instruction-approve-2"
+        },
+        "requested_by": {
+          "_id": "root",
+          "name": "root"
+        },
+        "comment": "test-instruction-to-update-with-approval-second-2-comment-updated",
+        "dismissed_by": {
+          "_id": "user-to-instruction-approve-1",
+          "name": "user-to-instruction-approve-1"
+        },
+        "dismiss_comment": "test-instruction-to-update-with-approval-second-2-dismiss-comment"
+      }
+    }
+    """
