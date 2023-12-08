@@ -19,6 +19,8 @@
         :optional-infos-attributes="optionalInfosAttributes",
         :with-simple-template="withSimpleTemplate",
         :without-infos-attributes="withoutInfosAttributes",
+        :with-alarm-display-name="withAlarmDisplayName",
+        :with-alarm-creation-date="withAlarmCreationDate",
         :variables="variables",
         @remove="remove(index)"
       )
@@ -94,6 +96,14 @@ export default {
       required: false,
     },
     withoutInfosAttributes: {
+      type: Boolean,
+      default: false,
+    },
+    withAlarmDisplayName: {
+      type: Boolean,
+      default: false,
+    },
+    withAlarmCreationDate: {
       type: Boolean,
       default: false,
     },
