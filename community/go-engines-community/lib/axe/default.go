@@ -40,6 +40,7 @@ type Options struct {
 	PeriodicalWaitTime       time.Duration
 	TagsPeriodicalWaitTime   time.Duration
 	WithRemediation          bool
+	WithDynamicInfos         bool
 }
 
 func ParseOptions() Options {
@@ -51,6 +52,7 @@ func ParseOptions() Options {
 	flag.DurationVar(&opts.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
 	flag.DurationVar(&opts.TagsPeriodicalWaitTime, "tagsPeriodicalWaitTime", 5*time.Second, "Duration to wait between two run of periodical process to update alarm tags")
 	flag.BoolVar(&opts.WithRemediation, "withRemediation", false, "Start remediation instructions")
+	flag.BoolVar(&opts.WithDynamicInfos, "withDynamicInfos", false, "Update dynamic infos on RPC changes")
 	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
 	flag.Parse()
 
@@ -102,6 +104,7 @@ func NewEngine(
 	)
 	rpcPublishQueues := []string{canopsis.PBehaviorRPCQueueServerName}
 	var remediationRpcClient libengine.RPCClient
+	var dynamicInfosRpc libengine.RPCClient
 	if options.WithRemediation {
 		remediationRpcClient = libengine.NewRPCClient(
 			canopsis.AxeRPCConsumerName,
@@ -114,6 +117,26 @@ func NewEngine(
 			logger,
 		)
 		rpcPublishQueues = append(rpcPublishQueues, canopsis.RemediationRPCQueueServerName)
+	}
+
+	if options.WithDynamicInfos {
+		dynamicInfosRpc = libengine.NewRPCClient(
+			canopsis.AxeRPCConsumerName,
+			canopsis.DynamicInfosRPCQueueServerName,
+			canopsis.AxeDynamicInfosRPCClientQueueName,
+			cfg.Global.PrefetchCount,
+			cfg.Global.PrefetchSize,
+			&rpcDynamicInfosClientMessageProcessor{
+				FeaturePrintEventOnError: options.FeaturePrintEventOnError,
+				PublishCh:                amqpChannel,
+				Decoder:                  json.NewDecoder(),
+				Encoder:                  json.NewEncoder(),
+				Logger:                   logger,
+			},
+			amqpChannel,
+			logger,
+		)
+		rpcPublishQueues = append(rpcPublishQueues, canopsis.DynamicInfosRPCQueueServerName)
 	}
 
 	alarmStatusService := alarmstatus.NewService(flappingrule.NewAdapter(dbClient), alarmConfigProvider, logger)
@@ -271,6 +294,7 @@ func NewEngine(
 			RMQChannel:               amqpChannel,
 			PbhRpc:                   pbhRpcClient,
 			RemediationRpc:           remediationRpcClient,
+			DynamicInfosRpc:          dynamicInfosRpc,
 			ActionRpc:                actionRpcClient,
 			MetaAlarmEventProcessor:  metaAlarmEventProcessor,
 			Executor:                 m.DepOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, metricsSender),
@@ -282,6 +306,10 @@ func NewEngine(
 	))
 	engineAxe.AddConsumer(serviceRpcClient)
 	engineAxe.AddConsumer(pbhRpcClient)
+	if dynamicInfosRpc != nil {
+		engineAxe.AddConsumer(dynamicInfosRpc)
+	}
+
 	engineAxe.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
 	engineAxe.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
 		PeriodicalInterval:     options.PeriodicalWaitTime,
