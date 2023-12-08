@@ -42,6 +42,8 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
     template="Symbol(custom)"
     templates=""
     type="entity"
+    withalarmcreationdate="true"
+    withalarmdisplayname="true"
     withcolorindicator="true"
   />
   <hr
@@ -210,6 +212,8 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
     template="Symbol(custom)"
     templates=""
     type="entity"
+    withalarmcreationdate="true"
+    withalarmdisplayname="true"
     withcolorindicator="true"
   />
   <hr
