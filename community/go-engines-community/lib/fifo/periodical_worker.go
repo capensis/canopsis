@@ -2,9 +2,10 @@ package fifo
 
 import (
 	"context"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"github.com/rs/zerolog"
-	"time"
 )
 
 type periodicalWorker struct {

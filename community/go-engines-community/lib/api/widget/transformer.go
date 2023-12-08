@@ -42,21 +42,21 @@ func (t *RequestTransformer) transformPatternFields(ctx context.Context, r *Edit
 	for i := range r.Filters {
 		r.Filters[i].AlarmPatternFieldsRequest, err = t.patternFieldsTransformer.TransformAlarmPatternFieldsRequest(ctx, r.Filters[i].AlarmPatternFieldsRequest)
 		if err != nil {
-			if err == common.ErrNotExistCorporateAlarmPattern {
+			if errors.Is(err, common.ErrNotExistCorporateAlarmPattern) {
 				return common.NewValidationError(fmt.Sprintf("filters.%d.corporate_alarm_pattern", i), err.Error())
 			}
 			return err
 		}
 		r.Filters[i].EntityPatternFieldsRequest, err = t.patternFieldsTransformer.TransformEntityPatternFieldsRequest(ctx, r.Filters[i].EntityPatternFieldsRequest)
 		if err != nil {
-			if err == common.ErrNotExistCorporateEntityPattern {
+			if errors.Is(err, common.ErrNotExistCorporateEntityPattern) {
 				return common.NewValidationError(fmt.Sprintf("filters.%d.corporate_entity_pattern", i), err.Error())
 			}
 			return err
 		}
 		r.Filters[i].PbehaviorPatternFieldsRequest, err = t.patternFieldsTransformer.TransformPbehaviorPatternFieldsRequest(ctx, r.Filters[i].PbehaviorPatternFieldsRequest)
 		if err != nil {
-			if err == common.ErrNotExistCorporatePbehaviorPattern {
+			if errors.Is(err, common.ErrNotExistCorporatePbehaviorPattern) {
 				return common.NewValidationError(fmt.Sprintf("filters.%d.corporate_pbehavior_pattern", i), err.Error())
 			}
 			return err

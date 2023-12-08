@@ -161,7 +161,7 @@ func NewFailoverOptions(sURL string, db int, logger zerolog.Logger,
 		if redisIdleTimeout, err := time.ParseDuration(redisIdleTimeoutStr); err == nil {
 			failoverOptions.ConnMaxIdleTime = redisIdleTimeout
 		} else {
-			return nil, fmt.Errorf("redis-sentinel timeout parameter error %s", err)
+			return nil, fmt.Errorf("redis-sentinel timeout parameter error %w", err)
 		}
 	}
 
@@ -196,7 +196,6 @@ func NewSession(ctx context.Context, db int, logger zerolog.Logger, reconnectCou
 			return nil, err
 		}
 		redisClient = redis.NewFailoverClient(failoverOptions)
-
 	} else {
 		redisOptions, err := NewOptions(connectUrl, db, logger, reconnectCount, minReconnectTimeout)
 		if err != nil {
@@ -217,7 +216,8 @@ func NewSession(ctx context.Context, db int, logger zerolog.Logger, reconnectCou
 }
 
 func IsConnectionError(err error) bool {
-	if _, ok := err.(net.Error); ok {
+	netErr := &net.OpError{}
+	if errors.As(err, &netErr) {
 		return true
 	}
 

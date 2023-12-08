@@ -17,10 +17,10 @@ func NewNullAutoInstructionMatcher() AutoInstructionMatcher {
 	return &nullAutoInstructionMatcher{}
 }
 
-func (_ nullAutoInstructionMatcher) Load(_ context.Context) error {
+func (nullAutoInstructionMatcher) Load(_ context.Context) error {
 	return nil
 }
 
-func (_ nullAutoInstructionMatcher) Match(_ []string, _ types.AlarmWithEntity) (bool, error) {
+func (nullAutoInstructionMatcher) Match(_ []string, _ types.AlarmWithEntity) (bool, error) {
 	return false, nil
 }

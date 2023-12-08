@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"crypto/tls"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -79,10 +80,15 @@ func run(ctx context.Context, flags Flags, logger zerolog.Logger) (resErr error)
 		return fmt.Errorf("cannot modify rmq channel: %w", err)
 	}
 
-	transport := http.DefaultTransport.(*http.Transport).Clone()
+	dt, ok := http.DefaultTransport.(*http.Transport)
+	if !ok {
+		return errors.New("unknown type of http.DefaultTransport")
+	}
+
+	transport := dt.Clone()
 	if config.Api.InsecureSkipverify {
 		logger.Warn().Msg("adapter accepts any certificate from canopsis api")
-		transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+		transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true} //nolint:gosec
 	}
 	httpClient := &http.Client{Transport: transport}
 

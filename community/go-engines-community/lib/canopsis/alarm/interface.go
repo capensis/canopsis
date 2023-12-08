@@ -96,7 +96,7 @@ type Adapter interface {
 type EventProcessor interface {
 	// Process processes an event and updates the corresponding
 	// alarm. It enriches the event with this alarm, and returns an AlarmChange
-	// representing the change that occured on this alarm and its previous
+	// representing the change that occurred on this alarm and its previous
 	// state.
 	Process(ctx context.Context, event *types.Event) (types.AlarmChange, error)
 }

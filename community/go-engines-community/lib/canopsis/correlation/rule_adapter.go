@@ -52,7 +52,7 @@ func (a mongoAdapter) GetManualRule(ctx context.Context, autoResolve bool) (Rule
 		"auto_resolve": autoResolve,
 	}).Decode(&rule)
 
-	if err == mongodriver.ErrNoDocuments {
+	if errors.Is(err, mongodriver.ErrNoDocuments) {
 		return rule, nil
 	}
 

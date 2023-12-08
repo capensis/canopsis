@@ -220,7 +220,7 @@ func (a mongoAdapter) GetOpenedMetaAlarm(ctx context.Context, ruleId string, val
 
 	err := a.mainDbCollection.FindOne(ctx, query, options.FindOne().SetSort(bson.M{"v.creation_date": -1})).Decode(&al)
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return al, errt.NewNotFound(err)
 		}
 
@@ -253,7 +253,7 @@ func (a mongoAdapter) GetLastAlarm(ctx context.Context, connector, connectorName
 	}
 	err := a.mainDbCollection.FindOne(ctx, query, options.FindOne().SetSort(bson.M{"v.creation_date": -1})).Decode(&alarm)
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return alarm, errt.NewNotFound(err)
 		}
 
@@ -610,7 +610,7 @@ func (a mongoAdapter) getAlarmWithErr(ctx context.Context, filter bson.M) (types
 	alarm := types.Alarm{}
 	err := a.mainDbCollection.FindOne(ctx, filter).Decode(&alarm)
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return alarm, errt.NewNotFound(err)
 		}
 

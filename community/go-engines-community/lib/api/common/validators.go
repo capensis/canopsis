@@ -2,6 +2,7 @@ package common
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"reflect"
 	"strconv"
@@ -34,12 +35,14 @@ var timeFormats = map[string]string{
 // ValidateCpsTimeType implements CustomTypeFunc and returns value to validate.
 func ValidateCpsTimeType(field reflect.Value) interface{} {
 	if field.Type() == reflect.TypeOf(datetime.CpsTime{}) {
-		val := field.Interface().(datetime.CpsTime).Time
-		if val.IsZero() {
-			return nil
-		}
+		if t, ok := field.Interface().(datetime.CpsTime); ok {
+			val := t.Time
+			if val.IsZero() {
+				return nil
+			}
 
-		return val
+			return val
+		}
 	}
 
 	return nil
@@ -186,7 +189,7 @@ func (v *uniqueFieldValidator) Validate(ctx context.Context, sl validator.Struct
 		if found.ID != id || strings.ToLower(v.field) == "id" {
 			sl.ReportError(val, v.field, v.field, "unique", "")
 		}
-	} else if err != mongodriver.ErrNoDocuments {
+	} else if !errors.Is(err, mongodriver.ErrNoDocuments) {
 		panic(err)
 	}
 }
@@ -228,7 +231,7 @@ func (v *existFieldValidator) Validate(ctx context.Context, sl validator.StructL
 	}
 	err := v.dbCollection.FindOne(ctx, bson.M{"_id": val}).Decode(&found)
 	if err != nil {
-		if err == mongodriver.ErrNoDocuments {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			sl.ReportError(val, v.field, v.field, "not_exist", "")
 		} else {
 			panic(err)

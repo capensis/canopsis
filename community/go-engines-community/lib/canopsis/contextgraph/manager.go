@@ -148,9 +148,9 @@ func (m *manager) CheckServices(ctx context.Context, entities []types.Entity) ([
 
 	entitiesData := make(map[string][2][]string) // array's indexes: 0 - added to impact, 1 - removed from impact
 
-	for _, ent := range entities {
+	for i := range entities {
+		ent := entities[i]
 		entityID := ent.ID
-
 		servicesMap := make(map[string]struct{}, len(ent.Services))
 		for _, id := range ent.Services {
 			servicesMap[id] = struct{}{}
@@ -279,8 +279,6 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string) (types
 		return m.processDisabledService(ctx, service, serviceID)
 	}
 
-	var updatedEntities []types.Entity
-
 	query, negativeQuery, err := getServiceQueries(service)
 	if err != nil {
 		return types.Entity{}, nil, err
@@ -308,6 +306,7 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string) (types
 		return types.Entity{}, nil, err
 	}
 
+	updatedEntities := make([]types.Entity, 0, len(entitiesToRemove))
 	entitiesToRemoveMap := make(map[string]bool, len(entitiesToRemove))
 	for _, ent := range entitiesToRemove {
 		entitiesToRemoveMap[ent.ID] = true
@@ -807,7 +806,7 @@ func (m *manager) processDisabledService(ctx context.Context, service entityserv
 func (m *manager) entityExist(ctx context.Context, id string) (bool, error) {
 	err := m.collection.FindOne(ctx, bson.M{"_id": id}, options.FindOne().SetProjection(bson.M{"_id": 1})).Err()
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return false, nil
 		}
 

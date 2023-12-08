@@ -446,7 +446,7 @@ describe('alarms-list-table', () => {
 
     const alarmsListRow = selectAlarmsListRow(wrapper).at(0);
 
-    alarmsListRow.vm.row.expanded = true;
+    alarmsListRow.vm.$emit('expand', true);
 
     const [firstAlarm] = alarms;
 
@@ -454,7 +454,7 @@ describe('alarms-list-table', () => {
       [firstAlarm._id]: true,
     });
 
-    alarmsListRow.vm.row.expanded = false;
+    alarmsListRow.vm.$emit('expand', false);
 
     expect(wrapper.vm.expanded).toEqual({
       [firstAlarm._id]: false,
