@@ -577,7 +577,8 @@ Feature: instruction approval creation
     When I do PUT /api/v4/cat/instructions/{{ .instructionID }}/approval:
     """json
     {
-      "approve": false
+      "approve": false,
+      "comment": "test-instruction-to-create-with-approval-second-7-dismiss-comment"
     }
     """
     Then the response code should be 403
@@ -591,7 +592,8 @@ Feature: instruction approval creation
     When I do PUT /api/v4/cat/instructions/{{ .instructionID }}/approval:
     """json
     {
-      "approve": false
+      "approve": false,
+      "comment": "test-instruction-to-create-with-approval-second-7-dismiss-comment"
     }
     """
     Then the response code should be 403
@@ -605,12 +607,57 @@ Feature: instruction approval creation
     When I do PUT /api/v4/cat/instructions/{{ .instructionID }}/approval:
     """json
     {
-      "approve": false
+      "approve": false,
+      "comment": "test-instruction-to-create-with-approval-second-7-dismiss-comment"
     }
     """
     Then the response code should be 200
     When I do GET /api/v4/cat/instructions/{{ .instructionID }}
-    Then the response code should be 404
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "type": 0,
+      "status": 3,
+      "name": "test-instruction-to-create-with-approval-second-7-name",
+      "description": "test-instruction-to-create-with-approval-second-7-description",
+      "enabled": true,
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "steps": [
+        {
+          "name": "test-instruction-to-create-with-approval-second-7-step-1",
+          "operations": [
+            {
+              "name": "test-instruction-to-create-with-approval-second-7-step-1-operation-1",
+              "time_to_complete": {"value": 1, "unit":"s"},
+              "description": "test-instruction-to-create-with-approval-second-7-step-1-operation-1-description"
+            }
+          ],
+          "stop_on_fail": true,
+          "endpoint": "test-instruction-to-create-with-approval-second-7-step-1-endpoint"
+        }
+      ],
+      "approval": {
+        "user": {
+          "_id": "user-to-instruction-approve-1",
+          "name": "user-to-instruction-approve-1"
+        },
+        "requested_by": {
+          "_id": "root",
+          "name": "root"
+        },
+        "comment": "test comment",
+        "dismissed_by": {
+          "_id": "user-to-instruction-approve-1",
+          "name": "user-to-instruction-approve-1"
+        },
+        "dismiss_comment": "test-instruction-to-create-with-approval-second-7-dismiss-comment"
+      }
+    }
+    """
 
   @concurrent
   Scenario: only the user from approval should be able to dismiss by role
@@ -651,7 +698,8 @@ Feature: instruction approval creation
     When I do PUT /api/v4/cat/instructions/{{ .instructionID }}/approval:
     """json
     {
-      "approve": false
+      "approve": false,
+      "comment": "test-instruction-to-create-with-approval-second-8-dismiss-comment"
     }
     """
     Then the response code should be 403
@@ -665,7 +713,8 @@ Feature: instruction approval creation
     When I do PUT /api/v4/cat/instructions/{{ .instructionID }}/approval:
     """json
     {
-      "approve": false
+      "approve": false,
+      "comment": "test-instruction-to-create-with-approval-second-8-dismiss-comment"
     }
     """
     Then the response code should be 403
@@ -679,12 +728,58 @@ Feature: instruction approval creation
     When I do PUT /api/v4/cat/instructions/{{ .instructionID }}/approval:
     """json
     {
-      "approve": false
+      "approve": false,
+      "comment": "test-instruction-to-create-with-approval-second-8-dismiss-comment"
     }
     """
     Then the response code should be 200
     When I do GET /api/v4/cat/instructions/{{ .instructionID }}
-    Then the response code should be 404
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "type": 0,
+      "status": 3,
+      "name": "test-instruction-to-create-with-approval-second-8-name",
+      "description": "test-instruction-to-create-with-approval-second-8-description",
+      "enabled": true,
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "steps": [
+        {
+          "name": "test-instruction-to-create-with-approval-second-8-step-1",
+          "operations": [
+            {
+              "name": "test-instruction-to-create-with-approval-second-8-step-1-operation-1",
+              "time_to_complete": {"value": 1, "unit":"s"},
+              "description": "test-instruction-to-create-with-approval-second-8-step-1-operation-1-description"
+            }
+          ],
+          "stop_on_fail": true,
+          "endpoint": "test-instruction-to-create-with-approval-second-8-step-1-endpoint"
+        }
+      ],
+      "approval": {
+        "role": {
+          "_id": "role-to-instruction-approve-2",
+          "name": "role-to-instruction-approve-2"
+        },
+        "requested_by": {
+          "_id": "root",
+          "name": "root"
+        },
+        "comment": "test comment",
+        "dismissed_by": {
+          "_id": "user-to-instruction-approve-2",
+          "name": "user-to-instruction-approve-2"
+        },
+        "dismiss_comment": "test-instruction-to-create-with-approval-second-8-dismiss-comment"
+      }
+
+    }
+    """
 
   @concurrent
   Scenario: given create request with approval request for auto instruction with user or role should return ok

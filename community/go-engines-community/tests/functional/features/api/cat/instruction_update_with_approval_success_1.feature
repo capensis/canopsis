@@ -1582,7 +1582,7 @@ Feature: instruction approval update
             }
           ],
           "stop_on_fail": true,
-          "endpoint": "new endpoint 3"
+          "endpoint": "new endpoint 9"
         }
       ],
       "approval": {
@@ -1596,7 +1596,8 @@ Feature: instruction approval update
     When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-9/approval:
     """json
     {
-      "approve": false
+      "approve": false,
+      "comment": "test-instruction-to-update-with-approval-9-dismiss-comment"
     }
     """
     Then the response code should be 403
@@ -1610,12 +1611,19 @@ Feature: instruction approval update
     When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-9/approval:
     """json
     {
-      "approve": false
+      "approve": false,
+      "comment": "test-instruction-to-update-with-approval-9-dismiss-comment"
     }
     """
     Then the response code should be 200
     When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-9/approval
     Then the response code should be 404
+    Then the response body should contain:
+    """json
+    {
+      "error": "updated instruction not found"
+    }
+    """
     When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-9
     Then the response code should be 200
     Then the response body should contain:
@@ -1662,5 +1670,60 @@ Feature: instruction approval update
           "rating": 3.5
         }
       ]
+    }
+    """
+    When I am manager
+    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-9
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "type": 0,
+      "status": 4,
+      "name": "test-instruction-to-update-with-approval-9-name",
+      "description": "test-instruction-to-update-with-approval-9-description",
+      "author": {
+        "_id": "manageruser",
+        "name": "manageruser"
+      },
+      "enabled": true,
+      "steps": [
+        {
+          "name": "test-instruction-to-update-with-approval-9-step-1-name",
+          "operations": [
+            {
+              "name": "test-instruction-to-update-with-approval-9-step-1-operation-1-name",
+              "time_to_complete": {
+                "value": 1,
+                "unit": "s"
+              },
+              "description": "test-instruction-to-update-with-approval-9-step-1-operation-1-description",
+              "jobs": [
+                {
+                  "_id": "test-job-to-instruction-edit-1"
+                }
+              ]
+            }
+          ],
+          "stop_on_fail": true,
+          "endpoint": "new endpoint 9"
+        }
+      ],
+      "approval": {
+        "user": {
+          "_id": "user-to-instruction-approve-2",
+          "name": "user-to-instruction-approve-2"
+        },
+        "requested_by": {
+          "_id": "manageruser",
+          "name": "manageruser"
+        },
+        "comment": "test comment",
+        "dismissed_by": {
+          "_id": "user-to-instruction-approve-2",
+          "name": "user-to-instruction-approve-2"
+        },
+        "dismiss_comment": "test-instruction-to-update-with-approval-9-dismiss-comment"
+      }
     }
     """

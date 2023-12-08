@@ -79,3 +79,22 @@ Feature: instruction approval creation
     }
     """
     Then the response code should be 201
+
+  @concurrent
+  Scenario: given dismiss request with missing comment should return error
+    When I am admin
+    When I do PUT /api/v4/cat/instructions/test-instruction-not-exist/approval:
+    """json
+    {
+      "approve": false
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "comment": "Comment is required when Approve false is defined."
+      }
+    }
+    """
