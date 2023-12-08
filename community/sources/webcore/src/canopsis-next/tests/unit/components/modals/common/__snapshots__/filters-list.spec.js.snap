@@ -20,7 +20,7 @@ exports[`filters-list Renders \`filters-list\` with all parameters 1`] = `
     <filters-list-component-stub
       addable="true"
       editable="true"
-      filters="[object Object],[object Object],[object Object],[object Object]"
+      filters=""
       name="filters"
     />
   </div>
