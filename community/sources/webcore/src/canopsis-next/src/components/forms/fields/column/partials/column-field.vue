@@ -120,14 +120,6 @@ export default {
       type: Array,
       required: false,
     },
-    withAlarmDisplayName: {
-      type: Boolean,
-      default: false,
-    },
-    withAlarmCreationDate: {
-      type: Boolean,
-      default: false,
-    },
   },
   data() {
     return {
@@ -151,20 +143,10 @@ export default {
     },
 
     contextAvailableColumns() {
-      let columns = Object.values(CONTEXT_WIDGET_COLUMNS).map(value => ({
+      return Object.values(CONTEXT_WIDGET_COLUMNS).map(value => ({
         value,
         text: this.$tc(ENTITY_FIELDS_TO_LABELS_KEYS[value], 2),
       }));
-
-      if (!this.withAlarmDisplayName) {
-        columns = columns.filter(column => column.value !== CONTEXT_WIDGET_COLUMNS.alarmDisplayName);
-      }
-
-      if (!this.withAlarmCreationDate) {
-        columns = columns.filter(column => column.value !== CONTEXT_WIDGET_COLUMNS.alarmCreationDate);
-      }
-
-      return columns;
     },
 
     availableColumns() {

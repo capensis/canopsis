@@ -383,6 +383,8 @@ const {
   resource,
   statsOk,
   statsKo,
+  alarmCreationDate,
+  alarmDisplayName,
   ...contextWidgetColumns
 } = ENTITY_FIELDS;
 
