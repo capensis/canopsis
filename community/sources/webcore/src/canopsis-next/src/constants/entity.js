@@ -374,7 +374,17 @@ export const ENTITY_INFOS_FIELDS = [
   ENTITY_FIELDS.componentInfos,
 ];
 
-const { ack, category, ticket, snooze, ...contextWidgetColumns } = ENTITY_FIELDS;
+const {
+  ack,
+  category,
+  ticket,
+  snooze,
+  connectorName,
+  resource,
+  statsOk,
+  statsKo,
+  ...contextWidgetColumns
+} = ENTITY_FIELDS;
 
 export const CONTEXT_WIDGET_COLUMNS = contextWidgetColumns;
 
