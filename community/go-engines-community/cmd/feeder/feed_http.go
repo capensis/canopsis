@@ -41,13 +41,15 @@ type HTTPSender struct {
 func (h *HTTPSender) Login() {
 	cookies, _ := cookiejar.New(nil)
 	client = http.Client{Jar: cookies}
-	resp, err := client.Get(h.URL + "/autologin?authkey=" + h.AuthKey)
+	resp, err := client.Get(h.URL + "/autologin?authkey=" + h.AuthKey) //nolint:noctx
 	if err != nil {
 		h.Logger.Error().Err(err).Msg("Can not login")
 		os.Exit(ErrLogin)
 	}
 
-	if resp.StatusCode != 200 {
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
 		h.Logger.Warn().Msgf("Can not login: Login return %d HTTP status code", resp.StatusCode)
 		os.Exit(ErrLogin)
 	}
@@ -69,7 +71,7 @@ func validJSON(filename string) bool {
 // sendEvent try to send an event to canopsis using /event route.
 // eventFiles will contains every JSON files to be send, the authkey,
 // the authentication key used to log into canopsis. An error, will
-// be return if an error occured during the upload of an event.
+// be return if an error occurred during the upload of an event.
 func (h *HTTPSender) sendEvent(eventFiles []string) {
 	for _, filename := range eventFiles {
 		fd, errFile := os.Open(filename)
@@ -83,7 +85,7 @@ func (h *HTTPSender) sendEvent(eventFiles []string) {
 			continue
 		}
 
-		req, err := http.NewRequest("POST", h.URL+"/api/v2/event", fd)
+		req, err := http.NewRequest(http.MethodPost, h.URL+"/api/v2/event", fd) //nolint:noctx
 		if err != nil {
 			h.Logger.Error().Err(err).Msg("new request error")
 			os.Exit(ErrHTTP)
@@ -96,7 +98,7 @@ func (h *HTTPSender) sendEvent(eventFiles []string) {
 		}
 
 		data, err := io.ReadAll(resp.Body)
-		if resp.StatusCode != 200 {
+		if resp.StatusCode != http.StatusOK {
 			h.Logger.Error().Err(err).Str("data", string(data)).Msg("")
 			os.Exit(ErrHTTP)
 		}

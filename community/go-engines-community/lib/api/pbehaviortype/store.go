@@ -112,7 +112,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Type, error) {
 	res := &Type{}
 
 	if err := s.dbCollection.FindOne(ctx, bson.M{"_id": id}).Decode(res); err != nil {
-		if err == mongodriver.ErrNoDocuments {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return nil, nil
 		}
 		return nil, err
@@ -309,20 +309,20 @@ func (s *store) isLinkedToPbehavior(ctx context.Context, id string) (bool, error
 	}})
 	if err := res.Err(); err == nil {
 		return true, nil
-	} else if err != mongodriver.ErrNoDocuments {
+	} else if !errors.Is(err, mongodriver.ErrNoDocuments) {
 		return false, err
 	}
 
 	return false, nil
 }
 
-// isLinkedToException checks if there is execption with linked type.
+// isLinkedToException checks if there is exception with linked type.
 func (s *store) isLinkedToException(ctx context.Context, id string) (bool, error) {
 	exceptionCollection := s.db.Collection(mongo.PbehaviorExceptionMongoCollection)
 	res := exceptionCollection.FindOne(ctx, bson.M{"exdates.type": id})
 	if err := res.Err(); err == nil {
 		return true, nil
-	} else if err != mongodriver.ErrNoDocuments {
+	} else if !errors.Is(err, mongodriver.ErrNoDocuments) {
 		return false, err
 	}
 
@@ -342,7 +342,7 @@ func (s *store) isLinkedToAction(ctx context.Context, id string) (bool, error) {
 	})
 	if err := res.Err(); err == nil {
 		return true, nil
-	} else if err != mongodriver.ErrNoDocuments {
+	} else if !errors.Is(err, mongodriver.ErrNoDocuments) {
 		return false, err
 	}
 

@@ -66,8 +66,7 @@ func TestFindStringSubmatchMapWithRegexExpression(t *testing.T) {
 
 func TestFindStringSubmatchMap(t *testing.T) {
 	Convey("Given a regular expression", t, func() {
-		re, err := regexp.Compile(`abc-(?P<sub1>.*)-def-(?P<sub2>\d+)`)
-		So(err, ShouldBeNil)
+		re := regexp.MustCompile(`abc-(?P<sub1>.*)-def-(?P<sub2>\d+)`)
 
 		Convey("A map containing the values of the subexpressions is returned for strings that match the regex", func() {
 			match := utils.FindStringSubmatchMap(re, "abc-test-def-123")
@@ -84,7 +83,6 @@ func TestFindStringSubmatchMap(t *testing.T) {
 }
 
 func TestGetStringField(t *testing.T) {
-
 	Convey("Given an alarm", t, func() {
 		s := Station{"Loubyanka", "Red", 1234}
 

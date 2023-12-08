@@ -2,6 +2,7 @@ package pbehaviorreason
 
 import (
 	"context"
+	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -116,7 +117,7 @@ func (s *store) GetOneBy(ctx context.Context, filter bson.M) (*Reason, error) {
 
 	err := s.dbClient.Collection(pbehavior.ReasonCollectionName).FindOne(ctx, filter).Decode(&reason)
 	if err != nil {
-		if err == mongodriver.ErrNoDocuments {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return nil, nil
 		}
 
@@ -170,13 +171,13 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	return deleted > 0, nil
 }
 
-// IsLinked checks if there is pbehavior with linked reason.
+// IsLinkedToPbehavior checks if there is pbehavior with linked reason.
 func (s *store) IsLinkedToPbehavior(ctx context.Context, id string) (bool, error) {
 	res := s.dbClient.
 		Collection(mongo.PbehaviorMongoCollection).
 		FindOne(ctx, bson.M{"reason": id})
 	if err := res.Err(); err != nil {
-		if err == mongodriver.ErrNoDocuments {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return false, nil
 		}
 
@@ -197,7 +198,7 @@ func (s *store) isLinkedToAction(ctx context.Context, id string) (bool, error) {
 				},
 			}})
 	if err := res.Err(); err != nil {
-		if err == mongodriver.ErrNoDocuments {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return false, nil
 		}
 
