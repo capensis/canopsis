@@ -62,7 +62,7 @@ export const revertGroupBy = obj => Object.entries(obj).reduce((acc, [id, values
  * @return {any}
  */
 export const mergeChangedProperties = (oldData, newData) => {
-  if (isArray(newData)) {
+  if (isArray(newData) && isArray(oldData)) {
     if (oldData.length !== newData.length) {
       return newData;
     }
