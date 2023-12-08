@@ -87,6 +87,22 @@ type PbehaviorResultEvent struct {
 	Error    *Error        `json:"error"`
 }
 
+type DynamicInfosEvent struct {
+	// On update rule
+	ID     string `json:"_id"`
+	Action int    `json:"action"`
+	// On update alarm
+	Alarm           *types.Alarm          `json:"alarm"`
+	Entity          *types.Entity         `json:"entity"`
+	AlarmChangeType types.AlarmChangeType `json:"alarm_change"`
+}
+
+type DynamicInfosResultEvent struct {
+	Alarm           *types.Alarm          `json:"alarm"`
+	AlarmChangeType types.AlarmChangeType `json:"alarm_change"`
+	Error           *Error                `json:"error"`
+}
+
 type Error struct {
 	Error error
 }
