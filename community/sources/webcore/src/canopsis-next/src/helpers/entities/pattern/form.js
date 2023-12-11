@@ -110,6 +110,7 @@ import {
  * @property {string} attribute
  * @property {string} operator
  * @property {string} field
+ * @property {string} fieldType
  * @property {string} dictionary
  * @property {number | string} value
  * @property {PatternRuleRangeForm} range
@@ -493,13 +494,15 @@ export const getFieldType = (value) => {
 export const isValidRuleValueWithFieldType = (rule) => {
   const { field, cond, field_type: fieldType } = rule;
 
-  if (isStringArrayFieldType(fieldType)) {
+  if ([PATTERN_FIELD_TYPES.stringArray, PATTERN_FIELD_TYPES.string].includes(fieldType)) {
     if (isArrayCondition(cond.type)) {
       return (isArray(cond.value) && cond.value.every(isString))
         || (isBoolean(cond.value) && cond.type === PATTERN_CONDITIONS.isEmpty);
     }
 
-    return false;
+    if (fieldType === PATTERN_FIELD_TYPES.stringArray) {
+      return false;
+    }
   }
 
   const isInfos = isInfosPatternRuleField(field) || isExtraInfosPatternRuleField(field);
@@ -662,18 +665,11 @@ export const getValueTypesByOperator = (operator) => {
  * @return {PatternValue|undefined|*}
  */
 export const convertValueByOperator = (value, operator) => {
-  const valueType = getFieldType(value);
-
-  if (
-    valueType === PATTERN_FIELD_TYPES.string
-    && [PATTERN_OPERATORS.isOneOf, PATTERN_OPERATORS.isNotOneOf].includes(operator)
-  ) {
-    return value;
-  }
+  const fieldType = getFieldType(value);
 
   const operatorsValueType = getValueTypesByOperator(operator);
 
-  if (operatorsValueType.includes(valueType)) {
+  if (operatorsValueType.includes(fieldType)) {
     return value;
   }
 
@@ -722,6 +718,7 @@ export const patternRuleToForm = (rule = {}) => {
     attribute: rule.field ?? '',
     operator: '',
     field: '',
+    fieldType: rule.field_type ?? PATTERN_FIELD_TYPES.string,
     dictionary: '',
     value: '',
     range: {
@@ -1019,7 +1016,7 @@ export const formRuleToPatternRule = (rule) => {
   }
 
   if ((isExtraInfos || isInfos) && rule.field !== PATTERN_RULE_INFOS_FIELDS.name) {
-    pattern.field_type = getFieldType(rule.value);
+    pattern.field_type = rule.fieldType;
   }
 
   switch (rule.operator) {

@@ -1,6 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
-import { PATTERN_OPERATORS, QUICK_RANGES, TIME_UNITS } from '@/constants';
+import { PATTERN_FIELD_TYPES, PATTERN_OPERATORS, QUICK_RANGES, TIME_UNITS } from '@/constants';
 
 import PatternRulesField from '@/components/forms/fields/pattern/pattern-rules-field.vue';
 
@@ -195,6 +195,7 @@ describe('pattern-rules-field', () => {
         attribute: attribute.value,
         dictionary: '',
         field: '',
+        fieldType: PATTERN_FIELD_TYPES.string,
         operator: '',
         value: '',
         range: {
