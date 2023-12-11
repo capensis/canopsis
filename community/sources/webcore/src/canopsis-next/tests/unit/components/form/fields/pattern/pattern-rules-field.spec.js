@@ -22,18 +22,21 @@ describe('pattern-rules-field', () => {
       attribute: 'attribute 1',
       operator: PATTERN_OPERATORS.equal,
       value: 'attribute value',
+      fieldType: PATTERN_FIELD_TYPES.string,
       key: 'key 1',
     },
     {
       attribute: 'attribute 2',
       operator: PATTERN_OPERATORS.notEqual,
       value: 'attribute value 2',
+      fieldType: PATTERN_FIELD_TYPES.string,
       key: 'key 2',
     },
     {
       attribute: 'attribute 3',
       operator: PATTERN_OPERATORS.contains,
       value: 'attribute contains',
+      fieldType: PATTERN_FIELD_TYPES.string,
       key: 'key 3',
     },
   ];
@@ -238,6 +241,7 @@ describe('pattern-rules-field', () => {
           ...rules,
           {
             attribute: attribute.value,
+            fieldType: PATTERN_FIELD_TYPES.string,
           },
         ],
         attributes: [
