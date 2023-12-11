@@ -139,10 +139,18 @@ describe('pattern-rules-field', () => {
   });
 
   test('Value changed to array after update rule with array operator', () => {
+    const attribute = {
+      text: 'Attribute text',
+      value: rules[1].attribute,
+      options: {
+        operators: [PATTERN_OPERATORS.notEqual, PATTERN_OPERATORS.hasNot],
+      },
+    };
+
     const wrapper = factory({
       propsData: {
         rules,
-        attributes: [],
+        attributes: [attribute],
       },
     });
 
