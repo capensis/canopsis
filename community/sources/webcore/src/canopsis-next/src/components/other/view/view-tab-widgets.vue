@@ -32,7 +32,7 @@ import { isEqual } from 'lodash';
 
 import { WIDGET_GRID_SIZES_KEYS, MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP, WIDGET_LAYOUT_MAX_WIDTHS } from '@/constants';
 
-import { widgetsToLayouts, layoutsToWidgetsGrid } from '@/helpers/entities/widget/grid';
+import { widgetsToLayoutsWithCompact, layoutsToWidgetsGrid } from '@/helpers/entities/widget/grid';
 
 import { queryMixin } from '@/mixins/query';
 import { activeViewMixin } from '@/mixins/active-view';
@@ -70,7 +70,7 @@ export default {
     },
   },
   data() {
-    const layouts = widgetsToLayouts(this.tab.widgets);
+    const layouts = widgetsToLayoutsWithCompact(this.tab.widgets);
 
     return {
       layouts,
@@ -88,7 +88,7 @@ export default {
   },
   watch: {
     'tab.widgets': function tabWidgets(widgets) {
-      this.layouts = widgetsToLayouts(widgets, this.layouts);
+      this.layouts = widgetsToLayoutsWithCompact(widgets, this.layouts);
     },
 
     $mq: {
