@@ -70,8 +70,8 @@ describe('view-tab-widgets', () => {
       type: WIDGET_TYPES.text,
       grid_parameters: {
         desktop: { autoHeight: true, h: 24, w: 12, x: 0, y: 14 },
-        mobile: { autoHeight: true, h: 12, w: 3, x: 0, y: 0 },
-        tablet: { autoHeight: true, h: 1, w: 12, x: 0, y: 0 },
+        mobile: { autoHeight: true, h: 12, w: 3, x: 0, y: 12 },
+        tablet: { autoHeight: true, h: 1, w: 12, x: 0, y: 1 },
       },
     },
     {
@@ -79,8 +79,8 @@ describe('view-tab-widgets', () => {
       type: WIDGET_TYPES.text,
       grid_parameters: {
         desktop: { autoHeight: true, h: 21, w: 12, x: 0, y: 38 },
-        mobile: { autoHeight: true, h: 1, w: 12, x: 0, y: 12 },
-        tablet: { autoHeight: true, h: 1, w: 12, x: 0, y: 1 },
+        mobile: { autoHeight: true, h: 1, w: 12, x: 0, y: 24 },
+        tablet: { autoHeight: true, h: 1, w: 12, x: 0, y: 2 },
       },
     },
   ];
