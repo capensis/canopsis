@@ -322,6 +322,7 @@ Feature: create entities on event
       ]
     }
     """
+    Then the response code should be 200
     When I wait the end of events processing which contain:
     """json
     [

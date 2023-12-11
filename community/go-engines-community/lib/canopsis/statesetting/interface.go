@@ -7,3 +7,7 @@ import "context"
 type Adapter interface {
 	Get(ctx context.Context, settingID string) (*StateSetting, error)
 }
+
+type RuleChangesWatcher interface {
+	Watch(ctx context.Context) error
+}

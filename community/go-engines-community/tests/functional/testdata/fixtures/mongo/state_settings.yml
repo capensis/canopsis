@@ -5,6 +5,7 @@ template:
     method: inherited,
     priority: <Index()>,
     enabled: true,
+    type: component,
     entity_pattern: [
       [
         {
@@ -34,6 +35,7 @@ template:
     method: dependencies,
     priority: <Index()>,
     enabled: true,
+    type: component,
     entity_pattern: [
       [
         {

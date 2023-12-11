@@ -22,6 +22,7 @@ Feature: create state settings
       "title": "test-inherited-state-setting-1",
       "method": "inherited",
       "enabled": true,
+      "type": "component",
       "entity_pattern": [
         [
           {
@@ -53,6 +54,7 @@ Feature: create state settings
       "title": "test-inherited-state-setting-1",
       "method": "inherited",
       "enabled": true,
+      "type": "component",
       "entity_pattern": [
         [
           {
@@ -87,6 +89,7 @@ Feature: create state settings
       "title": "test-inherited-state-setting-1",
       "method": "inherited",
       "enabled": true,
+      "type": "component",
       "entity_pattern": [
         [
           {
@@ -123,6 +126,7 @@ Feature: create state settings
       "title": "test-dependencies-state-setting-1",
       "method": "dependencies",
       "enabled": true,
+      "type": "component",
       "entity_pattern": [
         [
           {
@@ -169,6 +173,7 @@ Feature: create state settings
       "title": "test-dependencies-state-setting-1",
       "method": "dependencies",
       "enabled": true,
+      "type": "component",
       "entity_pattern": [
         [
           {
@@ -218,6 +223,7 @@ Feature: create state settings
       "title": "test-dependencies-state-setting-1",
       "method": "dependencies",
       "enabled": true,
+      "type": "component",
       "entity_pattern": [
         [
           {
@@ -327,7 +333,8 @@ Feature: create state settings
         "junit_thresholds": "JUnitThresholds is not empty.",
         "state_thresholds": "StateThresholds is not empty.",
         "title": "Title is missing.",
-        "priority": "Priority should be 0 or more."
+        "priority": "Priority should be 0 or more.",
+        "type": "Type is required when Method inherited is defined."
       }
     }
     """
@@ -384,7 +391,8 @@ Feature: create state settings
         "junit_thresholds": "JUnitThresholds is not empty.",
         "state_thresholds": "StateThresholds is missing.",
         "title": "Title is missing.",
-        "priority": "Priority should be 0 or more."
+        "priority": "Priority should be 0 or more.",
+        "type": "Type is required when Method dependencies is defined."
       }
     }
     """
@@ -409,6 +417,46 @@ Feature: create state settings
     """
 
   @concurrent
+  Scenario: given create state_settings request with invalid type for inherited method should return error
+    When I am admin
+    When I do POST /api/v4/state-settings:
+    """json
+    {
+      "method": "inherited",
+      "type": "test"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "type": "Type must be one of [component service]."
+      }
+    }
+    """
+
+  @concurrent
+  Scenario: given create state_settings request with invalid type for dependencies method should return error
+    When I am admin
+    When I do POST /api/v4/state-settings:
+    """json
+    {
+      "method": "dependencies",
+      "type": "test"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "type": "Type must be one of [component service]."
+      }
+    }
+    """
+
+  @concurrent
   Scenario: given create state_settings request with invalid patterns should return error
     When I am admin
     When I do POST /api/v4/state-settings:
@@ -416,6 +464,7 @@ Feature: create state settings
     {
       "method": "inherited",
       "enabled": true,
+      "type": "component",
       "entity_pattern": [
         [
           {
@@ -455,6 +504,7 @@ Feature: create state settings
     {
       "method": "inherited",
       "enabled": true,
+      "type": "component",
       "entity_pattern": [
         [
           {
@@ -498,6 +548,7 @@ Feature: create state settings
     {
       "method": "dependencies",
       "enabled": true,
+      "type": "component",
       "entity_pattern": [
         [
           {
@@ -554,6 +605,7 @@ Feature: create state settings
       "title": "inherited-settings-to-unique-title",
       "method": "dependencies",
       "enabled": true,
+      "type": "component",
       "entity_pattern": [
         [
           {

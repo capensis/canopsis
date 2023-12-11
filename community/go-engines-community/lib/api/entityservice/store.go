@@ -9,8 +9,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -40,7 +40,7 @@ type store struct {
 	dbCollection              mongo.DbCollection
 	alarmDbCollection         mongo.DbCollection
 	resolvedAlarmDbCollection mongo.DbCollection
-	serviceCountersCollection mongo.DbCollection
+	entityCounters            mongo.DbCollection
 	userDbCollection          mongo.DbCollection
 
 	linkGenerator link.Generator
@@ -54,7 +54,7 @@ func NewStore(db mongo.DbClient, linkGenerator link.Generator, logger zerolog.Lo
 		dbCollection:              db.Collection(mongo.EntityMongoCollection),
 		alarmDbCollection:         db.Collection(mongo.AlarmMongoCollection),
 		resolvedAlarmDbCollection: db.Collection(mongo.ResolvedAlarmMongoCollection),
-		serviceCountersCollection: db.Collection(mongo.EntityServiceCountersCollection),
+		entityCounters:            db.Collection(mongo.EntityCountersCollection),
 		userDbCollection:          db.Collection(mongo.UserCollection),
 
 		linkGenerator: linkGenerator,
@@ -223,7 +223,7 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 			return err
 		}
 
-		_, err = s.serviceCountersCollection.InsertOne(ctx, statecounters.EntityServiceCounters{
+		_, err = s.entityCounters.InsertOne(ctx, entitycounters.EntityCounters{
 			ID:             service.ID,
 			OutputTemplate: service.OutputTemplate,
 		})
@@ -292,7 +292,7 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, S
 		serviceChanges.IsToggled = request.Enabled != nil && oldValues.Enabled != *request.Enabled
 		serviceChanges.IsPatternChanged = !reflect.DeepEqual(oldValues.EntityPattern, request.EntityPattern)
 
-		_, err = s.serviceCountersCollection.UpdateOne(
+		_, err = s.entityCounters.UpdateOne(
 			ctx,
 			bson.M{"_id": request.ID}, bson.M{
 				"$set": bson.M{

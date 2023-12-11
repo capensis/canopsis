@@ -1,4 +1,4 @@
-package statecounters
+package entitycounters
 
 import (
 	"context"
