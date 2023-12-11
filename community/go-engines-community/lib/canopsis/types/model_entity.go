@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 )
 
 // Entity types
@@ -39,27 +40,27 @@ type Entity struct {
 	Created        datetime.CpsTime   `bson:"created" json:"created"`
 	LastEventDate  *datetime.CpsTime  `bson:"last_event_date,omitempty" json:"last_event_date,omitempty"`
 
-	Connector string   `bson:"connector,omitempty" json:"connector,omitempty"`
-	Component string   `bson:"component,omitempty" json:"component,omitempty"`
-	Services  []string `bson:"services" json:"services,omitempty"`
+	Connector string `bson:"connector,omitempty" json:"connector,omitempty"`
+	Component string `bson:"component,omitempty" json:"component,omitempty"`
 	// ImpactedServices field is only for connectors, see entity service RecomputeIdleSince method.
 	ImpactedServices []string `bson:"impacted_services" json:"-"`
-
 	// LastIdleRuleApply is used to mark entity if some idle rule was applied.
 	LastIdleRuleApply string `bson:"last_idle_rule_apply,omitempty" json:"last_idle_rule_apply,omitempty"`
+
 	// IdleSince represents since when entity didn't receive any events.
-	IdleSince *datetime.CpsTime `bson:"idle_since,omitempty" json:"idle_since,omitempty"`
-
+	IdleSince    *datetime.CpsTime `bson:"idle_since,omitempty" json:"idle_since,omitempty"`
 	ImportSource string            `bson:"import_source,omitempty" json:"import_source"`
-	Imported     *datetime.CpsTime `bson:"imported,omitempty" json:"imported"`
 
-	PbehaviorInfo     PbehaviorInfo     `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
+	Imported      *datetime.CpsTime `bson:"imported,omitempty" json:"imported"`
+	PbehaviorInfo PbehaviorInfo     `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
+
 	LastPbehaviorDate *datetime.CpsTime `bson:"last_pbehavior_date,omitempty" json:"last_pbehavior_date,omitempty"`
+	SliAvailState     int64             `bson:"sli_avail_state" json:"sli_avail_state"`
 
-	SliAvailState int64 `bson:"sli_avail_state" json:"sli_avail_state"`
-
+	Services         []string `bson:"services" json:"services,omitempty"`
 	ServicesToAdd    []string `bson:"services_to_add,omitempty" json:"services_to_add,omitempty"`
 	ServicesToRemove []string `bson:"services_to_remove,omitempty" json:"services_to_remove,omitempty"`
+
 	// Coordinates is used only in api, add json tag if it's required in an event.
 	Coordinates Coordinates `bson:"coordinates,omitempty" json:"-"`
 
@@ -73,6 +74,17 @@ type Entity struct {
 	IsUpdated bool `bson:"-" json:"-"`
 
 	Healthcheck bool `bson:"healthcheck,omitempty" json:"-"`
+
+	StateInfo *StateInfo `bson:"state_info" json:"state_info"`
+
+	ComponentStateSettings         bool `bson:"component_state_settings,omitempty" json:"component_state_settings,omitempty"`
+	ComponentStateSettingsToAdd    bool `bson:"component_state_settings_to_add,omitempty" json:"component_state_settings_to_add,omitempty"`
+	ComponentStateSettingsToRemove bool `bson:"component_state_settings_to_remove,omitempty" json:"component_state_settings_to_remove,omitempty"`
+}
+
+type StateInfo struct {
+	ID               string          `bson:"_id" json:"_id"`
+	InheritedPattern *pattern.Entity `bson:"inherited_pattern,omitempty" json:"inherited_pattern,omitempty"`
 }
 
 type Coordinates struct {

@@ -117,6 +117,7 @@ Feature: update state settings
       "priority": 1,
       "title": "some",
       "method": "worst_of_share",
+      "type": "component",
       "enabled": true,
       "entity_pattern": [
         [
@@ -384,6 +385,7 @@ Feature: update state settings
       "title": "inherited-settings-to-update-1-title-updated",
       "method": "inherited",
       "enabled": true,
+      "type": "component",
       "entity_pattern": [
         [
           {
@@ -416,6 +418,7 @@ Feature: update state settings
       "title": "inherited-settings-to-update-1-title-updated",
       "method": "inherited",
       "enabled": true,
+      "type": "component",
       "entity_pattern": [
         [
           {
@@ -451,6 +454,7 @@ Feature: update state settings
       "title": "inherited-settings-to-update-1-title-updated",
       "method": "inherited",
       "enabled": true,
+      "type": "component",
       "entity_pattern": [
         [
           {
@@ -545,7 +549,8 @@ Feature: update state settings
         "inherited_entity_pattern": "InheritedEntityPattern is missing.",
         "junit_thresholds": "JUnitThresholds is not empty.",
         "state_thresholds": "StateThresholds is not empty.",
-        "priority": "Priority should be 0 or more."
+        "priority": "Priority should be 0 or more.",
+        "type": "Type is required when Method inherited is defined."
       }
     }
     """
@@ -558,6 +563,7 @@ Feature: update state settings
     {
       "method": "inherited",
       "enabled": true,
+      "type": "component",
       "entity_pattern": [
         [
           {
@@ -597,6 +603,7 @@ Feature: update state settings
     {
       "method": "inherited",
       "enabled": true,
+      "type": "component",
       "entity_pattern": [
         [
           {
@@ -641,6 +648,7 @@ Feature: update state settings
       "title": "dependencies-settings-to-update-1-title-updated",
       "method": "dependencies",
       "enabled": true,
+      "type": "component",
       "entity_pattern": [
         [
           {
@@ -688,6 +696,7 @@ Feature: update state settings
       "title": "dependencies-settings-to-update-1-title-updated",
       "method": "dependencies",
       "enabled": true,
+      "type": "component",
       "entity_pattern": [
         [
           {
@@ -738,6 +747,7 @@ Feature: update state settings
       "title": "dependencies-settings-to-update-1-title-updated",
       "method": "dependencies",
       "enabled": true,
+      "type": "component",
       "entity_pattern": [
         [
           {
@@ -832,7 +842,8 @@ Feature: update state settings
         "inherited_entity_pattern": "InheritedEntityPattern is not empty.",
         "junit_thresholds": "JUnitThresholds is not empty.",
         "state_thresholds": "StateThresholds is missing.",
-        "priority": "Priority should be 0 or more."
+        "priority": "Priority should be 0 or more.",
+        "type": "Type is required when Method dependencies is defined."
       }
     }
     """    
@@ -845,6 +856,7 @@ Feature: update state settings
     {
       "method": "dependencies",
       "enabled": true,
+      "type": "component",
       "entity_pattern": [
         [
           {
@@ -901,6 +913,7 @@ Feature: update state settings
       "title": "inherited-settings-to-update-2-title-updated",
       "method": "dependencies",
       "enabled": true,
+      "type": "service",
       "entity_pattern": [
         [
           {
@@ -948,6 +961,7 @@ Feature: update state settings
       "title": "inherited-settings-to-update-2-title-updated",
       "method": "dependencies",
       "enabled": true,
+      "type": "service",
       "entity_pattern": [
         [
           {
@@ -997,6 +1011,7 @@ Feature: update state settings
       "title": "inherited-settings-to-update-2-title-updated",
       "method": "dependencies",
       "enabled": true,
+      "type": "service",
       "entity_pattern": [
         [
           {
@@ -1047,6 +1062,7 @@ Feature: update state settings
       "method": "inherited",
       "title": "dependencies-settings-to-update-2-title-updated",
       "enabled": true,
+      "type": "service",
       "entity_pattern": [
         [
           {
@@ -1079,6 +1095,7 @@ Feature: update state settings
       "title": "dependencies-settings-to-update-2-title-updated",
       "method": "inherited",
       "enabled": true,
+      "type": "service",
       "entity_pattern": [
         [
           {
@@ -1113,6 +1130,7 @@ Feature: update state settings
       "title": "dependencies-settings-to-update-2-title-updated",
       "method": "inherited",
       "enabled": true,
+      "type": "service",
       "entity_pattern": [
         [
           {
@@ -1148,6 +1166,7 @@ Feature: update state settings
       "method": "inherited",
       "title": "inherited-settings-to-unique-title",
       "enabled": true,
+      "type": "component",
       "entity_pattern": [
         [
           {
@@ -1191,6 +1210,7 @@ Feature: update state settings
       "title": "inherited-settings-to-update-1-title-not-found",
       "method": "inherited",
       "enabled": true,
+      "type": "component",
       "entity_pattern": [
         [
           {
@@ -1220,5 +1240,46 @@ Feature: update state settings
     """json
     {
       "error": "Not found"
+    }
+    """
+
+
+  @concurrent
+  Scenario: given update state_settings request with invalid type for inherited method should return error
+    When I am admin
+    When I do PUT /api/v4/state-settings/dependencies-settings-to-update-2:
+    """json
+    {
+      "method": "inherited",
+      "type": "test"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "type": "Type must be one of [component service]."
+      }
+    }
+    """
+
+  @concurrent
+  Scenario: given update state_settings request with invalid type for dependencies method should return error
+    When I am admin
+    When I do PUT /api/v4/state-settings/dependencies-settings-to-update-2:
+    """json
+    {
+      "method": "dependencies",
+      "type": "test"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """
+    {
+      "errors": {
+        "type": "Type must be one of [component service]."
+      }
     }
     """

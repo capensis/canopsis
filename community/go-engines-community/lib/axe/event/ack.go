@@ -6,7 +6,7 @@ import (
 
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -21,7 +21,7 @@ import (
 func NewAckProcessor(
 	client mongo.DbClient,
 	configProvider config.AlarmConfigProvider,
-	stateCountersService statecounters.StateCountersService,
+	stateCountersService entitycounters.StateCountersService,
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
 	metricsSender metrics.Sender,
 	logger zerolog.Logger,
@@ -43,7 +43,7 @@ type ackProcessor struct {
 	alarmCollection         mongo.DbCollection
 	entityCollection        mongo.DbCollection
 	configProvider          config.AlarmConfigProvider
-	stateCountersService    statecounters.StateCountersService
+	stateCountersService    entitycounters.StateCountersService
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor
 	metricsSender           metrics.Sender
 	logger                  zerolog.Logger
@@ -71,7 +71,7 @@ func (p *ackProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result,
 			"not_acked_since":            "",
 		},
 	}
-	var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
+	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
 	notAckedMetricType := ""
 
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
@@ -160,7 +160,7 @@ func (p *ackProcessor) postProcess(
 	ctx context.Context,
 	event rpc.AxeEvent,
 	result Result,
-	updatedServiceStates map[string]statecounters.UpdatedServicesInfo,
+	updatedServiceStates map[string]entitycounters.UpdatedServicesInfo,
 	notAckedMetricType string,
 ) {
 	p.metricsSender.SendEventMetrics(

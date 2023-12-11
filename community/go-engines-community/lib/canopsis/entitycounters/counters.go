@@ -1,4 +1,4 @@
-package statecounters
+package entitycounters
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -11,7 +11,7 @@ type StateCounters struct {
 	Ok       int `bson:"ok"`
 }
 
-type EntityServiceCounters struct {
+type EntityCounters struct {
 	ID                   string         `bson:"_id"`
 	All                  int            `bson:"all"`
 	Active               int            `bson:"active"`
@@ -25,7 +25,7 @@ type EntityServiceCounters struct {
 	OutputTemplate       string         `bson:"output_template,omitempty"`
 }
 
-func (s *EntityServiceCounters) GetWorstState() int {
+func (s *EntityCounters) GetWorstState() int {
 	if s.State.Critical > 0 {
 		return types.AlarmStateCritical
 	}
@@ -41,7 +41,7 @@ func (s *EntityServiceCounters) GetWorstState() int {
 	return types.AlarmStateOK
 }
 
-func (s *EntityServiceCounters) IncrementState(state int) {
+func (s *EntityCounters) IncrementState(state int) {
 	switch state {
 	case types.AlarmStateOK:
 		s.State.Ok++
@@ -54,7 +54,7 @@ func (s *EntityServiceCounters) IncrementState(state int) {
 	}
 }
 
-func (s *EntityServiceCounters) DecrementState(state int) {
+func (s *EntityCounters) DecrementState(state int) {
 	switch state {
 	case types.AlarmStateOK:
 		s.State.Ok--
@@ -67,7 +67,7 @@ func (s *EntityServiceCounters) DecrementState(state int) {
 	}
 }
 
-func (s *EntityServiceCounters) IncrementAlarmCounters(state int, acked, isActive bool) {
+func (s *EntityCounters) IncrementAlarmCounters(state int, acked, isActive bool) {
 	if isActive {
 		s.Active++
 		s.IncrementState(state)
@@ -88,7 +88,7 @@ func (s *EntityServiceCounters) IncrementAlarmCounters(state int, acked, isActiv
 	}
 }
 
-func (s *EntityServiceCounters) DecrementAlarmCounters(state int, acked, isActive bool) {
+func (s *EntityCounters) DecrementAlarmCounters(state int, acked, isActive bool) {
 	if isActive {
 		s.Active--
 		s.DecrementState(state)
@@ -109,17 +109,17 @@ func (s *EntityServiceCounters) DecrementAlarmCounters(state int, acked, isActiv
 	}
 }
 
-func (s *EntityServiceCounters) IncrementPbhCounters(typeID string) {
+func (s *EntityCounters) IncrementPbhCounters(typeID string) {
 	s.UnderPbehavior++
 	s.PbehaviorCounters[typeID]++
 }
 
-func (s *EntityServiceCounters) DecrementPbhCounters(typeID string) {
+func (s *EntityCounters) DecrementPbhCounters(typeID string) {
 	s.UnderPbehavior--
 	s.PbehaviorCounters[typeID]--
 }
 
-func (s *EntityServiceCounters) Sub(o EntityServiceCounters) map[string]int {
+func (s *EntityCounters) Sub(o EntityCounters) map[string]int {
 	diff := make(map[string]int)
 
 	diff["all"] = s.All - o.All
