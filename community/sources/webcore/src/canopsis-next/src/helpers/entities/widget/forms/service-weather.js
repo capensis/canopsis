@@ -67,6 +67,7 @@ import { alarmListBaseParametersToForm, formToAlarmListBaseParameters } from './
  * @property {number} heightFactor
  * @property {number} modalItemsPerPage
  * @property {boolean} isPriorityEnabled
+ * @property {boolean} isHideGrayEnabled
  * @property {AlarmListBaseParameters} alarmsList
  * @property {ServiceWeatherActionRequiredSettings} actionRequiredSettings
  */
@@ -129,6 +130,7 @@ export const serviceWeatherWidgetParametersToForm = (parameters = {}) => ({
       state_types: [],
     },
   isPriorityEnabled: parameters.isPriorityEnabled ?? true,
+  isHideGrayEnabled: parameters.isHideGrayEnabled ?? true,
   actionRequiredSettings: actionRequiredSettingsToForm(parameters.actionRequiredSettings),
 });
 
