@@ -1,5 +1,7 @@
 package rpc
 
+//go:generate easyjson -no_std_marshalers
+
 import (
 	"encoding/json"
 	"errors"
@@ -8,6 +10,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
+// AxeEvent
+//
+//easyjson:json
 type AxeEvent struct {
 	EventType   string        `json:"event_type"`
 	Parameters  AxeParameters `json:"parameters,omitempty"`
@@ -67,6 +72,9 @@ type AxeParameters struct {
 	MetaAlarmChildren  []string `json:"meta_alarm_children,omitempty"`
 }
 
+// AxeResultEvent
+//
+//easyjson:json
 type AxeResultEvent struct {
 	Alarm           *types.Alarm          `json:"alarm"`
 	AlarmChangeType types.AlarmChangeType `json:"alarm_change"`
@@ -75,15 +83,24 @@ type AxeResultEvent struct {
 	Error           *Error                `json:"error"`
 }
 
+// WebhookEvent
+//
+//easyjson:json
 type WebhookEvent struct {
 	Execution   string `json:"execution"`
 	Healthcheck bool   `json:"healthcheck"`
 }
 
+// PbehaviorRecomputeEvent
+//
+//easyjson:json
 type PbehaviorRecomputeEvent struct {
 	Ids []string `json:"ids"`
 }
 
+// PbehaviorEvent
+//
+//easyjson:json
 type PbehaviorEvent struct {
 	Alarm       *types.Alarm        `json:"alarm"`
 	Entity      *types.Entity       `json:"entity"`
@@ -104,6 +121,9 @@ type PbehaviorParameters struct {
 	Duration       *datetime.DurationWithUnit `json:"duration,omitempty"`
 }
 
+// PbehaviorResultEvent
+//
+//easyjson:json
 type PbehaviorResultEvent struct {
 	Alarm    *types.Alarm  `json:"alarm"`
 	Entity   *types.Entity `json:"entity"`
@@ -111,6 +131,9 @@ type PbehaviorResultEvent struct {
 	Error    *Error        `json:"error"`
 }
 
+// DynamicInfosEvent
+//
+//easyjson:json
 type DynamicInfosEvent struct {
 	// On update rule
 	ID     string `json:"_id"`
@@ -121,10 +144,30 @@ type DynamicInfosEvent struct {
 	AlarmChangeType types.AlarmChangeType `json:"alarm_change"`
 }
 
+// DynamicInfosResultEvent
+//
+//easyjson:json
 type DynamicInfosResultEvent struct {
 	Alarm           *types.Alarm          `json:"alarm"`
 	AlarmChangeType types.AlarmChangeType `json:"alarm_change"`
 	Error           *Error                `json:"error"`
+}
+
+// RemediationEvent
+//
+//easyjson:json
+type RemediationEvent struct {
+	Alarm       *types.Alarm      `json:"alarm"`
+	Entity      *types.Entity     `json:"entity"`
+	AlarmChange types.AlarmChange `json:"alarm_change"`
+}
+
+// RemediationJobEvent
+//
+//easyjson:json
+type RemediationJobEvent struct {
+	JobExecutionID string `json:"job_execution_id"`
+	Step           int    `json:"step"`
 }
 
 type Error struct {
