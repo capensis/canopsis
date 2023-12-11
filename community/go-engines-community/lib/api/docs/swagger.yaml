@@ -11411,6 +11411,7 @@ paths:
                   "title": "Inherited state setting",
                   "method": "inherited",
                   "enabled": true,
+                  "type": "component",
                   "entity_pattern": [
                     [
                       {
@@ -11441,6 +11442,7 @@ paths:
                   "title": "Dependencies state setting",
                   "method": "dependencies",
                   "enabled": true,
+                  "type": "component",
                   "entity_pattern": [
                     [
                       {
@@ -11553,6 +11555,7 @@ paths:
                   "title": "Inherited state setting",
                   "method": "inherited",
                   "enabled": true,
+                  "type": "component",
                   "entity_pattern": [
                     [
                       {
@@ -11583,6 +11586,7 @@ paths:
                   "title": "Dependencies state setting",
                   "method": "dependencies",
                   "enabled": true,
+                  "type": "component",
                   "entity_pattern": [
                     [
                       {

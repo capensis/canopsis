@@ -445,6 +445,12 @@ definitions:
         additionalProperties:
           $ref: '#/definitions/types.Info'
         type: object
+      component_state_settings:
+        type: boolean
+      component_state_settings_to_add:
+        type: boolean
+      component_state_settings_to_remove:
+        type: boolean
       connector:
         type: string
       created:
@@ -506,6 +512,8 @@ definitions:
         type: integer
       soft_deleted:
         $ref: '#/definitions/datetime.CpsTime'
+      state_info:
+        $ref: '#/definitions/types.StateInfo'
       type:
         type: string
     type: object
@@ -2439,8 +2447,6 @@ definitions:
       label:
         type: string
       name:
-        type: string
-      template:
         type: string
       template:
         type: string
@@ -4987,6 +4993,11 @@ definitions:
       title:
         description: Service and component state setting only fields
         type: string
+      type:
+        enum:
+        - component
+        - service
+        type: string
     required:
     - method
     type: object
@@ -5065,6 +5076,11 @@ definitions:
         $ref: '#/definitions/statesettings.StateThresholds'
       title:
         description: Service and component state setting only fields
+        type: string
+      type:
+        enum:
+        - component
+        - service
         type: string
     required:
     - method
@@ -5229,6 +5245,17 @@ definitions:
       type_name:
         description: TypeName is Name of pbehavior.Type.
         type: string
+    type: object
+  types.StateInfo:
+    properties:
+      _id:
+        type: string
+      inherited_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
     type: object
   user.BulkDeleteRequestItem:
     properties:

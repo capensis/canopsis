@@ -237,6 +237,7 @@ func (e *Event) GetEID() string {
 	if e.Component != "" {
 		return e.Component
 	}
+
 	return e.Connector + "/" + e.ConnectorName
 }
 

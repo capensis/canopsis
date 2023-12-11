@@ -28,25 +28,29 @@ func NewEnrichmentApplicator(
 func (a *enrichmentApplicator) Apply(
 	ctx context.Context,
 	rule ParsedRule,
-	event types.Event,
+	event *types.Event,
 	regexMatch RegexMatch,
-) (string, types.Event, error) {
+) (string, bool, error) {
+	var entityUpdated bool
+
 	externalData, err := a.getExternalData(ctx, rule, event, regexMatch)
 	if err != nil {
-		return rule.Config.OnFailure, event, err
+		return rule.Config.OnFailure, false, err
 	}
 
 	for _, action := range rule.Config.Actions {
-		event, err = a.actionProcessor.Process(ctx, rule.ID, action, event, regexMatch, externalData)
+		isUpdated, err := a.actionProcessor.Process(ctx, rule.ID, action, event, regexMatch, externalData)
 		if err != nil {
-			return rule.Config.OnFailure, event, fmt.Errorf("invalid action name=%q type=%q: %w", action.Name, action.Type, err)
+			return rule.Config.OnFailure, false, fmt.Errorf("invalid action name=%q type=%q: %w", action.Name, action.Type, err)
 		}
+
+		entityUpdated = entityUpdated || isUpdated
 	}
 
-	return rule.Config.OnSuccess, event, nil
+	return rule.Config.OnSuccess, entityUpdated, nil
 }
 
-func (a *enrichmentApplicator) getExternalData(ctx context.Context, rule ParsedRule, event types.Event, regexMatch RegexMatch) (map[string]interface{}, error) {
+func (a *enrichmentApplicator) getExternalData(ctx context.Context, rule ParsedRule, event *types.Event, regexMatch RegexMatch) (map[string]interface{}, error) {
 	externalData := make(map[string]interface{})
 
 	for name, parameters := range rule.ExternalData {

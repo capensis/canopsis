@@ -21,6 +21,11 @@ const (
 
 	CalculationNumber = "number"
 	CalculationShare  = "share"
+
+	RuleTypeComponent = "component"
+	RuleTypeService   = "service"
+
+	StateSettingsNotificationID = "state_settings_notify_id"
 )
 
 type StateSetting struct {
@@ -29,6 +34,7 @@ type StateSetting struct {
 	Method   string `bson:"method"`
 	Enabled  *bool  `bson:"enabled,omitempty"`
 	Priority int64  `bson:"priority"`
+	Type     string `bson:"type,omitempty"`
 
 	EntityPattern          *pattern.Entity `bson:"entity_pattern,omitempty"`
 	InheritedEntityPattern *pattern.Entity `bson:"inherited_entity_pattern,omitempty"`

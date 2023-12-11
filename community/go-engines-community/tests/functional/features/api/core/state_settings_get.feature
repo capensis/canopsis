@@ -27,6 +27,7 @@ Feature: get state settings
           "method": "inherited",
           "title": "state-settings-to-get-1-title",
           "enabled": true,
+          "type": "component",
           "entity_pattern": [
             [
               {
@@ -57,6 +58,7 @@ Feature: get state settings
           "method": "inherited",
           "title": "state-settings-to-get-2-title",
           "enabled": true,
+          "type": "component",
           "entity_pattern": [
             [
               {
@@ -116,6 +118,7 @@ Feature: get state settings
       "method": "inherited",
       "title": "state-settings-to-get-1-title",
       "enabled": true,
+      "type": "component",
       "entity_pattern": [
         [
           {

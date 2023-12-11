@@ -48,7 +48,7 @@ func (a *mongoAdapter) Bulk(ctx context.Context, models []mongodriver.WriteModel
 // Get is the same as GetEntityByID
 // Return True if the document has been found
 func (a *mongoAdapter) Get(ctx context.Context, id string) (types.Entity, bool) {
-	entity, err := a.GetEntityByID(ctx, id)
+	entity, err := a.getEntityByID(ctx, id)
 	entity.EnsureInitialized()
 
 	if errors.Is(err, ErrNotFound) {
@@ -61,7 +61,7 @@ func (a *mongoAdapter) Get(ctx context.Context, id string) (types.Entity, bool) 
 }
 
 // GetEntityByID finds an Entity from is eid
-func (a *mongoAdapter) GetEntityByID(ctx context.Context, id string) (types.Entity, error) {
+func (a *mongoAdapter) getEntityByID(ctx context.Context, id string) (types.Entity, error) {
 	var ent types.Entity
 
 	res := a.dbCollection.FindOne(ctx, bson.M{"_id": id})
