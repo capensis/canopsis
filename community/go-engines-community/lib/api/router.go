@@ -581,6 +581,12 @@ func RegisterRoutes(
 				entityAPI.GetContextGraph,
 			)
 
+			entityRouter.POST(
+				"/check-state-setting",
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionRead, enforcer),
+				entityAPI.CheckStateSetting,
+			)
+
 			entityRouter.GET(
 				"/pbehaviors",
 				middleware.Authorize(apisecurity.ObjEntity, model.PermissionRead, enforcer),
@@ -1445,15 +1451,30 @@ func RegisterRoutes(
 		stateSettingsRouter := protected.Group("/state-settings")
 		{
 			stateSettingsApi := statesettings.NewApi(statesettings.NewStore(dbClient), actionLogger)
-			stateSettingsRouter.PUT(
-				"/:id",
-				middleware.Authorize(apisecurity.PermStateSettings, model.PermissionCan, enforcer),
-				stateSettingsApi.Update,
+			stateSettingsRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionCreate, enforcer),
+				stateSettingsApi.Create,
 			)
 			stateSettingsRouter.GET(
 				"",
-				middleware.Authorize(apisecurity.PermStateSettings, model.PermissionCan, enforcer),
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionRead, enforcer),
 				stateSettingsApi.List,
+			)
+			stateSettingsRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionRead, enforcer),
+				stateSettingsApi.Get,
+			)
+			stateSettingsRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionUpdate, enforcer),
+				stateSettingsApi.Update,
+			)
+			stateSettingsRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionDelete, enforcer),
+				stateSettingsApi.Delete,
 			)
 		}
 

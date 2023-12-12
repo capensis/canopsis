@@ -237,6 +237,8 @@ func ValidatePbehaviorPattern(fl validator.FieldLevel) bool {
 
 func GetForbiddenFieldsInEntityPattern(collection string) []string {
 	switch collection {
+	case mongo.StateSettingsMongoCollection:
+		return []string{"last_event_date", "component", "component_infos"}
 	case mongo.EntityMongoCollection:
 		return []string{"last_event_date", "connector", "component_infos"}
 	case mongo.PbehaviorMongoCollection,

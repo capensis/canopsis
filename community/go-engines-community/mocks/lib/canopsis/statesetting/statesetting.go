@@ -36,10 +36,10 @@ func (m *MockAdapter) EXPECT() *MockAdapterMockRecorder {
 }
 
 // Get mocks base method.
-func (m *MockAdapter) Get(arg0 context.Context, arg1 string) (statesetting.StateSetting, error) {
+func (m *MockAdapter) Get(arg0 context.Context, arg1 string) (*statesetting.StateSetting, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", arg0, arg1)
-	ret0, _ := ret[0].(statesetting.StateSetting)
+	ret0, _ := ret[0].(*statesetting.StateSetting)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
