@@ -143,6 +143,8 @@ func (p *messageProcessor) postProcessUpdatedEntities(
 	now := datetime.NewCpsTime()
 
 	for _, ent := range entitiesForEvent {
+		ent := ent
+
 		var updateCountersEvent types.Event
 
 		switch ent.Type {
