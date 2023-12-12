@@ -326,6 +326,7 @@ Vue.use(DaySpanVuetifyPlugin, {
           offsetX: true,
           maxWidth: 500,
           openOnHover: true,
+          attach: '.modals-wrapper',
         },
       },
       dsCalendarEvent: {
@@ -333,6 +334,7 @@ Vue.use(DaySpanVuetifyPlugin, {
           offsetY: true,
           openOnHover: true,
           transition: 'fade-transition',
+          attach: '.modals-wrapper',
         },
       },
       dsCalendarEventPlaceholder: {
@@ -340,12 +342,14 @@ Vue.use(DaySpanVuetifyPlugin, {
           offsetY: true,
           openOnHover: true,
           transition: 'fade-transition',
+          attach: '.modals-wrapper',
         },
       },
       dsCalendarEventTimePlaceholder: {
         popoverProps: {
           openOnHover: true,
           transition: 'fade-transition',
+          attach: '.modals-wrapper',
         },
       },
     },
