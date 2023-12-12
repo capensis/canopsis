@@ -297,8 +297,8 @@ func (m *delayedScenarioManager) getExpiredTimeoutScenarios(
 		}
 
 		tasks[i] = DelayedScenarioTask{
-			Alarm:    *alarm,
-			Scenario: *scenario,
+			Alarm:    alarm,
+			Scenario: scenario,
 
 			AdditionalData: delayedScenario.AdditionalData,
 		}
@@ -307,30 +307,30 @@ func (m *delayedScenarioManager) getExpiredTimeoutScenarios(
 	return tasks, nil
 }
 
-func (m *delayedScenarioManager) loadScenarios(ctx context.Context, ids []string) (map[string]*Scenario, error) {
+func (m *delayedScenarioManager) loadScenarios(ctx context.Context, ids []string) (map[string]Scenario, error) {
 	scenarios, err := m.scenarioAdapter.GetEnabledByIDs(ctx, ids)
 	if err != nil {
 		return nil, err
 	}
 
-	scenariosByID := make(map[string]*Scenario)
+	scenariosByID := make(map[string]Scenario)
 	for _, scenario := range scenarios {
-		scenariosByID[scenario.ID] = &scenario
+		scenariosByID[scenario.ID] = scenario
 	}
 
 	return scenariosByID, nil
 }
 
-func (m *delayedScenarioManager) loadAlarms(ctx context.Context, ids []string) (map[string]*types.Alarm, error) {
+func (m *delayedScenarioManager) loadAlarms(ctx context.Context, ids []string) (map[string]types.Alarm, error) {
 	alarms := make([]types.Alarm, 0)
 	err := m.alarmAdapter.GetOpenedAlarmsByAlarmIDs(ctx, ids, &alarms)
 	if err != nil {
 		return nil, err
 	}
 
-	alarmsByID := make(map[string]*types.Alarm)
+	alarmsByID := make(map[string]types.Alarm)
 	for _, alarm := range alarms {
-		alarmsByID[alarm.ID] = &alarm
+		alarmsByID[alarm.ID] = alarm
 	}
 
 	return alarmsByID, nil

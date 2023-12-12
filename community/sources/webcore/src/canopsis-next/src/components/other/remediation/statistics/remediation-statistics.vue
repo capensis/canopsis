@@ -148,6 +148,8 @@ export default {
       try {
         await saveFile(blob, this.getFileName());
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: err.message || this.$t('errors.default') });
       }
     },

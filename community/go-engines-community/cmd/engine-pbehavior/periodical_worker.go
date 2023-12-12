@@ -265,7 +265,7 @@ func (w *periodicalWorker) publishToEngineFIFO(ctx context.Context, event types.
 func (w *periodicalWorker) publishTo(ctx context.Context, event types.Event, queue string) error {
 	bevent, err := w.Encoder.Encode(event)
 	if err != nil {
-		return fmt.Errorf("publishTo(): error while encoding event %+v", err)
+		return fmt.Errorf("publishTo(): error while encoding event %w", err)
 	}
 
 	return errt.NewIOError(w.ChannelPub.PublishWithContext(

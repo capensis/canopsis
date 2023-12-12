@@ -167,6 +167,8 @@ export default {
           data: mapIds(filters),
         });
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: this.$t('errors.default') });
 
         this.setFilters(oldFilters);
