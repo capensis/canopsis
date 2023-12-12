@@ -24,10 +24,14 @@ const (
 )
 
 type Report struct {
+	// The check flags show if an entity should be included in a second transaction search
+	// to check services and state settings.
 	CheckResource  bool
 	CheckComponent bool
 	CheckConnector bool
-	IsNew          bool
+
+	// IsNew is used only for event metric
+	IsNew bool
 }
 
 func NewManager(
@@ -55,7 +59,7 @@ type manager struct {
 	logger              zerolog.Logger
 }
 
-func (m *manager) InheritComponent(resource, component *types.Entity, commRegister libmongo.CommandsRegister) error {
+func (m *manager) InheritComponentFields(resource, component *types.Entity, commRegister libmongo.CommandsRegister) error {
 	update := make(bson.M)
 
 	if len(component.Infos) > 0 {
@@ -315,6 +319,7 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string, commRe
 		return types.Entity{}, err
 	}
 
+	// todo: should be called to get fresh services from the db, should be removed when we do something with cache
 	err = m.RefreshServices(ctx)
 	if err != nil {
 		return types.Entity{}, err
@@ -437,7 +442,7 @@ func (m *manager) HandleResource(ctx context.Context, event *types.Event, commRe
 	if resource.Connector != connectorID && !connectorExist {
 		resource.Connector = connectorID
 
-		commRegister.RegisterUpdate(resourceID, bson.M{"connector": connectorID})
+		commRegister.RegisterUpdate(resourceID, bson.M{"connector": connectorID, "last_event_date": now})
 		commRegister.RegisterInsert(&types.Entity{
 			ID:            connectorID,
 			Name:          connectorName,
@@ -455,11 +460,10 @@ func (m *manager) HandleResource(ctx context.Context, event *types.Event, commRe
 		report.CheckConnector = true
 	} else {
 		commRegister.RegisterUpdate(connectorID, bson.M{"last_event_date": now})
+		commRegister.RegisterUpdate(resourceID, bson.M{"last_event_date": now})
 	}
 
-	commRegister.RegisterUpdate(resourceID, bson.M{"last_event_date": now})
 	resource.LastEventDate = &now
-
 	event.Entity = resource
 
 	return report, nil
@@ -503,7 +507,8 @@ func (m *manager) HandleComponent(ctx context.Context, event *types.Event, commR
 	if component != nil && component.SoftDeleted != nil {
 		event.Entity = component
 
-		return report, nil
+		// clean report
+		return Report{}, nil
 	}
 
 	now := datetime.NewCpsTime()
@@ -555,7 +560,7 @@ func (m *manager) HandleComponent(ctx context.Context, event *types.Event, commR
 	if component.Connector != connectorID && !connectorExist {
 		component.Connector = connectorID
 
-		commRegister.RegisterUpdate(componentID, bson.M{"connector": connectorID})
+		commRegister.RegisterUpdate(componentID, bson.M{"connector": connectorID, "last_event_date": now})
 		commRegister.RegisterInsert(&types.Entity{
 			ID:            connectorID,
 			Name:          connectorName,
@@ -573,19 +578,16 @@ func (m *manager) HandleComponent(ctx context.Context, event *types.Event, commR
 		report.CheckConnector = true
 	} else {
 		commRegister.RegisterUpdate(connectorID, bson.M{"last_event_date": now})
+		commRegister.RegisterUpdate(componentID, bson.M{"last_event_date": now})
 	}
 
-	commRegister.RegisterUpdate(componentID, bson.M{"last_event_date": now})
 	component.LastEventDate = &now
-
 	event.Entity = component
 
 	return report, nil
 }
 
 func (m *manager) HandleService(ctx context.Context, event *types.Event, commRegister libmongo.CommandsRegister) (Report, error) {
-	var report Report
-
 	var service *types.Entity
 	var err error
 
@@ -593,15 +595,15 @@ func (m *manager) HandleService(ctx context.Context, event *types.Event, commReg
 
 	service, err = m.getEntity(ctx, serviceID)
 	if err != nil {
-		return report, err
+		return Report{}, err
 	}
 
 	if service == nil {
-		return report, fmt.Errorf("service %s doesn't exist", serviceID)
+		return Report{}, fmt.Errorf("service %s doesn't exist", serviceID)
 	} else if service.SoftDeleted != nil {
 		event.Entity = service
 
-		return report, nil
+		return Report{}, nil
 	}
 
 	now := datetime.NewCpsTime()
@@ -609,7 +611,7 @@ func (m *manager) HandleService(ctx context.Context, event *types.Event, commReg
 	service.LastEventDate = &now
 	event.Entity = service
 
-	return report, nil
+	return Report{}, nil
 }
 
 func (m *manager) HandleConnector(ctx context.Context, event *types.Event, commRegister libmongo.CommandsRegister) (Report, error) {
