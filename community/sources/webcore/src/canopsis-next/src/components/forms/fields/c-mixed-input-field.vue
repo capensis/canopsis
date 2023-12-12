@@ -148,6 +148,7 @@ export default {
             name: this.name,
             values: this.value,
             disabled: this.disabled,
+            errorMessages: this.errorMessages,
           },
           on: {
             change: this.updateModel,

@@ -2450,6 +2450,8 @@ definitions:
         type: string
       template:
         type: string
+      template:
+        type: string
     type: object
   exportconfiguration.Request:
     properties:

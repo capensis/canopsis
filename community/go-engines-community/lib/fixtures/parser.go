@@ -248,7 +248,6 @@ func (p *parser) processMethod(val string, fieldVal interface{}, index int, rang
 	default:
 		newVal, err := callReflectMethod(p.reflectFaker, method, args)
 		if err != nil {
-
 			return nil, fmt.Errorf("cannot call faker method: %w", err)
 		}
 

@@ -624,7 +624,7 @@ func BenchmarkMatchEntityPattern_UnmarshalBson_Infos_Regexp(b *testing.B) {
 }
 
 func benchmarkMatchEntityPattern(b *testing.B, fieldCond pattern.FieldCondition, entity *types.Entity) {
-	const size = 1
+	const size = 100
 	p := make(pattern.Entity, size)
 	for i := 0; i < size; i++ {
 		p[i] = []pattern.FieldCondition{fieldCond}

@@ -45,13 +45,13 @@ func getAlarmPatternGroupMongoQueries(p pattern.Alarm, prefix string) ([]bson.M,
 
 				switch cond.FieldType {
 				case pattern.FieldTypeString:
-					condQueries[j], err = cond.Condition.StringToMongoQuery(mongoField)
+					condQueries[j], err = cond.Condition.StringToMongoQuery(mongoField, true)
 				case pattern.FieldTypeInt:
-					condQueries[j], err = cond.Condition.IntToMongoQuery(mongoField)
+					condQueries[j], err = cond.Condition.IntToMongoQuery(mongoField, true)
 				case pattern.FieldTypeBool:
 					condQueries[j], err = cond.Condition.BoolToMongoQuery(mongoField)
 				case pattern.FieldTypeStringArray:
-					condQueries[j], err = cond.Condition.StringArrayToMongoQuery(mongoField)
+					condQueries[j], err = cond.Condition.StringArrayToMongoQuery(mongoField, true)
 				case "":
 					condQueries[j], err = cond.Condition.RefToMongoQuery(mongoField)
 				default:
@@ -61,13 +61,6 @@ func getAlarmPatternGroupMongoQueries(p pattern.Alarm, prefix string) ([]bson.M,
 					return nil, fmt.Errorf("invalid condition for %q field: %w", cond.Field, err)
 				}
 
-				conds := getTypeMongoQuery(mongoField, cond.FieldType)
-
-				if len(conds) > 0 {
-					conds = append(conds, condQueries[j])
-					condQueries[j] = bson.M{"$and": conds}
-				}
-
 				continue
 			}
 
@@ -75,12 +68,12 @@ func getAlarmPatternGroupMongoQueries(p pattern.Alarm, prefix string) ([]bson.M,
 			foundField := false
 			if _, ok := emptyAlarm.GetStringField(cond.Field); ok {
 				foundField = true
-				condQueries[j], err = cond.Condition.StringToMongoQuery(mongoField)
+				condQueries[j], err = cond.Condition.StringToMongoQuery(mongoField, false)
 			}
 			if !foundField || err != nil {
 				if _, ok := emptyAlarm.GetIntField(cond.Field); ok {
 					foundField = true
-					condQueries[j], err = cond.Condition.IntToMongoQuery(mongoField)
+					condQueries[j], err = cond.Condition.IntToMongoQuery(mongoField, false)
 				}
 			}
 			if !foundField || err != nil {
@@ -104,7 +97,7 @@ func getAlarmPatternGroupMongoQueries(p pattern.Alarm, prefix string) ([]bson.M,
 			if !foundField || err != nil {
 				if _, ok := emptyAlarm.GetStringArrayField(cond.Field); ok {
 					foundField = true
-					condQueries[j], err = cond.Condition.StringArrayToMongoQuery(mongoField)
+					condQueries[j], err = cond.Condition.StringArrayToMongoQuery(mongoField, false)
 				}
 			}
 

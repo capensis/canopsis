@@ -22,7 +22,8 @@
           :widget="item.widget",
           :tab="tab",
           :kiosk="kiosk",
-          :editing="editing"
+          :editing="editing",
+          :visible="visible"
         )
 </template>
 
@@ -60,6 +61,10 @@ export default {
       required: true,
     },
     kiosk: {
+      type: Boolean,
+      default: false,
+    },
+    visible: {
       type: Boolean,
       default: false,
     },
@@ -118,6 +123,8 @@ export default {
         await this.updateWidgetGridPositions({ data: newWidgetsGrid });
         await this.fetchActiveView();
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: this.$t('errors.default') });
       }
     },

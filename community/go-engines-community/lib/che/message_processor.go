@@ -190,7 +190,7 @@ func (p *messageProcessor) postProcessUpdatedEntities(
 		}
 	}
 
-	p.MetaUpdater.UpdateById(context.Background(), updatedEntityIdsForMetrics...)
+	p.MetaUpdater.UpdateById(ctx, updatedEntityIdsForMetrics...)
 }
 
 func (p *messageProcessor) logError(err error, errMsg string, msg []byte) {

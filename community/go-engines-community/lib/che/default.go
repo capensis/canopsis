@@ -2,6 +2,7 @@ package che
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -74,7 +75,7 @@ func NewEngine(
 	))
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(
 		externalDataContainer,
-		eventfilter.NewActionProcessor(eventFilterFailureService, templateExecutor, techMetricsSender),
+		eventfilter.NewActionProcessor(alarmConfigProvider, eventFilterFailureService, templateExecutor, techMetricsSender),
 		eventFilterFailureService,
 	))
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeDrop, eventfilter.NewDropApplicator())
@@ -129,7 +130,7 @@ func NewEngine(
 				})
 			if err != nil {
 				// Lock is set for options.PeriodicalWaitTime TTL, other instances should skip actions below
-				if err == redislock.ErrNotObtained {
+				if errors.Is(err, redislock.ErrNotObtained) {
 					return nil
 				}
 
@@ -204,7 +205,7 @@ func NewEngine(
 		Decoder:                  json.NewDecoder(),
 		Logger:                   logger,
 	}
-	engine.AddConsumer(libengine.NewDefaultConsumer(
+	engine.AddConsumer(libengine.NewConcurrentConsumer(
 		canopsis.CheConsumerName,
 		options.ConsumeFromQueue,
 		cfg.Global.PrefetchCount,
@@ -214,6 +215,7 @@ func NewEngine(
 		options.PublishToQueue,
 		options.FifoAckExchange,
 		canopsis.FIFOAckQueueName,
+		options.Workers,
 		amqpConnection,
 		mainMessageProcessor,
 		logger,

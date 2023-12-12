@@ -87,8 +87,9 @@
             :key="props.item._id",
             :selectable="selectable",
             :expandable="expandable",
-            :row="props",
             :widget="widget",
+            :expanded="props.expanded",
+            :alarm="props.item",
             :headers="headers",
             :parent-alarm="parentAlarm",
             :refresh-alarms-list="refreshAlarmsList",
@@ -101,7 +102,8 @@
             :wrap-actions="resizableColumn",
             :show-instruction-icon="hasInstructionsAlarms",
             @start:resize="startColumnResize",
-            @select:tag="$emit('select:tag', $event)"
+            @select:tag="$emit('select:tag', $event)",
+            @expand="props.expanded = $event"
           )
         template(#expand="{ item, index }")
           alarms-expand-panel(
@@ -690,8 +692,17 @@ export default {
   }
 
   &--truncated {
+    .color-indicator {
+      max-width: 100%;
+    }
+
+    .alarms-column-cell__layout .alarm-column-cell__text {
+      display: grid;
+    }
+
     .alarm-list-row__cell {
-      .alarm-column-cell__text > span {
+      .alarm-column-cell__text > span,
+      .alarm-column-value {
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;

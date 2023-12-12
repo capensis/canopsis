@@ -245,7 +245,7 @@ export default {
         name: this.templateModalName,
         config: {
           ...this.templateModalConfig,
-          template: this.withSimpleTemplate ? '' : DEFAULT_COLUMN_TEMPLATE_VALUE,
+          text: this.withSimpleTemplate ? '' : DEFAULT_COLUMN_TEMPLATE_VALUE,
           action: value => this.updateModelByTemplate(checked, value),
         },
       });

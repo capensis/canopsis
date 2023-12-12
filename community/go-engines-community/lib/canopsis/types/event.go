@@ -259,7 +259,7 @@ func (e *Event) InjectExtraInfos(source []byte) error {
 			delete(unmatchedParams, jsonKey)
 		}
 	} else {
-		return fmt.Errorf("Event.InjectExtraInfos json decode: %v", err)
+		return fmt.Errorf("Event.InjectExtraInfos json decode: %w", err)
 	}
 	if e.ExtraInfos == nil {
 		e.ExtraInfos = make(map[string]interface{})

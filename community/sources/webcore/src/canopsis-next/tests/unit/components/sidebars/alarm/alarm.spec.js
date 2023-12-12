@@ -174,6 +174,17 @@ describe('alarm', () => {
     tab: Faker.datatype.string(),
   };
 
+  widget.parameters.usedAlarmProperties = [
+    'v.connector',
+    'v.connector_name',
+    'v.component',
+    'v.resource',
+    'v.output',
+    'extra_details',
+    'v.state.val',
+    'v.status.val',
+  ];
+
   const sidebar = {
     name: SIDE_BARS.alarmSettings,
     config: {
@@ -411,7 +422,15 @@ describe('alarm', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'widgetColumns', formToWidgetColumns(columns)),
+        data: getWidgetRequestWithNewProperty(
+          widget,
+          'parameters',
+          {
+            ...widget.parameters,
+            widgetColumns: formToWidgetColumns(columns),
+            usedAlarmProperties: [''],
+          },
+        ),
       },
     });
   });
@@ -446,7 +465,15 @@ describe('alarm', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'widgetColumns', formToWidgetColumns(columns)),
+        data: getWidgetRequestWithNewProperty(
+          widget,
+          'parameters',
+          {
+            ...widget.parameters,
+            widgetColumns: formToWidgetColumns(columns),
+            usedAlarmProperties: [''],
+          },
+        ),
       },
     });
   });

@@ -2487,7 +2487,7 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				in.Delim('}')
 			}
-		case "RuleVersion":
+		case "infos_rule_version":
 			if in.IsNull() {
 				in.Skip()
 			} else {
@@ -2860,7 +2860,7 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		}
 	}
 	{
-		const prefix string = ",\"RuleVersion\":"
+		const prefix string = ",\"infos_rule_version\":"
 		out.RawString(prefix)
 		if in.RuleVersion == nil && (out.Flags&jwriter.NilMapAsEmpty) == 0 {
 			out.RawString(`null`)

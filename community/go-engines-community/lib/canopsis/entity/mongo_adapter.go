@@ -66,7 +66,7 @@ func (a *mongoAdapter) getEntityByID(ctx context.Context, id string) (types.Enti
 
 	res := a.dbCollection.FindOne(ctx, bson.M{"_id": id})
 	if err := res.Err(); err != nil {
-		if err == mongodriver.ErrNoDocuments {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return ent, ErrNotFound
 		}
 
@@ -137,7 +137,9 @@ func (a *mongoAdapter) UpsertMany(ctx context.Context, entities []types.Entity) 
 
 	upsertedIDs := make(map[string]bool, len(res.UpsertedIDs))
 	for _, v := range res.UpsertedIDs {
-		upsertedIDs[v.(string)] = true
+		if s, ok := v.(string); ok {
+			upsertedIDs[s] = true
+		}
 	}
 	// Update only enabled entities.
 	updateModels := make([]mongodriver.WriteModel, 0)
@@ -204,7 +206,7 @@ func (a *mongoAdapter) UpdateComponentInfos(ctx context.Context, id, componentID
 		options.FindOne().SetProjection(bson.M{"infos": 1}),
 	)
 	if err := res.Err(); err != nil {
-		if err == mongodriver.ErrNoDocuments {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return nil, nil
 		}
 		return nil, err

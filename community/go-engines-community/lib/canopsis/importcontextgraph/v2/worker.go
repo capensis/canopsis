@@ -234,7 +234,7 @@ func (w *worker) parseFile(ctx context.Context, filename, source string, withEve
 
 	t, err := decoder.Token()
 	if err != nil {
-		if err == io.EOF {
+		if errors.Is(err, io.EOF) {
 			return res, nil
 		}
 
@@ -531,11 +531,11 @@ func (w *worker) parseEntities(
 			var oldEntity types.Entity
 			updatedIds = append(updatedIds, componentName)
 			err := w.entityCollection.FindOne(ctx, bson.M{"_id": componentName, "soft_deleted": bson.M{"$exists": false}}).Decode(&oldEntity)
-			if err != nil && err != mongo.ErrNoDocuments {
+			if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
 				return res, err
 			}
 
-			if err == mongo.ErrNoDocuments {
+			if errors.Is(err, mongo.ErrNoDocuments) {
 				ci := importcontextgraph.EntityConfiguration{
 					ID:           componentName,
 					Name:         componentName,

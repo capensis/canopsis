@@ -400,11 +400,6 @@ func (a *Alarm) SetMetaValuePath(path string) {
 	a.AddUpdate("$set", bson.M{"v.meta_value_path": path})
 }
 
-func (a *Alarm) Activate() {
-	now := datetime.NewCpsTime()
-	a.Value.ActivationDate = &now
-}
-
 func (a *Alarm) IsActivated() bool {
 	return a.Value.ActivationDate != nil
 }
@@ -452,10 +447,7 @@ func (a *Alarm) GetStringField(f string) (string, bool) {
 		}
 		return a.Value.LastComment.Message, true
 	case "v.last_comment.initiator":
-		if a.Value.LastComment == nil {
-			return "", true
-		}
-		return a.Value.LastComment.Initiator, true
+		return a.Value.LastComment.GetInitiator(), true
 	case "v.ticket.m":
 		if a.Value.Ticket == nil {
 			return "", true
@@ -469,11 +461,7 @@ func (a *Alarm) GetStringField(f string) (string, bool) {
 
 		return a.Value.Ticket.Ticket, true
 	case "v.ticket.initiator":
-		if a.Value.Ticket == nil {
-			return "", true
-		}
-
-		return a.Value.Ticket.Initiator, true
+		return a.Value.Ticket.GetInitiator(), true
 	case "v.ack.a":
 		if a.Value.ACK == nil {
 			return "", true
@@ -487,17 +475,9 @@ func (a *Alarm) GetStringField(f string) (string, bool) {
 
 		return a.Value.ACK.Message, true
 	case "v.ack.initiator":
-		if a.Value.ACK == nil {
-			return "", true
-		}
-
-		return a.Value.ACK.Initiator, true
+		return a.Value.ACK.GetInitiator(), true
 	case "v.canceled.initiator":
-		if a.Value.Canceled == nil {
-			return "", true
-		}
-
-		return a.Value.Canceled.Initiator, true
+		return a.Value.Canceled.GetInitiator(), true
 	default:
 		if n := strings.TrimPrefix(f, "v.ticket.ticket_data."); n != f {
 			if a.Value.Ticket == nil || a.Value.Ticket.TicketData == nil {
