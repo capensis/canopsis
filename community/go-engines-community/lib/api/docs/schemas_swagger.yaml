@@ -1517,6 +1517,40 @@ definitions:
       name:
         type: string
     type: object
+  entity.CheckStateSettingRequest:
+    properties:
+      _id:
+        type: string
+      category:
+        type: string
+      connector:
+        type: string
+      impact_level:
+        maximum: 10
+        minimum: 1
+        type: integer
+      infos:
+        items:
+          $ref: '#/definitions/entity.InfoRequest'
+        type: array
+      name:
+        maxLength: 255
+        type: string
+      type:
+        enum:
+        - component
+        - service
+        type: string
+    required:
+    - impact_level
+    - name
+    - type
+    type: object
+  entity.CheckStateSettingResponse:
+    properties:
+      title:
+        type: string
+    type: object
   entity.ContextGraphResponse:
     properties:
       depends:
@@ -1657,6 +1691,18 @@ definitions:
         type: string
       value: {}
     type: object
+  entity.InfoRequest:
+    properties:
+      description:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      value: {}
+    required:
+    - name
+    type: object
   entity.Infos:
     additionalProperties:
       $ref: '#/definitions/entity.Info'
@@ -1709,7 +1755,7 @@ definitions:
         type: integer
       infos:
         items:
-          $ref: '#/definitions/entitybasic.InfoRequest'
+          $ref: '#/definitions/entity.InfoRequest'
         type: array
       sli_avail_state:
         maximum: 3
@@ -1808,18 +1854,6 @@ definitions:
       type:
         type: string
     type: object
-  entitybasic.InfoRequest:
-    properties:
-      description:
-        maxLength: 255
-        type: string
-      name:
-        maxLength: 255
-        type: string
-      value: {}
-    required:
-    - name
-    type: object
   entitycategory.Category:
     properties:
       _id:
@@ -1877,7 +1911,7 @@ definitions:
         type: integer
       infos:
         items:
-          $ref: '#/definitions/entitybasic.InfoRequest'
+          $ref: '#/definitions/entity.InfoRequest'
         type: array
       name:
         maxLength: 255
@@ -1921,7 +1955,7 @@ definitions:
         type: integer
       infos:
         items:
-          $ref: '#/definitions/entitybasic.InfoRequest'
+          $ref: '#/definitions/entity.InfoRequest'
         type: array
       name:
         maxLength: 255
@@ -2050,7 +2084,7 @@ definitions:
         type: integer
       infos:
         items:
-          $ref: '#/definitions/entitybasic.InfoRequest'
+          $ref: '#/definitions/entity.InfoRequest'
         type: array
       name:
         maxLength: 255
@@ -2405,6 +2439,8 @@ definitions:
       label:
         type: string
       name:
+        type: string
+      template:
         type: string
       template:
         type: string
@@ -4916,43 +4952,45 @@ definitions:
       value:
         type: string
     type: object
-  statesettings.JUnitThresholds:
+  statesettings.EditRequest:
     properties:
-      errors:
-        $ref: '#/definitions/statesettings.StateThresholds'
-      failures:
-        $ref: '#/definitions/statesettings.StateThresholds'
-      skipped:
-        $ref: '#/definitions/statesettings.StateThresholds'
-    required:
-    - errors
-    - failures
-    - skipped
-    type: object
-  statesettings.StateSetting:
-    properties:
-      _id:
-        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      inherited_entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
       junit_thresholds:
         $ref: '#/definitions/statesettings.JUnitThresholds'
+        description: JUnit state setting only field
       method:
+        description: |-
+          Possible method values.
+            * `worst` - take worst state.
+            * `worst_of_share` - take worst of share defined in junit_thresholds.
+            * `inherited` - take worst of subset of dependencies defined by pattern in inherited_entity_pattern.
+            * `dependencies` - calculate state by rules defined in state_thresholds.
         type: string
-      type:
-        type: string
-    type: object
-  statesettings.StateSettingRequest:
-    properties:
-      junit_thresholds:
-        $ref: '#/definitions/statesettings.JUnitThresholds'
-      method:
-        type: string
-      type:
+      priority:
+        minimum: 0
+        type: integer
+      state_thresholds:
+        $ref: '#/definitions/statesettings.StateThresholds'
+      title:
+        description: Service and component state setting only fields
         type: string
     required:
     - method
-    - type
     type: object
-  statesettings.StateThresholds:
+  statesettings.JUnitThreshold:
     properties:
       critical:
         maximum: 100
@@ -4973,6 +5011,110 @@ definitions:
     - major
     - minor
     - type
+    type: object
+  statesettings.JUnitThresholds:
+    properties:
+      errors:
+        $ref: '#/definitions/statesettings.JUnitThreshold'
+      failures:
+        $ref: '#/definitions/statesettings.JUnitThreshold'
+      skipped:
+        $ref: '#/definitions/statesettings.JUnitThreshold'
+    required:
+    - errors
+    - failures
+    - skipped
+    type: object
+  statesettings.Response:
+    properties:
+      _id:
+        type: string
+      deletable:
+        type: boolean
+      editable:
+        type: boolean
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      inherited_entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      junit_thresholds:
+        $ref: '#/definitions/statesettings.JUnitThresholds'
+        description: JUnit state setting only field
+      method:
+        description: |-
+          Possible method values.
+            * `worst` - take worst state.
+            * `worst_of_share` - take worst of share defined in junit_thresholds.
+            * `inherited` - take worst of subset of dependencies defined by pattern in inherited_entity_pattern.
+            * `dependencies` - calculate state by rules defined in state_thresholds.
+        type: string
+      priority:
+        minimum: 0
+        type: integer
+      state_thresholds:
+        $ref: '#/definitions/statesettings.StateThresholds'
+      title:
+        description: Service and component state setting only fields
+        type: string
+    required:
+    - method
+    type: object
+  statesettings.StateThreshold:
+    properties:
+      cond:
+        description: |-
+          Possible cond values.
+            * `gt` - greater than.
+            * `lt` - less than.
+        enum:
+        - gt
+        - lt
+        type: string
+      method:
+        description: |-
+          Possible method values.
+            * `number` - calculate by number of entities.
+            * `share` - calculate by share of entities.
+        enum:
+        - number
+        - share
+        type: string
+      state:
+        description: |-
+          Possible state values.
+            * `critical` - calculate critical state.
+            * `major` - calculate major state.
+            * `minor` - calculate minor state.
+            * `ok` - calculate ok state.
+        enum:
+        - critical
+        - major
+        - minor
+        - ok
+        type: string
+      value:
+        type: integer
+    type: object
+  statesettings.StateThresholds:
+    properties:
+      critical:
+        $ref: '#/definitions/statesettings.StateThreshold'
+      major:
+        $ref: '#/definitions/statesettings.StateThreshold'
+      minor:
+        $ref: '#/definitions/statesettings.StateThreshold'
+      ok:
+        $ref: '#/definitions/statesettings.StateThreshold'
     type: object
   statistics.EventStatistics:
     properties:

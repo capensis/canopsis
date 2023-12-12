@@ -3,7 +3,6 @@ package entityservice
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitybasic"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -46,14 +45,14 @@ type ContextGraphRequest struct {
 }
 
 type EditRequest struct {
-	ID             string                    `json:"-"`
-	Name           string                    `json:"name" binding:"required,max=255"`
-	Enabled        *bool                     `json:"enabled" binding:"required"`
-	OutputTemplate string                    `json:"output_template" binding:"required,max=500"`
-	Category       string                    `json:"category"`
-	ImpactLevel    int64                     `json:"impact_level" binding:"required,min=1,max=10"`
-	Infos          []entitybasic.InfoRequest `json:"infos" binding:"dive"`
-	SliAvailState  *int64                    `json:"sli_avail_state" binding:"required,min=0,max=3"`
+	ID             string               `json:"-"`
+	Name           string               `json:"name" binding:"required,max=255"`
+	Enabled        *bool                `json:"enabled" binding:"required"`
+	OutputTemplate string               `json:"output_template" binding:"required,max=500"`
+	Category       string               `json:"category"`
+	ImpactLevel    int64                `json:"impact_level" binding:"required,min=1,max=10"`
+	Infos          []entity.InfoRequest `json:"infos" binding:"dive"`
+	SliAvailState  *int64               `json:"sli_avail_state" binding:"required,min=0,max=3"`
 
 	Coordinates *types.Coordinates `json:"coordinates"`
 
