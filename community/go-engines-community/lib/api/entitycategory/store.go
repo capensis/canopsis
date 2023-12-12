@@ -2,6 +2,7 @@ package entitycategory
 
 import (
 	"context"
+	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -154,7 +155,7 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	entityCollection := s.dbClient.Collection(mongo.EntityMongoCollection)
 	res := entityCollection.FindOne(ctx, bson.M{"category": id, "soft_deleted": bson.M{"$exists": false}})
 	if err := res.Err(); err != nil {
-		if err != mongodriver.ErrNoDocuments {
+		if !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return false, err
 		}
 	} else {

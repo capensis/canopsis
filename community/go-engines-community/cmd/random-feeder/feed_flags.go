@@ -6,7 +6,7 @@ import (
 	cps "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 )
 
-func (f *Flags) ParseArgs() error {
+func (f *Flags) ParseArgs() {
 	flagEventsPerSec := flag.Int("opersec", int(500), "events per second")
 	flagNewResourcesPerSec := flag.Int("npersec", int(5), "new resources per second")
 	flagDumpFile := flag.String("dumpfile", "", "file with dump")
@@ -24,8 +24,6 @@ func (f *Flags) ParseArgs() error {
 	f.FeederTime = *flagFeederTime
 	f.ExchangeName = *flagExchange
 	f.Version = *version
-
-	return nil
 }
 
 type Flags struct {

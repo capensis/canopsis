@@ -193,7 +193,7 @@ func TestService_ListenScenarioFinish(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
-			ctx, cancel := context.WithCancel(context.Background())
+			ctx, cancel := context.WithCancel(timerCtx)
 			defer cancel()
 
 			scenarioExecChan := make(chan action.ExecuteScenariosTask)
@@ -265,7 +265,6 @@ func TestService_ListenScenarioFinish(t *testing.T) {
 				for _, info := range dataset.scenarioInfos {
 					select {
 					case <-ctx.Done():
-					case <-timerCtx.Done():
 					case scenarioInfoChannel <- info:
 					}
 				}

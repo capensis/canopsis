@@ -2,6 +2,7 @@ package db
 
 import (
 	"fmt"
+	"slices"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -27,17 +28,16 @@ func PbehaviorInfoPatternToMongoQuery(p pattern.PbehaviorInfo, prefix string) (b
 			mongoField := prefix + fieldCond.Field
 			cond := fieldCond.Condition
 
+			var ok bool
 			if fieldCond.Field == "pbehavior_info.canonical_type" {
-				var ok bool
-
 				condQueries[j], ok = canonicalTypeToMongoQuery(cond, mongoField)
 				if ok {
 					continue
 				}
 			}
 
-			if _, ok := emptyPbhInfo.GetStringField(fieldCond.Field); ok {
-				condQueries[j], err = cond.StringToMongoQuery(mongoField)
+			if _, ok = emptyPbhInfo.GetStringField(fieldCond.Field); ok {
+				condQueries[j], err = cond.StringToMongoQuery(mongoField, false)
 			} else {
 				err = pattern.ErrUnsupportedField
 			}
@@ -69,15 +69,7 @@ func canonicalTypeToMongoQuery(c pattern.Condition, f string) (bson.M, bool) {
 	case pattern.ConditionIsOneOf:
 		valueStrArray := c.GetValueStrArray()
 
-		found := false
-		for _, item := range valueStrArray {
-			if item == types.PbhCanonicalTypeActive {
-				found = true
-				break
-			}
-		}
-
-		if found {
+		if slices.Contains(valueStrArray, types.PbhCanonicalTypeActive) {
 			values := make([]interface{}, len(valueStrArray)+1)
 			for k, s := range valueStrArray {
 				values[k] = s
@@ -89,15 +81,7 @@ func canonicalTypeToMongoQuery(c pattern.Condition, f string) (bson.M, bool) {
 	case pattern.ConditionIsNotOneOf:
 		valueStrArray := c.GetValueStrArray()
 
-		found := false
-		for _, item := range valueStrArray {
-			if item == types.PbhCanonicalTypeActive {
-				found = true
-				break
-			}
-		}
-
-		if found {
+		if slices.Contains(valueStrArray, types.PbhCanonicalTypeActive) {
 			values := make([]interface{}, len(valueStrArray)+1)
 			for k, s := range valueStrArray {
 				values[k] = s

@@ -31,6 +31,7 @@ type Options struct {
 	FrameDuration            int
 	PeriodicalWaitTime       time.Duration
 	ComputeRruleEnd          bool
+	Workers                  int
 }
 
 type DependencyMaker struct {
@@ -159,6 +160,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		"",
 		"",
 		"",
+		options.Workers,
 		amqpConnection,
 		&recomputeMessageProcessor{
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,

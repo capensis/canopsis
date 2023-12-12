@@ -54,7 +54,7 @@ func regexp2MatchTimeout() time.Duration {
 func NewRegexExpression(expr string) (RegexExpression, error) {
 	if re, err := regexp.Compile(expr); err != nil {
 		if re2, err := regexp2.Compile(expr, regexp2.RE2); err != nil {
-			return nil, fmt.Errorf("unable to parse regex: %v", err)
+			return nil, fmt.Errorf("unable to parse regex: %w", err)
 		} else {
 			re2.MatchTimeout = regexp2MatchTimeout()
 			return WrapperRegex2{re2}, nil
