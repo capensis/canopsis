@@ -1,9 +1,13 @@
 package viewtab
 
-type ValidationErr struct {
-	error error
+type ValidationError struct {
+	err error
 }
 
-func (v ValidationErr) Error() string {
-	return v.error.Error()
+func (v ValidationError) Error() string {
+	return v.err.Error()
+}
+
+func (v ValidationError) Unwrap() error {
+	return v.err
 }

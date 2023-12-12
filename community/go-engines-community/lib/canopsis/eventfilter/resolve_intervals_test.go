@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"github.com/teambition/rrule-go"
 )
 
@@ -13,31 +13,31 @@ func TestUpdateIntervals(t *testing.T) {
 		ef                        Rule
 		rrule                     string
 		now                       time.Time
-		expectedResolvedStart     types.CpsTime
-		expectedResolvedStop      types.CpsTime
-		expectedNextResolvedStart *types.CpsTime
-		expectedNextResolvedStop  *types.CpsTime
+		expectedResolvedStart     datetime.CpsTime
+		expectedResolvedStop      datetime.CpsTime
+		expectedNextResolvedStart *datetime.CpsTime
+		expectedNextResolvedStop  *datetime.CpsTime
 	}{
 		"simple case, before the interval, shouldn't be updated": {
 			ef: Rule{
-				Start:             &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-				Stop:              &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-				ResolvedStart:     &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-				ResolvedStop:      &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-				NextResolvedStart: &types.CpsTime{Time: time.Date(2022, 1, 8, 0, 0, 0, 0, time.UTC)},
-				NextResolvedStop:  &types.CpsTime{Time: time.Date(2022, 1, 9, 0, 0, 0, 0, time.UTC)},
+				Start:             &datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+				Stop:              &datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+				ResolvedStart:     &datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+				ResolvedStop:      &datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+				NextResolvedStart: &datetime.CpsTime{Time: time.Date(2022, 1, 8, 0, 0, 0, 0, time.UTC)},
+				NextResolvedStop:  &datetime.CpsTime{Time: time.Date(2022, 1, 9, 0, 0, 0, 0, time.UTC)},
 			},
 			rrule:                     "FREQ=DAILY;INTERVAL=7",
 			now:                       time.Date(2021, 12, 31, 0, 0, 0, 0, time.UTC),
-			expectedResolvedStart:     types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-			expectedResolvedStop:      types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-			expectedNextResolvedStart: &types.CpsTime{Time: time.Date(2022, 1, 8, 0, 0, 0, 0, time.UTC)},
-			expectedNextResolvedStop:  &types.CpsTime{Time: time.Date(2022, 1, 9, 0, 0, 0, 0, time.UTC)},
+			expectedResolvedStart:     datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+			expectedResolvedStop:      datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+			expectedNextResolvedStart: &datetime.CpsTime{Time: time.Date(2022, 1, 8, 0, 0, 0, 0, time.UTC)},
+			expectedNextResolvedStop:  &datetime.CpsTime{Time: time.Date(2022, 1, 9, 0, 0, 0, 0, time.UTC)},
 		},
 		"the case, where resolved start and resolved stop is nil, should be updated": {
 			ef: Rule{
-				Start:             &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-				Stop:              &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+				Start:             &datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+				Stop:              &datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
 				ResolvedStart:     nil,
 				ResolvedStop:      nil,
 				NextResolvedStart: nil,
@@ -45,226 +45,227 @@ func TestUpdateIntervals(t *testing.T) {
 			},
 			rrule:                     "FREQ=DAILY;INTERVAL=7",
 			now:                       time.Date(2021, 12, 31, 0, 0, 0, 0, time.UTC),
-			expectedResolvedStart:     types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-			expectedResolvedStop:      types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-			expectedNextResolvedStart: &types.CpsTime{Time: time.Date(2022, 1, 8, 0, 0, 0, 0, time.UTC)},
-			expectedNextResolvedStop:  &types.CpsTime{Time: time.Date(2022, 1, 9, 0, 0, 0, 0, time.UTC)},
+			expectedResolvedStart:     datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+			expectedResolvedStop:      datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+			expectedNextResolvedStart: &datetime.CpsTime{Time: time.Date(2022, 1, 8, 0, 0, 0, 0, time.UTC)},
+			expectedNextResolvedStop:  &datetime.CpsTime{Time: time.Date(2022, 1, 9, 0, 0, 0, 0, time.UTC)},
 		},
 		"simple case, in the beginning of the interval, shouldn't be updated": {
 			ef: Rule{
-				Start:             &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-				Stop:              &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-				ResolvedStart:     &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-				ResolvedStop:      &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-				NextResolvedStart: &types.CpsTime{Time: time.Date(2022, 1, 8, 0, 0, 0, 0, time.UTC)},
-				NextResolvedStop:  &types.CpsTime{Time: time.Date(2022, 1, 9, 0, 0, 0, 0, time.UTC)},
+				Start:             &datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+				Stop:              &datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+				ResolvedStart:     &datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+				ResolvedStop:      &datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+				NextResolvedStart: &datetime.CpsTime{Time: time.Date(2022, 1, 8, 0, 0, 0, 0, time.UTC)},
+				NextResolvedStop:  &datetime.CpsTime{Time: time.Date(2022, 1, 9, 0, 0, 0, 0, time.UTC)},
 			},
 			rrule:                     "FREQ=DAILY;INTERVAL=7",
 			now:                       time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC),
-			expectedResolvedStart:     types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-			expectedResolvedStop:      types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-			expectedNextResolvedStart: &types.CpsTime{Time: time.Date(2022, 1, 8, 0, 0, 0, 0, time.UTC)},
-			expectedNextResolvedStop:  &types.CpsTime{Time: time.Date(2022, 1, 9, 0, 0, 0, 0, time.UTC)},
+			expectedResolvedStart:     datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+			expectedResolvedStop:      datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+			expectedNextResolvedStart: &datetime.CpsTime{Time: time.Date(2022, 1, 8, 0, 0, 0, 0, time.UTC)},
+			expectedNextResolvedStop:  &datetime.CpsTime{Time: time.Date(2022, 1, 9, 0, 0, 0, 0, time.UTC)},
 		},
 		"simple case, in the middle of the interval, shouldn't be updated": {
 			ef: Rule{
-				Start:             &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-				Stop:              &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-				ResolvedStart:     &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-				ResolvedStop:      &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-				NextResolvedStart: &types.CpsTime{Time: time.Date(2022, 1, 8, 0, 0, 0, 0, time.UTC)},
-				NextResolvedStop:  &types.CpsTime{Time: time.Date(2022, 1, 9, 0, 0, 0, 0, time.UTC)},
+				Start:             &datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+				Stop:              &datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+				ResolvedStart:     &datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+				ResolvedStop:      &datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+				NextResolvedStart: &datetime.CpsTime{Time: time.Date(2022, 1, 8, 0, 0, 0, 0, time.UTC)},
+				NextResolvedStop:  &datetime.CpsTime{Time: time.Date(2022, 1, 9, 0, 0, 0, 0, time.UTC)},
 			},
 			rrule:                     "FREQ=DAILY;INTERVAL=7",
 			now:                       time.Date(2022, 1, 1, 12, 0, 0, 0, time.UTC),
-			expectedResolvedStart:     types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-			expectedResolvedStop:      types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-			expectedNextResolvedStart: &types.CpsTime{Time: time.Date(2022, 1, 8, 0, 0, 0, 0, time.UTC)},
-			expectedNextResolvedStop:  &types.CpsTime{Time: time.Date(2022, 1, 9, 0, 0, 0, 0, time.UTC)},
+			expectedResolvedStart:     datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+			expectedResolvedStop:      datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+			expectedNextResolvedStart: &datetime.CpsTime{Time: time.Date(2022, 1, 8, 0, 0, 0, 0, time.UTC)},
+			expectedNextResolvedStop:  &datetime.CpsTime{Time: time.Date(2022, 1, 9, 0, 0, 0, 0, time.UTC)},
 		},
 		"simple case, after the interval, should be updated": {
 			ef: Rule{
-				Start:             &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-				Stop:              &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-				ResolvedStart:     &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-				ResolvedStop:      &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-				NextResolvedStart: &types.CpsTime{Time: time.Date(2022, 1, 8, 0, 0, 0, 0, time.UTC)},
-				NextResolvedStop:  &types.CpsTime{Time: time.Date(2022, 1, 9, 0, 0, 0, 0, time.UTC)},
+				Start:             &datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+				Stop:              &datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+				ResolvedStart:     &datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+				ResolvedStop:      &datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+				NextResolvedStart: &datetime.CpsTime{Time: time.Date(2022, 1, 8, 0, 0, 0, 0, time.UTC)},
+				NextResolvedStop:  &datetime.CpsTime{Time: time.Date(2022, 1, 9, 0, 0, 0, 0, time.UTC)},
 			},
 			rrule:                     "FREQ=DAILY;INTERVAL=7",
 			now:                       time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC),
-			expectedResolvedStart:     types.CpsTime{Time: time.Date(2022, 1, 8, 0, 0, 0, 0, time.UTC)},
-			expectedResolvedStop:      types.CpsTime{Time: time.Date(2022, 1, 9, 0, 0, 0, 0, time.UTC)},
-			expectedNextResolvedStart: &types.CpsTime{Time: time.Date(2022, 1, 15, 0, 0, 0, 0, time.UTC)},
-			expectedNextResolvedStop:  &types.CpsTime{Time: time.Date(2022, 1, 16, 0, 0, 0, 0, time.UTC)},
+			expectedResolvedStart:     datetime.CpsTime{Time: time.Date(2022, 1, 8, 0, 0, 0, 0, time.UTC)},
+			expectedResolvedStop:      datetime.CpsTime{Time: time.Date(2022, 1, 9, 0, 0, 0, 0, time.UTC)},
+			expectedNextResolvedStart: &datetime.CpsTime{Time: time.Date(2022, 1, 15, 0, 0, 0, 0, time.UTC)},
+			expectedNextResolvedStop:  &datetime.CpsTime{Time: time.Date(2022, 1, 16, 0, 0, 0, 0, time.UTC)},
 		},
 		"before the interval, but next interval is not calculated, should be updated": {
 			ef: Rule{
-				Start:         &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-				Stop:          &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-				ResolvedStart: &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-				ResolvedStop:  &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+				Start:         &datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+				Stop:          &datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+				ResolvedStart: &datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+				ResolvedStop:  &datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
 			},
 			rrule:                     "FREQ=DAILY;INTERVAL=7",
 			now:                       time.Date(2021, 12, 31, 0, 0, 0, 0, time.UTC),
-			expectedResolvedStart:     types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-			expectedResolvedStop:      types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-			expectedNextResolvedStart: &types.CpsTime{Time: time.Date(2022, 1, 8, 0, 0, 0, 0, time.UTC)},
-			expectedNextResolvedStop:  &types.CpsTime{Time: time.Date(2022, 1, 9, 0, 0, 0, 0, time.UTC)},
+			expectedResolvedStart:     datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+			expectedResolvedStop:      datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+			expectedNextResolvedStart: &datetime.CpsTime{Time: time.Date(2022, 1, 8, 0, 0, 0, 0, time.UTC)},
+			expectedNextResolvedStop:  &datetime.CpsTime{Time: time.Date(2022, 1, 9, 0, 0, 0, 0, time.UTC)},
 		},
 		"in the interval, but next interval is not calculated, should be updated": {
 			ef: Rule{
-				Start:         &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-				Stop:          &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-				ResolvedStart: &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-				ResolvedStop:  &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+				Start:         &datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+				Stop:          &datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+				ResolvedStart: &datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+				ResolvedStop:  &datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
 			},
 			rrule:                     "FREQ=DAILY;INTERVAL=7",
 			now:                       time.Date(2022, 1, 1, 12, 0, 0, 0, time.UTC),
-			expectedResolvedStart:     types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-			expectedResolvedStop:      types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-			expectedNextResolvedStart: &types.CpsTime{Time: time.Date(2022, 1, 8, 0, 0, 0, 0, time.UTC)},
-			expectedNextResolvedStop:  &types.CpsTime{Time: time.Date(2022, 1, 9, 0, 0, 0, 0, time.UTC)},
+			expectedResolvedStart:     datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+			expectedResolvedStop:      datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+			expectedNextResolvedStart: &datetime.CpsTime{Time: time.Date(2022, 1, 8, 0, 0, 0, 0, time.UTC)},
+			expectedNextResolvedStop:  &datetime.CpsTime{Time: time.Date(2022, 1, 9, 0, 0, 0, 0, time.UTC)},
 		},
 		"after the interval, but next interval is not calculated, should be updated": {
 			ef: Rule{
-				Start:         &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-				Stop:          &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-				ResolvedStart: &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-				ResolvedStop:  &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+				Start:         &datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+				Stop:          &datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+				ResolvedStart: &datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+				ResolvedStop:  &datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
 			},
 			rrule:                     "FREQ=DAILY;INTERVAL=7",
 			now:                       time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC),
-			expectedResolvedStart:     types.CpsTime{Time: time.Date(2022, 1, 8, 0, 0, 0, 0, time.UTC)},
-			expectedResolvedStop:      types.CpsTime{Time: time.Date(2022, 1, 9, 0, 0, 0, 0, time.UTC)},
-			expectedNextResolvedStart: &types.CpsTime{Time: time.Date(2022, 1, 15, 0, 0, 0, 0, time.UTC)},
-			expectedNextResolvedStop:  &types.CpsTime{Time: time.Date(2022, 1, 16, 0, 0, 0, 0, time.UTC)},
+			expectedResolvedStart:     datetime.CpsTime{Time: time.Date(2022, 1, 8, 0, 0, 0, 0, time.UTC)},
+			expectedResolvedStop:      datetime.CpsTime{Time: time.Date(2022, 1, 9, 0, 0, 0, 0, time.UTC)},
+			expectedNextResolvedStart: &datetime.CpsTime{Time: time.Date(2022, 1, 15, 0, 0, 0, 0, time.UTC)},
+			expectedNextResolvedStop:  &datetime.CpsTime{Time: time.Date(2022, 1, 16, 0, 0, 0, 0, time.UTC)},
 		},
 		"before the interval, but next interval is not calculated, cross intervals, should be updated": {
 			ef: Rule{
-				Start:         &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-				Stop:          &types.CpsTime{Time: time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC)},
-				ResolvedStart: &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-				ResolvedStop:  &types.CpsTime{Time: time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC)},
+				Start:         &datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+				Stop:          &datetime.CpsTime{Time: time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC)},
+				ResolvedStart: &datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+				ResolvedStop:  &datetime.CpsTime{Time: time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC)},
 			},
 			rrule:                     "FREQ=DAILY",
 			now:                       time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC),
-			expectedResolvedStart:     types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-			expectedResolvedStop:      types.CpsTime{Time: time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC)},
-			expectedNextResolvedStart: &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-			expectedNextResolvedStop:  &types.CpsTime{Time: time.Date(2022, 1, 4, 0, 0, 0, 0, time.UTC)},
+			expectedResolvedStart:     datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+			expectedResolvedStop:      datetime.CpsTime{Time: time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC)},
+			expectedNextResolvedStart: &datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+			expectedNextResolvedStop:  &datetime.CpsTime{Time: time.Date(2022, 1, 4, 0, 0, 0, 0, time.UTC)},
 		},
 		"in the interval, cross intervals, shouldn't be updated": {
 			ef: Rule{
-				Start:             &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-				Stop:              &types.CpsTime{Time: time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC)},
-				ResolvedStart:     &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-				ResolvedStop:      &types.CpsTime{Time: time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC)},
-				NextResolvedStart: &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-				NextResolvedStop:  &types.CpsTime{Time: time.Date(2022, 1, 4, 0, 0, 0, 0, time.UTC)},
+				Start:             &datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+				Stop:              &datetime.CpsTime{Time: time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC)},
+				ResolvedStart:     &datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+				ResolvedStop:      &datetime.CpsTime{Time: time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC)},
+				NextResolvedStart: &datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+				NextResolvedStop:  &datetime.CpsTime{Time: time.Date(2022, 1, 4, 0, 0, 0, 0, time.UTC)},
 			},
 			rrule:                     "FREQ=DAILY",
 			now:                       time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC),
-			expectedResolvedStart:     types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-			expectedResolvedStop:      types.CpsTime{Time: time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC)},
-			expectedNextResolvedStart: &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-			expectedNextResolvedStop:  &types.CpsTime{Time: time.Date(2022, 1, 4, 0, 0, 0, 0, time.UTC)},
+			expectedResolvedStart:     datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+			expectedResolvedStop:      datetime.CpsTime{Time: time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC)},
+			expectedNextResolvedStart: &datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+			expectedNextResolvedStop:  &datetime.CpsTime{Time: time.Date(2022, 1, 4, 0, 0, 0, 0, time.UTC)},
 		},
 		"after the interval, cross intervals, should be updated": {
 			ef: Rule{
-				Start:             &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-				Stop:              &types.CpsTime{Time: time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC)},
-				ResolvedStart:     &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-				ResolvedStop:      &types.CpsTime{Time: time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC)},
-				NextResolvedStart: &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-				NextResolvedStop:  &types.CpsTime{Time: time.Date(2022, 1, 4, 0, 0, 0, 0, time.UTC)},
+				Start:             &datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+				Stop:              &datetime.CpsTime{Time: time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC)},
+				ResolvedStart:     &datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+				ResolvedStop:      &datetime.CpsTime{Time: time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC)},
+				NextResolvedStart: &datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+				NextResolvedStop:  &datetime.CpsTime{Time: time.Date(2022, 1, 4, 0, 0, 0, 0, time.UTC)},
 			},
 			rrule:                     "FREQ=DAILY",
 			now:                       time.Date(2022, 1, 3, 0, 0, 0, 1, time.UTC),
-			expectedResolvedStart:     types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-			expectedResolvedStop:      types.CpsTime{Time: time.Date(2022, 1, 4, 0, 0, 0, 0, time.UTC)},
-			expectedNextResolvedStart: &types.CpsTime{Time: time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC)},
-			expectedNextResolvedStop:  &types.CpsTime{Time: time.Date(2022, 1, 5, 0, 0, 0, 0, time.UTC)},
+			expectedResolvedStart:     datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+			expectedResolvedStop:      datetime.CpsTime{Time: time.Date(2022, 1, 4, 0, 0, 0, 0, time.UTC)},
+			expectedNextResolvedStart: &datetime.CpsTime{Time: time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC)},
+			expectedNextResolvedStop:  &datetime.CpsTime{Time: time.Date(2022, 1, 5, 0, 0, 0, 0, time.UTC)},
 		},
 		"after the interval, with counts, next interval should be nil, because of exceeded count, should be updated": {
 			ef: Rule{
-				Start:             &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-				Stop:              &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-				ResolvedStart:     &types.CpsTime{Time: time.Date(2022, 1, 5, 0, 0, 0, 0, time.UTC)},
-				ResolvedStop:      &types.CpsTime{Time: time.Date(2022, 1, 6, 0, 0, 0, 0, time.UTC)},
-				NextResolvedStart: &types.CpsTime{Time: time.Date(2022, 1, 6, 0, 0, 0, 0, time.UTC)},
-				NextResolvedStop:  &types.CpsTime{Time: time.Date(2022, 1, 7, 0, 0, 0, 0, time.UTC)},
+				Start:             &datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+				Stop:              &datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+				ResolvedStart:     &datetime.CpsTime{Time: time.Date(2022, 1, 5, 0, 0, 0, 0, time.UTC)},
+				ResolvedStop:      &datetime.CpsTime{Time: time.Date(2022, 1, 6, 0, 0, 0, 0, time.UTC)},
+				NextResolvedStart: &datetime.CpsTime{Time: time.Date(2022, 1, 6, 0, 0, 0, 0, time.UTC)},
+				NextResolvedStop:  &datetime.CpsTime{Time: time.Date(2022, 1, 7, 0, 0, 0, 0, time.UTC)},
 			},
 			rrule:                     "FREQ=DAILY;COUNT=5",
 			now:                       time.Date(2022, 1, 6, 0, 0, 0, 1, time.UTC),
-			expectedResolvedStart:     types.CpsTime{Time: time.Date(2022, 1, 6, 0, 0, 0, 0, time.UTC)},
-			expectedResolvedStop:      types.CpsTime{Time: time.Date(2022, 1, 7, 0, 0, 0, 0, time.UTC)},
+			expectedResolvedStart:     datetime.CpsTime{Time: time.Date(2022, 1, 6, 0, 0, 0, 0, time.UTC)},
+			expectedResolvedStop:      datetime.CpsTime{Time: time.Date(2022, 1, 7, 0, 0, 0, 0, time.UTC)},
 			expectedNextResolvedStart: nil,
 			expectedNextResolvedStop:  nil,
 		},
 		"after the interval, with counts, next interval should be nil, because of exceeded count, shouldn't be updated": {
 			ef: Rule{
-				Start:             &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-				Stop:              &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-				ResolvedStart:     &types.CpsTime{Time: time.Date(2022, 1, 6, 0, 0, 0, 0, time.UTC)},
-				ResolvedStop:      &types.CpsTime{Time: time.Date(2022, 1, 7, 0, 0, 0, 0, time.UTC)},
+				Start:             &datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+				Stop:              &datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+				ResolvedStart:     &datetime.CpsTime{Time: time.Date(2022, 1, 6, 0, 0, 0, 0, time.UTC)},
+				ResolvedStop:      &datetime.CpsTime{Time: time.Date(2022, 1, 7, 0, 0, 0, 0, time.UTC)},
 				NextResolvedStart: nil,
 				NextResolvedStop:  nil,
 			},
 			rrule:                     "FREQ=DAILY;COUNT=5",
 			now:                       time.Date(2022, 1, 7, 0, 0, 0, 1, time.UTC),
-			expectedResolvedStart:     types.CpsTime{Time: time.Date(2022, 1, 6, 0, 0, 0, 0, time.UTC)},
-			expectedResolvedStop:      types.CpsTime{Time: time.Date(2022, 1, 7, 0, 0, 0, 0, time.UTC)},
+			expectedResolvedStart:     datetime.CpsTime{Time: time.Date(2022, 1, 6, 0, 0, 0, 0, time.UTC)},
+			expectedResolvedStop:      datetime.CpsTime{Time: time.Date(2022, 1, 7, 0, 0, 0, 0, time.UTC)},
 			expectedNextResolvedStart: nil,
 			expectedNextResolvedStop:  nil,
 		},
 		"after the interval, long cross intervals with counts, should be updated": {
 			ef: Rule{
-				Start:             &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-				Stop:              &types.CpsTime{Time: time.Date(2022, 1, 5, 0, 0, 0, 0, time.UTC)},
-				ResolvedStart:     &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-				ResolvedStop:      &types.CpsTime{Time: time.Date(2022, 1, 6, 0, 0, 0, 0, time.UTC)},
+				Start:             &datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+				Stop:              &datetime.CpsTime{Time: time.Date(2022, 1, 5, 0, 0, 0, 0, time.UTC)},
+				ResolvedStart:     &datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+				ResolvedStop:      &datetime.CpsTime{Time: time.Date(2022, 1, 6, 0, 0, 0, 0, time.UTC)},
 				NextResolvedStart: nil,
 				NextResolvedStop:  nil,
 			},
 			rrule:                     "FREQ=DAILY;COUNT=5",
 			now:                       time.Date(2022, 1, 7, 0, 0, 0, 1, time.UTC),
-			expectedResolvedStart:     types.CpsTime{Time: time.Date(2022, 1, 4, 0, 0, 0, 0, time.UTC)},
-			expectedResolvedStop:      types.CpsTime{Time: time.Date(2022, 1, 8, 0, 0, 0, 0, time.UTC)},
-			expectedNextResolvedStart: &types.CpsTime{Time: time.Date(2022, 1, 5, 0, 0, 0, 0, time.UTC)},
-			expectedNextResolvedStop:  &types.CpsTime{Time: time.Date(2022, 1, 9, 0, 0, 0, 0, time.UTC)},
+			expectedResolvedStart:     datetime.CpsTime{Time: time.Date(2022, 1, 4, 0, 0, 0, 0, time.UTC)},
+			expectedResolvedStop:      datetime.CpsTime{Time: time.Date(2022, 1, 8, 0, 0, 0, 0, time.UTC)},
+			expectedNextResolvedStart: &datetime.CpsTime{Time: time.Date(2022, 1, 5, 0, 0, 0, 0, time.UTC)},
+			expectedNextResolvedStop:  &datetime.CpsTime{Time: time.Date(2022, 1, 9, 0, 0, 0, 0, time.UTC)},
 		},
 		"test with old intervals, they should be be updated": {
 			ef: Rule{
-				Start:         &types.CpsTime{Time: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC)},
-				Stop:          &types.CpsTime{Time: time.Date(2021, 1, 2, 0, 0, 0, 0, time.UTC)},
-				ResolvedStart: &types.CpsTime{Time: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC)},
-				ResolvedStop:  &types.CpsTime{Time: time.Date(2021, 1, 2, 0, 0, 0, 0, time.UTC)},
+				Start:         &datetime.CpsTime{Time: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC)},
+				Stop:          &datetime.CpsTime{Time: time.Date(2021, 1, 2, 0, 0, 0, 0, time.UTC)},
+				ResolvedStart: &datetime.CpsTime{Time: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC)},
+				ResolvedStop:  &datetime.CpsTime{Time: time.Date(2021, 1, 2, 0, 0, 0, 0, time.UTC)},
 			},
 			rrule:                     "FREQ=DAILY",
 			now:                       time.Date(2022, 1, 1, 1, 0, 0, 0, time.UTC),
-			expectedResolvedStart:     types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-			expectedResolvedStop:      types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-			expectedNextResolvedStart: &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-			expectedNextResolvedStop:  &types.CpsTime{Time: time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC)},
+			expectedResolvedStart:     datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+			expectedResolvedStop:      datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+			expectedNextResolvedStart: &datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+			expectedNextResolvedStop:  &datetime.CpsTime{Time: time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC)},
 		},
 		"weird test": {
 			ef: Rule{
-				Start:         &types.CpsTime{Time: time.Date(2022, 1, 1, 9, 0, 0, 0, time.UTC)},
-				Stop:          &types.CpsTime{Time: time.Date(2022, 1, 1, 9, 20, 0, 0, time.UTC)},
-				ResolvedStart: &types.CpsTime{Time: time.Date(2022, 1, 1, 9, 0, 0, 0, time.UTC)},
-				ResolvedStop:  &types.CpsTime{Time: time.Date(2022, 1, 1, 9, 20, 0, 0, time.UTC)},
+				Start:         &datetime.CpsTime{Time: time.Date(2022, 1, 1, 9, 0, 0, 0, time.UTC)},
+				Stop:          &datetime.CpsTime{Time: time.Date(2022, 1, 1, 9, 20, 0, 0, time.UTC)},
+				ResolvedStart: &datetime.CpsTime{Time: time.Date(2022, 1, 1, 9, 0, 0, 0, time.UTC)},
+				ResolvedStop:  &datetime.CpsTime{Time: time.Date(2022, 1, 1, 9, 20, 0, 0, time.UTC)},
 			},
 			rrule:                     "FREQ=MINUTELY;INTERVAL=20;BYHOUR=9,10,11,12,13,14,15,16",
 			now:                       time.Date(2022, 1, 4, 10, 30, 0, 0, time.UTC),
-			expectedResolvedStart:     types.CpsTime{Time: time.Date(2022, 1, 4, 10, 20, 0, 0, time.UTC)},
-			expectedResolvedStop:      types.CpsTime{Time: time.Date(2022, 1, 4, 10, 40, 0, 0, time.UTC)},
-			expectedNextResolvedStart: &types.CpsTime{Time: time.Date(2022, 1, 4, 10, 40, 0, 0, time.UTC)},
-			expectedNextResolvedStop:  &types.CpsTime{Time: time.Date(2022, 1, 4, 11, 0, 0, 0, time.UTC)},
+			expectedResolvedStart:     datetime.CpsTime{Time: time.Date(2022, 1, 4, 10, 20, 0, 0, time.UTC)},
+			expectedResolvedStop:      datetime.CpsTime{Time: time.Date(2022, 1, 4, 10, 40, 0, 0, time.UTC)},
+			expectedNextResolvedStart: &datetime.CpsTime{Time: time.Date(2022, 1, 4, 10, 40, 0, 0, time.UTC)},
+			expectedNextResolvedStop:  &datetime.CpsTime{Time: time.Date(2022, 1, 4, 11, 0, 0, 0, time.UTC)},
 		},
 	}
 
 	for testName, dataSet := range dataSets {
+		dataSet := dataSet
 		t.Run(testName, func(t *testing.T) {
 			opt, err := rrule.StrToROption(dataSet.rrule)
 			if err != nil {
@@ -321,12 +322,12 @@ func TestUpdateIntervals(t *testing.T) {
 
 func BenchmarkCalculateRRuleAllCalculated(b *testing.B) {
 	ef := &Rule{
-		Start:             &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-		Stop:              &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-		ResolvedStart:     &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
-		ResolvedStop:      &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-		NextResolvedStart: &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
-		NextResolvedStop:  &types.CpsTime{Time: time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC)},
+		Start:             &datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+		Stop:              &datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+		ResolvedStart:     &datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)},
+		ResolvedStop:      &datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+		NextResolvedStart: &datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)},
+		NextResolvedStop:  &datetime.CpsTime{Time: time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC)},
 	}
 
 	now := time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
@@ -344,10 +345,10 @@ func BenchmarkCalculateRRuleAllCalculated(b *testing.B) {
 	r.DTStart(ef.Start.Time)
 
 	for i := 0; i < b.N; i++ {
-		ef.ResolvedStart = &types.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)}
-		ef.ResolvedStop = &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)}
-		ef.NextResolvedStart = &types.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)}
-		ef.NextResolvedStop = &types.CpsTime{Time: time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC)}
+		ef.ResolvedStart = &datetime.CpsTime{Time: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)}
+		ef.ResolvedStop = &datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)}
+		ef.NextResolvedStart = &datetime.CpsTime{Time: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)}
+		ef.NextResolvedStop = &datetime.CpsTime{Time: time.Date(2022, 1, 3, 0, 0, 0, 0, time.UTC)}
 
 		ResolveIntervals(ef, r, now, time.UTC)
 	}
@@ -685,8 +686,8 @@ func BenchmarkCalculateRRuleComplexOneYearGap(b *testing.B) {
 
 func getBenchmarkData(start, stop time.Time, rruleString string) (*Rule, *rrule.RRule, error) {
 	ef := Rule{
-		Start: &types.CpsTime{Time: start},
-		Stop:  &types.CpsTime{Time: stop},
+		Start: &datetime.CpsTime{Time: start},
+		Stop:  &datetime.CpsTime{Time: stop},
 	}
 
 	opt, err := rrule.StrToROption(rruleString)

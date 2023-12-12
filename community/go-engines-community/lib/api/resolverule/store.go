@@ -2,14 +2,13 @@ package resolverule
 
 import (
 	"context"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/resolverule"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
@@ -45,7 +44,7 @@ func NewStore(
 }
 
 func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, error) {
-	now := types.NewCpsTime(time.Now().Unix())
+	now := datetime.NewCpsTime()
 	model := s.transformRequestToDocument(request.EditRequest)
 
 	if request.ID == "" {
@@ -142,23 +141,7 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 
 func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, error) {
 	model := s.transformRequestToDocument(request.EditRequest)
-	model.Updated = types.CpsTime{Time: time.Now()}
-
-	update := bson.M{"$set": model}
-
-	unset := bson.M{}
-	if request.CorporateAlarmPattern != "" || len(request.AlarmPattern) > 0 {
-		unset["old_alarm_patterns"] = 1
-	}
-
-	if request.CorporateEntityPattern != "" || len(request.EntityPattern) > 0 {
-		unset["old_entity_patterns"] = 1
-	}
-
-	if len(unset) > 0 {
-		update["$unset"] = unset
-	}
-
+	model.Updated = datetime.NewCpsTime()
 	var res *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		res = nil
@@ -166,7 +149,7 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 		_, err := s.dbCollection.UpdateOne(
 			ctx,
 			bson.M{"_id": request.ID},
-			update,
+			bson.M{"$set": model},
 		)
 		if err != nil {
 			return err

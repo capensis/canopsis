@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	_ "net/http/pprof"
+	_ "net/http/pprof" //nolint:gosec
 	"os"
 	"path/filepath"
 	"runtime"
@@ -63,17 +63,17 @@ func getPath(environmentVariable string) string {
 func startCPU(logger zerolog.Logger) error {
 	fpath := getPath(envCPU)
 	if fpath == "" {
-		return fmt.Errorf("The environment variable %s is empty", envCPU)
+		return fmt.Errorf("the environment variable %s is empty", envCPU)
 	}
 
 	fh, err := os.Create(fpath)
 	if err != nil {
-		return fmt.Errorf("Failed to create CPU profile: %v", err)
+		return fmt.Errorf("failed to create CPU profile: %w", err)
 	}
 
 	err = pprof.StartCPUProfile(fh)
 	if err != nil {
-		return fmt.Errorf("Failed to start CPU profile: %v", err)
+		return fmt.Errorf("failed to start CPU profile: %w", err)
 	}
 
 	logger.Info().Msgf("CPU profiling enabled on file: %s", fpath)
@@ -87,13 +87,12 @@ func startCPU(logger zerolog.Logger) error {
 func startMemory(logger zerolog.Logger) (io.WriteCloser, error) {
 	fpath := getPath(envMemory)
 	if fpath == "" {
-		return nil, fmt.Errorf("The environment variable %s is empty",
-			envMemory)
+		return nil, fmt.Errorf("the environment variable %s is empty", envMemory)
 	}
 
 	fh, err := os.Create(fpath)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to create memory profile: %v", err)
+		return nil, fmt.Errorf("failed to create memory profile: %w", err)
 	}
 
 	logger.Info().Msgf("Memory profiling enabled on file: %s", fpath)
@@ -106,18 +105,18 @@ func startMemory(logger zerolog.Logger) (io.WriteCloser, error) {
 func startTrace(logger zerolog.Logger) (io.WriteCloser, error) {
 	fpath := getPath(envTrace)
 	if fpath == "" {
-		return nil, fmt.Errorf("The environment variable %s is empty",
+		return nil, fmt.Errorf("the environment variable %s is empty",
 			envMemory)
 	}
 
 	fh, err := os.Create(fpath)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to create trace file: %v", err)
+		return nil, fmt.Errorf("failed to create trace file: %w", err)
 	}
 
 	err = trace.Start(fh)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to start trace: %v", err)
+		return nil, fmt.Errorf("failed to start trace: %w", err)
 	}
 
 	logger.Info().Msgf("Tracing enabled on file: %s", fpath)
@@ -155,7 +154,7 @@ func Start(logger zerolog.Logger) Trace {
 		runtime.SetMutexProfileFraction(1)
 		logger.Info().Msg("Profiling web ENABLED")
 		go func() {
-			err := http.ListenAndServe("localhost:6060", nil)
+			err := http.ListenAndServe("localhost:6060", nil) //nolint:gosec
 			if err != nil {
 				logger.Err(err).Msg("fail to start pprof server")
 			}

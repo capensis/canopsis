@@ -49,7 +49,9 @@ func (a *api) List(c *gin.Context) {
 
 	ids, ok := c.Get(middleware.AuthorizedIds)
 	if ok {
-		r.Ids = ids.([]string)
+		if s, ok := ids.([]string); ok {
+			r.Ids = s
+		}
 	}
 
 	playlists, err := a.store.Find(c, r)

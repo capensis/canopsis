@@ -80,7 +80,7 @@ func (a *api) Create(c *gin.Context) {
 
 	exception, err := a.transformer.TransformCreateRequestToModel(c, request)
 	if err != nil {
-		if err == ErrTypeNotExists {
+		if errors.Is(err, ErrTypeNotExists) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 			return
 		}
@@ -119,7 +119,7 @@ func (a *api) Update(c *gin.Context) {
 
 	exception, err := a.transformer.TransformUpdateRequestToModel(c, request)
 	if err != nil {
-		if err == ErrTypeNotExists {
+		if errors.Is(err, ErrTypeNotExists) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 			return
 		}
@@ -177,7 +177,7 @@ func (a *api) Delete(c *gin.Context) {
 	ok, err := a.store.Delete(c, c.Param("id"))
 
 	if err != nil {
-		if err == ErrLinkedException {
+		if errors.Is(err, ErrLinkedException) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 			return
 		}

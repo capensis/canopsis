@@ -165,7 +165,7 @@ func Default(
 	// Create pbehavior computer.
 	pbhComputeChan := make(chan []string, chanBuf)
 	pbhStore := libpbehavior.NewStore(pbhRedisSession, json.NewEncoder(), json.NewDecoder())
-	pbhEntityTypeResolver := libpbehavior.NewEntityTypeResolver(pbhStore, libpbehavior.NewEntityMatcher(dbClient), logger)
+	pbhEntityTypeResolver := libpbehavior.NewEntityTypeResolver(pbhStore, logger)
 	// Create entity service event publisher.
 	entityPublChan := make(chan entityservice.ChangeEntityMessage, chanBuf)
 	entityServiceEventPublisher := entityservice.NewEventPublisher(amqpChannel, json.NewEncoder(),
@@ -317,6 +317,7 @@ func Default(
 
 		RegisterValidators(dbClient, flags.EnableSameServiceNames)
 		RegisterRoutes(
+			ctx,
 			cfg,
 			router,
 			security,
@@ -386,10 +387,10 @@ func Default(
 		techMetricsSender.Run(ctx)
 	})
 	api.AddWorker("session_clean", func(ctx context.Context) {
-		security.GetSessionStore().StartAutoClean(ctx, flags.IntegrationPeriodicalWaitTime)
+		security.GetSessionStore().StartAutoClean(ctx, flags.PeriodicalWaitTime)
 	})
 	api.AddWorker("enforce_policy_load", func(ctx context.Context) {
-		enforcer.StartAutoLoadPolicy(ctx)
+		enforcer.StartAutoLoadPolicy(ctx, flags.PeriodicalWaitTime)
 	})
 	api.AddWorker("pbehavior_compute", sendPbhRecomputeEvents(pbhComputeChan, json.NewEncoder(), amqpChannel, logger))
 	api.AddWorker("entity_event_publish", func(ctx context.Context) {

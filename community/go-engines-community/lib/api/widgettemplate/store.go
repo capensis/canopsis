@@ -7,7 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -113,7 +113,7 @@ func (s *store) GetOneById(ctx context.Context, id string) (*Response, error) {
 }
 
 func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	model := transformEditRequestToModel(r)
 	model.ID = utils.NewID()
 	model.Created = now
@@ -136,7 +136,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 }
 
 func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	model := transformEditRequestToModel(r)
 	model.ID = r.ID
 	model.Updated = now

@@ -27,6 +27,7 @@
               entity-counters-type
             )
           c-enabled-field.ml-3(
+            v-if="isHideGrayEnabled",
             :value="query.hide_grey",
             :label="$t('serviceWeather.hideGrey')",
             @input="updateHideGray"
@@ -53,6 +54,7 @@
             :action-required-color="actionRequiredSettings.color",
             :action-required-icon="actionRequiredSettings.icon_name",
             :show-alarms-button="isBothModalType && hasAlarmsListAccess",
+            :show-variables-help-button="hasVariablesHelpAccess",
             :template="widget.parameters.blockTemplate",
             :height-factor="widget.parameters.heightFactor",
             :color-indicator="widget.parameters.colorIndicator",
@@ -128,6 +130,10 @@ export default {
       return this.checkAccess(USERS_PERMISSIONS.business.serviceWeather.actions.alarmsList);
     },
 
+    hasVariablesHelpAccess() {
+      return this.checkAccess(USERS_PERMISSIONS.business.serviceWeather.actions.variablesHelp);
+    },
+
     actionRequiredSettings() {
       return this.widget.parameters.actionRequiredSettings ?? {};
     },
@@ -138,6 +144,10 @@ export default {
 
     isAlarmListModalType() {
       return this.widget.parameters.modalType === SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList;
+    },
+
+    isHideGrayEnabled() {
+      return this.widget.parameters.isHideGrayEnabled ?? true;
     },
   },
   methods: {
@@ -180,6 +190,8 @@ export default {
           },
         });
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: this.$t('errors.default') });
       }
     },

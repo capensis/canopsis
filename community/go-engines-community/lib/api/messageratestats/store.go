@@ -2,10 +2,11 @@ package messageratestats
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -15,7 +16,7 @@ import (
 type Store interface {
 	Find(context.Context, ListRequest) ([]StatsResponse, error)
 	// GetDeletedBeforeForHours gets the lower bound time value for hourly request.
-	GetDeletedBeforeForHours(ctx context.Context) (*types.CpsTime, error)
+	GetDeletedBeforeForHours(ctx context.Context) (*datetime.CpsTime, error)
 }
 
 type store struct {
@@ -72,13 +73,13 @@ func (s *store) Find(ctx context.Context, r ListRequest) ([]StatsResponse, error
 	return rates, nil
 }
 
-func (s *store) GetDeletedBeforeForHours(ctx context.Context) (*types.CpsTime, error) {
+func (s *store) GetDeletedBeforeForHours(ctx context.Context) (*datetime.CpsTime, error) {
 	res := struct {
-		Time types.CpsTime `bson:"_id"`
+		Time datetime.CpsTime `bson:"_id"`
 	}{}
 
 	err := s.db.Collection(mongo.MessageRateStatsHourCollectionName).FindOne(ctx, bson.M{}, options.FindOne().SetSort(bson.M{"_id": 1})).Decode(&res)
-	if err == mongodriver.ErrNoDocuments {
+	if errors.Is(err, mongodriver.ErrNoDocuments) {
 		return nil, nil
 	}
 

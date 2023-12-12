@@ -190,6 +190,7 @@ func sprintSpans(list []Span) string {
 	res := make([]string, len(list))
 
 	for i, s := range list {
+		s := s
 		res[i] = sprintSpan(&s)
 	}
 
