@@ -11,6 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/perfdata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -427,12 +428,12 @@ func (s *store) CheckStateSetting(ctx context.Context, r CheckStateSettingReques
 			return response, err
 		}
 
-		match, err := stateSetting.EntityPattern.Match(ent)
+		matched, err := match.MatchEntityPattern(*stateSetting.EntityPattern, &ent)
 		if err != nil {
 			return response, err
 		}
 
-		if match {
+		if matched {
 			response.Title = stateSetting.Title
 			return response, nil
 		}
