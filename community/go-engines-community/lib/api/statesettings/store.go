@@ -27,27 +27,23 @@ type Store interface {
 }
 
 type store struct {
-	dbClient           mongo.DbClient
-	dbCollection       mongo.DbCollection
-	notifyDbCollection mongo.DbCollection
-
-	sChan chan statesetting.RuleUpdatedMessage
-
-	defaultSearchByFields []string
+	dbClient                 mongo.DbClient
+	dbCollection             mongo.DbCollection
+	notifyDbCollection       mongo.DbCollection
+	stateSettingsUpdatesChan chan statesetting.RuleUpdatedMessage
+	defaultSearchByFields    []string
 }
 
 func NewStore(
 	dbClient mongo.DbClient,
-	sChan chan statesetting.RuleUpdatedMessage,
+	stateSettingsUpdatesChan chan statesetting.RuleUpdatedMessage,
 ) Store {
 	return &store{
-		dbClient:           dbClient,
-		dbCollection:       dbClient.Collection(mongo.StateSettingsMongoCollection),
-		notifyDbCollection: dbClient.Collection(mongo.EngineNotificationCollection),
-
-		sChan: sChan,
-
-		defaultSearchByFields: []string{"_id", "title"},
+		dbClient:                 dbClient,
+		dbCollection:             dbClient.Collection(mongo.StateSettingsMongoCollection),
+		notifyDbCollection:       dbClient.Collection(mongo.EngineNotificationCollection),
+		stateSettingsUpdatesChan: stateSettingsUpdatesChan,
+		defaultSearchByFields:    []string{"_id", "title"},
 	}
 }
 
@@ -149,7 +145,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 	}
 
 	if response != nil && (r.Method == statesetting.MethodDependencies || r.Method == statesetting.MethodInherited) {
-		s.sChan <- statesetting.RuleUpdatedMessage{
+		s.stateSettingsUpdatesChan <- statesetting.RuleUpdatedMessage{
 			NewPattern: response.EntityPattern,
 			NewType:    *response.Type,
 		}
@@ -210,7 +206,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	}
 
 	if response != nil && (r.Method == statesetting.MethodDependencies || r.Method == statesetting.MethodInherited) {
-		s.sChan <- statesetting.RuleUpdatedMessage{
+		s.stateSettingsUpdatesChan <- statesetting.RuleUpdatedMessage{
 			NewPattern: response.EntityPattern,
 			NewType:    *response.Type,
 			OldPattern: oldVersion.EntityPattern,
@@ -237,6 +233,7 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				return nil
 			}
+
 			return err
 		}
 
@@ -247,7 +244,7 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	}
 
 	if oldVersion.Method == statesetting.MethodDependencies || oldVersion.Method == statesetting.MethodInherited {
-		s.sChan <- statesetting.RuleUpdatedMessage{
+		s.stateSettingsUpdatesChan <- statesetting.RuleUpdatedMessage{
 			OldPattern: oldVersion.EntityPattern,
 			OldType:    oldVersion.Type,
 		}
