@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
@@ -46,7 +47,7 @@ func (v *baseValidator) validateStateSetting(sl validator.StructLevel, r StateSe
 			sl.ReportError(r.InheritedEntityPattern, "InheritedEntityPattern", "InheritedEntityPattern", "required", "")
 		}
 
-		if r.InheritedEntityPattern != nil && !r.InheritedEntityPattern.Validate(v.invalidInheritedEntityPatternFields) {
+		if r.InheritedEntityPattern != nil && !match.ValidateEntityPattern(*r.InheritedEntityPattern, v.invalidInheritedEntityPatternFields) {
 			sl.ReportError(r.InheritedEntityPattern, "InheritedEntityPattern", "InheritedEntityPattern", "entity_pattern", "")
 		}
 
@@ -80,7 +81,7 @@ func (v *baseValidator) validateStateSetting(sl validator.StructLevel, r StateSe
 		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "required", "")
 	}
 
-	if r.EntityPattern != nil && !r.EntityPattern.Validate(v.invalidRulesPatternFields) {
+	if r.EntityPattern != nil && !match.ValidateEntityPattern(*r.EntityPattern, v.invalidRulesPatternFields) {
 		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "entity_pattern", "")
 	}
 
