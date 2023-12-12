@@ -27,7 +27,7 @@ type Manager interface {
 	HandleService(ctx context.Context, event *types.Event, commRegister mongo.CommandsRegister) (Report, error)
 	// RefreshServices refreshes slice of available services. Should be used before AssignServices calls until the service cache is implemented.
 	RefreshServices(ctx context.Context) error
-	// AssignServices processes slice of entities to check if they're belonged to an entity service and modifies them.
+	// AssignServices processes an entity to check if it's belonged to an entity service and modifies it.
 	AssignServices(eventEntity *types.Entity, commRegister mongo.CommandsRegister)
 	// AssignStateSetting assigns a state setting for a component or a service, returns true if new state setting is assigned.
 	AssignStateSetting(ctx context.Context, entity *types.Entity, commRegister mongo.CommandsRegister) (bool, error)
@@ -39,6 +39,6 @@ type Manager interface {
 	ProcessComponentDependencies(ctx context.Context, component *types.Entity, commRegister mongo.CommandsRegister) ([]string, error)
 	// UpdateLastEventDate updates last event date field in the entity document
 	UpdateLastEventDate(ctx context.Context, event *types.Event, updateConnectorLastEventDate bool) error
-
-	InheritComponent(resource, component *types.Entity, commRegister mongo.CommandsRegister) error
+	// InheritComponentFields fills resource with component infos and check if resource is matched by component state setting.
+	InheritComponentFields(resource, component *types.Entity, commRegister mongo.CommandsRegister) error
 }

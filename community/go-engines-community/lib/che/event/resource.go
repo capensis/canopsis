@@ -164,9 +164,10 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 			return fmt.Errorf("resource was deleted during event processing")
 		}
 
-		if component.ID == "" {
-			return fmt.Errorf("component was deleted during event processing")
-		}
+		// todo: decide if needed
+		//if component.ID == "" {
+		//	return fmt.Errorf("component was deleted during event processing")
+		//}
 
 		// todo: should be called to get fresh services from the db, should be removed when we do something with cache
 		err = p.contextGraphManager.RefreshServices(ctx)
@@ -177,7 +178,7 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 		p.contextGraphManager.AssignServices(&resource, commRegister)
 		eventMetric.IsServicesUpdated = len(event.Entity.ServicesToAdd) > 0 || len(event.Entity.ServicesToRemove) > 0
 
-		if report.CheckComponent {
+		if component.ID != "" && report.CheckComponent {
 			p.contextGraphManager.AssignServices(&component, commRegister)
 			if len(component.ServicesToAdd) > 0 || len(component.ServicesToRemove) > 0 {
 				toCountersUpdate = append(toCountersUpdate, component)
@@ -196,7 +197,7 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 			}
 		}
 
-		err = p.contextGraphManager.InheritComponent(&resource, &component, commRegister)
+		err = p.contextGraphManager.InheritComponentFields(&resource, &component, commRegister)
 		if err != nil {
 			return fmt.Errorf("cannot inherit component fields: %w", err)
 		}

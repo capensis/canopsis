@@ -125,18 +125,18 @@ func (mr *MockManagerMockRecorder) HandleService(arg0, arg1, arg2 interface{}) *
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleService", reflect.TypeOf((*MockManager)(nil).HandleService), arg0, arg1, arg2)
 }
 
-// InheritComponent mocks base method.
-func (m *MockManager) InheritComponent(arg0, arg1 *types.Entity, arg2 mongo.CommandsRegister) error {
+// InheritComponentFields mocks base method.
+func (m *MockManager) InheritComponentFields(arg0, arg1 *types.Entity, arg2 mongo.CommandsRegister) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InheritComponent", arg0, arg1, arg2)
+	ret := m.ctrl.Call(m, "InheritComponentFields", arg0, arg1, arg2)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// InheritComponent indicates an expected call of InheritComponent.
-func (mr *MockManagerMockRecorder) InheritComponent(arg0, arg1, arg2 interface{}) *gomock.Call {
+// InheritComponentFields indicates an expected call of InheritComponentFields.
+func (mr *MockManagerMockRecorder) InheritComponentFields(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InheritComponent", reflect.TypeOf((*MockManager)(nil).InheritComponent), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InheritComponentFields", reflect.TypeOf((*MockManager)(nil).InheritComponentFields), arg0, arg1, arg2)
 }
 
 // ProcessComponentDependencies mocks base method.

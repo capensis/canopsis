@@ -62,11 +62,11 @@ func (a *assigner) LoadRules(ctx context.Context) error {
 
 	defer cursor.Close(ctx)
 
-	componentRules := make([]StateSetting, 0)
-	serviceRules := make([]StateSetting, 0)
+	componentRules := make([]StateSetting, 0, len(a.componentRules))
+	serviceRules := make([]StateSetting, 0, len(a.serviceRules))
 
-	componentRulesIDs := make([]string, 0)
-	serviceRulesIDs := make([]string, 0)
+	componentRulesIDs := make([]string, 0, len(a.componentRules))
+	serviceRulesIDs := make([]string, 0, len(a.serviceRules))
 
 	for cursor.Next(ctx) {
 		var rule StateSetting
@@ -135,6 +135,11 @@ func (a *assigner) assignToComponent(ctx context.Context, entity *types.Entity, 
 		}
 
 		if matched {
+			// if a state method is the same, return
+			if prevStateMethodID == entity.StateInfo.ID {
+				return false, nil
+			}
+
 			// for component, save inherited pattern to a state info to match resources easily.
 			entity.StateInfo = &types.StateInfo{
 				ID:               a.componentRules[idx].ID,
@@ -154,7 +159,7 @@ func (a *assigner) assignToComponent(ctx context.Context, entity *types.Entity, 
 
 			commRegister.RegisterUpdate(entity.ID, bson.M{"state_info": entity.StateInfo})
 
-			return prevStateMethodID != entity.StateInfo.ID, nil
+			return true, nil
 		}
 	}
 
@@ -183,6 +188,11 @@ func (a *assigner) assignToService(ctx context.Context, entity *types.Entity, pr
 		}
 
 		if matched {
+			// if a state method is the same, return
+			if prevStateMethodID == entity.StateInfo.ID {
+				return false, nil
+			}
+
 			// for service, save only rule's id, there is no need to save inherited pattern,
 			// because resources are matched to a service with service's pattern and inherited pattern
 			// will be used in axe for state calculation.
@@ -201,7 +211,7 @@ func (a *assigner) assignToService(ctx context.Context, entity *types.Entity, pr
 
 			commRegister.RegisterUpdate(entity.ID, bson.M{"state_info": entity.StateInfo})
 
-			return prevStateMethodID != entity.StateInfo.ID, nil
+			return true, nil
 		}
 	}
 
