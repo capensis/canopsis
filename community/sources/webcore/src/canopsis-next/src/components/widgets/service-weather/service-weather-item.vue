@@ -16,6 +16,13 @@
         v-layout.service-weather-item__toolbar.pt-1.pr-1(row, align-center)
           c-no-events-icon(:value="service.idle_since", :color="color", top)
           impact-state-indicator.mr-1(v-if="priorityEnabled", :value="service.impact_state")
+          v-btn.ma-0(
+            v-if="showVariablesHelpButton",
+            icon,
+            small,
+            @click.stop="showVariablesHelpModal(service)"
+          )
+            v-icon(color="white", small) help
         v-icon.service-weather-item__background(size="5em", :color="color") {{ backgroundIcon }}
         v-icon.service-weather-item__secondary-icon.mb-1.mr-1(
           v-if="service.secondary_icon",
@@ -34,10 +41,11 @@
 </template>
 
 <script>
-import { SERVICE_WEATHER_DEFAULT_EM_HEIGHT } from '@/constants';
+import { MODALS, SERVICE_WEATHER_DEFAULT_EM_HEIGHT } from '@/constants';
 
 import { getEntityColor } from '@/helpers/entities/entity/color';
 import { getMostReadableTextColor } from '@/helpers/color';
+import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import CardWithSeeAlarmsBtn from '@/components/common/card/card-with-see-alarms-btn.vue';
 
@@ -91,6 +99,10 @@ export default {
       required: false,
     },
     showAlarmsButton: {
+      type: Boolean,
+      default: false,
+    },
+    showVariablesHelpButton: {
       type: Boolean,
       default: false,
     },
@@ -195,12 +207,26 @@ export default {
         this.$emit('show:service');
       }
     },
+
+    showVariablesHelpModal() {
+      const entityFields = convertObjectToTreeview(this.service, 'entity');
+      const variables = [entityFields];
+
+      this.$modals.show({
+        name: MODALS.variablesHelp,
+        config: {
+          variables,
+        },
+      });
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
 .service-weather-item {
+  overflow: hidden;
+
   &__content > * {
     margin-right: 2px;
 

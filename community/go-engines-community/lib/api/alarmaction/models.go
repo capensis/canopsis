@@ -1,6 +1,6 @@
 package alarmaction
 
-import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 
 type Request struct {
 	Comment string `json:"comment" binding:"max=255"`
@@ -12,8 +12,8 @@ type AckRequest struct {
 }
 
 type SnoozeRequest struct {
-	Duration types.DurationWithUnit `json:"duration" binding:"required"`
-	Comment  string                 `json:"comment" binding:"max=255"`
+	Duration datetime.DurationWithUnit `json:"duration" binding:"required"`
+	Comment  string                    `json:"comment" binding:"max=255"`
 }
 
 type AssocTicketRequest struct {
@@ -66,6 +66,6 @@ type BulkCommentRequestItem struct {
 
 // alarmResolvedField is a short alarm structure for alarm bookmark APIs logic
 type alarmResolvedField struct {
-	ID       string         `bson:"_id"`
-	Resolved *types.CpsTime `bson:"resolved"`
+	ID       string            `bson:"_id"`
+	Resolved *datetime.CpsTime `bson:"resolved"`
 }

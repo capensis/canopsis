@@ -21,7 +21,7 @@
 <script>
 import { omit } from 'lodash';
 
-import { MODALS, OLD_PATTERNS_FIELDS, PATTERNS_FIELDS, VALIDATION_DELAY } from '@/constants';
+import { MODALS, PATTERNS_FIELDS, VALIDATION_DELAY } from '@/constants';
 
 import { filterToForm, formToFilter } from '@/helpers/entities/filter/form';
 
@@ -47,7 +47,7 @@ export default {
   ],
   data() {
     return {
-      form: filterToForm(this.modal.config.filter, this.getPatternsFields(), this.getOldPatternsFields()),
+      form: filterToForm(this.modal.config.filter, this.getPatternsFields()),
     };
   },
   computed: {
@@ -57,10 +57,6 @@ export default {
 
     patternsProps() {
       return omit(this.config, ['title', 'action']);
-    },
-
-    patternsFields() {
-      return this.getPatternsFields();
     },
   },
   methods: {
@@ -76,16 +72,12 @@ export default {
       ].filter(Boolean);
     },
 
-    getOldPatternsFields() {
-      return this.getPatternsFields().map(() => OLD_PATTERNS_FIELDS.mongoQuery);
-    },
-
     async submit() {
       const isFormValid = await this.$validator.validate();
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(formToFilter(this.form, this.patternsFields, this.config.corporate));
+          await this.config.action(formToFilter(this.form, this.getPatternsFields(), this.config.corporate));
         }
 
         this.$modals.hide();

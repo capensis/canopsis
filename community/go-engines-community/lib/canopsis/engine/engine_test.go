@@ -111,7 +111,7 @@ func TestEngine_Run_GivenErrorOnConsumer_ShouldStopEngine(t *testing.T) {
 	defer close(done)
 
 	mockConsumer := mock_engine.NewMockConsumer(ctrl)
-	expectedErr := &testErr{msg: "test error"}
+	expectedErr := &testError{msg: "test error"}
 	mockConsumer.EXPECT().Consume(gomock.Any()).Return(expectedErr)
 
 	engine := libengine.New(nil, nil, zerolog.Logger{})
@@ -125,7 +125,7 @@ func TestEngine_Run_GivenErrorOnConsumer_ShouldStopEngine(t *testing.T) {
 
 	waitDone(t, done)
 
-	testErr := &testErr{}
+	testErr := &testError{}
 	if !errors.As(err, &testErr) || testErr.Error() != expectedErr.Error() {
 		t.Errorf("expected error %v but got %v", expectedErr, err)
 	}

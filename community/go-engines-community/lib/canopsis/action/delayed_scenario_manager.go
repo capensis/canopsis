@@ -7,6 +7,7 @@ import (
 	"time"
 
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 )
@@ -55,7 +56,7 @@ func (m *delayedScenarioManager) AddDelayedScenario(ctx context.Context, alarm t
 		return errors.New("scenario is not delayed")
 	}
 
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	delayedScenario := DelayedScenario{
 		ScenarioID:     scenario.ID,
 		ExecutionTime:  scenario.Delay.AddTo(now),
@@ -108,7 +109,7 @@ func (m *delayedScenarioManager) ResumeDelayedScenarios(ctx context.Context, ala
 	for _, delayedScenario := range delayedScenarios {
 		if delayedScenario.AlarmID == alarm.ID && delayedScenario.Paused {
 			delayedScenario.Paused = false
-			delayedScenario.ExecutionTime = types.CpsTime{Time: now.Add(delayedScenario.TimeLeft)}
+			delayedScenario.ExecutionTime = datetime.CpsTime{Time: now.Add(delayedScenario.TimeLeft)}
 			delayedScenario.TimeLeft = 0
 			_, err := m.storage.Update(ctx, delayedScenario)
 			if err != nil {
@@ -296,8 +297,8 @@ func (m *delayedScenarioManager) getExpiredTimeoutScenarios(
 		}
 
 		tasks[i] = DelayedScenarioTask{
-			Alarm:    *alarm,
-			Scenario: *scenario,
+			Alarm:    alarm,
+			Scenario: scenario,
 
 			AdditionalData: delayedScenario.AdditionalData,
 		}
@@ -306,30 +307,30 @@ func (m *delayedScenarioManager) getExpiredTimeoutScenarios(
 	return tasks, nil
 }
 
-func (m *delayedScenarioManager) loadScenarios(ctx context.Context, ids []string) (map[string]*Scenario, error) {
+func (m *delayedScenarioManager) loadScenarios(ctx context.Context, ids []string) (map[string]Scenario, error) {
 	scenarios, err := m.scenarioAdapter.GetEnabledByIDs(ctx, ids)
 	if err != nil {
 		return nil, err
 	}
 
-	scenariosByID := make(map[string]*Scenario)
+	scenariosByID := make(map[string]Scenario)
 	for _, scenario := range scenarios {
-		scenariosByID[scenario.ID] = &scenario
+		scenariosByID[scenario.ID] = scenario
 	}
 
 	return scenariosByID, nil
 }
 
-func (m *delayedScenarioManager) loadAlarms(ctx context.Context, ids []string) (map[string]*types.Alarm, error) {
+func (m *delayedScenarioManager) loadAlarms(ctx context.Context, ids []string) (map[string]types.Alarm, error) {
 	alarms := make([]types.Alarm, 0)
 	err := m.alarmAdapter.GetOpenedAlarmsByAlarmIDs(ctx, ids, &alarms)
 	if err != nil {
 		return nil, err
 	}
 
-	alarmsByID := make(map[string]*types.Alarm)
+	alarmsByID := make(map[string]types.Alarm)
 	for _, alarm := range alarms {
-		alarmsByID[alarm.ID] = &alarm
+		alarmsByID[alarm.ID] = alarm
 	}
 
 	return alarmsByID, nil

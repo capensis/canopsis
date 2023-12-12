@@ -3,12 +3,11 @@ package playlist
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
@@ -119,7 +118,7 @@ func (s *store) GetById(ctx context.Context, id string) (*Response, error) {
 
 func (s *store) Insert(ctx context.Context, userID string, r EditRequest) (*Response, error) {
 	id := utils.NewID()
-	now := types.CpsTime{Time: time.Now()}
+	now := datetime.NewCpsTime()
 	model := Playlist{
 		ID:         id,
 		Author:     r.Author,
@@ -156,7 +155,7 @@ func (s *store) Insert(ctx context.Context, userID string, r EditRequest) (*Resp
 }
 
 func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
-	now := types.CpsTime{Time: time.Now()}
+	now := datetime.NewCpsTime()
 	model := Playlist{
 		Author:     r.Author,
 		Name:       r.Name,

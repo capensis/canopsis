@@ -7,6 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorexception"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
@@ -31,27 +32,15 @@ func (v *Validator) ValidateCreateRequest(sl validator.StructLevel) {
 }
 
 func (v *Validator) ValidateUpdateRequest(ctx context.Context, sl validator.StructLevel) {
-	id := ""
 	corporateEntityPattern := ""
 	var entityPattern pattern.Entity
 	switch r := sl.Current().Interface().(type) {
 	case UpdateRequest:
-		id = r.ID
 		entityPattern = r.EntityPattern
 		corporateEntityPattern = r.CorporateEntityPattern
 	case BulkUpdateRequestItem:
-		id = r.ID
 		entityPattern = r.EntityPattern
 		corporateEntityPattern = r.CorporateEntityPattern
-	}
-
-	if id != "" {
-		err := v.dbClient.Collection(mongo.PbehaviorMongoCollection).FindOne(ctx, bson.M{"_id": id, "old_mongo_query": bson.M{"$ne": nil}}).Err()
-		if err == nil {
-			return
-		} else if !errors.Is(err, mongodriver.ErrNoDocuments) {
-			panic(err)
-		}
 	}
 
 	if len(entityPattern) == 0 && corporateEntityPattern == "" {
@@ -63,7 +52,7 @@ func (v *Validator) ValidateEditRequest(ctx context.Context, sl validator.Struct
 	r := sl.Current().Interface().(EditRequest)
 
 	if r.CorporateEntityPattern == "" && len(r.EntityPattern) > 0 &&
-		!r.EntityPattern.Validate(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection)) {
+		!match.ValidateEntityPattern(r.EntityPattern, common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection)) {
 		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "entity_pattern", "")
 	}
 
@@ -129,7 +118,7 @@ func (v *Validator) ValidatePatchRequest(ctx context.Context, sl validator.Struc
 	if r.CorporateEntityPattern == nil && r.EntityPattern != nil {
 		if len(r.EntityPattern) == 0 {
 			sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "required", "")
-		} else if !r.EntityPattern.Validate(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection)) {
+		} else if !match.ValidateEntityPattern(r.EntityPattern, common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection)) {
 			sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "entity_pattern", "")
 		}
 	}
