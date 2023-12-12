@@ -101,18 +101,32 @@ export default {
     editing() {
       this.size = MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP[this.$mq];
     },
-  },
-  created() {
-    this.registerEditingOffHandler(this.updatePositions);
+
+    visible: {
+      immediate: true,
+      handler(visible) {
+        if (visible) {
+          this.registerEditingOffHandler(this.updatePositions);
+        } else {
+          this.unregisterEditingOffHandler(this.updatePositions);
+        }
+      },
+    },
   },
   beforeDestroy() {
-    this.unregisterEditingOffHandler(this.updatePositions);
     this.removeWidgetsQueries();
   },
   methods: {
     async updatePositions() {
       try {
         const newWidgetsGrid = layoutsToWidgetsGrid(this.layouts);
+        // eslint-disable-next-line no-console
+        console.log(
+          isEqual(this.widgetsGrid, newWidgetsGrid),
+          newWidgetsGrid.length,
+          this.widgetsGrid,
+          newWidgetsGrid,
+        ); // TODO: REMOVE IT
 
         if (isEqual(this.widgetsGrid, newWidgetsGrid) || !newWidgetsGrid.length) {
           return;
