@@ -113,7 +113,7 @@ func (c *AmqpClient) BeforeScenario(ctx context.Context, _ *godog.Scenario) (con
 		nil,
 	)
 	if err != nil {
-		return ctx, fmt.Errorf("cannot declare queue: %v", err)
+		return ctx, fmt.Errorf("cannot declare queue: %w", err)
 	}
 
 	err = ch.QueueBind(
@@ -124,12 +124,12 @@ func (c *AmqpClient) BeforeScenario(ctx context.Context, _ *godog.Scenario) (con
 		nil,
 	)
 	if err != nil {
-		return ctx, fmt.Errorf("cannot bind queue: %v", err)
+		return ctx, fmt.Errorf("cannot bind queue: %w", err)
 	}
 
 	err = ch.Qos(consumePrefetchCount, consumePrefetchSize, false)
 	if err != nil {
-		return ctx, fmt.Errorf("cannot qos: %v", err)
+		return ctx, fmt.Errorf("cannot qos: %w", err)
 	}
 
 	msgs, err := ch.Consume(
@@ -142,7 +142,7 @@ func (c *AmqpClient) BeforeScenario(ctx context.Context, _ *godog.Scenario) (con
 		nil,
 	)
 	if err != nil {
-		return ctx, fmt.Errorf("cannot consume queue: %v", err)
+		return ctx, fmt.Errorf("cannot consume queue: %w", err)
 	}
 
 	c.ackConsumers = append(c.ackConsumers, msgs)
@@ -343,7 +343,7 @@ func (c *AmqpClient) IWaitTheEndOfOneOfEventsProcessingWhichContain(ctx context.
 				return nil
 			}
 		case <-timer.C:
-			return fmt.Errorf("reached timeout: caught %d events but none of them matches to expected events\n%s\n",
+			return fmt.Errorf("reached timeout: caught %d events but none of them matches to expected events\n%s\n", //nolint:stylecheck
 				len(caughtEvents), pretty.Compare(c.filterEventFields(caughtEvents), expectedEvents))
 		}
 	}
@@ -450,7 +450,7 @@ func (c *AmqpClient) IWaitTheEndOfSentEventProcessing(ctx context.Context, doc s
 				return nil
 			}
 		case <-timer.C:
-			return fmt.Errorf("reached timeout: caught %d events out of %d\n%s\n", len(matched), len(sentEvents),
+			return fmt.Errorf("reached timeout: caught %d events out of %d\n%s\n", len(matched), len(sentEvents), //nolint:stylecheck
 				pretty.Compare(c.filterEventFields(caughtEvents), sentEvents))
 		}
 	}
@@ -562,7 +562,7 @@ func (c *AmqpClient) executeRPC(ctx context.Context, queue string, body []byte) 
 		nil,   // arguments
 	)
 	if err != nil {
-		return nil, fmt.Errorf("cannot declare queue: %v", err)
+		return nil, fmt.Errorf("cannot declare queue: %w", err)
 	}
 
 	msgs, err := consumeCh.Consume(
@@ -575,10 +575,10 @@ func (c *AmqpClient) executeRPC(ctx context.Context, queue string, body []byte) 
 		nil,    // args
 	)
 	if err != nil {
-		return nil, fmt.Errorf("cannot consume queue: %v", err)
+		return nil, fmt.Errorf("cannot consume queue: %w", err)
 	}
 
-	corrID := fmt.Sprintf("test-%d", rand.Int())
+	corrID := fmt.Sprintf("test-%d", rand.Int()) //nolint:gosec
 	err = publishCh.PublishWithContext(
 		ctx,
 		"",    // exchange
@@ -593,7 +593,7 @@ func (c *AmqpClient) executeRPC(ctx context.Context, queue string, body []byte) 
 		},
 	)
 	if err != nil {
-		return nil, fmt.Errorf("cannot publish to queue: %v", err)
+		return nil, fmt.Errorf("cannot publish to queue: %w", err)
 	}
 
 	timer := time.NewTimer(stepTimeout)
@@ -683,7 +683,7 @@ func (c *AmqpClient) catchEvents(ctx context.Context, expectedEvents []map[strin
 				return nil
 			}
 		case <-timer.C:
-			return fmt.Errorf("reached timeout: caught %d events out of %d\n%s\n", len(matched), len(expectedEvents),
+			return fmt.Errorf("reached timeout: caught %d events out of %d\n%s\n", len(matched), len(expectedEvents), //nolint:stylecheck
 				pretty.Compare(c.filterEventFields(caughtEvents), expectedEvents))
 		}
 	}

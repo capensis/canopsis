@@ -3,12 +3,12 @@ package eventfilter
 import (
 	"context"
 	"errors"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -58,7 +58,7 @@ func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, e
 		model.ID = utils.NewID()
 	}
 
-	now := types.NewCpsTime(time.Now().Unix())
+	now := datetime.NewCpsTime()
 	model.Created = &now
 	model.Updated = &now
 
@@ -165,7 +165,7 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 }
 
 func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, error) {
-	updated := types.NewCpsTime(time.Now().Unix())
+	updated := datetime.NewCpsTime()
 	model := s.transformRequestToDocument(request.EditRequest)
 	model.ID = request.ID
 	model.Created = nil
@@ -173,10 +173,6 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 
 	update := bson.M{"$set": model}
 	unset := bson.M{"events_count": ""}
-
-	if request.CorporateEntityPattern != "" || len(request.EntityPattern) > 0 || len(request.EventPattern) > 0 {
-		unset["old_patterns"] = 1
-	}
 
 	if model.Start == nil || model.Start.IsZero() || model.Stop == nil || model.Stop.IsZero() {
 		unset["start"] = ""

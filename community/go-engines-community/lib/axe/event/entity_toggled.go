@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
@@ -95,7 +96,7 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 	}
 
 	match := getOpenAlarmMatch(event)
-	update := getResolveAlarmUpdate(types.NewCpsTime())
+	update := getResolveAlarmUpdate(datetime.NewCpsTime())
 	var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
 	notAckedMetricType := ""
 
