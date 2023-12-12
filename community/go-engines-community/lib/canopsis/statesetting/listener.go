@@ -84,9 +84,7 @@ func (l *listener) Listen(ctx context.Context, ch <-chan RuleUpdatedMessage) {
 
 func (l *listener) processMessage(ctx context.Context, msg RuleUpdatedMessage) error {
 	g, ctx := errgroup.WithContext(ctx)
-	defer func() {
-		clear(l.processedIDsMap)
-	}()
+	defer clear(l.processedIDsMap)
 
 	if msg.NewPattern != nil {
 		g.Go(func() error {
