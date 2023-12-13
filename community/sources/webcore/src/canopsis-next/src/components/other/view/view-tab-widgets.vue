@@ -8,8 +8,7 @@
       :columns-count="$constants.WIDGET_GRID_COLUMNS_COUNT",
       :row-height="$constants.WIDGET_GRID_ROW_HEIGHT",
       :style="layoutStyle",
-      :disabled="!editing",
-      @input="inputHandler"
+      :disabled="!editing"
     )
       template(#item="{ on, item }")
         widget-edit-drag-handler(
@@ -116,18 +115,12 @@ export default {
   },
   beforeDestroy() {
     this.removeWidgetsQueries();
+    this.unregisterEditingOffHandler(this.updatePositions);
   },
   methods: {
     async updatePositions() {
       try {
         const newWidgetsGrid = layoutsToWidgetsGrid(this.layouts);
-        // eslint-disable-next-line no-console
-        console.log(
-          isEqual(this.widgetsGrid, newWidgetsGrid),
-          newWidgetsGrid.length,
-          JSON.stringify(this.widgetsGrid),
-          JSON.stringify(newWidgetsGrid),
-        ); // TODO: REMOVE IT
 
         if (isEqual(this.widgetsGrid, newWidgetsGrid) || !newWidgetsGrid.length) {
           return;
@@ -142,11 +135,6 @@ export default {
 
         this.$popups.error({ text: this.$t('errors.default') });
       }
-    },
-
-    inputHandler() {
-      // eslint-disable-next-line no-console
-      console.log('INPUT HANDLER'); // TODO: REMOVE IT
     },
 
     /**

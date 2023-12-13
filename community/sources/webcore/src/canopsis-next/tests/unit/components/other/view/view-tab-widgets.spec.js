@@ -124,13 +124,14 @@ describe('view-tab-widgets', () => {
     );
   });
 
-  it('Register and unregister editing off handler is working', async () => {
+  it('Register and unregister editing off handler is working (visible true)', async () => {
     const wrapper = factory({
       propsData: {
         tab: {
           id: 'tab-id',
           widgets,
         },
+        visible: true,
       },
       store,
     });
@@ -142,6 +143,27 @@ describe('view-tab-widgets', () => {
     wrapper.destroy();
 
     expect(unregisterEditingOffHandler).toHaveBeenCalledTimes(1);
+  });
+
+  it('Register and unregister editing off handler is working (visible false)', async () => {
+    const wrapper = factory({
+      propsData: {
+        tab: {
+          id: 'tab-id',
+          widgets,
+        },
+        visible: false,
+      },
+      store,
+    });
+
+    await flushPromises();
+
+    expect(registerEditingOffHandler).not.toHaveBeenCalled();
+
+    wrapper.destroy();
+
+    expect(unregisterEditingOffHandler).toHaveBeenCalledTimes(2);
   });
 
   it('Update positions doesn\'t trigger updateGridPositions without changes', async () => {
