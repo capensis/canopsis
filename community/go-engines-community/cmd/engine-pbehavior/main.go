@@ -19,6 +19,7 @@ func main() {
 	flag.BoolVar(&opts.FeaturePrintEventOnError, "printEventOnError", false, "Print event on processing error")
 	flag.DurationVar(&opts.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
 	flag.BoolVar(&opts.ComputeRruleEnd, "computeRruleEnd", false, "Compute rrule end for pbehaviors and exit")
+	flag.IntVar(&opts.Workers, "workers", canopsis.DefaultEventWorkers, "Amount of workers to process RPC events")
 	flagVersion := flag.Bool("version", false, "Show the version information")
 
 	flag.Parse()
