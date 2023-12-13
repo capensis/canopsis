@@ -134,8 +134,6 @@ func validateTemplateParametersRequest(sl validator.StructLevel, r EditRequest) 
 					fieldName := fmt.Sprintf("Parameters.%s.%d.value", parameter, i)
 					if val == "" {
 						sl.ReportError(column, fieldName, "Value", "required", "")
-					} else if !view.IsValidWidgetColumn(tplType, val) && !view.IsValidWidgetExportColumn(r.Type, parameter, val) {
-						sl.ReportError(column, fieldName, "Value", "invalid", "")
 					}
 				}
 			}
