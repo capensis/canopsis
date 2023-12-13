@@ -41,11 +41,11 @@
           template(#activator="{ on }")
             v-btn.mr-0(
               v-on="on",
-              :disabled="isCustom",
+              :class="isCustom ? 'text--primary' : 'text--disabled'",
               small,
               flat,
               icon,
-              @click="covertToCustom"
+              @click="convertToCustom"
             )
               v-icon(small) tune
           span {{ $t('common.convertToCustomColumn') }}
@@ -79,7 +79,7 @@ import {
   ALARM_OUTPUT_FIELDS,
 } from '@/constants';
 
-import { formToWidgetColumn } from '@/helpers/entities/widget/column/form';
+import { formToWidgetColumn, widgetColumnValueToForm } from '@/helpers/entities/widget/column/form';
 
 import { formBaseMixin, validationChildrenMixin } from '@/mixins/form';
 
@@ -223,23 +223,38 @@ export default {
       this.updateModel(newValue);
     },
 
-    covertToCustom() {
-      this.isCustom = true;
+    convertToCustom() {
+      this.isCustom = !this.isCustom;
 
-      const { value } = formToWidgetColumn(this.column);
-
-      const label = this.column.label
-        ? this.column.label
-        : this.availableColumns.find(column => column.value === this.column.column)?.text ?? '';
-
-      this.updateModel({
+      const newColumn = {
         ...this.column,
-        column: value,
-        label,
-        field: '',
-        rule: '',
-        dictionary: '',
-      });
+      };
+
+      if (this.isCustom) {
+        const { value } = formToWidgetColumn(this.column);
+
+        const selectedColumn = this.availableColumns.find(column => column.value === this.column.column);
+
+        const label = this.column.label || selectedColumn?.text || '';
+
+        newColumn.column = value;
+        newColumn.label = label;
+        newColumn.field = '';
+        newColumn.rule = '';
+        newColumn.dictionary = '';
+      } else {
+        const { column: value, field, rule, dictionary } = widgetColumnValueToForm(this.column.column);
+
+        const selectedColumn = this.availableColumns.find(column => column.value === value);
+
+        newColumn.column = value === selectedColumn?.value ? value : '';
+        newColumn.label = newColumn.label === selectedColumn?.text ? '' : newColumn.label;
+        newColumn.field = field;
+        newColumn.rule = rule;
+        newColumn.dictionary = dictionary;
+      }
+
+      this.updateModel(newColumn);
     },
   },
 };
