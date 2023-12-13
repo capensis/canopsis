@@ -113,35 +113,41 @@ export const widgetColumnToForm = ({
 export const widgetColumnsToForm = (columns = []) => columns.map(widgetColumnToForm);
 
 /**
+ * Convert form column to widget column
+ *
+ * @param {WidgetColumnForm} form
+ * @returns {WidgetColumn}
+ */
+export const formToWidgetColumn = ({ key, column, dictionary, field, onlyIcon, linksInRowCount, rule, ...rest }) => {
+  const result = {
+    ...rest,
+
+    value: column,
+  };
+
+  if (column === ALARM_FIELDS.infos) {
+    result.value = [column, rule, dictionary].filter(Boolean).join('.');
+  } else if (getInfosWidgetColumn(column)) {
+    result.value = `${column}.${dictionary}.${field}`;
+  } else if (isLinksWidgetColumn(column)) {
+    result.onlyIcon = onlyIcon;
+
+    if (onlyIcon) {
+      result.linksInRowCount = linksInRowCount;
+    }
+
+    if (field) {
+      result.value = `${column}.${field}`;
+    }
+  }
+
+  return result;
+};
+
+/**
  * Convert form array to widget columns array
  *
  * @param {WidgetColumnForm[]} form
  * @returns {WidgetColumn[]}
  */
-export const formToWidgetColumns = (form = []) => (
-  form.map(({ key, column, dictionary, field, onlyIcon, linksInRowCount, rule, ...rest }) => {
-    const result = {
-      ...rest,
-
-      value: column,
-    };
-
-    if (column === ALARM_FIELDS.infos) {
-      result.value = [column, rule, dictionary].filter(Boolean).join('.');
-    } else if (getInfosWidgetColumn(column)) {
-      result.value = `${column}.${dictionary}.${field}`;
-    } else if (isLinksWidgetColumn(column)) {
-      result.onlyIcon = onlyIcon;
-
-      if (onlyIcon) {
-        result.linksInRowCount = linksInRowCount;
-      }
-
-      if (field) {
-        result.value = `${column}.${field}`;
-      }
-    }
-
-    return result;
-  })
-);
+export const formToWidgetColumns = (form = []) => form.map(formToWidgetColumn);
