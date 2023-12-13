@@ -8,7 +8,8 @@
       :columns-count="$constants.WIDGET_GRID_COLUMNS_COUNT",
       :row-height="$constants.WIDGET_GRID_ROW_HEIGHT",
       :style="layoutStyle",
-      :disabled="!editing"
+      :disabled="!editing",
+      @input="inputHandler"
     )
       template(#item="{ on, item }")
         widget-edit-drag-handler(
@@ -124,8 +125,8 @@ export default {
         console.log(
           isEqual(this.widgetsGrid, newWidgetsGrid),
           newWidgetsGrid.length,
-          this.widgetsGrid,
-          newWidgetsGrid,
+          JSON.stringify(this.widgetsGrid),
+          JSON.stringify(newWidgetsGrid),
         ); // TODO: REMOVE IT
 
         if (isEqual(this.widgetsGrid, newWidgetsGrid) || !newWidgetsGrid.length) {
@@ -141,6 +142,11 @@ export default {
 
         this.$popups.error({ text: this.$t('errors.default') });
       }
+    },
+
+    inputHandler() {
+      // eslint-disable-next-line no-console
+      console.log('INPUT HANDLER'); // TODO: REMOVE IT
     },
 
     /**
