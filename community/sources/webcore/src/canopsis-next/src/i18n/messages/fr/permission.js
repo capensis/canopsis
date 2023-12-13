@@ -19,6 +19,8 @@ export default {
     [USER_PERMISSIONS_PREFIXES.business.lineChart]: 'Droits pour le widget : Graphique en ligne',
     [USER_PERMISSIONS_PREFIXES.business.pieChart]: 'Droits pour le widget : Diagramme circulaire',
     [USER_PERMISSIONS_PREFIXES.business.numbers]: 'Droits pour le widget : Nombres',
+    [USER_PERMISSIONS_PREFIXES.business.userStatistics]: 'Droits pour le widget : Statistiques des utilisateurs',
+    [USER_PERMISSIONS_PREFIXES.business.alarmStatistics]: 'Droits pour le widget : Statistiques d\'alarme',
   },
   api: {
     general: 'Général',
