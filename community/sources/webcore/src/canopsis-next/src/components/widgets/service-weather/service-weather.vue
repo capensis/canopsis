@@ -27,6 +27,7 @@
               entity-counters-type
             )
           c-enabled-field.ml-3(
+            v-if="isHideGrayEnabled",
             :value="query.hide_grey",
             :label="$t('serviceWeather.hideGrey')",
             @input="updateHideGray"
@@ -143,6 +144,10 @@ export default {
 
     isAlarmListModalType() {
       return this.widget.parameters.modalType === SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList;
+    },
+
+    isHideGrayEnabled() {
+      return this.widget.parameters.isHideGrayEnabled ?? true;
     },
   },
   methods: {
