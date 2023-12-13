@@ -143,13 +143,13 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
           </thead>
           <tbody>
             <alarms-list-row-stub
+              alarm="[object Object]"
               columnsfilters=""
               expandable="true"
               headers="[object Object]"
               medium="true"
               parentalarm="[object Object]"
               refreshalarmslist="[Function]"
-              row="[object Object]"
               search=""
               selectable="true"
               selectedtag="tag"
@@ -165,13 +165,13 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               />
             </tr>
             <alarms-list-row-stub
+              alarm="[object Object]"
               columnsfilters=""
               expandable="true"
               headers="[object Object]"
               medium="true"
               parentalarm="[object Object]"
               refreshalarmslist="[Function]"
-              row="[object Object]"
               search=""
               selectable="true"
               selectedtag="tag"
@@ -187,13 +187,13 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               />
             </tr>
             <alarms-list-row-stub
+              alarm="[object Object]"
               columnsfilters=""
               expandable="true"
               headers="[object Object]"
               medium="true"
               parentalarm="[object Object]"
               refreshalarmslist="[Function]"
-              row="[object Object]"
               search=""
               selectable="true"
               selectedtag="tag"
@@ -209,13 +209,13 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               />
             </tr>
             <alarms-list-row-stub
+              alarm="[object Object]"
               columnsfilters=""
               expandable="true"
               headers="[object Object]"
               medium="true"
               parentalarm="[object Object]"
               refreshalarmslist="[Function]"
-              row="[object Object]"
               search=""
               selectable="true"
               selectedtag="tag"
@@ -231,13 +231,13 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               />
             </tr>
             <alarms-list-row-stub
+              alarm="[object Object]"
               columnsfilters=""
               expandable="true"
               headers="[object Object]"
               medium="true"
               parentalarm="[object Object]"
               refreshalarmslist="[Function]"
-              row="[object Object]"
               search=""
               selectable="true"
               selectedtag="tag"
@@ -801,11 +801,11 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
           </thead>
           <tbody>
             <alarms-list-row-stub
+              alarm="[object Object]"
               columnsfilters=""
               expandable="true"
               headers="[object Object],[object Object],[object Object]"
               refreshalarmslist="[Function]"
-              row="[object Object]"
               search=""
               selectedtag=""
               widget="[object Object]"
@@ -820,11 +820,11 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               />
             </tr>
             <alarms-list-row-stub
+              alarm="[object Object]"
               columnsfilters=""
               expandable="true"
               headers="[object Object],[object Object],[object Object]"
               refreshalarmslist="[Function]"
-              row="[object Object]"
               search=""
               selectedtag=""
               widget="[object Object]"
@@ -839,11 +839,11 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               />
             </tr>
             <alarms-list-row-stub
+              alarm="[object Object]"
               columnsfilters=""
               expandable="true"
               headers="[object Object],[object Object],[object Object]"
               refreshalarmslist="[Function]"
-              row="[object Object]"
               search=""
               selectedtag=""
               widget="[object Object]"
@@ -858,11 +858,11 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               />
             </tr>
             <alarms-list-row-stub
+              alarm="[object Object]"
               columnsfilters=""
               expandable="true"
               headers="[object Object],[object Object],[object Object]"
               refreshalarmslist="[Function]"
-              row="[object Object]"
               search=""
               selectedtag=""
               widget="[object Object]"
@@ -877,11 +877,11 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               />
             </tr>
             <alarms-list-row-stub
+              alarm="[object Object]"
               columnsfilters=""
               expandable="true"
               headers="[object Object],[object Object],[object Object]"
               refreshalarmslist="[Function]"
-              row="[object Object]"
               search=""
               selectedtag=""
               widget="[object Object]"
