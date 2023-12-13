@@ -19,6 +19,8 @@ export default {
     [USER_PERMISSIONS_PREFIXES.business.lineChart]: 'Rights for Line Chart',
     [USER_PERMISSIONS_PREFIXES.business.pieChart]: 'Rights for Pie Chart',
     [USER_PERMISSIONS_PREFIXES.business.numbers]: 'Rights for Numbers',
+    [USER_PERMISSIONS_PREFIXES.business.userStatistics]: 'Rights for User Statistics',
+    [USER_PERMISSIONS_PREFIXES.business.alarmStatistics]: 'Rights for Alarm Statistics',
   },
   api: {
     general: 'General',
