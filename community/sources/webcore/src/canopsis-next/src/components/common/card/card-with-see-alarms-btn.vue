@@ -31,11 +31,15 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .card-with-see-alarms-btn {
   --see-alarms-btn-height: 18px;
 
   min-height: unset !important;
+
+  a {
+    color: white;
+  }
 
   &--with-btn {
     padding-bottom: var(--see-alarms-btn-height);
