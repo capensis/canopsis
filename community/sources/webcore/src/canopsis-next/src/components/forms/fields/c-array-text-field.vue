@@ -8,6 +8,7 @@
           :label="$t('common.value')"
         )
       c-action-btn(v-if="!disabled", type="delete", @click="removeItemFromArray(index)")
+    v-messages(:value="errorMessages", color="error")
     v-btn.mx-0(:disabled="disabled", color="primary", outline, @click="addItem") {{ $t('common.add') }}
 </template>
 
@@ -25,6 +26,10 @@ export default {
   },
   props: {
     values: {
+      type: Array,
+      default: () => [],
+    },
+    errorMessages: {
       type: Array,
       default: () => [],
     },

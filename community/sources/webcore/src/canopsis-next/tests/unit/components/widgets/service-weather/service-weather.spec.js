@@ -443,6 +443,7 @@ describe('service-weather', () => {
           parameters: {
             columnDesktop: 2,
             margin: {},
+            isHideGrayEnabled: false,
           },
         },
         editing: false,

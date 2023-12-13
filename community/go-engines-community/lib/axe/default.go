@@ -50,6 +50,7 @@ type Options struct {
 	WithRemediation          bool
 	WithDynamicInfos         bool
 	RecomputeAllOnInit       bool
+	Workers                  int
 }
 
 func ParseOptions() Options {
@@ -65,6 +66,7 @@ func ParseOptions() Options {
 	flag.BoolVar(&opts.WithDynamicInfos, "withDynamicInfos", false, "Update dynamic infos on RPC changes")
 	flag.BoolVar(&opts.RecomputeAllOnInit, "recomputeAllOnInit", false, "Recompute entity services on init.")
 	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
+	flag.IntVar(&opts.Workers, "workers", 2, "Amount of workers to process main event flow")
 	flag.Parse()
 
 	return opts
@@ -319,7 +321,7 @@ func NewEngine(
 		AlarmCollection:          dbClient.Collection(mongo.AlarmMongoCollection),
 		Logger:                   logger,
 	}
-	engineAxe.AddConsumer(libengine.NewDefaultConsumer(
+	engineAxe.AddConsumer(libengine.NewConcurrentConsumer(
 		canopsis.AxeConsumerName,
 		canopsis.AxeQueueName,
 		cfg.Global.PrefetchCount,
@@ -329,6 +331,7 @@ func NewEngine(
 		options.PublishToQueue,
 		options.FifoAckExchange,
 		canopsis.FIFOAckQueueName,
+		options.Workers,
 		amqpConnection,
 		mainMessageProcessor,
 		logger,
