@@ -79,6 +79,8 @@ import {
   ALARM_OUTPUT_FIELDS,
 } from '@/constants';
 
+import { formToWidgetColumn } from '@/helpers/entities/widget/column/form';
+
 import { formBaseMixin, validationChildrenMixin } from '@/mixins/form';
 
 import ColumnFieldExpandPanel from './column-field-expand-panel.vue';
@@ -223,13 +225,20 @@ export default {
 
     covertToCustom() {
       this.isCustom = true;
+
+      const { value } = formToWidgetColumn(this.column);
+
       const label = this.column.label
         ? this.column.label
         : this.availableColumns.find(column => column.value === this.column.column)?.text ?? '';
 
       this.updateModel({
         ...this.column,
+        column: value,
         label,
+        field: '',
+        rule: '',
+        dictionary: '',
       });
     },
   },
