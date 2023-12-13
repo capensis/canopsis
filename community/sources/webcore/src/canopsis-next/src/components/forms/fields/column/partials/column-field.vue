@@ -1,5 +1,16 @@
 <template lang="pug">
-  v-card
+  v-card.column-field
+    v-tooltip(left)
+      template(#activator="{ on }")
+        v-btn.column-field__remove-btn(
+          v-on="on",
+          small,
+          flat,
+          icon,
+          @click="$emit('remove')"
+        )
+          v-icon(color="error", small) close
+      span {{ $t('common.delete') }}
     v-card-text
       v-layout(row, align-center)
         span.handler.mr-1
@@ -8,7 +19,16 @@
           v-model="expanded",
           :color="hasChildrenError ? 'error' : ''"
         )
+        c-name-field(
+          v-if="isCustom",
+          v-field="column.label",
+          :name="columnLabelFieldName",
+          :label="$t('common.label')",
+          :error-messages="columnLabelErrorMessages",
+          required
+        )
         v-select(
+          v-else,
           v-validate="'required'",
           :value="column.column",
           :items="availableColumns",
@@ -21,18 +41,21 @@
           template(#activator="{ on }")
             v-btn.mr-0(
               v-on="on",
+              :disabled="isCustom",
               small,
               flat,
               icon,
-              @click="$emit('remove')"
+              @click="covertToCustom"
             )
-              v-icon(color="error", small) close
-          span {{ $t('common.delete') }}
+              v-icon(small) tune
+          span {{ $t('common.convertToCustomColumn') }}
       v-expand-transition(mode="out-in")
         column-field-expand-panel.pl-1(
           v-show="expanded",
           v-field="column",
           :name="name",
+          :with-label="!isCustom",
+          :with-field="isCustom",
           :with-html="withHtml",
           :with-template="withTemplate",
           :with-color-indicator="withColorIndicator",
@@ -124,6 +147,7 @@ export default {
   data() {
     return {
       expanded: !this.column?.column,
+      isCustom: false,
     };
   },
   computed: {
@@ -154,6 +178,14 @@ export default {
         ? this.alarmListAvailableColumns
         : this.contextAvailableColumns;
     },
+
+    columnLabelFieldName() {
+      return `${this.name}.label`;
+    },
+
+    columnLabelErrorMessages() {
+      return this.errors.collect(this.columnLabelFieldName);
+    },
   },
   watch: {
     type() {
@@ -163,6 +195,15 @@ export default {
       }));
 
       this.updateModel(columns);
+    },
+
+    availableColumns: {
+      immediate: true,
+      handler(columns) {
+        this.isCustom = this.column.column
+          ? columns.every(column => column.value !== this.column.column)
+          : false;
+      },
     },
   },
   methods: {
@@ -179,6 +220,30 @@ export default {
 
       this.updateModel(newValue);
     },
+
+    covertToCustom() {
+      this.isCustom = true;
+      const label = this.column.label
+        ? this.column.label
+        : this.availableColumns.find(column => column.value === this.column.column)?.text ?? '';
+
+      this.updateModel({
+        ...this.column,
+        label,
+      });
+    },
   },
 };
 </script>
+
+<style lang="scss">
+.column-field {
+  position: relative;
+
+  &__remove-btn.v-btn {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+}
+</style>
