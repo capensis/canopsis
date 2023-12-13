@@ -136,7 +136,7 @@ func (a *assigner) assignToComponent(ctx context.Context, entity *types.Entity, 
 
 		if matched {
 			// if a state method is the same, return
-			if prevStateMethodID == entity.StateInfo.ID {
+			if entity.StateInfo != nil && prevStateMethodID == entity.StateInfo.ID {
 				return false, nil
 			}
 
@@ -189,7 +189,7 @@ func (a *assigner) assignToService(ctx context.Context, entity *types.Entity, pr
 
 		if matched {
 			// if a state method is the same, return
-			if prevStateMethodID == entity.StateInfo.ID {
+			if entity.StateInfo != nil && prevStateMethodID == entity.StateInfo.ID {
 				return false, nil
 			}
 
