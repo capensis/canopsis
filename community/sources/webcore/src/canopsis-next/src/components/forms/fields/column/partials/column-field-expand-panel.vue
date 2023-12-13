@@ -184,7 +184,7 @@ export default {
   },
   data() {
     return {
-      customLabel: !!this.column.label,
+      customLabel: false,
     };
   },
   computed: {
@@ -238,6 +238,14 @@ export default {
 
     columnValueErrorMessages() {
       return this.errors.collect(this.columnValueFieldName);
+    },
+  },
+  watch: {
+    withLabel: {
+      immediate: true,
+      handler() {
+        this.customLabel = !!this.column.label;
+      },
     },
   },
   methods: {
