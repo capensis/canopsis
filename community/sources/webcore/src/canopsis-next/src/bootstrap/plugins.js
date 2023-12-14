@@ -64,6 +64,7 @@ export const bootstrapApplicationPlugins = (Vue) => {
             offsetX: true,
             maxWidth: 500,
             openOnHover: true,
+            attach: '.modals-wrapper',
           },
         },
         dsCalendarEvent: {
@@ -71,6 +72,7 @@ export const bootstrapApplicationPlugins = (Vue) => {
             offsetY: true,
             openOnHover: true,
             transition: 'fade-transition',
+            attach: '.modals-wrapper',
           },
         },
         dsCalendarEventPlaceholder: {
@@ -78,12 +80,14 @@ export const bootstrapApplicationPlugins = (Vue) => {
             offsetY: true,
             openOnHover: true,
             transition: 'fade-transition',
+            attach: '.modals-wrapper',
           },
         },
         dsCalendarEventTimePlaceholder: {
           popoverProps: {
             openOnHover: true,
             transition: 'fade-transition',
+            attach: '.modals-wrapper',
           },
         },
       },
