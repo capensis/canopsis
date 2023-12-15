@@ -251,6 +251,28 @@ describe('view-tab-widgets', () => {
           _id: 'tab-id',
           widgets: [],
         },
+        visible: true,
+      },
+      store: createMockedStoreModules([
+        queryModule,
+        activeViewModule,
+        widgetModule,
+      ]),
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `view-tab-widgets` with editing mode without visible', () => {
+    editing.mockReturnValueOnce(true);
+
+    const wrapper = snapshotFactory({
+      propsData: {
+        tab: {
+          _id: 'tab-id',
+          widgets: [],
+        },
+        visible: false,
       },
       store: createMockedStoreModules([
         queryModule,
@@ -288,6 +310,7 @@ describe('view-tab-widgets', () => {
           _id: 'tab-id',
           widgets,
         },
+        visible: true,
       },
       store: createMockedStoreModules([
         queryModule,
@@ -308,6 +331,7 @@ describe('view-tab-widgets', () => {
           _id: 'tab-id',
           widgets,
         },
+        visible: true,
       },
       store: createMockedStoreModules([
         queryModule,
