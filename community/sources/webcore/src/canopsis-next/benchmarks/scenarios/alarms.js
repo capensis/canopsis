@@ -6,52 +6,67 @@ const { AlarmsListModule } = require('../pages/alarms');
 
 const slowdowns = [1, 2, 4, 6];
 
-benchmark('Render 50 alarms', (measure) => {
-  slowdowns.forEach((slowdown) => {
-    measure(slowdown === 1 ? 'Without slowdown' : `With ${slowdown}x slowdown`, async (report, { url, viewId, tabId }) => {
-      const application = new Application(url);
-      const viewPage = new ViewPage(application);
-      const loginPage = new LoginPage(application);
-      const alarmsListModule = new AlarmsListModule(application);
+[50, 100].forEach((itemsPerPage) => {
+  benchmark(`Render ${itemsPerPage} alarms`, async (measure, { url, viewId, tabId }) => {
+    const application = new Application(url);
+    const viewPage = new ViewPage(application);
+    const loginPage = new LoginPage(application);
+    const alarmsListModule = new AlarmsListModule(application);
 
-      try {
-        await application.openBrowser();
-        await loginPage.login();
+    try {
+      await application.openBrowser();
+      await loginPage.login();
+      await viewPage.openById(viewId, { tabId });
+      await alarmsListModule.waitTableRow();
+      await alarmsListModule.updateItemsPerPage(itemsPerPage);
+      await application.page.waitForTimeout(1000);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      await application.closeBrowser();
+    }
 
-        await viewPage.openById(viewId, { tabId });
+    slowdowns.forEach((slowdown) => {
+      measure(slowdown === 1 ? 'Without slowdown' : `With ${slowdown}x slowdown`, async (report) => {
+        try {
+          await application.openBrowser();
+          await loginPage.login();
 
-        await application.emulateCPUThrottling(slowdown);
+          await viewPage.openById(viewId, { tabId });
 
-        await application.startMeasurePerformance();
+          await application.emulateCPUThrottling(slowdown);
 
-        await application.page.reload();
+          await application.startMeasurePerformance();
 
-        await alarmsListModule.waitTableRow();
+          await application.page.reload();
 
-        const performanceMetrics = await application.stopMeasurePerformance();
+          await alarmsListModule.waitTableRow();
 
-        const longAnimationFrame = Application.findLongestPerformanceTask(performanceMetrics);
+          const performanceMetrics = await application.stopMeasurePerformance();
 
-        const { duration } = longAnimationFrame.args.data;
+          const longAnimationFrame = Application.findLongestPerformanceTask(performanceMetrics);
 
-        report(duration);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        await application.closeBrowser();
-      }
+          const { duration } = longAnimationFrame.args.data;
+
+          report(duration);
+        } catch (err) {
+          console.error(err);
+        } finally {
+          await application.closeBrowser();
+        }
+      });
     });
   });
 });
 
-benchmark('Reload 50 alarms', (measure) => {
-  slowdowns.forEach((slowdown) => {
-    measure(slowdown === 1 ? 'Without slowdown' : `With ${slowdown}x slowdown`, async (report, { url, viewId, tabId }) => {
-      const application = new Application(url);
-      const viewPage = new ViewPage(application);
-      const loginPage = new LoginPage(application);
-      const alarmsListModule = new AlarmsListModule(application);
+benchmark('Reload 50 alarms', (measure, { url, viewId, tabId }) => {
+  const application = new Application(url);
+  const viewPage = new ViewPage(application);
+  const loginPage = new LoginPage(application);
+  const alarmsListModule = new AlarmsListModule(application);
 
+  [].forEach((slowdown) => {
+    measure(slowdown === 1 ? 'Without slowdown' : `With ${slowdown}x slowdown`, async (report) => {
       try {
         await application.openBrowser();
         await loginPage.login();
