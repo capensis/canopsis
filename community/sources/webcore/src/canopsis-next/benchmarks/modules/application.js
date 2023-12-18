@@ -52,9 +52,6 @@ class Application {
   }
 
   async stopMeasurePerformance() {
-    /**
-     * https://docs.google.com/document/d/1CvAClvFfyA5R-PhYUmn5OOQtYMH4h6I0nSsKchNAySU/preview#heading=h.uxpopqvbjezh
-     */
     return new PerformanceMetrics(await this.page.tracing.stop());
   }
 

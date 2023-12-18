@@ -1,4 +1,4 @@
-const { benchmark } = require('../utils/report');
+const { benchmark } = require('../utils/runner');
 const { Application } = require('../modules/application');
 const { ViewPage } = require('../modules/view');
 const { LoginPage } = require('../modules/login');
@@ -58,10 +58,11 @@ benchmark.each(
           await alarmsListModule.waitTableRow();
 
           const performanceMetrics = await application.stopMeasurePerformance();
+          const { JSHeapUsedSize, JSHeapTotalSize } = await application.getPageMetrics();
           const longAnimationFrame = performanceMetrics.findLongestPerformanceTask();
-          const { duration } = longAnimationFrame.args.data;
+          const { duration, blockingDuration } = longAnimationFrame.args.data;
 
-          report(duration);
+          report({ duration, blockingDuration, JSHeapUsedSize, JSHeapTotalSize });
         } catch (err) {
           console.error(err);
         } finally {
@@ -92,10 +93,11 @@ benchmark.each(
           await alarmsListModule.waitProgress(false);
 
           const performanceMetrics = await application.stopMeasurePerformance();
+          const { JSHeapUsedSize, JSHeapTotalSize } = await application.getPageMetrics();
           const longAnimationFrame = performanceMetrics.findLongestPerformanceTask();
-          const { duration } = longAnimationFrame.args.data;
+          const { duration, blockingDuration } = longAnimationFrame.args.data;
 
-          report(duration);
+          report({ duration, blockingDuration, JSHeapUsedSize, JSHeapTotalSize });
         } catch (err) {
           console.error(err);
         } finally {
@@ -123,10 +125,11 @@ benchmark.each(
           await alarmsListModule.waitFirstAlarmRowExpandPanel();
 
           const performanceMetrics = await application.stopMeasurePerformance();
+          const { JSHeapUsedSize, JSHeapTotalSize } = await application.getPageMetrics();
           const longAnimationFrame = performanceMetrics.findLongestPerformanceTask();
-          const { duration } = longAnimationFrame.args.data;
+          const { duration, blockingDuration } = longAnimationFrame.args.data;
 
-          report(duration);
+          report({ duration, blockingDuration, JSHeapUsedSize, JSHeapTotalSize });
         } catch (err) {
           console.error(err);
         } finally {

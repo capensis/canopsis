@@ -2,7 +2,7 @@
 
 require('./scenarios/alarms');
 
-const { runBenchmarks } = require('./utils/report');
+const { runBenchmarks } = require('./utils/runner');
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 require('yargs')
