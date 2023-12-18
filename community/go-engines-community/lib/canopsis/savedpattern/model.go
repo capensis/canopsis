@@ -1,8 +1,8 @@
 package savedpattern
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 const (
@@ -20,8 +20,8 @@ type SavedPattern struct {
 	EntityPattern    pattern.Entity        `bson:"entity_pattern,omitempty"`
 	PbehaviorPattern pattern.PbehaviorInfo `bson:"pbehavior_pattern,omitempty"`
 	Author           string                `bson:"author"`
-	Created          types.CpsTime         `bson:"created,omitempty"`
-	Updated          types.CpsTime         `bson:"updated,omitempty"`
+	Created          datetime.CpsTime      `bson:"created,omitempty"`
+	Updated          datetime.CpsTime      `bson:"updated,omitempty"`
 }
 
 type AlarmPatternFields struct {

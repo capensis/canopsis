@@ -3,13 +3,14 @@ package engine_test
 import (
 	"context"
 	"errors"
+	"testing"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	mock_amqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/amqp"
 	mock_engine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/engine"
 	"github.com/golang/mock/gomock"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"testing"
 )
 
 func TestRpcServer_Consume_GivenMessage_ShouldProcessIt(t *testing.T) {
@@ -136,11 +137,11 @@ func TestRpcServer_Consume_GivenErrorOnMessage_ShouldStopConsumer(t *testing.T) 
 	mockChannel.EXPECT().Ack(gomock.Any(), gomock.Any()).Times(0)
 	mockChannel.EXPECT().Nack(gomock.Any(), gomock.Any(), gomock.Any())
 
-	expectedErr := &testErr{msg: "test error"}
+	expectedErr := &testError{msg: "test error"}
 	mockMessageProcessor.EXPECT().Process(gomock.Any(), gomock.Any()).Return(nil, expectedErr)
 
 	err := consumer.Consume(context.Background())
-	testErr := &testErr{}
+	testErr := &testError{}
 	if !errors.As(err, &testErr) || testErr.Error() != expectedErr.Error() {
 		t.Errorf("expected error %v but got %v", expectedErr, err)
 	}

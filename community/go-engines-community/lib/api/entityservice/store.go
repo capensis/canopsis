@@ -5,10 +5,10 @@ import (
 	"errors"
 	"reflect"
 	"sort"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
@@ -107,7 +107,7 @@ func (s *store) GetDependencies(ctx context.Context, r ContextGraphRequest, user
 		}
 		return nil, err
 	}
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	match := bson.M{"services": service.ID}
 	pipeline := s.getQueryBuilder().CreateTreeOfDepsAggregationPipeline(match, r.Query, r.SortRequest, r.Category, r.Search,
 		r.WithFlags, now)
@@ -155,7 +155,7 @@ func (s *store) GetImpacts(ctx context.Context, r ContextGraphRequest, userId st
 		"_id":  bson.M{"$in": e.Services},
 		"type": types.EntityTypeService,
 	}
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	pipeline := s.getQueryBuilder().CreateTreeOfDepsAggregationPipeline(match, r.Query, r.SortRequest, r.Category, r.Search,
 		r.WithFlags, now)
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
@@ -193,7 +193,7 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 		Entity: types.Entity{
 			ID:            utils.NewID(),
 			Name:          request.Name,
-			EnableHistory: []types.CpsTime{},
+			EnableHistory: []datetime.CpsTime{},
 			Enabled:       enabled,
 			Infos:         transformInfos(request.EditRequest),
 			Type:          types.EntityTypeService,
@@ -201,7 +201,7 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 			Category:      request.Category,
 			ImpactLevel:   request.ImpactLevel,
 			SliAvailState: sliAvailState,
-			Created:       types.CpsTime{Time: time.Now()},
+			Created:       datetime.NewCpsTime(),
 		},
 		EntityPatternFields: request.EntityPatternFieldsRequest.ToModelWithoutFields(common.GetForbiddenFieldsInEntityPattern(mongo.EntityMongoCollection)),
 		OutputTemplate:      request.OutputTemplate,
@@ -317,7 +317,7 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 		"soft_deleted": nil,
 	}, bson.M{"$set": bson.M{
 		"enabled":      false,
-		"soft_deleted": types.NewCpsTime(),
+		"soft_deleted": datetime.NewCpsTime(),
 	}})
 	if err != nil || updateRes.MatchedCount == 0 {
 		return false, err
