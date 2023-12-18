@@ -1,6 +1,6 @@
 const BenchmarkLauncher = require('./BenchmarkLauncher');
-const ConsoleReporter = require('./ConsoleReporter');
-const FileReporter = require('./FileReporter');
+const ConsoleReporter = require('./reporters/ConsoleReporter');
+const FileReporter = require('./reporters/FileReporter');
 
 const benchmarkLauncher = new BenchmarkLauncher();
 
