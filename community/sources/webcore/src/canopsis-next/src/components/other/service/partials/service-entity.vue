@@ -63,7 +63,7 @@ import { isNull } from 'lodash';
 import { ENTITY_TYPES, MODALS, USERS_PERMISSIONS } from '@/constants';
 
 import { getEntityColor } from '@/helpers/color';
-import { getAvailableActionsByEntity } from '@/helpers/entities/entity';
+import { getAvailableActionsByEntity, isDisabledActionForEntityByActionsRequests } from '@/helpers/entities/entity';
 import { isInstructionManual } from '@/helpers/forms/remediation-instruction';
 
 import { authMixin } from '@/mixins/auth';
@@ -109,6 +109,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    actionsRequests: {
+      type: Array,
+      default: () => [],
+    },
   },
   data() {
     return {
@@ -152,6 +156,8 @@ export default {
         .map(action => ({
           ...action,
           loading: this.pendingByActionType[action.type],
+          disabled: this.pendingByActionType[action.type]
+              || isDisabledActionForEntityByActionsRequests(this.entity._id, action.type, this.actionsRequests),
         }));
     },
   },

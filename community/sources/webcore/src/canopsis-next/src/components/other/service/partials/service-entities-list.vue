@@ -18,6 +18,7 @@
         :entity-name-field="entityNameField",
         :widget-parameters="widgetParameters",
         :selected="isEntitySelected(serviceEntity)",
+        :actions-requests="actionsRequests",
         @update:selected="updateSelected(serviceEntity, $event)",
         @remove:unavailable="removeEntityFromUnavailable(serviceEntity)",
         @apply:action="$listeners['apply:action']",
@@ -76,6 +77,10 @@ export default {
     totalItems: {
       type: Number,
       required: false,
+    },
+    actionsRequests: {
+      type: Array,
+      default: () => [],
     },
   },
   data() {
