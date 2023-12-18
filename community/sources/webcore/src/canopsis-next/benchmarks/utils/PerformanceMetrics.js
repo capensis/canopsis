@@ -1,3 +1,6 @@
+/**
+ * https://docs.google.com/document/d/1CvAClvFfyA5R-PhYUmn5OOQtYMH4h6I0nSsKchNAySU/preview#heading=h.uxpopqvbjezh
+ */
 class PerformanceMetrics {
   constructor(data) {
     this.data = JSON.parse(data.toString());
