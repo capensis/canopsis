@@ -1,20 +1,9 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 const puppeteer = require('puppeteer');
 
+const { PerformanceMetrics } = require('../utils/PerformanceMetrics');
+
 class Application {
-  static findLongestPerformanceTask(performanceMetrics) {
-    const allAnimationTasks = performanceMetrics.traceEvents.filter(({ name, ph }) => name === 'LongAnimationFrame'
-      && ph === 'b');
-
-    return allAnimationTasks.reduce((acc, task) => {
-      if (acc.args.data.duration < task.args.data.duration) {
-        return task;
-      }
-
-      return acc;
-    });
-  }
-
   browser;
 
   page;
@@ -26,8 +15,8 @@ class Application {
   async openBrowser() {
     this.browser = await puppeteer.launch({
       ignoreHTTPSErrors: true,
-      // headless: 'new',
-      headless: false,
+      headless: 'new',
+      // headless: false,
       args: [
         '--no-sandbox',
         '--window-size=1920,1040',
@@ -66,13 +55,19 @@ class Application {
     /**
      * https://docs.google.com/document/d/1CvAClvFfyA5R-PhYUmn5OOQtYMH4h6I0nSsKchNAySU/preview#heading=h.uxpopqvbjezh
      */
-    const performanceMetrics = await this.page.tracing.stop();
-
-    return JSON.parse(performanceMetrics.toString());
+    return new PerformanceMetrics(await this.page.tracing.stop());
   }
 
   emulateCPUThrottling(rate) {
     return this.page.emulateCPUThrottling(rate);
+  }
+
+  async clickListItemByContent(content) {
+    const listItemElementSelector = `//*[contains(@class, 'v-menu__content') and contains(@class, 'menuable__content__active')]//*[contains(@class, 'v-list__tile__title') and contains(text(), "${content}")]`;
+    await this.page.waitForXPath(listItemElementSelector);
+    const [listItemElement] = await this.page.$x(listItemElementSelector);
+
+    return listItemElement.click();
   }
 }
 
