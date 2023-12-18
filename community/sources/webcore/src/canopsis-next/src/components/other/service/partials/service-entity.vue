@@ -112,6 +112,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    actionsRequests: {
+      type: Array,
+      default: () => [],
+    },
   },
   data() {
     return {
@@ -156,7 +160,7 @@ export default {
           ...action,
           loading: this.pendingByActionType[action.type],
           disabled: this.pendingByActionType[action.type]
-              || isDisabledActionForEntityByActionsRequests(this.entity._id, action.type, this.$actionsRequests),
+              || isDisabledActionForEntityByActionsRequests(this.entity._id, action.type, this.actionsRequests),
         }));
     },
   },
