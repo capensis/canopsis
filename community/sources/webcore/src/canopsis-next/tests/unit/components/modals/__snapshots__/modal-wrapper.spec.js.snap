@@ -38,7 +38,7 @@ exports[`modal-wrapper Renders \`modal-wrapper\` with custom props and slots 1`]
     class="v-card__actions"
   >
     <div
-      class="layout py-1 justify-end"
+      class="layout py-1 justify-end align-center"
     >
       <div>
         Actions

@@ -23,7 +23,6 @@ import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket
 const { mapActions: mapAlarmActions } = createNamespacedHelpers('alarm');
 
 export const widgetActionPanelServiceEntityMixin = {
-  inject: ['$actionsRequests'],
   mixins: [
     authMixin,
     entitiesPbehaviorTypeMixin,
@@ -32,6 +31,12 @@ export const widgetActionPanelServiceEntityMixin = {
     entitiesDeclareTicketRuleMixin,
     entitiesDeclareTicketRuleMixin,
   ],
+  props: {
+    actionsRequests: {
+      type: Array,
+      default: () => [],
+    },
+  },
   data() {
     return {
       unavailableEntitiesAction: {},
@@ -74,8 +79,8 @@ export const widgetActionPanelServiceEntityMixin = {
     }),
 
     async runAction(actionType, action) {
-      if (this.widgetParameters.stackedEntitiesActions) {
-        this.$actionsRequests.push({ actionType, action, entityId: this.entity?._id });
+      if (this.widgetParameters.entitiesActionsInQueue) {
+        this.$emit('add:action', { actionType, action, entityId: this.entity?._id });
 
         return Promise.resolve();
       }
