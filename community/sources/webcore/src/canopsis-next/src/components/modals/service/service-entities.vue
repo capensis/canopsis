@@ -72,7 +72,6 @@ export default {
   provide() {
     return {
       $periodicRefresh: this.$periodicRefresh,
-      $actionsRequests: this.actionsRequests,
     };
   },
   inject: ['$system'],
