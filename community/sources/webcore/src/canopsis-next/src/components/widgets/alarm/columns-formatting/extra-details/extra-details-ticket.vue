@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    v-tooltip.c-extra-details.extra-details-ticket(top)
+    v-tooltip.c-extra-details.extra-details-ticket(top, lazy)
       template(#activator="{ on }")
         v-badge.time-line-flag(:value="isLastFailed", color="transparent", overlap)
           template(#badge="")

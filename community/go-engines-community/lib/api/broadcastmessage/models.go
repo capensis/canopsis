@@ -2,17 +2,17 @@ package broadcastmessage
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 )
 
 type Payload struct {
-	Color   string        `bson:"color" json:"color" binding:"required,iscolor"`
-	Message string        `bson:"message" json:"message" binding:"required"`
-	Start   types.CpsTime `bson:"start" json:"start" binding:"required" swaggertype:"integer"`
-	End     types.CpsTime `bson:"end" json:"end" binding:"required" swaggertype:"integer"`
+	Color   string           `bson:"color" json:"color" binding:"required,iscolor"`
+	Message string           `bson:"message" json:"message" binding:"required"`
+	Start   datetime.CpsTime `bson:"start" json:"start" binding:"required" swaggertype:"integer"`
+	End     datetime.CpsTime `bson:"end" json:"end" binding:"required" swaggertype:"integer"`
 
-	Created *types.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated *types.CpsTime `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	Created *datetime.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Updated *datetime.CpsTime `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 
 	Maintenance bool `bson:"-" json:"maintenance,omitempty"`
 }

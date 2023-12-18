@@ -146,6 +146,8 @@ DisableActionSnoozeDelayOnPbh = false
 # TimeToKeepResolvedAlarms defines how long resolved alarms will be kept in main alarm collection
 TimeToKeepResolvedAlarms = "720h"
 AllowDoubleAck = false
+# EnableArraySortingInEntityInfos enables sorting string array infos before saving to an entity.
+EnableArraySortingInEntityInfos = true
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.timezone]

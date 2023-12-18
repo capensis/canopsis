@@ -2,12 +2,14 @@ package common
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"reflect"
 	"strconv"
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/validator"
@@ -32,13 +34,15 @@ var timeFormats = map[string]string{
 
 // ValidateCpsTimeType implements CustomTypeFunc and returns value to validate.
 func ValidateCpsTimeType(field reflect.Value) interface{} {
-	if field.Type() == reflect.TypeOf(types.CpsTime{}) {
-		val := field.Interface().(types.CpsTime).Time
-		if val.IsZero() {
-			return nil
-		}
+	if field.Type() == reflect.TypeOf(datetime.CpsTime{}) {
+		if t, ok := field.Interface().(datetime.CpsTime); ok {
+			val := t.Time
+			if val.IsZero() {
+				return nil
+			}
 
-		return val
+			return val
+		}
 	}
 
 	return nil
@@ -185,7 +189,7 @@ func (v *uniqueFieldValidator) Validate(ctx context.Context, sl validator.Struct
 		if found.ID != id || strings.ToLower(v.field) == "id" {
 			sl.ReportError(val, v.field, v.field, "unique", "")
 		}
-	} else if err != mongodriver.ErrNoDocuments {
+	} else if !errors.Is(err, mongodriver.ErrNoDocuments) {
 		panic(err)
 	}
 }
@@ -227,7 +231,7 @@ func (v *existFieldValidator) Validate(ctx context.Context, sl validator.StructL
 	}
 	err := v.dbCollection.FindOne(ctx, bson.M{"_id": val}).Decode(&found)
 	if err != nil {
-		if err == mongodriver.ErrNoDocuments {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			sl.ReportError(val, v.field, v.field, "not_exist", "")
 		} else {
 			panic(err)

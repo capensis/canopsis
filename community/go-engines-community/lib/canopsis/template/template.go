@@ -3,6 +3,7 @@ package template
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"log"
 	"reflect"
 	"regexp"
@@ -12,7 +13,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	libreflect "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/reflect"
 )
 
@@ -86,7 +87,11 @@ func (e *executor) Parse(text string) ParsedTemplate {
 }
 
 func (e *executor) ExecuteByTpl(tpl *template.Template, data any) (string, error) {
-	buf := e.bufPool.Get().(*bytes.Buffer)
+	buf, ok := e.bufPool.Get().(*bytes.Buffer)
+	if !ok {
+		return "", fmt.Errorf("unknown buffer type")
+	}
+
 	defer e.bufPool.Put(buf)
 	buf.Reset()
 	err := tpl.Execute(buf, addEnvVarsToData(data, e.templateConfigProvider.Get().Vars))
@@ -157,14 +162,14 @@ func GetFunctions(appLocation *time.Location) template.FuncMap {
 			return ""
 		},
 		// replace will replace a string, replacing matches of the regex with the replacement string
-		"replace": func(oldRegex string, new string, v interface{}) string {
+		"replace": func(oldRegex string, newV string, v interface{}) string {
 			if s, ok := v.(string); ok {
 				re, err := regexp.Compile(oldRegex)
 				if err != nil {
 					log.Printf("replace : %+v cannot be parsed by regexp, %v", oldRegex, err)
 					return ""
 				}
-				return re.ReplaceAllString(s, new)
+				return re.ReplaceAllString(s, newV)
 			}
 			log.Printf("replace : %+v is not a string", v)
 			return ""
@@ -197,14 +202,26 @@ func GetFunctions(appLocation *time.Location) template.FuncMap {
 					log.Printf("localtime : %+v is not a CpsTime", v)
 					return ""
 				}
-				timezone = v[1].(string)
-				format = v[0].(string)
+
+				if timezone, ok = v[1].(string); !ok {
+					log.Printf("localtime : %+v is not a string", v[1])
+					return ""
+				}
+
+				if format, ok = v[0].(string); !ok {
+					log.Printf("localtime : %+v is not a string", v[0])
+					return ""
+				}
 			} else if len(v) == 2 {
 				if value, ok = castTime(v[1]); !ok {
 					log.Printf("localtime : %+v is not a CpsTime", v)
 					return ""
 				}
-				format = v[0].(string)
+
+				if format, ok = v[0].(string); !ok {
+					log.Printf("localtime : %+v is not a string", v[0])
+					return ""
+				}
 			} else {
 				log.Print("localtime : must have 1 or 2 arguments")
 				return ""
@@ -276,9 +293,9 @@ func GetFunctions(appLocation *time.Location) template.FuncMap {
 
 func castTime(v interface{}) (time.Time, bool) {
 	switch t := v.(type) {
-	case types.CpsTime:
+	case datetime.CpsTime:
 		return t.Time, true
-	case *types.CpsTime:
+	case *datetime.CpsTime:
 		if t == nil {
 			return time.Time{}, false
 		}
