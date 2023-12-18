@@ -25,8 +25,8 @@ const DEFAULT_SANITIZE_OPTIONS = {
     'c-copy-wrapper': ['value'],
     'c-links-list': [':links', ':category'],
     'service-entities-list': [
-      ':service', ':service-entities', ':widget-parameters', ':pagination', ':total-items', 'entity-name-field',
-      '@refresh', '@update:pagination',
+      ':service', ':service-entities', ':widget-parameters', ':pagination', ':total-items', ':actions-requests',
+      'entity-name-field', '@refresh', '@update:pagination', '@add:action',
     ],
   },
   allowedSchemes: sanitizeHtmlLib.defaults.allowedSchemes.concat(['data']),

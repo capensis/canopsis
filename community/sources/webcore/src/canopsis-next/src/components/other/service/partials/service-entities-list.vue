@@ -18,6 +18,8 @@
         :entity-name-field="entityNameField",
         :widget-parameters="widgetParameters",
         :selected="isEntitySelected(serviceEntity)",
+        :actions-requests="actionsRequests",
+        @add:action="addAction",
         @update:selected="updateSelected(serviceEntity, $event)",
         @remove:unavailable="removeEntityFromUnavailable(serviceEntity)",
         @refresh="$listeners.refresh"
@@ -75,6 +77,10 @@ export default {
     totalItems: {
       type: Number,
       required: false,
+    },
+    actionsRequests: {
+      type: Array,
+      default: () => [],
     },
   },
   data() {
@@ -142,6 +148,10 @@ export default {
 
     isEntitySelected(entity) {
       return this.selectedEntitiesIds.includes(entity._id);
+    },
+
+    addAction(action) {
+      this.$emit('add:action', action);
     },
 
     updatePage(page) {
