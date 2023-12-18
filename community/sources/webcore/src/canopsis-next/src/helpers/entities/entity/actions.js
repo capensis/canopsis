@@ -166,8 +166,8 @@ export const isDisabledActionForEntityByActionsRequests = (entityId, actionType,
     case WEATHER_ACTIONS_TYPES.executeInstruction:
       return false;
     default:
-      return actionsRequests.some(({ actionType: requestActionType, entityId: requestEntityId }) => (
-        requestActionType === actionType && requestEntityId === entityId
+      return actionsRequests.some(({ actionType: requestActionType, entitiesIds: requestEntitiesIds }) => (
+        requestActionType === actionType && requestEntitiesIds.includes(entityId)
       ));
   }
 };
