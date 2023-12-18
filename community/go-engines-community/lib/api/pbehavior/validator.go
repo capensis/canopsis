@@ -7,6 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorexception"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
@@ -51,7 +52,7 @@ func (v *Validator) ValidateEditRequest(ctx context.Context, sl validator.Struct
 	r := sl.Current().Interface().(EditRequest)
 
 	if r.CorporateEntityPattern == "" && len(r.EntityPattern) > 0 &&
-		!r.EntityPattern.Validate(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection)) {
+		!match.ValidateEntityPattern(r.EntityPattern, common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection)) {
 		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "entity_pattern", "")
 	}
 
@@ -117,7 +118,7 @@ func (v *Validator) ValidatePatchRequest(ctx context.Context, sl validator.Struc
 	if r.CorporateEntityPattern == nil && r.EntityPattern != nil {
 		if len(r.EntityPattern) == 0 {
 			sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "required", "")
-		} else if !r.EntityPattern.Validate(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection)) {
+		} else if !match.ValidateEntityPattern(r.EntityPattern, common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection)) {
 			sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "entity_pattern", "")
 		}
 	}

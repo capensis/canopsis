@@ -286,6 +286,7 @@ export default {
   new: 'New',
   regexp: 'Regexp',
   archive: 'Archive',
+  convertToCustomColumn: 'Convert column to custom',
   variableTypes: {
     string: 'String',
     number: 'Number',

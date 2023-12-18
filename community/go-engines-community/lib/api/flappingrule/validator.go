@@ -2,6 +2,7 @@ package flappingrule
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
 )
@@ -25,12 +26,12 @@ func (v *Validator) ValidateUpdateRequest(sl validator.StructLevel) {
 
 func (v *Validator) validatePatterns(sl validator.StructLevel, r EditRequest) {
 	if r.CorporateEntityPattern == "" && len(r.EntityPattern) > 0 &&
-		!r.EntityPattern.Validate(common.GetForbiddenFieldsInEntityPattern(mongo.FlappingRuleMongoCollection)) {
+		!match.ValidateEntityPattern(r.EntityPattern, common.GetForbiddenFieldsInEntityPattern(mongo.FlappingRuleMongoCollection)) {
 		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "entity_pattern", "")
 	}
 
 	if r.CorporateAlarmPattern == "" && len(r.AlarmPattern) > 0 &&
-		!r.AlarmPattern.Validate(
+		!match.ValidateAlarmPattern(r.AlarmPattern,
 			common.GetForbiddenFieldsInAlarmPattern(mongo.FlappingRuleMongoCollection),
 			common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.FlappingRuleMongoCollection),
 		) {

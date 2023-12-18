@@ -33,7 +33,7 @@ func (e *jsonEncoder) Encode(in interface{}) ([]byte, error) {
 	}
 
 	if err != nil {
-		return []byte{}, encoding.NewEncodingError(fmt.Errorf("json encoder: %v", err))
+		return []byte{}, encoding.NewEncodingError(fmt.Errorf("json encoder: %w", err))
 	}
 
 	return b, nil
@@ -55,7 +55,7 @@ func (e *jsonDecoder) Decode(in []byte, out interface{}) error {
 	}
 
 	if err != nil {
-		return encoding.NewDecodingError(fmt.Errorf("json decoder: %v", err))
+		return encoding.NewDecodingError(fmt.Errorf("json decoder: %w", err))
 	}
 
 	return nil

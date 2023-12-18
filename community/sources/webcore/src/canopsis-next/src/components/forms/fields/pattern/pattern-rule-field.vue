@@ -49,7 +49,7 @@
         template(v-else)
           v-flex.pl-3(v-if="isInfosValueField", xs1)
             c-input-type-field(
-              :value="inputType",
+              :value="rule.fieldType",
               :label="$t('common.type')",
               :types="inputTypes",
               :disabled="disabled",
@@ -74,6 +74,8 @@
 </template>
 
 <script>
+import { isFunction } from 'lodash';
+
 import {
   PATTERN_FIELD_TYPES,
   PATTERN_QUICK_RANGES,
@@ -214,15 +216,23 @@ export default {
       };
 
       if (this.valueField) {
+        const valueFieldProps = isFunction(this.valueField.props)
+          ? this.valueField.props.call(this, this.rule)
+          : this.valueField.props;
+
+        const valueFieldOn = isFunction(this.valueField.on)
+          ? this.valueField.on.call(this, this.rule)
+          : this.valueField.on;
+
         return {
           is: this.valueField.is,
           props: {
             ...valueProps,
-            ...this.valueField.props,
+            ...valueFieldProps,
           },
           on: {
             ...valueHandlers,
-            ...this.valueField.on,
+            ...valueFieldOn,
           },
         };
       }
@@ -280,7 +290,12 @@ export default {
     },
 
     updateType(type) {
-      this.updateValue(convertValueByType(this.rule.value, type));
+      this.updateModel({
+        ...this.rule,
+
+        fieldType: type,
+        value: convertValueByType(this.rule.value, type),
+      });
     },
   },
 };

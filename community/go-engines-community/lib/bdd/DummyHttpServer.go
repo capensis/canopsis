@@ -16,7 +16,7 @@ func RunDummyHttpServer(ctx context.Context, addr string) error {
 	dummyRoutes := getDummyRoutes("http://" + addr)
 	mux.HandleFunc("/", dummyHandler(dummyRoutes))
 
-	server := &http.Server{
+	server := &http.Server{ //nolint:gosec
 		Addr:    addr,
 		Handler: mux,
 	}
