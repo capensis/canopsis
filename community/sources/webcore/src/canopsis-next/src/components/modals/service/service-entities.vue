@@ -13,7 +13,9 @@
             :widget-parameters="widgetParameters",
             :pagination.sync="pagination",
             :total-items="serviceEntitiesMeta.total_count",
-            @refresh="refresh"
+            :actions-requests="actionsRequests",
+            @refresh="refresh",
+            @add:action="addAction"
           )
         v-tab(:disabled="!hasPbehaviorListAccess") {{ $tc('common.pbehavior', 2) }}
         v-tab-item(lazy)
@@ -26,12 +28,12 @@
             dense
           )
     template(#actions="")
-      v-alert.my-0.mr-2.pa-1.pr-2(
+      v-alert.actions-requests-alert.my-0.mr-2.pa-1.pr-2(
         :value="actionsRequests.length",
         type="info",
         dismissible,
         @input="clearActions"
-      ) {{ actionsRequests.length }} {{ $t('modals.service.actionPending') }}
+      ) {{ actionsRequests.length }} {{ $tc('modals.service.actionInQueue', actionsRequests.length) }}
       v-tooltip.mx-2(top)
         template(#activator="{ on }")
           v-btn.secondary(v-on="on", @click="refresh")
@@ -39,7 +41,7 @@
         span {{ $t('modals.service.refreshEntities') }}
       v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.close') }}
       v-btn.primary(
-        v-if="stackedEntitiesActions",
+        v-if="entitiesActionsInQueue",
         :loading="submitting",
         :disabled="submitting || !actionsRequests.length",
         type="submit",
@@ -108,8 +110,8 @@ export default {
       return this.config.widgetParameters;
     },
 
-    stackedEntitiesActions() {
-      return this.widgetParameters?.stackedEntitiesActions ?? false;
+    entitiesActionsInQueue() {
+      return this.widgetParameters?.entitiesActionsInQueue ?? false;
     },
 
     serviceEntitiesWithKey() {
@@ -142,11 +144,15 @@ export default {
 
   methods: {
     refresh(immediate = false) {
-      if (!immediate && this.stackedEntitiesActions) {
+      if (!immediate && this.entitiesActionsInQueue) {
         return Promise.resolve();
       }
 
       return this.$periodicRefresh.notify();
+    },
+
+    addAction(action) {
+      this.actionsRequests.push(action);
     },
 
     clearActions(value) {
@@ -175,3 +181,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.actions-requests-alert {
+  line-height: 15px;
+}
+</style>
