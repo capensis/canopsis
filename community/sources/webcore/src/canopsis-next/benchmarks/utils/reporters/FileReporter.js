@@ -14,7 +14,7 @@ class FileReporter {
       fs.mkdirSync(metricsFolderPath);
     }
 
-    fs.writeFileSync(`${metricsFolderPath}/${this.name}.json`, JSON.stringify(data));
+    fs.writeFileSync(`${metricsFolderPath}/${this.name}.json`, JSON.stringify(data, undefined, 2));
   }
 }
 

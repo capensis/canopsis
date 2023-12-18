@@ -60,9 +60,9 @@ benchmark.each(
           const performanceMetrics = await application.stopMeasurePerformance();
           const { JSHeapUsedSize, JSHeapTotalSize } = await application.getPageMetrics();
           const longAnimationFrame = performanceMetrics.findLongestPerformanceTask();
-          const { duration, blockingDuration } = longAnimationFrame.args.data;
+          const { duration } = longAnimationFrame.args.data;
 
-          report({ duration, blockingDuration, JSHeapUsedSize, JSHeapTotalSize });
+          report({ duration, JSHeapUsedSize, JSHeapTotalSize });
         } catch (err) {
           console.error(err);
         } finally {
@@ -95,9 +95,9 @@ benchmark.each(
           const performanceMetrics = await application.stopMeasurePerformance();
           const { JSHeapUsedSize, JSHeapTotalSize } = await application.getPageMetrics();
           const longAnimationFrame = performanceMetrics.findLongestPerformanceTask();
-          const { duration, blockingDuration } = longAnimationFrame.args.data;
+          const { duration } = longAnimationFrame.args.data;
 
-          report({ duration, blockingDuration, JSHeapUsedSize, JSHeapTotalSize });
+          report({ duration, JSHeapUsedSize, JSHeapTotalSize });
         } catch (err) {
           console.error(err);
         } finally {
@@ -127,9 +127,9 @@ benchmark.each(
           const performanceMetrics = await application.stopMeasurePerformance();
           const { JSHeapUsedSize, JSHeapTotalSize } = await application.getPageMetrics();
           const longAnimationFrame = performanceMetrics.findLongestPerformanceTask();
-          const { duration, blockingDuration } = longAnimationFrame.args.data;
+          const { duration } = longAnimationFrame.args.data;
 
-          report({ duration, blockingDuration, JSHeapUsedSize, JSHeapTotalSize });
+          report({ duration, JSHeapUsedSize, JSHeapTotalSize });
         } catch (err) {
           console.error(err);
         } finally {
