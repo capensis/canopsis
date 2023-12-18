@@ -18,6 +18,7 @@ import {
   MODALS,
   PBEHAVIOR_ORIGINS,
   PBEHAVIOR_TYPE_TYPES,
+  USERS_PERMISSIONS,
   WEATHER_ACK_EVENT_OUTPUT,
   WEATHER_ACTIONS_TYPES,
   WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE,
@@ -62,6 +63,7 @@ describe('service-entities-list', () => {
       state: {
         val: ENTITIES_STATES.major,
       },
+      alarm_id: 'alarm-id',
     },
     {
       _id: 'service-entity-2-id',
@@ -70,9 +72,10 @@ describe('service-entities-list', () => {
           type: PBEHAVIOR_TYPE_TYPES.pause,
         },
       }],
+      alarm_id: 'alarm-id',
     },
   ];
-  const { authModule } = createAuthModule();
+  const { authModule, currentUserPermissionsById } = createAuthModule();
   const {
     alarmModule,
     bulkCreateAlarmAckEvent,
@@ -212,6 +215,7 @@ describe('service-entities-list', () => {
       _id: Faker.datatype.string(),
       ack: {},
       pbehaviors: [],
+      alarm_id: 'alarm-id',
     };
     const wrapper = factory({
       propsData: {
@@ -256,12 +260,19 @@ describe('service-entities-list', () => {
   });
 
   test('Validate action applied after trigger mass validate action', async () => {
+    currentUserPermissionsById.mockReturnValueOnce(({
+      [USERS_PERMISSIONS.business.serviceWeather.actions.entityValidate]: {
+        actions: [],
+      },
+    }));
+
     const entity = {
       _id: Faker.datatype.string(),
       state: {
         val: ENTITIES_STATES.major,
       },
       pbehaviors: [],
+      alarm_id: 'alarm-id',
     };
     const wrapper = factory({
       propsData: {
@@ -272,6 +283,7 @@ describe('service-entities-list', () => {
     await selectCheckboxFunctional(wrapper).vm.$emit('change', true);
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityValidate);
+    await flushPromises();
 
     expect(bulkCreateAlarmAckEvent).toBeCalledWith(
       expect.any(Object),
@@ -298,12 +310,19 @@ describe('service-entities-list', () => {
   });
 
   test('Invalidate action applied after trigger mass invalidate action', async () => {
+    currentUserPermissionsById.mockReturnValueOnce(({
+      [USERS_PERMISSIONS.business.serviceWeather.actions.entityInvalidate]: {
+        actions: [],
+      },
+    }));
+
     const entity = {
       _id: Faker.datatype.string(),
       state: {
         val: ENTITIES_STATES.major,
       },
       pbehaviors: [],
+      alarm_id: 'alarm-id',
     };
     const wrapper = factory({
       propsData: {
@@ -314,6 +333,8 @@ describe('service-entities-list', () => {
     await selectCheckboxFunctional(wrapper).vm.$emit('change', true);
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityInvalidate);
+
+    await flushPromises();
 
     expect(bulkCreateAlarmAckEvent).toBeCalledWith(
       expect.any(Object),
@@ -440,6 +461,7 @@ describe('service-entities-list', () => {
       alarm_display_name: 'alarm_display_name',
       status: {},
       pbehaviors: [],
+      alarm_id: 'alarm-id',
     };
     const wrapper = factory({
       propsData: {
@@ -480,6 +502,7 @@ describe('service-entities-list', () => {
     const entity = {
       _id: Faker.datatype.string(),
       pbehaviors: [],
+      alarm_id: 'alarm-id',
     };
     const wrapper = factory({
       propsData: {
