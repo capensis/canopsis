@@ -9,12 +9,8 @@ class BenchmarkLauncher {
     enhanceBenchmarkFunction(this.benchmark);
   }
 
-  getReportData() {
-    return this.benchmarksQueue.reduce((acc, benchmark) => {
-      acc[benchmark.name] = benchmark.getReportData();
-
-      return acc;
-    }, {});
+  toJSON() {
+    return this.benchmarksQueue.map(benchmark => benchmark.toJSON());
   }
 
   addReporter(...reporters) {
@@ -22,7 +18,7 @@ class BenchmarkLauncher {
   }
 
   report() {
-    const data = this.getReportData();
+    const data = this.toJSON();
 
     this.reporters.forEach(reporter => reporter.report(data));
   }

@@ -10,8 +10,11 @@ class Measure {
     this.reportData = data;
   };
 
-  getReportData() {
-    return this.reportData;
+  toJSON() {
+    return {
+      name: this.name,
+      data: this.reportData,
+    };
   }
 
   async run(options) {

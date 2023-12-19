@@ -5,11 +5,13 @@ const FileReporter = require('./reporters/FileReporter');
 const benchmarkLauncher = new BenchmarkLauncher();
 
 const runBenchmarks = async (options) => {
+  const { jsonName } = options;
+
   await benchmarkLauncher.run(options);
 
   benchmarkLauncher.addReporter(
     new ConsoleReporter(),
-    new FileReporter(),
+    new FileReporter({ name: jsonName }),
   );
 
   benchmarkLauncher.report();
