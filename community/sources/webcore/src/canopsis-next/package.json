@@ -98,6 +98,7 @@
     "babel-plugin-require-context-hook": "^1.0.0",
     "cache-loader": "^4.1.0",
     "canvas": "^2.11.2",
+    "chartjs-node-canvas": "^4.1.6",
     "chromedriver": "^92.0.0",
     "css-loader": "^3.5.3",
     "deepmerge": "^3.2.0",

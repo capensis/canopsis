@@ -4,6 +4,21 @@ const path = require('path');
 const metricsFolderPath = path.resolve(process.cwd(), 'benchmarks', '__metrics__');
 
 class FileReporter {
+  static readMetricFiles() {
+    if (fs.existsSync(metricsFolderPath)) {
+      const files = fs.readdirSync(metricsFolderPath);
+
+      return files
+        .filter(name => name.endsWith('.json'))
+        .map(name => ({
+          name: name.replace('.json', ''),
+          data: JSON.parse(fs.readFileSync(path.resolve(metricsFolderPath, name)).toString()),
+        }));
+    }
+
+    return [];
+  }
+
   constructor({ name = 'metrics' } = {}) {
     this.name = name;
   }
@@ -16,7 +31,7 @@ class FileReporter {
 
     const jsonName = this.name.endsWith('.json') ? this.name : `${this.name}.json`;
 
-    fs.writeFileSync(`${metricsFolderPath}/${jsonName}`, JSON.stringify(data, undefined, 2));
+    fs.writeFileSync(path.resolve(metricsFolderPath, jsonName), JSON.stringify(data, undefined, 2));
   }
 }
 
