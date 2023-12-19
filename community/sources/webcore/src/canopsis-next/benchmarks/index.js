@@ -25,6 +25,10 @@ require('yargs')
         type: 'string',
         describe: 'View tab id',
       });
+      yargs.positional('jsonName', {
+        type: 'string',
+        describe: 'Name of json report',
+      });
     },
     runBenchmarks,
   )

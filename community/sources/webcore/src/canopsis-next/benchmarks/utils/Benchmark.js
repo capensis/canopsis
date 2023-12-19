@@ -28,12 +28,11 @@ class Benchmark {
     logInfo(`Finish benchmark: ${this.name} (${time.toFixed()} ms)\n`);
   }
 
-  getReportData() {
-    return this.measuresQueue.reduce((acc, measure) => {
-      acc[measure.name] = measure.getReportData();
-
-      return acc;
-    }, {});
+  toJSON() {
+    return {
+      name: this.name,
+      data: this.measuresQueue.map(measure => measure.toJSON()),
+    };
   }
 }
 

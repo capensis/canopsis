@@ -1,10 +1,15 @@
 class ConsoleReporter {
   // eslint-disable-next-line class-methods-use-this
-  report(data) {
-    Object.entries(data).forEach(([benchmarkName, benchmarkData]) => {
+  report(benchmarksData) {
+    benchmarksData.forEach(({ name, data: benchmarkData }) => {
+      const tableData = benchmarkData.map(({ name: measureName, data: measureData }) => ({
+        name: measureName,
+        ...measureData,
+      }));
+
       /* eslint-disable no-console */
-      console.info(benchmarkName);
-      console.table(benchmarkData);
+      console.info(name);
+      console.table(tableData);
     });
   }
 }

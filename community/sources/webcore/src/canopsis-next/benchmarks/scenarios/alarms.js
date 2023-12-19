@@ -33,6 +33,14 @@ benchmark.each(
   itemsPerPageOptions,
   itemsPerPage => `${itemsPerPage} alarms`,
   async (itemsPerPage, measure, { url, viewId, tabId }) => {
+    if (!viewId) {
+      throw new Error('viewId not defined');
+    }
+
+    if (!tabId) {
+      throw new Error('tabId not defined');
+    }
+
     const application = new Application(url);
     const viewPage = new ViewPage(application);
     const loginPage = new LoginPage(application);
