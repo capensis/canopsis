@@ -2,7 +2,7 @@
 
 exports[`charts-form Renders \`charts-form\` with custom props 1`] = `
 <widget-settings-group-stub
-  title="Charts"
+  title="ChartsReporter"
 >
   <div
     class="layout pa-3 column"
@@ -86,7 +86,7 @@ exports[`charts-form Renders \`charts-form\` with custom props 2`] = `undefined`
 
 exports[`charts-form Renders \`charts-form\` with default props 1`] = `
 <widget-settings-group-stub
-  title="Charts"
+  title="ChartsReporter"
 >
   <div
     class="layout pa-3 column"
