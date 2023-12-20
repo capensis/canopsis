@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card(dark)
+  v-card
     v-card-title.primary.pa-2.white--text
       v-layout(justify-space-between, align-center)
         h4 {{ $t('alarm.infoPopup') }}
