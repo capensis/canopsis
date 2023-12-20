@@ -22,6 +22,20 @@ export default {
     },
   },
   methods: {
+    /**
+     * We've added offsetOverflow to condition
+     *
+     * @param menuWidth
+     * @return {string}
+     */
+    calcLeft(menuWidth) {
+      return `${
+        this.isAttached && !this.offsetOverflow
+          ? this.computedLeft
+          : this.calcXOverflow(this.computedLeft, menuWidth)
+      }px`;
+    },
+
     calcScrollPosition() {
       const $el = this.$refs.content;
       const activeTile = $el.querySelector('.v-list__tile--active');
