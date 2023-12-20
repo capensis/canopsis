@@ -1097,7 +1097,7 @@ permission:
     <<: *permission_crud
     _id: models_profile_color_theme
     name: <Current()._id>
-    description: "List alarm remove bookmark"
+    description: Color theme
 
   # API permissions
   permission_api_alarm_read:
