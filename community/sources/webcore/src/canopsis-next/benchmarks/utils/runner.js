@@ -19,7 +19,7 @@ const runBenchmarks = async (options) => {
 };
 
 const saveReportsCharts = () => {
-  const chartsReporter = new ChartsReporter({ width: 500, height: 500 });
+  const chartsReporter = new ChartsReporter({ width: 1000, height: 1000 });
 
   chartsReporter.report(...FileReporter.readMetricFiles());
 };

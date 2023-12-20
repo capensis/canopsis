@@ -6,6 +6,18 @@ const { ChartJSNodeCanvas } = require('chartjs-node-canvas');
 
 const chartsFolderPath = path.resolve(process.cwd(), 'benchmarks', '__charts__');
 
+const CHART_MEASURES_COLORS = [
+  '#fda701',
+  '#fd693b',
+  '#7bb242',
+  '#d64315',
+  '#fdef75',
+  '#fd5252',
+  '#9b27af',
+];
+
+const getColorByIndex = index => CHART_MEASURES_COLORS[index % CHART_MEASURES_COLORS.length];
+
 const groupData = (arrayData, prepare) => arrayData.reduce((acc, { name, data }) => {
   acc[name] = prepare ? prepare(data) : data;
 
@@ -14,7 +26,12 @@ const groupData = (arrayData, prepare) => arrayData.reduce((acc, { name, data })
 
 class ChartsReporter {
   constructor({ width, height }) {
-    this.service = new ChartJSNodeCanvas({ width, height, chartCallback: this.chartCallback });
+    this.service = new ChartJSNodeCanvas({
+      width,
+      height,
+      chartCallback: this.chartCallback,
+      backgroundColour: '#fff',
+    });
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -27,6 +44,10 @@ class ChartsReporter {
 
   generateChart(name, configuration) {
     const buffer = this.service.renderToBufferSync(configuration);
+
+    if (!fs.existsSync(chartsFolderPath)) {
+      fs.mkdirSync(chartsFolderPath);
+    }
 
     fs.writeFileSync(path.resolve(chartsFolderPath, `${name}.png`), buffer, 'base64');
   }
@@ -83,9 +104,9 @@ class ChartsReporter {
         acc.push({
           name: `${benchmarkName} (${property})`,
           labels: allMeasures,
-          datasets: allFileNames.map(fileName => ({
+          datasets: allFileNames.map((fileName, index) => ({
             label: fileName,
-            backgroundColor: 'rgba(47,171,99,0.33)',
+            backgroundColor: getColorByIndex(index),
             data: allMeasures.map(
               measureName => groupedMetrics?.[fileName]?.[benchmarkName]?.[measureName]?.[property] ?? 0,
             ),
