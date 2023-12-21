@@ -87,7 +87,7 @@
     <v-fade-transition>
       <v-overlay
         :value="isGroupsOrderChanged"
-        z-index="10"
+        z-index="8"
       />
     </v-fade-transition>
   </div>
@@ -288,7 +288,7 @@ export default {
 
       &--ordering {
         position: absolute;
-        z-index: 11;
+        z-index: 9;
       }
     }
 
@@ -298,7 +298,7 @@ export default {
     }
 
     &--editing {
-      z-index: 11;
+      z-index: 9;
 
       .groups-panel:after {
         content: '';

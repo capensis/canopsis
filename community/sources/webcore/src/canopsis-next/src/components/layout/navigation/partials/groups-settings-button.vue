@@ -100,7 +100,10 @@
           fab
           @click.stop="showCreatePrivateViewModal"
         >
-          <v-icon dark>
+          <v-icon
+            size="40"
+            dark
+          >
             $vuetify.icons.person_lock
           </v-icon>
         </v-btn>
