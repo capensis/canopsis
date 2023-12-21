@@ -83,7 +83,7 @@
           </v-icon>
         </v-btn>
       </template>
-      <span>{{ $t('layout.sideBar.buttons.create') }}</span>
+      <span>{{ $t('layout.sideBar.buttons.createView') }}</span>
     </v-tooltip>
     <v-tooltip
       v-if="hasAccessToPrivateView"
@@ -100,7 +100,10 @@
           fab
           @click.stop="showCreatePrivateViewModal"
         >
-          <v-icon dark>
+          <v-icon
+            size="40"
+            dark
+          >
             $vuetify.icons.person_lock
           </v-icon>
         </v-btn>

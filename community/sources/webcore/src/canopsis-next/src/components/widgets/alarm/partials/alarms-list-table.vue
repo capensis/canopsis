@@ -99,8 +99,12 @@
             />
           </v-fade-transition>
         </template>
-        <template #headerCell="{ header }">
+        <template
+          v-for="item in headers"
+          #[`header.${item.value}`]="{ header }"
+        >
           <alarm-header-cell
+            :key="`header.${item.value}`"
             :header="header"
             :selected-tag="selectedTag"
             :resizing="resizingMode"
@@ -108,11 +112,13 @@
           />
           <template>
             <span
+              :key="`header.${item.value}.drag`"
               class="alarms-list-table__dragging-handler"
               v-if="draggingMode"
               @click.stop=""
             />
             <span
+              :key="`header.cell.${item.value}.resize`"
               class="alarms-list-table__resize-handler"
               v-if="resizingMode"
               @mousedown.stop.prevent="startColumnResize(header.value)"
@@ -318,7 +324,7 @@ export default {
     },
 
     expanded() {
-      return this.$refs.dataTable.expanded;
+      return this.$refs.dataTable.expansion;
     },
 
     isColumnsChanging() {
@@ -754,20 +760,6 @@ export default {
 
   tbody {
     position: relative;
-
-    tr:not(.v-datatable__expand-row):not(:first-child) {
-      border-top: unset !important;
-
-      td:first-child:after {
-        content: ' ';
-        position: absolute;
-        background: var(--alarms-list-table-border-color);
-        height: 1px;
-        right: 0;
-        top: 0;
-        left: 0;
-      }
-    }
   }
 
   thead {
@@ -775,20 +767,6 @@ export default {
     transition: .3s cubic-bezier(.25, .8, .5,1);
     transition-property: opacity, background-color;
     z-index: 1;
-
-    tr:first-child {
-      border-bottom: unset !important;
-
-      &:after {
-        content: ' ';
-        position: absolute;
-        background: var(--alarms-list-table-border-color);
-        height: 1px;
-        right: 0;
-        bottom: 0;
-        left: 0;
-      }
-    }
 
     &.head-shadow {
       tr:first-child {

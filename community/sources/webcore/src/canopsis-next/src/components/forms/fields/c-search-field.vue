@@ -145,7 +145,7 @@ export default {
     .v-list {
       padding: 0;
 
-      .v-list__tile {
+      .v-list-item {
         height: 32px;
 
         .v-btn:not(.c-search-field__item__pinned) {

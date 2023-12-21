@@ -24,7 +24,7 @@
             v-on="on"
             :class="getSelectedClass(item)"
             :close="item.deprecated"
-            @input="removeItemFromArray(index)"
+            @click:close="removeItemFromArray(index)"
           >
             {{ getSelectedText(item) }}
           </v-chip>

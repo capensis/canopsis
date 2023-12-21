@@ -198,7 +198,7 @@ describe('kpi-rating-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `kpi-rating-filters` with total user active metric', async () => {
@@ -219,6 +219,6 @@ describe('kpi-rating-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

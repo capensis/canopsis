@@ -11,12 +11,12 @@ import {
 import { PATTERN_TYPES } from '@/constants';
 import PatternsList from '@/components/other/pattern/patterns-list.vue';
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
+import flushPromises from 'flush-promises';
 
 const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,
   'c-search-field': true,
   'v-checkbox': true,
-  'v-checkbox-functional': true,
   'c-expand-btn': true,
   'c-action-btn': true,
   'c-table-pagination': true,
@@ -51,22 +51,16 @@ describe('patterns-list', () => {
       },
     });
 
-    const firstCheckbox = selectRowCheckboxByIndex(wrapper, 0);
-    await firstCheckbox.vm.$emit('change', true);
+    await flushPromises();
 
-    const thirdCheckbox = selectRowCheckboxByIndex(wrapper, 2);
-    await thirdCheckbox.vm.$emit('change', true);
+    await selectRowCheckboxByIndex(wrapper, 0).trigger('click');
+    await selectRowCheckboxByIndex(wrapper, 2).trigger('click');
 
     const massRemoveButton = selectMassRemoveButton(wrapper);
-
     await massRemoveButton.vm.$emit('click');
 
-    const removeSelectedEvent = wrapper.emitted('remove-selected');
-
-    expect(removeSelectedEvent).toHaveLength(1);
-
-    const [eventData] = removeSelectedEvent[0];
-    expect(eventData).toEqual(
+    expect(wrapper).toEmit(
+      'remove-selected',
       [patterns[0], patterns[2]],
     );
   });
@@ -83,17 +77,13 @@ describe('patterns-list', () => {
       },
     });
 
+    await flushPromises();
+
     const removableRowIndex = 2;
 
-    const removeButton = selectRowRemoveButtonByIndex(wrapper, removableRowIndex);
-    await removeButton.vm.$emit('click');
+    await selectRowRemoveButtonByIndex(wrapper, removableRowIndex).vm.$emit('click');
 
-    const editEvent = wrapper.emitted('remove');
-
-    expect(editEvent).toHaveLength(1);
-
-    const [eventData] = editEvent[0];
-    expect(eventData).toEqual(patterns[removableRowIndex]._id);
+    expect(wrapper).toEmit('remove', patterns[removableRowIndex]._id);
   });
 
   it('Update event emitted after trigger click on the remove button', async () => {
@@ -108,28 +98,24 @@ describe('patterns-list', () => {
       },
     });
 
+    await flushPromises();
+
     const editableRowIndex = 5;
 
-    const editButton = selectRowEditButtonByIndex(wrapper, editableRowIndex);
-    await editButton.vm.$emit('click');
+    await selectRowEditButtonByIndex(wrapper, editableRowIndex).vm.$emit('click');
 
-    const editEvent = wrapper.emitted('edit');
-
-    expect(editEvent).toHaveLength(1);
-
-    const [eventData] = editEvent[0];
-    expect(eventData).toEqual(patterns[editableRowIndex]);
+    expect(wrapper).toEmit('edit', patterns[editableRowIndex]);
   });
 
   it('Renders `patterns-list` with default props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         patterns,
-        pagination: {},
+        options: {},
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `patterns-list` with custom props', () => {
@@ -152,6 +138,6 @@ describe('patterns-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

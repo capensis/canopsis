@@ -91,36 +91,6 @@ describe('create-comment-event', () => {
     expect($modals.hide).toBeCalledWith();
   });
 
-  test('Form didn\'t submitted after trigger submit button with error', async () => {
-    const action = jest.fn();
-    const config = { action };
-    const wrapper = factory({
-      propsData: {
-        modal: {
-          config,
-        },
-      },
-      mocks: {
-        $modals,
-      },
-    });
-
-    const validator = wrapper.getValidator();
-
-    validator.attach({
-      name: 'name',
-      rules: 'required:true',
-      getter: () => false,
-      context: () => wrapper.vm,
-      vm: wrapper.vm,
-    });
-
-    selectSubmitButton(wrapper).trigger('click');
-
-    expect(action).not.toBeCalled();
-    expect($modals.hide).not.toBeCalled();
-  });
-
   test('Errors added after trigger submit button with action errors', async () => {
     const action = jest.fn();
     const formErrors = {
@@ -151,6 +121,38 @@ describe('create-comment-event', () => {
     expect(action).toBeCalledTimes(1);
     expect(action).toBeCalledWith({ comment });
     expect($modals.hide).not.toBeCalledWith();
+  });
+
+  test('Form didn\'t submitted after trigger submit button with error', async () => {
+    const action = jest.fn();
+    const config = { action };
+    const wrapper = factory({
+      propsData: {
+        modal: {
+          config,
+        },
+      },
+      mocks: {
+        $modals,
+      },
+    });
+
+    const validator = wrapper.getValidator();
+
+    validator.attach({
+      name: 'name',
+      rules: 'required:true',
+      getter: () => false,
+      context: () => wrapper.vm,
+      vm: wrapper.vm,
+    });
+
+    selectSubmitButton(wrapper).trigger('click');
+
+    expect(action).not.toBeCalled();
+    expect($modals.hide).not.toBeCalled();
+
+    validator.detach('name');
   });
 
   test('Error popup showed after trigger submit button with action errors', async () => {
@@ -208,9 +210,7 @@ describe('create-comment-event', () => {
       },
     });
 
-    const cancelButton = selectCancelButton(wrapper);
-
-    cancelButton.trigger('click');
+    selectCancelButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -229,7 +229,7 @@ describe('create-comment-event', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `create-comment-event` with items', () => {
@@ -246,6 +246,6 @@ describe('create-comment-event', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

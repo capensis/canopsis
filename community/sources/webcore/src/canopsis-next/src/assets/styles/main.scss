@@ -17,8 +17,8 @@ html {
   z-index: 9;
 }
 
-.v-list .v-list__tile {
-  > *:not(.v-list__tile__action) {
+.v-list .v-list-item {
+  > *:not(.v-list-item__action) {
     .v-input {
       &, &__slot {
         margin-top: 4px;
@@ -220,21 +220,6 @@ html {
 
 .blinking {
   animation: blink 2s linear infinite;
-}
-
-.v-list__tile__title.v-list-badge__tile__title {
-  overflow: visible;
-
-  .v-badge__badge {
-    top: -5px;
-    right: -11px;
-    height: 16px;
-    width: 16px;
-
-    .v-icon {
-      font-size: 11px;
-    }
-  }
 }
 
 .kpi-widget {

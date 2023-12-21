@@ -8,18 +8,22 @@
       justify-space-around
       class="c-calendar__toolbar py-3"
     >
-      <calendar-today-btn @click="setToday" />
+      <calendar-today-btn
+        class="c-calendar__today-btn"
+        @click="setToday"
+      />
       <v-layout
         justify-center
       >
         <calendar-pagination
+          class="c-calendar__pagination"
           :focus.sync="focus"
           :type="internalType"
           @prev="prev"
           @next="next"
         />
       </v-layout>
-      <div>
+      <div class="c-calendar__menu-right">
         <calendar-view-mode v-model="internalType" />
         <slot name="menu-right" />
       </div>

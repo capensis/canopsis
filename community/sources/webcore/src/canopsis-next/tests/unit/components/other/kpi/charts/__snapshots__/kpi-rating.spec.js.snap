@@ -11,7 +11,7 @@ exports[`kpi-rating Renders \`kpi-rating\` with fetching error 1`] = `
   <kpi-rating-chart-stub
     metric="ticket_active_alarms"
     metrics=""
-    responsive="responsive"
+    responsive=""
   />
   <!---->
 </div>
@@ -28,7 +28,7 @@ exports[`kpi-rating Renders \`kpi-rating\` without metrics 1`] = `
   <kpi-rating-chart-stub
     metric="ticket_active_alarms"
     metrics=""
-    responsive="responsive"
+    responsive=""
   />
   <!---->
 </div>
