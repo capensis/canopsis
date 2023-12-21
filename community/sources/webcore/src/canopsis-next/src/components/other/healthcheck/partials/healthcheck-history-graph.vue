@@ -310,6 +310,8 @@ export default {
   }
 
   &__zoom {
+    display: flex;
+    gap: 8px;
     position: absolute;
     top: 10px;
     right: 10px;
