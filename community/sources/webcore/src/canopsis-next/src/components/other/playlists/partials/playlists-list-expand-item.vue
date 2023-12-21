@@ -1,25 +1,32 @@
 <template>
   <v-tabs
+    v-model="activeTab"
     background-color="secondary lighten-1"
     slider-color="primary"
     dark
     centered
   >
     <v-tab>{{ $tc('common.information') }}</v-tab>
-    <v-tab-item>
-      <v-layout class="pa-3">
-        <v-flex xs12>
-          <v-card class="pa-3">
-            <v-layout column>
-              <draggable-playlist-tabs
-                :tabs="availableTabs"
-                disabled
-              />
-            </v-layout>
-          </v-card>
-        </v-flex>
-      </v-layout>
-    </v-tab-item>
+
+    <v-tabs-items
+      v-model="activeTab"
+      mandatory
+    >
+      <v-tab-item>
+        <v-layout class="pa-3">
+          <v-flex xs12>
+            <v-card class="pa-3">
+              <v-layout column>
+                <draggable-playlist-tabs
+                  :tabs="availableTabs"
+                  disabled
+                />
+              </v-layout>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-tab-item>
+    </v-tabs-items>
   </v-tabs>
 </template>
 
@@ -36,6 +43,11 @@ export default {
       type: Object,
       required: true,
     },
+  },
+  data() {
+    return {
+      activeTab: 0,
+    };
   },
   computed: {
     availableTabs() {

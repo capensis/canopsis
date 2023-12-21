@@ -1,15 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`groups-side-bar-playlists Renders \`groups-side-bar-playlists\` with custom props 1`] = `
-<ul
-  class="v-expansion-panel sidebar-playlists v-expansion-panel--focusable theme--dark"
+<div
+  class="groups-side-bar-playlists v-item-group theme--dark v-expansion-panels"
 >
-  <li
-    class="v-expansion-panel__container secondary lighten-1"
-    tabindex="0"
+  <div
+    aria-expanded="true"
+    class="v-expansion-panel secondary lighten-1 v-expansion-panel--active v-item--active"
   >
-    <div
-      class="v-expansion-panel__header"
+    <button
+      aria-expanded="true"
+      class="v-expansion-panel-header v-expansion-panel-header--active"
+      type="button"
     >
       <div
         class="panel-header"
@@ -22,89 +24,92 @@ exports[`groups-side-bar-playlists Renders \`groups-side-bar-playlists\` with cu
         name="fade-transition"
       >
         <div
-          class="v-expansion-panel__header__icon"
+          class="v-expansion-panel-header__icon"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--dark"
+            class="v-icon notranslate material-icons theme--dark"
           >
             keyboard_arrow_down
           </i>
         </div>
       </transition-stub>
-    </div>
+    </button>
     <transition-stub
-      mode="in-out"
       name="expand-transition"
     >
       <div
-        class="v-expansion-panel__body"
-        style="display: none;"
+        class="v-expansion-panel-content"
+        style=""
       >
-        <router-link-stub
-          title="playlist-1-name"
-          to="[object Object]"
+        <div
+          class="v-expansion-panel-content__wrap"
         >
-          <div
-            class="secondary lighten-2 sidebar-playlists__button v-card v-sheet theme--dark"
+          <router-link-stub
+            title="playlist-1-name"
+            to="[object Object]"
           >
             <div
-              class="v-card__text"
+              class="secondary lighten-2 groups-side-bar-playlists__button v-card v-card--flat v-sheet theme--dark"
             >
               <div
-                class="layout align-center justify-space-between"
+                class="pa-4"
               >
                 <div
-                  class="flex"
+                  class="layout align-center justify-space-between"
                 >
                   <div
-                    class="layout align-center"
+                    class="flex"
                   >
-                    <span
-                      class="ellipsis pl-3"
+                    <div
+                      class="layout align-center"
                     >
-                      playlist-1-name
-                    </span>
+                      <span
+                        class="text-truncate pl-3"
+                      >
+                        playlist-1-name
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </router-link-stub>
-        <router-link-stub
-          title="playlist-2-name"
-          to="[object Object]"
-        >
-          <div
-            class="secondary lighten-2 sidebar-playlists__button v-card v-sheet theme--dark"
+          </router-link-stub>
+          <router-link-stub
+            title="playlist-2-name"
+            to="[object Object]"
           >
             <div
-              class="v-card__text"
+              class="secondary lighten-2 groups-side-bar-playlists__button v-card v-card--flat v-sheet theme--dark"
             >
               <div
-                class="layout align-center justify-space-between"
+                class="pa-4"
               >
                 <div
-                  class="flex"
+                  class="layout align-center justify-space-between"
                 >
                   <div
-                    class="layout align-center"
+                    class="flex"
                   >
-                    <span
-                      class="ellipsis pl-3"
+                    <div
+                      class="layout align-center"
                     >
-                      playlist-2-name
-                    </span>
+                      <span
+                        class="text-truncate pl-3"
+                      >
+                        playlist-2-name
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </router-link-stub>
+          </router-link-stub>
+        </div>
       </div>
     </transition-stub>
-  </li>
-</ul>
+  </div>
+</div>
 `;
 
-exports[`groups-side-bar-playlists Renders \`groups-side-bar-playlists\` with required props 1`] = `<!---->`;
+exports[`groups-side-bar-playlists Renders \`groups-side-bar-playlists\` with required props 1`] = `undefined`;

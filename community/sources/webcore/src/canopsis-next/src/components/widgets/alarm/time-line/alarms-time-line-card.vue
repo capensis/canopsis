@@ -35,7 +35,7 @@
         </tr>
         <tr
           v-for="state in states"
-          :key="state"
+          :key="state.value"
         >
           <td>{{ $t('common.state') }} {{ state.text }} :</td>
           <td>{{ state.value }}</td>

@@ -72,7 +72,7 @@ describe('charts-form', () => {
 
     const dropdownContent = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(dropdownContent.element).toMatchSnapshot();
   });
 
@@ -85,7 +85,7 @@ describe('charts-form', () => {
 
     const dropdownContent = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(dropdownContent.element).toMatchSnapshot();
   });
 });

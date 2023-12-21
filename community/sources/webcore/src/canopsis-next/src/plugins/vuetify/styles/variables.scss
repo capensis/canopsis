@@ -56,6 +56,13 @@ $btn-font-sizes: (
   'large': .875rem,
   'x-large': 1rem
 );
+$btn-sizes: (
+  'x-small': 20,
+  'small': 28,
+  'default': 36,
+  'large': 44,
+  'x-large': 52
+);
 
 $tabs-bar-background-color: 'unset';
 $tabs-item-letter-spacing: normal;
@@ -112,7 +119,7 @@ $headings: (
   ),
   'body-1': (
     'size': rem(14px),
-    'weight': 500,
+    'weight': 400,
     'line-height': 1.5,
   ),
   'body-2': (

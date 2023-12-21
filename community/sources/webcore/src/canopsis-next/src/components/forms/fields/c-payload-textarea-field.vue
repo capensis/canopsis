@@ -47,12 +47,12 @@
               class="c-payload-textarea-field__fake-line"
               v-if="selectedVariable && index === selectedVariable.index"
             >
-              {{ line.text.slice(0, selectedVariable.start) }}
+              <span>{{ line.text.slice(0, selectedVariable.start) }}</span>
               <span
                 class="c-payload-textarea-field__highlight"
                 ref="variable"
               >
-                {{ line.text.slice(selectedVariable.start, selectedVariable.end) }}
+                <span>{{ line.text.slice(selectedVariable.start, selectedVariable.end) }}</span>
               </span>
             </span>
             <v-tooltip
@@ -71,7 +71,7 @@
               </template>
               <span>{{ line.error.message }}</span>
             </v-tooltip>
-            {{ line.text }}
+            <span>{{ line.text }}</span>
           </span>
         </span>
       </div>
@@ -226,7 +226,7 @@ $iconBarWidth: 18px;
   }
 
   .v-input__prepend-inner {
-    padding: 0;
+    padding: 0 !important;
   }
 
   textarea {
@@ -237,11 +237,11 @@ $iconBarWidth: 18px;
     display: flex;
     flex-direction: column;
 
-    padding: 7px 0 8px 0;
     max-height: 100%;
   }
 
   &__line, &__fake-line {
+    line-height: 16px;
     white-space: pre-wrap;
     word-break: normal;
     text-align: start;
@@ -264,6 +264,7 @@ $iconBarWidth: 18px;
     left: 0;
     z-index: 1;
     pointer-events: auto;
+    transform: translateX(-100%);
   }
 
   &__append {

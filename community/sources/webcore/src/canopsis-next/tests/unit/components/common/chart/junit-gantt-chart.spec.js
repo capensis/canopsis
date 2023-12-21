@@ -16,7 +16,7 @@ const stubs = {
     template: `
       <div class="c-table-pagination">
         <button class="next-page" @click="$listeners['update:page'](page + 1)"></button>
-        <button class="rows-per-page" @click="$listeners['update:rows-per-page'](${newItemsPerPage})"></button>
+        <button class="items-per-page" @click="$listeners['update:items-per-page'](${newItemsPerPage})"></button>
       </div>
     `,
   },
@@ -253,7 +253,7 @@ describe('junit-gantt-chart', () => {
       },
     });
 
-    const itemsPerPageButton = wrapper.find('.c-table-pagination .rows-per-page');
+    const itemsPerPageButton = wrapper.find('.c-table-pagination .items-per-page');
 
     await itemsPerPageButton.trigger('click');
 
@@ -275,7 +275,7 @@ describe('junit-gantt-chart', () => {
 
     wrapper.vm.getTooltip({ tooltip: tooltipFactory(0) });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `junit-gantt-chart` tooltip without.', async () => {
@@ -289,7 +289,7 @@ describe('junit-gantt-chart', () => {
 
     wrapper.vm.getTooltip({ tooltip: tooltipFactory(4) });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `junit-gantt-chart` tooltip with opacity 0.', async () => {
@@ -309,7 +309,7 @@ describe('junit-gantt-chart', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `junit-gantt-chart` historical and tooltip (no icon).', async () => {

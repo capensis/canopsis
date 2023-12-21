@@ -64,7 +64,7 @@ describe('mermaid-contextmenu', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `mermaid-contextmenu` with custom props', () => {
@@ -76,6 +76,6 @@ describe('mermaid-contextmenu', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

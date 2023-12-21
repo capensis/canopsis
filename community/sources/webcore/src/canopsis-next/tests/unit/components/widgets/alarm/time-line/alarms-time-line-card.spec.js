@@ -78,7 +78,7 @@ describe('alarms-time-line-card', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-time-line-card` with html as message', async () => {
@@ -91,7 +91,7 @@ describe('alarms-time-line-card', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-time-line-card` without translate', async () => {
@@ -103,7 +103,7 @@ describe('alarms-time-line-card', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-time-line-card` with state but without translate', async () => {
@@ -115,7 +115,7 @@ describe('alarms-time-line-card', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-time-line-card` with state but without translate', async () => {
@@ -127,7 +127,7 @@ describe('alarms-time-line-card', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-time-line-card` with states', async () => {
@@ -139,6 +139,6 @@ describe('alarms-time-line-card', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -8,7 +8,7 @@
       align-center
     >
       <c-quick-date-interval-field
-        :interval="pagination.interval"
+        :interval="query.interval"
         :min="deletedBefore"
         @input="updateInterval"
       />
@@ -112,8 +112,8 @@ export default {
   computed: {
     interval() {
       return {
-        from: convertStartDateIntervalToTimestamp(this.pagination.interval.from),
-        to: convertStopDateIntervalToTimestamp(this.pagination.interval.to),
+        from: convertStartDateIntervalToTimestamp(this.query.interval.from),
+        to: convertStopDateIntervalToTimestamp(this.query.interval.to),
       };
     },
 
@@ -310,6 +310,8 @@ export default {
   }
 
   &__zoom {
+    display: flex;
+    gap: 8px;
     position: absolute;
     top: 10px;
     right: 10px;

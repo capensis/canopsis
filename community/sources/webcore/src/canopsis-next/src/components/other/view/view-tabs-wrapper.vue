@@ -1,27 +1,33 @@
 <template>
   <div>
     <view-tabs
-      class="tabs-absolute"
+      class="view-tabs--absolute"
       v-if="view && isTabsChanged"
       :tabs.sync="tabs"
       :changed="isTabsChanged"
       :updatable="updatable"
     />
     <v-fade-transition>
-      <div
-        class="v-overlay v-overlay--active"
-        v-show="view && isTabsChanged"
+      <v-overlay
+        class="view-tabs__overlay"
+        :value="view && isTabsChanged"
+        z-index="10"
       >
         <v-btn
+          class="ma-2"
           color="primary"
           @click="submit"
         >
           {{ $t('common.submit') }}
         </v-btn>
-        <v-btn @click="cancel">
+        <v-btn
+          class="ma-2"
+          light
+          @click="cancel"
+        >
           {{ $t('common.cancel') }}
         </v-btn>
-      </div>
+      </v-overlay>
     </v-fade-transition>
     <view-tabs
       :tabs.sync="tabs"
@@ -103,9 +109,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .tabs-absolute {
+.view-tabs {
+  &--absolute {
     position: absolute;
-    z-index: 9;
+    z-index: 11;
     width: 100%;
   }
+
+  &__overlay {
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+}
 </style>

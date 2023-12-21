@@ -34,8 +34,8 @@
       >
         <v-expand-transition>
           <v-layout
-            class="px-3 mt-1"
-            v-if="selected.length"
+            class="px-2 mt-1"
+            v-show="selected.length"
           >
             <slot
               name="mass-actions"
@@ -60,11 +60,12 @@
       :item-key="itemKey"
       :show-select="selectAll"
       :show-expand="expand"
-      :is-disabled-item="isDisabledItem"
+      :item-selectable="isItemSelectable"
       :hide-default-footer="hideActions || advancedPagination || noPagination"
       :table-class="tableClass"
       :dense="dense"
       :loader-height="loaderHeight"
+      checkbox-color="primary"
       @update:options="updateOptions"
     >
       <template
@@ -344,6 +345,10 @@ export default {
 
     getItemSlotName(header) {
       return `item.${header.value}`;
+    },
+
+    isItemSelectable(item) {
+      return !this.isDisabledItem(item);
     },
   },
 };

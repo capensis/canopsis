@@ -24,7 +24,6 @@
         class="draggable-item"
         v-for="{ to, tab, title, key } in preparedTabs"
         :key="key"
-        :disabled="changed"
         :to="to"
         exact
         ripple
@@ -32,6 +31,7 @@
         <span>{{ title }}</span>
         <template v-if="updatable && editing">
           <v-btn
+            :disabled="changed"
             small
             text
             icon
@@ -42,6 +42,7 @@
             </v-icon>
           </v-btn>
           <v-btn
+            :disabled="changed"
             small
             text
             icon
@@ -52,6 +53,7 @@
             </v-icon>
           </v-btn>
           <v-btn
+            :disabled="changed"
             small
             text
             icon
@@ -74,7 +76,10 @@
           :key="key"
           :value="to"
         >
-          <slot :tab="tab" />
+          <slot
+            :tab="tab"
+            :visible="to === $route.fullPath"
+          />
         </v-tab-item>
       </v-tabs-items>
     </template>

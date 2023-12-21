@@ -7,7 +7,7 @@
     />
     <kpi-rating-chart
       :metrics="ratingMetrics"
-      :metric="options.metric"
+      :metric="query.metric"
       :downloading="downloading"
       :min-date="minDate"
       responsive

@@ -474,7 +474,7 @@ describe('geomap-editor', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `geomap-editor` with custom props', () => {
@@ -491,7 +491,7 @@ describe('geomap-editor', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `geomap-editor` with validation errors ', async () => {
@@ -506,6 +506,6 @@ describe('geomap-editor', () => {
 
     await validator.validateAll();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -33,7 +33,7 @@ describe('quick-date-interval-type', () => {
   test('Renders `quick-date-interval-type` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `quick-date-interval-type` with custom props', () => {
@@ -44,6 +44,6 @@ describe('quick-date-interval-type', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

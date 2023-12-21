@@ -2,43 +2,43 @@
 
 exports[`state-criticity-field Renders \`state-criticity-field\` with custom props correctly 1`] = `
 <div
-  class="layout row"
+  class="layout"
 >
   <div
-    class="v-item-group theme--light v-btn-toggle"
+    class="v-item-group theme--light v-btn-toggle v-btn-toggle--dense"
   >
     <button
-      class="v-btn v-btn--depressed theme--light"
+      class="v-btn v-btn--has-bg theme--light v-size--default"
       type="button"
       value="0"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        Info
-      </div>
+      Info
+      </span>
     </button>
     <button
-      class="v-btn v-btn--depressed theme--light"
+      class="v-btn v-btn--has-bg theme--light v-size--default"
       type="button"
       value="1"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        Minor
-      </div>
+      Minor
+      </span>
     </button>
     <button
-      class="v-btn v-btn--depressed theme--light"
+      class="v-btn v-btn--has-bg theme--light v-size--default"
       type="button"
       value="3"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        Critical
-      </div>
+      Critical
+      </span>
     </button>
   </div>
 </div>
@@ -46,54 +46,54 @@ exports[`state-criticity-field Renders \`state-criticity-field\` with custom pro
 
 exports[`state-criticity-field Renders \`state-criticity-field\` with default props correctly 1`] = `
 <div
-  class="layout row"
+  class="layout"
 >
   <div
-    class="v-item-group theme--light v-btn-toggle"
+    class="v-item-group theme--light v-btn-toggle v-btn-toggle--dense"
   >
     <button
-      class="v-btn v-btn--depressed theme--light"
+      class="v-btn v-btn--has-bg theme--light v-size--default"
       type="button"
       value="0"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        Info
-      </div>
+      Info
+      </span>
     </button>
     <button
-      class="v-btn v-btn--depressed theme--light"
+      class="v-btn v-btn--has-bg theme--light v-size--default"
       type="button"
       value="1"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        Minor
-      </div>
+      Minor
+      </span>
     </button>
     <button
-      class="v-btn v-btn--depressed theme--light"
+      class="v-btn v-btn--has-bg theme--light v-size--default"
       type="button"
       value="2"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        Major
-      </div>
+      Major
+      </span>
     </button>
     <button
-      class="v-btn v-btn--depressed theme--light"
+      class="v-btn v-btn--has-bg theme--light v-size--default"
       type="button"
       value="3"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        Critical
-      </div>
+      Critical
+      </span>
     </button>
   </div>
 </div>

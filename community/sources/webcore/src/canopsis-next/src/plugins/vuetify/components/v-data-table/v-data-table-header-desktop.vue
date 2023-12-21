@@ -1,10 +1,40 @@
 <script>
 import VDataTableHeaderDesktop from 'vuetify/lib/components/VDataTable/VDataTableHeaderDesktop';
+import VSimpleCheckbox from 'vuetify/lib/components/VCheckbox/VSimpleCheckbox';
 import { convertToUnit, wrapInArray } from 'vuetify/lib/util/helpers';
 
 export default {
   extends: VDataTableHeaderDesktop,
+  props: {
+    disableSelect: {
+      type: Boolean,
+      default: false,
+    },
+  },
   methods: {
+    genSelectAll() {
+      const data = {
+        props: {
+          value: this.everyItem,
+          indeterminate: !this.everyItem && this.someItems,
+          disabled: this.disableSelect,
+          color: this.checkboxColor ?? '',
+        },
+        on: {
+          input: v => this.$emit('toggle-select-all', v),
+        },
+      };
+
+      if (this.$scopedSlots['data-table-select']) {
+        return this.$scopedSlots['data-table-select'](data);
+      }
+
+      return this.$createElement(VSimpleCheckbox, {
+        staticClass: 'v-data-table__checkbox',
+        ...data,
+      });
+    },
+
     genHeader(header) {
       const data = {
         /**

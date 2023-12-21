@@ -6,7 +6,7 @@
     :rounded="false"
   >
     <v-expansion-panel-header
-      class="pa-0"
+      class="pa-0 pr-6"
       :hide-actions="hideActions"
     >
       <div class="px-6 py-4 group-panel__title">

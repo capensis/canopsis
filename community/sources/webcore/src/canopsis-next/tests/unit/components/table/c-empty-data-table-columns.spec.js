@@ -8,6 +8,6 @@ describe('c-empty-data-table-columns', () => {
   it('Renders `c-empty-data-table-columns` correctly', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

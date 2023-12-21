@@ -28,9 +28,9 @@ export const localQueryMixin = {
   computed: {
     options: {
       get() {
-        const { page = 1, itemsPerPage = PAGINATION_LIMIT, sortBy = [], sortDesc = [] } = this.query;
+        const { page = 1, itemsPerPage = PAGINATION_LIMIT, sortBy = [], sortDesc = [], ...restQuery } = this.query;
 
-        return { page, itemsPerPage, sortBy, sortDesc };
+        return { page, itemsPerPage, sortBy, sortDesc, ...restQuery };
       },
       set(value) {
         this.query = {
@@ -42,7 +42,16 @@ export const localQueryMixin = {
           sortBy: value.sortBy || [],
           sortDesc: value.sortDesc || [],
 
-          ...omit(value, ['search', 'page', 'itemsPerPage', 'totalItems']),
+          ...omit(value, [
+            'search',
+            'page',
+            'itemsPerPage',
+            'totalItems',
+            'groupBy',
+            'groupDesc',
+            'multiSort',
+            'mustSort',
+          ]),
         };
       },
     },

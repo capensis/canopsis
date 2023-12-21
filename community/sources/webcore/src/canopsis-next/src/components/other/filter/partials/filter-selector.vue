@@ -51,7 +51,7 @@
         :key="getItemValue(item)"
         :close="isChipRemovable"
         small
-        @input="removeFilter(index)"
+        @click:close="removeFilter(index)"
       >
         {{ getItemText(item) }}
       </v-chip>
@@ -69,7 +69,7 @@
           />
         </v-list-item-action>
         <v-list-item-content>
-          <v-list-item-title class="v-list-badge__tile__title">
+          <v-list-item-title>
             <span>{{ item.title }}</span>
             <v-icon
               class="ml-2"

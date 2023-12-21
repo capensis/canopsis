@@ -101,7 +101,7 @@ describe('flowchart', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `flowchart` with custom props', () => {
@@ -116,7 +116,7 @@ describe('flowchart', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `flowchart` with readonly', () => {
@@ -130,6 +130,6 @@ describe('flowchart', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

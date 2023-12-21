@@ -9,14 +9,14 @@ exports[`kpi-widget-filters Renders 'kpi-widget-filters' with custom props 1`] =
     interval="[object Object]"
     min="1633737600"
     quick-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-    short="short"
+    short=""
   />
   <c-sampling-field-stub
     class="kpi-widget-filters__sampling"
     value="month"
   />
   <div
-    class="layout row align-end"
+    class="layout align-end"
   >
     <filter-selector-stub
       class="kpi-widget-filters__filter-selector mr-4"

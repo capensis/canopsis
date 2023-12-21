@@ -2,13 +2,13 @@
   <div class="position-relative">
     <c-progress-overlay :pending="pending" />
     <kpi-sli-filters
-      v-model="options"
+      v-model="query"
       :min-date="minDate"
     />
     <kpi-sli-chart
       :metrics="sliMetrics"
-      :data-type="options.type"
-      :sampling="options.sampling"
+      :data-type="query.type"
+      :sampling="query.sampling"
       :downloading="downloading"
       :min-date="minDate"
       responsive

@@ -75,7 +75,7 @@ describe('corporate-patterns', () => {
       data() {
         return {
           query: {
-            ItemsPerPage: initialItemsPerPage,
+            itemsPerPage: initialItemsPerPage,
           },
         };
       },
@@ -92,7 +92,7 @@ describe('corporate-patterns', () => {
     const itemsPerPage = Faker.datatype.number({ max: initialItemsPerPage });
     const page = Faker.datatype.number();
 
-    patternsListNode.$emit('update:pagination', {
+    patternsListNode.$emit('update:options', {
       itemsPerPage,
       page,
     });
@@ -178,7 +178,7 @@ describe('corporate-patterns', () => {
   it('Renders `corporate-patterns` without patterns', () => {
     const wrapper = snapshotFactory({ store, listeners });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `corporate-patterns` with patterns', () => {
@@ -196,6 +196,6 @@ describe('corporate-patterns', () => {
       listeners,
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

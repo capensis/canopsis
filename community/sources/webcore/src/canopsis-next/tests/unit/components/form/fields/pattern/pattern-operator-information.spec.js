@@ -16,6 +16,6 @@ describe('pattern-operator-information', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

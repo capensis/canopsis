@@ -2,9 +2,10 @@
   <v-btn-toggle
     class="window-size transparent"
     v-field="value"
-    mandatory
     light
-    dense
+    tile
+    group
+    mandatory
   >
     <v-btn
       v-for="size in availableSizes"

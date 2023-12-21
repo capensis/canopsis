@@ -49,6 +49,6 @@ describe('alarm-column-cell-popup-body', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

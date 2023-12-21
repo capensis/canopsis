@@ -47,7 +47,7 @@ describe('storage-settings-metrics-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `storage-settings-metrics-form` with custom form', () => {
@@ -57,6 +57,6 @@ describe('storage-settings-metrics-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

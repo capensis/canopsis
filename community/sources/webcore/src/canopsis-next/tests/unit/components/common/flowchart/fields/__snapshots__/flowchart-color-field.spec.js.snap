@@ -2,7 +2,7 @@
 
 exports[`flowchart-color-field Renders \`flowchart-color-field\` with custom props 1`] = `
 <div
-  class="layout flowchart-color-field row justify-space-between align-center"
+  class="layout flowchart-color-field justify-space-between align-center"
 >
   <span
     class="v-label"
@@ -13,11 +13,11 @@ exports[`flowchart-color-field Renders \`flowchart-color-field\` with custom pro
     class="flex xs3"
   >
     <button
-      class="flowchart-color-field__button ma-0 pa-0 v-btn v-btn--block v-btn--small theme--light"
+      class="flowchart-color-field__button ma-0 pa-0 v-btn v-btn--block v-btn--is-elevated v-btn--has-bg theme--light v-size--small"
       style="background-color: rgb(0, 0, 0);"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       />
     </button>
@@ -27,10 +27,10 @@ exports[`flowchart-color-field Renders \`flowchart-color-field\` with custom pro
 
 exports[`flowchart-color-field Renders \`flowchart-color-field\` with default props 1`] = `
 <div
-  class="layout flowchart-color-field row justify-space-between align-center"
+  class="layout flowchart-color-field justify-space-between align-center"
 >
   <div
-    class="v-input mt-0 v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+    class="v-input mt-0 v-input--hide-details theme--light v-input--selection-controls v-input--checkbox"
   >
     <div
       class="v-input__control"
@@ -41,9 +41,14 @@ exports[`flowchart-color-field Renders \`flowchart-color-field\` with default pr
         <div
           class="v-input--selection-controls__input"
         >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate material-icons theme--light"
+          >
+            check_box_outline_blank
+          </i>
           <input
             aria-checked="false"
-            aria-label="Color"
             role="checkbox"
             type="checkbox"
             value=""
@@ -51,15 +56,8 @@ exports[`flowchart-color-field Renders \`flowchart-color-field\` with default pr
           <div
             class="v-input--selection-controls__ripple"
           />
-          <i
-            aria-hidden="true"
-            class="v-icon material-icons theme--light"
-          >
-            check_box_outline_blank
-          </i>
         </div>
         <label
-          aria-hidden="true"
           class="v-label theme--light"
           style="left: 0px; position: relative;"
         >
@@ -73,11 +71,11 @@ exports[`flowchart-color-field Renders \`flowchart-color-field\` with default pr
     style="display: none;"
   >
     <button
-      class="flowchart-color-field__button ma-0 pa-0 v-btn v-btn--block v-btn--small theme--light"
+      class="flowchart-color-field__button ma-0 pa-0 v-btn v-btn--block v-btn--is-elevated v-btn--has-bg theme--light v-size--small"
       style="background-color: transparent;"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       />
     </button>

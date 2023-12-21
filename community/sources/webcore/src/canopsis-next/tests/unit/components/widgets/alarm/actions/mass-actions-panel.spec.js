@@ -749,7 +749,7 @@ describe('mass-actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `mass-actions-panel` with meta alarm', () => {
@@ -761,6 +761,6 @@ describe('mass-actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });
