@@ -88,12 +88,12 @@ const handleChange = () => emit('change');
     padding: 5px 0;
   }
 
-  &.editing {
+  &--editing {
     & ::v-deep .v-expansion-panel-header {
       cursor: move;
     }
 
-    .views-panel.empty {
+    .views-panel--empty {
       &:after {
         content: '';
         display: block;
