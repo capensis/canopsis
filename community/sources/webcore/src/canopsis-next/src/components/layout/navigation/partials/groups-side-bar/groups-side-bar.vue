@@ -34,7 +34,7 @@
           v-model="mutatedGroups"
           :component-data="{ props: expansionPanelsProps }"
           :disabled="!isNavigationEditingMode"
-          draggable="groups-panel__item--public"
+          draggable=".groups-panel__item--public"
           component="v-expansion-panels"
         >
           <groups-side-bar-group

@@ -61,6 +61,11 @@ export default {
       return {
         is: component || 'span',
         text: this.header.text,
+        bind: {
+          style: {
+            'white-space': 'normal',
+          },
+        },
       };
     },
   },
