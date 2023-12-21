@@ -24,7 +24,6 @@
         class="draggable-item"
         v-for="{ to, tab, title, key } in preparedTabs"
         :key="key"
-        :disabled="changed"
         :to="to"
         exact
         ripple
