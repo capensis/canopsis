@@ -35,7 +35,7 @@ export default {
 
 <style lang="scss" scoped>
   .comments-list {
-    & ::v-deep .v-list__tile {
+    & ::v-deep .v-list-item {
       height: auto;
 
       &__sub-title {

@@ -141,7 +141,7 @@ describe('alarm-status-rule-form', () => {
   test('Renders `alarm-status-rule-form` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `alarm-status-rule-form` with custom props', () => {
@@ -162,6 +162,6 @@ describe('alarm-status-rule-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

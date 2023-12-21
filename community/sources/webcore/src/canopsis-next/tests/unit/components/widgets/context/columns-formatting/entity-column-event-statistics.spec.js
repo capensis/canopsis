@@ -1,5 +1,3 @@
-import flushPromises from 'flush-promises';
-
 import { generateRenderer } from '@unit/utils/vue';
 import { PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
@@ -11,7 +9,7 @@ describe('entity-column-event-statistics', () => {
   });
 
   it('Renders `entity-column-event-statistics` with default entity', async () => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: {
         entity: {
           ok_events: 15,
@@ -20,13 +18,13 @@ describe('entity-column-event-statistics', () => {
       },
     });
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 
   it('Renders `entity-column-event-statistics` with pbehavior', async () => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: {
         entity: {
           ok_events: 30,
@@ -38,8 +36,8 @@ describe('entity-column-event-statistics', () => {
       },
     });
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 });

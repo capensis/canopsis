@@ -2,26 +2,26 @@
 
 exports[`add-location-btn Renders \`add-location-btn\` with custom props 1`] = `
 <div
-  class="v-item-group theme--light v-btn-toggle"
+  class="v-item-group theme--light v-btn-toggle v-btn-toggle--group v-btn-toggle--tile"
 >
   <button
-    class="ma-0 v-btn v-btn--block v-btn--flat v-btn--large theme--light"
+    class="ma-0 v-btn v-btn--block v-btn--text theme--light v-size--default"
     type="button"
     value="true"
   >
-    <div
+    <span
       class="v-btn__content"
     >
       <i
         aria-hidden="true"
-        class="v-icon v-icon--left material-icons theme--light"
+        class="v-icon notranslate v-icon--left material-icons theme--light"
       >
         add_location
       </i>
       <span>
         Add point
       </span>
-    </div>
+    </span>
   </button>
 </div>
 `;

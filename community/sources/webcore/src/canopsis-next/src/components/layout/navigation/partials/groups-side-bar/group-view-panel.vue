@@ -1,21 +1,13 @@
 <template>
   <v-card :color="cardColor">
     <v-card-text class="panel-item-content">
-      <div
-        :class="['panel-item-content__title pl-2', {
-          'panel-view__title--editing': isEditing,
-          'text-truncate': ellipsis
-        }]"
-      >
+      <div :class="['panel-item-content__title pl-2', { 'text-truncate': ellipsis }]">
         <slot name="title">
           {{ view.title }}
         </slot>
       </div>
 
-      <div
-        v-if="allowEditing"
-        class="panel-item-content__actions"
-      >
+      <div class="panel-item-content__actions">
         <v-icon
           v-if="view.is_private"
           small

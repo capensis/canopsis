@@ -114,7 +114,7 @@ describe('kpi-filters', () => {
     const itemsPerPage = Faker.datatype.number({ max: initialItemsPerPage });
     const page = Faker.datatype.number();
 
-    kpiFiltersListElement.vm.$emit('update:pagination', {
+    kpiFiltersListElement.vm.$emit('update:options', {
       itemsPerPage,
       page,
     });
@@ -361,7 +361,7 @@ describe('kpi-filters', () => {
       store: defaultStore,
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `kpi-filters` with full permissions', () => {
@@ -395,6 +395,6 @@ describe('kpi-filters', () => {
       }]),
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

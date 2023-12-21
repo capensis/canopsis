@@ -77,10 +77,10 @@ export default {
   .v-list {
     background-color: inherit;
 
-    .v-list__tile__title {
-      height: 28px;
-      line-height: 28px;
-    }
+      .v-list-item__title {
+        height: 28px;
+        line-height: 28px;
+      }
 
     .edit-view-button, .duplicate-view-button {
       vertical-align: top;

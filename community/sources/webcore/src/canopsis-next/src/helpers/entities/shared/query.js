@@ -126,6 +126,7 @@ export const convertWidgetQueryToRequest = (query) => {
       'filter',
       'lockedFilter',
       'search',
+      'itemsPerPage',
     ]),
 
     ...convertSortToRequest(sortBy, sortDesc),

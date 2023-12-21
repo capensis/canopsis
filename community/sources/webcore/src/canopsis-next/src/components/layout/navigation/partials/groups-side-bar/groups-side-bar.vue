@@ -15,7 +15,9 @@
           <app-version class="version" />
         </div>
       </template>
-      <section class="side-bar__links">
+      <section
+        :class="['side-bar__links', { 'side-bar__links--ordering': isGroupsOrderChanged }]"
+      >
         <v-layout
           class="pa-2"
           v-if="!mutatedGroups.length && groupsPending"
@@ -30,7 +32,6 @@
           v-else
           class="groups-panel"
           v-model="mutatedGroups"
-          :class="{ 'groups-panel--ordering': isGroupsOrderChanged }"
           :component-data="{ props: expansionPanelsProps }"
           :disabled="!isNavigationEditingMode"
           draggable="groups-panel__item--public"
@@ -62,27 +63,32 @@
         tooltip-right
         @toggleEditingMode="toggleNavigationEditingMode"
       />
+      <v-fade-transition>
+        <v-overlay
+          class="side-bar__overlay"
+          :value="isGroupsOrderChanged"
+        >
+          <v-btn
+            class="primary ma-2"
+            @click="submit"
+          >
+            {{ $t('common.submit') }}
+          </v-btn>
+          <v-btn
+            class="ma-2"
+            light
+            @click="resetMutatedGroups"
+          >
+            {{ $t('common.cancel') }}
+          </v-btn>
+        </v-overlay>
+      </v-fade-transition>
     </v-navigation-drawer>
     <v-fade-transition>
       <v-overlay
-        class="side-bar__overlay"
         :value="isGroupsOrderChanged"
-        z-index="10"
-      >
-        <v-btn
-          class="primary ma-2"
-          @click="submit"
-        >
-          {{ $t('common.submit') }}
-        </v-btn>
-        <v-btn
-          class="ma-2"
-          light
-          @click="resetMutatedGroups"
-        >
-          {{ $t('common.cancel') }}
-        </v-btn>
-      </v-overlay>
+        z-index="8"
+      />
     </v-fade-transition>
   </div>
 </template>
@@ -233,11 +239,7 @@ export default {
   .groups-panel {
     position: relative;
     box-shadow: none;
-
-    &--ordering {
-      position: absolute;
-      z-index: 9;
-    }
+    transition: none;
   }
 
   .side-bar {
@@ -282,6 +284,12 @@ export default {
     &__links {
       overflow: auto;
       padding-bottom: 100px;
+      width: 100%;
+
+      &--ordering {
+        position: absolute;
+        z-index: 9;
+      }
     }
 
     &__overlay {

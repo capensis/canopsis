@@ -69,7 +69,7 @@
           v-if="isMultiple"
           small
           close
-          @input="removeItemFromArray(index)"
+          @click:close="removeItemFromArray(index)"
         >
           <span class="text-truncate">{{ getItemText(item) }}</span>
         </v-chip>

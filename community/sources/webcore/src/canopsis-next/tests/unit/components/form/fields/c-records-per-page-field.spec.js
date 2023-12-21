@@ -85,25 +85,23 @@ describe('c-items-per-page-field', () => {
     expect(inputEvents[0].map(e => parseInt(e, 10))).toEqual([value]);
   });
 
-  it('Renders `c-items-per-page-field` with default props', () => {
+  it('Renders `c-items-per-page-field` with default props', async () => {
     const wrapper = snapshotFactory();
 
-    const menuContent = wrapper.findMenu();
-
-    expect(wrapper.element).toMatchSnapshot();
-    expect(menuContent.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
+    expect(wrapper).toMatchMenuSnapshot();
   });
 
-  it('Renders `c-items-per-page-field` with custom props', () => {
+  it('Renders `c-items-per-page-field` with custom props', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         items: [2, 4, 6],
       },
     });
 
-    const menuContent = wrapper.findMenu();
-
-    expect(wrapper.element).toMatchSnapshot();
-    expect(menuContent.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
+    expect(wrapper).toMatchMenuSnapshot();
   });
 });

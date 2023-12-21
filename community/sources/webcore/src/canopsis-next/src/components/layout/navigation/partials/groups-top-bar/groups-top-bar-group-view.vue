@@ -12,7 +12,6 @@
       <v-btn
         class="edit-view-button"
         v-show="view.is_private || hasViewEditButtonAccess"
-        color="grey darken-2"
         depressed
         small
         icon
@@ -25,7 +24,6 @@
       <v-btn
         class="duplicate-view-button"
         v-show="view.is_private || isNavigationEditingMode"
-        color="grey darken-2"
         depressed
         small
         icon

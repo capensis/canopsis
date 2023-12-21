@@ -11,7 +11,9 @@ exports[`margins Renders \`margins\` with custom props 1`] = `
     value="1"
   />
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
   <field-slider-stub
     max="10"
@@ -20,7 +22,9 @@ exports[`margins Renders \`margins\` with custom props 1`] = `
     value="3"
   />
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
   <field-slider-stub
     max="10"
@@ -29,7 +33,9 @@ exports[`margins Renders \`margins\` with custom props 1`] = `
     value="5"
   />
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
   <field-slider-stub
     max="10"
@@ -51,7 +57,9 @@ exports[`margins Renders \`margins\` with default props 1`] = `
     value="7"
   />
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
   <field-slider-stub
     max="5"
@@ -60,7 +68,9 @@ exports[`margins Renders \`margins\` with default props 1`] = `
     value="5"
   />
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
   <field-slider-stub
     max="5"
@@ -69,7 +79,9 @@ exports[`margins Renders \`margins\` with default props 1`] = `
     value="3"
   />
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
   <field-slider-stub
     max="5"

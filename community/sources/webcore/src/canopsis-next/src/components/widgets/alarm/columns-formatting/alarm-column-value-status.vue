@@ -14,7 +14,7 @@
       <v-icon
         v-on="on"
         :size="iconSize"
-        :style="{ color: statusColor, caretColor: statusColor}"
+        :style="{ color: statusColor, caretColor: statusColor }"
       >
         {{ status.icon }}
       </v-icon>

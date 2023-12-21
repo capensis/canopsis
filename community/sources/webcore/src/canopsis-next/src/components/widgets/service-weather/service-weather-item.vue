@@ -46,7 +46,6 @@
         >
           <v-icon
             color="white"
-            ,
             small
           >
             help

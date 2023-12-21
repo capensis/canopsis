@@ -40,14 +40,15 @@ describe('c-pbehavior-type-field', () => {
     expect(wrapper).toEmit('input', type._id);
   });
 
-  test('Renders `c-pbehavior-type-field` with default props', () => {
+  test('Renders `c-pbehavior-type-field` with default props', async () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         pbehaviorTypesModule,
       ]),
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -76,7 +77,8 @@ describe('c-pbehavior-type-field', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -99,7 +101,8 @@ describe('c-pbehavior-type-field', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
     expect(wrapper).toMatchMenuSnapshot();
   });
 });

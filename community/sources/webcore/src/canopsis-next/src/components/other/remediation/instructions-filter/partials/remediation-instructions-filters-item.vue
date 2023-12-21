@@ -78,7 +78,7 @@ export default {
     },
 
     chipListeners() {
-      const listeners = { input: this.close };
+      const listeners = { 'click:close': this.close };
 
       if (this.editable) {
         listeners.click = this.showEditFilterModal;

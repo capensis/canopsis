@@ -5,8 +5,8 @@
       :key="connectorTriangle.side"
       :d="connectorTriangle.path"
       fill="transparent"
-      @focusin="onFocusIn(connectorTriangle.side)"
-      @focusout="onFocusOut"
+      @mouseenter="onMouseEnter(connectorTriangle.side)"
+      @mouseleave="onMouseLeave"
       @mouseup="onConnectFinish(connectorTriangle)"
       @mousemove.stop=""
     />
@@ -133,7 +133,7 @@ export default {
     },
   },
   methods: {
-    onFocusIn(side) {
+    onMouseEnter(side) {
       this.activeSide = side;
 
       const point = calculateConnectorPointBySide(
@@ -144,7 +144,7 @@ export default {
       this.$emit('connecting', point);
     },
 
-    onFocusOut() {
+    onMouseLeave() {
       this.activeSide = undefined;
 
       this.$emit('unconnect');
