@@ -4,7 +4,7 @@ const path = require('path');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { ChartJSNodeCanvas } = require('chartjs-node-canvas');
 
-const chartsFolderPath = path.resolve(process.cwd(), 'benchmarks', '__charts__');
+const { getMetricsGroupedData } = require('../metrics-files');
 
 const CHART_MEASURES_COLORS = [
   '#fda701',
@@ -18,14 +18,9 @@ const CHART_MEASURES_COLORS = [
 
 const getColorByIndex = index => CHART_MEASURES_COLORS[index % CHART_MEASURES_COLORS.length];
 
-const groupData = (arrayData, prepare) => arrayData.reduce((acc, { name, data }) => {
-  acc[name] = prepare ? prepare(data) : data;
-
-  return acc;
-}, {});
-
 class ChartsReporter {
-  constructor({ width, height }) {
+  constructor({ width, height, outputPath }) {
+    this.outputPath = outputPath;
     this.service = new ChartJSNodeCanvas({
       width,
       height,
@@ -45,59 +40,17 @@ class ChartsReporter {
   generateChart(name, configuration) {
     const buffer = this.service.renderToBufferSync(configuration);
 
-    if (!fs.existsSync(chartsFolderPath)) {
-      fs.mkdirSync(chartsFolderPath);
+    if (!fs.existsSync(this.outputPath)) {
+      fs.mkdirSync(this.outputPath);
     }
 
-    fs.writeFileSync(path.resolve(chartsFolderPath, `${name}.png`), buffer, 'base64');
+    fs.writeFileSync(path.resolve(this.outputPath, `${name}.png`), buffer, 'base64');
   }
 
   report(...metrics) {
-    const groupedMetrics = groupData(
+    const { groupedMetrics, allFileNames, allProperties, allMeasures, allBenchmarks } = getMetricsGroupedData(
       metrics,
-      benchmarkData => groupData(
-        benchmarkData,
-        groupData,
-      ),
     );
-
-    const {
-      allProperties,
-      allMeasures,
-      allBenchmarks,
-      allFileNames,
-    } = Object.entries(groupedMetrics).reduce((acc, [fileName, benchmarksByName]) => {
-      acc.allFileNames.push(fileName);
-
-      Object.entries(benchmarksByName).forEach(([benchmarkName, measuresByName]) => {
-        if (!acc.allBenchmarks.includes(benchmarkName)) {
-          acc.allBenchmarks.push(benchmarkName);
-        }
-
-        Object.entries(measuresByName).forEach(([measureName, properties]) => {
-          if (!acc.allMeasures.includes(measureName)) {
-            acc.allMeasures.push(measureName);
-          }
-
-          if (!properties) {
-            return;
-          }
-
-          Object.keys(properties).forEach((property) => {
-            if (!acc.allProperties.includes(property)) {
-              acc.allProperties.push(property);
-            }
-          });
-        });
-      });
-
-      return acc;
-    }, {
-      allProperties: [],
-      allMeasures: [],
-      allBenchmarks: [],
-      allFileNames: [],
-    });
 
     const chartsOptions = allBenchmarks.reduce((acc, benchmarkName) => {
       allProperties.forEach((property) => {
