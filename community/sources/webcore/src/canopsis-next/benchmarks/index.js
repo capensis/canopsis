@@ -2,7 +2,7 @@
 
 require('./scenarios/alarms');
 
-const { runBenchmarks, saveReportsCharts } = require('./utils/runner');
+const { runBenchmarks, compareMetric } = require('./utils/runner');
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 require('yargs')
@@ -33,9 +33,19 @@ require('yargs')
     runBenchmarks,
   )
   .command(
-    'charts',
-    'render images from metrics',
-    saveReportsCharts,
+    'compare',
+    'compare metrics and render images from metrics and export pdf',
+    (yargs) => {
+      yargs.positional('target', {
+        type: 'string',
+        describe: 'Target metrics',
+      });
+      yargs.positional('source', {
+        type: 'string',
+        describe: 'Source metrics',
+      });
+    },
+    compareMetric,
   )
   .help()
   .argv;
