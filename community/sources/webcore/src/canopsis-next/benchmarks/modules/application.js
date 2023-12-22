@@ -16,7 +16,6 @@ class Application {
     this.browser = await puppeteer.launch({
       ignoreHTTPSErrors: true,
       headless: 'new',
-      // headless: false,
       args: [
         '--no-sandbox',
         '--window-size=1920,1040',
