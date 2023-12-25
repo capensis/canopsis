@@ -134,6 +134,7 @@ describe('alarms-list', () => {
     _id: '880c5d0c-3f31-477c-8365-2f90389326cc',
   };
   const defaultQuery = {
+    page: 1,
     filters: [],
     active_columns: widget.parameters.widgetColumns.map(v => v.value),
     correlation: userPreferences.content.isCorrelationEnabled,
@@ -846,6 +847,7 @@ describe('alarms-list', () => {
         id: widget._id,
         query: {
           ...defaultQuery,
+          page: 1,
           limit: newLimit,
         },
       },
