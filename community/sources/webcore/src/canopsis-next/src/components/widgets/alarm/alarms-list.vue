@@ -127,6 +127,7 @@ import { MODALS, USERS_PERMISSIONS } from '@/constants';
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 import { getAlarmListExportDownloadFileUrl } from '@/helpers/entities/alarm/url';
 import { setSeveralFields } from '@/helpers/immutable';
+import { getPageForNewRecordsPerPage } from '@/helpers/pagination';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
@@ -337,17 +338,12 @@ export default {
         ...this.query,
 
         limit,
+        page: getPageForNewRecordsPerPage(limit, this.query.limit, this.query.page),
       };
     },
 
     updateDense(dense) {
       this.updateContentInUserPreference({ dense });
-    },
-
-    expandFirstAlarm() {
-      if (!this.firstAlarmExpanded) {
-        this.$set(this.$refs.alarmsTable.expanded, this.alarms[0]._id, true);
-      }
     },
 
     removeHistoryFilter() {
