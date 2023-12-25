@@ -3,6 +3,7 @@ import { pick, isEqual } from 'lodash';
 import { SORT_ORDERS } from '@/constants';
 
 import { convertWidgetQueryToRequest } from '@/helpers/entities/shared/query';
+import { getPageForNewRecordsPerPage } from '@/helpers/pagination';
 
 import { queryMixin } from '@/mixins/query';
 import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
@@ -84,7 +85,10 @@ export const queryWidgetMixin = {
     updateRecordsPerPage(limit) {
       this.updateLockedQuery({
         id: this.queryId,
-        query: { limit },
+        query: {
+          limit,
+          page: getPageForNewRecordsPerPage(limit, this.query.limit, this.query.page),
+        },
       });
     },
 
