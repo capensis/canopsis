@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	libpassword "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	mock_security "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security"
 	mock_password "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security/password"
 	"github.com/golang/mock/gomock"
@@ -32,9 +33,9 @@ func TestBaseProvider_Auth_GivenUsernameAndPassword_ShouldReturnUser(t *testing.
 	mockEncoder.
 		EXPECT().
 		IsValidPassword(gomock.Eq([]byte(expectedUser.HashedPassword)), gomock.Eq([]byte(password))).
-		Return(true)
+		Return(true, nil)
 
-	p := NewBaseProvider(mockUserProvider, mockEncoder)
+	p := NewBaseProvider(mockUserProvider, []libpassword.Encoder{mockEncoder})
 	user, err := p.Auth(ctx, username, password)
 
 	if err != nil {
@@ -64,7 +65,7 @@ func TestBaseProvider_Auth_GivenInvalidUsername_ShouldReturnNil(t *testing.T) {
 		IsValidPassword(gomock.Any(), gomock.Any()).
 		Times(0)
 
-	p := NewBaseProvider(mockUserProvider, mockEncoder)
+	p := NewBaseProvider(mockUserProvider, []libpassword.Encoder{mockEncoder})
 	user, err := p.Auth(ctx, username, password)
 
 	if err != nil {
@@ -98,9 +99,9 @@ func TestBaseProvider_Auth_GivenInvalidPassword_ShouldReturnNil(t *testing.T) {
 	mockEncoder.
 		EXPECT().
 		IsValidPassword(gomock.Eq([]byte(expectedUser.HashedPassword)), gomock.Eq([]byte(password))).
-		Return(false)
+		Return(false, nil)
 
-	p := NewBaseProvider(mockUserProvider, mockEncoder)
+	p := NewBaseProvider(mockUserProvider, []libpassword.Encoder{mockEncoder})
 	user, err := p.Auth(ctx, username, password)
 
 	if err != nil {

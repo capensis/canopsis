@@ -191,7 +191,7 @@ func (s *security) GetConfig() libsecurity.Config {
 }
 
 func (s *security) GetPasswordEncoder() password.Encoder {
-	return password.NewSha1Encoder()
+	return password.NewBcryptEncoder()
 }
 
 func (s *security) GetTokenService() apisecurity.TokenService {
@@ -219,7 +219,11 @@ func (s *security) newUserProvider() libsecurity.UserProvider {
 }
 
 func (s *security) newBaseAuthProvider() libsecurity.Provider {
-	return provider.NewBaseProvider(s.newUserProvider(), s.GetPasswordEncoder())
+	return provider.NewBaseProvider(s.newUserProvider(), []password.Encoder{
+		s.GetPasswordEncoder(),
+		// todo deprecated encoder
+		password.NewSha1Encoder(),
+	})
 }
 
 func (s *security) newLdapAuthProvider() libsecurity.Provider {
