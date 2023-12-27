@@ -171,7 +171,12 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*User, error) {
 	var user *User
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		user = nil
-		_, err := s.collection.InsertOne(ctx, r.getBson(s.passwordEncoder))
+		insertDoc, err := r.getBson(s.passwordEncoder)
+		if err != nil {
+			return err
+		}
+
+		_, err = s.collection.InsertOne(ctx, insertDoc)
 		if err != nil {
 			return err
 		}
@@ -190,9 +195,14 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*User, error) {
 	var user *User
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		user = nil
+		updateDoc, err := r.getBson(s.passwordEncoder)
+		if err != nil {
+			return err
+		}
+
 		res, err := s.collection.UpdateOne(ctx,
 			bson.M{"_id": r.ID},
-			bson.M{"$set": r.getBson(s.passwordEncoder)},
+			bson.M{"$set": updateDoc},
 		)
 		if err != nil || res.MatchedCount == 0 {
 			return err
