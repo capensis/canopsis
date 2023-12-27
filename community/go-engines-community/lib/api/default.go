@@ -315,7 +315,7 @@ func Default(
 			})
 		})
 
-		RegisterValidators(dbClient, flags.EnableSameServiceNames)
+		RegisterValidators(dbClient)
 		RegisterRoutes(
 			ctx,
 			cfg,
@@ -348,6 +348,7 @@ func Default(
 			author.NewProvider(dbClient, p.ApiConfigProvider),
 			healthcheckStore,
 			tplExecutor,
+			flags.EnableSameServiceNames,
 			logger,
 		)
 	})

@@ -124,6 +124,7 @@ func RegisterRoutes(
 	authorProvider author.Provider,
 	healthcheckStore healthcheck.Store,
 	tplExecutor libtemplate.Executor,
+	enableSameServiceNames bool,
 	logger zerolog.Logger,
 ) {
 	sessionStore := security.GetSessionStore()
@@ -617,7 +618,7 @@ func RegisterRoutes(
 			)
 		}
 
-		entityserviceAPI := entityservice.NewApi(entityservice.NewStore(dbClient, linkGenerator, logger), entityPublChan,
+		entityserviceAPI := entityservice.NewApi(entityservice.NewStore(dbClient, linkGenerator, enableSameServiceNames, logger), entityPublChan,
 			metricsEntityMetaUpdater, common.NewPatternFieldsTransformer(dbClient), actionLogger, logger)
 		entityserviceRouter := protected.Group("/entityservices")
 		{
