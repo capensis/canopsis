@@ -1886,6 +1886,22 @@ func RegisterRoutes(
 				)
 			}
 
+			connectorPbehaviorRouter := bulkRouter.Group("/connector-pbehaviors")
+			{
+				connectorPbehaviorRouter.POST(
+					"",
+					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionCreate, enforcer),
+					middleware.PreProcessBulk(apiConfigProvider, true),
+					pbehaviorApi.BulkConnectorCreate,
+				)
+				connectorPbehaviorRouter.DELETE(
+					"",
+					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionDelete, enforcer),
+					middleware.PreProcessBulk(apiConfigProvider, true),
+					pbehaviorApi.BulkConnectorDelete,
+				)
+			}
+
 			entityRouter := bulkRouter.Group("/entities")
 			{
 				entityRouter.PUT(

@@ -110,16 +110,13 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 		pbhUniqueIDValidator.Validate(ctx, sl)
 		pbhValidator.ValidateCreateRequest(sl)
 	}, pbehavior.CreateRequest{})
-	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
-		pbhValidator.ValidateUpdateRequest(ctx, sl)
-	}, pbehavior.UpdateRequest{})
-	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
-		pbhValidator.ValidateUpdateRequest(ctx, sl)
-	}, pbehavior.BulkUpdateRequestItem{})
+	v.RegisterStructValidation(pbhValidator.ValidateUpdateRequest, pbehavior.UpdateRequest{})
+	v.RegisterStructValidation(pbhValidator.ValidateUpdateRequest, pbehavior.BulkUpdateRequestItem{})
 	v.RegisterStructValidationCtx(pbhValidator.ValidateEditRequest, pbehavior.EditRequest{})
 	v.RegisterStructValidationCtx(pbhValidator.ValidatePatchRequest, pbehavior.PatchRequest{})
 	v.RegisterStructValidation(pbhValidator.ValidateCalendarRequest, pbehavior.CalendarByEntityIDRequest{})
 	v.RegisterStructValidationCtx(pbhValidator.ValidateEntityCreateRequest, pbehavior.BulkEntityCreateRequestItem{})
+	v.RegisterStructValidationCtx(pbhValidator.ValidateConnectorCreateRequest, pbehavior.BulkConnectorCreateRequestItem{})
 
 	pbhReasonUniqueIDValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorReasonMongoCollection, "ID")
 	pbhReasonUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorReasonMongoCollection, "Name")

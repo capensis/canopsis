@@ -31,7 +31,7 @@ func (v *Validator) ValidateCreateRequest(sl validator.StructLevel) {
 	}
 }
 
-func (v *Validator) ValidateUpdateRequest(ctx context.Context, sl validator.StructLevel) {
+func (v *Validator) ValidateUpdateRequest(sl validator.StructLevel) {
 	corporateEntityPattern := ""
 	var entityPattern pattern.Entity
 	switch r := sl.Current().Interface().(type) {
@@ -241,11 +241,6 @@ func (v *Validator) ValidatePatchRequest(ctx context.Context, sl validator.Struc
 
 func (v *Validator) ValidateEntityCreateRequest(ctx context.Context, sl validator.StructLevel) {
 	r := sl.Current().Interface().(BulkEntityCreateRequestItem)
-
-	if r.RRule != "" && !v.checkRrule(r.RRule) {
-		sl.ReportError(r.RRule, "RRule", "RRule", "rrule", "")
-	}
-
 	var foundType *pbehavior.Type
 	var err error
 	if r.Type != "" {
@@ -273,6 +268,36 @@ func (v *Validator) ValidateEntityCreateRequest(ctx context.Context, sl validato
 
 	if r.Stop == nil && foundType != nil && foundType.Type != pbehavior.TypePause {
 		sl.ReportError(r.Stop, "Stop", "Stop", "required", "")
+	}
+}
+
+func (v *Validator) ValidateConnectorCreateRequest(ctx context.Context, sl validator.StructLevel) {
+	r := sl.Current().Interface().(BulkConnectorCreateRequestItem)
+
+	if r.Type != "" {
+		foundType, err := v.checkType(ctx, r.Type)
+		if err != nil {
+			panic(err)
+		}
+
+		if foundType == nil {
+			sl.ReportError(r.Type, "Type", "Type", "not_exist", "")
+		}
+	}
+
+	if r.Reason != "" {
+		ok, err := v.checkReason(ctx, r.Reason)
+		if err != nil {
+			panic(err)
+		}
+
+		if !ok {
+			sl.ReportError(r.Reason, "Reason", "Reason", "not_exist", "")
+		}
+	}
+
+	if r.Stop != nil && r.Start != nil && r.Stop.Before(*r.Start) {
+		sl.ReportError(r.Stop, "Stop", "Stop", "gtfield", "Start")
 	}
 }
 

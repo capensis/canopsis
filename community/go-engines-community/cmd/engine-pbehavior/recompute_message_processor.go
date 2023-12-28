@@ -24,6 +24,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+const maxLogIds = 20
+
 type recomputeMessageProcessor struct {
 	FeaturePrintEventOnError bool
 	PbhService               libpbehavior.Service
@@ -73,9 +75,19 @@ func (p *recomputeMessageProcessor) computePbehaviors(ctx context.Context, ids [
 		return err
 	}
 
+	if len(ids) == 0 {
+		p.Logger.Info().Msg("all pbehaviors recomputed")
+	} else if len(ids) <= maxLogIds {
+		p.Logger.Info().Strs("pbehaviors", ids).Msg("pbehaviors recomputed")
+	} else {
+		p.Logger.Info().
+			Strs("first_pbehaviors", ids[:maxLogIds]).
+			Int("pbehaviors", len(ids)).
+			Msg("pbehaviors recomputed")
+	}
+
 	excludeIds := make([]string, 0)
 	for _, id := range ids {
-		p.Logger.Debug().Str("pbehavior", id).Msg("pbehavior recomputed")
 		excludeIds, err = p.updateAlarms(ctx, id, excludeIds, resolver)
 		if err != nil {
 			return err
