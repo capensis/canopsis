@@ -14,8 +14,8 @@ type ListRequest struct {
 }
 
 type StatsResponse struct {
-	ID       int64 `bson:"_id" json:"time"`
-	Received int64 `bson:"received" json:"rate"`
+	ID   int64 `bson:"_id" json:"time"`
+	Rate int64 `bson:"received" json:"rate"`
 }
 
 type StatsListResponse struct {

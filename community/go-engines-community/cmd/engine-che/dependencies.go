@@ -9,6 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/che"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
 )
@@ -22,8 +23,10 @@ func NewEngine(ctx context.Context, opts che.Options, logger zerolog.Logger) eng
 		utils.MinDuration(canopsis.DefaultFlushInterval, opts.PeriodicalWaitTime), logger)
 	eventFilterFailureService := eventfilter.NewFailureService(dbClient,
 		utils.MinDuration(canopsis.DefaultFlushInterval, opts.PeriodicalWaitTime), logger)
-
-	e := che.NewEngine(ctx, opts, dbClient, cfg, metrics.NewNullSender(), metrics.NewNullMetaUpdater(),
+	pgPoolProvider := postgres.NewPoolProvider(cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
+	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
+	metricsSender := metrics.NewTimescaleDBSender(pgPoolProvider, metricsConfigProvider, logger)
+	e := che.NewEngine(ctx, opts, dbClient, cfg, metricsSender, metrics.NewNullMetaUpdater(),
 		eventfilter.NewExternalDataGetterContainer(), config.NewTimezoneConfigProvider(cfg, logger),
 		config.NewTemplateConfigProvider(cfg, logger), eventFilterEventCounter, eventFilterFailureService, logger)
 	e.AddDeferFunc(func(ctx context.Context) {
@@ -32,5 +35,6 @@ func NewEngine(ctx context.Context, opts che.Options, logger zerolog.Logger) eng
 			logger.Err(err).Msg("failed to close mongo connection")
 		}
 	})
+
 	return e
 }

@@ -1,0 +1,6 @@
+BEGIN;
+
+DROP MATERIALIZED VIEW IF EXISTS message_rate_hourly;
+DROP TABLE IF EXISTS message_rate;
+
+END;

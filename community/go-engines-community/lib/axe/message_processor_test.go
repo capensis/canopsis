@@ -26,6 +26,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fixtures"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
@@ -293,7 +294,9 @@ func benchmarkMessageProcessor(
 
 	cfg := config.CanopsisConf{}
 	logger := zerolog.Nop()
-	metricsSender := metrics.NewNullSender()
+	pgPoolProvider := postgres.NewPoolProvider(cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
+	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
+	metricsSender := metrics.NewTimescaleDBSender(pgPoolProvider, metricsConfigProvider, logger)
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	tzConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	templateConfigProvider := config.NewTemplateConfigProvider(cfg, logger)
@@ -327,7 +330,7 @@ func benchmarkMessageProcessor(
 			event.NewNullAutoInstructionMatcher(),
 			statecounters.NewStateCountersService(dbClient, amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), template.NewExecutor(templateConfigProvider, tzConfigProvider), logger),
 			metaAlarmEventProcessor,
-			metrics.NewNullSender(),
+			metricsSender,
 			statistics.NewEventStatisticsSender(dbClient, logger, tzConfigProvider),
 			nil,
 			alarmtag.NewExternalUpdater(dbClient),
