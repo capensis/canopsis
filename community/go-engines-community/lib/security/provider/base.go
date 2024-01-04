@@ -11,15 +11,21 @@ import (
 
 // baseProvider implements password-based authentication.
 type baseProvider struct {
-	userProvider     security.UserProvider
-	passwordEncoders []password.Encoder
+	userProvider               security.UserProvider
+	passwordEncoder            password.Encoder
+	deprecatedPasswordEncoders []password.Encoder
 }
 
 // NewBaseProvider creates new provider.
-func NewBaseProvider(p security.UserProvider, e []password.Encoder) security.Provider {
+func NewBaseProvider(
+	p security.UserProvider,
+	passwordEncoder password.Encoder,
+	deprecatedPasswordEncoders ...password.Encoder,
+) security.Provider {
 	return &baseProvider{
-		userProvider:     p,
-		passwordEncoders: e,
+		userProvider:               p,
+		passwordEncoder:            passwordEncoder,
+		deprecatedPasswordEncoders: deprecatedPasswordEncoders,
 	}
 }
 
@@ -39,10 +45,28 @@ func (p *baseProvider) Auth(ctx context.Context, username, password string) (*se
 
 	bytesHashedPwd := []byte(user.HashedPassword)
 	bytesPwd := []byte(password)
-	for _, passwordEncoder := range p.passwordEncoders {
-		if ok, _ := passwordEncoder.IsValidPassword(bytesHashedPwd, bytesPwd); ok {
-			return user, nil
+
+	if ok, _ := p.passwordEncoder.IsValidPassword(bytesHashedPwd, bytesPwd); ok {
+		return user, nil
+	}
+
+	for _, passwordEncoder := range p.deprecatedPasswordEncoders {
+		if ok, _ := passwordEncoder.IsValidPassword(bytesHashedPwd, bytesPwd); !ok {
+			continue
 		}
+
+		newHash, err := p.passwordEncoder.EncodePassword(bytesPwd)
+		if err != nil {
+			return nil, err
+		}
+
+		user.HashedPassword = string(newHash)
+		err = p.userProvider.UpdateHashedPassword(ctx, user.ID, user.HashedPassword)
+		if err != nil {
+			return nil, err
+		}
+
+		return user, nil
 	}
 
 	return nil, nil
