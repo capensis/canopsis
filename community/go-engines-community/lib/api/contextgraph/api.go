@@ -1,4 +1,4 @@
-package v1
+package contextgraph
 
 import (
 	"context"
@@ -9,23 +9,22 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
 
 type api struct {
-	reporter    contextgraph.StatusReporter
+	reporter    StatusReporter
 	filePattern string
 	logger      zerolog.Logger
 }
 
 func NewApi(
 	conf config.CanopsisConf,
-	reporter contextgraph.StatusReporter,
+	reporter StatusReporter,
 	logger zerolog.Logger,
-) contextgraph.API {
+) API {
 	a := &api{
 		filePattern: conf.ImportCtx.FilePattern,
 		reporter:    reporter,
@@ -36,20 +35,19 @@ func NewApi(
 }
 
 // ImportAll
-// @Param body body contextgraph.ImportRequest true "body"
+// @Param body body []importcontextgraph.EntityConfiguration true "body"
 // @Success 200 {object} contextgraph.ImportResponse
 func (a *api) ImportAll(c *gin.Context) {
-	query := contextgraph.ImportQuery{}
+	query := ImportQuery{}
 	if err := c.BindQuery(&query); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, query))
 		return
 	}
 
-	job := contextgraph.ImportJob{
+	job := ImportJob{
 		Creation: time.Now(),
-		Status:   contextgraph.StatusPending,
+		Status:   StatusPending,
 		Source:   query.Source,
-		IsOld:    true,
 	}
 
 	raw, err := c.GetRawData()
@@ -63,25 +61,24 @@ func (a *api) ImportAll(c *gin.Context) {
 		panic(err)
 	}
 
-	c.JSON(http.StatusOK, contextgraph.ImportResponse{ID: jobID})
+	c.JSON(http.StatusOK, ImportResponse{ID: jobID})
 }
 
 // ImportPartial
-// @Param body body contextgraph.ImportRequest true "body"
+// @Param body body []importcontextgraph.EntityConfiguration true "body"
 // @Success 200 {object} contextgraph.ImportResponse
 func (a *api) ImportPartial(c *gin.Context) {
-	query := contextgraph.ImportQuery{}
+	query := ImportQuery{}
 	if err := c.BindQuery(&query); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, query))
 		return
 	}
 
-	job := contextgraph.ImportJob{
+	job := ImportJob{
 		Creation:  time.Now(),
-		Status:    contextgraph.StatusPending,
+		Status:    StatusPending,
 		Source:    query.Source,
 		IsPartial: true,
-		IsOld:     true,
 	}
 
 	raw, err := c.GetRawData()
@@ -95,10 +92,10 @@ func (a *api) ImportPartial(c *gin.Context) {
 		panic(err)
 	}
 
-	c.JSON(http.StatusOK, contextgraph.ImportResponse{ID: jobID})
+	c.JSON(http.StatusOK, ImportResponse{ID: jobID})
 }
 
-func (a *api) createImportJob(ctx context.Context, job contextgraph.ImportJob, raw []byte) (string, error) {
+func (a *api) createImportJob(ctx context.Context, job ImportJob, raw []byte) (string, error) {
 	err := a.reporter.ReportCreate(ctx, &job)
 	if err != nil {
 		return "", err
@@ -117,7 +114,7 @@ func (a *api) createImportJob(ctx context.Context, job contextgraph.ImportJob, r
 func (a *api) Status(c *gin.Context) {
 	status, err := a.reporter.GetStatus(c.Request.Context(), c.Param("id"))
 	if err != nil {
-		if errors.Is(err, contextgraph.ErrNotFound) {
+		if errors.Is(err, ErrNotFound) {
 			c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 			return
 		}
