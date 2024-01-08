@@ -1,0 +1,9 @@
+[Unit]
+Description=Cannopsis reconfigure
+Documentation=https://doc.canopsis.net
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+EnvironmentFile=/opt/canopsis/etc/go-engines-vars.conf
+ExecStart=/opt/canopsis/bin/canopsis-reconfigure -migrate-postgres=true -migrate-mongo=true -edition community -conf /opt/canopsis/etc/canopsis.toml -override /opt/canopsis/etc/conf.d/canopsis-override.toml
