@@ -1118,7 +1118,7 @@ func (a *ApiClient) ISaveRequest(ctx context.Context, doc string) (context.Conte
 *
 Step example:
 
-	When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body is:
+	When I do GET /api/v4/contextgraph-import-status/{{ .lastResponse._id}} until response code is 200 and body is:
 	"""
 	{
 	  "status": "done"
@@ -1176,7 +1176,7 @@ func (a *ApiClient) IDoRequestUntilResponse(ctx context.Context, method, uri str
 *
 Step example:
 
-	When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and body contains:
+	When I do GET /api/v4/contextgraph-import-status/{{ .lastResponse._id}} until response code is 200 and body contains:
 	"""
 	{
 	  "status": "done"
@@ -1239,7 +1239,7 @@ func (a *ApiClient) IDoRequestUntilResponseContains(ctx context.Context, method,
 *
 Step example:
 
-	When I do GET /api/v4/contextgraph/import/status/{{ .lastResponse._id}} until response code is 200 and response key "data.0.duration" is greater or equal than 3
+	When I do GET /api/v4/contextgraph-import-status/{{ .lastResponse._id}} until response code is 200 and response key "data.0.duration" is greater or equal than 3
 	"""
 */
 func (a *ApiClient) IDoRequestUntilResponseKeyIsGreaterOrEqualThan(ctx context.Context, method, uri string, code int, path string, value float64) (context.Context, error) {
