@@ -1,5 +1,25 @@
 <template>
-  <v-card>
+  <v-card class="column-field">
+    <v-tooltip left>
+      <template #activator="{ on }">
+        <v-btn
+          class="column-field__remove-btn"
+          v-on="on"
+          small
+          text
+          icon
+          @click="$emit('remove')"
+        >
+          <v-icon
+            color="error"
+            small
+          >
+            close
+          </v-icon>
+        </v-btn>
+      </template>
+      <span>{{ $t('common.delete') }}</span>
+    </v-tooltip>
     <v-card-text>
       <v-layout align-center>
         <span class="handler mr-1">
@@ -15,7 +35,16 @@
           v-model="expanded"
           :color="hasChildrenError ? 'error' : ''"
         />
+        <c-name-field
+          v-if="isCustom"
+          v-field="column.label"
+          :name="columnLabelFieldName"
+          :label="$t('common.label')"
+          :error-messages="columnLabelErrorMessages"
+          required
+        />
         <v-select
+          v-else
           v-validate="'required'"
           :value="column.column"
           :items="availableColumns"
@@ -27,22 +56,19 @@
         <v-tooltip left>
           <template #activator="{ on }">
             <v-btn
-              class="mr-0"
+              :class="`mr-0 ${isCustom ? 'text--primary' : 'text--disabled'}`"
               v-on="on"
               small
               text
               icon
-              @click="$emit('remove')"
+              @click="convertToCustom"
             >
-              <v-icon
-                color="error"
-                small
-              >
-                close
+              <v-icon small>
+                tune
               </v-icon>
             </v-btn>
           </template>
-          <span>{{ $t('common.delete') }}</span>
+          <span>{{ $t('common.convertToCustomColumn') }}</span>
         </v-tooltip>
       </v-layout>
       <v-expand-transition mode="out-in">
@@ -51,6 +77,8 @@
           v-show="expanded"
           v-field="column"
           :name="name"
+          :with-label="!isCustom"
+          :with-field="isCustom"
           :with-html="withHtml"
           :with-template="withTemplate"
           :with-color-indicator="withColorIndicator"
@@ -76,6 +104,8 @@ import {
   ENTITY_FIELDS_TO_LABELS_KEYS,
   ALARM_OUTPUT_FIELDS,
 } from '@/constants';
+
+import { formToWidgetColumn, widgetColumnValueToForm } from '@/helpers/entities/widget/column/form';
 
 import { formBaseMixin, validationChildrenMixin } from '@/mixins/form';
 
@@ -145,6 +175,7 @@ export default {
   data() {
     return {
       expanded: !this.column?.column,
+      isCustom: false,
     };
   },
   computed: {
@@ -175,6 +206,14 @@ export default {
         ? this.alarmListAvailableColumns
         : this.contextAvailableColumns;
     },
+
+    columnLabelFieldName() {
+      return `${this.name}.label`;
+    },
+
+    columnLabelErrorMessages() {
+      return this.errors.collect(this.columnLabelFieldName);
+    },
   },
   watch: {
     type() {
@@ -184,6 +223,15 @@ export default {
       }));
 
       this.updateModel(columns);
+    },
+
+    availableColumns: {
+      immediate: true,
+      handler(columns) {
+        this.isCustom = this.column.column
+          ? columns.every(column => column.value !== this.column.column)
+          : false;
+      },
     },
   },
   methods: {
@@ -200,6 +248,52 @@ export default {
 
       this.updateModel(newValue);
     },
+
+    convertToCustom() {
+      this.isCustom = !this.isCustom;
+
+      const newColumn = {
+        ...this.column,
+      };
+
+      if (this.isCustom) {
+        const { value } = formToWidgetColumn(this.column);
+
+        const selectedColumn = this.availableColumns.find(column => column.value === this.column.column);
+
+        const label = this.column.label || selectedColumn?.text || '';
+
+        newColumn.column = value;
+        newColumn.label = label;
+        newColumn.field = '';
+        newColumn.rule = '';
+        newColumn.dictionary = '';
+      } else {
+        const { column: value, field, rule, dictionary } = widgetColumnValueToForm(this.column.column);
+
+        const selectedColumn = this.availableColumns.find(column => column.value === value);
+
+        newColumn.column = value === selectedColumn?.value ? value : '';
+        newColumn.label = newColumn.label === selectedColumn?.text ? '' : newColumn.label;
+        newColumn.field = field;
+        newColumn.rule = rule;
+        newColumn.dictionary = dictionary;
+      }
+
+      this.updateModel(newColumn);
+    },
   },
 };
 </script>
+
+<style lang="scss">
+.column-field {
+  position: relative;
+
+  &__remove-btn.v-btn {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+}
+</style>

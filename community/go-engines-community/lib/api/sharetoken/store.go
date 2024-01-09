@@ -6,7 +6,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/token"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -47,8 +47,8 @@ func NewStore(
 }
 
 func (s *store) Insert(ctx context.Context, userId string, r EditRequest) (*Response, error) {
-	now := types.NewCpsTime()
-	var expired types.CpsTime
+	now := datetime.NewCpsTime()
+	var expired datetime.CpsTime
 	if r.Duration != nil && r.Duration.Value > 0 {
 		expired = r.Duration.AddTo(now)
 	}

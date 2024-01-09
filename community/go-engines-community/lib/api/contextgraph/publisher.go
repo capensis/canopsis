@@ -6,6 +6,7 @@ import (
 	"time"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -42,7 +43,7 @@ func (p *rmqPublisher) SendImportResultEvent(ctx context.Context, uuid string, e
 		EventType:     types.EventTypeCheck,
 		SourceType:    types.SourceTypeResource,
 		Resource:      uuid,
-		Timestamp:     types.NewCpsTime(time.Now().Unix()),
+		Timestamp:     datetime.NewCpsTime(),
 		State:         state,
 		Output:        fmt.Sprintf("Import %s failed.", uuid),
 		ExtraInfos: map[string]interface{}{
@@ -70,7 +71,7 @@ func (p *rmqPublisher) SendPerfDataEvent(ctx context.Context, uuid string, stats
 func (p *rmqPublisher) sendEvent(ctx context.Context, event types.Event) error {
 	bevent, err := p.encoder.Encode(event)
 	if err != nil {
-		return fmt.Errorf("error while encoding event %+v", err)
+		return fmt.Errorf("error while encoding event %w", err)
 	}
 
 	return p.amqpPublisher.PublishWithContext(

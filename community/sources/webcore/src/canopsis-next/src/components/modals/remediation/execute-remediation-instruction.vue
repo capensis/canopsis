@@ -175,6 +175,8 @@ export default {
           })
           : err?.data?.error;
 
+        console.error(err);
+
         this.$popups.error({ text: message || this.$t('errors.default') });
 
         this.closeModal();

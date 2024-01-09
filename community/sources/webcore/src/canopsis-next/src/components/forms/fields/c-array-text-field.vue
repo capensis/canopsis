@@ -18,6 +18,10 @@
         @click="removeItemFromArray(index)"
       />
     </v-layout>
+    <v-messages
+      :value="errorMessages"
+      color="error"
+    />
     <v-btn
       class="v-btn-legacy-m--y"
       :disabled="disabled"
@@ -44,6 +48,10 @@ export default {
   },
   props: {
     values: {
+      type: Array,
+      default: () => [],
+    },
+    errorMessages: {
       type: Array,
       default: () => [],
     },

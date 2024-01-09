@@ -3,6 +3,14 @@
     justify-center
     column
   >
+    <v-text-field
+      v-if="withField"
+      v-validate="'required'"
+      v-field="column.column"
+      :label="$t('common.field')"
+      :error-messages="columnValueErrorMessages"
+      :name="columnValueFieldName"
+    />
     <template v-if="!withoutInfosAttributes">
       <c-alarm-infos-attribute-field
         v-if="isAlarmInfos"
@@ -48,22 +56,24 @@
         </template>
       </c-number-field>
     </template>
-    <v-switch
-      class="pa-0 my-2"
-      v-model="customLabel"
-      :label="$t('settings.columns.customLabel')"
-      color="primary"
-      hide-details
-      @change="updateCustomLabel"
-    />
-    <v-text-field
-      v-if="customLabel"
-      v-field="column.label"
-      v-validate="'required'"
-      :label="$t('common.label')"
-      :error-messages="errors.collect(`${name}.label`)"
-      :name="`${name}.label`"
-    />
+    <template v-if="withLabel">
+      <v-switch
+        class="pa-0 my-2"
+        v-model="customLabel"
+        :label="$t('settings.columns.customLabel')"
+        color="primary"
+        hide-details
+        @change="updateCustomLabel"
+      />
+      <v-text-field
+        v-if="customLabel"
+        v-field="column.label"
+        v-validate="'required'"
+        :label="$t('common.label')"
+        :error-messages="errors.collect(`${name}.label`)"
+        :name="`${name}.label`"
+      />
+    </template>
     <v-layout
       v-if="withTemplate || withSimpleTemplate"
       align-center
@@ -189,10 +199,18 @@ export default {
       type: Array,
       required: false,
     },
+    withLabel: {
+      type: Boolean,
+      default: false,
+    },
+    withField: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
-      customLabel: !!this.column.label,
+      customLabel: false,
     };
   },
   computed: {
@@ -238,6 +256,22 @@ export default {
 
     templateModalName() {
       return this.withSimpleTemplate ? MODALS.payloadTextareaEditor : MODALS.textEditor;
+    },
+
+    columnValueFieldName() {
+      return `${this.name}.column`;
+    },
+
+    columnValueErrorMessages() {
+      return this.errors.collect(this.columnValueFieldName);
+    },
+  },
+  watch: {
+    withLabel: {
+      immediate: true,
+      handler() {
+        this.customLabel = !!this.column.label;
+      },
     },
   },
   methods: {

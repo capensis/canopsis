@@ -126,15 +126,16 @@
             />
           </template>
         </template>
-        <template #item="props">
+        <template #item="{ isSelected, isExpanded, item, select, expand }">
           <alarms-list-row
             v-on="rowListeners"
-            :ref="`row${props.item._id}`"
-            :key="props.item._id"
-            :selected="props.isSelected"
+            :ref="`row${item._id}`"
+            :key="item._id"
+            :selected="isSelected"
             :selectable="selectable"
             :expandable="expandable"
-            :row="props"
+            :expanded="isExpanded"
+            :alarm="item"
             :widget="widget"
             :headers="headers"
             :parent-alarm="parentAlarm"
@@ -149,7 +150,8 @@
             :show-instruction-icon="hasInstructionsAlarms"
             @start:resize="startColumnResize"
             @select:tag="$emit('select:tag', $event)"
-            @input="props.select"
+            @expand="expand"
+            @input="select"
           />
         </template>
         <template #expanded-item="{ item }">

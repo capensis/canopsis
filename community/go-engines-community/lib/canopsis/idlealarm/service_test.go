@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
@@ -38,7 +39,7 @@ func TestService_Process_GivenAlarmRuleByLastEventDate_ShouldReturnEvent(t *test
 	alarm := types.Alarm{
 		ID: "test-alarm",
 		Value: types.AlarmValue{
-			LastEventDate: types.CpsTime{Time: time.Now().Add(-6 * time.Hour)},
+			LastEventDate: datetime.CpsTime{Time: time.Now().Add(-6 * time.Hour)},
 			Connector:     "test-connector",
 			ConnectorName: "test-connector-name",
 			Component:     "test-component",
@@ -49,7 +50,7 @@ func TestService_Process_GivenAlarmRuleByLastEventDate_ShouldReturnEvent(t *test
 	rule := idlerule.Rule{
 		Type:           idlerule.RuleTypeAlarm,
 		AlarmCondition: idlerule.RuleAlarmConditionLastEvent,
-		Duration: types.DurationWithUnit{
+		Duration: datetime.DurationWithUnit{
 			Value: 10,
 			Unit:  "s",
 		},
@@ -115,7 +116,7 @@ func TestService_Process_GivenAlarmRuleByLastEventDate_ShouldReturnEvent(t *test
 		IdleRuleApply: "alarm_last_event",
 	}
 	event := events[0]
-	event.Timestamp = types.CpsTime{}
+	event.Timestamp = datetime.CpsTime{}
 
 	if diff := pretty.Compare(event, expectedEvent); diff != "" {
 		t.Errorf("unexepected event %s", diff)
@@ -137,7 +138,7 @@ func TestService_Process_GivenAlarmRuleByLastUpdateDate_ShouldReturnEvent(t *tes
 	alarm := types.Alarm{
 		ID: "test-alarm",
 		Value: types.AlarmValue{
-			LastUpdateDate: types.CpsTime{Time: time.Now().Add(-6 * time.Hour)},
+			LastUpdateDate: datetime.CpsTime{Time: time.Now().Add(-6 * time.Hour)},
 			Connector:      "test-connector",
 			ConnectorName:  "test-connector-name",
 			Component:      "test-component",
@@ -148,7 +149,7 @@ func TestService_Process_GivenAlarmRuleByLastUpdateDate_ShouldReturnEvent(t *tes
 	rule := idlerule.Rule{
 		Type:           idlerule.RuleTypeAlarm,
 		AlarmCondition: idlerule.RuleAlarmConditionLastUpdate,
-		Duration: types.DurationWithUnit{
+		Duration: datetime.DurationWithUnit{
 			Value: 10,
 			Unit:  "s",
 		},
@@ -213,7 +214,7 @@ func TestService_Process_GivenAlarmRuleByLastUpdateDate_ShouldReturnEvent(t *tes
 		IdleRuleApply: "alarm_last_update",
 	}
 	event := events[0]
-	event.Timestamp = types.CpsTime{}
+	event.Timestamp = datetime.CpsTime{}
 
 	if diff := pretty.Compare(event, expectedEvent); diff != "" {
 		t.Errorf("unexepected event %s", diff)
@@ -241,7 +242,7 @@ func TestService_Process_GivenEntityRule_ShouldReturnEvent(t *testing.T) {
 		Component:     component,
 		Connector:     connector + "/" + connectorName,
 		Name:          resource,
-		LastEventDate: &types.CpsTime{Time: time.Now().Add(-6 * time.Hour)},
+		LastEventDate: &datetime.CpsTime{Time: time.Now().Add(-6 * time.Hour)},
 	}
 	state := types.CpsNumber(types.AlarmStateCritical)
 	output := "Idle rule test-rule-name"
@@ -250,7 +251,7 @@ func TestService_Process_GivenEntityRule_ShouldReturnEvent(t *testing.T) {
 		Type:   idlerule.RuleTypeEntity,
 		Name:   "test-rule-name",
 		Author: "test-author",
-		Duration: types.DurationWithUnit{
+		Duration: datetime.DurationWithUnit{
 			Value: 10,
 			Unit:  "s",
 		},
@@ -319,7 +320,7 @@ func TestService_Process_GivenEntityRule_ShouldReturnEvent(t *testing.T) {
 		IdleRuleApply: "entity",
 	}
 	event := events[0]
-	event.Timestamp = types.CpsTime{}
+	event.Timestamp = datetime.CpsTime{}
 
 	if diff := pretty.Compare(event, expectedEvent); diff != "" {
 		t.Errorf("unexepected event %s", diff)
@@ -379,7 +380,7 @@ func TestService_Process_GivenAlarmForConnectorEntity_ShouldReturnEvent(t *testi
 		SourceType:    types.SourceTypeConnector,
 	}
 	event := events[0]
-	event.Timestamp = types.CpsTime{}
+	event.Timestamp = datetime.CpsTime{}
 
 	if !reflect.DeepEqual(event, expectedEvent) {
 		t.Errorf("exepected event %+v but got %+v", expectedEvent, event)
@@ -409,14 +410,14 @@ func TestService_Process_GivenEntityRuleAndTwoAffectedComponents_ShouldFindConne
 		ID:            component1,
 		Type:          types.EntityTypeComponent,
 		Name:          component1,
-		LastEventDate: &types.CpsTime{Time: time.Now().Add(-6 * time.Hour)},
+		LastEventDate: &datetime.CpsTime{Time: time.Now().Add(-6 * time.Hour)},
 		Connector:     connectorEntity.ID,
 	}
 	entity2 := types.Entity{
 		ID:            component2,
 		Type:          types.EntityTypeComponent,
 		Name:          component2,
-		LastEventDate: &types.CpsTime{Time: time.Now().Add(-6 * time.Hour)},
+		LastEventDate: &datetime.CpsTime{Time: time.Now().Add(-6 * time.Hour)},
 		Connector:     connectorEntity.ID,
 	}
 	rule := idlerule.Rule{
@@ -424,7 +425,7 @@ func TestService_Process_GivenEntityRuleAndTwoAffectedComponents_ShouldFindConne
 		Type:   idlerule.RuleTypeEntity,
 		Name:   "test-rule-name",
 		Author: "test-author",
-		Duration: types.DurationWithUnit{
+		Duration: datetime.DurationWithUnit{
 			Value: 10,
 			Unit:  "s",
 		},

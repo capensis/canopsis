@@ -50,7 +50,6 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with custom props 1`]
           label="Type"
           name="customName"
           types="[object Object],[object Object]"
-          value="string"
         />
       </div>
       <div

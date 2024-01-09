@@ -1,3 +1,0 @@
-- time: RAW=NOW() - INTERVAL '20 HOURS'
-  entity_id: 13
-  value: 1

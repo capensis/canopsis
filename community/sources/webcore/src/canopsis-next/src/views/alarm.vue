@@ -80,6 +80,8 @@ export default {
           this.widget = prepareAlarmListWidget(widget);
         }
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: err.description || this.$t('errors.default') });
       } finally {
         this.pending = false;

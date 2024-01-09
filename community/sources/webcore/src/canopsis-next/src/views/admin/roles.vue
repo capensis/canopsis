@@ -61,6 +61,8 @@ export default {
 
               this.$popups.success({ text: this.$t('success.default') });
             } catch (err) {
+              console.error(err);
+
               this.$popups.error({ text: this.$t('errors.default') });
             }
           },
@@ -80,6 +82,8 @@ export default {
 
               this.$popups.success({ text: this.$t('success.default') });
             } catch (err) {
+              console.error(err);
+
               this.$popups.error({ text: this.$t('errors.default') });
             }
           },

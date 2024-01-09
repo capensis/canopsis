@@ -64,9 +64,7 @@
         v-if="hasMoreInfos"
         :value="$constants.ALARMS_EXPAND_PANEL_TABS.moreInfos"
       >
-        <v-layout
-          class="pa-3"
-        >
+        <v-layout class="pa-3">
           <v-flex :class="cardFlexClass">
             <v-card class="tab-item-card">
               <v-card-text>
@@ -81,9 +79,7 @@
         </v-layout>
       </v-tab-item>
       <v-tab-item :value="$constants.ALARMS_EXPAND_PANEL_TABS.timeLine">
-        <v-layout
-          class="pa-3"
-        >
+        <v-layout class="pa-3">
           <v-flex :class="cardFlexClass">
             <v-card class="tab-item-card">
               <v-progress-linear
@@ -106,9 +102,7 @@
         v-if="hasTickets"
         :value="$constants.ALARMS_EXPAND_PANEL_TABS.ticketsDeclared"
       >
-        <v-layout
-          class="pa-3"
-        >
+        <v-layout class="pa-3">
           <v-flex :class="cardFlexClass">
             <v-card class="tab-item-card">
               <v-card-text>
@@ -125,9 +119,7 @@
         v-if="hasWidgetCharts"
         :value="$constants.ALARMS_EXPAND_PANEL_TABS.charts"
       >
-        <v-layout
-          class="pa-3"
-        >
+        <v-layout class="pa-3">
           <v-flex :class="cardFlexClass">
             <v-card class="tab-item-card">
               <v-card-text>
@@ -142,9 +134,7 @@
         </v-layout>
       </v-tab-item>
       <v-tab-item :value="$constants.ALARMS_EXPAND_PANEL_TABS.pbehavior">
-        <v-layout
-          class="pa-3 secondary lighten-2"
-        >
+        <v-layout class="pa-3 secondary lighten-2">
           <v-flex :class="cardFlexClass">
             <v-card class="tab-item-card">
               <v-card-text>
@@ -162,9 +152,7 @@
         v-if="hasChildren"
         :value="$constants.ALARMS_EXPAND_PANEL_TABS.alarmsChildren"
       >
-        <v-layout
-          class="pa-3 secondary lighten-2"
-        >
+        <v-layout class="pa-3 secondary lighten-2">
           <v-flex :class="cardFlexClass">
             <v-card class="tab-item-card">
               <v-card-text>
@@ -185,9 +173,7 @@
         v-if="hasServiceDependencies"
         :value="$constants.ALARMS_EXPAND_PANEL_TABS.trackSource"
       >
-        <v-layout
-          class="pa-3 secondary lighten-2"
-        >
+        <v-layout class="pa-3 secondary lighten-2">
           <v-flex :class="cardFlexClass">
             <v-card class="tab-item-card">
               <v-card-text>
@@ -206,9 +192,7 @@
         v-if="hasImpactsDependencies"
         :value="$constants.ALARMS_EXPAND_PANEL_TABS.impactChain"
       >
-        <v-layout
-          class="pa-3 secondary lighten-2"
-        >
+        <v-layout class="pa-3 secondary lighten-2">
           <v-flex :class="cardFlexClass">
             <v-card class="tab-item-card">
               <v-card-text>

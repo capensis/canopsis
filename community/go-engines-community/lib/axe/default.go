@@ -2,6 +2,7 @@ package axe
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"time"
@@ -9,7 +10,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/axe/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
@@ -49,6 +49,7 @@ type Options struct {
 	TagsPeriodicalWaitTime   time.Duration
 	WithRemediation          bool
 	RecomputeAllOnInit       bool
+	Workers                  int
 }
 
 func ParseOptions() Options {
@@ -63,6 +64,7 @@ func ParseOptions() Options {
 	flag.BoolVar(&opts.WithRemediation, "withRemediation", false, "Start remediation instructions")
 	flag.BoolVar(&opts.RecomputeAllOnInit, "recomputeAllOnInit", false, "Recompute entity services on init.")
 	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
+	flag.IntVar(&opts.Workers, "workers", 2, "Amount of workers to process main event flow")
 	flag.Parse()
 
 	return opts
@@ -87,7 +89,7 @@ func NewEngine(
 	userInterfaceAdapter := config.NewUserInterfaceAdapter(dbClient)
 	userInterfaceConfig, err := userInterfaceAdapter.GetConfig(ctx)
 	if err != nil {
-		panic(fmt.Errorf("dependency error: %s: %v", "can't get user interface config", err))
+		panic(fmt.Errorf("dependency error: %s: %w", "can't get user interface config", err))
 	}
 	userInterfaceConfigProvider := config.NewUserInterfaceConfigProvider(userInterfaceConfig, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
@@ -141,9 +143,9 @@ func NewEngine(
 	)
 
 	entityAdapter := entity.NewAdapter(dbClient)
-	alarmAdapter := alarm.NewAdapter(dbClient)
+	alarmAdapter := libalarm.NewAdapter(dbClient)
 
-	metaAlarmEventProcessor := NewMetaAlarmEventProcessor(dbClient, alarm.NewAdapter(dbClient), correlation.NewRuleAdapter(dbClient),
+	metaAlarmEventProcessor := NewMetaAlarmEventProcessor(dbClient, libalarm.NewAdapter(dbClient), correlation.NewRuleAdapter(dbClient),
 		alarmStatusService, alarmConfigProvider, json.NewEncoder(), amqpChannel, metricsSender, correlation.NewMetaAlarmStateService(dbClient),
 		template.NewExecutor(templateConfigProvider, timezoneConfigProvider), logger)
 
@@ -230,7 +232,7 @@ func NewEngine(
 					})
 				if err != nil {
 					// Lock is set for options.PeriodicalWaitTime TTL, other instances should skip actions below
-					if err != redislock.ErrNotObtained {
+					if !errors.Is(err, redislock.ErrNotObtained) {
 						return fmt.Errorf("cannot obtain lock: %w", err)
 					}
 				} else {
@@ -296,7 +298,7 @@ func NewEngine(
 		AlarmCollection:          dbClient.Collection(mongo.AlarmMongoCollection),
 		Logger:                   logger,
 	}
-	engineAxe.AddConsumer(libengine.NewDefaultConsumer(
+	engineAxe.AddConsumer(libengine.NewConcurrentConsumer(
 		canopsis.AxeConsumerName,
 		canopsis.AxeQueueName,
 		cfg.Global.PrefetchCount,
@@ -306,6 +308,7 @@ func NewEngine(
 		options.PublishToQueue,
 		options.FifoAckExchange,
 		canopsis.FIFOAckQueueName,
+		options.Workers,
 		amqpConnection,
 		mainMessageProcessor,
 		logger,
@@ -359,12 +362,12 @@ func NewEngine(
 			TechMetricsSender:  techMetricsSender,
 			PeriodicalInterval: options.PeriodicalWaitTime,
 			ChannelPub:         amqpChannel,
-			AlarmService:       alarm.NewService(alarm.NewAdapter(dbClient), resolverule.NewAdapter(dbClient), alarmStatusService, logger),
-			AlarmAdapter:       alarm.NewAdapter(dbClient),
+			AlarmService:       libalarm.NewService(libalarm.NewAdapter(dbClient), resolverule.NewAdapter(dbClient), alarmStatusService, logger),
+			AlarmAdapter:       libalarm.NewAdapter(dbClient),
 			Encoder:            json.NewEncoder(),
 			IdleAlarmService: idlealarm.NewService(
 				idlerule.NewRuleAdapter(dbClient),
-				alarm.NewAdapter(dbClient),
+				libalarm.NewAdapter(dbClient),
 				entity.NewAdapter(dbClient),
 				pbhRpcClientForIdleRules,
 				json.NewEncoder(),
