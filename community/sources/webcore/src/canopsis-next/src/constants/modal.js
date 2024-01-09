@@ -114,4 +114,6 @@ export const MODALS = {
 
   createStateSetting: 'create-state-setting',
   createJunitStateSetting: 'create-junit-state-setting',
+
+  archiveDisabledEntities: 'archive-disabled-entities',
 };

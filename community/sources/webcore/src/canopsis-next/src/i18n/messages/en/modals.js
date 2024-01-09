@@ -199,6 +199,7 @@ export default {
   service: {
     refreshEntities: 'Refresh entities list',
     editPbehaviors: 'Edit pbehaviors',
+    massActionsDescription: 'You can choose entities to perform actions',
     entity: {
       tabs: {
         info: 'Info',
@@ -1002,5 +1003,8 @@ export default {
     duplicate: {
       title: 'Duplicate theme',
     },
+  },
+  archiveDisabledEntities: {
+    text: 'Are you sure you want to archive disabled entities?\nThis action cannot be undone',
   },
 };

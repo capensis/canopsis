@@ -32,6 +32,7 @@ import twoColumnDesktopSrc from '@/assets/images/column-desktop-2.svg';
 import threeColumnDesktopSrc from '@/assets/images/column-desktop-3.svg';
 import fourColumnDesktopSrc from '@/assets/images/column-desktop-4.svg';
 import sixColumnDesktopSrc from '@/assets/images/column-desktop-6.svg';
+import twelveColumnDesktopSrc from '@/assets/images/column-desktop-12.svg';
 
 export default {
   props: {
@@ -71,6 +72,7 @@ export default {
       { value: 3, src: threeColumnDesktopSrc },
       { value: 4, src: fourColumnDesktopSrc },
       { value: 6, src: sixColumnDesktopSrc },
+      { value: 12, src: twelveColumnDesktopSrc },
     ]);
 
     const availableItems = computed(() => {

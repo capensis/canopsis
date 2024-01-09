@@ -9,6 +9,7 @@ import request, { useRequestCancelling } from '@/services/request';
 import i18n from '@/i18n';
 
 import { alarmSchema } from '@/store/schemas';
+import { ENTITIES_MUTATION_TYPES } from '@/store/plugins/entities';
 
 import detailsModule from './details';
 import linksModule from './links';
@@ -94,6 +95,7 @@ export default {
             params,
             cancelToken: source.token,
             dataPreparer: d => d.data,
+            mutationType: ENTITIES_MUTATION_TYPES.smartUpdate,
             afterCommit: ({ normalizedData, data }) => {
               commit(types.FETCH_LIST_COMPLETED, {
                 widgetId,
@@ -104,6 +106,8 @@ export default {
           }, { root: true });
         }, `alarms-list-${widgetId}`);
       } catch (err) {
+        console.error(err);
+
         await dispatch('popups/error', { text: i18n.t('errors.default') }, { root: true });
 
         commit(types.FETCH_LIST_FAILED, { widgetId });

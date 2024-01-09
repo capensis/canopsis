@@ -2,6 +2,7 @@ package amqp
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sync"
 	"time"
@@ -97,7 +98,7 @@ func (c *baseConnection) Channel() (res Channel, resErr error) {
 
 	amqpCh, err := c.amqpConn.Channel()
 	if err != nil {
-		if c.isReconnectable && err == amqp.ErrClosed {
+		if c.isReconnectable && errors.Is(err, amqp.ErrClosed) {
 			if c.waitReconnectionTimeout == 0 {
 				reconnected := <-listener
 				if reconnected {
@@ -240,7 +241,7 @@ func (ch *baseChannel) Consume(
 		for {
 			msgs, err := ch.amqpCh.Consume(queue, consumer, autoAck, exclusive, noLocal, noWait, args)
 			if err != nil {
-				if err == amqp.ErrClosed {
+				if errors.Is(err, amqp.ErrClosed) {
 					if !ch.isReconnectable || ch.IsClosed() {
 						return
 					}
@@ -404,7 +405,7 @@ func (ch *baseChannel) retry(f func() error) error {
 	}
 
 	err := f()
-	if err == amqp.ErrClosed {
+	if errors.Is(err, amqp.ErrClosed) {
 		if ch.waitReconnectionTimeout == 0 {
 			reconnected := <-listener
 			if reconnected {

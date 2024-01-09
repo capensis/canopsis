@@ -8,7 +8,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
@@ -125,7 +125,7 @@ func (s *store) Create(ctx context.Context, r CreateRequest) (*Response, error) 
 	model := transformCreateRequestToModel(r)
 	model.ID = utils.NewID()
 	model.Type = alarmtag.TypeInternal
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	model.Created = now
 	model.Updated = now
 	var response *Response
@@ -149,7 +149,7 @@ func (s *store) Create(ctx context.Context, r CreateRequest) (*Response, error) 
 }
 
 func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) {
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	var response *Response
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil

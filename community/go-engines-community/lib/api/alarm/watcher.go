@@ -86,7 +86,7 @@ func (w *watcher) StartWatch(ctx context.Context, connId, userId, roomId string,
 		}},
 	})
 	if err != nil {
-		return fmt.Errorf("cannot watch collecton: %w", err)
+		return fmt.Errorf("cannot watch collection: %w", err)
 	}
 
 	go func() {
@@ -216,7 +216,7 @@ func (w *watcher) StartWatchDetails(ctx context.Context, connId, userId, roomId 
 
 	stream, err := w.collection.Watch(ctx, pipeline, opts)
 	if err != nil {
-		return fmt.Errorf("cannot watch collecton: %w", err)
+		return fmt.Errorf("cannot watch collection: %w", err)
 	}
 
 	go func() {
@@ -238,39 +238,35 @@ func (w *watcher) StartWatchDetails(ctx context.Context, connId, userId, roomId 
 			}
 
 			connIdsByUserId := w.getConnIds(roomId, k)
-			if request, ok := requestsById[changeEvent.DocumentKey.ID]; ok {
-				for userId, connIds := range connIdsByUserId {
-					res, err := w.store.GetDetails(streamCtx, request, userId)
-					if err != nil {
-						w.logger.Err(err).Msgf("cannot get alarm")
-						continue
-					}
-
-					res.ID = request.ID
-					w.hub.SendGroupRoomByConnections(streamCtx, connIds, websocket.RoomAlarmDetailsGroup, roomId, res)
-				}
-			}
+			w.sendGroupRoomAlrmDetails(streamCtx, changeEvent.DocumentKey.ID, roomId, requestsById, connIdsByUserId)
 
 			for _, parent := range changeEvent.FullDocument.Value.Parents {
 				if metaAlarmId, ok := metaAlarmIdByEntityId[parent]; ok {
-					if request, ok := requestsById[metaAlarmId]; ok {
-						for userId, connIds := range connIdsByUserId {
-							res, err := w.store.GetDetails(streamCtx, request, userId)
-							if err != nil {
-								w.logger.Err(err).Msgf("cannot get alarm")
-								continue
-							}
-
-							res.ID = request.ID
-							w.hub.SendGroupRoomByConnections(streamCtx, connIds, websocket.RoomAlarmDetailsGroup, roomId, res)
-						}
-					}
+					w.sendGroupRoomAlrmDetails(streamCtx, metaAlarmId, roomId, requestsById, connIdsByUserId)
 				}
 			}
 		}
 	}()
 
 	return nil
+}
+
+func (w *watcher) sendGroupRoomAlrmDetails(ctx context.Context, alarmId, roomId string, requestsById map[string]DetailsRequest, connIdsByUserId map[string][]string) {
+	request, ok := requestsById[alarmId]
+	if !ok {
+		return
+	}
+	for userId, connIds := range connIdsByUserId {
+		res, err := w.store.GetDetails(ctx, request, userId)
+		if err != nil {
+			w.logger.Err(err).Msgf("cannot get alarm")
+			continue
+		}
+		if res != nil {
+			res.ID = request.ID
+			w.hub.SendGroupRoomByConnections(ctx, connIds, websocket.RoomAlarmDetailsGroup, roomId, res)
+		}
+	}
 }
 
 func (w *watcher) StopWatch(_ context.Context, connId, roomId string) error {

@@ -238,6 +238,8 @@ export const USERS_PERMISSIONS = {
         userFilter: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_userFilter`,
 
         category: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_category`,
+
+        variablesHelp: `${USER_PERMISSIONS_PREFIXES.business.common}_variablesHelp`,
       },
     },
     counter: {

@@ -9,8 +9,8 @@
     lazy
   )
     template(#activator="{ on }")
-      v-layout(v-on="on", d-inline-flex, align-center)
-        c-compiled-template(v-if="column.isHtml", :template="value")
+      v-layout.alarms-column-cell__layout(v-on="on", d-inline-flex, align-center)
+        div(v-if="column.isHtml", v-html="sanitizedValue")
         div(v-else, v-bind="component.bind", v-on="component.on")
         v-btn.ma-0.alarms-column-cell__show-info-btn(
           :class="{ 'alarms-column-cell__show-info-btn--small': small }",
@@ -24,12 +24,14 @@
       :template="column.popupTemplate",
       @close="hideInfoPopup"
     )
-  c-compiled-template(v-else-if="column.isHtml", :template="value")
+  div(v-else-if="column.isHtml", v-html="sanitizedValue")
   div(v-else, v-bind="component.bind", v-on="component.on")
 </template>
 
 <script>
 import { get } from 'lodash';
+
+import { sanitizeHtml, linkifyHtml } from '@/helpers/html';
 
 import ColorIndicatorWrapper from '@/components/common/table/color-indicator-wrapper.vue';
 
@@ -89,6 +91,10 @@ export default {
       return this.column.filter ? this.column.filter(value) : value;
     },
 
+    sanitizedValue() {
+      return sanitizeHtml(linkifyHtml(String(this.value ?? '')));
+    },
+
     component() {
       return this.column.getComponent(this);
     },
@@ -108,11 +114,17 @@ export default {
 <style lang="scss">
 .alarms-column-cell {
   &__show-info-btn {
+    flex-shrink: 0 !important;
+
     &--small {
       width: 22px;
       max-width: 22px;
       height: 22px;
     }
+  }
+
+  &__layout {
+    max-width: 100%;
   }
 }
 </style>

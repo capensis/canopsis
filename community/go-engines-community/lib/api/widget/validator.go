@@ -1,7 +1,6 @@
 package widget
 
 import (
-	"context"
 	"fmt"
 	"regexp"
 	"strings"
@@ -9,18 +8,17 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/filemask"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
 )
 
 type Validator interface {
 	ValidateEditRequest(sl validator.StructLevel)
-	ValidateFilterRequest(ctx context.Context, sl validator.StructLevel)
+	ValidateFilterRequest(sl validator.StructLevel)
 }
 
-func NewValidator(dbClient mongo.DbClient) Validator {
+func NewValidator() Validator {
 	return &baseValidator{
-		filterValidator: widgetfilter.NewValidator(dbClient),
+		filterValidator: widgetfilter.NewValidator(),
 	}
 }
 
@@ -40,9 +38,9 @@ func (v *baseValidator) ValidateEditRequest(sl validator.StructLevel) {
 	validateTemplateParametersRequest(sl, r)
 }
 
-func (v *baseValidator) ValidateFilterRequest(ctx context.Context, sl validator.StructLevel) {
+func (v *baseValidator) ValidateFilterRequest(sl validator.StructLevel) {
 	r := sl.Current().Interface().(FilterRequest)
-	v.filterValidator.ValidatePatterns(ctx, sl, r.BaseEditRequest, r.ID)
+	v.filterValidator.ValidatePatterns(sl, r.BaseEditRequest)
 }
 
 func validateJunitParametersRequest(sl validator.StructLevel, r view.Parameters) {
@@ -136,8 +134,6 @@ func validateTemplateParametersRequest(sl validator.StructLevel, r EditRequest) 
 					fieldName := fmt.Sprintf("Parameters.%s.%d.value", parameter, i)
 					if val == "" {
 						sl.ReportError(column, fieldName, "Value", "required", "")
-					} else if !view.IsValidWidgetColumn(tplType, val) && !view.IsValidWidgetExportColumn(r.Type, parameter, val) {
-						sl.ReportError(column, fieldName, "Value", "invalid", "")
 					}
 				}
 			}

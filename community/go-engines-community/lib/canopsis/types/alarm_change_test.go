@@ -2,8 +2,8 @@ package types_test
 
 import (
 	"testing"
-	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -13,7 +13,7 @@ func TestComparison(t *testing.T) {
 		var alarmChangeTypeAck = types.AlarmChange{
 			Type:                types.AlarmChangeTypeAck,
 			PreviousState:       types.AlarmStateOK,
-			PreviousStateChange: types.CpsTime{Time: time.Now()},
+			PreviousStateChange: datetime.NewCpsTime(),
 		}
 		So(len(alarmChangeTypeAck.GetTriggers()), ShouldEqual, 1)
 		So(alarmChangeTypeAck.GetTriggers()[0], ShouldEqual, "ack")
@@ -22,11 +22,9 @@ func TestComparison(t *testing.T) {
 			var alarmChangeTypeNone = types.AlarmChange{
 				Type:                types.AlarmChangeTypeNone,
 				PreviousState:       types.AlarmStateOK,
-				PreviousStateChange: types.CpsTime{Time: time.Now()},
+				PreviousStateChange: datetime.NewCpsTime(),
 			}
 			So(len(alarmChangeTypeNone.GetTriggers()), ShouldEqual, 0)
 		})
-
 	})
-
 }

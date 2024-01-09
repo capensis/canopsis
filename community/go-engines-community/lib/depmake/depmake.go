@@ -37,7 +37,7 @@ func (m DependencyMaker) DepMongoClient(ctx context.Context, logger zerolog.Logg
 func (m DependencyMaker) DepConfig(ctx context.Context, dbClient mongo.DbClient) config.CanopsisConf {
 	cfg, err := config.NewAdapter(dbClient).GetConfig(ctx)
 	if err != nil {
-		panic(fmt.Errorf("dependency error: %s: %v", "can't get the config", err))
+		panic(fmt.Errorf("dependency error: %s: %w", "can't get the config", err))
 	}
 
 	return cfg
@@ -79,7 +79,7 @@ func (m DependencyMaker) DepRedisSession(ctx context.Context, db int, logger zer
 // Panic if err != nil, appending a message. Use this only in main programs.
 func Panic(msg string, err error) {
 	if err != nil {
-		panic(fmt.Errorf("dependency error: %s: %v", msg, err))
+		panic(fmt.Errorf("dependency error: %s: %w", msg, err))
 	}
 }
 

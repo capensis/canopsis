@@ -6,9 +6,9 @@ import (
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
@@ -32,7 +32,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 			Paginate: true,
 		},
 	}
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "_id", Value: 1}}},
 		{"$skip": 10},
@@ -115,7 +115,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "_id", Value: 1}}},
 		{"$skip": 0},
@@ -214,7 +214,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "_id", Value: 1}}},
 		{"$skip": 0},
@@ -278,7 +278,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	durationCond, err := pattern.NewDurationCondition(pattern.ConditionGT, types.DurationWithUnit{
+	durationCond, err := pattern.NewDurationCondition(pattern.ConditionGT, datetime.DurationWithUnit{
 		Value: 10,
 		Unit:  "m",
 	})
@@ -311,7 +311,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "_id", Value: 1}}},
 		{"$skip": 0},
@@ -396,7 +396,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "_id", Value: 1}}},
 		{"$skip": 0},
@@ -426,10 +426,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		{"$addFields": bson.M{"alarm.v.infos_array": bson.M{"$objectToArray": "$alarm.v.infos"}}},
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
 			{"alarm.v.resource": bson.M{"$eq": "test-resource"}},
-			{"$and": []bson.M{
-				{"alarm.v.infos_array.v.info_name": bson.M{"$type": bson.A{"long", "int", "decimal"}}},
-				{"alarm.v.infos_array.v.info_name": bson.M{"$eq": 3}},
-			}},
+			{"alarm.v.infos_array.v.info_name": bson.M{"$eq": 3}},
 		}}}}},
 		{"$project": bson.M{"alarm": 0}},
 		{"$facet": bson.M{
@@ -440,77 +437,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			"total_count": bson.M{"$sum": "$total_count.count"},
 		}},
 	}...)
-
-	b := NewMongoQueryBuilder(mockDbClient)
-	result, err := b.CreateListAggregationPipeline(ctx, request, now)
-	if err != nil {
-		t.Errorf("expected no error but got %v", err)
-	}
-	if diff := pretty.Compare(result, expected); diff != "" {
-		t.Errorf("unexpected result: %s", diff)
-	}
-}
-
-func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetFilterWithOldQuery_ShouldBuildQueryWithLookupsAfterLimit(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	filter := view.WidgetFilter{
-		ID: "test-filter",
-		OldMongoQuery: `{"$and": [
-			{"type": "resource"},
-			{"category": "test-category"}
-		]}`,
-	}
-	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
-	request := ListRequestWithPagination{
-		Query: pagination.GetDefaultQuery(),
-		ListRequest: ListRequest{
-			BaseFilterRequest: BaseFilterRequest{
-				Filters: []string{filter.ID},
-			},
-		},
-	}
-	now := types.NewCpsTime()
-	expectedDataPipeline := []bson.M{
-		{"$sort": bson.D{{Key: "_id", Value: 1}}},
-		{"$skip": 0},
-		{"$limit": 10},
-	}
-	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
-	expectedDataPipeline = append(expectedDataPipeline, bson.M{
-		"$addFields": getComputedFields(),
-	})
-	expectedDataPipeline = append(expectedDataPipeline, bson.M{
-		"$project": bson.M{
-			"services":            0,
-			"alarm":               0,
-			"event_stats":         0,
-			"pbehavior_info_type": 0,
-		},
-	})
-	expected := []bson.M{
-		{"$match": bson.M{
-			"soft_deleted": bson.M{"$exists": false},
-			"healthcheck":  bson.M{"$in": bson.A{nil, false}},
-		}},
-		{"$match": bson.M{"$and": []bson.M{
-			{"type": "resource"},
-			{"category": "test-category"},
-		}}},
-		{"$facet": bson.M{
-			"data":        expectedDataPipeline,
-			"total_count": []bson.M{{"$count": "count"}},
-		}},
-		{"$addFields": bson.M{
-			"total_count": bson.M{"$sum": "$total_count.count"},
-		}},
-	}
 
 	b := NewMongoQueryBuilder(mockDbClient)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
@@ -553,7 +479,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithAlarmSo
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{
 			{Key: "state", Value: 1},
@@ -628,7 +554,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "_id", Value: 1}}},
 		{"$skip": 0},
@@ -695,7 +621,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "_id", Value: 1}}},
 		{"$skip": 0},
@@ -822,7 +748,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 			},
 		},
 	}
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "_id", Value: 1}}},
 		{"$skip": 0},

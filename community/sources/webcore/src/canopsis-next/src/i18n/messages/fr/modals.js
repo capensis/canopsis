@@ -199,6 +199,7 @@ export default {
   service: {
     refreshEntities: 'Rafraîchir la liste des entités',
     editPbehaviors: 'Éditer les comportements périodiques',
+    massActionsDescription: 'Vous pouvez choisir des entités pour effectuer des actions',
     entity: {
       tabs: {
         info: 'Info',
@@ -1002,5 +1003,8 @@ export default {
     duplicate: {
       title: 'Thème en double',
     },
+  },
+  archiveDisabledEntities: {
+    text: 'Êtes-vous sûr de vouloir archiver les entités désactivées ?\nCette action ne peut pas être annulée',
   },
 };
