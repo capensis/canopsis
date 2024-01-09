@@ -258,7 +258,7 @@ export default {
     afterSubmit() {
       this.clearItems();
 
-      return this.refreshAlarmsList();
+      this.refreshAlarmsList();
     },
 
     showSnoozeModal() {

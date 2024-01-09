@@ -375,7 +375,7 @@ func (a *api) UpdatePositions(c *gin.Context) {
 
 	ok, err := a.store.UpdatePositions(c, request.Items, firstFilter.Widget, userId, isUserPreference)
 	if err != nil {
-		valErr := ValidationErr{}
+		valErr := ValidationError{}
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.ErrorResponse{Error: err.Error()})
 			return

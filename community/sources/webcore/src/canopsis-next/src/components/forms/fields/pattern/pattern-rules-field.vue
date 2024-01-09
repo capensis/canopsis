@@ -160,6 +160,10 @@ export default {
         [updatedRule.operator] = operators;
       }
 
+      if (!operators.includes(updatedRule.operator)) {
+        updatedRule.operator = '';
+      }
+
       return updatedRule;
     },
 

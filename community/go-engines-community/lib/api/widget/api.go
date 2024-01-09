@@ -244,7 +244,7 @@ func (a *api) UpdateGridPositions(c *gin.Context) {
 
 	ok, err = a.store.UpdateGridPositions(c, request.Items)
 	if err != nil {
-		valErr := ValidationErr{}
+		valErr := ValidationError{}
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.ErrorResponse{Error: err.Error()})
 			return

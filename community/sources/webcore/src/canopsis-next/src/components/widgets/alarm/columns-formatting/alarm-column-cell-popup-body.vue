@@ -1,5 +1,5 @@
 <template>
-  <v-card dark>
+  <v-card>
     <v-card-title class="primary pa-2 white--text">
       <v-layout
         justify-space-between

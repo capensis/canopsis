@@ -1,11 +1,12 @@
 package httpprovider
 
 import (
+	"net/url"
+	"testing"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	mock_security "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security"
 	"github.com/golang/mock/gomock"
-	"net/url"
-	"testing"
 )
 
 func TestQueryBasicProvider_Auth_GivenUsernameAndPasswordByQueryParam_ShouldAuthUser(t *testing.T) {

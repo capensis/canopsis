@@ -310,7 +310,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'm' windo
   </div>
   <div
     class="grid-layout"
-    style="height: 320px; max-width: 450px;"
+    style="height: 580px; max-width: 450px;"
   >
     <div
       class="grid-item grid-layout__placeholder primary darken-1 v-card v-sheet theme--light"
@@ -383,7 +383,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'm' windo
     </div>
     <div
       class="grid-item v-card v-sheet theme--light"
-      style="transform: translate3d(20px,20px, 0); width: -25px; height: 240px; position: absolute;"
+      style="transform: translate3d(20px,280px, 0); width: -25px; height: 240px; position: absolute;"
     >
       <div>
         <widget-edit-drag-handler-stub
@@ -423,7 +423,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'm' windo
     </div>
     <div
       class="grid-item v-card v-sheet theme--light"
-      style="transform: translate3d(20px,280px, 0); width: -40px; height: 20px; position: absolute;"
+      style="transform: translate3d(20px,540px, 0); width: -40px; height: 20px; position: absolute;"
     >
       <div>
         <widget-edit-drag-handler-stub
@@ -482,53 +482,13 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 't' windo
   </div>
   <div
     class="grid-layout"
-    style="height: 100px; max-width: 900px;"
+    style="height: 140px; max-width: 900px;"
   >
     <div
       class="grid-item grid-layout__placeholder primary darken-1 v-card v-sheet theme--light"
       style="transform: translate3d(20px,20px, 0); width: 0px; height: 0px; position: absolute; display: none;"
     >
       <div />
-      <div
-        class="grid-item__resize-handler"
-      >
-        <span
-          aria-hidden="true"
-          class="v-icon notranslate theme--light"
-          style="font-size: 16px; height: 16px; width: 16px;"
-        >
-          <svg
-            class="resize_right-svg-icon v-icon__component theme--light"
-            fill="currentColor"
-            style="font-size: 16px; height: 16px; width: 16px;"
-            viewBox="0 0 18 18"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
-   0a1 1 0 0 1 -.707-1.707l6.638-6.638a1 1 0 0 1 1.416 1.414l-6.638 6.638a1 1 0 0 1 -.707.293zm-5.84 0a1
-    1 0 0 1 -.707-1.707l12.477-12.477a1 1 0 1 1 1.415 1.414l-12.478 12.477a1 1 0 0 1 -.707.293z"
-            />
-          </svg>
-        </span>
-      </div>
-    </div>
-    <div
-      class="grid-item v-card v-sheet theme--light"
-      style="transform: translate3d(20px,20px, 0); width: -40px; height: 20px; position: absolute;"
-    >
-      <div>
-        <widget-edit-drag-handler-stub
-          autoheight="true"
-          tab="[object Object]"
-          widget="[object Object]"
-        />
-        <widget-wrapper-stub
-          editing="true"
-          tab="[object Object]"
-          widget="[object Object]"
-        />
-      </div>
       <div
         class="grid-item__resize-handler"
       >
@@ -596,6 +556,46 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 't' windo
     <div
       class="grid-item v-card v-sheet theme--light"
       style="transform: translate3d(20px,60px, 0); width: -40px; height: 20px; position: absolute;"
+    >
+      <div>
+        <widget-edit-drag-handler-stub
+          autoheight="true"
+          tab="[object Object]"
+          widget="[object Object]"
+        />
+        <widget-wrapper-stub
+          editing="true"
+          tab="[object Object]"
+          widget="[object Object]"
+        />
+      </div>
+      <div
+        class="grid-item__resize-handler"
+      >
+        <span
+          aria-hidden="true"
+          class="v-icon notranslate theme--light"
+          style="font-size: 16px; height: 16px; width: 16px;"
+        >
+          <svg
+            class="resize_right-svg-icon v-icon__component theme--light"
+            fill="currentColor"
+            style="font-size: 16px; height: 16px; width: 16px;"
+            viewBox="0 0 18 18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
+   0a1 1 0 0 1 -.707-1.707l6.638-6.638a1 1 0 0 1 1.416 1.414l-6.638 6.638a1 1 0 0 1 -.707.293zm-5.84 0a1
+    1 0 0 1 -.707-1.707l12.477-12.477a1 1 0 1 1 1.415 1.414l-12.478 12.477a1 1 0 0 1 -.707.293z"
+            />
+          </svg>
+        </span>
+      </div>
+    </div>
+    <div
+      class="grid-item v-card v-sheet theme--light"
+      style="transform: translate3d(20px,100px, 0); width: -40px; height: 20px; position: absolute;"
     >
       <div>
         <widget-edit-drag-handler-stub

@@ -42,12 +42,12 @@
         </v-layout>
         <alarms-expand-panel-btn
           v-if="expandable"
-          :expanded="row.isExpanded"
+          :expanded="expanded"
           :alarm="alarm"
           :widget="widget"
           :small="small"
           :search="search"
-          @input="updateExpanded"
+          @input="$emit('expand', $event)"
         />
       </v-layout>
     </td>
@@ -128,7 +128,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    row: {
+    alarm: {
       type: Object,
       required: true,
     },
@@ -172,6 +172,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    expanded: {
+      type: Boolean,
+      default: false,
+    },
     wrapActions: {
       type: Boolean,
       default: false,
@@ -191,10 +195,6 @@ export default {
     };
   },
   computed: {
-    alarm() {
-      return this.row.item;
-    },
-
     hasBookmark() {
       return !!this.alarm.bookmark;
     },
@@ -265,10 +265,6 @@ export default {
 
     activateRow(value) {
       this.active = value;
-    },
-
-    updateExpanded(value) {
-      this.row.expand(value);
     },
   },
 };

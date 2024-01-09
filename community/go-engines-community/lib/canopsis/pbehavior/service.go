@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
@@ -147,24 +148,24 @@ func (s *service) compute(ctx context.Context, span *timespan.Span) (_ ComputedE
 	if span == nil {
 		currentSpan, err := s.store.GetSpan(ctx)
 		if err != nil {
-			return nil, 0, err
+			return nil, 0, fmt.Errorf("cannot get span: %w", err)
 		}
 		span = &currentSpan
 	}
 
 	res, err := s.computer.Compute(ctx, *span)
 	if err != nil {
-		return nil, 0, err
+		return nil, 0, fmt.Errorf("cannot compute data: %w", err)
 	}
 
 	err = s.store.SetSpan(ctx, *span)
 	if err != nil {
-		return nil, 0, err
+		return nil, 0, fmt.Errorf("cannot save span: %w", err)
 	}
 
 	err = s.store.SetComputed(ctx, res)
 	if err != nil {
-		return nil, 0, err
+		return nil, 0, fmt.Errorf("cannot save computed data: %w", err)
 	}
 
 	resolver := NewTypeResolver(
@@ -178,7 +179,7 @@ func (s *service) compute(ctx context.Context, span *timespan.Span) (_ ComputedE
 	queries := s.getQueries(res.ComputedPbehaviors)
 	err = getter.Compute(ctx, queries)
 	if err != nil {
-		return nil, 0, err
+		return nil, 0, fmt.Errorf("cannot compute entity getter: %w", err)
 	}
 
 	return NewComputedEntityTypeResolver(getter, resolver), len(res.ComputedPbehaviors), nil
@@ -210,11 +211,11 @@ func (s *service) load(ctx context.Context, span timespan.Span) (ComputedEntityT
 func (s *service) getQueries(computed map[string]ComputedPbehavior) []bson.M {
 	queries := make([]bson.M, 0, len(computed))
 	for id, pbehavior := range computed {
-		if len(pbehavior.Pattern) == 0 {
+		if len(pbehavior.EntityPattern) == 0 {
 			continue
 		}
 
-		query, err := pbehavior.Pattern.ToMongoQuery("")
+		query, err := db.EntityPatternToMongoQuery(pbehavior.EntityPattern, "")
 		if err != nil {
 			s.logger.Err(err).Str("pbehavior", id).Msg("pbehavior has invalid pattern")
 			continue

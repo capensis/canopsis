@@ -2,6 +2,7 @@ package role
 
 import (
 	"context"
+	"errors"
 	"sort"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -186,7 +187,7 @@ func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Response
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	res := s.dbUserCollection.FindOne(ctx, bson.M{"roles": id})
 	if err := res.Err(); err != nil {
-		if err != mongodriver.ErrNoDocuments {
+		if !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return false, err
 		}
 	} else {
