@@ -1,3 +1,5 @@
+const { performance } = require('perf_hooks');
+
 const { logInfo } = require('./logger');
 
 class Measure {

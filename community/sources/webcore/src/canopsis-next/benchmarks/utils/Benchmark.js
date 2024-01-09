@@ -1,3 +1,5 @@
+const { performance } = require('perf_hooks');
+
 const { enhanceBenchmarkFunction } = require('./iterate');
 const Measure = require('./Measure');
 const { logInfo } = require('./logger');
