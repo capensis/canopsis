@@ -8,9 +8,11 @@ import (
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -92,8 +94,7 @@ func (p *recomputeMessageProcessor) updateAlarms(
 	pbehavior := libpbehavior.PBehavior{}
 	err := p.PbehaviorCollection.FindOne(ctx, bson.M{"_id": id},
 		options.FindOne().SetProjection(bson.M{
-			"entity_pattern":  1,
-			"old_mongo_query": 1,
+			"entity_pattern": 1,
 		})).Decode(&pbehavior)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -103,23 +104,11 @@ func (p *recomputeMessageProcessor) updateAlarms(
 		return excludeIds, err
 	}
 
-	var query interface{}
-	if len(pbehavior.EntityPattern) > 0 {
-		query, err = pbehavior.EntityPattern.ToMongoQuery("")
-		if err != nil {
-			return excludeIds, err
-		}
-	} else {
-		var oldMongoQuery map[string]interface{}
-		err = p.Decoder.Decode([]byte(pbehavior.OldMongoQuery), &oldMongoQuery)
-		if err != nil {
-			return excludeIds, err
-		}
-
-		query = oldMongoQuery
+	matchByPattern, err := db.EntityPatternToMongoQuery(pbehavior.EntityPattern, "")
+	if err != nil || len(matchByPattern) == 0 {
+		return excludeIds, err
 	}
 
-	matchByPattern := query
 	if len(excludeIds) > 0 {
 		matchByPattern = bson.M{"$and": bson.A{
 			bson.M{"_id": bson.M{"$nin": excludeIds}},
@@ -198,7 +187,7 @@ func (p *recomputeMessageProcessor) sendAlarmEvents(
 
 		event.EventType = eventType
 		event.Output = output
-		event.PbehaviorInfo = libpbehavior.NewPBehaviorInfo(types.CpsTime{Time: now}, resolveResult)
+		event.PbehaviorInfo = libpbehavior.NewPBehaviorInfo(datetime.CpsTime{Time: now}, resolveResult)
 		body, err := p.Encoder.Encode(event)
 		if err != nil {
 			return nil, fmt.Errorf("cannot encode event: %w", err)

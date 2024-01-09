@@ -2,9 +2,10 @@ package che
 
 import (
 	"context"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/contextgraph"
 	"github.com/rs/zerolog"
-	"time"
 )
 
 type impactedServicesPeriodicalWorker struct {

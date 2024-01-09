@@ -10,7 +10,7 @@ import (
 	"text/template"
 	"time"
 
-	libtypes "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 )
 
 type Templater struct {
@@ -59,7 +59,7 @@ func getTplFuncs(location *time.Location) template.FuncMap {
 		// For the strings it escapes newline and quote chars
 		"json": func(v any) string {
 			sv := struct {
-				V any
+				V any `json:"v"`
 			}{V: v}
 			b, err := json.Marshal(sv)
 			if err != nil {
@@ -75,12 +75,12 @@ func getTplFuncs(location *time.Location) template.FuncMap {
 			return time.Now().In(location).Unix()
 		},
 		"nowAdd": func(s string) (int64, error) {
-			d, err := libtypes.ParseDurationWithUnit(s)
+			d, err := datetime.ParseDurationWithUnit(s)
 			if err != nil {
 				return 0, err
 			}
 
-			return d.AddTo(libtypes.NewCpsTime()).Unix(), nil
+			return d.AddTo(datetime.NewCpsTime()).Unix(), nil
 		},
 		"nowDate": func() int64 {
 			y, m, d := time.Now().UTC().Date()
@@ -93,13 +93,13 @@ func getTplFuncs(location *time.Location) template.FuncMap {
 			return time.Date(y, m, d, 0, 0, 0, 0, location).Unix()
 		},
 		"nowDateAdd": func(s string) (int64, error) {
-			d, err := libtypes.ParseDurationWithUnit(s)
+			d, err := datetime.ParseDurationWithUnit(s)
 			if err != nil {
 				return 0, err
 			}
 
 			year, month, day := time.Now().UTC().Date()
-			now := libtypes.CpsTime{Time: time.Date(year, month, day, 0, 0, 0, 0, time.UTC)}
+			now := datetime.CpsTime{Time: time.Date(year, month, day, 0, 0, 0, 0, time.UTC)}
 
 			return d.AddTo(now).Unix(), nil
 		},
