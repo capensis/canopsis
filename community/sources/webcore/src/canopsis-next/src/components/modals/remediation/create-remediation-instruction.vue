@@ -1,36 +1,28 @@
-<template>
-  <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
-        <span>{{ title }}</span>
-      </template>
-      <template #text="">
-        <remediation-instruction-form
-          v-model="form"
-          :disabled="disabled"
-          :is-new="isNew"
+<template lang="pug">
+  v-form(@submit.prevent="submit")
+    modal-wrapper(close)
+      template(#title="")
+        span {{ title }}
+      template(#text="")
+        remediation-instruction-approval-alert.mb-3(
+          v-if="isChangesDismissed",
+          :user-name="approval.dismissed_by.display_name",
+          :comment="approval.dismiss_comment",
+          dismissed
+        )
+        remediation-instruction-form(
+          v-model="form",
+          :disabled="disabled",
+          :is-new="isNew",
           :required-approve="requiredInstructionApprove"
-        />
-      </template>
-      <template #actions="">
-        <v-btn
-          depressed
-          text
-          @click="$modals.hide"
-        >
-          {{ $t('common.cancel') }}
-        </v-btn>
-        <v-btn
-          class="primary"
-          :disabled="isDisabled"
-          :loading="submitting"
+        )
+      template(#actions="")
+        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-btn.primary(
+          :disabled="isDisabled",
+          :loading="submitting",
           type="submit"
-        >
-          {{ $t('common.submit') }}
-        </v-btn>
-      </template>
-    </modal-wrapper>
-  </v-form>
+        ) {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -50,6 +42,7 @@ import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import RemediationInstructionForm from '@/components/other/remediation/instructions/form/remediation-instruction-form.vue';
+import RemediationInstructionApprovalAlert from '@/components/other/remediation/instructions/partials/approval-alert.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -64,6 +57,7 @@ export default {
   components: {
     ModalWrapper,
     RemediationInstructionForm,
+    RemediationInstructionApprovalAlert,
   },
   mixins: [
     modalInnerMixin,
@@ -91,6 +85,14 @@ export default {
 
     isNew() {
       return !this.modal.config.remediationInstruction?._id;
+    },
+
+    approval() {
+      return this.modal.config.remediationInstruction.approval;
+    },
+
+    isChangesDismissed() {
+      return !!this.approval?.dismissed_by;
     },
   },
   methods: {
