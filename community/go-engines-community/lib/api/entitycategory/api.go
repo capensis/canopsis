@@ -2,9 +2,10 @@ package entitycategory
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"errors"
 	"net/http"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -134,7 +135,7 @@ func (a *api) Delete(c *gin.Context) {
 	ok, err := a.store.Delete(c.Request.Context(), id)
 
 	if err != nil {
-		if err == ErrLinkedCategoryToEntity {
+		if errors.Is(err, ErrLinkedCategoryToEntity) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 			return
 		}

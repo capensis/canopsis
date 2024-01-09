@@ -271,69 +271,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 }
 
-func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetFilterWithOldMongoQuery_ShouldBuildQueryWithLookupsBeforeLimit(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	filter := view.WidgetFilter{
-		ID: "test-filter",
-		OldMongoQuery: `{"$and": [
-			{"type": "resource"},
-			{"category": "test-category"}
-		]}`,
-	}
-	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
-	authorProvider := author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
-	request := ListRequest{
-		Query:   pagination.GetDefaultQuery(),
-		Filters: []string{filter.ID},
-	}
-	expectedDataPipeline := []bson.M{
-		{"$sort": bson.D{{Key: "name", Value: 1}}},
-		{"$skip": 0},
-		{"$limit": 10},
-	}
-	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$project": bson.M{
-		"services": 0,
-	}})
-	expectedDataPipeline = append(expectedDataPipeline, bson.M{"$sort": bson.D{{Key: "name", Value: 1}}})
-	expected := []bson.M{
-		{"$match": bson.M{
-			"type":    types.EntityTypeService,
-			"enabled": true,
-		}},
-	}
-	expected = append(expected, getCategoryLookup()...)
-	expected = append(expected, getAlarmLookup()...)
-	expected = append(expected, getPbehaviorLookup(authorProvider)...)
-	expected = append(expected, getPbehaviorInfoTypeLookup()...)
-	expected = append(expected, getPbehaviorAlarmCountersLookup()...)
-	expected = append(expected, []bson.M{
-		{"$match": bson.M{"$and": []bson.M{
-			{"type": "resource"},
-			{"category": "test-category"},
-		}}},
-		{"$facet": bson.M{
-			"data":        expectedDataPipeline,
-			"total_count": []bson.M{{"$count": "count"}},
-		}},
-		{"$addFields": bson.M{
-			"total_count": bson.M{"$sum": "$total_count.count"},
-		}},
-	}...)
-
-	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
-	result, err := b.CreateListAggregationPipeline(ctx, request)
-	if err != nil {
-		t.Errorf("expected no error but got %v", err)
-	}
-	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
-		t.Errorf("unexpected result: %s", diff)
-	}
-}
-
 func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSortByState_ShouldBuildQueryWithLookupsBeforeLimit(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()

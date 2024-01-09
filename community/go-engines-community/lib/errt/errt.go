@@ -129,17 +129,6 @@ func NewFatal(err error, rcode int) error {
 	}
 }
 
-// IsFatal returns true if the error is of type errt.Fatal, using type assertion.
-// This is only a shortcut for type assertion since Fatal error might be used in
-// multiple places.
-func IsFatal(err error) bool {
-	if err == nil {
-		return false
-	}
-	_, ok := err.(Fatal)
-	return ok
-}
-
 // UnmanagedEventError can be returned from any method that doesn't manage a given types.Event
 type UnmanagedEventError interface {
 	ErrT

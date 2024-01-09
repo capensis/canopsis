@@ -2,6 +2,7 @@ package saml
 
 import (
 	"crypto/rsa"
+
 	dsig "github.com/russellhaering/goxmldsig"
 )
 

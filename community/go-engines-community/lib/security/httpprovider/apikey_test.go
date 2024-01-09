@@ -1,17 +1,18 @@
 package httpprovider
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
-	mock_security "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security"
-	"github.com/golang/mock/gomock"
 	"net/http"
 	"net/url"
 	"testing"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	mock_security "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security"
+	"github.com/golang/mock/gomock"
 )
 
 func newRequest() *http.Request {
 	return &http.Request{
-		Method: "GET",
+		Method: http.MethodGet,
 		Host:   "www.google.com",
 		URL: &url.URL{
 			Scheme: "http",
