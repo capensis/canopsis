@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
@@ -13,15 +13,15 @@ import (
 )
 
 type Token struct {
-	ID       string        `bson:"_id"`
-	User     string        `bson:"user"`
-	Provider string        `bson:"provider,omitempty"`
-	Created  types.CpsTime `bson:"created"`
-	Accessed types.CpsTime `bson:"accessed"`
+	ID       string           `bson:"_id"`
+	User     string           `bson:"user"`
+	Provider string           `bson:"provider,omitempty"`
+	Created  datetime.CpsTime `bson:"created"`
+	Accessed datetime.CpsTime `bson:"accessed"`
 
-	Expired             *types.CpsTime          `bson:"expired,omitempty"`
-	ExpiredByInactivity *types.CpsTime          `bson:"expired_by_inactivity,omitempty"`
-	MaxInactiveInterval *types.DurationWithUnit `bson:"max_inactive_interval,omitempty"`
+	Expired             *datetime.CpsTime          `bson:"expired,omitempty"`
+	ExpiredByInactivity *datetime.CpsTime          `bson:"expired_by_inactivity,omitempty"`
+	MaxInactiveInterval *datetime.DurationWithUnit `bson:"max_inactive_interval,omitempty"`
 }
 
 func NewMongoStore(client mongo.DbClient, logger zerolog.Logger) *MongoStore {
@@ -63,7 +63,7 @@ func (s *MongoStore) Exists(ctx context.Context, id string) (bool, error) {
 }
 
 func (s *MongoStore) Access(ctx context.Context, id string) error {
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	token := Token{}
 	err := s.collection.FindOne(ctx, bson.M{"_id": id}).Decode(&token)
 	if err != nil {
@@ -86,7 +86,7 @@ func (s *MongoStore) Count(ctx context.Context) (int64, error) {
 	return s.collection.CountDocuments(ctx, bson.M{
 		"$or": []bson.M{
 			{"expired": nil},
-			{"expired": bson.M{"$gt": types.NewCpsTime()}},
+			{"expired": bson.M{"$gt": datetime.NewCpsTime()}},
 		},
 	})
 }
@@ -107,7 +107,7 @@ func (s *MongoStore) DeleteByUserIDs(ctx context.Context, ids []string) error {
 }
 
 func (s *MongoStore) DeleteExpired(ctx context.Context) error {
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	deleted, err := s.collection.DeleteMany(ctx, bson.M{
 		"expired": bson.M{
 			"$ne": nil,

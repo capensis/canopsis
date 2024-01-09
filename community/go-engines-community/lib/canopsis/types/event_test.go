@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"testing"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/kylelemons/godebug/pretty"
 )
@@ -22,7 +23,7 @@ func TestEvent_Format_GivenEmptyEventType_ShouldSetCheck(t *testing.T) {
 
 func TestEvent_Format_GivenEmptyTs_ShouldSetTs(t *testing.T) {
 	event := getEvent()
-	event.Timestamp = types.CpsTime{}
+	event.Timestamp = datetime.CpsTime{}
 	event.Format()
 	if event.Timestamp.Unix() <= 0 {
 		t.Errorf("expected ts but nothing")

@@ -2,12 +2,12 @@ package associativetable
 
 import (
 	"context"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-
-	"go.mongodb.org/mongo-driver/bson"
+	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func NewStore(
@@ -34,7 +34,7 @@ func (s store) GetByName(ctx context.Context, name string) (*AssociativeTable, e
 		FindOne(ctx, bson.M{"name": name}).
 		Decode(at)
 	if err != nil {
-		if err == mongodriver.ErrNoDocuments {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return nil, nil
 		}
 

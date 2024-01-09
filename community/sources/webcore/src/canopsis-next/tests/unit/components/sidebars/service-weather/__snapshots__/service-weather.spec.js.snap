@@ -187,6 +187,15 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
       class="v-divider theme--light"
       role="separator"
     />
+    <field-switcher-stub
+      title="Show hide gray"
+      value="true"
+    />
+    <hr
+      aria-orientation="horizontal"
+      class="v-divider theme--light"
+      role="separator"
+    />
     <field-modal-type-stub
       name="modalType"
       value="both"
@@ -393,6 +402,15 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
     />
     <field-switcher-stub
       title="Show priority"
+      value="true"
+    />
+    <hr
+      aria-orientation="horizontal"
+      class="v-divider theme--light"
+      role="separator"
+    />
+    <field-switcher-stub
+      title="Show hide gray"
       value="true"
     />
     <hr

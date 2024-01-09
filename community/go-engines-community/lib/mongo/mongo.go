@@ -97,6 +97,8 @@ type dbClient struct {
 	isDistributed bool
 }
 
+// dbCollection
+// nolint:wrapcheck
 type dbCollection struct {
 	mongoCollection *mongo.Collection
 	retryCount      int

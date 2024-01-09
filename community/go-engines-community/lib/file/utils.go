@@ -36,7 +36,7 @@ func IsImage(mediaType, filename string) bool {
 
 // GetHashPath returns hash path to store file.
 func GetHashPath() string {
-	return string('a' + rune(rand.Intn(26)))
+	return string('a' + rune(rand.Intn(26))) //nolint:gosec
 }
 
 // MoveFile moves file from src to dest.
@@ -50,11 +50,11 @@ func MoveFile(src, dest string) error {
 		if errors.As(err, &linkError) {
 			srcStat, err := os.Stat(src)
 			if err != nil {
-				return fmt.Errorf("link error %s %s; %s",
+				return fmt.Errorf("link error %s %w; %s",
 					linkError.Op, linkError.Err, dest)
 			}
 
-			return fmt.Errorf("link error %s %s; %s; %#v",
+			return fmt.Errorf("link error %s %w; %s; %#v",
 				linkError.Op, linkError.Err, dest, srcStat)
 		}
 	}

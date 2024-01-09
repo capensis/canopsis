@@ -4,7 +4,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/view"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 )
 
 type ListRequest struct {
@@ -26,13 +26,13 @@ type EditRequest struct {
 }
 
 type ViewGroup struct {
-	ID        string           `bson:"_id" json:"_id,omitempty"`
-	Title     string           `bson:"title" json:"title"`
-	Author    *author.Author   `bson:"author" json:"author,omitempty"`
-	Views     *[]view.Response `bson:"views,omitempty" json:"views,omitempty"`
-	Created   *types.CpsTime   `bson:"created" json:"created,omitempty" swaggertype:"integer"`
-	Updated   *types.CpsTime   `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
-	Deletable *bool            `bson:"deletable,omitempty" json:"deletable,omitempty"`
+	ID        string            `bson:"_id" json:"_id,omitempty"`
+	Title     string            `bson:"title" json:"title"`
+	Author    *author.Author    `bson:"author" json:"author,omitempty"`
+	Views     *[]view.Response  `bson:"views,omitempty" json:"views,omitempty"`
+	Created   *datetime.CpsTime `bson:"created" json:"created,omitempty" swaggertype:"integer"`
+	Updated   *datetime.CpsTime `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
+	Deletable *bool             `bson:"deletable,omitempty" json:"deletable,omitempty"`
 
 	IsPrivate bool `bson:"is_private" json:"is_private"`
 }

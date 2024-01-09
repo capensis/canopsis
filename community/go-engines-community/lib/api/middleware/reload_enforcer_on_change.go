@@ -1,9 +1,10 @@
 package middleware
 
 import (
+	"net/http"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 // ReloadEnforcerPolicyOnChange loads security policy if request changes policy.

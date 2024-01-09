@@ -145,8 +145,9 @@ export default {
 
     &--small {
       width: 22px;
-      max-width: 22px;
       height: 22px;
+      max-width: 22px;
+      max-height: 22px;
     }
   }
 
