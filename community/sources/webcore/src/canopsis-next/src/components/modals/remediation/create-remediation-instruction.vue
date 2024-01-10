@@ -5,10 +5,10 @@
         span {{ title }}
       template(#text="")
         remediation-instruction-approval-alert.mb-3(
-          v-if="isChangesDismissed",
-          :user-name="approval.dismissed_by.display_name",
-          :comment="approval.dismiss_comment",
-          dismissed
+          v-if="hasApproval && isChangesByCurrentUser",
+          :user-name="alertUserName",
+          :comment="alertComment",
+          :dismissed="isChangesDismissed"
         )
         remediation-instruction-form(
           v-model="form",
@@ -40,6 +40,7 @@ import { modalInnerMixin } from '@/mixins/modal/inner';
 import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { authMixin } from '@/mixins/auth';
 
 import RemediationInstructionForm from '@/components/other/remediation/instructions/form/remediation-instruction-form.vue';
 import RemediationInstructionApprovalAlert from '@/components/other/remediation/instructions/partials/approval-alert.vue';
@@ -60,6 +61,7 @@ export default {
     RemediationInstructionApprovalAlert,
   },
   mixins: [
+    authMixin,
     modalInnerMixin,
     validationErrorsMixinCreator(),
     submittableMixinCreator(),
@@ -91,8 +93,26 @@ export default {
       return this.modal.config.remediationInstruction.approval;
     },
 
+    hasApproval() {
+      return !!this.approval;
+    },
+
     isChangesDismissed() {
       return !!this.approval?.dismissed_by;
+    },
+
+    isChangesByCurrentUser() {
+      return this.approval?.requested_by?._id === this.currentUser._id;
+    },
+
+    alertUserName() {
+      const { dismissed_by: dismissedBy, requested_by: requestedBy } = this.approval ?? {};
+
+      return dismissedBy?.display_name ?? requestedBy?.display_name;
+    },
+
+    alertComment() {
+      return this.approval?.dismiss_comment ?? this.approval?.comment;
     },
   },
   methods: {
