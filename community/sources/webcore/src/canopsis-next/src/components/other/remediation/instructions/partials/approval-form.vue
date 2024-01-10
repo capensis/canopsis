@@ -4,9 +4,10 @@
       v-if="dismissing",
       v-model="form.comment",
       :label="$tc('common.comment')",
-      name="comment"
+      name="dismiss_comment",
+      required
     )
-    v-layout(v-if="!disabled", justify-end)
+    v-layout(justify-end)
       template(v-if="!dismissing")
         v-btn.warning(
           depressed,
@@ -15,6 +16,7 @@
         ) {{ $t('common.dismiss') }}
         v-btn(
           :loading="submitting",
+          :disabled="disabled",
           color="primary",
           @click="approve"
         ) {{ $t('common.approve') }}
@@ -25,6 +27,8 @@
           @click="cancelDismiss"
         ) {{ $t('common.cancel') }}
         v-btn(
+          :loading="submitting",
+          :disabled="disabled || errors.any()",
           depressed,
           flat,
           @click="dismiss"
@@ -33,7 +37,13 @@
 </template>
 
 <script>
+import { VALIDATION_DELAY } from '@/constants';
+
 export default {
+  $_veeValidate: {
+    validator: 'new',
+    delay: VALIDATION_DELAY,
+  },
   props: {
     submitting: {
       type: Boolean,
@@ -52,6 +62,11 @@ export default {
       dismissing: false,
     };
   },
+  watch: {
+    dismissing() {
+      this.errors.clear();
+    },
+  },
   methods: {
     closeDismissComment() {
       this.dismissing = false;
@@ -66,8 +81,12 @@ export default {
       this.closeDismissComment();
     },
 
-    dismiss() {
-      this.$emit('dismiss', this.form.comment);
+    async dismiss() {
+      const isFormValid = await this.$validator.validateAll();
+
+      if (isFormValid) {
+        this.$emit('dismiss', this.form.comment);
+      }
     },
 
     approve() {
