@@ -50,7 +50,7 @@
       :total-items="meta.total_count",
       :rows-per-page="query.limit",
       :page="query.page",
-      @update:page="updatePage",
+      @update:page="updateQueryPage",
       @update:rows-per-page="updateRecordsPerPage"
     )
 </template>
