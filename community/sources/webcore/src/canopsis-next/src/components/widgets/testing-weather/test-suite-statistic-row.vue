@@ -1,7 +1,15 @@
-<template lang="pug">
-  v-layout(row)
-    v-flex(xs6) {{ count }}
-    v-flex.text-lowercase(xs6) {{ label }}
+<template>
+  <v-layout>
+    <v-flex xs6>
+      {{ count }}
+    </v-flex>
+    <v-flex
+      class="text-lowercase"
+      xs6
+    >
+      {{ label }}
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

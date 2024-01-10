@@ -1,13 +1,13 @@
-<template lang="pug">
-  pattern-editor-field(
-    v-field="patterns",
-    :disabled="disabled",
-    :name="name",
-    :required="required",
-    :attributes="availableServiceWeatherAttributes",
-    :with-type="withType",
+<template>
+  <pattern-editor-field
+    v-field="patterns"
+    :disabled="disabled"
+    :name="name"
+    :required="required"
+    :attributes="availableServiceWeatherAttributes"
+    :with-type="withType"
     :counter="counter"
-  )
+  />
 </template>
 
 <script>

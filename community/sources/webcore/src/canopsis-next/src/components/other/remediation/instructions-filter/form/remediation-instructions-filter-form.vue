@@ -1,87 +1,97 @@
-<template lang="pug">
-  div
-    v-radio-group(
-      v-field="form.with",
-      :label="$t('remediation.instructionsFilter.filterByInstructions')",
-      name="with",
+<template>
+  <div>
+    <v-radio-group
+      v-field="form.with"
+      :label="$t('remediation.instructionsFilter.filterByInstructions')"
+      name="with"
       hide-details
-    )
-      v-radio(
-        :label="$t('remediation.instructionsFilter.with')",
-        :value="true",
+    >
+      <v-radio
+        :label="$t('remediation.instructionsFilter.with')"
+        :value="true"
         color="primary"
-      )
-      v-radio(
-        :label="$t('remediation.instructionsFilter.without')",
-        :value="false",
+      />
+      <v-radio
+        :label="$t('remediation.instructionsFilter.without')"
+        :value="false"
         color="primary"
-      )
-    v-switch(
-      :input-value="form.all",
-      :label="$t('remediation.instructionsFilter.selectAll')",
-      :disabled="hasAnyAnotherOppositeFilter",
-      color="primary",
+      />
+    </v-radio-group>
+    <v-switch
+      :input-value="form.all"
+      :label="$t('remediation.instructionsFilter.selectAll')"
+      :disabled="hasAnyAnotherOppositeFilter"
+      color="primary"
       @change="changeSelectedAll"
-    )
-    v-layout(row)
-      v-flex(md3, xs6)
-        v-checkbox(
-          :input-value="form.auto",
-          :label="$t(`remediation.instruction.types.${$constants.REMEDIATION_INSTRUCTION_TYPES.auto}`)",
-          :disabled="form.all || hasAnyAnotherOppositeFilterWithAuto",
-          color="primary",
+    />
+    <v-layout>
+      <v-flex
+        md3
+        xs6
+      >
+        <v-checkbox
+          :input-value="form.auto"
+          :label="$t(`remediation.instruction.types.${$constants.REMEDIATION_INSTRUCTION_TYPES.auto}`)"
+          :disabled="form.all || hasAnyAnotherOppositeFilterWithAuto"
+          color="primary"
           @change="changeType('auto', $event)"
-        )
-      v-checkbox(
-        :input-value="form.manual",
-        :label="$t(`remediation.instruction.types.${$constants.REMEDIATION_INSTRUCTION_TYPES.manual}`)",
-        :disabled="form.all || hasAnyAnotherOppositeFilterWithManual",
-        color="primary",
+        />
+      </v-flex>
+      <v-checkbox
+        :input-value="form.manual"
+        :label="$t(`remediation.instruction.types.${$constants.REMEDIATION_INSTRUCTION_TYPES.manual}`)"
+        :disabled="form.all || hasAnyAnotherOppositeFilterWithManual"
+        color="primary"
         @change="changeType('manual', $event)"
-      )
-    v-select(
-      v-validate="selectValidationRules",
-      :value="form.instructions",
-      :items="preparedRemediationInstructions",
-      :loading="remediationInstructionsPending",
-      :disabled="isAll",
-      :label="$t('remediation.instructionsFilter.selectedInstructions')",
-      :error-messages="errors.collect('instructions')",
-      item-text="name",
-      item-value="_id",
-      name="instructions",
-      multiple,
-      clearable,
-      return-object,
+      />
+    </v-layout>
+    <v-select
+      v-validate="selectValidationRules"
+      :value="form.instructions"
+      :items="preparedRemediationInstructions"
+      :loading="remediationInstructionsPending"
+      :disabled="isAll"
+      :label="$t('remediation.instructionsFilter.selectedInstructions')"
+      :error-messages="errors.collect('instructions')"
+      item-text="name"
+      item-value="_id"
+      name="instructions"
+      multiple
+      clearable
+      return-object
       @change="changeInstructions"
-    )
-      template(#append-outer="")
-        c-help-icon(
-          :text="$t('remediation.instructionsFilter.selectedInstructionsHelp')",
-          icon="help",
+    >
+      <template #append-outer="">
+        <c-help-icon
+          :text="$t('remediation.instructionsFilter.selectedInstructionsHelp')"
+          icon="help"
           left
-        )
-    v-radio-group(
-      v-field="form.running",
-      :label="$t('remediation.instructionsFilter.alarmsListDisplay')",
-      name="with",
+        />
+      </template>
+    </v-select>
+    <v-radio-group
+      v-field="form.running"
+      :label="$t('remediation.instructionsFilter.alarmsListDisplay')"
+      name="with"
       hide-details
-    )
-      v-radio(
-        :label="$t('remediation.instructionsFilter.allAlarms')",
-        :value="null",
+    >
+      <v-radio
+        :label="$t('remediation.instructionsFilter.allAlarms')"
+        :value="null"
         color="primary"
-      )
-      v-radio(
-        :label="showInProgressLabel",
-        :value="true",
+      />
+      <v-radio
+        :label="showInProgressLabel"
+        :value="true"
         color="primary"
-      )
-      v-radio(
-        :label="hideInProgressLabel",
-        :value="false",
+      />
+      <v-radio
+        :label="hideInProgressLabel"
+        :value="false"
         color="primary"
-      )
+      />
+    </v-radio-group>
+  </div>
 </template>
 
 <script>

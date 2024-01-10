@@ -1,24 +1,35 @@
-<template lang="pug">
-  v-layout(row)
-    template(v-if="value")
-      v-text-field.mt-0.pt-0(:value="value", :disabled="disabled", readonly, hide-details)
-      c-action-btn(
-        :disabled="disabled",
-        type="edit",
-        btn-class="ml-2",
+<template>
+  <v-layout>
+    <template v-if="value">
+      <v-text-field
+        class="mt-0 pt-0"
+        :value="value"
+        :disabled="disabled"
+        readonly
+        hide-details
+      />
+      <c-action-btn
+        :disabled="disabled"
+        type="edit"
+        btn-class="ml-2"
         @click="$emit('edit', value)"
-      )
-      c-action-btn(
-        :disabled="disabled",
-        type="delete",
+      />
+      <c-action-btn
+        :disabled="disabled"
+        type="delete"
         @click="$emit('remove')"
-      )
-    v-btn.ml-0(
-      v-else,
-      :disabled="disabled",
-      :color="errors.has(name) ? 'error' : 'primary'",
+      />
+    </template>
+    <v-btn
+      class="ml-0"
+      v-else
+      :disabled="disabled"
+      :color="errors.has(name) ? 'error' : 'primary'"
       @click="$emit('add')"
-    ) {{ $t('common.add') }}
+    >
+      {{ $t('common.add') }}
+    </v-btn>
+  </v-layout>
 </template>
 
 <script>

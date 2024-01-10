@@ -1,37 +1,45 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :pagination="pagination",
-    :items="filters",
-    :loading="pending",
-    :headers="headers",
-    :total-items="totalItems",
-    search,
-    advanced-pagination,
-    hide-actions,
-    expand,
-    @update:pagination="$emit('update:pagination', $event)"
-  )
-    template(#created="{ item }") {{ item.created | date }}
-    template(#updated="{ item }") {{ item.updated | date }}
-    template(#actions="{ item }")
-      v-layout(row)
-        c-action-btn(
-          v-if="updatable",
-          type="edit",
+<template>
+  <c-advanced-data-table
+    :options="options"
+    :items="filters"
+    :loading="pending"
+    :headers="headers"
+    :total-items="totalItems"
+    search
+    advanced-pagination
+    hide-actions
+    expand
+    @update:options="$emit('update:options', $event)"
+  >
+    <template #created="{ item }">
+      {{ item.created | date }}
+    </template>
+    <template #updated="{ item }">
+      {{ item.updated | date }}
+    </template>
+    <template #actions="{ item }">
+      <v-layout>
+        <c-action-btn
+          v-if="updatable"
+          type="edit"
           @click="$emit('edit', item)"
-        )
-        c-action-btn(
-          v-if="duplicable",
-          type="duplicate",
+        />
+        <c-action-btn
+          v-if="duplicable"
+          type="duplicate"
           @click="$emit('duplicate', item)"
-        )
-        c-action-btn(
-          v-if="removable",
-          type="delete",
+        />
+        <c-action-btn
+          v-if="removable"
+          type="delete"
           @click="$emit('remove', item._id)"
-        )
-    template(#expand="{ item }")
-      kpi-filters-expand-item(:filter="item")
+        />
+      </v-layout>
+    </template>
+    <template #expand="{ item }">
+      <kpi-filters-expand-item :filter="item" />
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>
@@ -44,7 +52,7 @@ export default {
       type: Array,
       required: true,
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },

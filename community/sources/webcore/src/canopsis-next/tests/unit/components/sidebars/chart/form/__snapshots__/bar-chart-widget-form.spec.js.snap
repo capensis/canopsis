@@ -61,7 +61,7 @@ exports[`bar-chart-widget-form Renders \`bar-chart-widget-form\` widget settings
 
 exports[`bar-chart-widget-form Renders \`bar-chart-widget-form\` widget settings with default props 1`] = `
 <v-layout-stub
-  column="column"
+  column=""
   tag="div"
 >
   <field-title-stub

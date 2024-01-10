@@ -1,40 +1,43 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :headers="headers",
-    :items="remediationJobs",
-    :loading="pending",
-    :total-items="totalItems",
-    :pagination="pagination",
-    :is-disabled-item="isDisabledJob",
-    :select-all="removable",
-    search,
-    advanced-pagination,
-    @update:pagination="$emit('update:pagination', $event)"
-  )
-    template(#mass-actions="{ selected }")
-      c-action-btn(
-        v-if="removable",
-        type="delete",
+<template>
+  <c-advanced-data-table
+    :headers="headers"
+    :items="remediationJobs"
+    :loading="pending"
+    :total-items="totalItems"
+    :options="options"
+    :is-disabled-item="isDisabledJob"
+    :select-all="removable"
+    search
+    advanced-pagination
+    @update:options="$emit('update:options', $event)"
+  >
+    <template #mass-actions="{ selected }">
+      <c-action-btn
+        v-if="removable"
+        type="delete"
         @click="$emit('remove-selected', selected)"
-      )
-    template(#actions="{ item, disabled }")
-      c-action-btn(
-        v-if="updatable",
-        type="edit",
+      />
+    </template>
+    <template #actions="{ item, disabled }">
+      <c-action-btn
+        v-if="updatable"
+        type="edit"
         @click="$emit('edit', item)"
-      )
-      c-action-btn(
-        v-if="duplicable",
-        type="duplicate",
+      />
+      <c-action-btn
+        v-if="duplicable"
+        type="duplicate"
         @click="$emit('duplicate', item)"
-      )
-      c-action-btn(
-        v-if="removable",
-        :tooltip="disabled ? $t('remediation.job.usingJob') : $t('common.delete')",
-        :disabled="disabled",
-        type="delete",
+      />
+      <c-action-btn
+        v-if="removable"
+        :tooltip="disabled ? $t('remediation.job.usingJob') : $t('common.delete')"
+        :disabled="disabled"
+        type="delete"
         @click="$emit('remove', item)"
-      )
+      />
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>
@@ -52,7 +55,7 @@ export default {
       type: Number,
       required: false,
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },

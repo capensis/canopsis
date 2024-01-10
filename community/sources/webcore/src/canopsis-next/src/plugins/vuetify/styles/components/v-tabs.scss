@@ -1,0 +1,11 @@
+.v-tab {
+  &:not(&--active) {
+    opacity: 0.7;
+  }
+}
+
+.v-tabs-items {
+  &.theme--light, &.theme--dark {
+    background-color: unset;
+  }
+}

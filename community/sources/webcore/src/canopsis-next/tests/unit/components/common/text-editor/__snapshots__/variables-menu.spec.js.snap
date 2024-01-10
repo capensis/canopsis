@@ -13,6 +13,7 @@ exports[`variables-menu Renders \`variables-menu\` with custom props 1`] = `
 exports[`variables-menu Renders \`variables-menu\` with custom props 2`] = `
 <div
   class="v-menu__content theme--light menuable__content__active "
+  role="menu"
   style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8; display: none;"
 >
   <variables-list-stub
@@ -26,20 +27,8 @@ exports[`variables-menu Renders \`variables-menu\` with default props 1`] = `
 <div
   class="v-menu"
 >
-  <transition-stub
-    name="v-menu-transition"
-  />
+  <!---->
 </div>
 `;
 
-exports[`variables-menu Renders \`variables-menu\` with default props 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <variables-list-stub
-    value=""
-    variables=""
-  />
-</div>
-`;
+exports[`variables-menu Renders \`variables-menu\` with default props 2`] = `undefined`;

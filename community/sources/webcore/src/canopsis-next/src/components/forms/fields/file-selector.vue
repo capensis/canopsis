@@ -1,35 +1,63 @@
-<template lang="pug">
-  div
-    div(v-if="withFilesList")
-      div.ml-2.font-italic(v-for="file in files", :key="file.name") {{ file.name }}
-        v-btn(icon, flat, small, @click="removeFileFromSelections(file.name)")
-          v-icon(small) close
-    div.file-selector-button-wrapper(
-      v-on="wrapperListeners",
+<template>
+  <div>
+    <div v-if="withFilesList">
+      <div
+        class="ml-2 font-italic"
+        v-for="file in files"
+        :key="file.name"
+      >
+        {{ file.name }}
+        <v-btn
+          icon
+          text
+          small
+          @click="removeFileFromSelections(file.name)"
+        >
+          <v-icon small>
+            close
+          </v-icon>
+        </v-btn>
+      </div>
+    </div>
+    <div
+      class="file-selector-button-wrapper"
+      v-on="wrapperListeners"
       :class="{ disabled: fullDisabled }"
-    )
-      slot(
-        :disabled="fullDisabled",
-        :loading="loading",
-        :on="scopedActivatorSlotListeners",
+    >
+      <slot
+        :disabled="fullDisabled"
+        :loading="loading"
+        :on="scopedActivatorSlotListeners"
         name="activator"
-      )
-        v-btn(
-          v-on="scopedActivatorSlotListeners",
-          :disabled="fullDisabled",
+      >
+        <v-btn
+          v-on="scopedActivatorSlotListeners"
+          :disabled="fullDisabled"
           :loading="loading"
-        )
-          v-icon cloud_upload
-    input.hidden(
-      ref="fileInput",
-      type="file",
-      :multiple="multiple",
-      :accept="accept",
-      @change="change",
+        >
+          <v-icon>cloud_upload</v-icon>
+        </v-btn>
+      </slot>
+    </div>
+    <input
+      class="hidden"
+      ref="fileInput"
+      type="file"
+      :multiple="multiple"
+      :accept="accept"
+      @change="change"
       @click.stop=""
-    )
-    div.mt-2(v-if="!hideDetails")
-      v-messages(:value="errorMessages", color="error")
+    >
+    <div
+      class="mt-2"
+      v-if="!hideDetails"
+    >
+      <v-messages
+        :value="errorMessages"
+        color="error"
+      />
+    </div>
+  </div>
 </template>
 
 <script>

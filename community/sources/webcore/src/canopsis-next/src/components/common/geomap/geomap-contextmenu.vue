@@ -1,19 +1,27 @@
-<template lang="pug">
-  v-menu(
-    v-model="shown",
-    :position-x="pageX",
-    :position-y="pageY",
-    :close-on-content-click="false",
-    :disabled="disabled",
-    ignore-click-upper-outside,
-    offset-overflow,
-    offset-x,
+<template>
+  <v-menu
+    v-model="shown"
+    :position-x="pageX"
+    :position-y="pageY"
+    :close-on-content-click="false"
+    :disabled="disabled"
+    ignore-click-upper-outside
+    offset-overflow
+    offset-x
     absolute
-  )
-    v-list(dense)
-      v-list-tile(v-for="action in availableActions", :key="action.text", @click="applyAction(action)")
-        v-list-tile-content
-          v-list-tile-title {{ action.text }}
+  >
+    <v-list dense>
+      <v-list-item
+        v-for="action in availableActions"
+        :key="action.text"
+        @click="applyAction(action)"
+      >
+        <v-list-item-content>
+          <v-list-item-title>{{ action.text }}</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    </v-list>
+  </v-menu>
 </template>
 
 <script>

@@ -1,18 +1,46 @@
-<template lang="pug">
-  v-layout(column)
-    c-alert(v-if="!headers.length", type="info") {{ $t('common.request.emptyHeaders') }}
-    v-layout(v-for="(item, index) in headers", :key="item.key", row, align-center, justify-space-between)
-      request-header-field(
-        v-field="headers[index]",
-        :disabled="disabled",
-        :name="`${name}.${item.key}`",
-        :headers-hints="headersHints",
+<template>
+  <v-layout column>
+    <c-alert
+      v-if="!headers.length"
+      type="info"
+    >
+      {{ $t('common.request.emptyHeaders') }}
+    </c-alert>
+    <v-layout
+      v-for="(item, index) in headers"
+      :key="item.key"
+      align-center
+      justify-space-between
+    >
+      <request-header-field
+        v-field="headers[index]"
+        :disabled="disabled"
+        :name="`${name}.${item.key}`"
+        :headers-hints="headersHints"
         :headers-variables="headersVariables"
-      )
-      c-action-btn(v-if="!disabled", type="delete", @click="removeItemFromArray(index)")
-    v-flex(v-if="!disabled", xs12)
-      v-layout
-        v-btn.ml-0(color="primary", outline, @click="addItem") {{ $t('common.add') }}
+      />
+      <c-action-btn
+        v-if="!disabled"
+        type="delete"
+        @click="removeItemFromArray(index)"
+      />
+    </v-layout>
+    <v-flex
+      v-if="!disabled"
+      xs12
+    >
+      <v-layout>
+        <v-btn
+          class="ml-0"
+          color="primary"
+          outlined
+          @click="addItem"
+        >
+          {{ $t('common.add') }}
+        </v-btn>
+      </v-layout>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

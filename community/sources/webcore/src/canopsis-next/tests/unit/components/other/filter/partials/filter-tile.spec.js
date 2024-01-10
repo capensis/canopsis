@@ -48,7 +48,7 @@ describe('filter-tile', () => {
   it('Renders `filter-tile` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `filter-tile` with custom props', () => {
@@ -61,6 +61,20 @@ describe('filter-tile', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  it('Renders `filter-tile` with old pattern', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        filter: {
+          title: 'Filter title',
+          old_mongo_query: {},
+        },
+        editable: true,
+      },
+    });
+
+    expect(wrapper).toMatchSnapshot();
   });
 });

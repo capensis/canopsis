@@ -1,22 +1,28 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :items="stateSettings",
-    :headers="headers",
-    :loading="pending",
-    :total-items="stateSettings.length",
-    no-pagination,
+<template>
+  <c-advanced-data-table
+    :items="stateSettings"
+    :headers="headers"
+    :loading="pending"
+    :total-items="stateSettings.length"
+    no-pagination
     expand
-  )
-    template(#method="{ item }") {{ $t(`stateSetting.methods.${item.method}`) }}
-    template(#actions="{ item }")
-      v-layout(row)
-        c-action-btn(
-          type="edit",
-          :disabled="!item.editable",
+  >
+    <template #method="{ item }">
+      {{ $t(`stateSetting.methods.${item.method}`) }}
+    </template>
+    <template #actions="{ item }">
+      <v-layout>
+        <c-action-btn
+          type="edit"
+          :disabled="!item.editable"
           @click.stop="$emit('edit', item)"
-        )
-    template(#expand="{ item }")
-      state-settings-list-expand-panel(:state-setting="item")
+        />
+      </v-layout>
+    </template>
+    <template #expand="{ item }">
+      <state-settings-list-expand-panel :state-setting="item" />
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>

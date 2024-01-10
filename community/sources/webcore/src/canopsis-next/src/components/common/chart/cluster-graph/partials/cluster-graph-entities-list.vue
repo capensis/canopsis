@@ -1,42 +1,60 @@
-<template lang="pug">
-  div
-    h6.my-2.title.text-xs-center {{ $tc('common.entity', 2) }}
-    v-card.ma-2(v-for="(entityItem, index) in entities", :key="entityItem.key")
-      v-card-text
-        c-entity-field(
-          :value="entityItem.entity",
-          :name="`entity-${entityItem.key}`",
-          :entity-types="entityTypes",
-          :item-disabled="isItemDisabled",
-          :item-text="getItemText",
-          required,
-          return-object,
-          clearable,
-          autocomplete,
+<template>
+  <div>
+    <h6 class="my-2 text-h6 text-center">
+      {{ $tc('common.entity', 2) }}
+    </h6>
+    <v-card
+      class="ma-2"
+      v-for="(entityItem, index) in entities"
+      :key="entityItem.key"
+    >
+      <v-card-text>
+        <c-entity-field
+          :value="entityItem.entity"
+          :name="`entity-${entityItem.key}`"
+          :entity-types="entityTypes"
+          :item-disabled="isItemDisabled"
+          :item-text="getItemText"
+          required
+          return-object
+          clearable
+          autocomplete
           @input="updateEntity($event, index)"
-        )
-        v-expand-transition
-          v-combobox(
-            v-if="entityItem.entity",
-            :value="entityItem.pinned",
-            :items="pinnedListById[entityItem.entity._id]",
-            :loading="pinnedPendingById[entityItem.entity._id]",
-            :label="$t('modals.createTreeOfDependenciesMap.pinnedEntities')",
-            :item-text="getItemText",
-            item-value="_id",
-            deletable-chips,
-            chips,
-            multiple,
+        />
+        <v-expand-transition>
+          <v-combobox
+            v-if="entityItem.entity"
+            :value="entityItem.pinned"
+            :items="pinnedListById[entityItem.entity._id]"
+            :loading="pinnedPendingById[entityItem.entity._id]"
+            :label="$t('modals.createTreeOfDependenciesMap.pinnedEntities')"
+            :item-text="getItemText"
+            item-value="_id"
+            deletable-chips
+            chips
+            multiple
             @change="updatePinned($event, index)"
-          )
-      v-card-actions
-        v-layout(justify-end)
-          c-action-btn(
-            :disabled="entities.length === 1",
-            type="delete",
+          />
+        </v-expand-transition>
+      </v-card-text>
+      <v-card-actions>
+        <v-layout justify-end>
+          <c-action-btn
+            :disabled="entities.length === 1"
+            type="delete"
             @click="remove(index)"
-          )
-    v-btn(color="primary", @click="add") {{ $t('modals.createTreeOfDependenciesMap.addEntity') }}
+          />
+        </v-layout>
+      </v-card-actions>
+    </v-card>
+    <v-btn
+      class="ml-2"
+      color="primary"
+      @click="add"
+    >
+      {{ $t('modals.createTreeOfDependenciesMap.addEntity') }}
+    </v-btn>
+  </div>
 </template>
 
 <script>

@@ -6,4 +6,5 @@ export { default as CActionFabBtn } from '@/components/common/buttons/c-action-f
 export { default as CFabExpandBtn } from '@/components/common/buttons/c-fab-expand-btn.vue';
 export { default as CFabBtn } from '@/components/common/buttons/c-fab-btn.vue';
 export { default as CRefreshBtn } from '@/components/common/buttons/c-refresh-btn.vue';
+export { default as CSpeedDial } from '@/components/common/buttons/c-speed-dial.vue';
 export { default as CDensityBtnToggle } from '@/components/common/groups/c-density-btn-toggle.vue';

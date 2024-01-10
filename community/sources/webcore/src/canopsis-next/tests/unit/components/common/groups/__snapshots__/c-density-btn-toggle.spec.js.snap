@@ -2,190 +2,190 @@
 
 exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with custom props 1`] = `
 <div
-  class="v-item-group density__btn-toggle theme--light v-btn-toggle"
+  class="density__btn-toggle v-item-group theme--light v-btn-toggle v-btn-toggle--group v-btn-toggle--tile"
   name="dense"
 >
   <span
     class="v-tooltip v-tooltip--top"
   >
-    <transition-stub
-      name="slide-y-reverse-transition"
-    />
+    <!---->
     <button
-      class="v-btn v-btn--flat v-btn--small theme--light"
+      class="ma-0 v-btn v-btn--text theme--light v-size--small"
       type="button"
       value="0"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        <svg
+        <span
           aria-hidden="true"
-          class="density_medium-svg-icon v-icon v-icon--is-component theme--light"
-          enable-background="new 0 0 24 24"
-          fill="#000000"
-          height="24px"
-          style="font-size: 16px; height: 16px;"
-          viewBox="0 0 24 24"
-          width="24px"
-          xmlns="http://www.w3.org/2000/svg"
+          class="v-icon notranslate theme--light"
+          style="font-size: 16px; height: 16px; width: 16px;"
         >
-          <g>
-            <rect
-              fill="none"
-              height="24"
-              width="24"
-            />
-          </g>
-           
-          <g>
+          <svg
+            class="v-icon__component theme--light"
+            enable-background="new 0 0 24 24"
+            fill="currentColor"
+            height="24px"
+            style="font-size: 16px; height: 16px; width: 16px;"
+            viewBox="0 0 24 24"
+            width="24px"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <g>
               <rect
-                height="2"
-                width="18"
-                x="3"
-                y="6"
-              />
-               
-              <rect
-                height="2"
-                width="18"
-                x="3"
-                y="16"
+                fill="none"
+                height="24"
+                width="24"
               />
             </g>
-          </g>
-        </svg>
-      </div>
+            <g>
+              <g>
+                <rect
+                  height="2"
+                  width="18"
+                  x="3"
+                  y="6"
+                />
+                <rect
+                  height="2"
+                  width="18"
+                  x="3"
+                  y="16"
+                />
+              </g>
+            </g>
+          </svg>
+        </span>
+      </span>
     </button>
   </span>
   <span
     class="v-tooltip v-tooltip--top"
   >
-    <transition-stub
-      name="slide-y-reverse-transition"
-    />
+    <!---->
     <button
-      class="v-btn v-btn--active v-btn--flat v-btn--small theme--light"
+      class="ma-0 v-btn v-item--active v-btn--active v-btn--text theme--light v-size--small"
       type="button"
       value="1"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        <svg
+        <span
           aria-hidden="true"
-          class="density_medium-svg-icon v-icon v-icon--is-component theme--light"
-          enable-background="new 0 0 24 24"
-          fill="#000000"
-          height="24px"
-          style="font-size: 16px; height: 16px;"
-          viewBox="0 0 24 24"
-          width="24px"
-          xmlns="http://www.w3.org/2000/svg"
+          class="v-icon notranslate theme--light"
+          style="font-size: 16px; height: 16px; width: 16px;"
         >
-          <g>
-            <rect
-              fill="none"
-              height="24"
-              width="24"
-            />
-          </g>
-           
-          <g>
+          <svg
+            class="v-icon__component theme--light"
+            enable-background="new 0 0 24 24"
+            fill="currentColor"
+            height="24px"
+            style="font-size: 16px; height: 16px; width: 16px;"
+            viewBox="0 0 24 24"
+            width="24px"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <g>
               <rect
-                height="2"
-                width="18"
-                x="3"
-                y="3"
-              />
-               
-              <rect
-                height="2"
-                width="18"
-                x="3"
-                y="19"
-              />
-               
-              <rect
-                height="2"
-                width="18"
-                x="3"
-                y="11"
+                fill="none"
+                height="24"
+                width="24"
               />
             </g>
-          </g>
-        </svg>
-      </div>
+            <g>
+              <g>
+                <rect
+                  height="2"
+                  width="18"
+                  x="3"
+                  y="3"
+                />
+                <rect
+                  height="2"
+                  width="18"
+                  x="3"
+                  y="19"
+                />
+                <rect
+                  height="2"
+                  width="18"
+                  x="3"
+                  y="11"
+                />
+              </g>
+            </g>
+          </svg>
+        </span>
+      </span>
     </button>
   </span>
   <span
     class="v-tooltip v-tooltip--top"
   >
-    <transition-stub
-      name="slide-y-reverse-transition"
-    />
+    <!---->
     <button
-      class="v-btn v-btn--flat v-btn--small theme--light"
+      class="ma-0 v-btn v-btn--text theme--light v-size--small"
       type="button"
       value="2"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        <svg
+        <span
           aria-hidden="true"
-          class="density_small-svg-icon v-icon v-icon--is-component theme--light"
-          enable-background="new 0 0 24 24"
-          fill="#000000"
-          height="24px"
-          style="font-size: 16px; height: 16px;"
-          viewBox="0 0 24 24"
-          width="24px"
-          xmlns="http://www.w3.org/2000/svg"
+          class="v-icon notranslate theme--light"
+          style="font-size: 16px; height: 16px; width: 16px;"
         >
-          <g>
-            <rect
-              fill="none"
-              height="24"
-              width="24"
-            />
-          </g>
-           
-          <g>
+          <svg
+            class="v-icon__component theme--light"
+            enable-background="new 0 0 24 24"
+            fill="currentColor"
+            height="24px"
+            style="font-size: 16px; height: 16px; width: 16px;"
+            viewBox="0 0 24 24"
+            width="24px"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <g>
               <rect
-                height="2"
-                width="18"
-                x="3"
-                y="2"
-              />
-               
-              <rect
-                height="2"
-                width="18"
-                x="3"
-                y="20"
-              />
-               
-              <rect
-                height="2"
-                width="18"
-                x="3"
-                y="14"
-              />
-               
-              <rect
-                height="2"
-                width="18"
-                x="3"
-                y="8"
+                fill="none"
+                height="24"
+                width="24"
               />
             </g>
-          </g>
-        </svg>
-      </div>
+            <g>
+              <g>
+                <rect
+                  height="2"
+                  width="18"
+                  x="3"
+                  y="2"
+                />
+                <rect
+                  height="2"
+                  width="18"
+                  x="3"
+                  y="20"
+                />
+                <rect
+                  height="2"
+                  width="18"
+                  x="3"
+                  y="14"
+                />
+                <rect
+                  height="2"
+                  width="18"
+                  x="3"
+                  y="8"
+                />
+              </g>
+            </g>
+          </svg>
+        </span>
+      </span>
     </button>
   </span>
 </div>
@@ -193,190 +193,190 @@ exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with custom props
 
 exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with default props 1`] = `
 <div
-  class="v-item-group density__btn-toggle theme--light v-btn-toggle"
+  class="density__btn-toggle v-item-group theme--light v-btn-toggle v-btn-toggle--group v-btn-toggle--tile"
   name="dense"
 >
   <span
     class="v-tooltip v-tooltip--top"
   >
-    <transition-stub
-      name="slide-y-reverse-transition"
-    />
+    <!---->
     <button
-      class="v-btn v-btn--active v-btn--flat v-btn--small theme--light"
+      class="ma-0 v-btn v-item--active v-btn--active v-btn--text theme--light v-size--small"
       type="button"
       value="0"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        <svg
+        <span
           aria-hidden="true"
-          class="density_medium-svg-icon v-icon v-icon--is-component theme--light"
-          enable-background="new 0 0 24 24"
-          fill="#000000"
-          height="24px"
-          style="font-size: 16px; height: 16px;"
-          viewBox="0 0 24 24"
-          width="24px"
-          xmlns="http://www.w3.org/2000/svg"
+          class="v-icon notranslate theme--light"
+          style="font-size: 16px; height: 16px; width: 16px;"
         >
-          <g>
-            <rect
-              fill="none"
-              height="24"
-              width="24"
-            />
-          </g>
-           
-          <g>
+          <svg
+            class="v-icon__component theme--light"
+            enable-background="new 0 0 24 24"
+            fill="currentColor"
+            height="24px"
+            style="font-size: 16px; height: 16px; width: 16px;"
+            viewBox="0 0 24 24"
+            width="24px"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <g>
               <rect
-                height="2"
-                width="18"
-                x="3"
-                y="6"
-              />
-               
-              <rect
-                height="2"
-                width="18"
-                x="3"
-                y="16"
+                fill="none"
+                height="24"
+                width="24"
               />
             </g>
-          </g>
-        </svg>
-      </div>
+            <g>
+              <g>
+                <rect
+                  height="2"
+                  width="18"
+                  x="3"
+                  y="6"
+                />
+                <rect
+                  height="2"
+                  width="18"
+                  x="3"
+                  y="16"
+                />
+              </g>
+            </g>
+          </svg>
+        </span>
+      </span>
     </button>
   </span>
   <span
     class="v-tooltip v-tooltip--top"
   >
-    <transition-stub
-      name="slide-y-reverse-transition"
-    />
+    <!---->
     <button
-      class="v-btn v-btn--flat v-btn--small theme--light"
+      class="ma-0 v-btn v-btn--text theme--light v-size--small"
       type="button"
       value="1"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        <svg
+        <span
           aria-hidden="true"
-          class="density_medium-svg-icon v-icon v-icon--is-component theme--light"
-          enable-background="new 0 0 24 24"
-          fill="#000000"
-          height="24px"
-          style="font-size: 16px; height: 16px;"
-          viewBox="0 0 24 24"
-          width="24px"
-          xmlns="http://www.w3.org/2000/svg"
+          class="v-icon notranslate theme--light"
+          style="font-size: 16px; height: 16px; width: 16px;"
         >
-          <g>
-            <rect
-              fill="none"
-              height="24"
-              width="24"
-            />
-          </g>
-           
-          <g>
+          <svg
+            class="v-icon__component theme--light"
+            enable-background="new 0 0 24 24"
+            fill="currentColor"
+            height="24px"
+            style="font-size: 16px; height: 16px; width: 16px;"
+            viewBox="0 0 24 24"
+            width="24px"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <g>
               <rect
-                height="2"
-                width="18"
-                x="3"
-                y="3"
-              />
-               
-              <rect
-                height="2"
-                width="18"
-                x="3"
-                y="19"
-              />
-               
-              <rect
-                height="2"
-                width="18"
-                x="3"
-                y="11"
+                fill="none"
+                height="24"
+                width="24"
               />
             </g>
-          </g>
-        </svg>
-      </div>
+            <g>
+              <g>
+                <rect
+                  height="2"
+                  width="18"
+                  x="3"
+                  y="3"
+                />
+                <rect
+                  height="2"
+                  width="18"
+                  x="3"
+                  y="19"
+                />
+                <rect
+                  height="2"
+                  width="18"
+                  x="3"
+                  y="11"
+                />
+              </g>
+            </g>
+          </svg>
+        </span>
+      </span>
     </button>
   </span>
   <span
     class="v-tooltip v-tooltip--top"
   >
-    <transition-stub
-      name="slide-y-reverse-transition"
-    />
+    <!---->
     <button
-      class="v-btn v-btn--flat v-btn--small theme--light"
+      class="ma-0 v-btn v-btn--text theme--light v-size--small"
       type="button"
       value="2"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        <svg
+        <span
           aria-hidden="true"
-          class="density_small-svg-icon v-icon v-icon--is-component theme--light"
-          enable-background="new 0 0 24 24"
-          fill="#000000"
-          height="24px"
-          style="font-size: 16px; height: 16px;"
-          viewBox="0 0 24 24"
-          width="24px"
-          xmlns="http://www.w3.org/2000/svg"
+          class="v-icon notranslate theme--light"
+          style="font-size: 16px; height: 16px; width: 16px;"
         >
-          <g>
-            <rect
-              fill="none"
-              height="24"
-              width="24"
-            />
-          </g>
-           
-          <g>
+          <svg
+            class="v-icon__component theme--light"
+            enable-background="new 0 0 24 24"
+            fill="currentColor"
+            height="24px"
+            style="font-size: 16px; height: 16px; width: 16px;"
+            viewBox="0 0 24 24"
+            width="24px"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <g>
               <rect
-                height="2"
-                width="18"
-                x="3"
-                y="2"
-              />
-               
-              <rect
-                height="2"
-                width="18"
-                x="3"
-                y="20"
-              />
-               
-              <rect
-                height="2"
-                width="18"
-                x="3"
-                y="14"
-              />
-               
-              <rect
-                height="2"
-                width="18"
-                x="3"
-                y="8"
+                fill="none"
+                height="24"
+                width="24"
               />
             </g>
-          </g>
-        </svg>
-      </div>
+            <g>
+              <g>
+                <rect
+                  height="2"
+                  width="18"
+                  x="3"
+                  y="2"
+                />
+                <rect
+                  height="2"
+                  width="18"
+                  x="3"
+                  y="20"
+                />
+                <rect
+                  height="2"
+                  width="18"
+                  x="3"
+                  y="14"
+                />
+                <rect
+                  height="2"
+                  width="18"
+                  x="3"
+                  y="8"
+                />
+              </g>
+            </g>
+          </svg>
+        </span>
+      </span>
     </button>
   </span>
 </div>

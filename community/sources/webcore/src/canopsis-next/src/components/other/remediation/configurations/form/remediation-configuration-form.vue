@@ -1,41 +1,51 @@
-<template lang="pug">
-  v-layout(column)
-    c-name-field(v-field="form.name", required)
-    v-layout(row)
-      v-flex.pr-3(xs6)
-        v-select(
-          v-validate="'required'",
-          :value="form.type",
-          :items="remediationJobConfigTypes",
-          :label="$t('common.type')",
-          :error-messages="errors.collect('type')",
-          name="type",
-          item-text="name",
-          item-value="name",
-          return-object,
+<template>
+  <v-layout column>
+    <c-name-field
+      v-field="form.name"
+      required
+    />
+    <v-layout>
+      <v-flex
+        class="pr-3"
+        xs6
+      >
+        <v-select
+          v-validate="'required'"
+          :value="form.type"
+          :items="remediationJobConfigTypes"
+          :label="$t('common.type')"
+          :error-messages="errors.collect('type')"
+          name="type"
+          item-text="name"
+          item-value="name"
+          return-object
           @input="updateType"
-        )
-      v-flex(xs6)
-        v-text-field(
-          v-field="form.host",
-          v-validate="'required|url'",
-          :label="$t('modals.createRemediationConfiguration.fields.host')",
-          :error-messages="errors.collect('host')",
+        />
+      </v-flex>
+      <v-flex xs6>
+        <v-text-field
+          v-field="form.host"
+          v-validate="'required|url'"
+          :label="$t('modals.createRemediationConfiguration.fields.host')"
+          :error-messages="errors.collect('host')"
           name="host"
-        )
-    v-text-field(
-      v-field="form.auth_token",
-      v-validate="'required'",
-      :label="$t('modals.createRemediationConfiguration.fields.token')",
-      :error-messages="errors.collect('token')",
+        />
+      </v-flex>
+    </v-layout>
+    <v-text-field
+      v-field="form.auth_token"
+      v-validate="'required'"
+      :label="$t('modals.createRemediationConfiguration.fields.token')"
+      :error-messages="errors.collect('token')"
       name="token"
-    )
-    c-name-field(
-      v-if="isShownUserNameField",
-      v-field="form.auth_username",
-      :label="$t('common.username')",
+    />
+    <c-name-field
+      v-if="isShownUserNameField"
+      v-field="form.auth_username"
+      :label="$t('common.username')"
       name="username"
-    )
+    />
+  </v-layout>
 </template>
 
 <script>

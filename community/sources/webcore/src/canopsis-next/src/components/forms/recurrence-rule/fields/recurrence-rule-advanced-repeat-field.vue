@@ -1,9 +1,9 @@
-<template lang="pug">
-  v-select(
-    v-model="selectedHint",
-    :label="$t('recurrenceRule.repeatOn')",
+<template>
+  <v-select
+    v-model="selectedHint"
+    :label="$t('recurrenceRule.repeatOn')"
     :items="hints"
-  )
+  />
 </template>
 
 <script>

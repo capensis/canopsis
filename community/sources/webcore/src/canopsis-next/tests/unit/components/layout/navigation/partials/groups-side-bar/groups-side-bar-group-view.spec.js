@@ -97,7 +97,7 @@ describe('groups-side-bar-group-view', () => {
       mocks: { $route: { params: { id: '' } } },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `groups-side-bar-group-view` with custom data', () => {
@@ -117,6 +117,6 @@ describe('groups-side-bar-group-view', () => {
       mocks: { $route: { params: { id: viewId } } },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -53,41 +53,33 @@ export const widgetSettingsMixin = {
      * @returns {Promise<void>}
      */
     async submit() {
-      try {
-        this.submitting = true;
+      const isFormValid = await this.$validator.validateAll();
 
-        const isFormValid = await this.$validator.validateAll();
+      if (isFormValid) {
+        const { _id: widgetId, tab: tabId } = this.widget;
+        const data = formToWidget(this.form);
 
-        if (isFormValid) {
-          const { _id: widgetId, tab: tabId } = this.widget;
-          const data = formToWidget(this.form);
+        data.tab = tabId;
 
-          data.tab = tabId;
-
-          if (this.duplicate) {
-            await this.createWidget({ data });
-          } else if (widgetId) {
-            await this.updateWidget({ id: widgetId, data });
-          } else {
-            await this.createWidget({ data });
-          }
-
-          if (data.parameters.mainFilter && this.userPreference.content.mainFilter === data.parameters.mainFilter) {
-            await this.updateContentInUserPreference({ mainFilter: null });
-          }
-
-          if (widgetId) {
-            await this.fetchUserPreference({ id: widgetId });
-          }
-
-          await this.fetchActiveView();
-
-          this.$sidebar.hide();
+        if (this.duplicate) {
+          await this.createWidget({ data });
+        } else if (widgetId) {
+          await this.updateWidget({ id: widgetId, data });
+        } else {
+          await this.createWidget({ data });
         }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        this.submitting = false;
+
+        if (data.parameters.mainFilter && this.userPreference.content.mainFilter === data.parameters.mainFilter) {
+          await this.updateContentInUserPreference({ mainFilter: null });
+        }
+
+        if (widgetId) {
+          await this.fetchUserPreference({ id: widgetId });
+        }
+
+        await this.fetchActiveView();
+
+        this.$sidebar.hide();
       }
     },
   },

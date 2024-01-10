@@ -224,7 +224,7 @@ describe('geomap-preview', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `geomap-preview` with custom props', async () => {
@@ -249,7 +249,7 @@ describe('geomap-preview', () => {
       width: 5,
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `geomap-preview` with all point types and color indicator impact state', async () => {
@@ -264,7 +264,7 @@ describe('geomap-preview', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `geomap-preview` with all point types and color indicator state', async () => {
@@ -279,7 +279,7 @@ describe('geomap-preview', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `geomap-preview` with all point types and pbehavior enabled', async () => {
@@ -294,6 +294,6 @@ describe('geomap-preview', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -1,14 +1,38 @@
-<template lang="pug">
-  c-advanced-data-table(:headers="headers", :items="tickets", hide-actions, disable-initial-sort)
-    template(#ticket_url="{ item }")
-      template(v-if="item.ticket_url")
-        a(v-if="isValidTicketUrl(item.ticket_url)", :href="item.ticket_url", target="_blank") {{ item.ticket_url }}
-        span(v-else) {{ item.ticket_url }}
-    template(#t="{ item }") {{ item.t | date }}
-    template(#_t="{ item }")
-      c-help-icon(v-bind="getIconProps(item)", top)
-    template(#metaalarm="{ item }")
-      v-icon(v-if="item.ticket_meta_alarm_id === parentAlarmId", top) low_priority
+<template>
+  <c-advanced-data-table
+    :headers="headers"
+    :items="tickets"
+    hide-actions
+    disable-initial-sort
+  >
+    <template #ticket_url="{ item }">
+      <template v-if="item.ticket_url">
+        <a
+          v-if="isValidTicketUrl(item.ticket_url)"
+          :href="item.ticket_url"
+          target="_blank"
+        >{{ item.ticket_url }}</a>
+        <span v-else>{{ item.ticket_url }}</span>
+      </template>
+    </template>
+    <template #t="{ item }">
+      {{ item.t | date }}
+    </template>
+    <template #_t="{ item }">
+      <c-help-icon
+        v-bind="getIconProps(item)"
+        top
+      />
+    </template>
+    <template #metaalarm="{ item }">
+      <v-icon
+        v-if="item.ticket_meta_alarm_id === parentAlarmId"
+        top
+      >
+        low_priority
+      </v-icon>
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>

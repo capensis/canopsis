@@ -5,35 +5,34 @@ exports[`pbehavior-recurrence-rule-field Renders \`pbehavior-recurrence-rule-fie
   class="flex"
 >
   <button
-    class="ml-0 v-btn theme--light primary"
+    class="ml-0 v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
     type="button"
   >
-    <div
+    <span
       class="v-btn__content"
     >
-       Edit recurrence rule
-    </div>
+    Edit recurrence rule
+    </span>
   </button>
   <span
     class="v-tooltip v-tooltip--top"
+    fixed=""
   >
-    <transition-stub
-      name="slide-y-reverse-transition"
-    />
+    <!---->
     <button
-      class="v-btn v-btn--icon theme--light"
+      class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
         <i
           aria-hidden="true"
-          class="v-icon material-icons theme--light grey--text text--darken-1"
+          class="v-icon notranslate material-icons theme--light grey--text text--darken-1"
         >
           info
         </i>
-      </div>
+      </span>
     </button>
   </span>
   <c-action-btn-stub
@@ -47,14 +46,14 @@ exports[`pbehavior-recurrence-rule-field Renders \`pbehavior-recurrence-rule-fie
   class="flex"
 >
   <button
-    class="ml-0 v-btn theme--light primary"
+    class="ml-0 v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
     type="button"
   >
-    <div
+    <span
       class="v-btn__content"
     >
-       Add recurrence rule
-    </div>
+    Add recurrence rule
+    </span>
   </button>
   <!---->
 </div>
