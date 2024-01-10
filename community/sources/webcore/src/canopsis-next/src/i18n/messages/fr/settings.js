@@ -259,4 +259,5 @@ export default {
     hideMassSelection: 'Masquer la sélection en masse',
     hideToolbar: 'Masquer la barre de tâches',
   },
+  entitiesActionsInQueue: 'Empiler les actions des entités et les appliquer simultanément',
 };

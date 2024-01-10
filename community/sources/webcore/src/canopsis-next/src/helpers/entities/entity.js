@@ -49,6 +49,7 @@ export const isActionTypeAvailableForEntity = (actionType, entity) => {
     state,
     ack,
     status,
+    alarm_id: alarmId,
     alarm_display_name: alarmDisplayName,
     assigned_instructions: assignedInstructions,
     pbh_origin_icon: pbhOriginIcon,
@@ -57,6 +58,7 @@ export const isActionTypeAvailableForEntity = (actionType, entity) => {
   const paused = pbhOriginIcon !== '';
   const stateIsOk = state?.val === ENTITIES_STATES.ok;
   const statusIsCancelled = status?.val === ENTITIES_STATUSES.cancelled;
+  const hasAlarm = !!alarmId;
 
   if (statusIsCancelled) {
     return false;
@@ -86,6 +88,8 @@ export const isActionTypeAvailableForEntity = (actionType, entity) => {
 
     case WEATHER_ACTIONS_TYPES.declareTicket:
     case WEATHER_ACTIONS_TYPES.entityAssocTicket:
+      return hasAlarm;
+
     case WEATHER_ACTIONS_TYPES.entityComment:
     default:
       return true;
@@ -232,3 +236,25 @@ export const getIconByEntityType = type => (
     ? '$vuetify.icons.engineering'
     : 'person'
 );
+
+/**
+* Is disabled action for entity by actions requests
+*
+* @param {string} entityId
+* @param {Object[]} actionsRequests
+* @param {string} actionType
+* @returns {boolean}
+*/
+export const isDisabledActionForEntityByActionsRequests = (entityId, actionType, actionsRequests) => {
+  switch (actionType) {
+    case WEATHER_ACTIONS_TYPES.declareTicket:
+    case WEATHER_ACTIONS_TYPES.entityAssocTicket:
+    case WEATHER_ACTIONS_TYPES.entityComment:
+    case WEATHER_ACTIONS_TYPES.executeInstruction:
+      return false;
+    default:
+      return actionsRequests.some(({ actionType: requestActionType, entitiesIds: requestEntitiesIds }) => (
+        requestActionType === actionType && requestEntitiesIds.includes(entityId)
+      ));
+  }
+};
