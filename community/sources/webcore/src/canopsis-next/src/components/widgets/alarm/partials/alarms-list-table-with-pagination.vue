@@ -24,6 +24,8 @@ import { isEqual, pick } from 'lodash';
 
 import { SORT_ORDERS } from '@/constants';
 
+import { getPageForNewRecordsPerPage } from '@/helpers/pagination';
+
 /**
  * Group-alarm-list component
  *
@@ -132,6 +134,7 @@ export default {
         ...this.query,
 
         limit,
+        page: getPageForNewRecordsPerPage(limit, this.query.limit, this.query.page),
       });
     },
 

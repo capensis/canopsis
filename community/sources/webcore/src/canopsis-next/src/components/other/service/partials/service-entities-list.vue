@@ -39,6 +39,7 @@ import {
   isActionTypeAvailableForEntity,
 } from '@/helpers/entities/entity/actions';
 import { filterById, mapIds } from '@/helpers/array';
+import { getPageForNewRecordsPerPage } from '@/helpers/pagination';
 
 import { widgetActionPanelServiceEntityMixin } from '@/mixins/widget/actions-panel/service-entity';
 
@@ -149,7 +150,12 @@ export default {
     },
 
     updateRecordsPerPage(rowsPerPage) {
-      this.$emit('update:pagination', { ...this.pagination, rowsPerPage, page: 1 });
+      this.$emit('update:pagination', {
+        ...this.pagination,
+
+        rowsPerPage,
+        page: getPageForNewRecordsPerPage(rowsPerPage, this.pagination.rowsPerPage, this.pagination.page),
+      });
     },
   },
 };
