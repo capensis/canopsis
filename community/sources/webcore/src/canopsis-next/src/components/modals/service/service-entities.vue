@@ -13,6 +13,7 @@
             :widget-parameters="widgetParameters",
             :pagination.sync="pagination",
             :total-items="serviceEntitiesMeta.total_count",
+            :actions-requests="actionsRequests",
             @refresh="refresh",
             @apply:action="applyAction"
           )
@@ -27,12 +28,25 @@
             dense
           )
     template(#actions="")
+      v-alert.actions-requests-alert.my-0.mr-2.pa-1.pr-2(
+        :value="actionsRequests.length",
+        type="info",
+        dismissible,
+        @input="clearActions"
+      ) {{ actionsRequests.length }} {{ $tc('modals.service.actionInQueue', actionsRequests.length) }}
       v-tooltip.mx-2(top)
         template(#activator="{ on }")
           v-btn.secondary(v-on="on", @click="refresh")
             v-icon refresh
         span {{ $t('modals.service.refreshEntities') }}
       v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.close') }}
+      v-btn.primary(
+        v-if="entitiesActionsInQueue",
+        :loading="submitting",
+        :disabled="submitting || !actionsRequests.length",
+        type="submit",
+        @click="submit"
+      ) {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -46,6 +60,7 @@ import Observer from '@/services/observer';
 
 import { createDowntimePbehavior } from '@/helpers/entities/pbehavior';
 import { convertActionToEvents } from '@/helpers/entities/entity';
+import { mapIds } from '@/helpers/entities';
 
 import { authMixin } from '@/mixins/auth';
 import { modalInnerMixin } from '@/mixins/modal/inner';
@@ -54,6 +69,8 @@ import { eventActionsMixin } from '@/mixins/event-actions';
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 import { entitiesServiceEntityMixin } from '@/mixins/entities/service-entity';
 import { localQueryMixin } from '@/mixins/query-local/query';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import ServiceTemplate from '@/components/other/service/partials/service-template.vue';
 import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-simple-list.vue';
@@ -77,11 +94,14 @@ export default {
     eventActionsMixin,
     entitiesPbehaviorMixin,
     entitiesServiceEntityMixin,
+    submittableMixinCreator(),
+    confirmableModalMixinCreator({ field: 'actionsRequests' }),
   ],
   data() {
     return {
       pending: true,
       unavailableEntitiesAction: {},
+      actionsRequests: [],
       query: {
         rowsPerPage: this.modal.config.widgetParameters.modalItemsPerPage ?? PAGINATION_LIMIT,
         sortKey: 'state',
@@ -112,6 +132,10 @@ export default {
     hasPbehaviorListAccess() {
       return this.checkAccess(USERS_PERMISSIONS.business.serviceWeather.actions.pbehaviorList);
     },
+
+    entitiesActionsInQueue() {
+      return this.widgetParameters?.entitiesActionsInQueue ?? false;
+    },
   },
 
   beforeCreate() {
@@ -133,6 +157,12 @@ export default {
   methods: {
     refresh() {
       return this.$periodicRefresh.notify();
+    },
+
+    clearActions(value) {
+      if (!value) {
+        this.actionsRequests = [];
+      }
     },
 
     async fetchList() {
@@ -179,11 +209,22 @@ export default {
       }
     },
 
+    runAction(actionType, entitiesIds, action) {
+      if (this.entitiesActionsInQueue) {
+        this.actionsRequests.push({ actionType, entitiesIds, action });
+
+        return Promise.resolve();
+      }
+
+      return action();
+    },
+
     async applyAction({ entities, actionType, payload }) {
+      const entitiesIds = mapIds(entities);
       if (actionType === WEATHER_ACTIONS_TYPES.entityPause) {
-        await this.createPauseEvent(entities, payload);
+        await this.runAction(actionType, entitiesIds, () => this.createPauseEvent(entities, payload));
       } else if (actionType === WEATHER_ACTIONS_TYPES.entityPlay) {
-        await this.createPlayEvent(entities);
+        await this.runAction(actionType, entitiesIds, () => this.createPlayEvent(entities));
       } else {
         const events = entities.reduce((acc, entity) => {
           acc.push(...convertActionToEvents({
@@ -195,11 +236,25 @@ export default {
           return acc;
         }, []);
 
-        await this.createEventAction({ data: events });
+        await this.runAction(actionType, entitiesIds, () => this.createEventAction({ data: events }));
       }
 
-      await this.fetchList();
+      if (!this.entitiesActionsInQueue) {
+        await this.fetchList();
+      }
+    },
+
+    async submit() {
+      await Promise.all(this.actionsRequests.map(({ action }) => action()));
+
+      this.$modals.hide();
     },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.actions-requests-alert {
+  line-height: 15px;
+}
+</style>
