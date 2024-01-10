@@ -50,7 +50,7 @@
       :total-items="meta.total_count",
       :rows-per-page="query.limit",
       :page="query.page",
-      @update:page="updateQueryPage",
+      @update:page="updatePage",
       @update:rows-per-page="updateRecordsPerPage"
     )
 </template>
@@ -59,6 +59,8 @@
 import { isEqual, pick } from 'lodash';
 
 import { SORT_ORDERS } from '@/constants';
+
+import { getPageForNewRecordsPerPage } from '@/helpers/pagination';
 
 import { authMixin } from '@/mixins/auth';
 import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
@@ -186,8 +188,8 @@ export default {
       this.$emit('update:query', {
         ...this.query,
 
-        page: 1,
         limit,
+        page: getPageForNewRecordsPerPage(limit, this.query.limit, this.query.page),
       });
     },
 

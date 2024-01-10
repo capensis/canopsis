@@ -24,6 +24,8 @@
 <script>
 import { isEqual, pick } from 'lodash';
 
+import { getPageForNewRecordsPerPage } from '@/helpers/pagination';
+
 import { SORT_ORDERS } from '@/constants';
 
 /**
@@ -142,6 +144,7 @@ export default {
         ...this.query,
 
         limit,
+        page: getPageForNewRecordsPerPage(limit, this.query.limit, this.query.page),
       });
     },
 
