@@ -28,6 +28,7 @@ export default {
     requestApproval: 'Request for approval',
     type: 'Instruction type',
     approvalPending: 'Approval pending',
+    approvalDismissed: 'Instruction is dismissed',
     needApprove: 'Approval is needed',
     executeInstruction: 'Execute {instructionName}',
     resumeInstruction: 'Resume {instructionName}',

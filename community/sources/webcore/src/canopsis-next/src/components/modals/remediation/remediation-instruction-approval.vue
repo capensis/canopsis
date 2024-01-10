@@ -1,33 +1,32 @@
 <template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ $t('modals.remediationInstructionApproval.title') }}
-      template(#text="")
-        v-fade-transition
-          v-layout(v-if="!remediationInstructionApproval", justify-center)
-            v-progress-circular(color="primary", indeterminate)
-          v-layout(v-else, column)
-            remediation-instruction-approval-alert(
-              :user-name="remediationInstructionApproval.approval.requested_by.name",
-              :comment="remediationInstructionApproval.approval.comment"
+  modal-wrapper(close)
+    template(#title="")
+      span {{ $t('modals.remediationInstructionApproval.title') }}
+    template(#text="")
+      v-fade-transition
+        v-layout(v-if="!remediationInstructionApproval", justify-center)
+          v-progress-circular(color="primary", indeterminate)
+        v-layout(v-else, column)
+          remediation-instruction-approval-alert(
+            :user-name="remediationInstructionApproval.approval.requested_by.name",
+            :comment="remediationInstructionApproval.approval.comment"
+          )
+            remediation-instruction-approval-form(
+              :disabled="!remediationInstructionApproval",
+              :submitting="submitting",
+              @approve="approve",
+              @dismiss="dismiss"
             )
-              remediation-instruction-approval-form(
-                :disabled="isDisabled || !remediationInstructionApproval",
-                :submitting="submitting",
-                @approve="approve",
-                @dismiss="dismiss"
-              )
-            remediation-instruction-approval-tabs(
-              :original="remediationInstructionApproval.original",
-              :updated="remediationInstructionApproval.updated"
-            )
-      template(#actions="")
-        v-btn(
-          depressed,
-          flat,
-          @click="$modals.hide"
-        ) {{ $t('common.close') }}
+          remediation-instruction-approval-tabs(
+            :original="remediationInstructionApproval.original",
+            :updated="remediationInstructionApproval.updated"
+          )
+    template(#actions="")
+      v-btn(
+        depressed,
+        flat,
+        @click="$modals.hide"
+      ) {{ $t('common.close') }}
 </template>
 
 <script>
