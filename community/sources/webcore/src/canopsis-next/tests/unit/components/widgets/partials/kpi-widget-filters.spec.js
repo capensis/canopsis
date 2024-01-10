@@ -79,7 +79,7 @@ describe('kpi-widget-filters', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders \'kpi-widget-filters\' with custom props', async () => {
@@ -102,6 +102,6 @@ describe('kpi-widget-filters', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

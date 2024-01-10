@@ -159,7 +159,7 @@ exports[`junit-gantt-chart Renders \`junit-gantt-chart\` tooltip with opacity 0.
     />
   </div>
   <c-table-pagination-stub
-    rows-per-page-items="5,10,20"
+    items="5,10,20"
     total-items="0"
   />
 </div>
@@ -197,7 +197,7 @@ exports[`junit-gantt-chart Renders \`junit-gantt-chart\` tooltip without. 1`] = 
     </div>
   </div>
   <c-table-pagination-stub
-    rows-per-page-items="5,10,20"
+    items="5,10,20"
     total-items="0"
   />
 </div>
@@ -235,7 +235,7 @@ exports[`junit-gantt-chart Renders \`junit-gantt-chart\` tooltip. 1`] = `
     </div>
   </div>
   <c-table-pagination-stub
-    rows-per-page-items="5,10,20"
+    items="5,10,20"
     total-items="0"
   />
 </div>

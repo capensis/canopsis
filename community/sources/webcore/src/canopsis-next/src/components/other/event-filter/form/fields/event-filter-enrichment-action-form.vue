@@ -1,55 +1,83 @@
-<template lang="pug">
-  v-card
-    v-card-text
-      v-layout(row, align-start)
-        v-icon.draggable.ml-0.mr-3.mt-3.action-drag-handler drag_indicator
-        v-layout(column)
-          v-layout(row)
-            v-select(
-              v-field="form.type",
-              :items="eventFilterActionTypes",
+<template>
+  <v-card>
+    <v-card-text>
+      <v-layout align-start>
+        <v-icon class="draggable ml-0 mr-3 mt-3 action-drag-handler">
+          drag_indicator
+        </v-icon>
+        <v-layout column>
+          <v-layout>
+            <v-select
+              v-field="form.type"
+              :items="eventFilterActionTypes"
               :label="$t('common.type')"
-            )
-            v-btn.mr-0(icon, @click="remove")
-              v-icon(color="error") delete
-          v-expand-transition
-            event-filter-enrichment-action-form-type-info(v-if="form.type", :type="form.type")
-          v-text-field(
-            v-field="form.description",
-            :label="$t('common.description')",
+            />
+            <v-btn
+              class="mr-0"
+              icon
+              @click="remove"
+            >
+              <v-icon color="error">
+                delete
+              </v-icon>
+            </v-btn>
+          </v-layout>
+          <v-expand-transition>
+            <event-filter-enrichment-action-form-type-info
+              v-if="form.type"
+              :type="form.type"
+            />
+          </v-expand-transition>
+          <v-text-field
+            v-field="form.description"
+            :label="$t('common.description')"
             key="description"
-          )
-          v-layout
-            v-flex(xs5)
-              c-name-field(v-field="form.name", key="name", required)
-            v-flex(xs7)
-              c-payload-text-field.ml-2(
-                v-if="isStringTemplateValueType",
-                v-field="form.value",
-                :label="$t('common.value')",
-                :variables="variables",
-                :name="valueFieldName",
-                key="from",
-                required,
-                clearable
-              )
-              v-combobox.ml-2(
-                v-else-if="isStringCopyValueType",
-                v-field="form.value",
-                v-validate="'required'",
-                :label="$t('common.value')",
-                :error-messages="errors.collect('value')",
-                :items="copyValueVariables",
-                :name="valueFieldName",
+          />
+          <v-layout>
+            <v-flex xs5>
+              <c-name-field
+                v-field="form.name"
+                key="name"
+                required
+              />
+            </v-flex>
+            <v-flex xs7>
+              <c-payload-text-field
+                class="ml-2"
+                v-if="isStringTemplateValueType"
+                v-field="form.value"
+                :label="$t('common.value')"
+                :variables="variables"
+                :name="valueFieldName"
                 key="from"
-              )
-              c-mixed-field.ml-2(
-                v-else,
-                v-field="form.value",
-                :label="$t('common.value')",
-                :name="valueFieldName",
+                required
+                clearable
+              />
+              <v-combobox
+                class="ml-2"
+                v-else-if="isStringCopyValueType"
+                v-field="form.value"
+                v-validate="'required'"
+                :label="$t('common.value')"
+                :error-messages="errors.collect('value')"
+                :items="copyValueVariables"
+                :name="valueFieldName"
+                key="from"
+              />
+              <c-mixed-field
+                class="ml-2"
+                v-else
+                v-field="form.value"
+                :label="$t('common.value')"
+                :name="valueFieldName"
                 key="value"
-              )
+              />
+            </v-flex>
+          </v-layout>
+        </v-layout>
+      </v-layout>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script>

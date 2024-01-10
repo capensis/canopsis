@@ -1,35 +1,48 @@
-<template lang="pug">
-  v-layout(column)
-    field-title(v-field="form.title", :required="requiredTitle")
-    field-periodic-refresh(v-if="withPeriodicRefresh", v-field="form.parameters")
-    field-preset(v-if="withPreset", v-field="form.parameters", :type="form.type")
-    widget-settings-group(:title="$t('settings.chart.metricsDisplay')")
-      field-alarm-metric-presets(
-        v-field="form.parameters.metrics",
-        :parameters="availableParameters",
-        :min="2",
+<template>
+  <v-layout column>
+    <field-title
+      v-field="form.title"
+      :required="requiredTitle"
+    />
+    <field-periodic-refresh
+      v-if="withPeriodicRefresh"
+      v-field="form.parameters"
+    />
+    <field-preset
+      v-if="withPreset"
+      v-field="form.parameters"
+      :type="form.type"
+    />
+    <widget-settings-group :title="$t('settings.chart.metricsDisplay')">
+      <field-alarm-metric-presets
+        v-field="form.parameters.metrics"
+        :parameters="availableParameters"
+        :min="2"
         with-color
-      )
-      field-pie-show-mode(v-field="form.parameters.show_mode")
-    widget-settings-group(:title="$t('settings.advancedSettings')")
-      field-title(
-        v-field="form.parameters.chart_title",
-        :label="$tc('common.header')",
-        :placeholder="$t('settings.headerTitle')",
+      />
+      <field-pie-show-mode v-field="form.parameters.show_mode" />
+    </widget-settings-group>
+    <widget-settings-group :title="$t('settings.advancedSettings')">
+      <field-title
+        v-field="form.parameters.chart_title"
+        :label="$tc('common.header')"
+        :placeholder="$t('settings.headerTitle')"
         name="chart_title"
-      )
-      field-quick-date-interval-type(v-field="form.parameters.default_time_range")
-      field-sampling(v-field="form.parameters.default_sampling")
-      field-alarm-metric-aggregate-function(v-field="form.parameters.aggregate_func")
-      field-filters(
-        v-if="withFilters",
-        :filters="form.filters",
-        addable,
-        editable,
-        with-entity,
-        hide-selector,
+      />
+      <field-quick-date-interval-type v-field="form.parameters.default_time_range" />
+      <field-sampling v-field="form.parameters.default_sampling" />
+      <field-alarm-metric-aggregate-function v-field="form.parameters.aggregate_func" />
+      <field-filters
+        v-if="withFilters"
+        :filters="form.filters"
+        addable
+        editable
+        with-entity
+        hide-selector
         @update:filters="updateFilters"
-      )
+      />
+    </widget-settings-group>
+  </v-layout>
 </template>
 
 <script>

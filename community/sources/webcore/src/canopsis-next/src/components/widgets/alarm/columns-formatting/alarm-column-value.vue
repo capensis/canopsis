@@ -1,34 +1,36 @@
-<template lang="pug">
-  c-compiled-template.alarm-column-value(
-    v-if="column.template",
-    :template="column.template",
+<template>
+  <c-compiled-template
+    class="alarm-column-value"
+    v-if="column.template"
+    :template="column.template"
     :context="templateContext"
-  )
-  color-indicator-wrapper(
-    v-else-if="column.colorIndicatorEnabled",
-    :type="column.colorIndicator",
-    :entity="alarm.entity",
+  />
+  <color-indicator-wrapper
+    v-else-if="column.colorIndicatorEnabled"
+    :type="column.colorIndicator"
+    :entity="alarm.entity"
     :alarm="alarm"
-  )
-    alarm-column-cell(
-      :alarm="alarm",
-      :widget="widget",
-      :column="column",
-      :small="small",
-      :selected-tag="selectedTag",
-      @activate="$emit('activate', $event)",
+  >
+    <alarm-column-cell
+      :alarm="alarm"
+      :widget="widget"
+      :column="column"
+      :small="small"
+      :selected-tag="selectedTag"
+      @activate="$emit('activate', $event)"
       @select:tag="$emit('select:tag', $event)"
-    )
-  alarm-column-cell(
-    v-else,
-    :alarm="alarm",
-    :widget="widget",
-    :column="column",
-    :small="small",
-    :selected-tag="selectedTag",
-    @activate="$emit('activate', $event)",
+    />
+  </color-indicator-wrapper>
+  <alarm-column-cell
+    v-else
+    :alarm="alarm"
+    :widget="widget"
+    :column="column"
+    :small="small"
+    :selected-tag="selectedTag"
+    @activate="$emit('activate', $event)"
     @select:tag="$emit('select:tag', $event)"
-  )
+  />
 </template>
 
 <script>

@@ -1,18 +1,19 @@
-<template lang="pug">
-  v-layout(column)
-    c-enabled-field(
-      v-model="enabled",
-      :label="label",
-      color="primary",
+<template>
+  <v-layout column>
+    <c-enabled-field
+      v-model="enabled"
+      :label="label"
+      color="primary"
       @input="updateIcon"
-    )
-    c-icon-field(
-      v-if="enabled",
-      v-field="icon",
-      :label="$t('common.icon')",
-      :name="name",
+    />
+    <c-icon-field
+      v-if="enabled"
+      v-field="icon"
+      :label="$t('common.icon')"
+      :name="name"
       required
-    )
+    />
+  </v-layout>
 </template>
 
 <script>

@@ -1,12 +1,14 @@
-<template lang="pug">
-  td
-    v-checkbox(
-      v-bind="checkbox.bind",
-      v-on="checkbox.on",
-      :disabled="disabled || disabledForRole",
-      color="primary",
-      hideDetails
-    )
+<template>
+  <td>
+    <v-simple-checkbox
+      class="ma-0 pa-0"
+      v-bind="checkbox.bind"
+      v-on="checkbox.on"
+      :disabled="disabled || disabledForRole"
+      color="primary"
+      hide-details="hideDetails"
+    />
+  </td>
 </template>
 
 <script>
@@ -54,21 +56,21 @@ export default {
             action,
           );
 
-          if (!acc.indeterminate && checkboxValue !== acc.inputValue && !(index === 0 && maskIndex === 0)) {
+          if (!acc.indeterminate && checkboxValue !== acc.value && !(index === 0 && maskIndex === 0)) {
             acc.indeterminate = true;
           }
 
-          acc.inputValue = acc.inputValue || checkboxValue;
+          acc.value = acc.value || checkboxValue;
         });
 
         return acc;
       }, {
-        inputValue: false,
+        value: false,
         indeterminate: false,
       });
 
       const on = {
-        change: value => this.group.permissions.forEach((permission) => {
+        input: value => this.group.permissions.forEach((permission) => {
           const actions = getPermissionActions(permission);
 
           actions.forEach(

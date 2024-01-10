@@ -1,21 +1,23 @@
-<template lang="pug">
-  v-layout(row)
-    date-time-picker-text-field(
-      v-validate="startRules",
-      :value="startString",
-      :label="$t('common.start')",
-      :error-message="errors.collect('start')",
-      name="start",
+<template>
+  <v-layout>
+    <date-time-picker-text-field
+      v-validate="startRules"
+      :value="startString"
+      :label="$t('common.start')"
+      :error-message="errors.collect('start')"
+      name="start"
       @input="updateStartDate"
-    )
-    date-time-picker-text-field.ml-2(
-      v-validate="stopRules",
-      :value="stopString",
-      :label="$t('common.stop')",
-      :error-message="errors.collect('stop')",
-      name="stop",
+    />
+    <date-time-picker-text-field
+      class="ml-2"
+      v-validate="stopRules"
+      :value="stopString"
+      :label="$t('common.stop')"
+      :error-message="errors.collect('stop')"
+      name="stop"
       @input="updateStopDate"
-    )
+    />
+  </v-layout>
 </template>
 
 <script>

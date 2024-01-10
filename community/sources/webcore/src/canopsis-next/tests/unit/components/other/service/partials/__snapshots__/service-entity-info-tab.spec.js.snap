@@ -16,7 +16,7 @@ exports[`service-entity-info-tab Renders \`service-entity-info-tab\` with custom
   </div>
   <service-entity-template-stub
     entity="[object Object]"
-    template=<div>Template</div>
+    template="<div>Template</div>"
   />
 </div>
 `;
