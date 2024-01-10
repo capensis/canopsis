@@ -214,6 +214,7 @@ export default {
     refreshEntities: 'Rafraîchir la liste des entités',
     editPbehaviors: 'Éditer les comportements périodiques',
     massActionsDescription: 'Vous pouvez choisir des entités pour effectuer des actions',
+    actionInQueue: 'action en file d\'attente|actions en file d\'attente',
     entity: {
       tabs: {
         info: 'Info',
