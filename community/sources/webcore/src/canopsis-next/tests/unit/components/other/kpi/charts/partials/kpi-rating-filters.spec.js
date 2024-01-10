@@ -14,7 +14,7 @@ const stubs = {
   'c-filter-field': true,
   'kpi-rating-criteria-field': true,
   'kpi-rating-metric-field': true,
-  'c-records-per-page-field': true,
+  'c-items-per-page-field': true,
 };
 
 describe('kpi-rating-filters', () => {
@@ -23,7 +23,7 @@ describe('kpi-rating-filters', () => {
     filter: null,
     criteria: undefined,
     metric: ALARM_METRIC_PARAMETERS.ackAlarms,
-    rowsPerPage: 5,
+    itemsPerPage: 5,
     interval: {
       from: QUICK_RANGES.last30Days.start,
       to: QUICK_RANGES.last30Days.stop,
@@ -187,7 +187,7 @@ describe('kpi-rating-filters', () => {
           filter: null,
           criteria: undefined,
           metric: ALARM_METRIC_PARAMETERS.ticketActiveAlarms,
-          rowsPerPage: 5,
+          itemsPerPage: 5,
           interval: {
             from: QUICK_RANGES.last30Days.start,
             to: QUICK_RANGES.last30Days.stop,
@@ -198,7 +198,7 @@ describe('kpi-rating-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `kpi-rating-filters` with total user active metric', async () => {
@@ -208,7 +208,7 @@ describe('kpi-rating-filters', () => {
           filter: null,
           criteria: undefined,
           metric: USER_METRIC_PARAMETERS.totalUserActivity,
-          rowsPerPage: 5,
+          itemsPerPage: 5,
           interval: {
             from: QUICK_RANGES.last30Days.start,
             to: QUICK_RANGES.last30Days.stop,
@@ -219,6 +219,6 @@ describe('kpi-rating-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

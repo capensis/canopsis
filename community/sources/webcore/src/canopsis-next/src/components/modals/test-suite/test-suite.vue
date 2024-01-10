@@ -1,13 +1,36 @@
-<template lang="pug">
-  modal-wrapper(:title-color="color", close)
-    template(#title="")
-      span {{ testSuite.name }}
-    template(#text="")
-      v-layout(v-if="testSuiteHistoryPending", justify-center)
-        v-progress-circular(color="primary", indeterminate)
-      test-suite-history(v-else, :test-suite-history="testSuiteHistory")
-    template(#actions="")
-      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+<template>
+  <modal-wrapper
+    :title-color="color"
+    close
+  >
+    <template #title="">
+      <span>{{ testSuite.name }}</span>
+    </template>
+    <template #text="">
+      <v-layout
+        v-if="testSuiteHistoryPending"
+        justify-center
+      >
+        <v-progress-circular
+          color="primary"
+          indeterminate
+        />
+      </v-layout>
+      <test-suite-history
+        v-else
+        :test-suite-history="testSuiteHistory"
+      />
+    </template>
+    <template #actions="">
+      <v-btn
+        depressed
+        text
+        @click="$modals.hide"
+      >
+        {{ $t('common.cancel') }}
+      </v-btn>
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>

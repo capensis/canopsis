@@ -1,13 +1,33 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ $t('modals.createPbehaviorException.title') }}
-      template(#text="")
-        pbehavior-exception-form(v-model="form", with-type)
-      template(#actions="")
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-        v-btn.primary(:disabled="isDisabled", type="submit") {{ $t('common.submit') }}
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ $t('modals.createPbehaviorException.title') }}</span>
+      </template>
+      <template #text="">
+        <pbehavior-exception-form
+          v-model="form"
+          with-type
+        />
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
+          @click="$modals.hide"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          class="primary"
+          :disabled="isDisabled"
+          type="submit"
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>

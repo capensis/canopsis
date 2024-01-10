@@ -7,11 +7,13 @@ import { createInputStub } from '@unit/stubs/input';
 import FastActionOutput from '@/components/sidebars/alarm/form/fields/fast-action-output.vue';
 
 const stubs = {
+  'widget-settings-item': true,
   'c-enabled-field': true,
   'v-text-field': createInputStub('v-text-field'),
 };
 
 const snapshotStubs = {
+  'widget-settings-item': true,
   'c-enabled-field': true,
 };
 
@@ -89,7 +91,7 @@ describe('fast-action-output', () => {
   it('Renders `fast-action-output` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `fast-action-output` with custom props', () => {
@@ -103,6 +105,6 @@ describe('fast-action-output', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

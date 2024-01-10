@@ -69,7 +69,7 @@ describe('snooze-event-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `snooze-event-form` with custom props', () => {
@@ -86,6 +86,6 @@ describe('snooze-event-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });
