@@ -1,17 +1,28 @@
-<template lang="pug">
-  widget-settings-item(:title="$t('settings.chart.fontSize')")
-    v-radio-group.pt-0.mt-0(v-model="enabled", :name="name", hide-details)
-      v-radio(
-        :value="false",
-        :label="$t('settings.chart.auto')",
+<template>
+  <widget-settings-item :title="$t('settings.chart.fontSize')">
+    <v-radio-group
+      class="pt-0 mt-0"
+      v-model="enabled"
+      :name="name"
+      hide-details
+    >
+      <v-radio
+        :value="false"
+        :label="$t('settings.chart.auto')"
         color="primary"
-      )
-      v-radio(
-        :value="true",
-        :label="$t('settings.chart.manual')",
+      />
+      <v-radio
+        :value="true"
+        :label="$t('settings.chart.manual')"
         color="primary"
-      )
-    c-number-field(v-if="enabled", v-field="value", required)
+      />
+    </v-radio-group>
+    <c-number-field
+      v-if="enabled"
+      v-field="value"
+      required
+    />
+  </widget-settings-item>
 </template>
 
 <script>

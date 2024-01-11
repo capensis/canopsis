@@ -19,7 +19,7 @@ describe('saml-login', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `saml-login` without redirect', () => {
@@ -30,6 +30,6 @@ describe('saml-login', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

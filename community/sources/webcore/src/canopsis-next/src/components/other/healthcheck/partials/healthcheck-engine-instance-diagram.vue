@@ -1,7 +1,16 @@
-<template lang="pug">
-  div.instances-diagram.py-2
-    div.instances-diagram__node.my-2(v-for="instanceNumber in optimalInstances", :key="instanceNumber")
-      div.instances-diagram__node__circle(:style="getInstanceStyle(instanceNumber)")
+<template>
+  <div class="instances-diagram py-2">
+    <div
+      class="instances-diagram__node my-2"
+      v-for="instanceNumber in optimalInstances"
+      :key="instanceNumber"
+    >
+      <div
+        class="instances-diagram__node__circle"
+        :style="getInstanceStyle(instanceNumber)"
+      />
+    </div>
+  </div>
 </template>
 
 <script>

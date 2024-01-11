@@ -1,18 +1,24 @@
-<template lang="pug">
-  v-app#app(:dark="system.dark")
-    c-progress-overlay(
-      :pending="wholePending",
-      :transition="false",
+<template>
+  <v-app id="app">
+    <c-progress-overlay
+      :pending="wholePending"
+      :transition="false"
       color="gray"
-    )
-    v-layout(v-if="!wholePending")
-      the-navigation#main-navigation(v-if="currentUser && shownHeader")
-      v-content#main-content
-        active-broadcast-message
-        router-view(:key="routeViewKey")
-    the-sidebar
-    the-modals
-    the-popups
+    />
+    <v-layout v-if="!wholePending">
+      <the-navigation
+        id="main-navigation"
+        v-if="currentUser && shownHeader"
+      />
+      <v-main id="main-content">
+        <active-broadcast-message />
+        <router-view :key="routeViewKey" />
+      </v-main>
+    </v-layout>
+    <the-sidebar />
+    <the-modals />
+    <the-popups />
+  </v-app>
 </template>
 
 <script>

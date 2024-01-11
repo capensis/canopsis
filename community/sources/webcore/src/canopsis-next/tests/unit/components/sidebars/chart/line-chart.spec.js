@@ -235,7 +235,7 @@ describe('line-chart', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `line-chart` widget settings with custom props and permissions', async () => {
@@ -276,6 +276,6 @@ describe('line-chart', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

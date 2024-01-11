@@ -1,12 +1,17 @@
-<template lang="pug">
-  v-radio-group.mt-0(v-field="value", hide-details)
-    v-radio(
-      v-for="{ value, text } in availableSizes",
-      :key="value",
-      :value="value",
-      :label="text",
+<template>
+  <v-radio-group
+    class="mt-0"
+    v-field="value"
+    hide-details
+  >
+    <v-radio
+      v-for="{ value: size, text } in availableSizes"
+      :key="size"
+      :value="size"
+      :label="text"
       color="primary"
-    )
+    />
+  </v-radio-group>
 </template>
 
 <script>

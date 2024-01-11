@@ -8,11 +8,11 @@ exports[`view-form Renders \`view-form\` with custom props 1`] = `
   <c-name-field-stub
     label="Title"
     name="title"
-    required="required"
+    required=""
     value="View title"
   />
   <div
-    class="v-input v-text-field v-input--is-label-active v-input--is-dirty theme--light"
+    class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field"
   >
     <div
       class="v-input__control"
@@ -24,14 +24,12 @@ exports[`view-form Renders \`view-form\` with custom props 1`] = `
           class="v-text-field__slot"
         >
           <label
-            aria-hidden="true"
             class="v-label v-label--active theme--light"
             style="left: 0px; position: absolute;"
           >
             Description
           </label>
           <input
-            aria-label="Description"
             name="description"
             type="text"
           />
@@ -43,8 +41,10 @@ exports[`view-form Renders \`view-form\` with custom props 1`] = `
         <div
           class="v-messages theme--light"
         >
-          <div
+          <transition-group-stub
             class="v-messages__wrapper"
+            name="message-transition"
+            tag="div"
           />
         </div>
       </div>
@@ -76,10 +76,10 @@ exports[`view-form Renders \`view-form\` with default props 1`] = `
   <c-name-field-stub
     label="Title"
     name="title"
-    required="required"
+    required=""
   />
   <div
-    class="v-input v-text-field theme--light"
+    class="v-input theme--light v-text-field"
   >
     <div
       class="v-input__control"
@@ -91,14 +91,12 @@ exports[`view-form Renders \`view-form\` with default props 1`] = `
           class="v-text-field__slot"
         >
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: absolute;"
           >
             Description
           </label>
           <input
-            aria-label="Description"
             name="description"
             type="text"
           />
@@ -110,8 +108,10 @@ exports[`view-form Renders \`view-form\` with default props 1`] = `
         <div
           class="v-messages theme--light"
         >
-          <div
+          <transition-group-stub
             class="v-messages__wrapper"
+            name="message-transition"
+            tag="div"
           />
         </div>
       </div>

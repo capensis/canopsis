@@ -48,7 +48,7 @@ describe('c-expand-btn', () => {
   it('Renders `c-expand-btn` correctly.', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-expand-btn` expanded correctly.', () => {
@@ -56,7 +56,7 @@ describe('c-expand-btn', () => {
       propsData: { expanded: true },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-expand-btn` with custom color correctly.', () => {
@@ -64,6 +64,6 @@ describe('c-expand-btn', () => {
       propsData: { color: 'custom-color' },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

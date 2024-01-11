@@ -1,13 +1,20 @@
-<template lang="pug">
-  v-tooltip(:disabled="!text", right)
-    template(#activator="{ on }")
-      div.color-indicator(
-        v-on="on",
-        :class="{ 'color-indicator--invalid': !text }",
+<template>
+  <v-tooltip
+    :disabled="!text"
+    right
+  >
+    <template #activator="{ on }">
+      <div
+        class="color-indicator"
+        v-on="on"
+        :class="{ 'color-indicator--invalid': !text }"
         :style="{ backgroundColor: color }"
-      )
-        slot {{ value }}
-    span {{ text }}
+      >
+        <slot>{{ value }}</slot>
+      </div>
+    </template>
+    <span>{{ text }}</span>
+  </v-tooltip>
 </template>
 
 <script>

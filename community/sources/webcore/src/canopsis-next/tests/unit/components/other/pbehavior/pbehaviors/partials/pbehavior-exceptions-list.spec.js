@@ -35,7 +35,7 @@ describe('pbehavior-exceptions-list', () => {
   test('Renders `pbehavior-exceptions-list` without exceptions', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pbehavior-exceptions-list` with exceptions', () => {
@@ -45,6 +45,6 @@ describe('pbehavior-exceptions-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });
