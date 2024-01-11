@@ -14,7 +14,7 @@
     :expandable="expandable"
     :hide-actions="hideActions"
     :hide-pagination="hidePagination"
-    @update:page="updateQueryPage"
+    @update:page="updatePage"
     @update:items-per-page="updateItemsPerPage"
   />
 </template>
@@ -23,6 +23,7 @@
 import { PAGINATION_LIMIT } from '@/config';
 
 import { convertDataTableOptionsToQuery } from '@/helpers/entities/shared/query';
+import { getPageForNewItemsPerPage } from '@/helpers/pagination';
 
 /**
  * Group-alarm-list component
@@ -98,9 +99,15 @@ export default {
       },
 
       set(newOptions) {
+        const convertedOptions = convertDataTableOptionsToQuery(newOptions, this.options);
+
+        if (convertedOptions === this.options) {
+          return;
+        }
+
         this.$emit('update:query', {
           ...this.query,
-          ...convertDataTableOptionsToQuery(newOptions, this.options),
+          ...convertedOptions,
         });
       },
     },
@@ -111,10 +118,11 @@ export default {
         ...this.query,
 
         itemsPerPage,
+        page: getPageForNewItemsPerPage(itemsPerPage, this.query.itemsPerPage, this.query.page),
       });
     },
 
-    updateQueryPage(page) {
+    updatePage(page) {
       this.$emit('update:query', {
         ...this.query,
 

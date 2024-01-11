@@ -32,22 +32,26 @@ export const convertSortToQuery = ({ parameters }) => {
 /**
  * Convert vuetify data table sort options to sort options with comparison
  *
- * @param {DataTableSortOptions} newOptions
- * @param {DataTableSortOptions} oldOptions
+ * @param {DataTableSortOptions} [newOptions = {}]
+ * @param {DataTableSortOptions} [oldOptions = {}]
+ * @param {string[]} [optionsKeys = ['page', 'itemsPerPage', 'sortBy', 'sortDesc']]
  * @return {DataTableSortOptions}
  */
-export const convertDataTableOptionsToQuery = (newOptions = {}, oldOptions = {}) => {
-  const optionsKeys = ['sortBy', 'sortDesc'];
+export const convertDataTableOptionsToQuery = (
+  newOptions = {},
+  oldOptions = {},
+  optionsKeys = ['page', 'itemsPerPage', 'sortBy', 'sortDesc'],
+) => {
   const newOptionsToCompare = pick(newOptions, optionsKeys);
   const oldOptionsToCompare = pick(oldOptions, optionsKeys);
 
   if (isEqual(newOptionsToCompare, oldOptionsToCompare)) {
-    return oldOptionsToCompare;
+    return oldOptions;
   }
 
-  const { sortBy = [], sortDesc = [] } = newOptions;
+  const { page = 1, itemsPerPage = PAGINATION_LIMIT, sortBy = [], sortDesc = [] } = newOptions;
 
-  return { sortBy, sortDesc };
+  return { page, itemsPerPage, sortBy, sortDesc };
 };
 
 /**

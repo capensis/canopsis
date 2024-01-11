@@ -50,7 +50,7 @@
             :limit="options.itemsPerPage"
             :total="totalItems"
             type="top"
-            @input="updateQueryPage"
+            @input="updatePage"
           />
         </v-flex>
         <v-flex
@@ -171,7 +171,7 @@
       :total-items="totalItems"
       :items-per-page="options.itemsPerPage"
       :page="options.page"
-      @update:page="updateQueryPage"
+      @update:page="updatePage"
       @update:items-per-page="updateItemsPerPage"
     />
     <component
@@ -558,7 +558,7 @@ export default {
       this.$emit('update:items-per-page', limit);
     },
 
-    updateQueryPage(page) {
+    updatePage(page) {
       this.$emit('update:page', page);
     },
 

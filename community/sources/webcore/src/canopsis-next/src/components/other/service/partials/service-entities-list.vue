@@ -44,9 +44,9 @@
     </div>
     <c-table-pagination
       class="mt-1"
-      v-if="totalItems > options?.itemsPerPage"
+      v-if="totalItems > options.itemsPerPage"
       :total-items="totalItems"
-      :items-per-page="options?.itemsPerPage"
+      :items-per-page="options.itemsPerPage"
       :page="options.page"
       @update:page="updatePage"
       @update:items-per-page="updateItemsPerPage"
@@ -61,6 +61,7 @@ import {
   isActionTypeAvailableForEntity,
 } from '@/helpers/entities/entity/actions';
 import { filterById, mapIds } from '@/helpers/array';
+import { getPageForNewItemsPerPage } from '@/helpers/pagination';
 
 import { widgetActionPanelServiceEntityMixin } from '@/mixins/widget/actions-panel/service-entity';
 
@@ -171,10 +172,13 @@ export default {
     },
 
     updateItemsPerPage(itemsPerPage) {
-      this.$emit('update:options', { ...this.options, itemsPerPage, page: 1 });
+      this.$emit('update:options', {
+        ...this.options,
+
+        itemsPerPage,
+        page: getPageForNewItemsPerPage(itemsPerPage, this.options.itemsPerPage, this.options.page),
+      });
     },
   },
 };
-</script>
-<script setup>
 </script>
