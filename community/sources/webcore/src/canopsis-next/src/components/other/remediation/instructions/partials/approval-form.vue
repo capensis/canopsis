@@ -1,39 +1,58 @@
-<template lang="pug">
-  v-layout(column)
-    c-description-field(
-      v-if="dismissing",
-      v-model="form.comment",
-      :label="$tc('common.comment')",
-      name="dismiss_comment",
+<template>
+  <v-layout column="column">
+    <c-description-field
+      v-if="dismissing"
+      v-model="form.comment"
+      :label="$tc('common.comment')"
+      name="dismiss_comment"
       required
-    )
-    v-layout(justify-end)
-      template(v-if="!dismissing")
-        v-btn.warning(
-          depressed,
-          flat,
+    />
+    <v-layout justify-end>
+      <template v-if="!dismissing">
+        <v-btn
+          class="warning mr-2"
+          depressed
+          text
           @click="showDismissComment"
-        ) {{ $t('common.dismiss') }}
-        v-btn(
-          :loading="submitting",
-          :disabled="disabled",
-          color="primary",
+        >
+          {{ $t('common.dismiss') }}
+        </v-btn>
+        <v-btn
+          :loading="submitting"
+          :disabled="disabled"
+          color="primary"
           @click="approve"
-        ) {{ $t('common.approve') }}
-      template(v-else)
-        v-btn(
-          depressed,
-          flat,
+        >
+          {{ $t('common.approve') }}
+        </v-btn>
+      </template>
+      <template v-else>
+        <v-btn
+          class="mr-2"
+          depressed
+          text
           @click="cancelDismiss"
-        ) {{ $t('common.cancel') }}
-        v-btn(
-          :loading="submitting",
-          :disabled="disabled || errors.any()",
-          depressed,
-          flat,
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :loading="submitting"
+          :disabled="disabled || errors.any()"
+          depressed
+          text
           @click="dismiss"
-        ) {{ $t('common.dismiss') }}
-          v-icon(color="error", right) cancel
+        >
+          {{ $t('common.dismiss') }}
+          <v-icon
+            color="error"
+            right
+          >
+            cancel
+          </v-icon>
+        </v-btn>
+      </template>
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>

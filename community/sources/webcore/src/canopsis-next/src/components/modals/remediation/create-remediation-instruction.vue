@@ -1,28 +1,43 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ title }}
-      template(#text="")
-        remediation-instruction-approval-alert.mb-3(
-          v-if="hasApproval && isChangesByCurrentUser",
-          :user-name="alertUserName",
-          :comment="alertComment",
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        {{ title }}
+      </template>
+      <template #text="">
+        <remediation-instruction-approval-alert
+          class="mb-3"
+          v-if="hasApproval && isChangesByCurrentUser"
+          :user-name="alertUserName"
+          :comment="alertComment"
           :dismissed="isChangesDismissed"
-        )
-        remediation-instruction-form(
-          v-model="form",
-          :disabled="disabled",
-          :is-new="isNew",
+        />
+        <remediation-instruction-form
+          v-model="form"
+          :disabled="disabled"
+          :is-new="isNew"
           :required-approve="requiredInstructionApprove"
-        )
-      template(#actions="")
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-        v-btn.primary(
-          :disabled="isDisabled",
-          :loading="submitting",
+        />
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
+          @click="$modals.hide"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          class="primary"
+          :disabled="isDisabled"
+          :loading="submitting"
           type="submit"
-        ) {{ $t('common.submit') }}
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>

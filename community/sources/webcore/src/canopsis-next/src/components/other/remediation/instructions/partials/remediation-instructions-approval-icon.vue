@@ -1,9 +1,15 @@
-<template lang="pug">
-  v-tooltip(:disabled="isApproved", top)
-    template(#activator="{ on }")
-      span(v-on="on")
-        v-icon(:color="iconData.color") {{ iconData.name }}
-    span {{ iconData.tooltip }}
+<template>
+  <v-tooltip
+    :disabled="isApproved"
+    top="top"
+  >
+    <template #activator="{ on }">
+      <span v-on="on">
+        <v-icon :color="iconData.color">{{ iconData.name }}</v-icon>
+      </span>
+    </template>
+    {{ iconData.tooltip }}
+  </v-tooltip>
 </template>
 
 <script>
