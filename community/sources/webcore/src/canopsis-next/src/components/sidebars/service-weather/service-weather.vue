@@ -97,6 +97,8 @@
       field-modal-type(v-model="form.parameters.modalType")
       v-divider
       field-action-required-settings(v-model="form.parameters.actionRequiredSettings")
+      v-divider
+      field-switcher(v-model="form.parameters.entitiesActionsInQueue", :title="$t('settings.entitiesActionsInQueue')")
     v-divider
 </template>
 
