@@ -1,15 +1,15 @@
-import { isEqual, pick } from 'lodash';
-
-import { PAGINATION_LIMIT } from '@/config';
-
-import { convertDataTableOptionsToQuery, convertWidgetQueryToRequest } from '@/helpers/entities/shared/query';
+import { convertWidgetQueryToRequest } from '@/helpers/entities/shared/query';
+import { getPageForNewItemsPerPage } from '@/helpers/pagination';
 
 import { queryMixin } from '@/mixins/query';
 import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
 
+import { widgetOptionsMixin } from './options';
+
 export const queryWidgetMixin = {
   mixins: [
     queryMixin,
+    widgetOptionsMixin,
     entitiesUserPreferenceMixin,
   ],
   props: {
@@ -39,29 +39,6 @@ export const queryWidgetMixin = {
     tabQueryNonce() {
       return this.getQueryNonceById(this.tabId);
     },
-
-    options: {
-      get() {
-        const { page = 1, itemsPerPage = PAGINATION_LIMIT, sortBy = [], sortDesc = [] } = this.query;
-
-        return { page, itemsPerPage, sortBy, sortDesc };
-      },
-
-      set(newOptions) {
-        const paginationKeys = ['sortBy', 'sortDesc'];
-        const newPagination = pick(newOptions, paginationKeys);
-        const oldPagination = pick(this.options, paginationKeys);
-
-        if (isEqual(newPagination, oldPagination)) {
-          return;
-        }
-
-        this.query = {
-          ...this.query,
-          ...convertDataTableOptionsToQuery(newOptions, this.options),
-        };
-      },
-    },
   },
   methods: {
     getQuery() {
@@ -69,13 +46,16 @@ export const queryWidgetMixin = {
     },
 
     updateItemsPerPage(itemsPerPage) {
-      this.updateLockedQuery({
+      this.updateLockedQueryById({
         id: this.queryId,
-        query: { itemsPerPage },
+        query: {
+          itemsPerPage,
+          page: getPageForNewItemsPerPage(itemsPerPage, this.query.itemsPerPage, this.query.page),
+        },
       });
     },
 
-    updateQueryPage(page) {
+    updatePage(page) {
       this.query = { ...this.query, page };
     },
   },

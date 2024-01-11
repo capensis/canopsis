@@ -107,6 +107,7 @@ describe('alarms-list', () => {
     _id: '880c5d0c-3f31-477c-8365-2f90389326cc',
   };
   const defaultQuery = {
+    page: 1,
     filters: [],
     sortBy: [],
     sortDesc: [],
@@ -905,6 +906,8 @@ describe('alarms-list', () => {
         id: widget._id,
         query: {
           ...defaultQuery,
+
+          page: 1,
           itemsPerPage: newLimit,
         },
       },
