@@ -90,7 +90,7 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
   <alarms-list-table-stub
     alarms="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     cellscontentbehavior="wrap"
-    class="mt-1"
+    class="mt-2"
     columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     columnssettings="[object Object]"
     densable="true"
@@ -188,7 +188,7 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
   <alarms-list-table-stub
     alarms="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     cellscontentbehavior="wrap"
-    class="mt-1"
+    class="mt-2"
     columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     columnssettings="[object Object]"
     densable="true"
@@ -334,7 +334,7 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
   <alarms-list-table-stub
     alarms="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     cellscontentbehavior="wrap"
-    class="mt-1"
+    class="mt-2"
     columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     columnssettings="[object Object]"
     densable="true"
