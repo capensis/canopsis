@@ -264,7 +264,7 @@ describe('create-pbehavior', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `create-pbehavior` with pbehavior', () => {
@@ -285,6 +285,6 @@ describe('create-pbehavior', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -163,7 +163,7 @@ describe('c-advanced-search-field', () => {
 
     const tooltipContent = wrapper.find('.v-tooltip__content');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(tooltipContent.element).toMatchSnapshot();
   });
 });

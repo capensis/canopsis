@@ -122,7 +122,7 @@ describe('periodic-refresh', () => {
   it('Renders `periodic-refresh` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `periodic-refresh` with with life watching', () => {
@@ -132,7 +132,7 @@ describe('periodic-refresh', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `periodic-refresh` with custom props', () => {
@@ -148,7 +148,7 @@ describe('periodic-refresh', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `periodic-refresh` with errors', async () => {
@@ -185,6 +185,6 @@ describe('periodic-refresh', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

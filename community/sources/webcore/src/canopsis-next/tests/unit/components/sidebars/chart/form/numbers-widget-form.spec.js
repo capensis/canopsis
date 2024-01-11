@@ -220,7 +220,7 @@ describe('numbers-widget-form', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `numbers-widget-form` widget settings with custom props', async () => {
@@ -248,6 +248,6 @@ describe('numbers-widget-form', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

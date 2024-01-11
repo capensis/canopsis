@@ -17,7 +17,7 @@ describe('alarms-expand-panel-more-infos', () => {
   it('Renders `alarms-expand-panel-more-infos` without template', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-expand-panel-more-infos` with template', async () => {
@@ -35,6 +35,6 @@ describe('alarms-expand-panel-more-infos', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -1,42 +1,48 @@
-<template lang="pug">
-  v-layout(:row="row", :column="column")
-    v-flex(:xs6="row")
-      v-combobox(
-        v-if="combobox",
-        v-field="value.dictionary",
-        v-validate="'required'",
-        :items="items",
-        :disabled="disabled",
-        :label="label || $t('common.dictionary')",
-        :return-object="false",
-        :name="dictionaryName",
-        :error-messages="errors.collect(dictionaryName)",
-        :loading="pending",
-        :hide-details="row",
-        item-text="value",
+<template>
+  <v-layout :column="column">
+    <v-flex :xs6="row">
+      <v-combobox
+        v-if="combobox"
+        v-field="value.dictionary"
+        v-validate="'required'"
+        :items="items"
+        :disabled="disabled"
+        :label="label || $t('common.dictionary')"
+        :return-object="false"
+        :name="dictionaryName"
+        :error-messages="errors.collect(dictionaryName)"
+        :loading="pending"
+        :hide-details="row"
+        item-text="value"
         item-value="value"
-      )
-      v-text-field(
-        v-else,
-        v-field="value.dictionary",
-        v-validate="'required'",
-        :disabled="disabled",
-        :label="label || $t('common.dictionary')",
-        :error-messages="errors.collect(dictionaryName)",
-        :name="dictionaryName",
+      />
+      <v-text-field
+        v-else
+        v-field="value.dictionary"
+        v-validate="'required'"
+        :disabled="disabled"
+        :label="label || $t('common.dictionary')"
+        :error-messages="errors.collect(dictionaryName)"
+        :name="dictionaryName"
         :hide-details="row"
-      )
-    v-flex(:class="{ 'pl-3': row }", :xs6="row")
-      v-select(
-        v-field="value.field",
-        v-validate="'required'",
-        :items="fieldItems",
-        :disabled="disabled || !value.dictionary",
-        :label="label || $t('common.field')",
-        :name="fieldName",
-        :error-messages="errors.collect(fieldName)",
+      />
+    </v-flex>
+    <v-flex
+      :class="{ 'pl-3': row }"
+      :xs6="row"
+    >
+      <v-select
+        v-field="value.field"
+        v-validate="'required'"
+        :items="fieldItems"
+        :disabled="disabled || !value.dictionary"
+        :label="label || $t('common.field')"
+        :name="fieldName"
+        :error-messages="errors.collect(fieldName)"
         :hide-details="row"
-      )
+      />
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
