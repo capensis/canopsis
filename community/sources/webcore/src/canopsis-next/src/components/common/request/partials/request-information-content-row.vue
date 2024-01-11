@@ -1,18 +1,41 @@
-<template lang="pug">
-  div.request-information-content-row(v-click-outside.contextmenu="clickOutsideDirective")
-    v-menu(
-      v-model="contextmenu.active",
-      :position-x="contextmenu.x",
+<template>
+  <div
+    class="request-information-content-row"
+    v-click-outside.contextmenu="clickOutsideDirective"
+  >
+    <v-menu
+      v-model="contextmenu.active"
+      :position-x="contextmenu.x"
       :position-y="contextmenu.y"
-    )
-      v-list(dense)
-        v-list-tile(v-for="item in items", :key="item.text", @click="item.action")
-          v-list-tile-content
-            v-list-tile-title {{ item.text }}
-    span.request-information-content-row__key(@contextmenu.prevent="openContextmenu") {{ row.name }}
-    template(v-if="hasRowValue")
-      span :&nbsp;
-      span.request-information-content-row__value(@contextmenu.prevent="openContextmenu") {{ parsedValue }}
+    >
+      <v-list dense>
+        <v-list-item
+          v-for="item in items"
+          :key="item.text"
+          @click="item.action"
+        >
+          <v-list-item-content>
+            <v-list-item-title>{{ item.text }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-menu>
+    <span
+      class="request-information-content-row__key"
+      @contextmenu.prevent="openContextmenu"
+    >
+      {{ row.name }}
+    </span>
+    <template v-if="hasRowValue">
+      :&nbsp;
+      <span
+        class="request-information-content-row__value"
+        @contextmenu.prevent="openContextmenu"
+      >
+        {{ parsedValue }}
+      </span>
+    </template>
+  </div>
 </template>
 
 <script>

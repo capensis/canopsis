@@ -24,7 +24,7 @@ describe('login', () => {
   it('Renders `login` with default state', () => {
     const wrapper = snapshotFactory({ store });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `login` with custom state', () => {
@@ -39,6 +39,6 @@ describe('login', () => {
       ]),
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

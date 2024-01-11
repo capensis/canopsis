@@ -151,7 +151,7 @@ describe('text-editor', () => {
   it('Renders `text-editor` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `text-editor` with custom props', () => {
@@ -162,6 +162,6 @@ describe('text-editor', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

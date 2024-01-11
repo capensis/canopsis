@@ -19,19 +19,19 @@ exports[`point-form-dialog Renders \`point-form-dialog\` with custom props 1`] =
           Edit point
         </h4>
         <button
-          class="ma-0 ml-3 v-btn v-btn--icon v-btn--small theme--light"
+          class="ma-0 ml-3 v-btn v-btn--icon v-btn--round theme--light v-size--small"
           type="button"
         >
-          <div
+          <span
             class="v-btn__content"
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light white--text"
+              class="v-icon notranslate material-icons theme--light white--text"
             >
               close
             </i>
-          </div>
+          </span>
         </button>
       </div>
     </div>
@@ -45,37 +45,37 @@ exports[`point-form-dialog Renders \`point-form-dialog\` with custom props 1`] =
       />
     </div>
     <div
-      class="layout justify-end"
+      class="v-card__actions v-layout justify-end"
     >
       <button
-        class="v-btn v-btn--flat theme--light"
+        class="v-btn v-btn--text theme--light v-size--default"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Cancel
-        </div>
+        Cancel
+        </span>
       </button>
       <button
-        class="v-btn v-btn--flat theme--light error--text"
+        class="v-btn v-btn--text theme--light v-size--default error--text"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Delete
-        </div>
+        Delete
+        </span>
       </button>
       <button
-        class="primary v-btn theme--light"
+        class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Submit
-        </div>
+        Submit
+        </span>
       </button>
     </div>
   </div>
@@ -101,19 +101,19 @@ exports[`point-form-dialog Renders \`point-form-dialog\` with required props 1`]
           Add point
         </h4>
         <button
-          class="ma-0 ml-3 v-btn v-btn--icon v-btn--small theme--light"
+          class="ma-0 ml-3 v-btn v-btn--icon v-btn--round theme--light v-size--small"
           type="button"
         >
-          <div
+          <span
             class="v-btn__content"
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light white--text"
+              class="v-icon notranslate material-icons theme--light white--text"
             >
               close
             </i>
-          </div>
+          </span>
         </button>
       </div>
     </div>
@@ -126,28 +126,28 @@ exports[`point-form-dialog Renders \`point-form-dialog\` with required props 1`]
       />
     </div>
     <div
-      class="layout justify-end"
+      class="v-card__actions v-layout justify-end"
     >
       <button
-        class="v-btn v-btn--flat theme--light"
+        class="v-btn v-btn--text theme--light v-size--default"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Cancel
-        </div>
+        Cancel
+        </span>
       </button>
       <!---->
       <button
-        class="primary v-btn theme--light"
+        class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Submit
-        </div>
+        Submit
+        </span>
       </button>
     </div>
   </div>

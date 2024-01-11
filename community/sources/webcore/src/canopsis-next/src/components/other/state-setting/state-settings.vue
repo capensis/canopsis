@@ -1,9 +1,9 @@
-<template lang="pug">
-  state-settings-list(
-    :state-settings="stateSettingsWithStaticSetting",
-    :pending="stateSettingsPending",
+<template>
+  <state-settings-list
+    :state-settings="stateSettingsWithStaticSetting"
+    :pending="stateSettingsPending"
     @edit="showEditStateSettingModal"
-  )
+  />
 </template>
 
 <script>

@@ -1,10 +1,15 @@
-<template lang="pug">
-  widget-settings(:submitting="submitting", divider, @submit="submit")
-    line-chart-widget-form(
-      v-model="form",
-      :with-filters="hasAccessToListFilters",
+<template>
+  <widget-settings
+    :submitting="submitting"
+    divider
+    @submit="submit"
+  >
+    <line-chart-widget-form
+      v-model="form"
+      :with-filters="hasAccessToListFilters"
       with-periodic-refresh
-    )
+    />
+  </widget-settings>
 </template>
 
 <script>

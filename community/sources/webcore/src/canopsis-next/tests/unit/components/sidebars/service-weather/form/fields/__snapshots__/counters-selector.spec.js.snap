@@ -8,19 +8,19 @@ exports[`field-counters-selector Renders \`field-counters-selector\` with custom
     class="layout column"
   >
     <c-enabled-field-stub
-      hide-details="hide-details"
+      hide-details=""
       label="Pbehavior counters"
       value="true"
     />
     <c-pbehavior-type-field-stub
-      chips="chips"
+      chips=""
       max="3"
-      multiple="multiple"
+      multiple=""
       required="true"
       value="pbh-type"
     />
     <c-enabled-field-stub
-      hide-details="hide-details"
+      hide-details=""
       label="Entity states counters"
       value="true"
     />
@@ -40,18 +40,18 @@ exports[`field-counters-selector Renders \`field-counters-selector\` with disabl
     class="layout column"
   >
     <c-enabled-field-stub
-      hide-details="hide-details"
+      hide-details=""
       label="Pbehavior counters"
     />
     <c-pbehavior-type-field-stub
-      chips="chips"
+      chips=""
       disabled="true"
       max="3"
-      multiple="multiple"
+      multiple=""
       value=""
     />
     <c-enabled-field-stub
-      hide-details="hide-details"
+      hide-details=""
       label="Entity states counters"
     />
     <c-service-weather-state-counter-field-stub

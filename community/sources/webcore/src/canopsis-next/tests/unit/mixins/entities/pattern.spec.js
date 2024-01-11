@@ -73,7 +73,7 @@ describe('Entities pattern mixin', () => {
   });
 
   test('Patterns list fetched with error', async () => {
-    const error = Faker.datatype.string();
+    const error = Faker.lorem.word();
     const params = {
       page: Faker.datatype.string(),
     };

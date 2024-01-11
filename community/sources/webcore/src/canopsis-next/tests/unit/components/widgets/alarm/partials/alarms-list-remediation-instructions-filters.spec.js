@@ -158,7 +158,7 @@ describe('alarms-list-remediation-instructions-filters', () => {
   it('Renders `alarms-list-remediation-instructions-filters` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-remediation-instructions-filters` with custom props', async () => {
@@ -173,7 +173,7 @@ describe('alarms-list-remediation-instructions-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-remediation-instructions-filters` with locked filters props', async () => {
@@ -186,7 +186,7 @@ describe('alarms-list-remediation-instructions-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-remediation-instructions-filters` with access, but without filters filters props', async () => {
@@ -199,6 +199,6 @@ describe('alarms-list-remediation-instructions-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

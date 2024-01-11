@@ -1,32 +1,62 @@
-<template lang="pug">
-  v-layout.secondary.lighten-2.py-3(row)
-    v-flex(xs12, sm8, offset-sm2)
-      v-card
-        v-card-text
-          v-layout(wrap, justify-center, align-center)
-            v-flex(xs12)
-              scenario-info-item(
-                :label="$t('common.author')",
-                :value="scenario.author.display_name",
+<template>
+  <v-layout
+    class="secondary lighten-2 py-3"
+  >
+    <v-flex
+      xs12
+      sm8
+      offset-sm2
+    >
+      <v-card>
+        <v-card-text>
+          <v-layout
+            wrap
+            justify-center
+            align-center
+          >
+            <v-flex
+              v-if="scenario.author"
+              xs12
+            >
+              <scenario-info-item
+                :label="$t('common.author')"
+                :value="scenario.author.display_name"
                 icon="person"
-              )
-            v-flex(xs12)
-              scenario-info-item(
-                :label="$tc('common.trigger', 2)",
-                :value="preparedTriggers",
+              />
+            </v-flex>
+            <v-flex xs12>
+              <scenario-info-item
+                :label="$tc('common.trigger', 2)"
+                :value="preparedTriggers"
                 icon="bolt"
-              )
-            v-flex(v-if="hasDisableDuringPeriods", xs12)
-              scenario-info-item(
-                :label="$t('common.disableDuringPeriods')",
-                :value="scenario.disable_during_periods.join(', ')",
+              />
+            </v-flex>
+            <v-flex
+              v-if="hasDisableDuringPeriods"
+              xs12
+            >
+              <scenario-info-item
+                :label="$t('common.disableDuringPeriods')"
+                :value="scenario.disable_during_periods.join(', ')"
                 icon="highlight_off"
-              )
-            v-flex.mt-2(v-for="(action, index) in scenario.actions", :key="index", xs12)
-              scenario-action-card(
-                :action="action",
+              />
+            </v-flex>
+            <v-flex
+              class="mt-2"
+              v-for="(action, index) in scenario.actions"
+              :key="index"
+              xs12
+            >
+              <scenario-action-card
+                :action="action"
                 :action-number="index + 1"
-              )
+              />
+            </v-flex>
+          </v-layout>
+        </v-card-text>
+      </v-card>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

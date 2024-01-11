@@ -1,11 +1,11 @@
-<template lang="pug">
-  v-autocomplete(
-    v-field="value",
-    :items="timezones",
-    :label="fieldLabel",
-    :disabled="disabled",
+<template>
+  <v-autocomplete
+    v-field="value"
+    :items="timezones"
+    :label="fieldLabel"
+    :disabled="disabled"
     :name="name"
-  )
+  />
 </template>
 
 <script>

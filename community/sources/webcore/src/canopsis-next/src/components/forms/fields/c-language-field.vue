@@ -1,10 +1,10 @@
-<template lang="pug">
-  v-select(
-    v-field="value",
-    :items="languages",
-    :disabled="disabled",
+<template>
+  <v-select
+    v-field="value"
+    :items="languages"
+    :disabled="disabled"
     :label="label"
-  )
+  />
 </template>
 
 <script>

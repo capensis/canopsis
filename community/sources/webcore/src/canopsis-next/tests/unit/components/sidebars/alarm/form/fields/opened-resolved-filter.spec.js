@@ -47,7 +47,7 @@ describe('opened-resolved-filter', () => {
   it('Renders `opened-resolved-filter` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `opened-resolved-filter` with custom props', () => {
@@ -57,6 +57,6 @@ describe('opened-resolved-filter', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

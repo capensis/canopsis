@@ -5,10 +5,10 @@ exports[`storage-settings-perf-data-metrics-form Renders \`storage-settings-perf
   class="layout c-information-block column"
 >
   <div
-    class="layout row"
+    class="layout"
   >
     <div
-      class="subheading font-weight-bold"
+      class="text-subtitle-1 font-weight-bold"
     >
       External metrics data storage
     </div>
@@ -17,7 +17,7 @@ exports[`storage-settings-perf-data-metrics-form Renders \`storage-settings-perf
       icon-class="ml-2"
       max-width="300"
       text="When enabled, external metrics data will be deleted after the defined time period"
-      top="top"
+      top=""
     />
   </div>
   <!---->
@@ -35,10 +35,10 @@ exports[`storage-settings-perf-data-metrics-form Renders \`storage-settings-perf
   class="layout c-information-block column"
 >
   <div
-    class="layout row"
+    class="layout"
   >
     <div
-      class="subheading font-weight-bold"
+      class="text-subtitle-1 font-weight-bold"
     >
       External metrics data storage
     </div>
@@ -47,7 +47,7 @@ exports[`storage-settings-perf-data-metrics-form Renders \`storage-settings-perf
       icon-class="ml-2"
       max-width="300"
       text="When enabled, external metrics data will be deleted after the defined time period"
-      top="top"
+      top=""
     />
   </div>
   <!---->

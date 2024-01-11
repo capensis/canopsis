@@ -109,11 +109,13 @@ describe('alarms-list', () => {
   const defaultQuery = {
     page: 1,
     filters: [],
+    sortBy: [],
+    sortDesc: [],
     active_columns: widget.parameters.widgetColumns.map(v => v.value),
     correlation: userPreferences.content.isCorrelationEnabled,
     only_bookmarks: userPreferences.content.onlyBookmarks,
     category: userPreferences.content.category,
-    limit: userPreferences.content.itemsPerPage,
+    itemsPerPage: userPreferences.content.itemsPerPage,
     tstart: QUICK_RANGES.last1Year.start,
     tstop: QUICK_RANGES.last1Year.stop,
     opened: null,
@@ -314,7 +316,6 @@ describe('alarms-list', () => {
           ...omit(defaultQuery, ['tstart', 'tstop', 'filters']),
           filter: undefined,
           lockedFilter: null,
-          multiSortBy: [],
           page: 1,
           with_instructions: true,
           with_declare_tickets: true,
@@ -347,7 +348,6 @@ describe('alarms-list', () => {
           ...omit(defaultQuery, ['tstart', 'tstop', 'filters']),
           filter: undefined,
           lockedFilter: null,
-          multiSortBy: [],
           page: 1,
           with_instructions: true,
           with_declare_tickets: true,
@@ -731,7 +731,7 @@ describe('alarms-list', () => {
 
     const removeHistoryButton = selectRemoveHistoryButton(wrapper);
 
-    removeHistoryButton.vm.$emit('input');
+    removeHistoryButton.vm.$emit('click:close');
 
     await flushPromises();
 
@@ -884,7 +884,7 @@ describe('alarms-list', () => {
     updateQuery.mockClear();
 
     const newLimit = Faker.datatype.number();
-    selectAlarmsListTable(wrapper).vm.$emit('update:rows-per-page', newLimit);
+    selectAlarmsListTable(wrapper).vm.$emit('update:items-per-page', newLimit);
 
     await flushPromises();
 
@@ -906,8 +906,9 @@ describe('alarms-list', () => {
         id: widget._id,
         query: {
           ...defaultQuery,
+
           page: 1,
-          limit: newLimit,
+          itemsPerPage: newLimit,
         },
       },
       undefined,
@@ -1469,8 +1470,9 @@ describe('alarms-list', () => {
       {
         widgetId: widget._id,
         params: {
-          ...defaultQuery,
+          ...omit(defaultQuery, ['sortBy', 'sortDesc', 'itemsPerPage']),
 
+          limit: defaultQuery.itemsPerPage,
           tstart: expect.any(Number),
           tstop: expect.any(Number),
         },
@@ -1520,8 +1522,9 @@ describe('alarms-list', () => {
       {
         widgetId: widget._id,
         params: {
-          ...defaultQuery,
+          ...omit(defaultQuery, ['sortBy', 'sortDesc', 'itemsPerPage']),
 
+          limit: defaultQuery.itemsPerPage,
           tstart: expect.any(Number),
           tstop: expect.any(Number),
         },
@@ -1576,8 +1579,9 @@ describe('alarms-list', () => {
       {
         widgetId: widget._id,
         params: {
-          ...defaultQuery,
+          ...omit(defaultQuery, ['sortBy', 'sortDesc', 'itemsPerPage']),
 
+          limit: defaultQuery.itemsPerPage,
           tstart: expect.any(Number),
           tstop: expect.any(Number),
         },
@@ -1691,7 +1695,7 @@ describe('alarms-list', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list` with default props and user filter permission and correlation and bookmark', async () => {
@@ -1723,7 +1727,7 @@ describe('alarms-list', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list` with clear filter disabled props', async () => {
@@ -1772,6 +1776,6 @@ describe('alarms-list', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

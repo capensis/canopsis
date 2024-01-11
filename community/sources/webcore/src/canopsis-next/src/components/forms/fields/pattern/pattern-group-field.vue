@@ -1,16 +1,20 @@
-<template lang="pug">
-  v-layout
-    v-flex.pa-2.mr-2
-      pattern-operator-information {{ $t('common.and') }}
-    v-flex(xs11)
-      v-layout(column)
-        pattern-rules-field(
-          :rules="group.rules",
-          :attributes="attributes",
-          :disabled="disabled",
-          :readonly="readonly",
+<template>
+  <v-layout>
+    <v-flex class="pa-2 mr-2">
+      <pattern-operator-information>{{ $t('common.and') }}</pattern-operator-information>
+    </v-flex>
+    <v-flex xs11>
+      <v-layout column>
+        <pattern-rules-field
+          :rules="group.rules"
+          :attributes="attributes"
+          :disabled="disabled"
+          :readonly="readonly"
           @input="updateRules"
-        )
+        />
+      </v-layout>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

@@ -1,5 +1,4 @@
 import { omit } from 'lodash';
-import flushPromises from 'flush-promises';
 
 import { generateRenderer } from '@unit/utils/vue';
 import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
@@ -17,7 +16,7 @@ describe('alarm-column-value-status', () => {
   });
 
   it.each(Object.entries(ENTITIES_STATES))('Renders `alarm-column-value-status` with ongoing status and state: %s', async (_, state) => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: {
         alarm: {
           entity: {},
@@ -33,15 +32,15 @@ describe('alarm-column-value-status', () => {
       },
     });
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 
   it.each(
     Object.entries(omit(ENTITIES_STATUSES, ['ongoing', 'noEvents'])),
   )('Renders `alarm-column-value-status` with status: %s', async (_, status) => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: {
         alarm: {
           entity: {},
@@ -57,13 +56,13 @@ describe('alarm-column-value-status', () => {
       },
     });
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 
   it('Renders `alarm-column-value-status` with status: noEvents', async () => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: {
         alarm: {
           entity: {
@@ -78,8 +77,8 @@ describe('alarm-column-value-status', () => {
       },
     });
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 });

@@ -2,7 +2,7 @@ import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { PAGINATION_LIMIT, PAGINATION_PER_PAGE_VALUES } from '@/config';
 
-import CRecordsPerPage from '@/components/forms/fields/c-records-per-page-field.vue';
+import CItemsPerPageField from '@/components/forms/fields/c-items-per-page-field.vue';
 
 const stubs = {
   'v-select': {
@@ -15,9 +15,9 @@ const stubs = {
   },
 };
 
-describe('c-records-per-page-field', () => {
-  const factory = generateShallowRenderer(CRecordsPerPage, { stubs });
-  const snapshotFactory = generateRenderer(CRecordsPerPage);
+describe('c-items-per-page-field', () => {
+  const factory = generateShallowRenderer(CItemsPerPageField, { stubs });
+  const snapshotFactory = generateRenderer(CItemsPerPageField);
 
   it('Default items is equal to PAGINATION_PER_PAGE_VALUES', () => {
     const wrapper = factory();
@@ -85,25 +85,23 @@ describe('c-records-per-page-field', () => {
     expect(inputEvents[0].map(e => parseInt(e, 10))).toEqual([value]);
   });
 
-  it('Renders `c-records-per-page-field` with default props', () => {
+  it('Renders `c-items-per-page-field` with default props', async () => {
     const wrapper = snapshotFactory();
 
-    const menuContent = wrapper.findMenu();
-
-    expect(wrapper.element).toMatchSnapshot();
-    expect(menuContent.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
+    expect(wrapper).toMatchMenuSnapshot();
   });
 
-  it('Renders `c-records-per-page-field` with custom props', () => {
+  it('Renders `c-items-per-page-field` with custom props', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         items: [2, 4, 6],
       },
     });
 
-    const menuContent = wrapper.findMenu();
-
-    expect(wrapper.element).toMatchSnapshot();
-    expect(menuContent.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
+    expect(wrapper).toMatchMenuSnapshot();
   });
 });

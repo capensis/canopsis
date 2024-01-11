@@ -2,10 +2,10 @@
 
 exports[`c-search-field Renders \`c-search-field\` correctly 1`] = `
 <div
-  class="layout c-search-field row align-end"
+  class="layout c-search-field align-end"
 >
   <div
-    class="v-input v-text-field v-text-field--single-line v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
+    class="v-input v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light v-text-field v-text-field--single-line"
   >
     <div
       class="v-input__control"
@@ -17,7 +17,6 @@ exports[`c-search-field Renders \`c-search-field\` correctly 1`] = `
           class="v-text-field__slot"
         >
           <input
-            aria-label="Search"
             type="text"
           />
         </div>
@@ -37,30 +36,37 @@ exports[`c-search-field Renders \`c-search-field\` correctly 1`] = `
 
 exports[`c-search-field Renders \`c-search-field\` correctly with combobox and items 1`] = `
 <div
-  class="layout c-search-field row align-end"
+  class="layout c-search-field align-end"
 >
   <div
-    class="v-input v-text-field v-text-field--single-line v-select v-autocomplete v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
+    class="v-input v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light v-text-field v-text-field--single-line v-select v-autocomplete"
   >
     <div
       class="v-input__control"
     >
       <div
+        aria-expanded="false"
+        aria-haspopup="listbox"
         class="v-input__slot"
+        role="combobox"
       >
         <div
           class="v-select__slot"
         >
           <input
-            aria-label="Search"
             autocomplete="off"
-            role="combobox"
             type="text"
+          />
+          <input
+            type="hidden"
+            value="c-search-field"
           />
         </div>
         <div
           class="v-menu"
-        />
+        >
+          <!---->
+        </div>
       </div>
     </div>
   </div>
@@ -75,147 +81,4 @@ exports[`c-search-field Renders \`c-search-field\` correctly with combobox and i
 </div>
 `;
 
-exports[`c-search-field Renders \`c-search-field\` correctly with combobox and items 2`] = `
-<div
-  class="v-menu__content theme--light v-autocomplete__content c-search-field__menu"
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-select-list v-card theme--light"
-  >
-    <div
-      class="v-list theme--light"
-      role="list"
-    >
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title pr-2"
-            >
-              item 1
-            </div>
-          </div>
-          <div
-            class="v-list__tile__action"
-          >
-            <div
-              class="layout row"
-            >
-              <button
-                class="ma-0 v-btn v-btn--icon v-btn--small theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
-                >
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light grey--text"
-                    style="font-size: 16px;"
-                  >
-                    delete
-                  </i>
-                </div>
-              </button>
-              <button
-                class="ma-0 v-btn v-btn--icon v-btn--small theme--light c-search-field__item__pinned"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
-                >
-                  <svg
-                    aria-hidden="true"
-                    class="push_pin-svg-icon v-icon v-icon--is-component theme--light inherit--text"
-                    height="48"
-                    style="font-size: 16px; height: 16px;"
-                    viewBox="0 -960 960 960"
-                    width="48"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="m634-448 86 77v60H510v241l-30 30-30-30v-241H240v-60l80-77v-333h-50v-60h414v60h-50v333Z"
-                      fill="currentColor"
-                    />
-                  </svg>
-                </div>
-              </button>
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title pr-2"
-            >
-              item 2
-            </div>
-          </div>
-          <div
-            class="v-list__tile__action"
-          >
-            <div
-              class="layout row"
-            >
-              <button
-                class="ma-0 v-btn v-btn--icon v-btn--small theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
-                >
-                  <i
-                    aria-hidden="true"
-                    class="v-icon material-icons theme--light grey--text"
-                    style="font-size: 16px;"
-                  >
-                    delete
-                  </i>
-                </div>
-              </button>
-              <button
-                class="ma-0 v-btn v-btn--icon v-btn--small theme--light"
-                type="button"
-              >
-                <div
-                  class="v-btn__content"
-                >
-                  <svg
-                    aria-hidden="true"
-                    class="push_pin-svg-icon v-icon v-icon--is-component theme--light grey--text"
-                    height="48"
-                    style="font-size: 16px; height: 16px;"
-                    viewBox="0 -960 960 960"
-                    width="48"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="m634-448 86 77v60H510v241l-30 30-30-30v-241H240v-60l80-77v-333h-50v-60h414v60h-50v333Z"
-                      fill="currentColor"
-                    />
-                  </svg>
-                </div>
-              </button>
-            </div>
-          </div>
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-`;
+exports[`c-search-field Renders \`c-search-field\` correctly with combobox and items 2`] = `undefined`;
