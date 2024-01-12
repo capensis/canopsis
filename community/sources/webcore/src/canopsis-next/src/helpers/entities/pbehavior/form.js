@@ -1,6 +1,4 @@
-import Vue from 'vue';
 import { cloneDeep, isObject, omit } from 'lodash';
-import { CalendarEvent, DaySpan, Op, Schedule } from 'dayspan';
 
 import { COLORS } from '@/config';
 import {
@@ -16,6 +14,7 @@ import {
   convertDateToTimestampByTimezone,
   getLocaleTimezone,
   getNowTimestamp,
+  isEndOfDay,
   isStartOfDay,
 } from '@/helpers/date/date';
 import { addKeyInEntities, getIdFromEntity, removeKeyFromEntities } from '@/helpers/array';
@@ -295,39 +294,38 @@ export const formToPbehavior = (form, timezone = getLocaleTimezone()) => ({
 /**
  * Convert calendar event to pbehavior form data
  *
- * @param {CalendarEvent} calendarEvent
+ * @param {Object} event
  * @param {Array} entityPattern
  * @param {string} [timezone = getLocaleTimezone()]
  * @return {PbehaviorForm}
  */
 export const calendarEventToPbehaviorForm = (
-  calendarEvent,
+  event,
   entityPattern,
   timezone = getLocaleTimezone(),
 ) => {
   const {
     start,
     end,
-    schedule,
-    data: { pbehavior, cachedForm = {} },
-  } = calendarEvent;
+    data: { cachedForm = {}, pbehavior },
+  } = event;
 
   const form = {
     ...pbehaviorToForm(pbehavior, entityPattern, timezone),
     ...cachedForm,
   };
 
-  form.tstart = start.date.toDate();
+  form.tstart = start;
 
   if (!pbehavior || pbehavior.tstop) {
-    if (schedule.durationUnit === 'days') {
+    if (event.durationUnit === 'days') {
       if (end.date.diff(start.date, 'hours') <= 24) {
         form.tstop = start.date.clone().endOf('day').toDate();
       } else {
         form.tstop = end.date.clone().subtract(1, 'millisecond').toDate();
       }
     } else {
-      form.tstop = end.date.toDate();
+      form.tstop = end;
     }
   }
 
@@ -335,36 +333,36 @@ export const calendarEventToPbehaviorForm = (
 };
 
 /**
+ * Check pbehavior is full day
+ *
+ * @param {LocalDate} start
+ * @param {LocalDate} stop
+ * @return {boolean}
+ */
+export const isFullDayEvent = (start, stop) => {
+  const noEnding = start && !stop;
+
+  return isStartOfDay(start) && (noEnding || isEndOfDay(stop));
+};
+
+/**
  * Convert form to calendar event.
  *
  * @param {PbehaviorForm} form
- * @param {CalendarEvent} calendarEvent
+ * @param {Object} event
  * @param {string} timezone
- * @return {CalendarEvent}
+ * @return {Object}
  */
-export const formToCalendarEvent = (form, calendarEvent, timezone) => {
-  const span = new DaySpan(calendarEvent.start, calendarEvent.end);
+export const formToCalendarEvent = (form, event, timezone) => {
+  const timed = !isFullDayEvent(form.tstart, form.tstop);
 
-  const schedule = calendarEvent.fullDay
-    ? Schedule.forDay(span.start, span.days(Op.UP))
-    : Schedule.forSpan(span);
-
-  const details = {
-    ...calendarEvent.data,
+  return {
+    ...event,
+    timed,
+    color: form.color,
 
     pbehavior: formToPbehavior(form, timezone),
   };
-
-  const event = Vue.$dayspan.createEvent(details, schedule);
-
-  event.id = calendarEvent.event.id;
-
-  return new CalendarEvent(
-    calendarEvent.id,
-    event,
-    schedule.getSingleEventSpan(),
-    calendarEvent.day,
-  );
 };
 
 /**

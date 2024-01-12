@@ -1,9 +1,16 @@
-<template lang="pug">
-  span.point-icon(v-on="$listeners", :style="pointStyles")
-    v-icon(
-      :size="icon.size || size",
+<template>
+  <span
+    class="point-icon"
+    v-on="$listeners"
+    :style="pointStyles"
+  >
+    <v-icon
+      :size="icon.size || size"
       :color="icon.color"
-    ) {{ icon.name }}
+    >
+      {{ icon.name }}
+    </v-icon>
+  </span>
 </template>
 
 <script>

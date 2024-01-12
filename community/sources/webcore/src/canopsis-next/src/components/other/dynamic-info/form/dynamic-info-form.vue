@@ -1,36 +1,77 @@
-<template lang="pug">
-  v-stepper.dynamic-info-form(v-model="stepper", non-linear)
-    v-stepper-header
-      v-stepper-step.py-0(
-        :complete="stepper > steps.GENERAL",
-        :step="steps.GENERAL",
-        :rules="[() => !hasGeneralFormAnyError]",
+<template>
+  <v-stepper
+    class="dynamic-info-form"
+    v-model="stepper"
+    non-linear
+  >
+    <v-stepper-header>
+      <v-stepper-step
+        class="py-0"
+        :complete="stepper > steps.GENERAL"
+        :step="steps.GENERAL"
+        :rules="[() => !hasGeneralFormAnyError]"
         editable
-      ) {{ $t('common.general') }}
-        small(v-if="hasGeneralFormAnyError") {{ $t('modals.createDynamicInfo.errors.invalid') }}
-      v-divider
-      v-stepper-step.py-0(
-        :complete="stepper > steps.INFOS",
-        :step="steps.INFOS",
-        :rules="[() => !hasInfosFormAnyError]",
+      >
+        {{ $t('common.general') }}
+        <small v-if="hasGeneralFormAnyError">{{ $t('modals.createDynamicInfo.errors.invalid') }}</small>
+      </v-stepper-step>
+      <v-divider />
+      <v-stepper-step
+        class="py-0"
+        :complete="stepper > steps.INFOS"
+        :step="steps.INFOS"
+        :rules="[() => !hasInfosFormAnyError]"
         editable
-      ) {{ $t('modals.createDynamicInfo.steps.infos.title') }}
-        small(v-if="hasInfosFormAnyError") {{ $t('modals.createDynamicInfo.errors.invalid') }}
-      v-divider
-      v-stepper-step.py-0(
-        :complete="stepper > steps.PATTERNS",
-        :step="steps.PATTERNS",
-        :rules="[() => !hasPatternsFormAnyError]",
+      >
+        {{ $t('modals.createDynamicInfo.steps.infos.title') }}
+        <small v-if="hasInfosFormAnyError">{{ $t('modals.createDynamicInfo.errors.invalid') }}</small>
+      </v-stepper-step>
+      <v-divider />
+      <v-stepper-step
+        class="py-0"
+        :complete="stepper > steps.PATTERNS"
+        :step="steps.PATTERNS"
+        :rules="[() => !hasPatternsFormAnyError]"
         editable
-      ) {{ $t('modals.createDynamicInfo.steps.patterns.title') }}
-        small(v-if="hasPatternsFormAnyError") {{ $t('modals.createDynamicInfo.errors.invalid') }}
-    v-stepper-items
-      v-stepper-content.pa-0(:step="steps.GENERAL")
-        dynamic-info-general-form.pa-4(v-field="form", :is-disabled-id-field="isDisabledIdField", ref="generalForm")
-      v-stepper-content.pa-0(:step="steps.INFOS")
-        dynamic-info-infos-form.pa-4(v-field="form.infos", ref="infosForm")
-      v-stepper-content.pa-0(:step="steps.PATTERNS")
-        dynamic-info-patterns-form.pa-4(v-field="form.patterns", ref="patternsForm")
+      >
+        {{ $t('modals.createDynamicInfo.steps.patterns.title') }}
+        <small v-if="hasPatternsFormAnyError">{{ $t('modals.createDynamicInfo.errors.invalid') }}</small>
+      </v-stepper-step>
+    </v-stepper-header>
+    <v-stepper-items>
+      <v-stepper-content
+        class="pa-0"
+        :step="steps.GENERAL"
+      >
+        <dynamic-info-general-form
+          class="pa-4"
+          v-field="form"
+          :is-disabled-id-field="isDisabledIdField"
+          ref="generalForm"
+        />
+      </v-stepper-content>
+      <v-stepper-content
+        class="pa-0"
+        :step="steps.INFOS"
+      >
+        <dynamic-info-infos-form
+          class="pa-4"
+          v-field="form.infos"
+          ref="infosForm"
+        />
+      </v-stepper-content>
+      <v-stepper-content
+        class="pa-0"
+        :step="steps.PATTERNS"
+      >
+        <dynamic-info-patterns-form
+          class="pa-4"
+          v-field="form.patterns"
+          ref="patternsForm"
+        />
+      </v-stepper-content>
+    </v-stepper-items>
+  </v-stepper>
 </template>
 
 <script>

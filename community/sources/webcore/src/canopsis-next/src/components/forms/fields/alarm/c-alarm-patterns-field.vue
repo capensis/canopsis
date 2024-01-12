@@ -1,22 +1,26 @@
-<template lang="pug">
-  pattern-editor-field(
-    v-field="patterns",
-    :disabled="disabled",
-    :readonly="readonly",
-    :name="name",
-    :type="$constants.PATTERN_TYPES.alarm",
-    :required="required",
-    :attributes="availableAlarmAttributes",
-    :with-type="withType",
+<template>
+  <pattern-editor-field
+    v-field="patterns"
+    :disabled="disabled"
+    :readonly="readonly"
+    :name="name"
+    :type="$constants.PATTERN_TYPES.alarm"
+    :required="required"
+    :attributes="availableAlarmAttributes"
+    :with-type="withType"
     :counter="counter"
-  )
-    template(#append-count="")
-      v-btn(
-        v-if="counter && counter.count",
-        flat,
-        small,
+  >
+    <template #append-count="">
+      <v-btn
+        v-if="counter && counter.count"
+        text
+        small
         @click="showPatternAlarms"
-      ) {{ $t('common.seeAlarms') }}
+      >
+        {{ $t('common.seeAlarms') }}
+      </v-btn>
+    </template>
+  </pattern-editor-field>
 </template>
 
 <script>

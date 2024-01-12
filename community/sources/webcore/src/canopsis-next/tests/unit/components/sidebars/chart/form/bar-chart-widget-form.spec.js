@@ -219,7 +219,7 @@ describe('bar-chart-widget-form', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `bar-chart-widget-form` widget settings with custom props', async () => {
@@ -248,6 +248,6 @@ describe('bar-chart-widget-form', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

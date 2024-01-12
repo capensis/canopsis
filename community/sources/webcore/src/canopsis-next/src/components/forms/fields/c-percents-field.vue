@@ -1,13 +1,13 @@
-<template lang="pug">
-  c-number-field(
-    v-field="value",
-    :label="label",
-    :name="name",
-    :max="max",
-    :min="min",
-    prefix="%",
+<template>
+  <c-number-field
+    v-field="value"
+    :label="label"
+    :name="name"
+    :max="max"
+    :min="min"
+    prefix="%"
     required
-  )
+  />
 </template>
 
 <script>

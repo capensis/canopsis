@@ -1,23 +1,27 @@
-<template lang="pug">
-  v-autocomplete(
-    v-field="value",
-    v-validate="rules",
-    :label="label",
-    :hint="hint",
-    :items="availableIconNames",
-    :name="name",
-    :error-messages="errors.collect(name)",
-    :disabled="disabled",
+<template>
+  <v-autocomplete
+    v-field="value"
+    v-validate="rules"
+    :label="label"
+    :hint="hint"
+    :items="availableIconNames"
+    :name="name"
+    :error-messages="errors.collect(name)"
+    :disabled="disabled"
     persistent-hint
-  )
-    template(#selection="{ item }")
-      v-icon {{ item }}
-      span.ml-2 {{ item }}
-    template(#item="{ item }")
-      v-icon {{ item }}
-      span.ml-2 {{ item }}
-    template(#no-data="")
-      slot(name="no-data")
+  >
+    <template #selection="{ item }">
+      <v-icon>{{ item }}</v-icon>
+      <span class="ml-2">{{ item }}</span>
+    </template>
+    <template #item="{ item }">
+      <v-icon>{{ item }}</v-icon>
+      <span class="ml-2">{{ item }}</span>
+    </template>
+    <template #no-data="">
+      <slot name="no-data" />
+    </template>
+  </v-autocomplete>
 </template>
 
 <script>

@@ -1,5 +1,8 @@
-<template lang="pug">
-  c-compiled-template(:template="modalTemplate", :context="templateContext")
+<template>
+  <c-compiled-template
+    :template="modalTemplate"
+    :context="templateContext"
+  />
 </template>
 
 <script>
@@ -11,6 +14,7 @@ import ServiceEntitiesList from './service-entities-list.vue';
 
 export default {
   components: {
+    // eslint-disable-next-line vue/no-unused-components
     ServiceEntitiesList,
   },
   props: {
@@ -26,7 +30,7 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },
@@ -60,12 +64,12 @@ export default {
           :service="service"
           :service-entities="serviceEntities"
           :widget-parameters="widgetParameters"
-          :pagination="pagination"
+          :options="options"
           :total-items="totalItems"
           :actions-requests="actionsRequests"
           entity-name-field="${entityNameField}"
           @refresh="refreshEntities"
-          @update:pagination="updatePagination"
+          @update:options="updateOptions"
           @add:action="addAction"
         ></service-entities-list>
       `);
@@ -79,8 +83,8 @@ export default {
       this.$emit('add:action', action);
     },
 
-    updatePagination(pagination) {
-      this.$emit('update:pagination', pagination);
+    updateOptions(pagination) {
+      this.$emit('update:options', pagination);
     },
 
     refreshEntities(immediate = false) {

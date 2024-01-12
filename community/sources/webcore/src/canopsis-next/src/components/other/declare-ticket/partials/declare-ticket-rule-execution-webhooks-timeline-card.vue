@@ -1,20 +1,34 @@
-<template lang="pug">
-  v-layout(column)
-    v-layout.mb-2(align-center)
-      c-expand-btn(
-        v-if="expandable",
-        :expanded="expanded",
-        :loading="pending",
-        color="grey",
+<template>
+  <v-layout column>
+    <v-layout
+      class="mb-2"
+      align-center
+    >
+      <c-expand-btn
+        v-if="expandable"
+        :expanded="expanded"
+        :loading="pending"
+        color="grey"
         @expand="expandResponse"
-      )
-      span.ml-2 {{ $t(`alarm.timeLine.types.${step._t}`) }}
-      span(v-if="step.message") : {{ step.message }}
-    v-expand-transition
-      v-card(v-show="expanded", light)
-        v-card-text
-          c-request-text-information(v-if="response", :value="response")
-          span(v-else) {{ $t('declareTicket.noResponse') }}
+      />
+      <span class="ml-2">{{ $t(`alarm.timeLine.types.${step._t}`) }}</span>
+      <span v-if="step.message">: {{ step.message }}</span>
+    </v-layout>
+    <v-expand-transition>
+      <v-card
+        v-show="expanded"
+        light
+      >
+        <v-card-text>
+          <c-request-text-information
+            v-if="response"
+            :value="response"
+          />
+          <span v-else>{{ $t('declareTicket.noResponse') }}</span>
+        </v-card-text>
+      </v-card>
+    </v-expand-transition>
+  </v-layout>
 </template>
 
 <script>

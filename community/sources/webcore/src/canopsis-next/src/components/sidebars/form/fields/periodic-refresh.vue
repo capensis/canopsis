@@ -1,7 +1,17 @@
-<template lang="pug">
-  widget-settings-item(:title="$t('settings.periodicRefresh')", optional)
-    periodic-refresh-field(v-field="form.periodic_refresh", :name="name")
-    live-watching-field(v-if="withLiveWatching", v-field="form.liveWatching")
+<template>
+  <widget-settings-item
+    :title="$t('settings.periodicRefresh')"
+    optional
+  >
+    <periodic-refresh-field
+      v-field="form.periodic_refresh"
+      :name="name"
+    />
+    <live-watching-field
+      v-if="withLiveWatching"
+      v-field="form.liveWatching"
+    />
+  </widget-settings-item>
 </template>
 
 <script>

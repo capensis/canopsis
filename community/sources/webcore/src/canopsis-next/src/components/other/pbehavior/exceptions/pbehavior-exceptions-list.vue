@@ -1,38 +1,42 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :headers="headers",
-    :items="pbehaviorExceptions",
-    :loading="pending",
-    :total-items="totalItems",
-    :pagination="pagination",
-    :is-disabled-item="isDisabledException",
-    select-all,
-    expand,
-    search,
-    advanced-pagination,
-    @update:pagination="$emit('update:pagination', $event)"
-  )
-    template(#mass-actions="{ selected }")
-      c-action-btn(
-        v-if="hasDeleteAnyPbehaviorExceptionAccess",
-        type="delete",
+<template>
+  <c-advanced-data-table
+    :headers="headers"
+    :items="pbehaviorExceptions"
+    :loading="pending"
+    :total-items="totalItems"
+    :options="options"
+    :is-disabled-item="isDisabledException"
+    select-all
+    expand
+    search
+    advanced-pagination
+    @update:options="$emit('update:options', $event)"
+  >
+    <template #mass-actions="{ selected }">
+      <c-action-btn
+        v-if="hasDeleteAnyPbehaviorExceptionAccess"
+        type="delete"
         @click="$emit('remove-selected', selected)"
-      )
-    template(#actions="{ item }")
-      c-action-btn(
-        v-if="hasUpdateAnyPbehaviorExceptionAccess",
-        type="edit",
-        @click="$emit('edit', item)"
-      )
-      c-action-btn(
-        v-if="hasDeleteAnyPbehaviorExceptionAccess",
-        :tooltip="item.deletable ? $t('common.delete') : $t('pbehavior.exceptions.usingException')",
-        :disabled="!item.deletable",
-        type="delete",
-        @click="$emit('remove', item._id)"
-      )
-    template(#expand="{ item }")
-      pbehavior-exceptions-list-expand-panel(:pbehavior-exception="item")
+      />
+    </template>
+    <template #actions="{ item: actionsItem }">
+      <c-action-btn
+        v-if="hasUpdateAnyPbehaviorExceptionAccess"
+        type="edit"
+        @click="$emit('edit', actionsItem)"
+      />
+      <c-action-btn
+        v-if="hasDeleteAnyPbehaviorExceptionAccess"
+        :tooltip="actionsItem.deletable ? $t('common.delete') : $t('pbehavior.exceptions.usingException')"
+        :disabled="!actionsItem.deletable"
+        type="delete"
+        @click="$emit('remove', actionsItem._id)"
+      />
+    </template>
+    <template #expand="{ item: expandItem }">
+      <pbehavior-exceptions-list-expand-panel :pbehavior-exception="expandItem" />
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>
@@ -58,15 +62,10 @@ export default {
       type: Number,
       required: false,
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },
-  },
-  data() {
-    return {
-      selected: [],
-    };
   },
   computed: {
     headers() {

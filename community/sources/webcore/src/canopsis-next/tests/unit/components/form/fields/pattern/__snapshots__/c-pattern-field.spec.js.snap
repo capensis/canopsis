@@ -2,20 +2,21 @@
 
 exports[`c-pattern-field Renders \`c-pattern-field\` with custom props 1`] = `
 <div
-  class="v-input c-select-field v-text-field v-select v-input--hide-details v-input--is-disabled theme--light"
-  role="combobox"
+  class="v-input c-select-field v-input--hide-details v-input--is-disabled theme--light v-text-field v-select"
 >
   <div
     class="v-input__control"
   >
     <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
       class="v-input__slot"
+      role="button"
     >
       <div
         class="v-select__slot"
       >
         <label
-          aria-hidden="true"
           class="v-label v-label--is-disabled theme--light"
           style="left: 0px; position: absolute;"
         >
@@ -25,11 +26,9 @@ exports[`c-pattern-field Renders \`c-pattern-field\` with custom props 1`] = `
           class="v-select__selections"
         >
           <input
-            aria-label="Custom label"
             aria-readonly="false"
-            autocomplete="on"
+            autocomplete="off"
             disabled="disabled"
-            name="customName"
             readonly="readonly"
             type="text"
           />
@@ -42,68 +41,47 @@ exports[`c-pattern-field Renders \`c-pattern-field\` with custom props 1`] = `
           >
             <i
               aria-hidden="true"
-              class="v-icon v-icon--disabled material-icons theme--light"
+              class="v-icon notranslate v-icon--disabled material-icons theme--light"
             >
               arrow_drop_down
             </i>
           </div>
         </div>
+        <input
+          name="customName"
+          type="hidden"
+          value="[object Object]"
+        />
       </div>
       <div
         class="v-menu"
-      />
-    </div>
-  </div>
-</div>
-`;
-
-exports[`c-pattern-field Renders \`c-pattern-field\` with custom props 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-select-list v-card theme--light"
-  >
-    <div
-      class="v-list v-list--dense theme--light"
-      role="list"
-    >
-      <div
-        role="listitem"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            Custom
-          </div>
-          <!---->
-        </a>
+        <!---->
       </div>
     </div>
   </div>
 </div>
 `;
 
+exports[`c-pattern-field Renders \`c-pattern-field\` with custom props 2`] = `undefined`;
+
 exports[`c-pattern-field Renders \`c-pattern-field\` with default props 1`] = `
 <div
-  class="v-input c-select-field v-text-field v-select v-input--hide-details theme--light"
-  role="combobox"
+  class="v-input c-select-field v-input--hide-details theme--light v-text-field v-select"
 >
   <div
     class="v-input__control"
   >
     <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
       class="v-input__slot"
+      role="button"
     >
       <div
         class="v-select__slot"
       >
         <label
-          aria-hidden="true"
           class="v-label theme--light"
           style="left: 0px; position: absolute;"
         >
@@ -113,10 +91,8 @@ exports[`c-pattern-field Renders \`c-pattern-field\` with default props 1`] = `
           class="v-select__selections"
         >
           <input
-            aria-label="Pattern"
             aria-readonly="false"
-            autocomplete="on"
-            name="filter"
+            autocomplete="off"
             readonly="readonly"
             type="text"
           />
@@ -129,48 +105,25 @@ exports[`c-pattern-field Renders \`c-pattern-field\` with default props 1`] = `
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light"
+              class="v-icon notranslate material-icons theme--light"
             >
               arrow_drop_down
             </i>
           </div>
         </div>
+        <input
+          name="filter"
+          type="hidden"
+        />
       </div>
       <div
         class="v-menu"
-      />
+      >
+        <!---->
+      </div>
     </div>
   </div>
 </div>
 `;
 
-exports[`c-pattern-field Renders \`c-pattern-field\` with default props 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-select-list v-card theme--light"
-  >
-    <div
-      class="v-list v-list--dense theme--light"
-      role="list"
-    >
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            Custom
-          </div>
-          <!---->
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-`;
+exports[`c-pattern-field Renders \`c-pattern-field\` with default props 2`] = `undefined`;

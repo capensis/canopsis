@@ -12,7 +12,7 @@ exports[`patterns-form Renders \`patterns-form\` with custom props 1`] = `
   />
   <c-patterns-field-stub
     class="mt-2"
-    some-required="some-required"
+    some-required=""
     value="[object Object]"
     with-alarm="true"
     with-entity="true"
@@ -29,7 +29,7 @@ exports[`patterns-form Renders \`patterns-form\` with default props 1`] = `
   <!---->
   <c-patterns-field-stub
     class="mt-2"
-    some-required="some-required"
+    some-required=""
     value="[object Object]"
   />
 </div>

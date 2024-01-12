@@ -1,6 +1,7 @@
-<template lang="pug">
-  div.position-relative
-    c-compiled-template(:template="template")
+<template>
+  <div class="position-relative">
+    <c-compiled-template :template="template" />
+  </div>
 </template>
 
 <script>

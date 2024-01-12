@@ -33,7 +33,7 @@ describe('alarm-metric-aggregate-function', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `alarm-metric-aggregate-function` with custom props', () => {
@@ -43,6 +43,6 @@ describe('alarm-metric-aggregate-function', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

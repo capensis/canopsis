@@ -3,7 +3,7 @@
 exports[`alarms-list Renders \`alarms-list\` 1`] = `
 <div
   class="modal-wrapper"
-  close="close"
+  close=""
 >
   <div
     class="title"
@@ -12,7 +12,6 @@ exports[`alarms-list Renders \`alarms-list\` 1`] = `
       Alarm list
     </span>
   </div>
-   
   <div
     class="text"
   >
@@ -27,7 +26,6 @@ exports[`alarms-list Renders \`alarms-list\` 1`] = `
       widget="[object Object]"
     />
   </div>
-   
   <div
     class="actions"
   />

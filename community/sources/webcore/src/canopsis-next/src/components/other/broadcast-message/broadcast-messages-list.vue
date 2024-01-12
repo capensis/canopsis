@@ -1,33 +1,44 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :headers="headers",
-    :items="preparedBroadcastMessages",
-    :loading="pending",
-    :total-items="totalItems",
-    :pagination="pagination",
-    advanced-pagination,
-    search,
-    @update:pagination="$emit('update:pagination', $event)"
-  )
-    template(#items="{ item }")
-      tr
-        td {{ $t(`broadcastMessage.statuses.${item.status}`) }}
-        td.broadcast-message-cell
-          broadcast-message(:message="item.message", :color="item.color")
-        td {{ item.start | date }}
-        td {{ item.end | date }}
-        td
-          v-layout(row)
-            c-action-btn(
-              v-if="hasUpdateAnyBroadcastMessageAccess",
-              type="edit",
-              @click="$emit('edit', item)"
-            )
-            c-action-btn(
-              v-if="hasDeleteAnyBroadcastMessageAccess",
-              type="delete",
-              @click="$emit('remove', item._id)"
-            )
+<template>
+  <c-advanced-data-table
+    :headers="headers"
+    :items="preparedBroadcastMessages"
+    :loading="pending"
+    :total-items="totalItems"
+    :options="options"
+    advanced-pagination
+    search
+    @update:options="$emit('update:options', $event)"
+  >
+    <template #status="{ item }">
+      {{ $t(`broadcastMessage.statuses.${item.status}`) }}
+    </template>
+    <template #message="{ item }">
+      <broadcast-message
+        :message="item.message"
+        :color="item.color"
+      />
+    </template>
+    <template #start="{ item }">
+      {{ item.start | date }}
+    </template>
+    <template #end="{ item }">
+      {{ item.end | date }}
+    </template>
+    <template #actions="{ item }">
+      <v-layout>
+        <c-action-btn
+          v-if="hasUpdateAnyBroadcastMessageAccess"
+          type="edit"
+          @click="$emit('edit', item)"
+        />
+        <c-action-btn
+          v-if="hasDeleteAnyBroadcastMessageAccess"
+          type="delete"
+          @click="$emit('remove', item._id)"
+        />
+      </v-layout>
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>
@@ -57,7 +68,7 @@ export default {
       type: Number,
       required: false,
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },
@@ -72,6 +83,8 @@ export default {
         },
         {
           text: this.$t('common.preview'),
+          value: 'message',
+          width: 300,
           sortable: false,
         },
         {
@@ -86,6 +99,7 @@ export default {
         },
         {
           text: this.$t('common.actionsLabel'),
+          value: 'actions',
           sortable: false,
         },
       ];
@@ -112,9 +126,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .broadcast-message-cell {
-    max-width: 300px;
-  }
-</style>

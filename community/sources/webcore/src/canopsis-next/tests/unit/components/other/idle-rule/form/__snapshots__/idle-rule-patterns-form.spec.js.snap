@@ -5,9 +5,9 @@ exports[`idle-rule-patterns-form Renders \`idle-rule-patterns-form\` with custom
   alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
   entity-attributes="[object Object]"
   entity-counters-type="true"
-  some-required="some-required"
+  some-required=""
   value="[object Object]"
-  with-entity="with-entity"
+  with-entity=""
 />
 `;
 
@@ -16,9 +16,9 @@ exports[`idle-rule-patterns-form Renders \`idle-rule-patterns-form\` with defaul
   alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
   both-counters="true"
   entity-attributes="[object Object]"
-  some-required="some-required"
+  some-required=""
   value="[object Object]"
   with-alarm="true"
-  with-entity="with-entity"
+  with-entity=""
 />
 `;

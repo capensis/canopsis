@@ -1,11 +1,31 @@
-<template lang="pug">
-  v-tooltip(left)
-    template(#activator="{ on }")
-      v-badge.logged-users-count(:color="badgeColor", overlap)
-        template(#badge="") {{ count }}
-        v-btn(v-on="on", flat, icon, small)
-          v-icon(color="white", small) people
-    span {{ $t('layout.sideBar.loggedUsersCount') }}
+<template>
+  <v-tooltip left>
+    <template #activator="{ on }">
+      <v-badge
+        class="logged-users-count"
+        :color="badgeColor"
+        overlap
+      >
+        <template #badge="">
+          {{ count }}
+        </template>
+        <v-btn
+          v-on="on"
+          text
+          icon
+          small
+        >
+          <v-icon
+            color="white"
+            small
+          >
+            people
+          </v-icon>
+        </v-btn>
+      </v-badge>
+    </template>
+    <span>{{ $t('layout.sideBar.loggedUsersCount') }}</span>
+  </v-tooltip>
 </template>
 
 <script>
@@ -58,13 +78,19 @@ export default {
 <style lang="scss">
 .logged-users-count {
   position: absolute;
+  margin: 6px;
   top: 0;
 
   .v-badge__badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     top: 2px;
     right: 2px;
     height: 17px;
+    min-height: 17px;
     width: 17px;
+    min-width: 17px;
     font-size: 12px;
   }
 }

@@ -41,7 +41,7 @@ describe('state-criticity-field', () => {
   it('Renders `state-criticity-field` with default props correctly', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `state-criticity-field` with custom props correctly', () => {
@@ -57,6 +57,6 @@ describe('state-criticity-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

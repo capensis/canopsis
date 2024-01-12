@@ -271,7 +271,7 @@ describe('meta-alarm-rule-form', () => {
   test('Renders `meta-alarm-rule-form` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `meta-alarm-rule-form` with custom props', () => {
@@ -281,7 +281,7 @@ describe('meta-alarm-rule-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test.each(
@@ -296,6 +296,6 @@ describe('meta-alarm-rule-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

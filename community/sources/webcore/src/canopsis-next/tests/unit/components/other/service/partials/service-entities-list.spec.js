@@ -26,6 +26,7 @@ import {
 import { COLORS } from '@/config';
 
 import ServiceEntitiesList from '@/components/other/service/partials/service-entities-list.vue';
+import { createCheckboxInputStub } from '@unit/stubs/input';
 
 jest.mock('@/helpers/uid');
 
@@ -33,6 +34,7 @@ const stubs = {
   'service-entity-actions': true,
   'service-entity': true,
   'c-table-pagination': true,
+  'v-simple-checkbox': createCheckboxInputStub('v-simple-checkbox'),
 };
 
 const selectEntityActions = wrapper => wrapper.find('service-entity-actions-stub');
@@ -40,7 +42,7 @@ const selectServiceEntityByIndex = (wrapper, index) => wrapper
   .findAll('service-entity-stub')
   .at(index);
 const selectTablePagination = wrapper => wrapper.find('c-table-pagination-stub');
-const selectCheckboxFunctional = wrapper => wrapper.find('v-checkbox-functional-stub');
+const selectCheckbox = wrapper => wrapper.find('.v-simple-checkbox');
 
 const applyEntitiesAction = async (wrapper, type) => {
   const entityActions = selectEntityActions(wrapper);
@@ -111,7 +113,7 @@ describe('service-entities-list', () => {
     },
     propsData: {
       service,
-      pagination: {},
+      options: {},
     },
     listeners: {
       refresh,
@@ -124,7 +126,7 @@ describe('service-entities-list', () => {
     stubs,
     propsData: {
       service,
-      pagination: {},
+      options: {},
     },
     listeners: {
       refresh,
@@ -154,10 +156,10 @@ describe('service-entities-list', () => {
       },
     });
 
-    await selectCheckboxFunctional(wrapper).vm.$emit('change', true);
+    await selectCheckbox(wrapper).vm.$emit('change', true);
     expect(wrapper.vm.selectedEntities).toEqual(serviceEntities);
 
-    await selectCheckboxFunctional(wrapper).vm.$emit('change', false);
+    await selectCheckbox(wrapper).vm.$emit('change', false);
     expect(wrapper.vm.selectedEntities).toEqual([]);
   });
 
@@ -174,7 +176,7 @@ describe('service-entities-list', () => {
       },
     });
 
-    await selectCheckboxFunctional(wrapper).vm.$emit('change', true);
+    await selectCheckbox(wrapper).vm.$emit('change', true);
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityAckRemove);
 
@@ -223,7 +225,7 @@ describe('service-entities-list', () => {
       },
     });
 
-    await selectCheckboxFunctional(wrapper).vm.$emit('change', true);
+    await selectCheckbox(wrapper).vm.$emit('change', true);
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityAssocTicket);
 
@@ -280,7 +282,7 @@ describe('service-entities-list', () => {
       },
     });
 
-    await selectCheckboxFunctional(wrapper).vm.$emit('change', true);
+    await selectCheckbox(wrapper).vm.$emit('change', true);
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityValidate);
     await flushPromises();
@@ -330,7 +332,7 @@ describe('service-entities-list', () => {
       },
     });
 
-    await selectCheckboxFunctional(wrapper).vm.$emit('change', true);
+    await selectCheckbox(wrapper).vm.$emit('change', true);
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityInvalidate);
 
@@ -374,7 +376,7 @@ describe('service-entities-list', () => {
       },
     });
 
-    await selectCheckboxFunctional(wrapper).vm.$emit('change', true);
+    await selectCheckbox(wrapper).vm.$emit('change', true);
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityPause);
 
@@ -439,7 +441,7 @@ describe('service-entities-list', () => {
       },
     });
 
-    await selectCheckboxFunctional(wrapper).vm.$emit('change', true);
+    await selectCheckbox(wrapper).vm.$emit('change', true);
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityPlay);
 
@@ -469,7 +471,7 @@ describe('service-entities-list', () => {
       },
     });
 
-    await selectCheckboxFunctional(wrapper).vm.$emit('change', true);
+    await selectCheckbox(wrapper).vm.$emit('change', true);
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityCancel);
 
@@ -510,7 +512,7 @@ describe('service-entities-list', () => {
       },
     });
 
-    await selectCheckboxFunctional(wrapper).vm.$emit('change', true);
+    await selectCheckbox(wrapper).vm.$emit('change', true);
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityComment);
 
@@ -573,7 +575,7 @@ describe('service-entities-list', () => {
       },
     });
 
-    await selectCheckboxFunctional(wrapper).vm.$emit('change', true);
+    await selectCheckbox(wrapper).vm.$emit('change', true);
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.declareTicket);
 
@@ -624,7 +626,7 @@ describe('service-entities-list', () => {
       },
     });
 
-    await selectCheckboxFunctional(wrapper).vm.$emit('change', true);
+    await selectCheckbox(wrapper).vm.$emit('change', true);
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityAck);
 
@@ -666,46 +668,46 @@ describe('service-entities-list', () => {
   });
 
   test('Page updated after trigger pagination', async () => {
-    const pagination = {
-      rowsPerPage: 10,
+    const options = {
+      itemsPerPage: 10,
       page: 1,
     };
     const wrapper = factory({
       propsData: {
         serviceEntities,
         totalItems: 20,
-        pagination,
+        options,
       },
     });
 
     const newPage = 2;
     await selectTablePagination(wrapper).vm.$emit('update:page', newPage);
 
-    expect(wrapper).toEmit('update:pagination', {
-      ...pagination,
+    expect(wrapper).toEmit('update:options', {
+      ...options,
       page: newPage,
     });
   });
 
   test('Records per page updated after trigger pagination', async () => {
-    const pagination = {
-      rowsPerPage: 10,
+    const options = {
+      itemsPerPage: 10,
       page: 1,
     };
     const wrapper = factory({
       propsData: {
         serviceEntities,
         totalItems: 20,
-        pagination,
+        options,
       },
     });
 
-    const newRowsPerPage = 11;
-    await selectTablePagination(wrapper).vm.$emit('update:rows-per-page', newRowsPerPage);
+    const newItemsPerPage = 11;
+    await selectTablePagination(wrapper).vm.$emit('update:items-per-page', newItemsPerPage);
 
-    expect(wrapper).toEmit('update:pagination', {
-      ...pagination,
-      rowsPerPage: newRowsPerPage,
+    expect(wrapper).toEmit('update:options', {
+      ...options,
+      itemsPerPage: newItemsPerPage,
     });
   });
 
@@ -730,7 +732,7 @@ describe('service-entities-list', () => {
   test('Renders `service-entities-list` with default props', async () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `service-entities-list` with custom props', async () => {
@@ -743,7 +745,7 @@ describe('service-entities-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `service-entities-list` with selected entities', async () => {
@@ -760,6 +762,6 @@ describe('service-entities-list', () => {
 
     await firstEntity.vm.$emit('update:selected', true);
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

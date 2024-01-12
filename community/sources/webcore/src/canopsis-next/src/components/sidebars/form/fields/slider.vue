@@ -1,13 +1,14 @@
-<template lang="pug">
-  widget-settings-item(:title="title")
-    v-slider(
-      v-field="value",
-      :max="max",
-      :min="min",
-      ticks="always",
-      always-dirty,
+<template>
+  <widget-settings-item :title="title">
+    <v-slider
+      v-field="value"
+      :max="max"
+      :min="min"
+      ticks="always"
+      always-dirty
       thumb-label
-    )
+    />
+  </widget-settings-item>
 </template>
 
 <script>

@@ -311,7 +311,7 @@ describe('tags', () => {
   test('Renders `tags` without permissions', () => {
     const wrapper = snapshotFactory({ store });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `tags` with permissions', () => {
@@ -341,6 +341,6 @@ describe('tags', () => {
       ]),
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

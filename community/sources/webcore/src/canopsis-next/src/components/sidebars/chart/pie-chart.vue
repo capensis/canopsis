@@ -1,11 +1,16 @@
-<template lang="pug">
-  widget-settings(:submitting="submitting", divider, @submit="submit")
-    pie-chart-widget-form(
-      v-model="form",
-      :with-filters="hasAccessToListFilters",
-      with-periodic-refresh,
+<template>
+  <widget-settings
+    :submitting="submitting"
+    divider
+    @submit="submit"
+  >
+    <pie-chart-widget-form
+      v-model="form"
+      :with-filters="hasAccessToListFilters"
+      with-periodic-refresh
       with-preset
-    )
+    />
+  </widget-settings>
 </template>
 
 <script>

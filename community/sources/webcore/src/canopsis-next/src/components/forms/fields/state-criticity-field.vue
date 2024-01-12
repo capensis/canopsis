@@ -1,17 +1,22 @@
-<template lang="pug">
-  v-layout(row)
-    v-btn-toggle(
-      :value="value",
-      :mandatory="mandatory",
+<template>
+  <v-layout>
+    <v-btn-toggle
+      :value="value"
+      :mandatory="mandatory"
+      dense
       @change="$emit('input', $event)"
-    )
-      v-btn(
-        v-for="{ color, value, text } in availableStates",
-        :key="value",
-        :value="value",
-        :style="{ backgroundColor: color }",
+    >
+      <v-btn
+        v-for="{ color, state, text } in availableStates"
+        :key="state"
+        :value="state"
+        :style="{ backgroundColor: color }"
         depressed
-      ) {{ text }}
+      >
+        {{ text }}
+      </v-btn>
+    </v-btn-toggle>
+  </v-layout>
 </template>
 
 <script>
@@ -38,7 +43,7 @@ export default {
     availableStates() {
       return Object.entries(this.stateValues).map(([key, state]) => ({
         text: this.$t(`modals.createChangeStateEvent.states.${key}`),
-        value: state,
+        state,
         color: getEntityStateColor(state),
       }));
     },

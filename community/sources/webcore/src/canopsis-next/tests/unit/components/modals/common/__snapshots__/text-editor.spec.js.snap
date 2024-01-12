@@ -7,7 +7,7 @@ exports[`text-editor Renders \`text-editor\` with empty modal 1`] = `
 >
   <div
     class="modal-wrapper"
-    close="close"
+    close=""
   >
     <div
       class="title"
@@ -16,7 +16,6 @@ exports[`text-editor Renders \`text-editor\` with empty modal 1`] = `
         Text editor
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -26,29 +25,28 @@ exports[`text-editor Renders \`text-editor\` with empty modal 1`] = `
         value=""
       />
     </div>
-     
     <div
       class="actions"
     >
       <button
-        class="v-btn v-btn--flat theme--light"
+        class="v-btn v-btn--text theme--light v-size--default"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Cancel
-        </div>
+        Cancel
+        </span>
       </button>
       <button
-        class="primary v-btn theme--light"
+        class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Submit
-        </div>
+        Submit
+        </span>
       </button>
     </div>
   </div>

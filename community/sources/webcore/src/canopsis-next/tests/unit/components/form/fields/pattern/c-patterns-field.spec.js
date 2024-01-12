@@ -164,7 +164,7 @@ describe('c-patterns-field', () => {
   test('Renders `c-patterns-field` with default props', () => {
     const wrapper = snapshotFactory({ store });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `c-patterns-field` with custom props', () => {
@@ -186,6 +186,6 @@ describe('c-patterns-field', () => {
       store,
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

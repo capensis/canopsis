@@ -6,7 +6,7 @@ exports[`service-weather-item Renders \`service-weather-item\` with custom props
   style="height: 4em; color: white;"
 >
   <div
-    class="layout fill-height service-weather-item__content row justify-space-between"
+    class="layout fill-height service-weather-item__content justify-space-between"
   >
     <div
       class="flex position-relative fill-height"
@@ -19,11 +19,11 @@ exports[`service-weather-item Renders \`service-weather-item\` with custom props
         />
       </div>
       <div
-        class="layout service-weather-item__toolbar pt-1 pr-1 row align-center"
+        class="layout service-weather-item__toolbar pt-1 pr-1 align-center"
       >
         <c-no-events-icon-stub
           color="white"
-          top="top"
+          top=""
         />
         <impact-state-indicator-stub
           class="mr-1"
@@ -33,7 +33,7 @@ exports[`service-weather-item Renders \`service-weather-item\` with custom props
       </div>
       <i
         aria-hidden="true"
-        class="v-icon service-weather-item__background material-icons theme--light white--text"
+        class="v-icon notranslate service-weather-item__background material-icons theme--light white--text"
         style="font-size: 5em;"
       />
       <!---->
@@ -51,7 +51,7 @@ exports[`service-weather-item Renders \`service-weather-item\` with full access 
   style="height: 16em; color: white;"
 >
   <div
-    class="layout fill-height service-weather-item__content row justify-space-between"
+    class="layout fill-height service-weather-item__content justify-space-between"
   >
     <div
       class="flex position-relative fill-height"
@@ -69,49 +69,46 @@ exports[`service-weather-item Renders \`service-weather-item\` with full access 
               />
             </strong>
           </p>
-           
           <hr
             id="null"
           />
-           
           <p />
-           
           <p>
              Dernière mise à jour : 
           </p>
         </div>
       </div>
       <div
-        class="layout service-weather-item__toolbar pt-1 pr-1 row align-center"
+        class="layout service-weather-item__toolbar pt-1 pr-1 align-center"
       >
         <c-no-events-icon-stub
           color="white"
-          top="top"
+          top=""
         />
         <impact-state-indicator-stub
           class="mr-1"
           value="0"
         />
         <button
-          class="ma-0 v-btn v-btn--icon v-btn--small theme--light"
+          class="ma-0 v-btn v-btn--icon v-btn--round theme--light v-size--small"
           type="button"
         >
-          <div
+          <span
             class="v-btn__content"
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light white--text"
+              class="v-icon notranslate material-icons theme--light white--text"
               style="font-size: 16px;"
             >
               help
             </i>
-          </div>
+          </span>
         </button>
       </div>
       <i
         aria-hidden="true"
-        class="v-icon service-weather-item__background material-icons theme--light white--text"
+        class="v-icon notranslate service-weather-item__background material-icons theme--light white--text"
         style="font-size: 5em;"
       />
       <!---->

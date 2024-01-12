@@ -139,7 +139,7 @@ describe('date-time-picker', () => {
 
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
 
     dateSpy.mockClear();
   });
@@ -154,7 +154,7 @@ describe('date-time-picker', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `date-time-picker` without value', async () => {
@@ -167,6 +167,6 @@ describe('date-time-picker', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

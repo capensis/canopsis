@@ -117,7 +117,7 @@ describe('field-counters-selector', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `field-counters-selector` with custom props', () => {
@@ -132,6 +132,6 @@ describe('field-counters-selector', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });
