@@ -99,7 +99,7 @@ describe('c-array-text-field', () => {
   it('Renders `c-array-text-field` with default props correctly', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-array-text-field` with all field types correctly', () => {
@@ -117,7 +117,7 @@ describe('c-array-text-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders disabled `c-array-text-field` correctly', () => {
@@ -131,6 +131,6 @@ describe('c-array-text-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -1,15 +1,15 @@
-<template lang="pug">
-  c-patterns-field(
-    v-field="form",
-    :alarm-attributes="alarmAttributes",
-    :entity-attributes="entityAttributes",
-    :readonly="readonly",
-    some-required,
-    with-pbehavior,
-    with-alarm,
-    with-entity,
+<template>
+  <c-patterns-field
+    v-field="form"
+    :alarm-attributes="alarmAttributes"
+    :entity-attributes="entityAttributes"
+    :readonly="readonly"
+    some-required
+    with-pbehavior
+    with-alarm
+    with-entity
     both-counters
-  )
+  />
 </template>
 
 <script>

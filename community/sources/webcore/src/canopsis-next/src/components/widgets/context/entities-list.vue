@@ -1,60 +1,77 @@
-<template lang="pug">
-  entities-list-table-with-pagination(
-    :widget="widget",
-    :entities="contextEntities",
-    :pending="contextEntitiesPending",
-    :meta="contextEntitiesMeta",
-    :query.sync="query",
-    :columns="widget.parameters.widgetColumns",
+<template>
+  <entities-list-table-with-pagination
+    :widget="widget"
+    :entities="contextEntities"
+    :pending="contextEntitiesPending"
+    :meta="contextEntitiesMeta"
+    :query.sync="query"
+    :columns="widget.parameters.widgetColumns"
     selectable
-  )
-    template(#toolbar="")
-      v-flex
-        c-advanced-search-field(
-          :query.sync="query",
-          :columns="widget.parameters.widgetColumns",
+  >
+    <template #toolbar="">
+      <v-flex>
+        <c-advanced-search-field
+          :query.sync="query"
+          :columns="widget.parameters.widgetColumns"
           :tooltip="$t('context.advancedSearch')"
-        )
-      v-flex(v-if="hasAccessToCategory")
-        c-entity-category-field.mr-3(:category="query.category", @input="updateCategory")
-      v-flex
-        v-layout(v-if="hasAccessToUserFilter", row, align-center)
-          filter-selector(
-            :label="$t('settings.selectAFilter')",
-            :filters="userPreference.filters",
-            :locked-filters="widget.filters",
-            :value="mainFilter",
-            :locked-value="lockedFilter",
-            :disabled="!hasAccessToListFilters",
+        />
+      </v-flex>
+      <v-flex v-if="hasAccessToCategory">
+        <c-entity-category-field
+          class="mr-3"
+          :category="query.category"
+          @input="updateCategory"
+        />
+      </v-flex>
+      <v-flex>
+        <v-layout
+          v-if="hasAccessToUserFilter"
+          align-center
+        >
+          <filter-selector
+            :label="$t('settings.selectAFilter')"
+            :filters="userPreference.filters"
+            :locked-filters="widget.filters"
+            :value="mainFilter"
+            :locked-value="lockedFilter"
+            :disabled="!hasAccessToListFilters"
             @input="updateSelectedFilter"
-          )
-          filters-list-btn(
-            v-if="hasAccessToAddFilter || hasAccessToEditFilter",
-            :widget-id="widget._id",
-            :addable="hasAccessToAddFilter",
-            :editable="hasAccessToEditFilter",
-            private,
-            with-alarm,
-            with-entity,
-            with-pbehavior,
+          />
+          <filters-list-btn
+            v-if="hasAccessToAddFilter || hasAccessToEditFilter"
+            :widget-id="widget._id"
+            :addable="hasAccessToAddFilter"
+            :editable="hasAccessToEditFilter"
+            private
+            with-alarm
+            with-entity
+            with-pbehavior
             entity-counters-type
-          )
-      v-flex
-        v-checkbox.pt-2(
-          :input-value="query.no_events",
-          :label="$t('context.noEventsFilter')",
-          color="primary",
+          />
+        </v-layout>
+      </v-flex>
+      <v-flex>
+        <v-checkbox
+          class="pt-2"
+          :input-value="query.no_events"
+          :label="$t('context.noEventsFilter')"
+          color="primary"
           @change="updateNoEvents"
-        )
-      v-flex(v-if="hasAccessToCreateEntity")
-        context-fab
-      v-flex(v-if="hasAccessToExportAsCsv")
-        c-action-btn(
-          :loading="downloading",
-          :tooltip="$t('settings.exportAsCsv')",
-          icon="cloud_download",
+        />
+      </v-flex>
+      <v-flex v-if="hasAccessToCreateEntity">
+        <context-fab />
+      </v-flex>
+      <v-flex v-if="hasAccessToExportAsCsv">
+        <c-action-btn
+          :loading="downloading"
+          :tooltip="$t('settings.exportAsCsv')"
+          icon="cloud_download"
           @click="exportContextList"
-        )
+        />
+      </v-flex>
+    </template>
+  </entities-list-table-with-pagination>
 </template>
 
 <script>

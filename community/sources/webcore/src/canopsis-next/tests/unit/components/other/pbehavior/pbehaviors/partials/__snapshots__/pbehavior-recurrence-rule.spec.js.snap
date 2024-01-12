@@ -2,7 +2,7 @@
 
 exports[`pbehavior-recurrence-rule Renders \`pbehavior-recurrence-rule\` with pbehavior 1`] = `
 <div
-  class="layout row"
+  class="layout"
 >
   <div
     class="flex offset-xs3 xs6"

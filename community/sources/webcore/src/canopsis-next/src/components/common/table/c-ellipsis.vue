@@ -1,11 +1,23 @@
-<template lang="pug">
-  div
-    span(@click.stop="textClicked") {{ shortenedText }}
-    v-menu(v-if="!isShort", :close-on-content-click="false")
-      template(#activator="{ on }")
-        span.ml-1(v-on="on") ...
-      v-card
-        v-card-title.pre-wrap {{ text }}
+<template>
+  <div>
+    <span @click.stop="textClicked">{{ shortenedText }}</span>
+    <v-menu
+      v-if="!isShort"
+      :close-on-content-click="false"
+    >
+      <template #activator="{ on }">
+        <span
+          class="ml-1"
+          v-on="on"
+        >...</span>
+      </template>
+      <v-card>
+        <v-card-title class="pre-wrap">
+          {{ text }}
+        </v-card-title>
+      </v-card>
+    </v-menu>
+  </div>
 </template>
 
 <script>

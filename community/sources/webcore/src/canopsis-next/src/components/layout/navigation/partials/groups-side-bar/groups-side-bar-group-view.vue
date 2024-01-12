@@ -1,19 +1,21 @@
-<template lang="pug">
-  router-link.panel-item-content-link(
-    :class="{ editing: isNavigationEditingMode }",
-    :event="routerLinkEvents",
-    :title="view.title",
+<template>
+  <router-link
+    class="panel-item-content-link"
+    :class="{ editing: isNavigationEditingMode }"
+    :event="routerLinkEvents"
+    :title="view.title"
     :to="viewLink"
-  )
-    group-view-panel(
-      :view="view",
-      :is-order-changed="isGroupsOrderChanged",
-      :is-view-active="isViewActive",
-      :editable="(isViewPrivate || hasViewEditButtonAccess) && isNavigationEditingMode",
-      :duplicable="(isViewPrivate || hasCreateAnyViewAccess) && isNavigationEditingMode",
-      @duplicate="showDuplicateViewModal",
+  >
+    <group-view-panel
+      :view="view"
+      :is-order-changed="isGroupsOrderChanged"
+      :is-view-active="isViewActive"
+      :editable="(isViewPrivate || hasViewEditButtonAccess) && isNavigationEditingMode"
+      :duplicable="(isViewPrivate || hasCreateAnyViewAccess) && isNavigationEditingMode"
+      @duplicate="showDuplicateViewModal"
       @change="showEditViewModal"
-    )
+    />
+  </router-link>
 </template>
 
 <script>

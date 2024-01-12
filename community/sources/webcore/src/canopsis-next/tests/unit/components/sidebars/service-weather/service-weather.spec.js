@@ -708,7 +708,7 @@ describe('service-weather', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `service-weather` widget settings with custom props', async () => {
@@ -764,6 +764,6 @@ describe('service-weather', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });
