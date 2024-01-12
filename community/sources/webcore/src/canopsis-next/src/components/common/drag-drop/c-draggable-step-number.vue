@@ -1,9 +1,25 @@
-<template lang="pug">
-  v-layout(align-center, justify-space-around)
-    span.handler
-      v-icon.draggable(v-show="!disabled", :class="dragClass") drag_indicator
-    v-avatar.white--text(:color="color", size="32")
-      slot
+<template>
+  <v-layout
+    align-center
+    justify-space-around
+  >
+    <span class="handler">
+      <v-icon
+        class="draggable"
+        v-show="!disabled"
+        :class="dragClass"
+      >
+        drag_indicator
+      </v-icon>
+    </span>
+    <v-avatar
+      class="white--text"
+      :color="color"
+      size="32"
+    >
+      <slot />
+    </v-avatar>
+  </v-layout>
 </template>
 
 <script>

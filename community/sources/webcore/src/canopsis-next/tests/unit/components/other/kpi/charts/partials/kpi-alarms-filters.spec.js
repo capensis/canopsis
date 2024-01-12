@@ -240,7 +240,7 @@ describe('kpi-alarms-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `kpi-alarms-filters` with hour sampling', async () => {
@@ -261,7 +261,7 @@ describe('kpi-alarms-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `kpi-alarms-filters` with hour sampling and normal interval', async () => {
@@ -282,6 +282,6 @@ describe('kpi-alarms-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

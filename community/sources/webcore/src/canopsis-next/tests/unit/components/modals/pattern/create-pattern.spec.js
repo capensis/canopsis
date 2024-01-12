@@ -66,9 +66,7 @@ describe('create-pattern', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -108,14 +106,14 @@ describe('create-pattern', () => {
       vm: patternForm.vm,
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
     expect(action).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
+
+    validator.detach('name');
   });
 
   test('Form submitted after trigger submit button without action', async () => {
@@ -130,9 +128,7 @@ describe('create-pattern', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -159,9 +155,7 @@ describe('create-pattern', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -207,9 +201,7 @@ describe('create-pattern', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -255,9 +247,7 @@ describe('create-pattern', () => {
 
     patternForm.vm.$emit('input', newForm);
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -277,9 +267,7 @@ describe('create-pattern', () => {
       },
     });
 
-    const cancelButton = selectCancelButton(wrapper);
-
-    cancelButton.trigger('click');
+    selectCancelButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -298,7 +286,7 @@ describe('create-pattern', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `create-pattern` with pattern', () => {
@@ -323,7 +311,7 @@ describe('create-pattern', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `create-pattern` with hidden title', () => {
@@ -341,6 +329,6 @@ describe('create-pattern', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

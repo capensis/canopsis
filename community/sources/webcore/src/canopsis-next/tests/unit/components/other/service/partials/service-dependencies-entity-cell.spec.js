@@ -58,7 +58,7 @@ describe('service-dependencies', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `service-dependencies-entity-cell` with column with state color indicator', async () => {
@@ -69,7 +69,7 @@ describe('service-dependencies', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `service-dependencies-entity-cell` with column with impact state color indicator', async () => {
@@ -80,7 +80,7 @@ describe('service-dependencies', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `service-dependencies-entity-cell` with state column', async () => {
@@ -91,7 +91,7 @@ describe('service-dependencies', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `service-dependencies-entity-cell` with state column with state color indicator', async () => {
@@ -102,7 +102,7 @@ describe('service-dependencies', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `service-dependencies-entity-cell` with state column with impact state color indicator', async () => {
@@ -113,6 +113,6 @@ describe('service-dependencies', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -1,9 +1,195 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`extra-details-ack Renders \`extra-details-ack\` with date in previous month 1`] = `<div><span class="c-extra-details__badge purple"><i aria-hidden="true" class="v-icon material-icons theme--light white--text" style="font-size: 16px;">playlist_add_check</i></span><span class="v-tooltip c-extra-details v-tooltip--top"><transition-stub name="slide-y-reverse-transition"><div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"></div></transition-stub></span></div>`;
+exports[`extra-details-ack Renders \`extra-details-ack\` with date in previous month 1`] = `
+<div>
+  <span
+    class="v-tooltip c-extra-details v-tooltip--top"
+  >
+    <!---->
+    <span
+      class="c-extra-details__badge purple"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate material-icons theme--light white--text"
+        style="font-size: 16px;"
+      >
+        playlist_add_check
+      </i>
+    </span>
+  </span>
+</div>
+`;
 
-exports[`extra-details-ack Renders \`extra-details-ack\` with full ack 1`] = `<div><span class="c-extra-details__badge purple"><i aria-hidden="true" class="v-icon material-icons theme--light white--text" style="font-size: 16px;">playlist_add_check</i></span><span class="v-tooltip c-extra-details v-tooltip--top"><transition-stub name="slide-y-reverse-transition"><div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"></div></transition-stub></span></div>`;
+exports[`extra-details-ack Renders \`extra-details-ack\` with date in previous month 2`] = `
+<div
+  class="v-tooltip__content menuable__content__active"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
+>
+  <div
+    class="text-md-center"
+  >
+    <strong>
+      Ack
+    </strong>
+    <div>
+      By : ack-author
+    </div>
+    <div>
+      Date : 07/08/2013 19:00:00
+    </div>
+    <div>
+        Initiator : ack-initiator
+    </div>
+    <div
+      class="c-extra-details__message"
+    >
+        Comment : ack-message
+    </div>
+  </div>
+</div>
+`;
 
-exports[`extra-details-ack Renders \`extra-details-ack\` without initiator 1`] = `<div><span class="c-extra-details__badge purple"><i aria-hidden="true" class="v-icon material-icons theme--light white--text" style="font-size: 16px;">playlist_add_check</i></span><span class="v-tooltip c-extra-details v-tooltip--top"><transition-stub name="slide-y-reverse-transition"><div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"></div></transition-stub></span></div>`;
+exports[`extra-details-ack Renders \`extra-details-ack\` with full ack 1`] = `
+<div>
+  <span
+    class="v-tooltip c-extra-details v-tooltip--top"
+  >
+    <!---->
+    <span
+      class="c-extra-details__badge purple"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate material-icons theme--light white--text"
+        style="font-size: 16px;"
+      >
+        playlist_add_check
+      </i>
+    </span>
+  </span>
+</div>
+`;
 
-exports[`extra-details-ack Renders \`extra-details-ack\` without message 1`] = `<div><span class="c-extra-details__badge purple"><i aria-hidden="true" class="v-icon material-icons theme--light white--text" style="font-size: 16px;">playlist_add_check</i></span><span class="v-tooltip c-extra-details v-tooltip--top"><transition-stub name="slide-y-reverse-transition"><div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"></div></transition-stub></span></div>`;
+exports[`extra-details-ack Renders \`extra-details-ack\` with full ack 2`] = `
+<div
+  class="v-tooltip__content menuable__content__active"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
+>
+  <div
+    class="text-md-center"
+  >
+    <strong>
+      Ack
+    </strong>
+    <div>
+      By : ack-author
+    </div>
+    <div>
+      Date : 6:00:00
+    </div>
+    <div>
+        Initiator : ack-initiator
+    </div>
+    <div
+      class="c-extra-details__message"
+    >
+        Comment : ack-message
+    </div>
+  </div>
+</div>
+`;
+
+exports[`extra-details-ack Renders \`extra-details-ack\` without initiator 1`] = `
+<div>
+  <span
+    class="v-tooltip c-extra-details v-tooltip--top"
+  >
+    <!---->
+    <span
+      class="c-extra-details__badge purple"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate material-icons theme--light white--text"
+        style="font-size: 16px;"
+      >
+        playlist_add_check
+      </i>
+    </span>
+  </span>
+</div>
+`;
+
+exports[`extra-details-ack Renders \`extra-details-ack\` without initiator 2`] = `
+<div
+  class="v-tooltip__content menuable__content__active"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
+>
+  <div
+    class="text-md-center"
+  >
+    <strong>
+      Ack
+    </strong>
+    <div>
+      By : ack-author
+    </div>
+    <div>
+      Date : 6:00:00
+    </div>
+    <!---->
+    <div
+      class="c-extra-details__message"
+    >
+        Comment : ack-message
+    </div>
+  </div>
+</div>
+`;
+
+exports[`extra-details-ack Renders \`extra-details-ack\` without message 1`] = `
+<div>
+  <span
+    class="v-tooltip c-extra-details v-tooltip--top"
+  >
+    <!---->
+    <span
+      class="c-extra-details__badge purple"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate material-icons theme--light white--text"
+        style="font-size: 16px;"
+      >
+        playlist_add_check
+      </i>
+    </span>
+  </span>
+</div>
+`;
+
+exports[`extra-details-ack Renders \`extra-details-ack\` without message 2`] = `
+<div
+  class="v-tooltip__content menuable__content__active"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
+>
+  <div
+    class="text-md-center"
+  >
+    <strong>
+      Ack
+    </strong>
+    <div>
+      By : ack-author
+    </div>
+    <div>
+      Date : 6:00:00
+    </div>
+    <div>
+        Initiator : ack-initiator
+    </div>
+    <!---->
+  </div>
+</div>
+`;

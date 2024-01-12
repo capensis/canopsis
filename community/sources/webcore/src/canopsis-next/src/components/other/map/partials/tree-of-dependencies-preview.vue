@@ -1,20 +1,23 @@
-<template lang="pug">
-  div.tree-of-dependencies__preview
-    c-zoom-overlay
-      network-graph.fill-height.black--text(
-        ref="networkGraph",
-        :options="options",
-        :node-html-label-options="nodeHtmlLabelsOptions",
+<template>
+  <div class="tree-of-dependencies__preview">
+    <c-zoom-overlay>
+      <network-graph
+        class="fill-height black--text"
+        ref="networkGraph"
+        :options="options"
+        :node-html-label-options="nodeHtmlLabelsOptions"
         ctrl-wheel-zoom
-      )
-    c-help-icon(
-      :text="$t('treeOfDependencies.panzoom.helpText')",
-      size="32",
-      icon-class="map-preview__help-icon",
-      color="secondary",
-      icon="help",
+      />
+    </c-zoom-overlay>
+    <c-help-icon
+      :text="$t('treeOfDependencies.panzoom.helpText')"
+      size="32"
+      icon-class="map-preview__help-icon"
+      color="secondary"
+      icon="help"
       top
-    )
+    />
+  </div>
 </template>
 
 <script>
@@ -242,6 +245,7 @@ export default {
         nodeEl.classList.add('v-btn__content', 'position-relative', 'border-radius-rounded');
         nodeEl.style.width = `${nodeSize}px`;
         nodeEl.style.height = `${nodeSize}px`;
+        nodeEl.style.justifyContent = 'center';
         nodeEl.style.background = !this.colorIndicator
           ? COLORS.secondary
           : getEntityColor(entity, this.colorIndicator);

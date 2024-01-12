@@ -1,18 +1,36 @@
-<template lang="pug">
-  v-layout(wrap)
-    v-flex(xs3)
-      event-filter-failure-type-field(:value="query.type", @input="updateQueryField('type', $event)")
-    v-flex(v-if="eventFilter.unread_failures_count", xs12)
-      v-btn.mx-0(:loading="markAsReadPending", color="primary", @click="markNewFailuresAsRead")
-        v-icon(left) done_all
-        span {{ $t('eventFilter.markAsRead') }}
-    v-flex(xs12)
-      event-filter-failures-list(
-        :failures="eventFilterFailures",
-        :pagination.sync="pagination",
-        :total-items="eventFilterFailuresMeta.total_count",
+<template>
+  <v-layout wrap>
+    <v-flex xs3>
+      <event-filter-failure-type-field
+        :value="query.type"
+        @input="updateQueryField('type', $event)"
+      />
+    </v-flex>
+    <v-flex
+      v-if="eventFilter.unread_failures_count"
+      xs12
+    >
+      <v-btn
+        class="v-btn-legacy-m--y"
+        :loading="markAsReadPending"
+        color="primary"
+        @click="markNewFailuresAsRead"
+      >
+        <v-icon left>
+          done_all
+        </v-icon>
+        <span>{{ $t('eventFilter.markAsRead') }}</span>
+      </v-btn>
+    </v-flex>
+    <v-flex xs12>
+      <event-filter-failures-list
+        :failures="eventFilterFailures"
+        :options.sync="options"
+        :total-items="eventFilterFailuresMeta.total_count"
         :pending="eventFilterFailuresPending"
-      )
+      />
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

@@ -30,7 +30,7 @@ describe('pbehavior-comments', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pbehavior-comments` with comments', async () => {
@@ -42,6 +42,6 @@ describe('pbehavior-comments', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

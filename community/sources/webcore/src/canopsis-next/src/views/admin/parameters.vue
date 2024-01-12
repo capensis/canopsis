@@ -1,45 +1,87 @@
-<template lang="pug">
-  v-container
-    v-layout(row, wrap)
-      v-flex(xs12)
-        v-card.ma-2
-          v-tabs(v-model="activeTab", slider-color="primary", fixed-tabs)
-            v-tab(:href="`#${$constants.PARAMETERS_TABS.parameters}`") {{ $t('parameters.tabs.parameters') }}
-            v-tab-item(:value="$constants.PARAMETERS_TABS.parameters")
-              v-card-text
-                user-interface(:disabled="!hasUpdateParametersAccess")
-            v-tab(:href="`#${$constants.PARAMETERS_TABS.viewExportImport}`")
-              | {{ $t('parameters.tabs.importExportViews') }}
-            v-tab-item(:value="$constants.PARAMETERS_TABS.viewExportImport")
-              views-import-export
-            v-tab(:href="`#${$constants.PARAMETERS_TABS.stateSettings}`") {{ $t('parameters.tabs.stateSettings') }}
-            v-tab-item(:value="$constants.PARAMETERS_TABS.stateSettings", lazy)
-              v-card-text
-                state-settings
-            template(v-if="isProVersion")
-              v-tab(:href="`#${$constants.PARAMETERS_TABS.notificationSettings}`")
-                | {{ $t('parameters.tabs.notificationsSettings') }}
-              v-tab-item(:value="$constants.PARAMETERS_TABS.notificationSettings", lazy)
-                v-card-text
-                  notifications-settings
-              v-tab(:href="`#${$constants.PARAMETERS_TABS.storageSettings}`")
-                | {{ $t('parameters.tabs.storageSettings') }}
-              v-tab-item(:value="$constants.PARAMETERS_TABS.storageSettings", lazy)
-                v-card-text
-                  storage-settings
-            template(v-if="hasReadAnyWidgetTemplateAccess")
-              v-tab(:href="`#${$constants.PARAMETERS_TABS.widgetTemplates}`")
-                | {{ $t('parameters.tabs.widgetTemplates') }}
-              v-tab-item(:value="$constants.PARAMETERS_TABS.widgetTemplates", lazy)
-                v-card-text
-                  widget-templates
-    v-fade-transition
-      c-fab-btn(
-        v-if="hasFabButton",
-        @create="showSelectWidgetTemplateTypeModal",
+<template>
+  <v-container>
+    <v-layout wrap>
+      <v-flex xs12>
+        <v-card class="ma-2">
+          <v-tabs
+            class="parameters__tabs"
+            v-model="activeTab"
+            slider-color="primary"
+            transition="slide-y"
+            vertical
+          >
+            <v-tab :href="`#${$constants.PARAMETERS_TABS.parameters}`">
+              {{ $t('parameters.tabs.parameters') }}
+            </v-tab>
+            <v-tab :href="`#${$constants.PARAMETERS_TABS.viewExportImport}`">
+              {{ $t('parameters.tabs.importExportViews') }}
+            </v-tab>
+            <v-tab :href="`#${$constants.PARAMETERS_TABS.stateSettings}`">
+              {{ $t('parameters.tabs.stateSettings') }}
+            </v-tab>
+            <template v-if="isProVersion">
+              <v-tab :href="`#${$constants.PARAMETERS_TABS.notificationSettings}`">
+                {{ $t('parameters.tabs.notificationsSettings') }}
+              </v-tab>
+              <v-tab :href="`#${$constants.PARAMETERS_TABS.storageSettings}`">
+                {{ $t('parameters.tabs.storageSettings') }}
+              </v-tab>
+            </template>
+            <v-tab
+              v-if="hasReadAnyWidgetTemplateAccess"
+              :href="`#${$constants.PARAMETERS_TABS.widgetTemplates}`"
+            >
+              {{ $t('parameters.tabs.widgetTemplates') }}
+            </v-tab>
+            <v-tabs-items v-model="activeTab">
+              <v-tab-item :value="$constants.PARAMETERS_TABS.parameters">
+                <v-card-text>
+                  <user-interface :disabled="!hasUpdateParametersAccess" />
+                </v-card-text>
+              </v-tab-item>
+              <v-tab-item :value="$constants.PARAMETERS_TABS.viewExportImport">
+                <views-import-export />
+              </v-tab-item>
+              <v-tab-item :value="$constants.PARAMETERS_TABS.stateSettings">
+                <v-card-text>
+                  <state-settings />
+                </v-card-text>
+              </v-tab-item>
+              <template v-if="isProVersion">
+                <v-tab-item :value="$constants.PARAMETERS_TABS.notificationSettings">
+                  <v-card-text>
+                    <notifications-settings />
+                  </v-card-text>
+                </v-tab-item>
+                <v-tab-item :value="$constants.PARAMETERS_TABS.storageSettings">
+                  <v-card-text>
+                    <storage-settings />
+                  </v-card-text>
+                </v-tab-item>
+              </template>
+              <v-tab-item
+                v-if="hasReadAnyWidgetTemplateAccess"
+                :value="$constants.PARAMETERS_TABS.widgetTemplates"
+              >
+                <v-card-text>
+                  <widget-templates />
+                </v-card-text>
+              </v-tab-item>
+            </v-tabs-items>
+          </v-tabs>
+        </v-card>
+      </v-flex>
+    </v-layout>
+    <v-fade-transition>
+      <c-fab-btn
+        v-if="hasFabButton"
+        @create="showSelectWidgetTemplateTypeModal"
         @refresh="refresh"
-      )
-        span {{ $t('modals.createWidgetTemplate.create.title') }}
+      >
+        <span>{{ $t('modals.createWidgetTemplate.create.title') }}</span>
+      </c-fab-btn>
+    </v-fade-transition>
+  </v-container>
 </template>
 
 <script>
@@ -103,3 +145,18 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.parameters__tabs .v-slide-group__wrapper {
+  position: relative;
+  background: transparent;
+
+  &:before {
+    content: '';
+    position: absolute;
+    inset: 0 0;
+    background-color: var(--v-application-background-base);
+    opacity: .5;
+  }
+}
+</style>

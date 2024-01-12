@@ -1,32 +1,53 @@
-<template lang="pug">
-  v-layout
-    v-flex.mt-3(xs1)
-      v-layout.fill-height(align-center, column)
-        v-avatar.white--text(color="primary", size="32") {{ stepNumber }}
-        span.step-line.primary.mt-3(v-if="!isLastStep")
-    v-flex(xs11)
-      v-layout
-        v-text-field(
-          :value="step.name",
-          :label="$t('common.name')",
-          readonly,
-          hide-details,
-          box
-        )
-      remediation-instruction-status(
-        :completed-at="step.completed_at",
-        :time-to-complete="step.time_to_complete",
+<template>
+  <v-layout>
+    <v-flex
+      class="mt-3"
+      xs1
+    >
+      <v-layout
+        class="fill-height"
+        align-center
+        column
+      >
+        <v-avatar
+          class="white--text"
+          color="primary"
+          size="32"
+        >
+          {{ stepNumber }}
+        </v-avatar>
+        <span
+          class="step-line primary mt-3"
+          v-if="!isLastStep"
+        />
+      </v-layout>
+    </v-flex>
+    <v-flex xs11>
+      <v-layout>
+        <v-text-field
+          :value="step.name"
+          :label="$t('common.name')"
+          readonly
+          hide-details
+          filled
+        />
+      </v-layout>
+      <remediation-instruction-status
+        :completed-at="step.completed_at"
+        :time-to-complete="step.time_to_complete"
         :failed-at="step.failed_at"
-      )
-      remediation-instruction-execute-step-operations(
-        :operations="step.operations",
-        :step-number="stepNumber",
-        :is-first-step="isFirstStep",
-        :next-pending="nextPending",
-        :previous-pending="previousPending",
-        v-on="$listeners",
+      />
+      <remediation-instruction-execute-step-operations
+        :operations="step.operations"
+        :step-number="stepNumber"
+        :is-first-step="isFirstStep"
+        :next-pending="nextPending"
+        :previous-pending="previousPending"
+        v-on="$listeners"
         @finish="showEndpointModal"
-      )
+      />
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
