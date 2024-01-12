@@ -135,11 +135,6 @@ func (a *assigner) assignToComponent(ctx context.Context, entity *types.Entity, 
 		}
 
 		if matched {
-			// if a state method is the same, return
-			if entity.StateInfo != nil && prevStateMethodID == entity.StateInfo.ID {
-				return false, nil
-			}
-
 			// for component, save inherited pattern to a state info to match resources easily.
 			entity.StateInfo = &types.StateInfo{
 				ID:               a.componentRules[idx].ID,
