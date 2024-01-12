@@ -191,10 +191,7 @@ func NewEngine(
 
 	mainMessageProcessor := &messageProcessor{
 		FeaturePrintEventOnError: options.PrintEventOnError,
-		DbClient:                 mongoClient,
 		AlarmConfigProvider:      alarmConfigProvider,
-		EventFilterService:       eventFilterService,
-		ContextGraphManager:      contextGraphManager,
 		TechMetricsSender:        techMetricsSender,
 		MetricsSender:            metricsSender,
 		AmqpPublisher:            m.DepAMQPChannelPub(amqpConnection),

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
@@ -46,7 +47,7 @@ func (p *serviceProcessor) Process(ctx context.Context, event *types.Event) (
 		},
 	}
 
-	commRegister := libmongo.NewCommandsRegister(p.dbCollection)
+	commRegister := libmongo.NewCommandsRegister(p.dbCollection, canopsis.DefaultBulkSize)
 
 	if event.EventType == types.EventTypeRecomputeEntityService {
 		var eventEntity types.Entity
@@ -139,7 +140,7 @@ func (p *serviceProcessor) Process(ctx context.Context, event *types.Event) (
 		}
 
 		// todo: should be called to get fresh services from the db, should be removed when we do something with cache
-		err = p.contextGraphManager.RefreshServices(ctx)
+		err = p.contextGraphManager.LoadServices(ctx)
 		if err != nil {
 			return fmt.Errorf("cannot refresh services: %w", err)
 		}

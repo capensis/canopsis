@@ -24,9 +24,9 @@ type assigner struct {
 	dbCollection             mongo.DbCollection
 	entityCountersCollection mongo.DbCollection
 
+	rulesMutex     sync.RWMutex
 	componentRules []StateSetting
 	serviceRules   []StateSetting
-	rulesMutex     sync.RWMutex
 
 	ruleQuery        bson.M
 	ruleQueryOptions *options.FindOptions

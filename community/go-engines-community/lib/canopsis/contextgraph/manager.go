@@ -18,11 +18,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-const (
-	added   = 0
-	removed = 1
-)
-
 type Report struct {
 	// The check flags show if an entity should be included in a second transaction search
 	// to check services and state settings.
@@ -77,22 +72,20 @@ func (m *manager) InheritComponentFields(resource, component *types.Entity, comm
 				resource.ComponentStateSettings = true
 				if !resource.ComponentStateSettingsToRemove {
 					resource.ComponentStateSettingsToAdd = true
+				} else {
+					resource.ComponentStateSettingsToRemove = false
 				}
-
-				resource.ComponentStateSettingsToRemove = false
 
 				update["component_state_settings"] = resource.ComponentStateSettings
 				update["component_state_settings_to_add"] = resource.ComponentStateSettingsToAdd
 				update["component_state_settings_to_remove"] = resource.ComponentStateSettingsToRemove
-			}
-
-			if !matched && resource.ComponentStateSettings {
+			} else if !matched && resource.ComponentStateSettings {
 				resource.ComponentStateSettings = false
 				if !resource.ComponentStateSettingsToAdd {
 					resource.ComponentStateSettingsToRemove = true
+				} else {
+					resource.ComponentStateSettingsToAdd = false
 				}
-
-				resource.ComponentStateSettingsToAdd = false
 
 				update["component_state_settings"] = resource.ComponentStateSettings
 				update["component_state_settings_to_add"] = resource.ComponentStateSettingsToAdd
@@ -108,7 +101,7 @@ func (m *manager) InheritComponentFields(resource, component *types.Entity, comm
 	return nil
 }
 
-func (m *manager) RefreshServices(ctx context.Context) error {
+func (m *manager) LoadServices(ctx context.Context) error {
 	var err error
 
 	m.services, err = m.storage.GetAll(ctx)
@@ -117,10 +110,9 @@ func (m *manager) RefreshServices(ctx context.Context) error {
 }
 
 func (m *manager) AssignServices(entity *types.Entity, commRegister libmongo.CommandsRegister) {
-	// array's indexes: 0 - added services, 1 - removed services
-	var entitiesData [2][]string
-
 	servicesMap := make(map[string]struct{}, len(entity.Services))
+	toAddMap := make(map[string]bool)
+	toRemoveMap := make(map[string]bool)
 	for _, id := range entity.Services {
 		servicesMap[id] = struct{}{}
 	}
@@ -139,32 +131,19 @@ func (m *manager) AssignServices(entity *types.Entity, commRegister libmongo.Com
 
 		if matched {
 			if !found && entity.Enabled {
-				entitiesData[added] = append(entitiesData[added], serviceID)
+				toAddMap[serviceID] = true
 			}
 
 			if found && !entity.Enabled {
-				entitiesData[removed] = append(entitiesData[removed], serviceID)
+				toRemoveMap[serviceID] = true
 			}
 		} else if found {
-			entitiesData[removed] = append(entitiesData[removed], serviceID)
+			toRemoveMap[serviceID] = true
 		}
 	}
 
-	addedTo := entitiesData[added]
-	removedFrom := entitiesData[removed]
-
-	if len(addedTo) == 0 && len(removedFrom) == 0 {
+	if len(toAddMap) == 0 && len(toRemoveMap) == 0 {
 		return
-	}
-
-	toAddMap := make(map[string]bool, len(addedTo))
-	for _, impact := range addedTo {
-		toAddMap[impact] = true
-	}
-
-	toRemoveMap := make(map[string]bool, len(removedFrom))
-	for _, impact := range removedFrom {
-		toRemoveMap[impact] = true
 	}
 
 	servicesToAddMap := make(map[string]bool, len(entity.ServicesToAdd))
@@ -177,21 +156,20 @@ func (m *manager) AssignServices(entity *types.Entity, commRegister libmongo.Com
 		servicesToRemoveMap[id] = true
 	}
 
-	newServices := make([]string, 0, len(entity.Services))
-	newServicesToAdd := make([]string, 0, len(entity.ServicesToAdd))
-	newServicesToRemove := make([]string, 0, len(entity.ServicesToRemove))
+	newServices := make([]string, 0, len(toAddMap)+len(entity.Services)-len(toRemoveMap))
+	newServicesToAdd := make([]string, 0, max(len(entity.ServicesToAdd), len(toAddMap)))
+	newServicesToRemove := make([]string, 0, max(len(entity.ServicesToRemove), len(toRemoveMap)))
 
-	newServices = append(newServices, addedTo...)
-
-	for idx := 0; idx < len(addedTo); idx++ {
-		if !servicesToRemoveMap[addedTo[idx]] {
-			newServicesToAdd = append(newServicesToAdd, addedTo[idx])
+	for id := range toAddMap {
+		newServices = append(newServices, id)
+		if !servicesToRemoveMap[id] {
+			newServicesToAdd = append(newServicesToAdd, id)
 		}
 	}
 
-	for idx := 0; idx < len(removedFrom); idx++ {
-		if !servicesToAddMap[removedFrom[idx]] {
-			newServicesToRemove = append(newServicesToRemove, removedFrom[idx])
+	for id := range toRemoveMap {
+		if !servicesToAddMap[id] {
+			newServicesToRemove = append(newServicesToRemove, id)
 		}
 	}
 
@@ -252,12 +230,45 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string, commRe
 
 	var entitiesToRemove []types.Entity
 
-	cursor, err := m.entityCollection.Find(
+	cursor, err := m.entityCollection.Aggregate(
 		ctx,
-		bson.M{"$and": bson.A{
-			bson.M{"services": serviceID},
-			negativeQuery,
-		}},
+		[]bson.M{
+			{
+				"$match": bson.M{
+					"$and": bson.A{
+						bson.M{"services": serviceID},
+						negativeQuery,
+					},
+				},
+			},
+			{
+				"$project": bson.M{
+					"_id":             1,
+					"services":        1,
+					"services_to_add": 1,
+				},
+			},
+			{
+				"$addFields": bson.M{
+					"services": bson.M{
+						"$setDifference": bson.A{
+							"$services",
+							bson.A{serviceID},
+						},
+					},
+				},
+			},
+			{
+				"$addFields": bson.M{
+					"services_to_add": bson.M{
+						"$setDifference": bson.A{
+							"$services_to_add",
+							bson.A{serviceID},
+						},
+					},
+				},
+			},
+		},
 	)
 	if err != nil {
 		return types.Entity{}, err
@@ -269,30 +280,51 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string, commRe
 	}
 
 	for _, ent := range entitiesToRemove {
-		for idx, impServ := range ent.Services {
-			if impServ == serviceID {
-				ent.Services = append(ent.Services[:idx], ent.Services[idx+1:]...)
-				break
-			}
-		}
-
-		for idx, impServ := range ent.ServicesToAdd {
-			if impServ == serviceID {
-				ent.ServicesToAdd = append(ent.ServicesToAdd[:idx], ent.ServicesToAdd[idx+1:]...)
-				break
-			}
-		}
-
 		commRegister.RegisterUpdate(ent.ID, bson.M{"services": ent.Services, "services_to_add": ent.ServicesToAdd})
 	}
 
 	var entitiesToAdd []types.Entity
-	cursor, err = m.entityCollection.Find(
+
+	cursor, err = m.entityCollection.Aggregate(
 		ctx,
-		bson.M{"$and": bson.A{
-			bson.M{"services": bson.M{"$ne": serviceID}},
-			query,
-		}})
+		[]bson.M{
+			{
+				"$match": bson.M{
+					"$and": bson.A{
+						bson.M{"services": bson.M{"$ne": serviceID}},
+						query,
+					},
+				},
+			},
+			{
+				"$project": bson.M{
+					"_id":                1,
+					"services":           1,
+					"services_to_remove": 1,
+				},
+			},
+			{
+				"$addFields": bson.M{
+					"services": bson.M{
+						"$setDifference": bson.A{
+							"$services",
+							bson.A{serviceID},
+						},
+					},
+				},
+			},
+			{
+				"$addFields": bson.M{
+					"services_to_remove": bson.M{
+						"$setDifference": bson.A{
+							"$services_to_remove",
+							bson.A{serviceID},
+						},
+					},
+				},
+			},
+		},
+	)
 	if err != nil {
 		return types.Entity{}, err
 	}
@@ -303,13 +335,6 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string, commRe
 	}
 
 	for _, ent := range entitiesToAdd {
-		for idx, impServ := range ent.ServicesToRemove {
-			if impServ == serviceID {
-				ent.ServicesToRemove = append(ent.ServicesToRemove[:idx], ent.ServicesToRemove[idx+1:]...)
-				break
-			}
-		}
-
 		ent.Services = append(ent.Services, serviceID)
 		commRegister.RegisterUpdate(ent.ID, bson.M{"services": ent.Services, "services_to_remove": ent.ServicesToRemove})
 	}
@@ -320,7 +345,7 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string, commRe
 	}
 
 	// todo: should be called to get fresh services from the db, should be removed when we do something with cache
-	err = m.RefreshServices(ctx)
+	err = m.LoadServices(ctx)
 	if err != nil {
 		return types.Entity{}, err
 	}
@@ -360,11 +385,11 @@ func (m *manager) HandleResource(ctx context.Context, event *types.Event, commRe
 		event.Entity = resource
 
 		return report, nil
-	} else {
-		resource, componentExist, connectorExist, err = m.getResourceEntities(ctx, resourceID, componentID, connectorID)
-		if err != nil {
-			return report, err
-		}
+	}
+
+	resource, componentExist, connectorExist, err = m.getResourceEntities(ctx, resourceID, componentID, connectorID)
+	if err != nil {
+		return report, err
 	}
 
 	if resource != nil && resource.SoftDeleted != nil {
@@ -758,22 +783,20 @@ func (m *manager) ProcessComponentDependencies(ctx context.Context, component *t
 			resource.ComponentStateSettings = true
 			if !resource.ComponentStateSettingsToRemove {
 				resource.ComponentStateSettingsToAdd = true
+			} else {
+				resource.ComponentStateSettingsToRemove = false
 			}
-
-			resource.ComponentStateSettingsToRemove = false
 
 			update["component_state_settings"] = resource.ComponentStateSettings
 			update["component_state_settings_to_add"] = resource.ComponentStateSettingsToAdd
 			update["component_state_settings_to_remove"] = resource.ComponentStateSettingsToRemove
-		}
-
-		if !matched && resource.ComponentStateSettings {
+		} else if !matched && resource.ComponentStateSettings {
 			resource.ComponentStateSettings = false
 			if !resource.ComponentStateSettingsToAdd {
 				resource.ComponentStateSettingsToRemove = true
+			} else {
+				resource.ComponentStateSettingsToAdd = false
 			}
-
-			resource.ComponentStateSettingsToAdd = false
 
 			update["component_state_settings"] = resource.ComponentStateSettings
 			update["component_state_settings_to_add"] = resource.ComponentStateSettingsToAdd
@@ -834,9 +857,9 @@ func (m *manager) getResourceEntities(ctx context.Context, resourceID, component
 		if ent.Type == types.EntityTypeResource {
 			resource = &ent
 		} else if ent.Type == types.EntityTypeComponent {
-			componentExist = ent.ID != ""
+			componentExist = true
 		} else {
-			connectorExist = ent.ID != ""
+			connectorExist = true
 		}
 	}
 
@@ -865,7 +888,7 @@ func (m *manager) getComponentEntities(ctx context.Context, componentID, connect
 		if ent.Type == types.EntityTypeComponent {
 			component = &ent
 		} else {
-			connectorExist = ent.ID != ""
+			connectorExist = true
 		}
 	}
 
@@ -889,7 +912,41 @@ func (m *manager) getEntity(ctx context.Context, id string) (*types.Entity, erro
 
 func (m *manager) processDisabledService(ctx context.Context, serviceID string, commRegister libmongo.CommandsRegister) error {
 	var dependedEntities []types.Entity
-	cursor, err := m.entityCollection.Find(ctx, bson.M{"services": serviceID})
+	cursor, err := m.entityCollection.Aggregate(
+		ctx,
+		[]bson.M{
+			{
+				"$match": bson.M{"services": serviceID},
+			},
+			{
+				"$project": bson.M{
+					"_id":             1,
+					"services":        1,
+					"services_to_add": 1,
+				},
+			},
+			{
+				"$addFields": bson.M{
+					"services": bson.M{
+						"$setDifference": bson.A{
+							"$services",
+							bson.A{serviceID},
+						},
+					},
+				},
+			},
+			{
+				"$addFields": bson.M{
+					"services_to_add": bson.M{
+						"$setDifference": bson.A{
+							"$services_to_add",
+							bson.A{serviceID},
+						},
+					},
+				},
+			},
+		},
+	)
 	if err != nil {
 		return err
 	}
@@ -900,20 +957,6 @@ func (m *manager) processDisabledService(ctx context.Context, serviceID string, 
 	}
 
 	for _, ent := range dependedEntities {
-		for impIdx, impServ := range ent.Services {
-			if impServ == serviceID {
-				ent.Services = append(ent.Services[:impIdx], ent.Services[impIdx+1:]...)
-				break
-			}
-		}
-
-		for impIdx, impServ := range ent.ServicesToAdd {
-			if impServ == serviceID {
-				ent.ServicesToAdd = append(ent.ServicesToAdd[:impIdx], ent.ServicesToAdd[impIdx+1:]...)
-				break
-			}
-		}
-
 		commRegister.RegisterUpdate(ent.ID, bson.M{"services": ent.Services, "services_to_add": ent.ServicesToAdd})
 	}
 

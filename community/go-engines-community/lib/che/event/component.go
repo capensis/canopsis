@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
@@ -45,7 +46,7 @@ func (p *componentProcessor) Process(ctx context.Context, event *types.Event) (
 	}
 
 	var report contextgraph.Report
-	commRegister := libmongo.NewCommandsRegister(p.dbCollection)
+	commRegister := libmongo.NewCommandsRegister(p.dbCollection, canopsis.DefaultBulkSize)
 
 	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		commRegister.Clear()
@@ -97,16 +98,13 @@ func (p *componentProcessor) Process(ctx context.Context, event *types.Event) (
 
 	// cap = 2: component and connector.
 	entityIdsToCheck := make([]string, 0, 2)
-	entityIdsToUpdateMetrics := make([]string, 0, 2)
 
 	if report.CheckComponent {
 		entityIdsToCheck = append(entityIdsToCheck, event.Entity.ID)
-		entityIdsToUpdateMetrics = append(entityIdsToUpdateMetrics, event.Entity.ID)
 	}
 
 	if report.CheckConnector {
 		entityIdsToCheck = append(entityIdsToCheck, event.Entity.Connector)
-		entityIdsToUpdateMetrics = append(entityIdsToUpdateMetrics, event.Entity.Connector)
 	}
 
 	if len(entityIdsToCheck) == 0 {
@@ -155,7 +153,7 @@ func (p *componentProcessor) Process(ctx context.Context, event *types.Event) (
 		}
 
 		// todo: should be called to get fresh services from the db, should be removed when we do something with cache
-		err = p.contextGraphManager.RefreshServices(ctx)
+		err = p.contextGraphManager.LoadServices(ctx)
 		if err != nil {
 			return fmt.Errorf("cannot refresh services: %w", err)
 		}
@@ -195,5 +193,5 @@ func (p *componentProcessor) Process(ctx context.Context, event *types.Event) (
 		return nil, nil, eventMetric, err
 	}
 
-	return toCountersUpdate, append(resourceIDsToUpdateMetrics, entityIdsToUpdateMetrics...), eventMetric, nil
+	return toCountersUpdate, append(resourceIDsToUpdateMetrics, entityIdsToCheck...), eventMetric, nil
 }
