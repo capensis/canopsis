@@ -1,8 +1,27 @@
-<template lang="pug">
-  v-layout.tab-panel-content(xs12)
-    v-flex.tab-content-block.secondary.pa-2.white--text(xs4) {{ group.title }}
-    v-flex.tab-content-block.secondary.lighten-1.pa-2.white--text(xs4) {{ view.title }}
-    v-flex.tab-content-block.pa-2.white--text(xs4) {{ tab.title }}
+<template>
+  <v-layout
+    class="tab-panel-content"
+    xs12
+  >
+    <v-flex
+      class="tab-content-block secondary pa-2 white--text"
+      xs4
+    >
+      {{ group.title }}
+    </v-flex>
+    <v-flex
+      class="tab-content-block secondary lighten-1 pa-2 white--text"
+      xs4
+    >
+      {{ view.title }}
+    </v-flex>
+    <v-flex
+      class="tab-content-block pa-2 white--text"
+      xs4
+    >
+      {{ tab.title }}
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

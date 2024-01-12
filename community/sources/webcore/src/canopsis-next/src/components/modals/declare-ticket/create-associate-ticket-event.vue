@@ -1,36 +1,58 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ $t('modals.createAssociateTicketEvent.title') }}
-      template(#text="")
-        v-layout(column)
-          alarm-general-table(v-if="config.items", :items="config.items")
-          v-divider
-          v-checkbox(
-            v-if="isAllComponentAlarms",
-            v-model="form.ticket_resources",
-            :label="$t('alarm.associateTicketResources')",
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ $t('modals.createAssociateTicketEvent.title') }}</span>
+      </template>
+      <template #text="">
+        <v-layout column>
+          <alarm-general-table
+            v-if="config.items"
+            :items="config.items"
+          />
+          <v-divider />
+          <v-checkbox
+            v-if="isAllComponentAlarms"
+            v-model="form.ticket_resources"
+            :label="$t('alarm.associateTicketResources')"
             color="primary"
-          )
-          associate-ticket-event-form.mt-3(v-model="form")
-          c-description-field(
-            v-model="form.comment",
-            :label="$tc('common.comment')",
+          />
+          <associate-ticket-event-form
+            class="mt-3"
+            v-model="form"
+          />
+          <c-description-field
+            v-model="form.comment"
+            :label="$tc('common.comment')"
             name="comment"
-          )
-          c-alert(v-if="itemsWithoutAck.length", type="info") {{ alertMessage }}
-      template(#actions="")
-        v-btn(
-          depressed,
-          flat,
+          />
+          <c-alert
+            v-if="itemsWithoutAck.length"
+            type="info"
+          >
+            {{ alertMessage }}
+          </c-alert>
+        </v-layout>
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
           @click="$modals.hide"
-        ) {{ $t('common.cancel') }}
-        v-btn.primary(
-          :loading="submitting",
-          :disabled="isDisabled",
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          class="primary"
+          :loading="submitting"
+          :disabled="isDisabled"
           type="submit"
-        ) {{ $t('common.saveChanges') }}
+        >
+          {{ $t('common.saveChanges') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>

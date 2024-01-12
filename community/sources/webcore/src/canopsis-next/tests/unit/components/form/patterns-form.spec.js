@@ -73,7 +73,7 @@ describe('patterns-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `patterns-form` with custom props', () => {
@@ -94,6 +94,6 @@ describe('patterns-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

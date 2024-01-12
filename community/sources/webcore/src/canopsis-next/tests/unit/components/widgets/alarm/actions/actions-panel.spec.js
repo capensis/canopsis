@@ -1336,7 +1336,7 @@ describe('actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `actions-panel` with simple manual instruction in running', () => {
@@ -1364,7 +1364,7 @@ describe('actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `actions-panel` with manual instruction in waiting result', () => {
@@ -1383,7 +1383,7 @@ describe('actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `actions-panel` with auto instruction in running', () => {
@@ -1402,7 +1402,7 @@ describe('actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `actions-panel` with paused manual instruction', () => {
@@ -1421,7 +1421,7 @@ describe('actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `actions-panel` with unresolved alarm and flapping status', () => {
@@ -1437,7 +1437,7 @@ describe('actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `actions-panel` with unresolved alarm and ongoing status', () => {
@@ -1460,7 +1460,7 @@ describe('actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `actions-panel` with resolved alarm', () => {
@@ -1484,7 +1484,7 @@ describe('actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `actions-panel` with full unresolved alarm, but without access', () => {
@@ -1497,7 +1497,7 @@ describe('actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `actions-panel` without entity, instructions, but with status stealthy', () => {
@@ -1521,7 +1521,7 @@ describe('actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `actions-panel` without assigned_declare_ticket_rules', () => {
@@ -1540,7 +1540,7 @@ describe('actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `actions-panel` with links in alarm', () => {
@@ -1574,7 +1574,7 @@ describe('actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `actions-panel` with links in resolved alarm', () => {
@@ -1606,7 +1606,7 @@ describe('actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `actions-panel` with parentAlarm with auto meta alarm', () => {
@@ -1626,6 +1626,6 @@ describe('actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

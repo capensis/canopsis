@@ -2,138 +2,136 @@
 
 exports[`pbehavior-comments Renders \`pbehavior-comments\` with comments 1`] = `
 <div
-  class="v-list comments-list theme--light"
+  class="v-list comments-list v-sheet theme--light"
   role="list"
 >
   <!---->
   <div
+    class="v-list-item theme--light"
     role="listitem"
+    tabindex="-1"
   >
     <div
-      class="v-list__tile theme--light"
+      class="v-list-item__content"
     >
       <div
-        class="v-list__tile__content"
+        class="v-list-item__title"
       >
-        <div
-          class="v-list__tile__title"
-        >
-          author-pbehavior-comment-0
-        </div>
-        <div
-          class="v-list__tile__sub-title"
-        >
-          <div>
-            message-pbehavior-comment-0
-          </div>
+        author-pbehavior-comment-0
+      </div>
+      <div
+        class="v-list-item__subtitle"
+      >
+        <div>
+          message-pbehavior-comment-0
         </div>
       </div>
     </div>
   </div>
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
   <div
+    class="v-list-item theme--light"
     role="listitem"
+    tabindex="-1"
   >
     <div
-      class="v-list__tile theme--light"
+      class="v-list-item__content"
     >
       <div
-        class="v-list__tile__content"
+        class="v-list-item__title"
       >
-        <div
-          class="v-list__tile__title"
-        >
-          author-pbehavior-comment-1
-        </div>
-        <div
-          class="v-list__tile__sub-title"
-        >
-          <div>
-            message-pbehavior-comment-1
-          </div>
+        author-pbehavior-comment-1
+      </div>
+      <div
+        class="v-list-item__subtitle"
+      >
+        <div>
+          message-pbehavior-comment-1
         </div>
       </div>
     </div>
   </div>
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
   <div
+    class="v-list-item theme--light"
     role="listitem"
+    tabindex="-1"
   >
     <div
-      class="v-list__tile theme--light"
+      class="v-list-item__content"
     >
       <div
-        class="v-list__tile__content"
+        class="v-list-item__title"
       >
-        <div
-          class="v-list__tile__title"
-        >
-          author-pbehavior-comment-2
-        </div>
-        <div
-          class="v-list__tile__sub-title"
-        >
-          <div>
-            message-pbehavior-comment-2
-          </div>
+        author-pbehavior-comment-2
+      </div>
+      <div
+        class="v-list-item__subtitle"
+      >
+        <div>
+          message-pbehavior-comment-2
         </div>
       </div>
     </div>
   </div>
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
   <div
+    class="v-list-item theme--light"
     role="listitem"
+    tabindex="-1"
   >
     <div
-      class="v-list__tile theme--light"
+      class="v-list-item__content"
     >
       <div
-        class="v-list__tile__content"
+        class="v-list-item__title"
       >
-        <div
-          class="v-list__tile__title"
-        >
-          author-pbehavior-comment-3
-        </div>
-        <div
-          class="v-list__tile__sub-title"
-        >
-          <div>
-            message-pbehavior-comment-3
-          </div>
+        author-pbehavior-comment-3
+      </div>
+      <div
+        class="v-list-item__subtitle"
+      >
+        <div>
+          message-pbehavior-comment-3
         </div>
       </div>
     </div>
   </div>
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
   <div
+    class="v-list-item theme--light"
     role="listitem"
+    tabindex="-1"
   >
     <div
-      class="v-list__tile theme--light"
+      class="v-list-item__content"
     >
       <div
-        class="v-list__tile__content"
+        class="v-list-item__title"
       >
-        <div
-          class="v-list__tile__title"
-        >
-          author-pbehavior-comment-4
-        </div>
-        <div
-          class="v-list__tile__sub-title"
-        >
-          <div>
-            message-pbehavior-comment-4
-          </div>
+        author-pbehavior-comment-4
+      </div>
+      <div
+        class="v-list-item__subtitle"
+      >
+        <div>
+          message-pbehavior-comment-4
         </div>
       </div>
     </div>
@@ -144,23 +142,21 @@ exports[`pbehavior-comments Renders \`pbehavior-comments\` with comments 1`] = `
 
 exports[`pbehavior-comments Renders \`pbehavior-comments\` without comments 1`] = `
 <div
-  class="v-list comments-list theme--light"
+  class="v-list comments-list v-sheet theme--light"
   role="list"
 >
   <div
+    class="v-list-item theme--light"
     role="listitem"
+    tabindex="-1"
   >
     <div
-      class="v-list__tile theme--light"
+      class="v-list-item__content"
     >
       <div
-        class="v-list__tile__content"
+        class="v-list-item__title"
       >
-        <div
-          class="v-list__tile__title"
-        >
-          No data
-        </div>
+        No data
       </div>
     </div>
   </div>

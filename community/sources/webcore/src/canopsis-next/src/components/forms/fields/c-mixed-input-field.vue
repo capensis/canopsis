@@ -1,10 +1,11 @@
-<template lang="pug">
-  component.c-mixed-input-field(
-    :is="inputComponent.is",
-    v-validate="rules",
-    v-bind="inputComponent.bind",
+<template>
+  <component
+    class="c-mixed-input-field"
+    :is="inputComponent.is"
+    v-validate="rules"
+    v-bind="inputComponent.bind"
     v-on="inputComponent.on"
-  )
+  />
 </template>
 
 <script>
@@ -105,18 +106,17 @@ export default {
               'hideDetails',
               'flat',
               'errorMessages',
-              'label',
             ]),
             ...additionalProps,
 
+            placeholder: this.label,
             class: 'c-mixed-input-field__text',
             type: this.inputType === PATTERN_FIELD_TYPES.number ? 'number' : 'text',
             singleLine: true,
-            dense: true,
           },
           on: {
             input: this.updateTextFieldValue,
-            'update:searchInput': this.updateTextFieldValue,
+            'update:search-input': this.updateTextFieldValue,
           },
         };
       }

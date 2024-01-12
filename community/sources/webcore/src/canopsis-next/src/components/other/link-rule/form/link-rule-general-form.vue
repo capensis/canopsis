@@ -1,38 +1,53 @@
-<template lang="pug">
-  v-layout(column)
-    v-layout.mt-3(row, align-end)
-      v-flex(xs6)
-        div.subheading {{ $t('linkRule.type') }}
-        v-radio-group(
-          :value="form.type",
-          row,
-          mandatory,
+<template>
+  <v-layout column>
+    <v-layout align-end>
+      <v-flex xs6>
+        <div class="text-subtitle-1">
+          {{ $t('linkRule.type') }}
+        </div>
+        <v-radio-group
+          :value="form.type"
+          row
+          mandatory
           @change="updateType"
-        )
-          v-radio(
-            v-for="type in types",
-            :value="type.value",
-            :label="type.label",
-            :key="type.value",
+        >
+          <v-radio
+            v-for="type in types"
+            :value="type.value"
+            :label="type.label"
+            :key="type.value"
             color="primary"
-          )
-      v-flex(xs6)
-        c-enabled-field(v-field="form.enabled")
-    c-name-field.mb-3(v-field="form.name", required)
-    c-patterns-field(
-      v-field="form.patterns",
-      :alarm-attributes="alarmPatternAttributes",
-      :entity-attributes="entityPatternAttributes",
-      :with-alarm="isAlarmType",
-      some-required,
+          />
+        </v-radio-group>
+      </v-flex>
+      <v-flex xs6>
+        <c-enabled-field v-field="form.enabled" />
+      </v-flex>
+    </v-layout>
+    <c-name-field
+      class="mb-3"
+      v-field="form.name"
+      required
+    />
+    <c-patterns-field
+      v-field="form.patterns"
+      :alarm-attributes="alarmPatternAttributes"
+      :entity-attributes="entityPatternAttributes"
+      :with-alarm="isAlarmType"
+      some-required
       with-entity
-    )
-    c-collapse-panel.my-3(:title="$t('externalData.title')")
-      external-data-form(
-        v-field="form.external_data",
-        :types="externalDataTypes",
+    />
+    <c-collapse-panel
+      class="my-3"
+      :title="$t('externalData.title')"
+    >
+      <external-data-form
+        v-field="form.external_data"
+        :types="externalDataTypes"
         :variables="externalDataPayloadVariables"
-      )
+      />
+    </c-collapse-panel>
+  </v-layout>
 </template>
 
 <script>
@@ -50,14 +65,9 @@ import { payloadVariablesMixin } from '@/mixins/payload/variables';
 
 import ExternalDataForm from '@/components/forms/external-data/external-data-form.vue';
 
-import LinkRuleLinksForm from './fields/link-rule-links-form.vue';
-
 export default {
   inject: ['$validator'],
-  components: {
-    ExternalDataForm,
-    LinkRuleLinksForm,
-  },
+  components: { ExternalDataForm },
   mixins: [
     formMixin,
     formValidationHeaderMixin,

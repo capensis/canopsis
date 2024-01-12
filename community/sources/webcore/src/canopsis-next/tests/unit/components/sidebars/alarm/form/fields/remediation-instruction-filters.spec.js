@@ -113,7 +113,7 @@ describe('remediation-instructions-filters', () => {
   it('Renders `remediation-instructions-filters` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `remediation-instructions-filters` with custom props', () => {
@@ -127,7 +127,7 @@ describe('remediation-instructions-filters', () => {
 
     const menuContents = wrapper.findAllMenus();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     menuContents.wrappers.forEach((menuContent) => {
       expect(menuContent.element).toMatchSnapshot();
     });
