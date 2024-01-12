@@ -496,7 +496,7 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 	return []bson.M{
 		{
 			"$lookup": bson.M{
-				"from":         mongo.EntityServiceCountersCollection,
+				"from":         mongo.EntityCountersCollection,
 				"localField":   "_id",
 				"foreignField": "_id",
 				"as":           "counters",

@@ -2,6 +2,8 @@ package statesettings
 
 import (
 	"context"
+	"errors"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -11,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const StickySortField = "on_top"
@@ -24,19 +27,23 @@ type Store interface {
 }
 
 type store struct {
-	dbClient     mongo.DbClient
-	dbCollection mongo.DbCollection
-
-	defaultSearchByFields []string
+	dbClient                 mongo.DbClient
+	dbCollection             mongo.DbCollection
+	notifyDbCollection       mongo.DbCollection
+	stateSettingsUpdatesChan chan statesetting.RuleUpdatedMessage
+	defaultSearchByFields    []string
 }
 
 func NewStore(
 	dbClient mongo.DbClient,
+	stateSettingsUpdatesChan chan statesetting.RuleUpdatedMessage,
 ) Store {
 	return &store{
-		dbClient:              dbClient,
-		dbCollection:          dbClient.Collection(mongo.StateSettingsMongoCollection),
-		defaultSearchByFields: []string{"_id", "title"},
+		dbClient:                 dbClient,
+		dbCollection:             dbClient.Collection(mongo.StateSettingsMongoCollection),
+		notifyDbCollection:       dbClient.Collection(mongo.EngineNotificationCollection),
+		stateSettingsUpdatesChan: stateSettingsUpdatesChan,
+		defaultSearchByFields:    []string{"_id", "title"},
 	}
 }
 
@@ -123,6 +130,13 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 			return err
 		}
 
+		if r.Method == statesetting.MethodDependencies || r.Method == statesetting.MethodInherited {
+			err = s.updateNotify(ctx)
+			if err != nil {
+				return err
+			}
+		}
+
 		response, err = s.GetById(ctx, r.ID)
 		return err
 	})
@@ -130,11 +144,19 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 		return nil, err
 	}
 
+	if response != nil && (r.Method == statesetting.MethodDependencies || r.Method == statesetting.MethodInherited) {
+		s.stateSettingsUpdatesChan <- statesetting.RuleUpdatedMessage{
+			NewPattern: response.EntityPattern,
+			NewType:    *response.Type,
+		}
+	}
+
 	return response, nil
 }
 
 func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	var response *Response
+	var oldVersion statesetting.StateSetting
 
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
@@ -146,17 +168,22 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 			unset["state_thresholds"] = 1
 		}
 
-		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$set": r, "$unset": unset})
+		err := s.dbCollection.FindOneAndUpdate(
+			ctx,
+			bson.M{"_id": r.ID},
+			bson.M{"$set": r, "$unset": unset},
+			options.FindOneAndUpdate().SetReturnDocument(options.Before),
+		).Decode(&oldVersion)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
 				return common.NewValidationError("title", "Title already exists.")
 			}
 
-			return err
-		}
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil
+			}
 
-		if res.MatchedCount == 0 {
-			return nil
+			return err
 		}
 
 		err = priority.UpdateFollowing(ctx, s.dbCollection, r.ID, r.Priority)
@@ -164,12 +191,27 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 			return err
 		}
 
+		if r.Method == statesetting.MethodDependencies || r.Method == statesetting.MethodInherited {
+			err = s.updateNotify(ctx)
+			if err != nil {
+				return err
+			}
+		}
+
 		response, err = s.GetById(ctx, r.ID)
 		return err
 	})
-
 	if err != nil {
 		return nil, err
+	}
+
+	if response != nil && (r.Method == statesetting.MethodDependencies || r.Method == statesetting.MethodInherited) {
+		s.stateSettingsUpdatesChan <- statesetting.RuleUpdatedMessage{
+			NewPattern: response.EntityPattern,
+			NewType:    *response.Type,
+			OldPattern: oldVersion.EntityPattern,
+			OldType:    oldVersion.Type,
+		}
 	}
 
 	return response, nil
@@ -180,12 +222,35 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 		return false, ErrDefaultRule
 	}
 
-	deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
+	var oldVersion statesetting.StateSetting
+
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		err := s.dbCollection.FindOneAndDelete(
+			ctx,
+			bson.M{"_id": id},
+		).Decode(&oldVersion)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil
+			}
+
+			return err
+		}
+
+		return s.updateNotify(ctx)
+	})
 	if err != nil {
 		return false, err
 	}
 
-	return deleted > 0, nil
+	if oldVersion.Method == statesetting.MethodDependencies || oldVersion.Method == statesetting.MethodInherited {
+		s.stateSettingsUpdatesChan <- statesetting.RuleUpdatedMessage{
+			OldPattern: oldVersion.EntityPattern,
+			OldType:    oldVersion.Type,
+		}
+	}
+
+	return oldVersion.ID != "", nil
 }
 
 func (s *store) getSortQuery(sortBy, sort string) bson.M {
@@ -200,6 +265,18 @@ func (s *store) getSortQuery(sortBy, sort string) bson.M {
 	}
 
 	return bson.M{"$sort": q}
+}
+
+// updateNotify updates a single document to trigger engine-che to update state settings rules
+func (s *store) updateNotify(ctx context.Context) error {
+	_, err := s.notifyDbCollection.UpdateOne(
+		ctx,
+		bson.M{"_id": statesetting.StateSettingsNotificationID},
+		bson.M{"$set": bson.M{"time": time.Now()}},
+		options.Update().SetUpsert(true),
+	)
+
+	return err
 }
 
 func addEditableAndDeletableFields() bson.M {

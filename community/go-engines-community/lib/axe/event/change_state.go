@@ -10,7 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -28,7 +28,7 @@ func NewChangeStateProcessor(
 	userInterfaceConfigProvider config.UserInterfaceConfigProvider,
 	alarmStatusService alarmstatus.Service,
 	autoInstructionMatcher AutoInstructionMatcher,
-	stateCountersService statecounters.StateCountersService,
+	stateCountersService entitycounters.StateCountersService,
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
 	metricsSender metrics.Sender,
 	remediationRpcClient engine.RPCClient,
@@ -60,7 +60,7 @@ type changeStateProcessor struct {
 	userInterfaceConfigProvider config.UserInterfaceConfigProvider
 	alarmStatusService          alarmstatus.Service
 	autoInstructionMatcher      AutoInstructionMatcher
-	stateCountersService        statecounters.StateCountersService
+	stateCountersService        entitycounters.StateCountersService
 	metaAlarmEventProcessor     libalarm.MetaAlarmEventProcessor
 	metricsSender               metrics.Sender
 	remediationRpcClient        engine.RPCClient
@@ -94,7 +94,7 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 	newStepState := types.NewAlarmStep(types.AlarmStepChangeState, event.Parameters.Timestamp, event.Parameters.Author, output,
 		event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
 	newStepState.Value = *event.Parameters.State
-	var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
+	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
 
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
@@ -188,7 +188,7 @@ func (p *changeStateProcessor) postProcess(
 	ctx context.Context,
 	event rpc.AxeEvent,
 	result Result,
-	updatedServiceStates map[string]statecounters.UpdatedServicesInfo,
+	updatedServiceStates map[string]entitycounters.UpdatedServicesInfo,
 ) {
 	p.metricsSender.SendEventMetrics(
 		result.Alarm,

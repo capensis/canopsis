@@ -14,7 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -35,7 +35,7 @@ func NewCheckProcessor(
 	alarmStatusService alarmstatus.Service,
 	pbhTypeResolver pbehavior.EntityTypeResolver,
 	autoInstructionMatcher AutoInstructionMatcher,
-	stateCountersService statecounters.StateCountersService,
+	stateCountersService entitycounters.StateCountersService,
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
 	metricsSender metrics.Sender,
 	eventStatisticsSender statistics.EventStatisticsSender,
@@ -75,7 +75,7 @@ type checkProcessor struct {
 	alarmStatusService      alarmstatus.Service
 	pbhTypeResolver         pbehavior.EntityTypeResolver
 	autoInstructionMatcher  AutoInstructionMatcher
-	stateCountersService    statecounters.StateCountersService
+	stateCountersService    entitycounters.StateCountersService
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor
 	metricsSender           metrics.Sender
 	eventStatisticsSender   statistics.EventStatisticsSender
@@ -93,7 +93,7 @@ func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 	}
 
 	entity := *event.Entity
-	var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
+	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
 
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
@@ -484,7 +484,7 @@ func (p *checkProcessor) postProcess(
 	ctx context.Context,
 	event rpc.AxeEvent,
 	result Result,
-	updatedServiceStates map[string]statecounters.UpdatedServicesInfo,
+	updatedServiceStates map[string]entitycounters.UpdatedServicesInfo,
 ) {
 	p.metricsSender.SendEventMetrics(
 		result.Alarm,
