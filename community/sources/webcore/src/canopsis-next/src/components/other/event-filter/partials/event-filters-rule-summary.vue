@@ -1,41 +1,80 @@
-<template lang="pug">
-  v-layout(column)
-    c-information-block-row(:label="$t('common.description')", :width="labelWidth") {{ eventFilter.description }}
-    c-information-block-row(
-      :label="$t('common.type')",
+<template>
+  <v-layout column>
+    <c-information-block-row
+      :label="$t('common.description')"
       :width="labelWidth"
-    ) {{ $t(`eventFilter.types.${eventFilter.type}`) }}
-    c-information-block-row(:label="$t('common.priority')", :width="labelWidth") {{ eventFilter.priority || '-' }}
-    c-information-block-row(:label="$t('common.author')", :width="labelWidth") {{ eventFilter.author.display_name }}
-    c-information-block-row(:label="$t('common.created')", :width="labelWidth") {{ eventFilter.created | date }}
-    c-information-block-row(:label="$t('common.updated')", :width="labelWidth") {{ eventFilter.updated | date }}
-    c-information-block-row(
-      v-if="eventFilter.events_count",
-      :label="$t('eventFilter.eventsFilteredSinceLastUpdate')",
+    >
+      {{ eventFilter.description }}
+    </c-information-block-row>
+    <c-information-block-row
+      :label="$t('common.type')"
       :width="labelWidth"
-    ) {{ eventFilter.events_count }}
-    c-information-block-row(
-      v-if="eventFilter.failures_count",
-      :label="$t('eventFilter.errorsSinceLastUpdate')",
+    >
+      {{ $t(`eventFilter.types.${eventFilter.type}`) }}
+    </c-information-block-row>
+    <c-information-block-row
+      :label="$t('common.priority')"
       :width="labelWidth"
-    ) {{ eventFilter.failures_count }}
-    c-information-block-row(
-      v-if="eventFilter.start",
-      :label="$t('common.start')",
+    >
+      {{ eventFilter.priority || '-' }}
+    </c-information-block-row>
+    <c-information-block-row
+      :label="$t('common.author')"
       :width="labelWidth"
-    ) {{ eventFilter.start | date }}
-    c-information-block-row(
-      v-if="eventFilter.stop",
-      :label="$t('common.stop')",
+    >
+      {{ eventFilter.author?.display_name }}
+    </c-information-block-row>
+    <c-information-block-row
+      :label="$t('common.created')"
       :width="labelWidth"
-    ) {{ eventFilter.stop | date }}
-    recurrence-rule-information(v-if="eventFilter.rrule", :rrule="eventFilter.rrule")
-    pbehavior-recurrence-rule-exceptions-field(
-      v-if="hasExdatesOrExceptions",
-      :exdates="exdates",
-      :exceptions="exceptions",
+    >
+      {{ eventFilter.created | date }}
+    </c-information-block-row>
+    <c-information-block-row
+      :label="$t('common.updated')"
+      :width="labelWidth"
+    >
+      {{ eventFilter.updated | date }}
+    </c-information-block-row>
+    <c-information-block-row
+      v-if="eventFilter.events_count"
+      :label="$t('eventFilter.eventsFilteredSinceLastUpdate')"
+      :width="labelWidth"
+    >
+      {{ eventFilter.events_count }}
+    </c-information-block-row>
+    <c-information-block-row
+      v-if="eventFilter.failures_count"
+      :label="$t('eventFilter.errorsSinceLastUpdate')"
+      :width="labelWidth"
+    >
+      {{ eventFilter.failures_count }}
+    </c-information-block-row>
+    <c-information-block-row
+      v-if="eventFilter.start"
+      :label="$t('common.start')"
+      :width="labelWidth"
+    >
+      {{ eventFilter.start | date }}
+    </c-information-block-row>
+    <c-information-block-row
+      v-if="eventFilter.stop"
+      :label="$t('common.stop')"
+      :width="labelWidth"
+    >
+      {{ eventFilter.stop | date }}
+    </c-information-block-row>
+    <recurrence-rule-information
+      v-if="eventFilter.rrule"
+      :rrule="eventFilter.rrule"
+    />
+    <pbehavior-recurrence-rule-exceptions-field
+      v-if="hasExdatesOrExceptions"
+      :exdates="exdates"
+      :exceptions="exceptions"
       disabled
-    )
+    />
+  </v-layout>
 </template>
 
 <script>

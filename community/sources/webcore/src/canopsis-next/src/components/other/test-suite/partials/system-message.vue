@@ -1,17 +1,25 @@
-<template lang="pug">
-  div.system-message
-    v-layout(align-center)
-      span.mr-1
-        slot(name="label") {{ label }}
-      c-copy-btn(
-        :value="value",
-        :tooltip="$t('testSuite.copyMessage')",
-        @success="showCopySuccessPopup",
+<template>
+  <div class="system-message">
+    <v-layout align-center>
+      <span class="mr-1">
+        <slot name="label">{{ label }}</slot>
+      </span>
+      <c-copy-btn
+        :value="value"
+        :tooltip="$t('testSuite.copyMessage')"
+        @success="showCopySuccessPopup"
         @error="showCopyErrorPopup"
-      )
-      c-download-btn(:value="value", :name="fileName", type="txt")
-    pre.pre-wrap.system-message__text
-      slot {{ value }}
+      />
+      <c-download-btn
+        :value="value"
+        :name="fileName"
+        type="txt"
+      />
+    </v-layout>
+    <pre class="pre-wrap system-message__text">
+      <slot>{{ value }}</slot>
+    </pre>
+  </div>
 </template>
 
 <script>

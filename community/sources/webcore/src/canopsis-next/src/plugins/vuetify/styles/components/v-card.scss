@@ -1,0 +1,6 @@
+.theme--light.v-card > .v-card__text,
+.theme--light.v-card > .v-card__subtitle,
+.theme--dark.v-card > .v-card__text,
+.theme--dark.v-card > .v-card__subtitle {
+  color: unset;
+}

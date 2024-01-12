@@ -1,19 +1,22 @@
-<template lang="pug">
-  modal-wrapper(close)
-    template(#title="")
-      span {{ $t('common.filters') }}
-    template(#text="")
-      c-progress-overlay(:pending="pending")
-      filters-list-component(
-        :filters="filters",
-        :pending="pending",
-        :addable="config.addable",
-        :editable="config.editable",
-        @input="updateFiltersPositions",
-        @add="showCreateFilterModal",
-        @edit="showEditFilterModal",
+<template>
+  <modal-wrapper close>
+    <template #title="">
+      <span>{{ $t('common.filters') }}</span>
+    </template>
+    <template #text="">
+      <c-progress-overlay :pending="pending" />
+      <filters-list-component
+        :filters="filters"
+        :pending="pending"
+        :addable="config.addable"
+        :editable="config.editable"
+        @input="updateFiltersPositions"
+        @add="showCreateFilterModal"
+        @edit="showEditFilterModal"
         @delete="showDeleteFilterModal"
-      )
+      />
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>

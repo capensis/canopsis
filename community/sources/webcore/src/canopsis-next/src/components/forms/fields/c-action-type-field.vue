@@ -1,12 +1,12 @@
-<template lang="pug">
-  v-select(
-    v-field="value",
-    v-validate="'required'",
-    :items="actionTypes",
-    :error-messages="errors.collect(name)",
-    :label="label || $t('common.type')",
+<template>
+  <v-select
+    v-field="value"
+    v-validate="'required'"
+    :items="actionTypes"
+    :error-messages="errors.collect(name)"
+    :label="label || $t('common.type')"
     :name="name"
-  )
+  />
 </template>
 
 <script>

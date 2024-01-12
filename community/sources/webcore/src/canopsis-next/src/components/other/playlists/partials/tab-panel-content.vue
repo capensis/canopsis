@@ -1,9 +1,15 @@
-<template lang="pug">
-  v-layout(column)
-    v-layout.secondary.lighten-2.tab-panel-item(align-center)
-      slot(name="title")
-        span.white--text {{ tab.title }}
-    v-divider(dark)
+<template>
+  <v-layout column>
+    <v-layout
+      class="secondary lighten-2 tab-panel-item"
+      align-center
+    >
+      <slot name="title">
+        <span class="white--text">{{ tab.title }}</span>
+      </slot>
+    </v-layout>
+    <v-divider dark />
+  </v-layout>
 </template>
 
 <script>

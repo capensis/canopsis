@@ -1,13 +1,13 @@
-<template lang="pug">
-  v-select(
-    v-field="value",
-    :items="items",
-    :label="$t('common.criteria')",
-    item-text="label",
-    item-value="id",
-    hide-details,
+<template>
+  <v-select
+    v-field="value"
+    :items="items"
+    :label="$t('common.criteria')"
+    item-text="label"
+    item-value="id"
+    hide-details
     return-object
-  )
+  />
 </template>
 
 <script>

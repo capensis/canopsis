@@ -1,17 +1,22 @@
-<template lang="pug">
-  c-information-block(
-    :title="$t('storageSetting.eventFilterFailure.title')",
-    :help-text="$t('storageSetting.eventFilterFailure.titleHelp')",
+<template>
+  <c-information-block
+    :title="$t('storageSetting.eventFilterFailure.title')"
+    :help-text="$t('storageSetting.eventFilterFailure.titleHelp')"
     help-icon-color="info"
-  )
-    template(v-if="history", #subtitle="")
-      storage-settings-history-message(:history="history")
-    c-enabled-duration-field(
-      v-field="form.delete_after",
-      :label="$t('storageSetting.eventFilterFailure.deleteAfter')",
-      :help-text="$t('storageSetting.eventFilterFailure.deleteAfterHelpText')",
+  >
+    <template
+      v-if="history"
+      #subtitle=""
+    >
+      <storage-settings-history-message :history="history" />
+    </template>
+    <c-enabled-duration-field
+      v-field="form.delete_after"
+      :label="$t('storageSetting.eventFilterFailure.deleteAfter')"
+      :help-text="$t('storageSetting.eventFilterFailure.deleteAfterHelpText')"
       :name="errorsDeleteAfterFieldName"
-    )
+    />
+  </c-information-block>
 </template>
 
 <script>

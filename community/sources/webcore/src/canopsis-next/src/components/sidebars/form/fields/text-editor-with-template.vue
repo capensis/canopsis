@@ -1,14 +1,13 @@
-<template lang="pug">
-  settings-button-field(
-    :is-empty="isValueEmpty",
-    :addable="addable",
-    :removable="removable",
-    @create="showTextEditorWithTemplateModal",
-    @edit="showTextEditorWithTemplateModal",
+<template>
+  <settings-button-field
+    :title="title"
+    :is-empty="isValueEmpty"
+    :addable="addable"
+    :removable="removable"
+    @create="showTextEditorWithTemplateModal"
+    @edit="showTextEditorWithTemplateModal"
     @delete="showRemoveTextConfirmationModal"
-  )
-    template(#title="")
-      div.subheading {{ title }}
+  />
 </template>
 
 <script>

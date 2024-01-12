@@ -279,7 +279,7 @@ describe('storage-settings-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `storage-settings-form` with custom form and history', () => {
@@ -306,6 +306,6 @@ describe('storage-settings-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

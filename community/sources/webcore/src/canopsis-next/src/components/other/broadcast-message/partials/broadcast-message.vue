@@ -1,11 +1,21 @@
-<template lang="pug">
-  div.broadcast-message.pa-2(
-    :style="{ backgroundColor: color }",
+<template>
+  <div
+    class="broadcast-message pa-2"
+    :style="{ backgroundColor: color }"
     :title="message"
-  )
-    c-compiled-template.broadcast-message__text(:template="message", parent-element="span")
-    div.broadcast-message__actions(title="")
-      slot(name="actions")
+  >
+    <c-compiled-template
+      class="broadcast-message__text"
+      :template="message"
+      parent-element="span"
+    />
+    <div
+      class="broadcast-message__actions"
+      title=""
+    >
+      <slot name="actions" />
+    </div>
+  </div>
 </template>
 
 <script>

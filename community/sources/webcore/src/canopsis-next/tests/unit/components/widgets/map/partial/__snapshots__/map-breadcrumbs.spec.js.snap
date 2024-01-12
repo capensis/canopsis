@@ -5,10 +5,10 @@ exports[`map-breadcrumbs Renders \`map-breadcrumbs\` with custom props 1`] = `
   class="v-breadcrumbs pa-0 theme--light"
 >
   <button
-    class="ma-0 v-btn v-btn--flat v-btn--small theme--light"
+    class="v-btn v-btn--text theme--light v-size--small"
     type="button"
   >
-    <div
+    <span
       class="v-btn__content"
     >
       <span
@@ -16,7 +16,7 @@ exports[`map-breadcrumbs Renders \`map-breadcrumbs\` with custom props 1`] = `
       >
         First map
       </span>
-    </div>
+    </span>
   </button>
   <li
     class="v-breadcrumbs__divider"
@@ -24,10 +24,10 @@ exports[`map-breadcrumbs Renders \`map-breadcrumbs\` with custom props 1`] = `
     /
   </li>
   <button
-    class="ma-0 v-btn v-btn--flat v-btn--small theme--light"
+    class="v-btn v-btn--text theme--light v-size--small"
     type="button"
   >
-    <div
+    <span
       class="v-btn__content"
     >
       <span
@@ -35,7 +35,7 @@ exports[`map-breadcrumbs Renders \`map-breadcrumbs\` with custom props 1`] = `
       >
         Second map
       </span>
-    </div>
+    </span>
   </button>
   <li
     class="v-breadcrumbs__divider"
@@ -43,11 +43,11 @@ exports[`map-breadcrumbs Renders \`map-breadcrumbs\` with custom props 1`] = `
     /
   </li>
   <button
-    class="ma-0 v-btn v-btn--disabled v-btn--flat v-btn--loader v-btn--small theme--light"
+    class="v-btn v-btn--disabled v-btn--loading v-btn--text theme--light v-size--small"
     disabled="disabled"
     type="button"
   >
-    <div
+    <span
       class="v-btn__content"
     >
       <span
@@ -55,14 +55,14 @@ exports[`map-breadcrumbs Renders \`map-breadcrumbs\` with custom props 1`] = `
       >
         Active map
       </span>
-    </div>
+    </span>
     <span
-      class="v-btn__loading"
+      class="v-btn__loader"
     >
       <div
         aria-valuemax="100"
         aria-valuemin="0"
-        class="v-progress-circular v-progress-circular--indeterminate"
+        class="v-progress-circular v-progress-circular--visible v-progress-circular--indeterminate"
         role="progressbar"
         style="height: 23px; width: 23px;"
       >

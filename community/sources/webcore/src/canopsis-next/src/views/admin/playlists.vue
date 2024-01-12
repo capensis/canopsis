@@ -1,25 +1,28 @@
-<template lang="pug">
-  div
-    c-page-header
-    v-card.ma-4.mt-0
-      playlists-list(
-        :playlists="playlists",
-        :pending="playlistsPending",
-        :pagination.sync="pagination",
-        :total-items="playlistsMeta.total_count",
-        :creatable="hasCreateAnyPlaylistAccess",
-        :updatable="hasUpdateAnyPlaylistAccess",
-        :removable="hasDeleteAnyPlaylistAccess",
-        @edit="showEditPlaylistModal",
-        @remove="showRemovePlaylistModal",
+<template>
+  <div>
+    <c-page-header />
+    <v-card class="ma-4 mt-0">
+      <playlists-list
+        :playlists="playlists"
+        :pending="playlistsPending"
+        :options.sync="options"
+        :total-items="playlistsMeta.total_count"
+        :creatable="hasCreateAnyPlaylistAccess"
+        :updatable="hasUpdateAnyPlaylistAccess"
+        :removable="hasDeleteAnyPlaylistAccess"
+        @edit="showEditPlaylistModal"
+        @remove="showRemovePlaylistModal"
         @duplicate="showDuplicatePlaylistModal"
-      )
-    c-fab-btn(
-      v-if="hasCreateAnyPlaylistAccess",
-      @refresh="fetchList",
+      />
+    </v-card>
+    <c-fab-btn
+      v-if="hasCreateAnyPlaylistAccess"
+      @refresh="fetchList"
       @create="showCreatePlaylistModal"
-    )
-      span {{ $t('modals.createPlaylist.create.title') }}
+    >
+      <span>{{ $t('modals.createPlaylist.create.title') }}</span>
+    </c-fab-btn>
+  </div>
 </template>
 
 <script>

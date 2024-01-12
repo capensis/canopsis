@@ -1,12 +1,25 @@
-<template lang="pug">
-  v-card.grid-item(
-    :class="cardClass",
+<template>
+  <v-card
+    class="grid-item"
+    :class="cardClass"
     :style="style"
-  )
-    div(ref="defaultSlotWrapper")
-      slot(:on="slotOn", :item="item")
-    div.grid-item__resize-handler(v-if="!disabled", v-on="resizeHandlerOn")
-      v-icon(small) $vuetify.icons.resize_right
+  >
+    <div ref="defaultSlotWrapper">
+      <slot
+        :on="slotOn"
+        :item="item"
+      />
+    </div>
+    <div
+      class="grid-item__resize-handler"
+      v-if="!disabled"
+      v-on="resizeHandlerOn"
+    >
+      <v-icon small>
+        $vuetify.icons.resize_right
+      </v-icon>
+    </div>
+  </v-card>
 </template>
 
 <script>
@@ -105,7 +118,7 @@ export default {
     },
 
     x() {
-      const { x = 0, w = 0 } = this.item;
+      const { x = 0, w = 1 } = this.item;
 
       return x + w > this.columnsCount
         ? 0
@@ -117,7 +130,7 @@ export default {
     },
 
     w() {
-      const { x = 0, w = 0 } = this.item;
+      const { x = 0, w = 1 } = this.item;
 
       return (x + w > this.columnsCount) && (w > this.columnsCount)
         ? this.columnsCount
@@ -125,7 +138,7 @@ export default {
     },
 
     h() {
-      return this.item.h ?? 0;
+      return this.item.h ?? 1;
     },
 
     autoHeight() {

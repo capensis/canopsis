@@ -1,17 +1,21 @@
-<template lang="pug">
-  div.position-relative
-    c-progress-overlay(:pending="pending")
-    kpi-rating-filters(v-model="pagination", :min-date="minDate")
-    kpi-rating-chart(
-      :metrics="ratingMetrics",
-      :metric="pagination.metric",
-      :downloading="downloading",
-      :min-date="minDate",
-      responsive,
-      @export:csv="exportMetricsAsCsv",
+<template>
+  <div class="position-relative">
+    <c-progress-overlay :pending="pending" />
+    <kpi-rating-filters
+      v-model="options"
+      :min-date="minDate"
+    />
+    <kpi-rating-chart
+      :metrics="ratingMetrics"
+      :metric="query.metric"
+      :downloading="downloading"
+      :min-date="minDate"
+      responsive
+      @export:csv="exportMetricsAsCsv"
       @export:png="exportMetricsAsPng"
-    )
-    kpi-error-overlay(v-if="unavailable || fetchError")
+    />
+    <kpi-error-overlay v-if="unavailable || fetchError" />
+  </div>
 </template>
 
 <script>
@@ -103,7 +107,7 @@ export default {
         criteria: this.query.criteria?.id,
         filter: this.query.metric !== USER_METRIC_PARAMETERS.totalUserActivity ? this.query.filter : undefined,
         metric: this.query.metric,
-        limit: this.query.rowsPerPage,
+        limit: this.query.itemsPerPage,
       };
     },
 

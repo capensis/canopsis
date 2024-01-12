@@ -61,7 +61,7 @@ describe('pbehavior-comment-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pbehavior-comment-field` with custom props', () => {
@@ -74,6 +74,6 @@ describe('pbehavior-comment-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -21,43 +21,45 @@ exports[`group-view-panel Renders \`group-view-panel\` with custom props 1`] = `
     >
       <!---->
       <button
-        class="ma-0 v-btn v-btn--disabled v-btn--icon v-btn--depressed v-btn--small theme--light"
+        class="v-btn v-btn--disabled v-btn--icon v-btn--round theme--light v-size--small"
         disabled="disabled"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--light"
+            class="v-icon notranslate material-icons theme--light"
             style="font-size: 16px;"
           >
             edit
           </i>
-        </div>
+        </span>
       </button>
       <button
-        class="ma-0 v-btn v-btn--disabled v-btn--icon v-btn--depressed v-btn--small theme--light"
+        class="v-btn v-btn--disabled v-btn--icon v-btn--round theme--light v-size--small"
         disabled="disabled"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--light"
+            class="v-icon notranslate material-icons theme--light"
             style="font-size: 16px;"
           >
             file_copy
           </i>
-        </div>
+        </span>
       </button>
     </div>
   </div>
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
 </div>
 `;
@@ -70,9 +72,9 @@ exports[`group-view-panel Renders \`group-view-panel\` with required props 1`] =
     class="v-card__text panel-item-content"
   >
     <div
-      class="panel-item-content__title pl-2 ellipsis"
+      class="panel-item-content__title pl-2 text-truncate"
     >
-      View title
+        View title
     </div>
     <div
       class="panel-item-content__actions"
@@ -82,7 +84,9 @@ exports[`group-view-panel Renders \`group-view-panel\` with required props 1`] =
     </div>
   </div>
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
 </div>
 `;

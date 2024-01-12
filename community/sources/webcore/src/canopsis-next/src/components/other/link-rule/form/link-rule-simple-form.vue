@@ -1,5 +1,8 @@
-<template lang="pug">
-  link-rule-links-form(v-field="links", :type="type")
+<template>
+  <link-rule-links-form
+    v-field="links"
+    :type="type"
+  />
 </template>
 
 <script>

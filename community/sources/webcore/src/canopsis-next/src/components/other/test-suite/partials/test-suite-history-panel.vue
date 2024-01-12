@@ -1,6 +1,10 @@
-<template lang="pug">
-  c-collapse-panel(:title="title", :color="color", lazy)
-    test-suite-tabs(:test-suite-id="testSuite._id")
+<template>
+  <c-collapse-panel
+    :title="title"
+    :color="color"
+  >
+    <test-suite-tabs :test-suite-id="testSuite._id" />
+  </c-collapse-panel>
 </template>
 
 <script>

@@ -7,11 +7,9 @@ exports[`ack-event-form Renders \`ack-event-form\` with custom props 1`] = `
   <span
     class="v-tooltip v-tooltip--top"
   >
-    <transition-stub
-      name="slide-y-reverse-transition"
-    />
+    <!---->
     <div
-      class="v-input v-input--selection-controls v-input--checkbox v-input--is-label-active v-input--is-dirty theme--light"
+      class="v-input v-input--is-label-active v-input--is-dirty theme--light v-input--selection-controls v-input--checkbox primary--text"
     >
       <div
         class="v-input__control"
@@ -22,9 +20,14 @@ exports[`ack-event-form Renders \`ack-event-form\` with custom props 1`] = `
           <div
             class="v-input--selection-controls__input"
           >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light primary--text"
+            >
+              check_box
+            </i>
             <input
               aria-checked="true"
-              aria-label="Ack resources"
               role="checkbox"
               type="checkbox"
               value=""
@@ -32,15 +35,8 @@ exports[`ack-event-form Renders \`ack-event-form\` with custom props 1`] = `
             <div
               class="v-input--selection-controls__ripple primary--text"
             />
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light primary--text"
-            >
-              check_box
-            </i>
           </div>
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
@@ -48,7 +44,7 @@ exports[`ack-event-form Renders \`ack-event-form\` with custom props 1`] = `
           </label>
         </div>
         <div
-          class="v-messages theme--light"
+          class="v-messages theme--light primary--text"
         >
           <transition-group-stub
             class="v-messages__wrapper"
@@ -75,11 +71,9 @@ exports[`ack-event-form Renders \`ack-event-form\` with default props 1`] = `
   <span
     class="v-tooltip v-tooltip--top"
   >
-    <transition-stub
-      name="slide-y-reverse-transition"
-    />
+    <!---->
     <div
-      class="v-input v-input--selection-controls v-input--checkbox theme--light"
+      class="v-input theme--light v-input--selection-controls v-input--checkbox"
     >
       <div
         class="v-input__control"
@@ -90,9 +84,14 @@ exports[`ack-event-form Renders \`ack-event-form\` with default props 1`] = `
           <div
             class="v-input--selection-controls__input"
           >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              check_box_outline_blank
+            </i>
             <input
               aria-checked="false"
-              aria-label="Ack resources"
               role="checkbox"
               type="checkbox"
               value=""
@@ -100,15 +99,8 @@ exports[`ack-event-form Renders \`ack-event-form\` with default props 1`] = `
             <div
               class="v-input--selection-controls__ripple"
             />
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              check_box_outline_blank
-            </i>
           </div>
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >

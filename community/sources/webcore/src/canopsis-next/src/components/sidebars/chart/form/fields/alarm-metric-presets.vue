@@ -1,15 +1,16 @@
-<template lang="pug">
-  widget-settings-item(:title="$t('settings.chart.selectMetrics')")
-    c-alarm-metric-presets-field(
-      v-field="value",
-      :with-color="withColor",
-      :with-external="withExternal",
-      :with-aggregate-function="withAggregateFunction",
-      :parameters="parameters",
-      :only-group="onlyGroup",
-      :only-external="onlyExternal",
+<template>
+  <widget-settings-item :title="$t('settings.chart.selectMetrics')">
+    <c-alarm-metric-presets-field
+      v-field="value"
+      :with-color="withColor"
+      :with-external="withExternal"
+      :with-aggregate-function="withAggregateFunction"
+      :parameters="parameters"
+      :only-group="onlyGroup"
+      :only-external="onlyExternal"
       :min="min"
-    )
+    />
+  </widget-settings-item>
 </template>
 
 <script>

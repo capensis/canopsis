@@ -1,11 +1,11 @@
-<template lang="pug">
-  v-select(
-    v-field="value",
-    :label="$t('common.disableDuringPeriods')",
-    :items="duringItems",
-    :name="name",
+<template>
+  <v-select
+    v-field="value"
+    :label="$t('common.disableDuringPeriods')"
+    :items="duringItems"
+    :name="name"
     multiple
-  )
+  />
 </template>
 
 <script>

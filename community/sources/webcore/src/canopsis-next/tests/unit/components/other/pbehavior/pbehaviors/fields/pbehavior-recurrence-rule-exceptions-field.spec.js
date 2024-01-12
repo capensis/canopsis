@@ -79,7 +79,7 @@ describe('pbehavior-recurrence-rule-exceptions-field', () => {
   test('Renders `pbehavior-exceptions-field` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pbehavior-exceptions-field` with custom props', () => {
@@ -97,6 +97,6 @@ describe('pbehavior-recurrence-rule-exceptions-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

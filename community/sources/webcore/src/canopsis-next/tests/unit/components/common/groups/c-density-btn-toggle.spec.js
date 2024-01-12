@@ -10,7 +10,7 @@ describe('c-density-btn-toggle', () => {
   it('Renders `c-density-btn-toggle` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-density-btn-toggle` with custom props', () => {
@@ -20,6 +20,6 @@ describe('c-density-btn-toggle', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

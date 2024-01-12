@@ -1,26 +1,29 @@
-<template lang="pug">
-  div
-    c-page-header
-    v-card.ma-4.mt-0
-      roles-list(
-        :roles="roles",
-        :pending="rolesPending",
-        :pagination.sync="pagination",
-        :total-items="rolesMeta.total_count",
-        :removable="hasDeleteAnyRoleAccess",
-        :duplicable="hasCreateAnyRoleAccess",
-        :updatable="hasUpdateAnyRoleAccess",
-        @edit="showEditRoleModal",
-        @remove="showRemoveRoleModal",
-        @duplicate="showDuplicateRoleModal",
+<template>
+  <div>
+    <c-page-header />
+    <v-card class="ma-4 mt-0">
+      <roles-list
+        :roles="roles"
+        :pending="rolesPending"
+        :options.sync="options"
+        :total-items="rolesMeta.total_count"
+        :removable="hasDeleteAnyRoleAccess"
+        :duplicable="hasCreateAnyRoleAccess"
+        :updatable="hasUpdateAnyRoleAccess"
+        @edit="showEditRoleModal"
+        @remove="showRemoveRoleModal"
+        @duplicate="showDuplicateRoleModal"
         @remove-selected="showRemoveSelectedRolesModal"
-      )
-    c-fab-btn(
-      :has-access="hasCreateAnyRoleAccess",
-      @refresh="fetchList",
+      />
+    </v-card>
+    <c-fab-btn
+      :has-access="hasCreateAnyRoleAccess"
+      @refresh="fetchList"
       @create="showCreateRoleModal"
-    )
-      span {{ $t('modals.createRole.create.title') }}
+    >
+      <span>{{ $t('modals.createRole.create.title') }}</span>
+    </c-fab-btn>
+  </div>
 </template>
 
 <script>

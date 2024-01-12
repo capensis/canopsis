@@ -1,27 +1,45 @@
-<template lang="pug">
-  v-layout(column)
-    v-layout(row)
-      v-flex(xs4)
-        state-setting-method-field(v-field="form.method")
-    v-layout(v-if="isWorstOfShareMethod", column)
-      v-layout(row)
-        h4.subheading.font-weight-bold {{ $t('stateSetting.worstLabel') }}
-        c-help-icon(:text="$t('stateSetting.worstHelpText')", icon-class="ml-2", max-width="220", right)
-      state-setting-threshold-field.pl-4.pt-2(
-        v-field="form.junit_thresholds.skipped",
-        :label="$t('common.skipped')",
+<template>
+  <v-layout column>
+    <v-layout>
+      <v-flex xs4>
+        <state-setting-method-field v-field="form.method" />
+      </v-flex>
+    </v-layout>
+    <v-layout
+      v-if="isWorstOfShareMethod"
+      column
+    >
+      <v-layout>
+        <h4 class="text-subtitle-1 font-weight-bold">
+          {{ $t('stateSetting.worstLabel') }}
+        </h4>
+        <c-help-icon
+          :text="$t('stateSetting.worstHelpText')"
+          icon-class="ml-2"
+          max-width="220"
+          right
+        />
+      </v-layout>
+      <state-setting-threshold-field
+        class="pl-4 pt-2"
+        v-field="form.junit_thresholds.skipped"
+        :label="$t('common.skipped')"
         name="junit_thresholds.skipped"
-      )
-      state-setting-threshold-field.pl-4.pt-2(
-        v-field="form.junit_thresholds.errors",
-        :label="$tc('common.error', 2)",
+      />
+      <state-setting-threshold-field
+        class="pl-4 pt-2"
+        v-field="form.junit_thresholds.errors"
+        :label="$tc('common.error', 2)"
         name="junit_thresholds.errors"
-      )
-      state-setting-threshold-field.pl-4.pt-2(
-        v-field="form.junit_thresholds.failures",
-        :label="$t('common.failures')",
+      />
+      <state-setting-threshold-field
+        class="pl-4 pt-2"
+        v-field="form.junit_thresholds.failures"
+        :label="$t('common.failures')"
         name="junit_thresholds.failures"
-      )
+      />
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>

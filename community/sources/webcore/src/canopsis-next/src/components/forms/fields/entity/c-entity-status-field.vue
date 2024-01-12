@@ -1,12 +1,12 @@
-<template lang="pug">
-  v-select(
-    v-field="value",
-    :items="alarmStates",
-    :disabled="disabled",
-    :label="label || $t('common.status')",
-    :name="name",
+<template>
+  <v-select
+    v-field="value"
+    :items="alarmStates"
+    :disabled="disabled"
+    :label="label || $t('common.status')"
+    :name="name"
     hide-details
-  )
+  />
 </template>
 
 <script>

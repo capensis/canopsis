@@ -70,8 +70,8 @@ describe('view-tab-widgets', () => {
       type: WIDGET_TYPES.text,
       grid_parameters: {
         desktop: { autoHeight: true, h: 24, w: 12, x: 0, y: 14 },
-        mobile: { autoHeight: true, h: 12, w: 3, x: 0, y: 0 },
-        tablet: { autoHeight: true, h: 1, w: 12, x: 0, y: 0 },
+        mobile: { autoHeight: true, h: 12, w: 3, x: 0, y: 12 },
+        tablet: { autoHeight: true, h: 1, w: 12, x: 0, y: 1 },
       },
     },
     {
@@ -79,8 +79,8 @@ describe('view-tab-widgets', () => {
       type: WIDGET_TYPES.text,
       grid_parameters: {
         desktop: { autoHeight: true, h: 21, w: 12, x: 0, y: 38 },
-        mobile: { autoHeight: true, h: 1, w: 12, x: 0, y: 12 },
-        tablet: { autoHeight: true, h: 1, w: 12, x: 0, y: 1 },
+        mobile: { autoHeight: true, h: 1, w: 12, x: 0, y: 24 },
+        tablet: { autoHeight: true, h: 1, w: 12, x: 0, y: 2 },
       },
     },
   ];
@@ -124,13 +124,14 @@ describe('view-tab-widgets', () => {
     );
   });
 
-  it('Register and unregister editing off handler is working', async () => {
+  it('Register and unregister editing off handler is working (visible true)', async () => {
     const wrapper = factory({
       propsData: {
         tab: {
           id: 'tab-id',
           widgets,
         },
+        visible: true,
       },
       store,
     });
@@ -142,6 +143,27 @@ describe('view-tab-widgets', () => {
     wrapper.destroy();
 
     expect(unregisterEditingOffHandler).toHaveBeenCalledTimes(1);
+  });
+
+  it('Register and unregister editing off handler is working (visible false)', async () => {
+    const wrapper = factory({
+      propsData: {
+        tab: {
+          id: 'tab-id',
+          widgets,
+        },
+        visible: false,
+      },
+      store,
+    });
+
+    await flushPromises();
+
+    expect(registerEditingOffHandler).not.toHaveBeenCalled();
+
+    wrapper.destroy();
+
+    expect(unregisterEditingOffHandler).toHaveBeenCalledTimes(2);
   });
 
   it('Update positions doesn\'t trigger updateGridPositions without changes', async () => {
@@ -217,7 +239,7 @@ describe('view-tab-widgets', () => {
       store,
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `view-tab-widgets` with editing mode', () => {
@@ -237,7 +259,7 @@ describe('view-tab-widgets', () => {
       ]),
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `view-tab-widgets` with widgets', () => {
@@ -251,7 +273,7 @@ describe('view-tab-widgets', () => {
       store,
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it.each(['m', 't', 'l', 'xl'])('Renders `view-tab-widgets` with widgets on \'%s\' window size', async (size) => {
@@ -274,7 +296,7 @@ describe('view-tab-widgets', () => {
       ]),
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `view-tab-widgets` with widgets with editing mode', () => {
@@ -294,6 +316,6 @@ describe('view-tab-widgets', () => {
       ]),
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

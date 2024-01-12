@@ -1,6 +1,11 @@
-<template lang="pug">
-  v-layout.overlay(align-center, justify-center)
-    span.error--text {{ $t('kpi.noData') }}
+<template>
+  <v-layout
+    class="overlay"
+    align-center
+    justify-center
+  >
+    <span class="error--text">{{ $t('kpi.noData') }}</span>
+  </v-layout>
 </template>
 
 <style lang="scss" scoped>

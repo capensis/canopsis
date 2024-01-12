@@ -1,16 +1,16 @@
-<template lang="pug">
-  v-autocomplete(
-    v-field="value",
-    :items="filters",
-    :label="label || $t('common.filters')",
-    :loading="filtersPending",
-    :disabled="disabled",
-    :name="name",
-    item-text="name",
-    item-value="_id",
-    hide-details,
+<template>
+  <v-autocomplete
+    v-field="value"
+    :items="filters"
+    :label="label || $t('common.filters')"
+    :loading="filtersPending"
+    :disabled="disabled"
+    :name="name"
+    item-text="name"
+    item-value="_id"
+    hide-details
     clearable
-  )
+  />
 </template>
 
 <script>

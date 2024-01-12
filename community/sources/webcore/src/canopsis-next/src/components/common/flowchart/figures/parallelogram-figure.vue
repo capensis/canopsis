@@ -1,5 +1,8 @@
-<template lang="pug">
-  path(v-on="$listeners", :d="parallelogramPath")
+<template>
+  <path
+    v-on="$listeners"
+    :d="parallelogramPath"
+  />
 </template>
 
 <script>

@@ -1,27 +1,42 @@
-<template lang="pug">
-  v-layout(row, wrap)
-    v-flex(xs5)
-      v-checkbox(
-        v-validate,
-        v-field="value.enabled",
-        :label="label",
-        :error-messages="errors.collect(enabledFieldName)",
-        :name="enabledFieldName",
+<template>
+  <v-layout wrap>
+    <v-flex xs5>
+      <v-checkbox
+        v-validate
+        v-field="value.enabled"
+        :label="label"
+        :error-messages="errors.collect(enabledFieldName)"
+        :name="enabledFieldName"
         color="primary"
-      )
-        template(#append="")
-          c-help-icon(v-if="helpText", :text="helpText", max-width="300", color="info", top)
-    v-flex(xs2)
-      c-number-field(
-        v-field="value.limit",
-        :label="fieldLabel",
-        :name="limitFieldName",
-        :disabled="!value.enabled",
-        :required="value.enabled",
+      >
+        <template #append="">
+          <c-help-icon
+            v-if="helpText"
+            :text="helpText"
+            max-width="300"
+            color="info"
+            top
+          />
+        </template>
+      </v-checkbox>
+    </v-flex>
+    <v-flex xs2>
+      <c-number-field
+        v-field="value.limit"
+        :label="fieldLabel"
+        :name="limitFieldName"
+        :disabled="!value.enabled"
+        :required="value.enabled"
         :min="min"
-      )
-    v-flex(xs9)
-      v-messages(:value="errors.collect(name)", color="error")
+      />
+    </v-flex>
+    <v-flex xs9>
+      <v-messages
+        :value="errors.collect(name)"
+        color="error"
+      />
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

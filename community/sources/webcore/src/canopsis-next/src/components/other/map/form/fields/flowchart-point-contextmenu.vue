@@ -1,21 +1,25 @@
-<template lang="pug">
-  v-menu(
-    :value="value",
-    :position-x="positionX",
-    :position-y="positionY",
-    :close-on-content-click="false",
-    absolute,
+<template>
+  <v-menu
+    :value="value"
+    :position-x="positionX"
+    :position-y="positionY"
+    :close-on-content-click="false"
+    absolute
     @input="$listeners.close"
-  )
-    v-list(dense)
-      v-list-tile(
-        v-for="item in items",
-        :key="item.text",
-        @click="item.action",
+  >
+    <v-list dense>
+      <v-list-item
+        v-for="item in items"
+        :key="item.text"
+        @click="item.action"
         @contextmenu.prevent.stop=""
-      )
-        v-list-tile-content
-          v-list-tile-title {{ item.text }}
+      >
+        <v-list-item-content>
+          <v-list-item-title>{{ item.text }}</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    </v-list>
+  </v-menu>
 </template>
 
 <script>

@@ -1,15 +1,15 @@
-<template lang="pug">
-  pattern-editor-field(
-    v-field="patterns",
-    :disabled="disabled",
-    :readonly="readonly",
-    :name="name",
-    :type="$constants.PATTERN_TYPES.pbehavior",
-    :required="required",
-    :attributes="pbehaviorAttributes",
-    :with-type="withType",
+<template>
+  <pattern-editor-field
+    v-field="patterns"
+    :disabled="disabled"
+    :readonly="readonly"
+    :name="name"
+    :type="$constants.PATTERN_TYPES.pbehavior"
+    :required="required"
+    :attributes="pbehaviorAttributes"
+    :with-type="withType"
     :counter="counter"
-  )
+  />
 </template>
 
 <script>

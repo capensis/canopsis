@@ -1,15 +1,15 @@
-<template lang="pug">
-  v-select(
-    :value="value",
-    :label="$t('modals.createPbehaviorType.fields.type')",
-    :items="defaultTypes",
-    :disabled="disabled",
-    :loading="pending",
-    item-value="type",
-    item-text="name",
-    return-object,
+<template>
+  <v-select
+    :value="value"
+    :label="$t('modals.createPbehaviorType.fields.type')"
+    :items="defaultTypes"
+    :disabled="disabled"
+    :loading="pending"
+    item-value="type"
+    item-text="name"
+    return-object
     @input="updateValue"
-  )
+  />
 </template>
 
 <script>
