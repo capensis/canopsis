@@ -1,13 +1,14 @@
-<template lang="pug">
-  c-patterns-field.mt-2(
-    v-field="form",
-    :alarm-attributes="alarmAttributes",
-    :entity-attributes="entityAttributes",
-    :readonly="readonly",
-    with-alarm,
-    with-entity,
+<template>
+  <c-patterns-field
+    class="mt-2"
+    v-field="form"
+    :alarm-attributes="alarmAttributes"
+    :entity-attributes="entityAttributes"
+    :readonly="readonly"
+    with-alarm
+    with-entity
     some-required
-  )
+  />
 </template>
 
 <script>

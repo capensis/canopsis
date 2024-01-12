@@ -1,5 +1,3 @@
-import flushPromises from 'flush-promises';
-
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { mockDateNow } from '@unit/utils/mock-hooks';
@@ -237,10 +235,10 @@ describe('c-quick-date-interval-field', () => {
   it('Renders `c-quick-date-interval-field` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `c-quick-date-interval-field` with custom props', () => {
+  it('Renders `c-quick-date-interval-field` with custom props', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         interval: {
@@ -254,11 +252,13 @@ describe('c-quick-date-interval-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
+    expect(wrapper).toMatchMenuSnapshot();
   });
 
   it('Renders `c-quick-date-interval-field` with short format', async () => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: {
         interval: {
           from: QUICK_RANGES.last2Days.start,
@@ -272,13 +272,13 @@ describe('c-quick-date-interval-field', () => {
       },
     });
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
+    expect(wrapper).toMatchMenuSnapshot();
   });
 
   it('Renders `c-quick-date-interval-field` with short format and custom interval', async () => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: {
         interval: {
           from: 1385435500,
@@ -292,8 +292,8 @@ describe('c-quick-date-interval-field', () => {
       },
     });
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
+    expect(wrapper).toMatchMenuSnapshot();
   });
 });

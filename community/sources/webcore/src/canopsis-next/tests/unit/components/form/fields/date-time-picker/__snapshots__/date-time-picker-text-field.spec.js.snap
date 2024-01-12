@@ -9,7 +9,7 @@ exports[`date-time-picker-text-field Renders \`date-time-picker-text-field\` wit
       class="flex"
     >
       <div
-        class="v-input v-text-field v-input--is-label-active v-input--is-dirty theme--light"
+        class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field"
       >
         <div
           class="v-input__control"
@@ -21,14 +21,12 @@ exports[`date-time-picker-text-field Renders \`date-time-picker-text-field\` wit
               class="v-text-field__slot"
             >
               <label
-                aria-hidden="true"
                 class="v-label v-label--active theme--light"
                 style="left: 0px; position: absolute;"
               >
                 label
               </label>
               <input
-                aria-label="label"
                 name="name"
                 type="text"
               />
@@ -40,8 +38,10 @@ exports[`date-time-picker-text-field Renders \`date-time-picker-text-field\` wit
             <div
               class="v-messages theme--light"
             >
-              <div
+              <transition-group-stub
                 class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
               />
             </div>
           </div>
@@ -70,7 +70,7 @@ exports[`date-time-picker-text-field Renders \`date-time-picker-text-field\` wit
       class="flex"
     >
       <div
-        class="v-input v-text-field theme--light"
+        class="v-input theme--light v-text-field"
       >
         <div
           class="v-input__control"
@@ -92,8 +92,10 @@ exports[`date-time-picker-text-field Renders \`date-time-picker-text-field\` wit
             <div
               class="v-messages theme--light"
             >
-              <div
+              <transition-group-stub
                 class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
               />
             </div>
           </div>

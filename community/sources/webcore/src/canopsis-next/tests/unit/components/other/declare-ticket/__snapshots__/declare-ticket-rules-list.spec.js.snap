@@ -5,7 +5,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
   class="c-advanced-data-table"
 >
   <div
-    class="layout row wrap"
+    class="layout wrap"
   >
     <div
       class="flex xs4"
@@ -18,69 +18,99 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
       class="flex xs12"
     >
       <transition-stub
-        mode="in-out"
         name="expand-transition"
       >
-        <!---->
+        <div
+          class="layout px-2 mt-1"
+          style="display: none;"
+        >
+          <c-action-btn-stub
+            class="ml-3"
+            type="delete"
+          />
+        </div>
       </transition-stub>
     </div>
   </div>
-  <div>
+  <div
+    class="v-data-table theme--light v-data-table--selectable"
+    header-text="text"
+  >
     <div
-      class="v-table__overflow"
+      class="v-data-table__wrapper"
     >
-      <table
-        class="v-datatable v-table v-datatable--select-all theme--light"
-      >
-        <thead>
+      <table>
+        <colgroup>
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+        </colgroup>
+        <thead
+          class="v-data-table-header"
+        >
           <tr>
-            <th>
+            <th
+              aria-label=""
+              class="text-start"
+              data-value="data-table-select"
+              role="columnheader"
+              scope="col"
+              style="width: 1px; min-width: 1px;"
+            >
               <div
-                class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                class="v-data-table__checkbox v-simple-checkbox"
               >
                 <div
-                  class="v-input__control"
+                  class="v-input--selection-controls__input"
                 >
-                  <div
-                    class="v-input__slot"
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
                   >
-                    <div
-                      class="v-input--selection-controls__input"
-                    >
-                      <input
-                        aria-checked="false"
-                        role="checkbox"
-                        type="checkbox"
-                        value=""
-                      />
-                      <div
-                        class="v-input--selection-controls__ripple"
-                      />
-                      <i
-                        aria-hidden="true"
-                        class="v-icon material-icons theme--light"
-                      >
-                        check_box_outline_blank
-                      </i>
-                    </div>
-                  </div>
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
                 </div>
               </div>
             </th>
             <th
               aria-label="Name: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="name"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Name
+              <span>
+                Name
+              </span>
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
               >
                 arrow_upward
               </i>
@@ -88,17 +118,18 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
             <th
               aria-label="System name: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="system_name"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              System name
+              <span>
+                System name
+              </span>
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
               >
                 arrow_upward
               </i>
@@ -106,17 +137,18 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
             <th
               aria-label="Enabled: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="enabled"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Enabled
+              <span>
+                Enabled
+              </span>
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
               >
                 arrow_upward
               </i>
@@ -124,17 +156,18 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
             <th
               aria-label="Creation date: Sorted descending. Activate to remove sorting."
               aria-sort="descending"
-              class="column active desc sortable text-xs-left"
+              class="text-start sortable active desc"
               data-value="created"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Creation date
+              <span>
+                Creation date
+              </span>
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
               >
                 arrow_upward
               </i>
@@ -142,17 +175,18 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
             <th
               aria-label="Last modified on: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="updated"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Last modified on
+              <span>
+                Last modified on
+              </span>
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
               >
                 arrow_upward
               </i>
@@ -160,34 +194,38 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
             <th
               aria-label="Last modified by: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="author.display_name"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Last modified by
+              <span>
+                Last modified by
+              </span>
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
               >
                 arrow_upward
               </i>
             </th>
             <th
-              aria-label="Actions: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label="Actions"
+              class="text-start"
               data-value="actions"
               role="columnheader"
               scope="col"
             >
-              Actions
+              <span>
+                Actions
+              </span>
             </th>
           </tr>
+        </thead>
+        <thead>
           <tr
-            class="v-datatable__progress"
+            class="v-data-table__progress"
           >
             <th
               class="column"
@@ -196,74 +234,95 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
               <div
                 aria-valuemax="100"
                 aria-valuemin="0"
-                class="v-progress-linear"
+                class="v-progress-linear v-progress-linear--absolute v-progress-linear--visible theme--light"
                 role="progressbar"
                 style="height: 2px;"
               >
                 <div
                   class="v-progress-linear__background primary"
-                  style="height: 2px; opacity: 0.3; width: 100%;"
+                  style="opacity: 0.3; left: 0%; width: 100%;"
                 />
                 <div
-                  class="v-progress-linear__bar"
+                  class="v-progress-linear__buffer"
+                />
+                <transition-stub
+                  name="fade-transition"
                 >
-                  <transition-stub
-                    name="fade-transition"
+                  <div
+                    class="v-progress-linear__indeterminate v-progress-linear__indeterminate--active"
                   >
                     <div
-                      class="v-progress-linear__bar__indeterminate v-progress-linear__bar__indeterminate--active"
-                    >
-                      <div
-                        class="v-progress-linear__bar__indeterminate long primary"
-                      />
-                      <div
-                        class="v-progress-linear__bar__indeterminate short primary"
-                      />
-                    </div>
-                  </transition-stub>
-                  <transition-stub
-                    name="slide-x-transition"
-                  />
-                </div>
+                      class="v-progress-linear__indeterminate long primary"
+                    />
+                    <div
+                      class="v-progress-linear__indeterminate short primary"
+                    />
+                  </div>
+                </transition-stub>
               </div>
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout c-checkbox-wrapper row justify-start"
+                class="v-data-table__checkbox v-simple-checkbox"
               >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <!---->
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
               </div>
             </td>
-            <td>
-              name-0
+            <td
+              class="text-start"
+            >
+        name-0
             </td>
-            <td>
-              system-name-0
+            <td
+              class="text-start"
+            >
+        system-name-0
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <c-enabled-stub />
             </td>
-            <td>
-              04/03/2021 13:44:48
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
             </td>
-            <td>
-              04/03/2021 13:44:48
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
             </td>
-            <td>
-              author-name-0
+            <td
+              class="text-start"
+            >
+        author-name-0
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <c-action-btn-stub
                   type="edit"
@@ -277,42 +336,67 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
               </div>
             </td>
           </tr>
-          <tr>
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout c-checkbox-wrapper row justify-start"
+                class="v-data-table__checkbox v-simple-checkbox"
               >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <!---->
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
               </div>
             </td>
-            <td>
-              name-1
+            <td
+              class="text-start"
+            >
+        name-1
             </td>
-            <td>
-              system-name-1
+            <td
+              class="text-start"
+            >
+        system-name-1
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <c-enabled-stub
                 value="true"
               />
             </td>
-            <td>
-              04/03/2021 13:44:49
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:49
             </td>
-            <td>
-              04/03/2021 13:44:49
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:49
             </td>
-            <td>
-              author-name-1
+            <td
+              class="text-start"
+            >
+        author-name-1
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <c-action-btn-stub
                   type="edit"
@@ -326,40 +410,65 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
               </div>
             </td>
           </tr>
-          <tr>
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout c-checkbox-wrapper row justify-start"
+                class="v-data-table__checkbox v-simple-checkbox"
               >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <!---->
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
               </div>
             </td>
-            <td>
-              name-2
+            <td
+              class="text-start"
+            >
+        name-2
             </td>
-            <td>
-              system-name-2
+            <td
+              class="text-start"
+            >
+        system-name-2
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <c-enabled-stub />
             </td>
-            <td>
-              04/03/2021 13:44:50
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:50
             </td>
-            <td>
-              04/03/2021 13:44:50
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:50
             </td>
-            <td>
-              author-name-2
+            <td
+              class="text-start"
+            >
+        author-name-2
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <c-action-btn-stub
                   type="edit"
@@ -373,42 +482,67 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
               </div>
             </td>
           </tr>
-          <tr>
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout c-checkbox-wrapper row justify-start"
+                class="v-data-table__checkbox v-simple-checkbox"
               >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <!---->
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
               </div>
             </td>
-            <td>
-              name-3
+            <td
+              class="text-start"
+            >
+        name-3
             </td>
-            <td>
-              system-name-3
+            <td
+              class="text-start"
+            >
+        system-name-3
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <c-enabled-stub
                 value="true"
               />
             </td>
-            <td>
-              04/03/2021 13:44:51
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:51
             </td>
-            <td>
-              04/03/2021 13:44:51
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:51
             </td>
-            <td>
-              author-name-3
+            <td
+              class="text-start"
+            >
+        author-name-3
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <c-action-btn-stub
                   type="edit"
@@ -422,40 +556,65 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
               </div>
             </td>
           </tr>
-          <tr>
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout c-checkbox-wrapper row justify-start"
+                class="v-data-table__checkbox v-simple-checkbox"
               >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <!---->
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
               </div>
             </td>
-            <td>
-              name-4
+            <td
+              class="text-start"
+            >
+        name-4
             </td>
-            <td>
-              system-name-4
+            <td
+              class="text-start"
+            >
+        system-name-4
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <c-enabled-stub />
             </td>
-            <td>
-              04/03/2021 13:44:52
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:52
             </td>
-            <td>
-              04/03/2021 13:44:52
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:52
             </td>
-            <td>
-              author-name-4
+            <td
+              class="text-start"
+            >
+        author-name-4
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <c-action-btn-stub
                   type="edit"
@@ -469,42 +628,67 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
               </div>
             </td>
           </tr>
-          <tr>
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout c-checkbox-wrapper row justify-start"
+                class="v-data-table__checkbox v-simple-checkbox"
               >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <!---->
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
               </div>
             </td>
-            <td>
-              name-5
+            <td
+              class="text-start"
+            >
+        name-5
             </td>
-            <td>
-              system-name-5
+            <td
+              class="text-start"
+            >
+        system-name-5
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <c-enabled-stub
                 value="true"
               />
             </td>
-            <td>
-              04/03/2021 13:44:53
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:53
             </td>
-            <td>
-              04/03/2021 13:44:53
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:53
             </td>
-            <td>
-              author-name-5
+            <td
+              class="text-start"
+            >
+        author-name-5
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <c-action-btn-stub
                   type="edit"
@@ -518,40 +702,65 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
               </div>
             </td>
           </tr>
-          <tr>
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout c-checkbox-wrapper row justify-start"
+                class="v-data-table__checkbox v-simple-checkbox"
               >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <!---->
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
               </div>
             </td>
-            <td>
-              name-6
+            <td
+              class="text-start"
+            >
+        name-6
             </td>
-            <td>
-              system-name-6
+            <td
+              class="text-start"
+            >
+        system-name-6
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <c-enabled-stub />
             </td>
-            <td>
-              04/03/2021 13:44:54
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:54
             </td>
-            <td>
-              04/03/2021 13:44:54
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:54
             </td>
-            <td>
-              author-name-6
+            <td
+              class="text-start"
+            >
+        author-name-6
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <c-action-btn-stub
                   type="edit"
@@ -565,42 +774,67 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
               </div>
             </td>
           </tr>
-          <tr>
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout c-checkbox-wrapper row justify-start"
+                class="v-data-table__checkbox v-simple-checkbox"
               >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <!---->
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
               </div>
             </td>
-            <td>
-              name-7
+            <td
+              class="text-start"
+            >
+        name-7
             </td>
-            <td>
-              system-name-7
+            <td
+              class="text-start"
+            >
+        system-name-7
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <c-enabled-stub
                 value="true"
               />
             </td>
-            <td>
-              04/03/2021 13:44:55
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:55
             </td>
-            <td>
-              04/03/2021 13:44:55
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:55
             </td>
-            <td>
-              author-name-7
+            <td
+              class="text-start"
+            >
+        author-name-7
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <c-action-btn-stub
                   type="edit"
@@ -614,40 +848,65 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
               </div>
             </td>
           </tr>
-          <tr>
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout c-checkbox-wrapper row justify-start"
+                class="v-data-table__checkbox v-simple-checkbox"
               >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <!---->
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
               </div>
             </td>
-            <td>
-              name-8
+            <td
+              class="text-start"
+            >
+        name-8
             </td>
-            <td>
-              system-name-8
+            <td
+              class="text-start"
+            >
+        system-name-8
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <c-enabled-stub />
             </td>
-            <td>
-              04/03/2021 13:44:56
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:56
             </td>
-            <td>
-              04/03/2021 13:44:56
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:56
             </td>
-            <td>
-              author-name-8
+            <td
+              class="text-start"
+            >
+        author-name-8
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <c-action-btn-stub
                   type="edit"
@@ -661,42 +920,67 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
               </div>
             </td>
           </tr>
-          <tr>
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout c-checkbox-wrapper row justify-start"
+                class="v-data-table__checkbox v-simple-checkbox"
               >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <!---->
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
               </div>
             </td>
-            <td>
-              name-9
+            <td
+              class="text-start"
+            >
+        name-9
             </td>
-            <td>
-              system-name-9
+            <td
+              class="text-start"
+            >
+        system-name-9
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <c-enabled-stub
                 value="true"
               />
             </td>
-            <td>
-              04/03/2021 13:44:57
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:57
             </td>
-            <td>
-              04/03/2021 13:44:57
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:57
             </td>
-            <td>
-              author-name-9
+            <td
+              class="text-start"
+            >
+        author-name-9
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <c-action-btn-stub
                   type="edit"
@@ -715,8 +999,8 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
     </div>
   </div>
   <c-table-pagination-stub
+    items-per-page="10"
     page="2"
-    rows-per-page="10"
     total-items="50"
   />
 </div>
@@ -727,7 +1011,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
   class="c-advanced-data-table"
 >
   <div
-    class="layout row wrap"
+    class="layout wrap"
   >
     <div
       class="flex xs4"
@@ -738,36 +1022,65 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
       class="flex xs12"
     >
       <transition-stub
-        mode="in-out"
         name="expand-transition"
       >
-        <!---->
+        <div
+          class="layout px-2 mt-1"
+          style="display: none;"
+        />
       </transition-stub>
     </div>
   </div>
-  <div>
+  <div
+    class="v-data-table theme--light"
+    header-text="text"
+  >
     <div
-      class="v-table__overflow"
+      class="v-data-table__wrapper"
     >
-      <table
-        class="v-datatable v-table theme--light"
-      >
-        <thead>
+      <table>
+        <colgroup>
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+        </colgroup>
+        <thead
+          class="v-data-table-header"
+        >
           <tr>
             <th
-              aria-label="Name: Sorted ascending. Activate to sort descending."
-              aria-sort="ascending"
-              class="column active asc sortable text-xs-left"
+              aria-label="Name: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="text-start sortable"
               data-value="name"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Name
+              <span>
+                Name
+              </span>
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
               >
                 arrow_upward
               </i>
@@ -775,17 +1088,18 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
             <th
               aria-label="System name: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="system_name"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              System name
+              <span>
+                System name
+              </span>
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
               >
                 arrow_upward
               </i>
@@ -793,17 +1107,18 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
             <th
               aria-label="Enabled: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="enabled"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Enabled
+              <span>
+                Enabled
+              </span>
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
               >
                 arrow_upward
               </i>
@@ -811,17 +1126,18 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
             <th
               aria-label="Creation date: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="created"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Creation date
+              <span>
+                Creation date
+              </span>
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
               >
                 arrow_upward
               </i>
@@ -829,17 +1145,18 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
             <th
               aria-label="Last modified on: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="updated"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Last modified on
+              <span>
+                Last modified on
+              </span>
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
               >
                 arrow_upward
               </i>
@@ -847,45 +1164,40 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
             <th
               aria-label="Last modified by: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="author.display_name"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Last modified by
+              <span>
+                Last modified by
+              </span>
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
               >
                 arrow_upward
               </i>
             </th>
             <th
-              aria-label="Actions: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label="Actions"
+              class="text-start"
               data-value="actions"
               role="columnheader"
               scope="col"
             >
-              Actions
+              <span>
+                Actions
+              </span>
             </th>
-          </tr>
-          <tr
-            class="v-datatable__progress"
-          >
-            <th
-              class="column"
-              colspan="7"
-            />
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr
+            class="v-data-table__empty-wrapper"
+          >
             <td
-              class="text-xs-center"
               colspan="7"
             >
               No data available

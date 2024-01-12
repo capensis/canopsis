@@ -1,29 +1,41 @@
-<template lang="pug">
-  v-autocomplete(
-    v-validate="rules",
-    v-field="value",
-    :items="availableParameters",
-    :label="label",
-    :name="name",
-    :multiple="isMultiple",
-    :hide-details="hideDetails",
-    :return-object="false",
+<template>
+  <v-autocomplete
+    v-validate="rules"
+    v-field="value"
+    :items="availableParameters"
+    :label="label"
+    :name="name"
+    :multiple="isMultiple"
+    :hide-details="hideDetails"
+    :return-object="false"
     :error-messages="errors.collect(name)"
-  )
-    template(#selection="{ item, index }")
-      template(v-if="isMultiple")
-        span(v-if="!index") {{ getSelectionLabel(item) }}
-      template(v-else) {{ item.text }}
-    template(#item="{ parent, item, tile }")
-      v-list-tile(v-bind="tile.props", v-on="tile.on")
-        v-list-tile-action(v-if="isMultiple")
-          v-checkbox(
-            :input-value="tile.props.value",
-            :color="parent.color",
-            :disabled="tile.props.disabled"
-          )
-        v-list-tile-content
-          v-list-tile-title {{ item.text }}
+  >
+    <template #selection="{ item, index }">
+      <template v-if="isMultiple">
+        <span v-if="!index">{{ getSelectionLabel(item) }}</span>
+      </template>
+      <template v-else>
+        {{ item.text }}
+      </template>
+    </template>
+    <template #item="{ parent, item, attrs, on }">
+      <v-list-item
+        v-bind="attrs"
+        v-on="on"
+      >
+        <v-list-item-action v-if="isMultiple">
+          <v-checkbox
+            :input-value="attrs.value"
+            :color="parent.color"
+            :disabled="attrs.disabled"
+          />
+        </v-list-item-action>
+        <v-list-item-content>
+          <v-list-item-title>{{ item.text }}</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    </template>
+  </v-autocomplete>
 </template>
 
 <script>

@@ -26,7 +26,8 @@ exports[`kpi-rating-filters Renders \`kpi-rating-filters\` with query 1`] = `
       type="0"
       value="ticket_active_alarms"
     />
-    <c-records-per-page-field-stub
+    <c-items-per-page-field-stub
+      class="mt-4"
       value="5"
     />
   </div>
@@ -60,7 +61,8 @@ exports[`kpi-rating-filters Renders \`kpi-rating-filters\` with total user activ
       type="0"
       value="total_user_activity"
     />
-    <c-records-per-page-field-stub
+    <c-items-per-page-field-stub
+      class="mt-4"
       value="5"
     />
   </div>

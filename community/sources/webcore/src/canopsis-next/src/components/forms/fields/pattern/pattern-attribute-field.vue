@@ -1,16 +1,16 @@
-<template lang="pug">
-  c-select-field(
-    v-field="value",
-    v-validate="rules",
-    :items="items",
-    :disabled="disabled",
-    :error-messages="errors.collect(name)",
-    :label="label || $tc('common.searchBy')",
-    :name="name",
-    item-disabled="options.disabled",
-    ellipsis,
+<template>
+  <c-select-field
+    v-field="value"
+    v-validate="rules"
+    :items="items"
+    :disabled="disabled"
+    :error-messages="errors.collect(name)"
+    :label="label || $tc('common.searchBy')"
+    :name="name"
+    item-disabled="options.disabled"
+    ellipsis
     autocomplete
-  )
+  />
 </template>
 
 <script>

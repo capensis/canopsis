@@ -56,7 +56,7 @@ describe('entity-gantt', () => {
     const junitGanttChart = selectJunitGanttChart(wrapper);
 
     const newQuery = {
-      rowsPerPage: 15,
+      itemsPerPage: 15,
       page: 2,
     };
 
@@ -69,7 +69,7 @@ describe('entity-gantt', () => {
       {
         id: alarm.entity._id,
         params: {
-          limit: newQuery.rowsPerPage,
+          limit: newQuery.itemsPerPage,
           page: newQuery.page,
         },
       },
@@ -174,10 +174,10 @@ describe('entity-gantt', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

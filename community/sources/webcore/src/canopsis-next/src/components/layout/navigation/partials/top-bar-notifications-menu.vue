@@ -1,5 +1,8 @@
-<template lang="pug">
-  top-bar-menu(:title="$tc('common.notification', 2)", :links="links")
+<template>
+  <top-bar-menu
+    :title="$tc('common.notification', 2)"
+    :links="links"
+  />
 </template>
 
 <script>

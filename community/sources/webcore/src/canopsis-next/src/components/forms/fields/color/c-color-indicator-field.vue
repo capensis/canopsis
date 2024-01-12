@@ -1,15 +1,20 @@
-<template lang="pug">
-  v-radio-group(v-field="value", :name="name", :disabled="disabled")
-    v-radio(
-      :value="$constants.COLOR_INDICATOR_TYPES.state",
-      :label="$t('settings.colorIndicator.fields.displayAsSeverity')",
+<template>
+  <v-radio-group
+    v-field="value"
+    :name="name"
+    :disabled="disabled"
+  >
+    <v-radio
+      :value="$constants.COLOR_INDICATOR_TYPES.state"
+      :label="$t('settings.colorIndicator.fields.displayAsSeverity')"
       color="primary"
-    )
-    v-radio(
-      :value="$constants.COLOR_INDICATOR_TYPES.impactState",
-      :label="$t('settings.colorIndicator.fields.displayAsPriority')",
+    />
+    <v-radio
+      :value="$constants.COLOR_INDICATOR_TYPES.impactState"
+      :label="$t('settings.colorIndicator.fields.displayAsPriority')"
       color="primary"
-    )
+    />
+  </v-radio-group>
 </template>
 
 <script>

@@ -280,7 +280,7 @@ describe('remediation-instructions-filter-form', () => {
       store,
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `remediation-instructions-filter-form` with custom props', () => {
@@ -297,6 +297,6 @@ describe('remediation-instructions-filter-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });
