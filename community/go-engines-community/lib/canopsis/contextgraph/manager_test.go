@@ -428,7 +428,7 @@ func TestCheckServices(t *testing.T) {
 			commRegister.Clear()
 			storage.EXPECT().GetAll(gomock.Any()).Return(dataset.services, nil)
 
-			err := manager.RefreshServices(ctx)
+			err := manager.LoadServices(ctx)
 			if err != nil {
 				t.Error(err)
 			}

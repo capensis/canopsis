@@ -36,8 +36,8 @@ type listener struct {
 	amqpPublisher libamqp.Publisher
 	encoder       encoding.Encoder
 
-	processedIDsMap   map[string]bool
 	processedIDsMapMx sync.Mutex
+	processedIDsMap   map[string]bool
 
 	logger zerolog.Logger
 }
@@ -59,8 +59,8 @@ func NewListener(
 		encoder:          encoder,
 		logger:           logger,
 
-		processedIDsMap:   make(map[string]bool),
 		processedIDsMapMx: sync.Mutex{},
+		processedIDsMap:   make(map[string]bool),
 	}
 }
 
