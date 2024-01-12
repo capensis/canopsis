@@ -38,7 +38,7 @@ describe('c-color-indicator-field', () => {
   it('Renders `c-color-indicator-field` with state value correctly', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-color-indicator-field` with impact state value correctly', () => {
@@ -49,6 +49,6 @@ describe('c-color-indicator-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -1,23 +1,26 @@
-<template lang="pug">
-  v-layout(row)
-    v-flex(xs6)
-      c-enabled-field(
-        v-model="oldMode",
-        :label="$t('common.numberField')",
+<template>
+  <v-layout>
+    <v-flex xs6>
+      <c-enabled-field
+        v-model="oldMode"
+        :label="$t('common.numberField')"
         @input="updateOldMode"
-      )
-    v-flex(xs6)
-      c-number-field(
-        v-if="oldMode",
-        v-field="value",
-        :name="name",
-        required
-      )
-      c-entity-state-field(
-        v-else,
-        v-field="value",
+      />
+    </v-flex>
+    <v-flex xs6>
+      <c-number-field
+        v-if="oldMode"
+        v-field="value"
         :name="name"
-      )
+        required
+      />
+      <c-entity-state-field
+        v-else
+        v-field="value"
+        :name="name"
+      />
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

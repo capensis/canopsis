@@ -95,7 +95,7 @@ describe('service-weather-item', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `service-weather-item` with full access', async () => {
@@ -127,6 +127,6 @@ describe('service-weather-item', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

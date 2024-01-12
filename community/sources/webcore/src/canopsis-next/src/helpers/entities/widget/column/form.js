@@ -53,29 +53,13 @@ export const getInfosWidgetColumn = (value = '') => [
 export const isLinksWidgetColumn = (value = '') => value.startsWith(ALARM_LIST_WIDGET_COLUMNS.links);
 
 /**
- * Convert widget column to form
+ * Convert widget column value to form
  *
  * @param {string} [value = '']
- * @param {string} [label = '']
- * @param {boolean} [onlyIcon = false]
- * @param {boolean} [withHtml = true]
- * @param {WidgetColumn & { value: undefined, label: undefined }} [rest]
  * @returns {WidgetColumnForm}
  */
-export const widgetColumnToForm = ({
-  value = '',
-  label = '',
-  onlyIcon = false,
-
-  ...rest
-} = {}) => {
-  const result = {
-    ...rest,
-
-    label,
-    key: uid(),
-    column: value,
-  };
+export const widgetColumnValueToForm = (value = '') => {
+  const result = {};
 
   const infosColumn = getInfosWidgetColumn(value) ?? '';
 
@@ -98,6 +82,41 @@ export const widgetColumnToForm = ({
 
     result.column = column;
     result.field = field;
+  } else {
+    result.column = value;
+  }
+
+  return result;
+};
+
+/**
+ * Convert widget column to form
+ *
+ * @param {string} [value = '']
+ * @param {string} [label = '']
+ * @param {boolean} [onlyIcon = false]
+ * @param {boolean} [withHtml = true]
+ * @param {WidgetColumn & { value: undefined, label: undefined }} [rest]
+ * @returns {WidgetColumnForm}
+ */
+export const widgetColumnToForm = ({
+  value = '',
+  label = '',
+  onlyIcon = false,
+
+  ...rest
+} = {}) => {
+  const result = {
+    ...rest,
+
+    label,
+    key: uid(),
+    column: value,
+
+    ...widgetColumnValueToForm(value),
+  };
+
+  if (isLinksWidgetColumn(value)) {
     result.onlyIcon = onlyIcon;
   }
 
@@ -113,35 +132,41 @@ export const widgetColumnToForm = ({
 export const widgetColumnsToForm = (columns = []) => columns.map(widgetColumnToForm);
 
 /**
+ * Convert form column to widget column
+ *
+ * @param {WidgetColumnForm} form
+ * @returns {WidgetColumn}
+ */
+export const formToWidgetColumn = ({ key, column, dictionary, field, onlyIcon, linksInRowCount, rule, ...rest }) => {
+  const result = {
+    ...rest,
+
+    value: column,
+  };
+
+  if (column === ALARM_FIELDS.infos) {
+    result.value = [column, rule, dictionary].filter(Boolean).join('.');
+  } else if (getInfosWidgetColumn(column)) {
+    result.value = `${column}.${dictionary}.${field}`;
+  } else if (isLinksWidgetColumn(column)) {
+    result.onlyIcon = onlyIcon;
+
+    if (onlyIcon) {
+      result.linksInRowCount = linksInRowCount;
+    }
+
+    if (field) {
+      result.value = `${column}.${field}`;
+    }
+  }
+
+  return result;
+};
+
+/**
  * Convert form array to widget columns array
  *
  * @param {WidgetColumnForm[]} form
  * @returns {WidgetColumn[]}
  */
-export const formToWidgetColumns = (form = []) => (
-  form.map(({ key, column, dictionary, field, onlyIcon, linksInRowCount, rule, ...rest }) => {
-    const result = {
-      ...rest,
-
-      value: column,
-    };
-
-    if (column === ALARM_FIELDS.infos) {
-      result.value = [column, rule, dictionary].filter(Boolean).join('.');
-    } else if (getInfosWidgetColumn(column)) {
-      result.value = `${column}.${dictionary}.${field}`;
-    } else if (isLinksWidgetColumn(column)) {
-      result.onlyIcon = onlyIcon;
-
-      if (onlyIcon) {
-        result.linksInRowCount = linksInRowCount;
-      }
-
-      if (field) {
-        result.value = `${column}.${field}`;
-      }
-    }
-
-    return result;
-  })
-);
+export const formToWidgetColumns = (form = []) => form.map(formToWidgetColumn);

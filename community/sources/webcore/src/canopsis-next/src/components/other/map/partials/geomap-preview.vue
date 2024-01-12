@@ -1,59 +1,72 @@
-<template lang="pug">
-  c-zoom-overlay
-    geomap.geomap-preview(ref="map", :min-zoom="minZoom", :disabled="!!activePoint")
-      geomap-control-zoom(position="topleft", :disabled="!!activePoint")
-      geomap-control-layers(position="topright", :disabled="!!activePoint")
-
-      geomap-tile-layer(
-        :name="$t('map.layers.openStreetMap')",
-        :url="$config.OPEN_STREET_LAYER_URL",
-        layer-type="base",
+<template>
+  <c-zoom-overlay>
+    <geomap
+      class="geomap-preview"
+      ref="map"
+      :min-zoom="minZoom"
+      :disabled="!!activePoint"
+    >
+      <geomap-control-zoom
+        position="topleft"
+        :disabled="!!activePoint"
+      />
+      <geomap-control-layers
+        position="topright"
+        :disabled="!!activePoint"
+      />
+      <geomap-tile-layer
+        :name="$t('map.layers.openStreetMap')"
+        :url="$config.OPEN_STREET_LAYER_URL"
+        layer-type="base"
         no-wrap
-      )
-
-      geomap-control(position="bottomright")
-        c-help-icon(
-          :text="$t('geomap.panzoom.helpText')",
-          size="32",
-          color="secondary",
-          icon="help",
+      />
+      <geomap-control position="bottomright">
+        <c-help-icon
+          :text="$t('geomap.panzoom.helpText')"
+          size="32"
+          color="secondary"
+          icon="help"
           top
-        )
-
-      geomap-cluster-group(
-        v-for="{ markers, name, style } in layers",
-        :key="name",
-        :name="name",
-        :cluster-style="style",
+        />
+      </geomap-control>
+      <geomap-cluster-group
+        v-for="{ markers: layerMarkers, name, style } in layers"
+        :key="name"
+        :name="name"
+        :cluster-style="style"
         layer-type="overlay"
-      )
-        geomap-marker(
-          v-for="{ coordinates, id, data, icon } in markers",
-          :key="id",
-          :lat-lng="coordinates",
+      >
+        <geomap-marker
+          v-for="{ coordinates, id, data, icon } in layerMarkers"
+          :key="id"
+          :lat-lng="coordinates"
           @click="openMarkerPopup(data, $event)"
-        )
-          geomap-icon(:icon-anchor="icon.anchor")
-            point-icon(
-              :style="icon.style",
-              :entity="data.entity",
-              :size="icon.size",
-              :color-indicator="colorIndicator",
+        >
+          <geomap-icon :icon-anchor="icon.anchor">
+            <point-icon
+              :style="icon.style"
+              :entity="data.entity"
+              :size="icon.size"
+              :color-indicator="colorIndicator"
               :pbehavior-enabled="pbehaviorEnabled"
-            )
-
-      point-popup-dialog(
-        v-if="activePoint",
-        :point="activePoint",
-        :position-x="positionX",
-        :position-y="positionY",
-        :popup-template="popupTemplate",
-        :color-indicator="colorIndicator",
-        :popup-actions="popupActions",
-        @show:alarms="showAlarms",
-        @show:map="showLinkedMap",
+            />
+          </geomap-icon>
+        </geomap-marker>
+      </geomap-cluster-group>
+      <point-popup-dialog
+        v-if="activePoint"
+        :point="activePoint"
+        :position-x="positionX"
+        :position-y="positionY"
+        :popup-template="popupTemplate"
+        :color-indicator="colorIndicator"
+        :popup-actions="popupActions"
+        @show:alarms="showAlarms"
+        @show:map="showLinkedMap"
         @close="closePopup"
-      )
+      />
+    </geomap>
+  </c-zoom-overlay>
 </template>
 
 <script>
@@ -74,7 +87,6 @@ import GeomapControlLayers from '@/components/common/geomap/geomap-control-layer
 import GeomapClusterGroup from '@/components/common/geomap/geomap-cluster-group.vue';
 import GeomapMarker from '@/components/common/geomap/geomap-marker.vue';
 import GeomapIcon from '@/components/common/geomap/geomap-icon.vue';
-import GeomapTooltip from '@/components/common/geomap/geomap-tooltip.vue';
 import GeomapControl from '@/components/common/geomap/geomap-control.vue';
 
 import PointIcon from './point-icon.vue';
@@ -90,7 +102,6 @@ export default {
     GeomapClusterGroup,
     GeomapMarker,
     GeomapIcon,
-    GeomapTooltip,
     GeomapControl,
     PointIcon,
   },

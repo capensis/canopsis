@@ -30,7 +30,7 @@ describe('alarm-column-value', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarm-column-value` with custom props', async () => {
@@ -48,7 +48,7 @@ describe('alarm-column-value', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarm-column-value` with custom template', async () => {
@@ -72,6 +72,6 @@ describe('alarm-column-value', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

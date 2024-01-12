@@ -126,9 +126,7 @@ describe('create-snooze-event', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -164,9 +162,7 @@ describe('create-snooze-event', () => {
       vm: snoozeEventForm.vm,
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -196,9 +192,7 @@ describe('create-snooze-event', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -235,9 +229,7 @@ describe('create-snooze-event', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -280,9 +272,7 @@ describe('create-snooze-event', () => {
 
     snoozeEventForm.vm.$emit('input', newForm);
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -302,9 +292,7 @@ describe('create-snooze-event', () => {
       },
     });
 
-    const cancelButton = selectCancelButton(wrapper);
-
-    cancelButton.trigger('click');
+    selectCancelButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -323,7 +311,7 @@ describe('create-snooze-event', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `create-snooze-event` with config data', () => {
@@ -341,6 +329,6 @@ describe('create-snooze-event', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

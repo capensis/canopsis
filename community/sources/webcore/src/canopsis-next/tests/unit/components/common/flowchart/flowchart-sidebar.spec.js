@@ -810,7 +810,7 @@ describe('flowchart-sidebar', () => {
     });
   });
 
-  test('Renders `flowchart-sidebar` with form', () => {
+  test('Renders `flowchart-sidebar` with form', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         shapes: {},
@@ -818,10 +818,12 @@ describe('flowchart-sidebar', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    await wrapper.openAllExpansionPanels();
+
+    expect(wrapper).toMatchSnapshot();
   });
 
-  test('Renders `flowchart-sidebar` with custom props', () => {
+  test('Renders `flowchart-sidebar` with custom props', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         shapes: {
@@ -834,6 +836,8 @@ describe('flowchart-sidebar', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    await wrapper.openAllExpansionPanels();
+
+    expect(wrapper).toMatchSnapshot();
   });
 });
