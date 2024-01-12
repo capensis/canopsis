@@ -125,7 +125,7 @@ describe('alarms-list-modal', () => {
   test('Renders `alarms-list-modal` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `alarms-list-modal` with custom props', () => {
@@ -140,6 +140,6 @@ describe('alarms-list-modal', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

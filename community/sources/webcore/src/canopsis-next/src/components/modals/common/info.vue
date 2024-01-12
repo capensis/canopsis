@@ -1,9 +1,12 @@
-<template lang="pug">
-  modal-wrapper(close)
-    template(#title="")
-      span {{ config.title }}
-    template(#text="")
-      div(v-html="config.text")
+<template>
+  <modal-wrapper close>
+    <template #title="">
+      <span>{{ config.title }}</span>
+    </template>
+    <template #text="">
+      <div v-html="config.text" />
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>

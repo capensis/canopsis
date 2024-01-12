@@ -1,80 +1,86 @@
-<template lang="pug">
-  widget-settings(:submitting="submitting", @submit="submit")
-    field-title(v-model="form.title")
-    v-divider
-    widget-settings-group(:title="$t('settings.advancedSettings')")
-      field-default-sort-column(
-        v-model="form.parameters.sort",
-        :columns="sortablePreparedWidgetColumns",
+<template>
+  <widget-settings
+    :submitting="submitting"
+    @submit="submit"
+  >
+    <field-title v-model="form.title" />
+    <v-divider />
+    <widget-settings-group :title="$t('settings.advancedSettings')">
+      <field-default-sort-column
+        v-model="form.parameters.sort"
+        :columns="sortablePreparedWidgetColumns"
         :columns-label="$t('settings.columnName')"
-      )
-      v-divider
-      field-columns(
-        v-model="form.parameters.widgetColumns",
-        :template="form.parameters.widgetColumnsTemplate",
-        :templates="entityColumnsWidgetTemplates",
-        :templates-pending="widgetTemplatesPending",
-        :label="$t('settings.columnNames')",
-        :type="$constants.ENTITIES_TYPES.entity",
+      />
+      <v-divider />
+      <field-columns
+        v-model="form.parameters.widgetColumns"
+        :template="form.parameters.widgetColumnsTemplate"
+        :templates="entityColumnsWidgetTemplates"
+        :templates-pending="widgetTemplatesPending"
+        :label="$t('settings.columnNames')"
+        :type="$constants.ENTITIES_TYPES.entity"
         @update:template="updateWidgetColumnsTemplate"
-      )
-      v-divider
-      field-columns(
-        v-model="form.parameters.serviceDependenciesColumns",
-        :template="form.parameters.serviceDependenciesColumnsTemplate",
-        :templates="entityColumnsWidgetTemplates",
-        :templates-pending="widgetTemplatesPending",
-        :label="$t('settings.treeOfDependenciesColumnNames')",
-        :type="$constants.ENTITIES_TYPES.entity",
-        with-color-indicator,
+      />
+      <v-divider />
+      <field-columns
+        v-model="form.parameters.serviceDependenciesColumns"
+        :template="form.parameters.serviceDependenciesColumnsTemplate"
+        :templates="entityColumnsWidgetTemplates"
+        :templates-pending="widgetTemplatesPending"
+        :label="$t('settings.treeOfDependenciesColumnNames')"
+        :type="$constants.ENTITIES_TYPES.entity"
+        with-color-indicator
         @update:template="updateServiceDependenciesColumnsTemplate"
-      )
-      v-divider
-      field-columns(
-        v-model="form.parameters.activeAlarmsColumns",
-        :template="form.parameters.activeAlarmsColumnsTemplate",
-        :templates="alarmColumnsWidgetTemplates",
-        :templates-pending="widgetTemplatesPending",
-        :label="$t('settings.activeAlarmsColumns')",
-        :type="$constants.ENTITIES_TYPES.alarm",
+      />
+      <v-divider />
+      <field-columns
+        v-model="form.parameters.activeAlarmsColumns"
+        :template="form.parameters.activeAlarmsColumnsTemplate"
+        :templates="alarmColumnsWidgetTemplates"
+        :templates-pending="widgetTemplatesPending"
+        :label="$t('settings.activeAlarmsColumns')"
+        :type="$constants.ENTITIES_TYPES.alarm"
         @update:template="updateActiveAlarmsColumnsTemplate"
-      )
-      v-divider
-      field-columns(
-        v-model="form.parameters.resolvedAlarmsColumns",
-        :template="form.parameters.resolvedAlarmsColumnsTemplate",
-        :templates="alarmColumnsWidgetTemplates",
-        :templates-pending="widgetTemplatesPending",
-        :label="$t('settings.resolvedAlarmsColumns')",
-        :type="$constants.ENTITIES_TYPES.alarm",
+      />
+      <v-divider />
+      <field-columns
+        v-model="form.parameters.resolvedAlarmsColumns"
+        :template="form.parameters.resolvedAlarmsColumnsTemplate"
+        :templates="alarmColumnsWidgetTemplates"
+        :templates-pending="widgetTemplatesPending"
+        :label="$t('settings.resolvedAlarmsColumns')"
+        :type="$constants.ENTITIES_TYPES.alarm"
         @update:template="updateResolvedAlarmsColumnsTemplate"
-      )
-      v-divider
-      template(v-if="hasAccessToListFilters")
-        field-filters(
-          v-model="form.parameters.mainFilter",
-          :filters.sync="form.filters",
-          :widget-id="widget._id",
-          :addable="hasAccessToAddFilter",
-          :editable="hasAccessToEditFilter",
-          with-alarm,
-          with-entity,
-          with-pbehavior,
+      />
+      <v-divider />
+      <template v-if="hasAccessToListFilters">
+        <field-filters
+          v-model="form.parameters.mainFilter"
+          :filters.sync="form.filters"
+          :widget-id="widget._id"
+          :addable="hasAccessToAddFilter"
+          :editable="hasAccessToEditFilter"
+          with-alarm
+          with-entity
+          with-pbehavior
           entity-counters-type
-        )
-        v-divider
-      field-context-entities-types-filter(v-model="form.parameters.selectedTypes")
-      v-divider
-      export-csv-form(
-        v-model="form.parameters",
-        :type="$constants.ENTITIES_TYPES.entity",
-        :templates="entityColumnsWidgetTemplates",
-        :templates-pending="widgetTemplatesPending",
+        />
+        <v-divider />
+      </template>
+      <field-context-entities-types-filter v-model="form.parameters.selectedTypes" />
+      <v-divider />
+      <export-csv-form
+        v-model="form.parameters"
+        :type="$constants.ENTITIES_TYPES.entity"
+        :templates="entityColumnsWidgetTemplates"
+        :templates-pending="widgetTemplatesPending"
         without-infos-attributes
-      )
-    v-divider
-    charts-form(v-model="form.parameters.charts")
-    v-divider
+      />
+    </widget-settings-group>
+    <v-divider />
+    <charts-form v-model="form.parameters.charts" />
+    <v-divider />
+  </widget-settings>
 </template>
 
 <script>

@@ -89,7 +89,7 @@ describe('c-draggable-list-field', () => {
   it('Renders `c-draggable-list-field` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-draggable-list-field` with custom props', () => {
@@ -105,6 +105,6 @@ describe('c-draggable-list-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -64,9 +64,7 @@ describe('create-remediation-instructions-filter', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -107,14 +105,14 @@ describe('create-remediation-instructions-filter', () => {
       vm: remediationInstructionsFilterForm.vm,
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
     expect(action).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
+
+    validator.detach('name');
   });
 
   test('Form submitted after trigger submit button without action', async () => {
@@ -129,9 +127,7 @@ describe('create-remediation-instructions-filter', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -163,9 +159,7 @@ describe('create-remediation-instructions-filter', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -212,9 +206,7 @@ describe('create-remediation-instructions-filter', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -255,9 +247,7 @@ describe('create-remediation-instructions-filter', () => {
 
     remediationInstructionsFilterForm.vm.$emit('input', newForm);
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -277,9 +267,7 @@ describe('create-remediation-instructions-filter', () => {
       },
     });
 
-    const cancelButton = selectCancelButton(wrapper);
-
-    cancelButton.trigger('click');
+    selectCancelButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -298,7 +286,7 @@ describe('create-remediation-instructions-filter', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `create-remediation-instructions-filter` with filter', () => {
@@ -326,7 +314,7 @@ describe('create-remediation-instructions-filter', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `create-remediation-instructions-filter` with hidden title', () => {
@@ -344,6 +332,6 @@ describe('create-remediation-instructions-filter', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

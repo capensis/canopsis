@@ -10,7 +10,6 @@ const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,
   'c-search-field': true,
   'v-checkbox': true,
-  'v-checkbox-functional': true,
   'c-expand-btn': true,
   'c-action-btn': true,
   'c-enabled': true,
@@ -41,23 +40,23 @@ describe('event-filters-list', () => {
   it('Renders `event-filters-list` with default props', () => {
     const wrapper = snapshotFactory({
       propsData: {
-        pagination: {},
+        options: {},
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `event-filters-list` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         eventFilters,
-        pagination: {
+        options: {
           page: 2,
-          rowsPerPage: 10,
+          updatedPerPage: 10,
           search: 'Filter',
-          sortBy: 'created',
-          descending: true,
+          sortBy: ['created'],
+          sortDesc: [true],
         },
         totalItems: 50,
         pending: true,
@@ -67,19 +66,19 @@ describe('event-filters-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `event-filters-list` with expanded panel', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         eventFilters,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
           search: '',
-          sortBy: '',
-          descending: false,
+          sortBy: [],
+          sortDesc: [],
         },
         totalItems: 50,
       },
@@ -88,10 +87,29 @@ describe('event-filters-list', () => {
     const expandButton = wrapper
       .findAll('tr > td')
       .at(0)
-      .find('c-expand-btn-stub');
+      .find('.v-data-table__expand-icon');
 
     await expandButton.vm.$emit('expand');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  it('Renders `event-filters-list` with updatable and old_patterns', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        eventFilters: eventFilters.map(eventFilter => ({ ...eventFilter, old_patterns: true })),
+        options: {
+          page: 1,
+          itemsPerPage: 10,
+          search: [],
+          sortBy: [],
+          descending: false,
+        },
+        updatable: true,
+        totalItems: 50,
+      },
+    });
+
+    expect(wrapper).toMatchSnapshot();
   });
 });

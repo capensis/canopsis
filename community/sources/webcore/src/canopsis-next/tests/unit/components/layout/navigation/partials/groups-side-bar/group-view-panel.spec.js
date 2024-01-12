@@ -46,7 +46,7 @@ describe('group-view-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `group-view-panel` with custom props', () => {
@@ -65,6 +65,6 @@ describe('group-view-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

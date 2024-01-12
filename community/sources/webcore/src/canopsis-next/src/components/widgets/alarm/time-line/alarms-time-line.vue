@@ -1,14 +1,20 @@
-<template lang="pug">
-  div.timeline
-    alarms-time-line-steps(:steps="steps.data")
-      template(#card="{ step }")
-        alarms-time-line-card(:step="step", :is-html-enabled="isHtmlEnabled")
-    c-pagination(
-      :total="meta.total_count",
-      :limit="meta.per_page",
-      :page="meta.page",
+<template>
+  <div class="timeline">
+    <alarms-time-line-steps :steps="steps.data">
+      <template #card="{ step }">
+        <alarms-time-line-card
+          :step="step"
+          :is-html-enabled="isHtmlEnabled"
+        />
+      </template>
+    </alarms-time-line-steps>
+    <c-pagination
+      :total="meta.total_count"
+      :limit="meta.per_page"
+      :page="meta.page"
       @input="updatePage"
-    )
+    />
+  </div>
 </template>
 
 <script>

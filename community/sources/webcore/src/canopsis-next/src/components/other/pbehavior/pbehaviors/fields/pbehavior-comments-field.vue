@@ -1,16 +1,21 @@
-<template lang="pug">
-  div
-    pbehavior-comment-field(
-      v-for="(comment, index) in comments",
-      v-field="comments[index]",
-      :key="comment.key",
+<template>
+  <div>
+    <pbehavior-comment-field
+      v-for="(comment, index) in comments"
+      v-field="comments[index]"
+      :key="comment.key"
       @remove="removeItemFromArray(index)"
-    )
-    v-layout(row)
-      v-btn.ml-0.primary(
-        type="button",
+    />
+    <v-layout>
+      <v-btn
+        class="ml-0 primary"
+        type="button"
         @click="addComment"
-      ) {{ $t('modals.createPbehavior.steps.comments.buttons.addComment') }}
+      >
+        {{ $t('modals.createPbehavior.steps.comments.buttons.addComment') }}
+      </v-btn>
+    </v-layout>
+  </div>
 </template>
 
 <script>

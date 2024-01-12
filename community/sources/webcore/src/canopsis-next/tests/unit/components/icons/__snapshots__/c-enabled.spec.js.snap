@@ -4,7 +4,7 @@ exports[`c-enabled Renders \`c-enabled\` correctly. 1`] = `
 <span>
   <i
     aria-hidden="true"
-    class="v-icon material-icons theme--light error--text"
+    class="v-icon notranslate material-icons theme--light error--text"
   >
     cancel
   </i>
@@ -15,7 +15,7 @@ exports[`c-enabled Renders \`c-enabled\` with enabled prop correctly. 1`] = `
 <span>
   <i
     aria-hidden="true"
-    class="v-icon material-icons theme--light primary--text"
+    class="v-icon notranslate material-icons theme--light primary--text"
   >
     check_circle
   </i>
