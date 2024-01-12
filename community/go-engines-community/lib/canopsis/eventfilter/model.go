@@ -113,7 +113,7 @@ type RegexMatch struct {
 }
 
 type Template struct {
-	Event        types.Event
+	Event        *types.Event
 	RegexMatch   RegexMatch
 	ExternalData map[string]interface{}
 }

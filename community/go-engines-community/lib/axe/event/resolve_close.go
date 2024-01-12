@@ -8,7 +8,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
@@ -22,7 +22,7 @@ import (
 
 func NewResolveCloseProcessor(
 	dbClient mongo.DbClient,
-	stateCountersService statecounters.StateCountersService,
+	stateCountersService entitycounters.StateCountersService,
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
 	metricsSender metrics.Sender,
 	remediationRpcClient engine.RPCClient,
@@ -48,7 +48,7 @@ type resolveCloseProcessor struct {
 	alarmCollection         mongo.DbCollection
 	entityCollection        mongo.DbCollection
 	resolvedAlarmCollection mongo.DbCollection
-	stateCountersService    statecounters.StateCountersService
+	stateCountersService    entitycounters.StateCountersService
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor
 	metricsSender           metrics.Sender
 	remediationRpcClient    engine.RPCClient
@@ -78,13 +78,13 @@ func processResolve(
 	ctx context.Context,
 	match bson.M,
 	event rpc.AxeEvent,
-	stateCountersService statecounters.StateCountersService,
+	stateCountersService entitycounters.StateCountersService,
 	dbClient mongo.DbClient,
 	alarmCollection, entityCollection, resolvedCollection mongo.DbCollection,
-) (Result, map[string]statecounters.UpdatedServicesInfo, string, error) {
+) (Result, map[string]entitycounters.UpdatedServicesInfo, string, error) {
 	result := Result{}
 	update := getResolveAlarmUpdate(datetime.NewCpsTime())
-	var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
+	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
 	notAckedMetricType := ""
 	err := dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
@@ -167,9 +167,9 @@ func postProcessResolve(
 	ctx context.Context,
 	event rpc.AxeEvent,
 	result Result,
-	updatedServiceStates map[string]statecounters.UpdatedServicesInfo,
+	updatedServiceStates map[string]entitycounters.UpdatedServicesInfo,
 	notAckedMetricType string,
-	stateCountersService statecounters.StateCountersService,
+	stateCountersService entitycounters.StateCountersService,
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
 	metricsSender metrics.Sender,
 	remediationRpcClient engine.RPCClient,

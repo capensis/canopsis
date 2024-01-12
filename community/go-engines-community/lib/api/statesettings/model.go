@@ -33,6 +33,7 @@ type StateSetting struct {
 	EntityPattern          *pattern.Entity  `json:"entity_pattern,omitempty" bson:"entity_pattern,omitempty"`
 	InheritedEntityPattern *pattern.Entity  `json:"inherited_entity_pattern,omitempty" bson:"inherited_entity_pattern,omitempty"`
 	StateThresholds        *StateThresholds `json:"state_thresholds,omitempty" bson:"state_thresholds,omitempty"`
+	Type                   *string          `json:"type,omitempty" bson:"type,omitempty" binding:"required_if=Method inherited,required_if=Method dependencies,omitempty,oneof=component service"`
 
 	// JUnit state setting only field
 	JUnitThresholds *JUnitThresholds `json:"junit_thresholds,omitempty" bson:"junit_thresholds,omitempty"`

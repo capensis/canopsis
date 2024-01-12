@@ -7,7 +7,7 @@ import (
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -16,7 +16,7 @@ import (
 
 func NewRecomputeEntityServiceProcessor(
 	dbClient mongo.DbClient,
-	stateCountersService statecounters.StateCountersService,
+	stateCountersService entitycounters.StateCountersService,
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
 	metricsSender metrics.Sender,
 	remediationRpcClient engine.RPCClient,
@@ -42,7 +42,7 @@ type recomputeEntityServiceProcessor struct {
 	alarmCollection         mongo.DbCollection
 	entityCollection        mongo.DbCollection
 	resolvedAlarmCollection mongo.DbCollection
-	stateCountersService    statecounters.StateCountersService
+	stateCountersService    entitycounters.StateCountersService
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor
 	metricsSender           metrics.Sender
 	remediationRpcClient    engine.RPCClient
@@ -58,7 +58,7 @@ func (p *recomputeEntityServiceProcessor) Process(ctx context.Context, event rpc
 
 	if event.Entity.Enabled {
 		entity := *event.Entity
-		var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
+		var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
 
 		err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 			var err error

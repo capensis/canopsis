@@ -21,8 +21,6 @@ type Adapter interface {
 
 	GetIDs(ctx context.Context, filter map[string]interface{}, ids *[]interface{}) error
 
-	GetEntityByID(ctx context.Context, id string) (types.Entity, error)
-
 	Count(ctx context.Context) (int, error)
 
 	UpsertMany(ctx context.Context, entities []types.Entity) (map[string]bool, error)

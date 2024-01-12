@@ -1,4 +1,4 @@
-package statecounters
+package entitycounters
 
 import (
 	"context"
@@ -48,7 +48,7 @@ func NewStateCountersService(
 ) StateCountersService {
 	return &service{
 		dbClient:                  client,
-		serviceCountersCollection: client.Collection(mongo.EntityServiceCountersCollection),
+		serviceCountersCollection: client.Collection(mongo.EntityCountersCollection),
 		entityCollection:          client.Collection(mongo.EntityMongoCollection),
 		encoder:                   encoder,
 		pubChannel:                pubChannel,
@@ -232,7 +232,7 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 	bulkBytesSize := 0
 
 	for cursor.Next(ctx) {
-		var counters EntityServiceCounters
+		var counters EntityCounters
 
 		err = cursor.Decode(&counters)
 		if err != nil {
@@ -582,14 +582,13 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 }
 
 func (s *service) RecomputeEntityServiceCounters(ctx context.Context, entity types.Entity) (map[string]UpdatedServicesInfo, error) {
-	updatedServiceStates := make(map[string]UpdatedServicesInfo)
-	var counters EntityServiceCounters
+	var counters EntityCounters
 	err := s.serviceCountersCollection.FindOne(ctx, bson.M{"_id": entity.ID}).Decode(&counters)
 	if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 		return nil, err
 	}
 
-	counters = EntityServiceCounters{
+	counters = EntityCounters{
 		ID:                entity.ID,
 		OutputTemplate:    counters.OutputTemplate,
 		PbehaviorCounters: make(map[string]int),
@@ -672,6 +671,7 @@ func (s *service) RecomputeEntityServiceCounters(ctx context.Context, entity typ
 		return nil, err
 	}
 
+	updatedServiceStates := make(map[string]UpdatedServicesInfo)
 	updatedServiceStates[entity.ID] = UpdatedServicesInfo{
 		State:  counters.GetWorstState(),
 		Output: output,
