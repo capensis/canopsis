@@ -34,23 +34,21 @@ exports[`geomap-editor Renders \`geomap-editor\` with custom props 1`] = `
         <span
           class="v-tooltip v-tooltip--right"
         >
-          <transition-stub
-            name="slide-x-transition"
-          />
+          <!---->
           <button
-            class="secondary ma-0 v-btn v-btn--icon theme--dark lighten-4"
+            class="secondary ma-0 v-btn v-btn--icon v-btn--round theme--dark v-size--default lighten-4"
             type="button"
           >
-            <div
+            <span
               class="v-btn__content"
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--dark"
+                class="v-icon notranslate material-icons theme--dark"
               >
                 add_location
               </i>
-            </div>
+            </span>
           </button>
         </span>
       </geomap-control-stub>
@@ -66,7 +64,7 @@ exports[`geomap-editor Renders \`geomap-editor\` with custom props 1`] = `
           text="Useful shortcuts:
 Ctrl + mouse wheel - zoom in/out
 Left mouse click + drag - pan the area"
-          top="top"
+          top=""
         />
       </geomap-control-stub>
       <geomap-tile-layer-stub
@@ -116,11 +114,9 @@ Left mouse click + drag - pan the area"
       <!---->
       <div
         class="v-menu"
-        coordinates="coordinates"
+        coordinates=""
       >
-        <transition-stub
-          name="v-menu-transition"
-        />
+        <!---->
       </div>
     </div>
     <!---->
@@ -162,23 +158,21 @@ exports[`geomap-editor Renders \`geomap-editor\` with form 1`] = `
         <span
           class="v-tooltip v-tooltip--right"
         >
-          <transition-stub
-            name="slide-x-transition"
-          />
+          <!---->
           <button
-            class="secondary ma-0 v-btn v-btn--icon theme--dark lighten-4"
+            class="secondary ma-0 v-btn v-btn--icon v-btn--round theme--dark v-size--default lighten-4"
             type="button"
           >
-            <div
+            <span
               class="v-btn__content"
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--dark"
+                class="v-icon notranslate material-icons theme--dark"
               >
                 add_location
               </i>
-            </div>
+            </span>
           </button>
         </span>
       </geomap-control-stub>
@@ -194,7 +188,7 @@ exports[`geomap-editor Renders \`geomap-editor\` with form 1`] = `
           text="Useful shortcuts:
 Ctrl + mouse wheel - zoom in/out
 Left mouse click + drag - pan the area"
-          top="top"
+          top=""
         />
       </geomap-control-stub>
       <geomap-tile-layer-stub
@@ -219,11 +213,9 @@ Left mouse click + drag - pan the area"
       <!---->
       <div
         class="v-menu"
-        coordinates="coordinates"
+        coordinates=""
       >
-        <transition-stub
-          name="v-menu-transition"
-        />
+        <!---->
       </div>
     </div>
     <!---->
@@ -264,26 +256,24 @@ exports[`geomap-editor Renders \`geomap-editor\` with validation errors  1`] = `
         position="topleft"
       >
         <button
-          class="secondary ma-0 v-btn v-btn--icon theme--dark lighten-4"
+          class="secondary ma-0 v-btn v-btn--icon v-btn--round theme--dark v-size--default lighten-4"
           type="button"
         >
-          <div
+          <span
             class="v-btn__content"
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--dark"
+              class="v-icon notranslate material-icons theme--dark"
             >
               add_location
             </i>
-          </div>
+          </span>
         </button>
         <span
           class="v-tooltip v-tooltip--right"
         >
-          <transition-stub
-            name="slide-x-transition"
-          />
+          <!---->
         </span>
       </geomap-control-stub>
       <geomap-control-stub
@@ -298,7 +288,7 @@ exports[`geomap-editor Renders \`geomap-editor\` with validation errors  1`] = `
           text="Useful shortcuts:
 Ctrl + mouse wheel - zoom in/out
 Left mouse click + drag - pan the area"
-          top="top"
+          top=""
         />
       </geomap-control-stub>
       <geomap-tile-layer-stub
@@ -323,11 +313,9 @@ Left mouse click + drag - pan the area"
       <!---->
       <div
         class="v-menu"
-        coordinates="coordinates"
+        coordinates=""
       >
-        <transition-stub
-          name="v-menu-transition"
-        />
+        <!---->
       </div>
     </div>
     <div

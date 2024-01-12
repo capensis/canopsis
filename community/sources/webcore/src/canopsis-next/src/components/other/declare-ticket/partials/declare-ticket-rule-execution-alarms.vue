@@ -1,18 +1,36 @@
-<template lang="pug">
-  v-data-table(:headers="headers", :items="alarmExecutions", hide-actions)
-    template(#items="{ item, index }")
-      td.text-xs-left.pre-wrap {{ item.alarm.v.connector_name }}
-      td.text-xs-left.pre-wrap {{ item.alarm.v.connector }}
-      td.text-xs-left.pre-wrap {{ item.alarm.v.component }}
-      td.text-xs-left.pre-wrap {{ item.alarm.v.resource }}
-      template(v-if="!isOneExecution")
-        td.text-xs-left.pre-wrap {{ item.ruleName }}
-        td.text-xs-left
-          declare-ticket-rule-execution-status(
-            :running="isExecutionRunning(item)",
-            :success="isExecutionSucceeded(item)",
+<template>
+  <v-data-table
+    :headers="headers"
+    :items="alarmExecutions"
+    hide-default-footer
+  >
+    <template #items="{ item }">
+      <td class="text-left pre-wrap">
+        {{ item.alarm.v.connector_name }}
+      </td>
+      <td class="text-left pre-wrap">
+        {{ item.alarm.v.connector }}
+      </td>
+      <td class="text-left pre-wrap">
+        {{ item.alarm.v.component }}
+      </td>
+      <td class="text-left pre-wrap">
+        {{ item.alarm.v.resource }}
+      </td>
+      <template v-if="!isOneExecution">
+        <td class="text-left pre-wrap">
+          {{ item.ruleName }}
+        </td>
+        <td class="text-left">
+          <declare-ticket-rule-execution-status
+            :running="isExecutionRunning(item)"
+            :success="isExecutionSucceeded(item)"
             :fail-reason="item.fail_reason"
-          )
+          />
+        </td>
+      </template>
+    </template>
+  </v-data-table>
 </template>
 
 <script>
@@ -21,12 +39,10 @@ import {
   isDeclareTicketExecutionSucceeded,
 } from '@/helpers/entities/declare-ticket/rule/form';
 
-import ProgressCell from '@/components/common/table/progress-cell.vue';
-
 import DeclareTicketRuleExecutionStatus from './declare-ticket-rule-execution-status.vue';
 
 export default {
-  components: { DeclareTicketRuleExecutionStatus, ProgressCell },
+  components: { DeclareTicketRuleExecutionStatus },
   props: {
     alarmExecutions: {
       type: Array,

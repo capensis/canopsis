@@ -5,12 +5,12 @@ exports[`kpi-rating-settings Renders \`kpi-rating-settings\` with default props 
   class="layout column"
 >
   <span
-    class="pl-4 subheading"
+    class="pl-4 text-subtitle-1"
   >
     The list of parameters to use for rating.
   </span>
   <kpi-rating-settings-list-stub
-    pagination="[object Object]"
+    options="[object Object]"
     ratingsettings=""
     totalitems="0"
   />
@@ -22,12 +22,12 @@ exports[`kpi-rating-settings Renders \`kpi-rating-settings\` with full permissio
   class="layout column"
 >
   <span
-    class="pl-4 subheading"
+    class="pl-4 text-subtitle-1"
   >
     The list of parameters to use for rating.
   </span>
   <kpi-rating-settings-list-stub
-    pagination="[object Object]"
+    options="[object Object]"
     ratingsettings=""
     totalitems="10"
     updatable="true"

@@ -1,23 +1,24 @@
-<template lang="pug">
-  c-page(
-    :creatable="hasCreateAnyThemeAccess",
-    :create-tooltip="$t('modals.createTheme.create.title')",
-    @refresh="fetchList",
+<template>
+  <c-page
+    :creatable="hasCreateAnyThemeAccess"
+    :create-tooltip="$t('modals.createTheme.create.title')"
+    @refresh="fetchList"
     @create="showCreateThemeModal"
-  )
-    themes-list(
-      :themes="themes",
-      :pending="themesPending",
-      :pagination.sync="pagination",
-      :total-items="themesMeta.total_count",
-      :updatable="hasUpdateAnyThemeAccess",
-      :removable="hasDeleteAnyThemeAccess",
-      :duplicable="hasCreateAnyThemeAccess",
-      @edit="showEditThemeModal",
-      @remove="showRemoveThemeModal",
-      @duplicate="showDuplicateThemeModal",
+  >
+    <themes-list
+      :themes="themes"
+      :pending="themesPending"
+      :options.sync="options"
+      :total-items="themesMeta.total_count"
+      :updatable="hasUpdateAnyThemeAccess"
+      :removable="hasDeleteAnyThemeAccess"
+      :duplicable="hasCreateAnyThemeAccess"
+      @edit="showEditThemeModal"
+      @remove="showRemoveThemeModal"
+      @duplicate="showDuplicateThemeModal"
       @remove-selected="showDeleteSelectedThemesModal"
-    )
+    />
+  </c-page>
 </template>
 
 <script>

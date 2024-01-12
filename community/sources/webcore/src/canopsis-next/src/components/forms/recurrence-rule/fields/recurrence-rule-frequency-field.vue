@@ -1,9 +1,9 @@
-<template lang="pug">
-  v-select(
-    v-field="value",
-    :label="$t('recurrenceRule.freq')",
+<template>
+  <v-select
+    v-field="value"
+    :label="$t('recurrenceRule.freq')"
     :items="frequencies"
-  )
+  />
 </template>
 
 <script>

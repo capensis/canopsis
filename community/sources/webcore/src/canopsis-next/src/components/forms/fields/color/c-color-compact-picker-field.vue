@@ -1,5 +1,8 @@
-<template lang="pug">
-  compact(v-field="value", v-bind="$attrs")
+<template>
+  <compact
+    v-field="value"
+    v-bind="$attrs"
+  />
 </template>
 
 <script>

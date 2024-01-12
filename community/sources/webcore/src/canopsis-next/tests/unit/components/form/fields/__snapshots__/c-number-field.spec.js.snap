@@ -2,7 +2,7 @@
 
 exports[`c-number-field Renders \`c-number-field\` with custom props 1`] = `
 <div
-  class="v-input v-text-field v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
+  class="v-input v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light v-text-field"
 >
   <div
     class="v-input__control"
@@ -14,14 +14,12 @@ exports[`c-number-field Renders \`c-number-field\` with custom props 1`] = `
         class="v-text-field__slot"
       >
         <label
-          aria-hidden="true"
           class="v-label v-label--active v-label--is-disabled theme--light"
           style="left: 0px; position: absolute;"
         >
           Custom label
         </label>
         <input
-          aria-label="Custom label"
           disabled="disabled"
           max="21"
           min="19"
@@ -36,8 +34,10 @@ exports[`c-number-field Renders \`c-number-field\` with custom props 1`] = `
       <div
         class="v-messages theme--light"
       >
-        <div
+        <transition-group-stub
           class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
         />
       </div>
     </div>
@@ -47,7 +47,7 @@ exports[`c-number-field Renders \`c-number-field\` with custom props 1`] = `
 
 exports[`c-number-field Renders \`c-number-field\` with default props 1`] = `
 <div
-  class="v-input v-text-field theme--light"
+  class="v-input theme--light v-text-field"
 >
   <div
     class="v-input__control"
@@ -59,7 +59,6 @@ exports[`c-number-field Renders \`c-number-field\` with default props 1`] = `
         class="v-text-field__slot"
       >
         <input
-          aria-label=""
           name="value"
           type="number"
         />
@@ -71,8 +70,10 @@ exports[`c-number-field Renders \`c-number-field\` with default props 1`] = `
       <div
         class="v-messages theme--light"
       >
-        <div
+        <transition-group-stub
           class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
         />
       </div>
     </div>

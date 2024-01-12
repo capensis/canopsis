@@ -1,15 +1,15 @@
-<template lang="pug">
-  users-list(
-    :users="users",
-    :total-items="usersMeta.total_count",
-    :pagination.sync="pagination",
-    :pending="usersPending",
-    :removable="hasDeleteAnyUserAccess",
-    :updatable="hasUpdateAnyUserAccess",
-    @edit="showEditUserModal",
-    @remove="showRemoveUserModal",
+<template>
+  <users-list
+    :users="users"
+    :total-items="usersMeta.total_count"
+    :options.sync="options"
+    :pending="usersPending"
+    :removable="hasDeleteAnyUserAccess"
+    :updatable="hasUpdateAnyUserAccess"
+    @edit="showEditUserModal"
+    @remove="showRemoveUserModal"
     @remove-selected="showRemoveSelectedUsersModal"
-  )
+  />
 </template>
 
 <script>

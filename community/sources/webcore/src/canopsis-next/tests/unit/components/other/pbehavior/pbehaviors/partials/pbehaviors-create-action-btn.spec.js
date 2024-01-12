@@ -64,7 +64,7 @@ describe('pbehaviors-create-action-btn', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pbehaviors-create-action-btn` with access', () => {
@@ -79,6 +79,6 @@ describe('pbehaviors-create-action-btn', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

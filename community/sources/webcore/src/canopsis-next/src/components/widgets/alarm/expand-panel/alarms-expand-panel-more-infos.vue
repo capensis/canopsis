@@ -1,14 +1,23 @@
-<template lang="pug">
-  div.more-infos
-    c-compiled-template(
-      v-if="template",
-      :template="template",
-      :context="templateContext",
+<template>
+  <div class="more-infos">
+    <c-compiled-template
+      v-if="template"
+      :template="template"
+      :context="templateContext"
       @select:tag="$emit('select:tag', $event)"
-    )
-    v-layout(v-else, justify-center)
-      v-icon(color="info") infos
-      p.ma-0 {{ $t('alarm.moreInfos.defineATemplate') }}
+    />
+    <v-layout
+      v-else
+      justify-center
+    >
+      <v-icon color="info">
+        infos
+      </v-icon>
+      <p class="ma-0">
+        {{ $t('alarm.moreInfos.defineATemplate') }}
+      </p>
+    </v-layout>
+  </div>
 </template>
 
 <script>

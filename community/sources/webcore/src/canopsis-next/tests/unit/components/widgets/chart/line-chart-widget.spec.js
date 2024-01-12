@@ -165,7 +165,7 @@ describe('line-chart-widget', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `line-chart-widget` with custom props', async () => {
@@ -184,6 +184,6 @@ describe('line-chart-widget', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

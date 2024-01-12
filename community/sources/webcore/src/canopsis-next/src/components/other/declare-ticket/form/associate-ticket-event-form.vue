@@ -1,12 +1,33 @@
-<template lang="pug">
-  c-information-block(:title="$t('declareTicket.ticketUrlAndId')")
-    c-name-field(v-field="form.system_name", :label="$t('common.systemName')", :name="systemNameFieldName")
-    v-layout(row)
-      v-flex.mr-3(xs6)
-        declare-ticket-rule-ticket-id-field(v-field="form.ticket_id", :name="ticketIdFieldName", required)
-      v-flex(xs6)
-        declare-ticket-rule-ticket-url-text-field(v-field="form.ticket_url", :name="ticketUrlFieldName")
-    declare-ticket-rule-ticket-custom-fields-field(v-field="form.mapping", :name="name")
+<template>
+  <c-information-block :title="$t('declareTicket.ticketUrlAndId')">
+    <c-name-field
+      v-field="form.system_name"
+      :label="$t('common.systemName')"
+      :name="systemNameFieldName"
+    />
+    <v-layout>
+      <v-flex
+        class="mr-3"
+        xs6
+      >
+        <declare-ticket-rule-ticket-id-field
+          v-field="form.ticket_id"
+          :name="ticketIdFieldName"
+          required
+        />
+      </v-flex>
+      <v-flex xs6>
+        <declare-ticket-rule-ticket-url-text-field
+          v-field="form.ticket_url"
+          :name="ticketUrlFieldName"
+        />
+      </v-flex>
+    </v-layout>
+    <declare-ticket-rule-ticket-custom-fields-field
+      v-field="form.mapping"
+      :name="name"
+    />
+  </c-information-block>
 </template>
 
 <script>

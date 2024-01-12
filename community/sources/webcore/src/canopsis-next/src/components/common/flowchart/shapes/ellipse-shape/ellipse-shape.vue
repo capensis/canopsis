@@ -1,25 +1,26 @@
-<template lang="pug">
-  g(@dblclick.stop="enableEditingMode")
-    ellipse(
-      v-bind="shape.properties",
-      v-on="$listeners",
-      :cx="centerX",
-      :cy="centerY",
-      :rx="radiusX",
-      :ry="radiusY",
+<template>
+  <g @dblclick.stop="enableEditingMode">
+    <ellipse
+      v-bind="shape.properties"
+      v-on="$listeners"
+      :cx="centerX"
+      :cy="centerY"
+      :rx="radiusX"
+      :ry="radiusY"
       :cursor="readonly ? '' : 'move'"
-    )
-    text-editor(
-      ref="editor",
-      v-bind="shape.textProperties",
-      :value="shape.text",
-      :y="shape.y",
-      :x="shape.x",
-      :width="shape.width",
-      :height="shape.height",
-      :editable="editing",
+    />
+    <text-editor
+      ref="editor"
+      v-bind="shape.textProperties"
+      :value="shape.text"
+      :y="shape.y"
+      :x="shape.x"
+      :width="shape.width"
+      :height="shape.height"
+      :editable="editing"
       @blur="disableEditingMode"
-    )
+    />
+  </g>
 </template>
 
 <script>

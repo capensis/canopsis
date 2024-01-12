@@ -1,11 +1,13 @@
-<template lang="pug">
-  v-layout
-    v-flex(xs12)
-      c-duration-field(
-        v-field="timebased.time_interval",
-        :label="$t('metaAlarmRule.timeInterval')",
+<template>
+  <v-layout>
+    <v-flex xs12>
+      <c-duration-field
+        v-field="timebased.time_interval"
+        :label="$t('metaAlarmRule.timeInterval')"
         required
-      )
+      />
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

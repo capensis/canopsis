@@ -10,7 +10,7 @@ exports[`associate-ticket-event-form Renders \`associate-ticket-event-form\` wit
     value="System name"
   />
   <div
-    class="layout row"
+    class="layout"
   >
     <div
       class="flex mr-3 xs6"

@@ -1,6 +1,10 @@
-<template lang="pug">
-  span.c-state-count-changes-chip(:style="style")
-    slot
+<template>
+  <span
+    class="c-state-count-changes-chip"
+    :style="style"
+  >
+    <slot />
+  </span>
 </template>
 
 <script>

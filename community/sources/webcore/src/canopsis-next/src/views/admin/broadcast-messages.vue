@@ -1,21 +1,24 @@
-<template lang="pug">
-  div
-    c-page-header
-    v-card.ma-4.mt-0
-      broadcast-messages-list(
-        :broadcast-messages="broadcastMessages",
-        :pending="broadcastMessagesPending",
-        :pagination.sync="pagination",
-        :total-items="broadcastMessagesMeta.total_count",
-        @edit="showEditBroadcastMessageModal",
+<template>
+  <div>
+    <c-page-header />
+    <v-card class="ma-4 mt-0">
+      <broadcast-messages-list
+        :broadcast-messages="broadcastMessages"
+        :pending="broadcastMessagesPending"
+        :options.sync="options"
+        :total-items="broadcastMessagesMeta.total_count"
+        @edit="showEditBroadcastMessageModal"
         @remove="showRemoveBroadcastMessageModal"
-      )
-    c-fab-btn(
-      :has-access="hasCreateAnyBroadcastMessageAccess",
-      @refresh="fetchList",
+      />
+    </v-card>
+    <c-fab-btn
+      :has-access="hasCreateAnyBroadcastMessageAccess"
+      @refresh="fetchList"
       @create="showCreateBroadcastMessageModal"
-    )
-      span {{ $t('modals.createBroadcastMessage.create.title') }}
+    >
+      <span>{{ $t('modals.createBroadcastMessage.create.title') }}</span>
+    </c-fab-btn>
+  </div>
 </template>
 
 <script>

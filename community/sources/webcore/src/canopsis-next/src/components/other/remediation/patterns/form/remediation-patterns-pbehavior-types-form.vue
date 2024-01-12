@@ -1,21 +1,24 @@
-<template lang="pug">
-  div
-    v-layout(row)
-      c-pbehavior-type-field(
-        v-field="form.active_on_pbh",
-        :label="$t('remediation.pattern.tabs.pbehaviorTypes.fields.activeOnTypes')",
-        :is-item-disabled="isActiveItemDisabled",
-        chips,
+<template>
+  <div>
+    <v-layout>
+      <c-pbehavior-type-field
+        v-field="form.active_on_pbh"
+        :label="$t('remediation.pattern.tabs.pbehaviorTypes.fields.activeOnTypes')"
+        :is-item-disabled="isActiveItemDisabled"
+        chips
         multiple
-      )
-    v-layout(row)
-      c-pbehavior-type-field(
-        v-field="form.disabled_on_pbh",
-        :label="$t('remediation.pattern.tabs.pbehaviorTypes.fields.disabledOnTypes')",
-        :is-item-disabled="isDisabledItemDisabled",
-        chips,
+      />
+    </v-layout>
+    <v-layout>
+      <c-pbehavior-type-field
+        v-field="form.disabled_on_pbh"
+        :label="$t('remediation.pattern.tabs.pbehaviorTypes.fields.disabledOnTypes')"
+        :is-item-disabled="isDisabledItemDisabled"
+        chips
         multiple
-      )
+      />
+    </v-layout>
+  </div>
 </template>
 
 <script>

@@ -1,55 +1,90 @@
-<template lang="pug">
-  div
-    c-advanced-data-table.v-table-small(
-      :headers="headers",
-      :items="items",
-      :loading="pending",
-      :total-items="totalItems",
-      :pagination="pagination",
-      :select-all="removable",
-      advanced-pagination,
-      search,
-      @update:pagination="$emit('update:pagination', $event)"
-    )
-      template(#mass-actions="{ selected }")
-        c-action-btn(
-          v-if="removable",
-          type="delete",
+<template>
+  <div>
+    <c-advanced-data-table
+      class="v-table-small"
+      :headers="headers"
+      :items="items"
+      :loading="pending"
+      :total-items="totalItems"
+      :options="options"
+      :select-all="removable"
+      advanced-pagination
+      search
+      @update:options="$emit('update:options', $event)"
+    >
+      <template #mass-actions="{ selected }">
+        <c-action-btn
+          v-if="removable"
+          type="delete"
           @click="$emit('remove-selected', selected)"
-        )
-      template(#oid="{ item }")
-        snmp-rules-list-item-cell(:fields="oidFields", :source="item.oid")
-      template(#output="{ item }")
-        snmp-rules-list-item-cell(:fields="commonFields", :source="item.output")
-      template(#resource="{ item }")
-        snmp-rules-list-item-cell(:fields="commonFields", :source="item.resource")
-      template(#component="{ item }")
-        snmp-rules-list-item-cell(:fields="commonFields", :source="item.component")
-      template(#state="{ item }")
-        template(v-if="isTemplateStateType(item)")
-          snmp-rules-list-item-cell(:fields="templateStateFields", :source="item.state")
-          snmp-rules-list-item-cell(:fields="stateOidField")
-          div.pl-3
-            snmp-rules-list-item-cell(:fields="stateOidFields", :source="item.state.stateoid")
-        template(v-else)
-          snmp-rules-list-item-cell(:fields="stateFields", :source="item.state")
-      template(#actions="{ item }")
-        v-layout(row)
-          c-action-btn(
-            v-if="updatable",
-            type="edit",
+        />
+      </template>
+      <template #oid="{ item }">
+        <snmp-rules-list-item-cell
+          :fields="oidFields"
+          :source="item.oid"
+        />
+      </template>
+      <template #output="{ item }">
+        <snmp-rules-list-item-cell
+          :fields="commonFields"
+          :source="item.output"
+        />
+      </template>
+      <template #resource="{ item }">
+        <snmp-rules-list-item-cell
+          :fields="commonFields"
+          :source="item.resource"
+        />
+      </template>
+      <template #component="{ item }">
+        <snmp-rules-list-item-cell
+          :fields="commonFields"
+          :source="item.component"
+        />
+      </template>
+      <template #state="{ item }">
+        <template v-if="isTemplateStateType(item)">
+          <snmp-rules-list-item-cell
+            :fields="templateStateFields"
+            :source="item.state"
+          />
+          <snmp-rules-list-item-cell :fields="stateOidField" />
+          <div class="pl-3">
+            <snmp-rules-list-item-cell
+              :fields="stateOidFields"
+              :source="item.state.stateoid"
+            />
+          </div>
+        </template>
+        <template v-else>
+          <snmp-rules-list-item-cell
+            :fields="stateFields"
+            :source="item.state"
+          />
+        </template>
+      </template>
+      <template #actions="{ item }">
+        <v-layout>
+          <c-action-btn
+            v-if="updatable"
+            type="edit"
             @click="$emit('edit', item)"
-          )
-          c-action-btn(
-            v-if="duplicable",
-            type="duplicate",
+          />
+          <c-action-btn
+            v-if="duplicable"
+            type="duplicate"
             @click="$emit('duplicate', item)"
-          )
-          c-action-btn(
-            v-if="removable",
-            type="delete",
+          />
+          <c-action-btn
+            v-if="removable"
+            type="delete"
             @click="$emit('remove', item._id)"
-          )
+          />
+        </v-layout>
+      </template>
+    </c-advanced-data-table>
+  </div>
 </template>
 
 <script>
@@ -62,7 +97,7 @@ export default {
     SnmpRulesListItemCell,
   },
   props: {
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },

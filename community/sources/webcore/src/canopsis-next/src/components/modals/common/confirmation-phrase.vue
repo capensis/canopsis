@@ -1,22 +1,49 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ config.title }}
-      template(#text="")
-        v-alert(:value="true", color="warning", icon="info")
-          span.pre-line(v-html="config.text")
-        div.my-3
-          p.mb-2 {{ config.phraseText }}
-          pre.black--text.grey.lighten-2.d-inline.pa-1 {{ originalPhrase }}
-        v-text-field.mt-2(v-model="phrase", :label="$t('modals.confirmationPhrase.phrase')")
-      template(#actions="")
-        v-btn(@click="$modals.hide", flat) {{ $t('common.cancel') }}
-        v-btn.primary(
-          :loading="submitting",
-          :disabled="isDisabled || !phrasesEqual",
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ config.title }}</span>
+      </template>
+      <template #text="">
+        <v-alert
+          color="warning"
+          icon="info"
+        >
+          <span
+            class="pre-line"
+            v-html="config.text"
+          />
+        </v-alert>
+        <div class="my-3">
+          <p class="mb-2">
+            {{ config.phraseText }}
+          </p>
+          <pre class="black--text grey lighten-2 d-inline pa-1">{{ originalPhrase }}</pre>
+        </div>
+        <v-text-field
+          class="mt-2"
+          v-model="phrase"
+          :label="$t('modals.confirmationPhrase.phrase')"
+        />
+      </template>
+      <template #actions="">
+        <v-btn
+          @click="$modals.hide"
+          text
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          class="primary"
+          :loading="submitting"
+          :disabled="isDisabled || !phrasesEqual"
           type="submit"
-        ) {{ $t('common.yes') }}
+        >
+          {{ $t('common.yes') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>

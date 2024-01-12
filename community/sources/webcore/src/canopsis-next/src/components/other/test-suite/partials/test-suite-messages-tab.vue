@@ -1,25 +1,29 @@
-<template lang="pug">
-  v-layout(column)
-    template(v-if="hasMessages")
-      test-suite-message-panel.mb-2(
-        v-if="testSuite.system_err",
-        :value="testSuite.system_err",
-        :title="$t('testSuite.systemError')",
-        :label="$t('testSuite.systemErrorMessage')",
-        :file-name="systemErrorFileName",
+<template>
+  <v-layout column>
+    <template v-if="hasMessages">
+      <test-suite-message-panel
+        class="mb-2"
+        v-if="testSuite.system_err"
+        :value="testSuite.system_err"
+        :title="$t('testSuite.systemError')"
+        :label="$t('testSuite.systemErrorMessage')"
+        :file-name="systemErrorFileName"
         :color="$config.COLORS.testSuiteStatuses.failed"
-      )
-      test-suite-message-panel(
-        v-if="testSuite.system_out",
-        :value="testSuite.system_out",
-        :title="$t('testSuite.systemOut')",
-        :label="$t('testSuite.systemOutMessage')",
-        :file-name="systemOutFileName",
+      />
+      <test-suite-message-panel
+        v-if="testSuite.system_out"
+        :value="testSuite.system_out"
+        :title="$t('testSuite.systemOut')"
+        :label="$t('testSuite.systemOutMessage')"
+        :file-name="systemOutFileName"
         :color="$config.COLORS.testSuiteStatuses.error"
-      )
-    template(v-else)
-      div {{ testSuite.artifact_match_err }}
-      div {{ $t('testSuite.noData') }}
+      />
+    </template>
+    <template v-else>
+      <div>{{ testSuite.artifact_match_err }}</div>
+      <div>{{ $t('testSuite.noData') }}</div>
+    </template>
+  </v-layout>
 </template>
 
 <script>

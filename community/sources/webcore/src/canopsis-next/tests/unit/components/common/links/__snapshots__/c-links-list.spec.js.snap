@@ -17,11 +17,13 @@ exports[`c-links-list Renders \`c-links-list\` with links 1`] = `
       FirstCategory
     </span>
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <div>
       <div
-        class="pa-2 text-xs-right"
+        class="pa-2 text-right"
       >
         <a
           href="FirstCategoryLink1"
@@ -33,7 +35,7 @@ exports[`c-links-list Renders \`c-links-list\` with links 1`] = `
     </div>
     <div>
       <div
-        class="pa-2 text-xs-right"
+        class="pa-2 text-right"
       >
         <a
           href="FirstCategoryLink2"
@@ -45,7 +47,7 @@ exports[`c-links-list Renders \`c-links-list\` with links 1`] = `
     </div>
     <div>
       <div
-        class="pa-2 text-xs-right"
+        class="pa-2 text-right"
       >
         <a
           href="FirstCategoryLink3"
@@ -57,7 +59,7 @@ exports[`c-links-list Renders \`c-links-list\` with links 1`] = `
     </div>
     <div>
       <div
-        class="pa-2 text-xs-right"
+        class="pa-2 text-right"
       >
         <a
           href="FirstCategoryLink4"
@@ -75,11 +77,13 @@ exports[`c-links-list Renders \`c-links-list\` with links 1`] = `
       SecondCategory
     </span>
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <div>
       <div
-        class="pa-2 text-xs-right"
+        class="pa-2 text-right"
       >
         <a
           href="SecondCategoryLink1"
@@ -97,11 +101,13 @@ exports[`c-links-list Renders \`c-links-list\` with links 1`] = `
       ThirdCategory
     </span>
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <div>
       <div
-        class="pa-2 text-xs-right"
+        class="pa-2 text-right"
       >
         <a
           href="ThirdCategoryLink1"
@@ -126,11 +132,13 @@ exports[`c-links-list Renders \`c-links-list\` with links and category 1`] = `
       SecondCategory
     </span>
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <div>
       <div
-        class="pa-2 text-xs-right"
+        class="pa-2 text-right"
       >
         <a
           href="SecondCategoryLink1"
@@ -155,11 +163,13 @@ exports[`c-links-list Renders \`c-links-list\` with links with copy action 1`] =
       FirstCategory
     </span>
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <div>
       <div
-        class="pa-2 text-xs-right"
+        class="pa-2 text-right"
       >
         <c-copy-wrapper-stub
           value="FirstCategoryLink1"
@@ -170,7 +180,7 @@ exports[`c-links-list Renders \`c-links-list\` with links with copy action 1`] =
     </div>
     <div>
       <div
-        class="pa-2 text-xs-right"
+        class="pa-2 text-right"
       >
         <c-copy-wrapper-stub
           value="FirstCategoryLink2"
@@ -181,7 +191,7 @@ exports[`c-links-list Renders \`c-links-list\` with links with copy action 1`] =
     </div>
     <div>
       <div
-        class="pa-2 text-xs-right"
+        class="pa-2 text-right"
       >
         <c-copy-wrapper-stub
           value="FirstCategoryLink3"
@@ -192,7 +202,7 @@ exports[`c-links-list Renders \`c-links-list\` with links with copy action 1`] =
     </div>
     <div>
       <div
-        class="pa-2 text-xs-right"
+        class="pa-2 text-right"
       >
         <c-copy-wrapper-stub
           value="FirstCategoryLink4"
@@ -209,11 +219,13 @@ exports[`c-links-list Renders \`c-links-list\` with links with copy action 1`] =
       SecondCategory
     </span>
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <div>
       <div
-        class="pa-2 text-xs-right"
+        class="pa-2 text-right"
       >
         <a
           href="SecondCategoryLink1"
@@ -231,11 +243,13 @@ exports[`c-links-list Renders \`c-links-list\` with links with copy action 1`] =
       ThirdCategory
     </span>
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <div>
       <div
-        class="pa-2 text-xs-right"
+        class="pa-2 text-right"
       >
         <a
           href="ThirdCategoryLink1"

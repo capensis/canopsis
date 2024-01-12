@@ -5,41 +5,24 @@ exports[`c-advanced-search-field Renders \`c-advanced-search-field\` correctly 1
   <span
     class="v-tooltip v-tooltip--bottom"
   >
-    <transition-stub
-      name="slide-y-transition"
-    />
+    <!---->
     <button
-      class="v-btn v-btn--icon theme--light"
+      class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
         <i
           aria-hidden="true"
-          class="v-icon material-icons theme--light"
+          class="v-icon notranslate material-icons theme--light"
         >
           help_outline
         </i>
-      </div>
+      </span>
     </button>
   </span>
 </c-search-field-stub>
 `;
 
-exports[`c-advanced-search-field Renders \`c-advanced-search-field\` correctly 2`] = `
-<div
-  class="v-tooltip__content"
-  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
->
-  <div>
-    
-      
-    <span>
-      Tooltip content
-    </span>
-    
-    
-  </div>
-</div>
-`;
+exports[`c-advanced-search-field Renders \`c-advanced-search-field\` correctly 2`] = `undefined`;

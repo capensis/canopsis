@@ -1,16 +1,20 @@
-<template lang="pug">
-  div.code-editor__wrapper
-    c-action-btn(
-      v-if="resettable",
-      :disabled="!wasChanged",
-      :tooltip="$t('common.reset')",
-      icon="$vuetify.icons.restart_alt",
-      color="white",
-      btn-color="grey darken-1",
-      left,
+<template>
+  <div class="code-editor__wrapper">
+    <c-action-btn
+      v-if="resettable"
+      :disabled="!wasChanged"
+      :tooltip="$t('common.reset')"
+      icon="$vuetify.icons.restart_alt"
+      color="white"
+      btn-color="grey darken-1"
+      left
       @click="reset"
-    )
-    div.code-editor(ref="codeEditor")
+    />
+    <div
+      class="code-editor"
+      ref="codeEditor"
+    />
+  </div>
 </template>
 
 <script>

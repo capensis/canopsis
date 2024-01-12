@@ -142,7 +142,7 @@ describe('modal-title-buttons', () => {
   test('Renders `modal-title-buttons` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `modal-title-buttons` with custom props', async () => {
@@ -156,7 +156,7 @@ describe('modal-title-buttons', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `modal-title-buttons` with minimized modal', () => {
@@ -175,6 +175,6 @@ describe('modal-title-buttons', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

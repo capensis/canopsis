@@ -1,7 +1,12 @@
-<template lang="pug">
-  div
-    action-note-form(v-field="value")
-    c-duration-field(v-field="value.duration", :name="`${name}.duration`", required)
+<template>
+  <div>
+    <action-note-form v-field="value" />
+    <c-duration-field
+      v-field="value.duration"
+      :name="`${name}.duration`"
+      required
+    />
+  </div>
 </template>
 
 <script>

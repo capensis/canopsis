@@ -31,7 +31,7 @@ describe('c-links-list', () => {
   test('Renders `c-links-list` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `c-links-list` with links', () => {
@@ -41,7 +41,7 @@ describe('c-links-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `c-links-list` with links and category', () => {
@@ -52,7 +52,7 @@ describe('c-links-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `c-links-list` with links with copy action', () => {
@@ -69,6 +69,6 @@ describe('c-links-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

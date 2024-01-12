@@ -1,5 +1,5 @@
 const requireModule = require.context(
-  '!svg-inline-loader?modules!.',
+  '!!svg-inline-loader?modules!.',
   true,
   /.*\.svg$/,
 );

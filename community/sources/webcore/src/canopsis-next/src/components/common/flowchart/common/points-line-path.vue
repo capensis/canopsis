@@ -1,11 +1,11 @@
-<template lang="pug">
-  path(
-    v-on="$listeners",
-    ref="path",
-    :d="path",
-    :fill="fill",
+<template>
+  <path
+    v-on="$listeners"
+    ref="path"
+    :d="path"
+    :fill="fill"
     pointer-events="stroke"
-  )
+  />
 </template>
 
 <script>

@@ -1,0 +1,10 @@
+.v-btn
+  &:not(.v-btn--round)
+    @each $name, $size in $btn-sizes
+      &.v-size--#{$name}
+        height: #{$size}px
+        min-width: #{round($size * 2.4444444444444446)}px // default ratio
+        padding: 0 #{$size / 2.25}px
+
+.v-btn-toggle .v-btn.v-btn
+  min-width: auto
