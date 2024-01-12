@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -14,7 +14,7 @@ import (
 
 func NewUpdateCountersProcessor(
 	dbClient mongo.DbClient,
-	stateCountersService statecounters.StateCountersService,
+	stateCountersService entitycounters.StateCountersService,
 ) Processor {
 	return &updateCountersProcessor{
 		dbClient:             dbClient,
@@ -28,7 +28,7 @@ type updateCountersProcessor struct {
 	dbClient             mongo.DbClient
 	alarmCollection      mongo.DbCollection
 	entityCollection     mongo.DbCollection
-	stateCountersService statecounters.StateCountersService
+	stateCountersService entitycounters.StateCountersService
 }
 
 func (p *updateCountersProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -38,7 +38,7 @@ func (p *updateCountersProcessor) Process(ctx context.Context, event rpc.AxeEven
 	}
 
 	entity := *event.Entity
-	var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
+	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
 
 	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		updatedServiceStates = nil

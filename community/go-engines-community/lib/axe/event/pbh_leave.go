@@ -7,7 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
@@ -22,7 +22,7 @@ import (
 func NewPbhLeaveProcessor(
 	client mongo.DbClient,
 	autoInstructionMatcher AutoInstructionMatcher,
-	stateCountersService statecounters.StateCountersService,
+	stateCountersService entitycounters.StateCountersService,
 	metricsSender metrics.Sender,
 	remediationRpcClient engine.RPCClient,
 	encoder encoding.Encoder,
@@ -46,7 +46,7 @@ type pbhLeaveProcessor struct {
 	alarmCollection        mongo.DbCollection
 	entityCollection       mongo.DbCollection
 	autoInstructionMatcher AutoInstructionMatcher
-	stateCountersService   statecounters.StateCountersService
+	stateCountersService   entitycounters.StateCountersService
 	metricsSender          metrics.Sender
 	remediationRpcClient   engine.RPCClient
 	encoder                encoding.Encoder
@@ -62,7 +62,7 @@ func (p *pbhLeaveProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 	match := getOpenAlarmMatchWithStepsLimit(event)
 	match["v.pbehavior_info.id"] = bson.M{"$nin": bson.A{nil, ""}}
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
-	var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
+	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
 		updatedServiceStates = nil
@@ -182,7 +182,7 @@ func (p *pbhLeaveProcessor) postProcess(
 	ctx context.Context,
 	event rpc.AxeEvent,
 	result Result,
-	updatedServiceStates map[string]statecounters.UpdatedServicesInfo,
+	updatedServiceStates map[string]entitycounters.UpdatedServicesInfo,
 ) {
 	p.metricsSender.SendEventMetrics(
 		result.Alarm,
