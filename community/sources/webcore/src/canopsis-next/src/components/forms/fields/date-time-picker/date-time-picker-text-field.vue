@@ -1,22 +1,26 @@
-<template lang="pug">
-  div
-    v-layout
-      v-flex
-        v-text-field(
-          v-field="value",
-          :label="label",
-          :name="name",
-          :error-messages="errorMessages",
-          @focus="focus",
+<template>
+  <div>
+    <v-layout>
+      <v-flex>
+        <v-text-field
+          v-field="value"
+          :label="label"
+          :name="name"
+          :error-messages="errorMessages"
+          @focus="focus"
           @blur="blur"
-        )
-      v-flex
-        date-time-picker-menu(
-          :value="objectValue",
-          :label="label",
-          :round-hours="roundHours",
+        />
+      </v-flex>
+      <v-flex>
+        <date-time-picker-menu
+          :value="objectValue"
+          :label="label"
+          :round-hours="roundHours"
           @input="updateObjectField"
-        )
+        />
+      </v-flex>
+    </v-layout>
+  </div>
 </template>
 
 <script>

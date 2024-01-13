@@ -2,60 +2,53 @@
 
 exports[`switcher Renders \`switcher\` with custom props 1`] = `
 <div
-  class="container pa-3 fluid"
+  class="widget-settings-flat-item v-list-item theme--light"
+  tabindex="-1"
 >
   <div
-    class="layout align-center justify-space-between"
+    class="v-list-item__content"
   >
     <div
-      class="flex xs11"
+      class="v-list-item__title"
     >
-      <div
-        class="subheading"
-      >
-        Custom title
-      </div>
+      Custom title
     </div>
-    <div
-      class="layout"
-    >
-      <input
-        class="v-switch ma-0 pa-0"
-        color="primary"
-        hide-details="hide-details"
-        type="checkbox"
-      />
-    </div>
+  </div>
+  <div
+    class="v-list-item__action mr-3"
+  >
+    <input
+      class="v-switch ma-0 pa-0"
+      color="primary"
+      hide-details=""
+      type="checkbox"
+    />
   </div>
 </div>
 `;
 
 exports[`switcher Renders \`switcher\` with default and required props 1`] = `
 <div
-  class="container pa-3 fluid"
+  class="widget-settings-flat-item v-list-item theme--light"
+  tabindex="-1"
 >
   <div
-    class="layout align-center justify-space-between"
+    class="v-list-item__content"
   >
     <div
-      class="flex xs11"
+      class="v-list-item__title"
     >
-      <div
-        class="subheading"
-      >
-        
-      </div>
     </div>
-    <div
-      class="layout"
-    >
-      <input
-        class="v-switch ma-0 pa-0"
-        color="primary"
-        hide-details="hide-details"
-        type="checkbox"
-      />
-    </div>
+  </div>
+  <div
+    class="v-list-item__action mr-3"
+  >
+    <input
+      class="v-switch ma-0 pa-0"
+      color="primary"
+      hide-details=""
+      type="checkbox"
+    />
   </div>
 </div>
 `;

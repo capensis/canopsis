@@ -7,21 +7,19 @@ exports[`alarm-pbehavior-counters Renders \`alarm-pbehavior-counters\` with cust
   <span
     class="v-tooltip v-tooltip--top"
   >
-    <transition-stub
-      name="slide-y-reverse-transition"
-    />
+    <!---->
     <div
-      class="layout row justify-space-around align-center"
+      class="layout justify-space-around align-center"
     >
       <i
         aria-hidden="true"
-        class="v-icon material-icons theme--light"
+        class="v-icon notranslate material-icons theme--light"
         style="font-size: 18px; color: white; caret-color: white;"
       >
         assignment_returned
       </i>
       <span
-        class="caption"
+        class="text-caption"
       >
         1
       </span>
@@ -30,21 +28,19 @@ exports[`alarm-pbehavior-counters Renders \`alarm-pbehavior-counters\` with cust
   <span
     class="v-tooltip v-tooltip--top"
   >
-    <transition-stub
-      name="slide-y-reverse-transition"
-    />
+    <!---->
     <div
-      class="layout row justify-space-around align-center"
+      class="layout justify-space-around align-center"
     >
       <i
         aria-hidden="true"
-        class="v-icon material-icons theme--light"
+        class="v-icon notranslate material-icons theme--light"
         style="font-size: 18px; color: white; caret-color: white;"
       >
         add_photo_alternate
       </i>
       <span
-        class="caption"
+        class="text-caption"
       >
         3
       </span>
@@ -53,21 +49,19 @@ exports[`alarm-pbehavior-counters Renders \`alarm-pbehavior-counters\` with cust
   <span
     class="v-tooltip v-tooltip--top"
   >
-    <transition-stub
-      name="slide-y-reverse-transition"
-    />
+    <!---->
     <div
-      class="layout row justify-space-around align-center"
+      class="layout justify-space-around align-center"
     >
       <i
         aria-hidden="true"
-        class="v-icon material-icons theme--light"
+        class="v-icon notranslate material-icons theme--light"
         style="font-size: 18px; color: white; caret-color: white;"
       >
         more_horiz
       </i>
       <span
-        class="caption"
+        class="text-caption"
       >
         12
       </span>
@@ -76,16 +70,7 @@ exports[`alarm-pbehavior-counters Renders \`alarm-pbehavior-counters\` with cust
 </div>
 `;
 
-exports[`alarm-pbehavior-counters Renders \`alarm-pbehavior-counters\` with custom props 2`] = `
-<div
-  class="v-tooltip__content"
-  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
->
-  <span>
-    type-1-name
-  </span>
-</div>
-`;
+exports[`alarm-pbehavior-counters Renders \`alarm-pbehavior-counters\` with custom props 2`] = `undefined`;
 
 exports[`alarm-pbehavior-counters Renders \`alarm-pbehavior-counters\` with default props 1`] = `
 <div

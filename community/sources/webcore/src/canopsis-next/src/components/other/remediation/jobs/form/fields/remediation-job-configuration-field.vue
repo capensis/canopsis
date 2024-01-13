@@ -1,17 +1,18 @@
-<template lang="pug">
-  v-layout(row)
-    v-select(
-      v-field="value",
-      v-validate="'required'",
-      :items="configurations",
-      :label="$t('remediation.job.configuration')",
-      :error-messages="errors.collect('configuration')",
-      :loading="pending",
-      name="configuration",
-      return-object,
-      item-text="name",
+<template>
+  <v-layout>
+    <v-select
+      v-field="value"
+      v-validate="'required'"
+      :items="configurations"
+      :label="$t('remediation.job.configuration')"
+      :error-messages="errors.collect('configuration')"
+      :loading="pending"
+      name="configuration"
+      return-object
+      item-text="name"
       item-value="_id"
-    )
+    />
+  </v-layout>
 </template>
 
 <script>

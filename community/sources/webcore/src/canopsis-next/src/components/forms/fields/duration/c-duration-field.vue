@@ -1,26 +1,32 @@
-<template lang="pug">
-  v-layout(row)
-    v-flex.pr-3(xs8)
-      c-number-field(
-        v-field="duration.value",
-        :label="label || $t('common.duration')",
-        :disabled="disabled",
-        :name="valueFieldName",
-        :required="isRequired",
+<template>
+  <v-layout>
+    <v-flex
+      class="pr-3"
+      xs7
+    >
+      <c-number-field
+        v-field="duration.value"
+        :label="label || $t('common.duration')"
+        :disabled="disabled"
+        :name="valueFieldName"
+        :required="isRequired"
         :min="min"
-      )
-    v-flex(xs4)
-      v-select(
-        v-validate="unitValidateRules",
-        :value="duration.unit",
-        :items="availableUnits",
-        :disabled="disabled",
-        :label="unitsLabel",
-        :error-messages="errors.collect(unitFieldName)",
-        :name="unitFieldName",
-        :clearable="clearable",
+      />
+    </v-flex>
+    <v-flex xs5>
+      <v-select
+        v-validate="unitValidateRules"
+        :value="duration.unit"
+        :items="availableUnits"
+        :disabled="disabled"
+        :label="unitsLabel"
+        :error-messages="errors.collect(unitFieldName)"
+        :name="unitFieldName"
+        :clearable="clearable"
         @change="updateUnit"
-      )
+      />
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

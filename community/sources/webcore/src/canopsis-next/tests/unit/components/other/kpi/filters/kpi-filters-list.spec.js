@@ -15,7 +15,7 @@ const stubs = {
 const selectExpandButtonByRow = (wrapper, index) => wrapper
   .findAll('tbody > tr')
   .at(index)
-  .find('c-expand-btn-stub');
+  .find('.v-data-table__expand-icon');
 
 describe('kpi-filters-list', () => {
   const filtersItems = [
@@ -93,23 +93,23 @@ describe('kpi-filters-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         filters: [],
-        pagination: {},
+        options: {},
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `kpi-filters-list` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         filters: filtersItems,
-        pagination: {
+        options: {
           page: 2,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
           search: 'Filter',
-          sortBy: 'created',
-          descending: true,
+          sortBy: ['created'],
+          sortDesc: [],
         },
         totalItems: 50,
         pending: true,
@@ -119,28 +119,45 @@ describe('kpi-filters-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `kpi-filters-list` with expanded panel', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         filters: filtersItems,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
           search: '',
-          sortBy: '',
-          descending: false,
+          sortBy: [],
+          sortDesc: [],
         },
         totalItems: 50,
       },
     });
 
-    const expandButton = selectExpandButtonByRow(wrapper, 0);
+    await selectExpandButtonByRow(wrapper, 0).vm.$emit('expand');
 
-    await expandButton.vm.$emit('expand');
+    expect(wrapper).toMatchSnapshot();
+  });
 
-    expect(wrapper.element).toMatchSnapshot();
+  it('Renders `kpi-filters-list` with updatable and old_entity_patterns', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        filters: filtersItems.map(item => ({ ...item, old_entity_patterns: true })),
+        options: {
+          page: 1,
+          itemsPerPage: 10,
+          search: '',
+          sortBy: [],
+          sortDesc: [],
+        },
+        updatable: true,
+        totalItems: 50,
+      },
+    });
+
+    expect(wrapper).toMatchSnapshot();
   });
 });

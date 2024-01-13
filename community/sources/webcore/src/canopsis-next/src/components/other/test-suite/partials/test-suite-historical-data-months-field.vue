@@ -1,16 +1,22 @@
-<template lang="pug">
-  v-layout(row)
-    c-enabled-field(
-      :value="Boolean(value)",
-      :label="$t('testSuite.compareWithHistorical')",
+<template>
+  <v-layout>
+    <c-enabled-field
+      :value="Boolean(value)"
+      :label="$t('testSuite.compareWithHistorical')"
       @input="changeEnabledField"
-    )
-    v-radio-group(v-if="value", v-field="value", row)
-      v-radio(
-        v-for="item in preparedItems",
-        :key="item.value",
+    />
+    <v-radio-group
+      v-if="value"
+      v-field="value"
+      row
+    >
+      <v-radio
+        v-for="item in preparedItems"
+        :key="item.value"
         v-bind="item"
-      )
+      />
+    </v-radio-group>
+  </v-layout>
 </template>
 
 <script>

@@ -40,7 +40,7 @@ describe('field-number', () => {
   test('Renders `field-number` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `field-number` with custom props', () => {
@@ -51,6 +51,6 @@ describe('field-number', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

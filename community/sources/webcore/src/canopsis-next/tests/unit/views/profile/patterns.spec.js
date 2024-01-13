@@ -372,7 +372,7 @@ describe('patterns', () => {
   it('Renders `patterns` without permissions', () => {
     const wrapper = snapshotFactory({ store });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `patterns` with permissions', () => {
@@ -394,7 +394,7 @@ describe('patterns', () => {
       ]),
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `patterns` corporate tab with permissions', async () => {
@@ -420,6 +420,6 @@ describe('patterns', () => {
       activeTab: PATTERN_TABS.corporatePatterns,
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });
