@@ -1,54 +1,79 @@
-<template lang="pug">
-  v-select(
-    v-validate="'required'",
-    :value="value",
-    :items="preparedTriggers",
-    :disabled="disabled",
-    :label="label || $tc('common.trigger', 2)",
-    :error-messages="errorMessages",
-    :name="name",
-    item-value="type",
-    item-disabled="deprecated",
-    multiple,
-    chips,
-    return-object,
+<template>
+  <v-select
+    v-validate="'required'"
+    :value="value"
+    :items="preparedTriggers"
+    :disabled="disabled"
+    :label="label || $tc('common.trigger', 2)"
+    :error-messages="errorMessages"
+    :name="name"
+    item-value="type"
+    item-disabled="deprecated"
+    multiple
+    chips
+    return-object
     @change="changeValue"
-  )
-    template(#selection="{ item, index }")
-      v-tooltip(:disabled="!item.deprecated", top)
-        template(#activator="{ on }")
-          v-chip(
-            v-on="on",
-            :class="getSelectedClass(item)",
-            :close="item.deprecated",
-            @input="removeItemFromArray(index)"
-          ) {{ getSelectedText(item) }}
-        span {{ $t('common.deprecatedTrigger') }}
-    template(#item="{ item, tile, parent }")
-      v-list-tile(
-        v-bind="tile.props",
-        :active-class="errors.has(getAdditionalValueFieldName(item.type)) ? 'error--text' : tile.props.activeClass",
-        @click="tile.on.click"
-      )
-        v-list-tile-action
-          v-checkbox.ma-0(
-            :input-value="tile.props.value",
-            :color="parent.color",
+  >
+    <template #selection="{ item, index }">
+      <v-tooltip
+        :disabled="!item.deprecated"
+        top
+      >
+        <template #activator="{ on }">
+          <v-chip
+            v-on="on"
+            :class="getSelectedClass(item)"
+            :close="item.deprecated"
+            @click:close="removeItemFromArray(index)"
+          >
+            {{ getSelectedText(item) }}
+          </v-chip>
+        </template>
+        <span>{{ $t('common.deprecatedTrigger') }}</span>
+      </v-tooltip>
+    </template>
+    <template #item="{ item, attrs, on, parent }">
+      <v-list-item
+        v-bind="attrs"
+        :active-class="errors.has(getAdditionalValueFieldName(item.type)) ? 'error--text' : tile.props.activeClass"
+        @click="on.click"
+      >
+        <v-list-item-action>
+          <v-checkbox
+            :input-value="attrs.value"
+            :color="parent.color"
             hide-details
-          )
-        v-list-tile-content
-          v-layout.fill-width(row, align-center, justify-space-between)
-            v-flex {{ item.text }}
-            component.ml-1(
-              v-if="additionalValuesComponentsByTypes[item.type]",
-              v-bind="additionalValuesComponentsByTypes[item.type].bind",
-              v-on="additionalValuesComponentsByTypes[item.type].on",
-              :is="additionalValuesComponentsByTypes[item.type].is",
-              :disabled="!tile.props.value",
+          />
+        </v-list-item-action>
+        <v-list-item-content>
+          <v-layout
+            class="fill-width"
+            align-center
+            justify-space-between
+          >
+            <v-flex>{{ item.text }}</v-flex>
+            <component
+              class="ml-1"
+              v-if="additionalValuesComponentsByTypes[item.type]"
+              v-bind="additionalValuesComponentsByTypes[item.type].bind"
+              v-on="additionalValuesComponentsByTypes[item.type].on"
+              :is="additionalValuesComponentsByTypes[item.type].is"
+              :disabled="!attrs.value"
               @click.prevent.stop=""
-            )
-        v-list-tile-action(v-if="item.helpText")
-          c-help-icon(:text="item.helpText", color="info", size="20", top)
+            />
+          </v-layout>
+        </v-list-item-content>
+        <v-list-item-action v-if="item.helpText">
+          <c-help-icon
+            :text="item.helpText"
+            color="info"
+            size="20"
+            top
+          />
+        </v-list-item-action>
+      </v-list-item>
+    </template>
+  </v-select>
 </template>
 
 <script>

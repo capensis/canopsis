@@ -8,12 +8,9 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -264,8 +261,6 @@ func benchmarkMessageProcessorWithConfig(
 	p := messageProcessor{
 		FeaturePrintEventOnError: true,
 		AlarmConfigProvider:      config.NewAlarmConfigProvider(cfg, zerolog.Nop()),
-		ContextGraphManager:      contextgraph.NewManager(entity.NewAdapter(dbClient), dbClient, contextgraph.NewEntityServiceStorage(dbClient), statesetting.NewService(dbClient, zerolog.Nop()), zerolog.Nop()),
-		EventFilterService:       ruleService,
 		MetricsSender:            metrics.NewNullSender(),
 		MetaUpdater:              metrics.NewNullMetaUpdater(),
 		TechMetricsSender:        techMetricsSender,

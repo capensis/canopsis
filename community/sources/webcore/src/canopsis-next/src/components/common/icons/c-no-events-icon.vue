@@ -1,8 +1,24 @@
-<template lang="pug">
-  v-tooltip(v-if="value", :max-width="maxWidth", :top="top", :right="right", :bottom="bottom", :left="left")
-    template(#activator="{ on }")
-      v-icon.d-block(v-on="on", :color="color", :size="size") sync_problem
-    span {{ message }}
+<template>
+  <v-tooltip
+    v-if="value"
+    :max-width="maxWidth"
+    :top="top"
+    :right="right"
+    :bottom="bottom"
+    :left="left"
+  >
+    <template #activator="{ on }">
+      <v-icon
+        class="d-block"
+        v-on="on"
+        :color="color"
+        :size="size"
+      >
+        sync_problem
+      </v-icon>
+    </template>
+    <span>{{ message }}</span>
+  </v-tooltip>
 </template>
 
 <script>

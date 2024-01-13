@@ -2,7 +2,7 @@
 
 exports[`c-color-indicator-field Renders \`c-color-indicator-field\` with impact state value correctly 1`] = `
 <div
-  class="v-input v-input--selection-controls v-input--radio-group v-input--radio-group--column v-input--is-label-active v-input--is-dirty theme--light"
+  class="v-input v-input--is-label-active v-input--is-dirty theme--light v-input--selection-controls v-input--radio-group v-input--radio-group--column"
 >
   <div
     class="v-input__control"
@@ -12,6 +12,7 @@ exports[`c-color-indicator-field Renders \`c-color-indicator-field\` with impact
       style="height: auto;"
     >
       <div
+        aria-labelledby="input-23"
         class="v-input--radio-group__input"
         role="radiogroup"
       >
@@ -21,9 +22,14 @@ exports[`c-color-indicator-field Renders \`c-color-indicator-field\` with impact
           <div
             class="v-input--selection-controls__input"
           >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              radio_button_unchecked
+            </i>
             <input
               aria-checked="false"
-              aria-label="Display as severity"
               name="colorIndicator"
               role="radio"
               type="radio"
@@ -32,15 +38,8 @@ exports[`c-color-indicator-field Renders \`c-color-indicator-field\` with impact
             <div
               class="v-input--selection-controls__ripple"
             />
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              radio_button_unchecked
-            </i>
           </div>
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
@@ -48,31 +47,29 @@ exports[`c-color-indicator-field Renders \`c-color-indicator-field\` with impact
           </label>
         </div>
         <div
-          class="v-radio theme--light"
+          class="v-radio theme--light v-item--active"
         >
           <div
             class="v-input--selection-controls__input"
           >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light primary--text"
+            >
+              radio_button_checked
+            </i>
             <input
-              aria-checked="false"
-              aria-label="Display as priority"
+              aria-checked="true"
               name="colorIndicator"
               role="radio"
               type="radio"
               value="impact_state"
             />
             <div
-              class="v-input--selection-controls__ripple"
+              class="v-input--selection-controls__ripple primary--text"
             />
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              radio_button_unchecked
-            </i>
           </div>
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
@@ -96,7 +93,7 @@ exports[`c-color-indicator-field Renders \`c-color-indicator-field\` with impact
 
 exports[`c-color-indicator-field Renders \`c-color-indicator-field\` with state value correctly 1`] = `
 <div
-  class="v-input v-input--selection-controls v-input--radio-group v-input--radio-group--column v-input--is-label-active v-input--is-dirty theme--light"
+  class="v-input v-input--is-label-active v-input--is-dirty theme--light v-input--selection-controls v-input--radio-group v-input--radio-group--column"
 >
   <div
     class="v-input__control"
@@ -106,35 +103,34 @@ exports[`c-color-indicator-field Renders \`c-color-indicator-field\` with state 
       style="height: auto;"
     >
       <div
+        aria-labelledby="input-13"
         class="v-input--radio-group__input"
         role="radiogroup"
       >
         <div
-          class="v-radio theme--light"
+          class="v-radio theme--light v-item--active"
         >
           <div
             class="v-input--selection-controls__input"
           >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light primary--text"
+            >
+              radio_button_checked
+            </i>
             <input
-              aria-checked="false"
-              aria-label="Display as severity"
+              aria-checked="true"
               name="colorIndicator"
               role="radio"
               type="radio"
               value="state"
             />
             <div
-              class="v-input--selection-controls__ripple"
+              class="v-input--selection-controls__ripple primary--text"
             />
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              radio_button_unchecked
-            </i>
           </div>
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
@@ -147,9 +143,14 @@ exports[`c-color-indicator-field Renders \`c-color-indicator-field\` with state 
           <div
             class="v-input--selection-controls__input"
           >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              radio_button_unchecked
+            </i>
             <input
               aria-checked="false"
-              aria-label="Display as priority"
               name="colorIndicator"
               role="radio"
               type="radio"
@@ -158,15 +159,8 @@ exports[`c-color-indicator-field Renders \`c-color-indicator-field\` with state 
             <div
               class="v-input--selection-controls__ripple"
             />
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              radio_button_unchecked
-            </i>
           </div>
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >

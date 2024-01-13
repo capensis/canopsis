@@ -1,27 +1,45 @@
-<template lang="pug">
-  v-layout(column)
-    c-entity-field(
-      :value="form.entity",
-      :label="$t('map.defineEntity')",
-      :required="!isLinked",
-      :clearable="isLinked",
-      :entity-types="entityTypes",
-      :item-disabled="isEntityExist",
-      :item-text="getItemText",
-      return-object,
-      autocomplete,
+<template>
+  <v-layout column>
+    <c-entity-field
+      :value="form.entity"
+      :label="$t('map.defineEntity')"
+      :required="!isLinked"
+      :clearable="isLinked"
+      :entity-types="entityTypes"
+      :item-disabled="isEntityExist"
+      :item-text="getItemText"
+      return-object
+      autocomplete
       @input="updateEntity"
-    )
-      template(v-if="coordinates", #icon="{ item }")
-        v-icon.mr-2(v-if="item.coordinates") pin_drop
-    c-coordinates-field(v-if="coordinates", v-field="form.coordinates", :disabled="form.is_entity_coordinates")
-    c-enabled-field(v-model="isLinked", :label="$t('map.addLink')")
-    c-map-field(
-      v-show="isLinked",
-      v-field="form.map",
-      :required="isLinked",
+    >
+      <template
+        v-if="coordinates"
+        #icon="{ item }"
+      >
+        <v-icon
+          class="mr-2"
+          v-if="item.coordinates"
+        >
+          pin_drop
+        </v-icon>
+      </template>
+    </c-entity-field>
+    <c-coordinates-field
+      v-if="coordinates"
+      v-field="form.coordinates"
+      :disabled="form.is_entity_coordinates"
+    />
+    <c-enabled-field
+      v-model="isLinked"
+      :label="$t('map.addLink')"
+    />
+    <c-map-field
+      v-show="isLinked"
+      v-field="form.map"
+      :required="isLinked"
       hide-details
-    )
+    />
+  </v-layout>
 </template>
 
 <script>

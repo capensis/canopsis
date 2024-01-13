@@ -1,12 +1,12 @@
-<template lang="pug">
-  v-text-field(
-    v-field="value",
-    v-validate="rules",
-    v-bind="$attrs",
-    :label="label || $t('common.name')",
-    :error-messages="errors.collect(name)",
+<template>
+  <v-text-field
+    v-field="value"
+    v-validate="rules"
+    v-bind="$attrs"
+    :label="label || $t('common.name')"
+    :error-messages="errors.collect(name)"
     :name="name"
-  )
+  />
 </template>
 
 <script>

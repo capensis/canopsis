@@ -1,23 +1,26 @@
-<template lang="pug">
-  v-select.role-template-field(
-    v-validate,
-    :value="value",
-    :label="label || $t('role.selectTemplate')",
-    :loading="pending",
-    :items="preparedItems",
-    :error-messages="errors.collect(name)",
-    :name="name",
-    :disabled="disabled",
-    item-text="name",
-    item-value="permissions",
-    return-object,
-    clearable,
+<template>
+  <v-select
+    class="role-template-field"
+    v-validate
+    :value="value"
+    :label="label || $t('role.selectTemplate')"
+    :loading="pending"
+    :items="preparedItems"
+    :error-messages="errors.collect(name)"
+    :name="name"
+    :disabled="disabled"
+    item-text="name"
+    item-value="permissions"
+    return-object
+    clearable
     @input="updatePermissions"
-  )
-    template(#item="{ item }")
-      v-layout(justify-space-between)
-        | {{ item.name }}
-        span.role-template-field__item-description {{ item.description }}
+  >
+    <template #item="{ item }">
+      <v-layout justify-space-between>
+        {{ item.name }}<span class="role-template-field__item-description">{{ item.description }}</span>
+      </v-layout>
+    </template>
+  </v-select>
 </template>
 
 <script>

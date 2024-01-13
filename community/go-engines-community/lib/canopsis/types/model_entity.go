@@ -44,18 +44,19 @@ type Entity struct {
 	Component string `bson:"component,omitempty" json:"component,omitempty"`
 	// ImpactedServices field is only for connectors, see entity service RecomputeIdleSince method.
 	ImpactedServices []string `bson:"impacted_services" json:"-"`
+
 	// LastIdleRuleApply is used to mark entity if some idle rule was applied.
 	LastIdleRuleApply string `bson:"last_idle_rule_apply,omitempty" json:"last_idle_rule_apply,omitempty"`
-
 	// IdleSince represents since when entity didn't receive any events.
-	IdleSince    *datetime.CpsTime `bson:"idle_since,omitempty" json:"idle_since,omitempty"`
+	IdleSince *datetime.CpsTime `bson:"idle_since,omitempty" json:"idle_since,omitempty"`
+
 	ImportSource string            `bson:"import_source,omitempty" json:"import_source"`
+	Imported     *datetime.CpsTime `bson:"imported,omitempty" json:"imported"`
 
-	Imported      *datetime.CpsTime `bson:"imported,omitempty" json:"imported"`
-	PbehaviorInfo PbehaviorInfo     `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
-
+	PbehaviorInfo     PbehaviorInfo     `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
 	LastPbehaviorDate *datetime.CpsTime `bson:"last_pbehavior_date,omitempty" json:"last_pbehavior_date,omitempty"`
-	SliAvailState     int64             `bson:"sli_avail_state" json:"sli_avail_state"`
+
+	SliAvailState int64 `bson:"sli_avail_state" json:"sli_avail_state"`
 
 	Services         []string `bson:"services" json:"services,omitempty"`
 	ServicesToAdd    []string `bson:"services_to_add,omitempty" json:"services_to_add,omitempty"`

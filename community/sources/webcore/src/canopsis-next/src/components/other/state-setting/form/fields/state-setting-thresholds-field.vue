@@ -1,27 +1,35 @@
-<template lang="pug">
-  v-layout(row)
-    v-flex(xs4)
-      h5.subheading.font-weight-bold {{ $t('stateSetting.criterion') }}: {{ label }}
-      state-setting-thresholds-type-field.mt-3(v-field="value.type")
-    v-flex
-      state-setting-threshold-state-field(
-        v-field="value.minor",
-        :type="value.type",
-        :name="`${name}.minor`",
+<template>
+  <v-layout>
+    <v-flex xs4>
+      <h5 class="text-subtitle-1 font-weight-bold">
+        {{ $t('stateSetting.criterion') }}: {{ label }}
+      </h5>
+      <state-setting-thresholds-type-field
+        class="mt-3"
+        v-field="value.type"
+      />
+    </v-flex>
+    <v-flex>
+      <state-setting-threshold-state-field
+        v-field="value.minor"
+        :type="value.type"
+        :name="`${name}.minor`"
         :label="$t('stateSetting.states.minor')"
-      )
-      state-setting-threshold-state-field(
-        v-field="value.major",
-        :type="value.type",
-        :name="`${name}.major`",
+      />
+      <state-setting-threshold-state-field
+        v-field="value.major"
+        :type="value.type"
+        :name="`${name}.major`"
         :label="$t('stateSetting.states.major')"
-      )
-      state-setting-threshold-state-field(
-        v-field="value.critical",
-        :type="value.type",
-        :name="`${name}.critical`",
+      />
+      <state-setting-threshold-state-field
+        v-field="value.critical"
+        :type="value.type"
+        :name="`${name}.critical`"
         :label="$t('stateSetting.states.critical')"
-      )
+      />
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

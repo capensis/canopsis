@@ -1,18 +1,20 @@
-<template lang="pug">
-  div
-    v-layout(row, align-center)
-      v-textarea(
-        v-field="comment.message",
-        v-validate="rules",
-        :disabled="!!comment._id",
-        :label="$t('modals.createPbehavior.steps.comments.fields.message')",
-        :error-messages="errors.collect(messageFieldName)",
+<template>
+  <div>
+    <v-layout align-center>
+      <v-textarea
+        v-field="comment.message"
+        v-validate="rules"
+        :disabled="!!comment._id"
+        :label="$t('modals.createPbehavior.steps.comments.fields.message')"
+        :error-messages="errors.collect(messageFieldName)"
         :name="messageFieldName"
-      )
-      c-action-btn(
-        type="delete",
+      />
+      <c-action-btn
+        type="delete"
         @click="$emit('remove')"
-      )
+      />
+    </v-layout>
+  </div>
 </template>
 
 <script>

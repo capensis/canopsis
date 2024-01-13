@@ -1,23 +1,22 @@
-<template lang="pug">
-  c-lazy-search-field(
-    v-field="value",
-    :label="$t('entity.fields.alarmDisplayName')",
-    :loading="pending",
-    :items="alarms",
-    :name="name",
-    :has-more="hasMoreAlarms",
-    :required="required",
-    :item-text="itemText",
-    :item-value="itemValue",
-    :disabled="disabled",
-    :no-data-text="$t('alarm.noAlarmFound')",
-    name="alarms",
-    clearable,
-    autocomplete,
-    @fetch="fetchAlarms",
-    @fetch:more="fetchMoreAlarms",
+<template>
+  <c-lazy-search-field
+    v-field="value"
+    :label="$t('entity.fields.alarmDisplayName')"
+    :loading="pending"
+    :items="alarms"
+    :name="name"
+    :has-more="hasMoreAlarms"
+    :required="required"
+    :item-text="itemText"
+    :item-value="itemValue"
+    :disabled="disabled"
+    :no-data-text="$t('alarm.noAlarmFound')"
+    clearable
+    autocomplete
+    @fetch="fetchAlarms"
+    @fetch:more="fetchMoreAlarms"
     @update:search="updateSearch"
-  )
+  />
 </template>
 
 <script>

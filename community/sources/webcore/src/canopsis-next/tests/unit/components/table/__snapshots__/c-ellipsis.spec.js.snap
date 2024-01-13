@@ -1,17 +1,35 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`c-ellipsis Renders \`c-ellipsis\` correctly 1`] = `
-<div><span>omnis esse recusandae magni similique porro quaera</span>
-  <div class="v-menu"><span class="ml-1">...</span>
-    <div class="v-card v-sheet theme--light">
-      <div class="v-card__title pre-wrap">omnis esse recusandae magni similique porro quaerat alias vel deserunt porro voluptate
-        voluptatibus commodi sequi et qui fugiat exercitationem et et eligendi ad officia quis suscipit earum soluta
-        minima architecto numquam et voluptatibus quia officiis nulla veritatis soluta optio assumenda est fugiat est
-        suscipit inventore temporibus dolores quos dolorem doloremque autem qui sit ipsam praesentium esse sunt ut
-        molestiae nulla itaque voluptatem pariatur vel dolorum impedit asperiores numquam animi esse laborum in et
-        magnam nulla et consequatur facere sint nam facere sunt aut alias qui omnis rerum corporis totam quibusdam
-        nostrum mollitia quia vel amet pariatur eveniet explicabo quia ullam</div>
+<div>
+  <span>
+    omnis esse recusandae magni similique porro quaera
+  </span>
+  <div
+    class="v-menu"
+  >
+    <span
+      class="ml-1"
+    >
+      ...
+    </span>
+    <div
+      class="v-card v-sheet theme--light"
+    >
+      <div
+        class="v-card__title pre-wrap"
+      >
+        omnis esse recusandae magni similique porro quaerat alias vel deserunt porro voluptate
+      voluptatibus commodi sequi et qui fugiat exercitationem et et eligendi ad officia quis suscipit earum soluta
+      minima architecto numquam et voluptatibus quia officiis nulla veritatis soluta optio assumenda est fugiat est
+      suscipit inventore temporibus dolores quos dolorem doloremque autem qui sit ipsam praesentium esse sunt ut
+      molestiae nulla itaque voluptatem pariatur vel dolorum impedit asperiores numquam animi esse laborum in et
+      magnam nulla et consequatur facere sint nam facere sunt aut alias qui omnis rerum corporis totam quibusdam
+      nostrum mollitia quia vel amet pariatur eveniet explicabo quia ullam
+      </div>
     </div>
   </div>
 </div>
 `;
+
+exports[`c-ellipsis Renders \`c-ellipsis\` correctly 2`] = `undefined`;

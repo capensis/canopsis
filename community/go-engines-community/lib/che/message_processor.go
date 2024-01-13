@@ -9,7 +9,6 @@ import (
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -27,13 +26,10 @@ import (
 
 type messageProcessor struct {
 	FeaturePrintEventOnError bool
-	DbClient                 mongo.DbClient
 	AlarmConfigProvider      config.AlarmConfigProvider
-	EventFilterService       eventfilter.Service
 	MetricsSender            metrics.Sender
 	MetaUpdater              metrics.MetaUpdater
 	TechMetricsSender        techmetrics.Sender
-	ContextGraphManager      contextgraph.Manager
 	AmqpPublisher            libamqp.Publisher
 	EntityCollection         mongo.DbCollection
 	Encoder                  encoding.Encoder

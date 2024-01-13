@@ -1,29 +1,40 @@
-<template lang="pug">
-  v-layout.date-time-splitted-field(column)
-    v-layout(row, :reverse="reverse")
-      v-flex.date-time-splitted-field__date
-        c-date-picker-field(
-          :value="value | date('vuetifyDatePicker', null)",
-          :label="!reverse || fullDay ? label : ''",
-          :placeholder="placeholder",
-          :error="errors.has(name)",
-          :disabled="disabled",
-          :min="min",
-          :max="max",
-          hide-details,
+<template>
+  <v-layout
+    class="date-time-splitted-field"
+    column
+  >
+    <v-layout :reverse="reverse">
+      <v-flex class="date-time-splitted-field__date">
+        <c-date-picker-field
+          :value="value | date('vuetifyDatePicker', null)"
+          :label="!reverse || fullDay ? label : ''"
+          :placeholder="placeholder"
+          :error="errors.has(name)"
+          :disabled="disabled"
+          :min="min"
+          :max="max"
+          hide-details
           @input="updateDate"
-        )
-      time-picker-field.date-time-splitted-field__time(
-        v-if="!fullDay",
-        :value="value | date('timePicker', null)",
-        :label="reverse ? label : ''",
-        :error="errors.has(name)",
-        :disabled="disabled",
-        hide-details,
+        />
+      </v-flex>
+      <time-picker-field
+        class="date-time-splitted-field__time"
+        v-if="!fullDay"
+        :value="value | date('timePicker', null)"
+        :label="reverse ? label : ''"
+        :error="errors.has(name)"
+        :disabled="disabled"
+        hide-details
         @input="updateTime"
-      )
-    div.v-text-field__details.mt-2
-      v-messages(:value="errors.collect(name)", color="error")
+      />
+    </v-layout>
+    <div class="v-text-field__details mt-2">
+      <v-messages
+        :value="errors.collect(name)"
+        color="error"
+      />
+    </div>
+  </v-layout>
 </template>
 
 <script>

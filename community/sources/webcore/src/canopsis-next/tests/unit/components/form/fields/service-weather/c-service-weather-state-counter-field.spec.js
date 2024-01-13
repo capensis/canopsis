@@ -24,14 +24,15 @@ describe('c-service-weather-state-counter-field', () => {
     expect(wrapper).toEmit('input', SERVICE_WEATHER_STATE_COUNTERS.all);
   });
 
-  it('Renders `c-service-weather-state-counter-field` with default props', () => {
+  it('Renders `c-service-weather-state-counter-field` with default props', async () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
-  it('Renders `c-service-weather-state-counter-field` with custom props', () => {
+  it('Renders `c-service-weather-state-counter-field` with custom props', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: [SERVICE_WEATHER_STATE_COUNTERS.acked, SERVICE_WEATHER_STATE_COUNTERS.all],
@@ -42,7 +43,8 @@ describe('c-service-weather-state-counter-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
     expect(wrapper).toMatchMenuSnapshot();
   });
 });

@@ -37,7 +37,6 @@ exports[`pie-chart-metrics Renders \`pie-chart-metrics\` with default props 1`] 
   <h4
     class="kpi-widget__title"
   >
-    
   </h4>
   <!---->
 </div>
@@ -50,7 +49,6 @@ exports[`pie-chart-metrics Renders \`pie-chart-metrics\` with empty data 1`] = `
   <h4
     class="kpi-widget__title"
   >
-    
   </h4>
   <div
     class="pie-chart-metrics__chart kpi-widget__chart"
@@ -80,7 +78,6 @@ exports[`pie-chart-metrics Renders \`pie-chart-metrics\` with number labels prop
   <h4
     class="kpi-widget__title"
   >
-    
   </h4>
   <div
     class="pie-chart-metrics__chart kpi-widget__chart"

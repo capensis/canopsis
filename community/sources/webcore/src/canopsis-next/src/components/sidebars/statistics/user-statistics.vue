@@ -1,15 +1,20 @@
-<template lang="pug">
-  widget-settings(:submitting="submitting", divider, @submit="submit")
-    statistics-form(
-      v-model="form",
-      :widget="widget",
-      :type="$constants.KPI_RATING_SETTINGS_TYPES.user",
-      :show-filter="hasAccessToListFilters",
-      :show-interval="hasAccessToInterval",
-      :filter-disabled="!hasAccessToListFilters",
-      :filter-addable="hasAccessToAddFilter",
+<template>
+  <widget-settings
+    :submitting="submitting"
+    divider
+    @submit="submit"
+  >
+    <statistics-form
+      v-model="form"
+      :widget="widget"
+      :type="$constants.KPI_RATING_SETTINGS_TYPES.user"
+      :show-filter="hasAccessToListFilters"
+      :show-interval="hasAccessToInterval"
+      :filter-disabled="!hasAccessToListFilters"
+      :filter-addable="hasAccessToAddFilter"
       :filter-editable="hasAccessToEditFilter"
-    )
+    />
+  </widget-settings>
 </template>
 
 <script>

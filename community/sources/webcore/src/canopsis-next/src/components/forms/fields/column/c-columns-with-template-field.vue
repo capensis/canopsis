@@ -1,15 +1,19 @@
-<template lang="pug">
-  v-layout(column)
-    v-select(
-      :value="template",
-      :items="templatesWithCustom",
-      :label="$t('common.template')",
-      :loading="templatesPending",
-      return-object,
+<template>
+  <v-layout column>
+    <v-select
+      :value="template"
+      :items="templatesWithCustom"
+      :label="$t('common.template')"
+      :loading="templatesPending"
+      return-object
       @input="updateTemplate"
-    )
-    span.body-2.my-2 {{ $tc('common.column', 2) }}
-    c-columns-field(v-bind="$attrs", @input="updateColumns")
+    />
+    <span class="text-body-2 my-2">{{ $tc('common.column', 2) }}</span>
+    <c-columns-field
+      v-bind="$attrs"
+      @input="updateColumns"
+    />
+  </v-layout>
 </template>
 
 <script>
@@ -17,10 +21,7 @@ import { CUSTOM_WIDGET_TEMPLATE } from '@/constants';
 
 import { formBaseMixin } from '@/mixins/form';
 
-import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
-
 export default {
-  components: { WidgetSettingsItem },
   mixins: [formBaseMixin],
   inheritAttrs: false,
   model: {

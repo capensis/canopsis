@@ -10,7 +10,7 @@ exports[`alarm-column-value-state Renders \`alarm-column-value-state\` with alar
   />
   <i
     aria-hidden="true"
-    class="v-icon d-block material-icons theme--light purple--text"
+    class="v-icon notranslate d-block material-icons theme--light purple--text"
   >
     account_circle
   </i>

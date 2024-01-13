@@ -6,7 +6,7 @@ exports[`title Renders \`title\` with custom props 1`] = `
   title="Custom title"
 >
   <div
-    class="v-input v-text-field v-text-field--placeholder v-input--is-label-active v-input--is-dirty theme--light"
+    class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-text-field--placeholder"
   >
     <div
       class="v-input__control"
@@ -30,8 +30,10 @@ exports[`title Renders \`title\` with custom props 1`] = `
         <div
           class="v-messages theme--light"
         >
-          <div
+          <transition-group-stub
             class="v-messages__wrapper"
+            name="message-transition"
+            tag="div"
           />
         </div>
       </div>
@@ -46,7 +48,7 @@ exports[`title Renders \`title\` with default props 1`] = `
   title="Title"
 >
   <div
-    class="v-input v-text-field v-text-field--placeholder theme--light"
+    class="v-input theme--light v-text-field v-text-field--placeholder"
   >
     <div
       class="v-input__control"
@@ -70,8 +72,10 @@ exports[`title Renders \`title\` with default props 1`] = `
         <div
           class="v-messages theme--light"
         >
-          <div
+          <transition-group-stub
             class="v-messages__wrapper"
+            name="message-transition"
+            tag="div"
           />
         </div>
       </div>

@@ -1,6 +1,14 @@
-<template lang="pug">
-  v-tooltip(top)
-    template(#activator="{ on }")
-      v-icon.cursor-default(v-on="on", size="22") bookmark
-    span {{ $t('alarm.hasBookmark') }}
+<template>
+  <v-tooltip top>
+    <template #activator="{ on }">
+      <v-icon
+        class="cursor-default"
+        v-on="on"
+        size="22"
+      >
+        bookmark
+      </v-icon>
+    </template>
+    <span>{{ $t('alarm.hasBookmark') }}</span>
+  </v-tooltip>
 </template>

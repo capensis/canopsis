@@ -68,7 +68,7 @@ describe('c-date-time-interval-field', () => {
       .mockReturnValue(dateObject);
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
 
     dateSpy.mockClear();
   });
@@ -87,6 +87,6 @@ describe('c-date-time-interval-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });
