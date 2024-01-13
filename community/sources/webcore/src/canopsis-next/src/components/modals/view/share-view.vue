@@ -1,20 +1,36 @@
-<template lang="pug">
-  modal-wrapper(close)
-    template(#title="")
-      span {{ config.title }}
-    template(#text="")
-      c-information-block(:title="$t('view.sharedViewUrl')")
-        v-text-field(:value="config.url", readonly)
-          template(#append="")
-            c-copy-btn(
-              :value="config.url",
-              :tooltip="$t('common.copyLink')",
-              top,
-              @success="showCopySuccessPopup",
+<template>
+  <modal-wrapper close>
+    <template #title="">
+      <span>{{ config.title }}</span>
+    </template>
+    <template #text="">
+      <c-information-block :title="$t('view.sharedViewUrl')">
+        <v-text-field
+          :value="config.url"
+          readonly
+        >
+          <template #append="">
+            <c-copy-btn
+              :value="config.url"
+              :tooltip="$t('common.copyLink')"
+              top
+              @success="showCopySuccessPopup"
               @error="showCopyErrorPopup"
-            )
-    template(#actions="")
-      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.close') }}
+            />
+          </template>
+        </v-text-field>
+      </c-information-block>
+    </template>
+    <template #actions="">
+      <v-btn
+        depressed
+        text
+        @click="$modals.hide"
+      >
+        {{ $t('common.close') }}
+      </v-btn>
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>

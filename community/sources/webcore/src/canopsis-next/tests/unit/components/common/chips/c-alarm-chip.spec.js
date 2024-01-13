@@ -10,7 +10,7 @@ describe('c-alarm-chip', () => {
   it('Renders `c-alarm-chip` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-alarm-chip` with custom props', () => {
@@ -22,7 +22,7 @@ describe('c-alarm-chip', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it.each(Object.entries(ENTITIES_STATUSES))('Renders `c-alarm-chip` with status: %s', (_, value) => {
@@ -34,7 +34,7 @@ describe('c-alarm-chip', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it.each(Object.entries(EVENT_ENTITY_TYPES))('Renders `c-alarm-chip` with state: %s', (_, value) => {
@@ -46,6 +46,6 @@ describe('c-alarm-chip', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

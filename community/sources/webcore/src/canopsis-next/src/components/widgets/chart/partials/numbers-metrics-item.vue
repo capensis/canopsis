@@ -1,16 +1,27 @@
-<template lang="pug">
-  v-layout.numbers-metrics-item(:style="itemStyle", column, align-center)
-    v-layout(row, align-center)
-      div.numbers-metrics-item__value {{ value }}
-      c-help-icon(
-        v-if="showTrend && trendEnabled",
-        :text="trendTooltipText",
-        :icon-class="{ 'numbers-metrics-item__trend': true, 'numbers-metrics-item__trend--up': trendUp }",
-        icon="arrow_downward",
-        size="0.75em",
+<template>
+  <v-layout
+    class="numbers-metrics-item"
+    :style="itemStyle"
+    column
+    align-center
+  >
+    <v-layout align-center>
+      <div class="numbers-metrics-item__value">
+        {{ value }}
+      </div>
+      <c-help-icon
+        v-if="showTrend && trendEnabled"
+        :text="trendTooltipText"
+        :icon-class="{ 'numbers-metrics-item__trend': true, 'numbers-metrics-item__trend--up': trendUp }"
+        icon="arrow_downward"
+        size="0.75em"
         top
-      )
-    div.numbers-metrics-item__title {{ title }}
+      />
+    </v-layout>
+    <div class="numbers-metrics-item__title">
+      {{ title }}
+    </div>
+  </v-layout>
 </template>
 
 <script>
@@ -99,6 +110,7 @@ export default {
 <style lang="scss">
 .numbers-metrics-item {
   &__value {
+    line-height: normal;
     text-align: center;
   }
 

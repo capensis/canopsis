@@ -126,7 +126,7 @@ describe('periodic-refresh-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `periodic-refresh-field` with custom props', () => {
@@ -143,6 +143,6 @@ describe('periodic-refresh-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

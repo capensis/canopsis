@@ -8,7 +8,6 @@ import (
 	context "context"
 	reflect "reflect"
 
-	types "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	gomock "github.com/golang/mock/gomock"
 	primitive "go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -63,7 +62,7 @@ func (mr *MockCommandsRegisterMockRecorder) Commit(arg0 interface{}) *gomock.Cal
 }
 
 // RegisterInsert mocks base method.
-func (m *MockCommandsRegister) RegisterInsert(arg0 *types.Entity) {
+func (m *MockCommandsRegister) RegisterInsert(arg0 interface{}) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "RegisterInsert", arg0)
 }

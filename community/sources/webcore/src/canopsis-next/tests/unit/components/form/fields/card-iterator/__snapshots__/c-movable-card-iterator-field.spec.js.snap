@@ -15,55 +15,55 @@ exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\`
           class="pl-2"
         >
           <button
-            class="v-btn v-btn--disabled v-btn--icon theme--light"
+            class="v-btn v-btn--disabled v-btn--icon v-btn--round theme--light v-size--default"
             disabled="disabled"
             type="button"
           >
-            <div
+            <span
               class="v-btn__content"
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 arrow_upward
               </i>
-            </div>
+            </span>
           </button>
           <button
-            class="v-btn v-btn--icon theme--light"
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
           >
-            <div
+            <span
               class="v-btn__content"
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 arrow_downward
               </i>
-            </div>
+            </span>
           </button>
         </span>
       </div>
       <div
-        class="flex text-xs-right pr-2 xs3"
+        class="flex text-right pr-2 xs3"
       >
         <button
-          class="v-btn v-btn--icon theme--light"
+          class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
           type="button"
         >
-          <div
+          <span
             class="v-btn__content"
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light error--text"
+              class="v-icon notranslate material-icons theme--light error--text"
             >
               close
             </i>
-          </div>
+          </span>
         </button>
       </div>
     </div>
@@ -84,55 +84,55 @@ exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\`
           class="pl-2"
         >
           <button
-            class="v-btn v-btn--icon theme--light"
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
           >
-            <div
+            <span
               class="v-btn__content"
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 arrow_upward
               </i>
-            </div>
+            </span>
           </button>
           <button
-            class="v-btn v-btn--disabled v-btn--icon theme--light"
+            class="v-btn v-btn--disabled v-btn--icon v-btn--round theme--light v-size--default"
             disabled="disabled"
             type="button"
           >
-            <div
+            <span
               class="v-btn__content"
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 arrow_downward
               </i>
-            </div>
+            </span>
           </button>
         </span>
       </div>
       <div
-        class="flex text-xs-right pr-2 xs3"
+        class="flex text-right pr-2 xs3"
       >
         <button
-          class="v-btn v-btn--icon theme--light"
+          class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
           type="button"
         >
-          <div
+          <span
             class="v-btn__content"
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light error--text"
+              class="v-icon notranslate material-icons theme--light error--text"
             >
               close
             </i>
-          </div>
+          </span>
         </button>
       </div>
     </div>
@@ -141,17 +141,17 @@ exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\`
     />
   </div>
   <div
-    class="layout row wrap"
+    class="layout wrap"
   >
     <button
-      class="mr-2 mx-0 v-btn v-btn--outline v-btn--depressed theme--light primary--text"
+      class="mr-2 mx-0 v-btn v-btn--outlined theme--light v-size--default primary--text"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        Add
-      </div>
+      Add
+      </span>
     </button>
   </div>
 </div>
@@ -160,7 +160,7 @@ exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\`
 exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\` with default props 1`] = `
 <div>
   <div
-    class="layout row wrap"
+    class="layout wrap"
   >
     <!---->
   </div>
@@ -185,55 +185,55 @@ exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\`
           class="pl-2"
         >
           <button
-            class="v-btn v-btn--disabled v-btn--icon theme--light"
+            class="v-btn v-btn--disabled v-btn--icon v-btn--round theme--light v-size--default"
             disabled="disabled"
             type="button"
           >
-            <div
+            <span
               class="v-btn__content"
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 arrow_upward
               </i>
-            </div>
+            </span>
           </button>
           <button
-            class="v-btn v-btn--icon theme--light"
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
           >
-            <div
+            <span
               class="v-btn__content"
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 arrow_downward
               </i>
-            </div>
+            </span>
           </button>
         </span>
       </div>
       <div
-        class="flex text-xs-right pr-2 xs3"
+        class="flex text-right pr-2 xs3"
       >
         <button
-          class="v-btn v-btn--icon theme--light"
+          class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
           type="button"
         >
-          <div
+          <span
             class="v-btn__content"
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light error--text"
+              class="v-icon notranslate material-icons theme--light error--text"
             >
               close
             </i>
-          </div>
+          </span>
         </button>
       </div>
     </div>
@@ -260,55 +260,55 @@ exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\`
           class="pl-2"
         >
           <button
-            class="v-btn v-btn--icon theme--light"
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
           >
-            <div
+            <span
               class="v-btn__content"
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 arrow_upward
               </i>
-            </div>
+            </span>
           </button>
           <button
-            class="v-btn v-btn--disabled v-btn--icon theme--light"
+            class="v-btn v-btn--disabled v-btn--icon v-btn--round theme--light v-size--default"
             disabled="disabled"
             type="button"
           >
-            <div
+            <span
               class="v-btn__content"
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 arrow_downward
               </i>
-            </div>
+            </span>
           </button>
         </span>
       </div>
       <div
-        class="flex text-xs-right pr-2 xs3"
+        class="flex text-right pr-2 xs3"
       >
         <button
-          class="v-btn v-btn--icon theme--light"
+          class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
           type="button"
         >
-          <div
+          <span
             class="v-btn__content"
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light error--text"
+              class="v-icon notranslate material-icons theme--light error--text"
             >
               close
             </i>
-          </div>
+          </span>
         </button>
       </div>
     </div>
@@ -326,17 +326,17 @@ exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\`
     class="append-slot"
   />
   <div
-    class="layout row wrap"
+    class="layout wrap"
   >
     <button
-      class="mr-2 mx-0 v-btn v-btn--outline v-btn--depressed theme--light primary--text"
+      class="mr-2 mx-0 v-btn v-btn--outlined theme--light v-size--default primary--text"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        Add
-      </div>
+      Add
+      </span>
     </button>
   </div>
 </div>

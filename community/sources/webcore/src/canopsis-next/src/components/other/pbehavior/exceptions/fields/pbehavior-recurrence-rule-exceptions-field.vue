@@ -1,20 +1,41 @@
-<template lang="pug">
-  div
-    h3.text--secondary {{ $t('pbehavior.exceptions.title') }}
-    pbehavior-exceptions-list(v-if="exceptions.length", :exceptions="exceptions", @input="updateExceptions")
-    pbehavior-exceptions-field(
-      v-field="exdates",
-      :disabled="disabled",
+<template>
+  <div>
+    <h3 class="text--secondary">
+      {{ $t('pbehavior.exceptions.title') }}
+    </h3>
+    <pbehavior-exceptions-list
+      v-if="exceptions.length"
+      :exceptions="exceptions"
+      @input="updateExceptions"
+    />
+    <pbehavior-exceptions-field
+      v-field="exdates"
+      :disabled="disabled"
       :with-exdate-type="withExdateType"
-    )
-      template(#no-data="")
-        c-alert(
-          :value="!hasExceptionsOrExdates",
+    >
+      <template #no-data="">
+        <c-alert
+          :value="!hasExceptionsOrExdates"
           type="info"
-        ) {{ $t('pbehavior.exceptions.emptyExceptions') }}
-      template(#actions="")
-        v-btn.ml-0(color="primary", @click="addException") {{ $t('pbehavior.exceptions.create') }}
-        pbehavior-recurrence-rule-exceptions-list-menu(:value="exceptions", @input="updateExceptions")
+        >
+          {{ $t('pbehavior.exceptions.emptyExceptions') }}
+        </c-alert>
+      </template>
+      <template #actions="">
+        <v-btn
+          class="mr-2"
+          color="primary"
+          @click="addException"
+        >
+          {{ $t('pbehavior.exceptions.create') }}
+        </v-btn>
+        <pbehavior-recurrence-rule-exceptions-list-menu
+          :value="exceptions"
+          @input="updateExceptions"
+        />
+      </template>
+    </pbehavior-exceptions-field>
+  </div>
 </template>
 
 <script>

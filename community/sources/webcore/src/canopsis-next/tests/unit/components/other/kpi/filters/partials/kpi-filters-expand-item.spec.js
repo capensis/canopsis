@@ -23,6 +23,6 @@ describe('kpi-filters-expand-item', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

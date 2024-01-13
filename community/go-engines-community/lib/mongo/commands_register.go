@@ -5,28 +5,28 @@ package mongo
 import (
 	"context"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type CommandsRegister interface {
 	Clear()
-	RegisterInsert(entity *types.Entity)
+	RegisterInsert(i any)
 	RegisterUpdate(id string, set bson.M)
 	Commit(ctx context.Context) error
 }
 
 type commandsRegister struct {
 	dbCollection DbCollection
+	bulkSize     int
 
 	models []mongo.WriteModel
 }
 
-func NewCommandsRegister(collection DbCollection) CommandsRegister {
+func NewCommandsRegister(collection DbCollection, bulkSize int) CommandsRegister {
 	return &commandsRegister{
 		dbCollection: collection,
+		bulkSize:     bulkSize,
 		models:       nil,
 	}
 }
@@ -36,8 +36,8 @@ func (s *commandsRegister) Clear() {
 	s.models = s.models[:0]
 }
 
-func (s *commandsRegister) RegisterInsert(entity *types.Entity) {
-	s.models = append(s.models, mongo.NewInsertOneModel().SetDocument(entity))
+func (s *commandsRegister) RegisterInsert(i any) {
+	s.models = append(s.models, mongo.NewInsertOneModel().SetDocument(i))
 }
 
 func (s *commandsRegister) RegisterUpdate(id string, set bson.M) {
@@ -47,16 +47,16 @@ func (s *commandsRegister) RegisterUpdate(id string, set bson.M) {
 func (s *commandsRegister) Commit(ctx context.Context) error {
 	// todo: check bulk size in bytes
 
-	if len(s.models) == 0 {
+	modelsLen := len(s.models)
+	if modelsLen == 0 {
 		return nil
 	}
 
 	defer s.Clear()
 
-	modelsLen := len(s.models)
 	from := 0
 
-	for to := canopsis.DefaultBulkSize; to <= modelsLen; to += canopsis.DefaultBulkSize {
+	for to := s.bulkSize; to <= modelsLen; to += s.bulkSize {
 		_, err := s.dbCollection.BulkWrite(ctx, s.models[from:to])
 		if err != nil {
 			return err

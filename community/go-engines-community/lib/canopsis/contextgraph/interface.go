@@ -25,8 +25,8 @@ type Manager interface {
 	HandleConnector(ctx context.Context, event *types.Event, commRegister mongo.CommandsRegister) (Report, error)
 	// HandleService processes service event.
 	HandleService(ctx context.Context, event *types.Event, commRegister mongo.CommandsRegister) (Report, error)
-	// RefreshServices refreshes slice of available services. Should be used before AssignServices calls until the service cache is implemented.
-	RefreshServices(ctx context.Context) error
+	// LoadServices refreshes slice of available services. Should be used before AssignServices calls until the service cache is implemented.
+	LoadServices(ctx context.Context) error
 	// AssignServices processes an entity to check if it's belonged to an entity service and modifies it.
 	AssignServices(eventEntity *types.Entity, commRegister mongo.CommandsRegister)
 	// AssignStateSetting assigns a state setting for a component or a service, returns true if new state setting is assigned.

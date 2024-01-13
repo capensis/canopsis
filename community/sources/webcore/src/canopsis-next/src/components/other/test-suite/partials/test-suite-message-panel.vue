@@ -1,9 +1,21 @@
-<template lang="pug">
-  div.test-suite-message
-    v-card
-      v-card-title.white--text(:style="{ backgroundColor: color }") {{ title }}
-      v-card-text.pt-1
-        system-message(:value="value", :label="label", :file-name="fileName")
+<template>
+  <div class="test-suite-message">
+    <v-card>
+      <v-card-title
+        class="white--text"
+        :style="{ backgroundColor: color }"
+      >
+        {{ title }}
+      </v-card-title>
+      <v-card-text class="pt-1">
+        <system-message
+          :value="value"
+          :label="label"
+          :file-name="fileName"
+        />
+      </v-card-text>
+    </v-card>
+  </div>
 </template>
 
 <script>

@@ -1,5 +1,9 @@
-<template lang="pug">
-  component(:is="component", v-bind="props", v-on="$listeners")
+<template>
+  <component
+    :is="component"
+    v-bind="props"
+    v-on="$listeners"
+  />
 </template>
 
 <script>

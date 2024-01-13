@@ -100,5 +100,6 @@ const (
 
 	ColorThemeCollection = "color_theme"
 
+	//todo: think about collection anme
 	EngineNotificationCollection = "engine_notification"
 )
