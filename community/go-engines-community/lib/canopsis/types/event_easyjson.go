@@ -296,6 +296,8 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.IsInstructionMatched = bool(in.Bool())
 		case "healthcheck":
 			out.Healthcheck = bool(in.Bool())
+		case "state_setting_updated":
+			out.StateSettingUpdated = bool(in.Bool())
 		case "ticket":
 			out.Ticket = string(in.String())
 		case "ticket_url":
@@ -662,6 +664,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"healthcheck\":"
 		out.RawString(prefix)
 		out.Bool(bool(in.Healthcheck))
+	}
+	if in.StateSettingUpdated {
+		const prefix string = ",\"state_setting_updated\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.StateSettingUpdated))
 	}
 	if in.Ticket != "" {
 		const prefix string = ",\"ticket\":"

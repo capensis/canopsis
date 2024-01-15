@@ -95,7 +95,7 @@ type checkProcessor struct {
 
 func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
 	result := Result{}
-	if event.Entity == nil || !event.Entity.Enabled || event.Parameters.State == nil || event.Entity.StateInfo != nil && event.Parameters.Initiator != types.InitiatorSystem {
+	if event.Entity == nil || !event.Entity.Enabled || event.Parameters.State == nil || event.Entity.StateInfo != nil && event.Parameters.Initiator != types.InitiatorSystem && !event.Parameters.StateSettingUpdated {
 		return result, nil
 	}
 
@@ -179,6 +179,16 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 	result := Result{
 		Forward: true,
 	}
+
+	if event.Parameters.StateSettingUpdated {
+		componentState, err := p.componentCountersCalculator.RecomputeCounters(ctx, &entity)
+		if err != nil {
+			return Result{}, err
+		}
+
+		*params.State = types.CpsNumber(componentState)
+	}
+
 	if *params.State == types.AlarmStateOK {
 		return result, nil
 	}
@@ -303,7 +313,20 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 	result := Result{
 		Forward: true,
 	}
-	newState := *params.State
+
+	var newState types.CpsNumber
+
+	if params.StateSettingUpdated {
+		componentState, err := p.componentCountersCalculator.RecomputeCounters(ctx, &entity)
+		if err != nil {
+			return Result{}, err
+		}
+
+		newState = types.CpsNumber(componentState)
+	} else {
+		newState = *params.State
+	}
+
 	alarmChange := p.newAlarmChange(alarm)
 	previousState := alarm.Value.State.Value
 	previousStatus := alarm.Value.Status.Value

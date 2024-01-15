@@ -167,7 +167,7 @@ func (p *componentProcessor) Process(ctx context.Context, event *types.Event) (
 			}
 		}
 
-		_, err = p.contextGraphManager.AssignStateSetting(ctx, &component, commRegister)
+		stateSettingUpdated, err := p.contextGraphManager.AssignStateSetting(ctx, &component, commRegister)
 		if err != nil {
 			return fmt.Errorf("cannot assign state setting: %w", err)
 		}
@@ -185,6 +185,7 @@ func (p *componentProcessor) Process(ctx context.Context, event *types.Event) (
 		}
 
 		event.Entity = &component
+		event.StateSettingUpdated = stateSettingUpdated
 		eventMetric.IsServicesUpdated = len(event.Entity.ServicesToAdd) > 0 || len(event.Entity.ServicesToRemove) > 0
 
 		return nil
