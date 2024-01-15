@@ -1,24 +1,37 @@
-<template lang="pug">
-  c-lazy-search-field(
-    v-field="value",
-    :label="label",
-    :loading="pending",
-    :items="availableParameters",
-    :name="name",
-    :has-more="hasMoreExternalMetrics",
-    :required="required",
-    :hide-no-data="addable",
-    item-text="text",
-    item-value="value",
-    @fetch="fetchListExternalMetrics",
-    @fetch:more="fetchMoreExternalMetrics",
+<template>
+  <c-lazy-search-field
+    v-field="value"
+    :label="label"
+    :loading="pending"
+    :items="availableParameters"
+    :name="name"
+    :has-more="hasMoreExternalMetrics"
+    :required="required"
+    :hide-no-data="addable"
+    item-text="text"
+    item-value="value"
+    @fetch="fetchListExternalMetrics"
+    @fetch:more="fetchMoreExternalMetrics"
     @update:search="updateSearch"
-  )
-    template(v-if="!addable", #selection="{ item }")
-      v-icon.mr-2 language
-      span {{ item }}
-    template(v-if="!addable", #icon="{ item }")
-      v-icon.mr-2 language
+  >
+    <template
+      v-if="!addable"
+      #selection="{ item }"
+    >
+      <v-icon class="mr-2">
+        language
+      </v-icon>
+      <span>{{ item }}</span>
+    </template>
+    <template
+      v-if="!addable"
+      #icon=""
+    >
+      <v-icon class="mr-2">
+        language
+      </v-icon>
+    </template>
+  </c-lazy-search-field>
 </template>
 
 <script>

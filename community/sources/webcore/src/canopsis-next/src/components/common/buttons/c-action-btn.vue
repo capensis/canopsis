@@ -1,51 +1,82 @@
-<template lang="pug">
-  v-tooltip(
-    :top="top",
-    :right="right",
-    :bottom="bottom",
-    :left="left",
-    :disabled="disabled",
-    :custom-activator="customTooltipActivator",
-    :lazy="lazy"
-  )
-    template(#activator="{ on: tooltipOn }")
-      slot(name="button", :on="tooltipOn")
-        v-badge.c-action-btn__badge(v-if="badgeValue", :color="badgeColor", overlap)
-          template(#badge="")
-            v-tooltip(
-              :top="top",
-              :right="right",
-              :bottom="bottom",
-              :left="left",
-              :disabled="!badgeTooltip",
-              :custom-activator="customTooltipActivator"
-            )
-              template(#activator="{ on: badgeTooltipOn }")
-                slot(name="badgeIcon", :on="badgeTooltipOn")
-                  v-icon(v-on="badgeTooltipOn", color="white") {{ badgeIcon }}
-              span {{ badgeTooltip }}
-          v-btn.ma-0.c-action-btn__button(
-            v-on="tooltipOn",
-            :disabled="disabled",
-            :loading="loading",
-            :small="small",
-            :color="btnColor",
-            icon,
+<template>
+  <v-tooltip
+    :top="top"
+    :right="right"
+    :bottom="bottom"
+    :left="left"
+    :disabled="disabled"
+  >
+    <template #activator="{ on: tooltipOn }">
+      <slot
+        name="button"
+        :on="tooltipOn"
+      >
+        <v-badge
+          class="c-action-btn__badge"
+          v-if="badgeValue"
+          :color="badgeColor"
+          overlap
+        >
+          <template #badge="">
+            <v-tooltip
+              :top="top"
+              :right="right"
+              :bottom="bottom"
+              :left="left"
+              :disabled="!badgeTooltip"
+            >
+              <template #activator="{ on: badgeTooltipOn }">
+                <slot
+                  name="badgeIcon"
+                  :on="badgeTooltipOn"
+                >
+                  <v-icon
+                    v-on="badgeTooltipOn"
+                    color="white"
+                  >
+                    {{ badgeIcon }}
+                  </v-icon>
+                </slot>
+              </template>
+              <span>{{ badgeTooltip }}</span>
+            </v-tooltip>
+          </template>
+          <v-btn
+            class="ma-0 c-action-btn__button"
+            v-on="tooltipOn"
+            :disabled="disabled"
+            :loading="loading"
+            :small="small"
+            :color="btnColor"
+            :dark="dark"
+            icon
             @click.stop.prevent="$listeners.click"
-          )
-            v-icon(:color="preparedProps.color") {{ preparedProps.icon }}
-        v-btn.mx-1.my-0.c-action-btn__button(
-          v-else,
-          v-on="tooltipOn",
-          :disabled="disabled",
-          :loading="loading",
-          :small="small",
-          :color="btnColor",
-          icon,
+          >
+            <v-icon :color="preparedProps.color">
+              {{ preparedProps.icon }}
+            </v-icon>
+          </v-btn>
+        </v-badge>
+        <v-btn
+          class="mx-1 my-0 c-action-btn__button"
+          v-else
+          v-on="tooltipOn"
+          :disabled="disabled"
+          :loading="loading"
+          :small="small"
+          :color="btnColor"
+          :dark="dark"
+          icon
           @click.stop.prevent="$listeners.click"
-        )
-          v-icon(:color="preparedProps.color") {{ preparedProps.icon }}
-    span {{ preparedProps.tooltip }}
+        >
+          <v-icon :color="preparedProps.color">
+            {{ preparedProps.icon }}
+          </v-icon>
+        </v-btn>
+      </slot>
+    </template>
+    <span>{{ preparedProps.tooltip }}</span>
+  </v-tooltip>
 </template>
 
 <script>
@@ -119,11 +150,7 @@ export default {
       type: String,
       default: '',
     },
-    customTooltipActivator: {
-      type: Boolean,
-      default: false,
-    },
-    lazy: {
+    dark: {
       type: Boolean,
       default: false,
     },

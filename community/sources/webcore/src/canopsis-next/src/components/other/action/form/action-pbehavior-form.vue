@@ -1,5 +1,11 @@
-<template lang="pug">
-  pbehavior-form(v-field="value", no-pattern, no-enabled, no-comments, with-start-on-trigger)
+<template>
+  <pbehavior-form
+    v-field="value"
+    no-pattern
+    no-enabled
+    no-comments
+    with-start-on-trigger
+  />
 </template>
 
 <script>

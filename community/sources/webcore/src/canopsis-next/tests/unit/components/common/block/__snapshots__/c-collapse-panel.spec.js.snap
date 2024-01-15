@@ -1,61 +1,72 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`c-collapse-panel Renders \`c-collapse-panel\` with custom props 1`] = `
-<ul
-  class="v-expansion-panel c-collapse-panel theme--light"
+<div
+  class="c-collapse-panel elevation-2 v-item-group theme--light v-expansion-panels v-expansion-panels--accordion"
 >
-  <li
-    class="v-expansion-panel__container"
-    style="background-color: grey;"
-    tabindex="0"
+  <div
+    aria-expanded="false"
+    class="v-expansion-panel c-collapse-panel__panel"
   >
-    <div
-      class="v-expansion-panel__header"
+    <button
+      class="v-expansion-panel-header grey"
+      type="button"
     >
       <span
         class="white--text"
-      >
-        
-      </span>
+      />
       <transition-stub
         name="fade-transition"
       >
         <div
-          class="v-expansion-panel__header__icon"
+          class="v-expansion-panel-header__icon"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--light white--text"
+            class="v-icon notranslate material-icons theme--light white--text"
           >
             custom_icon
           </i>
         </div>
       </transition-stub>
-    </div>
+    </button>
     <transition-stub
-      mode="in-out"
       name="expand-transition"
+      style="background-color: grey;"
     >
       <div
-        class="v-expansion-panel__body"
+        class="v-expansion-panel-content"
         style="display: none;"
-      />
+      >
+        <div
+          class="v-expansion-panel-content__wrap"
+        >
+          <div
+            class="c-collapse-panel__card v-card v-card--flat v-sheet theme--light"
+          >
+            <div
+              class="v-card__text"
+            />
+          </div>
+        </div>
+      </div>
     </transition-stub>
-  </li>
-</ul>
+  </div>
+</div>
 `;
 
 exports[`c-collapse-panel Renders \`c-collapse-panel\` with custom title 1`] = `
-<ul
-  class="v-expansion-panel c-collapse-panel theme--light"
+<div
+  class="c-collapse-panel elevation-2 v-item-group theme--light v-expansion-panels v-expansion-panels--accordion"
 >
-  <li
-    class="v-expansion-panel__container"
-    style="background-color: grey;"
-    tabindex="0"
+  <div
+    aria-expanded="false"
+    class="v-expansion-panel c-collapse-panel__panel"
   >
-    <div
-      class="v-expansion-panel__header"
+    <button
+      class="v-expansion-panel-header"
+      style="background-color: rgb(128, 128, 128); border-color: rgb(128, 128, 128);"
+      type="button"
     >
       <span
         class="white--text"
@@ -66,102 +77,110 @@ exports[`c-collapse-panel Renders \`c-collapse-panel\` with custom title 1`] = `
         name="fade-transition"
       >
         <div
-          class="v-expansion-panel__header__icon"
+          class="v-expansion-panel-header__icon"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--light white--text"
+            class="v-icon notranslate material-icons theme--light white--text"
           >
             keyboard_arrow_down
           </i>
         </div>
       </transition-stub>
-    </div>
+    </button>
     <transition-stub
-      mode="in-out"
       name="expand-transition"
+      style="background-color: rgb(128, 128, 128);"
     >
       <div
-        class="v-expansion-panel__body"
+        class="v-expansion-panel-content"
         style="display: none;"
       >
         <div
-          class="v-card v-sheet theme--light"
+          class="v-expansion-panel-content__wrap"
         >
           <div
-            class="v-card__text"
-          />
+            class="c-collapse-panel__card v-card v-card--flat v-sheet theme--light"
+          >
+            <div
+              class="v-card__text"
+            />
+          </div>
         </div>
       </div>
     </transition-stub>
-  </li>
-</ul>
+  </div>
+</div>
 `;
 
 exports[`c-collapse-panel Renders \`c-collapse-panel\` with default props 1`] = `
-<ul
-  class="v-expansion-panel c-collapse-panel theme--light"
+<div
+  class="c-collapse-panel elevation-2 v-item-group theme--light v-expansion-panels v-expansion-panels--accordion"
 >
-  <li
-    class="v-expansion-panel__container"
-    style="background-color: grey;"
-    tabindex="0"
+  <div
+    aria-expanded="false"
+    class="v-expansion-panel c-collapse-panel__panel"
   >
-    <div
-      class="v-expansion-panel__header"
+    <button
+      class="v-expansion-panel-header"
+      style="background-color: rgb(128, 128, 128); border-color: rgb(128, 128, 128);"
+      type="button"
     >
       <span
         class="white--text"
-      >
-        
-      </span>
+      />
       <transition-stub
         name="fade-transition"
       >
         <div
-          class="v-expansion-panel__header__icon"
+          class="v-expansion-panel-header__icon"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--light white--text"
+            class="v-icon notranslate material-icons theme--light white--text"
           >
             keyboard_arrow_down
           </i>
         </div>
       </transition-stub>
-    </div>
+    </button>
     <transition-stub
-      mode="in-out"
       name="expand-transition"
+      style="background-color: rgb(128, 128, 128);"
     >
       <div
-        class="v-expansion-panel__body"
+        class="v-expansion-panel-content"
         style="display: none;"
       >
         <div
-          class="v-card v-sheet theme--light"
+          class="v-expansion-panel-content__wrap"
         >
           <div
-            class="v-card__text"
-          />
+            class="c-collapse-panel__card v-card v-card--flat v-sheet theme--light"
+          >
+            <div
+              class="v-card__text"
+            />
+          </div>
         </div>
       </div>
     </transition-stub>
-  </li>
-</ul>
+  </div>
+</div>
 `;
 
 exports[`c-collapse-panel Renders \`c-collapse-panel\` with errors 1`] = `
-<ul
-  class="v-expansion-panel c-collapse-panel theme--light"
+<div
+  class="c-collapse-panel elevation-2 v-item-group theme--light v-expansion-panels v-expansion-panels--accordion"
 >
-  <li
-    class="v-expansion-panel__container error"
-    style="background-color: grey;"
-    tabindex="0"
+  <div
+    aria-expanded="false"
+    class="v-expansion-panel c-collapse-panel__panel"
   >
-    <div
-      class="v-expansion-panel__header"
+    <button
+      class="v-expansion-panel-header error"
+      style=""
+      type="button"
     >
       <span
         class="white--text"
@@ -172,34 +191,38 @@ exports[`c-collapse-panel Renders \`c-collapse-panel\` with errors 1`] = `
         name="fade-transition"
       >
         <div
-          class="v-expansion-panel__header__icon"
+          class="v-expansion-panel-header__icon"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--light white--text"
+            class="v-icon notranslate material-icons theme--light white--text"
           >
             keyboard_arrow_down
           </i>
         </div>
       </transition-stub>
-    </div>
+    </button>
     <transition-stub
-      mode="in-out"
       name="expand-transition"
+      style="background-color: rgb(128, 128, 128);"
     >
       <div
-        class="v-expansion-panel__body"
+        class="v-expansion-panel-content"
         style="display: none;"
       >
         <div
-          class="v-card v-sheet theme--light"
+          class="v-expansion-panel-content__wrap"
         >
           <div
-            class="v-card__text"
-          />
+            class="c-collapse-panel__card v-card v-card--flat v-sheet theme--light"
+          >
+            <div
+              class="v-card__text"
+            />
+          </div>
         </div>
       </div>
     </transition-stub>
-  </li>
-</ul>
+  </div>
+</div>
 `;

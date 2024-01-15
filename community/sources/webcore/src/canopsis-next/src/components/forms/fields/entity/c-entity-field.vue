@@ -1,24 +1,24 @@
-<template lang="pug">
-  c-lazy-search-field(
-    v-field="value",
-    :label="selectLabel",
-    :loading="pending",
-    :limit="limit",
-    :items="entities",
-    :name="name",
-    :has-more="hasMoreEntities",
-    :item-text="itemText",
-    :item-value="itemValue",
-    :item-disabled="itemDisabled",
-    :disabled="disabled",
-    :required="required",
-    :clearable="clearable",
-    :autocomplete="autocomplete",
-    :return-object="returnObject",
-    @fetch="fetchEntities",
-    @fetch:more="fetchMoreEntities",
+<template>
+  <c-lazy-search-field
+    v-field="value"
+    :label="selectLabel"
+    :loading="pending"
+    :limit="limit"
+    :items="entities"
+    :name="name"
+    :has-more="hasMoreEntities"
+    :item-text="itemText"
+    :item-value="itemValue"
+    :item-disabled="itemDisabled"
+    :disabled="disabled"
+    :required="required"
+    :clearable="clearable"
+    :autocomplete="autocomplete"
+    :return-object="returnObject"
+    @fetch="fetchEntities"
+    @fetch:more="fetchMoreEntities"
     @update:search="updateSearch"
-  )
+  />
 </template>
 
 <script>

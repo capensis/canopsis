@@ -2,20 +2,21 @@
 
 exports[`c-pbehavior-reason-field Renders \`c-pbehavior-reason-field\` with custom props 1`] = `
 <div
-  class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
-  role="combobox"
+  class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
 >
   <div
     class="v-input__control"
   >
     <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
       class="v-input__slot"
+      role="button"
     >
       <div
         class="v-select__slot"
       >
         <label
-          aria-hidden="true"
           class="v-label v-label--active theme--light"
           style="left: 0px; position: absolute;"
         >
@@ -30,10 +31,8 @@ exports[`c-pbehavior-reason-field Renders \`c-pbehavior-reason-field\` with cust
             reason-name-1
           </div>
           <input
-            aria-label="Reason"
             aria-readonly="false"
-            autocomplete="on"
-            name="customName"
+            autocomplete="off"
             readonly="readonly"
             type="text"
           />
@@ -46,16 +45,23 @@ exports[`c-pbehavior-reason-field Renders \`c-pbehavior-reason-field\` with cust
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light"
+              class="v-icon notranslate material-icons theme--light"
             >
               arrow_drop_down
             </i>
           </div>
         </div>
+        <input
+          name="customName"
+          type="hidden"
+          value="reason-id-1"
+        />
       </div>
       <div
         class="v-menu"
-      />
+      >
+        <!---->
+      </div>
     </div>
     <div
       class="v-text-field__details"
@@ -63,8 +69,10 @@ exports[`c-pbehavior-reason-field Renders \`c-pbehavior-reason-field\` with cust
       <div
         class="v-messages theme--light"
       >
-        <div
+        <transition-group-stub
           class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
         />
       </div>
     </div>
@@ -72,74 +80,25 @@ exports[`c-pbehavior-reason-field Renders \`c-pbehavior-reason-field\` with cust
 </div>
 `;
 
-exports[`c-pbehavior-reason-field Renders \`c-pbehavior-reason-field\` with custom props 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-select-list v-card theme--light"
-  >
-    <div
-      class="v-list theme--light"
-      role="list"
-    >
-      <div
-        class="primary--text"
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              reason-name-1
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              reason-name-2
-            </div>
-          </div>
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-`;
+exports[`c-pbehavior-reason-field Renders \`c-pbehavior-reason-field\` with custom props 2`] = `undefined`;
 
 exports[`c-pbehavior-reason-field Renders \`c-pbehavior-reason-field\` with default props 1`] = `
 <div
-  class="v-input v-text-field v-select theme--light"
-  role="combobox"
+  class="v-input theme--light v-text-field v-select"
 >
   <div
     class="v-input__control"
   >
     <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
       class="v-input__slot"
+      role="button"
     >
       <div
         class="v-select__slot"
       >
         <label
-          aria-hidden="true"
           class="v-label theme--light"
           style="left: 0px; position: absolute;"
         >
@@ -149,10 +108,8 @@ exports[`c-pbehavior-reason-field Renders \`c-pbehavior-reason-field\` with defa
           class="v-select__selections"
         >
           <input
-            aria-label="Reason"
             aria-readonly="false"
-            autocomplete="on"
-            name="reason"
+            autocomplete="off"
             readonly="readonly"
             type="text"
           />
@@ -165,16 +122,22 @@ exports[`c-pbehavior-reason-field Renders \`c-pbehavior-reason-field\` with defa
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light"
+              class="v-icon notranslate material-icons theme--light"
             >
               arrow_drop_down
             </i>
           </div>
         </div>
+        <input
+          name="reason"
+          type="hidden"
+        />
       </div>
       <div
         class="v-menu"
-      />
+      >
+        <!---->
+      </div>
     </div>
     <div
       class="v-text-field__details"
@@ -182,8 +145,10 @@ exports[`c-pbehavior-reason-field Renders \`c-pbehavior-reason-field\` with defa
       <div
         class="v-messages theme--light"
       >
-        <div
+        <transition-group-stub
           class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
         />
       </div>
     </div>
@@ -191,36 +156,4 @@ exports[`c-pbehavior-reason-field Renders \`c-pbehavior-reason-field\` with defa
 </div>
 `;
 
-exports[`c-pbehavior-reason-field Renders \`c-pbehavior-reason-field\` with default props 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-select-list v-card theme--light"
-  >
-    <div
-      class="v-list theme--light"
-      role="list"
-    >
-      <div
-        role="listitem"
-      >
-        <div
-          class="v-list__tile theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              No data available
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-`;
+exports[`c-pbehavior-reason-field Renders \`c-pbehavior-reason-field\` with default props 2`] = `undefined`;

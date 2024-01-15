@@ -1,28 +1,45 @@
-<template lang="pug">
-  v-layout(column)
-    v-flex(v-if="!steps.length", xs12)
-      v-alert(:value="true", type="info") {{ $t('remediation.instruction.emptySteps') }}
-    c-card-iterator-field.mb-2(
-      v-field="steps",
-      item-key="key",
-      :disabled="disabled",
+<template>
+  <v-layout column>
+    <c-alert
+      :value="!steps.length"
+      type="info"
+    >
+      {{ $t('remediation.instruction.emptySteps') }}
+    </c-alert>
+    <c-card-iterator-field
+      class="mb-2"
+      v-field="steps"
+      item-key="key"
+      :disabled="disabled"
       :draggable-group="draggableGroup"
-    )
-      template(#item="{ index }")
-        remediation-instruction-step-field(
-          v-field="steps[index]",
-          :step-number="index + 1",
-          :disabled="disabled",
+    >
+      <template #item="{ index }">
+        <remediation-instruction-step-field
+          v-field="steps[index]"
+          :step-number="index + 1"
+          :disabled="disabled"
           @remove="removeStep(index)"
-        )
-    v-layout(row, align-center)
-      v-btn.ml-0(
-        :color="hasStepsErrors ? 'error' : 'primary'",
-        :disabled="disabled",
-        outline,
+        />
+      </template>
+    </c-card-iterator-field>
+    <v-layout align-center>
+      <v-btn
+        class="mr-2"
+        :color="hasStepsErrors ? 'error' : 'primary'"
+        :disabled="disabled"
+        outlined
         @click="addStep"
-      ) {{ $t('remediation.instruction.addStep') }}
-      span.error--text(v-show="hasStepsErrors") {{ $t('remediation.instruction.errors.stepRequired') }}
+      >
+        {{ $t('remediation.instruction.addStep') }}
+      </v-btn>
+      <span
+        class="error--text"
+        v-show="hasStepsErrors"
+      >
+        {{ $t('remediation.instruction.errors.stepRequired') }}
+      </span>
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>

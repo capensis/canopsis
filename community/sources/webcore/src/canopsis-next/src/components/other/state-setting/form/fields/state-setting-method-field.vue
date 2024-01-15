@@ -1,23 +1,27 @@
-<template lang="pug">
-  v-layout(column)
-    span.subheading.font-weight-bold {{ $t('stateSetting.computeMethod') }}
-    v-radio-group(
-      v-field="value",
-      hide-details,
+<template>
+  <v-layout column>
+    <span class="subheading font-weight-bold">{{ $t('stateSetting.computeMethod') }}</span>
+    <v-radio-group
+      v-field="value"
+      hide-details
       mandatory
-    )
-      v-radio(
-        v-for="method in methods",
-        :key="method",
-        :value="method",
+    >
+      <v-radio
+        v-for="method in methods"
+        :key="method"
+        :value="method"
         color="primary"
-      )
-        template(#label)
-          span.mr-2 {{ $t(`stateSetting.methods.${method}.label`) }}
-          c-help-icon(
-            :text="$t(`stateSetting.methods.${method}.tooltip`)",
+      >
+        <template #label>
+          <span class="mr-2">{{ $t(`stateSetting.methods.${method}.label`) }}</span>
+          <c-help-icon
+            :text="$t(`stateSetting.methods.${method}.tooltip`)"
             top
-          )
+          />
+        </template>
+      </v-radio>
+    </v-radio-group>
+  </v-layout>
 </template>
 
 <script>

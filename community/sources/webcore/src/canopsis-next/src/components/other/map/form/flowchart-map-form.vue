@@ -1,7 +1,14 @@
-<template lang="pug">
-  v-layout.geomap-map-form(column)
-    c-name-field(v-field="form.name", required)
-    flowchart-editor(v-field="form.parameters")
+<template>
+  <v-layout
+    class="geomap-map-form"
+    column
+  >
+    <c-name-field
+      v-field="form.name"
+      required
+    />
+    <flowchart-editor v-field="form.parameters" />
+  </v-layout>
 </template>
 
 <script>

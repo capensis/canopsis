@@ -237,7 +237,7 @@ describe('numbers', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `numbers` widget settings with custom props and permissions', async () => {
@@ -278,6 +278,6 @@ describe('numbers', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

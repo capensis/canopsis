@@ -3,6 +3,7 @@
 exports[`group-panel Renders \`group-panel\` with custom props 1`] = `
 <li
   class="v-expansion-panel__container secondary group-item editing"
+  isgroupsorderchanged="true"
   tabindex="0"
 >
   <div
@@ -11,33 +12,26 @@ exports[`group-panel Renders \`group-panel\` with custom props 1`] = `
     <div
       class="panel-header"
     >
-      <div
-        class="panel-header__title"
-      >
+      <span>
         Custom group title
-      </div>
-      <div
-        class="panel-header__actions"
+      </span>
+      <button
+        class="v-btn v-btn--disabled v-btn--icon v-btn--depressed v-btn--small theme--light"
+        disabled="disabled"
+        type="button"
       >
-        <!---->
-        <button
-          class="v-btn v-btn--disabled v-btn--icon v-btn--depressed v-btn--small theme--light"
-          disabled="disabled"
-          type="button"
+        <div
+          class="v-btn__content"
         >
-          <div
-            class="v-btn__content"
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate material-icons theme--light"
+            style="font-size: 16px;"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-              style="font-size: 16px;"
-            >
-              edit
-            </i>
-          </div>
-        </button>
-      </div>
+            edit
+          </i>
+        </div>
+      </button>
     </div>
   </div>
   <transition-stub
@@ -67,17 +61,26 @@ exports[`group-panel Renders \`group-panel\` with required props 1`] = `
     <div
       class="panel-header"
     >
-      <div
-        class="panel-header__title"
-      >
+      <span>
         Group title
-      </div>
-      <div
-        class="panel-header__actions"
+      </span>
+      <button
+        class="v-btn v-btn--icon v-btn--depressed v-btn--small theme--light"
+        style="display: none;"
+        type="button"
       >
-        <!---->
-        <!---->
-      </div>
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate material-icons theme--light"
+            style="font-size: 16px;"
+          >
+            edit
+          </i>
+        </div>
+      </button>
     </div>
     <transition-stub
       name="fade-transition"
@@ -87,7 +90,7 @@ exports[`group-panel Renders \`group-panel\` with required props 1`] = `
       >
         <i
           aria-hidden="true"
-          class="v-icon material-icons theme--light"
+          class="v-icon notranslate material-icons theme--light"
         >
           keyboard_arrow_down
         </i>

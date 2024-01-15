@@ -1,48 +1,62 @@
-<template lang="pug">
-  v-layout(column)
-    h5.subheading.font-weight-bold {{ $t('stateSetting.targetEntityState') }} - {{ label }}
-    v-layout.target-entity-state-row(row, align-center)
-      v-flex(xs1)
-        v-switch(
-          v-field="condition.enabled",
+<template>
+  <v-layout column>
+    <h5 class="subheading font-weight-bold">
+      {{ $t('stateSetting.targetEntityState') }} - {{ label }}
+    </h5>
+    <v-layout
+      class="target-entity-state-row"
+      align-center
+    >
+      <v-flex xs1>
+        <v-switch
+          v-field="condition.enabled"
           color="primary"
-        )
-      v-flex(xs3)
-        state-setting-threshold-method-field(
-          v-field="condition.method",
+        />
+      </v-flex>
+      <v-flex xs3>
+        <state-setting-threshold-method-field
+          v-field="condition.method"
           :disabled="disabled"
-        )
-      v-flex(xs3)
-        c-select-field(
-          v-field="condition.state",
-          :label="$t('stateSetting.entitiesStates')",
-          :items="states",
-          :disabled="disabled",
-          :required="!disabled",
+        />
+      </v-flex>
+      <v-flex xs3>
+        <c-select-field
+          v-field="condition.state"
+          :label="$t('stateSetting.entitiesStates')"
+          :items="states"
+          :disabled="disabled"
+          :required="!disabled"
           :name="stateName"
-        )
-      v-flex(xs3)
-        c-select-field(
-          v-field="condition.cond",
-          :label="$tc('common.condition', 1)",
-          :items="conditions",
-          :disabled="disabled",
-          :required="!disabled",
+        />
+      </v-flex>
+      <v-flex xs3>
+        <c-select-field
+          v-field="condition.cond"
+          :label="$tc('common.condition', 1)"
+          :items="conditions"
+          :disabled="disabled"
+          :required="!disabled"
           :name="conditionName"
-        )
-      v-flex(xs2)
-        c-number-field(
-          v-field="condition.value",
-          :label="$t('common.value')",
-          :disabled="disabled",
-          :required="!disabled",
-          :name="valueName",
+        />
+      </v-flex>
+      <v-flex xs2>
+        <c-number-field
+          v-field="condition.value"
+          :label="$t('common.value')"
+          :disabled="disabled"
+          :required="!disabled"
+          :name="valueName"
           :min="0"
-        )
-    v-expand-transition
-      span(v-if="summaryMessage")
-        strong {{ $t('common.summary') }}:
-        span.ml-2 {{ summaryMessage }}
+        />
+      </v-flex>
+    </v-layout>
+    <v-expand-transition>
+      <span v-if="summaryMessage">
+        <strong>{{ $t('common.summary') }}:</strong>
+        <span class="ml-2">{{ summaryMessage }}</span>
+      </span>
+    </v-expand-transition>
+  </v-layout>
 </template>
 
 <script>

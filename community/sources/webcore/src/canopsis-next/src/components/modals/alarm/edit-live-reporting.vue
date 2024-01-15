@@ -1,22 +1,35 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ $t('modals.liveReporting.editLiveReporting') }}
-      template(#text="")
-        h3 {{ $t('modals.liveReporting.dateInterval') }}
-        date-interval-selector(v-model="form", :quick-ranges="quickRanges")
-      template(#actions="")
-        v-btn(
-          flat,
-          depressed,
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ $t('modals.liveReporting.editLiveReporting') }}</span>
+      </template>
+      <template #text="">
+        <h3>{{ $t('modals.liveReporting.dateInterval') }}</h3>
+        <date-interval-selector
+          v-model="form"
+          :quick-ranges="quickRanges"
+        />
+      </template>
+      <template #actions="">
+        <v-btn
+          text
+          depressed
           @click="$modals.hide"
-        ) {{ $t('common.cancel') }}
-        v-btn.primary(
-          :loading="submitting",
-          :disabled="isDisabled",
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          class="primary"
+          :loading="submitting"
+          :disabled="isDisabled"
           type="submit"
-        ) {{ $t('common.apply') }}
+        >
+          {{ $t('common.apply') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>

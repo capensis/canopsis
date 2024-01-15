@@ -1128,7 +1128,7 @@ describe('flowchart-editor', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `flowchart-editor` with custom props', async () => {
@@ -1156,6 +1156,6 @@ describe('flowchart-editor', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

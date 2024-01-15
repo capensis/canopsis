@@ -1,13 +1,13 @@
-<template lang="pug">
-  c-patterns-field(
-    v-field="patterns",
-    :entity-attributes="entityAttributes",
-    :entity-types="entityTypes",
-    name="rule_patterns",
-    required,
-    with-entity,
+<template>
+  <c-patterns-field
+    v-field="patterns"
+    :entity-attributes="entityAttributes"
+    :entity-types="entityTypes"
+    name="rule_patterns"
+    required
+    with-entity
     entity-counters-type
-  )
+  />
 </template>
 
 <script>

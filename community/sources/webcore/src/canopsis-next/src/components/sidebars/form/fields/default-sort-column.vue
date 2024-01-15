@@ -1,23 +1,25 @@
-<template lang="pug">
-  v-list-group
-    template(#activator="")
-      v-list-tile {{ $t('settings.defaultSortColumn') }}
-    v-container
-      v-layout(row)
-        v-select(
-          v-field="value.column",
-          :items="columns",
-          :label="columnsLabel"
-        )
-      v-layout(row)
-        v-select(
-          v-field="value.order",
-          :items="orders"
-        )
+<template>
+  <widget-settings-item :title="$t('settings.defaultSortColumn')">
+    <v-layout>
+      <v-select
+        v-field="value.column"
+        :items="columns"
+        :label="columnsLabel"
+      />
+    </v-layout>
+    <v-layout>
+      <v-select
+        v-field="value.order"
+        :items="orders"
+      />
+    </v-layout>
+  </widget-settings-item>
 </template>
 
 <script>
 import { SORT_ORDERS } from '@/constants';
+
+import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
 /**
  * Component to select the default column to sort on settings
@@ -27,6 +29,7 @@ import { SORT_ORDERS } from '@/constants';
  * @event value#input
  */
 export default {
+  components: { WidgetSettingsItem },
   props: {
     value: {
       type: Object,

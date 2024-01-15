@@ -1,16 +1,16 @@
-<template lang="pug">
-  state-settings-list(
-    :pagination.sync="pagination",
-    :state-settings="stateSettings",
-    :total-items="stateSettingsMeta.total_count",
-    :pending="stateSettingsPending",
-    :addable="hasCreateAnyStateSettingAccess",
-    :updatable="hasUpdateAnyStateSettingAccess",
-    :removable="hasDeleteAnyStateSettingAccess",
-    @edit="showEditStateSettingModal",
-    @duplicate="showDuplicateStateSettingModal",
+<template>
+  <state-settings-list
+    :options.sync="options"
+    :state-settings="stateSettings"
+    :total-items="stateSettingsMeta.total_count"
+    :pending="stateSettingsPending"
+    :addable="hasCreateAnyStateSettingAccess"
+    :updatable="hasUpdateAnyStateSettingAccess"
+    :removable="hasDeleteAnyStateSettingAccess"
+    @edit="showEditStateSettingModal"
+    @duplicate="showDuplicateStateSettingModal"
     @remove="showRemoveStateSettingModal"
-  )
+  />
 </template>
 
 <script>

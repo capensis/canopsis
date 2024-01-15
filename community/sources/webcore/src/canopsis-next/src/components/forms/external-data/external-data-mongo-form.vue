@@ -1,44 +1,59 @@
-<template lang="pug">
-  v-layout(column)
-    v-text-field(
-      v-field="form.collection",
-      v-validate="'required'",
-      :label="$t('externalData.fields.collection')",
-      :name="collectionFieldName",
-      :error-messages="errors.collect(collectionFieldName)",
+<template>
+  <v-layout column>
+    <v-text-field
+      v-field="form.collection"
+      v-validate="'required'"
+      :label="$t('externalData.fields.collection')"
+      :name="collectionFieldName"
+      :error-messages="errors.collect(collectionFieldName)"
       :disabled="disabled"
-    )
-    v-layout(row)
-      v-flex(xs6)
-        v-text-field(
-          v-field="form.sort_by",
-          :label="$t('externalData.fields.sortBy')",
-          :name="sortByFieldName",
-          :error-messages="errors.collect(sortByFieldName)",
+    />
+    <v-layout>
+      <v-flex xs6>
+        <v-text-field
+          v-field="form.sort_by"
+          :label="$t('externalData.fields.sortBy')"
+          :name="sortByFieldName"
+          :error-messages="errors.collect(sortByFieldName)"
           :disabled="disabled"
-        )
-      v-flex.ml-3(xs6)
-        v-select(
-          v-field="form.sort",
-          :items="sortOrders",
-          :label="$t('externalData.fields.sort')",
-          :name="sortFieldName",
-          :error-messages="errors.collect(sortFieldName)",
-          :disabled="disabled",
+        />
+      </v-flex>
+      <v-flex
+        class="ml-3"
+        xs6
+      >
+        <v-select
+          v-field="form.sort"
+          :items="sortOrders"
+          :label="$t('externalData.fields.sort')"
+          :name="sortFieldName"
+          :error-messages="errors.collect(sortFieldName)"
+          :disabled="disabled"
           clearable
-        )
-    external-data-mongo-condition-form(
-      v-for="(condition, index) in form.conditions",
-      v-field="form.conditions[index]",
-      :key="condition.key",
-      :name="`${name}.conditions.${condition.key}`",
-      :disabled-remove="hasOnlyOneCondition",
-      :disabled="disabled",
-      :variables="variables",
+        />
+      </v-flex>
+    </v-layout>
+    <external-data-mongo-condition-form
+      v-for="(condition, index) in form.conditions"
+      v-field="form.conditions[index]"
+      :key="condition.key"
+      :name="`${name}.conditions.${condition.key}`"
+      :disabled-remove="hasOnlyOneCondition"
+      :disabled="disabled"
+      :variables="variables"
       @remove="removeCondition(index)"
-    )
-    v-flex(v-if="!disabled")
-      v-btn.ml-0.mb-0(color="primary", outline, @click="addCondition") {{ $t('common.addMore') }}
+    />
+    <v-flex v-if="!disabled">
+      <v-btn
+        class="ml-0 mb-0"
+        color="primary"
+        outlined
+        @click="addCondition"
+      >
+        {{ $t('common.addMore') }}
+      </v-btn>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

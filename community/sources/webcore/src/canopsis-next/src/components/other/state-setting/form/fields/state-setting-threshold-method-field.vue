@@ -1,19 +1,20 @@
-<template lang="pug">
-  v-radio-group.mt-0(
-    v-field="value",
-    :label="label",
-    :disabled="disabled",
-    hide-details,
-    mandatory,
+<template>
+  <v-radio-group
+    v-field="value"
+    :label="label"
+    :disabled="disabled"
+    hide-details
+    mandatory
     row
-  )
-    v-radio(
-      v-for="method in methods",
-      :key="method",
-      :label="$t(`stateSetting.thresholdMethods.${method}`)",
-      :value="method",
+  >
+    <v-radio
+      v-for="method in methods"
+      :key="method"
+      :label="$t(`stateSetting.thresholdMethods.${method}`)"
+      :value="method"
       color="primary"
-    )
+    />
+  </v-radio-group>
 </template>
 
 <script>

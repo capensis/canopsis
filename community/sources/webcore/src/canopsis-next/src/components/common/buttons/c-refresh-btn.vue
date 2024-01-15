@@ -1,14 +1,15 @@
-<template lang="pug">
-  v-tooltip(left)
-    v-btn(
-      slot="activator",
-      color="secondary",
-      data-test="refreshButton",
-      fab,
-      dark,
-      icon,
-      @click.stop="$emit('click', $event)"
-    )
-      v-icon refresh
-    span {{ $t('common.refresh') }}
+<template>
+  <v-tooltip left>
+    <template #activator="{ on }">
+      <v-btn
+        v-on="on"
+        color="secondary"
+        fab
+        @click.stop="$emit('click', $event)"
+      >
+        <v-icon>refresh</v-icon>
+      </v-btn>
+    </template>
+    <span>{{ $t('common.refresh') }}</span>
+  </v-tooltip>
 </template>

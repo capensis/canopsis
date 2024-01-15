@@ -11,7 +11,7 @@ exports[`kpi-alarms Renders \`kpi-alarms\` with fetching error 1`] = `
   <kpi-alarms-chart-stub
     interval="[object Object]"
     metrics=""
-    responsive="responsive"
+    responsive=""
     sampling="day"
   />
   <kpi-error-overlay-stub />
@@ -31,7 +31,7 @@ exports[`kpi-alarms Renders \`kpi-alarms\` without metrics 1`] = `
     interval="[object Object]"
     metrics=""
     min-date="1385766000"
-    responsive="responsive"
+    responsive=""
     sampling="day"
   />
   <!---->

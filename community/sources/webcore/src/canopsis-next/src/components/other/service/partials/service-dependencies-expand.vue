@@ -1,34 +1,63 @@
-<template lang="pug">
-  v-layout
-    v-tooltip(v-if="item.loadMore", right)
-      template(#activator="{ on }")
-        v-btn(
-          v-on="on",
-          :loading="pending",
-          icon,
+<template>
+  <v-layout>
+    <v-tooltip
+      v-if="item.loadMore"
+      right
+    >
+      <template #activator="{ on }">
+        <v-btn
+          v-on="on"
+          :loading="pending"
+          icon
           @click="$emit('load', item)"
-        )
-          v-icon more_horiz
-      span {{ $t('common.loadMore') }}
-    v-badge(
-      v-else,
-      :value="!!item.entity?.pbehavior_info",
-      color="grey",
+        >
+          <v-icon>more_horiz</v-icon>
+        </v-btn>
+      </template>
+      <span>{{ $t('common.loadMore') }}</span>
+    </v-tooltip>
+    <v-badge
+      v-else
+      :value="!!item.entity?.pbehavior_info"
+      color="grey"
       overlap
-    )
-      v-btn(
-        :color="entityColor",
-        icon,
-        dark,
+    >
+      <v-btn
+        :color="entityColor"
+        fab
+        small
+        depressed
+        dark
         @click="$emit('show', item)"
-      )
-        v-icon {{ entityIcon }}
-      template(#badge="")
-        v-icon.pa-0(dark) {{ pbehaviorIcon }}
-    v-tooltip(v-if="item.cycle", top)
-      template(#activator="{ on }")
-        v-icon(v-on="on", color="error", size="14") autorenew
-      span {{ $t('common.cycleDependency') }}
+      >
+        <v-icon>{{ entityIcon }}</v-icon>
+      </v-btn>
+      <template #badge>
+        <v-icon
+          class="pa-0"
+          dark
+        >
+          {{ pbehaviorIcon }}
+        </v-icon>
+      </template>
+    </v-badge>
+    <v-tooltip
+      v-if="item.cycle"
+      top
+    >
+      <template #activator="{ on }">
+        <v-icon
+          class="ml-1"
+          v-on="on"
+          color="error"
+          size="14"
+        >
+          autorenew
+        </v-icon>
+      </template>
+      <span>{{ $t('common.cycleDependency') }}</span>
+    </v-tooltip>
+  </v-layout>
 </template>
 
 <script>

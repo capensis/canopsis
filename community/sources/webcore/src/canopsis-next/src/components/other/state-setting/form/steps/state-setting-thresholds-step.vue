@@ -1,18 +1,24 @@
-<template lang="pug">
-  v-layout.state-setting-thresholds-step(column)
-    state-setting-threshold-field(
-      v-for="key in sortedThresholdsKeys",
-      v-field="thresholds[key]",
-      :key="key",
-      :label="$t(`stateSetting.states.${key}`)",
-      :name="`${name}.${key}`",
-      :state="key",
+<template>
+  <v-layout
+    class="state-setting-thresholds-step"
+    column
+  >
+    <state-setting-threshold-field
+      v-for="key in sortedThresholdsKeys"
+      v-field="thresholds[key]"
+      :key="key"
+      :label="$t(`stateSetting.states.${key}`)"
+      :name="`${name}.${key}`"
+      :state="key"
       @input="errors.remove(name)"
-    )
-    c-alert(
-      :value="errors.has(name)",
+    />
+    <c-alert
+      :value="errors.has(name)"
       type="error"
-    ) {{ $t('stateSetting.conditionsError') }}
+    >
+      {{ $t('stateSetting.conditionsError') }}
+    </c-alert>
+  </v-layout>
 </template>
 
 <script>

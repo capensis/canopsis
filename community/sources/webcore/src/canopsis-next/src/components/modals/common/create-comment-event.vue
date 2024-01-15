@@ -1,30 +1,42 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ $t('modals.createCommentEvent.title') }}
-      template(#text="")
-        v-layout(column)
-          template(v-if="items.length")
-            alarm-general-table(:items="items")
-            v-divider.my-3
-          c-name-field(
-            v-model="form.comment",
-            :label="$tc('common.comment')",
-            name="comment",
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ $t('modals.createCommentEvent.title') }}</span>
+      </template>
+      <template #text="">
+        <v-layout column>
+          <template v-if="items.length">
+            <alarm-general-table :items="items" />
+            <v-divider class="my-3" />
+          </template>
+          <c-name-field
+            v-model="form.comment"
+            :label="$tc('common.comment')"
+            name="comment"
             required
-          )
-      template(#actions="")
-        v-btn(
-          depressed,
-          flat,
+          />
+        </v-layout>
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
           @click="$modals.hide"
-        ) {{ $t('common.cancel') }}
-        v-btn.primary(
-          :loading="submitting",
-          :disabled="isDisabled",
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          class="primary"
+          :loading="submitting"
+          :disabled="isDisabled"
           type="submit"
-        ) {{ $t('common.saveChanges') }}
+        >
+          {{ $t('common.saveChanges') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>

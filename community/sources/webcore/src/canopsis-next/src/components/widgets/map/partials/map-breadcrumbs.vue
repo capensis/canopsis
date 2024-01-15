@@ -1,14 +1,20 @@
-<template lang="pug">
-  v-breadcrumbs.pa-0(:items="breadcrumbs")
-    template(#item="{ item }")
-      v-btn.ma-0(
-        :disabled="item.last",
-        :loading="item.last && pending",
-        small,
-        flat,
+<template>
+  <v-breadcrumbs
+    class="pa-0"
+    :items="breadcrumbs"
+  >
+    <template #item="{ item }">
+      <v-btn
+        :disabled="item.last"
+        :loading="item.last && pending"
+        small
+        text
         @click="$emit('click', item)"
-      )
-        span.text-none {{ item.text }}
+      >
+        <span class="text-none">{{ item.text }}</span>
+      </v-btn>
+    </template>
+  </v-breadcrumbs>
 </template>
 
 <script>

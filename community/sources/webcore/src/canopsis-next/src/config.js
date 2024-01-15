@@ -38,6 +38,11 @@ export const DEFAULT_WEATHER_LIMIT = 120;
 
 export const DEFAULT_LOCALE = 'en';
 
+export const LOCALES = {
+  en: 'en',
+  fr: 'fr',
+};
+
 export const DEFAULT_VIEW_STATS_INTERVAL = 120000;
 
 export const LOCALE_PRIORITIES = {

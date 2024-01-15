@@ -356,7 +356,7 @@ describe('flowchart-properties', () => {
     });
   });
 
-  test('Renders `flowchart-properties` with all properties', () => {
+  test('Renders `flowchart-properties` with all properties', async () => {
     const fill = 'red';
     const stroke = 'orange';
     const shapes = {
@@ -376,10 +376,12 @@ describe('flowchart-properties', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    await wrapper.openAllExpansionPanels();
+
+    expect(wrapper).toMatchSnapshot();
   });
 
-  test('Renders `flowchart-properties` with lines', () => {
+  test('Renders `flowchart-properties` with lines', async () => {
     const shapes = {
       first: lineShapeToForm({
         _id: 'first',
@@ -395,6 +397,8 @@ describe('flowchart-properties', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    await wrapper.openAllExpansionPanels();
+
+    expect(wrapper).toMatchSnapshot();
   });
 });

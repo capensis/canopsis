@@ -1,5 +1,10 @@
-<template lang="pug">
-  c-runtime-template(v-on="$listeners", v-bind="$attrs", :template="compiledTemplate", :parent="$parent")
+<template>
+  <c-runtime-template
+    v-on="$listeners"
+    v-bind="$attrs"
+    :template="compiledTemplate"
+    :parent="$parent"
+  />
 </template>
 
 <script>

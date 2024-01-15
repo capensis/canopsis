@@ -1,5 +1,8 @@
-<template lang="pug">
-  div(v-bind="component.bind")
+<template>
+  <div
+    v-bind="component.bind"
+    :is="component.bind.is"
+  />
 </template>
 
 <script>

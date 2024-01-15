@@ -1,11 +1,14 @@
-<template lang="pug">
-  v-layout(column)
-    h5.subheading.font-weight-bold {{ $t('stateSetting.title') }}
-    v-text-field(
-      :value="stateSetting.title",
-      :loading="stateSettingPending",
+<template>
+  <v-layout column>
+    <h5 class="subheading font-weight-bold">
+      {{ $t('stateSetting.title') }}
+    </h5>
+    <v-text-field
+      :value="stateSetting.title"
+      :loading="stateSettingPending"
       disabled
-    )
+    />
+  </v-layout>
 </template>
 
 <script>

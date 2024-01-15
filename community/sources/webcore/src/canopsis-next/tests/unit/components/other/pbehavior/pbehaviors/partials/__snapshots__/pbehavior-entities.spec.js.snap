@@ -5,7 +5,7 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
   class="c-advanced-data-table"
 >
   <div
-    class="layout row wrap"
+    class="layout wrap"
   >
     <div
       class="flex xs4"
@@ -16,282 +16,369 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
     </div>
     <!---->
   </div>
-  <div>
+  <div
+    class="v-data-table v-data-table--has-bottom theme--light"
+    header-text="text"
+  >
     <div
-      class="v-table__overflow"
+      class="v-data-table__wrapper"
     >
-      <table
-        class="v-datatable v-table theme--light"
-      >
-        <thead>
+      <table>
+        <colgroup>
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+        </colgroup>
+        <thead
+          class="v-data-table-header"
+        >
           <tr>
             <th
-              aria-label="Id: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label="Id"
+              class="text-start"
               data-value="_id"
               role="columnheader"
               scope="col"
             >
-              Id
+              <span>
+                Id
+              </span>
             </th>
             <th
-              aria-label="Name: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label="Name"
+              class="text-start"
               data-value="name"
               role="columnheader"
               scope="col"
             >
-              Name
+              <span>
+                Name
+              </span>
             </th>
             <th
-              aria-label="Type: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label="Type"
+              class="text-start"
               data-value="type"
               role="columnheader"
               scope="col"
             >
-              Type
+              <span>
+                Type
+              </span>
             </th>
-          </tr>
-          <tr
-            class="v-datatable__progress"
-          >
-            <th
-              class="column"
-              colspan="3"
-            />
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <!---->
-            <td>
-              id-pbehavior-entity-0
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+        id-pbehavior-entity-0
             </td>
-            <td>
-              name-pbehavior-entity-0
+            <td
+              class="text-start"
+            >
+        name-pbehavior-entity-0
             </td>
-            <td>
-              type-pbehavior-entity-0
-            </td>
-          </tr>
-          <tr>
-            <!---->
-            <td>
-              id-pbehavior-entity-1
-            </td>
-            <td>
-              name-pbehavior-entity-1
-            </td>
-            <td>
-              type-pbehavior-entity-1
+            <td
+              class="text-start"
+            >
+        type-pbehavior-entity-0
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
-              id-pbehavior-entity-2
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+        id-pbehavior-entity-1
             </td>
-            <td>
-              name-pbehavior-entity-2
+            <td
+              class="text-start"
+            >
+        name-pbehavior-entity-1
             </td>
-            <td>
-              type-pbehavior-entity-2
-            </td>
-          </tr>
-          <tr>
-            <!---->
-            <td>
-              id-pbehavior-entity-3
-            </td>
-            <td>
-              name-pbehavior-entity-3
-            </td>
-            <td>
-              type-pbehavior-entity-3
+            <td
+              class="text-start"
+            >
+        type-pbehavior-entity-1
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
-              id-pbehavior-entity-4
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+        id-pbehavior-entity-2
             </td>
-            <td>
-              name-pbehavior-entity-4
+            <td
+              class="text-start"
+            >
+        name-pbehavior-entity-2
             </td>
-            <td>
-              type-pbehavior-entity-4
-            </td>
-          </tr>
-          <tr>
-            <!---->
-            <td>
-              id-pbehavior-entity-5
-            </td>
-            <td>
-              name-pbehavior-entity-5
-            </td>
-            <td>
-              type-pbehavior-entity-5
+            <td
+              class="text-start"
+            >
+        type-pbehavior-entity-2
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
-              id-pbehavior-entity-6
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+        id-pbehavior-entity-3
             </td>
-            <td>
-              name-pbehavior-entity-6
+            <td
+              class="text-start"
+            >
+        name-pbehavior-entity-3
             </td>
-            <td>
-              type-pbehavior-entity-6
-            </td>
-          </tr>
-          <tr>
-            <!---->
-            <td>
-              id-pbehavior-entity-7
-            </td>
-            <td>
-              name-pbehavior-entity-7
-            </td>
-            <td>
-              type-pbehavior-entity-7
+            <td
+              class="text-start"
+            >
+        type-pbehavior-entity-3
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
-              id-pbehavior-entity-8
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+        id-pbehavior-entity-4
             </td>
-            <td>
-              name-pbehavior-entity-8
+            <td
+              class="text-start"
+            >
+        name-pbehavior-entity-4
             </td>
-            <td>
-              type-pbehavior-entity-8
+            <td
+              class="text-start"
+            >
+        type-pbehavior-entity-4
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
-              id-pbehavior-entity-9
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+        id-pbehavior-entity-5
             </td>
-            <td>
-              name-pbehavior-entity-9
+            <td
+              class="text-start"
+            >
+        name-pbehavior-entity-5
             </td>
-            <td>
-              type-pbehavior-entity-9
+            <td
+              class="text-start"
+            >
+        type-pbehavior-entity-5
+            </td>
+          </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+        id-pbehavior-entity-6
+            </td>
+            <td
+              class="text-start"
+            >
+        name-pbehavior-entity-6
+            </td>
+            <td
+              class="text-start"
+            >
+        type-pbehavior-entity-6
+            </td>
+          </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+        id-pbehavior-entity-7
+            </td>
+            <td
+              class="text-start"
+            >
+        name-pbehavior-entity-7
+            </td>
+            <td
+              class="text-start"
+            >
+        type-pbehavior-entity-7
+            </td>
+          </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+        id-pbehavior-entity-8
+            </td>
+            <td
+              class="text-start"
+            >
+        name-pbehavior-entity-8
+            </td>
+            <td
+              class="text-start"
+            >
+        type-pbehavior-entity-8
+            </td>
+          </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+        id-pbehavior-entity-9
+            </td>
+            <td
+              class="text-start"
+            >
+        name-pbehavior-entity-9
+            </td>
+            <td
+              class="text-start"
+            >
+        type-pbehavior-entity-9
             </td>
           </tr>
         </tbody>
       </table>
     </div>
     <div
-      class="v-datatable v-table theme--light"
+      class="v-data-footer"
     >
       <div
-        class="v-datatable__actions"
+        class="v-data-footer__select"
       >
+        Rows per page:
         <div
-          class="v-datatable__actions__select"
+          class="v-input v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
         >
-          Rows per page:
           <div
-            class="v-input v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
-            role="combobox"
+            class="v-input__control"
           >
             <div
-              class="v-input__control"
+              aria-expanded="false"
+              aria-haspopup="listbox"
+              class="v-input__slot"
+              role="button"
             >
               <div
-                class="v-input__slot"
+                class="v-select__slot"
               >
                 <div
-                  class="v-select__slot"
+                  class="v-select__selections"
                 >
                   <div
-                    class="v-select__selections"
+                    class="v-select__selection v-select__selection--comma"
                   >
-                    <div
-                      class="v-select__selection v-select__selection--comma"
-                    >
-                      10
-                    </div>
-                    <input
-                      aria-label="Rows per page:"
-                      aria-readonly="false"
-                      autocomplete="on"
-                      readonly="readonly"
-                      type="text"
-                    />
+                    10
                   </div>
-                  <div
-                    class="v-input__append-inner"
-                  >
-                    <div
-                      class="v-input__icon v-input__icon--append"
-                    >
-                      <i
-                        aria-hidden="true"
-                        class="v-icon material-icons theme--light"
-                      >
-                        arrow_drop_down
-                      </i>
-                    </div>
-                  </div>
+                  <input
+                    aria-label="Rows per page:"
+                    aria-readonly="false"
+                    autocomplete="off"
+                    readonly="readonly"
+                    type="text"
+                  />
                 </div>
                 <div
-                  class="v-menu"
+                  class="v-input__append-inner"
+                >
+                  <div
+                    class="v-input__icon v-input__icon--append"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
+                    >
+                      arrow_drop_down
+                    </i>
+                  </div>
+                </div>
+                <input
+                  type="hidden"
+                  value="10"
                 />
+              </div>
+              <div
+                class="v-menu"
+              >
+                <!---->
               </div>
             </div>
           </div>
         </div>
-        <div
-          class="v-datatable__actions__range-controls"
+      </div>
+      <div
+        class="v-data-footer__pagination"
+      >
+        1-10 of 11
+      </div>
+      <div
+        class="v-data-footer__icons-before"
+      >
+        <button
+          aria-label="Previous page"
+          class="v-btn v-btn--disabled v-btn--icon v-btn--round v-btn--text theme--light v-size--default"
+          disabled="disabled"
+          type="button"
         >
-          <div
-            class="v-datatable__actions__pagination"
+          <span
+            class="v-btn__content"
           >
-            1-10 of 11
-          </div>
-          <button
-            aria-label="Previous page"
-            class="v-btn v-btn--disabled v-btn--flat v-btn--icon theme--light"
-            disabled="disabled"
-            type="button"
-          >
-            <div
-              class="v-btn__content"
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
             >
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                chevron_left
-              </i>
-            </div>
-          </button>
-          <button
-            aria-label="Next page"
-            class="v-btn v-btn--flat v-btn--icon theme--light"
-            type="button"
+              chevron_left
+            </i>
+          </span>
+        </button>
+      </div>
+      <div
+        class="v-data-footer__icons-after"
+      >
+        <button
+          aria-label="Next page"
+          class="v-btn v-btn--icon v-btn--round v-btn--text theme--light v-size--default"
+          type="button"
+        >
+          <span
+            class="v-btn__content"
           >
-            <div
-              class="v-btn__content"
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
             >
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                chevron_right
-              </i>
-            </div>
-          </button>
-        </div>
+              chevron_right
+            </i>
+          </span>
+        </button>
       </div>
     </div>
   </div>
@@ -304,7 +391,7 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` without entities 1`] 
   class="c-advanced-data-table"
 >
   <div
-    class="layout row wrap"
+    class="layout wrap"
   >
     <div
       class="flex xs4"
@@ -315,59 +402,69 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` without entities 1`] 
     </div>
     <!---->
   </div>
-  <div>
+  <div
+    class="v-data-table v-data-table--has-bottom theme--light"
+    header-text="text"
+  >
     <div
-      class="v-table__overflow"
+      class="v-data-table__wrapper"
     >
-      <table
-        class="v-datatable v-table theme--light"
-      >
-        <thead>
+      <table>
+        <colgroup>
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+        </colgroup>
+        <thead
+          class="v-data-table-header"
+        >
           <tr>
             <th
-              aria-label="Id: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label="Id"
+              class="text-start"
               data-value="_id"
               role="columnheader"
               scope="col"
             >
-              Id
+              <span>
+                Id
+              </span>
             </th>
             <th
-              aria-label="Name: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label="Name"
+              class="text-start"
               data-value="name"
               role="columnheader"
               scope="col"
             >
-              Name
+              <span>
+                Name
+              </span>
             </th>
             <th
-              aria-label="Type: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label="Type"
+              class="text-start"
               data-value="type"
               role="columnheader"
               scope="col"
             >
-              Type
+              <span>
+                Type
+              </span>
             </th>
-          </tr>
-          <tr
-            class="v-datatable__progress"
-          >
-            <th
-              class="column"
-              colspan="3"
-            />
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr
+            class="v-data-table__empty-wrapper"
+          >
             <td
-              class="text-xs-center"
               colspan="3"
             >
               No data available
@@ -377,109 +474,117 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` without entities 1`] 
       </table>
     </div>
     <div
-      class="v-datatable v-table theme--light"
+      class="v-data-footer"
     >
       <div
-        class="v-datatable__actions"
+        class="v-data-footer__select"
       >
+        Rows per page:
         <div
-          class="v-datatable__actions__select"
+          class="v-input v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
         >
-          Rows per page:
           <div
-            class="v-input v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
-            role="combobox"
+            class="v-input__control"
           >
             <div
-              class="v-input__control"
+              aria-expanded="false"
+              aria-haspopup="listbox"
+              class="v-input__slot"
+              role="button"
             >
               <div
-                class="v-input__slot"
+                class="v-select__slot"
               >
                 <div
-                  class="v-select__slot"
+                  class="v-select__selections"
                 >
                   <div
-                    class="v-select__selections"
+                    class="v-select__selection v-select__selection--comma"
                   >
-                    <div
-                      class="v-select__selection v-select__selection--comma"
-                    >
-                      10
-                    </div>
-                    <input
-                      aria-label="Rows per page:"
-                      aria-readonly="false"
-                      autocomplete="on"
-                      readonly="readonly"
-                      type="text"
-                    />
+                    10
                   </div>
-                  <div
-                    class="v-input__append-inner"
-                  >
-                    <div
-                      class="v-input__icon v-input__icon--append"
-                    >
-                      <i
-                        aria-hidden="true"
-                        class="v-icon material-icons theme--light"
-                      >
-                        arrow_drop_down
-                      </i>
-                    </div>
-                  </div>
+                  <input
+                    aria-label="Rows per page:"
+                    aria-readonly="false"
+                    autocomplete="off"
+                    readonly="readonly"
+                    type="text"
+                  />
                 </div>
                 <div
-                  class="v-menu"
+                  class="v-input__append-inner"
+                >
+                  <div
+                    class="v-input__icon v-input__icon--append"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
+                    >
+                      arrow_drop_down
+                    </i>
+                  </div>
+                </div>
+                <input
+                  type="hidden"
+                  value="10"
                 />
+              </div>
+              <div
+                class="v-menu"
+              >
+                <!---->
               </div>
             </div>
           </div>
         </div>
-        <div
-          class="v-datatable__actions__range-controls"
+      </div>
+      <div
+        class="v-data-footer__pagination"
+      >
+        –
+      </div>
+      <div
+        class="v-data-footer__icons-before"
+      >
+        <button
+          aria-label="Previous page"
+          class="v-btn v-btn--disabled v-btn--icon v-btn--round v-btn--text theme--light v-size--default"
+          disabled="disabled"
+          type="button"
         >
-          <div
-            class="v-datatable__actions__pagination"
+          <span
+            class="v-btn__content"
           >
-            –
-          </div>
-          <button
-            aria-label="Previous page"
-            class="v-btn v-btn--disabled v-btn--flat v-btn--icon theme--light"
-            disabled="disabled"
-            type="button"
-          >
-            <div
-              class="v-btn__content"
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
             >
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                chevron_left
-              </i>
-            </div>
-          </button>
-          <button
-            aria-label="Next page"
-            class="v-btn v-btn--disabled v-btn--flat v-btn--icon theme--light"
-            disabled="disabled"
-            type="button"
+              chevron_left
+            </i>
+          </span>
+        </button>
+      </div>
+      <div
+        class="v-data-footer__icons-after"
+      >
+        <button
+          aria-label="Next page"
+          class="v-btn v-btn--disabled v-btn--icon v-btn--round v-btn--text theme--light v-size--default"
+          disabled="disabled"
+          type="button"
+        >
+          <span
+            class="v-btn__content"
           >
-            <div
-              class="v-btn__content"
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
             >
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                chevron_right
-              </i>
-            </div>
-          </button>
-        </div>
+              chevron_right
+            </i>
+          </span>
+        </button>
       </div>
     </div>
   </div>

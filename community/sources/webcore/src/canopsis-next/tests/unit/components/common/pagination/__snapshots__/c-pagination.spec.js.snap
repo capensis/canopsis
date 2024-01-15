@@ -2,7 +2,7 @@
 
 exports[`c-pagination Renders \`c-pagination\` on the bottom correctly 1`] = `
 <div
-  class="container text-xs-center"
+  class="container text-center"
 >
   <div
     class="layout align-center justify-center"
@@ -12,99 +12,113 @@ exports[`c-pagination Renders \`c-pagination\` on the bottom correctly 1`] = `
     >
       showing 21 to 30 of 100 entries
     </span>
-    <ul
-      class="v-pagination theme--light"
+    <nav
+      aria-label="Pagination Navigation"
       data-test="vPagination"
+      role="navigation"
     >
-      <li>
-        <button
-          class="v-pagination__navigation"
-          type="button"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon material-icons theme--light"
+      <ul
+        class="v-pagination theme--light"
+      >
+        <li>
+          <button
+            aria-label="Previous page"
+            class="v-pagination__navigation"
+            type="button"
           >
-            chevron_left
-          </i>
-        </button>
-      </li>
-      <li>
-        <button
-          class="v-pagination__item"
-          type="button"
-        >
-          1
-        </button>
-      </li>
-      <li>
-        <button
-          class="v-pagination__item"
-          type="button"
-        >
-          2
-        </button>
-      </li>
-      <li>
-        <button
-          class="v-pagination__item v-pagination__item--active primary"
-          type="button"
-        >
-          3
-        </button>
-      </li>
-      <li>
-        <button
-          class="v-pagination__item"
-          type="button"
-        >
-          4
-        </button>
-      </li>
-      <li>
-        <button
-          class="v-pagination__item"
-          type="button"
-        >
-          5
-        </button>
-      </li>
-      <li>
-        <span
-          class="v-pagination__more"
-        >
-          ...
-        </span>
-      </li>
-      <li>
-        <button
-          class="v-pagination__item"
-          type="button"
-        >
-          10
-        </button>
-      </li>
-      <li>
-        <button
-          class="v-pagination__navigation"
-          type="button"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon material-icons theme--light"
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              chevron_left
+            </i>
+          </button>
+        </li>
+        <li>
+          <button
+            aria-label="Goto Page 1"
+            class="v-pagination__item"
+            type="button"
           >
-            chevron_right
-          </i>
-        </button>
-      </li>
-    </ul>
+            1
+          </button>
+        </li>
+        <li>
+          <button
+            aria-label="Goto Page 2"
+            class="v-pagination__item"
+            type="button"
+          >
+            2
+          </button>
+        </li>
+        <li>
+          <button
+            aria-current="true"
+            aria-label="Current Page, Page 3"
+            class="v-pagination__item v-pagination__item--active primary"
+            type="button"
+          >
+            3
+          </button>
+        </li>
+        <li>
+          <button
+            aria-label="Goto Page 4"
+            class="v-pagination__item"
+            type="button"
+          >
+            4
+          </button>
+        </li>
+        <li>
+          <button
+            aria-label="Goto Page 5"
+            class="v-pagination__item"
+            type="button"
+          >
+            5
+          </button>
+        </li>
+        <li>
+          <span
+            class="v-pagination__more"
+          >
+            ...
+          </span>
+        </li>
+        <li>
+          <button
+            aria-label="Goto Page 10"
+            class="v-pagination__item"
+            type="button"
+          >
+            10
+          </button>
+        </li>
+        <li>
+          <button
+            aria-label="Next page"
+            class="v-pagination__navigation"
+            type="button"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              chevron_right
+            </i>
+          </button>
+        </li>
+      </ul>
+    </nav>
   </div>
 </div>
 `;
 
 exports[`c-pagination Renders \`c-pagination\` on the top correctly 1`] = `
 <div
-  class="container text-xs-center py-1"
+  class="container text-center py-1"
 >
   <ul
     class="v-pagination"
@@ -116,7 +130,7 @@ exports[`c-pagination Renders \`c-pagination\` on the top correctly 1`] = `
       >
         <i
           aria-hidden="true"
-          class="v-icon material-icons theme--light"
+          class="v-icon notranslate material-icons theme--light"
         >
           chevron_left
         </i>
@@ -134,7 +148,7 @@ exports[`c-pagination Renders \`c-pagination\` on the top correctly 1`] = `
       >
         <i
           aria-hidden="true"
-          class="v-icon material-icons theme--light"
+          class="v-icon notranslate material-icons theme--light"
         >
           chevron_right
         </i>
@@ -146,7 +160,7 @@ exports[`c-pagination Renders \`c-pagination\` on the top correctly 1`] = `
 
 exports[`c-pagination Renders \`c-pagination\` on the top with disabled buttons correctly 1`] = `
 <div
-  class="container text-xs-center py-1"
+  class="container text-center py-1"
 >
   <ul
     class="v-pagination"
@@ -159,7 +173,7 @@ exports[`c-pagination Renders \`c-pagination\` on the top with disabled buttons 
       >
         <i
           aria-hidden="true"
-          class="v-icon material-icons theme--light"
+          class="v-icon notranslate material-icons theme--light"
         >
           chevron_left
         </i>
@@ -178,7 +192,7 @@ exports[`c-pagination Renders \`c-pagination\` on the top with disabled buttons 
       >
         <i
           aria-hidden="true"
-          class="v-icon material-icons theme--light"
+          class="v-icon notranslate material-icons theme--light"
         >
           chevron_right
         </i>
@@ -190,7 +204,7 @@ exports[`c-pagination Renders \`c-pagination\` on the top with disabled buttons 
 
 exports[`c-pagination Renders \`c-pagination\` on the top with disabled next button correctly 1`] = `
 <div
-  class="container text-xs-center py-1"
+  class="container text-center py-1"
 >
   <ul
     class="v-pagination"
@@ -202,7 +216,7 @@ exports[`c-pagination Renders \`c-pagination\` on the top with disabled next but
       >
         <i
           aria-hidden="true"
-          class="v-icon material-icons theme--light"
+          class="v-icon notranslate material-icons theme--light"
         >
           chevron_left
         </i>
@@ -221,7 +235,7 @@ exports[`c-pagination Renders \`c-pagination\` on the top with disabled next but
       >
         <i
           aria-hidden="true"
-          class="v-icon material-icons theme--light"
+          class="v-icon notranslate material-icons theme--light"
         >
           chevron_right
         </i>
@@ -233,7 +247,7 @@ exports[`c-pagination Renders \`c-pagination\` on the top with disabled next but
 
 exports[`c-pagination Renders \`c-pagination\` on the top with disabled prev button correctly 1`] = `
 <div
-  class="container text-xs-center py-1"
+  class="container text-center py-1"
 >
   <ul
     class="v-pagination"
@@ -246,7 +260,7 @@ exports[`c-pagination Renders \`c-pagination\` on the top with disabled prev but
       >
         <i
           aria-hidden="true"
-          class="v-icon material-icons theme--light"
+          class="v-icon notranslate material-icons theme--light"
         >
           chevron_left
         </i>
@@ -264,7 +278,7 @@ exports[`c-pagination Renders \`c-pagination\` on the top with disabled prev but
       >
         <i
           aria-hidden="true"
-          class="v-icon material-icons theme--light"
+          class="v-icon notranslate material-icons theme--light"
         >
           chevron_right
         </i>
@@ -276,7 +290,7 @@ exports[`c-pagination Renders \`c-pagination\` on the top with disabled prev but
 
 exports[`c-pagination Renders \`c-pagination\` with default props correctly 1`] = `
 <div
-  class="container text-xs-center"
+  class="container text-center"
 >
   <div
     class="layout align-center justify-center"
@@ -286,52 +300,63 @@ exports[`c-pagination Renders \`c-pagination\` with default props correctly 1`] 
     >
       showing 1 to 1 of 1 entries
     </span>
-    <ul
-      class="v-pagination theme--light"
+    <nav
+      aria-label="Pagination Navigation"
       data-test="vPagination"
+      role="navigation"
     >
-      <li>
-        <button
-          class="v-pagination__navigation v-pagination__navigation--disabled"
-          type="button"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon material-icons theme--light"
+      <ul
+        class="v-pagination theme--light"
+      >
+        <li>
+          <button
+            aria-label="Previous page"
+            class="v-pagination__navigation v-pagination__navigation--disabled"
+            disabled="disabled"
+            type="button"
           >
-            chevron_left
-          </i>
-        </button>
-      </li>
-      <li>
-        <button
-          class="v-pagination__item v-pagination__item--active primary"
-          type="button"
-        >
-          1
-        </button>
-      </li>
-      <li>
-        <button
-          class="v-pagination__navigation v-pagination__navigation--disabled"
-          type="button"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon material-icons theme--light"
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              chevron_left
+            </i>
+          </button>
+        </li>
+        <li>
+          <button
+            aria-current="true"
+            aria-label="Current Page, Page 1"
+            class="v-pagination__item v-pagination__item--active primary"
+            type="button"
           >
-            chevron_right
-          </i>
-        </button>
-      </li>
-    </ul>
+            1
+          </button>
+        </li>
+        <li>
+          <button
+            aria-label="Next page"
+            class="v-pagination__navigation v-pagination__navigation--disabled"
+            disabled="disabled"
+            type="button"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              chevron_right
+            </i>
+          </button>
+        </li>
+      </ul>
+    </nav>
   </div>
 </div>
 `;
 
 exports[`c-pagination Renders \`c-pagination\` with default props correctly 2`] = `
 <div
-  class="container text-xs-center"
+  class="container text-center"
 >
   <div
     class="layout align-center justify-center"
@@ -341,52 +366,63 @@ exports[`c-pagination Renders \`c-pagination\` with default props correctly 2`] 
     >
       showing 1 to 1 of 1 entries
     </span>
-    <ul
-      class="v-pagination theme--light"
+    <nav
+      aria-label="Pagination Navigation"
       data-test="vPagination"
+      role="navigation"
     >
-      <li>
-        <button
-          class="v-pagination__navigation v-pagination__navigation--disabled"
-          type="button"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon material-icons theme--light"
+      <ul
+        class="v-pagination theme--light"
+      >
+        <li>
+          <button
+            aria-label="Previous page"
+            class="v-pagination__navigation v-pagination__navigation--disabled"
+            disabled="disabled"
+            type="button"
           >
-            chevron_left
-          </i>
-        </button>
-      </li>
-      <li>
-        <button
-          class="v-pagination__item v-pagination__item--active primary"
-          type="button"
-        >
-          1
-        </button>
-      </li>
-      <li>
-        <button
-          class="v-pagination__navigation v-pagination__navigation--disabled"
-          type="button"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon material-icons theme--light"
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              chevron_left
+            </i>
+          </button>
+        </li>
+        <li>
+          <button
+            aria-current="true"
+            aria-label="Current Page, Page 1"
+            class="v-pagination__item v-pagination__item--active primary"
+            type="button"
           >
-            chevron_right
-          </i>
-        </button>
-      </li>
-    </ul>
+            1
+          </button>
+        </li>
+        <li>
+          <button
+            aria-label="Next page"
+            class="v-pagination__navigation v-pagination__navigation--disabled"
+            disabled="disabled"
+            type="button"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              chevron_right
+            </i>
+          </button>
+        </li>
+      </ul>
+    </nav>
   </div>
 </div>
 `;
 
 exports[`c-pagination Renders \`c-pagination\` with default props on the top correctly 1`] = `
 <div
-  class="container text-xs-center py-1"
+  class="container text-center py-1"
 >
   <ul
     class="v-pagination"
@@ -399,7 +435,7 @@ exports[`c-pagination Renders \`c-pagination\` with default props on the top cor
       >
         <i
           aria-hidden="true"
-          class="v-icon material-icons theme--light"
+          class="v-icon notranslate material-icons theme--light"
         >
           chevron_left
         </i>
@@ -418,7 +454,7 @@ exports[`c-pagination Renders \`c-pagination\` with default props on the top cor
       >
         <i
           aria-hidden="true"
-          class="v-icon material-icons theme--light"
+          class="v-icon notranslate material-icons theme--light"
         >
           chevron_right
         </i>

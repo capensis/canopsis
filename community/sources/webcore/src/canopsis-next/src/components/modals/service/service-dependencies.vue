@@ -1,15 +1,18 @@
-<template lang="pug">
-  modal-wrapper(close)
-    template(#title="")
-      span {{ title }}
-    template(#text="")
-      service-dependencies-table(
-        :root="config.root",
-        :columns="config.columns",
-        :impact="config.impact",
-        :openable-root="config.openableRoot",
+<template>
+  <modal-wrapper close>
+    <template #title="">
+      <span>{{ title }}</span>
+    </template>
+    <template #text="">
+      <service-dependencies-table
+        :root="config.root"
+        :columns="config.columns"
+        :impact="config.impact"
+        :openable-root="config.openableRoot"
         include-root
-      )
+      />
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>

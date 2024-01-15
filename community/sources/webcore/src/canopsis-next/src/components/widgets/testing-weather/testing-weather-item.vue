@@ -1,22 +1,47 @@
-<template lang="pug">
-  card-with-see-alarms-btn.white--text.cursor-pointer.ma-1(
-    :style="{ backgroundColor: color }",
-    :show-button="hasAlarmsListAccess",
-    tile,
-    @click="showTestSuiteInformationModal",
+<template>
+  <card-with-see-alarms-btn
+    class="white--text cursor-pointer ma-1"
+    :style="{ backgroundColor: color }"
+    :show-button="hasAlarmsListAccess"
+    tile
+    @click="showTestSuiteInformationModal"
     @show:alarms="showAlarmListModal"
-  )
-    v-layout.fill-height(row)
-      v-flex.pa-2
-        h3.text-md-center {{ testSuite.name }}
-        v-divider.white(light)
-        v-layout.pt-1(justify-start)
-          v-flex(xs6)
-            v-layout.fill-height(column, justify-space-between)
-              c-mini-bar-chart(:history="testSuite.mini_chart", :unit="$constants.TIME_UNITS.second")
-              span.pre-wrap {{ testSuite.timestamp | date('testSuiteFormat') }}
-          v-flex(xs6)
-            test-suite-statistics(:test-suite="testSuite")
+  >
+    <v-layout
+      class="fill-height"
+    >
+      <v-flex class="pa-2">
+        <h3 class="text-md-center">
+          {{ testSuite.name }}
+        </h3>
+        <v-divider
+          class="white"
+          light
+        />
+        <v-layout
+          class="pt-1"
+          justify-start
+        >
+          <v-flex xs6>
+            <v-layout
+              class="fill-height"
+              column
+              justify-space-between
+            >
+              <c-mini-bar-chart
+                :history="testSuite.mini_chart"
+                :unit="$constants.TIME_UNITS.second"
+              />
+              <span class="pre-wrap">{{ testSuite.timestamp | date('testSuiteFormat') }}</span>
+            </v-layout>
+          </v-flex>
+          <v-flex xs6>
+            <test-suite-statistics :test-suite="testSuite" />
+          </v-flex>
+        </v-layout>
+      </v-flex>
+    </v-layout>
+  </card-with-see-alarms-btn>
 </template>
 
 <script>
