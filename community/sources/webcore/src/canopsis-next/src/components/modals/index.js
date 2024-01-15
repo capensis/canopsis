@@ -193,6 +193,10 @@ export const CreateServicePauseEvent = () => ({
   component: import(/* webpackChunkName: "Context" */ './service/create-service-pause-event.vue'),
   loading: LoaderOverlay,
 });
+export const EntityDependenciesByStateSettings = () => ({
+  component: import(/* webpackChunkName: "Context" */ './entity/entity-dependencies-by-state-settings.vue'),
+  loading: LoaderOverlay,
+});
 export const SelectView = () => ({
   component: import(/* webpackChunkName: "View" */ './view/select-view.vue'),
   loading: LoaderOverlay,

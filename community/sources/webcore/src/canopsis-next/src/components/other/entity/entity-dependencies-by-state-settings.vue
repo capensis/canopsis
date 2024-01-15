@@ -1,21 +1,11 @@
 <template>
-  <div class="tree-of-dependencies__preview">
-    <c-zoom-overlay>
-      <network-graph
-        ref="networkGraph"
-        :options="options"
-        :node-html-label-options="nodeHtmlLabelsOptions"
-        class="fill-height black--text"
-        ctrl-wheel-zoom
-      />
-    </c-zoom-overlay>
-    <c-help-icon
-      :text="$t('treeOfDependencies.panzoom.helpText')"
-      size="32"
-      icon-class="map-preview__help-icon"
-      color="secondary"
-      icon="help"
-      top
+  <div class="entity-dependencies-by-state-settings">
+    <network-graph
+      class="fill-height black--text"
+      ref="networkGraph"
+      :options="options"
+      :node-html-label-options="nodeHtmlLabelsOptions"
+      ctrl-wheel-zoom
     />
   </div>
 </template>
@@ -23,12 +13,11 @@
 <script>
 import { omit } from 'lodash';
 
-import { COLORS, PAGINATION_LIMIT } from '@/config';
+import { PAGINATION_LIMIT } from '@/config';
 import {
   MODALS,
   TREE_OF_DEPENDENCIES_GRAPH_OPTIONS,
   TREE_OF_DEPENDENCIES_GRAPH_LAYOUT_OPTIONS,
-  TREE_OF_DEPENDENCIES_TYPES,
   ENTITY_TYPES,
 } from '@/constants';
 
@@ -47,12 +36,16 @@ export default {
   components: { NetworkGraph },
   mixins: [entitiesEntityDependenciesMixin],
   props: {
-    map: {
+    entity: {
       type: Object,
       required: true,
     },
     colorIndicator: {
       type: String,
+      required: false,
+    },
+    impact: {
+      type: Boolean,
       required: false,
     },
     columns: {
@@ -62,14 +55,10 @@ export default {
   },
   data() {
     return {
-      entitiesById: normalizeTreeOfDependenciesMapEntities(this.map.parameters?.entities),
+      entitiesById: normalizeTreeOfDependenciesMapEntities([{ entity: this.entity, pinned_entities: [] }]),
     };
   },
   computed: {
-    impact() {
-      return this.map.parameters?.type === TREE_OF_DEPENDENCIES_TYPES.impactChain;
-    },
-
     rootEntities() {
       return Object.values(this.entitiesById)
         .filter(entity => entity.dependencies);
@@ -168,17 +157,19 @@ export default {
           'material-icons',
           'theme--light',
           'white--text',
-          'tree-of-dependencies__node-icon',
+          'entity-dependencies-by-state-settings__node-icon',
         );
 
         el.innerHTML = entity.type === ENTITY_TYPES.service
           ? engineeringIcon
           : 'person';
 
+        // 'perm_identity'
+
         return el;
       };
 
-      const getProgressEl = () => {
+      const getProgressElement = () => {
         const progressContentCircleEl = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         progressContentCircleEl.classList.add('v-progress-circular__overlay');
         progressContentCircleEl.setAttribute('fill', 'transparent');
@@ -206,14 +197,14 @@ export default {
         return progressEl;
       };
 
-      const getBadgeIconEl = (entity, opened) => {
+      const getBadgeIconElement = (entity, opened) => {
         const badgeIconEl = document.createElement('i');
         badgeIconEl.classList.add(
           'v-icon',
           'material-icons',
           'theme--light',
           'white--text',
-          'tree-of-dependencies__fetch-dependencies',
+          'entity-dependencies-by-state-settings__fetch-dependencies',
         );
         badgeIconEl.textContent = opened ? 'remove' : 'add';
 
@@ -222,10 +213,10 @@ export default {
 
       const getBadgeEl = (entity, opened, pending) => {
         const badgeEl = document.createElement('span');
-        badgeEl.appendChild(pending ? getProgressEl() : getBadgeIconEl(entity, opened));
+        badgeEl.appendChild(pending ? getProgressElement() : getBadgeIconElement(entity, opened));
         badgeEl.classList.add(
           'v-badge__badge',
-          'd-inline-flex',
+          'inline-flex',
           'justify-center',
           'align-center',
           'grey',
@@ -253,9 +244,7 @@ export default {
         nodeEl.style.width = `${nodeSize}px`;
         nodeEl.style.height = `${nodeSize}px`;
         nodeEl.style.justifyContent = 'center';
-        nodeEl.style.background = !this.colorIndicator
-          ? COLORS.secondary
-          : getEntityColor(entity, this.colorIndicator);
+        nodeEl.style.background = getEntityColor(entity, this.colorIndicator);
 
         if (this.hasDependencies(entity) && !dependenciesCount) {
           nodeEl.appendChild(getBadgeEl(entity, opened, pending));
@@ -615,7 +604,7 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.tree-of-dependencies__preview {
+.entity-dependencies-by-state-settings {
   position: relative;
   height: 800px;
   width: 100%;
@@ -640,7 +629,7 @@ export default {
     height: 20px;
   }
 
-  & ::v-deep .tree-of-dependencies__node-icon {
+  & ::v-deep .entity-dependencies-by-state-settings__node-icon {
     font-size: 30px;
 
     svg {
@@ -648,7 +637,7 @@ export default {
     }
   }
 
-  & ::v-deep .tree-of-dependencies__fetch-dependencies {
+  & ::v-deep .entity-dependencies-by-state-settings__fetch-dependencies {
     width: 100%;
     height: 100%;
     border-radius: 50%;
