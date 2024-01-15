@@ -203,6 +203,8 @@ type Event struct {
 	IsInstructionMatched bool `bson:"instr_matched,omitempty" json:"instr_matched,omitempty"`
 
 	Healthcheck bool `bson:"healthcheck,omitempty" json:"healthcheck,omitempty"`
+
+	StateSettingUpdated bool `bson:"state_setting_updated,omitempty" json:"state_setting_updated,omitempty"`
 }
 
 // Format an event
