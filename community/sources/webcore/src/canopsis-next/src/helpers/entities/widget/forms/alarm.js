@@ -170,7 +170,6 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {boolean} isActionsAllowWithOkState
  * @property {boolean} sticky_header
  * @property {boolean} dense
- * @property {boolean} dense
  * @property {boolean} showRootCauseByStateClick
  */
 
