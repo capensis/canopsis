@@ -1,14 +1,34 @@
-<template lang="pug">
-  v-data-iterator(:items="exceptions", hide-actions)
-    template(#item="{ item, index }")
-      v-layout(column)
-        v-layout(row, align-center)
-          h4 {{ item.name }}
-          c-action-btn(type="delete", @click="removeItemFromArray(index)")
-        c-advanced-data-table(:items="item.exdates", :headers="exdatesHeaders")
-          template(#begin="{ item }") {{ item.begin | date }}
-          template(#end="{ item }") {{ item.end | date }}
-          template(#type="{ item }") {{ item.type.name }}
+<template>
+  <v-data-iterator
+    :items="exceptions"
+    hide-default-footer
+  >
+    <template #item="{ item, index }">
+      <v-layout column>
+        <v-layout align-center>
+          <h4>{{ item.name }}</h4>
+          <c-action-btn
+            type="delete"
+            @click="removeItemFromArray(index)"
+          />
+        </v-layout>
+        <c-advanced-data-table
+          :items="item.exdates"
+          :headers="exdatesHeaders"
+        >
+          <template #begin="{ item: exdate }">
+            {{ exdate.begin | date }}
+          </template>
+          <template #end="{ item: exdate }">
+            {{ exdate.end | date }}
+          </template>
+          <template #type="{ item: exdate }">
+            {{ exdate.type.name }}
+          </template>
+        </c-advanced-data-table>
+      </v-layout>
+    </template>
+  </v-data-iterator>
 </template>
 
 <script>

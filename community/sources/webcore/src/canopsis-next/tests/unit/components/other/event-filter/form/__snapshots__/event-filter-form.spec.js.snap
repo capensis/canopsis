@@ -3,7 +3,7 @@
 exports[`event-filter-form Renders \`event-filter-form\` with \`break\` type 1`] = `
 <div>
   <div
-    class="layout row"
+    class="layout"
   >
     <div
       class="flex xs8"
@@ -24,11 +24,11 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`break\` type 1`]
     </div>
   </div>
   <c-description-field-stub
-    required="required"
+    required=""
     value="event-filter-description"
   />
   <div
-    class="layout row justify-space-between"
+    class="layout justify-space-between"
   >
     <c-enabled-field-stub
       value="true"
@@ -49,11 +49,11 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`break\` type 1`]
     form="[object Object]"
   />
   <c-patterns-field-stub
-    entity-counters-type="entity-counters-type"
-    some-required="some-required"
+    entity-counters-type=""
+    some-required=""
     value="[object Object]"
-    with-entity="with-entity"
-    with-event="with-event"
+    with-entity=""
+    with-event=""
   />
   <!---->
 </div>
@@ -62,7 +62,7 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`break\` type 1`]
 exports[`event-filter-form Renders \`event-filter-form\` with \`change_entity\` type 1`] = `
 <div>
   <div
-    class="layout row"
+    class="layout"
   >
     <div
       class="flex xs8"
@@ -83,11 +83,11 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`change_entity\` 
     </div>
   </div>
   <c-description-field-stub
-    required="required"
+    required=""
     value="event-filter-description"
   />
   <div
-    class="layout row justify-space-between"
+    class="layout justify-space-between"
   >
     <c-enabled-field-stub
       value="true"
@@ -108,14 +108,16 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`change_entity\` 
     form="[object Object]"
   />
   <c-patterns-field-stub
-    entity-counters-type="entity-counters-type"
-    some-required="some-required"
+    entity-counters-type=""
+    some-required=""
     value="[object Object]"
-    with-entity="with-entity"
-    with-event="with-event"
+    with-entity=""
+    with-event=""
   />
   <hr
+    aria-orientation="horizontal"
     class="my-3 v-divider theme--light"
+    role="separator"
   />
   <c-information-block-stub
     title="Change entity options"
@@ -143,7 +145,7 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`change_entity\` 
 exports[`event-filter-form Renders \`event-filter-form\` with \`drop\` type 1`] = `
 <div>
   <div
-    class="layout row"
+    class="layout"
   >
     <div
       class="flex xs8"
@@ -164,11 +166,11 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`drop\` type 1`] 
     </div>
   </div>
   <c-description-field-stub
-    required="required"
+    required=""
     value="event-filter-description"
   />
   <div
-    class="layout row justify-space-between"
+    class="layout justify-space-between"
   >
     <c-enabled-field-stub
       value="true"
@@ -189,11 +191,11 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`drop\` type 1`] 
     form="[object Object]"
   />
   <c-patterns-field-stub
-    entity-counters-type="entity-counters-type"
-    some-required="some-required"
+    entity-counters-type=""
+    some-required=""
     value="[object Object]"
-    with-entity="with-entity"
-    with-event="with-event"
+    with-entity=""
+    with-event=""
   />
   <!---->
 </div>
@@ -202,7 +204,7 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`drop\` type 1`] 
 exports[`event-filter-form Renders \`event-filter-form\` with \`enrichment\` type 1`] = `
 <div>
   <div
-    class="layout row"
+    class="layout"
   >
     <div
       class="flex xs8"
@@ -223,11 +225,11 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`enrichment\` typ
     </div>
   </div>
   <c-description-field-stub
-    required="required"
+    required=""
     value="event-filter-description"
   />
   <div
-    class="layout row justify-space-between"
+    class="layout justify-space-between"
   >
     <c-enabled-field-stub
       value="true"
@@ -248,14 +250,16 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`enrichment\` typ
     form="[object Object]"
   />
   <c-patterns-field-stub
-    entity-counters-type="entity-counters-type"
-    some-required="some-required"
+    entity-counters-type=""
+    some-required=""
     value="[object Object]"
-    with-entity="with-entity"
-    with-event="with-event"
+    with-entity=""
+    with-event=""
   />
   <hr
+    aria-orientation="horizontal"
     class="my-3 v-divider theme--light"
+    role="separator"
   />
   <c-information-block-stub
     title="Enrichment options"
@@ -283,7 +287,7 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`enrichment\` typ
 exports[`event-filter-form Renders \`event-filter-form\` with custom props 1`] = `
 <div>
   <div
-    class="layout row"
+    class="layout"
   >
     <div
       class="flex xs8"
@@ -304,11 +308,11 @@ exports[`event-filter-form Renders \`event-filter-form\` with custom props 1`] =
     </div>
   </div>
   <c-description-field-stub
-    required="required"
+    required=""
     value="event-filter-description"
   />
   <div
-    class="layout row justify-space-between"
+    class="layout justify-space-between"
   >
     <c-enabled-field-stub
       value="true"
@@ -329,11 +333,11 @@ exports[`event-filter-form Renders \`event-filter-form\` with custom props 1`] =
     form="[object Object]"
   />
   <c-patterns-field-stub
-    entity-counters-type="entity-counters-type"
-    some-required="some-required"
+    entity-counters-type=""
+    some-required=""
     value="[object Object]"
-    with-entity="with-entity"
-    with-event="with-event"
+    with-entity=""
+    with-event=""
   />
   <!---->
 </div>
@@ -342,7 +346,7 @@ exports[`event-filter-form Renders \`event-filter-form\` with custom props 1`] =
 exports[`event-filter-form Renders \`event-filter-form\` with default props 1`] = `
 <div>
   <div
-    class="layout row"
+    class="layout"
   >
     <div
       class="flex xs8"
@@ -361,10 +365,10 @@ exports[`event-filter-form Renders \`event-filter-form\` with default props 1`] 
     </div>
   </div>
   <c-description-field-stub
-    required="required"
+    required=""
   />
   <div
-    class="layout row justify-space-between"
+    class="layout justify-space-between"
   >
     <c-enabled-field-stub />
     <c-priority-field-stub />
@@ -381,10 +385,10 @@ exports[`event-filter-form Renders \`event-filter-form\` with default props 1`] 
     form="[object Object]"
   />
   <c-patterns-field-stub
-    entity-counters-type="entity-counters-type"
-    some-required="some-required"
-    with-entity="with-entity"
-    with-event="with-event"
+    entity-counters-type=""
+    some-required=""
+    with-entity=""
+    with-event=""
   />
   <!---->
 </div>

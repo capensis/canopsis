@@ -1,6 +1,7 @@
-<template lang="pug">
-  span.c-circle-badge
-    slot
+<template>
+  <span class="c-circle-badge">
+    <slot />
+  </span>
 </template>
 
 <style lang="scss">

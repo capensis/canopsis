@@ -8,7 +8,7 @@ describe('c-collapse-panel', () => {
   it('Renders `c-collapse-panel` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-collapse-panel` with custom title', () => {
@@ -18,7 +18,7 @@ describe('c-collapse-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-collapse-panel` with errors', async () => {
@@ -40,7 +40,7 @@ describe('c-collapse-panel', () => {
 
     await validator.validateAll();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-collapse-panel` with custom props', () => {
@@ -48,10 +48,9 @@ describe('c-collapse-panel', () => {
       propsData: {
         color: 'grey',
         icon: 'custom_icon',
-        lazy: true,
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

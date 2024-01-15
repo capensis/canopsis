@@ -1,34 +1,64 @@
-<template lang="pug">
-  v-layout.mt-2(column)
-    v-layout(row)
-      v-flex(v-if="!jobs.length", xs12)
-        v-alert(:value="true", type="info") {{ $t('remediation.instruction.emptyJobs') }}
-    h3.subheading.font-weight-bold {{ $t('remediation.instruction.listJobs') }}
-    c-draggable-list-field(
-      v-field="jobs",
-      :disabled="disabled",
-      :group="draggableGroup",
-      handle=".job-drag-handler",
+<template>
+  <v-layout
+    class="mt-2"
+    column
+  >
+    <v-layout>
+      <v-flex
+        v-if="!jobs.length"
+        xs12
+      >
+        <v-alert type="info">
+          {{ $t('remediation.instruction.emptyJobs') }}
+        </v-alert>
+      </v-flex>
+    </v-layout>
+    <h3 class="text-subtitle-1 font-weight-bold">
+      {{ $t('remediation.instruction.listJobs') }}
+    </h3>
+    <c-draggable-list-field
+      v-field="jobs"
+      :disabled="disabled"
+      :group="draggableGroup"
+      handle=".job-drag-handler"
       ghost-class="white"
-    )
-      v-card.my-2(v-for="(job, index) in jobs", :key="job.key")
-        v-card-text
-          remediation-instruction-job-field.py-1(
-            v-field="jobs[index]",
-            :jobs="jobsItems",
-            :name="job.key",
-            :job-number="index + 1",
-            :disabled="disabled",
+    >
+      <v-card
+        class="my-2"
+        v-for="(job, index) in jobs"
+        :key="job.key"
+      >
+        <v-card-text>
+          <remediation-instruction-job-field
+            class="py-1"
+            v-field="jobs[index]"
+            :jobs="jobsItems"
+            :name="job.key"
+            :job-number="index + 1"
+            :disabled="disabled"
             @remove="removeItemFromArray(index)"
-          )
-    v-layout(row, align-center)
-      v-btn.ml-0(
-        :color="hasJobsErrors ? 'error' : 'primary'",
-        :disabled="disabled",
-        outline,
+          />
+        </v-card-text>
+      </v-card>
+    </c-draggable-list-field>
+    <v-layout align-center>
+      <v-btn
+        class="ml-0"
+        :color="hasJobsErrors ? 'error' : 'primary'"
+        :disabled="disabled"
+        outlined
         @click="addJob"
-      ) {{ $t('remediation.instruction.addJob') }}
-      span.error--text(v-show="hasJobsErrors") {{ $t('remediation.instruction.errors.jobRequired') }}
+      >
+        {{ $t('remediation.instruction.addJob') }}
+      </v-btn>
+      <span
+        class="error--text"
+        v-show="hasJobsErrors"
+      >
+        {{ $t('remediation.instruction.errors.jobRequired') }}
+      </span>
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>

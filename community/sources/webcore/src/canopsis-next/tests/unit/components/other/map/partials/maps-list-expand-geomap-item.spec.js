@@ -19,6 +19,6 @@ describe('maps-list-expand-geomap-item', () => {
       propsData: { map },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

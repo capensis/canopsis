@@ -7,7 +7,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
   light="true"
 >
   <div
-    class="layout row"
+    class="layout"
   >
     <div
       class="treeview-data-table--tree mr-4"
@@ -16,17 +16,18 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
         class="v-treeview theme--light"
       >
         <div
+          aria-expanded="false"
           class="v-treeview-node"
         >
           <div
             class="v-treeview-node__root"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon v-treeview-node__toggle v-icon--link material-icons theme--light"
+            <button
+              class="v-icon notranslate v-treeview-node__toggle v-icon--link material-icons theme--light"
+              type="button"
             >
               arrow_drop_down
-            </i>
+            </button>
             <div
               class="v-treeview-node__content"
             >
@@ -41,22 +42,19 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                 >
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon notranslate material-icons theme--light"
                   >
                     arrow_right_alt
                   </i>
                   <span
-                    class="v-chip ma-0 theme--light white--text"
-                    tabindex="0"
+                    class="ma-0 v-chip v-chip--no-color theme--light v-size--default white--text"
                   >
                     <span
                       class="v-chip__content"
                     >
                       <span
-                        class="px-2 body-2 font-weight-bold"
-                      >
-                        
-                      </span>
+                        class="px-2 text-body-2 font-weight-bold"
+                      />
                     </span>
                   </span>
                 </div>
@@ -69,58 +67,72 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
     <div
       class="flex"
     >
-      <div>
+      <div
+        class="v-data-table theme--light"
+        header-text="text"
+      >
         <div
-          class="v-table__overflow"
+          class="v-data-table__wrapper"
         >
-          <table
-            class="v-datatable v-table theme--light"
-          >
-            <thead>
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="3"
+            tag="td"
+          />
+          <table>
+            <colgroup>
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+            </colgroup>
+            <thead
+              class="v-data-table-header"
+            >
               <tr>
                 <th
-                  aria-label=": Not sorted."
-                  aria-sort="none"
-                  class="column text-xs-left"
+                  aria-label=""
+                  class="text-start"
                   data-value="no-events-icon"
                   role="columnheader"
                   scope="col"
-                />
+                >
+                  <span />
+                </th>
                 <th
-                  aria-label="Custom name label: Not sorted."
-                  aria-sort="none"
-                  class="column text-xs-left"
+                  aria-label="Custom name label"
+                  class="text-start"
                   data-value="entity.name"
                   role="columnheader"
                   scope="col"
                 >
-                  Custom name label
+                  <span>
+                    Custom name label
+                  </span>
                 </th>
                 <th
-                  aria-label="Custom type label: Not sorted."
-                  aria-sort="none"
-                  class="column text-xs-left"
+                  aria-label="Custom type label"
+                  class="text-start"
                   data-value="entity.type"
                   role="columnheader"
                   scope="col"
                 >
-                  Custom type label
+                  <span>
+                    Custom type label
+                  </span>
                 </th>
-              </tr>
-              <tr
-                class="v-datatable__progress"
-              >
-                <th
-                  class="column"
-                  colspan="3"
-                />
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td>
                   <c-no-events-icon-stub
-                    top="top"
+                    top=""
                   />
                 </td>
                 <td>
@@ -136,6 +148,9 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                   />
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
             </tbody>
           </table>
         </div>
@@ -150,7 +165,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
   class="treeview-data-table service-dependencies v-sheet theme--light"
 >
   <div
-    class="layout row"
+    class="layout"
   >
     <div
       class="treeview-data-table--tree mr-4"
@@ -159,11 +174,15 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
         class="v-treeview theme--light"
       >
         <div
+          aria-expanded="false"
           class="v-treeview-node v-treeview-node--leaf"
         >
           <div
             class="v-treeview-node__root"
           >
+            <div
+              class="v-treeview-node__level"
+            />
             <div
               class="v-treeview-node__content"
             >
@@ -178,11 +197,15 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
           </div>
         </div>
         <div
+          aria-expanded="false"
           class="v-treeview-node v-treeview-node--leaf"
         >
           <div
             class="v-treeview-node__root"
           >
+            <div
+              class="v-treeview-node__level"
+            />
             <div
               class="v-treeview-node__content"
             >
@@ -197,11 +220,15 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
           </div>
         </div>
         <div
+          aria-expanded="false"
           class="v-treeview-node v-treeview-node--leaf"
         >
           <div
             class="v-treeview-node__root"
           >
+            <div
+              class="v-treeview-node__level"
+            />
             <div
               class="v-treeview-node__content"
             >
@@ -216,11 +243,15 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
           </div>
         </div>
         <div
+          aria-expanded="false"
           class="v-treeview-node v-treeview-node--leaf"
         >
           <div
             class="v-treeview-node__root"
           >
+            <div
+              class="v-treeview-node__level"
+            />
             <div
               class="v-treeview-node__content"
             >
@@ -239,58 +270,87 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
     <div
       class="flex"
     >
-      <div>
+      <div
+        class="v-data-table theme--light"
+        header-text="text"
+      >
         <div
-          class="v-table__overflow"
+          class="v-data-table__wrapper"
         >
-          <table
-            class="v-datatable v-table theme--light"
-          >
-            <thead>
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="3"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="3"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="3"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="3"
+            tag="td"
+          />
+          <table>
+            <colgroup>
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+            </colgroup>
+            <thead
+              class="v-data-table-header"
+            >
               <tr>
                 <th
-                  aria-label=": Not sorted."
-                  aria-sort="none"
-                  class="column text-xs-left"
+                  aria-label=""
+                  class="text-start"
                   data-value="no-events-icon"
                   role="columnheader"
                   scope="col"
-                />
+                >
+                  <span />
+                </th>
                 <th
-                  aria-label="Name: Not sorted."
-                  aria-sort="none"
-                  class="column text-xs-left"
+                  aria-label="Name"
+                  class="text-start"
                   data-value="entity.name"
                   role="columnheader"
                   scope="col"
                 >
-                  Name
+                  <span>
+                    Name
+                  </span>
                 </th>
                 <th
-                  aria-label="Type: Not sorted."
-                  aria-sort="none"
-                  class="column text-xs-left"
+                  aria-label="Type"
+                  class="text-start"
                   data-value="entity.type"
                   role="columnheader"
                   scope="col"
                 >
-                  Type
+                  <span>
+                    Type
+                  </span>
                 </th>
-              </tr>
-              <tr
-                class="v-datatable__progress"
-              >
-                <th
-                  class="column"
-                  colspan="3"
-                />
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td>
                   <c-no-events-icon-stub
-                    top="top"
+                    top=""
                   />
                 </td>
                 <td>
@@ -306,10 +366,13 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                   />
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
               <tr>
                 <td>
                   <c-no-events-icon-stub
-                    top="top"
+                    top=""
                   />
                 </td>
                 <td>
@@ -325,10 +388,13 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                   />
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
               <tr>
                 <td>
                   <c-no-events-icon-stub
-                    top="top"
+                    top=""
                   />
                 </td>
                 <td>
@@ -344,10 +410,13 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                   />
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
               <tr>
                 <td>
                   <c-no-events-icon-stub
-                    top="top"
+                    top=""
                   />
                 </td>
                 <td>
@@ -363,6 +432,9 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                   />
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
             </tbody>
           </table>
         </div>
@@ -377,7 +449,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
   class="treeview-data-table service-dependencies v-sheet theme--light"
 >
   <div
-    class="layout row"
+    class="layout"
   >
     <div
       class="treeview-data-table--tree mr-4"
@@ -386,11 +458,15 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
         class="v-treeview theme--light"
       >
         <div
+          aria-expanded="false"
           class="v-treeview-node v-treeview-node--leaf"
         >
           <div
             class="v-treeview-node__root"
           >
+            <div
+              class="v-treeview-node__level"
+            />
             <div
               class="v-treeview-node__content"
             >
@@ -405,11 +481,15 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
           </div>
         </div>
         <div
+          aria-expanded="false"
           class="v-treeview-node v-treeview-node--leaf"
         >
           <div
             class="v-treeview-node__root"
           >
+            <div
+              class="v-treeview-node__level"
+            />
             <div
               class="v-treeview-node__content"
             >
@@ -424,11 +504,15 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
           </div>
         </div>
         <div
+          aria-expanded="false"
           class="v-treeview-node v-treeview-node--leaf"
         >
           <div
             class="v-treeview-node__root"
           >
+            <div
+              class="v-treeview-node__level"
+            />
             <div
               class="v-treeview-node__content"
             >
@@ -447,58 +531,77 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
     <div
       class="flex"
     >
-      <div>
+      <div
+        class="v-data-table theme--light"
+        header-text="text"
+      >
         <div
-          class="v-table__overflow"
+          class="v-data-table__wrapper"
         >
-          <table
-            class="v-datatable v-table theme--light"
-          >
-            <thead>
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="3"
+            tag="td"
+          />
+          <transition-group-stub
+            class="v-data-table__expanded__col"
+            colspan="3"
+            tag="td"
+          />
+          <table>
+            <colgroup>
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+            </colgroup>
+            <thead
+              class="v-data-table-header"
+            >
               <tr>
                 <th
-                  aria-label=": Not sorted."
-                  aria-sort="none"
-                  class="column text-xs-left"
+                  aria-label=""
+                  class="text-start"
                   data-value="no-events-icon"
                   role="columnheader"
                   scope="col"
-                />
+                >
+                  <span />
+                </th>
                 <th
-                  aria-label="Name: Not sorted."
-                  aria-sort="none"
-                  class="column text-xs-left"
+                  aria-label="Name"
+                  class="text-start"
                   data-value="entity.name"
                   role="columnheader"
                   scope="col"
                 >
-                  Name
+                  <span>
+                    Name
+                  </span>
                 </th>
                 <th
-                  aria-label="Type: Not sorted."
-                  aria-sort="none"
-                  class="column text-xs-left"
+                  aria-label="Type"
+                  class="text-start"
                   data-value="entity.type"
                   role="columnheader"
                   scope="col"
                 >
-                  Type
+                  <span>
+                    Type
+                  </span>
                 </th>
-              </tr>
-              <tr
-                class="v-datatable__progress"
-              >
-                <th
-                  class="column"
-                  colspan="3"
-                />
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td>
                   <c-no-events-icon-stub
-                    top="top"
+                    top=""
                   />
                 </td>
                 <td>
@@ -514,10 +617,13 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                   />
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
               <tr>
                 <td>
                   <c-no-events-icon-stub
-                    top="top"
+                    top=""
                   />
                 </td>
                 <td>
@@ -533,6 +639,9 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                   />
                 </td>
               </tr>
+              <tr
+                class="v-data-table__expanded v-data-table__expanded__row"
+              />
             </tbody>
           </table>
         </div>
@@ -547,7 +656,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with required pro
   class="treeview-data-table service-dependencies v-sheet theme--light"
 >
   <div
-    class="layout row"
+    class="layout"
   >
     <div
       class="treeview-data-table--tree mr-4"
@@ -559,57 +668,67 @@ exports[`service-dependencies Renders \`service-dependencies\` with required pro
     <div
       class="flex"
     >
-      <div>
+      <div
+        class="v-data-table theme--light"
+        header-text="text"
+      >
         <div
-          class="v-table__overflow"
+          class="v-data-table__wrapper"
         >
-          <table
-            class="v-datatable v-table theme--light"
-          >
-            <thead>
+          <table>
+            <colgroup>
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+            </colgroup>
+            <thead
+              class="v-data-table-header"
+            >
               <tr>
                 <th
-                  aria-label=": Not sorted."
-                  aria-sort="none"
-                  class="column text-xs-left"
+                  aria-label=""
+                  class="text-start"
                   data-value="no-events-icon"
                   role="columnheader"
                   scope="col"
-                />
+                >
+                  <span />
+                </th>
                 <th
-                  aria-label="Name: Not sorted."
-                  aria-sort="none"
-                  class="column text-xs-left"
+                  aria-label="Name"
+                  class="text-start"
                   data-value="entity.name"
                   role="columnheader"
                   scope="col"
                 >
-                  Name
+                  <span>
+                    Name
+                  </span>
                 </th>
                 <th
-                  aria-label="Type: Not sorted."
-                  aria-sort="none"
-                  class="column text-xs-left"
+                  aria-label="Type"
+                  class="text-start"
                   data-value="entity.type"
                   role="columnheader"
                   scope="col"
                 >
-                  Type
+                  <span>
+                    Type
+                  </span>
                 </th>
-              </tr>
-              <tr
-                class="v-datatable__progress"
-              >
-                <th
-                  class="column"
-                  colspan="3"
-                />
               </tr>
             </thead>
             <tbody>
-              <tr>
+              <tr
+                class="v-data-table__empty-wrapper"
+              >
                 <td
-                  class="text-xs-center"
                   colspan="3"
                 >
                   No data available

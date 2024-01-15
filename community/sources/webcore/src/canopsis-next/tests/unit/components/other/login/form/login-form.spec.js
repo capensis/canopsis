@@ -52,7 +52,7 @@ describe('login-form', () => {
   it('Renders `login-form` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `login-form` with custom props', () => {
@@ -65,6 +65,6 @@ describe('login-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

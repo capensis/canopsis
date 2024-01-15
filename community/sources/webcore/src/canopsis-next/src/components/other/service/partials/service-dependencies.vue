@@ -1,35 +1,55 @@
-<template lang="pug">
-  c-treeview-data-table.service-dependencies(
-    :items="items",
-    :headers="headers",
-    :loading="hasActivePending",
-    :load-children="loadChildren",
+<template>
+  <c-treeview-data-table
+    class="service-dependencies"
+    :items="items"
+    :headers="headers"
+    :loading="hasActivePending"
+    :load-children="loadChildren"
     item-key="key"
-  )
-    template(#expand="{ item }")
-      service-dependencies-expand(
-        :item="item",
-        :pending="pendingByIds[item.parentId]",
-        @load="loadMore",
+  >
+    <template #expand="{ item }">
+      <service-dependencies-expand
+        :item="item"
+        :pending="pendingByIds[item.parentId]"
+        @load="loadMore"
         @show="showTreeOfDependenciesModal"
-      )
-    template(#expand-append="{ item }")
-      div.expand-append(v-if="includeRoot && isInRootIds(item._id)")
-        v-icon arrow_right_alt
-        v-chip.ma-0(
-          :color="getEntityColor(item.entity)",
+      />
+    </template>
+    <template #expand-append="{ item }">
+      <div
+        class="expand-append"
+        v-if="includeRoot && isInRootIds(item._id)"
+      >
+        <v-icon>arrow_right_alt</v-icon>
+        <v-chip
+          class="ma-0"
+          :color="getEntityColor(item.entity)"
           text-color="white"
-        )
-          span.px-2.body-2.font-weight-bold {{ item.entity.impact_state }}
-    template(#items="{ item }")
-      tr
-        td(v-for="(header, index) in headers", :key="header.value")
-          c-no-events-icon(v-if="!index", :value="item.entity | get('idle_since')", top)
-          service-dependencies-entity-cell(
-            v-else-if="item.entity",
-            :item="item",
+        >
+          <span class="px-2 text-body-2 font-weight-bold">{{ item.entity.impact_state }}</span>
+        </v-chip>
+      </div>
+    </template>
+    <template #items="{ item }">
+      <tr>
+        <td
+          v-for="(header, index) in headers"
+          :key="header.value"
+        >
+          <c-no-events-icon
+            v-if="!index"
+            :value="item.entity | get('idle_since')"
+            top
+          />
+          <service-dependencies-entity-cell
+            v-else-if="item.entity"
+            :item="item"
             :column="header"
-           )
+          />
+        </td>
+      </tr>
+    </template>
+  </c-treeview-data-table>
 </template>
 
 <script>
@@ -248,5 +268,4 @@ export default {
     }
   }
 }
-
 </style>

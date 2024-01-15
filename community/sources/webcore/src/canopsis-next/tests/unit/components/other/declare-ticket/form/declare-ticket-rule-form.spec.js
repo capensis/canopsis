@@ -8,7 +8,7 @@ const stubs = {
   'declare-ticket-rule-test-query': true,
 };
 
-const selectTabItems = wrapper => wrapper.findAll('a.v-tabs__item');
+const selectTabItems = wrapper => wrapper.findAll('.v-tab');
 const selectTestQueryTab = wrapper => selectTabItems(wrapper).at(2);
 const selectDeclareTicketRuleGeneralForm = wrapper => wrapper.find('declare-ticket-rule-general-form-stub');
 const selectDeclareTicketRulePatternsForm = wrapper => wrapper.find('declare-ticket-rule-patterns-form-stub');
@@ -79,7 +79,7 @@ describe('declare-ticket-rule-form', () => {
 
     await selectTestQueryTab(wrapper).trigger('click');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `declare-ticket-rule-form` with custom props', async () => {
@@ -91,7 +91,7 @@ describe('declare-ticket-rule-form', () => {
 
     await selectTestQueryTab(wrapper).trigger('click');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `declare-ticket-rule-form` with errors', async () => {
@@ -104,6 +104,6 @@ describe('declare-ticket-rule-form', () => {
       hasPatternsError: true,
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

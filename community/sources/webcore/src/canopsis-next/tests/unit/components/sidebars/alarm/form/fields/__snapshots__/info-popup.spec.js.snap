@@ -2,60 +2,62 @@
 
 exports[`info-popup Renders \`info-popup\` with custom props 1`] = `
 <div
-  class="container pa-3 fluid"
+  class="widget-settings-flat-item v-list-item theme--light"
+  tabindex="-1"
 >
   <div
-    class="layout align-center justify-space-between"
+    class="v-list-item__content"
   >
     <div
-      class="subheading"
+      class="v-list-item__title"
     >
       Info popup
     </div>
-    <div
-      class="layout justify-end"
+  </div>
+  <div
+    class="v-list-item__action mr-3"
+  >
+    <button
+      class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--small"
+      type="button"
     >
-      <button
-        class="primary v-btn v-btn--small theme--light"
-        type="button"
+      <span
+        class="v-btn__content"
       >
-        <div
-          class="v-btn__content"
-        >
-          Create/Edit
-        </div>
-      </button>
-    </div>
+      Create/Edit
+      </span>
+    </button>
   </div>
 </div>
 `;
 
 exports[`info-popup Renders \`info-popup\` with default props 1`] = `
 <div
-  class="container pa-3 fluid"
+  class="widget-settings-flat-item v-list-item theme--light"
+  tabindex="-1"
 >
   <div
-    class="layout align-center justify-space-between"
+    class="v-list-item__content"
   >
     <div
-      class="subheading"
+      class="v-list-item__title"
     >
       Info popup
     </div>
-    <div
-      class="layout justify-end"
+  </div>
+  <div
+    class="v-list-item__action mr-3"
+  >
+    <button
+      class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--small"
+      type="button"
     >
-      <button
-        class="primary v-btn v-btn--small theme--light"
-        type="button"
+      <span
+        class="v-btn__content"
       >
-        <div
-          class="v-btn__content"
-        >
-          Create/Edit
-        </div>
-      </button>
-    </div>
+      Create/Edit
+      </span>
+    </button>
   </div>
 </div>
 `;
