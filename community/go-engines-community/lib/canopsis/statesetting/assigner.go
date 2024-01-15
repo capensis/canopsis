@@ -183,11 +183,6 @@ func (a *assigner) assignToService(ctx context.Context, entity *types.Entity, pr
 		}
 
 		if matched {
-			// if a state method is the same, return
-			if entity.StateInfo != nil && prevStateMethodID == entity.StateInfo.ID {
-				return false, nil
-			}
-
 			// for service, save only rule's id, there is no need to save inherited pattern,
 			// because resources are matched to a service with service's pattern and inherited pattern
 			// will be used in axe for state calculation.
@@ -217,7 +212,7 @@ func (a *assigner) assignToService(ctx context.Context, entity *types.Entity, pr
 		_, err := a.entityCountersCollection.UpdateOne(
 			ctx,
 			bson.M{"_id": entity.ID},
-			bson.M{"unset": bson.M{"rule": ""}},
+			bson.M{"$unset": bson.M{"rule": ""}},
 		)
 
 		if err != nil {
