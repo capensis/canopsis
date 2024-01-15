@@ -46,12 +46,12 @@ expect.extend({
   toMatchTooltipSnapshot(wrapper) {
     const tooltip = wrapper.findTooltip();
 
-    return toMatchSnapshot.call(this, tooltip.element);
+    return toMatchSnapshot.call(this, tooltip);
   },
   toMatchMenuSnapshot(wrapper) {
     const menu = wrapper.findMenu();
 
-    return toMatchSnapshot.call(this, menu.element);
+    return toMatchSnapshot.call(this, menu);
   },
   toEmit(wrapper, event, ...data) {
     const emittedEvents = wrapper.emitted(event);

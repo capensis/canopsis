@@ -1,27 +1,34 @@
-<template lang="pug">
-  v-tooltip(top)
-    template(#activator="{ on }")
-      v-btn(
-        v-on="on",
-        :input-value="isPeriodicRefreshEnabled",
-        :loading="pending",
-        color="secondary",
-        fab,
-        dark,
+<template>
+  <v-tooltip top>
+    <template #activator="{ on }">
+      <v-btn
+        v-on="on"
+        :input-value="isPeriodicRefreshEnabled"
+        :loading="pending"
+        color="secondary"
+        fab
+        dark
         @click.stop="refreshHandler"
-      )
-        v-icon(v-if="!isPeriodicRefreshEnabled") refresh
-        v-progress-circular.periodic-refresh-progress(
-          v-else,
-          :rotate="270",
-          :size="30",
-          :width="2",
-          :value="periodicRefreshProgressValue",
-          color="white",
+      >
+        <v-icon v-if="!isPeriodicRefreshEnabled">
+          refresh
+        </v-icon>
+        <v-progress-circular
+          class="periodic-refresh-progress"
+          v-else
+          :rotate="270"
+          :size="30"
+          :width="2"
+          :value="periodicRefreshProgressValue"
+          color="white"
           button
-        )
-          span.refresh-btn {{ periodicRefreshProgress | maxDurationByUnit }}
-    span {{ tooltipContent }}
+        >
+          <span class="refresh-btn">{{ periodicRefreshProgress | maxDurationByUnit }}</span>
+        </v-progress-circular>
+      </v-btn>
+    </template>
+    <span>{{ tooltipContent }}</span>
+  </v-tooltip>
 </template>
 
 <script>

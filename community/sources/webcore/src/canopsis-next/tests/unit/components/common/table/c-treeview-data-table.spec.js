@@ -26,20 +26,7 @@ describe('c-treeview-data-table', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
-  });
-
-  it('Renders `c-treeview-data-table` with default and required props', async () => {
-    const wrapper = snapshotFactory({
-      propsData: {
-        headers,
-        items: snapshotItems,
-      },
-    });
-
-    await flushPromises();
-
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-treeview-data-table` with custom props', async () => {
@@ -54,7 +41,7 @@ describe('c-treeview-data-table', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-treeview-data-table` with `openAll` prop', async () => {
@@ -68,7 +55,7 @@ describe('c-treeview-data-table', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-treeview-data-table` with custom props and expand slots', async () => {
@@ -86,7 +73,7 @@ describe('c-treeview-data-table', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-treeview-data-table` with default props and data-table `items` slot', async () => {
@@ -103,7 +90,7 @@ describe('c-treeview-data-table', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-treeview-data-table` with default props and data-table values slots', async () => {
@@ -121,7 +108,7 @@ describe('c-treeview-data-table', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-treeview-data-table` with default and required props (changed headers)', async () => {
@@ -134,7 +121,7 @@ describe('c-treeview-data-table', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-treeview-data-table` with default and required props and trigger click', async () => {
@@ -155,6 +142,6 @@ describe('c-treeview-data-table', () => {
     await secondToggleIcon.trigger('click');
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

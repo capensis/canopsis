@@ -1,12 +1,16 @@
-<template lang="pug">
-  v-layout(column)
-    c-duration-field(v-field="form.duration", required)
-    c-description-field(
-      v-field="form.comment",
-      :label="$t('common.note')",
-      :required="isNoteRequired",
+<template>
+  <v-layout column>
+    <c-duration-field
+      v-field="form.duration"
+      required
+    />
+    <c-description-field
+      v-field="form.comment"
+      :label="$t('common.note')"
+      :required="isNoteRequired"
       name="comment"
-    )
+    />
+  </v-layout>
 </template>
 
 <script>

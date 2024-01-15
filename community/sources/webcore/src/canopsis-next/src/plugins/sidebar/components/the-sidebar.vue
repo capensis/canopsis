@@ -1,6 +1,7 @@
-<template lang="pug">
-  div
-    sidebar-base(:sidebar="sidebar")
+<template>
+  <div>
+    <sidebar-base :sidebar="sidebar" />
+  </div>
 </template>
 
 <script>

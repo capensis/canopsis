@@ -1,14 +1,14 @@
-<template lang="pug">
-  c-patterns-field(
-    v-field="patterns",
-    :entity-attributes="entityAttributes",
-    :entity-types="entityTypes",
-    :entity-title="$t('stateSetting.addImpactingEntityPattern')",
-    name="inherited_entity_pattern",
-    required,
-    with-entity,
+<template>
+  <c-patterns-field
+    v-field="patterns"
+    :entity-attributes="entityAttributes"
+    :entity-types="entityTypes"
+    :entity-title="$t('stateSetting.addImpactingEntityPattern')"
+    name="inherited_entity_pattern"
+    required
+    with-entity
     entity-counters-type
-  )
+  />
 </template>
 
 <script>

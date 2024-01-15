@@ -1,13 +1,26 @@
-<template lang="pug">
-  v-menu(bottom, offset-y, offset-x)
-    template(#activator="{ on }")
-      v-btn.white--text(v-on="on", flat) {{ userName }}
-    v-list.py-0
-      top-bar-profile-menu-link(
-        v-for="link in links",
-        :key="link.title",
+<template>
+  <v-menu
+    bottom
+    offset-y
+    offset-x
+  >
+    <template #activator="{ on }">
+      <v-btn
+        class="white--text"
+        v-on="on"
+        text
+      >
+        {{ userName }}
+      </v-btn>
+    </template>
+    <v-list class="py-0">
+      <top-bar-profile-menu-link
+        v-for="link in links"
+        :key="link.title"
         :link="link"
-      )
+      />
+    </v-list>
+  </v-menu>
 </template>
 
 <script>

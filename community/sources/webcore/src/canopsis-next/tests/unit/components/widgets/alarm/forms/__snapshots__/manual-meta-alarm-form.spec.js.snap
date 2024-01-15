@@ -5,29 +5,28 @@ exports[`manual-meta-alarm-form Renders \`manual-meta-alarm-form\` with alarms 1
   class="layout column"
 >
   <div
-    class="v-input v-text-field v-select v-autocomplete theme--light"
+    class="v-input theme--light v-text-field v-select v-autocomplete"
   >
     <div
       class="v-input__control"
     >
       <div
+        aria-expanded="false"
+        aria-haspopup="listbox"
         class="v-input__slot"
+        role="combobox"
       >
         <div
           class="v-select__slot"
         >
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: absolute;"
           >
             Manual meta alarm
           </label>
           <input
-            aria-label="Manual meta alarm"
             autocomplete="off"
-            name="manualMetaAlarm"
-            role="combobox"
             type="text"
           />
           <div
@@ -38,16 +37,22 @@ exports[`manual-meta-alarm-form Renders \`manual-meta-alarm-form\` with alarms 1
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 arrow_drop_down
               </i>
             </div>
           </div>
+          <input
+            name="manualMetaAlarm"
+            type="hidden"
+          />
         </div>
         <div
           class="v-menu"
-        />
+        >
+          <!---->
+        </div>
       </div>
       <div
         class="v-text-field__details"
@@ -65,7 +70,7 @@ exports[`manual-meta-alarm-form Renders \`manual-meta-alarm-form\` with alarms 1
     </div>
   </div>
   <div
-    class="v-input v-text-field theme--light"
+    class="v-input theme--light v-text-field"
   >
     <div
       class="v-input__control"
@@ -77,14 +82,12 @@ exports[`manual-meta-alarm-form Renders \`manual-meta-alarm-form\` with alarms 1
           class="v-text-field__slot"
         >
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: absolute;"
           >
             Note
           </label>
           <input
-            aria-label="Note"
             type="text"
           />
         </div>
@@ -95,8 +98,10 @@ exports[`manual-meta-alarm-form Renders \`manual-meta-alarm-form\` with alarms 1
         <div
           class="v-messages theme--light"
         >
-          <div
+          <transition-group-stub
             class="v-messages__wrapper"
+            name="message-transition"
+            tag="div"
           />
         </div>
       </div>
@@ -108,68 +113,35 @@ exports[`manual-meta-alarm-form Renders \`manual-meta-alarm-form\` with alarms 1
 </div>
 `;
 
-exports[`manual-meta-alarm-form Renders \`manual-meta-alarm-form\` with alarms 2`] = `
-<div
-  class="v-menu__content theme--light v-autocomplete__content"
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-select-list v-card theme--light"
-  >
-    <div
-      class="v-list theme--light"
-      role="list"
-    >
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              alarm-display-name
-            </div>
-          </div>
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-`;
+exports[`manual-meta-alarm-form Renders \`manual-meta-alarm-form\` with alarms 2`] = `undefined`;
 
 exports[`manual-meta-alarm-form Renders \`manual-meta-alarm-form\` with default props 1`] = `
 <div
   class="layout column"
 >
   <div
-    class="v-input v-text-field v-select v-autocomplete v-input--is-label-active v-input--is-dirty theme--light"
+    class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select v-autocomplete"
   >
     <div
       class="v-input__control"
     >
       <div
+        aria-expanded="false"
+        aria-haspopup="listbox"
         class="v-input__slot"
+        role="combobox"
       >
         <div
           class="v-select__slot"
         >
           <label
-            aria-hidden="true"
             class="v-label v-label--active theme--light"
             style="left: 0px; position: absolute;"
           >
             Manual meta alarm
           </label>
           <input
-            aria-label="Manual meta alarm"
             autocomplete="off"
-            name="manualMetaAlarm"
-            role="combobox"
             type="text"
           />
           <div
@@ -180,16 +152,23 @@ exports[`manual-meta-alarm-form Renders \`manual-meta-alarm-form\` with default 
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 arrow_drop_down
               </i>
             </div>
           </div>
+          <input
+            name="manualMetaAlarm"
+            type="hidden"
+            value="metaAlarm"
+          />
         </div>
         <div
           class="v-menu"
-        />
+        >
+          <!---->
+        </div>
       </div>
       <div
         class="v-text-field__details"
@@ -207,7 +186,7 @@ exports[`manual-meta-alarm-form Renders \`manual-meta-alarm-form\` with default 
     </div>
   </div>
   <div
-    class="v-input v-text-field v-input--is-label-active v-input--is-dirty theme--light"
+    class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field"
   >
     <div
       class="v-input__control"
@@ -219,14 +198,12 @@ exports[`manual-meta-alarm-form Renders \`manual-meta-alarm-form\` with default 
           class="v-text-field__slot"
         >
           <label
-            aria-hidden="true"
             class="v-label v-label--active theme--light"
             style="left: 0px; position: absolute;"
           >
             Note
           </label>
           <input
-            aria-label="Note"
             type="text"
           />
         </div>
@@ -237,8 +214,10 @@ exports[`manual-meta-alarm-form Renders \`manual-meta-alarm-form\` with default 
         <div
           class="v-messages theme--light"
         >
-          <div
+          <transition-group-stub
             class="v-messages__wrapper"
+            name="message-transition"
+            tag="div"
           />
         </div>
       </div>
@@ -251,40 +230,4 @@ exports[`manual-meta-alarm-form Renders \`manual-meta-alarm-form\` with default 
 </div>
 `;
 
-exports[`manual-meta-alarm-form Renders \`manual-meta-alarm-form\` with default props 2`] = `
-<div
-  class="v-menu__content theme--light v-autocomplete__content"
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-select-list v-card theme--light"
-  >
-    <div
-      class="v-list theme--light"
-      role="list"
-    >
-      <div
-        role="listitem"
-      >
-        <div
-          class="v-list__tile theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              No meta alarm corresponding. Press 
-              <kbd>
-                enter
-              </kbd>
-               to create a new one
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-`;
+exports[`manual-meta-alarm-form Renders \`manual-meta-alarm-form\` with default props 2`] = `undefined`;

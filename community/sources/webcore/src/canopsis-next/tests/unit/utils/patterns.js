@@ -30,7 +30,7 @@ export const generateEntityPatternsTests = (Component, name, customProps = {}) =
     test(`Renders \`${name}\` with default props`, () => {
       const wrapper = snapshotFactory();
 
-      expect(wrapper.element).toMatchSnapshot();
+      expect(wrapper).toMatchSnapshot();
     });
 
     test(`Renders \`${name}\` with custom props`, () => {
@@ -44,7 +44,7 @@ export const generateEntityPatternsTests = (Component, name, customProps = {}) =
         },
       });
 
-      expect(wrapper.element).toMatchSnapshot();
+      expect(wrapper).toMatchSnapshot();
     });
   });
 };

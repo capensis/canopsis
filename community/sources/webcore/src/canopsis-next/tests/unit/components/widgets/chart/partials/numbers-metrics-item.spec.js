@@ -27,7 +27,7 @@ describe('numbers-metrics-item', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `numbers-metrics-item` with avg aggregated function', async () => {
@@ -41,7 +41,7 @@ describe('numbers-metrics-item', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `numbers-metrics-item` with sum aggregated function', async () => {
@@ -55,7 +55,7 @@ describe('numbers-metrics-item', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `numbers-metrics-item` with min aggregated function', async () => {
@@ -69,7 +69,7 @@ describe('numbers-metrics-item', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `numbers-metrics-item` with max aggregated function', async () => {
@@ -83,7 +83,7 @@ describe('numbers-metrics-item', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `numbers-metrics-item` with trend up', async () => {
@@ -103,7 +103,7 @@ describe('numbers-metrics-item', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `numbers-metrics-item` with trend down', async () => {
@@ -123,6 +123,6 @@ describe('numbers-metrics-item', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

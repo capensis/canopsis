@@ -238,7 +238,7 @@ describe('pie-chart', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pie-chart` widget settings with custom props and permissions', async () => {
@@ -280,6 +280,6 @@ describe('pie-chart', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

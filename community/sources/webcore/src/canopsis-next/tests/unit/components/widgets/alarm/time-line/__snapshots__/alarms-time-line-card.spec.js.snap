@@ -44,7 +44,7 @@ exports[`alarms-time-line-card Renders \`alarms-time-line-card\` with state but 
     class="time-line-card__content text--disabled"
   >
     <p>
-      Idle rule Test all resource
+        Idle rule Test all resource
     </p>
   </div>
 </div>
@@ -70,7 +70,7 @@ exports[`alarms-time-line-card Renders \`alarms-time-line-card\` with state but 
     class="time-line-card__content text--disabled"
   >
     <p>
-      Status dec
+        Status dec
     </p>
   </div>
 </div>
@@ -91,22 +91,20 @@ exports[`alarms-time-line-card Renders \`alarms-time-line-card\` with state coun
     class="time-line-card__content text--disabled"
   >
     <table>
-      <tr>
-        <td>
-          State increased :
-        </td>
-        <td>
-          
-        </td>
-      </tr>
-      <tr>
-        <td>
-          State decreases :
-        </td>
-        <td>
-          
-        </td>
-      </tr>
+      <tbody>
+        <tr>
+          <td>
+            State increased :
+          </td>
+          <td />
+        </tr>
+        <tr>
+          <td>
+            State decreases :
+          </td>
+          <td />
+        </tr>
+      </tbody>
     </table>
   </div>
 </div>
@@ -127,54 +125,52 @@ exports[`alarms-time-line-card Renders \`alarms-time-line-card\` with states 1`]
     class="time-line-card__content text--disabled"
   >
     <table>
-      <tr>
-        <td>
-          State increased :
-        </td>
-        <td>
-          
-        </td>
-      </tr>
-      <tr>
-        <td>
-          State decreases :
-        </td>
-        <td>
-          
-        </td>
-      </tr>
-      <tr>
-        <td>
-          Severity critical :
-        </td>
-        <td>
-          critical
-        </td>
-      </tr>
-      <tr>
-        <td>
-          Severity major :
-        </td>
-        <td>
-          major
-        </td>
-      </tr>
-      <tr>
-        <td>
-          Severity minor :
-        </td>
-        <td>
-          minor
-        </td>
-      </tr>
-      <tr>
-        <td>
-          Severity ok :
-        </td>
-        <td>
-          ok
-        </td>
-      </tr>
+      <tbody>
+        <tr>
+          <td>
+            State increased :
+          </td>
+          <td />
+        </tr>
+        <tr>
+          <td>
+            State decreases :
+          </td>
+          <td />
+        </tr>
+        <tr>
+          <td>
+            Severity critical :
+          </td>
+          <td>
+            critical
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Severity major :
+          </td>
+          <td>
+            major
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Severity minor :
+          </td>
+          <td>
+            minor
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Severity ok :
+          </td>
+          <td>
+            ok
+          </td>
+        </tr>
+      </tbody>
     </table>
   </div>
 </div>
@@ -196,7 +192,7 @@ exports[`alarms-time-line-card Renders \`alarms-time-line-card\` without transla
     class="time-line-card__content text--disabled"
   >
     <p>
-      Pbehavior Name pbh. Type: Default pause. Reason: Test reason
+        Pbehavior Name pbh. Type: Default pause. Reason: Test reason
     </p>
   </div>
 </div>

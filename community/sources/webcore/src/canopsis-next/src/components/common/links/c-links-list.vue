@@ -1,12 +1,33 @@
-<template lang="pug">
-  div.mt-1
-    div(v-for="(categoryLinks, category) in preparedLinks", :key="category")
-      span.category.mr-2 {{ category }}
-      v-divider(light)
-      div(v-for="(link, index) in categoryLinks", :key="index")
-        div.pa-2.text-xs-right
-          c-copy-wrapper(v-if="link.action === $constants.LINK_RULE_ACTIONS.copy", :value="link.url") {{ link.label }}
-          a(v-else, :href="link.url", target="_blank") {{ link.label }}
+<template>
+  <div class="mt-1">
+    <div
+      v-for="(categoryLinks, categoryName) in preparedLinks"
+      :key="categoryName"
+    >
+      <span class="category mr-2">{{ categoryName }}</span>
+      <v-divider light />
+      <div
+        v-for="(link, index) in categoryLinks"
+        :key="index"
+      >
+        <div class="pa-2 text-right">
+          <c-copy-wrapper
+            v-if="link.action === $constants.LINK_RULE_ACTIONS.copy"
+            :value="link.url"
+          >
+            {{ link.label }}
+          </c-copy-wrapper>
+          <a
+            v-else
+            :href="link.url"
+            target="_blank"
+          >
+            {{ link.label }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>

@@ -1,6 +1,10 @@
-<template lang="pug">
-  widget-settings-item(:title="$t('settings.defaultSampling')")
-    c-sampling-field(v-field="value", :name="name")
+<template>
+  <widget-settings-item :title="$t('settings.defaultSampling')">
+    <c-sampling-field
+      v-field="value"
+      :name="name"
+    />
+  </widget-settings-item>
 </template>
 
 <script>
