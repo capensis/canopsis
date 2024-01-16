@@ -76,14 +76,18 @@ describe('button-field', () => {
   });
 
   it('Renders `button-field` with default props', () => {
-    const wrapper = snapshotFactory();
+    const wrapper = snapshotFactory({
+      propsData: {
+        title: 'Custom title',
+      },
+    });
 
     expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `button-field` with custom props', () => {
     const wrapper = snapshotFactory({
-      title: {
+      propsData: {
         title: 'Title',
         isEmpty: true,
         addable: true,

@@ -7,6 +7,16 @@ import AlarmsTimeLine from '@/components/widgets/alarm/time-line/alarms-time-lin
 const stubs = {
   'alarms-time-line-flag': true,
   'alarms-time-line-card': true,
+  'alarms-time-line-steps': {
+    props: ['steps'],
+    template: `
+      <div>
+        <div v-for="(step, index) in steps" :key="index">
+          <slot name="step" :step="step"></slot>
+        </div>
+      </div>
+    `,
+  },
   'c-pagination': {
     template: `
       <input class="c-pagination" @input="$listeners.input(+$event.target.value)" />
@@ -28,7 +38,7 @@ describe('alarms-time-line', () => {
     stubs: snapshotStubs,
   });
 
-  it('Check pagination', () => {
+  it('Check pagination', async () => {
     const page = 2;
     const wrapper = factory({
       propsData: {
@@ -36,14 +46,9 @@ describe('alarms-time-line', () => {
       },
     });
 
-    const pagination = wrapper.find('.c-pagination');
+    await wrapper.find('.c-pagination').setValue(page);
 
-    pagination.setValue(page);
-
-    const updatePageEvents = wrapper.emitted('update:page');
-
-    expect(updatePageEvents).toHaveLength(1);
-    expect(updatePageEvents[0]).toEqual([page]);
+    expect(wrapper).toEmit('update:page', page);
   });
 
   it('Renders `alarms-time-line` with required props', () => {

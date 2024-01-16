@@ -76,7 +76,6 @@ describe('filters-list', () => {
     .reply(400);
 
   const factory = generateShallowRenderer(FiltersList, {
-
     stubs,
     store,
     mocks: { $popups, $modals },
@@ -87,7 +86,6 @@ describe('filters-list', () => {
     },
   });
   const snapshotFactory = generateRenderer(FiltersList, {
-
     stubs,
     store,
     mocks: { $popups, $modals },
@@ -258,6 +256,10 @@ describe('filters-list', () => {
   });
 
   test('Filters priority didn\'t change after trigger filters list with error', async () => {
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+
     mockGetUserPreferenceRequest({
       filters,
       widget: widgetId,
@@ -289,6 +291,8 @@ describe('filters-list', () => {
     );
 
     expect($popups.error).toBeCalledWith({ text: 'Something went wrong...' });
+
+    consoleErrorSpy.mockClear();
   });
 
   test('Renders `filters-list` with empty modal', async () => {

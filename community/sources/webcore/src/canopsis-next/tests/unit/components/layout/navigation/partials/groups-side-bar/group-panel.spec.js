@@ -14,13 +14,12 @@ const stubs = {
 
 const selectButton = wrapper => wrapper.find('v-btn-stub');
 
-// TODO: vue-jest doesn't support composition setup
-describe.skip('group-panel', () => {
+describe('group-panel', () => {
   const factory = generateShallowRenderer(GroupsPanel, { stubs });
   const snapshotFactory = generateRenderer(GroupsPanel, {
     parentComponent: {
       provide: {
-        expansionPanel: {
+        expansionPanels: {
           register: jest.fn(),
           unregister: jest.fn(),
         },
