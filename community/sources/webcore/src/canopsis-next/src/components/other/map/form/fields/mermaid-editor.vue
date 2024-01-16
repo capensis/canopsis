@@ -1,16 +1,49 @@
-<template lang="pug">
-  v-layout(column)
-    v-layout.mermaid-editor.mb-2(:style="editorStyles")
-      v-flex.mermaid-editor__sidebar
-        mermaid-code-editor.fill-height(v-field="form.code")
-      v-flex.mermaid-editor__content
-        v-layout.mermaid-editor__toolbar.px-2(row, align-center, justify-end)
-          add-location-btn.mr-2(v-model="addOnClick")
-          mermaid-theme-field.mermaid-editor__theme-picker(v-field="form.theme")
-        div.mermaid-editor__preview
-          mermaid-code-preview(:value="form.code", :theme="form.theme")
-          mermaid-points-editor.mermaid-editor__points(v-field="form.points", :add-on-click="addOnClick")
-    v-messages(v-if="hasChildrenError", :value="errorMessages", color="error")
+<template>
+  <v-layout column>
+    <v-layout
+      class="mermaid-editor mb-2"
+      :style="editorStyles"
+    >
+      <v-flex class="mermaid-editor__sidebar">
+        <mermaid-code-editor
+          class="fill-height"
+          v-field="form.code"
+        />
+      </v-flex>
+      <v-flex class="mermaid-editor__content">
+        <v-layout
+          class="mermaid-editor__toolbar px-2"
+          align-center
+          justify-end
+        >
+          <add-location-btn
+            class="mr-2"
+            v-model="addOnClick"
+          />
+          <mermaid-theme-field
+            class="mermaid-editor__theme-picker"
+            v-field="form.theme"
+          />
+        </v-layout>
+        <div class="mermaid-editor__preview">
+          <mermaid-code-preview
+            :value="form.code"
+            :theme="form.theme"
+          />
+          <mermaid-points-editor
+            class="mermaid-editor__points"
+            v-field="form.points"
+            :add-on-click="addOnClick"
+          />
+        </div>
+      </v-flex>
+    </v-layout>
+    <v-messages
+      v-if="hasChildrenError"
+      :value="errorMessages"
+      color="error"
+    />
+  </v-layout>
 </template>
 
 <script>

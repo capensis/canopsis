@@ -1,32 +1,54 @@
-<template lang="pug">
-  div.container.text-xs-center(v-if="total", :class="{ 'py-1': isTop }")
-    ul.v-pagination(v-if="isTop")
-      li
-        button.v-pagination__navigation(
-          data-test="paginationPreviewButton",
-          :disabled="isPreviousPageDisabled",
-          :class="{ 'v-pagination__navigation--disabled': isPreviousPageDisabled }",
+<template>
+  <div
+    class="container text-center"
+    v-if="total"
+    :class="{ 'py-1': isTop }"
+  >
+    <ul
+      class="v-pagination"
+      v-if="isTop"
+    >
+      <li>
+        <button
+          class="v-pagination__navigation"
+          data-test="paginationPreviewButton"
+          :disabled="isPreviousPageDisabled"
+          :class="{ 'v-pagination__navigation--disabled': isPreviousPageDisabled }"
           @click="previous"
-        )
-          v-icon chevron_left
-      div.pagination-details {{ page }} / {{ totalPages }}
-      li
-        button.v-pagination__navigation(
-          data-test="paginationNextButton",
-          :disabled="isNextPageDisabled",
-          :class="{ 'v-pagination__navigation--disabled': isNextPageDisabled }",
+        >
+          <v-icon>chevron_left</v-icon>
+        </button>
+      </li>
+      <div class="pagination-details">
+        {{ page }} / {{ totalPages }}
+      </div>
+      <li>
+        <button
+          class="v-pagination__navigation"
+          data-test="paginationNextButton"
+          :disabled="isNextPageDisabled"
+          :class="{ 'v-pagination__navigation--disabled': isNextPageDisabled }"
           @click="next"
-        )
-          v-icon chevron_right
-    v-layout(v-else, align-center, justify-center)
-      span.text--secondary {{ $t('common.paginationItems', { first, last, total }) }}
-      v-pagination(
-        data-test="vPagination",
-        :value="page",
-        :total-visible="$config.PAGINATION_TOTAL_VISIBLE",
-        :length="totalPages",
+        >
+          <v-icon>chevron_right</v-icon>
+        </button>
+      </li>
+    </ul>
+    <v-layout
+      v-else
+      align-center
+      justify-center
+    >
+      <span class="text--secondary">{{ $t('common.paginationItems', { first, last, total }) }}</span>
+      <v-pagination
+        data-test="vPagination"
+        :value="page"
+        :total-visible="$config.PAGINATION_TOTAL_VISIBLE"
+        :length="totalPages"
         @input="updatePage"
-      )
+      />
+    </v-layout>
+  </div>
 </template>
 
 <script>

@@ -1,7 +1,14 @@
-<template lang="pug">
-  v-layout(column)
-    p.font-italic.grey--text.my-3 {{ $t('linkRule.sourceCodeAlert') }}
-    java-script-code-editor.java-script-code-editor(v-field="value", resettable)
+<template>
+  <v-layout column>
+    <p class="font-italic grey--text my-3">
+      {{ $t('linkRule.sourceCodeAlert') }}
+    </p>
+    <java-script-code-editor
+      class="java-script-code-editor"
+      v-field="value"
+      resettable
+    />
+  </v-layout>
 </template>
 
 <script>

@@ -1,22 +1,23 @@
-<template lang="pug">
-  v-layout(column)
-    v-select(
-      :value="form.template",
-      :items="templatesWithCustom",
-      :label="$t('common.template')",
-      return-object,
+<template>
+  <v-layout column>
+    <v-select
+      :value="form.template"
+      :items="templatesWithCustom"
+      :label="$t('common.template')"
+      return-object
       @input="updateTemplate"
-    )
-    text-editor-field(
-      v-validate="rules",
-      :value="form.text",
-      :label="label",
-      :error-messages="errors.collect('text')",
-      :variables="variables",
-      :dark="$system.dark",
-      name="text",
+    />
+    <text-editor-field
+      v-validate="rules"
+      :value="form.text"
+      :label="label"
+      :error-messages="errors.collect('text')"
+      :variables="variables"
+      :dark="$system.dark"
+      name="text"
       @input="updateText"
-    )
+    />
+  </v-layout>
 </template>
 
 <script>

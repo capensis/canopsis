@@ -7,7 +7,6 @@ exports[`bar-chart-metrics Renders \`bar-chart-metrics\` with default props 1`] 
   <h4
     class="kpi-widget__title"
   >
-    
   </h4>
   <!---->
 </div>
@@ -20,7 +19,6 @@ exports[`bar-chart-metrics Renders \`bar-chart-metrics\` with empty data 1`] = `
   <h4
     class="kpi-widget__title"
   >
-    
   </h4>
   <div
     class="kpi-widget__chart"
@@ -50,7 +48,6 @@ exports[`bar-chart-metrics Renders \`bar-chart-metrics\` with history data 1`] =
   <h4
     class="kpi-widget__title"
   >
-    
   </h4>
   <div
     class="kpi-widget__chart"
@@ -110,7 +107,6 @@ exports[`bar-chart-metrics Renders \`bar-chart-metrics\` with stacked history da
   <h4
     class="kpi-widget__title"
   >
-    
   </h4>
   <div
     class="kpi-widget__chart"

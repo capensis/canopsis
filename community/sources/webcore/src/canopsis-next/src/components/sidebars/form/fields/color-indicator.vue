@@ -1,6 +1,7 @@
-<template lang="pug">
-  widget-settings-item(:title="$t('settings.colorIndicator.title')")
-    c-color-indicator-field(v-field="value")
+<template>
+  <widget-settings-item :title="$t('settings.colorIndicator.title')">
+    <c-color-indicator-field v-field="value" />
+  </widget-settings-item>
 </template>
 
 <script>

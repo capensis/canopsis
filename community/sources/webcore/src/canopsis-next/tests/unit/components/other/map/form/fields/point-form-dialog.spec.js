@@ -59,9 +59,7 @@ describe('point-form-dialog', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -112,9 +110,7 @@ describe('point-form-dialog', () => {
       point: newPoint,
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -144,9 +140,7 @@ describe('point-form-dialog', () => {
       vm: pointForm.vm,
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -160,9 +154,7 @@ describe('point-form-dialog', () => {
       },
     });
 
-    const cancelButton = selectCancelButton(wrapper);
-
-    cancelButton.trigger('click');
+    selectCancelButton(wrapper).trigger('click');
 
     expect(wrapper).toEmit('cancel');
   });
@@ -285,7 +277,7 @@ describe('point-form-dialog', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `point-form-dialog` with custom props', () => {
@@ -298,6 +290,6 @@ describe('point-form-dialog', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

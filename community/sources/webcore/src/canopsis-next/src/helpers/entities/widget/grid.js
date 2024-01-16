@@ -2,6 +2,8 @@ import { get, omit, pick } from 'lodash';
 
 import { WIDGET_GRID_SIZES_KEYS } from '@/constants';
 
+import { compactLayout } from '@/helpers/grid';
+
 /**
  * @typedef {Object} GridLayoutWidgetGrid
  * @property {string} _id
@@ -26,6 +28,7 @@ export const widgetsToLayoutBySize = (
 
   newLayoutItem.i = widget._id;
   newLayoutItem.widget = widget;
+  newLayoutItem.h = newLayoutItem.h || 1;
 
   return newLayoutItem;
 });
@@ -59,18 +62,22 @@ export const calculateNewWidgetGridParametersY = (widgets = []) => (
 );
 
 /**
- * Convert widgets to layouts for all sizes
+ * Convert widgets to layouts for all sizes with compact layout function
  *
  * @param {Widget[]} [widgets = []]
  * @param {GridLayout} [layouts = []]
  * @param {string[]} [sizes = Object.values(WIDGET_GRID_SIZES_KEYS)]
  * @returns {GridLayout}
  */
-export const widgetsToLayouts = (widgets = [], layouts = [], sizes = Object.values(WIDGET_GRID_SIZES_KEYS)) => (
+export const widgetsToLayoutsWithCompact = (
+  widgets = [],
+  layouts = [],
+  sizes = Object.values(WIDGET_GRID_SIZES_KEYS),
+) => (
   sizes.reduce((acc, size) => {
     const oldLayout = get(layouts, size, []);
 
-    acc[size] = widgetsToLayoutBySize(widgets, oldLayout, size);
+    acc[size] = compactLayout(widgetsToLayoutBySize(widgets, oldLayout, size));
 
     return acc;
   }, {})

@@ -1,13 +1,28 @@
-<template lang="pug">
-  c-responsive-list.ml-4(:items="preparedEngines", item-key="name", item-value="label")
-    template(#default="{ item }")
-      v-tooltip(:disabled="!item.tooltip", bottom)
-        template(#activator="{ on }")
-          c-engine-chip.ma-1(
-            v-on="{ ...chipListeners, ...on }",
+<template>
+  <c-responsive-list
+    class="ml-4"
+    :items="preparedEngines"
+    item-key="name"
+    item-value="label"
+  >
+    <template #default="{ item }">
+      <v-tooltip
+        :disabled="!item.tooltip"
+        bottom
+      >
+        <template #activator="{ on }">
+          <c-engine-chip
+            class="ma-1"
+            v-on="{ ...chipListeners, ...on }"
             :color="item.color"
-          ) {{ item.label }}
-        span {{ item.tooltip }}
+          >
+            {{ item.label }}
+          </c-engine-chip>
+        </template>
+        <span>{{ item.tooltip }}</span>
+      </v-tooltip>
+    </template>
+  </c-responsive-list>
 </template>
 
 <script>

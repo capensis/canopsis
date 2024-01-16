@@ -38,7 +38,7 @@ describe('field-grid-size', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `field-grid-size` with custom props', () => {
@@ -51,6 +51,6 @@ describe('field-grid-size', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -1,40 +1,89 @@
-<template lang="pug">
-  div.recurrence-rule-form
-    v-layout(column)
-      v-layout(row)
-        v-flex.pr-2(xs6)
-          recurrence-rule-frequency-field(:value="form.freq", @input="updateFrequency")
-          recurrence-rule-interval-field(v-if="isFrequencyEnabled", v-model="form")
-          recurrence-rule-advanced-repeat-field(
-            v-if="isMonthlyFrequency",
-            v-model="form",
+<template>
+  <div class="recurrence-rule-form">
+    <v-layout column>
+      <v-layout>
+        <v-flex
+          class="pr-2"
+          xs6
+        >
+          <recurrence-rule-frequency-field
+            :value="form.freq"
+            @input="updateFrequency"
+          />
+          <recurrence-rule-interval-field
+            v-if="isFrequencyEnabled"
+            v-model="form"
+          />
+          <recurrence-rule-advanced-repeat-field
+            v-if="isMonthlyFrequency"
+            v-model="form"
             :start="start"
-          )
-        v-flex.pl-2(xs6)
-          recurrence-rule-end-field(v-if="isFrequencyEnabled", v-model="form")
-
-      c-collapse-panel.my-2(v-if="isFrequencyEnabled", :color="advancedCollapseColor")
-        template(#header="")
-          span {{ $t('recurrenceRule.tabs.advanced') }}
-        template(#actions="")
-          v-icon $vuetify.icons.expand
-        v-layout(row, wrap)
-          v-flex(xs6)
-            recurrence-rule-weekday-field(v-model="form.wkst")
-          v-flex(v-if="!isYearlyFrequency", xs12)
-            recurrence-rule-weekday-field(v-model="form.byweekday", chips)
-          v-flex(xs12)
-            recurrence-rule-month-field(v-model="form.bymonth")
-          v-flex(v-for="(field, index) in advancedFields", :key="field", :class="`${index % 2 ? 'pl' : 'pr'}-2`", xs6)
-            recurrence-rule-regex-field(
-              v-model="form[field]",
-              :label="$t(`recurrenceRule.${field}`)",
-              :help-text="$t(`recurrenceRule.tooltips.${field}`)",
+          />
+        </v-flex>
+        <v-flex
+          class="pl-2"
+          xs6
+        >
+          <recurrence-rule-end-field
+            v-if="isFrequencyEnabled"
+            v-model="form"
+          />
+        </v-flex>
+      </v-layout>
+      <c-collapse-panel
+        class="my-2"
+        v-if="isFrequencyEnabled"
+        :color="advancedCollapseColor"
+      >
+        <template #header="">
+          <span>{{ $t('recurrenceRule.tabs.advanced') }}</span>
+        </template>
+        <template #actions="">
+          <v-icon>$vuetify.icons.expand</v-icon>
+        </template>
+        <v-layout wrap>
+          <v-flex xs6>
+            <recurrence-rule-weekday-field v-model="form.wkst" />
+          </v-flex>
+          <v-flex
+            v-if="!isYearlyFrequency"
+            xs12
+          >
+            <recurrence-rule-weekday-field
+              v-model="form.byweekday"
+              chips
+            />
+          </v-flex>
+          <v-flex xs12>
+            <recurrence-rule-month-field v-model="form.bymonth" />
+          </v-flex>
+          <v-flex
+            v-for="(field, index) in advancedFields"
+            :key="field"
+            :class="`${index % 2 ? 'pl' : 'pr'}-2`"
+            xs6
+          >
+            <recurrence-rule-regex-field
+              v-model="form[field]"
+              :label="$t(`recurrenceRule.${field}`)"
+              :help-text="$t(`recurrenceRule.tooltips.${field}`)"
               :name="field"
-            )
-
-    recurrence-rule-information(v-if="isFrequencyEnabled", :rrule="recurrenceRuleString")
-    c-alert(:value="errors.has('recurrenceRule')", type="error") {{ errors.first('recurrenceRule') }}
+            />
+          </v-flex>
+        </v-layout>
+      </c-collapse-panel>
+    </v-layout>
+    <recurrence-rule-information
+      v-if="isFrequencyEnabled"
+      :rrule="recurrenceRuleString"
+    />
+    <c-alert
+      :value="errors.has('recurrenceRule')"
+      type="error"
+    >
+      {{ errors.first('recurrenceRule') }}
+    </c-alert>
+  </div>
 </template>
 
 <script>

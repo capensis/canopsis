@@ -1,13 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`alarm-header-cell Renders \`alarm-header-cell\` with custom header 1`] = `
-<span>
+<span
+  style="white-space: normal;"
+>
   Custom header
+
 </span>
 `;
 
 exports[`alarm-header-cell Renders \`alarm-header-cell\` with priority header 1`] = `
-<alarm-header-priority-stub>
+<alarm-header-priority-stub
+  style="white-space: normal;"
+>
   Priority
+
 </alarm-header-priority-stub>
 `;
