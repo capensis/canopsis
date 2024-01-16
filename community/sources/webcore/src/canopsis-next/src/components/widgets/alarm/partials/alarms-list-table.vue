@@ -186,7 +186,7 @@
 <script>
 import { get, intersectionBy } from 'lodash';
 
-import { ALARM_DENSE_TYPES, ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS } from '@/constants';
+import { ALARM_DENSE_TYPES, ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS, MODALS } from '@/constants';
 
 import featuresService from '@/services/features';
 
@@ -573,10 +573,13 @@ export default {
       }
     },
 
-    openRootCauseDiagram() {
-      /**
-       * TODO: Should be added show modal mechanism
-        */
+    openRootCauseDiagram(entity) {
+      this.$modals.show({
+        name: MODALS.entityDependenciesByStateSettings,
+        config: {
+          entity,
+        },
+      });
     },
   },
 };

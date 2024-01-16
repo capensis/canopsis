@@ -16,12 +16,19 @@ module.exports = {
     'vue',
     'styl',
   ],
-  testEnvironment: 'jest-environment-jsdom',
+  testEnvironment: 'jsdom',
+  testEnvironmentOptions: {
+    browsers: [
+      'chrome',
+      'firefox',
+      'safari',
+    ],
+  },
   transform: {
     '^.+\\.vue$': '<rootDir>/tests/unit/jest.vue',
     '^.+\\.jsx?$': '<rootDir>/tests/unit/jest.transform',
     '^.+\\.svg$': '<rootDir>/tests/unit/jest.svg',
-    '^.+\\.html?$': 'html-loader-jest',
+    '^.+\\.html?$': '<rootDir>/tests/unit/jest.html',
     '^.+\\.(jpg|jpeg|png)$': '<rootDir>/tests/unit/jest.assets.js',
   },
   transformIgnorePatterns: [

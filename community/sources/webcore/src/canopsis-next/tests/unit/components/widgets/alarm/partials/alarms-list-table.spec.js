@@ -2,7 +2,7 @@ import { range } from 'lodash';
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreGetters, createMockedStoreModules } from '@unit/utils/store';
 import { fakeAlarm } from '@unit/data/alarm';
 import { triggerWindowKeyboardEvent, triggerWindowScrollEvent } from '@unit/utils/events';
@@ -23,7 +23,7 @@ const stubs = {
   'c-density-btn-toggle': true,
 };
 
-const selectTable = wrapper => wrapper.find('v-data-table-stub');
+const selectTable = wrapper => wrapper.findComponent({ name: 'VDataTable' });
 const selectAlarmsListRow = wrapper => wrapper.findAll('alarms-list-row-stub');
 const selectTableHead = wrapper => wrapper.find('thead');
 const selectTableBody = wrapper => wrapper.find('tbody');
@@ -108,10 +108,6 @@ describe('alarms-list-table', () => {
     value: 'label',
   }];
 
-  const factory = generateShallowRenderer(AlarmsListTable, {
-    stubs,
-    attachTo: document.body,
-  });
   const snapshotFactory = generateRenderer(AlarmsListTable, {
     stubs,
     attachTo: document.body,
@@ -123,7 +119,7 @@ describe('alarms-list-table', () => {
 
   it('Alarms selected after trigger table', () => {
     const selectedAlarms = alarms.slice(0, -1);
-    const wrapper = factory({
+    const wrapper = snapshotFactory({
       store,
       propsData: {
         options: {},
@@ -138,8 +134,8 @@ describe('alarms-list-table', () => {
     expect(wrapper.vm.selected).toEqual(selectedAlarms);
   });
 
-  it('Pagination update event emitted after trigger update pagination', () => {
-    const wrapper = factory({
+  it('Pagination update event emitted after trigger update pagination', async () => {
+    const wrapper = snapshotFactory({
       store,
       propsData: {
         options: {},
@@ -157,14 +153,13 @@ describe('alarms-list-table', () => {
       totalItems: Faker.datatype.number(),
     };
 
-    const table = selectTable(wrapper);
-    table.vm.$emit('update:options', options);
+    selectTable(wrapper).vm.$emit('update:options', options);
 
     const updateOptionsEvents = wrapper.emitted('update:options');
-    expect(updateOptionsEvents).toHaveLength(1);
+    expect(updateOptionsEvents).toHaveLength(2);
 
-    const [eventData] = updateOptionsEvents[0];
-    expect(eventData).toEqual(options);
+    const [eventData] = updateOptionsEvents[1];
+    expect({ ...eventData }).toEqual(options);
   });
 
   it('Resize listener added after mount and removed after destroy', async () => {

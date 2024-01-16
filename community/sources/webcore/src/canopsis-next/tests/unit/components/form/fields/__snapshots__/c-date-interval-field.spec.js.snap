@@ -10,7 +10,14 @@ exports[`c-date-interval-field Renders \`c-date-interval-field\` with custom pro
     hide-details=""
     label="From"
     value="today-2d"
-  />
+  >
+    <i
+      aria-hidden="true"
+      class="v-icon notranslate material-icons theme--light"
+    >
+      calendar_today
+    </i>
+  </c-date-picker-field-stub>
   <c-date-picker-field-stub
     allowed-dates="() => {}"
     content-class="[object Object]"
@@ -18,7 +25,14 @@ exports[`c-date-interval-field Renders \`c-date-interval-field\` with custom pro
     hide-details=""
     label="To"
     value="today"
-  />
+  >
+    <i
+      aria-hidden="true"
+      class="v-icon notranslate material-icons theme--light"
+    >
+      calendar_today
+    </i>
+  </c-date-picker-field-stub>
 </div>
 `;
 
@@ -30,12 +44,26 @@ exports[`c-date-interval-field Renders \`c-date-interval-field\` with default pr
     hide-details=""
     label="From"
     value="now-12h"
-  />
+  >
+    <i
+      aria-hidden="true"
+      class="v-icon notranslate material-icons theme--light"
+    >
+      calendar_today
+    </i>
+  </c-date-picker-field-stub>
   <c-date-picker-field-stub
     content-class="[object Object]"
     hide-details=""
     label="To"
     value="now"
-  />
+  >
+    <i
+      aria-hidden="true"
+      class="v-icon notranslate material-icons theme--light"
+    >
+      calendar_today
+    </i>
+  </c-date-picker-field-stub>
 </div>
 `;
