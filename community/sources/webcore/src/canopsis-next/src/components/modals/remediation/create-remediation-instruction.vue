@@ -105,7 +105,7 @@ export default {
     },
 
     approval() {
-      return this.modal.config.remediationInstruction.approval;
+      return this.modal.config.remediationInstruction?.approval;
     },
 
     hasApproval() {
