@@ -100,7 +100,7 @@ describe('c-change-state-field', () => {
 
     await validator.validateAll();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-change-state-field` with custom label correctly', () => {
@@ -115,7 +115,7 @@ describe('c-change-state-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-change-state-field` without allowed change severity to info correctly', () => {
@@ -130,7 +130,7 @@ describe('c-change-state-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-change-state-field` with allowed change severity to info correctly', () => {
@@ -146,7 +146,7 @@ describe('c-change-state-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-change-state-field` with errors correctly', async () => {
@@ -173,6 +173,6 @@ describe('c-change-state-field', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

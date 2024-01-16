@@ -1,5 +1,8 @@
-<template lang="pug">
-  path(:fill="fill", :d="path")
+<template>
+  <path
+    :fill="fill"
+    :d="path"
+  />
 </template>
 
 <script>

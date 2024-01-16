@@ -1,28 +1,42 @@
-<template lang="pug">
-  div(v-if="activeMessages.length")
-    broadcast-message(
-      v-for="activeMessage in activeMessages",
-      :key="activeMessage._id",
-      :message="activeMessage.message",
+<template>
+  <div v-if="activeMessages.length">
+    <broadcast-message
+      v-for="activeMessage in activeMessages"
+      :key="activeMessage._id"
+      :message="activeMessage.message"
       :color="activeMessage.color"
-    )
-      template(v-if="isLoggedIn && activeMessage.maintenance", #actions="")
-        v-btn.my-0.ml-0.mr-2(
-          color="white",
-          outline,
-          round,
-          small,
+    >
+      <template
+        v-if="isLoggedIn && activeMessage.maintenance"
+        #actions=""
+      >
+        <v-btn
+          class="mr-2"
+          color="white"
+          outlined
+          rounded
+          small
           @click="showEditBroadcastMessageModal(activeMessage)"
-        )
-          v-icon(small) edit
-        v-btn.my-0.ml-0.mr-2(
-          color="white",
-          outline,
-          round,
-          small,
+        >
+          <v-icon small>
+            edit
+          </v-icon>
+        </v-btn>
+        <v-btn
+          class="my-0 ml-0 mr-2"
+          color="white"
+          outlined
+          rounded
+          small
           @click="showConfirmationLeaveMaintenanceMode"
-        )
-          v-icon(small) logout
+        >
+          <v-icon small>
+            logout
+          </v-icon>
+        </v-btn>
+      </template>
+    </broadcast-message>
+  </div>
 </template>
 
 <script>

@@ -86,7 +86,7 @@ describe('idle-rule-form', () => {
   test('Renders `idle-rule-form` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `idle-rule-form` with custom props', () => {
@@ -100,7 +100,7 @@ describe('idle-rule-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `idle-rule-form` with errors', async () => {
@@ -111,6 +111,6 @@ describe('idle-rule-form', () => {
       hasPatternsError: true,
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

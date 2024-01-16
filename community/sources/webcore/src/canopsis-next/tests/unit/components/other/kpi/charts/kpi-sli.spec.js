@@ -152,7 +152,7 @@ describe('kpi-sli', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `kpi-sli` with fetching error', async () => {
@@ -167,6 +167,6 @@ describe('kpi-sli', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

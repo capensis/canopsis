@@ -17,7 +17,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
       y="0"
     />
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -52,7 +52,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
       stroke-width="10"
     />
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -101,7 +101,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
       stroke-width="10"
     />
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -164,7 +164,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
       stroke-width="10"
     />
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -193,7 +193,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
       r="50"
     />
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -223,7 +223,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
       ry="65"
     />
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -250,7 +250,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
       data-type="rhombus"
     />
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -277,7 +277,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
       data-type="parallelogram"
     />
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -317,7 +317,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
       />
     </g>
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -344,7 +344,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
       data-type="document"
     />
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -371,7 +371,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
       data-type="storage"
     />
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -409,7 +409,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
       y="0"
     />
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -490,7 +490,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
       y="0"
     />
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -525,7 +525,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
       stroke-width="10"
     />
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -574,7 +574,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
       stroke-width="10"
     />
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -637,7 +637,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
       stroke-width="10"
     />
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -666,7 +666,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
       r="50"
     />
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -696,7 +696,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
       ry="65"
     />
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -723,7 +723,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
       data-type="rhombus"
     />
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -750,7 +750,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
       data-type="parallelogram"
     />
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -790,7 +790,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
       />
     </g>
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -817,7 +817,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
       data-type="document"
     />
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -844,7 +844,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
       data-type="storage"
     />
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >
@@ -882,7 +882,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
       y="0"
     />
     <foreignobject
-      fontColor="black"
+      fontcolor="black"
       pointer-events="none"
       style="overflow: visible;"
     >

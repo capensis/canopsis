@@ -5,17 +5,17 @@ exports[`storage-settings-remediation-form Renders \`storage-settings-remediatio
   class="layout c-information-block column"
 >
   <div
-    class="layout row"
+    class="layout"
   >
     <div
-      class="subheading font-weight-bold"
+      class="text-subtitle-1 font-weight-bold"
     >
       Instructions data storage
     </div>
     <!---->
   </div>
   <div
-    class="layout mt-2 row"
+    class="layout mt-2"
   >
     <span
       class="text--secondary"
@@ -53,10 +53,10 @@ exports[`storage-settings-remediation-form Renders \`storage-settings-remediatio
   class="layout c-information-block column"
 >
   <div
-    class="layout row"
+    class="layout"
   >
     <div
-      class="subheading font-weight-bold"
+      class="text-subtitle-1 font-weight-bold"
     >
       Instructions data storage
     </div>

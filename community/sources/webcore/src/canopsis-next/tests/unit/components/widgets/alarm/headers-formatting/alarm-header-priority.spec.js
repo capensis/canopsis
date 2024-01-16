@@ -12,7 +12,7 @@ describe('alarm-header-priority', () => {
   it('Renders `alarm-header-priority` without slot', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarm-header-priority` with slot', () => {
@@ -22,6 +22,6 @@ describe('alarm-header-priority', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });
