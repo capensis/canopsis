@@ -1,4 +1,12 @@
-const { serialize } = require('jest-snapshot/build/utils');
+const prettyFormat = require('pretty-format');
+const { getSerializers } = require('jest-snapshot');
+
+const serialize = value => prettyFormat.format(value, {
+  escapeRegex: true,
+  indent: 2,
+  plugins: getSerializers(),
+  printFunctionName: false,
+});
 
 const isHtmlString = received => received && typeof received === 'string' && received[0] === '<';
 const isVueWrapper = received => (

@@ -97,6 +97,8 @@ describe('c-json-field', () => {
   });
 
   it('Payload json value as prop without variables', () => {
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
     const popupErrorFn = jest.fn();
     const wrapper = factory({
       propsData: {
@@ -113,6 +115,8 @@ describe('c-json-field', () => {
 
     expect(textarea.element.value).toBe(defaultValue);
     expect(popupErrorFn).toBeCalledWith({ text: 'Something went wrong...' });
+
+    consoleErrorSpy.mockClear();
   });
 
   it('v-validate works correctly on valid json', async () => {

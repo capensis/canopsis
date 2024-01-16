@@ -817,7 +817,25 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
                 <file-selector-stub
                   errormessages=""
                   hidedetails="true"
-                />
+                >
+                  <button
+                    class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--text theme--light v-size--large"
+                    type="button"
+                  >
+                    <span
+                      class="v-btn__content"
+                    >
+                      <image-shape-icon-stub
+                        class="grey--text text--darken-3"
+                      />
+                    </span>
+                  </button>
+                  <span
+                    class="v-tooltip v-tooltip--top"
+                  >
+                    <!---->
+                  </span>
+                </file-selector-stub>
               </div>
               <hr
                 aria-orientation="horizontal"
@@ -1767,7 +1785,25 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
                 <file-selector-stub
                   errormessages=""
                   hidedetails="true"
-                />
+                >
+                  <button
+                    class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--text theme--light v-size--large"
+                    type="button"
+                  >
+                    <span
+                      class="v-btn__content"
+                    >
+                      <image-shape-icon-stub
+                        class="grey--text text--darken-3"
+                      />
+                    </span>
+                  </button>
+                  <span
+                    class="v-tooltip v-tooltip--top"
+                  >
+                    <!---->
+                  </span>
+                </file-selector-stub>
               </div>
               <hr
                 aria-orientation="horizontal"

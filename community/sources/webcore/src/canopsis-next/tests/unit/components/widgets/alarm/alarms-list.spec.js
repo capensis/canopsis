@@ -3,7 +3,7 @@ import flushPromises from 'flush-promises';
 import { omit } from 'lodash';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { mockDateNow, mockModals, mockPopups, mockSocket } from '@unit/utils/mock-hooks';
+import { mockModals, mockPopups, mockSocket } from '@unit/utils/mock-hooks';
 import { createMockedStoreModule, createMockedStoreModules } from '@unit/utils/store';
 import { fakeAlarmDetails, fakeStaticAlarms } from '@unit/data/alarm';
 import { API_HOST, API_ROUTES } from '@/config';
@@ -75,7 +75,7 @@ describe('alarms-list', () => {
   const nowTimestamp = 1386435600000;
   const nowSubtractOneYearUnix = 1354921200;
 
-  mockDateNow(nowTimestamp);
+  jest.useFakeTimers({ now: nowTimestamp });
 
   const totalItems = 10;
   const alarms = fakeStaticAlarms({
@@ -949,8 +949,6 @@ describe('alarms-list', () => {
     const originalWindowOpen = window.open;
     window.open = jest.fn();
 
-    jest.useFakeTimers('legacy');
-
     const wrapper = factory({
       store: createMockedStoreModules([
         alarmModule,
@@ -998,6 +996,7 @@ describe('alarms-list', () => {
           fields: widget.parameters.widgetExportColumns.map(({ text, value }) => ({
             label: text,
             name: value,
+            template: undefined,
           })),
           separator: widget.parameters.exportCsvSeparator,
           time_format: widget.parameters.exportCsvDatetimeFormat,
@@ -1027,7 +1026,6 @@ describe('alarms-list', () => {
       '_blank',
     );
 
-    jest.useRealTimers();
     window.open = originalWindowOpen;
   });
 
@@ -1089,6 +1087,7 @@ describe('alarms-list', () => {
           fields: widget.parameters.widgetExportColumns.map(({ text, value }) => ({
             label: text,
             name: value,
+            template: undefined,
           })),
           separator: widget.parameters.exportCsvSeparator,
           time_format: EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
@@ -1155,6 +1154,7 @@ describe('alarms-list', () => {
           fields: widget.parameters.widgetColumns.map(({ text, value }) => ({
             label: text,
             name: value,
+            template: undefined,
           })),
           separator: widget.parameters.exportCsvSeparator,
           time_format: widget.parameters.exportCsvDatetimeFormat,
@@ -1170,7 +1170,6 @@ describe('alarms-list', () => {
   it('Widget exported after trigger export button with long request time', async () => {
     const originalWindowOpen = window.open;
     window.open = jest.fn();
-    jest.useFakeTimers('legacy');
 
     const longFetchAlarmsListExport = jest.fn()
       .mockReturnValueOnce({
@@ -1247,7 +1246,6 @@ describe('alarms-list', () => {
 
     expect(window.open).toHaveBeenCalled();
 
-    jest.useRealTimers();
     window.open = originalWindowOpen;
   });
 
@@ -1345,8 +1343,6 @@ describe('alarms-list', () => {
     expect($popups.error).toHaveBeenCalledWith({
       text: 'Failed to export alarms list in CSV format',
     });
-
-    jest.useRealTimers();
   });
 
   it('Error popup showed exported after trigger export button with failed status fetch export', async () => {
@@ -1398,8 +1394,6 @@ describe('alarms-list', () => {
     expect($popups.error).toHaveBeenCalledWith({
       text: 'Failed to export alarms list in CSV format',
     });
-
-    jest.useRealTimers();
   });
 
   it('Alarms not fetched after change query without columns', async () => {
@@ -1588,12 +1582,11 @@ describe('alarms-list', () => {
       },
       undefined,
     );
-
-    jest.useRealTimers();
   });
 
   it('Interval cleared after update periodic refresh', async () => {
-    jest.useFakeTimers('legacy');
+    jest.spyOn(global, 'setInterval');
+    jest.spyOn(global, 'clearInterval');
 
     const expanded = {};
     const wrapper = factory({
@@ -1644,12 +1637,11 @@ describe('alarms-list', () => {
       expect.any(Function),
       120000,
     );
-
-    jest.useRealTimers();
   });
 
   it('Interval cleared after destroy', async () => {
-    jest.useFakeTimers('legacy');
+    jest.spyOn(global, 'setInterval');
+    jest.spyOn(global, 'clearInterval');
 
     const expanded = {};
     const wrapper = factory({
@@ -1681,8 +1673,6 @@ describe('alarms-list', () => {
     wrapper.destroy();
 
     expect(clearInterval).toHaveBeenCalledTimes(1);
-
-    jest.useRealTimers();
   });
 
   it('Renders `alarms-list` with default props', async () => {

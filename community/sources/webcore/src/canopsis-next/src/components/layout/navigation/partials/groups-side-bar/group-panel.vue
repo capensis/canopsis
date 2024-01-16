@@ -35,32 +35,40 @@
   </v-expansion-panel>
 </template>
 
-<script setup>
-defineProps({
-  isEditing: {
-    type: Boolean,
-    default: false,
+<script>
+export default {
+  props: {
+    isEditing: {
+      type: Boolean,
+      default: false,
+    },
+    editable: {
+      type: Boolean,
+      default: false,
+    },
+    group: {
+      type: Object,
+      required: true,
+    },
+    orderChanged: {
+      type: Boolean,
+      default: false,
+    },
+    hideActions: {
+      type: Boolean,
+      default: false,
+    },
   },
-  editable: {
-    type: Boolean,
-    default: false,
-  },
-  group: {
-    type: Object,
-    required: true,
-  },
-  orderChanged: {
-    type: Boolean,
-    default: false,
-  },
-  hideActions: {
-    type: Boolean,
-    default: false,
-  },
-});
-const emit = defineEmits(['change']);
+  setup(props, { emit }) {
+    const handleChange = () => {
+      emit('change');
+    };
 
-const handleChange = () => emit('change');
+    return {
+      handleChange,
+    };
+  },
+};
 </script>
 
 <style lang="scss" scoped>
