@@ -170,7 +170,7 @@ export default {
 
     isNeedApproveByCurrentUser(remediationInstruction) {
       return isApproveRequested(remediationInstruction)
-        && (remediationInstruction.approval.requested_by?._id === this.currentUser._id
+        && (remediationInstruction.approval.user?._id === this.currentUser._id
         || isUserHasRole(this.currentUser, remediationInstruction.approval.role));
     },
   },
