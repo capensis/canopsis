@@ -1,30 +1,31 @@
-<template lang="pug">
-  v-layout(column)
-    v-text-field(
-      v-field="form.title",
-      v-validate="titleRules",
-      :label="$t('common.title')",
-      :error-messages="errors.collect('title')",
+<template>
+  <v-layout column>
+    <v-text-field
+      v-field="form.title"
+      v-validate="titleRules"
+      :label="$t('common.title')"
+      :error-messages="errors.collect('title')"
       name="title"
-    )
-    c-alarm-patterns-field(
-      v-if="isAlarmPattern",
-      v-field="form",
-      :name="$constants.PATTERNS_FIELDS.alarm",
+    />
+    <c-alarm-patterns-field
+      v-if="isAlarmPattern"
+      v-field="form"
+      :name="$constants.PATTERNS_FIELDS.alarm"
       :check-count-name="$constants.PATTERNS_FIELDS.alarm"
-    )
-    c-entity-patterns-field(
-      v-else-if="isEntityPattern",
-      v-field="form",
-      :name="$constants.PATTERNS_FIELDS.entity",
+    />
+    <c-entity-patterns-field
+      v-else-if="isEntityPattern"
+      v-field="form"
+      :name="$constants.PATTERNS_FIELDS.entity"
       :check-count-name="$constants.PATTERNS_FIELDS.entity"
-    )
-    c-pbehavior-patterns-field(
-      v-else-if="isPbehaviorPattern",
-      v-field="form",
-      :name="$constants.PATTERNS_FIELDS.pbehavior",
+    />
+    <c-pbehavior-patterns-field
+      v-else-if="isPbehaviorPattern"
+      v-field="form"
+      :name="$constants.PATTERNS_FIELDS.pbehavior"
       :check-count-name="$constants.PATTERNS_FIELDS.pbehavior"
-    )
+    />
+  </v-layout>
 </template>
 
 <script>

@@ -116,7 +116,7 @@ describe('declare-ticket-rule-general-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `declare-ticket-rule-general-form` with filled form', () => {
@@ -135,6 +135,6 @@ describe('declare-ticket-rule-general-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

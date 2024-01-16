@@ -1,20 +1,32 @@
-<template lang="pug">
-  div.c-clickable-tooltip
-    div(ref="activator", @mouseenter="showTooltip", @mouseleave="hideTooltip")
-      slot(name="activator")
-    v-tooltip(
-      :value="show",
-      :top="top",
-      :right="right",
-      :bottom="bottom",
-      :left="left",
-      :close-delay="transitionDelay",
-      :open-delay="transitionDelay",
-      :activator="$refs.activator",
+<template>
+  <div class="c-clickable-tooltip">
+    <div
+      ref="activator"
+      @mouseenter="showTooltip"
+      @mouseleave="hideTooltip"
+    >
+      <slot name="activator" />
+    </div>
+    <v-tooltip
+      :value="show"
+      :top="top"
+      :right="right"
+      :bottom="bottom"
+      :left="left"
+      :close-delay="transitionDelay"
+      :open-delay="transitionDelay"
+      :activator="$refs.activator"
       ignore-content-leave
-    )
-      span(@mouseenter="showTooltip", @mouseleave="hideTooltip")
-        slot
+      content-class="c-clickable-tooltip__content"
+    >
+      <div
+        @mouseenter="showTooltip"
+        @mouseleave="hideTooltip"
+      >
+        <slot />
+      </div>
+    </v-tooltip>
+  </div>
 </template>
 
 <script>
@@ -66,3 +78,16 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.c-clickable-tooltip {
+  &__content {
+    pointer-events: initial;
+    padding: 0;
+
+    & > div {
+      padding: 5px 16px;
+    }
+  }
+}
+</style>

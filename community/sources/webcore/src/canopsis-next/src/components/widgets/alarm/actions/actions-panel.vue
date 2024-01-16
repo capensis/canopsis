@@ -1,5 +1,9 @@
-<template lang="pug">
-  shared-actions-panel(:actions="preparedActions", :small="small", :wrap="wrap")
+<template>
+  <shared-actions-panel
+    :actions="preparedActions"
+    :small="small"
+    :wrap="wrap"
+  />
 </template>
 
 <script>

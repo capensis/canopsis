@@ -93,7 +93,7 @@ describe('groups-side-bar-group', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `groups-side-bar-group` with custom data', () => {
@@ -105,7 +105,7 @@ describe('groups-side-bar-group', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `groups-side-bar-group` with empty groups', () => {
@@ -120,6 +120,6 @@ describe('groups-side-bar-group', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

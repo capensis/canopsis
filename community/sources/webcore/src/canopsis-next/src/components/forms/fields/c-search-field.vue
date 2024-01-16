@@ -1,57 +1,80 @@
-<template lang="pug">
-  v-layout.c-search-field(row, align-end)
-    v-combobox(
-      v-if="combobox",
-      v-model="localValue",
-      :label="$t('common.search')",
-      :items="items",
-      :menu-props="comboboxMenuProps",
-      :return-object="false",
-      append-icon="",
-      item-text="search",
-      item-value="search",
-      hide-details,
-      hide-no-data,
-      single-line,
+<template>
+  <v-layout
+    class="c-search-field"
+    align-end
+  >
+    <v-combobox
+      v-if="combobox"
+      v-model="localValue"
+      :label="$t('common.search')"
+      :items="items"
+      :menu-props="comboboxMenuProps"
+      :return-object="false"
+      append-icon=""
+      item-text="search"
+      item-value="search"
+      hide-details
+      hide-no-data
+      single-line
       @input="submit"
-    )
-      template(#item="{ item }")
-        v-list-tile-content
-          v-list-tile-title.pr-2 {{ item.search }}
-        v-list-tile-action
-          v-layout(row)
-            v-btn.ma-0(
-              small,
-              icon,
+    >
+      <template #item="{ item }">
+        <v-list-item-content>
+          <v-list-item-title class="pr-2">
+            {{ item.search }}
+          </v-list-item-title>
+        </v-list-item-content>
+        <v-list-item-action>
+          <v-layout>
+            <v-btn
+              small
+              icon
               @click.stop="$emit('remove', item.search)"
-            )
-              v-icon(color="grey", small) delete
-            v-btn.ma-0(
-              :class="{ 'c-search-field__item__pinned': item.pinned }",
-              small,
-              icon,
+            >
+              <v-icon
+                color="grey"
+                small
+              >
+                delete
+              </v-icon>
+            </v-btn>
+            <v-btn
+              :class="{ 'c-search-field__item__pinned': item.pinned }"
+              small
+              icon
               @click.stop="$emit('toggle-pin', item.search)"
-            )
-              v-icon(:color="item.pinned ? 'inherit' : 'grey'", small) $vuetify.icons.push_pin
-    v-text-field(
-      v-else,
-      v-model="localValue",
-      :label="$t('common.search')",
-      hide-details,
-      single-line,
+            >
+              <v-icon
+                :color="item.pinned ? 'inherit' : 'grey'"
+                small
+              >
+                $vuetify.icons.push_pin
+              </v-icon>
+            </v-btn>
+          </v-layout>
+        </v-list-item-action>
+      </template>
+    </v-combobox>
+    <v-text-field
+      v-else
+      v-model="localValue"
+      :label="$t('common.search')"
+      hide-details
+      single-line
       @keydown.enter.prevent="submit"
-    )
-    c-action-btn(
-      :tooltip="$t('common.search')",
-      icon="search",
+    />
+    <c-action-btn
+      :tooltip="$t('common.search')"
+      icon="search"
       @click="submit"
-    )
-    c-action-btn(
-      :tooltip="$t('common.clearSearch')",
-      icon="clear",
+    />
+    <c-action-btn
+      :tooltip="$t('common.clearSearch')"
+      icon="clear"
       @click="clear"
-    )
-    slot
+    />
+    <slot />
+  </v-layout>
 </template>
 
 <script>
@@ -122,7 +145,7 @@ export default {
     .v-list {
       padding: 0;
 
-      .v-list__tile {
+      .v-list-item {
         height: 32px;
 
         .v-btn:not(.c-search-field__item__pinned) {

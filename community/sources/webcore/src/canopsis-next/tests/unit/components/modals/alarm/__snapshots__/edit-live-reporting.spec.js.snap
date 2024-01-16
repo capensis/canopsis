@@ -7,7 +7,7 @@ exports[`edit-live-reporting Renders \`edit-live-reporting\` with empty modal 1`
 >
   <div
     class="modal-wrapper"
-    close="close"
+    close=""
   >
     <div
       class="title"
@@ -16,7 +16,6 @@ exports[`edit-live-reporting Renders \`edit-live-reporting\` with empty modal 1`
         Live reporting
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -28,29 +27,28 @@ exports[`edit-live-reporting Renders \`edit-live-reporting\` with empty modal 1`
         value="[object Object]"
       />
     </div>
-     
     <div
       class="actions"
     >
       <button
-        class="v-btn v-btn--flat theme--light"
+        class="v-btn v-btn--text theme--light v-size--default"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Cancel
-        </div>
+        Cancel
+        </span>
       </button>
       <button
-        class="primary v-btn theme--light"
+        class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Apply
-        </div>
+        Apply
+        </span>
       </button>
     </div>
   </div>
@@ -64,7 +62,7 @@ exports[`edit-live-reporting Renders \`edit-live-reporting\` with interval 1`] =
 >
   <div
     class="modal-wrapper"
-    close="close"
+    close=""
   >
     <div
       class="title"
@@ -73,7 +71,6 @@ exports[`edit-live-reporting Renders \`edit-live-reporting\` with interval 1`] =
         Live reporting
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -85,29 +82,28 @@ exports[`edit-live-reporting Renders \`edit-live-reporting\` with interval 1`] =
         value="[object Object]"
       />
     </div>
-     
     <div
       class="actions"
     >
       <button
-        class="v-btn v-btn--flat theme--light"
+        class="v-btn v-btn--text theme--light v-size--default"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Cancel
-        </div>
+        Cancel
+        </span>
       </button>
       <button
-        class="primary v-btn theme--light"
+        class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Apply
-        </div>
+        Apply
+        </span>
       </button>
     </div>
   </div>

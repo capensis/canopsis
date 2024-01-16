@@ -1,26 +1,39 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ title }}
-      template(#text="")
-        widget-template-columns-form(
-          v-if="isColumnsType",
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ title }}</span>
+      </template>
+      <template #text="">
+        <widget-template-columns-form
+          v-if="isColumnsType"
           v-model="form"
-        )
-        widget-template-text-form(
-          v-else,
-          v-model="form",
+        />
+        <widget-template-text-form
+          v-else
+          v-model="form"
           :entity-infos="entityInfos"
-        )
-      template(#actions="")
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-        v-btn(
-          :disabled="isDisabled",
-          :loading="submitting",
-          type="submit",
+        />
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
+          @click="$modals.hide"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :disabled="isDisabled"
+          :loading="submitting"
+          type="submit"
           color="primary"
-        ) {{ $t('common.submit') }}
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>

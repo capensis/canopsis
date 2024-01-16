@@ -1,10 +1,10 @@
-<template lang="pug">
-  circle(
-    v-on="$listeners",
-    :cx="centerX",
-    :cy="centerY",
+<template>
+  <circle
+    v-on="$listeners"
+    :cx="centerX"
+    :cy="centerY"
     :r="radius"
-  )
+  />
 </template>
 
 <script>

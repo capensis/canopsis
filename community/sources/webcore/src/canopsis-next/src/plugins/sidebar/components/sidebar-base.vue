@@ -1,6 +1,11 @@
-<template lang="pug">
-  sidebar-wrapper(:sidebar="sidebar")
-    component(v-if="sidebar.name", :is="sidebar.name", :sidebar="sidebar")
+<template>
+  <sidebar-wrapper :sidebar="sidebar">
+    <component
+      v-if="sidebar.name"
+      :is="sidebar.name"
+      :sidebar="sidebar"
+    />
+  </sidebar-wrapper>
 </template>
 
 <script>

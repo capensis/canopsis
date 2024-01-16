@@ -1,27 +1,44 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(:close="cancel")
-      template(#title="")
-        span {{ $t('modals.pbehaviorRecurrentChangesConfirmation.title') }}
-      template(#text="")
-        v-radio-group(
-          v-model="type",
-          hide-details,
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper :close="cancel">
+      <template #title="">
+        <span>{{ $t('modals.pbehaviorRecurrentChangesConfirmation.title') }}</span>
+      </template>
+      <template #text="">
+        <v-radio-group
+          v-model="type"
+          hide-details
           mandatory
-        )
-          v-radio(
-            :value="$constants.PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES.selected",
-            :label="$t('modals.pbehaviorRecurrentChangesConfirmation.fields.selected')",
+        >
+          <v-radio
+            :value="$constants.PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES.selected"
+            :label="$t('modals.pbehaviorRecurrentChangesConfirmation.fields.selected')"
             color="primary"
-          )
-          v-radio(
-            :value="$constants.PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES.all",
-            :label="$t('modals.pbehaviorRecurrentChangesConfirmation.fields.all')",
+          />
+          <v-radio
+            :value="$constants.PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES.all"
+            :label="$t('modals.pbehaviorRecurrentChangesConfirmation.fields.all')"
             color="primary"
-          )
-      template(#actions="")
-        v-btn(depressed, flat, @click="cancel") {{ $t('common.cancel') }}
-        v-btn.primary(type="submit") {{ $t('common.submit') }}
+          />
+        </v-radio-group>
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
+          @click="cancel"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          class="primary"
+          type="submit"
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>

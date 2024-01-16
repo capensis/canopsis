@@ -5,8 +5,7 @@ exports[`remediation-instructions-filters-item Renders \`remediation-instruction
   class="instruction-filter"
 >
   <span
-    class="v-chip white--text v-chip--label v-chip--removable theme--light grey"
-    tabindex="0"
+    class="white--text v-chip v-chip--clickable v-chip--label v-chip--removable theme--light v-size--default grey"
   >
     <span
       class="v-chip__content"
@@ -16,14 +15,14 @@ exports[`remediation-instructions-filters-item Renders \`remediation-instruction
       >
         <i
           aria-hidden="true"
-          class="v-icon material-icons theme--light white--text"
+          class="v-icon notranslate material-icons theme--light white--text"
           style="font-size: 16px;"
         >
           assignment
         </i>
         <i
           aria-hidden="true"
-          class="v-icon pl-1 material-icons theme--light white--text"
+          class="v-icon notranslate pl-1 material-icons theme--light white--text"
           style="font-size: 16px;"
         >
           lock
@@ -36,20 +35,18 @@ exports[`remediation-instructions-filters-item Renders \`remediation-instruction
         <span
           class="pl-1"
         >
-          Manual
+        Manual
         </span>
         <!---->
       </span>
-      <div
-        class="v-chip__close"
+      <button
+        aria-label="Close"
+        class="v-icon notranslate v-chip__close v-icon--link v-icon--right material-icons theme--light"
+        style="font-size: 18px;"
+        type="button"
       >
-        <i
-          aria-hidden="true"
-          class="v-icon material-icons theme--light"
-        >
-          check_box_outline_blank
-        </i>
-      </div>
+        check_box_outline_blank
+      </button>
     </span>
   </span>
 </div>
@@ -60,8 +57,7 @@ exports[`remediation-instructions-filters-item Renders \`remediation-instruction
   class="instruction-filter"
 >
   <span
-    class="v-chip white--text v-chip--label theme--light primary"
-    tabindex="0"
+    class="white--text v-chip v-chip--label theme--light v-size--default primary"
   >
     <span
       class="v-chip__content"
@@ -71,7 +67,7 @@ exports[`remediation-instructions-filters-item Renders \`remediation-instruction
       >
         <i
           aria-hidden="true"
-          class="v-icon material-icons theme--light white--text"
+          class="v-icon notranslate material-icons theme--light white--text"
           style="font-size: 16px;"
         >
           assignment
@@ -85,7 +81,6 @@ exports[`remediation-instructions-filters-item Renders \`remediation-instruction
         <span
           class="pl-1"
         >
-          
         </span>
         <!---->
       </span>
@@ -99,8 +94,7 @@ exports[`remediation-instructions-filters-item Renders \`remediation-instruction
   class="instruction-filter"
 >
   <span
-    class="v-chip white--text v-chip--label v-chip--removable theme--light grey"
-    tabindex="0"
+    class="white--text v-chip v-chip--clickable v-chip--label v-chip--removable theme--light v-size--default grey"
   >
     <span
       class="v-chip__content"
@@ -110,14 +104,14 @@ exports[`remediation-instructions-filters-item Renders \`remediation-instruction
       >
         <i
           aria-hidden="true"
-          class="v-icon material-icons theme--light white--text"
+          class="v-icon notranslate material-icons theme--light white--text"
           style="font-size: 16px;"
         >
           assignment
         </i>
         <i
           aria-hidden="true"
-          class="v-icon pl-1 material-icons theme--light white--text"
+          class="v-icon notranslate pl-1 material-icons theme--light white--text"
           style="font-size: 16px;"
         >
           lock
@@ -130,24 +124,22 @@ exports[`remediation-instructions-filters-item Renders \`remediation-instruction
         <span
           class="pl-1"
         >
-          Manual
+        Manual
         </span>
         <strong
           class="pl-1 text-uppercase"
         >
-          In progress
+        In progress
         </strong>
       </span>
-      <div
-        class="v-chip__close"
+      <button
+        aria-label="Close"
+        class="v-icon notranslate v-chip__close v-icon--link v-icon--right material-icons theme--light"
+        style="font-size: 18px;"
+        type="button"
       >
-        <i
-          aria-hidden="true"
-          class="v-icon material-icons theme--light"
-        >
-          check_box_outline_blank
-        </i>
-      </div>
+        check_box_outline_blank
+      </button>
     </span>
   </span>
 </div>
@@ -158,8 +150,7 @@ exports[`remediation-instructions-filters-item Renders \`remediation-instruction
   class="instruction-filter"
 >
   <span
-    class="v-chip white--text v-chip--label v-chip--removable theme--light grey"
-    tabindex="0"
+    class="white--text v-chip v-chip--clickable v-chip--label v-chip--removable theme--light v-size--default grey"
   >
     <span
       class="v-chip__content"
@@ -169,14 +160,14 @@ exports[`remediation-instructions-filters-item Renders \`remediation-instruction
       >
         <i
           aria-hidden="true"
-          class="v-icon material-icons theme--light white--text"
+          class="v-icon notranslate material-icons theme--light white--text"
           style="font-size: 16px;"
         >
           assignment
         </i>
         <i
           aria-hidden="true"
-          class="v-icon pl-1 material-icons theme--light white--text"
+          class="v-icon notranslate pl-1 material-icons theme--light white--text"
           style="font-size: 16px;"
         >
           lock
@@ -189,24 +180,22 @@ exports[`remediation-instructions-filters-item Renders \`remediation-instruction
         <span
           class="pl-1"
         >
-          Manual
+        Manual
         </span>
         <strong
           class="pl-1 text-uppercase"
         >
-          In progress
+        In progress
         </strong>
       </span>
-      <div
-        class="v-chip__close"
+      <button
+        aria-label="Close"
+        class="v-icon notranslate v-chip__close v-icon--link v-icon--right material-icons theme--light"
+        style="font-size: 18px;"
+        type="button"
       >
-        <i
-          aria-hidden="true"
-          class="v-icon material-icons theme--light"
-        >
-          check_box_outline_blank
-        </i>
-      </div>
+        check_box_outline_blank
+      </button>
     </span>
   </span>
 </div>

@@ -66,7 +66,6 @@ export const widgetColumnDraggingAlarmMixin = {
     handleColumnSort({ dragged, related }) {
       const oldDraggableIndex = this.headers.findIndex(({ value }) => value === dragged.dataset.value);
       const newDraggableIndex = this.headers.findIndex(({ value }) => value === related.dataset.value);
-
       const copiedHeaders = this.getHeadersByMovingIndexes(oldDraggableIndex, newDraggableIndex);
 
       this.calculateColumnsSortingOrderByHeaders(copiedHeaders);

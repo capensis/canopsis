@@ -2,7 +2,7 @@
 
 exports[`alarm-column-cell-popup-body Renders \`alarm-column-cell-popup-body\` with full alarm 1`] = `
 <div
-  class="v-card v-sheet theme--dark"
+  class="v-card v-sheet theme--light"
 >
   <div
     class="v-card__title primary pa-2 white--text"
@@ -14,20 +14,20 @@ exports[`alarm-column-cell-popup-body Renders \`alarm-column-cell-popup-body\` w
         Info popup
       </h4>
       <button
-        class="ma-0 ml-3 v-btn v-btn--icon v-btn--small theme--dark white"
+        class="ma-0 ml-3 v-btn v-btn--icon v-btn--round theme--light v-size--small white--text"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--dark error--text"
+            class="v-icon notranslate material-icons theme--light error--text"
             style="font-size: 16px;"
           >
             close
           </i>
-        </div>
+        </span>
       </button>
     </div>
   </div>

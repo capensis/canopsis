@@ -27,14 +27,15 @@ describe('flowchart-number-field', () => {
     expect(wrapper).toEmit('input', newValue);
   });
 
-  test('Renders `flowchart-number-field` with default props', () => {
+  test('Renders `flowchart-number-field` with default props', async () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
-  test('Renders `flowchart-number-field` with custom props', () => {
+  test('Renders `flowchart-number-field` with custom props', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: 12,
@@ -43,7 +44,8 @@ describe('flowchart-number-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
     expect(wrapper).toMatchMenuSnapshot();
   });
 });

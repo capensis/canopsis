@@ -119,7 +119,7 @@ describe('filters-list', () => {
   it('Renders `filters-list` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `filters-list` with custom props', () => {
@@ -132,6 +132,6 @@ describe('filters-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

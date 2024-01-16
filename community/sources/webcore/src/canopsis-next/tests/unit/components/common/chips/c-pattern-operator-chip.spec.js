@@ -12,6 +12,6 @@ describe('c-pattern-operator-chip', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

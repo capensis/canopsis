@@ -1,16 +1,29 @@
-<template lang="pug">
-  v-menu(offset-y, @click.prevent.stop="")
-    template(#activator="{ on }")
-      v-btn(v-on="on", depressed, small, light)
-        v-icon {{ icon }}
-    v-list
-      v-list-tile(
-        v-for="assignedInstruction in assignedInstructions",
-        :key="assignedInstruction._id",
-        :disabled="isDisabled(assignedInstruction)",
+<template>
+  <v-menu
+    offset-y
+    @click.prevent.stop=""
+  >
+    <template #activator="{ on }">
+      <v-btn
+        v-on="on"
+        depressed
+        small
+        light
+      >
+        <v-icon>{{ icon }}</v-icon>
+      </v-btn>
+    </template>
+    <v-list>
+      <v-list-item
+        v-for="assignedInstruction in assignedInstructions"
+        :key="assignedInstruction._id"
+        :disabled="isDisabled(assignedInstruction)"
         @click.stop.prevent="$emit('execute', assignedInstruction)"
-      )
-        v-list-tile-title {{ getLabel(assignedInstruction) }}
+      >
+        <v-list-item-title>{{ getLabel(assignedInstruction) }}</v-list-item-title>
+      </v-list-item>
+    </v-list>
+  </v-menu>
 </template>
 
 <script>

@@ -1,5 +1,5 @@
-<template lang="pug">
-  shared-mass-actions-panel(v-show="items.length", :actions="actions")
+<template>
+  <shared-mass-actions-panel :actions="actions" />
 </template>
 
 <script>

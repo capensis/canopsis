@@ -1,13 +1,16 @@
-<template lang="pug">
-  td
-    v-checkbox-functional(
-      v-for="(checkbox, index) in checkboxes",
-      v-bind="checkbox.bind",
-      v-on="checkbox.on",
-      :key="index",
-      :disabled="disabled || disabledForRole",
+<template>
+  <td>
+    <v-simple-checkbox
+      class="ma-0 pa-0"
+      v-for="(checkbox, index) in checkboxes"
+      v-bind="checkbox.bind"
+      v-on="checkbox.on"
+      :key="index"
+      :disabled="disabled || disabledForRole"
+      color="primary"
       hide-details
-    )
+    />
+  </td>
 </template>
 
 <script>
@@ -51,7 +54,7 @@ export default {
           bind: {
             label: action !== CRUD_ACTIONS.can ? action : undefined,
 
-            inputValue: getCheckboxValue(
+            value: getCheckboxValue(
               this.permission._id,
               this.role.permissions,
               this.changedRole,
@@ -59,7 +62,7 @@ export default {
             ),
           },
           on: {
-            change: value => this.changeCheckboxValue(value, action),
+            input: value => this.changeCheckboxValue(value, action),
           },
         }));
       }
@@ -67,14 +70,14 @@ export default {
       return [
         {
           bind: {
-            inputValue: getCheckboxValue(
+            value: getCheckboxValue(
               this.permission._id,
               this.role.permissions,
               this.changedRole,
             ),
           },
           on: {
-            change: value => this.changeCheckboxValue(value),
+            input: value => this.changeCheckboxValue(value),
           },
         },
       ];

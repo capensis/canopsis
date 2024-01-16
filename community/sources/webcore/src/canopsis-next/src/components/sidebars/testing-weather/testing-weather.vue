@@ -1,44 +1,49 @@
-<template lang="pug">
-  widget-settings(:submitting="submitting", @submit="submit")
-    field-title(v-model="form.title")
-    v-divider
-    field-periodic-refresh(v-model="form.parameters")
-    v-divider
-    field-storage(
-      v-model="form.parameters.directory",
-      :title="$t('settings.resultDirectory')",
-      :disabled="form.parameters.is_api",
-      @add="editResultDirectory",
-      @edit="editResultDirectory",
+<template>
+  <widget-settings
+    :submitting="submitting"
+    @submit="submit"
+  >
+    <field-title v-model="form.title" />
+    <v-divider />
+    <field-periodic-refresh v-model="form.parameters" />
+    <v-divider />
+    <field-storage
+      v-model="form.parameters.directory"
+      :title="$t('settings.resultDirectory')"
+      :disabled="form.parameters.is_api"
+      @add="editResultDirectory"
+      @edit="editResultDirectory"
       @remove="removeResultDirectory"
-    )
-    v-divider
-    widget-settings-group(:title="$t('settings.advancedSettings')")
-      field-switcher(
-        v-model="form.parameters.is_api",
+    />
+    <v-divider />
+    <widget-settings-group :title="$t('settings.advancedSettings')">
+      <field-switcher
+        v-model="form.parameters.is_api"
         :title="$t('settings.receiveByApi')"
-      )
-      v-divider
-      field-storages(
-        v-model="form.parameters.screenshot_directories",
-        :disabled="form.parameters.is_api",
-        :help-text="$t('settings.screenshotDirectories.helpText')",
-        :title="$t('settings.screenshotDirectories.title')",
-        @add="editScreenshotStorage",
+      />
+      <v-divider />
+      <field-storages
+        v-model="form.parameters.screenshot_directories"
+        :disabled="form.parameters.is_api"
+        :help-text="$t('settings.screenshotDirectories.helpText')"
+        :title="$t('settings.screenshotDirectories.title')"
+        @add="editScreenshotStorage"
         @edit="editScreenshotStorage"
-      )
-      v-divider
-      field-storages(
-        v-model="form.parameters.video_directories",
-        :disabled="form.parameters.is_api",
-        :help-text="$t('settings.videoDirectories.helpText')",
-        :title="$t('settings.videoDirectories.title')",
-        @add="editVideoStorage",
+      />
+      <v-divider />
+      <field-storages
+        v-model="form.parameters.video_directories"
+        :disabled="form.parameters.is_api"
+        :help-text="$t('settings.videoDirectories.helpText')"
+        :title="$t('settings.videoDirectories.title')"
+        @add="editVideoStorage"
         @edit="editVideoStorage"
-      )
-      v-divider
-      field-file-name-masks(v-model="form.parameters")
-    v-divider
+      />
+      <v-divider />
+      <field-file-name-masks v-model="form.parameters" />
+    </widget-settings-group>
+    <v-divider />
+  </widget-settings>
 </template>
 
 <script>

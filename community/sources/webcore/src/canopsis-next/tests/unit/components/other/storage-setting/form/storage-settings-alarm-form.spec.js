@@ -71,7 +71,7 @@ describe('storage-settings-alarm-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `storage-settings-alarm-form` with custom form and history', () => {
@@ -86,6 +86,6 @@ describe('storage-settings-alarm-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

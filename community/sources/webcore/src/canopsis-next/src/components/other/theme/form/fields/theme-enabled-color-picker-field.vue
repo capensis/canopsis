@@ -1,16 +1,28 @@
-<template lang="pug">
-  v-layout.theme-enabled-color-picker-field(
-    :class="{ 'theme-enabled-color-picker-field--disabled': !value.enabled }",
+<template>
+  <v-layout
+    class="theme-enabled-color-picker-field"
+    :class="{ 'theme-enabled-color-picker-field--disabled': !value.enabled }"
     column
-  )
-    c-enabled-field.mt-0(v-field="value.enabled", :label="enableLabel")
-      template(#append="")
-        c-help-icon(v-if="enableHelpText", :text="enableHelpText", top)
-    theme-color-picker-field(
-      v-field="value.color",
-      v-bind="$attrs",
+  >
+    <c-enabled-field
+      class="mt-0"
+      v-field="value.enabled"
+      :label="enableLabel"
+    >
+      <template #append="">
+        <c-help-icon
+          v-if="enableHelpText"
+          :text="enableHelpText"
+          top
+        />
+      </template>
+    </c-enabled-field>
+    <theme-color-picker-field
+      v-field="value.color"
+      v-bind="$attrs"
       :disabled="!value.enabled"
-    )
+    />
+  </v-layout>
 </template>
 
 <script>

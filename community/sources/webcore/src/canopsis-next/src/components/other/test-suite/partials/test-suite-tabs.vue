@@ -1,25 +1,55 @@
-<template lang="pug">
-  v-tabs(centered, slider-color="primary")
-    v-tab {{ $t('common.summary') }}
-    v-tab-item
-      test-suite-summary-tab.pt-3(:test-suite="testSuite")
-    v-tab {{ $t('testSuite.tabs.globalMessages') }}
-    v-tab-item
-      test-suite-messages-tab.pt-3(:test-suite="testSuite")
-    v-tab {{ $t('testSuite.tabs.gantt') }}
-    v-tab-item(lazy)
-      test-suite-gantt-tab.pt-3(:test-suite="testSuite")
-    v-tab {{ $t('testSuite.tabs.details') }}
-    v-tab-item(lazy)
-      test-suite-details-tab.pt-3(:test-suite="testSuite")
-    template(v-if="hasScreenshots")
-      v-tab {{ $t('testSuite.tabs.screenshots') }}
-      v-tab-item
-        test-suite-screenshots-tab.pt-3(:test-suite="testSuite")
-    template(v-if="hasVideos")
-      v-tab {{ $t('testSuite.tabs.videos') }}
-      v-tab-item
-        test-suite-videos-tab.pt-3(:test-suite="testSuite")
+<template>
+  <v-tabs
+    centered
+    slider-color="primary"
+  >
+    <v-tab>{{ $t('common.summary') }}</v-tab>
+    <v-tab-item>
+      <test-suite-summary-tab
+        class="pt-3"
+        :test-suite="testSuite"
+      />
+    </v-tab-item>
+    <v-tab>{{ $t('testSuite.tabs.globalMessages') }}</v-tab>
+    <v-tab-item>
+      <test-suite-messages-tab
+        class="pt-3"
+        :test-suite="testSuite"
+      />
+    </v-tab-item>
+    <v-tab>{{ $t('testSuite.tabs.gantt') }}</v-tab>
+    <v-tab-item>
+      <test-suite-gantt-tab
+        class="pt-3"
+        :test-suite="testSuite"
+      />
+    </v-tab-item>
+    <v-tab>{{ $t('testSuite.tabs.details') }}</v-tab>
+    <v-tab-item>
+      <test-suite-details-tab
+        class="pt-3"
+        :test-suite="testSuite"
+      />
+    </v-tab-item>
+    <template v-if="hasScreenshots">
+      <v-tab>{{ $t('testSuite.tabs.screenshots') }}</v-tab>
+      <v-tab-item>
+        <test-suite-screenshots-tab
+          class="pt-3"
+          :test-suite="testSuite"
+        />
+      </v-tab-item>
+    </template>
+    <template v-if="hasVideos">
+      <v-tab>{{ $t('testSuite.tabs.videos') }}</v-tab>
+      <v-tab-item>
+        <test-suite-videos-tab
+          class="pt-3"
+          :test-suite="testSuite"
+        />
+      </v-tab-item>
+    </template>
+  </v-tabs>
 </template>
 
 <script>

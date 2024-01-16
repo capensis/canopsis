@@ -1,18 +1,44 @@
-<template lang="pug">
-  v-layout.kpi-widget(column, align-center)
-    h4.kpi-widget__title {{ title }}
-    v-layout.kpi-widget__list(row, wrap)
-      numbers-metrics-item(
-        v-for="metric in metrics",
-        :key="metric.title",
-        :metric="metric",
-        :show-trend="showTrend",
+<template>
+  <v-layout
+    class="kpi-widget"
+    column
+    align-center
+  >
+    <h4 class="kpi-widget__title">
+      {{ title }}
+    </h4>
+    <v-layout
+      class="kpi-widget__list"
+      wrap
+    >
+      <numbers-metrics-item
+        v-for="metric in metrics"
+        :key="metric.title"
+        :metric="metric"
+        :show-trend="showTrend"
         :value-font-size="fontSize"
-      )
-    v-layout.kpi-widget__actions.mt-4(row, justify-end)
-      v-btn.ma-0(:loading="downloading", color="primary", small, @click="$emit('export:csv')")
-        v-icon(small, left) file_download
-        span {{ $t('common.exportAsCsv') }}
+      />
+    </v-layout>
+    <v-layout
+      class="kpi-widget__actions mt-4"
+      justify-end
+    >
+      <v-btn
+        :loading="downloading"
+        color="primary"
+        small
+        @click="$emit('export:csv')"
+      >
+        <v-icon
+          small
+          left
+        >
+          file_download
+        </v-icon>
+        <span>{{ $t('common.exportAsCsv') }}</span>
+      </v-btn>
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>

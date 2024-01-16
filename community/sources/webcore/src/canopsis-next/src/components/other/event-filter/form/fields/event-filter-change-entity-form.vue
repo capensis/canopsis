@@ -1,30 +1,36 @@
-<template lang="pug">
-  div
-    c-payload-text-field(
-      v-field="form.resource",
-      :label="$t('eventFilter.resource')",
-      :name="`${name}.resource`",
+<template>
+  <div>
+    <c-payload-text-field
+      v-field="form.resource"
+      :label="$t('eventFilter.resource')"
+      :name="`${name}.resource`"
       :variables="variables"
-    )
-    c-payload-text-field(
-      v-field="form.component",
-      :label="$t('eventFilter.component')",
-      :name="`${name}.component`",
+    />
+    <c-payload-text-field
+      v-field="form.component"
+      :label="$t('eventFilter.component')"
+      :name="`${name}.component`"
       :variables="variables"
-    )
-    c-payload-text-field(
-      v-field="form.connector",
-      :label="$t('eventFilter.connector')",
-      :name="`${name}.connector`",
+    />
+    <c-payload-text-field
+      v-field="form.connector"
+      :label="$t('eventFilter.connector')"
+      :name="`${name}.connector`"
       :variables="variables"
-    )
-    c-payload-text-field(
-      v-field="form.connector_name",
-      :label="$t('eventFilter.connectorName')",
-      :name="`${name}.connector_name`",
+    />
+    <c-payload-text-field
+      v-field="form.connector_name"
+      :label="$t('eventFilter.connectorName')"
+      :name="`${name}.connector_name`"
       :variables="variables"
-    )
-    v-alert(:value="errors.has(name)", type="error") {{ $t('eventFilter.configRequired') }}
+    />
+    <v-alert
+      :value="errors.has(name)"
+      type="error"
+    >
+      {{ $t('eventFilter.configRequired') }}
+    </v-alert>
+  </div>
 </template>
 
 <script>

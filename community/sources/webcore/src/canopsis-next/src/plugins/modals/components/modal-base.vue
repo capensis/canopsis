@@ -1,6 +1,10 @@
-<template lang="pug">
-  modal-wrapper(:modal="modal")
-    component(:is="modal.name", :modal="modal")
+<template>
+  <modal-wrapper :modal="modal">
+    <component
+      :is="modal.name"
+      :modal="modal"
+    />
+  </modal-wrapper>
 </template>
 
 <script>

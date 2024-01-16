@@ -7,7 +7,7 @@ exports[`tags Renders \`tags\` with permissions 1`] = `
 >
   <tags-list-stub
     duplicable="true"
-    pagination="[object Object]"
+    options="[object Object]"
     pending="true"
     removable="true"
     tags="[object Object],[object Object]"
@@ -22,7 +22,7 @@ exports[`tags Renders \`tags\` without permissions 1`] = `
   create-tooltip="Create a tag"
 >
   <tags-list-stub
-    pagination="[object Object]"
+    options="[object Object]"
     tags=""
   />
 </c-page-stub>
