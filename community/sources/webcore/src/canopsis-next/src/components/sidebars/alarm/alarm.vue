@@ -87,6 +87,11 @@
         :title="$t('settings.clearFilterDisabled')"
       />
       <v-divider />
+      <field-switcher
+        v-model="form.parameters.showRootCauseByStateClick"
+        :title="$t('settings.showRootCauseByStateClick')"
+      />
+      <v-divider />
       <field-live-reporting v-model="form.parameters.liveReporting" />
       <v-divider />
       <field-info-popup

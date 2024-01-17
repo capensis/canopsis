@@ -71,6 +71,7 @@ export default {
   isPriorityEnabled: 'Show priority',
   isHideGrayEnabled: 'Show hide gray',
   clearFilterDisabled: 'Disable possibility to clear selected filter',
+  showRootCauseByStateClick: 'Show root cause diagram called from Severity column',
   alarmsColumns: 'Alarm list columns',
   resolvedAlarmsColumns: 'Column names for resolved alarms',
   activeAlarmsColumns: 'Column names for active alarms',

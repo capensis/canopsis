@@ -2,6 +2,7 @@
   <div
     class="chip-container"
     :class="{ 'chip-container--small': small }"
+    @click="$emit('click', $event)"
   >
     <v-badge
       :value="!!badgeValue"
