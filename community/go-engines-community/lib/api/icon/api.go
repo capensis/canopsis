@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"mime"
 	"net/http"
+	"os"
 	"path"
 	"slices"
 
@@ -111,6 +112,17 @@ func (a *api) List(c *gin.Context) {
 	aggregationResult, err := a.store.List(c, query)
 	if err != nil {
 		panic(err)
+	}
+
+	// todo: optimize it by adding separate workers, which should read files,
+	// todo: also upgrade file storage to get file contents from cache instead of filesystem
+	for idx, res := range aggregationResult.Data {
+		svgContent, err := os.ReadFile(a.store.GetFilepath(res))
+		if err != nil {
+			panic(err)
+		}
+
+		aggregationResult.Data[idx].Content = string(svgContent)
 	}
 
 	res, err := common.NewPaginatedResponse(query.Query, aggregationResult)
