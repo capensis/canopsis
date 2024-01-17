@@ -89,27 +89,14 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 			result.Alarm = alarm
 			result.AlarmChange = alarmChange
 
-			if result.Alarm.ID == "" {
-				updatedServiceStates, err = p.entityServiceCountersCalculator.CalculateCounters(ctx, &entity, nil, result.AlarmChange)
-				if err != nil {
-					return err
-				}
-
-				componentStateChanged, newComponentState, err = p.componentCountersCalculator.CalculateCounters(ctx, &entity, nil, result.AlarmChange)
-				if err != nil {
-					return err
-				}
-			} else {
-				updatedServiceStates, err = p.entityServiceCountersCalculator.CalculateCounters(ctx, &entity, &result.Alarm, result.AlarmChange)
-				if err != nil {
-					return err
-				}
-
-				componentStateChanged, newComponentState, err = p.componentCountersCalculator.CalculateCounters(ctx, &entity, &result.Alarm, result.AlarmChange)
-				if err != nil {
-					return err
-				}
-			}
+			updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
+				ctx,
+				p.entityServiceCountersCalculator,
+				p.componentCountersCalculator,
+				&result.Alarm,
+				&entity,
+				result.AlarmChange,
+			)
 
 			return err
 		})
@@ -188,19 +175,14 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 			}
 		}
 
-		if result.Alarm.ID == "" {
-			updatedServiceStates, err = p.entityServiceCountersCalculator.CalculateCounters(ctx, &entity, nil, result.AlarmChange)
-			if err != nil {
-				return err
-			}
-		} else {
-			updatedServiceStates, err = p.entityServiceCountersCalculator.CalculateCounters(ctx, &entity, &result.Alarm, result.AlarmChange)
-			if err != nil {
-				return err
-			}
-		}
-
-		componentStateChanged, newComponentState, err = p.componentCountersCalculator.CalculateCounters(ctx, &entity, &result.Alarm, result.AlarmChange)
+		updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
+			ctx,
+			p.entityServiceCountersCalculator,
+			p.componentCountersCalculator,
+			&result.Alarm,
+			&entity,
+			result.AlarmChange,
+		)
 
 		return err
 	})

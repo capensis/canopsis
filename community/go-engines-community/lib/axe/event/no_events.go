@@ -116,29 +116,16 @@ func (p *noEventsProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 			return err
 		}
 
-		if result.Alarm.ID == "" {
-			updatedServiceStates, err = p.entityServiceCountersCalculator.CalculateCounters(ctx, &entity, nil, result.AlarmChange)
-			if err != nil {
-				return err
-			}
+		updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
+			ctx,
+			p.entityServiceCountersCalculator,
+			p.componentCountersCalculator,
+			&result.Alarm,
+			&entity,
+			result.AlarmChange,
+		)
 
-			componentStateChanged, newComponentState, err = p.componentCountersCalculator.CalculateCounters(ctx, &entity, nil, result.AlarmChange)
-			if err != nil {
-				return err
-			}
-		} else {
-			updatedServiceStates, err = p.entityServiceCountersCalculator.CalculateCounters(ctx, &entity, &result.Alarm, result.AlarmChange)
-			if err != nil {
-				return err
-			}
-
-			componentStateChanged, newComponentState, err = p.componentCountersCalculator.CalculateCounters(ctx, &entity, &result.Alarm, result.AlarmChange)
-			if err != nil {
-				return err
-			}
-		}
-
-		return nil
+		return err
 	})
 
 	if err != nil || result.Alarm.ID == "" {
