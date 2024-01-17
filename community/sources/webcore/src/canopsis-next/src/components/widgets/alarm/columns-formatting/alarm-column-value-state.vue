@@ -7,6 +7,7 @@
       :value="stateId"
       :badge-value="badgeValue"
       :small="small"
+      @click="$emit('click', $event)"
     />
     <v-icon
       class="d-block"

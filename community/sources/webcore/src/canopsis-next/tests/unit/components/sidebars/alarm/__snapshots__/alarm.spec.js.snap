@@ -140,6 +140,15 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
       class="v-divider theme--light"
       role="separator"
     />
+    <field-switcher-stub
+      title="Show root cause diagram called from Severity column"
+      value="true"
+    />
+    <hr
+      aria-orientation="horizontal"
+      class="v-divider theme--light"
+      role="separator"
+    />
     <field-live-reporting-stub
       value="[object Object]"
     />
@@ -872,6 +881,15 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     <!---->
     <field-switcher-stub
       title="Disable possibility to clear selected filter"
+    />
+    <hr
+      aria-orientation="horizontal"
+      class="v-divider theme--light"
+      role="separator"
+    />
+    <field-switcher-stub
+      title="Show root cause diagram called from Severity column"
+      value="true"
     />
     <hr
       aria-orientation="horizontal"
@@ -1614,6 +1632,15 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     <!---->
     <field-switcher-stub
       title="Disable possibility to clear selected filter"
+    />
+    <hr
+      aria-orientation="horizontal"
+      class="v-divider theme--light"
+      role="separator"
+    />
+    <field-switcher-stub
+      title="Show root cause diagram called from Severity column"
+      value="true"
     />
     <hr
       aria-orientation="horizontal"

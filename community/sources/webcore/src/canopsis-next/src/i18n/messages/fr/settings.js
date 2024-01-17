@@ -71,6 +71,7 @@ export default {
   isPriorityEnabled: 'Afficher la priorité',
   isHideGrayEnabled: 'Afficher l\'option Cacher les tuiles grises',
   clearFilterDisabled: 'Désactiver la possibilité d\'effacer le filtre sélectionné',
+  showRootCauseByStateClick: 'Afficher le diagramme de cause première appelé à partir de la colonne Criticité',
   alarmsColumns: 'Colonnes de la liste des alarmes',
   resolvedAlarmsColumns: 'Noms de colonne pour les alarmes résolues',
   activeAlarmsColumns: 'Noms de colonne pour les alarmes actives',

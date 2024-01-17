@@ -74,6 +74,7 @@
         :small="small"
         @activate="activateRow"
         @select:tag="$emit('select:tag', $event)"
+        @click:state="$emit('click:state', $event)"
       />
       <span
         class="alarms-list-table__resize-handler"
