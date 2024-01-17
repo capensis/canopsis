@@ -1,9 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`service-dependencies-expand Renders \`service-dependencies-expand\` with item 1`] = `
-<div
-  class="layout"
->
+<span>
   <span
     class="v-badge v-badge--overlap theme--light"
   >
@@ -110,13 +108,11 @@ exports[`service-dependencies-expand Renders \`service-dependencies-expand\` wit
   </span>
    
   <!---->
-</div>
+</span>
 `;
 
 exports[`service-dependencies-expand Renders \`service-dependencies-expand\` with item with cycle 1`] = `
-<div
-  class="layout"
->
+<span>
   <span
     class="v-badge v-badge--overlap theme--light"
   >
@@ -238,13 +234,11 @@ exports[`service-dependencies-expand Renders \`service-dependencies-expand\` wit
       Cycle dependency
     </span>
   </div>
-</div>
+</span>
 `;
 
 exports[`service-dependencies-expand Renders \`service-dependencies-expand\` with item with load more 1`] = `
-<div
-  class="layout"
->
+<span>
   <div
     class="v-tooltip"
     right=""
@@ -271,5 +265,5 @@ exports[`service-dependencies-expand Renders \`service-dependencies-expand\` wit
   </div>
    
   <!---->
-</div>
+</span>
 `;
