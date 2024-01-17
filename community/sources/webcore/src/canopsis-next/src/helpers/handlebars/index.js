@@ -1,3 +1,4 @@
+import Vue from 'vue';
 import promisedHandlebars from 'promised-handlebars';
 import HandlebarsLib from 'handlebars';
 
@@ -18,6 +19,7 @@ export async function compile(template, context = {}) {
   const handleBarFunction = Handlebars.compile(template ?? '');
   const preparedContext = {
     env: store.getters['templateVars/items'] ?? {},
+    isDarkTheme: Vue.prototype.$vuetify?.dark ?? false,
 
     ...context,
   };
