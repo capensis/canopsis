@@ -150,7 +150,7 @@ export const dependenciesDenormalize = ({
     });
 
     if (meta.page < meta.page_count) {
-      denormalizedDependency.children.push(getLoadMoreDenormalizedChild(dependency));
+      denormalizedDependency.children.push(getLoadMoreDenormalizedChild(denormalizedDependency));
     }
 
     return denormalizedDependency;
