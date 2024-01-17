@@ -1,5 +1,5 @@
 <template>
-  <v-layout>
+  <span>
     <v-tooltip
       v-if="item.loadMore"
       right
@@ -57,7 +57,7 @@
       </template>
       <span>{{ $t('common.cycleDependency') }}</span>
     </v-tooltip>
-  </v-layout>
+  </span>
 </template>
 
 <script>
