@@ -131,26 +131,16 @@ func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 		}
 
 		if !event.Healthcheck {
-			if result.Alarm.ID == "" {
-				updatedServiceStates, err = p.entityServiceCountersCalculator.CalculateCounters(ctx, &entity, nil, result.AlarmChange)
-				if err != nil {
-					return err
-				}
-
-				componentStateChanged, newComponentState, err = p.componentCountersCalculator.CalculateCounters(ctx, &entity, nil, result.AlarmChange)
-				if err != nil {
-					return err
-				}
-			} else {
-				updatedServiceStates, err = p.entityServiceCountersCalculator.CalculateCounters(ctx, &entity, &result.Alarm, result.AlarmChange)
-				if err != nil {
-					return err
-				}
-
-				componentStateChanged, newComponentState, err = p.componentCountersCalculator.CalculateCounters(ctx, &entity, &result.Alarm, result.AlarmChange)
-				if err != nil {
-					return err
-				}
+			updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
+				ctx,
+				p.entityServiceCountersCalculator,
+				p.componentCountersCalculator,
+				&result.Alarm,
+				&entity,
+				result.AlarmChange,
+			)
+			if err != nil {
+				return err
 			}
 		}
 

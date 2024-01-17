@@ -68,7 +68,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 		},
 		{
 			name:  "given new not yet counted entity with an ok alarm and alarm change is none, should change service counter and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -92,7 +92,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 		},
 		{
 			name:  "given new not yet counted entity with a ko alarm and alarm change is none, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -118,7 +118,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 		},
 		{
 			name:  "given new not yet counted entity matched to inherited rule with a ko alarm and alarm change is none, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-1",
@@ -158,7 +158,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 		},
 		{
 			name:  "given new not yet counted entity with an acked alarm and alarm change is none, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -212,7 +212,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 		},
 		{
 			name:  "given new not yet counted entity with an ok alarm in inactive pbh and alarm change is none, should change service counter and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -240,7 +240,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 		},
 		{
 			name:  "given new not yet counted entity with a ko alarm in inactive pbh and alarm change is none, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -268,7 +268,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 		},
 		{
 			name:  "given new not yet counted entity matched to inherited rule with a ko alarm in inactive pbh and alarm change is none, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-1",
@@ -310,7 +310,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 		},
 		{
 			name:  "given new not yet counted entity with an acked alarm in inactive pbh and alarm change is none, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -356,7 +356,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 		},
 		{
 			name:  "given counted entity with an alarm and alarm change is none, shouldn't check counters",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -396,7 +396,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 		},
 		{
 			name:  "given an entity to be removed from counters with an ok alarm and alarm change is none, should change service counter and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -426,7 +426,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 		},
 		{
 			name:  "given an entity to be removed from counters with a ko alarm and alarm change is none, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -458,7 +458,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 		},
 		{
 			name:  "given an entity to be removed from counters matched to inherited rule with a ko alarm and alarm change is none, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Name:             "test-resource-1",
@@ -507,7 +507,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 		},
 		{
 			name:  "given an entity to be removed from counters with an acked alarm and alarm change is none, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -572,7 +572,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 		},
 		{
 			name:  "given an entity to be removed from counters with an ok alarm in inactive pbh and alarm change is none, should change service counter and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -606,7 +606,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 		},
 		{
 			name:  "given an entity to be removed from counters with a ko alarm in inactive pbh and alarm change is none, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -640,7 +640,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 		},
 		{
 			name:  "given an entity to be removed from counters matched to inherited rule with a ko alarm in inactive pbh and alarm change is none, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Name:             "test-resource-1",
@@ -691,7 +691,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 		},
 		{
 			name:  "given an entity to be removed from counters with an acked alarm in inactive pbh and alarm change is none, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -728,7 +728,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 		// state and output changes
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is none, shouldn't do any updates as worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -755,7 +755,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 		},
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is none, should update service, because the worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -784,7 +784,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 		},
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is none, when rule type is dependencies, shouldn't do any updates as worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -822,7 +822,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 		},
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is none when rule type is dependencies, should update service, because the worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -863,7 +863,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 		},
 		{
 			name:  "given new not yet counted entity with a ko alarm and alarm change is none, when rule type is inherited, shouldn't update service, because the inherited worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-2",
@@ -903,7 +903,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 		},
 		{
 			name:  "given new not yet counted entity with a ko alarm and alarm change is none, when rule type is inherited, should update service, because the inherited worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-1",
@@ -949,7 +949,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 		},
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is none, shouldn't update output",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -978,7 +978,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeNone(t *testing.T)
 		},
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is none, should update output",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -1027,7 +1027,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		// active
 		{
 			name:  "given new not yet counted entity with a ko alarm and alarm change is stateinc, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -1054,7 +1054,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given new not yet counted entity matched to inherited rule with a ko alarm and alarm change is stateinc, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-1",
@@ -1095,7 +1095,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given new not yet counted entity with an acked alarm and alarm change is stateinc, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -1122,7 +1122,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given new not yet counted entity with a ko alarm and alarm change is statedec, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -1147,7 +1147,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given new not yet counted entity matched to inherited rule with a ko alarm and alarm change is statedec, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-1",
@@ -1188,7 +1188,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given new not yet counted entity with an acked alarm and alarm change is statedec, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -1215,7 +1215,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given new not yet counted entity with a ko alarm and alarm change is changestate, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -1246,7 +1246,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		// inactive
 		{
 			name:  "given new not yet counted entity with a ko alarm in inactive pbh and alarm change is stateinc, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -1275,7 +1275,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given new not yet counted entity matched to inherited rule with a ko alarm in inactive pbh and alarm change is stateinc, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-1",
@@ -1318,7 +1318,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given new not yet counted entity with an acked alarm in inactive pbh and alarm change is stateinc, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -1348,7 +1348,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given new not yet counted entity with a ko alarm in inactive pbh and alarm change is statedec, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -1377,7 +1377,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given new not yet counted entity matched to inherited rule with a ko alarm in inactive pbh and alarm change is statedec, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-1",
@@ -1420,7 +1420,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given new not yet counted entity with an acked alarm in inactive pbh and alarm change is statedec, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -1450,7 +1450,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given new not yet counted entity with a ko alarm in inactive pbh and alarm change is changestate, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -1483,7 +1483,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		// when already counted
 		{
 			name:  "given counted entity with a ko alarm and alarm change is stateinc, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -1509,7 +1509,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given counted entity matched to inherited rule with a ko alarm and alarm change is stateinc, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Name:     "test-resource-1",
@@ -1550,7 +1550,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given counted entity with a ko alarm and alarm change is statedec, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -1576,7 +1576,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given counted entity matched to inherited rule with a ko alarm and alarm change is statedec, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Name:     "test-resource-1",
@@ -1617,7 +1617,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given counted entity with a ko alarm and alarm change is changestate, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -1644,7 +1644,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		// inactive
 		{
 			name:  "given counted entity with a ko alarm in inactive pbh and alarm change is stateinc, shouldn't check counters",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -1667,7 +1667,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given counted entity with a ko alarm in inactive pbh and alarm change is statedec, shouldn't check counters",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -1690,7 +1690,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given counted entity with a ko alarm and alarm change is changestate, shouldn't check counters",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -1715,7 +1715,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		// active
 		{
 			name:  "given an entity to be removed from counters entity with a ko alarm and alarm change is stateinc, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -1742,7 +1742,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given an entity to be removed from counters entity matched to inherited rule with a ko alarm and alarm change is stateinc, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Name:             "test-resource-1",
@@ -1788,7 +1788,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given an entity to be removed from counters entity with an acked alarm and alarm change is stateinc, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -1817,7 +1817,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given an entity to be removed from counters entity with a ko alarm and alarm change is statedec, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -1846,7 +1846,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given an entity to be removed from counters entity matched to inherited rule with a ko alarm and alarm change is statedec, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Name:             "test-resource-1",
@@ -1892,7 +1892,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given an entity to be removed from counters entity with an acked alarm and alarm change is statedec, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -1921,7 +1921,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given an entity to be removed from counters with a ko alarm and alarm change is changestate, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -1951,7 +1951,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		// inactive
 		{
 			name:  "given an entity to be removed from counters entity with a ko alarm in inactive pbh and alarm change is stateinc, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -1979,7 +1979,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given an entity to be removed from counters entity matched to inherited rule with a ko alarm in inactive pbh and alarm change is stateinc, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Name:             "test-resource-1",
@@ -2021,7 +2021,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given an entity to be removed from counters entity with an acked alarm in inactive pbh and alarm change is stateinc, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -2050,7 +2050,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given an entity to be removed from counters entity with a ko alarm in inactive pbh and alarm change is statedec, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -2078,7 +2078,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given an entity to be removed from counters entity matched to inherited rule with a ko alarm in inactive pbh and alarm change is statedec, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Name:             "test-resource-1",
@@ -2120,7 +2120,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given an entity to be removed from counters entity with an acked alarm in inactive pbh and alarm change is statedec, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -2149,7 +2149,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given an entity to be removed from counters with a ko alarm in inactive pbh and alarm change is changestate, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -2181,7 +2181,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		// state and output changes
 		{
 			name:  "given counted entity with a major alarm and alarm change is stateinc, shouldn't do any updates as worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -2206,7 +2206,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given counted entity with a major alarm and alarm change is stateinc, should update service, because the worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -2232,7 +2232,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given counted entity with a major alarm and alarm change is statedec, when rule type is dependencies, shouldn't do any updates as worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -2268,7 +2268,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given counted entity with a major alarm and alarm change is statedec when rule type is dependencies, should update service, because the worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -2307,7 +2307,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given counted entity with a ko alarm and alarm change is changestate, when rule type is inherited, shouldn't update service, because the inherited worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Name:     "test-resource-2",
@@ -2344,7 +2344,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given counted entity with a ko alarm and alarm change is changestate, when rule type is inherited, should update service, because the inherited worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Name:     "test-resource-1",
@@ -2388,7 +2388,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given counted entity with a major alarm and alarm change is stateinc, shouldn't update output",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -2415,7 +2415,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeState(t *testing.T
 		},
 		{
 			name:  "given counted entity with a major alarm and alarm change is stateinc, should update output",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -2461,7 +2461,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 		// when entity should be added to counters
 		{
 			name:  "given new not yet counted entity with a ko alarm and alarm change is create, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -2487,7 +2487,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 		},
 		{
 			name:  "given new not yet counted entity matched to inherited rule with a ko alarm and alarm change is create, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-1",
@@ -2528,7 +2528,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 		// when already counted
 		{
 			name:  "given counted entity with a ko alarm and alarm change is create, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -2554,7 +2554,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 		},
 		{
 			name:  "given counted entity matched to inherited rule with a ko alarm and alarm change is create, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Name:     "test-resource-1",
@@ -2596,7 +2596,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 		// when entity should be removed from counters
 		{
 			name:  "given an entity to be removed from counters with a ko alarm and alarm change is create, should change service counters and shouldn't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -2620,7 +2620,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 		},
 		{
 			name:  "given an entity to be removed from counters matched to inherited rule with a ko alarm and alarm change is create, should change service counters and shouldn't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Name:             "test-resource-1",
@@ -2662,7 +2662,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 		// state and output changes
 		{
 			name:  "given given counted entity with a major alarm and alarm change is create, shouldn't do any updates as worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -2689,7 +2689,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is create, should update service, because the worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -2719,7 +2719,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is create, when rule type is dependencies, shouldn't do any updates as worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -2756,7 +2756,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is create when rule type is dependencies, should update service, because the worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -2797,7 +2797,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 		},
 		{
 			name:  "given given counted entity with a ko alarm and alarm change is create, when rule type is inherited, shouldn't update service, because the inherited worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Name:     "test-resource-2",
@@ -2839,7 +2839,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 		},
 		{
 			name:  "given given counted entity with a ko alarm and alarm change is create, when rule type is inherited, should update service, because the inherited worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Name:     "test-resource-1",
@@ -2887,7 +2887,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is create, shouldn't update output",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -2916,7 +2916,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreate(t *testing.
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is create, should update output",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -2964,7 +2964,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 		// when entity should be added to counters
 		{
 			name:  "given new not yet counted entity with a ko alarm and alarm change is create with active pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -2993,7 +2993,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 		},
 		{
 			name:  "given new not yet counted entity matched to inherited rule with a ko alarm and alarm change is create with active pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-1",
@@ -3036,7 +3036,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 		},
 		{
 			name:  "given new not yet counted entity with a ko alarm and alarm change is create with inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -3064,7 +3064,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 		},
 		{
 			name:  "given new not yet counted entity matched to inherited rule with a ko alarm and alarm change is create with inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-1",
@@ -3107,7 +3107,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 		// when already counted
 		{
 			name:  "given counted entity with a ko alarm and alarm change is create with active pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -3136,7 +3136,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 		},
 		{
 			name:  "given counted entity matched to inherited rule with a ko alarm and alarm change is create with active pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Name:     "test-resource-1",
@@ -3180,7 +3180,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 		},
 		{
 			name:  "given counted entity with a ko alarm and alarm change is create with inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -3206,7 +3206,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 		},
 		{
 			name:  "given counted entity matched to inherited rule with a ko alarm and alarm change is create with inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Name:     "test-resource-1",
@@ -3246,7 +3246,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 		// when entity should be removed from counters
 		{
 			name:  "given an entity to be removed from counters with a ko alarm and alarm change is create with active pbh, should change service counters and shouldn't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -3273,7 +3273,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 		},
 		{
 			name:  "given an entity to be removed from counters matched to inherited rule with a ko alarm and alarm change is create with active pbh, should change service counters and shouldn't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Name:             "test-resource-1",
@@ -3317,7 +3317,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 		},
 		{
 			name:  "given an entity to be removed from counters with a ko alarm and alarm change is create with inactive pbh, should change service counters and shouldn't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -3345,7 +3345,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 		},
 		{
 			name:  "given an entity to be removed from counters matched to inherited rule with a ko alarm and alarm change is create with inactive pbh, should change service counters and shouldn't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Name:             "test-resource-1",
@@ -3391,7 +3391,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 		// state and output changes
 		{
 			name:  "given given counted entity with a major alarm and alarm change is create with active pbh, shouldn't do any updates as worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -3421,7 +3421,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is create with active pbh, should update service, because the worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -3454,7 +3454,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is create with active pbh, when rule type is dependencies, shouldn't do any updates as worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -3494,7 +3494,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is create with active pbh when rule type is dependencies, should update service, because the worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -3538,7 +3538,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 		},
 		{
 			name:  "given given counted entity with a ko alarm and alarm change is create with active pbh, when rule type is inherited, shouldn't update service, because the inherited worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Name:     "test-resource-2",
@@ -3583,7 +3583,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 		},
 		{
 			name:  "given given counted entity with a ko alarm and alarm change is create with active pbh, when rule type is inherited, should update service, because the inherited worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Name:     "test-resource-1",
@@ -3634,7 +3634,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is create with active pbh, shouldn't update output",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -3666,7 +3666,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is create with active pbh, should update output",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -3742,7 +3742,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 		},
 		{
 			name:  "given new not yet counted entity with an ok alarm and alarm change is pbhenter with active pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -3769,7 +3769,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 		},
 		{
 			name:  "given new not yet counted entity with an acked ko alarm and alarm change is pbhenter with active pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -3798,7 +3798,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 		},
 		{
 			name:  "given new not yet counted entity with a ko alarm and alarm change is pbhenter with active pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -3827,7 +3827,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 		},
 		{
 			name:  "given new not yet counted entity matched to inherited rule with a ko alarm and alarm change is pbhenter with active pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-1",
@@ -3898,7 +3898,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 		},
 		{
 			name:  "given new not yet counted entity with an ok alarm and alarm change is pbhenter with inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -3926,7 +3926,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 		},
 		{
 			name:  "given new not yet counted entity with an acked ko alarm and alarm change is pbhenter with inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -3955,7 +3955,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 		},
 		{
 			name:  "given new not yet counted entity with a ko alarm and alarm change is pbhenter with inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -3983,7 +3983,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 		},
 		{
 			name:  "given new not yet counted entity matched to inherited rule with a ko alarm and alarm change is pbhenter with inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-1",
@@ -4048,7 +4048,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 		},
 		{
 			name:  "given counted entity with an alarm and alarm change is pbhenter with active pbh, shouldn't check counters",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -4094,7 +4094,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 		},
 		{
 			name:  "given counted entity with an ok alarm and alarm change is pbhenter with inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -4123,7 +4123,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 		},
 		{
 			name:  "given counted entity with an acked ko alarm and alarm change is pbhenter with inactive pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -4157,7 +4157,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 		},
 		{
 			name:  "given counted entity with a ko alarm and alarm change is pbhenter with inactive pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -4190,7 +4190,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 		},
 		{
 			name:  "given counted entity matched to inherited rule with a ko alarm and alarm change is pbhenter with inactive pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Name:     "test-resource-1",
@@ -4268,7 +4268,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 		},
 		{
 			name:  "given entity to be removed from counters with an ok alarm and alarm change is pbhenter with active pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -4297,7 +4297,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 		},
 		{
 			name:  "given entity to be removed from counters with an acked ko alarm and alarm change is pbhenter with active pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -4328,7 +4328,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 		},
 		{
 			name:  "given entity to be removed from counters with a ko alarm and alarm change is pbhenter with active pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -4359,7 +4359,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 		},
 		{
 			name:  "given entity to be removed from counters matched to inherited rule with a ko alarm and alarm change is pbhenter with active pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Name:             "test-resource-1",
@@ -4435,7 +4435,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 		},
 		{
 			name:  "given entity to be removed from counters with an ok alarm and alarm change is pbhenter with inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -4465,7 +4465,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 		},
 		{
 			name:  "given entity to be removed from counters with an acked ko alarm and alarm change is pbhenter with inactive pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -4497,7 +4497,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 		},
 		{
 			name:  "given entity to be removed from counters with a ko alarm and alarm change is pbhenter with inactive pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -4529,7 +4529,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 		},
 		{
 			name:  "given entity to be removed from counters matched to inherited rule with a ko alarm and alarm change is pbhenter with inactive pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Name:             "test-resource-1",
@@ -4579,7 +4579,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 		// state and output changes
 		{
 			name:  "given given counted entity with a major alarm and alarm change is pbhenter with inactive pbh, shouldn't do any updates as worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -4612,7 +4612,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is pbhenter with inactive pbh, should update service, because the worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -4647,7 +4647,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is pbhenter with inactive pbh, when rule type is dependencies, shouldn't do any updates as worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -4689,7 +4689,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is pbhenter with inactive pbh when rule type is dependencies, should update service, because the worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -4735,7 +4735,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 		},
 		{
 			name:  "given given counted entity with a ko alarm and alarm change is pbhenter with inactive pbh, when rule type is inherited, shouldn't update service, because the inherited worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Name:     "test-resource-2",
@@ -4784,7 +4784,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 		},
 		{
 			name:  "given given counted entity with a ko alarm and alarm change is pbhenter with inactive pbh, when rule type is inherited, should update service, because the inherited worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Name:     "test-resource-1",
@@ -4837,7 +4837,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is pbhenter with inactive pbh, shouldn't update output",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -4871,7 +4871,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhEnter(t *testin
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is pbhenter with inactive pbh, should update output",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -4947,7 +4947,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 		},
 		{
 			name:  "given new not yet counted entity with an ok alarm and alarm change is pbhleave from active pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -4972,7 +4972,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 		},
 		{
 			name:  "given new not yet counted entity with an acked ko alarm and alarm change is pbhleave from active pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -4999,7 +4999,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 		},
 		{
 			name:  "given new not yet counted entity with a ko alarm and alarm change is pbhleave from active pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -5026,7 +5026,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 		},
 		{
 			name:  "given new not yet counted entity matched to inherited rule with a ko alarm and alarm change is pbhleave from active pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-1",
@@ -5090,7 +5090,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 		},
 		{
 			name:  "given new not yet counted entity with an ok alarm and alarm change is pbhleave from inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -5115,7 +5115,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 		},
 		{
 			name:  "given new not yet counted entity with an acked ko alarm and alarm change is pbhleave from inactive pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -5142,7 +5142,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 		},
 		{
 			name:  "given new not yet counted entity with a ko alarm and alarm change is pbhleave from inactive pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -5169,7 +5169,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 		},
 		{
 			name:  "given new not yet counted entity matched to inherited rule with a ko alarm and alarm change is pbhleave from inactive pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-1",
@@ -5231,7 +5231,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 		},
 		{
 			name:  "given counted entity with an alarm and alarm change is pbhleave from active pbh, shouldn't check counters",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -5273,7 +5273,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 		},
 		{
 			name:  "given counted entity with an ok alarm and alarm change is pbhleave from inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -5300,7 +5300,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 		},
 		{
 			name:  "given counted entity with an acked ko alarm and alarm change is pbhleave from inactive pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -5332,7 +5332,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 		},
 		{
 			name:  "given counted entity with a ko alarm and alarm change is pbhleave from inactive pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -5363,7 +5363,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 		},
 		{
 			name:  "given counted entity matched to inherited rule with a ko alarm and alarm change is pbhleave from inactive pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Name:     "test-resource-1",
@@ -5437,7 +5437,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 		},
 		{
 			name:  "given entity to be removed from counters with an ok alarm and alarm change is pbhleave from active pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -5464,7 +5464,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 		},
 		{
 			name:  "given entity to be removed from counters with an acked ko alarm and alarm change is pbhleave from active pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -5493,7 +5493,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 		},
 		{
 			name:  "given entity to be removed from counters with a ko alarm and alarm change is pbhleave from active pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -5522,7 +5522,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 		},
 		{
 			name:  "given entity to be removed from counters matched to inherited rule with a ko alarm and alarm change is pbhleave from active pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Name:             "test-resource-1",
@@ -5596,7 +5596,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 		},
 		{
 			name:  "given entity to be removed from counters with an ok alarm and alarm change is pbhleave from inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -5624,7 +5624,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 		},
 		{
 			name:  "given entity to be removed from counters with an acked ko alarm and alarm change is pbhleave from inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -5653,7 +5653,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 		},
 		{
 			name:  "given entity to be removed from counters with a ko alarm and alarm change is pbhleave from inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -5681,7 +5681,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 		},
 		{
 			name:  "given entity to be removed from counters matched to inherited rule with a ko alarm and alarm change is pbhleave from inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Name:             "test-resource-1",
@@ -5727,7 +5727,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 		// state and output changes
 		{
 			name:  "given given counted entity with a major alarm and alarm change is pbhleave from inactive pbh, shouldn't do any updates as worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -5758,7 +5758,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is pbhleave from inactive pbh, should update service, because the worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -5791,7 +5791,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is pbhleave from inactive pbh, when rule type is dependencies, shouldn't do any updates as worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -5831,7 +5831,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is pbhleave from inactive pbh when rule type is dependencies, should update service, because the worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -5875,7 +5875,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 		},
 		{
 			name:  "given given counted entity with a ko alarm and alarm change is pbhleave from inactive pbh, when rule type is inherited, shouldn't update service, because the inherited worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Name:     "test-resource-2",
@@ -5922,7 +5922,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 		},
 		{
 			name:  "given given counted entity with a ko alarm and alarm change is pbhleave from inactive pbh, when rule type is inherited, should update service, because the inherited worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Name:     "test-resource-1",
@@ -5973,7 +5973,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is pbhleave from inactive pbh, shouldn't update output",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -6005,7 +6005,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeave(t *testin
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is pbhleave from inactive pbh, should update output",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -6082,7 +6082,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given new not yet counted entity with an ok alarm and alarm change is pbhleaveandenter from active to active pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -6110,7 +6110,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given new not yet counted entity with an acked ko alarm and alarm change is pbhleaveandenter from active to active pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -6140,7 +6140,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given new not yet counted entity with a ko alarm and alarm change is pbhleaveandenter from active to active pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -6170,7 +6170,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given new not yet counted entity matched to inherited rule with a ko alarm and alarm change is pbhleaveandenter from active to active pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-1",
@@ -6243,7 +6243,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given new not yet counted entity with an ok alarm and alarm change is pbhleaveandenter from active to inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -6272,7 +6272,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given new not yet counted entity with an acked ko alarm and alarm change is pbhleaveandenter from active to inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -6302,7 +6302,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given new not yet counted entity with a ko alarm and alarm change is pbhleaveandenter from active to inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -6331,7 +6331,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given new not yet counted entity matched to inherited rule with a ko alarm and alarm change is pbhleaveandenter from active to inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-1",
@@ -6401,7 +6401,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given new not yet counted entity with an ok alarm and alarm change is pbhleaveandenter from inactive to active pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -6430,7 +6430,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given new not yet counted entity with an acked ko alarm and alarm change is pbhleaveandenter from inactive to active pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -6461,7 +6461,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given new not yet counted entity with a ko alarm and alarm change is pbhleaveandenter from inactive to active pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -6492,7 +6492,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given new not yet counted entity matched to inherited rule with a ko alarm and alarm change is pbhleaveandenter from inactive to active pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-1",
@@ -6567,7 +6567,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given new not yet counted entity with an ok alarm and alarm change is pbhleaveandenter from inactive to inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -6597,7 +6597,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given new not yet counted entity with an acked ko alarm and alarm change is pbhleaveandenter from inactive to inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -6628,7 +6628,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given new not yet counted entity with a ko alarm and alarm change is pbhleaveandenter from inactive to inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -6658,7 +6658,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given new not yet counted entity matched to inherited rule with a ko alarm and alarm change is pbhleaveandenter from inactive to inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-1",
@@ -6726,7 +6726,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given counted entity with an ok alarm and alarm change is pbhleaveandenter from active to active pbh, shouldn't do anything",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -6774,7 +6774,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given counted entity with an ok alarm and alarm change is pbhleaveandenter from active to inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -6801,7 +6801,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given counted entity with an acked ko alarm and alarm change is pbhleaveandenter from active to inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -6831,7 +6831,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given counted entity with a ko alarm and alarm change is pbhleaveandenter from active to inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -6860,7 +6860,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given counted entity matched to inherited rule with a ko alarm and alarm change is pbhleaveandenter from active to inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Name:     "test-resource-1",
@@ -6930,7 +6930,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given counted entity with an ok alarm and alarm change is pbhleaveandenter from inactive to active pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -6957,7 +6957,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given counted entity with an acked ko alarm and alarm change is pbhleaveandenter from inactive to active pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -6989,7 +6989,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given counted entity with a ko alarm and alarm change is pbhleaveandenter from inactive to active pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -7020,7 +7020,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given counted entity matched to inherited rule with a ko alarm and alarm change is pbhleaveandenter from inactive to active pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Name:     "test-resource-1",
@@ -7093,7 +7093,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given counted entity with an ok alarm and alarm change is pbhleaveandenter from inactive to inactive pbh, should update counters",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -7145,7 +7145,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given an entity to be removed from counters with an ok alarm and alarm change is pbhleaveandenter from active to active pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -7172,7 +7172,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given an entity to be removed from counters with an acked ko alarm and alarm change is pbhleaveandenter from active to active pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -7204,7 +7204,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given an entity to be removed from counters with a ko alarm and alarm change is pbhleaveandenter from active to active pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -7236,7 +7236,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given an entity to be removed from counters matched to inherited rule with a ko alarm and alarm change is pbhleaveandenter from active to active pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Name:             "test-resource-1",
@@ -7311,7 +7311,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given an entity to be removed from counters with an ok alarm and alarm change is pbhleaveandenter from active to inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -7339,7 +7339,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given an entity to be removed from counters with an acked ko alarm and alarm change is pbhleaveandenter from active to inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -7372,7 +7372,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given an entity to be removed from counters with a ko alarm and alarm change is pbhleaveandenter from active to inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -7405,7 +7405,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given an entity to be removed from counters matched to inherited rule with a ko alarm and alarm change is pbhleaveandenter from active to inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Name:             "test-resource-1",
@@ -7483,7 +7483,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given an entity to be removed from counters with an ok alarm and alarm change is pbhleaveandenter from inactive to active pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -7511,7 +7511,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given an entity to be removed from counters with an acked ko alarm and alarm change is pbhleaveandenter from inactive to active pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -7540,7 +7540,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given an entity to be removed from counters with a ko alarm and alarm change is pbhleaveandenter from inactive to active pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -7568,7 +7568,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given an entity to be removed from counters matched to inherited rule with a ko alarm and alarm change is pbhleaveandenter from inactive to active pbh, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Name:             "test-resource-1",
@@ -7639,7 +7639,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given an entity to be removed from counters with an ok alarm and alarm change is pbhleaveandenter from inactive to inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -7668,7 +7668,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given an entity to be removed from counters with an acked ko alarm and alarm change is pbhleaveandenter from inactive to inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -7698,7 +7698,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given an entity to be removed from counters with a ko alarm and alarm change is pbhleaveandenter from inactive to inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -7727,7 +7727,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given an entity to be removed from counters matched to inherited rule with a ko alarm and alarm change is pbhleaveandenter from inactive to inactive pbh, should change service counters and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Name:             "test-resource-1",
@@ -7771,7 +7771,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		// state and output changes
 		{
 			name:  "given given counted entity with a major alarm and alarm change is pbhleaveandenter from inactive to active pbh, shouldn't do any updates as worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -7805,7 +7805,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is pbhleaveandenter from inactive to active pbh, should update service, because the worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -7841,7 +7841,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is pbhleaveandenter from active to inactive pbh, shouldn't do any updates as worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -7875,7 +7875,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is pbhleaveandenter from inactive to active pbh, should update service, because the worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -7912,7 +7912,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is pbhleaveandenter from inactive to active pbh, when rule type is dependencies, shouldn't do any updates as worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -7955,7 +7955,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is pbhleaveandenter from inactive to active pbh when rule type is dependencies, should update service, because the worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -7999,7 +7999,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is pbhleaveandenter from active to inactive pbh, when rule type is dependencies, shouldn't do any updates as worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -8044,7 +8044,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is pbhleaveandenter from active to inactive pbh when rule type is dependencies, should update service, because the worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -8091,7 +8091,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given given counted entity with a ko alarm and alarm change is pbhleaveandenter from inactive to active pbh, when rule type is inherited, shouldn't update service, because the inherited worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Name:     "test-resource-2",
@@ -8141,7 +8141,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given given counted entity with a ko alarm and alarm change is pbhleave from inactive to active pbh, when rule type is inherited, should update service, because the inherited worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Name:     "test-resource-1",
@@ -8195,7 +8195,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given given counted entity with a ko alarm and alarm change is pbhleaveandenter from active to inactive pbh, when rule type is inherited, shouldn't update service, because the inherited worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Name:     "test-resource-2",
@@ -8245,7 +8245,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given given counted entity with a ko alarm and alarm change is pbhleave from active to inactive pbh, when rule type is inherited, should update service, because the inherited worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Name:     "test-resource-1",
@@ -8299,7 +8299,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is pbhleaveandenter from inactive to active pbh, shouldn't update output",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -8331,7 +8331,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t
 		},
 		{
 			name:  "given given counted entity with a major alarm and alarm change is pbhleave from inactive to inactive pbh, should update output",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -8386,7 +8386,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		// active
 		{
 			name:  "given new not yet counted entity with an ok alarm and alarm change is resolve, should change service counter and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -8407,7 +8407,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		},
 		{
 			name:  "given new not yet counted entity with a ko alarm and alarm change is resolve, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -8428,7 +8428,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		},
 		{
 			name:  "given new not yet counted entity matched to inherited rule with a ko alarm and alarm change is resolve, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-1",
@@ -8463,7 +8463,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		},
 		{
 			name:  "given new not yet counted entity with an acked alarm and alarm change is resolve, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -8485,7 +8485,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		// inactive
 		{
 			name:  "given new not yet counted entity with an ok alarm in inactive pbh and alarm change is resolve, should change service counter and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -8512,7 +8512,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		},
 		{
 			name:  "given new not yet counted entity with a ko alarm in inactive pbh and alarm change is resolve, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -8539,7 +8539,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		},
 		{
 			name:  "given new not yet counted entity matched to inherited rule with a ko alarm in inactive pbh and alarm change is resolve, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-1",
@@ -8580,7 +8580,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		},
 		{
 			name:  "given new not yet counted entity with an acked alarm in inactive pbh and alarm change is resolve, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -8608,7 +8608,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		// when already counted
 		{
 			name:  "given counted entity with an ok alarm and alarm change is resolve, should change service counter and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -8629,7 +8629,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		},
 		{
 			name:  "given counted entity with a ko alarm and alarm change is resolve, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -8657,7 +8657,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		},
 		{
 			name:  "given counted entity matched to inherited rule with a ko alarm and alarm change is resolve, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Name:     "test-resource-1",
@@ -8703,7 +8703,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		},
 		{
 			name:  "given counted entity with an acked alarm and alarm change is resolve, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -8732,7 +8732,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		// inactive
 		{
 			name:  "given counted entity with an ok alarm in inactive pbh and alarm change is resolve, should change service counter and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -8755,7 +8755,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		},
 		{
 			name:  "given counted entity with a ko alarm in inactive pbh and alarm change is resolve, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -8778,7 +8778,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		},
 		{
 			name:  "given counted entity matched to inherited rule with a ko alarm in inactive pbh and alarm change is resolve, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Name:     "test-resource-1",
@@ -8814,7 +8814,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		},
 		{
 			name:  "given counted entity with an acked alarm in inactive pbh and alarm change is resolve, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -8840,7 +8840,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		// active
 		{
 			name:  "given an entity to be removed from counters with an ok alarm and alarm change is resolve, should change service counter and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -8870,7 +8870,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		},
 		{
 			name:  "given an entity to be removed from counters with a ko alarm and alarm change is resolve, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -8902,7 +8902,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		},
 		{
 			name:  "given an entity to be removed from counters matched to inherited rule with a ko alarm and alarm change is resolve, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Name:             "test-resource-1",
@@ -8951,7 +8951,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		},
 		{
 			name:  "given an entity to be removed from counters with an acked alarm and alarm change is resolve, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -8984,7 +8984,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		// inactive
 		{
 			name:  "given an entity to be removed from counters with an ok alarm in inactive pbh and alarm change is resolve, should change service counter and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -9018,7 +9018,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		},
 		{
 			name:  "given an entity to be removed from counters with a ko alarm in inactive pbh and alarm change is resolve, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -9052,7 +9052,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		},
 		{
 			name:  "given an entity to be removed from counters matched to inherited rule with a ko alarm in inactive pbh and alarm change is resolve, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Name:             "test-resource-1",
@@ -9103,7 +9103,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		},
 		{
 			name:  "given an entity to be removed from counters with an acked alarm in inactive pbh and alarm change is resolve, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -9140,7 +9140,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		// state and output changes
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is resolve, shouldn't do any updates as worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -9167,7 +9167,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		},
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is resolve, should update service, because the worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -9196,7 +9196,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		},
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is resolve, when rule type is dependencies, shouldn't do any updates as worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -9233,7 +9233,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		},
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is resolve when rule type is dependencies, should update service, because the worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -9273,7 +9273,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		},
 		{
 			name:  "given new not yet counted entity with a ko alarm and alarm change is resolve, when rule type is inherited, shouldn't update service, because the inherited worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Name:     "test-resource-2",
@@ -9316,7 +9316,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		},
 		{
 			name:  "given new not yet counted entity with a ko alarm and alarm change is resolve, when rule type is inherited, should update service, because the inherited worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Name:     "test-resource-1",
@@ -9364,7 +9364,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		},
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is resolve, shouldn't update output",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -9393,7 +9393,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeResolve(t *testing
 		},
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is resolve, should update output",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -9440,7 +9440,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 		// active
 		{
 			name:  "given new not yet counted entity matched to inherited rule with an acked alarm and alarm change is ack, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-1",
@@ -9480,7 +9480,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 		},
 		{
 			name:  "given new not yet counted entity with an acked alarm and alarm change is ack, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -9507,7 +9507,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 		// inactive
 		{
 			name:  "given new not yet counted entity matched to inherited rule with a ko alarm in inactive pbh and alarm change is ack, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-1",
@@ -9550,7 +9550,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 		},
 		{
 			name:  "given new not yet counted entity with an acked alarm in inactive pbh and alarm change is ack, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -9580,7 +9580,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 		// when already counted
 		{
 			name:  "given new not yet counted entity with an acked alarm and alarm change is ack, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -9601,7 +9601,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 		// inactive
 		{
 			name:  "given new not yet counted entity with an acked alarm in inactive pbh and alarm change is ack, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -9626,7 +9626,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 		// active
 		{
 			name:  "given new not yet counted entity matched to inherited rule with an acked alarm and alarm change is ack, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Name:             "test-resource-1",
@@ -9671,7 +9671,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 		},
 		{
 			name:  "given new not yet counted entity with an acked alarm and alarm change is ack, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -9700,7 +9700,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 		// inactive
 		{
 			name:  "given new not yet counted entity matched to inherited rule with a ko alarm in inactive pbh and alarm change is ack, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Name:             "test-resource-1",
@@ -9741,7 +9741,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 		},
 		{
 			name:  "given new not yet counted entity with an acked alarm in inactive pbh and alarm change is ack, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -9769,7 +9769,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 		// state and output changes
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is ack, shouldn't do any updates as worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -9796,7 +9796,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 		},
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is ack, should update service, because the worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -9825,7 +9825,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 		},
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is ack, when rule type is dependencies, shouldn't do any updates as worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -9863,7 +9863,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 		},
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is ack when rule type is dependencies, should update service, because the worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -9904,7 +9904,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 		},
 		{
 			name:  "given new not yet counted entity with a ko alarm and alarm change is ack, when rule type is inherited, shouldn't update service, because the inherited worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-2",
@@ -9944,7 +9944,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 		},
 		{
 			name:  "given new not yet counted entity with a ko alarm and alarm change is ack, when rule type is inherited, should update service, because the inherited worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-1",
@@ -9990,7 +9990,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 		},
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is ack, shouldn't update output",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -10019,7 +10019,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAck(t *testing.T) 
 		},
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is ack, should update output",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -10064,7 +10064,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 		// active
 		{
 			name:  "given new not yet counted entity matched to inherited rule with an alarm and alarm change is ackremove, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-1",
@@ -10104,7 +10104,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 		},
 		{
 			name:  "given new not yet counted entity with an alarm and alarm change is ackremove, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -10131,7 +10131,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 		// inactive
 		{
 			name:  "given new not yet counted entity matched to inherited rule with a ko alarm in inactive pbh and alarm change is ackremove, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-1",
@@ -10173,7 +10173,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 		},
 		{
 			name:  "given new not yet counted entity with an alarm in inactive pbh and alarm change is ackremove, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -10202,7 +10202,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 		// when already counted
 		{
 			name:  "given new not yet counted entity with an alarm and alarm change is ackremove, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -10223,7 +10223,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 		// inactive
 		{
 			name:  "given new not yet counted entity with an alarm in inactive pbh and alarm change is ackremove, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -10248,7 +10248,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 		// active
 		{
 			name:  "given new not yet counted entity matched to inherited rule with an alarm and alarm change is ackremove, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Name:             "test-resource-1",
@@ -10293,7 +10293,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 		},
 		{
 			name:  "given new not yet counted entity with an alarm and alarm change is ackremove, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -10322,7 +10322,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 		// inactive
 		{
 			name:  "given new not yet counted entity matched to inherited rule with a ko alarm in inactive pbh and alarm change is ackremove, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Name:             "test-resource-1",
@@ -10364,7 +10364,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 		},
 		{
 			name:  "given new not yet counted entity with an alarm in inactive pbh and alarm change is ackremove, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -10393,7 +10393,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 		// state and output changes
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is ackremove, shouldn't do any updates as worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -10420,7 +10420,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 		},
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is ackremove, should update service, because the worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -10449,7 +10449,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 		},
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is ackremove, when rule type is dependencies, shouldn't do any updates as worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -10487,7 +10487,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 		},
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is ackremove when rule type is dependencies, should update service, because the worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -10528,7 +10528,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 		},
 		{
 			name:  "given new not yet counted entity with a ko alarm and alarm change is ackremove, when rule type is inherited, shouldn't update service, because the inherited worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-2",
@@ -10568,7 +10568,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 		},
 		{
 			name:  "given new not yet counted entity with a ko alarm and alarm change is ackremove, when rule type is inherited, should update service, because the inherited worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-1",
@@ -10614,7 +10614,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 		},
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is ackremove, shouldn't update output",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -10643,7 +10643,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeAckRemove(t *testi
 		},
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is ackremove, should update output",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -10710,7 +10710,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 		},
 		{
 			name:  "given new not yet counted entity with an ok alarm and alarm change is enabled, should change service counter and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -10734,7 +10734,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 		},
 		{
 			name:  "given new not yet counted entity with a ko alarm and alarm change is enabled, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -10760,7 +10760,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 		},
 		{
 			name:  "given new not yet counted entity matched to inherited rule with a ko alarm and alarm change is enabled, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-1",
@@ -10800,7 +10800,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 		},
 		{
 			name:  "given new not yet counted entity with an acked alarm and alarm change is enabled, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -10854,7 +10854,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 		},
 		{
 			name:  "given new not yet counted entity with an ok alarm in inactive pbh and alarm change is enabled, should change service counter and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -10882,7 +10882,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 		},
 		{
 			name:  "given new not yet counted entity with a ko alarm in inactive pbh and alarm change is enabled, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -10910,7 +10910,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 		},
 		{
 			name:  "given new not yet counted entity matched to inherited rule with a ko alarm in inactive pbh and alarm change is enabled, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-1",
@@ -10952,7 +10952,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 		},
 		{
 			name:  "given new not yet counted entity with an acked alarm in inactive pbh and alarm change is enabled, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -10998,7 +10998,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 		},
 		{
 			name:  "given counted entity with an alarm and alarm change is enabled, shouldn't check counters",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:  true,
 				Type:     types.EntityTypeResource,
@@ -11038,7 +11038,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 		},
 		{
 			name:  "given an entity to be removed from counters with an ok alarm and alarm change is enabled, should change service counter and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -11068,7 +11068,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 		},
 		{
 			name:  "given an entity to be removed from counters with a ko alarm and alarm change is enabled, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -11100,7 +11100,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 		},
 		{
 			name:  "given an entity to be removed from counters matched to inherited rule with a ko alarm and alarm change is enabled, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Name:             "test-resource-1",
@@ -11149,7 +11149,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 		},
 		{
 			name:  "given an entity to be removed from counters with an acked alarm and alarm change is enabled, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -11214,7 +11214,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 		},
 		{
 			name:  "given an entity to be removed from counters with an ok alarm in inactive pbh and alarm change is enabled, should change service counter and don't update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateOK}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -11248,7 +11248,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 		},
 		{
 			name:  "given an entity to be removed from counters with a ko alarm in inactive pbh and alarm change is enabled, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMinor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -11282,7 +11282,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 		},
 		{
 			name:  "given an entity to be removed from counters matched to inherited rule with a ko alarm in inactive pbh and alarm change is enabled, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Name:             "test-resource-1",
@@ -11333,7 +11333,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 		},
 		{
 			name:  "given an entity to be removed from counters with an acked alarm in inactive pbh and alarm change is enabled, should change service counters and update service",
-			alarm: &types.Alarm{Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{ACK: &types.AlarmStep{}, State: &types.AlarmStep{Value: types.AlarmStateCritical}}},
 			entity: types.Entity{
 				Enabled:          true,
 				Type:             types.EntityTypeResource,
@@ -11370,7 +11370,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 		// state and output changes
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is enabled, shouldn't do any updates as worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -11397,7 +11397,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 		},
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is enabled, should update service, because the worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -11426,7 +11426,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 		},
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is enabled, when rule type is dependencies, shouldn't do any updates as worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -11464,7 +11464,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 		},
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is enabled when rule type is dependencies, should update service, because the worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -11505,7 +11505,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 		},
 		{
 			name:  "given new not yet counted entity with a ko alarm and alarm change is enabled, when rule type is inherited, shouldn't update service, because the inherited worst state didn't changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-2",
@@ -11545,7 +11545,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 		},
 		{
 			name:  "given new not yet counted entity with a ko alarm and alarm change is enabled, when rule type is inherited, should update service, because the inherited worst state changed",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Name:          "test-resource-1",
@@ -11591,7 +11591,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 		},
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is enabled, shouldn't update output",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
@@ -11620,7 +11620,7 @@ func TestEntityServiceService_ProcessCounters_GivenAlarmChangeEnabled(t *testing
 		},
 		{
 			name:  "given new not yet counted entity with a major alarm and alarm change is enabled, should update output",
-			alarm: &types.Alarm{Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
+			alarm: &types.Alarm{ID: "test-alarm", Value: types.AlarmValue{State: &types.AlarmStep{Value: types.AlarmStateMajor}}},
 			entity: types.Entity{
 				Enabled:       true,
 				Type:          types.EntityTypeResource,
