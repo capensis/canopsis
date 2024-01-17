@@ -130,7 +130,7 @@ export default {
         { text: this.$t('common.recurrence'), value: 'rrule' },
         { text: this.$t('common.type'), value: 'type.name' },
         { text: this.$t('common.reason'), value: 'reason.name' },
-        { text: this.$t('common.icon'), value: 'icon' },
+        { text: this.$tc('common.icon', 1), value: 'icon' },
       ];
 
       if (this.withActiveStatus) {

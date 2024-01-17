@@ -104,7 +104,7 @@ export default {
   link: 'Lien | Liens',
   stack: 'Pile',
   edition: 'Édition',
-  icon: 'Icône',
+  icon: 'Icône | Icônes',
   fullscreen: 'Plein écran',
   interval: 'Période',
   status: 'Statut',

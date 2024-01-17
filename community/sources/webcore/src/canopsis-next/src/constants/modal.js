@@ -116,4 +116,6 @@ export const MODALS = {
   createJunitStateSetting: 'create-junit-state-setting',
 
   archiveDisabledEntities: 'archive-disabled-entities',
+
+  createIcon: 'create-icon',
 };

@@ -1,6 +1,7 @@
 <template>
   <v-menu
     v-if="administrationGroupedLinks.length"
+    content-class="administration-menu__content"
     bottom
     offset-y
   >
@@ -153,6 +154,16 @@ export default {
           icon: '$vuetify.icons.alt_route',
           permission: USERS_PERMISSIONS.technical.healthcheck,
         },
+        {
+          route: { name: ROUTES_NAMES.adminStorageSettings },
+          icon: '$vuetify.icons.storage',
+          permission: USERS_PERMISSIONS.technical.storageSettings,
+        },
+        {
+          route: { name: ROUTES_NAMES.adminStateSettings },
+          icon: 'add_alert',
+          permission: USERS_PERMISSIONS.technical.stateSetting,
+        },
       ];
     },
 
@@ -167,3 +178,13 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.administration-menu__content {
+  max-height: 95vh;
+
+  .v-avatar {
+    border-radius: unset;
+  }
+}
+</style>

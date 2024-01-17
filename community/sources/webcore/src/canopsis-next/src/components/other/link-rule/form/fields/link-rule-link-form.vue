@@ -28,7 +28,7 @@
           <v-flex xs4>
             <c-icon-field
               v-field="form.icon_name"
-              :label="$t('common.icon')"
+              :label="$tc('common.icon', 1)"
               :name="iconFieldName"
               required
             />

@@ -97,7 +97,7 @@ export default {
           value: 'name',
         },
         {
-          text: this.$t('common.icon'),
+          text: this.$tc('common.icon', 1),
           value: 'icon_name',
           sortable: false,
         },
