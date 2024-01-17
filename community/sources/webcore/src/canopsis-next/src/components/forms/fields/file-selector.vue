@@ -19,15 +19,15 @@
         </v-btn>
       </div>
     </div>
-    <div
-      class="file-selector-button-wrapper"
+    <v-layout
       v-on="wrapperListeners"
-      :class="{ disabled: fullDisabled }"
+      align-center
     >
       <slot
         :disabled="fullDisabled"
         :loading="loading"
         :on="scopedActivatorSlotListeners"
+        :clear="internalClear"
         name="activator"
       >
         <v-btn
@@ -38,7 +38,7 @@
           <v-icon>cloud_upload</v-icon>
         </v-btn>
       </slot>
-    </div>
+    </v-layout>
     <input
       class="hidden"
       ref="fileInput"
@@ -154,16 +154,14 @@ export default {
       this.$emit('change', this.files);
     },
 
-    internalClear() {
-      this.$refs.fileInput.value = null;
-      this.files = [];
-
-      this.$emit('change', this.files);
-    },
-
     clear() {
       this.$refs.fileInput.value = null;
       this.files = [];
+    },
+
+    internalClear() {
+      this.clear();
+      this.$emit('change', this.files);
     },
 
     removeFileFromSelections(name) {
@@ -182,19 +180,5 @@ export default {
 <style lang="scss" scoped>
   .hidden {
     display: none;
-  }
-
-  .file-selector-button-wrapper {
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    cursor: pointer;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-
-    &.disabled {
-      cursor: default;
-    }
   }
 </style>

@@ -219,6 +219,7 @@ export const API_ROUTES = {
   },
   linkRule: '/api/v4/link-rules',
   linkCategories: '/api/v4/link-categories',
+  icons: '/api/v4/icons',
   themes: {
     list: '/api/v4/color-themes',
     bulkList: '/api/v4/bulk/color-themes',
