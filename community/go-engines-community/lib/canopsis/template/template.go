@@ -1,5 +1,7 @@
 package template
 
+//go:generate mockgen -destination=../../../mocks/lib/canopsis/template/template.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template Executor
+
 import (
 	"bytes"
 	"encoding/json"

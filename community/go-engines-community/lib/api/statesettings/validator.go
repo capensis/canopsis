@@ -135,7 +135,7 @@ func (v *baseValidator) validateJUnitSettings(sl validator.StructLevel, r StateS
 func (v *baseValidator) ValidateStateThreshold(sl validator.StructLevel) {
 	r := sl.Current().Interface().(StateThreshold)
 
-	if r.Method == statesetting.CalculationShare {
+	if r.Method == statesetting.CalculationMethodShare {
 		if r.Value > 99 {
 			sl.ReportError(r.Value, "Value", "Value", "ltfield", "100")
 		}

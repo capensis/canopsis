@@ -19,8 +19,11 @@ const (
 	MethodInherited    = "inherited"
 	MethodDependencies = "dependencies"
 
-	CalculationNumber = "number"
-	CalculationShare  = "share"
+	CalculationMethodNumber = "number"
+	CalculationMethodShare  = "share"
+
+	CalculationCondGT = "gt"
+	CalculationCondLT = "lt"
 
 	RuleTypeComponent = "component"
 	RuleTypeService   = "service"
@@ -55,6 +58,64 @@ type StateThreshold struct {
 	State  string `bson:"state"`
 	Cond   string `bson:"cond"`
 	Value  int    `bson:"value"`
+}
+
+type Counters struct {
+	OK       int
+	Minor    int
+	Major    int
+	Critical int
+}
+
+func (c Counters) GetTotal() int {
+	return c.OK + c.Minor + c.Major + c.Critical
+}
+
+func (s *StateThreshold) IsReached(c Counters) bool {
+	if s == nil {
+		return false
+	}
+
+	if s.Method == CalculationMethodNumber {
+		switch s.State {
+		case types.AlarmStateTitleOK:
+			return s.matchNumberCondition(c.OK)
+		case types.AlarmStateTitleMinor:
+			return s.matchNumberCondition(c.Minor)
+		case types.AlarmStateTitleMajor:
+			return s.matchNumberCondition(c.Major)
+		case types.AlarmStateTitleCritical:
+			return s.matchNumberCondition(c.Critical)
+		}
+	} else if s.Method == CalculationMethodShare {
+		switch s.State {
+		case types.AlarmStateTitleOK:
+			return s.matchShareCondition(c.OK, c.GetTotal())
+		case types.AlarmStateTitleMinor:
+			return s.matchShareCondition(c.Minor, c.GetTotal())
+		case types.AlarmStateTitleMajor:
+			return s.matchShareCondition(c.Major, c.GetTotal())
+		case types.AlarmStateTitleCritical:
+			return s.matchShareCondition(c.Critical, c.GetTotal())
+		}
+	}
+
+	return false
+}
+
+func (s *StateThreshold) matchNumberCondition(val int) bool {
+	switch s.Cond {
+	case CalculationCondGT:
+		return val > s.Value
+	case CalculationCondLT:
+		return val < s.Value
+	}
+
+	return false
+}
+
+func (s *StateThreshold) matchShareCondition(val, all int) bool {
+	return s.matchNumberCondition(int(float64(val) / float64(all) * 100))
 }
 
 type JUnitThresholds struct {

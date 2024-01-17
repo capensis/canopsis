@@ -15,7 +15,7 @@ type Result struct {
 	Alarm       types.Alarm
 	Entity      types.Entity
 	AlarmChange types.AlarmChange
-	Forward     bool
 
+	Forward              bool
 	IsInstructionMatched bool
 }

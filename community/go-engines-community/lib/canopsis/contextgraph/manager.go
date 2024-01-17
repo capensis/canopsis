@@ -56,41 +56,44 @@ type manager struct {
 
 func (m *manager) InheritComponentFields(resource, component *types.Entity, commRegister libmongo.CommandsRegister) error {
 	update := make(bson.M)
+	var err error
 
 	if len(component.Infos) > 0 {
 		update["component_infos"] = component.Infos
 	}
 
 	if component.StateInfo != nil {
+		matched := true
+
 		if component.StateInfo.InheritedPattern != nil {
-			matched, err := match.MatchEntityPattern(*component.StateInfo.InheritedPattern, resource)
+			matched, err = match.MatchEntityPattern(*component.StateInfo.InheritedPattern, resource)
 			if err != nil {
 				return err
 			}
+		}
 
-			if matched && !resource.ComponentStateSettings {
-				resource.ComponentStateSettings = true
-				if !resource.ComponentStateSettingsToRemove {
-					resource.ComponentStateSettingsToAdd = true
-				} else {
-					resource.ComponentStateSettingsToRemove = false
-				}
-
-				update["component_state_settings"] = resource.ComponentStateSettings
-				update["component_state_settings_to_add"] = resource.ComponentStateSettingsToAdd
-				update["component_state_settings_to_remove"] = resource.ComponentStateSettingsToRemove
-			} else if !matched && resource.ComponentStateSettings {
-				resource.ComponentStateSettings = false
-				if !resource.ComponentStateSettingsToAdd {
-					resource.ComponentStateSettingsToRemove = true
-				} else {
-					resource.ComponentStateSettingsToAdd = false
-				}
-
-				update["component_state_settings"] = resource.ComponentStateSettings
-				update["component_state_settings_to_add"] = resource.ComponentStateSettingsToAdd
-				update["component_state_settings_to_remove"] = resource.ComponentStateSettingsToRemove
+		if matched && !resource.ComponentStateSettings {
+			resource.ComponentStateSettings = true
+			if !resource.ComponentStateSettingsToRemove {
+				resource.ComponentStateSettingsToAdd = true
+			} else {
+				resource.ComponentStateSettingsToRemove = false
 			}
+
+			update["component_state_settings"] = resource.ComponentStateSettings
+			update["component_state_settings_to_add"] = resource.ComponentStateSettingsToAdd
+			update["component_state_settings_to_remove"] = resource.ComponentStateSettingsToRemove
+		} else if !matched && resource.ComponentStateSettings {
+			resource.ComponentStateSettings = false
+			if !resource.ComponentStateSettingsToAdd {
+				resource.ComponentStateSettingsToRemove = true
+			} else {
+				resource.ComponentStateSettingsToAdd = false
+			}
+
+			update["component_state_settings"] = resource.ComponentStateSettings
+			update["component_state_settings_to_add"] = resource.ComponentStateSettingsToAdd
+			update["component_state_settings_to_remove"] = resource.ComponentStateSettingsToRemove
 		}
 	}
 
@@ -216,7 +219,20 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string, commRe
 	}
 
 	if !service.Enabled || service.ID == "" {
-		return service.Entity, m.processDisabledService(ctx, serviceID, commRegister)
+		err := m.processDisabledService(ctx, serviceID, commRegister)
+		if err != nil {
+			return types.Entity{}, err
+		}
+
+		// todo: should be called to get fresh services from the db, should be removed when we do something with cache
+		err = m.LoadServices(ctx)
+		if err != nil {
+			return types.Entity{}, err
+		}
+
+		m.AssignServices(&service.Entity, commRegister)
+
+		return service.Entity, nil
 	}
 
 	query, negativeQuery, err := service.GetMongoQueries()
@@ -779,28 +795,14 @@ func (m *manager) ProcessComponentDependencies(ctx context.Context, component *t
 			matched = false
 		}
 
-		if matched && !resource.ComponentStateSettings {
-			resource.ComponentStateSettings = true
-			if !resource.ComponentStateSettingsToRemove {
-				resource.ComponentStateSettingsToAdd = true
-			} else {
-				resource.ComponentStateSettingsToRemove = false
-			}
-
-			update["component_state_settings"] = resource.ComponentStateSettings
-			update["component_state_settings_to_add"] = resource.ComponentStateSettingsToAdd
-			update["component_state_settings_to_remove"] = resource.ComponentStateSettingsToRemove
-		} else if !matched && resource.ComponentStateSettings {
-			resource.ComponentStateSettings = false
-			if !resource.ComponentStateSettingsToAdd {
-				resource.ComponentStateSettingsToRemove = true
-			} else {
-				resource.ComponentStateSettingsToAdd = false
-			}
-
-			update["component_state_settings"] = resource.ComponentStateSettings
-			update["component_state_settings_to_add"] = resource.ComponentStateSettingsToAdd
-			update["component_state_settings_to_remove"] = resource.ComponentStateSettingsToRemove
+		if matched {
+			update["component_state_settings"] = true
+			update["component_state_settings_to_add"] = false
+			update["component_state_settings_to_remove"] = false
+		} else if !matched {
+			update["component_state_settings"] = false
+			update["component_state_settings_to_add"] = false
+			update["component_state_settings_to_remove"] = false
 		}
 
 		commRegister.RegisterUpdate(resource.ID, update)
