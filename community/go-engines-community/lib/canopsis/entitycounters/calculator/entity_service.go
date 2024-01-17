@@ -103,6 +103,14 @@ func (s *entityServiceCountersCalculator) RecomputeCounters(ctx context.Context,
 				"preserveNullAndEmptyArrays": true,
 			},
 		},
+		{
+			"$project": bson.M{
+				"entity":        1,
+				"alarm._id":     1,
+				"alarm.v.state": 1,
+				"alarm.v.ack":   1,
+			},
+		},
 	})
 	if err != nil {
 		return nil, err
@@ -200,13 +208,13 @@ func (s *entityServiceCountersCalculator) CalculateCounters(ctx context.Context,
 	case types.AlarmChangeTypeNone:
 		strategy = entityservice.NoChangeStrategy{}
 	case types.AlarmChangeTypeCreate:
-		if alarm == nil {
+		if alarm == nil || alarm.ID == "" {
 			return nil, nil
 		}
 
 		strategy = entityservice.CreateStrategy{}
 	case types.AlarmChangeTypeCreateAndPbhEnter:
-		if alarm == nil {
+		if alarm == nil || alarm.ID == "" {
 			return nil, nil
 		}
 
@@ -218,25 +226,25 @@ func (s *entityServiceCountersCalculator) CalculateCounters(ctx context.Context,
 	case types.AlarmChangeTypePbhLeaveAndEnter:
 		strategy = entityservice.PbhLeaveAndEnterStrategy{}
 	case types.AlarmChangeTypeStateDecrease, types.AlarmChangeTypeStateIncrease, types.AlarmChangeTypeChangeState:
-		if alarm == nil {
+		if alarm == nil || alarm.ID == "" {
 			return nil, nil
 		}
 
 		strategy = entityservice.ChangeStateStrategy{}
 	case types.AlarmChangeTypeResolve:
-		if alarm == nil {
+		if alarm == nil || alarm.ID == "" {
 			return nil, nil
 		}
 
 		strategy = entityservice.ResolveStrategy{}
 	case types.AlarmChangeTypeAck:
-		if alarm == nil {
+		if alarm == nil || alarm.ID == "" {
 			return nil, nil
 		}
 
 		strategy = entityservice.AckStrategy{}
 	case types.AlarmChangeTypeAckremove:
-		if alarm == nil {
+		if alarm == nil || alarm.ID == "" {
 			return nil, nil
 		}
 
@@ -270,10 +278,10 @@ func (s *entityServiceCountersCalculator) calculateCounters(ctx context.Context,
 	calcData.CurPbhTypeID = entity.PbehaviorInfo.TypeID
 	calcData.PrevPbhTypeID = alarmChange.PreviousPbehaviorTypeID
 	calcData.EntityEnabled = entity.Enabled
-	calcData.AlarmExists = alarm != nil
+	calcData.AlarmExists = alarm != nil && alarm.ID != ""
 
 	// todo: garbage condition, but it works, is it possible to simplify?
-	if alarm != nil && calcData.PrevActive {
+	if calcData.AlarmExists && calcData.PrevActive {
 		if alarmChange.Type == types.AlarmChangeTypeStateDecrease ||
 			alarmChange.Type == types.AlarmChangeTypeStateIncrease ||
 			alarmChange.Type == types.AlarmChangeTypeChangeState {
@@ -289,11 +297,11 @@ func (s *entityServiceCountersCalculator) calculateCounters(ctx context.Context,
 		}
 	}
 
-	if alarm != nil && calcData.CurActive {
+	if calcData.AlarmExists && calcData.CurActive {
 		calcData.CurState = int(alarm.CurrentState())
 	}
 
-	if alarm != nil {
+	if calcData.AlarmExists {
 		calcData.IsAcked = alarm.IsAck()
 	}
 

@@ -172,27 +172,14 @@ func (p *pbhLeaveAndEnterProcessor) Process(ctx context.Context, event rpc.AxeEv
 		result.Alarm = alarm
 		result.AlarmChange = alarmChange
 
-		if result.Alarm.ID == "" {
-			updatedServiceStates, err = p.entityServiceCountersCalculator.CalculateCounters(ctx, &result.Entity, nil, result.AlarmChange)
-			if err != nil {
-				return err
-			}
-
-			componentStateChanged, newComponentState, err = p.componentCountersCalculator.CalculateCounters(ctx, &result.Entity, nil, result.AlarmChange)
-			if err != nil {
-				return err
-			}
-		} else {
-			updatedServiceStates, err = p.entityServiceCountersCalculator.CalculateCounters(ctx, &result.Entity, &result.Alarm, result.AlarmChange)
-			if err != nil {
-				return err
-			}
-
-			componentStateChanged, newComponentState, err = p.componentCountersCalculator.CalculateCounters(ctx, &result.Entity, &result.Alarm, result.AlarmChange)
-			if err != nil {
-				return err
-			}
-		}
+		updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
+			ctx,
+			p.entityServiceCountersCalculator,
+			p.componentCountersCalculator,
+			&result.Alarm,
+			&result.Entity,
+			result.AlarmChange,
+		)
 
 		return err
 	})

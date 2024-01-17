@@ -59,26 +59,16 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 			return err
 		}
 
-		if alarm.ID == "" {
-			updatedServiceStates, err = p.entityServiceCountersCalculator.CalculateCounters(ctx, &entity, nil, result.AlarmChange)
-			if err != nil {
-				return err
-			}
-
-			componentStateChanged, newComponentState, err = p.componentCountersCalculator.CalculateCounters(ctx, &entity, nil, result.AlarmChange)
-			if err != nil {
-				return err
-			}
-		} else {
-			updatedServiceStates, err = p.entityServiceCountersCalculator.CalculateCounters(ctx, &entity, &alarm, result.AlarmChange)
-			if err != nil {
-				return err
-			}
-
-			componentStateChanged, newComponentState, err = p.componentCountersCalculator.CalculateCounters(ctx, &entity, &alarm, result.AlarmChange)
-			if err != nil {
-				return err
-			}
+		updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
+			ctx,
+			p.entityServiceCountersCalculator,
+			p.componentCountersCalculator,
+			&alarm,
+			&entity,
+			result.AlarmChange,
+		)
+		if err != nil {
+			return err
 		}
 
 		if entity.Type == types.EntityTypeComponent {

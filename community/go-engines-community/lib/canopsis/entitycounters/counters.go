@@ -40,7 +40,7 @@ func (s *EntityCounters) Reset() {
 	s.Acknowledged = 0
 	s.AcknowledgedUnderPbh = 0
 	s.NotAcknowledged = 0
-	s.PbehaviorCounters = make(map[string]int)
+	clear(s.PbehaviorCounters)
 	s.UnderPbehavior = 0
 	s.Depends = 0
 	s.Output = ""
@@ -236,34 +236,36 @@ func (s *EntityCounters) DecrementPbhCounters(typeID string) {
 func (s *EntityCounters) Sub(o EntityCounters) map[string]int {
 	diff := make(map[string]int)
 
-	diff["all"] = s.All - o.All
-	diff["active"] = s.Active - o.Active
-	diff["depends"] = s.Depends - o.Depends
+	setNotZero(diff, "all", s.All-o.All)
+	setNotZero(diff, "active", s.Active-o.Active)
+	setNotZero(diff, "depends", s.Depends-o.Depends)
 
-	diff["state.ok"] = s.State.Ok - o.State.Ok
-	diff["state.minor"] = s.State.Minor - o.State.Minor
-	diff["state.major"] = s.State.Major - o.State.Major
-	diff["state.critical"] = s.State.Critical - o.State.Critical
+	setNotZero(diff, "state.ok", s.State.Ok-o.State.Ok)
+	setNotZero(diff, "state.minor", s.State.Minor-o.State.Minor)
+	setNotZero(diff, "state.major", s.State.Major-o.State.Major)
+	setNotZero(diff, "state.critical", s.State.Critical-o.State.Critical)
 
-	diff["inherited_state.ok"] = s.InheritedState.Ok - o.InheritedState.Ok
-	diff["inherited_state.minor"] = s.InheritedState.Minor - o.InheritedState.Minor
-	diff["inherited_state.major"] = s.InheritedState.Major - o.InheritedState.Major
-	diff["inherited_state.critical"] = s.InheritedState.Critical - o.InheritedState.Critical
+	setNotZero(diff, "inherited_state.ok", s.InheritedState.Ok-o.InheritedState.Ok)
+	setNotZero(diff, "inherited_state.minor", s.InheritedState.Minor-o.InheritedState.Minor)
+	setNotZero(diff, "inherited_state.major", s.InheritedState.Major-o.InheritedState.Major)
+	setNotZero(diff, "inherited_state.critical", s.InheritedState.Critical-o.InheritedState.Critical)
 
-	diff["acked"] = s.Acknowledged - o.Acknowledged
-	diff["acked_under_pbh"] = s.AcknowledgedUnderPbh - o.AcknowledgedUnderPbh
-	diff["unacked"] = s.NotAcknowledged - o.NotAcknowledged
+	setNotZero(diff, "acked", s.Acknowledged-o.Acknowledged)
+	setNotZero(diff, "acked_under_pbh", s.AcknowledgedUnderPbh-o.AcknowledgedUnderPbh)
+	setNotZero(diff, "unacked", s.NotAcknowledged-o.NotAcknowledged)
+	setNotZero(diff, "under_pbh", s.UnderPbehavior-o.UnderPbehavior)
 
-	diff["under_pbh"] = s.UnderPbehavior - o.UnderPbehavior
 	for k, v := range s.PbehaviorCounters {
-		diff["pbehavior."+k] = v - o.PbehaviorCounters[k]
-	}
-
-	for k, v := range diff {
-		if v == 0 {
-			delete(diff, k)
-		}
+		setNotZero(diff, "pbehavior."+k, v-o.PbehaviorCounters[k])
 	}
 
 	return diff
+}
+
+func setNotZero(m map[string]int, k string, v int) {
+	if v == 0 {
+		return
+	}
+
+	m[k] = v
 }

@@ -189,15 +189,14 @@ func processResolve(
 			return err
 		}
 
-		updatedServiceStates, err = entityServiceCountersCalculator.CalculateCounters(ctx, &entity, &result.Alarm, result.AlarmChange)
-		if err != nil {
-			return err
-		}
-
-		componentStateChanged, newComponentState, err = componentCountersCalculator.CalculateCounters(ctx, &entity, &result.Alarm, result.AlarmChange)
-		if err != nil {
-			return err
-		}
+		updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
+			ctx,
+			entityServiceCountersCalculator,
+			componentCountersCalculator,
+			&result.Alarm,
+			&entity,
+			result.AlarmChange,
+		)
 
 		return err
 	})

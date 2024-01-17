@@ -38,13 +38,13 @@ func NewComponentCountersCalculator(dbClient mongo.DbClient, eventsSender entity
 	}
 }
 
-func (s *componentCountersCalculator) RecomputeCounters(ctx context.Context, entity *types.Entity) (int, error) {
-	if entity == nil {
+func (s *componentCountersCalculator) RecomputeCounters(ctx context.Context, component *types.Entity) (int, error) {
+	if component == nil {
 		return 0, nil
 	}
 
 	var counters entitycounters.EntityCounters
-	err := s.entityCountersCollection.FindOne(ctx, bson.M{"_id": entity.ID}).Decode(&counters)
+	err := s.entityCountersCollection.FindOne(ctx, bson.M{"_id": component.ID}).Decode(&counters)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return 0, nil
@@ -55,8 +55,9 @@ func (s *componentCountersCalculator) RecomputeCounters(ctx context.Context, ent
 
 	counters.Reset()
 
-	match := make([]bson.M, 1, 2)
-	match[0] = bson.M{"$match": bson.M{"component": entity.ID, "type": types.EntityTypeResource}}
+	match := []bson.M{
+		{"$match": bson.M{"component": component.ID, "type": types.EntityTypeResource}},
+	}
 
 	if counters.Rule.InheritedEntityPattern != nil {
 		patternMongoQuery, err := db.EntityPatternToMongoQuery(*counters.Rule.InheritedEntityPattern, "")
@@ -100,6 +101,13 @@ func (s *componentCountersCalculator) RecomputeCounters(ctx context.Context, ent
 				"preserveNullAndEmptyArrays": true,
 			},
 		},
+		{
+			"$project": bson.M{
+				"entity.pbehavior_info": 1,
+				"alarm._id":             1,
+				"alarm.v.state":         1,
+			},
+		},
 	}...))
 	if err != nil {
 		return 0, err
@@ -126,7 +134,7 @@ func (s *componentCountersCalculator) RecomputeCounters(ctx context.Context, ent
 
 	_, err = s.entityCountersCollection.UpdateOne(
 		ctx,
-		bson.M{"_id": entity.ID},
+		bson.M{"_id": component.ID},
 		bson.M{"$set": counters},
 		options.Update().SetUpsert(true),
 	)
@@ -142,7 +150,7 @@ func (s *componentCountersCalculator) RecomputeAll(ctx context.Context) error {
 		"enabled":    true,
 		"type":       types.EntityTypeComponent,
 		"state_info": bson.M{"$nin": bson.A{"", nil}},
-	})
+	}, options.Find().SetProjection(bson.M{"_id": 1, "connector": 1}))
 	if err != nil {
 		return err
 	}
@@ -176,13 +184,13 @@ func (s *componentCountersCalculator) CalculateCounters(ctx context.Context, ent
 	case types.AlarmChangeTypeNone:
 		strategy = component.NoChangeStrategy{}
 	case types.AlarmChangeTypeCreate:
-		if alarm == nil {
+		if alarm == nil || alarm.ID == "" {
 			return false, 0, nil
 		}
 
 		strategy = component.CreateStrategy{}
 	case types.AlarmChangeTypeCreateAndPbhEnter:
-		if alarm == nil {
+		if alarm == nil || alarm.ID == "" {
 			return false, 0, nil
 		}
 
@@ -196,7 +204,7 @@ func (s *componentCountersCalculator) CalculateCounters(ctx context.Context, ent
 	case types.AlarmChangeTypePbhLeaveAndEnter:
 		strategy = component.PbhLeaveAndEnterStrategy{}
 	case types.AlarmChangeTypeResolve:
-		if alarm == nil {
+		if alarm == nil || alarm.ID == "" {
 			return false, 0, nil
 		}
 
@@ -225,10 +233,10 @@ func (s *componentCountersCalculator) calculateCounters(ctx context.Context, ent
 
 	calcData.PrevActive = alarmChange.PreviousPbehaviorCannonicalType == types.PbhCanonicalTypeActive || alarmChange.PreviousPbehaviorCannonicalType == ""
 	calcData.CurActive = entity.PbehaviorInfo.IsActive()
-	calcData.AlarmExists = alarm != nil
+	calcData.AlarmExists = alarm != nil && alarm.ID != ""
 
 	// todo: garbage condition, but it works, is it possible to simplify?
-	if alarm != nil && calcData.PrevActive {
+	if calcData.AlarmExists && calcData.PrevActive {
 		if alarmChange.Type == types.AlarmChangeTypeStateDecrease ||
 			alarmChange.Type == types.AlarmChangeTypeStateIncrease ||
 			alarmChange.Type == types.AlarmChangeTypeChangeState {
@@ -244,7 +252,7 @@ func (s *componentCountersCalculator) calculateCounters(ctx context.Context, ent
 		}
 	}
 
-	if alarm != nil && calcData.CurActive {
+	if calcData.AlarmExists && calcData.CurActive {
 		calcData.CurState = int(alarm.CurrentState())
 	}
 

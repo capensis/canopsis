@@ -104,24 +104,18 @@ func (s *StateThreshold) IsReached(c Counters) bool {
 }
 
 func (s *StateThreshold) matchNumberCondition(val int) bool {
-	if s.Cond == CalculationCondGT && val > s.Value {
-		return true
-	} else if s.Cond == CalculationCondLT && val < s.Value {
-		return true
+	switch s.Cond {
+	case CalculationCondGT:
+		return val > s.Value
+	case CalculationCondLT:
+		return val < s.Value
 	}
 
 	return false
 }
 
 func (s *StateThreshold) matchShareCondition(val, all int) bool {
-	ratio := float64(val) / float64(all) * 100
-	if s.Cond == CalculationCondGT && int(ratio) > s.Value {
-		return true
-	} else if s.Cond == CalculationCondLT && int(ratio) < s.Value {
-		return true
-	}
-
-	return false
+	return s.matchNumberCondition(int(float64(val) / float64(all) * 100))
 }
 
 type JUnitThresholds struct {
