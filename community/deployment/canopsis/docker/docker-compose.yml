@@ -88,7 +88,7 @@ services:
     #mem_reservation: 3g
     oom_score_adj: -1000
     # keyFile will be created during initdb (script in /docker-entrypoint-initdb.d)
-    command: ['--wiredTigerCacheSizeGB', '2', '--replSet', 'rs0', '--keyFile', '/data/db/.keyFile']
+    command: ['--wiredTigerCacheSizeGB', '2.5', '--replSet', 'rs0', '--keyFile', '/data/db/.keyFile']
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongosh --quiet
       interval: 10s
