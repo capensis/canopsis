@@ -3,6 +3,7 @@
 exports[`button-field Renders \`button-field\` with custom props 1`] = `
 <div
   class="container pa-3 fluid"
+  title="Title"
 >
   <div
     class="layout align-center justify-space-between"
@@ -18,11 +19,10 @@ exports[`button-field Renders \`button-field\` with custom props 1`] = `
           class="v-btn__content"
         >
           <span>
-            Edit
+            Create
           </span>
         </div>
       </button>
-      <!---->
     </div>
   </div>
 </div>
@@ -31,6 +31,7 @@ exports[`button-field Renders \`button-field\` with custom props 1`] = `
 exports[`button-field Renders \`button-field\` with default props 1`] = `
 <div
   class="container pa-3 fluid"
+  title=""
 >
   <div
     class="layout align-center justify-space-between"
