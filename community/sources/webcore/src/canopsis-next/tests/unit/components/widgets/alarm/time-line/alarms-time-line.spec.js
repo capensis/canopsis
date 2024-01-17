@@ -3,20 +3,12 @@ import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { fakeAlarmDetails } from '@unit/data/alarm';
 
 import AlarmsTimeLine from '@/components/widgets/alarm/time-line/alarms-time-line.vue';
+import AlarmsTimeLineSteps from '@/components/widgets/alarm/time-line/alarms-time-line-steps.vue';
 
 const stubs = {
   'alarms-time-line-flag': true,
   'alarms-time-line-card': true,
-  'alarms-time-line-steps': {
-    props: ['steps'],
-    template: `
-      <div>
-        <div v-for="(step, index) in steps" :key="index">
-          <slot name="step" :step="step"></slot>
-        </div>
-      </div>
-    `,
-  },
+  'alarms-time-line-steps': AlarmsTimeLineSteps,
   'c-pagination': {
     template: `
       <input class="c-pagination" @input="$listeners.input(+$event.target.value)" />
