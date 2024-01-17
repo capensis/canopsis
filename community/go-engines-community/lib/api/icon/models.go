@@ -22,6 +22,8 @@ type Response struct {
 	Storage  string `bson:"storage" json:"-"`
 	Etag     string `bson:"etag" json:"-"`
 	MimeType string `bson:"mime_type" json:"-"`
+
+	Content string `json:"content,omitempty"`
 }
 
 type AggregationResult struct {
