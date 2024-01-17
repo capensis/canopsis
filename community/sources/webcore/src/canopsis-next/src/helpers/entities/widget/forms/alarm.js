@@ -138,6 +138,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {WidgetColumn[]} widgetColumns
  * @property {string} exportPdfTemplate
  * @property {string} exportPdfTemplateTemplate
+ * @property {boolean} showRootCauseByStateClick
  */
 
 /**
@@ -169,6 +170,8 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {boolean} isActionsAllowWithOkState
  * @property {boolean} sticky_header
  * @property {boolean} dense
+ * @property {boolean} dense
+ * @property {boolean} showRootCauseByStateClick
  */
 
 /**
@@ -282,6 +285,7 @@ export const alarmListBaseParametersToForm = (alarmListParameters = {}) => ({
   widgetColumns: widgetColumnsToForm(alarmListParameters.widgetColumns ?? DEFAULT_ALARMS_WIDGET_COLUMNS),
   exportPdfTemplate: alarmListParameters.exportPdfTemplate ?? ALARM_EXPORT_PDF_TEMPLATE,
   exportPdfTemplateTemplate: widgetTemplateValueToForm(alarmListParameters.exportPdfTemplateTemplate),
+  showRootCauseByStateClick: alarmListParameters.showRootCauseByStateClick ?? true,
 });
 
 /**
@@ -372,6 +376,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   inlineLinksCount: parameters.inlineLinksCount ?? DEFAULT_LINKS_INLINE_COUNT,
   exportPdfTemplate: parameters.exportPdfTemplate ?? ALARM_EXPORT_PDF_TEMPLATE,
   exportPdfTemplateTemplate: widgetTemplateValueToForm(parameters.exportPdfTemplateTemplate),
+  showRootCauseByStateClick: parameters.showRootCauseByStateClick ?? true,
 });
 
 /**
@@ -550,18 +555,33 @@ export const getAlarmsListWidgetColumnValueFilter = (value) => {
  * @param {string} value
  * @param {boolean} [onlyIcon]
  * @param {number} [inlineLinksCount]
+ * @param {boolean} [showRootCauseByStateClick]
  * @returns {Function}
  */
-export const getAlarmsListWidgetColumnComponentGetter = ({ value, onlyIcon, inlineLinksCount }) => {
+export const getAlarmsListWidgetColumnComponentGetter = (
+  { value, onlyIcon, inlineLinksCount },
+  { showRootCauseByStateClick } = {},
+) => {
   switch (value) {
     case ALARM_FIELDS.state:
-      return context => ({
-        bind: {
-          is: 'alarm-column-value-state',
-          alarm: context.alarm,
-          small: context.small,
-        },
-      });
+      return (context) => {
+        const component = {
+          bind: {
+            is: 'alarm-column-value-state',
+            alarm: context.alarm,
+            small: context.small,
+          },
+        };
+
+        if (showRootCauseByStateClick) {
+          component.bind.class = 'cursor-pointer';
+          component.on = {
+            click: () => context.$emit('click:state', context.alarm.entity),
+          };
+        }
+
+        return component;
+      };
 
     case ALARM_FIELDS.status:
       return context => ({

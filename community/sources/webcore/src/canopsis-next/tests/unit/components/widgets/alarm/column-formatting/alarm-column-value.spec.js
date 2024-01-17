@@ -1,6 +1,6 @@
 import flushPromises from 'flush-promises';
 
-import { generateRenderer } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { COLOR_INDICATOR_TYPES } from '@/constants';
 
 import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
@@ -14,8 +14,29 @@ const stubs = {
   'c-runtime-template': CRuntimeTemplate,
 };
 
+const selectAlarmColumnCell = wrapper => wrapper.find('alarm-column-cell-stub');
+
 describe('alarm-column-value', () => {
   const snapshotFactory = generateRenderer(AlarmColumnValue, { stubs });
+  const factory = generateShallowRenderer(AlarmColumnValue, { stubs });
+
+  it('Click state emitted after trigger click state event on alarm cell', async () => {
+    const wrapper = factory({
+      propsData: {
+        alarm: {
+          entity: {},
+        },
+        widget: {},
+        column: {
+          colorIndicator: COLOR_INDICATOR_TYPES.state,
+        },
+      },
+    });
+
+    selectAlarmColumnCell(wrapper).vm.$emit('click:state');
+
+    expect(wrapper).toEmit('click:state');
+  });
 
   it('Renders `alarm-column-value` with required props', async () => {
     const wrapper = snapshotFactory({

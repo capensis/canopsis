@@ -507,6 +507,29 @@ describe('alarms-list-table', () => {
     expect(wrapper.vm.expanded).toEqual({});
   });
 
+  it('Root cause diagram opened after trigger click state event', async () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        options: {},
+        widget: defaultWidget,
+        alarms,
+        columns,
+        stickyHeader: true,
+      },
+    });
+
+    expect(wrapper.vm.expanded).toEqual({});
+
+    const alarmsListRow = selectAlarmsListRow(wrapper).at(0);
+
+    alarmsListRow.vm.$emit('click:state', true);
+
+    /**
+     * TODO: Should be tested show modal
+     */
+  });
+
   it('Renders `alarms-list-table` with default and required props', () => {
     const wrapper = snapshotFactory({
       store,

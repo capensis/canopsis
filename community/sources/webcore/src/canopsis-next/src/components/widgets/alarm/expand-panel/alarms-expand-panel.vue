@@ -177,6 +177,7 @@
           <v-flex :class="cardFlexClass">
             <v-card class="tab-item-card">
               <v-card-text>
+                <state-settings-summary />
                 <service-dependencies
                   :root="dependency"
                   :columns="widget.parameters.serviceDependenciesColumns"
@@ -247,6 +248,7 @@ import ServiceDependencies from '@/components/other/service/partials/service-dep
 import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/pbehaviors-simple-list.vue';
 import DeclaredTicketsList from '@/components/other/declare-ticket/declared-tickets-list.vue';
 import EntityCharts from '@/components/widgets/chart/entity-charts.vue';
+import StateSettingsSummary from '@/components/other/state-setting/state-settings-summary.vue';
 
 import AlarmsTimeLine from '../time-line/alarms-time-line.vue';
 import EntityGantt from '../entity-gantt/entity-gantt.vue';
@@ -256,6 +258,7 @@ import AlarmsExpandPanelChildren from './alarms-expand-panel-children.vue';
 
 export default {
   components: {
+    StateSettingsSummary,
     EntityCharts,
     DeclaredTicketsList,
     PbehaviorsSimpleList,

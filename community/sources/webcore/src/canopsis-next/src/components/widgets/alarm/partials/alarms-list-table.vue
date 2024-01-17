@@ -150,6 +150,7 @@
             :show-instruction-icon="hasInstructionsAlarms"
             @start:resize="startColumnResize"
             @select:tag="$emit('select:tag', $event)"
+            @click:state="openRootCauseDiagram"
             @expand="expand"
             @input="select"
           />
@@ -570,6 +571,12 @@ export default {
       if (this.selecting) {
         this.calculateRowsPositions();
       }
+    },
+
+    openRootCauseDiagram() {
+      /**
+       * TODO: Should be added show modal mechanism
+        */
     },
   },
 };

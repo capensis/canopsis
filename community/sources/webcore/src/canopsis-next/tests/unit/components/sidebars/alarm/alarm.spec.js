@@ -128,6 +128,10 @@ const selectFieldActionsAllowWithOkState = wrapper => selectSwitcherFieldByTitle
   wrapper,
   'Actions allowed when state OK?',
 );
+const selectFieldShowRootCauseByStateClick = wrapper => selectSwitcherFieldByTitle(
+  wrapper,
+  'Show root cause diagram called from Severity column',
+);
 const selectChartsForm = wrapper => wrapper.findAll('input.charts-form').at(0);
 
 describe('alarm', () => {
@@ -907,6 +911,32 @@ describe('alarm', () => {
       expectData: {
         id: widget._id,
         data: getWidgetRequestWithNewParametersProperty(widget, 'clearFilterDisabled', clearFilterDisabled),
+      },
+    });
+  });
+
+  test('Clear filter disabled changed after trigger switcher field', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const showRootCauseByStateClick = Faker.datatype.boolean();
+
+    selectFieldShowRootCauseByStateClick(wrapper).vm.$emit('input', showRootCauseByStateClick);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'showRootCauseByStateClick', showRootCauseByStateClick),
       },
     });
   });

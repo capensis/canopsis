@@ -18,6 +18,7 @@ const stubs = {
 const selectExpandButton = wrapper => wrapper.find('alarms-expand-panel-btn-stub');
 const selectTableRow = wrapper => wrapper.find('tr');
 const selectCheckbox = wrapper => wrapper.find('.v-simple-checkbox');
+const selectAlarmColumnValue = wrapper => wrapper.find('alarm-column-value-stub');
 
 describe('alarms-list-row', () => {
   const fetchItem = jest.fn();
@@ -189,6 +190,35 @@ describe('alarms-list-row', () => {
     await flushPromises();
 
     expect(wrapper).toEmit('expand', newExpanded);
+  });
+
+  it('Click state emitted after trigger click state event', async () => {
+    const entity = {
+      _id: 'alarm-entity',
+    };
+    const alarm = {
+      _id: 'alarm-id',
+      v: {
+        status: {},
+      },
+      entity,
+    };
+
+    const wrapper = factory({
+      propsData: {
+        alarm,
+        expand: true,
+        widget: {},
+        headers: [{ value: 'first' }, { value: 'second' }],
+        expandable: true,
+      },
+    });
+
+    await flushPromises();
+
+    selectAlarmColumnValue(wrapper).vm.$emit('click:state');
+
+    expect(wrapper).toEmit('click:state');
   });
 
   it('Renders `alarms-list-row` with default and required props', () => {

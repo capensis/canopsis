@@ -19,6 +19,7 @@
       :selected-tag="selectedTag"
       @activate="$emit('activate', $event)"
       @select:tag="$emit('select:tag', $event)"
+      @click:state="$emit('click:state', $event)"
     />
   </color-indicator-wrapper>
   <alarm-column-cell
@@ -30,6 +31,7 @@
     :selected-tag="selectedTag"
     @activate="$emit('activate', $event)"
     @select:tag="$emit('select:tag', $event)"
+    @click:state="$emit('click:state', $event)"
   />
 </template>
 
