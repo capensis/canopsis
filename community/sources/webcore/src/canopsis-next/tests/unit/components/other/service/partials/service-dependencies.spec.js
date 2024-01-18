@@ -14,6 +14,8 @@ import ServiceDependencies from '@/components/other/service/partials/service-dep
 const stubs = {
   'c-treeview-data-table': CTreeviewDataTable,
   'c-no-events-icon': true,
+  'service-dependencies-show-type-field': true,
+  'state-settings-summary': true,
   'service-dependencies-expand': true,
   'service-dependencies-entity-cell': true,
 };

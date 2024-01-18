@@ -11,9 +11,7 @@
         dense
       />
     </widget-settings-item>
-    <v-divider />
     <field-criticity-levels v-field="form.values" />
-    <v-divider />
     <field-levels-colors-selector
       v-field="form.colors"
       color-type="hex"

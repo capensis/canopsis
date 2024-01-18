@@ -21,12 +21,14 @@ const snapshotStubs = {
   'field-default-elements-per-page': true,
   'field-info-popup': true,
   'field-text-editor-with-template': true,
+  'field-switcher': true,
 };
 
 const selectFieldColumns = wrapper => wrapper.find('field-columns-stub');
 const selectFieldDefaultElementsPerPage = wrapper => wrapper.find('field-default-elements-per-page-stub');
 const selectFieldInfoPopup = wrapper => wrapper.find('field-info-popup-stub');
 const selectFieldTextEditorWithTemplate = wrapper => wrapper.find('field-text-editor-with-template-stub');
+const selectFieldSwitcher = wrapper => wrapper.find('field-switcher-stub');
 
 describe('alarms-list-modal', () => {
   const form = {
@@ -51,13 +53,11 @@ describe('alarms-list-modal', () => {
   ]);
 
   const factory = generateShallowRenderer(AlarmsListModal, {
-
     store,
     stubs,
   });
 
   const snapshotFactory = generateRenderer(AlarmsListModal, {
-
     store,
     stubs: snapshotStubs,
   });
@@ -120,6 +120,18 @@ describe('alarms-list-modal', () => {
     selectFieldTextEditorWithTemplate(wrapper).vm.$emit('input', newTemplate);
 
     expect(wrapper).toEmit('input', { ...form, moreInfoTemplate: newTemplate });
+  });
+
+  test('Show root cause by state click changed after trigger switcher field', () => {
+    const wrapper = factory({
+      propsData: { form },
+    });
+
+    const newShowRootCauseByStateClick = Faker.datatype.boolean();
+
+    selectFieldSwitcher(wrapper).vm.$emit('input', newShowRootCauseByStateClick);
+
+    expect(wrapper).toEmit('input', { ...form, showRootCauseByStateClick: newShowRootCauseByStateClick });
   });
 
   test('Renders `alarms-list-modal` with default props', () => {

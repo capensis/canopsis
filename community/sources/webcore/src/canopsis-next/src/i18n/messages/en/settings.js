@@ -41,6 +41,7 @@ export default {
   groupColumnNames: 'Column names for meta alarms',
   trackColumnNames: 'Track alarm source columns',
   treeOfDependenciesColumnNames: 'Column names for tree of dependencies',
+  treeOfDependenciesSettings: 'Tree of dependencies settings',
   orderBy: 'Order by',
   periodicRefresh: 'Periodic refresh',
   defaultNumberOfElementsPerPage: 'Default number of elements/page',

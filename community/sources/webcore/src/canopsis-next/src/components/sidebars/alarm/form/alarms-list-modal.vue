@@ -5,7 +5,6 @@
       :columns="sortablePreparedWidgetColumns"
       :columns-label="$t('settings.columnName')"
     />
-    <v-divider />
     <field-columns
       v-field="form.widgetColumns"
       :template="form.widgetColumnsTemplate"
@@ -18,14 +17,11 @@
       with-color-indicator
       @update:template="updateColumnsTemplate"
     />
-    <v-divider />
     <field-default-elements-per-page v-field="form.itemsPerPage" />
-    <v-divider />
     <field-info-popup
       v-field="form.infoPopups"
       :columns="form.widgetColumns"
     />
-    <v-divider />
     <field-text-editor-with-template
       :value="form.moreInfoTemplate"
       :template="form.moreInfoTemplateTemplate"
@@ -34,7 +30,6 @@
       :templates="alarmMoreInfosWidgetTemplates"
       @input="updateMoreInfo"
     />
-    <v-divider />
     <field-text-editor-with-template
       :value="form.exportPdfTemplate"
       :template="form.exportPdfTemplateTemplate"
@@ -46,6 +41,10 @@
       addable
       removable
       @input="updateExportPdf"
+    />
+    <field-switcher
+      v-field="form.showRootCauseByStateClick"
+      :title="$t('settings.showRootCauseByStateClick')"
     />
   </widget-settings-group>
 </template>
@@ -67,11 +66,13 @@ import FieldInfoPopup from '@/components/sidebars/alarm/form/fields/info-popup.v
 import FieldTextEditorWithTemplate from '@/components/sidebars/form/fields/text-editor-with-template.vue';
 import FieldDefaultElementsPerPage from '@/components/sidebars/form/fields/default-elements-per-page.vue';
 import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
+import FieldSwitcher from '@/components/sidebars/form/fields/switcher.vue';
 
 import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html';
 
 export default {
   components: {
+    FieldSwitcher,
     WidgetSettingsGroup,
     FieldDefaultSortColumn,
     FieldColumns,
