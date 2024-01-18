@@ -1,6 +1,7 @@
 <template>
   <div
     v-bind="component.bind"
+    v-on="component.on"
     :is="component.bind.is"
   />
 </template>
@@ -36,6 +37,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    showRootCauseByStateClick: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     columnsFiltersMap() {
@@ -62,6 +67,25 @@ export default {
       const value = get(this.entity, this.column.value, '');
 
       return this.columnFilter ? this.columnFilter(value) : value;
+    },
+
+    stateCellProperties() {
+      const component = {
+        bind: {
+          is: 'c-alarm-chip',
+          type: ENTITY_INFOS_TYPE.state,
+          value: this.value,
+        },
+      };
+
+      if (this.showRootCauseByStateClick) {
+        component.bind.class = 'cursor-pointer';
+        component.on = {
+          click: () => this.$emit('click:state', this.entity),
+        };
+      }
+
+      return component;
     },
 
     component() {
@@ -97,13 +121,7 @@ export default {
             pbehaviorInfo: this.entity.pbehavior_info,
           },
         },
-        state: {
-          bind: {
-            is: 'c-alarm-chip',
-            type: ENTITY_INFOS_TYPE.state,
-            value: this.value,
-          },
-        },
+        state: this.stateCellProperties,
       };
 
       const cell = PROPERTIES_COMPONENTS_MAP[this.column.value];

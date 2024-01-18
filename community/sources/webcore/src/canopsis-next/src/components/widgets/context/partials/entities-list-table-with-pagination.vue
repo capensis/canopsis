@@ -42,6 +42,8 @@
           :entity="item"
           :column="column"
           :columns-filters="columnsFilters"
+          :show-root-cause-by-state-click="showRootCauseByStateClick"
+          @click:state="openRootCauseDiagram"
         />
       </template>
       <template #actions="{ item }">
@@ -55,6 +57,7 @@
           :resolved-alarms-columns="widget.parameters.resolvedAlarmsColumns"
           :active-alarms-columns="widget.parameters.activeAlarmsColumns"
           :charts="widget.parameters.charts"
+          :tree-of-dependencies-show-type="widget.parameters.treeOfDependenciesShowType"
         />
       </template>
       <template #mass-actions="{ selected, clearSelected }">
@@ -153,6 +156,10 @@ export default {
         ]
         : [];
     },
+
+    showRootCauseByStateClick() {
+      return this.widget.parameters.showRootCauseByStateClick ?? true;
+    },
   },
   async mounted() {
     this.columnsFiltersPending = true;
@@ -175,6 +182,12 @@ export default {
 
         page,
       });
+    },
+
+    openRootCauseDiagram() {
+      /**
+       * TODO: Should be added show modal mechanism
+       */
     },
   },
 };

@@ -2,6 +2,7 @@
   <service-dependencies
     :root="item"
     :columns="columns"
+    :type="type"
     openable-root
   />
 </template>
@@ -21,6 +22,10 @@ export default {
     columns: {
       type: Array,
       default: () => [],
+    },
+    type: {
+      type: Number,
+      required: false,
     },
   },
 };
