@@ -4,7 +4,7 @@
       {{ title }}
     </template>
     <template #text="">
-      {{ $t('stateSetting.computeMethod') }}: {{ stateMethodName }}
+      <state-settings-summary />
       <entity-dependencies-by-state-settings-component :entity="config.entity" />
     </template>
   </modal-wrapper>
@@ -16,12 +16,14 @@ import { MODALS } from '@/constants';
 import { modalInnerMixin } from '@/mixins/modal/inner';
 
 import EntityDependenciesByStateSettingsComponent from '@/components/other/entity/entity-dependencies-by-state-settings.vue';
+import StateSettingsSummary from '@/components/other/state-setting/state-settings-summary.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.entityDependenciesByStateSettings,
   components: {
+    StateSettingsSummary,
     ModalWrapper,
     EntityDependenciesByStateSettingsComponent,
   },
@@ -33,13 +35,6 @@ export default {
 
     entity() {
       return this.config.entity;
-    },
-
-    stateMethodName() {
-      /**
-       * TODO: Should be changed on real data
-       */
-      return '%rule name%';
     },
   },
 };

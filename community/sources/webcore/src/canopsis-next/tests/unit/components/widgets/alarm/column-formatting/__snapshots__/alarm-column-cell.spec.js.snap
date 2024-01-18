@@ -44,7 +44,6 @@ exports[`alarm-column-cell Renders \`alarm-column-cell\` with column links with 
 exports[`alarm-column-cell Renders \`alarm-column-cell\` with column state 1`] = `
 <alarm-column-value-state-stub
   alarm="[object Object]"
-  class="cursor-pointer"
   propertykey="v.state.val"
 />
 `;
