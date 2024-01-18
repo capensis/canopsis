@@ -2,7 +2,7 @@
   <v-layout align-center>
     <template v-if="splitted">
       <v-btn
-        class="ml-0"
+        class="mr-3"
         :disabled="disabled"
         key="splitted"
         small
@@ -18,7 +18,6 @@
       </div>
     </template>
     <v-btn
-      class="ml-0"
       v-else
       :style="style"
       :disabled="disabled"

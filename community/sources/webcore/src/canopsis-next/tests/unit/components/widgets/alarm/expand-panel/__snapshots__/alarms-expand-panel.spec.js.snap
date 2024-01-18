@@ -477,12 +477,12 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
                 <div
                   class="v-card__text"
                 >
-                  <state-settings-summary-stub />
                   <service-dependencies-stub
                     columns="[object Object]"
                     includeroot="true"
                     openableroot="true"
                     root="[object Object]"
+                    type="0"
                   />
                 </div>
               </div>
@@ -515,6 +515,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
                     includeroot="true"
                     openableroot="true"
                     root="[object Object]"
+                    type="0"
                   />
                 </div>
               </div>

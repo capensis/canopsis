@@ -41,6 +41,7 @@ export default {
   groupColumnNames: 'Nom des colonnes des méta-alarmes',
   trackColumnNames: 'Colonnes pour le suivi de cause racine',
   treeOfDependenciesColumnNames: 'Nom des colonnes pour l\'arborescence des dépendances',
+  treeOfDependenciesSettings: 'Paramètres de l\'arborescence des dépendances',
   orderBy: 'Trier par',
   periodicRefresh: 'Rafraichissement périodique',
   defaultNumberOfElementsPerPage: 'Nombre d\'élements par page par défaut',

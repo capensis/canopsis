@@ -19,7 +19,6 @@ const stubs = {
   'entity-gantt': true,
   'pbehaviors-simple-list': true,
   'alarms-expand-panel-charts': true,
-  'state-settings-summary': true,
   'c-compiled-template': CCompiledTemplate,
   'c-runtime-template': CRuntimeTemplate,
 };

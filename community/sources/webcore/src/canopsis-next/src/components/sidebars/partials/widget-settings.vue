@@ -51,8 +51,10 @@ export default {
   }
 
   &--divider {
-    .v-list-group:not(:last-of-type) {
-      border-bottom: var(--item-divider-border);
+    .v-list-group, .widget-settings-flat-item {
+      &:not(:last-of-type) {
+        border-bottom: var(--item-divider-border);
+      }
     }
   }
 

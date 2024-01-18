@@ -110,6 +110,7 @@ export default {
   .v-radio {
     flex-direction: column;
     width: 50%;
+    margin-right: unset !important;
   }
 
   .v-label {
