@@ -78,6 +78,7 @@
                 <tree-of-dependencies-tab
                   :item="item"
                   :columns="serviceDependenciesColumns"
+                  :type="treeOfDependenciesShowType"
                 />
               </v-card-text>
             </v-card>
@@ -141,6 +142,8 @@
 </template>
 
 <script>
+import { TREE_OF_DEPENDENCIES_SHOW_TYPES } from '@/constants';
+
 import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
 
 import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/pbehaviors-simple-list.vue';
@@ -187,6 +190,10 @@ export default {
     charts: {
       type: Array,
       default: () => [],
+    },
+    treeOfDependenciesShowType: {
+      type: Number,
+      default: TREE_OF_DEPENDENCIES_SHOW_TYPES.custom,
     },
   },
   computed: {

@@ -14,6 +14,7 @@ import {
   DEFAULT_ALARMS_WIDGET_COLUMNS,
   ALARM_UNSORTABLE_FIELDS,
   ALARM_FIELDS_TO_LABELS_KEYS,
+  TREE_OF_DEPENDENCIES_SHOW_TYPES,
 } from '@/constants';
 
 import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/array';
@@ -42,6 +43,8 @@ import { getWidgetColumnLabel, getWidgetColumnSortable } from '../list';
  * @property {WidgetCsvSeparator} exportCsvSeparator
  * @property {string} exportCsvDatetimeFormat
  * @property {AlarmChart[]} charts
+ * @property {boolean} showRootCauseByStateClick
+ * @property {number} treeOfDependenciesShowType
  */
 
 /**
@@ -90,6 +93,8 @@ export const contextWidgetParametersToForm = (parameters = {}) => ({
   exportCsvSeparator: parameters.exportCsvSeparator ?? EXPORT_CSV_SEPARATORS.comma,
   exportCsvDatetimeFormat: parameters.exportCsvDatetimeFormat ?? EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
   charts: addKeyInEntities(parameters.charts),
+  showRootCauseByStateClick: parameters.showRootCauseByStateClick ?? true,
+  treeOfDependenciesShowType: parameters.treeOfDependenciesShowType ?? TREE_OF_DEPENDENCIES_SHOW_TYPES.custom,
 });
 
 /**
