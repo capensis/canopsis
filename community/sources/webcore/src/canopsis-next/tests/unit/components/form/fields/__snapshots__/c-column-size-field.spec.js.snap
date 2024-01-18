@@ -12,7 +12,6 @@ exports[`c-column-size-field Renders \`c-column-size-field\` with custom props 1
       style="height: auto;"
     >
       <div
-        aria-labelledby="input-43"
         class="v-input--radio-group__input"
         role="radiogroup"
       >
@@ -124,7 +123,6 @@ exports[`c-column-size-field Renders \`c-column-size-field\` with required props
       style="height: auto;"
     >
       <div
-        aria-labelledby="input-15"
         class="v-input--radio-group__input"
         role="radiogroup"
       >
@@ -416,7 +414,6 @@ exports[`c-column-size-field Renders \`c-column-size-field\` with tablet prop 1`
       style="height: auto;"
     >
       <div
-        aria-labelledby="input-55"
         class="v-input--radio-group__input"
         role="radiogroup"
       >
