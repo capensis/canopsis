@@ -9,8 +9,8 @@
     @update:options="$emit('update:options', $event)"
   >
     <template #icon="{ item }">
-      <v-icon color="black">
-        {{ item.icon }}
+      <v-icon>
+        $vuetify.icons.{{ item.title }}
       </v-icon>
     </template>
     <template #updated="{ item }">

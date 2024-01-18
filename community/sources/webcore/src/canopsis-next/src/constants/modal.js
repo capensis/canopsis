@@ -118,4 +118,5 @@ export const MODALS = {
   archiveDisabledEntities: 'archive-disabled-entities',
 
   createIcon: 'create-icon',
+  editIcon: 'edit-icon',
 };

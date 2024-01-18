@@ -130,7 +130,7 @@ export default {
           },
         },
         [PARAMETERS_TABS.icons]: {
-          text: this.$t('modals.uploadIcon.title'),
+          text: this.$t('modals.createIcon.create.title'),
           on: {
             refresh: this.fetchIconsList,
             create: this.showCreateIconModal,
