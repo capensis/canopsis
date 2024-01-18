@@ -28,6 +28,8 @@
         :loading="loading"
         :on="scopedActivatorSlotListeners"
         :clear="internalClear"
+        :drop="dropFiles"
+        :files="files"
         name="activator"
       >
         <v-btn
@@ -135,22 +137,53 @@ export default {
         click: this.selectFiles,
       };
     },
+
+    mimeType() {
+      return !this.accept ? '' : new RegExp(this.accept.replace('*', '.*'));
+    },
   },
   methods: {
     selectFiles(event) {
-      event.stopPropagation();
+      event?.stopPropagation();
 
       if (!this.fullDisabled) {
         this.$refs.fileInput.click();
       }
     },
 
-    change(e) {
-      const files = Object.values(e.target.files);
+    dropFiles(event) {
+      event?.preventDefault();
+
+      if (event?.dataTransfer.items) {
+        const files = [...event.dataTransfer.items]
+          .filter(({ type }) => this.mimeType && this.mimeType.test(type))
+          .map(item => item.getAsFile());
+
+        if (!files.length) {
+          this.errors.add({
+            field: this.name,
+            msg: this.$t('common.fileSelector.dragAndDrop.fileTypeError', { accept: this.accept }),
+          });
+
+          return;
+        }
+
+        this.files = this.multiple
+          ? union(this.files, files)
+          : files;
+
+        this.errors.remove(this.name);
+        this.$emit('change', files);
+      }
+    },
+
+    change(event) {
+      const files = Object.values(event.target.files);
       this.files = this.multiple
         ? union(this.files, files)
         : files;
 
+      this.errors.remove(this.name);
       this.$emit('change', this.files);
     },
 
