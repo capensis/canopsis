@@ -5,6 +5,7 @@ exports[`service-entity-tree-of-dependencies-tab Renders \`service-entity-tree-o
   columns="[object Object]"
   openableroot="true"
   root="[object Object]"
+  type="0"
 />
 `;
 
@@ -12,5 +13,6 @@ exports[`service-entity-tree-of-dependencies-tab Renders \`service-entity-tree-o
 <service-dependencies-stub
   openableroot="true"
   root="[object Object]"
+  type="0"
 />
 `;

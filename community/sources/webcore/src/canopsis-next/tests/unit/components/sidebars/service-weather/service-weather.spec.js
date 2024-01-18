@@ -47,6 +47,7 @@ const stubs = {
   'field-switcher': true,
   'field-modal-type': true,
   'field-action-required-settings': true,
+  'field-tree-of-dependencies-settings': true,
 };
 
 const generateDefaultServiceWeatherWidget = () => ({
