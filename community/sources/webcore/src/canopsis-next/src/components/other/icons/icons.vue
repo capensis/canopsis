@@ -18,6 +18,7 @@ import { MODALS } from '@/constants';
 import { localQueryMixin } from '@/mixins/query-local/query';
 import { entitiesIconMixin } from '@/mixins/entities/icon';
 import { permissionsTechnicalIconMixin } from '@/mixins/permissions/technical/icon';
+import { vuetifyCustomIconsBaseMixin } from '@/mixins/vuetify/custom-icons/base';
 
 import IconsList from '@/components/other/icons/icons-list.vue';
 
@@ -27,7 +28,15 @@ export default {
     localQueryMixin,
     entitiesIconMixin,
     permissionsTechnicalIconMixin,
+    vuetifyCustomIconsBaseMixin,
   ],
+  watch: {
+    icons(icons) {
+      icons.forEach(({ title, content }) => (
+        !this.hasIconInVuetify(title) && this.registerIconInVuetify(title, content)
+      ));
+    },
+  },
   mounted() {
     this.fetchList();
   },
@@ -63,7 +72,7 @@ export default {
     },
 
     fetchList() {
-      return this.fetchIconsList({ params: this.getQuery() });
+      this.fetchIconsList({ params: this.getQuery() });
     },
   },
 };

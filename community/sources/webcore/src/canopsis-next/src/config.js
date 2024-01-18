@@ -90,6 +90,7 @@ export const SOCKET_ROOMS = {
   declareticket: 'declareticket',
   alarms: 'alarms',
   alarmDetails: 'alarm-details',
+  icons: 'icons',
 };
 
 export const API_ROUTES = {
