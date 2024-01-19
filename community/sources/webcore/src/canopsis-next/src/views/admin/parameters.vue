@@ -73,10 +73,10 @@
     </v-layout>
     <v-fade-transition>
       <c-fab-btn
-        v-if="fabListeners"
-        v-on="fabListeners"
+        v-if="fabData"
+        v-on="fabData.on"
       >
-        <span>{{ $t('modals.createWidgetTemplate.create.title') }}</span>
+        <span>{{ fabData.label }}</span>
       </c-fab-btn>
     </v-fade-transition>
   </v-container>
@@ -120,15 +120,21 @@ export default {
     };
   },
   computed: {
-    fabListeners() {
+    fabData() {
       return {
         [PARAMETERS_TABS.widgetTemplates]: {
-          refresh: this.fetchWidgetTemplatesListWithPreviousParams,
-          create: this.showSelectWidgetTemplateTypeModal,
+          label: this.$t('modals.createWidgetTemplate.create.title'),
+          on: {
+            refresh: this.fetchWidgetTemplatesListWithPreviousParams,
+            create: this.showSelectWidgetTemplateTypeModal,
+          },
         },
         [PARAMETERS_TABS.stateSettings]: {
-          refresh: this.fetchStateSettingsList,
-          create: this.showCreateStateSettingModal,
+          label: this.$t('modals.createStateSetting.create.title'),
+          on: {
+            refresh: this.fetchStateSettingsListWithPreviousParams,
+            create: this.showCreateStateSettingModal,
+          },
         },
       }[this.activeTab];
     },
@@ -142,7 +148,7 @@ export default {
           action: async (newWidgetTemplate) => {
             await this.createWidgetTemplate({ data: newWidgetTemplate });
 
-            this.fabListeners?.refresh();
+            this.fabData?.on.refresh();
           },
         },
       });
@@ -157,7 +163,7 @@ export default {
             await this.createStateSetting({ data: newStateSetting });
 
             this.$popups.success({ text: this.$t('modals.createStateSetting.create.success') });
-            this.fabListeners?.refresh();
+            this.fabData?.on.refresh();
           },
         },
       });

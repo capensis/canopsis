@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { ENTITY_PATTERN_FIELDS, ENTITY_TYPES } from '@/constants';
+import { ENTITY_PATTERN_FIELDS, STATE_SETTING_ENTITY_TYPES } from '@/constants';
 
 import { formValidationHeaderMixin } from '@/mixins/form';
 
@@ -30,10 +30,7 @@ export default {
   },
   computed: {
     entityTypes() {
-      return [
-        ENTITY_TYPES.component,
-        ENTITY_TYPES.service,
-      ];
+      return [...STATE_SETTING_ENTITY_TYPES];
     },
 
     typeOptions() {
@@ -58,6 +55,10 @@ export default {
         },
         {
           value: ENTITY_PATTERN_FIELDS.connector,
+          options: { disabled: true },
+        },
+        {
+          value: ENTITY_PATTERN_FIELDS.type,
           options: { disabled: true },
         },
         {

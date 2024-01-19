@@ -5,12 +5,17 @@ import {
   PATTERNS_FIELDS,
   STATE_SETTING_THRESHOLDS_METHODS,
   STATE_SETTING_METHODS,
+  ENTITY_TYPES,
 } from '@/constants';
 
 import { filterPatternsToForm, formFilterToPatterns } from '../filter/form';
 
 /**
  * @typedef { 'inherited' | 'dependencies_state' } StateSettingMethod
+ */
+
+/**
+ * @typedef { 'component' | 'service' } StateSettingType
  */
 
 /**
@@ -51,6 +56,7 @@ import { filterPatternsToForm, formFilterToPatterns } from '../filter/form';
  * @typedef {StateSettingInherited | StateSettingDependenciesState} StateSetting
  * @property {string} title
  * @property {number} priority
+ * @property {StateSettingType} type
  * @property {boolean} enabled
  * @property {StateSettingMethod} method
  */
@@ -78,6 +84,7 @@ import { filterPatternsToForm, formFilterToPatterns } from '../filter/form';
  * @typedef {StateSettingInheritedForm | StateSettingDependenciesStateForm} StateSettingForm
  * @property {string} title
  * @property {number} priority
+ * @property {StateSettingType} type
  * @property {boolean} enabled
  * @property {StateSettingMethod} method
  * @property {FilterPatternsForm} entity_pattern
@@ -118,6 +125,7 @@ export const stateSettingToForm = (stateSetting = {}) => ({
   priority: stateSetting.priority ?? 1,
   enabled: stateSetting.enabled ?? true,
   method: stateSetting.method ?? STATE_SETTING_METHODS.inherited,
+  type: stateSetting.type ?? ENTITY_TYPES.component,
   entity_pattern: filterPatternsToForm(
     { [PATTERNS_FIELDS.entity]: stateSetting.entity_pattern },
     [PATTERNS_FIELDS.entity],
