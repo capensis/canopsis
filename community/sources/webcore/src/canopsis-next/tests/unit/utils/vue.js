@@ -7,7 +7,7 @@ import {
   createLocalVue,
   Wrapper,
 } from '@vue/test-utils';
-// eslint-disable-next-line no-restricted-syntax
+// eslint-disable-next-line no-restricted-imports
 import flushPromises from 'flush-promises';
 
 import { MqLayout } from '@unit/stubs/mq';

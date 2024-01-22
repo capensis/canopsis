@@ -81,10 +81,17 @@
       {
         "selector": "CallExpression[callee.object.property.name='vm'][callee.property.name='$emit']",
         "message": "Should be used `wrapper.triggerCustomEvent('input', data)` instead of `wrapper.vm.$emit('input', data)`"
-      },
+      }
+    ],
+    "no-restricted-imports": [
+      "error",
       {
-        "selector": "ImportDeclaration[source.value='flush-promises']",
-        "message": "`flushPromises` should be imported from `@unit/utils/vue`"
+        "patterns": [
+          {
+            "group": ["flush-promises"],
+            "message": "`flushPromises` should be imported from `@unit/utils/vue`"
+          }
+        ]
       }
     ]
   }
