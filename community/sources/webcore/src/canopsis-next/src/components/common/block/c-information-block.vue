@@ -3,9 +3,7 @@
     class="c-information-block"
     column
   >
-    <v-layout
-      v-if="title || helpText"
-    >
+    <v-layout v-if="title || helpText">
       <div class="text-subtitle-1 font-weight-bold">
         {{ title }}
       </div>

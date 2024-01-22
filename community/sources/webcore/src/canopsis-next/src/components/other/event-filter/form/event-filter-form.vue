@@ -41,7 +41,9 @@
     <template v-if="hasAdditionalOptions">
       <v-divider class="my-3" />
       <c-information-block
-        :title="isEnrichmentType ? $t('eventFilter.enrichmentOptions') : $t('eventFilter.changeEntityOptions')"
+        :title="
+          isEnrichmentType ? $t('eventFilter.enrichmentOptions') : $t('eventFilter.changeEntityOptions')
+        "
       >
         <c-collapse-panel
           class="mb-2"

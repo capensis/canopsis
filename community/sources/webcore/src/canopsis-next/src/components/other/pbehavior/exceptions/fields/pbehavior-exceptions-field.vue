@@ -1,8 +1,6 @@
 <template>
   <v-layout column>
-    <v-layout
-      class="mt-3"
-    >
+    <v-layout class="mt-3">
       <v-flex xs12>
         <slot
           name="no-data"
@@ -19,9 +17,7 @@
         />
       </v-flex>
     </v-layout>
-    <v-layout
-      v-if="!disabled"
-    >
+    <v-layout v-if="!disabled">
       <slot name="actions">
         <v-flex>
           <v-btn

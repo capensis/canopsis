@@ -40,9 +40,7 @@
             :label="$t('common.description')"
             hide-details
           />
-          <v-layout
-            class="mt-4"
-          >
+          <v-layout class="mt-4">
             <span class="text-subtitle-1">{{ $t('remediation.instructionExecute.jobs.title') }}</span>
           </v-layout>
           <v-layout column>

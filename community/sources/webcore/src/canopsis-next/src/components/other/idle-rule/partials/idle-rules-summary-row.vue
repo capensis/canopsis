@@ -1,7 +1,5 @@
 <template>
-  <v-layout
-    class="mb-3 c-idle-rules-summary-row"
-  >
+  <v-layout class="mb-3 c-idle-rules-summary-row">
     <v-flex class="c-idle-rules-summary-row--label">
       <span class="font-weight-bold">{{ label }}</span>
     </v-flex>

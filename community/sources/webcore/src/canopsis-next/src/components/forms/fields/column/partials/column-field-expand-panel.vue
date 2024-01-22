@@ -117,9 +117,7 @@
       hide-details
       @change="switchChangeColorIndicator($event)"
     />
-    <v-layout
-      v-if="column.colorIndicator"
-    >
+    <v-layout v-if="column.colorIndicator">
       <c-color-indicator-field
         v-field="column.colorIndicator"
         :disabled="!!column.template"
