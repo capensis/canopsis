@@ -1,7 +1,5 @@
 <template>
-  <v-layout
-    class="secondary lighten-2 py-3"
-  >
+  <v-layout class="secondary lighten-2 py-3">
     <v-flex
       xs12
       sm8

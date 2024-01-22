@@ -212,9 +212,7 @@
         v-if="hasEntityGantt"
         :value="$constants.ALARMS_EXPAND_PANEL_TABS.entityGantt"
       >
-        <v-layout
-          class="pa-3 secondary lighten-2"
-        >
+        <v-layout class="pa-3 secondary lighten-2">
           <v-flex :class="cardFlexClass">
             <v-card class="tab-item-card">
               <v-card-text>

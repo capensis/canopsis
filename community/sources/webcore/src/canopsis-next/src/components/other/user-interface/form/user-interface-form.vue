@@ -87,9 +87,7 @@
         />
       </v-flex>
     </v-layout>
-    <v-layout
-      class="mt-3"
-    >
+    <v-layout class="mt-3">
       <v-flex>
         <text-editor-field
           v-field="form.login_page_description"
@@ -99,9 +97,7 @@
         />
       </v-flex>
     </v-layout>
-    <v-layout
-      class="mt-3"
-    >
+    <v-layout class="mt-3">
       <v-flex>
         <span class="v-label file-selector__label">{{ $t('userInterface.logo') }}</span>
         <v-layout>

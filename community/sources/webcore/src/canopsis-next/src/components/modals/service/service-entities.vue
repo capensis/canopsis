@@ -40,9 +40,7 @@
       </v-tabs>
     </template>
     <template #actions="">
-      <v-tooltip
-        top
-      >
+      <v-tooltip top>
         <template #activator="{ on }">
           <v-btn
             v-on="on"

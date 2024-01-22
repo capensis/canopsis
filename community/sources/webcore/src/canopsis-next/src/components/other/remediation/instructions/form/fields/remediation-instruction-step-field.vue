@@ -6,9 +6,7 @@
     @remove="remove"
   >
     <template #header="">
-      <v-layout
-        class="mt-3"
-      >
+      <v-layout class="mt-3">
         <v-flex xs9>
           <v-text-field
             v-field="step.name"
