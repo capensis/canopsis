@@ -3,7 +3,6 @@ import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { getWidgetRequestWithNewProperty, getWidgetRequestWithNewParametersProperty } from '@unit/utils/settings';
-import { expectsOneInput } from '@unit/utils/form';
 
 import { ALARM_METRIC_PARAMETERS, QUICK_RANGES, SAMPLINGS, WIDGET_TYPES } from '@/constants';
 
@@ -66,9 +65,9 @@ describe('numbers-widget-form', () => {
 
     const fieldTitle = selectFieldTitle(wrapper);
 
-    fieldTitle.vm.$emit('input', newTitle);
+    fieldTitle.triggerCustomEvent('input', newTitle);
 
-    expectsOneInput(wrapper, getWidgetRequestWithNewProperty(form, 'title', newTitle));
+    expect(wrapper).toEmit('input', getWidgetRequestWithNewProperty(form, 'title', newTitle));
   });
 
   test('Periodic refresh changed after trigger field periodic refresh', async () => {
@@ -87,12 +86,12 @@ describe('numbers-widget-form', () => {
       unit: Faker.datatype.string(),
     };
 
-    fieldPeriodicRefresh.vm.$emit('input', {
+    fieldPeriodicRefresh.triggerCustomEvent('input', {
       ...wrapper.vm.form.parameters,
       periodic_refresh: periodicRefresh,
     });
 
-    expectsOneInput(wrapper, getWidgetRequestWithNewParametersProperty(form, 'periodic_refresh', periodicRefresh));
+    expect(wrapper).toEmit('input', getWidgetRequestWithNewParametersProperty(form, 'periodic_refresh', periodicRefresh));
   });
 
   test('Preset changed after trigger preset field', async () => {
@@ -109,8 +108,8 @@ describe('numbers-widget-form', () => {
       chart_title: Faker.datatype.string(),
     };
 
-    selectFieldPreset(wrapper).vm.$emit('input', newParameters);
-    expectsOneInput(wrapper, getWidgetRequestWithNewProperty(form, 'parameters', newParameters));
+    selectFieldPreset(wrapper).triggerCustomEvent('input', newParameters);
+    expect(wrapper).toEmit('input', getWidgetRequestWithNewProperty(form, 'parameters', newParameters));
   });
 
   test('Metrics changed after trigger field alarm metric presets', async () => {
@@ -129,8 +128,8 @@ describe('numbers-widget-form', () => {
       },
     ];
 
-    selectFieldAlarmMetricPresets(wrapper).vm.$emit('input', newMetrics);
-    expectsOneInput(wrapper, getWidgetRequestWithNewParametersProperty(form, 'metrics', newMetrics));
+    selectFieldAlarmMetricPresets(wrapper).triggerCustomEvent('input', newMetrics);
+    expect(wrapper).toEmit('input', getWidgetRequestWithNewParametersProperty(form, 'metrics', newMetrics));
   });
 
   test('Chart title changed after trigger field chart title', async () => {
@@ -142,8 +141,8 @@ describe('numbers-widget-form', () => {
 
     const newChartTitle = Faker.datatype.string();
 
-    selectFieldChartTitle(wrapper).vm.$emit('input', newChartTitle);
-    expectsOneInput(wrapper, getWidgetRequestWithNewParametersProperty(form, 'chart_title', newChartTitle));
+    selectFieldChartTitle(wrapper).triggerCustomEvent('input', newChartTitle);
+    expect(wrapper).toEmit('input', getWidgetRequestWithNewParametersProperty(form, 'chart_title', newChartTitle));
   });
 
   test('Filters changed after trigger field filters', async () => {
@@ -156,8 +155,8 @@ describe('numbers-widget-form', () => {
 
     const filters = [Faker.datatype.string()];
 
-    selectFieldFilters(wrapper).vm.$emit('update:filters', filters);
-    expectsOneInput(wrapper, getWidgetRequestWithNewProperty(form, 'filters', filters));
+    selectFieldFilters(wrapper).triggerCustomEvent('update:filters', filters);
+    expect(wrapper).toEmit('input', getWidgetRequestWithNewProperty(form, 'filters', filters));
   });
 
   test('Quick date interval type changed after trigger field quick date interval', async () => {
@@ -167,9 +166,9 @@ describe('numbers-widget-form', () => {
       },
     });
 
-    selectFieldQuickDateIntervalType(wrapper).vm.$emit('input', QUICK_RANGES.last30Days.value);
-    expectsOneInput(
-      wrapper,
+    selectFieldQuickDateIntervalType(wrapper).triggerCustomEvent('input', QUICK_RANGES.last30Days.value);
+    expect(wrapper).toEmit(
+      'input',
       getWidgetRequestWithNewParametersProperty(form, 'default_time_range', QUICK_RANGES.last30Days.value),
     );
   });
@@ -181,8 +180,8 @@ describe('numbers-widget-form', () => {
       },
     });
 
-    selectFieldSampling(wrapper).vm.$emit('input', SAMPLINGS.month);
-    expectsOneInput(wrapper, getWidgetRequestWithNewParametersProperty(form, 'default_sampling', SAMPLINGS.month));
+    selectFieldSampling(wrapper).triggerCustomEvent('input', SAMPLINGS.month);
+    expect(wrapper).toEmit('input', getWidgetRequestWithNewParametersProperty(form, 'default_sampling', SAMPLINGS.month));
   });
 
   test('Trend changed after trigger field switcher', async () => {
@@ -194,8 +193,8 @@ describe('numbers-widget-form', () => {
 
     const newShowTrend = !form.parameters.show_trend;
 
-    selectFieldSwitcher(wrapper).vm.$emit('input', newShowTrend);
-    expectsOneInput(wrapper, getWidgetRequestWithNewParametersProperty(form, 'show_trend', newShowTrend));
+    selectFieldSwitcher(wrapper).triggerCustomEvent('input', newShowTrend);
+    expect(wrapper).toEmit('input', getWidgetRequestWithNewParametersProperty(form, 'show_trend', newShowTrend));
   });
 
   test('Font size changed after trigger field font size', async () => {
@@ -207,8 +206,8 @@ describe('numbers-widget-form', () => {
 
     const newFontSize = Faker.datatype.number();
 
-    selectFieldFontSize(wrapper).vm.$emit('input', newFontSize);
-    expectsOneInput(wrapper, getWidgetRequestWithNewParametersProperty(form, 'font_size', newFontSize));
+    selectFieldFontSize(wrapper).triggerCustomEvent('input', newFontSize);
+    expect(wrapper).toEmit('input', getWidgetRequestWithNewParametersProperty(form, 'font_size', newFontSize));
   });
 
   test('Renders `numbers-widget-form` widget settings with default props', async () => {

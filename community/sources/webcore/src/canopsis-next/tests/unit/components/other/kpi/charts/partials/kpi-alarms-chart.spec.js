@@ -196,7 +196,7 @@ describe('kpi-alarms-chart', () => {
 
     const kpiChartExportActions = wrapper.find('kpi-chart-export-actions-stub');
 
-    kpiChartExportActions.vm.$emit('export:csv');
+    kpiChartExportActions.triggerCustomEvent('export:csv');
 
     expect(exportCsv).toHaveBeenCalledTimes(1);
   });
@@ -214,7 +214,7 @@ describe('kpi-alarms-chart', () => {
 
     const kpiChartExportActions = wrapper.find('kpi-chart-export-actions-stub');
 
-    kpiChartExportActions.vm.$emit('export:png');
+    kpiChartExportActions.triggerCustomEvent('export:png');
 
     expect(exportPng).toHaveBeenCalledTimes(1);
   });

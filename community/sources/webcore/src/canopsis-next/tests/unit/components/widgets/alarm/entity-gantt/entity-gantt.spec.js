@@ -60,7 +60,7 @@ describe('entity-gantt', () => {
       page: 2,
     };
 
-    junitGanttChart.vm.$emit('update:query', newQuery);
+    junitGanttChart.triggerCustomEvent('update:query', newQuery);
 
     await flushPromises();
 

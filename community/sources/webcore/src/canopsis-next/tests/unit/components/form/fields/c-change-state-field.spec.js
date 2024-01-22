@@ -39,17 +39,9 @@ describe('c-change-state-field', () => {
       },
     });
 
-    const stateCriticityElement = wrapper.find('input.state-criticity-field');
+    wrapper.find('input.state-criticity-field').setValue(ENTITIES_STATES.critical);
 
-    stateCriticityElement.setValue(ENTITIES_STATES.critical);
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData.state).toEqual(ENTITIES_STATES.critical);
-    expect(eventData).toEqual({
+    expect(wrapper).toEmit('input', {
       ...initialValue,
       state: ENTITIES_STATES.critical,
     });
@@ -67,17 +59,11 @@ describe('c-change-state-field', () => {
       },
     });
 
-    const outputElement = wrapper.find('.v-textarea textarea');
     const newOutput = Faker.datatype.string();
-    outputElement.setValue(newOutput);
 
-    const inputEvents = wrapper.emitted('input');
+    wrapper.find('.v-textarea textarea').setValue(newOutput);
 
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData.output).toEqual(newOutput);
-    expect(eventData).toEqual({
+    expect(wrapper).toEmit('input', {
       ...initialValue,
       output: newOutput,
     });

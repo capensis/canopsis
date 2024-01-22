@@ -22,7 +22,7 @@ describe('c-alarm-metric-aggregate-function-field', () => {
       },
     });
 
-    selectRadioGroup(wrapper).vm.$emit('input', AGGREGATE_FUNCTIONS.max);
+    selectRadioGroup(wrapper).triggerCustomEvent('input', AGGREGATE_FUNCTIONS.max);
 
     expect(wrapper).toEmit('input', AGGREGATE_FUNCTIONS.max);
   });

@@ -81,9 +81,7 @@ describe('c-ellipsis', () => {
 
     wrapper.find('div > span').trigger('click');
 
-    const textClickedEvents = wrapper.emitted('textClicked');
-
-    expect(textClickedEvents).toHaveLength(1);
+    expect(wrapper).toEmit('textClicked');
   });
 
   it('Click on text with text letters count more then default max letters', () => {
@@ -93,9 +91,7 @@ describe('c-ellipsis', () => {
 
     wrapper.find('div > span').trigger('click');
 
-    const textClickedEvents = wrapper.emitted('textClicked');
-
-    expect(textClickedEvents).toHaveLength(1);
+    expect(wrapper).toEmit('textClicked');
   });
 
   it('Renders `c-ellipsis` correctly', async () => {

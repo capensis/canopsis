@@ -74,7 +74,7 @@ describe('alarms-list-modal', () => {
       },
     ];
 
-    selectFieldColumns(wrapper).vm.$emit('input', newColumns);
+    selectFieldColumns(wrapper).triggerCustomEvent('input', newColumns);
 
     expect(wrapper).toEmit('input', { ...form, widgetColumns: newColumns });
   });
@@ -88,7 +88,7 @@ describe('alarms-list-modal', () => {
       min: form.itemsPerPage + 1,
     });
 
-    selectFieldDefaultElementsPerPage(wrapper).vm.$emit('input', newValue);
+    selectFieldDefaultElementsPerPage(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', { ...form, itemsPerPage: newValue });
   });
@@ -105,7 +105,7 @@ describe('alarms-list-modal', () => {
       },
     ];
 
-    selectFieldInfoPopup(wrapper).vm.$emit('input', newInfoPopups);
+    selectFieldInfoPopup(wrapper).triggerCustomEvent('input', newInfoPopups);
 
     expect(wrapper).toEmit('input', { ...form, infoPopups: newInfoPopups });
   });
@@ -117,7 +117,7 @@ describe('alarms-list-modal', () => {
 
     const newTemplate = Faker.datatype.string();
 
-    selectFieldTextEditorWithTemplate(wrapper).vm.$emit('input', newTemplate);
+    selectFieldTextEditorWithTemplate(wrapper).triggerCustomEvent('input', newTemplate);
 
     expect(wrapper).toEmit('input', { ...form, moreInfoTemplate: newTemplate });
   });
@@ -129,7 +129,7 @@ describe('alarms-list-modal', () => {
 
     const newShowRootCauseByStateClick = Faker.datatype.boolean();
 
-    selectFieldSwitcher(wrapper).vm.$emit('input', newShowRootCauseByStateClick);
+    selectFieldSwitcher(wrapper).triggerCustomEvent('input', newShowRootCauseByStateClick);
 
     expect(wrapper).toEmit('input', { ...form, showRootCauseByStateClick: newShowRootCauseByStateClick });
   });

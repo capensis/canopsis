@@ -19,7 +19,7 @@ describe('flowchart-stroke-type-field', () => {
 
     const selectField = selectSelectField(wrapper);
 
-    selectField.vm.$emit('input', STROKE_TYPES.dashed);
+    selectField.triggerCustomEvent('input', STROKE_TYPES.dashed);
 
     expect(wrapper).toEmit('input', STROKE_TYPES.dashed);
   });

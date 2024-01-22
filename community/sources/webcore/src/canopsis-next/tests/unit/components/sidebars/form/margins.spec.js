@@ -40,7 +40,7 @@ describe('margins', () => {
 
     const newValue = Faker.datatype.number();
 
-    selectFieldSliderTop(wrapper).vm.$emit('input', newValue);
+    selectFieldSliderTop(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', { ...form, top: newValue });
   });
@@ -52,7 +52,7 @@ describe('margins', () => {
 
     const newValue = Faker.datatype.number();
 
-    selectFieldSliderRight(wrapper).vm.$emit('input', newValue);
+    selectFieldSliderRight(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', { ...form, right: newValue });
   });
@@ -64,7 +64,7 @@ describe('margins', () => {
 
     const newValue = Faker.datatype.number();
 
-    selectFieldSliderBottom(wrapper).vm.$emit('input', newValue);
+    selectFieldSliderBottom(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', { ...form, bottom: newValue });
   });
@@ -76,7 +76,7 @@ describe('margins', () => {
 
     const newValue = Faker.datatype.number();
 
-    selectFieldSliderLeft(wrapper).vm.$emit('input', newValue);
+    selectFieldSliderLeft(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', { ...form, left: newValue });
   });

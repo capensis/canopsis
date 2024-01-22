@@ -25,7 +25,7 @@ describe('flowchart-color-field', () => {
 
     const checkboxField = selectCheckboxField(wrapper);
 
-    checkboxField.vm.$emit('change', true);
+    checkboxField.triggerCustomEvent('change', true);
 
     expect(wrapper).toEmit('input', firstColor);
   });
@@ -39,7 +39,7 @@ describe('flowchart-color-field', () => {
 
     const checkboxField = selectCheckboxField(wrapper);
 
-    checkboxField.vm.$emit('change', false);
+    checkboxField.triggerCustomEvent('change', false);
 
     expect(wrapper).toEmit('input', 'transparent');
   });
@@ -59,7 +59,7 @@ describe('flowchart-color-field', () => {
 
     const button = selectButton(wrapper);
 
-    button.vm.$emit('click');
+    button.triggerCustomEvent('click');
     expect($modals.show).toBeCalledWith(
       {
         name: MODALS.colorPicker,

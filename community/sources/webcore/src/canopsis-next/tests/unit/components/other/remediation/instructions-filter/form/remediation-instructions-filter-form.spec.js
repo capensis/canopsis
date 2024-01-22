@@ -76,7 +76,7 @@ describe('remediation-instructions-filter-form', () => {
     });
 
     const runningField = selectRunningField(wrapper);
-    runningField.vm.$emit('input', false);
+    runningField.triggerCustomEvent('input', false);
 
     expect(wrapper).toEmit('input', { running: false });
   });
@@ -93,7 +93,7 @@ describe('remediation-instructions-filter-form', () => {
 
     const withField = selectWithField(wrapper);
 
-    withField.vm.$emit('input', false);
+    withField.triggerCustomEvent('input', false);
 
     expect(wrapper).toEmit('input', { with: false });
   });
@@ -110,7 +110,7 @@ describe('remediation-instructions-filter-form', () => {
 
     const allField = selectAllField(wrapper);
 
-    allField.vm.$emit('change', false);
+    allField.triggerCustomEvent('change', false);
 
     expect(wrapper).toEmit('input', { all: false });
   });
@@ -127,7 +127,7 @@ describe('remediation-instructions-filter-form', () => {
 
     const allField = selectAllField(wrapper);
 
-    allField.vm.$emit('change', true);
+    allField.triggerCustomEvent('change', true);
 
     expect(wrapper).toEmit('input', {
       all: true,
@@ -155,7 +155,7 @@ describe('remediation-instructions-filter-form', () => {
 
     const autoField = selectAutoField(wrapper);
 
-    autoField.vm.$emit('change', false);
+    autoField.triggerCustomEvent('change', false);
     expect(wrapper).toEmit('input', {
       auto: false,
       instructions: filter.instructions,
@@ -180,7 +180,7 @@ describe('remediation-instructions-filter-form', () => {
 
     const manualField = selectManualField(wrapper);
 
-    manualField.vm.$emit('change', true);
+    manualField.triggerCustomEvent('change', true);
     expect(wrapper).toEmit('input', {
       manual: true,
       instructions: [],
@@ -205,7 +205,7 @@ describe('remediation-instructions-filter-form', () => {
       },
     ];
 
-    instructionsField.vm.$emit('change', instructions);
+    instructionsField.triggerCustomEvent('change', instructions);
     expect(wrapper).toEmit('input', {
       manual: true,
       instructions,

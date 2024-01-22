@@ -324,7 +324,7 @@ describe('create-filter', () => {
       },
     };
 
-    patternsForm.vm.$emit('input', newForm);
+    patternsForm.triggerCustomEvent('input', newForm);
 
     selectSubmitButton(wrapper).trigger('click');
 

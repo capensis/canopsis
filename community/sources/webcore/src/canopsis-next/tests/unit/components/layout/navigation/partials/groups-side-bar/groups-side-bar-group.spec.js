@@ -77,7 +77,7 @@ describe('groups-side-bar-group', () => {
 
     const updatedViews = [...views].reverse();
 
-    selectDraggableField(wrapper).vm.$emit('input', updatedViews);
+    selectDraggableField(wrapper).triggerCustomEvent('input', updatedViews);
 
     expect(wrapper).toEmit('update:group', {
       ...groupWithViews,

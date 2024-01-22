@@ -31,7 +31,7 @@ describe('field-slider', () => {
 
     const newValue = Faker.datatype.number({ min: value });
 
-    selectSliderField(wrapper).vm.$emit('input', newValue);
+    selectSliderField(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', newValue);
   });

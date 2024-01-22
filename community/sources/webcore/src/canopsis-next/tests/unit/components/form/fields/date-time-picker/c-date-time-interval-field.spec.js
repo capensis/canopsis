@@ -37,7 +37,7 @@ describe('c-date-time-interval-field', () => {
       max: timestamp,
     });
 
-    fromField.vm.$emit('input', newValue);
+    fromField.triggerCustomEvent('input', newValue);
     expect(wrapper).toEmit('input', { ...value, from: newValue });
   });
 
@@ -58,7 +58,7 @@ describe('c-date-time-interval-field', () => {
       max: timestamp,
     });
 
-    toField.vm.$emit('input', newValue);
+    toField.triggerCustomEvent('input', newValue);
     expect(wrapper).toEmit('input', { ...value, to: newValue });
   });
 

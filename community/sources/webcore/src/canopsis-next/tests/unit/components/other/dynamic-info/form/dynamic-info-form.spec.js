@@ -37,7 +37,7 @@ describe('dynamic-info-form', () => {
       description: Faker.datatype.string(),
     };
 
-    dynamicInfoGeneralForm.vm.$emit('input', newForm);
+    dynamicInfoGeneralForm.triggerCustomEvent('input', newForm);
 
     expect(wrapper).toEmit('input', newForm);
   });
@@ -61,7 +61,7 @@ describe('dynamic-info-form', () => {
       },
     ];
 
-    dynamicInfoInfosForm.vm.$emit('input', newInfos);
+    dynamicInfoInfosForm.triggerCustomEvent('input', newInfos);
 
     expect(wrapper).toEmit('input', { infos: newInfos });
   });
@@ -83,7 +83,7 @@ describe('dynamic-info-form', () => {
       entity_pattern: {},
     };
 
-    patternsForm.vm.$emit('input', newPatterns);
+    patternsForm.triggerCustomEvent('input', newPatterns);
 
     expect(wrapper).toEmit('input', {
       infos: [],

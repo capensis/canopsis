@@ -35,7 +35,7 @@ describe('storage-settings-perf-data-metrics-form', () => {
 
     const newValue = randomDurationValue();
 
-    selectPerfDataMetricsDeleteAfterField(wrapper).vm.$emit('input', newValue);
+    selectPerfDataMetricsDeleteAfterField(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', { ...form, delete_after: newValue });
   });

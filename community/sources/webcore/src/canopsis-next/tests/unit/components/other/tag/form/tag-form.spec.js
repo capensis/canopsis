@@ -32,7 +32,7 @@ describe('tag-form', () => {
 
     const newValue = Faker.datatype.string();
 
-    selectValueField(wrapper).vm.$emit('input', newValue);
+    selectValueField(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', { value: newValue });
   });
@@ -48,7 +48,7 @@ describe('tag-form', () => {
 
     const newValue = Faker.internet.color();
 
-    selectColorPickerField(wrapper).vm.$emit('input', newValue);
+    selectColorPickerField(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', { color: newValue });
   });
@@ -68,7 +68,7 @@ describe('tag-form', () => {
       entity_pattern: {},
     };
 
-    selectTagPatternsForm(wrapper).vm.$emit('input', newPatterns);
+    selectTagPatternsForm(wrapper).triggerCustomEvent('input', newPatterns);
 
     expect(wrapper).toEmit('input', {
       value: 'Value',

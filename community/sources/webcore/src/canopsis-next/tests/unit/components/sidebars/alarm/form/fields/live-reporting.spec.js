@@ -72,12 +72,7 @@ describe('live-reporting', () => {
 
     modalArguments.config.action(actionValue);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual(actionValue);
+    expect(wrapper).toEmit('input', actionValue);
   });
 
   it('Text editor modal opened after trigger edit button', () => {
@@ -112,12 +107,7 @@ describe('live-reporting', () => {
 
     modalArguments.config.action(actionValue);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual(actionValue);
+    expect(wrapper).toEmit('input', actionValue);
   });
 
   it('Value removed after trigger delete button', () => {
@@ -131,12 +121,7 @@ describe('live-reporting', () => {
 
     deleteButton.trigger('click');
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({});
+    expect(wrapper).toEmit('input', {});
   });
 
   it('Renders `live-reporting` with default props', () => {

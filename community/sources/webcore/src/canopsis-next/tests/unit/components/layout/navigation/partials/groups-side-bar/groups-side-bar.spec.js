@@ -57,7 +57,7 @@ describe('groups-side-bar', () => {
   it('Side bar opened after trigger navigation', async () => {
     const wrapper = factory({ store });
 
-    selectNavigationDrawer(wrapper).vm.$emit('input', true);
+    selectNavigationDrawer(wrapper).triggerCustomEvent('input', true);
 
     expect(wrapper).toEmit('input', true);
   });
@@ -119,8 +119,8 @@ describe('groups-side-bar', () => {
 
     const updatedGroups = [...availableGroups].reverse();
 
-    selectDraggableField(wrapper).vm.$emit('input', updatedGroups);
-    selectSubmitButton(wrapper).vm.$emit('click');
+    selectDraggableField(wrapper).triggerCustomEvent('input', updatedGroups);
+    selectSubmitButton(wrapper).triggerCustomEvent('click');
 
     await flushPromises();
 
@@ -155,7 +155,7 @@ describe('groups-side-bar', () => {
 
     fetchGroupsList.mockClear();
 
-    selectSubmitButton(wrapper).vm.$emit('click');
+    selectSubmitButton(wrapper).triggerCustomEvent('click');
 
     await flushPromises();
 
@@ -198,8 +198,8 @@ describe('groups-side-bar', () => {
 
     const updatedGroups = [...availableGroups].reverse();
 
-    selectDraggableField(wrapper).vm.$emit('input', updatedGroups);
-    selectCancelButton(wrapper).vm.$emit('click');
+    selectDraggableField(wrapper).triggerCustomEvent('input', updatedGroups);
+    selectCancelButton(wrapper).triggerCustomEvent('click');
 
     await flushPromises();
 
@@ -209,7 +209,7 @@ describe('groups-side-bar', () => {
   it('Editing mode changed after trigger settings button', async () => {
     const wrapper = factory({ store });
 
-    selectGroupsSettingsButton(wrapper).vm.$emit('toggleEditingMode');
+    selectGroupsSettingsButton(wrapper).triggerCustomEvent('toggleEditingMode');
 
     expect(toggleEditingMode).toBeCalled();
   });

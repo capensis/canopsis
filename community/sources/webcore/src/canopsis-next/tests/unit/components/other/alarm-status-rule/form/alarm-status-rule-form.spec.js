@@ -47,7 +47,7 @@ describe('alarm-status-rule-form', () => {
 
     const newValue = Faker.datatype.string();
 
-    nameField.vm.$emit('input', newValue);
+    nameField.triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', { name: newValue });
   });
@@ -66,7 +66,7 @@ describe('alarm-status-rule-form', () => {
       unit: TIME_UNITS.hour,
     };
 
-    durationField.vm.$emit('input', newDuration);
+    durationField.triggerCustomEvent('input', newDuration);
 
     expect(wrapper).toEmit('input', { duration: newDuration });
   });
@@ -82,7 +82,7 @@ describe('alarm-status-rule-form', () => {
 
     const newPriority = Faker.datatype.number();
 
-    priorityField.vm.$emit('input', newPriority);
+    priorityField.triggerCustomEvent('input', newPriority);
 
     expect(wrapper).toEmit('input', { priority: newPriority });
   });
@@ -99,7 +99,7 @@ describe('alarm-status-rule-form', () => {
 
     const newFreqLimit = Faker.datatype.number();
 
-    numberField.vm.$emit('input', newFreqLimit);
+    numberField.triggerCustomEvent('input', newFreqLimit);
 
     expect(wrapper).toEmit('input', { freq_limit: newFreqLimit });
   });
@@ -115,7 +115,7 @@ describe('alarm-status-rule-form', () => {
 
     const newDescription = Faker.datatype.string();
 
-    descriptionField.vm.$emit('input', newDescription);
+    descriptionField.triggerCustomEvent('input', newDescription);
 
     expect(wrapper).toEmit('input', { description: newDescription });
   });
@@ -133,7 +133,7 @@ describe('alarm-status-rule-form', () => {
       alarm_pattern: {},
     };
 
-    alarmStatusRulePatternsForm.vm.$emit('input', newPatterns);
+    alarmStatusRulePatternsForm.triggerCustomEvent('input', newPatterns);
 
     expect(wrapper).toEmit('input', { patterns: newPatterns });
   });

@@ -38,7 +38,7 @@ describe('pbehavior-recurrence-rule-field', () => {
       },
     });
 
-    selectCreateRruleButton(wrapper).vm.$emit('click');
+    selectCreateRruleButton(wrapper).triggerCustomEvent('click');
 
     expect($modals.show).toBeCalledWith(
       {
@@ -80,7 +80,7 @@ describe('pbehavior-recurrence-rule-field', () => {
       },
     });
 
-    selectRemoveRruleButton(wrapper).vm.$emit('click');
+    selectRemoveRruleButton(wrapper).triggerCustomEvent('click');
 
     expect($modals.show).toBeCalledWith(
       {

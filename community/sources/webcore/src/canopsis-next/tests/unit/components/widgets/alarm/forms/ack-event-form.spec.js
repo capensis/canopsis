@@ -45,7 +45,7 @@ describe('ack-event-form', () => {
 
     const descriptionField = selectDescriptionField(wrapper);
 
-    descriptionField.vm.$emit('input', comment);
+    descriptionField.triggerCustomEvent('input', comment);
 
     expect(wrapper).toEmit('input', { ...form, comment });
   });
@@ -65,7 +65,7 @@ describe('ack-event-form', () => {
 
     const ackResources = !form.ack_resources;
 
-    selectCheckboxField(wrapper).vm.$emit('change', ackResources);
+    selectCheckboxField(wrapper).triggerCustomEvent('change', ackResources);
 
     expect(wrapper).toEmit('input', { ...form, ack_resources: ackResources });
   });

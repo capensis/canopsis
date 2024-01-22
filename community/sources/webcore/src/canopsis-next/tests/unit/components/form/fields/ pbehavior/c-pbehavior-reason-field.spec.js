@@ -53,7 +53,7 @@ describe('c-pbehavior-reason-field', () => {
       },
     });
 
-    selectSelectField(wrapper).vm.$emit('input', reason._id);
+    selectSelectField(wrapper).triggerCustomEvent('input', reason._id);
 
     expect(wrapper).toEmit('input', reason._id);
   });

@@ -304,7 +304,7 @@ describe('add-info-popup', () => {
       template: Faker.datatype.string(),
     };
 
-    infoPopupForm.vm.$emit('input', newForm);
+    infoPopupForm.triggerCustomEvent('input', newForm);
 
     selectSubmitButton(wrapper).trigger('click');
 

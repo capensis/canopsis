@@ -122,7 +122,7 @@ describe('filters-list', () => {
       },
     });
 
-    selectFiltersList(wrapper).vm.$emit('add');
+    selectFiltersList(wrapper).triggerCustomEvent('add');
 
     expect($modals.show).toBeCalledWith({
       name: MODALS.createFilter,
@@ -163,7 +163,7 @@ describe('filters-list', () => {
       author: Faker.datatype.string(),
     };
 
-    selectFiltersList(wrapper).vm.$emit('edit', editingFilter);
+    selectFiltersList(wrapper).triggerCustomEvent('edit', editingFilter);
 
     expect($modals.show).toBeCalledWith({
       name: MODALS.createFilter,
@@ -204,7 +204,7 @@ describe('filters-list', () => {
       _id: Faker.datatype.string(),
     };
 
-    selectFiltersList(wrapper).vm.$emit('delete', removingFilter);
+    selectFiltersList(wrapper).triggerCustomEvent('delete', removingFilter);
 
     expect($modals.show).toBeCalledWith({
       name: MODALS.confirmation,
@@ -244,7 +244,7 @@ describe('filters-list', () => {
 
     mockPutWidgetFilterPositionsRequest();
 
-    selectFiltersList(wrapper).vm.$emit('input', newSortedFilters);
+    selectFiltersList(wrapper).triggerCustomEvent('input', newSortedFilters);
 
     await flushPromises();
 
@@ -280,7 +280,7 @@ describe('filters-list', () => {
 
     mockPutWidgetFilterPositionsRequestWithError();
 
-    selectFiltersList(wrapper).vm.$emit('input', newSortedFilters);
+    selectFiltersList(wrapper).triggerCustomEvent('input', newSortedFilters);
 
     await flushPromises();
 

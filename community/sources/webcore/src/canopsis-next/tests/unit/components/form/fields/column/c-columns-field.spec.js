@@ -64,7 +64,7 @@ describe('c-columns-field', () => {
       label: Faker.datatype.string(),
     };
 
-    selectColumnFieldByIndex(wrapper, 2).vm.$emit('input', newColumn);
+    selectColumnFieldByIndex(wrapper, 2).triggerCustomEvent('input', newColumn);
 
     expect(wrapper).toEmit('input', [
       columns[0],
@@ -82,7 +82,7 @@ describe('c-columns-field', () => {
       },
     });
 
-    selectColumnFieldByIndex(wrapper, columnToRemoveIndex).vm.$emit('remove');
+    selectColumnFieldByIndex(wrapper, columnToRemoveIndex).triggerCustomEvent('remove');
 
     expect(wrapper).toEmit('input', [
       columns[0],

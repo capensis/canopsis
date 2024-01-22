@@ -32,7 +32,7 @@ describe('field-number', () => {
 
     const newValue = Faker.datatype.number();
 
-    selectNumberField(wrapper).vm.$emit('input', newValue);
+    selectNumberField(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', newValue);
   });

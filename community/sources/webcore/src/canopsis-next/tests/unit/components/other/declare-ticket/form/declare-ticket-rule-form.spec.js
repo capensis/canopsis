@@ -39,7 +39,7 @@ describe('declare-ticket-rule-form', () => {
       enabled: !form.enabled,
     };
 
-    selectDeclareTicketRuleGeneralForm(wrapper).vm.$emit('input', newForm);
+    selectDeclareTicketRuleGeneralForm(wrapper).triggerCustomEvent('input', newForm);
 
     expect(wrapper).toEmit('input', newForm);
   });
@@ -56,7 +56,7 @@ describe('declare-ticket-rule-form', () => {
       entity_patterns: [{}, {}],
     };
 
-    selectDeclareTicketRulePatternsForm(wrapper).vm.$emit('input', newFormPatterns);
+    selectDeclareTicketRulePatternsForm(wrapper).triggerCustomEvent('input', newFormPatterns);
 
     expect(wrapper).toEmit('input', {
       ...form,

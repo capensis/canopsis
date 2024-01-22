@@ -96,18 +96,10 @@ describe('kpi-rating-settings-list', () => {
 
     await enableButton.trigger('click');
 
-    const submitButton = wrapper.findAll('.v-btn').at(1);
-
-    submitButton.trigger('click');
-
-    const changeSelectedEvents = wrapper.emitted('change-selected');
-
-    expect(changeSelectedEvents).toHaveLength(1);
-
-    const [eventData] = changeSelectedEvents[0];
+    wrapper.findAll('.v-btn').at(1).trigger('click');
 
     const [firstRatingSetting] = ratingSettingsItems;
-    expect(eventData).toEqual([{
+    expect(wrapper).toEmit('change-selected', [{
       ...firstRatingSetting,
       enabled: !firstRatingSetting.enabled,
     }]);

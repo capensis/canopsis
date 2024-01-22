@@ -20,16 +20,9 @@ describe('kpi-sli-show-mode-field', () => {
       },
     });
 
-    const valueElement = wrapper.find('select.v-select');
+    wrapper.find('select.v-select').setValue(KPI_SLI_GRAPH_DATA_TYPE.percent);
 
-    valueElement.setValue(KPI_SLI_GRAPH_DATA_TYPE.percent);
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(KPI_SLI_GRAPH_DATA_TYPE.percent);
+    expect(wrapper).toEmit('input', KPI_SLI_GRAPH_DATA_TYPE.percent);
   });
 
   it('Renders `kpi-sli-show-mode-field` without props', () => {

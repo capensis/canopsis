@@ -74,7 +74,7 @@ describe('c-alarm-tag-field', () => {
 
     const selectField = selectSelectField(wrapper);
 
-    selectField.vm.$emit('input');
+    selectField.triggerCustomEvent('input');
 
     expect(wrapper).toEmit('input');
   });

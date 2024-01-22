@@ -79,7 +79,7 @@ describe('c-duration-field', () => {
 
     const valueElement = selectSelectField(wrapper);
 
-    valueElement.vm.$emit('change', TIME_UNITS.month);
+    valueElement.triggerCustomEvent('change', TIME_UNITS.month);
 
     expect(wrapper).toEmit('input', {
       unit: TIME_UNITS.month,
@@ -101,7 +101,7 @@ describe('c-duration-field', () => {
 
     const valueElement = selectSelectField(wrapper);
 
-    valueElement.vm.$emit('change');
+    valueElement.triggerCustomEvent('change');
 
     expect(wrapper).toEmit('input', {
       unit: undefined,

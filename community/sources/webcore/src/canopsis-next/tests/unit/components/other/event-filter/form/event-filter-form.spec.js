@@ -62,7 +62,7 @@ describe('event-filter-form', () => {
 
     const newId = Faker.datatype.string();
 
-    idField.vm.$emit('input', newId);
+    idField.triggerCustomEvent('input', newId);
 
     expect(wrapper).toEmit('input', {
       ...form,
@@ -79,7 +79,7 @@ describe('event-filter-form', () => {
 
     const eventFilterTypeField = selectEventFilterTypeField(wrapper);
 
-    eventFilterTypeField.vm.$emit('input', EVENT_FILTER_TYPES.enrichment);
+    eventFilterTypeField.triggerCustomEvent('input', EVENT_FILTER_TYPES.enrichment);
 
     expect(wrapper).toEmit('input', {
       ...form,
@@ -98,7 +98,7 @@ describe('event-filter-form', () => {
 
     const description = Faker.datatype.string();
 
-    descriptionField.vm.$emit('input', description);
+    descriptionField.triggerCustomEvent('input', description);
 
     expect(wrapper).toEmit('input', {
       ...form,
@@ -117,7 +117,7 @@ describe('event-filter-form', () => {
 
     const priority = Faker.datatype.string();
 
-    priorityField.vm.$emit('input', priority);
+    priorityField.triggerCustomEvent('input', priority);
 
     expect(wrapper).toEmit('input', {
       ...form,
@@ -140,7 +140,7 @@ describe('event-filter-form', () => {
 
     const newEnabled = !enabled;
 
-    enabledField.vm.$emit('input', newEnabled);
+    enabledField.triggerCustomEvent('input', newEnabled);
 
     expect(wrapper).toEmit('input', {
       ...form,
@@ -161,7 +161,7 @@ describe('event-filter-form', () => {
       id: Faker.datatype.string(),
     };
 
-    patternsField.vm.$emit('input', newPatterns);
+    patternsField.triggerCustomEvent('input', newPatterns);
 
     expect(wrapper).toEmit('input', {
       ...form,
@@ -192,7 +192,7 @@ describe('event-filter-form', () => {
       connector_name: Faker.datatype.string(),
     };
 
-    eventFilterChangeEntityForm.vm.$emit('input', newConfig);
+    eventFilterChangeEntityForm.triggerCustomEvent('input', newConfig);
 
     expect(wrapper).toEmit('input', {
       ...changeEntityForm,
@@ -223,7 +223,7 @@ describe('event-filter-form', () => {
       external_data: [],
     };
 
-    eventFilterEnrichmentForm.vm.$emit('input', updatedForm);
+    eventFilterEnrichmentForm.triggerCustomEvent('input', updatedForm);
 
     expect(wrapper).toEmit('input', updatedForm);
   });
@@ -243,7 +243,7 @@ describe('event-filter-form', () => {
       exceptions: [],
     };
 
-    eventFilterDropIntervalsField.vm.$emit('input', newData);
+    eventFilterDropIntervalsField.triggerCustomEvent('input', newData);
 
     expect(wrapper).toEmit('input', newData);
   });

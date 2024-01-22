@@ -39,7 +39,7 @@ describe('declare-ticket-rule-general-form', () => {
 
     const newName = Faker.datatype.string();
 
-    selectNameField(wrapper).vm.$emit('input', newName);
+    selectNameField(wrapper).triggerCustomEvent('input', newName);
 
     expect(wrapper).toEmit('input', { ...form, name: newName });
   });
@@ -53,7 +53,7 @@ describe('declare-ticket-rule-general-form', () => {
 
     const newName = Faker.datatype.string();
 
-    selectSystemNameField(wrapper).vm.$emit('input', newName);
+    selectSystemNameField(wrapper).triggerCustomEvent('input', newName);
 
     expect(wrapper).toEmit('input', { ...form, system_name: newName });
   });
@@ -67,7 +67,7 @@ describe('declare-ticket-rule-general-form', () => {
 
     const newEnabled = !form.enabled;
 
-    selectEnabledField(wrapper).vm.$emit('input', newEnabled);
+    selectEnabledField(wrapper).triggerCustomEvent('input', newEnabled);
 
     expect(wrapper).toEmit('input', { ...form, enabled: newEnabled });
   });
@@ -81,7 +81,7 @@ describe('declare-ticket-rule-general-form', () => {
 
     const newEnabled = !form.emit_trigger;
 
-    selectEmitTriggerField(wrapper).vm.$emit('input', newEnabled);
+    selectEmitTriggerField(wrapper).triggerCustomEvent('input', newEnabled);
 
     expect(wrapper).toEmit('input', { ...form, emit_trigger: newEnabled });
   });
@@ -98,7 +98,7 @@ describe('declare-ticket-rule-general-form', () => {
       url: 'url',
     }];
 
-    selectDeclareTicketRuleWebhooksField(wrapper).vm.$emit('input', newWebhooks);
+    selectDeclareTicketRuleWebhooksField(wrapper).triggerCustomEvent('input', newWebhooks);
 
     expect(wrapper).toEmit('input', { ...form, webhooks: newWebhooks });
   });

@@ -260,7 +260,7 @@ describe('create-change-state-event', () => {
       comment: 'comment',
     };
 
-    changeStateEventField.vm.$emit('input', newForm);
+    changeStateEventField.triggerCustomEvent('input', newForm);
 
     selectSubmitButton(wrapper).trigger('click');
 

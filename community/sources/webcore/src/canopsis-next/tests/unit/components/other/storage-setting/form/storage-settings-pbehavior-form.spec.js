@@ -36,7 +36,7 @@ describe('storage-settings-pbehavior-form', () => {
 
     const newValue = randomDurationValue();
 
-    selectPbehaviorDeleteAfterField(wrapper).vm.$emit('input', newValue);
+    selectPbehaviorDeleteAfterField(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', { ...form, delete_after: newValue });
   });

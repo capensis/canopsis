@@ -45,7 +45,7 @@ const fillPointDialog = (
 ) => {
   const pointFormDialog = selectPointFormDialogMenu(wrapper);
 
-  pointFormDialog.vm.$emit('submit', point);
+  pointFormDialog.triggerCustomEvent('submit', point);
 
   return point;
 };
@@ -60,13 +60,13 @@ const checkMenuIsClosed = async (wrapper) => {
 const triggerContextMenuEvent = (wrapper, event) => {
   const contextMenu = selectPointContextmenu(wrapper);
 
-  return contextMenu.vm.$emit(event);
+  return contextMenu.triggerCustomEvent(event);
 };
 
 const triggerPointEvent = (wrapper, index, event) => {
   const pointMarker = selectPointMarkerByIndex(wrapper, index);
 
-  return pointMarker.vm.$emit(event, new Event(event));
+  return pointMarker.triggerCustomEvent(event, new Event(event));
 };
 
 const getEvent = () => ({

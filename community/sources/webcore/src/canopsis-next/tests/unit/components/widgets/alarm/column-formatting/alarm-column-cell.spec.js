@@ -428,7 +428,7 @@ describe('alarm-column-cell', () => {
 
     const popupBody = selectAlarmColumnPopupBody(wrapper);
 
-    popupBody.vm.$emit('close');
+    popupBody.triggerCustomEvent('close');
 
     await flushPromises();
 
