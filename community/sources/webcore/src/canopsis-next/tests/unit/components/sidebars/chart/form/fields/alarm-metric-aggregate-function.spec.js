@@ -1,4 +1,5 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+
 import { AGGREGATE_FUNCTIONS } from '@/constants';
 
 import AlarmMetricAggregateFunction from '@/components/sidebars/chart/form/fields/alarm-metric-aggregate-function.vue';

@@ -1,15 +1,17 @@
 import Faker from 'faker';
 import AxiosMockAdapter from 'axios-mock-adapter';
-import flushPromises from 'flush-promises';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
+
 import { API_ROUTES } from '@/config';
 import { MODALS } from '@/constants';
-import store from '@/store';
+
 import ClickOutside from '@/services/click-outside';
 import request from '@/services/request';
+
+import store from '@/store';
 
 import FiltersList from '@/components/modals/common/filters-list.vue';
 

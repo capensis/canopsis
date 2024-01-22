@@ -1,9 +1,9 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createCheckboxInputStub } from '@unit/stubs/input';
 import { createMockedStoreModules, createPbehaviorTypesModule } from '@unit/utils/store';
+
 import { PBEHAVIOR_TYPE_TYPES, TIME_UNITS } from '@/constants';
 
 import PbehaviorGeneralForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-general-form.vue';

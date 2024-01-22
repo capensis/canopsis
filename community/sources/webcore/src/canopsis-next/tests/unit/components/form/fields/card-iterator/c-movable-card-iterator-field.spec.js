@@ -1,6 +1,6 @@
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
-
 import { createButtonStub } from '@unit/stubs/button';
+
 import CMovableCardIteratorField from '@/components/forms/fields/card-iterator/c-movable-card-iterator-field.vue';
 import MovableCardIteratorItem from '@/components/forms/fields/card-iterator/movable-card-iterator-item.vue';
 

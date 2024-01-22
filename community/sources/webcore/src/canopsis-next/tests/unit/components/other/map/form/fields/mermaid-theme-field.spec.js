@@ -1,8 +1,9 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createSelectInputStub } from '@unit/stubs/input';
-import MermaidThemeField from '@/components/other/map/form/fields/mermaid-theme-field.vue';
+
 import { MERMAID_THEMES } from '@/constants';
+
+import MermaidThemeField from '@/components/other/map/form/fields/mermaid-theme-field.vue';
 
 const stubs = {
   'v-select': createSelectInputStub('v-select'),

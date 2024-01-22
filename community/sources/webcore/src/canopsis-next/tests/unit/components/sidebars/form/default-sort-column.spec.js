@@ -1,6 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createSelectInputStub } from '@unit/stubs/input';
+
 import { SORT_ORDERS } from '@/constants';
 
 import DefaultSortColumn from '@/components/sidebars/form/fields/default-sort-column.vue';

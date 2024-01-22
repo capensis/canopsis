@@ -1,7 +1,6 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import {
   createAlarmModule,
   createAuthModule,
@@ -11,8 +10,10 @@ import {
   createUserPreferenceModule,
 } from '@unit/utils/store';
 import { mockDateNow } from '@unit/utils/mock-hooks';
-import { widgetToForm } from '@/helpers/entities/widget/form';
+
 import { AGGREGATE_FUNCTIONS, ALARM_METRIC_PARAMETERS, SAMPLINGS, WIDGET_TYPES } from '@/constants';
+
+import { widgetToForm } from '@/helpers/entities/widget/form';
 
 import EntityChartWidget from '@/components/widgets/chart/entity-chart-widget.vue';
 

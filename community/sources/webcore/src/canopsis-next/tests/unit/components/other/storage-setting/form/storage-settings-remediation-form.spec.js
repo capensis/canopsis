@@ -1,7 +1,9 @@
 import { generateRenderer } from '@unit/utils/vue';
-import { TIME_UNITS } from '@/constants';
-import { dataStorageSettingsToForm } from '@/helpers/entities/data-storage/form';
 import { randomDurationValue } from '@unit/utils/duration';
+
+import { TIME_UNITS } from '@/constants';
+
+import { dataStorageSettingsToForm } from '@/helpers/entities/data-storage/form';
 
 import CInformationBlock from '@/components/common/block/c-information-block.vue';
 import StorageSettingsRemediationForm from '@/components/other/storage-setting/form/storage-settings-remediation-form.vue';

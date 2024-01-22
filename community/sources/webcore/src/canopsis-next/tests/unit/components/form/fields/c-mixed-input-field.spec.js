@@ -2,6 +2,7 @@ import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createInputStub } from '@unit/stubs/input';
+
 import { PATTERN_FIELD_TYPES } from '@/constants';
 
 import CMixedInputField from '@/components/forms/fields/c-mixed-input-field.vue';

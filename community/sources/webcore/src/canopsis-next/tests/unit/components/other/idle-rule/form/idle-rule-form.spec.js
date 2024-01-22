@@ -1,6 +1,7 @@
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+
 import { IDLE_RULE_TYPES } from '@/constants';
 
 import IdleRuleForm from '@/components/other/idle-rule/form/idle-rule-form.vue';

@@ -1,8 +1,10 @@
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
-import MermaidPreview from '@/components/other/map/partials/mermaid-preview.vue';
 import { COLOR_INDICATOR_TYPES } from '@/constants';
+
 import { mermaidPointToForm } from '@/helpers/entities/map/form';
+
+import MermaidPreview from '@/components/other/map/partials/mermaid-preview.vue';
 
 const stubs = {
   panzoom: true,

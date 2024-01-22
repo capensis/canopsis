@@ -1,7 +1,8 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createSelectInputStub } from '@unit/stubs/input';
+
 import { SAMPLINGS } from '@/constants';
+
 import CSamplingField from '@/components/forms/fields/c-sampling-field.vue';
 
 const stubs = {

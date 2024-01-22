@@ -1,7 +1,8 @@
-import { TREE_OF_DEPENDENCIES_SHOW_TYPES } from '@/constants';
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { randomArrayItem } from '@unit/utils/array';
 import { createNumberInputStub } from '@unit/stubs/input';
+
+import { TREE_OF_DEPENDENCIES_SHOW_TYPES } from '@/constants';
 
 import TreeOfDependenciesSettings from '@/components/sidebars/form/fields/tree-of-dependencies-settings.vue';
 

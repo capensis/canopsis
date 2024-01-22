@@ -6,6 +6,7 @@ import Faker from 'faker';
 import { CANOPSIS_EDITION } from '@/constants';
 
 import request from '@/services/request';
+
 import { DEFAULT_ENTITY_MODULE_TYPES } from '@/store/plugins/entities/create-crud-module';
 
 /**

@@ -1,8 +1,7 @@
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
-import flushPromises from 'flush-promises';
 import { mockPopups } from '@unit/utils/mock-hooks';
+
 import EntityGantt from '@/components/widgets/alarm/entity-gantt/entity-gantt.vue';
 
 const stubs = {

@@ -1,14 +1,15 @@
-import flushPromises from 'flush-promises';
 import { omit, pick } from 'lodash';
 import Faker from 'faker';
 
-import { generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 import { triggerDocumentMouseEvent, triggerDocumentKeyboardEvent } from '@unit/utils/events';
 
 import { CONNECTOR_SIDES, FLOWCHART_KEY_CODES, SHAPES } from '@/constants';
+
 import { shapeToForm } from '@/helpers/flowchart/shapes';
 import { readTextFromClipboard, writeTextToClipboard } from '@/helpers/clipboard';
 import { uid } from '@/helpers/uid';
+
 import RectShape from '@/components/common/flowchart/shapes/rect-shape/rect-shape.vue';
 import RhombusShape from '@/components/common/flowchart/shapes/rhombus-shape/rhombus-shape.vue';
 import CircleShape from '@/components/common/flowchart/shapes/circle-shape/circle-shape.vue';
@@ -21,7 +22,6 @@ import LineShape from '@/components/common/flowchart/shapes/line-shape/line-shap
 import ArrowLineShape from '@/components/common/flowchart/shapes/arrow-line-shape/arrow-line-shape.vue';
 import BidirectionalArrowLineShape from '@/components/common/flowchart/shapes/bidirectional-arrow-line-shape/bidirectional-arrow-line-shape.vue';
 import ImageShape from '@/components/common/flowchart/shapes/image-shape/image-shape.vue';
-
 import FlowchartEditor from '@/components/common/flowchart/flowchart-editor.vue';
 
 jest.mock('@/helpers/uid', () => {

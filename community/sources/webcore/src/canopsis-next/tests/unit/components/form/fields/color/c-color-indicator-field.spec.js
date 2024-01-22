@@ -1,7 +1,8 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
-import CColorIndicatorField from '@/components/forms/fields/color/c-color-indicator-field.vue';
 import { COLOR_INDICATOR_TYPES } from '@/constants';
+
+import CColorIndicatorField from '@/components/forms/fields/color/c-color-indicator-field.vue';
 
 const stubs = {
   'v-radio-group': {

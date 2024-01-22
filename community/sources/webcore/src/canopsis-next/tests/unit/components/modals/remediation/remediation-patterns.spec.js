@@ -1,15 +1,16 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { createModalWrapperStub } from '@unit/stubs/modal';
+
+import { PATTERN_CUSTOM_ITEM_VALUE } from '@/constants';
+
 import ClickOutside from '@/services/click-outside';
 
 import RemediationPatterns from '@/components/modals/remediation/remediation-patterns.vue';
-import { PATTERN_CUSTOM_ITEM_VALUE } from '@/constants';
 
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),

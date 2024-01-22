@@ -1,6 +1,7 @@
 import Faker from 'faker';
 
 import { testsEntityModule } from '@unit/utils/store';
+
 import { API_ROUTES } from '@/config';
 
 import patternModule from '@/store/modules/entities/pattern';

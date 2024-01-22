@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { createVueInstance, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, createVueInstance, generateRenderer } from '@unit/utils/vue';
 
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
 

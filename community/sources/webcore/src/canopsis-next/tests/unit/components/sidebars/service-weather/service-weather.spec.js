@@ -1,8 +1,7 @@
 import { omit } from 'lodash';
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { mockDateNow, mockSidebar } from '@unit/utils/mock-hooks';
 import {
@@ -22,6 +21,7 @@ import {
 } from '@/constants';
 
 import ClickOutside from '@/services/click-outside';
+
 import { widgetToForm, formToWidget, getEmptyWidgetByType } from '@/helpers/entities/widget/form';
 
 import ServiceWeatherSettings from '@/components/sidebars/service-weather/service-weather.vue';

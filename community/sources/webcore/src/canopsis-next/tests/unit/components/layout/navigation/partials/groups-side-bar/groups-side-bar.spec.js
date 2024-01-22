@@ -1,7 +1,6 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import {
   createAuthModule,
   createEntitiesModule,
@@ -10,8 +9,9 @@ import {
   createNavigationModule,
   createViewModule,
 } from '@unit/utils/store';
-import { CRUD_ACTIONS, MAX_LIMIT, USERS_PERMISSIONS } from '@/constants';
 import { mockPopups } from '@unit/utils/mock-hooks';
+
+import { CRUD_ACTIONS, MAX_LIMIT, USERS_PERMISSIONS } from '@/constants';
 
 import GroupsSideBar from '@/components/layout/navigation/partials/groups-side-bar/groups-side-bar.vue';
 

@@ -1,5 +1,4 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { fakeAlarmDetails } from '@unit/data/alarm';
 
 import AlarmsTimeLine from '@/components/widgets/alarm/time-line/alarms-time-line.vue';

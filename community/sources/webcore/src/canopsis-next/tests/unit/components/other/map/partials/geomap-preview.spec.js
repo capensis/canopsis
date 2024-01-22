@@ -1,10 +1,10 @@
-import flushPromises from 'flush-promises';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { COLOR_INDICATOR_TYPES, ENTITIES_STATES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
+
+import { geomapPointToForm } from '@/helpers/entities/map/form';
 
 import GeomapPreview from '@/components/other/map/partials/geomap-preview.vue';
-import { COLOR_INDICATOR_TYPES, ENTITIES_STATES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
-import { geomapPointToForm } from '@/helpers/entities/map/form';
 
 const fitBounds = jest.fn();
 

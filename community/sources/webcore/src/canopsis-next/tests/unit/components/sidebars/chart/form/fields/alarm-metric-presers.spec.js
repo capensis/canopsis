@@ -1,4 +1,5 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+
 import { ALARM_METRIC_PARAMETERS } from '@/constants';
 
 import AlarmMetricPresets from '@/components/sidebars/chart/form/fields/alarm-metric-presets.vue';

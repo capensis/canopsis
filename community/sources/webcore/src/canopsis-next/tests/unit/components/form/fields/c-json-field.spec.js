@@ -2,8 +2,9 @@ import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createTextareaInputStub } from '@unit/stubs/input';
 import { createButtonStub } from '@unit/stubs/button';
 
-import CJsonField from '@/components/forms/fields/c-json-field.vue';
 import { stringifyJson } from '@/helpers/json';
+
+import CJsonField from '@/components/forms/fields/c-json-field.vue';
 
 const stubs = {
   'v-textarea': createTextareaInputStub('v-textarea'),

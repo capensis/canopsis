@@ -1,8 +1,9 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 
-import CEventFilterTypeField from '@/components/forms/fields/c-event-filter-type-field.vue';
 import { EVENT_FILTER_TYPES } from '@/constants';
+
+import CEventFilterTypeField from '@/components/forms/fields/c-event-filter-type-field.vue';
 
 const stubs = {
   'v-select': createSelectInputStub('v-select'),

@@ -1,6 +1,7 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createButtonStub } from '@unit/stubs/button';
 import { mockModals } from '@unit/utils/mock-hooks';
+
 import { MODALS } from '@/constants';
 
 import RemediationInstructionsFilters from '@/components/sidebars/alarm/form/fields/remediation-instructions-filters.vue';

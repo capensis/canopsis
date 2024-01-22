@@ -3,8 +3,9 @@ import Faker from 'faker';
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 
-import InfoPopupForm from '@/components/widgets/alarm/forms/info-popup-form.vue';
 import { ALARM_FIELDS } from '@/constants';
+
+import InfoPopupForm from '@/components/widgets/alarm/forms/info-popup-form.vue';
 
 const stubs = {
   'v-select': createSelectInputStub('v-select'),

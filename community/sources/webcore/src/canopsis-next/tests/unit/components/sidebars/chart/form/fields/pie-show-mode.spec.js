@@ -1,5 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createInputStub } from '@unit/stubs/input';
+
 import { KPI_PIE_CHART_SHOW_MODS } from '@/constants';
 
 import CPieShowModeField from '@/components/sidebars/chart/form/fields/pie-show-mode.vue';

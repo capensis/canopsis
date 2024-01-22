@@ -1,6 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { mockDateNow } from '@unit/utils/mock-hooks';
+
 import { QUICK_RANGES } from '@/constants';
 
 import CQuickDateIntervalField from '@/components/forms/fields/c-quick-date-interval-field.vue';

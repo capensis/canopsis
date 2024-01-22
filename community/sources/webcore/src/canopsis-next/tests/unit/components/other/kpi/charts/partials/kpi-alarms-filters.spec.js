@@ -1,8 +1,6 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
 
 import { ALARM_METRIC_PARAMETERS, QUICK_RANGES, SAMPLINGS } from '@/constants';
@@ -147,9 +145,7 @@ describe('kpi-alarms-filters', () => {
       },
     });
 
-    const metricParametersField = wrapper.find('c-alarm-metric-parameters-field-stub');
-
-    metricParametersField.triggerCustomEvent('input', newParameters);
+    wrapper.find('c-alarm-metric-parameters-field-stub').triggerCustomEvent('input', newParameters);
 
     await flushPromises();
 

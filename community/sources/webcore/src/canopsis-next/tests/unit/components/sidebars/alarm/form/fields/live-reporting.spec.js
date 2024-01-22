@@ -3,6 +3,7 @@ import Faker from 'faker';
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { fakeTimestamp } from '@unit/data/date';
+
 import { MODALS } from '@/constants';
 
 import LiveReporting from '@/components/sidebars/alarm/form/fields/live-reporting.vue';

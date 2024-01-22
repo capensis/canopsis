@@ -1,6 +1,7 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
 import { fakeTimestamp } from '@unit/data/date';
+
 import { ALARM_INTERVAL_FIELDS, QUICK_RANGES, TIME_UNITS } from '@/constants';
 
 import DateIntervalSelector from '@/components/forms/date-interval-selector.vue';

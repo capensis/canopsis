@@ -1,6 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createCheckboxInputStub } from '@unit/stubs/input';
+
 import { AGGREGATE_FUNCTIONS } from '@/constants';
 
 import CAlarmMetricAggregateFunctionField from '@/components/forms/fields/kpi/c-alarm-metric-aggregate-function-field.vue';

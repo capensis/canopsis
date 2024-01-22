@@ -1,7 +1,7 @@
 import { generateRenderer } from '@unit/utils/vue';
 import { createModalWrapperStub } from '@unit/stubs/modal';
-
 import { createMockedStoreModules } from '@unit/utils/store';
+
 import AlarmsList from '@/components/modals/alarm/alarms-list.vue';
 
 const snapshotStubs = {

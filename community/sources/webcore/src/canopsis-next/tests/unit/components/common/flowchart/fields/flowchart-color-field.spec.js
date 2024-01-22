@@ -1,10 +1,11 @@
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { mockModals } from '@unit/utils/mock-hooks';
-import FlowchartColorField from '@/components/common/flowchart/fields/flowchart-color-field.vue';
+
 import { MODALS } from '@/constants';
+
+import FlowchartColorField from '@/components/common/flowchart/fields/flowchart-color-field.vue';
 
 const selectCheckboxField = wrapper => wrapper.find('v-checkbox-stub');
 const selectButton = wrapper => wrapper.find('v-btn-stub');

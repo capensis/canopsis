@@ -1,7 +1,6 @@
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createNumberInputStub } from '@unit/stubs/input';
 
 import CNumberField from '@/components/forms/fields/c-number-field.vue';

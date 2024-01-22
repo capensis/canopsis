@@ -1,8 +1,7 @@
 import { omit } from 'lodash';
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { mockSidebar } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
@@ -17,6 +16,7 @@ import {
 import { SIDE_BARS, WIDGET_TYPES } from '@/constants';
 
 import ClickOutside from '@/services/click-outside';
+
 import { widgetToForm, formToWidget, getEmptyWidgetByType } from '@/helpers/entities/widget/form';
 
 import TextSettings from '@/components/sidebars/text/text.vue';

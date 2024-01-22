@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { createVueInstance, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, createVueInstance, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules, createPbehaviorTimespanModule, createPbehaviorTypesModule } from '@unit/utils/store';
 
 import PbehaviorPlanningCalendar from '@/components/other/pbehavior/calendar/pbehavior-planning-calendar.vue';

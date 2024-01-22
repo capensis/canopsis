@@ -1,6 +1,7 @@
 import Faker from 'faker';
 
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+
 import { REQUEST_METHODS } from '@/constants';
 
 import PbehaviorGeneralForm from '@/components/other/declare-ticket/form/declare-ticket-rule-general-form.vue';

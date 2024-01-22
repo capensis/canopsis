@@ -1,7 +1,7 @@
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createAuthModule, createMockedStoreModules } from '@unit/utils/store';
-
 import { mockModals } from '@unit/utils/mock-hooks';
+
 import { ENTITY_TYPES, MODALS, PBEHAVIOR_TYPE_TYPES, USERS_PERMISSIONS } from '@/constants';
 
 import ServiceEntity from '@/components/other/service/partials/service-entity.vue';

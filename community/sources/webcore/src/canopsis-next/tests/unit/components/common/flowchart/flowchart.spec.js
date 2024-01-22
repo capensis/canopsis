@@ -1,7 +1,8 @@
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
-import Flowchart from '@/components/common/flowchart/flowchart.vue';
 import { circleShapeToForm, rectShapeToForm } from '@/helpers/flowchart/shapes';
+
+import Flowchart from '@/components/common/flowchart/flowchart.vue';
 
 const stubs = {
   'c-zoom-overlay': true,

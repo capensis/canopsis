@@ -1,6 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createSelectInputStub } from '@unit/stubs/input';
+
 import { ALARM_PATTERN_FIELDS } from '@/constants';
 
 import PatternAttributeField from '@/components/forms/fields/pattern/pattern-attribute-field.vue';

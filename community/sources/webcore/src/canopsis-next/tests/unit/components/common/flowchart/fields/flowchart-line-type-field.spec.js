@@ -1,5 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
+
 import { LINE_TYPES } from '@/constants';
 
 import FlowchartLineTypeField from '@/components/common/flowchart/fields/flowchart-line-type-field.vue';

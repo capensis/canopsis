@@ -1,6 +1,7 @@
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+
 import { EVENT_FILTER_ENRICHMENT_AFTER_TYPES, EVENT_FILTER_TYPES, PATTERN_CUSTOM_ITEM_VALUE } from '@/constants';
 
 import EventFilterForm from '@/components/other/event-filter/form/event-filter-form.vue';

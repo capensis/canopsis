@@ -1,6 +1,7 @@
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+
 import { PATTERN_FIELD_TYPES } from '@/constants';
 
 import CMixedField from '@/components/forms/fields/c-mixed-field.vue';

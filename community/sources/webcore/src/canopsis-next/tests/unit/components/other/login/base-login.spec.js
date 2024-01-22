@@ -1,11 +1,11 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createAuthModule, createInfoModule, createMockedStoreModules } from '@unit/utils/store';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { mockRouter } from '@unit/utils/mock-hooks';
+
 import { ROUTES_NAMES } from '@/constants';
 
 import BaseLogin from '@/components/other/login/base-login.vue';

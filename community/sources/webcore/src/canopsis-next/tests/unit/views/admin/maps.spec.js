@@ -1,12 +1,12 @@
 import Faker from 'faker';
 import { omit } from 'lodash';
-import flushPromises from 'flush-promises';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
 
 import { CRUD_ACTIONS, MAP_TYPES, MODALS, USERS_PERMISSIONS } from '@/constants';
+
 import Maps from '@/views/admin/maps.vue';
 
 const stubs = {

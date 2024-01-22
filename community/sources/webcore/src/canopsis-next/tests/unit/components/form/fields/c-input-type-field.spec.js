@@ -1,5 +1,6 @@
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
+
 import { PATTERN_FIELD_TYPES } from '@/constants';
 
 import CInputTypeField from '@/components/forms/fields/c-input-type-field.vue';

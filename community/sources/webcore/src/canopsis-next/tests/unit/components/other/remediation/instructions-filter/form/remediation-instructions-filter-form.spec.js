@@ -1,7 +1,7 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createMockedStoreModules } from '@unit/utils/store';
 import { createCheckboxInputStub, createInputStub, createSelectInputStub } from '@unit/stubs/input';
+
 import { MAX_LIMIT, REMEDIATION_INSTRUCTION_TYPES } from '@/constants';
 
 import RemediationInstructionsFilterForm from '@/components/other/remediation/instructions-filter/form/remediation-instructions-filter-form.vue';
