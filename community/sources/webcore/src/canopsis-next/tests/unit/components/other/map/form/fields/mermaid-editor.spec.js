@@ -143,7 +143,7 @@ describe('mermaid-editor', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `mermaid-editor` with custom props', () => {
@@ -155,7 +155,7 @@ describe('mermaid-editor', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `mermaid-editor` with validation errors ', async () => {
@@ -171,6 +171,6 @@ describe('mermaid-editor', () => {
 
     await validator.validateAll();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

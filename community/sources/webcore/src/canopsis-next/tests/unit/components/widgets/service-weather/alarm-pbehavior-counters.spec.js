@@ -45,7 +45,7 @@ describe('alarm-pbehavior-counters', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchTooltipSnapshot();
   });
 
@@ -57,7 +57,7 @@ describe('alarm-pbehavior-counters', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchTooltipSnapshot();
   });
 });

@@ -1,18 +1,19 @@
-<template lang="pug">
-  v-card-text
-    remediation-jobs-list(
-      :remediation-jobs="remediationJobs",
-      :pending="remediationJobsPending",
-      :total-items="remediationJobsMeta.total_count",
-      :pagination.sync="pagination",
-      :removable="hasDeleteAnyRemediationJobAccess",
-      :updatable="hasUpdateAnyRemediationJobAccess",
-      :duplicable="hasCreateAnyRemediationJobAccess",
-      @remove-selected="showRemoveSelectedRemediationJobsModal",
-      @remove="showRemoveRemediationJobModal",
-      @duplicate="showDuplicateRemediationJobModal",
+<template>
+  <v-card-text>
+    <remediation-jobs-list
+      :remediation-jobs="remediationJobs"
+      :pending="remediationJobsPending"
+      :total-items="remediationJobsMeta.total_count"
+      :options.sync="options"
+      :removable="hasDeleteAnyRemediationJobAccess"
+      :updatable="hasUpdateAnyRemediationJobAccess"
+      :duplicable="hasCreateAnyRemediationJobAccess"
+      @remove-selected="showRemoveSelectedRemediationJobsModal"
+      @remove="showRemoveRemediationJobModal"
+      @duplicate="showDuplicateRemediationJobModal"
       @edit="showEditRemediationJobModal"
-    )
+    />
+  </v-card-text>
 </template>
 
 <script>

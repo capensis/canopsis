@@ -8,39 +8,27 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctl
       class="v-menu"
     >
       <button
-        class="ma-0 v-btn v-btn--icon theme--light"
+        class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--light"
+            class="v-icon notranslate material-icons theme--light"
           >
             more_vert
           </i>
-        </div>
+        </span>
       </button>
-      <transition-stub
-        name="v-menu-transition"
-      >
-        <div
-          class="v-menu__content theme--light "
-          style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
-        />
-      </transition-stub>
+      <!---->
     </div>
   </div>
 </div>
 `;
 
-exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the mobile size 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
-/>
-`;
+exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the mobile size 2`] = `undefined`;
 
 exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the tablet size 1`] = `
 <div>
@@ -50,39 +38,27 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctl
       class="v-menu"
     >
       <button
-        class="ma-0 v-btn v-btn--icon theme--light"
+        class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--light"
+            class="v-icon notranslate material-icons theme--light"
           >
             more_vert
           </i>
-        </div>
+        </span>
       </button>
-      <transition-stub
-        name="v-menu-transition"
-      >
-        <div
-          class="v-menu__content theme--light "
-          style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
-        />
-      </transition-stub>
+      <!---->
     </div>
   </div>
 </div>
 `;
 
-exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the tablet size 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 12px; transform-origin: top left; z-index: 0; display: none;"
-/>
-`;
+exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the tablet size 2`] = `undefined`;
 
 exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions on the large size 1`] = `
 <div>
@@ -90,13 +66,11 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions on the l
     <c-action-btn-stub
       color="primary"
       icon="edit"
-      lazy="lazy"
       tooltip="Edit title"
     />
     <c-action-btn-stub
       color="secondary"
       icon="delete"
-      lazy="lazy"
       tooltip="Delete title"
     />
   </div>

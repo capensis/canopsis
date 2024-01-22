@@ -1,6 +1,7 @@
 const path = require('path');
 const { merge } = require('lodash');
 const { process, getCacheKey } = require('vue-jest');
+const vueTemplateBabelCompiler = require('vue-template-babel-compiler');
 
 const updateFieldDirective = require('../../tools/update-field-directive');
 
@@ -11,6 +12,7 @@ const configWithVueJestOptions = {
         js: path.resolve(__dirname, './jest.transform'),
       },
       templateCompiler: {
+        compiler: vueTemplateBabelCompiler,
         compilerOptions: {
           directives: {
             field: updateFieldDirective,

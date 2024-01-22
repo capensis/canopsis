@@ -11,7 +11,7 @@ exports[`kpi-sli Renders \`kpi-sli\` with fetching error 1`] = `
   <kpi-sli-chart-stub
     data-type="percent"
     metrics=""
-    responsive="responsive"
+    responsive=""
     sampling="day"
   />
   <kpi-error-overlay-stub />
@@ -31,7 +31,7 @@ exports[`kpi-sli Renders \`kpi-sli\` without metrics 1`] = `
     data-type="percent"
     metrics=""
     min-date="1385766000"
-    responsive="responsive"
+    responsive=""
     sampling="day"
   />
   <!---->

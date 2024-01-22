@@ -35,7 +35,7 @@ describe('c-number-field', () => {
   it('Renders `c-number-field` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-number-field` with custom props', () => {
@@ -51,6 +51,6 @@ describe('c-number-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

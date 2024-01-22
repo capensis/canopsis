@@ -239,7 +239,7 @@ describe('view-tab-widgets', () => {
       store,
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `view-tab-widgets` with editing mode', () => {
@@ -259,7 +259,7 @@ describe('view-tab-widgets', () => {
       ]),
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `view-tab-widgets` with widgets', () => {
@@ -273,7 +273,7 @@ describe('view-tab-widgets', () => {
       store,
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it.each(['m', 't', 'l', 'xl'])('Renders `view-tab-widgets` with widgets on \'%s\' window size', async (size) => {
@@ -296,7 +296,7 @@ describe('view-tab-widgets', () => {
       ]),
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `view-tab-widgets` with widgets with editing mode', () => {
@@ -316,6 +316,6 @@ describe('view-tab-widgets', () => {
       ]),
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

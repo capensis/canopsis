@@ -1,31 +1,47 @@
-<template lang="pug">
-  v-layout.py-2(column)
-    kpi-widget-filters.mx-3(
-      :widget-id="widget._id",
-      :user-filters="userPreference.filters",
-      :widget-filters="widget.filters",
-      :locked-filter="lockedFilter",
-      :filters="query.filter",
-      :interval="query.interval",
-      :sampling="query.sampling",
-      :min-interval-date="minAvailableDate",
-      :show-interval="showInterval",
-      :show-filter="showFilter",
-      :filter-disabled="filterDisabled",
-      :filter-addable="filterAddable",
-      :filter-editable="filterEditable",
-      @update:filters="updateSelectedFilter",
+<template>
+  <v-layout
+    class="py-2"
+    column
+  >
+    <kpi-widget-filters
+      class="mx-3"
+      :widget-id="widget._id"
+      :user-filters="userPreference.filters"
+      :widget-filters="widget.filters"
+      :locked-filter="lockedFilter"
+      :filters="query.filter"
+      :interval="query.interval"
+      :sampling="query.sampling"
+      :min-interval-date="minAvailableDate"
+      :show-interval="showInterval"
+      :show-filter="showFilter"
+      :filter-disabled="filterDisabled"
+      :filter-addable="filterAddable"
+      :filter-editable="filterEditable"
+      @update:filters="updateSelectedFilter"
       @update:interval="updateInterval"
-    )
-    v-layout.kpi-widget.pa-3(column, align-center)
-      h4.kpi-widget__title {{ widget.parameters.table_title }}
-      c-progress-overlay(:pending="mainRatingSettingsPending", transition)
-      c-advanced-data-table.kpi-widget__table.pre-line(
-        :items="preparedGroupMetrics",
-        :loading="groupMetricsPending",
-        :headers="headers",
+    />
+    <v-layout
+      class="kpi-widget pa-3"
+      column
+      align-center
+    >
+      <h4 class="kpi-widget__title">
+        {{ widget.parameters.table_title }}
+      </h4>
+      <c-progress-overlay
+        :pending="mainRatingSettingsPending"
+        transition
+      />
+      <c-advanced-data-table
+        class="kpi-widget__table pre-line"
+        :items="preparedGroupMetrics"
+        :loading="groupMetricsPending"
+        :headers="headers"
         no-pagination
-      )
+      />
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>

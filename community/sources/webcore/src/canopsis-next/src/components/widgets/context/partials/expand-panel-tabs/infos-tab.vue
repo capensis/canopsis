@@ -1,16 +1,26 @@
-<template lang="pug">
-  v-layout(column)
-    v-layout(row, wrap)
-      v-flex(xs4)
-        c-search-field(v-model="searchingText")
-    v-data-table(
-      :items="items",
-      :headers="headers",
-      :search="searchingText",
+<template>
+  <v-layout column>
+    <v-layout wrap>
+      <v-flex xs4>
+        <c-search-field v-model="searchingText" />
+      </v-flex>
+    </v-layout>
+    <v-data-table
+      :items="items"
+      :headers="headers"
+      :search="searchingText"
       item-key="name"
-    )
-      template(#items="{ item }")
-        td(v-for="column in headers", :key="column.value") {{ item | get(column.value) }}
+    >
+      <template #items="{ item }">
+        <td
+          v-for="column in headers"
+          :key="column.value"
+        >
+          {{ item | get(column.value) }}
+        </td>
+      </template>
+    </v-data-table>
+  </v-layout>
 </template>
 
 <script>
