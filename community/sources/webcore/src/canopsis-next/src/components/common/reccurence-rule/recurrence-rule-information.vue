@@ -1,9 +1,12 @@
-<template lang="pug">
-  v-layout(column)
-    c-information-block-row(:label="$t('common.recurrence')")
-      span.c-word-break-all {{ recurrenceRuleString }}
-    c-information-block-row(:label="$t('common.summary')")
-      span.c-word-wrap-break {{ recurrenceRuleText }}
+<template>
+  <v-layout column>
+    <c-information-block-row :label="$t('common.recurrence')">
+      <span class="c-word-break-all">{{ recurrenceRuleString }}</span>
+    </c-information-block-row>
+    <c-information-block-row :label="$t('common.summary')">
+      <span class="c-word-wrap-break">{{ recurrenceRuleText }}</span>
+    </c-information-block-row>
+  </v-layout>
 </template>
 
 <script>

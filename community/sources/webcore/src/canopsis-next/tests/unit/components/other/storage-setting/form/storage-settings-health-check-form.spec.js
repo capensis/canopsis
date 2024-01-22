@@ -48,7 +48,7 @@ describe('storage-settings-health-check-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `storage-settings-health-check-form` with custom form and history', () => {
@@ -59,6 +59,6 @@ describe('storage-settings-health-check-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

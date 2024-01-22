@@ -7,7 +7,7 @@ exports[`add-info-popup Renders \`add-info-popup\` with empty modal 1`] = `
 >
   <div
     class="modal-wrapper"
-    close="close"
+    close=""
   >
     <div
       class="title"
@@ -16,7 +16,6 @@ exports[`add-info-popup Renders \`add-info-popup\` with empty modal 1`] = `
         Add an info popup
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -25,29 +24,28 @@ exports[`add-info-popup Renders \`add-info-popup\` with empty modal 1`] = `
         form="[object Object]"
       />
     </div>
-     
     <div
       class="actions"
     >
       <button
-        class="v-btn v-btn--flat theme--light"
+        class="v-btn v-btn--text theme--light v-size--default"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Cancel
-        </div>
+        Cancel
+        </span>
       </button>
       <button
-        class="primary v-btn theme--light"
+        class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Submit
-        </div>
+        Submit
+        </span>
       </button>
     </div>
   </div>
@@ -61,7 +59,7 @@ exports[`add-info-popup Renders \`add-info-popup\` with popup 1`] = `
 >
   <div
     class="modal-wrapper"
-    close="close"
+    close=""
   >
     <div
       class="title"
@@ -70,7 +68,6 @@ exports[`add-info-popup Renders \`add-info-popup\` with popup 1`] = `
         Add an info popup
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -79,29 +76,28 @@ exports[`add-info-popup Renders \`add-info-popup\` with popup 1`] = `
         form="[object Object]"
       />
     </div>
-     
     <div
       class="actions"
     >
       <button
-        class="v-btn v-btn--flat theme--light"
+        class="v-btn v-btn--text theme--light v-size--default"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Cancel
-        </div>
+        Cancel
+        </span>
       </button>
       <button
-        class="primary v-btn theme--light"
+        class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Submit
-        </div>
+        Submit
+        </span>
       </button>
     </div>
   </div>

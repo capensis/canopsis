@@ -1,8 +1,14 @@
-<template lang="pug">
-  c-information-block-row(:label="label")
-    v-layout
-      v-flex(xs2) {{ count }}
-      v-flex(v-if="testsStatusPercent") {{ testsStatusPercent | percentage(precision) }}
+<template>
+  <c-information-block-row :label="label">
+    <v-layout>
+      <v-flex xs2>
+        {{ count }}
+      </v-flex>
+      <v-flex v-if="testsStatusPercent">
+        {{ testsStatusPercent | percentage(precision) }}
+      </v-flex>
+    </v-layout>
+  </c-information-block-row>
 </template>
 
 <script>

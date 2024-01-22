@@ -3,10 +3,10 @@
 exports[`pbehavior-comment-field Renders \`pbehavior-comment-field\` with custom props 1`] = `
 <div>
   <div
-    class="layout row align-center"
+    class="layout align-center"
   >
     <div
-      class="v-input v-textarea v-text-field v-input--is-label-active v-input--is-dirty theme--light"
+      class="v-input v-textarea v-input--is-label-active v-input--is-dirty theme--light v-text-field"
     >
       <div
         class="v-input__control"
@@ -18,14 +18,12 @@ exports[`pbehavior-comment-field Renders \`pbehavior-comment-field\` with custom
             class="v-text-field__slot"
           >
             <label
-              aria-hidden="true"
               class="v-label v-label--active theme--light"
               style="left: 0px; position: absolute;"
             >
               Message
             </label>
             <textarea
-              aria-label="Message"
               name="undefined_message"
               rows="5"
             />
@@ -56,10 +54,10 @@ exports[`pbehavior-comment-field Renders \`pbehavior-comment-field\` with custom
 exports[`pbehavior-comment-field Renders \`pbehavior-comment-field\` with default props 1`] = `
 <div>
   <div
-    class="layout row align-center"
+    class="layout align-center"
   >
     <div
-      class="v-input v-textarea v-text-field theme--light"
+      class="v-input v-textarea theme--light v-text-field"
     >
       <div
         class="v-input__control"
@@ -71,14 +69,12 @@ exports[`pbehavior-comment-field Renders \`pbehavior-comment-field\` with defaul
             class="v-text-field__slot"
           >
             <label
-              aria-hidden="true"
               class="v-label theme--light"
               style="left: 0px; position: absolute;"
             >
               Message
             </label>
             <textarea
-              aria-label="Message"
               name="undefined_message"
               rows="5"
             />

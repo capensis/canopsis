@@ -1,10 +1,23 @@
-<template lang="pug">
-  v-fade-transition
-    v-layout.alert(v-show="value")
-      div.overlay(:class="backgroundColor", :style="{ opacity: opacity }")
-      div.content
-        slot
-          v-alert(type="error", :value="true") {{ errorMessage }}
+<template>
+  <v-fade-transition>
+    <v-layout
+      class="alert"
+      v-show="value"
+    >
+      <div
+        class="overlay"
+        :class="backgroundColor"
+        :style="{ opacity: opacity }"
+      />
+      <div class="content">
+        <slot>
+          <v-alert type="error">
+            {{ errorMessage }}
+          </v-alert>
+        </slot>
+      </div>
+    </v-layout>
+  </v-fade-transition>
 </template>
 
 <script>

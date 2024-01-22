@@ -88,9 +88,9 @@ services:
     #mem_reservation: 3g
     oom_score_adj: -1000
     # keyFile will be created during initdb (script in /docker-entrypoint-initdb.d)
-    command: ['--wiredTigerCacheSizeGB', '2560', '--replSet', 'rs0', '--keyFile', '/data/db/.keyFile']
+    command: ['--wiredTigerCacheSizeGB', '2.5', '--replSet', 'rs0', '--keyFile', '/data/db/.keyFile']
     healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongo --quiet
+      test: echo 'db.runCommand("ping").ok' | mongosh --quiet
       interval: 10s
       timeout: 10s
       retries: 5
@@ -106,7 +106,7 @@ services:
       - compose.env
     volumes:
       - "./files/mongo-rs-init/rs-initiate.js:/tmp/rs-initiate.js"
-    command: ['sh', '-c', 'mongo "mongodb://$$MONGO_INITDB_ROOT_USERNAME:$$MONGO_INITDB_ROOT_PASSWORD@mongodb/" /tmp/rs-initiate.js']
+    command: ['sh', '-c', 'mongosh "mongodb://$$MONGO_INITDB_ROOT_USERNAME:$$MONGO_INITDB_ROOT_PASSWORD@mongodb/" /tmp/rs-initiate.js']
     restart: "no"
     depends_on:
       mongodb:

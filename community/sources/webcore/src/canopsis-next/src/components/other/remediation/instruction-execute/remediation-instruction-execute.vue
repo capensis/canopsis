@@ -1,18 +1,19 @@
-<template lang="pug">
-  div
-    v-text-field(
-      :value="instructionExecution.description",
-      :label="$t('common.description')",
-      readonly,
-      box
-    )
-    remediation-instruction-execute-steps(
-      :steps="instructionExecution.steps",
-      :execution-id="instructionExecution._id",
-      :next-pending="nextPending",
-      :previous-pending="previousPending",
+<template>
+  <div>
+    <v-text-field
+      :value="instructionExecution.description"
+      :label="$t('common.description')"
+      readonly
+      filled
+    />
+    <remediation-instruction-execute-steps
+      :steps="instructionExecution.steps"
+      :execution-id="instructionExecution._id"
+      :next-pending="nextPending"
+      :previous-pending="previousPending"
       v-on="$listeners"
-    )
+    />
+  </div>
 </template>
 
 <script>

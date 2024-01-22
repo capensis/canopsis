@@ -7,7 +7,7 @@ exports[`text-field-editor Renders \`text-field-editor\` with all parameters 1`]
 >
   <div
     class="modal-wrapper"
-    close="close"
+    close=""
   >
     <div
       class="title"
@@ -16,12 +16,11 @@ exports[`text-field-editor Renders \`text-field-editor\` with all parameters 1`]
         Text field editor title
       </span>
     </div>
-     
     <div
       class="text"
     >
       <div
-        class="v-input v-text-field v-input--is-label-active v-input--is-dirty theme--light"
+        class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field"
       >
         <div
           class="v-input__control"
@@ -33,14 +32,12 @@ exports[`text-field-editor Renders \`text-field-editor\` with all parameters 1`]
               class="v-text-field__slot"
             >
               <label
-                aria-hidden="true"
                 class="v-label v-label--active theme--light"
                 style="left: 0px; position: absolute;"
               >
                 field-label
               </label>
               <input
-                aria-label="field-label"
                 name="field-name"
                 type="text"
               />
@@ -52,37 +49,38 @@ exports[`text-field-editor Renders \`text-field-editor\` with all parameters 1`]
             <div
               class="v-messages theme--light"
             >
-              <div
+              <transition-group-stub
                 class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
               />
             </div>
           </div>
         </div>
       </div>
     </div>
-     
     <div
       class="actions"
     >
       <button
-        class="v-btn v-btn--flat theme--light"
+        class="v-btn v-btn--text theme--light v-size--default"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Cancel
-        </div>
+        Cancel
+        </span>
       </button>
       <button
-        class="primary v-btn theme--light"
+        class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Submit
-        </div>
+        Submit
+        </span>
       </button>
     </div>
   </div>
@@ -96,21 +94,18 @@ exports[`text-field-editor Renders \`text-field-editor\` with empty modal 1`] = 
 >
   <div
     class="modal-wrapper"
-    close="close"
+    close=""
   >
     <div
       class="title"
     >
-      <span>
-        
-      </span>
+      <span />
     </div>
-     
     <div
       class="text"
     >
       <div
-        class="v-input v-text-field theme--light"
+        class="v-input theme--light v-text-field"
       >
         <div
           class="v-input__control"
@@ -122,14 +117,12 @@ exports[`text-field-editor Renders \`text-field-editor\` with empty modal 1`] = 
               class="v-text-field__slot"
             >
               <label
-                aria-hidden="true"
                 class="v-label theme--light"
                 style="left: 0px; position: absolute;"
               >
                 Text
               </label>
               <input
-                aria-label="Text"
                 name="text"
                 type="text"
               />
@@ -141,37 +134,38 @@ exports[`text-field-editor Renders \`text-field-editor\` with empty modal 1`] = 
             <div
               class="v-messages theme--light"
             >
-              <div
+              <transition-group-stub
                 class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
               />
             </div>
           </div>
         </div>
       </div>
     </div>
-     
     <div
       class="actions"
     >
       <button
-        class="v-btn v-btn--flat theme--light"
+        class="v-btn v-btn--text theme--light v-size--default"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Cancel
-        </div>
+        Cancel
+        </span>
       </button>
       <button
-        class="primary v-btn theme--light"
+        class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
         type="submit"
       >
-        <div
+        <span
           class="v-btn__content"
         >
-          Submit
-        </div>
+        Submit
+        </span>
       </button>
     </div>
   </div>

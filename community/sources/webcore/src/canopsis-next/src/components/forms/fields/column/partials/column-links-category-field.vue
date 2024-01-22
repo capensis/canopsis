@@ -1,14 +1,14 @@
-<template lang="pug">
-  v-combobox(
-    v-field="value",
-    :items="categories",
-    :label="$tc('common.category')",
-    :return-object="false",
-    :loading="pending",
-    item-text="value",
-    item-value="value",
+<template>
+  <v-combobox
+    v-field="value"
+    :items="categories"
+    :label="$tc('common.category')"
+    :return-object="false"
+    :loading="pending"
+    item-text="value"
+    item-value="value"
     clearable
-  )
+  />
 </template>
 
 <script>

@@ -83,7 +83,7 @@ describe('flowchart-color-field', () => {
   test('Renders `flowchart-color-field` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `flowchart-color-field` with custom props', () => {
@@ -96,6 +96,6 @@ describe('flowchart-color-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

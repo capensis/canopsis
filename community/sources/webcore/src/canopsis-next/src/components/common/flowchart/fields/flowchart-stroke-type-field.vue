@@ -1,11 +1,39 @@
-<template lang="pug">
-  v-layout(row, justify-space-between, align-center)
-    v-label {{ label }}
-    v-flex(xs3)
-      v-select.mt-0.pt-0(v-field="value", :items="types", hide-details)
-        template(v-for="slotName in ['selection', 'item']", #[slotName]="{ item }")
-          svg(width="50", height="4")
-            line(v-bind="item.properties", x1="0", y1="0", x2="100%", y2="0", stroke="currentColor", stroke-width="4")
+<template>
+  <v-layout
+    justify-space-between
+    align-center
+  >
+    <v-label>{{ label }}</v-label>
+    <v-flex xs3>
+      <v-select
+        class="mt-0 pt-0"
+        v-field="value"
+        :items="types"
+        hide-details
+      >
+        <template
+          v-for="slotName in ['selection', 'item']"
+          #[slotName]="{ item }"
+        >
+          <svg
+            :key="slotName"
+            width="50"
+            height="4"
+          >
+            <line
+              v-bind="item.properties"
+              x1="0"
+              y1="0"
+              x2="100%"
+              y2="0"
+              stroke="currentColor"
+              stroke-width="4"
+            />
+          </svg>
+        </template>
+      </v-select>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

@@ -64,7 +64,7 @@ describe('service-pause-event-form', () => {
   test('Renders `service-pause-event-form` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `service-pause-event-form` with custom props', () => {
@@ -77,6 +77,6 @@ describe('service-pause-event-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

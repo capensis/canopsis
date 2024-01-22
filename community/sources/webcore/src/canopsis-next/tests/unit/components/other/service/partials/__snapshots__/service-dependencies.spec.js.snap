@@ -7,7 +7,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
   light="true"
 >
   <div
-    class="layout row"
+    class="layout"
   >
     <div
       class="treeview-data-table--tree mr-4"
@@ -16,17 +16,18 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
         class="v-treeview theme--light"
       >
         <div
+          aria-expanded="false"
           class="v-treeview-node"
         >
           <div
             class="v-treeview-node__root"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon v-treeview-node__toggle v-icon--link material-icons theme--light"
+            <button
+              class="v-icon notranslate v-treeview-node__toggle v-icon--link material-icons theme--light"
+              type="button"
             >
               arrow_drop_down
-            </i>
+            </button>
             <div
               class="v-treeview-node__content"
             >
@@ -34,19 +35,19 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                 class="v-treeview-node__label"
               >
                 <button
-                  class="v-btn v-btn--icon theme--dark"
+                  class="v-btn v-btn--fab v-btn--has-bg v-btn--round theme--dark v-size--small"
                   type="button"
                 >
-                  <div
+                  <span
                     class="v-btn__content"
                   >
                     <i
                       aria-hidden="true"
-                      class="v-icon material-icons theme--dark"
+                      class="v-icon notranslate material-icons theme--dark"
                     >
                       person
                     </i>
-                  </div>
+                  </span>
                 </button>
                 <!---->
                 <div
@@ -54,22 +55,19 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                 >
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light"
+                    class="v-icon notranslate material-icons theme--light"
                   >
                     arrow_right_alt
                   </i>
                   <span
-                    class="v-chip ma-0 theme--light white--text"
-                    tabindex="0"
+                    class="ma-0 v-chip v-chip--no-color theme--light v-size--default white--text"
                   >
                     <span
                       class="v-chip__content"
                     >
                       <span
-                        class="px-2 body-2 font-weight-bold"
-                      >
-                        
-                      </span>
+                        class="px-2 text-body-2 font-weight-bold"
+                      />
                     </span>
                   </span>
                 </div>
@@ -82,72 +80,77 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
     <div
       class="flex"
     >
-      <div>
+      <div
+        class="v-data-table theme--light"
+        header-text="text"
+      >
         <div
-          class="v-table__overflow"
+          class="v-data-table__wrapper"
         >
-          <table
-            class="v-datatable v-table theme--light"
-          >
-            <thead>
+          <table>
+            <colgroup>
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+            </colgroup>
+            <thead
+              class="v-data-table-header"
+            >
               <tr>
                 <th
-                  aria-label=": Not sorted."
-                  aria-sort="none"
-                  class="column text-xs-left"
+                  aria-label=""
+                  class="text-start"
                   data-value="no-events-icon"
                   role="columnheader"
                   scope="col"
-                />
+                >
+                  <span />
+                </th>
                 <th
-                  aria-label="Custom name label: Not sorted."
-                  aria-sort="none"
-                  class="column text-xs-left"
+                  aria-label="Custom name label"
+                  class="text-start"
                   data-value="entity.name"
                   role="columnheader"
                   scope="col"
                 >
-                  Custom name label
+                  <span>
+                    Custom name label
+                  </span>
                 </th>
                 <th
-                  aria-label="Custom type label: Not sorted."
-                  aria-sort="none"
-                  class="column text-xs-left"
+                  aria-label="Custom type label"
+                  class="text-start"
                   data-value="entity.type"
                   role="columnheader"
                   scope="col"
                 >
-                  Custom type label
+                  <span>
+                    Custom type label
+                  </span>
                 </th>
-              </tr>
-              <tr
-                class="v-datatable__progress"
-              >
-                <th
-                  class="column"
-                  colspan="3"
-                />
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>
-                  <c-no-events-icon-stub
-                    top="top"
-                  />
+              <tr
+                class=""
+              >
+                <td
+                  class="text-start"
+                />
+                <td
+                  class="text-start"
+                >
+                  Root alarm entity
                 </td>
-                <td>
-                  <service-dependencies-entity-cell-stub
-                    column="[object Object]"
-                    item="[object Object]"
-                  />
-                </td>
-                <td>
-                  <service-dependencies-entity-cell-stub
-                    column="[object Object]"
-                    item="[object Object]"
-                  />
-                </td>
+                <td
+                  class="text-start"
+                />
               </tr>
             </tbody>
           </table>
@@ -163,7 +166,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
   class="treeview-data-table service-dependencies v-sheet theme--light"
 >
   <div
-    class="layout row"
+    class="layout"
   >
     <div
       class="treeview-data-table--tree mr-4"
@@ -172,11 +175,15 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
         class="v-treeview theme--light"
       >
         <div
+          aria-expanded="false"
           class="v-treeview-node v-treeview-node--leaf"
         >
           <div
             class="v-treeview-node__root"
           >
+            <div
+              class="v-treeview-node__level"
+            />
             <div
               class="v-treeview-node__content"
             >
@@ -184,37 +191,38 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                 class="v-treeview-node__label"
               >
                 <button
-                  class="v-btn v-btn--icon theme--dark"
+                  class="v-btn v-btn--fab v-btn--has-bg v-btn--round theme--dark v-size--small"
                   style="background-color: rgb(47, 171, 99); border-color: #2fab63;"
                   type="button"
                 >
-                  <div
+                  <span
                     class="v-btn__content"
                   >
-                    <svg
+                    <span
                       aria-hidden="true"
-                      class="v-icon v-icon--is-component theme--dark"
-                      enable-background="new 0 0 24 24"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
+                      class="v-icon notranslate theme--dark"
                     >
-                      <g>
-                        <rect
-                          fill="none"
-                          height="24"
-                          width="24"
-                        />
-                      </g>
-                       
-                      <g>
+                      <svg
+                        class="v-icon__component theme--dark"
+                        enable-background="new 0 0 24 24"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
                         <g>
-                          <path
-                            d="M9,15c-2.67,0-8,1.34-8,4v2h16v-2C17,16.34,11.67,15,9,15z"
+                          <rect
+                            fill="none"
+                            height="24"
+                            width="24"
                           />
-                           
-                          <path
-                            d="M22.1,6.84c0.01-0.11,0.02-0.22,0.02-0.34c0-0.12-0.01-0.23-0.03-0.34l0.74-0.58c0.07-0.05,
+                        </g>
+                        <g>
+                          <g>
+                            <path
+                              d="M9,15c-2.67,0-8,1.34-8,4v2h16v-2C17,16.34,11.67,15,9,15z"
+                            />
+                            <path
+                              d="M22.1,6.84c0.01-0.11,0.02-0.22,0.02-0.34c0-0.12-0.01-0.23-0.03-0.34l0.74-0.58c0.07-0.05,
           0.08-0.15,0.04-0.22l-0.7-1.21 c-0.04-0.08-0.14-0.1-0.21-0.08L21.1,
           4.42c-0.18-0.14-0.38-0.25-0.59-0.34l-0.13-0.93C20.36,3.06,20.29,3,20.2,
           3h-1.4 c-0.09,0-0.16,0.06-0.17,0.15L18.5,4.08c-0.21,0.09-0.41,0.21-0.59,
@@ -225,10 +233,9 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
           0,0.16-0.06,0.17-0.15l0.13-0.93c0.21-0.09,0.41-0.21,0.59-0.34l0.87,
           0.35 c0.08,0.03,0.17,0,0.21-0.08l0.7-1.21c0.04-0.08,0.03-0.17-0.04-0.22L22.1,6.84z M19.5,
           7.75c-0.69,0-1.25-0.56-1.25-1.25 s0.56-1.25,1.25-1.25s1.25,0.56,1.25,1.25S20.19,7.75,19.5,7.75z"
-                          />
-                           
-                          <path
-                            d="M19.92,11.68l-0.5-0.87c-0.03-0.06-0.1-0.08-0.15-0.06l-0.62,
+                            />
+                            <path
+                              d="M19.92,11.68l-0.5-0.87c-0.03-0.06-0.1-0.08-0.15-0.06l-0.62,
           0.25c-0.13-0.1-0.27-0.18-0.42-0.24l-0.09-0.66 C18.12,10.04,18.06,10,
           18,10h-1c-0.06,0-0.11,0.04-0.12,0.11l-0.09,0.66c-0.15,0.06-0.29,0.15-0.42,
           0.24l-0.62-0.25 c-0.06-0.02-0.12,0-0.15,0.06l-0.5,0.87c-0.03,0.06-0.02,0.12,
@@ -240,21 +247,20 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
           c0.01-0.08,0.02-0.16,0.02-0.24c0-0.08-0.01-0.17-0.02-0.24l0.53-0.41C19.93,11.81,
           19.94,11.74,19.92,11.68z M17.5,13.33 c-0.46,0-0.83-0.38-0.83-0.83c0-0.46,0.38-0.83,
           0.83-0.83s0.83,0.38,0.83,0.83C18.33,12.96,17.96,13.33,17.5,13.33z"
-                          />
-                           
-                          <path
-                            d="M4.74,9h8.53c0.27,0,0.49-0.22,0.49-0.49V8.49c0-0.27-0.22-0.49-0.49-0.49H13c0-1.48-0.81-2.75-2-3.45V5.5
+                            />
+                            <path
+                              d="M4.74,9h8.53c0.27,0,0.49-0.22,0.49-0.49V8.49c0-0.27-0.22-0.49-0.49-0.49H13c0-1.48-0.81-2.75-2-3.45V5.5
           C11,5.78,10.78,6,10.5,6S10,5.78,10,5.5V4.14C9.68,4.06,9.35,4,9,4S8.32,4.06,8,4.14V5.5C8,5.78,7.78,6,7.5,
           6S7,5.78,7,5.5V4.55 C5.81,5.25,5,6.52,5,8H4.74C4.47,8,4.25,8.22,4.25,8.49v0.03C4.25,8.78,4.47,9,4.74,9z"
-                          />
-                           
-                          <path
-                            d="M9,13c1.86,0,3.41-1.28,3.86-3H5.14C5.59,11.72,7.14,13,9,13z"
-                          />
+                            />
+                            <path
+                              d="M9,13c1.86,0,3.41-1.28,3.86-3H5.14C5.59,11.72,7.14,13,9,13z"
+                            />
+                          </g>
                         </g>
-                      </g>
-                    </svg>
-                  </div>
+                      </svg>
+                    </span>
+                  </span>
                 </button>
                 <!---->
               </div>
@@ -262,11 +268,15 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
           </div>
         </div>
         <div
+          aria-expanded="false"
           class="v-treeview-node v-treeview-node--leaf"
         >
           <div
             class="v-treeview-node__root"
           >
+            <div
+              class="v-treeview-node__level"
+            />
             <div
               class="v-treeview-node__content"
             >
@@ -274,37 +284,38 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                 class="v-treeview-node__label"
               >
                 <button
-                  class="v-btn v-btn--icon theme--dark"
+                  class="v-btn v-btn--fab v-btn--has-bg v-btn--round theme--dark v-size--small"
                   style="background-color: rgb(47, 171, 99); border-color: #2fab63;"
                   type="button"
                 >
-                  <div
+                  <span
                     class="v-btn__content"
                   >
-                    <svg
+                    <span
                       aria-hidden="true"
-                      class="v-icon v-icon--is-component theme--dark"
-                      enable-background="new 0 0 24 24"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
+                      class="v-icon notranslate theme--dark"
                     >
-                      <g>
-                        <rect
-                          fill="none"
-                          height="24"
-                          width="24"
-                        />
-                      </g>
-                       
-                      <g>
+                      <svg
+                        class="v-icon__component theme--dark"
+                        enable-background="new 0 0 24 24"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
                         <g>
-                          <path
-                            d="M9,15c-2.67,0-8,1.34-8,4v2h16v-2C17,16.34,11.67,15,9,15z"
+                          <rect
+                            fill="none"
+                            height="24"
+                            width="24"
                           />
-                           
-                          <path
-                            d="M22.1,6.84c0.01-0.11,0.02-0.22,0.02-0.34c0-0.12-0.01-0.23-0.03-0.34l0.74-0.58c0.07-0.05,
+                        </g>
+                        <g>
+                          <g>
+                            <path
+                              d="M9,15c-2.67,0-8,1.34-8,4v2h16v-2C17,16.34,11.67,15,9,15z"
+                            />
+                            <path
+                              d="M22.1,6.84c0.01-0.11,0.02-0.22,0.02-0.34c0-0.12-0.01-0.23-0.03-0.34l0.74-0.58c0.07-0.05,
           0.08-0.15,0.04-0.22l-0.7-1.21 c-0.04-0.08-0.14-0.1-0.21-0.08L21.1,
           4.42c-0.18-0.14-0.38-0.25-0.59-0.34l-0.13-0.93C20.36,3.06,20.29,3,20.2,
           3h-1.4 c-0.09,0-0.16,0.06-0.17,0.15L18.5,4.08c-0.21,0.09-0.41,0.21-0.59,
@@ -315,10 +326,9 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
           0,0.16-0.06,0.17-0.15l0.13-0.93c0.21-0.09,0.41-0.21,0.59-0.34l0.87,
           0.35 c0.08,0.03,0.17,0,0.21-0.08l0.7-1.21c0.04-0.08,0.03-0.17-0.04-0.22L22.1,6.84z M19.5,
           7.75c-0.69,0-1.25-0.56-1.25-1.25 s0.56-1.25,1.25-1.25s1.25,0.56,1.25,1.25S20.19,7.75,19.5,7.75z"
-                          />
-                           
-                          <path
-                            d="M19.92,11.68l-0.5-0.87c-0.03-0.06-0.1-0.08-0.15-0.06l-0.62,
+                            />
+                            <path
+                              d="M19.92,11.68l-0.5-0.87c-0.03-0.06-0.1-0.08-0.15-0.06l-0.62,
           0.25c-0.13-0.1-0.27-0.18-0.42-0.24l-0.09-0.66 C18.12,10.04,18.06,10,
           18,10h-1c-0.06,0-0.11,0.04-0.12,0.11l-0.09,0.66c-0.15,0.06-0.29,0.15-0.42,
           0.24l-0.62-0.25 c-0.06-0.02-0.12,0-0.15,0.06l-0.5,0.87c-0.03,0.06-0.02,0.12,
@@ -330,21 +340,20 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
           c0.01-0.08,0.02-0.16,0.02-0.24c0-0.08-0.01-0.17-0.02-0.24l0.53-0.41C19.93,11.81,
           19.94,11.74,19.92,11.68z M17.5,13.33 c-0.46,0-0.83-0.38-0.83-0.83c0-0.46,0.38-0.83,
           0.83-0.83s0.83,0.38,0.83,0.83C18.33,12.96,17.96,13.33,17.5,13.33z"
-                          />
-                           
-                          <path
-                            d="M4.74,9h8.53c0.27,0,0.49-0.22,0.49-0.49V8.49c0-0.27-0.22-0.49-0.49-0.49H13c0-1.48-0.81-2.75-2-3.45V5.5
+                            />
+                            <path
+                              d="M4.74,9h8.53c0.27,0,0.49-0.22,0.49-0.49V8.49c0-0.27-0.22-0.49-0.49-0.49H13c0-1.48-0.81-2.75-2-3.45V5.5
           C11,5.78,10.78,6,10.5,6S10,5.78,10,5.5V4.14C9.68,4.06,9.35,4,9,4S8.32,4.06,8,4.14V5.5C8,5.78,7.78,6,7.5,
           6S7,5.78,7,5.5V4.55 C5.81,5.25,5,6.52,5,8H4.74C4.47,8,4.25,8.22,4.25,8.49v0.03C4.25,8.78,4.47,9,4.74,9z"
-                          />
-                           
-                          <path
-                            d="M9,13c1.86,0,3.41-1.28,3.86-3H5.14C5.59,11.72,7.14,13,9,13z"
-                          />
+                            />
+                            <path
+                              d="M9,13c1.86,0,3.41-1.28,3.86-3H5.14C5.59,11.72,7.14,13,9,13z"
+                            />
+                          </g>
                         </g>
-                      </g>
-                    </svg>
-                  </div>
+                      </svg>
+                    </span>
+                  </span>
                 </button>
                 <!---->
               </div>
@@ -352,11 +361,15 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
           </div>
         </div>
         <div
+          aria-expanded="false"
           class="v-treeview-node v-treeview-node--leaf"
         >
           <div
             class="v-treeview-node__root"
           >
+            <div
+              class="v-treeview-node__level"
+            />
             <div
               class="v-treeview-node__content"
             >
@@ -364,20 +377,20 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                 class="v-treeview-node__label"
               >
                 <button
-                  class="v-btn v-btn--icon theme--dark"
+                  class="v-btn v-btn--fab v-btn--has-bg v-btn--round theme--dark v-size--small"
                   style="background-color: rgb(47, 171, 99); border-color: #2fab63;"
                   type="button"
                 >
-                  <div
+                  <span
                     class="v-btn__content"
                   >
                     <i
                       aria-hidden="true"
-                      class="v-icon material-icons theme--dark"
+                      class="v-icon notranslate material-icons theme--dark"
                     >
                       person
                     </i>
-                  </div>
+                  </span>
                 </button>
                 <!---->
               </div>
@@ -385,11 +398,15 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
           </div>
         </div>
         <div
+          aria-expanded="false"
           class="v-treeview-node v-treeview-node--leaf"
         >
           <div
             class="v-treeview-node__root"
           >
+            <div
+              class="v-treeview-node__level"
+            />
             <div
               class="v-treeview-node__content"
             >
@@ -397,37 +414,38 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                 class="v-treeview-node__label"
               >
                 <button
-                  class="v-btn v-btn--icon theme--dark"
+                  class="v-btn v-btn--fab v-btn--has-bg v-btn--round theme--dark v-size--small"
                   style="background-color: rgb(47, 171, 99); border-color: #2fab63;"
                   type="button"
                 >
-                  <div
+                  <span
                     class="v-btn__content"
                   >
-                    <svg
+                    <span
                       aria-hidden="true"
-                      class="v-icon v-icon--is-component theme--dark"
-                      enable-background="new 0 0 24 24"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
+                      class="v-icon notranslate theme--dark"
                     >
-                      <g>
-                        <rect
-                          fill="none"
-                          height="24"
-                          width="24"
-                        />
-                      </g>
-                       
-                      <g>
+                      <svg
+                        class="v-icon__component theme--dark"
+                        enable-background="new 0 0 24 24"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
                         <g>
-                          <path
-                            d="M9,15c-2.67,0-8,1.34-8,4v2h16v-2C17,16.34,11.67,15,9,15z"
+                          <rect
+                            fill="none"
+                            height="24"
+                            width="24"
                           />
-                           
-                          <path
-                            d="M22.1,6.84c0.01-0.11,0.02-0.22,0.02-0.34c0-0.12-0.01-0.23-0.03-0.34l0.74-0.58c0.07-0.05,
+                        </g>
+                        <g>
+                          <g>
+                            <path
+                              d="M9,15c-2.67,0-8,1.34-8,4v2h16v-2C17,16.34,11.67,15,9,15z"
+                            />
+                            <path
+                              d="M22.1,6.84c0.01-0.11,0.02-0.22,0.02-0.34c0-0.12-0.01-0.23-0.03-0.34l0.74-0.58c0.07-0.05,
           0.08-0.15,0.04-0.22l-0.7-1.21 c-0.04-0.08-0.14-0.1-0.21-0.08L21.1,
           4.42c-0.18-0.14-0.38-0.25-0.59-0.34l-0.13-0.93C20.36,3.06,20.29,3,20.2,
           3h-1.4 c-0.09,0-0.16,0.06-0.17,0.15L18.5,4.08c-0.21,0.09-0.41,0.21-0.59,
@@ -438,10 +456,9 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
           0,0.16-0.06,0.17-0.15l0.13-0.93c0.21-0.09,0.41-0.21,0.59-0.34l0.87,
           0.35 c0.08,0.03,0.17,0,0.21-0.08l0.7-1.21c0.04-0.08,0.03-0.17-0.04-0.22L22.1,6.84z M19.5,
           7.75c-0.69,0-1.25-0.56-1.25-1.25 s0.56-1.25,1.25-1.25s1.25,0.56,1.25,1.25S20.19,7.75,19.5,7.75z"
-                          />
-                           
-                          <path
-                            d="M19.92,11.68l-0.5-0.87c-0.03-0.06-0.1-0.08-0.15-0.06l-0.62,
+                            />
+                            <path
+                              d="M19.92,11.68l-0.5-0.87c-0.03-0.06-0.1-0.08-0.15-0.06l-0.62,
           0.25c-0.13-0.1-0.27-0.18-0.42-0.24l-0.09-0.66 C18.12,10.04,18.06,10,
           18,10h-1c-0.06,0-0.11,0.04-0.12,0.11l-0.09,0.66c-0.15,0.06-0.29,0.15-0.42,
           0.24l-0.62-0.25 c-0.06-0.02-0.12,0-0.15,0.06l-0.5,0.87c-0.03,0.06-0.02,0.12,
@@ -453,21 +470,20 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
           c0.01-0.08,0.02-0.16,0.02-0.24c0-0.08-0.01-0.17-0.02-0.24l0.53-0.41C19.93,11.81,
           19.94,11.74,19.92,11.68z M17.5,13.33 c-0.46,0-0.83-0.38-0.83-0.83c0-0.46,0.38-0.83,
           0.83-0.83s0.83,0.38,0.83,0.83C18.33,12.96,17.96,13.33,17.5,13.33z"
-                          />
-                           
-                          <path
-                            d="M4.74,9h8.53c0.27,0,0.49-0.22,0.49-0.49V8.49c0-0.27-0.22-0.49-0.49-0.49H13c0-1.48-0.81-2.75-2-3.45V5.5
+                            />
+                            <path
+                              d="M4.74,9h8.53c0.27,0,0.49-0.22,0.49-0.49V8.49c0-0.27-0.22-0.49-0.49-0.49H13c0-1.48-0.81-2.75-2-3.45V5.5
           C11,5.78,10.78,6,10.5,6S10,5.78,10,5.5V4.14C9.68,4.06,9.35,4,9,4S8.32,4.06,8,4.14V5.5C8,5.78,7.78,6,7.5,
           6S7,5.78,7,5.5V4.55 C5.81,5.25,5,6.52,5,8H4.74C4.47,8,4.25,8.22,4.25,8.49v0.03C4.25,8.78,4.47,9,4.74,9z"
-                          />
-                           
-                          <path
-                            d="M9,13c1.86,0,3.41-1.28,3.86-3H5.14C5.59,11.72,7.14,13,9,13z"
-                          />
+                            />
+                            <path
+                              d="M9,13c1.86,0,3.41-1.28,3.86-3H5.14C5.59,11.72,7.14,13,9,13z"
+                            />
+                          </g>
                         </g>
-                      </g>
-                    </svg>
-                  </div>
+                      </svg>
+                    </span>
+                  </span>
                 </button>
                 <!---->
               </div>
@@ -479,128 +495,129 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
     <div
       class="flex"
     >
-      <div>
+      <div
+        class="v-data-table theme--light"
+        header-text="text"
+      >
         <div
-          class="v-table__overflow"
+          class="v-data-table__wrapper"
         >
-          <table
-            class="v-datatable v-table theme--light"
-          >
-            <thead>
+          <table>
+            <colgroup>
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+            </colgroup>
+            <thead
+              class="v-data-table-header"
+            >
               <tr>
                 <th
-                  aria-label=": Not sorted."
-                  aria-sort="none"
-                  class="column text-xs-left"
+                  aria-label=""
+                  class="text-start"
                   data-value="no-events-icon"
                   role="columnheader"
                   scope="col"
-                />
+                >
+                  <span />
+                </th>
                 <th
-                  aria-label="Name: Not sorted."
-                  aria-sort="none"
-                  class="column text-xs-left"
+                  aria-label="Name"
+                  class="text-start"
                   data-value="entity.name"
                   role="columnheader"
                   scope="col"
                 >
-                  Name
+                  <span>
+                    Name
+                  </span>
                 </th>
                 <th
-                  aria-label="Type: Not sorted."
-                  aria-sort="none"
-                  class="column text-xs-left"
+                  aria-label="Type"
+                  class="text-start"
                   data-value="entity.type"
                   role="columnheader"
                   scope="col"
                 >
-                  Type
+                  <span>
+                    Type
+                  </span>
                 </th>
-              </tr>
-              <tr
-                class="v-datatable__progress"
-              >
-                <th
-                  class="column"
-                  colspan="3"
-                />
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>
-                  <c-no-events-icon-stub
-                    top="top"
-                  />
+              <tr
+                class=""
+              >
+                <td
+                  class="text-start"
+                />
+                <td
+                  class="text-start"
+                >
+                  Data alarm 1 entity
                 </td>
-                <td>
-                  <service-dependencies-entity-cell-stub
-                    column="[object Object]"
-                    item="[object Object]"
-                  />
-                </td>
-                <td>
-                  <service-dependencies-entity-cell-stub
-                    column="[object Object]"
-                    item="[object Object]"
-                  />
+                <td
+                  class="text-start"
+                >
+                  service
                 </td>
               </tr>
-              <tr>
-                <td>
-                  <c-no-events-icon-stub
-                    top="top"
-                  />
+              <tr
+                class=""
+              >
+                <td
+                  class="text-start"
+                />
+                <td
+                  class="text-start"
+                >
+                  Data alarm 2 entity
                 </td>
-                <td>
-                  <service-dependencies-entity-cell-stub
-                    column="[object Object]"
-                    item="[object Object]"
-                  />
-                </td>
-                <td>
-                  <service-dependencies-entity-cell-stub
-                    column="[object Object]"
-                    item="[object Object]"
-                  />
+                <td
+                  class="text-start"
+                >
+                  service
                 </td>
               </tr>
-              <tr>
-                <td>
-                  <c-no-events-icon-stub
-                    top="top"
-                  />
+              <tr
+                class=""
+              >
+                <td
+                  class="text-start"
+                />
+                <td
+                  class="text-start"
+                >
+                  Data alarm 3 entity
                 </td>
-                <td>
-                  <service-dependencies-entity-cell-stub
-                    column="[object Object]"
-                    item="[object Object]"
-                  />
-                </td>
-                <td>
-                  <service-dependencies-entity-cell-stub
-                    column="[object Object]"
-                    item="[object Object]"
-                  />
+                <td
+                  class="text-start"
+                >
+                  connector
                 </td>
               </tr>
-              <tr>
-                <td>
-                  <c-no-events-icon-stub
-                    top="top"
-                  />
+              <tr
+                class=""
+              >
+                <td
+                  class="text-start"
+                />
+                <td
+                  class="text-start"
+                >
+                  Data alarm 4 entity
                 </td>
-                <td>
-                  <service-dependencies-entity-cell-stub
-                    column="[object Object]"
-                    item="[object Object]"
-                  />
-                </td>
-                <td>
-                  <service-dependencies-entity-cell-stub
-                    column="[object Object]"
-                    item="[object Object]"
-                  />
+                <td
+                  class="text-start"
+                >
+                  service
                 </td>
               </tr>
             </tbody>
@@ -617,7 +634,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
   class="treeview-data-table service-dependencies v-sheet theme--light"
 >
   <div
-    class="layout row"
+    class="layout"
   >
     <div
       class="treeview-data-table--tree mr-4"
@@ -626,11 +643,15 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
         class="v-treeview theme--light"
       >
         <div
+          aria-expanded="false"
           class="v-treeview-node v-treeview-node--leaf"
         >
           <div
             class="v-treeview-node__root"
           >
+            <div
+              class="v-treeview-node__level"
+            />
             <div
               class="v-treeview-node__content"
             >
@@ -638,37 +659,38 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                 class="v-treeview-node__label"
               >
                 <button
-                  class="v-btn v-btn--icon theme--dark"
+                  class="v-btn v-btn--fab v-btn--has-bg v-btn--round theme--dark v-size--small"
                   style="background-color: rgb(47, 171, 99); border-color: #2fab63;"
                   type="button"
                 >
-                  <div
+                  <span
                     class="v-btn__content"
                   >
-                    <svg
+                    <span
                       aria-hidden="true"
-                      class="v-icon v-icon--is-component theme--dark"
-                      enable-background="new 0 0 24 24"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
+                      class="v-icon notranslate theme--dark"
                     >
-                      <g>
-                        <rect
-                          fill="none"
-                          height="24"
-                          width="24"
-                        />
-                      </g>
-                       
-                      <g>
+                      <svg
+                        class="v-icon__component theme--dark"
+                        enable-background="new 0 0 24 24"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
                         <g>
-                          <path
-                            d="M9,15c-2.67,0-8,1.34-8,4v2h16v-2C17,16.34,11.67,15,9,15z"
+                          <rect
+                            fill="none"
+                            height="24"
+                            width="24"
                           />
-                           
-                          <path
-                            d="M22.1,6.84c0.01-0.11,0.02-0.22,0.02-0.34c0-0.12-0.01-0.23-0.03-0.34l0.74-0.58c0.07-0.05,
+                        </g>
+                        <g>
+                          <g>
+                            <path
+                              d="M9,15c-2.67,0-8,1.34-8,4v2h16v-2C17,16.34,11.67,15,9,15z"
+                            />
+                            <path
+                              d="M22.1,6.84c0.01-0.11,0.02-0.22,0.02-0.34c0-0.12-0.01-0.23-0.03-0.34l0.74-0.58c0.07-0.05,
           0.08-0.15,0.04-0.22l-0.7-1.21 c-0.04-0.08-0.14-0.1-0.21-0.08L21.1,
           4.42c-0.18-0.14-0.38-0.25-0.59-0.34l-0.13-0.93C20.36,3.06,20.29,3,20.2,
           3h-1.4 c-0.09,0-0.16,0.06-0.17,0.15L18.5,4.08c-0.21,0.09-0.41,0.21-0.59,
@@ -679,10 +701,9 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
           0,0.16-0.06,0.17-0.15l0.13-0.93c0.21-0.09,0.41-0.21,0.59-0.34l0.87,
           0.35 c0.08,0.03,0.17,0,0.21-0.08l0.7-1.21c0.04-0.08,0.03-0.17-0.04-0.22L22.1,6.84z M19.5,
           7.75c-0.69,0-1.25-0.56-1.25-1.25 s0.56-1.25,1.25-1.25s1.25,0.56,1.25,1.25S20.19,7.75,19.5,7.75z"
-                          />
-                           
-                          <path
-                            d="M19.92,11.68l-0.5-0.87c-0.03-0.06-0.1-0.08-0.15-0.06l-0.62,
+                            />
+                            <path
+                              d="M19.92,11.68l-0.5-0.87c-0.03-0.06-0.1-0.08-0.15-0.06l-0.62,
           0.25c-0.13-0.1-0.27-0.18-0.42-0.24l-0.09-0.66 C18.12,10.04,18.06,10,
           18,10h-1c-0.06,0-0.11,0.04-0.12,0.11l-0.09,0.66c-0.15,0.06-0.29,0.15-0.42,
           0.24l-0.62-0.25 c-0.06-0.02-0.12,0-0.15,0.06l-0.5,0.87c-0.03,0.06-0.02,0.12,
@@ -694,21 +715,20 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
           c0.01-0.08,0.02-0.16,0.02-0.24c0-0.08-0.01-0.17-0.02-0.24l0.53-0.41C19.93,11.81,
           19.94,11.74,19.92,11.68z M17.5,13.33 c-0.46,0-0.83-0.38-0.83-0.83c0-0.46,0.38-0.83,
           0.83-0.83s0.83,0.38,0.83,0.83C18.33,12.96,17.96,13.33,17.5,13.33z"
-                          />
-                           
-                          <path
-                            d="M4.74,9h8.53c0.27,0,0.49-0.22,0.49-0.49V8.49c0-0.27-0.22-0.49-0.49-0.49H13c0-1.48-0.81-2.75-2-3.45V5.5
+                            />
+                            <path
+                              d="M4.74,9h8.53c0.27,0,0.49-0.22,0.49-0.49V8.49c0-0.27-0.22-0.49-0.49-0.49H13c0-1.48-0.81-2.75-2-3.45V5.5
           C11,5.78,10.78,6,10.5,6S10,5.78,10,5.5V4.14C9.68,4.06,9.35,4,9,4S8.32,4.06,8,4.14V5.5C8,5.78,7.78,6,7.5,
           6S7,5.78,7,5.5V4.55 C5.81,5.25,5,6.52,5,8H4.74C4.47,8,4.25,8.22,4.25,8.49v0.03C4.25,8.78,4.47,9,4.74,9z"
-                          />
-                           
-                          <path
-                            d="M9,13c1.86,0,3.41-1.28,3.86-3H5.14C5.59,11.72,7.14,13,9,13z"
-                          />
+                            />
+                            <path
+                              d="M9,13c1.86,0,3.41-1.28,3.86-3H5.14C5.59,11.72,7.14,13,9,13z"
+                            />
+                          </g>
                         </g>
-                      </g>
-                    </svg>
-                  </div>
+                      </svg>
+                    </span>
+                  </span>
                 </button>
                 <!---->
               </div>
@@ -716,11 +736,15 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
           </div>
         </div>
         <div
+          aria-expanded="false"
           class="v-treeview-node v-treeview-node--leaf"
         >
           <div
             class="v-treeview-node__root"
           >
+            <div
+              class="v-treeview-node__level"
+            />
             <div
               class="v-treeview-node__content"
             >
@@ -728,37 +752,38 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                 class="v-treeview-node__label"
               >
                 <button
-                  class="v-btn v-btn--icon theme--dark"
+                  class="v-btn v-btn--fab v-btn--has-bg v-btn--round theme--dark v-size--small"
                   style="background-color: rgb(47, 171, 99); border-color: #2fab63;"
                   type="button"
                 >
-                  <div
+                  <span
                     class="v-btn__content"
                   >
-                    <svg
+                    <span
                       aria-hidden="true"
-                      class="v-icon v-icon--is-component theme--dark"
-                      enable-background="new 0 0 24 24"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
+                      class="v-icon notranslate theme--dark"
                     >
-                      <g>
-                        <rect
-                          fill="none"
-                          height="24"
-                          width="24"
-                        />
-                      </g>
-                       
-                      <g>
+                      <svg
+                        class="v-icon__component theme--dark"
+                        enable-background="new 0 0 24 24"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
                         <g>
-                          <path
-                            d="M9,15c-2.67,0-8,1.34-8,4v2h16v-2C17,16.34,11.67,15,9,15z"
+                          <rect
+                            fill="none"
+                            height="24"
+                            width="24"
                           />
-                           
-                          <path
-                            d="M22.1,6.84c0.01-0.11,0.02-0.22,0.02-0.34c0-0.12-0.01-0.23-0.03-0.34l0.74-0.58c0.07-0.05,
+                        </g>
+                        <g>
+                          <g>
+                            <path
+                              d="M9,15c-2.67,0-8,1.34-8,4v2h16v-2C17,16.34,11.67,15,9,15z"
+                            />
+                            <path
+                              d="M22.1,6.84c0.01-0.11,0.02-0.22,0.02-0.34c0-0.12-0.01-0.23-0.03-0.34l0.74-0.58c0.07-0.05,
           0.08-0.15,0.04-0.22l-0.7-1.21 c-0.04-0.08-0.14-0.1-0.21-0.08L21.1,
           4.42c-0.18-0.14-0.38-0.25-0.59-0.34l-0.13-0.93C20.36,3.06,20.29,3,20.2,
           3h-1.4 c-0.09,0-0.16,0.06-0.17,0.15L18.5,4.08c-0.21,0.09-0.41,0.21-0.59,
@@ -769,10 +794,9 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
           0,0.16-0.06,0.17-0.15l0.13-0.93c0.21-0.09,0.41-0.21,0.59-0.34l0.87,
           0.35 c0.08,0.03,0.17,0,0.21-0.08l0.7-1.21c0.04-0.08,0.03-0.17-0.04-0.22L22.1,6.84z M19.5,
           7.75c-0.69,0-1.25-0.56-1.25-1.25 s0.56-1.25,1.25-1.25s1.25,0.56,1.25,1.25S20.19,7.75,19.5,7.75z"
-                          />
-                           
-                          <path
-                            d="M19.92,11.68l-0.5-0.87c-0.03-0.06-0.1-0.08-0.15-0.06l-0.62,
+                            />
+                            <path
+                              d="M19.92,11.68l-0.5-0.87c-0.03-0.06-0.1-0.08-0.15-0.06l-0.62,
           0.25c-0.13-0.1-0.27-0.18-0.42-0.24l-0.09-0.66 C18.12,10.04,18.06,10,
           18,10h-1c-0.06,0-0.11,0.04-0.12,0.11l-0.09,0.66c-0.15,0.06-0.29,0.15-0.42,
           0.24l-0.62-0.25 c-0.06-0.02-0.12,0-0.15,0.06l-0.5,0.87c-0.03,0.06-0.02,0.12,
@@ -784,21 +808,20 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
           c0.01-0.08,0.02-0.16,0.02-0.24c0-0.08-0.01-0.17-0.02-0.24l0.53-0.41C19.93,11.81,
           19.94,11.74,19.92,11.68z M17.5,13.33 c-0.46,0-0.83-0.38-0.83-0.83c0-0.46,0.38-0.83,
           0.83-0.83s0.83,0.38,0.83,0.83C18.33,12.96,17.96,13.33,17.5,13.33z"
-                          />
-                           
-                          <path
-                            d="M4.74,9h8.53c0.27,0,0.49-0.22,0.49-0.49V8.49c0-0.27-0.22-0.49-0.49-0.49H13c0-1.48-0.81-2.75-2-3.45V5.5
+                            />
+                            <path
+                              d="M4.74,9h8.53c0.27,0,0.49-0.22,0.49-0.49V8.49c0-0.27-0.22-0.49-0.49-0.49H13c0-1.48-0.81-2.75-2-3.45V5.5
           C11,5.78,10.78,6,10.5,6S10,5.78,10,5.5V4.14C9.68,4.06,9.35,4,9,4S8.32,4.06,8,4.14V5.5C8,5.78,7.78,6,7.5,
           6S7,5.78,7,5.5V4.55 C5.81,5.25,5,6.52,5,8H4.74C4.47,8,4.25,8.22,4.25,8.49v0.03C4.25,8.78,4.47,9,4.74,9z"
-                          />
-                           
-                          <path
-                            d="M9,13c1.86,0,3.41-1.28,3.86-3H5.14C5.59,11.72,7.14,13,9,13z"
-                          />
+                            />
+                            <path
+                              d="M9,13c1.86,0,3.41-1.28,3.86-3H5.14C5.59,11.72,7.14,13,9,13z"
+                            />
+                          </g>
                         </g>
-                      </g>
-                    </svg>
-                  </div>
+                      </svg>
+                    </span>
+                  </span>
                 </button>
                 <!---->
               </div>
@@ -806,11 +829,15 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
           </div>
         </div>
         <div
+          aria-expanded="false"
           class="v-treeview-node v-treeview-node--leaf"
         >
           <div
             class="v-treeview-node__root"
           >
+            <div
+              class="v-treeview-node__level"
+            />
             <div
               class="v-treeview-node__content"
             >
@@ -818,26 +845,24 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                 class="v-treeview-node__label"
               >
                 <button
-                  class="v-btn v-btn--icon theme--light"
+                  class="v-btn v-btn--fab v-btn--has-bg v-btn--round theme--light v-size--small"
                   type="button"
                 >
-                  <div
+                  <span
                     class="v-btn__content"
                   >
                     <i
                       aria-hidden="true"
-                      class="v-icon material-icons theme--light"
+                      class="v-icon notranslate material-icons theme--light"
                     >
                       more_horiz
                     </i>
-                  </div>
+                  </span>
                 </button>
                 <span
                   class="v-tooltip v-tooltip--right"
                 >
-                  <transition-stub
-                    name="slide-x-transition"
-                  />
+                  <!---->
                 </span>
                 <!---->
               </div>
@@ -849,90 +874,95 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
     <div
       class="flex"
     >
-      <div>
+      <div
+        class="v-data-table theme--light"
+        header-text="text"
+      >
         <div
-          class="v-table__overflow"
+          class="v-data-table__wrapper"
         >
-          <table
-            class="v-datatable v-table theme--light"
-          >
-            <thead>
+          <table>
+            <colgroup>
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+            </colgroup>
+            <thead
+              class="v-data-table-header"
+            >
               <tr>
                 <th
-                  aria-label=": Not sorted."
-                  aria-sort="none"
-                  class="column text-xs-left"
+                  aria-label=""
+                  class="text-start"
                   data-value="no-events-icon"
                   role="columnheader"
                   scope="col"
-                />
+                >
+                  <span />
+                </th>
                 <th
-                  aria-label="Name: Not sorted."
-                  aria-sort="none"
-                  class="column text-xs-left"
+                  aria-label="Name"
+                  class="text-start"
                   data-value="entity.name"
                   role="columnheader"
                   scope="col"
                 >
-                  Name
+                  <span>
+                    Name
+                  </span>
                 </th>
                 <th
-                  aria-label="Type: Not sorted."
-                  aria-sort="none"
-                  class="column text-xs-left"
+                  aria-label="Type"
+                  class="text-start"
                   data-value="entity.type"
                   role="columnheader"
                   scope="col"
                 >
-                  Type
+                  <span>
+                    Type
+                  </span>
                 </th>
-              </tr>
-              <tr
-                class="v-datatable__progress"
-              >
-                <th
-                  class="column"
-                  colspan="3"
-                />
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>
-                  <c-no-events-icon-stub
-                    top="top"
-                  />
+              <tr
+                class=""
+              >
+                <td
+                  class="text-start"
+                />
+                <td
+                  class="text-start"
+                >
+                  Data alarm 1 entity
                 </td>
-                <td>
-                  <service-dependencies-entity-cell-stub
-                    column="[object Object]"
-                    item="[object Object]"
-                  />
-                </td>
-                <td>
-                  <service-dependencies-entity-cell-stub
-                    column="[object Object]"
-                    item="[object Object]"
-                  />
+                <td
+                  class="text-start"
+                >
+                  service
                 </td>
               </tr>
-              <tr>
-                <td>
-                  <c-no-events-icon-stub
-                    top="top"
-                  />
+              <tr
+                class=""
+              >
+                <td
+                  class="text-start"
+                />
+                <td
+                  class="text-start"
+                >
+                  Data alarm 2 entity
                 </td>
-                <td>
-                  <service-dependencies-entity-cell-stub
-                    column="[object Object]"
-                    item="[object Object]"
-                  />
-                </td>
-                <td>
-                  <service-dependencies-entity-cell-stub
-                    column="[object Object]"
-                    item="[object Object]"
-                  />
+                <td
+                  class="text-start"
+                >
+                  service
                 </td>
               </tr>
             </tbody>
@@ -949,7 +979,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with required pro
   class="treeview-data-table service-dependencies v-sheet theme--light"
 >
   <div
-    class="layout row"
+    class="layout"
   >
     <div
       class="treeview-data-table--tree mr-4"
@@ -961,57 +991,67 @@ exports[`service-dependencies Renders \`service-dependencies\` with required pro
     <div
       class="flex"
     >
-      <div>
+      <div
+        class="v-data-table theme--light"
+        header-text="text"
+      >
         <div
-          class="v-table__overflow"
+          class="v-data-table__wrapper"
         >
-          <table
-            class="v-datatable v-table theme--light"
-          >
-            <thead>
+          <table>
+            <colgroup>
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+              <col
+                class=""
+              />
+            </colgroup>
+            <thead
+              class="v-data-table-header"
+            >
               <tr>
                 <th
-                  aria-label=": Not sorted."
-                  aria-sort="none"
-                  class="column text-xs-left"
+                  aria-label=""
+                  class="text-start"
                   data-value="no-events-icon"
                   role="columnheader"
                   scope="col"
-                />
+                >
+                  <span />
+                </th>
                 <th
-                  aria-label="Name: Not sorted."
-                  aria-sort="none"
-                  class="column text-xs-left"
+                  aria-label="Name"
+                  class="text-start"
                   data-value="entity.name"
                   role="columnheader"
                   scope="col"
                 >
-                  Name
+                  <span>
+                    Name
+                  </span>
                 </th>
                 <th
-                  aria-label="Type: Not sorted."
-                  aria-sort="none"
-                  class="column text-xs-left"
+                  aria-label="Type"
+                  class="text-start"
                   data-value="entity.type"
                   role="columnheader"
                   scope="col"
                 >
-                  Type
+                  <span>
+                    Type
+                  </span>
                 </th>
-              </tr>
-              <tr
-                class="v-datatable__progress"
-              >
-                <th
-                  class="column"
-                  colspan="3"
-                />
               </tr>
             </thead>
             <tbody>
-              <tr>
+              <tr
+                class="v-data-table__empty-wrapper"
+              >
                 <td
-                  class="text-xs-center"
                   colspan="3"
                 >
                   No data available

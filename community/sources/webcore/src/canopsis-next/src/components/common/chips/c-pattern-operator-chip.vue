@@ -1,6 +1,7 @@
-<template lang="pug">
-  div.text-uppercase.c-pattern-operator-chip.bg-gray
-    slot
+<template>
+  <div class="text-uppercase c-pattern-operator-chip bg-gray">
+    <slot />
+  </div>
 </template>
 
 <style lang="scss" scoped>

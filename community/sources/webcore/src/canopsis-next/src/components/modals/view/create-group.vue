@@ -1,33 +1,60 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ title }}
-      template(#text="")
-        v-text-field(
-          v-model="form.title",
-          v-validate="'required'",
-          :label="$t('common.title')",
-          :error-messages="errors.collect('title')",
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ title }}</span>
+      </template>
+      <template #text="">
+        <v-text-field
+          v-model="form.title"
+          v-validate="'required'"
+          :label="$t('common.title')"
+          :error-messages="errors.collect('title')"
           name="title"
-        )
-      template(#actions="")
-        v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
-        v-btn.primary(
-          :disabled="isDisabled",
-          :loading="submitting",
+        />
+      </template>
+      <template #actions="">
+        <v-btn
+          @click="$modals.hide"
+          depressed
+          text
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          class="primary"
+          :disabled="isDisabled"
+          :loading="submitting"
           type="submit"
-        ) {{ $t('common.submit') }}
-        v-tooltip(v-if="config.deletable", :disabled="group.deletable", top)
-          template(#activator="{ on }")
-            div.ml-2(v-on="on")
-              v-btn.error(
-                :disabled="submitting || !group.deletable",
-                :outline="$system.dark",
-                color="error",
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+        <v-tooltip
+          v-if="config.deletable"
+          :disabled="group.deletable"
+          top
+        >
+          <template #activator="{ on }">
+            <div
+              class="ml-2"
+              v-on="on"
+            >
+              <v-btn
+                class="error"
+                :disabled="submitting || !group.deletable"
+                :outlined="$system.dark"
+                color="error"
                 @click="remove"
-              ) {{ $t('common.delete') }}
-          span {{ $t('modals.group.errors.isNotEmpty') }}
+              >
+                {{ $t('common.delete') }}
+              </v-btn>
+            </div>
+          </template>
+          <span>{{ $t('modals.group.errors.isNotEmpty') }}</span>
+        </v-tooltip>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>

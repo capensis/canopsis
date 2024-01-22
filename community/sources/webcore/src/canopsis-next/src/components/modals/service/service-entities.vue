@@ -1,42 +1,74 @@
-<template lang="pug">
-  modal-wrapper(:title-color="color", close)
-    template(#title="")
-      span {{ service.name }}
-    template(#text="")
-      v-tabs.position-relative(slider-color="primary", fixed-tabs)
-        v-tab {{ $t('common.service') }}
-        v-tab-item
-          c-progress-overlay(:pending="pending")
-          service-template(
-            :service="service",
-            :service-entities="serviceEntitiesWithKey",
-            :widget-parameters="widgetParameters",
-            :pagination.sync="pagination",
-            :total-items="serviceEntitiesMeta.total_count",
+<template>
+  <modal-wrapper
+    :title-color="color"
+    close
+  >
+    <template #title="">
+      <span>{{ service.name }}</span>
+    </template>
+    <template #text="">
+      <v-tabs
+        class="position-relative"
+        slider-color="primary"
+        centered
+      >
+        <v-tab>{{ $t('common.service') }}</v-tab>
+        <v-tab-item>
+          <c-progress-overlay :pending="pending" />
+          <service-template
+            :service="service"
+            :service-entities="serviceEntitiesWithKey"
+            :widget-parameters="widgetParameters"
+            :options.sync="options"
+            :total-items="serviceEntitiesMeta.total_count"
             @refresh="refresh"
-          )
-        v-tab(:disabled="!hasPbehaviorListAccess") {{ $tc('common.pbehavior', 2) }}
-        v-tab-item(lazy)
-          pbehaviors-simple-list(
-            :entity="service",
-            with-active-status,
-            addable,
-            updatable,
-            removable,
+          />
+        </v-tab-item>
+        <v-tab :disabled="!hasPbehaviorListAccess">
+          {{ $tc('common.pbehavior', 2) }}
+        </v-tab>
+        <v-tab-item>
+          <pbehaviors-simple-list
+            :entity="service"
+            with-active-status
+            addable
+            updatable
+            removable
             dense
-          )
-    template(#actions="")
-      v-tooltip.mx-2(top)
-        template(#activator="{ on }")
-          v-btn.secondary(v-on="on", @click="refresh")
-            v-icon refresh
-        span {{ $t('modals.service.refreshEntities') }}
-      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.close') }}
+          />
+        </v-tab-item>
+      </v-tabs>
+    </template>
+    <template #actions="">
+      <v-tooltip
+        top
+      >
+        <template #activator="{ on }">
+          <v-btn
+            v-on="on"
+            class="mx-2"
+            color="secondary"
+            @click="refresh"
+          >
+            <v-icon>refresh</v-icon>
+          </v-btn>
+        </template>
+        <span>{{ $t('modals.service.refreshEntities') }}</span>
+      </v-tooltip>
+      <v-btn
+        depressed
+        text
+        @click="$modals.hide"
+      >
+        {{ $t('common.close') }}
+      </v-btn>
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>
 import { PAGINATION_LIMIT } from '@/config';
-import { MODALS, PBEHAVIOR_ORIGINS, SORT_ORDERS, USERS_PERMISSIONS } from '@/constants';
+import { MODALS, PBEHAVIOR_ORIGINS, USERS_PERMISSIONS } from '@/constants';
 
 import Observer from '@/services/observer';
 
@@ -70,9 +102,9 @@ export default {
       pending: true,
       unavailableEntitiesAction: {},
       query: {
-        rowsPerPage: this.modal.config.widgetParameters.modalItemsPerPage ?? PAGINATION_LIMIT,
-        sortKey: 'state',
-        sortDir: SORT_ORDERS.desc,
+        itemsPerPage: this.modal.config.widgetParameters.modalItemsPerPage ?? PAGINATION_LIMIT,
+        sortBy: ['state'],
+        sortDesc: [true],
       },
     };
   },

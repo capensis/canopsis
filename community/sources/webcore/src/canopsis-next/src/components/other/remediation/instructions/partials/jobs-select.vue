@@ -1,13 +1,17 @@
-<template lang="pug">
-  choose-expansion-panel(
-    :entities="jobs",
-    :label="$tc('remediation.instruction.job', 2)",
-    content-key="name",
-    clearable,
-    @remove="removeJob",
+<template>
+  <choose-expansion-panel
+    :entities="jobs"
+    :label="$tc('remediation.instruction.job', 2)"
+    content-key="name"
+    clearable
+    @remove="removeJob"
     @clear="clear"
-  )
-    choose-jobs-lists(:jobs="jobs", @select="updateJobs")
+  >
+    <choose-jobs-lists
+      :jobs="jobs"
+      @select="updateJobs"
+    />
+  </choose-expansion-panel>
 </template>
 
 <script>

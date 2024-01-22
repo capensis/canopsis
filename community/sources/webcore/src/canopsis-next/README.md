@@ -92,9 +92,9 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.counterCustom]: SIDE_BARS.counterCustomSettings,
 };
 ```
-5. Define constants in `index.js` file:
+5. Define constants in `icons.js` file:
 ```js
-// file index.js
+// file icons.js
 // ...another code
 import * as constants from './constants';
 // ...another code
@@ -105,7 +105,7 @@ export default {
 6. Create a new component for the widget settings in the `components/sidebars/settings`. Example: `counter-custom.vue` for the `CounterCustom` widget. In this file you must import `src/mixins/widget/settings` mixin:
 ```vue
 // file components/sidebars/settings/counter-custom.vue
-<template lang="pug">
+<template>
   // TEMPLATE
 </template>
 
@@ -121,10 +121,10 @@ export default {
 };
 </script>
 ```
-7. Define settings component in the `index.js` file.
-   **ALL VUE COMPONENTS IN THE `index.js` MUST IMPORT ASYNCHRONOUS TO AVOID ERRORS WITH CYCLIC IMPORTS**:
+7. Define settings component in the `icons.js` file.
+   **ALL VUE COMPONENTS IN THE `icons.js` MUST IMPORT ASYNCHRONOUS TO AVOID ERRORS WITH CYCLIC IMPORTS**:
 ```js
-// file index.js
+// file icons.js
 import * as constants from './constants';
 
 export default {
@@ -170,9 +170,9 @@ export default {
   },
 };
 ```
-10. Create `i18n/index.js` file for concat all translation to one map
+10. Create `i18n/icons.js` file for concat all translation to one map
 ```js
-// file i18n/index.js
+// file i18n/icons.js
 import en from './messages/en';
 import fr from './messages/fr';
 
@@ -183,7 +183,7 @@ export default {
 ```
 11. Include `i18n` to `indes.js` file:
 ```js
-// file index.js
+// file icons.js
 // ...another code
 import i18n from './i18n';
 
@@ -194,7 +194,7 @@ export default {
 ```
 12. If we need to put preparer for the widget parameters to form we can do it by the following way:
 ```js
-// file index.js
+// file icons.js
 // ...another code
 import {
   counterWidgetParametersToForm,
@@ -225,8 +225,8 @@ export default {
 13. Create main widget component for this new widget type.
 ```vue
 // file components/widgets/counter-custom.vue
-<template lang="pug">
-  h1 CUSTOM COUNTER
+<template>
+  <h1>CUSTOM COUNTER</h1>
   // ...another code
 </template>
 
@@ -273,9 +273,9 @@ export const COMPONENTS_BY_WIDGET_TYPES = {
 };
 // ...another code
 ```
-15. Define main widget component in the `index.js` file.
+15. Define main widget component in the `icons.js` file.
 ```js
-// file index.js
+// file icons.js
 import * as constants from './constants';
 
 // ...another code
@@ -290,7 +290,7 @@ export default {
 ```
 16. If we need, we can add converter from `widget` to `query` and from `userPreference` to query. We need to use at least one of following helpers if we are using `widgetFetchQueryMixin` in the main component of the widget:
 ```js
-// file index.js
+// file icons.js
 // ...another code
 import { convertCounterCustomWidgetToQuery } from './helpers/query';
 // ...another code
@@ -318,7 +318,7 @@ export default {
 ```
 17. If we want we can define widget preparation before displaying main component:
 ```js
-// file index.js
+// file icons.js
 export default {
   // ...another code
   components: {
@@ -342,7 +342,7 @@ export default {
 ```
 18. If we want we can define `vuex` store module and use it in the main widget component:
 ```js
-// file store/index.js
+// file store/icons.js
 // ...another code
 
 export default {
@@ -365,9 +365,9 @@ export default {
   },
 };
 ```
-And include it in the `index.js` file as we did for `i18n`:
+And include it in the `icons.js` file as we did for `i18n`:
 ```js
-// file index.js
+// file icons.js
 // ...another code
 import store from './store';
 // ...another code
@@ -441,9 +441,9 @@ export default {
 };
 ```
 *Another possible content of the component you can see in another components.*
-6. Include our component into settings. Go to `src/components/sidebars/index.js` and put export for our component (which we've created in the previous step) with `Settings` suffix:
+6. Include our component into settings. Go to `src/components/sidebars/icons.js` and put export for our component (which we've created in the previous step) with `Settings` suffix:
 ```js
-// file src/components/sidebars/index.js
+// file src/components/sidebars/icons.js
 
 // ...another widgets settings exports
 export { default as CounterSettings } from './settings/counter.vue'; // <-- here
@@ -655,12 +655,12 @@ This functional must store in the dedicated repository. It means that you can ke
 
 What does support for a custom feature consist of?
 1. `features` service from `src/services/features.js` inside the main canopsis repo
-2. Dedicated repository for feature with `index.js` file
+2. Dedicated repository for feature with `icons.js` file
 3. `src/features` folder inside the main canopsis repo
 
 ## Features service
 `features` service is a singleton.
-This service imports all features from `src/features` folder and does deep merge for `index.js` files.
+This service imports all features from `src/features` folder and does deep merge for `icons.js` files.
 
 ### API
 
@@ -730,17 +730,17 @@ export default {
 
 ## Custom feature repository
 <a name="custom-feature-repo"></a>
-The feature repository must contain `index.js` file. This is a **mandatory** file, specifically it is read by the main canopsis application.
+The feature repository must contain `icons.js` file. This is a **mandatory** file, specifically it is read by the main canopsis application.
 
 This file should contain configuration for a feature (details below).
 
-If you want you can write all code only inside this `index.js` file without another files (helpers, components etc.) but it will be difficult for support in the future. And I recommend to split this file like we did in [this repository](https://git.canopsis.net/cat/widget-template-counter).
+If you want you can write all code only inside this `icons.js` file without another files (helpers, components etc.) but it will be difficult for support in the future. And I recommend to split this file like we did in [this repository](https://git.canopsis.net/cat/widget-template-counter).
 
 **!!IMPORTANT!!** YOU MUST KEEP IN MIND THAT:
 * WE **CAN'T CUSTOMIZE EVERYTHING** IN THE APPLICATION BY FEATURE. *If you want to put customization in some special place you should ask canopsis dev team to put customization into this place.*
 * WE CAN USE `@/constants.js` **ONLY INSIDE VUE COMPONENTS FILES** BECAUSE THEY WILL IMPORT ASYNCHRONOUS. OTHERWISE WE WILL RECEIVE **JS ERROR WITH CYCLIC IMPORTS**.
 
-`index.js` should have the special structure:
+`icons.js` should have the special structure:
 ```js
 // We can put field which we need only
 
@@ -790,7 +790,7 @@ export default {
 Type: `Object`<br>
 Allows us to add custom modules to application `Vuex` store.
 ```js
-// index.js
+// icons.js
 export default {
   // ...another code
   store: {
@@ -821,7 +821,7 @@ export default {
 Type: `Object`<br>
 Allows us to add custom translations for `en` and `fr` languages. We will have possibility to use this words in the components.
 ```js
-// index.js
+// icons.js
 export default {
   // ...another code
   i18n: {
@@ -837,16 +837,16 @@ export default {
 ```
 ```jade
 // SomeComponent.vue
-<template lang="pug">
-h1 {{ $t('someWord') }}
+<template>
+<h1>{{ $t('someWord') }}</h1>
 </template>
 ```
 
 ### Constants
-There are two different ways to define constants in `index.js` file.
-1. Directly in the `index.js` file
+There are two different ways to define constants in `icons.js` file.
+1. Directly in the `icons.js` file
 ```js
-// index.js
+// icons.js
 export default {
   // ...another code
   constants: {
@@ -857,7 +857,7 @@ export default {
 ```
 2. In special `constants.js` file
 ```js
-// index.js
+// icons.js
 import * as constants from './constants'
 
 export default {
@@ -949,7 +949,7 @@ Allows us to add preparer for new widget type parameters or change exists prepar
 `key` should be as widget type. Value must be a function which receive `widget.parameters` object in arguments.
 **We should define this function only if we need to put special preparation from `parameters` to `form`.**
 ```js
-// index.js
+// icons.js
 import { counterWidgetParametersToForm } from './helpers/entities/widget/forms/counter-custom';
 
 // ...another code
@@ -985,7 +985,7 @@ Allows us to add preparer for new widget type form or change exists preparer for
 `key` should be as widget type. Value must be a function which receive `form` object in arguments.
 **We should define this function if we need to put special preparation from `form` to `parameters`.**
 ```js
-// index.js
+// icons.js
 import { formToCounterWidgetParameters } from './helpers/entities/widget/forms/counter-custom';
 
 // ...another code
@@ -1021,7 +1021,7 @@ Allows us to add converter for user preferences for new widget type or change ex
 **Key** should be as widget type. **Value** must be a function which receive `userPreference` object in arguments.
 **We should define this function if we need to put special preparation for query. For example, if we are using `fetchQueryMixins` (`'@/mixins/widget/fetch-query'`)**
 ```js
-// index.js
+// icons.js
 // ...another code
 export default {
   // ...another code
@@ -1054,7 +1054,7 @@ Allows us to add converter for new widget type or change exists preparer for ano
 **Key** should be as widget type. **Value** must be a function which receive `widget` object in arguments.
 **We should define this function if we need to put special preparation for query. For example, if we are using `fetchQueryMixins` (`'@/mixins/widget/fetch-query'`)**
 ```js
-// index.js
+// icons.js
 import { convertCounterCustomWidgetToQuery } from './helpers/query';
 
 // ...another code
@@ -1087,11 +1087,11 @@ export default {
 };
 ```
 ### Common components
-**!!IMPORTANT!!: ALL VUE COMPONENTS IN THE `index.js` MUST IMPORT ASYNCHRONOUS TO AVOID ERRORS WITH CYCLIC IMPORTS**
+**!!IMPORTANT!!: ALL VUE COMPONENTS IN THE `icons.js` MUST IMPORT ASYNCHRONOUS TO AVOID ERRORS WITH CYCLIC IMPORTS**
 Example:
 **INCORRECT WAY:**
 ```js
-// file index.js
+// file icons.js
 import CounterCustom from './components/sidebars/settings/counter-custom.vue'; // INCORRECT WAY
 
 export default {
@@ -1104,7 +1104,7 @@ export default {
 ```
 **CORRECT WAY:**
 ```js
-// file index.js
+// file icons.js
 
 export default {
   components: {
@@ -1119,7 +1119,7 @@ export default {
 Type: `Object<string, Function>`<br>
 Allows us to add custom modal windows.
 ```js
-// file index.js
+// file icons.js
 import * as constants from './constants';
 // ...another code
 export default {
@@ -1141,7 +1141,7 @@ export default {
 Type: `Object`<br>
 Allows us to add custom dialog props for custom modal windows.
 ```js
-// file index.js
+// file icons.js
 import * as constants from './constants';
 // ...another code
 export default {
@@ -1161,7 +1161,7 @@ export default {
 Type: `Object`<br>
 Allows us to add custom sidebar components.
 ```js
-// file index.js
+// file icons.js
 import * as constants from './constants';
 // ...another code
 export default {
@@ -1182,7 +1182,7 @@ export default {
 Type: `Object`<br>
 Allows us to add custom main component for custom widget.
 ```js
-// file index.js
+// file icons.js
 import * as constants from './constants';
 // ...another code
 export default {
@@ -1203,7 +1203,7 @@ export default {
 Type: `Function`<br>
 Allows us to prepare widget before displaying. **We can use `this` keyword inside this computed property because we have component context here.**
 ```js
-// file index.js
+// file icons.js
 // ...another code
 export default {
   // ...another code
@@ -1233,7 +1233,7 @@ export default {
 Type: `Function`<br>
 Allows us to add custom action into alarms list actions panel. **This computed property must immutably edit received `actions` from arguments and return it.**
 ```js
-// file index.js
+// file icons.js
 // ...another code
 export default {
   components: {
@@ -1266,7 +1266,7 @@ export default {
 Type: `Function`<br>
 Allows us to add custom action into alarms list mass actions panel. **This computed property must immutably edit received `actions` from arguments and return it.**
 ```js
-// file index.js
+// file icons.js
 // ...another code
 export default {
   components: {
@@ -1299,7 +1299,7 @@ export default {
 Type: `Function`<br>
 Allows us to customize listeners for alarm-list-row component. **This computed property must immutably edit received `listeners` from arguments and return it.**
 ```js
-// file index.js
+// file icons.js
 import { flow } from 'lodash';
 // ...another code
 export default {
@@ -1330,7 +1330,7 @@ export default {
 Type: `Function`<br>
 Allows us to customize classes for alarm-list-row component. **This computed property must immutably edit received `classes` from arguments and return it.**
 ```js
-// file index.js
+// file icons.js
 // ...another code
 export default {
   components: {
@@ -1367,7 +1367,7 @@ export const alarmListTableMixin = {
 };
 ```
 ```js
-// file index.js
+// file icons.js
 // ...another code
 import { alarmListTableMixin } from './mixins/alarm-list-table';
 // ...another code
@@ -1388,7 +1388,7 @@ export default {
 Type: `Function`<br>
 Allows us to customize row listeners on `alarm-list-table` component. **This computed property must immutably edit received `rowListeners` from arguments and return it.**
 ```js
-// file index.js
+// file icons.js
 import { flow } from 'lodash';
 // ...another code
 export default {
@@ -1419,7 +1419,7 @@ export default {
 Type: `Function`<br>
 Allows us to define additional component which will be rendered in the bottom of `alarm-list-table` component.
 ```js
-// file index.js
+// file icons.js
 // ...another code
 export default {
   // ...another code

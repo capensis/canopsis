@@ -319,7 +319,7 @@ describe('pattern-advanced-editor-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-advanced-editor-field` with custom props', () => {
@@ -340,6 +340,6 @@ describe('pattern-advanced-editor-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

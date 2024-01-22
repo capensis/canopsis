@@ -1,25 +1,26 @@
-<template lang="pug">
-  g(v-if="selected")
-    points-line-path(
-      :points="editingPoints",
-      :type="shape.lineType",
-      :stroke="color",
-      fill="transparent",
-      stroke-width="1",
-      stroke-dasharray="4 4",
+<template>
+  <g v-if="selected">
+    <points-line-path
+      :points="editingPoints"
+      :type="shape.lineType"
+      :stroke="color"
+      fill="transparent"
+      stroke-width="1"
+      stroke-dasharray="4 4"
       pointer-events="none"
-    )
-    circle(
-      v-for="(point, index) in editingPoints",
-      :key="`${point._id}`",
-      :cx="point.x",
-      :cy="point.y",
-      :fill="color",
-      :r="cornerRadius",
-      :pointer-events="moving ? 'none' : 'all'",
-      cursor="crosshair",
+    />
+    <circle
+      v-for="(point, index) in editingPoints"
+      :key="`${point._id}`"
+      :cx="point.x"
+      :cy="point.y"
+      :fill="color"
+      :r="cornerRadius"
+      :pointer-events="moving ? 'none' : 'all'"
+      cursor="crosshair"
       @mousedown.stop="onStartMovePoint(index)"
-    )
+    />
+  </g>
 </template>
 
 <script>

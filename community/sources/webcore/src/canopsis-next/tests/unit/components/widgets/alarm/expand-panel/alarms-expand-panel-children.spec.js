@@ -48,7 +48,7 @@ describe('alarms-expand-panel-children', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-expand-panel-children` with editing', () => {
@@ -62,7 +62,7 @@ describe('alarms-expand-panel-children', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-expand-panel-children` with causes alarms', () => {
@@ -76,6 +76,6 @@ describe('alarms-expand-panel-children', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

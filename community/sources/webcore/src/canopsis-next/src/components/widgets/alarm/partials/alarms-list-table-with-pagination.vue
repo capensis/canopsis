@@ -1,28 +1,29 @@
-<template lang="pug">
-  alarms-list-table(
-    :widget="widget",
-    :alarms="alarms",
-    :total-items="meta.total_count",
-    :pagination.sync="pagination",
-    :columns="columns",
-    :loading="loading",
-    :parent-alarm="parentAlarm",
-    :hide-children="hideChildren",
-    :sticky-header="stickyHeader",
-    :refresh-alarms-list="refreshAlarmsList",
-    :selectable="selectable",
-    :expandable="expandable",
-    :hide-actions="hideActions",
-    :hide-pagination="hidePagination",
-    @update:page="updateQueryPage",
-    @update:rows-per-page="updateRecordsPerPage"
-  )
+<template>
+  <alarms-list-table
+    :widget="widget"
+    :alarms="alarms"
+    :total-items="meta.total_count"
+    :options.sync="options"
+    :columns="columns"
+    :loading="loading"
+    :parent-alarm="parentAlarm"
+    :hide-children="hideChildren"
+    :sticky-header="stickyHeader"
+    :refresh-alarms-list="refreshAlarmsList"
+    :selectable="selectable"
+    :expandable="expandable"
+    :hide-actions="hideActions"
+    :hide-pagination="hidePagination"
+    @update:page="updatePage"
+    @update:items-per-page="updateItemsPerPage"
+  />
 </template>
 
 <script>
-import { isEqual, pick } from 'lodash';
+import { PAGINATION_LIMIT } from '@/config';
 
-import { SORT_ORDERS } from '@/constants';
+import { convertDataTableOptionsToQuery } from '@/helpers/entities/shared/query';
+import { getPageForNewItemsPerPage } from '@/helpers/pagination';
 
 /**
  * Group-alarm-list component
@@ -90,52 +91,38 @@ export default {
     },
   },
   computed: {
-    pagination: {
+    options: {
       get() {
-        const { sortDir, page, limit, sortKey: sortBy = null, multiSortBy = [] } = this.query;
-        const descending = sortDir === SORT_ORDERS.desc;
+        const { page = 1, itemsPerPage = PAGINATION_LIMIT, sortBy = [], sortDesc = [] } = this.query;
 
-        return { sortBy, page, limit, descending, multiSortBy };
+        return { page, itemsPerPage, sortBy, sortDesc };
       },
 
-      set(value) {
-        const paginationKeys = ['sortBy', 'descending', 'multiSortBy'];
-        const newPagination = pick(value, paginationKeys);
-        const oldPagination = pick(this.pagination, paginationKeys);
+      set(newOptions) {
+        const convertedOptions = convertDataTableOptionsToQuery(newOptions, this.options);
 
-        if (isEqual(newPagination, oldPagination)) {
+        if (convertedOptions === this.options) {
           return;
         }
 
-        const {
-          sortBy = null,
-          descending = false,
-          multiSortBy = [],
-        } = newPagination;
-
-        const newQuery = {
-          sortKey: sortBy,
-          sortDir: descending ? SORT_ORDERS.desc : SORT_ORDERS.asc,
-          multiSortBy,
-        };
-
         this.$emit('update:query', {
           ...this.query,
-          ...newQuery,
+          ...convertedOptions,
         });
       },
     },
   },
   methods: {
-    updateRecordsPerPage(limit) {
+    updateItemsPerPage(itemsPerPage) {
       this.$emit('update:query', {
         ...this.query,
 
-        limit,
+        itemsPerPage,
+        page: getPageForNewItemsPerPage(itemsPerPage, this.query.itemsPerPage, this.query.page),
       });
     },
 
-    updateQueryPage(page) {
+    updatePage(page) {
       this.$emit('update:query', {
         ...this.query,
 

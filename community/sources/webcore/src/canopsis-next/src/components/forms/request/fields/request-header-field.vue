@@ -1,37 +1,43 @@
-<template lang="pug">
-  v-layout(row)
-    v-flex.mr-3(xs6)
-      v-combobox(
-        v-field="header.text",
-        v-validate="'required'",
-        :label="$t('common.headerKey')",
-        :error-messages="errors.collect(textFieldName)",
-        :disabled="disabled",
-        :items="textHints",
+<template>
+  <v-layout>
+    <v-flex
+      class="mr-3"
+      xs6
+    >
+      <v-combobox
+        v-field="header.text"
+        v-validate="'required'"
+        :label="$t('common.headerKey')"
+        :error-messages="errors.collect(textFieldName)"
+        :disabled="disabled"
+        :items="textHints"
         :name="textFieldName"
-      )
-    v-flex(xs6)
-      v-combobox(
-        v-if="valueHints",
-        v-field="header.value",
-        v-validate="'required'",
-        :label="$t('common.headerValue')",
-        :error-messages="errors.collect(valueFieldName)",
-        :disabled="disabled",
-        :items="valueHints",
-        :name="valueFieldName",
+      />
+    </v-flex>
+    <v-flex xs6>
+      <v-combobox
+        v-if="valueHints"
+        v-field="header.value"
+        v-validate="'required'"
+        :label="$t('common.headerValue')"
+        :error-messages="errors.collect(valueFieldName)"
+        :disabled="disabled"
+        :items="valueHints"
+        :name="valueFieldName"
         :return-object="false"
-      )
-      c-payload-text-field(
-        v-else,
-        v-field="header.value",
-        :label="$t('common.headerValue')",
-        :error-messages="errors.collect(valueFieldName)",
-        :disabled="disabled",
-        :variables="headersVariables",
-        :name="valueFieldName",
+      />
+      <c-payload-text-field
+        v-else
+        v-field="header.value"
+        :label="$t('common.headerValue')"
+        :error-messages="errors.collect(valueFieldName)"
+        :disabled="disabled"
+        :variables="headersVariables"
+        :name="valueFieldName"
         required
-      )
+      />
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

@@ -1,23 +1,39 @@
-<template lang="pug">
-  v-select.c-input-type-field(
-    v-field="value",
-    v-validate="rules",
-    :items="preparedTypes",
-    :label="label",
-    :disabled="disabled",
-    :flat="flat",
-    :error="hasError",
-    :name="name",
-    hide-details,
+<template>
+  <v-select
+    class="mt-4 c-input-type-field"
+    v-field="value"
+    v-validate="rules"
+    :items="preparedTypes"
+    :label="label"
+    :disabled="disabled"
+    :flat="flat"
+    :error="hasError"
+    :name="name"
+    hide-details
     dense
-  )
-    template(#selection="{ parent, item, index }")
-      v-icon.c-input-type-field__icon(small) {{ getInputTypeIcon(item.value) }}
-    template(#item="{ item }")
-      v-list-tile-avatar.c-input-type-field__avatar
-        v-icon.c-input-type-field__icon(small) {{ getInputTypeIcon(item.value) }}
-      v-list-tile-content
-        v-list-tile-title {{ item.text }}
+  >
+    <template #selection="{ item }">
+      <v-icon
+        class="c-input-type-field__icon"
+        small
+      >
+        {{ getInputTypeIcon(item.value) }}
+      </v-icon>
+    </template>
+    <template #item="{ item }">
+      <v-list-item-avatar class="c-input-type-field__avatar">
+        <v-icon
+          class="c-input-type-field__icon"
+          small
+        >
+          {{ getInputTypeIcon(item.value) }}
+        </v-icon>
+      </v-list-item-avatar>
+      <v-list-item-content>
+        <v-list-item-title>{{ item.text }}</v-list-item-title>
+      </v-list-item-content>
+    </template>
+  </v-select>
 </template>
 
 <script>

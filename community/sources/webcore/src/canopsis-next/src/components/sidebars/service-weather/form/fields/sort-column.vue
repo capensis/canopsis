@@ -1,23 +1,30 @@
-<template lang="pug">
-  widget-settings-item(:title="$t('settings.defaultSortColumn')")
-    v-layout(row)
-      v-combobox(
-        v-field="value.column",
-        :items="columns",
-        :label="$t('settings.orderBy')",
-        :return-object="false",
-        item-text="label",
+<template>
+  <widget-settings-item :title="$t('settings.defaultSortColumn')">
+    <v-layout>
+      <v-combobox
+        v-field="value.column"
+        :items="columns"
+        :label="$t('settings.orderBy')"
+        :return-object="false"
+        item-text="label"
         item-value="value"
-      )
-        template(#no-data="")
-          v-list-tile
-            v-list-tile-content
-              v-list-tile-title(v-html="$t('settings.sortColumnNoData')")
-    v-layout(row)
-      v-select(
-        v-field="value.order",
+      >
+        <template #no-data="">
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-title v-html="$t('settings.sortColumnNoData')" />
+            </v-list-item-content>
+          </v-list-item>
+        </template>
+      </v-combobox>
+    </v-layout>
+    <v-layout>
+      <v-select
+        v-field="value.order"
         :items="orders"
-      )
+      />
+    </v-layout>
+  </widget-settings-item>
 </template>
 
 <script>

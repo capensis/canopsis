@@ -1,47 +1,55 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :headers="headers",
-    :items="maps",
-    :loading="pending",
-    :total-items="totalItems",
-    :pagination="pagination",
-    :select-all="removable",
-    :is-disabled-item="isDisabledMap",
-    advanced-pagination,
-    expand,
-    search,
-    @update:pagination="$emit('update:pagination', $event)"
-  )
-    template(#mass-actions="{ selected }")
-      c-action-btn(
-        v-show="removable",
-        type="delete",
+<template>
+  <c-advanced-data-table
+    :headers="headers"
+    :items="maps"
+    :loading="pending"
+    :total-items="totalItems"
+    :options="options"
+    :select-all="removable"
+    :is-disabled-item="isDisabledMap"
+    advanced-pagination
+    expand
+    search
+    @update:options="$emit('update:options', $event)"
+  >
+    <template #mass-actions="{ selected }">
+      <c-action-btn
+        v-show="removable"
+        type="delete"
         @click="$emit('remove-selected', selected)"
-      )
-    template(#type="{ item }")
-      span {{ $t(`map.types.${item.type}`) }}
-    template(#updated="{ item }") {{ item.updated | date }}
-    template(#actions="{ item }")
-      v-layout(row)
-        c-action-btn(
-          v-if="updatable",
-          type="edit",
+      />
+    </template>
+    <template #type="{ item }">
+      <span>{{ $t(`map.types.${item.type}`) }}</span>
+    </template>
+    <template #updated="{ item }">
+      {{ item.updated | date }}
+    </template>
+    <template #actions="{ item }">
+      <v-layout>
+        <c-action-btn
+          v-if="updatable"
+          type="edit"
           @click="$emit('edit', item)"
-        )
-        c-action-btn(
-          v-if="duplicable",
-          type="duplicate",
+        />
+        <c-action-btn
+          v-if="duplicable"
+          type="duplicate"
           @click="$emit('duplicate', item)"
-        )
-        c-action-btn(
-          v-if="removable",
-          :tooltip="item.deletable ? $t('common.delete') : $t('map.usingMap')",
-          :disabled="!item.deletable",
-          type="delete",
+        />
+        <c-action-btn
+          v-if="removable"
+          :tooltip="item.deletable ? $t('common.delete') : $t('map.usingMap')"
+          :disabled="!item.deletable"
+          type="delete"
           @click="$emit('remove', item._id)"
-        )
-    template(#expand="{ item }")
-      maps-list-expand-item(:map="item")
+        />
+      </v-layout>
+    </template>
+    <template #expand="{ item }">
+      <maps-list-expand-item :map="item" />
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>
@@ -64,7 +72,7 @@ export default {
       type: Number,
       required: false,
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },

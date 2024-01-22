@@ -268,7 +268,7 @@ describe('pbehavior-recurrence-rule-periods', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pbehavior-recurrence-rule-periods` with entities', async () => {
@@ -282,6 +282,6 @@ describe('pbehavior-recurrence-rule-periods', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

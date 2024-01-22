@@ -1,15 +1,27 @@
-<template lang="pug">
-  c-action-btn(v-bind="$attrs", :tooltip="tooltip")
-    template(#button="")
-      v-btn.mx-1.ma-0(
-        v-clipboard:copy="value",
-        v-clipboard:success="onSuccessCopied",
-        v-clipboard:error="onErrorCopied",
-        :small="small",
-        :fab="fab",
+<template>
+  <c-action-btn
+    v-bind="$attrs"
+    :tooltip="tooltip"
+  >
+    <template #button="">
+      <v-btn
+        class="mx-1 ma-0"
+        v-clipboard:copy="value"
+        v-clipboard:success="onSuccessCopied"
+        v-clipboard:error="onErrorCopied"
+        :small="small"
+        :fab="fab"
         icon
-      )
-        v-icon(:color="color", :small="iconSmall") {{ icon }}
+      >
+        <v-icon
+          :color="color"
+          :small="iconSmall"
+        >
+          {{ icon }}
+        </v-icon>
+      </v-btn>
+    </template>
+  </c-action-btn>
 </template>
 
 <script>

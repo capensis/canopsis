@@ -34,7 +34,7 @@ describe('service-entity-template', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `service-entity-template` with custom props', async () => {
@@ -55,7 +55,7 @@ describe('service-entity-template', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `service-entity-template` with custom props without right', async () => {
@@ -72,6 +72,6 @@ describe('service-entity-template', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

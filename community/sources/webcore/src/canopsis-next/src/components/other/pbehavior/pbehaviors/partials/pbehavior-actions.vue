@@ -1,23 +1,24 @@
-<template lang="pug">
-  v-layout(row)
-    c-action-btn(
-      v-if="updatable",
-      :tooltip="pbehavior.editable ? $t('common.edit') : $t('pbehavior.notEditable')",
-      :loading="editing",
-      type="edit",
+<template>
+  <v-layout>
+    <c-action-btn
+      v-if="updatable"
+      :tooltip="pbehavior.editable ? $t('common.edit') : $t('pbehavior.notEditable')"
+      :loading="editing"
+      type="edit"
       @click="showEditPbehaviorModal"
-    )
-    c-action-btn(
-      v-if="duplicable",
-      :loading="duplicating",
-      type="duplicate",
+    />
+    <c-action-btn
+      v-if="duplicable"
+      :loading="duplicating"
+      type="duplicate"
       @click="showDuplicatePbehaviorModal"
-    )
-    c-action-btn(
-      v-if="removable",
-      type="delete",
+    />
+    <c-action-btn
+      v-if="removable"
+      type="delete"
       @click="showDeletePbehaviorModal"
-    )
+    />
+  </v-layout>
 </template>
 
 <script>

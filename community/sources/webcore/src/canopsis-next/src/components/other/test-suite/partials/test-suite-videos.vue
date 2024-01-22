@@ -1,9 +1,26 @@
-<template lang="pug">
-  v-container.pa-0(fluid, grid-list-sm)
-    v-layout(row, wrap)
-      v-flex(v-for="video in videoSources", :key="video", xs6)
-        video.d-block(controls, :src="video", width="100%")
-          source(:src="video")
+<template>
+  <v-container
+    class="pa-0"
+    fluid
+    grid-list-sm
+  >
+    <v-layout wrap>
+      <v-flex
+        v-for="video in videoSources"
+        :key="video"
+        xs6
+      >
+        <video
+          class="d-block"
+          controls
+          :src="video"
+          width="100%"
+        >
+          <source :src="video">
+        </video>
+      </v-flex>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>

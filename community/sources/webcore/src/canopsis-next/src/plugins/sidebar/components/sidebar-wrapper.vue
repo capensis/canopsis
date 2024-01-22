@@ -1,21 +1,33 @@
-<template lang="pug">
-  v-navigation-drawer(
-    v-model="isOpen",
-    :ignore-click-outside="hasMaximizedModal",
-    :custom-close-conditional="closeCondition",
-    :width="450",
-    right,
-    fixed,
+<template>
+  <v-navigation-drawer
+    v-model="isOpen"
+    :ignore-click-outside="hasMaximizedModal"
+    :custom-close-conditional="closeCondition"
+    :width="450"
+    right
+    fixed
     temporary
-  )
-    div(v-if="title")
-      v-toolbar(color="secondary")
-        v-layout(row, align-center)
-          v-flex.white--text.subheading {{ title }}
-          v-btn(icon, @click.stop="closeHandler")
-            v-icon(color="white") close
-      v-divider
-    slot
+  >
+    <div v-if="title">
+      <v-list color="secondary">
+        <v-list-item>
+          <v-list-item-title class="white--text text-subtitle-1">
+            {{ title }}
+          </v-list-item-title>
+          <v-btn
+            icon
+            @click.stop="closeHandler"
+          >
+            <v-icon color="white">
+              close
+            </v-icon>
+          </v-btn>
+        </v-list-item>
+      </v-list>
+      <v-divider />
+    </div>
+    <slot />
+  </v-navigation-drawer>
 </template>
 
 <script>

@@ -1,7 +1,13 @@
-<template lang="pug">
-  span
-    slot
-    c-help-icon(:text="$t('alarm.tooltips.priority')", icon-class="priority-help-icon ml-1", size="16", top)
+<template>
+  <span>
+    <slot />
+    <c-help-icon
+      :text="$t('alarm.tooltips.priority')"
+      icon-class="priority-help-icon ml-1"
+      size="16"
+      top
+    />
+  </span>
 </template>
 
 <style lang="scss" scoped>
