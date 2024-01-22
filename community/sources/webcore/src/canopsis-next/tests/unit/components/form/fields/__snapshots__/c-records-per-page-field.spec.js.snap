@@ -21,8 +21,7 @@ exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with custom p
         >
           <input
             aria-readonly="false"
-            autocomplete="on"
-            name="itemsPerPage"
+            autocomplete="off"
             readonly="readonly"
             type="text"
           />
@@ -42,6 +41,7 @@ exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with custom p
           </div>
         </div>
         <input
+          name="itemsPerPage"
           type="hidden"
           value="10"
         />
@@ -144,8 +144,7 @@ exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with default 
           </div>
           <input
             aria-readonly="false"
-            autocomplete="on"
-            name="itemsPerPage"
+            autocomplete="off"
             readonly="readonly"
             type="text"
           />
@@ -165,6 +164,7 @@ exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with default 
           </div>
         </div>
         <input
+          name="itemsPerPage"
           type="hidden"
           value="10"
         />
