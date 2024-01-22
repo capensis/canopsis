@@ -2,9 +2,10 @@ import { range } from 'lodash';
 
 import { generateRenderer } from '@unit/utils/vue';
 
+import { EVENT_FILTER_TYPES } from '@/constants';
+
 import EventFiltersList from '@/components/other/event-filter/event-filters-list.vue';
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
-import { EVENT_FILTER_TYPES } from '@/constants';
 
 const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,

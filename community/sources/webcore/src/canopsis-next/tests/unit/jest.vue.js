@@ -1,4 +1,5 @@
 const path = require('path');
+
 const { merge } = require('lodash');
 const { process, getCacheKey } = require('@vue/vue2-jest');
 const vueTemplateBabelCompiler = require('vue-template-babel-compiler');

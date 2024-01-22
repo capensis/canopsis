@@ -1,7 +1,6 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import {
   createAuthModule,
   createMockedStoreModules,
@@ -9,15 +8,17 @@ import {
   createServiceModule,
   createUserPreferenceModule,
 } from '@unit/utils/store';
+import { mockModals } from '@unit/utils/mock-hooks';
+
 import { MODALS, SERVICE_WEATHER_WIDGET_MODAL_TYPES, USERS_PERMISSIONS, WIDGET_TYPES } from '@/constants';
+import { DEFAULT_WEATHER_LIMIT } from '@/config';
+
 import {
   generateDefaultServiceWeatherWidget,
   generatePreparedDefaultAlarmListWidget,
 } from '@/helpers/entities/widget/form';
-import { DEFAULT_WEATHER_LIMIT } from '@/config';
 
 import ServiceWeatherWidget from '@/components/widgets/service-weather/service-weather.vue';
-import { mockModals } from '@unit/utils/mock-hooks';
 
 const stubs = {
   'c-entity-category-field': true,

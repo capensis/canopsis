@@ -1,10 +1,9 @@
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { createActivatorElementStub } from '@unit/stubs/vuetify';
 
 import { ENTITY_TYPES } from '@/constants';
 
 import ServiceDependenciesExpand from '@/components/other/service/partials/service-dependencies-expand.vue';
-
-import { createActivatorElementStub } from '@unit/stubs/vuetify';
 
 const stubs = {
   'v-tooltip': createActivatorElementStub('v-tooltip'),

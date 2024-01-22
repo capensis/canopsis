@@ -1,8 +1,6 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
-
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import {
   createAlarmModule,
   createAuthModule,
@@ -11,8 +9,9 @@ import {
   createPbehaviorModule,
   createPbehaviorTypesModule,
 } from '@unit/utils/store';
-import { uid } from '@/helpers/uid';
 import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
+import { createCheckboxInputStub } from '@unit/stubs/input';
+
 import {
   ENTITIES_STATES,
   MODALS,
@@ -24,8 +23,9 @@ import {
 } from '@/constants';
 import { COLORS } from '@/config';
 
+import { uid } from '@/helpers/uid';
+
 import ServiceEntitiesList from '@/components/other/service/partials/service-entities-list.vue';
-import { createCheckboxInputStub } from '@unit/stubs/input';
 
 jest.mock('@/helpers/uid');
 

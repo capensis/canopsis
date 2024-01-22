@@ -1,7 +1,6 @@
 import { range } from 'lodash';
-import flushPromises from 'flush-promises';
 
-import { generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 
 import PbehaviorComments from '@/components/other/pbehavior/pbehaviors/partials/pbehavior-comments.vue';
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';

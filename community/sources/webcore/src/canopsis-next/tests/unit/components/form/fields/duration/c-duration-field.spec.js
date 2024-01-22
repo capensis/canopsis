@@ -1,7 +1,8 @@
 import Faker from 'faker';
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createNumberInputStub } from '@unit/stubs/input';
+
 import { TIME_UNITS } from '@/constants';
 
 import CDurationField from '@/components/forms/fields/duration/c-duration-field.vue';

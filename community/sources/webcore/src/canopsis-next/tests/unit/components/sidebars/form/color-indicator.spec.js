@@ -1,4 +1,5 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+
 import { COLOR_INDICATOR_TYPES } from '@/constants';
 
 import FieldColorIndicator from '@/components/sidebars/form/fields/color-indicator.vue';

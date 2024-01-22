@@ -1,6 +1,7 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { ENTITIES_STATES } from '@/constants';
+
 import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
 
 const stubs = {

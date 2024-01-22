@@ -1,6 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createNumberInputStub } from '@unit/stubs/input';
+
 import GridRangeSize from '@/components/sidebars/alarm/form/fields/grid-range-size.vue';
 
 const stubs = {

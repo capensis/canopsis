@@ -1,6 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createSelectInputStub } from '@unit/stubs/input';
+
 import DefaultElementsPerPage from '@/components/sidebars/form/fields/default-elements-per-page.vue';
 
 const stubs = {

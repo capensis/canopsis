@@ -1,11 +1,12 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+
+import { MERMAID_THEMES } from '@/constants';
+
+import { mermaidPointToForm } from '@/helpers/entities/map/form';
 
 import MermaidEditor from '@/components/other/map/form/fields/mermaid-editor.vue';
-import { MERMAID_THEMES } from '@/constants';
-import { mermaidPointToForm } from '@/helpers/entities/map/form';
 
 const stubs = {
   'mermaid-code-editor': true,

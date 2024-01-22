@@ -24,7 +24,7 @@ describe('c-expand-btn', () => {
 
     wrapper.find('button.v-btn').trigger('click');
 
-    expect(wrapper).toEmit('expand', [true]);
+    expect(wrapper).toEmit('expand', true);
   });
 
   it('Expand button collapse is worked.', () => {
@@ -32,7 +32,7 @@ describe('c-expand-btn', () => {
 
     wrapper.find('button.v-btn').trigger('click');
 
-    expect(wrapper).toEmit('expand', [false]);
+    expect(wrapper).toEmit('expand', false);
   });
 
   it('Renders `c-expand-btn` correctly.', () => {

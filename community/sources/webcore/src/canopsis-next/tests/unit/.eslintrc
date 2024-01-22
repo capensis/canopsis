@@ -12,6 +12,80 @@
     "import/no-extraneous-dependencies": "off",
     "import/no-unresolved": "off",
     "import/extensions": "off",
-    "import/order": "off"
+    "import/order": ["error", {
+      "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
+      "pathGroups": [
+        {
+          "pattern": "@unit/**",
+          "group": "internal",
+          "position": "before"
+        },
+        {
+          "pattern": "@/+(config|constants)",
+          "group": "internal",
+          "position": "before"
+        },
+        {
+          "pattern": "@/plugins/**",
+          "group": "internal",
+          "position": "before"
+        },
+        {
+          "pattern": "@/services/**",
+          "group": "internal",
+          "position": "before"
+        },
+        {
+          "pattern": "@/+(store|i18n|filters|router)",
+          "group": "internal",
+          "position": "before"
+        },
+        {
+          "pattern": "@/store/**",
+          "group": "internal",
+          "position": "before"
+        },
+        {
+          "pattern": "@/helpers/**",
+          "group": "internal",
+          "position": "before"
+        },
+        {
+          "pattern": "@/mixins/**",
+          "group": "internal",
+          "position": "before"
+        },
+        {
+          "pattern": "@/components/**",
+          "group": "internal",
+          "position": "before"
+        }
+      ],
+      "pathGroupsExcludedImportTypes": ["@unit/**"],
+      "newlines-between": "always"
+    }],
+    "no-restricted-syntax": [
+      "error",
+      {
+        "selector": "Program > VariableDeclaration CallExpression[callee.name='generateShallowRenderer']",
+        "message": "generateShallowRenderer should be used inside describe."
+      },
+      {
+        "selector": "Program > VariableDeclaration CallExpression[callee.name='generateRenderer']",
+        "message": "generateRenderer should be used inside describe."
+      },
+      {
+        "selector": "CallExpression[callee.object.name='wrapper'][callee.property.name='emitted']",
+        "message": "Should be used `expect(wrapper).toEmit('input', ...data)` instead of `wrapper.emitted('input')`"
+      },
+      {
+        "selector": "CallExpression[callee.object.property.name='vm'][callee.property.name='$emit']",
+        "message": "Should be used `wrapper.triggerCustomEvent('input', data)` instead of `wrapper.vm.$emit('input', data)`"
+      },
+      {
+        "selector": "ImportDeclaration[source.value='flush-promises']",
+        "message": "`flushPromises` should be imported from `@unit/utils/vue`"
+      }
+    ]
   }
 }

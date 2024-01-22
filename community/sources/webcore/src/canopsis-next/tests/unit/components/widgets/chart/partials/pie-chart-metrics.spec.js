@@ -1,6 +1,5 @@
-import flushPromises from 'flush-promises';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 
-import { generateRenderer } from '@unit/utils/vue';
 import { ALARM_METRIC_PARAMETERS, KPI_PIE_CHART_SHOW_MODS } from '@/constants';
 
 import PieChartMetrics from '@/components/widgets/chart/partials/pie-chart-metrics.vue';

@@ -1,5 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { randomArrayItem } from '@unit/utils/array';
+
 import { SAMPLINGS } from '@/constants';
 
 import FieldQuickDateIntervalType from '@/components/sidebars/chart/form/fields/sampling.vue';

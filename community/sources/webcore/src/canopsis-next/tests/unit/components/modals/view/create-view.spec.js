@@ -1,16 +1,16 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 import { omit } from 'lodash';
 
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createAuthModule, createMockedStoreModules, createViewModule } from '@unit/utils/store';
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals, mockPopups, mockRouter } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 
-import ClickOutside from '@/services/click-outside';
 import { CRUD_ACTIONS, DEFAULT_PERIODIC_REFRESH, MODALS, USERS_PERMISSIONS } from '@/constants';
+
+import ClickOutside from '@/services/click-outside';
 
 import CreateView from '@/components/modals/view/create-view.vue';
 

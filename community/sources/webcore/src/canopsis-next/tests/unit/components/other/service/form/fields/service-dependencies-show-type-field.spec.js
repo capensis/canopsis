@@ -1,6 +1,7 @@
-import { TREE_OF_DEPENDENCIES_SHOW_TYPES } from '@/constants';
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createNumberInputStub } from '@unit/stubs/input';
+
+import { TREE_OF_DEPENDENCIES_SHOW_TYPES } from '@/constants';
 
 import ServiceDependenciesShowTypeField from '@/components/other/service/form/fields/service-dependencies-show-type-field.vue';
 

@@ -1,10 +1,10 @@
-import flushPromises from 'flush-promises';
 import { range } from 'lodash';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules, createPbehaviorTimespanModule } from '@unit/utils/store';
 import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
 import { createSelectInputStub } from '@unit/stubs/input';
+
 import { MODALS, PBEHAVIOR_RRULE_PERIODS_RANGES } from '@/constants';
 
 import PbehaviorRecurrenceRulePeriods from '@/components/other/pbehavior/pbehaviors/partials/pbehavior-recurrence-rule-periods.vue';

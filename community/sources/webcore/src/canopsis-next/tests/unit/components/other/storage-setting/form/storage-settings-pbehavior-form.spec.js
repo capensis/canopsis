@@ -1,9 +1,11 @@
 import { generateRenderer } from '@unit/utils/vue';
+import { randomDurationValue } from '@unit/utils/duration';
+
 import { TIME_UNITS } from '@/constants';
+
 import { dataStorageSettingsToForm } from '@/helpers/entities/data-storage/form';
 
 import StorageSettingsPbehaviorForm from '@/components/other/storage-setting/form/storage-settings-pbehavior-form.vue';
-import { randomDurationValue } from '@unit/utils/duration';
 import CInformationBlock from '@/components/common/block/c-information-block.vue';
 
 const stubs = {

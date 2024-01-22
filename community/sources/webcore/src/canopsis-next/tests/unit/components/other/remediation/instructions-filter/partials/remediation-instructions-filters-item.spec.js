@@ -1,6 +1,7 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createButtonStub } from '@unit/stubs/button';
 import { mockModals } from '@unit/utils/mock-hooks';
+
 import { MODALS } from '@/constants';
 
 import RemediationInstructionsFiltersItem from '@/components/other/remediation/instructions-filter/partials/remediation-instructions-filters-item.vue';

@@ -1,6 +1,5 @@
-import flushPromises from 'flush-promises';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { COLOR_INDICATOR_TYPES } from '@/constants';
 
 import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';

@@ -1,10 +1,12 @@
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+
+import { LINE_TYPES, STROKE_TYPES } from '@/constants';
+
 import { lineShapeToForm, rectShapeToForm } from '@/helpers/flowchart/shapes';
 
 import FlowchartProperties from '@/components/common/flowchart/flowchart-properties.vue';
-import { LINE_TYPES, STROKE_TYPES } from '@/constants';
 
 const stubs = {
   'flowchart-color-field': true,

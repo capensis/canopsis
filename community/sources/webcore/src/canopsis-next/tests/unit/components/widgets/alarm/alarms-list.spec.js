@@ -1,11 +1,11 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
 import { omit } from 'lodash';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockModals, mockPopups, mockSocket } from '@unit/utils/mock-hooks';
 import { createMockedStoreModule, createMockedStoreModules } from '@unit/utils/store';
 import { fakeAlarmDetails, fakeStaticAlarms } from '@unit/data/alarm';
+
 import { API_HOST, API_ROUTES } from '@/config';
 import {
   CANOPSIS_EDITION,

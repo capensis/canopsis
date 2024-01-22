@@ -1,7 +1,6 @@
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createInputStub } from '@unit/stubs/input';
 
 import FastActionOutput from '@/components/sidebars/alarm/form/fields/fast-action-output.vue';

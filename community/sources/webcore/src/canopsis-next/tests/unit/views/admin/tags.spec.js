@@ -1,14 +1,13 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
+import { omit } from 'lodash';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createAuthModule, createMockedStoreModules, createAlarmTagModule } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
 
 import { CRUD_ACTIONS, MODALS, TAG_TYPES, USERS_PERMISSIONS } from '@/constants';
 
 import Tags from '@/views/admin/tags.vue';
-import { omit } from 'lodash';
 
 const stubs = {
   'c-page': true,

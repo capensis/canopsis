@@ -1,6 +1,7 @@
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+
 import { TIME_UNITS } from '@/constants';
 
 import SnoozeEventForm from '@/components/widgets/alarm/forms/snooze-event-form.vue';

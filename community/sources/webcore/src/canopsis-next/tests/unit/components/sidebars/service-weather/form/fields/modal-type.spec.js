@@ -1,5 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createInputStub } from '@unit/stubs/input';
+
 import { SERVICE_WEATHER_WIDGET_MODAL_TYPES } from '@/constants';
 
 import FieldModalType from '@/components/sidebars/service-weather/form/fields/modal-type.vue';
