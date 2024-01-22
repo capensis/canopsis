@@ -188,7 +188,7 @@ export default {
 
     openRootCauseDiagram(entity) {
       this.$modals.show({
-        name: MODALS.entityDependenciesByStateSettings,
+        name: MODALS.entitiesRootCauseDiagram,
         config: {
           entity,
         },
