@@ -9,10 +9,10 @@ class ViewPage {
 
   async clickReload() {
     await Promise.all([
-      this.application.page.waitForSelector('.v-datatable__progress [role=progressbar]', {
+      this.application.page.waitForSelector('.v-data-table__progress [role=progressbar]', {
         hidden: true,
       }),
-      this.application.page.click('.view-fab-btns > .layout > .v-btn'),
+      this.application.page.click('.view-fab-btns > .layout > .flex:nth-of-type(2) > .v-btn'),
     ]);
   }
 }

@@ -12,11 +12,11 @@ class AlarmsListModule {
   }
 
   waitFirstAlarmRowExpandPanel() {
-    return this.application.waitElement('.v-datatable__expand-content');
+    return this.application.waitElement('.v-data-table__expanded__content');
   }
 
   waitProgress(visible = true) {
-    return this.application.page.waitForSelector('.v-datatable__progress [role=progressbar]', {
+    return this.application.page.waitForSelector('.v-data-table__progress [role=progressbar]', {
       hidden: !visible,
     });
   }
