@@ -1,5 +1,4 @@
 import { omit } from 'lodash';
-import flushPromises from 'flush-promises';
 
 import { generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
@@ -14,7 +13,6 @@ describe('extra-details-ack', () => {
   mockDateNow(nowTimestamp);
 
   const snapshotFactory = generateRenderer(ExtraDetailsAck, {
-
     attachTo: document.body,
   });
 
@@ -26,43 +24,43 @@ describe('extra-details-ack', () => {
   };
 
   it('Renders `extra-details-ack` with full ack', async () => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: {
         ack,
       },
     });
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 
   it('Renders `extra-details-ack` without initiator', async () => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: {
         ack: omit(ack, ['initiator']),
       },
     });
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 
   it('Renders `extra-details-ack` without message', async () => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: {
         ack: omit(ack, ['m']),
       },
     });
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 
   it('Renders `extra-details-ack` with date in previous month', async () => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: {
         ack: {
           ...ack,
@@ -71,8 +69,8 @@ describe('extra-details-ack', () => {
       },
     });
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 });

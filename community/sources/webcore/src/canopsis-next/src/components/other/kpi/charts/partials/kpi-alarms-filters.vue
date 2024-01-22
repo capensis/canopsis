@@ -1,14 +1,31 @@
-<template lang="pug">
-  div.kpi-alarms-toolbar
-    v-layout.ml-4.my-4(wrap)
-      c-quick-date-interval-field.mr-4(
-        v-field="query.interval",
-        :min="minFromTimestamp",
+<template>
+  <div class="kpi-alarms-toolbar">
+    <v-layout
+      class="ml-4 my-4"
+      wrap
+    >
+      <c-quick-date-interval-field
+        class="mr-4"
+        v-field="query.interval"
+        :min="minFromTimestamp"
         :quick-ranges="quickRanges"
-      )
-      c-sampling-field.mr-4.kpi-alarms-toolbar__sampling(:value="query.sampling", @input="updateSampling")
-      c-filter-field.mr-4.kpi-alarms-toolbar__filters(v-field="query.filter")
-      c-alarm-metric-parameters-field.kpi-alarms-toolbar__parameters(v-field="query.parameters", hide-details)
+      />
+      <c-sampling-field
+        class="mr-4 kpi-alarms-toolbar__sampling"
+        :value="query.sampling"
+        @input="updateSampling"
+      />
+      <c-filter-field
+        class="mr-4 kpi-alarms-toolbar__filters"
+        v-field="query.filter"
+      />
+      <c-alarm-metric-parameters-field
+        class="kpi-alarms-toolbar__parameters"
+        v-field="query.parameters"
+        hide-details
+      />
+    </v-layout>
+  </div>
 </template>
 
 <script>

@@ -6,7 +6,7 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with custom p
 >
   <!---->
   <c-name-field-stub
-    required="required"
+    required=""
     value="pbehavior"
   />
   <div
@@ -14,24 +14,24 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with custom p
   >
     <c-enabled-field-stub
       class="mt-0 mb-1"
-      hide-details="hide-details"
+      hide-details=""
       label="Start on trigger"
       value="true"
     />
     <c-duration-field-stub
-      required="required"
+      required=""
       value="[object Object]"
     />
     <div
-      class="layout row"
+      class="layout"
     >
       <div
         class="flex xs6"
       >
         <c-pbehavior-reason-field-stub
           class="mr-2"
-          required="required"
-          return-object="return-object"
+          required=""
+          return-object=""
           value="[object Object]"
         />
       </div>
@@ -40,8 +40,8 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with custom p
       >
         <c-pbehavior-type-field-stub
           class="ml-2"
-          required="required"
-          return-object="return-object"
+          required=""
+          return-object=""
           value="[object Object]"
         />
       </div>
@@ -55,10 +55,10 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with required
   class="layout column"
 >
   <c-enabled-field-stub
-    hide-details="hide-details"
+    hide-details=""
   />
   <c-name-field-stub
-    required="required"
+    required=""
     value="pbehavior"
   />
   <div
@@ -66,13 +66,13 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with required
   >
     <!---->
     <div
-      class="layout row align-center"
+      class="layout align-center"
     >
       <div
         class="flex xs3"
       >
         <div
-          class="v-input mt-0 v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+          class="v-input mt-0 v-input--hide-details theme--light v-input--selection-controls v-input--checkbox"
         >
           <div
             class="v-input__control"
@@ -83,9 +83,14 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with required
               <div
                 class="v-input--selection-controls__input"
               >
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate material-icons theme--light"
+                >
+                  check_box_outline_blank
+                </i>
                 <input
                   aria-checked="false"
-                  aria-label="Whole day"
                   role="checkbox"
                   type="checkbox"
                   value=""
@@ -93,15 +98,8 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with required
                 <div
                   class="v-input--selection-controls__ripple"
                 />
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                >
-                  check_box_outline_blank
-                </i>
               </div>
               <label
-                aria-hidden="true"
                 class="v-label theme--light"
                 style="left: 0px; position: relative;"
               >
@@ -129,15 +127,15 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with required
       </div>
     </div>
     <div
-      class="layout row"
+      class="layout"
     >
       <div
         class="flex xs6"
       >
         <c-pbehavior-reason-field-stub
           class="mr-2"
-          required="required"
-          return-object="return-object"
+          required=""
+          return-object=""
           value="[object Object]"
         />
       </div>
@@ -146,8 +144,8 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with required
       >
         <c-pbehavior-type-field-stub
           class="ml-2"
-          required="required"
-          return-object="return-object"
+          required=""
+          return-object=""
           value="[object Object]"
         />
       </div>

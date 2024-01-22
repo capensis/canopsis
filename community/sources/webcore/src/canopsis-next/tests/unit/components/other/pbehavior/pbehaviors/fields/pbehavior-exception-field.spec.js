@@ -196,7 +196,7 @@ describe('pbehavior-exception-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pbehavior-exception-field` with custom props', () => {
@@ -212,7 +212,7 @@ describe('pbehavior-exception-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pbehavior-exception-field` with custom props with defined type', () => {
@@ -228,6 +228,6 @@ describe('pbehavior-exception-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

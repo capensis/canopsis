@@ -37,7 +37,7 @@ describe('c-enabled-field', () => {
   it('Renders `c-enabled-field` with default props correctly', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-enabled-field` with custom props correctly', () => {
@@ -51,6 +51,6 @@ describe('c-enabled-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

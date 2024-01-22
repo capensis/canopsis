@@ -1,22 +1,22 @@
-<template lang="pug">
-  v-select(
-    v-field="value",
-    v-validate="rules",
-    :label="label || $t('common.type')",
-    :loading="fieldPbehaviorTypesPending",
-    :items="preparedItems",
-    :error-messages="errors.collect(name)",
-    :name="name",
-    :disabled="disabled",
-    :multiple="multiple",
-    :chips="chips",
-    :deletable-chips="chips",
-    :small-chips="chips",
-    :item-disabled="isItemDisabled",
-    :return-object="returnObject",
-    item-text="name",
+<template>
+  <v-select
+    v-field="value"
+    v-validate="rules"
+    :label="label || $t('common.type')"
+    :loading="fieldPbehaviorTypesPending"
+    :items="preparedItems"
+    :error-messages="errors.collect(name)"
+    :name="name"
+    :disabled="disabled"
+    :multiple="multiple"
+    :chips="chips"
+    :deletable-chips="chips"
+    :small-chips="chips"
+    :item-disabled="isItemDisabled"
+    :return-object="returnObject"
+    item-text="name"
     item-value="_id"
-  )
+  />
 </template>
 
 <script>

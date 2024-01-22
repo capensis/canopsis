@@ -1,28 +1,31 @@
-<template lang="pug">
-  div.flowchart-preview
-    flowchart(
-      :shapes="shapes",
-      :background-color="map.parameters.background_color",
+<template>
+  <div class="flowchart-preview">
+    <flowchart
+      :shapes="shapes"
+      :background-color="map.parameters.background_color"
       readonly
-    )
-      template(#layers="{ data }")
-        flowchart-points-preview(
-          v-on="$listeners",
-          :points="map.parameters.points",
-          :popup-template="popupTemplate",
-          :popup-actions="popupActions",
-          :color-indicator="colorIndicator",
-          :pbehavior-enabled="pbehaviorEnabled",
+    >
+      <template #layers="{ data }">
+        <flowchart-points-preview
+          v-on="$listeners"
+          :points="map.parameters.points"
+          :popup-template="popupTemplate"
+          :popup-actions="popupActions"
+          :color-indicator="colorIndicator"
+          :pbehavior-enabled="pbehaviorEnabled"
           :shapes="data"
-        )
-    c-help-icon(
-      :text="$t('flowchart.panzoom.helpText')",
-      size="32",
-      icon-class="map-preview__help-icon",
-      color="secondary",
-      icon="help",
+        />
+      </template>
+    </flowchart>
+    <c-help-icon
+      :text="$t('flowchart.panzoom.helpText')"
+      size="32"
+      icon-class="map-preview__help-icon"
+      color="secondary"
+      icon="help"
       top
-    )
+    />
+  </div>
 </template>
 
 <script>

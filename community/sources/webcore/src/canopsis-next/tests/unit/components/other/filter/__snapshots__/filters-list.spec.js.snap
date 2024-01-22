@@ -21,14 +21,14 @@ exports[`filters-list Renders \`filters-list\` with custom props 1`] = `
     />
   </c-draggable-list-field-stub>
   <button
-    class="ml-0 v-btn v-btn--outline v-btn--depressed theme--light primary--text"
+    class="v-btn-legacy-m--y v-btn v-btn--outlined theme--light v-size--default primary--text"
     type="button"
   >
-    <div
+    <span
       class="v-btn__content"
     >
-      Add filter
-    </div>
+    Add filter
+    </span>
   </button>
 </div>
 `;
@@ -46,14 +46,14 @@ exports[`filters-list Renders \`filters-list\` with default props 1`] = `
     value=""
   />
   <button
-    class="ml-0 v-btn v-btn--outline v-btn--depressed theme--light primary--text"
+    class="v-btn-legacy-m--y v-btn v-btn--outlined theme--light v-size--default primary--text"
     type="button"
   >
-    <div
+    <span
       class="v-btn__content"
     >
-      Add filter
-    </div>
+    Add filter
+    </span>
   </button>
 </div>
 `;

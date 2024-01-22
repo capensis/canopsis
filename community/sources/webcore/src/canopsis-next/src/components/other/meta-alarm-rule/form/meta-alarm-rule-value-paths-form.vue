@@ -1,14 +1,19 @@
-<template lang="pug">
-  div
-    text-fields(
-      v-field="form.value_paths",
-      :label="$tc('metaAlarmRule.valuePath', 1)",
-      :title="$tc('metaAlarmRule.valuePath', 2)",
-      validation-rules="required",
+<template>
+  <div>
+    <text-fields
+      v-field="form.value_paths"
+      :label="$tc('metaAlarmRule.valuePath', 1)"
+      :title="$tc('metaAlarmRule.valuePath', 2)"
+      validation-rules="required"
       @input="validateValuePaths"
-    )
-    v-alert(:value="errors.has('value_paths')", type="error")
-      span {{ $t('metaAlarmRule.errors.noValuePaths') }}
+    />
+    <v-alert
+      :value="errors.has('value_paths')"
+      type="error"
+    >
+      <span>{{ $t('metaAlarmRule.errors.noValuePaths') }}</span>
+    </v-alert>
+  </div>
 </template>
 
 <script>

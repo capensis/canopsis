@@ -1,20 +1,21 @@
-<template lang="pug">
-  v-card-text
-    remediation-instructions-list(
-      :remediation-instructions="remediationInstructions",
-      :pending="remediationInstructionsPending",
-      :total-items="remediationInstructionsMeta.total_count",
-      :pagination.sync="pagination",
-      :updatable="hasUpdateAnyRemediationInstructionAccess",
-      :removable="hasDeleteAnyRemediationInstructionAccess",
-      :duplicable="hasCreateAnyRemediationInstructionAccess",
-      @remove-selected="showRemoveSelectedRemediationInstructionModal",
-      @assign-patterns="showAssignPatternsModal",
-      @duplicate="showDuplicateRemediationInstructionModal",
-      @remove="showRemoveRemediationInstructionModal",
-      @approve="showApproveRemediationInstructionModal",
+<template>
+  <v-card-text>
+    <remediation-instructions-list
+      :remediation-instructions="remediationInstructions"
+      :pending="remediationInstructionsPending"
+      :total-items="remediationInstructionsMeta.total_count"
+      :options.sync="options"
+      :updatable="hasUpdateAnyRemediationInstructionAccess"
+      :removable="hasDeleteAnyRemediationInstructionAccess"
+      :duplicable="hasCreateAnyRemediationInstructionAccess"
+      @remove-selected="showRemoveSelectedRemediationInstructionModal"
+      @assign-patterns="showAssignPatternsModal"
+      @duplicate="showDuplicateRemediationInstructionModal"
+      @remove="showRemoveRemediationInstructionModal"
+      @approve="showApproveRemediationInstructionModal"
       @edit="showEditRemediationInstructionModal"
-    )
+    />
+  </v-card-text>
 </template>
 
 <script>

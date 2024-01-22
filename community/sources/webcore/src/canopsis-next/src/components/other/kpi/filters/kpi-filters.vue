@@ -1,18 +1,19 @@
-<template lang="pug">
-  v-layout(column)
-    span.pl-4 {{ $t('kpi.filters.helpInformation') }}
-    kpi-filters-list(
-      :pagination.sync="pagination",
-      :filters="filters",
-      :pending="filtersPending",
-      :total-items="filtersMeta.total_count",
-      :duplicable="hasCreateAnyKpiFiltersAccess",
-      :removable="hasDeleteAnyKpiFiltersAccess",
-      :updatable="hasUpdateAnyKpiFiltersAccess",
-      @edit="showEditFilterModal",
-      @duplicate="showDuplicateFilterModal",
+<template>
+  <v-layout column>
+    <span class="pl-4">{{ $t('kpi.filters.helpInformation') }}</span>
+    <kpi-filters-list
+      :options.sync="options"
+      :filters="filters"
+      :pending="filtersPending"
+      :total-items="filtersMeta.total_count"
+      :duplicable="hasCreateAnyKpiFiltersAccess"
+      :removable="hasDeleteAnyKpiFiltersAccess"
+      :updatable="hasUpdateAnyKpiFiltersAccess"
+      @edit="showEditFilterModal"
+      @duplicate="showDuplicateFilterModal"
       @remove="showDeleteFilterModal"
-    )
+    />
+  </v-layout>
 </template>
 
 <script>

@@ -1,6 +1,11 @@
-<template lang="pug">
-  div.test-suite-chip.white--text(v-on="$listeners", :style="{ background: color }")
-    slot {{ $t(`testSuite.statuses.${value}`) }}
+<template>
+  <div
+    class="test-suite-chip white--text"
+    v-on="$listeners"
+    :style="{ background: color }"
+  >
+    <slot>{{ $t(`testSuite.statuses.${value}`) }}</slot>
+  </div>
 </template>
 
 <script>

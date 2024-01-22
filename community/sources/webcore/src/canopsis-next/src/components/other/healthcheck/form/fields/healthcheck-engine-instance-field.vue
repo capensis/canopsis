@@ -1,43 +1,66 @@
-<template lang="pug">
-  v-layout(row, wrap)
-    v-flex(xs3)
-      v-checkbox(
-        v-validate,
-        v-field="value.enabled",
-        :label="label",
-        :error-messages="errors.collect(enabledFieldName)",
-        :name="enabledFieldName",
+<template>
+  <v-layout wrap>
+    <v-flex xs3>
+      <v-checkbox
+        v-validate
+        v-field="value.enabled"
+        :label="label"
+        :error-messages="errors.collect(enabledFieldName)"
+        :name="enabledFieldName"
         color="primary"
-      )
-    v-flex(xs4)
-      v-layout(column)
-        v-layout(row, align-center)
-          v-flex(:class="{ 'text--disabled': !value.enabled }", xs6) {{ $t('common.minimal') }}
-          v-flex(xs6)
-            c-number-field(
-              v-field="value.minimal",
-              :error-messages="getErrorMessages(minimalFieldName)",
-              :name="minimalFieldName",
-              :label="$t('common.minimal')",
-              :disabled="!value.enabled",
-              :required="value.enabled",
-              :max="+value.optimal",
+      />
+    </v-flex>
+    <v-flex xs4>
+      <v-layout column>
+        <v-layout align-center>
+          <v-flex
+            :class="{ 'text--disabled': !value.enabled }"
+            xs6
+          >
+            {{ $t('common.minimal') }}
+          </v-flex>
+          <v-flex xs6>
+            <c-number-field
+              v-field="value.minimal"
+              :error-messages="getErrorMessages(minimalFieldName)"
+              :name="minimalFieldName"
+              :label="$t('common.minimal')"
+              :disabled="!value.enabled"
+              :required="value.enabled"
+              :max="+value.optimal"
               :min="0"
-            )
-        v-layout(row, align-center)
-          v-flex(:class="{ 'text--disabled': !value.enabled }", xs6) {{ $t('common.optimal') }}
-          v-flex(xs6)
-            c-number-field.mt-0(
-              v-field="value.optimal",
-              :error-messages="getErrorMessages(optimalFieldName)",
-              :name="optimalFieldName",
-              :label="$t('common.optimal')",
-              :disabled="!value.enabled",
-              :required="value.enabled",
+            />
+          </v-flex>
+        </v-layout>
+        <v-layout align-center>
+          <v-flex
+            :class="{ 'text--disabled': !value.enabled }"
+            xs6
+          >
+            {{ $t('common.optimal') }}
+          </v-flex>
+          <v-flex xs6>
+            <c-number-field
+              class="mt-0"
+              v-field="value.optimal"
+              :error-messages="getErrorMessages(optimalFieldName)"
+              :name="optimalFieldName"
+              :label="$t('common.optimal')"
+              :disabled="!value.enabled"
+              :required="value.enabled"
               :min="+value.minimal"
-            )
-    v-flex(xs9)
-      v-messages(:value="errors.collect(name)", color="error")
+            />
+          </v-flex>
+        </v-layout>
+      </v-layout>
+    </v-flex>
+    <v-flex xs9>
+      <v-messages
+        :value="errors.collect(name)"
+        color="error"
+      />
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

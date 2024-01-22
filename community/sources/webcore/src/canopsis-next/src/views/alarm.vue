@@ -1,14 +1,14 @@
-<template lang="pug">
-  alarms-list-table(
-    :widget="widget",
-    :alarms="alarmItems",
-    :columns="columns",
-    :loading="pending",
-    :total-items="alarmItems.length",
-    expandable,
-    hide-pagination,
+<template>
+  <alarms-list-table
+    :widget="widget"
+    :alarms="alarmItems"
+    :columns="columns"
+    :loading="pending"
+    :total-items="alarmItems.length"
+    expandable
+    hide-pagination
     has-columns
-  )
+  />
 </template>
 
 <script>

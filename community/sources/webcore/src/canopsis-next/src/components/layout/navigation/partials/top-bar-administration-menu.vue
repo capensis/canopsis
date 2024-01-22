@@ -1,19 +1,40 @@
-<template lang="pug">
-  v-menu(v-if="administrationGroupedLinks.length", bottom, offset-y)
-    template(#activator="{ on }")
-      v-btn.white--text(v-on="on", flat) {{ $t('common.administration') }}
-    v-list.py-0
-      template(v-for="(group, index) in administrationGroupedLinks")
-        v-subheader.subheading(:key="`${group.title}-title`", @click.stop="") {{ group.title }}
-        top-bar-menu-link.top-bar-administration-menu-link(
-          v-for="link in group.links",
-          :key="link.title",
+<template>
+  <v-menu
+    v-if="administrationGroupedLinks.length"
+    bottom
+    offset-y
+  >
+    <template #activator="{ on }">
+      <v-btn
+        class="white--text"
+        v-on="on"
+        text
+      >
+        {{ $t('common.administration') }}
+      </v-btn>
+    </template>
+    <v-list class="py-0">
+      <template v-for="(group, index) in administrationGroupedLinks">
+        <v-subheader
+          class="text-subtitle-1"
+          :key="`${group.title}-title`"
+          @click.stop=""
+        >
+          {{ group.title }}
+        </v-subheader>
+        <top-bar-menu-link
+          class="top-bar-administration-menu-link"
+          v-for="link in group.links"
+          :key="link.title"
           :link="link"
-        )
-        v-divider(
-          v-if="index < administrationGroupedLinks.length - 1",
+        />
+        <v-divider
+          v-if="index &lt; administrationGroupedLinks.length - 1"
           :key="`${group.title}-divider`"
-        )
+        />
+      </template>
+    </v-list>
+  </v-menu>
 </template>
 
 <script>
@@ -146,9 +167,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.top-bar-administration-menu-link ::v-deep span {
-  margin-left: 8px;
-}
-</style>

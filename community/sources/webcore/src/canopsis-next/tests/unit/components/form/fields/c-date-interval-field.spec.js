@@ -120,7 +120,7 @@ describe('c-date-interval-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `c-date-interval-field` with custom props', () => {
@@ -137,6 +137,6 @@ describe('c-date-interval-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });
