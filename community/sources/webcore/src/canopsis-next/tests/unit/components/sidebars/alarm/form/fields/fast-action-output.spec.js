@@ -45,16 +45,9 @@ describe('fast-action-output', () => {
       },
     });
 
-    const enabledField = selectEnabledField(wrapper);
+    selectEnabledField(wrapper).triggerCustomEvent('input', false);
 
-    enabledField.vm.$emit('input', false);
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmit('input', {
       ...value,
       enabled: false,
     });
@@ -71,18 +64,11 @@ describe('fast-action-output', () => {
       },
     });
 
-    const textField = selectTextField(wrapper);
-
     const newValue = Faker.datatype.string();
 
-    textField.setValue(newValue);
+    selectTextField(wrapper).setValue(newValue);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmit('input', {
       ...value,
       value: newValue,
     });

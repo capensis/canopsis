@@ -84,9 +84,7 @@ describe('manual-meta-alarm-form', () => {
 
     const comment = Faker.datatype.string();
 
-    const textField = selectTextField(wrapper);
-
-    textField.setValue(comment);
+    selectTextField(wrapper).setValue(comment);
 
     expect(wrapper).toEmit('input', { ...form, comment });
   });
@@ -108,7 +106,7 @@ describe('manual-meta-alarm-form', () => {
 
     const enabledField = selectEnabledField(wrapper);
 
-    enabledField.vm.$emit('input', autoResolve);
+    enabledField.triggerCustomEvent('input', autoResolve);
 
     expect(wrapper).toEmit('input', { ...form, auto_resolve: autoResolve });
   });

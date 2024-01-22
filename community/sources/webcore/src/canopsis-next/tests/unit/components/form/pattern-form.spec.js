@@ -38,7 +38,7 @@ describe('pattern-form', () => {
 
     const textField = selectTextField(wrapper);
 
-    textField.vm.$emit('input', title);
+    textField.triggerCustomEvent('input', title);
 
     expect(wrapper).toEmit('input', { ...form, title });
   });
@@ -61,7 +61,7 @@ describe('pattern-form', () => {
 
     const alarmPatternsField = selectAlarmPatternsField(wrapper);
 
-    alarmPatternsField.vm.$emit('input', { ...form, id, groups });
+    alarmPatternsField.triggerCustomEvent('input', { ...form, id, groups });
 
     expect(wrapper).toEmit('input', { ...form, id, groups });
   });
@@ -84,7 +84,7 @@ describe('pattern-form', () => {
 
     const entityPatternsField = selectEntityPatternsField(wrapper);
 
-    entityPatternsField.vm.$emit('input', { ...form, id, groups });
+    entityPatternsField.triggerCustomEvent('input', { ...form, id, groups });
 
     expect(wrapper).toEmit('input', { ...form, id, groups });
   });
@@ -107,7 +107,7 @@ describe('pattern-form', () => {
 
     const pbehaviorPatternsField = selectPbehaviorPatternsField(wrapper);
 
-    pbehaviorPatternsField.vm.$emit('input', { ...form, id, groups });
+    pbehaviorPatternsField.triggerCustomEvent('input', { ...form, id, groups });
 
     expect(wrapper).toEmit('input', { ...form, id, groups });
   });

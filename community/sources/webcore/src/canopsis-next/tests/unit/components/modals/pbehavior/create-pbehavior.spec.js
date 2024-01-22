@@ -227,7 +227,7 @@ describe('create-pbehavior', () => {
       rrule: null,
     };
 
-    selectPbehaviorForm(wrapper).vm.$emit('input', newForm);
+    selectPbehaviorForm(wrapper).triggerCustomEvent('input', newForm);
     selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();

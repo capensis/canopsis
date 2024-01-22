@@ -17,7 +17,7 @@ describe('field-color-indicator', () => {
   test('Value changed after trigger color indicator field', () => {
     const wrapper = factory();
 
-    selectNumberField(wrapper).vm.$emit('input', COLOR_INDICATOR_TYPES.impactState);
+    selectNumberField(wrapper).triggerCustomEvent('input', COLOR_INDICATOR_TYPES.impactState);
 
     expect(wrapper).toEmit('input', COLOR_INDICATOR_TYPES.impactState);
   });

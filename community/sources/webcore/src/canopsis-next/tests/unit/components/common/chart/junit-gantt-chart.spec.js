@@ -234,15 +234,9 @@ describe('junit-gantt-chart', () => {
       },
     });
 
-    const nextPageButton = wrapper.find('.c-table-pagination .next-page');
+    await wrapper.find('.c-table-pagination .next-page').trigger('click');
 
-    await nextPageButton.trigger('click');
-
-    const updateQueryEvents = wrapper.emitted('update:query');
-    const [eventData] = updateQueryEvents[0];
-
-    expect(updateQueryEvents).toHaveLength(1);
-    expect(eventData).toEqual({ ...query, page: query.page + 1 });
+    expect(wrapper).toEmit('update:query', { ...query, page: query.page + 1 });
   });
 
   it('Pagination rows per page event', async () => {
@@ -253,15 +247,9 @@ describe('junit-gantt-chart', () => {
       },
     });
 
-    const itemsPerPageButton = wrapper.find('.c-table-pagination .items-per-page');
+    await wrapper.find('.c-table-pagination .items-per-page').trigger('click');
 
-    await itemsPerPageButton.trigger('click');
-
-    const updateQueryEvents = wrapper.emitted('update:query');
-    const [eventData] = updateQueryEvents[0];
-
-    expect(updateQueryEvents).toHaveLength(1);
-    expect(eventData).toEqual({ ...query, itemsPerPage: newItemsPerPage, page: 1 });
+    expect(wrapper).toEmit('update:query', { ...query, itemsPerPage: newItemsPerPage, page: 1 });
   });
 
   it('Renders `junit-gantt-chart` tooltip.', async () => {

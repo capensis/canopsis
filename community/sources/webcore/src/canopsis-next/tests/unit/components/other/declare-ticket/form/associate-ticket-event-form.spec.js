@@ -43,7 +43,7 @@ describe('associate-ticket-event-form', () => {
 
     const newName = Faker.datatype.string();
 
-    selectSystemNameField(wrapper).vm.$emit('input', newName);
+    selectSystemNameField(wrapper).triggerCustomEvent('input', newName);
 
     expect(wrapper).toEmit('input', {
       ...form,
@@ -60,7 +60,7 @@ describe('associate-ticket-event-form', () => {
 
     const newTicketId = Faker.datatype.string();
 
-    selectDeclareTicketRuleTicketIdField(wrapper).vm.$emit('input', newTicketId);
+    selectDeclareTicketRuleTicketIdField(wrapper).triggerCustomEvent('input', newTicketId);
 
     expect(wrapper).toEmit('input', {
       ...form,
@@ -77,7 +77,7 @@ describe('associate-ticket-event-form', () => {
 
     const newTicketUrl = Faker.datatype.string();
 
-    selectDeclareTicketRuleTicketUrlTextField(wrapper).vm.$emit('input', newTicketUrl);
+    selectDeclareTicketRuleTicketUrlTextField(wrapper).triggerCustomEvent('input', newTicketUrl);
 
     expect(wrapper).toEmit('input', {
       ...form,
@@ -100,7 +100,7 @@ describe('associate-ticket-event-form', () => {
       },
     ];
 
-    selectDeclareTicketRuleTicketCustomFieldsField(wrapper).vm.$emit('input', newMapping);
+    selectDeclareTicketRuleTicketCustomFieldsField(wrapper).triggerCustomEvent('input', newMapping);
 
     expect(wrapper).toEmit('input', {
       ...form,

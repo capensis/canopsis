@@ -84,7 +84,7 @@ describe('kpi-rating', () => {
 
     const kpiRatingFiltersElement = wrapper.find('kpi-rating-filters-stub');
 
-    kpiRatingFiltersElement.vm.$emit('input', {
+    kpiRatingFiltersElement.triggerCustomEvent('input', {
       criteria: {
         id: expectedDefaultParams.criteria,
       },
@@ -140,7 +140,7 @@ describe('kpi-rating', () => {
 
     const kpiRatingFiltersElement = wrapper.find('kpi-rating-filters-stub');
 
-    kpiRatingFiltersElement.vm.$emit('input', {
+    kpiRatingFiltersElement.triggerCustomEvent('input', {
       criteria: {
         id: expectedDefaultParams.criteria,
       },
@@ -192,7 +192,7 @@ describe('kpi-rating', () => {
 
     const kpiRatingFiltersElement = wrapper.find('kpi-rating-filters-stub');
 
-    kpiRatingFiltersElement.vm.$emit('input', {
+    kpiRatingFiltersElement.triggerCustomEvent('input', {
       criteria: {
         id: expectedParamsAfterUpdate.criteria,
       },
@@ -243,7 +243,7 @@ describe('kpi-rating', () => {
 
     const kpiRatingFiltersElement = wrapper.find('kpi-rating-filters-stub');
 
-    kpiRatingFiltersElement.vm.$emit('input', {
+    kpiRatingFiltersElement.triggerCustomEvent('input', {
       criteria: {
         id: expectedParamsAfterUpdate.criteria,
       },

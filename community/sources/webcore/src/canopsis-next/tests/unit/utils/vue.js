@@ -175,6 +175,11 @@ Wrapper.prototype.clickOutside = function clickOutside() {
   jest.runAllTimers();
   jest.useRealTimers();
 };
+Wrapper.prototype.triggerCustomEvent = function triggerCustomEvent(name, ...data) {
+  this.vm?.$emit?.(name, ...data);
+
+  return this?.vm?.$nextTick?.();
+};
 
 /**
  * Generate render function

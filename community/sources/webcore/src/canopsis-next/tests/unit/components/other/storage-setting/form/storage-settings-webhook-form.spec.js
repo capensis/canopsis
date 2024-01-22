@@ -45,7 +45,7 @@ describe('storage-settings-webhook-form', () => {
 
     const newValue = randomDurationValue();
 
-    selectWebhookDeleteAfterField(wrapper).vm.$emit('input', newValue);
+    selectWebhookDeleteAfterField(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', { ...form, delete_after: newValue });
   });

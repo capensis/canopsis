@@ -245,7 +245,7 @@ describe('create-remediation-instructions-filter', () => {
       instructions: [{}],
     };
 
-    remediationInstructionsFilterForm.vm.$emit('input', newForm);
+    remediationInstructionsFilterForm.triggerCustomEvent('input', newForm);
 
     selectSubmitButton(wrapper).trigger('click');
 

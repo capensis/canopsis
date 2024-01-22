@@ -114,7 +114,7 @@ describe('pbehaviors-simple-list', () => {
     await flushPromises();
     fetchPbehaviorsByEntityIdWithoutStore.mockClear();
 
-    selectAddButton(wrapper).vm.$emit('click');
+    selectAddButton(wrapper).triggerCustomEvent('click');
 
     expect($modals.show).toBeCalledWith(
       {
@@ -150,7 +150,7 @@ describe('pbehaviors-simple-list', () => {
       },
     });
 
-    selectCalendarButton(wrapper).vm.$emit('click');
+    selectCalendarButton(wrapper).triggerCustomEvent('click');
 
     expect($modals.show).toBeCalledWith(
       {

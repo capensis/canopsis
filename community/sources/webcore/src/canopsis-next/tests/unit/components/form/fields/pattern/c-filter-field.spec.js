@@ -104,7 +104,7 @@ describe('c-filter-field', () => {
 
     const valueElement = selectAutocomplete(wrapper);
 
-    valueElement.vm.$emit('input', newValue);
+    valueElement.triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', newValue);
   });

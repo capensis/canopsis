@@ -129,7 +129,7 @@ describe('alarms-list-table', () => {
       },
     });
 
-    selectTable(wrapper).vm.$emit('input', selectedAlarms);
+    selectTable(wrapper).triggerCustomEvent('input', selectedAlarms);
 
     expect(wrapper.vm.selected).toEqual(selectedAlarms);
   });
@@ -153,13 +153,9 @@ describe('alarms-list-table', () => {
       totalItems: Faker.datatype.number(),
     };
 
-    selectTable(wrapper).vm.$emit('update:options', options);
+    selectTable(wrapper).triggerCustomEvent('update:options', options);
 
-    const updateOptionsEvents = wrapper.emitted('update:options');
-    expect(updateOptionsEvents).toHaveLength(2);
-
-    const [eventData] = updateOptionsEvents[1];
-    expect({ ...eventData }).toEqual(options);
+    expect(wrapper).toEmit('update:options', expect.any(Object), options);
   });
 
   it('Resize listener added after mount and removed after destroy', async () => {
@@ -489,7 +485,7 @@ describe('alarms-list-table', () => {
 
     const alarmsListRow = selectAlarmsListRow(wrapper).at(0);
 
-    alarmsListRow.vm.$emit('expand', true);
+    alarmsListRow.triggerCustomEvent('expand', true);
 
     const [firstAlarm] = alarms;
 
@@ -497,7 +493,7 @@ describe('alarms-list-table', () => {
       [firstAlarm._id]: true,
     });
 
-    alarmsListRow.vm.$emit('expand', false);
+    alarmsListRow.triggerCustomEvent('expand', false);
 
     expect(wrapper.vm.expanded).toEqual({});
   });
@@ -518,7 +514,7 @@ describe('alarms-list-table', () => {
 
     const alarmsListRow = selectAlarmsListRow(wrapper).at(0);
 
-    alarmsListRow.vm.$emit('click:state', true);
+    alarmsListRow.triggerCustomEvent('click:state', true);
 
     /**
      * TODO: Should be tested show modal

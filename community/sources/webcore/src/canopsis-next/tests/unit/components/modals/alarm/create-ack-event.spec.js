@@ -251,7 +251,7 @@ describe('create-ack-event', () => {
       ack_resources: true,
     };
 
-    ackEventForm.vm.$emit('input', newForm);
+    ackEventForm.triggerCustomEvent('input', newForm);
 
     selectSubmitButton(wrapper).trigger('click');
 

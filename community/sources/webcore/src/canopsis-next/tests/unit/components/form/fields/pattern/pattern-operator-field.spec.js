@@ -29,16 +29,10 @@ describe('pattern-operator-field', () => {
         value: PATTERN_OPERATORS.notExist,
       },
     });
-    const selectField = selectSelectField(wrapper);
 
-    selectField.setValue(PATTERN_OPERATORS.notExist);
+    selectSelectField(wrapper).setValue(PATTERN_OPERATORS.notExist);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(PATTERN_OPERATORS.notExist);
+    expect(wrapper).toEmit('input', PATTERN_OPERATORS.notExist);
   });
 
   test('Renders `pattern-operator-field` with default props', () => {

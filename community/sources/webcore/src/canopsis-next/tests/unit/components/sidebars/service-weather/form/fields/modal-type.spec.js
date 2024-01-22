@@ -23,7 +23,7 @@ describe('field-modal-type', () => {
   test('Value changed after trigger radio group', () => {
     const wrapper = factory();
 
-    selectRadioGroup(wrapper).vm.$emit('input', SERVICE_WEATHER_WIDGET_MODAL_TYPES.both);
+    selectRadioGroup(wrapper).triggerCustomEvent('input', SERVICE_WEATHER_WIDGET_MODAL_TYPES.both);
 
     expect(wrapper).toEmit('input', SERVICE_WEATHER_WIDGET_MODAL_TYPES.both);
   });

@@ -258,7 +258,7 @@ describe('remediation-patterns', () => {
       entity_pattern: entityPattern,
     };
 
-    remediationPatternsPbehaviorTypesForm.vm.$emit('input', newForm);
+    remediationPatternsPbehaviorTypesForm.triggerCustomEvent('input', newForm);
 
     selectSubmitButton(wrapper).trigger('click');
 

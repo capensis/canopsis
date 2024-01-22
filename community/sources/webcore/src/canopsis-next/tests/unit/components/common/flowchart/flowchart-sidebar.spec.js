@@ -107,7 +107,7 @@ describe('flowchart-sidebar', () => {
     });
 
     const button = selectButtonByIndex(wrapper, 0);
-    await button.vm.$emit('click');
+    await button.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('input', {
       [id]: rectShapeToForm({
@@ -134,7 +134,7 @@ describe('flowchart-sidebar', () => {
     });
 
     const button = selectButtonByIndex(wrapper, 1);
-    await button.vm.$emit('click');
+    await button.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('input', {
       [id]: rectShapeToForm({
@@ -167,7 +167,7 @@ describe('flowchart-sidebar', () => {
     });
 
     const button = selectButtonByIndex(wrapper, 2);
-    await button.vm.$emit('click');
+    await button.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('input', {
       [id]: rectShapeToForm({
@@ -195,7 +195,7 @@ describe('flowchart-sidebar', () => {
     });
 
     const button = selectButtonByIndex(wrapper, 3);
-    await button.vm.$emit('click');
+    await button.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('input', {
       [id]: rhombusShapeToForm({
@@ -222,7 +222,7 @@ describe('flowchart-sidebar', () => {
     });
 
     const button = selectButtonByIndex(wrapper, 4);
-    await button.vm.$emit('click');
+    await button.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('input', {
       [id]: circleShapeToForm({
@@ -248,7 +248,7 @@ describe('flowchart-sidebar', () => {
     });
 
     const button = selectButtonByIndex(wrapper, 5);
-    await button.vm.$emit('click');
+    await button.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('input', {
       [id]: ellipseShapeToForm({
@@ -275,7 +275,7 @@ describe('flowchart-sidebar', () => {
     });
 
     const button = selectButtonByIndex(wrapper, 6);
-    await button.vm.$emit('click');
+    await button.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('input', {
       [id]: parallelogramShapeToForm({
@@ -302,7 +302,7 @@ describe('flowchart-sidebar', () => {
     });
 
     const button = selectButtonByIndex(wrapper, 7);
-    await button.vm.$emit('click');
+    await button.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('input', {
       [id]: processShapeToForm({
@@ -329,7 +329,7 @@ describe('flowchart-sidebar', () => {
     });
 
     const button = selectButtonByIndex(wrapper, 8);
-    await button.vm.$emit('click');
+    await button.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('input', {
       [id]: documentShapeToForm({
@@ -356,7 +356,7 @@ describe('flowchart-sidebar', () => {
     });
 
     const button = selectButtonByIndex(wrapper, 9);
-    await button.vm.$emit('click');
+    await button.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('input', {
       [id]: storageShapeToForm({
@@ -401,7 +401,7 @@ describe('flowchart-sidebar', () => {
     });
 
     const button = selectButtonByIndex(wrapper, 10);
-    await button.vm.$emit('click');
+    await button.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('input', {
       [id]: lineShapeToForm({
@@ -444,7 +444,7 @@ describe('flowchart-sidebar', () => {
     });
 
     const button = selectButtonByIndex(wrapper, 11);
-    await button.vm.$emit('click');
+    await button.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('input', {
       [id]: arrowLineShapeToForm({
@@ -487,7 +487,7 @@ describe('flowchart-sidebar', () => {
     });
 
     const button = selectButtonByIndex(wrapper, 12);
-    await button.vm.$emit('click');
+    await button.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('input', {
       [id]: bidirectionalArrowLineShapeToForm({
@@ -530,7 +530,7 @@ describe('flowchart-sidebar', () => {
     });
 
     const button = selectButtonByIndex(wrapper, 13);
-    await button.vm.$emit('click');
+    await button.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('input', {
       [id]: lineShapeToForm({
@@ -573,7 +573,7 @@ describe('flowchart-sidebar', () => {
     });
 
     const button = selectButtonByIndex(wrapper, 14);
-    await button.vm.$emit('click');
+    await button.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('input', {
       [id]: arrowLineShapeToForm({
@@ -616,7 +616,7 @@ describe('flowchart-sidebar', () => {
     });
 
     const button = selectButtonByIndex(wrapper, 15);
-    await button.vm.$emit('click');
+    await button.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('input', {
       [id]: bidirectionalArrowLineShapeToForm({
@@ -641,7 +641,7 @@ describe('flowchart-sidebar', () => {
     });
 
     const button = selectButtonByIndex(wrapper, 16);
-    await button.vm.$emit('click');
+    await button.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('input', {
       [id]: rectShapeToForm({
@@ -670,7 +670,7 @@ describe('flowchart-sidebar', () => {
     });
 
     const button = selectButtonByIndex(wrapper, 17);
-    await button.vm.$emit('click');
+    await button.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('input', {
       [id]: rectShapeToForm({
@@ -712,7 +712,7 @@ describe('flowchart-sidebar', () => {
     const file = new File([new ArrayBuffer(1)], fileName);
 
     const fileSelector = selectFileSelector(wrapper);
-    await fileSelector.vm.$emit('change', [file]);
+    await fileSelector.triggerCustomEvent('change', [file]);
 
     await flushPromises();
 
@@ -755,7 +755,7 @@ describe('flowchart-sidebar', () => {
     const file = new File([new ArrayBuffer(1)], fileName);
 
     const fileSelector = selectFileSelector(wrapper);
-    await fileSelector.vm.$emit('change', [file]);
+    await fileSelector.triggerCustomEvent('change', [file]);
 
     await flushPromises();
 
@@ -789,7 +789,7 @@ describe('flowchart-sidebar', () => {
     });
 
     const iconButton = selectIconButtonByIndex(wrapper, 1);
-    await iconButton.vm.$emit('click');
+    await iconButton.triggerCustomEvent('click');
 
     await flushPromises();
 

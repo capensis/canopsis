@@ -18,7 +18,7 @@ describe('group-view-panel', () => {
       },
     });
 
-    selectEditButton(wrapper).vm.$emit('click', new Event('click'));
+    selectEditButton(wrapper).triggerCustomEvent('click', new Event('click'));
 
     expect(wrapper).toEmit('change');
   });
@@ -32,7 +32,7 @@ describe('group-view-panel', () => {
       },
     });
 
-    selectDuplicateButton(wrapper).vm.$emit('click', new Event('click'));
+    selectDuplicateButton(wrapper).triggerCustomEvent('click', new Event('click'));
 
     expect(wrapper).toEmit('duplicate');
   });

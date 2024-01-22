@@ -23,7 +23,7 @@ describe('service-entity-header', () => {
 
     const alert = selectAlert(wrapper);
 
-    alert.vm.$emit('input');
+    alert.triggerCustomEvent('input');
 
     expect(wrapper).toEmit('remove:unavailable');
   });

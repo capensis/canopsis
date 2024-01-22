@@ -22,14 +22,9 @@ describe('c-entity-state-field', () => {
 
     const valueElement = wrapper.find('select.v-select');
 
-    valueElement.vm.$emit('input', ENTITIES_STATES.critical);
+    valueElement.triggerCustomEvent('input', ENTITIES_STATES.critical);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(ENTITIES_STATES.critical);
+    expect(wrapper).toEmit('input', ENTITIES_STATES.critical);
   });
 
   it('Renders `c-entity-state-field` with default props', () => {

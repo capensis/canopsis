@@ -22,7 +22,7 @@ export const generateEntityPatternsTests = (Component, name, customProps = {}) =
         entity_pattern: {},
       };
 
-      patternsField.vm.$emit('input', newPatterns);
+      patternsField.triggerCustomEvent('input', newPatterns);
 
       expect(wrapper).toEmit('input', newPatterns);
     });

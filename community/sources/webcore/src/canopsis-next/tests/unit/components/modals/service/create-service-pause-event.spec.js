@@ -101,7 +101,7 @@ describe('create-service-pause-event', () => {
       reason: Faker.datatype.string(),
     };
 
-    servicePauseEventForm.vm.$emit('input', newData);
+    servicePauseEventForm.triggerCustomEvent('input', newData);
 
     submitButton.trigger('click');
 

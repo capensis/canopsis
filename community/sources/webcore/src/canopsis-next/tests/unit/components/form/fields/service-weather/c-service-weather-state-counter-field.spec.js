@@ -19,7 +19,7 @@ describe('c-service-weather-state-counter-field', () => {
 
     const selectField = selectSelectField(wrapper);
 
-    selectField.vm.$emit('input', SERVICE_WEATHER_STATE_COUNTERS.all);
+    selectField.triggerCustomEvent('input', SERVICE_WEATHER_STATE_COUNTERS.all);
 
     expect(wrapper).toEmit('input', SERVICE_WEATHER_STATE_COUNTERS.all);
   });

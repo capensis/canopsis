@@ -237,7 +237,7 @@ describe('create-tag', () => {
       color: Faker.internet.color(),
     };
 
-    selectTagForm(wrapper).vm.$emit('input', newForm);
+    selectTagForm(wrapper).triggerCustomEvent('input', newForm);
     selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();

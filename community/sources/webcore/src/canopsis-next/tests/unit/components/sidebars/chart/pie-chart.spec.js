@@ -215,7 +215,7 @@ describe('pie-chart', () => {
 
     const form = selectWidgetForm(wrapper);
 
-    form.vm.$emit('input', updatedWidget);
+    form.triggerCustomEvent('input', updatedWidget);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,

@@ -157,7 +157,7 @@ describe('service-weather', () => {
       _id: Faker.datatype.string(),
     };
 
-    selectEntityCategoryField(wrapper).vm.$emit('input', category);
+    selectEntityCategoryField(wrapper).triggerCustomEvent('input', category);
 
     expect(updateUserPreference).toBeCalledWith(
       expect.any(Object),
@@ -206,7 +206,7 @@ describe('service-weather', () => {
       filter: {},
     };
 
-    selectFilterSelectorField(wrapper).vm.$emit('input', selectedFilter._id);
+    selectFilterSelectorField(wrapper).triggerCustomEvent('input', selectedFilter._id);
 
     await flushPromises();
 
@@ -241,7 +241,7 @@ describe('service-weather', () => {
 
     updateQuery.mockClear();
 
-    selectEnabledField(wrapper).vm.$emit('input', true);
+    selectEnabledField(wrapper).triggerCustomEvent('input', true);
 
     await flushPromises();
 
@@ -290,7 +290,7 @@ describe('service-weather', () => {
       },
     });
 
-    selectServiceWeatherItemByIndex(wrapper, 0).vm.$emit('show:alarms');
+    selectServiceWeatherItemByIndex(wrapper, 0).triggerCustomEvent('show:alarms');
 
     const alarmListWidget = generatePreparedDefaultAlarmListWidget();
     alarmListWidget.parameters.serviceDependenciesColumns = widget.parameters.serviceDependenciesColumns;
@@ -351,7 +351,7 @@ describe('service-weather', () => {
 
     await flushPromises();
 
-    await selectServiceWeatherItemByIndex(wrapper, 0).vm.$emit('show:service');
+    await selectServiceWeatherItemByIndex(wrapper, 0).triggerCustomEvent('show:service');
 
     expect($modals.show).toBeCalledWith(
       {
@@ -385,7 +385,7 @@ describe('service-weather', () => {
 
     await flushPromises();
 
-    await selectServiceWeatherItemByIndex(wrapper, 0).vm.$emit('show:service');
+    await selectServiceWeatherItemByIndex(wrapper, 0).triggerCustomEvent('show:service');
 
     expect($modals.show).toBeCalledWith(
       {

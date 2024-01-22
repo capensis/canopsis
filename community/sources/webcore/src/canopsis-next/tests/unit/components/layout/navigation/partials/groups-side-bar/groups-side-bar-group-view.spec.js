@@ -40,7 +40,7 @@ describe('groups-side-bar-group-view', () => {
       mocks: { $route: { params: { id: '' } } },
     });
 
-    selectGroupViewPanel(wrapper).vm.$emit('duplicate');
+    selectGroupViewPanel(wrapper).triggerCustomEvent('duplicate');
 
     expect($modals.show).toBeCalledWith({
       name: MODALS.createView,
@@ -72,7 +72,7 @@ describe('groups-side-bar-group-view', () => {
       mocks: { $route: { params: { id: '' } } },
     });
 
-    selectGroupViewPanel(wrapper).vm.$emit('change');
+    selectGroupViewPanel(wrapper).triggerCustomEvent('change');
 
     expect($modals.show).toBeCalledWith({
       name: MODALS.createView,

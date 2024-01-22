@@ -50,7 +50,7 @@ describe('service-weather-item', () => {
       },
     });
 
-    selectCard(wrapper).vm.$emit('show:alarms', new MouseEvent('click'));
+    selectCard(wrapper).triggerCustomEvent('show:alarms', new MouseEvent('click'));
 
     expect(wrapper).toEmit('show:alarms');
   });

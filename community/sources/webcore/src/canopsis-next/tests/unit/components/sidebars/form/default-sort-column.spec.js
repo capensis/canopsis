@@ -43,16 +43,9 @@ describe('default-sort-column', () => {
       },
     });
 
-    const columnField = selectColumnSelectField(wrapper);
+    selectColumnSelectField(wrapper).setValue(secondColumn.value);
 
-    columnField.setValue(secondColumn.value);
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({ column: secondColumn.value, order: SORT_ORDERS.desc });
+    expect(wrapper).toEmit('input', { column: secondColumn.value, order: SORT_ORDERS.desc });
   });
 
   it('Order changed after trigger select field with orders', () => {
@@ -67,16 +60,9 @@ describe('default-sort-column', () => {
       },
     });
 
-    const orderField = selectOrderSelectField(wrapper);
+    selectOrderSelectField(wrapper).setValue(SORT_ORDERS.asc);
 
-    orderField.setValue(SORT_ORDERS.asc);
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({ column: firstColumn.value, order: SORT_ORDERS.asc });
+    expect(wrapper).toEmit('input', { column: firstColumn.value, order: SORT_ORDERS.asc });
   });
 
   it('Renders `default-sort-column` with default props', () => {

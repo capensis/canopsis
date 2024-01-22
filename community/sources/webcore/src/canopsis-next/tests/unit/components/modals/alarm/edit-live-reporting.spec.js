@@ -281,7 +281,7 @@ describe('edit-live-reporting', () => {
       time_field: 't',
     };
 
-    dateIntervalSelector.vm.$emit('input', newForm);
+    dateIntervalSelector.triggerCustomEvent('input', newForm);
 
     selectSubmitButton(wrapper).trigger('click');
 

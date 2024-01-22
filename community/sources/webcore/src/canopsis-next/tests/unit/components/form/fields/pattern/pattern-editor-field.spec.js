@@ -59,7 +59,7 @@ describe('pattern-editor-field', () => {
 
     const patternField = selectPatternField(wrapper);
 
-    patternField.vm.$emit('input', { _id: PATTERN_CUSTOM_ITEM_VALUE });
+    patternField.triggerCustomEvent('input', { _id: PATTERN_CUSTOM_ITEM_VALUE });
 
     expect(wrapper).toEmit('input', {
       id: PATTERN_CUSTOM_ITEM_VALUE,
@@ -96,7 +96,7 @@ describe('pattern-editor-field', () => {
       ],
     };
 
-    patternField.vm.$emit('input', pattern);
+    patternField.triggerCustomEvent('input', pattern);
 
     expect(wrapper).toEmit('input', {
       id,
@@ -163,7 +163,7 @@ describe('pattern-editor-field', () => {
 
     const editButton = selectEditButton(wrapper);
 
-    await editButton.vm.$emit('click');
+    await editButton.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('input', {
       ...patterns,
@@ -195,7 +195,7 @@ describe('pattern-editor-field', () => {
       },
     };
 
-    advancedEditor.vm.$emit('input', [[
+    advancedEditor.triggerCustomEvent('input', [[
       patternRule,
     ]]);
 

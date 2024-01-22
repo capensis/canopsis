@@ -33,7 +33,7 @@ describe('alarm-column-value', () => {
       },
     });
 
-    selectAlarmColumnCell(wrapper).vm.$emit('click:state');
+    selectAlarmColumnCell(wrapper).triggerCustomEvent('click:state');
 
     expect(wrapper).toEmit('click:state');
   });

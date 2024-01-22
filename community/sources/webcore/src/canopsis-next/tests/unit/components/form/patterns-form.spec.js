@@ -34,7 +34,7 @@ describe('patterns-form', () => {
 
     const textField = selectTextField(wrapper);
 
-    textField.vm.$emit('input', title);
+    textField.triggerCustomEvent('input', title);
 
     expect(wrapper).toEmit('input', { ...form, title });
   });
@@ -61,7 +61,7 @@ describe('patterns-form', () => {
       },
     };
 
-    patternsField.vm.$emit('input', newForm);
+    patternsField.triggerCustomEvent('input', newForm);
 
     expect(wrapper).toEmit('input', newForm);
   });

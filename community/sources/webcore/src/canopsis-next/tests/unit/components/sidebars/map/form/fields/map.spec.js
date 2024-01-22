@@ -47,7 +47,7 @@ describe('field-map', () => {
 
     const newMap = Faker.datatype.string();
 
-    mapField.vm.$emit('input', newMap);
+    mapField.triggerCustomEvent('input', newMap);
 
     expect(wrapper).toEmit('input', newMap);
   });

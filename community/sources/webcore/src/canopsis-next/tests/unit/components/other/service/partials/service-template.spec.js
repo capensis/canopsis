@@ -54,7 +54,7 @@ describe('service-template', () => {
 
     const entitiesList = selectEntitiesList(wrapper);
 
-    await entitiesList.vm.$emit('refresh');
+    await entitiesList.triggerCustomEvent('refresh');
 
     expect(wrapper).toEmit('refresh');
   });
@@ -77,7 +77,7 @@ describe('service-template', () => {
       page: Faker.datatype.number(),
     };
 
-    await entitiesList.vm.$emit('update:options', newPagination);
+    await entitiesList.triggerCustomEvent('update:options', newPagination);
 
     expect(wrapper).toEmit('update:options', newPagination);
   });

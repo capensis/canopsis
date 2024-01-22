@@ -42,7 +42,7 @@ describe('c-date-picker-field', () => {
 
     const newValue = '2022-10-04';
 
-    selectDatePicker(wrapper).vm.$emit('input', newValue);
+    selectDatePicker(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', newValue);
   });
@@ -54,7 +54,7 @@ describe('c-date-picker-field', () => {
       },
     });
 
-    selectTextField(wrapper).vm.$emit('click:append');
+    selectTextField(wrapper).triggerCustomEvent('click:append');
 
     expect(wrapper).toEmit('input', null);
   });
@@ -68,7 +68,7 @@ describe('c-date-picker-field', () => {
 
     const newValue = '2022-10-04';
 
-    selectDatePicker(wrapper).vm.$emit('change', newValue);
+    selectDatePicker(wrapper).triggerCustomEvent('change', newValue);
 
     expect(wrapper).toEmit('change', newValue);
   });

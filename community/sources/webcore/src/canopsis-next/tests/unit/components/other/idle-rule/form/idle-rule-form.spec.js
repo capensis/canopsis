@@ -33,7 +33,7 @@ describe('idle-rule-form', () => {
 
     const newValue = !enabled;
 
-    enabledField.vm.$emit('input', newValue);
+    enabledField.triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', { enabled: newValue });
   });
@@ -52,7 +52,7 @@ describe('idle-rule-form', () => {
       description: Faker.datatype.string(),
     };
 
-    generalForm.vm.$emit('input', newValue);
+    generalForm.triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', newValue);
   });
@@ -74,7 +74,7 @@ describe('idle-rule-form', () => {
       alarm_pattern: {},
     };
 
-    patternsForm.vm.$emit('input', newPatterns);
+    patternsForm.triggerCustomEvent('input', newPatterns);
 
     expect(wrapper).toEmit('input', {
       enabled: true,

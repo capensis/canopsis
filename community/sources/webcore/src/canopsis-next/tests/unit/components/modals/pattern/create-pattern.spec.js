@@ -245,7 +245,7 @@ describe('create-pattern', () => {
       instructions: [{}],
     };
 
-    patternForm.vm.$emit('input', newForm);
+    patternForm.triggerCustomEvent('input', newForm);
 
     selectSubmitButton(wrapper).trigger('click');
 

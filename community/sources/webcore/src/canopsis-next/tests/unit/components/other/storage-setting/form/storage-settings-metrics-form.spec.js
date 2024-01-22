@@ -35,7 +35,7 @@ describe('storage-settings-metrics-form', () => {
 
     const newValue = randomDurationValue();
 
-    selectMetricsDeleteAfterField(wrapper).vm.$emit('input', newValue);
+    selectMetricsDeleteAfterField(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', { ...form, delete_after: newValue });
   });

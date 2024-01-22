@@ -26,14 +26,9 @@ describe('c-pagination', () => {
     const page = 2;
     const wrapper = factory({ propsData: { page, limit: 5, total: 10, type: 'top' } });
 
-    const prevButton = wrapper.findAll('button').at(0);
+    wrapper.findAll('button').at(0).trigger('click');
 
-    prevButton.trigger('click');
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-    expect(inputEvents[0]).toEqual([page - 1]);
+    expect(wrapper).toEmit('input', page - 1);
   });
 
   it('Pagination on the top. Check prev page button is disabled, when first page.', () => {
@@ -48,14 +43,9 @@ describe('c-pagination', () => {
     const page = 1;
     const wrapper = factory({ propsData: { page, total: 10, limit: 5, type: 'top' } });
 
-    const nextButton = wrapper.findAll('button').at(1);
+    wrapper.findAll('button').at(1).trigger('click');
 
-    nextButton.trigger('click');
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-    expect(inputEvents[0]).toEqual([page + 1]);
+    expect(wrapper).toEmit('input', page + 1);
   });
 
   it('Pagination on the top. Check next page button is disabled, when last page.', () => {
@@ -71,14 +61,9 @@ describe('c-pagination', () => {
     const page = Faker.datatype.number();
     const wrapper = factory({ propsData: { total: 1 } });
 
-    const pagination = wrapper.find('.v-pagination');
+    wrapper.find('.v-pagination').setValue(page);
 
-    pagination.setValue(page);
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-    expect(inputEvents[0]).toEqual([page]);
+    expect(wrapper).toEmit('input', page);
   });
 
   it('Renders `c-pagination` with default props correctly', () => {

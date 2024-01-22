@@ -95,7 +95,7 @@ describe('kpi-sli', () => {
 
     const kpiSliFiltersElement = wrapper.find('kpi-sli-filters-stub');
 
-    kpiSliFiltersElement.vm.$emit('input', {
+    kpiSliFiltersElement.triggerCustomEvent('input', {
       sampling: SAMPLINGS.day,
       filter: null,
       in_percents: true,
