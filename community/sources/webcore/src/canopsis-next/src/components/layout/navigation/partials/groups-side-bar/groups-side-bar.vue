@@ -15,9 +15,7 @@
           <app-version class="version" />
         </div>
       </template>
-      <section
-        :class="['side-bar__links', { 'side-bar__links--ordering': isGroupsOrderChanged }]"
-      >
+      <section :class="['side-bar__links', { 'side-bar__links--ordering': isGroupsOrderChanged }]">
         <v-layout
           class="pa-2"
           v-if="!mutatedGroups.length && groupsPending"

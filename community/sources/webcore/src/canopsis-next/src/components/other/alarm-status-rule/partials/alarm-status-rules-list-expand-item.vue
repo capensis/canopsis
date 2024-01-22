@@ -14,9 +14,7 @@
       mandatory
     >
       <v-tab-item>
-        <v-layout
-          class="py-3"
-        >
+        <v-layout class="py-3">
           <v-textarea
             class="my-2 mx-4 pa-0"
             :value="rule.description"

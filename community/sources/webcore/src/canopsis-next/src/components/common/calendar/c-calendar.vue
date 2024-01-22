@@ -12,9 +12,7 @@
         class="c-calendar__today-btn"
         @click="setToday"
       />
-      <v-layout
-        justify-center
-      >
+      <v-layout justify-center>
         <calendar-pagination
           class="c-calendar__pagination"
           :focus.sync="focus"

@@ -6,9 +6,7 @@
   >
     <template #activator="">
       <v-list-item-content class="widget-settings-item-title">
-        <v-list-item-title
-          :class="validationHeaderClass"
-        >
+        <v-list-item-title :class="validationHeaderClass">
           <slot name="title">
             {{ title }}
           </slot>

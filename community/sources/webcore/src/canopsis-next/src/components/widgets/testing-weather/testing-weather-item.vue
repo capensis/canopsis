@@ -7,9 +7,7 @@
     @click="showTestSuiteInformationModal"
     @show:alarms="showAlarmListModal"
   >
-    <v-layout
-      class="fill-height"
-    >
+    <v-layout class="fill-height">
       <v-flex class="pa-2">
         <h3 class="text-md-center">
           {{ testSuite.name }}

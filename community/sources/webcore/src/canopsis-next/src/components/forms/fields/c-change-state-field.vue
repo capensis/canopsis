@@ -6,9 +6,7 @@
         :state-values="availableStateValues"
       />
     </v-layout>
-    <v-layout
-      class="mt-4"
-    >
+    <v-layout class="mt-4">
       <v-textarea
         v-field="value.output"
         v-validate="'required'"

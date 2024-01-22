@@ -68,6 +68,16 @@
     }],
     "vue/no-v-text-v-html-on-component": "off",
     "vue/require-component-is": "off",
+    "vue/max-attributes-per-line": ["error", {
+      "singleline": 3,
+      "multiline": 1
+    }],
+    "vue/first-attribute-linebreak": ["error", {
+      "singleline": "beside"
+    }],
+    "vue/component-name-in-template-casing": ["error", "kebab-case", {
+      "registeredComponentsOnly": true
+    }],
     "vuejs-accessibility/label-has-for": "off",
     "vuejs-accessibility/click-events-have-key-events": "off",
     "vuejs-accessibility/form-control-has-label": "off",
