@@ -1,5 +1,6 @@
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
+
 import { MODALS } from '@/constants';
 
 import PbehaviorRecurrenceRuleField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-recurrence-rule-field.vue';

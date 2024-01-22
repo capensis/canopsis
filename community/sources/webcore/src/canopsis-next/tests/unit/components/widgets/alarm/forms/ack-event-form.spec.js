@@ -1,7 +1,6 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createCheckboxInputStub } from '@unit/stubs/input';
 import { createActivatorElementStub } from '@unit/stubs/vuetify';
 

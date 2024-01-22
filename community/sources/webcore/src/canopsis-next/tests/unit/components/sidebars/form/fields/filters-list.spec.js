@@ -4,6 +4,7 @@ import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
 
 import { MODALS } from '@/constants';
+
 import { uuid } from '@/helpers/uuid';
 
 import FieldFiltersList from '@/components/sidebars/form/fields/filters-list.vue';

@@ -1,5 +1,4 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createButtonStub } from '@unit/stubs/button';
 
 import ButtonField from '@/components/sidebars/form/fields/button-field.vue';

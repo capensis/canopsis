@@ -1,7 +1,6 @@
 import { range } from 'lodash';
-import flushPromises from 'flush-promises';
 
-import { generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 import {
   selectRowRemoveButtonByIndex,
   selectRowEditButtonByIndex,
@@ -12,6 +11,7 @@ import {
 } from '@unit/utils/table';
 
 import { MAP_TYPES } from '@/constants';
+
 import MapsList from '@/components/other/map/maps-list.vue';
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 

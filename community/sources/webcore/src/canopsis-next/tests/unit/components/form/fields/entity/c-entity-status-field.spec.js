@@ -1,6 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createSelectInputStub } from '@unit/stubs/input';
+
 import { ENTITIES_STATUSES } from '@/constants';
 
 import CEntityStatusField from '@/components/forms/fields/entity/c-entity-status-field.vue';

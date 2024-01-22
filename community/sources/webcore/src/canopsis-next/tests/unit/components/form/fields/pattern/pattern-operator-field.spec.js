@@ -1,6 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createSelectInputStub } from '@unit/stubs/input';
+
 import { PATTERN_OPERATORS } from '@/constants';
 
 import PatternOperatorField from '@/components/forms/fields/pattern/pattern-operator-field.vue';

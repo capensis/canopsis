@@ -1,7 +1,9 @@
 import { keyBy } from 'lodash';
 
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+
 import { COLOR_INDICATOR_TYPES, SHAPES } from '@/constants';
+
 import { shapeToForm } from '@/helpers/flowchart/shapes';
 
 import FlowchartPointsPreview from '@/components/other/map/partials/flowchart-points-preview.vue';

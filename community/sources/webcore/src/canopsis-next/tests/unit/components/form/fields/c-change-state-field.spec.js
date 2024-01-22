@@ -1,10 +1,11 @@
 import Faker from 'faker';
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
+import { generateShallowRenderer, generateRenderer, flushPromises } from '@unit/utils/vue';
 import { createMockedStoreGetters } from '@unit/utils/store';
 import { createTextareaInputStub, createNumberInputStub } from '@unit/stubs/input';
-import flushPromises from 'flush-promises';
+
 import { ENTITIES_STATES } from '@/constants';
+
 import CChangeStateField from '@/components/forms/fields/c-change-state-field.vue';
 
 const stubs = {

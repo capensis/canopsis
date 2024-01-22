@@ -1,13 +1,14 @@
 import Faker from 'faker';
 import { LatLngBounds } from 'leaflet';
 import { omit } from 'lodash';
-import flushPromises from 'flush-promises';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createActivatorElementStub } from '@unit/stubs/vuetify';
 import { mockModals } from '@unit/utils/mock-hooks';
-import { geomapPointToForm } from '@/helpers/entities/map/form';
+
 import { MODALS } from '@/constants';
+
+import { geomapPointToForm } from '@/helpers/entities/map/form';
 
 import GeomapEditor from '@/components/other/map/form/fields/geomap-editor.vue';
 

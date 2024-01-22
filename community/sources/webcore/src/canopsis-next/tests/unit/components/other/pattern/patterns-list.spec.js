@@ -1,6 +1,6 @@
 import { range } from 'lodash';
 
-import { generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 import {
   selectRowRemoveButtonByIndex,
   selectRowEditButtonByIndex,
@@ -9,9 +9,9 @@ import {
 } from '@unit/utils/table';
 
 import { PATTERN_TYPES } from '@/constants';
+
 import PatternsList from '@/components/other/pattern/patterns-list.vue';
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
-import flushPromises from 'flush-promises';
 
 const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,

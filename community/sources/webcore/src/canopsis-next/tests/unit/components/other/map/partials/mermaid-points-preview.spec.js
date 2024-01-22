@@ -1,8 +1,10 @@
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
-import MermaidPointsPreview from '@/components/other/map/partials/mermaid-points-preview.vue';
 import { COLOR_INDICATOR_TYPES } from '@/constants';
+
 import { mermaidPointToForm } from '@/helpers/entities/map/form';
+
+import MermaidPointsPreview from '@/components/other/map/partials/mermaid-points-preview.vue';
 
 const stubs = {
   'mermaid-point-marker': true,

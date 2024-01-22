@@ -1,8 +1,8 @@
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createMockedStoreModules } from '@unit/utils/store';
+
 import AlarmsListModal from '@/components/sidebars/alarm/form/alarms-list-modal.vue';
 
 const stubs = {

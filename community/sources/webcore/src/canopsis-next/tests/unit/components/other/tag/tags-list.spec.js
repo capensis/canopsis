@@ -1,8 +1,6 @@
 import { range } from 'lodash';
-import flushPromises from 'flush-promises';
 
-import { TAG_TYPES } from '@/constants';
-import { generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 import {
   selectRowRemoveButtonByIndex,
   selectRowEditButtonByIndex,
@@ -11,8 +9,10 @@ import {
   selectRowDuplicateButtonByIndex,
   selectRowExpandButtonByIndex,
 } from '@unit/utils/table';
-import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 
+import { TAG_TYPES } from '@/constants';
+
+import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 import TagsList from '@/components/other/tag/tags-list.vue';
 
 const stubs = {

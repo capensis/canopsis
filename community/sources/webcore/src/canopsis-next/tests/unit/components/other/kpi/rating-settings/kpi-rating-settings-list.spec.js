@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 
 import KpiRatingSettingsList from '@/components/other/kpi/rating-settings/kpi-rating-settings-list.vue';
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';

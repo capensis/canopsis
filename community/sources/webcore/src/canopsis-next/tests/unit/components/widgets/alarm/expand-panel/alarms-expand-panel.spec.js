@@ -1,7 +1,5 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createMockedStoreModule, createMockedStoreModules } from '@unit/utils/store';
-
 import { fakeAlarmDetails } from '@unit/data/alarm';
 
 import { CANOPSIS_EDITION, ENTITY_TYPES, JUNIT_ALARM_CONNECTOR, USERS_PERMISSIONS } from '@/constants';

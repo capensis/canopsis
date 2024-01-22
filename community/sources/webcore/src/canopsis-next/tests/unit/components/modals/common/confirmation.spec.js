@@ -1,8 +1,6 @@
-import flushPromises from 'flush-promises';
-
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
-
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
+
 import Confirmation from '@/components/modals/common/confirmation.vue';
 
 const stubs = {

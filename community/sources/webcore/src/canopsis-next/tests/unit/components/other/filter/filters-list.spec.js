@@ -1,6 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { mockModals } from '@unit/utils/mock-hooks';
+
 import { ENTITIES_TYPES } from '@/constants';
 
 import FiltersList from '@/components/other/filter/filters-list.vue';

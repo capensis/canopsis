@@ -2,6 +2,7 @@ import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createInputStub, createSelectInputStub } from '@unit/stubs/input';
+
 import { META_ALARMS_RULE_TYPES } from '@/constants';
 
 import MetaAlarmRuleForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-form.vue';

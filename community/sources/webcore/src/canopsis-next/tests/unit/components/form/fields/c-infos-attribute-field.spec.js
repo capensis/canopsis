@@ -1,5 +1,4 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createSelectInputStub } from '@unit/stubs/input';
 
 import CInfosAttributeField from '@/components/forms/fields/c-infos-attribute-field.vue';

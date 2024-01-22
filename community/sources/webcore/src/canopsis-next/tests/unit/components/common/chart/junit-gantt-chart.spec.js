@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import JunitGanttChart from '@/components/common/chart/junit-gantt-chart.vue';
 

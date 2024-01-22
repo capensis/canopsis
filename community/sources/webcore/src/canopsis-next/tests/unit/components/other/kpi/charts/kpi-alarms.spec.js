@@ -1,10 +1,7 @@
-import flushPromises from 'flush-promises';
-
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
-
 import { createMockedStoreModules } from '@unit/utils/store';
+
 import { ALARM_METRIC_PARAMETERS, QUICK_RANGES, SAMPLINGS } from '@/constants';
 
 import KpiAlarms from '@/components/other/kpi/charts/kpi-alarms';

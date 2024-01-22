@@ -1,8 +1,7 @@
 import Faker from 'faker';
 import { range } from 'lodash';
-import flushPromises from 'flush-promises';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import {
   createAlarmModule,
   createAuthModule,
@@ -10,6 +9,7 @@ import {
   createMockedStoreModules,
 } from '@unit/utils/store';
 import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
+
 import {
   ALARM_LIST_ACTIONS_TYPES,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,

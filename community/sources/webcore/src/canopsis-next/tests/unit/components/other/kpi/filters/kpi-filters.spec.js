@@ -1,8 +1,8 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
+
 import { CRUD_ACTIONS, MODALS, USERS_PERMISSIONS } from '@/constants';
 
 import KpiFilters from '@/components/other/kpi/filters/kpi-filters.vue';

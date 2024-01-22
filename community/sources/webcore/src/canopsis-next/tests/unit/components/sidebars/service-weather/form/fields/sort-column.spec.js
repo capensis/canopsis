@@ -2,6 +2,7 @@ import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
+
 import { SORT_ORDERS } from '@/constants';
 
 import FieldSortColumn from '@/components/sidebars/service-weather/form/fields/sort-column.vue';

@@ -1,11 +1,12 @@
 import { range } from 'lodash';
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules, createPbehaviorModule } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
+
 import { MODALS } from '@/constants';
+
 import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
 
 import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/pbehaviors-simple-list.vue';
