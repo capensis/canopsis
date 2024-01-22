@@ -21,7 +21,7 @@ import StateSettingsSummary from '@/components/other/state-setting/state-setting
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
-  name: MODALS.entityDependenciesByStateSettings,
+  name: MODALS.entitiesRootCauseDiagram,
   components: {
     StateSettingsSummary,
     ModalWrapper,
