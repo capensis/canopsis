@@ -37,18 +37,11 @@ describe('grid-range-size', () => {
   it('Value changed after trigger range slider field', () => {
     const wrapper = factory();
 
-    const rangeSliderField = selectRangeSliderField(wrapper);
-
     const newValue = 3;
 
-    rangeSliderField.setValue(newValue);
+    selectRangeSliderField(wrapper).setValue(newValue);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(newValue);
+    expect(wrapper).toEmit('input', newValue);
   });
 
   it('Renders `grid-range-size` with default and required props', () => {

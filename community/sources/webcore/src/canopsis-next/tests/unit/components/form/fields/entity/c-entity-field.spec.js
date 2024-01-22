@@ -120,12 +120,7 @@ describe('c-entity-field', () => {
 
     autocompleteElement.setValue(items[0].value);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(items[0].value);
+    expect(wrapper).toEmit('input', items[0].value);
   });
 
   it('Renders `c-entity-field` with default props', async () => {

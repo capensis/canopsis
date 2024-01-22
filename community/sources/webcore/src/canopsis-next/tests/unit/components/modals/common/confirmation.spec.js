@@ -51,7 +51,7 @@ describe('confirmation', () => {
 
     const submitButton = selectSubmitButton(wrapper);
 
-    submitButton.vm.$emit('click', new Event('click'));
+    submitButton.triggerCustomEvent('click', new Event('click'));
 
     await flushPromises();
 
@@ -80,7 +80,7 @@ describe('confirmation', () => {
 
     const submitButton = selectSubmitButton(wrapper);
 
-    submitButton.vm.$emit('click', new Event('click'));
+    submitButton.triggerCustomEvent('click', new Event('click'));
 
     await flushPromises();
 
@@ -106,9 +106,7 @@ describe('confirmation', () => {
       },
     });
 
-    const cancelButton = selectCancelButton(wrapper);
-
-    cancelButton.vm.$emit('click', new Event('click'));
+    selectCancelButton(wrapper).triggerCustomEvent('click', new Event('click'));
 
     expect($modals.hide).toBeCalledWith();
 

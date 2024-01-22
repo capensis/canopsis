@@ -82,14 +82,9 @@ describe('c-pattern-field', () => {
     const wrapper = factory({ store });
     const selectField = selectSelectField(wrapper);
 
-    selectField.vm.$emit('input', PATTERN_CUSTOM_ITEM_VALUE);
+    selectField.triggerCustomEvent('input', PATTERN_CUSTOM_ITEM_VALUE);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(PATTERN_CUSTOM_ITEM_VALUE);
+    expect(wrapper).toEmit('input', PATTERN_CUSTOM_ITEM_VALUE);
   });
 
   test('Renders `c-pattern-field` with default props', () => {

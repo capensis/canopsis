@@ -224,10 +224,8 @@ describe('c-entity-category-field', () => {
 
     await flushPromises();
 
-    const inputEvents = wrapper.emitted('input');
-
     expect(validator.errors.has(`${name}.create`)).toBeTruthy();
-    expect(inputEvents).toBeFalsy();
+    expect(wrapper).not.toEmit('input');
 
     wrapper.destroy();
   });
@@ -266,13 +264,9 @@ describe('c-entity-category-field', () => {
 
     await flushPromises();
 
-    const inputEvents = wrapper.emitted('input');
-    const [eventData] = inputEvents[0];
-
     expect(createMock).toBeCalledWith(expect.any(Object), { data: { name: categoryName } }, undefined);
     expect(fetchListMock).toBeCalledTimes(2);
-    expect(inputEvents).toHaveLength(1);
-    expect(eventData).toBe(category);
+    expect(wrapper).toEmit('input', category);
     expect(textField.vm.value).toBe('');
   });
 
@@ -309,10 +303,8 @@ describe('c-entity-category-field', () => {
 
     await flushPromises();
 
-    const inputEvents = wrapper.emitted('input');
-
     expect(fetchListMock).toBeCalledTimes(1);
-    expect(inputEvents).toBe(undefined);
+    expect(wrapper).not.toEmit('input');
     expect(textField.vm.value).toBe('');
   });
 

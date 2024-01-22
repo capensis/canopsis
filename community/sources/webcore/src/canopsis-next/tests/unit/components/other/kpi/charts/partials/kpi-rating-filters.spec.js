@@ -50,21 +50,14 @@ describe('kpi-rating-filters', () => {
       to: stop,
     };
 
-    quickIntervalField.vm.$emit('input', {
+    quickIntervalField.triggerCustomEvent('input', {
       from: start,
       to: stop,
     });
 
     await flushPromises();
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-
-    expect(eventData.interval).toEqual(expectedInterval);
-    expect(eventData).toEqual({
+    expect(wrapper).toEmit('input', {
       ...initialQuery,
       interval: expectedInterval,
     });
@@ -80,18 +73,11 @@ describe('kpi-rating-filters', () => {
 
     const filtersField = wrapper.find('c-filter-field-stub');
 
-    filtersField.vm.$emit('input', expectedFilter);
+    filtersField.triggerCustomEvent('input', expectedFilter);
 
     await flushPromises();
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-
-    expect(eventData.filter).toEqual(expectedFilter);
-    expect(eventData).toEqual({
+    expect(wrapper).toEmit('input', {
       ...initialQuery,
       filter: expectedFilter,
     });
@@ -110,18 +96,11 @@ describe('kpi-rating-filters', () => {
 
     const criteriaField = wrapper.find('kpi-rating-criteria-field-stub');
 
-    criteriaField.vm.$emit('input', ratingSetting);
+    criteriaField.triggerCustomEvent('input', ratingSetting);
 
     await flushPromises();
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-
-    expect(eventData.criteria).toEqual(ratingSetting);
-    expect(eventData).toEqual({
+    expect(wrapper).toEmit('input', {
       ...initialQuery,
       criteria: ratingSetting,
     });
@@ -136,18 +115,11 @@ describe('kpi-rating-filters', () => {
 
     const criteriaField = wrapper.find('kpi-rating-criteria-field-stub');
 
-    criteriaField.vm.$emit('input', KPI_RATING_CRITERIA.impactLevel);
+    criteriaField.triggerCustomEvent('input', KPI_RATING_CRITERIA.impactLevel);
 
     await flushPromises();
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-
-    expect(eventData.criteria).toEqual(KPI_RATING_CRITERIA.impactLevel);
-    expect(eventData).toEqual({
+    expect(wrapper).toEmit('input', {
       ...initialQuery,
       metric: ALARM_METRIC_PARAMETERS.createdAlarms,
       criteria: KPI_RATING_CRITERIA.impactLevel,
@@ -163,18 +135,11 @@ describe('kpi-rating-filters', () => {
 
     const metricParametersField = wrapper.find('kpi-rating-metric-field-stub');
 
-    metricParametersField.vm.$emit('input', ALARM_METRIC_PARAMETERS.cancelAckAlarms);
+    metricParametersField.triggerCustomEvent('input', ALARM_METRIC_PARAMETERS.cancelAckAlarms);
 
     await flushPromises();
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-
-    expect(eventData.metric).toEqual(ALARM_METRIC_PARAMETERS.cancelAckAlarms);
-    expect(eventData).toEqual({
+    expect(wrapper).toEmit('input', {
       ...initialQuery,
       metric: ALARM_METRIC_PARAMETERS.cancelAckAlarms,
     });

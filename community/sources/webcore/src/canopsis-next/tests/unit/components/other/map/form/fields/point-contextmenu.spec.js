@@ -19,7 +19,7 @@ describe('mermaid-contextmenu', () => {
 
     const addPointTile = selectListTileByIndex(wrapper, 0);
 
-    addPointTile.vm.$emit('click');
+    addPointTile.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('add:point');
   });
@@ -35,7 +35,7 @@ describe('mermaid-contextmenu', () => {
 
     const editPointTile = selectListTileByIndex(wrapper, 0);
 
-    editPointTile.vm.$emit('click');
+    editPointTile.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('edit:point');
   });
@@ -51,7 +51,7 @@ describe('mermaid-contextmenu', () => {
 
     const removePointTile = selectListTileByIndex(wrapper, 1);
 
-    removePointTile.vm.$emit('click');
+    removePointTile.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('remove:point');
   });

@@ -70,7 +70,7 @@ describe('c-map-field', () => {
 
     const selectField = selectSelectField(wrapper);
 
-    selectField.vm.$emit('input', map._id);
+    selectField.triggerCustomEvent('input', map._id);
 
     expect(wrapper).toEmit('input', map._id);
   });

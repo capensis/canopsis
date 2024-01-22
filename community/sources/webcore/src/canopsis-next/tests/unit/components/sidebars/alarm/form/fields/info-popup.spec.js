@@ -66,12 +66,7 @@ describe('info-popup', () => {
 
     modalArguments.config.action(actionValue);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(actionValue);
+    expect(wrapper).toEmit('input', actionValue);
   });
 
   it('Renders `info-popup` with default props', () => {

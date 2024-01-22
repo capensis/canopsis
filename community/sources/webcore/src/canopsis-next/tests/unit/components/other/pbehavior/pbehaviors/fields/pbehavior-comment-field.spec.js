@@ -34,7 +34,7 @@ describe('pbehavior-comment-field', () => {
 
     const newMessage = Faker.datatype.string();
 
-    selectMessageField(wrapper).vm.$emit('input', newMessage);
+    selectMessageField(wrapper).triggerCustomEvent('input', newMessage);
 
     expect(wrapper).toEmit('input', {
       ...comment,
@@ -49,7 +49,7 @@ describe('pbehavior-comment-field', () => {
 
     const newMessage = Faker.datatype.string();
 
-    selectRemoveButton(wrapper).vm.$emit('click', newMessage);
+    selectRemoveButton(wrapper).triggerCustomEvent('click', newMessage);
 
     expect(wrapper).toEmit('remove');
   });

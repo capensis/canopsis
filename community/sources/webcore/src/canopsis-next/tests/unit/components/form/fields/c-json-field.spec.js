@@ -75,12 +75,7 @@ describe('c-json-field', () => {
     await textarea.setValue(newValue);
     await textarea.trigger('blur');
 
-    const inputEvents = wrapper.emitted('input');
-
-    const [eventData] = inputEvents[0];
-
-    expect(inputEvents).toHaveLength(1);
-    expect(eventData).toBe(newValue);
+    expect(wrapper).toEmit('input', newValue);
   });
 
   it('Payload json value as prop with variables', () => {

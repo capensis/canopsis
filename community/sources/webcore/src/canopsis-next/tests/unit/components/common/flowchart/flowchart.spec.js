@@ -29,7 +29,7 @@ describe('flowchart', () => {
       rect: rectShapeToForm({ _id: 'rect' }),
     };
     const flowchartSidebar = selectFlowchartSidebar(wrapper);
-    flowchartSidebar.vm.$emit('input', newShapes);
+    flowchartSidebar.triggerCustomEvent('input', newShapes);
 
     expect(wrapper).toEmit('input', newShapes);
   });
@@ -45,7 +45,7 @@ describe('flowchart', () => {
       rect: rectShapeToForm({ _id: 'rect' }),
     };
     const flowchartEditor = selectFlowchartEditor(wrapper);
-    flowchartEditor.vm.$emit('input', newShapes);
+    flowchartEditor.triggerCustomEvent('input', newShapes);
 
     expect(wrapper).toEmit('input', newShapes);
   });
@@ -61,13 +61,13 @@ describe('flowchart', () => {
     });
 
     const flowchartSidebar = selectFlowchartSidebar(wrapper);
-    await flowchartSidebar.vm.$emit('update:selected', [shapes.rect]);
+    await flowchartSidebar.triggerCustomEvent('update:selected', [shapes.rect]);
 
     const newShapes = {
       circle: circleShapeToForm({ _id: 'circle' }),
     };
     const flowchartProperties = selectFlowchartProperties(wrapper);
-    flowchartProperties.vm.$emit('input', newShapes);
+    flowchartProperties.triggerCustomEvent('input', newShapes);
 
     expect(wrapper).toEmit('input', newShapes);
   });
@@ -83,13 +83,13 @@ describe('flowchart', () => {
     });
 
     const flowchartSidebar = selectFlowchartSidebar(wrapper);
-    await flowchartSidebar.vm.$emit('update:selected', [shapes.rect]);
+    await flowchartSidebar.triggerCustomEvent('update:selected', [shapes.rect]);
 
     const newShapes = {
       circle: circleShapeToForm({ _id: 'circle' }),
     };
     const flowchartProperties = selectFlowchartProperties(wrapper);
-    flowchartProperties.vm.$emit('input', newShapes);
+    flowchartProperties.triggerCustomEvent('input', newShapes);
 
     expect(wrapper).toEmit('input', newShapes);
   });

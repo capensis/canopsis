@@ -1,4 +1,4 @@
-import { kebabCase } from 'lodash';
+import { cloneDeep, isFunction, kebabCase } from 'lodash';
 import { toMatchSnapshot } from 'jest-snapshot';
 import registerRequireContextHook from 'babel-plugin-require-context-hook/register';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
@@ -54,6 +54,7 @@ expect.extend({
     return toMatchSnapshot.call(this, menu);
   },
   toEmit(wrapper, event, ...data) {
+    // eslint-disable-next-line no-restricted-syntax
     const emittedEvents = wrapper.emitted(event);
 
     if (this.isNot) {
@@ -81,10 +82,15 @@ expect.extend({
 
     try {
       expect(
-        emittedEvents.map(events => events[0]),
+        cloneDeep(emittedEvents.map(events => events[0])),
       ).toEqual(data);
     } catch (err) {
-      return err.matcherResult;
+      const { pass, message } = err.matcherResult ?? { pass: false, message: '' };
+
+      return {
+        pass,
+        message: isFunction(message) ? message : () => message,
+      };
     }
 
     return { pass: true };

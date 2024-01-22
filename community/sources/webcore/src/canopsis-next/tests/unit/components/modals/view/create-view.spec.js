@@ -136,7 +136,7 @@ describe('create-view', () => {
 
     createGroup.mockReturnValueOnce(newGroup);
 
-    selectViewForm(wrapper).vm.$emit('input', newView);
+    selectViewForm(wrapper).triggerCustomEvent('input', newView);
     selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
@@ -163,7 +163,7 @@ describe('create-view', () => {
 
     await flushPromises();
 
-    selectViewForm(wrapper).vm.$emit('input', fakedViewWithoutId);
+    selectViewForm(wrapper).triggerCustomEvent('input', fakedViewWithoutId);
     selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
@@ -238,7 +238,7 @@ describe('create-view', () => {
 
     await flushPromises();
 
-    selectViewForm(wrapper).vm.$emit('input', fakedViewWithoutId);
+    selectViewForm(wrapper).triggerCustomEvent('input', fakedViewWithoutId);
     selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
@@ -269,7 +269,7 @@ describe('create-view', () => {
 
     await flushPromises();
 
-    selectViewForm(wrapper).vm.$emit('input', fakedViewWithoutId);
+    selectViewForm(wrapper).triggerCustomEvent('input', fakedViewWithoutId);
     selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();

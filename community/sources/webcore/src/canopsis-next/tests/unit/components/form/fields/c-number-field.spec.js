@@ -24,12 +24,7 @@ describe('c-number-field', () => {
 
     textField.setValue(newValue);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(newValue);
+    expect(wrapper).toEmit('input', newValue);
   });
 
   it('Renders `c-number-field` with default props', () => {

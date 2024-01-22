@@ -50,7 +50,7 @@ describe('pbehavior-exception-field', () => {
 
     const newTimeStart = new Date(1233266565);
 
-    selectDateTimePickerField(wrapper).vm.$emit('update:start', newTimeStart);
+    selectDateTimePickerField(wrapper).triggerCustomEvent('update:start', newTimeStart);
 
     expect(wrapper).toEmit('input', {
       ...value,
@@ -70,11 +70,11 @@ describe('pbehavior-exception-field', () => {
 
     const newTimeStart = new Date(1233266565);
 
-    selectToggleEditButton(wrapper).vm.$emit('click');
+    selectToggleEditButton(wrapper).triggerCustomEvent('click');
 
     await flushPromises();
 
-    selectDateTimePickerField(wrapper).vm.$emit('update:start', newTimeStart);
+    selectDateTimePickerField(wrapper).triggerCustomEvent('update:start', newTimeStart);
 
     expect(wrapper).toEmit('input', {
       ...value,
@@ -94,11 +94,11 @@ describe('pbehavior-exception-field', () => {
 
     const newTimeStart = new Date(1233266565);
 
-    selectToggleEditButton(wrapper).vm.$emit('click');
+    selectToggleEditButton(wrapper).triggerCustomEvent('click');
 
     await flushPromises();
 
-    selectDateTimePickerField(wrapper).vm.$emit('update:end', newTimeStart);
+    selectDateTimePickerField(wrapper).triggerCustomEvent('update:end', newTimeStart);
 
     expect(wrapper).toEmit('input', {
       ...value,
@@ -123,11 +123,11 @@ describe('pbehavior-exception-field', () => {
       _id: Faker.datatype.string(),
     };
 
-    selectToggleEditButton(wrapper).vm.$emit('click');
+    selectToggleEditButton(wrapper).triggerCustomEvent('click');
 
     await flushPromises();
 
-    selectTypeField(wrapper).vm.$emit('input', newType);
+    selectTypeField(wrapper).triggerCustomEvent('input', newType);
 
     expect(wrapper).toEmit('input', {
       ...value,
@@ -143,7 +143,7 @@ describe('pbehavior-exception-field', () => {
       },
     });
 
-    selectRemoveButton(wrapper).vm.$emit('click');
+    selectRemoveButton(wrapper).triggerCustomEvent('click');
 
     expect(wrapper).toEmit('delete');
   });
@@ -160,7 +160,7 @@ describe('pbehavior-exception-field', () => {
       },
     });
 
-    selectFullDayCheckbox(wrapper).vm.$emit('change', true);
+    selectFullDayCheckbox(wrapper).triggerCustomEvent('change', true);
     await flushPromises();
 
     expect(wrapper).toEmit('input', {
@@ -183,7 +183,7 @@ describe('pbehavior-exception-field', () => {
       },
     });
 
-    selectFullDayCheckbox(wrapper).vm.$emit('change', false);
+    selectFullDayCheckbox(wrapper).triggerCustomEvent('change', false);
     await flushPromises();
 
     expect(wrapper).toEmit('input', value);

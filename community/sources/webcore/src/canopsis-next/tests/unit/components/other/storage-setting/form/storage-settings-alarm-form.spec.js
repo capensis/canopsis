@@ -44,7 +44,7 @@ describe('storage-settings-alarm-form', () => {
 
     const newValue = randomDurationValue();
 
-    selectAlarmArchiveAfterField(wrapper).vm.$emit('input', newValue);
+    selectAlarmArchiveAfterField(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', { ...form, archive_after: newValue });
   });
@@ -59,7 +59,7 @@ describe('storage-settings-alarm-form', () => {
 
     const newValue = randomDurationValue();
 
-    selectAlarmDeleteAfterField(wrapper).vm.$emit('input', newValue);
+    selectAlarmDeleteAfterField(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', { ...form, delete_after: newValue });
   });

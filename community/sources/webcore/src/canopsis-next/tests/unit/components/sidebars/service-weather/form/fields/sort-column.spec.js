@@ -35,7 +35,7 @@ describe('field-sort-column', () => {
 
     const newColumn = Faker.datatype.string();
 
-    selectColumnField(wrapper).vm.$emit('input', newColumn);
+    selectColumnField(wrapper).triggerCustomEvent('input', newColumn);
 
     expect(wrapper).toEmit('input', {
       column: newColumn,
@@ -54,7 +54,7 @@ describe('field-sort-column', () => {
       },
     });
 
-    selectOrderField(wrapper).vm.$emit('input', SORT_ORDERS.desc);
+    selectOrderField(wrapper).triggerCustomEvent('input', SORT_ORDERS.desc);
 
     expect(wrapper).toEmit('input', {
       column,

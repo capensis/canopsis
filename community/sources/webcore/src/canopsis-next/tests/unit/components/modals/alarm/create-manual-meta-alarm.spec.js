@@ -129,7 +129,7 @@ describe('create-manual-meta-alarm', () => {
       auto_resolve: true,
     };
 
-    manualMetaAlarmForm.vm.$emit('input', newData);
+    manualMetaAlarmForm.triggerCustomEvent('input', newData);
 
     submitButton.trigger('click');
 

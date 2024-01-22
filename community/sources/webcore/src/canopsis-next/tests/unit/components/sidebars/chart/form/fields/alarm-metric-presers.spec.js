@@ -25,7 +25,7 @@ describe('alarm-metric-presets', () => {
       metric: ALARM_METRIC_PARAMETERS.ackActiveAlarms,
     }];
 
-    selectAlarmMetricPresetsField(wrapper).vm.$emit('input', newValue);
+    selectAlarmMetricPresetsField(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', newValue);
   });

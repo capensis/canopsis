@@ -36,7 +36,7 @@ describe('field-template', () => {
       },
     });
 
-    selectButton(wrapper).vm.$emit('click');
+    selectButton(wrapper).triggerCustomEvent('click');
 
     expect($modals.show).toBeCalledWith({
       name: MODALS.textEditor,

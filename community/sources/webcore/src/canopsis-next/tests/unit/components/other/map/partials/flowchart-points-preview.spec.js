@@ -55,7 +55,7 @@ describe('flowchart-points-preview', () => {
     await triggerPointClick(wrapper, 0);
 
     const pointPopupDialog = selectPointPopupDialog(wrapper);
-    pointPopupDialog.vm.$emit('show:alarms');
+    pointPopupDialog.triggerCustomEvent('show:alarms');
 
     expect(wrapper).toEmit('show:alarms', firstPoint);
   });
@@ -71,7 +71,7 @@ describe('flowchart-points-preview', () => {
     await triggerPointClick(wrapper, 1);
 
     const pointPopupDialog = selectPointPopupDialog(wrapper);
-    pointPopupDialog.vm.$emit('show:map');
+    pointPopupDialog.triggerCustomEvent('show:map');
 
     expect(wrapper).toEmit('show:map', secondPoint.map);
   });
@@ -87,7 +87,7 @@ describe('flowchart-points-preview', () => {
     await triggerPointClick(wrapper, 1);
 
     const pointPopupDialog = selectPointPopupDialog(wrapper);
-    await pointPopupDialog.vm.$emit('close');
+    await pointPopupDialog.triggerCustomEvent('close');
 
     expect(selectPointPopupDialog(wrapper).element).toBeFalsy();
   });

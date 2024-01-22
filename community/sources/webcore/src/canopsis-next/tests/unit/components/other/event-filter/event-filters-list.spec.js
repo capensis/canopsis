@@ -89,7 +89,7 @@ describe('event-filters-list', () => {
       .at(0)
       .find('.v-data-table__expand-icon');
 
-    await expandButton.vm.$emit('expand');
+    await expandButton.triggerCustomEvent('expand');
 
     expect(wrapper).toMatchSnapshot();
   });

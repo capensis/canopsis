@@ -27,10 +27,9 @@ describe('login-form', () => {
 
     const username = Faker.datatype.string();
 
-    selectTextField(wrapper).vm.$emit('input', username);
+    selectTextField(wrapper).triggerCustomEvent('input', username);
 
-    const inputEvents = wrapper.emitted('input');
-    expect(inputEvents[0]).toEqual([username, ['username']]);
+    expect(wrapper).toEmit('input', username);
   });
 
   it('Password changed after trigger password field', () => {
@@ -43,10 +42,9 @@ describe('login-form', () => {
 
     const password = Faker.datatype.string();
 
-    selectPasswordField(wrapper).vm.$emit('input', password);
+    selectPasswordField(wrapper).triggerCustomEvent('input', password);
 
-    const inputEvents = wrapper.emitted('input');
-    expect(inputEvents[0]).toEqual([password, ['password']]);
+    expect(wrapper).toEmit('input', password);
   });
 
   it('Renders `login-form` with default props', () => {

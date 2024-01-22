@@ -81,7 +81,7 @@ describe('service-entity', () => {
 
     const header = selectServiceEntityHeader(wrapper);
 
-    await header.vm.$emit('update:selected');
+    await header.triggerCustomEvent('update:selected');
 
     expect(updateSelected).toHaveBeenCalled();
   });
@@ -91,7 +91,7 @@ describe('service-entity', () => {
 
     const header = selectServiceEntityHeader(wrapper);
 
-    await header.vm.$emit('remove:unavailable');
+    await header.triggerCustomEvent('remove:unavailable');
 
     expect(removeUnavailable).toHaveBeenCalled();
   });
@@ -102,7 +102,7 @@ describe('service-entity', () => {
     const info = selectServiceEntityInfoTab(wrapper);
     const assignedInstruction = {};
 
-    await info.vm.$emit('execute', assignedInstruction);
+    await info.triggerCustomEvent('execute', assignedInstruction);
 
     expect($modals.show).toBeCalledWith(
       {

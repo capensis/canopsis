@@ -82,7 +82,7 @@ const getEvent = event => ({
 const triggerPointEvent = (wrapper, index, event) => {
   const pointMarker = selectPointMarkerByIndex(wrapper, index);
 
-  return pointMarker.vm.$emit(event, new Event(event));
+  return pointMarker.triggerCustomEvent(event, new Event(event));
 };
 
 const checkDialogMenuPosition = (wrapper, { x, y }) => {
@@ -99,7 +99,7 @@ const fillPointDialog = (
 ) => {
   const pointFormDialog = selectPointFormDialogMenu(wrapper);
 
-  pointFormDialog.vm.$emit('submit', point);
+  pointFormDialog.triggerCustomEvent('submit', point);
 
   return point;
 };
@@ -168,7 +168,7 @@ describe('geomap-editor', () => {
 
     const addLocationBtn = selectAddLocationBtn(wrapper);
 
-    await addLocationBtn.vm.$emit('click');
+    await addLocationBtn.triggerCustomEvent('click');
 
     await geomap.trigger('click', event);
 
@@ -337,7 +337,7 @@ describe('geomap-editor', () => {
 
     const pointFormDialog = selectPointFormDialogMenu(wrapper);
 
-    pointFormDialog.vm.$emit('remove');
+    pointFormDialog.triggerCustomEvent('remove');
 
     expect($modals.show).toBeCalledWith(
       {
@@ -430,7 +430,7 @@ describe('geomap-editor', () => {
 
     const pointFormDialog = selectPointFormDialogMenu(wrapper);
 
-    await pointFormDialog.vm.$emit('fly:coordinates', coordinates);
+    await pointFormDialog.triggerCustomEvent('fly:coordinates', coordinates);
 
     expect(pointFormDialog.vm.point.coordinates).toBe(coordinates);
   });
@@ -453,7 +453,7 @@ describe('geomap-editor', () => {
 
     const pointMarker = selectPointMarkerByIndex(wrapper, 0);
 
-    pointMarker.vm.$emit('dragend', {
+    pointMarker.triggerCustomEvent('dragend', {
       target: {
         getLatLng,
         options: {

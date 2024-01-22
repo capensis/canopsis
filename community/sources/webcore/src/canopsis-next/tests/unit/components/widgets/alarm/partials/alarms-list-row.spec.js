@@ -87,12 +87,7 @@ describe('alarms-list-row', () => {
 
     selectCheckbox(wrapper).trigger('click');
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(true);
+    expect(wrapper).toEmit('input', true);
   });
 
   it('Listeners from feature called after trigger', () => {
@@ -157,7 +152,7 @@ describe('alarms-list-row', () => {
 
     const expandButton = selectExpandButton(wrapper);
 
-    expandButton.vm.$emit('input', newExpanded);
+    expandButton.triggerCustomEvent('input', newExpanded);
 
     await flushPromises();
 
@@ -185,7 +180,7 @@ describe('alarms-list-row', () => {
 
     const expandButton = selectExpandButton(wrapper);
 
-    expandButton.vm.$emit('input', newExpanded);
+    expandButton.triggerCustomEvent('input', newExpanded);
 
     await flushPromises();
 
@@ -216,7 +211,7 @@ describe('alarms-list-row', () => {
 
     await flushPromises();
 
-    selectAlarmColumnValue(wrapper).vm.$emit('click:state');
+    selectAlarmColumnValue(wrapper).triggerCustomEvent('click:state');
 
     expect(wrapper).toEmit('click:state');
   });

@@ -31,14 +31,9 @@ describe('c-infos-attribute-field', () => {
 
     const newDictionary = 'newDictionary';
 
-    dictionarySelect.vm.$emit('input', newDictionary);
+    dictionarySelect.triggerCustomEvent('input', newDictionary);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmit('input', {
       dictionary: newDictionary,
       field: value.field,
     });
@@ -59,14 +54,9 @@ describe('c-infos-attribute-field', () => {
 
     const newField = 'newField';
 
-    fieldSelect.vm.$emit('input', newField);
+    fieldSelect.triggerCustomEvent('input', newField);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmit('input', {
       dictionary: value.dictionary,
       field: newField,
     });

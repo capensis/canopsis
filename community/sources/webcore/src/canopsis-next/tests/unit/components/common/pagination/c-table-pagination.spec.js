@@ -44,28 +44,18 @@ describe('c-table-pagination', () => {
     const { page } = mockData;
     const wrapper = factory();
 
-    const pagination = wrapper.find('.c-pagination');
+    wrapper.find('.c-pagination').setValue(page);
 
-    pagination.setValue(page);
-
-    const updatePageEvents = wrapper.emitted('update:page');
-
-    expect(updatePageEvents).toHaveLength(1);
-    expect(updatePageEvents[0]).toEqual([page]);
+    expect(wrapper).toEmit('update:page', page);
   });
 
   it('Update pagination rows per page', () => {
     const { itemsPerPage } = mockData;
     const wrapper = factory();
 
-    const itemsPerPageField = wrapper.find('.c-items-per-page-field');
+    wrapper.find('.c-items-per-page-field').setValue(itemsPerPage);
 
-    itemsPerPageField.setValue(itemsPerPage);
-
-    const updateItemsPerPageEvents = wrapper.emitted('update:items-per-page');
-
-    expect(updateItemsPerPageEvents).toHaveLength(1);
-    expect(updateItemsPerPageEvents[0]).toEqual([itemsPerPage]);
+    expect(wrapper).toEmit('update:items-per-page', itemsPerPage);
   });
 
   it('Renders `c-table-pagination` with custom props', () => {

@@ -21,14 +21,9 @@ describe('c-entity-status-field', () => {
     });
     const selectElement = wrapper.find('select.v-select');
 
-    selectElement.vm.$emit('input', ENTITIES_STATUSES.cancelled);
+    selectElement.triggerCustomEvent('input', ENTITIES_STATUSES.cancelled);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(ENTITIES_STATUSES.cancelled);
+    expect(wrapper).toEmit('input', ENTITIES_STATUSES.cancelled);
   });
 
   it('Renders `c-entity-status-field` with default props', () => {

@@ -47,7 +47,7 @@ describe('mermaid-editor', () => {
 
     const mermaidCodeEditor = selectMermaidCodeEditor(wrapper);
 
-    mermaidCodeEditor.vm.$emit('input', newCode);
+    mermaidCodeEditor.triggerCustomEvent('input', newCode);
 
     expect(wrapper).toEmit('input', {
       ...initialForm,
@@ -66,7 +66,7 @@ describe('mermaid-editor', () => {
 
     const mermaidThemeField = selectMermaidThemeField(wrapper);
 
-    mermaidThemeField.vm.$emit('input', newTheme);
+    mermaidThemeField.triggerCustomEvent('input', newTheme);
 
     expect(wrapper).toEmit('input', {
       ...initialForm,
@@ -85,7 +85,7 @@ describe('mermaid-editor', () => {
 
     const mermaidPoints = selectMermaidPoints(wrapper);
 
-    mermaidPoints.vm.$emit('input', newPoints);
+    mermaidPoints.triggerCustomEvent('input', newPoints);
 
     expect(wrapper).toEmit('input', {
       ...initialForm,
@@ -102,7 +102,7 @@ describe('mermaid-editor', () => {
 
     const addLocationBtn = selectAddLocationBtn(wrapper);
 
-    await addLocationBtn.vm.$emit('input', true);
+    await addLocationBtn.triggerCustomEvent('input', true);
 
     const mermaidPoints = selectMermaidPoints(wrapper);
 

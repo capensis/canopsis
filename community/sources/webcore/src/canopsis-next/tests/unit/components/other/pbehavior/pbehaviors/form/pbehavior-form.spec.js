@@ -58,7 +58,7 @@ describe('pbehavior-form', () => {
       comments: [],
     };
 
-    selectPbehaviorGeneralForm(wrapper).vm.$emit('input', newForm);
+    selectPbehaviorGeneralForm(wrapper).triggerCustomEvent('input', newForm);
 
     expect(wrapper).toEmit('input', newForm);
   });
@@ -83,7 +83,7 @@ describe('pbehavior-form', () => {
       },
     ];
 
-    selectPbehaviorCommentsField(wrapper).vm.$emit('input', newComments);
+    selectPbehaviorCommentsField(wrapper).triggerCustomEvent('input', newComments);
 
     expect(wrapper).toEmit('input', {
       ...form,
@@ -107,7 +107,7 @@ describe('pbehavior-form', () => {
     const newPatterns = [
     ];
 
-    selectPatternsField(wrapper).vm.$emit('input', newPatterns);
+    selectPatternsField(wrapper).triggerCustomEvent('input', newPatterns);
 
     expect(wrapper).toEmit('input', {
       ...form,
@@ -131,7 +131,7 @@ describe('pbehavior-form', () => {
 
     const newColor = Faker.internet.color();
 
-    selectEnabledColorPickerField(wrapper).vm.$emit('input', newColor);
+    selectEnabledColorPickerField(wrapper).triggerCustomEvent('input', newColor);
 
     expect(wrapper).toEmit('input', {
       ...form,

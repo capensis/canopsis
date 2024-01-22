@@ -22,12 +22,7 @@ describe('c-sampling-field', () => {
 
     selectElement.setValue(SAMPLINGS.hour);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(SAMPLINGS.hour);
+    expect(wrapper).toEmit('input', SAMPLINGS.hour);
   });
 
   it('Renders `c-sampling-field` with default props', () => {

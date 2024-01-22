@@ -270,7 +270,7 @@ describe('create-snooze-event', () => {
       comment: 'comment',
     };
 
-    snoozeEventForm.vm.$emit('input', newForm);
+    snoozeEventForm.triggerCustomEvent('input', newForm);
 
     selectSubmitButton(wrapper).trigger('click');
 

@@ -95,7 +95,7 @@ describe('kpi-alarms', () => {
 
     const kpiSliFiltersElement = wrapper.find('kpi-alarms-filters-stub');
 
-    kpiSliFiltersElement.vm.$emit('input', {
+    kpiSliFiltersElement.triggerCustomEvent('input', {
       parameters: [ALARM_METRIC_PARAMETERS.createdAlarms],
       sampling: SAMPLINGS.day,
       filter: null,

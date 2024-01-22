@@ -54,7 +54,7 @@ describe('modal-title-buttons', () => {
 
     const closeButton = selectButton(wrapper);
 
-    closeButton.vm.$emit('click');
+    closeButton.triggerCustomEvent('click');
 
     expect($modals.hide).toBeCalledWith({ id: modal.id });
   });
@@ -81,7 +81,7 @@ describe('modal-title-buttons', () => {
 
     const closeButton = selectButton(wrapper);
 
-    closeButton.vm.$emit('click');
+    closeButton.triggerCustomEvent('click');
 
     expect(close).toBeCalled();
   });
@@ -107,7 +107,7 @@ describe('modal-title-buttons', () => {
 
     await flushPromises();
 
-    selectButton(wrapper).vm.$emit('click');
+    selectButton(wrapper).triggerCustomEvent('click');
 
     expect($modals.minimize).toBeCalledWith({ id: modal.id });
   });
@@ -134,7 +134,7 @@ describe('modal-title-buttons', () => {
 
     const maximizeButton = selectButton(wrapper);
 
-    maximizeButton.vm.$emit('click');
+    maximizeButton.triggerCustomEvent('click');
 
     expect($modals.maximize).toBeCalledWith({ id: modal.id });
   });

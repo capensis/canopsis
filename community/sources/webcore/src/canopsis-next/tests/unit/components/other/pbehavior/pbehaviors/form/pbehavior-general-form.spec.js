@@ -80,7 +80,7 @@ describe('pbehavior-general-form', () => {
 
     const newName = Faker.datatype.string();
 
-    selectNameField(wrapper).vm.$emit('input', newName);
+    selectNameField(wrapper).triggerCustomEvent('input', newName);
 
     expect(wrapper).toEmit('input', { ...form, name: newName });
   });
@@ -94,7 +94,7 @@ describe('pbehavior-general-form', () => {
 
     const newEnabled = !form.enabled;
 
-    selectEnabledField(wrapper).vm.$emit('input', newEnabled);
+    selectEnabledField(wrapper).triggerCustomEvent('input', newEnabled);
 
     expect(wrapper).toEmit('input', { ...form, enabled: newEnabled });
   });
@@ -110,7 +110,7 @@ describe('pbehavior-general-form', () => {
       },
     });
 
-    selectStartOnTriggerField(wrapper).vm.$emit('input', true);
+    selectStartOnTriggerField(wrapper).triggerCustomEvent('input', true);
 
     expect(wrapper).toEmit('input', {
       ...form,
@@ -132,7 +132,7 @@ describe('pbehavior-general-form', () => {
       },
     });
 
-    selectStartOnTriggerField(wrapper).vm.$emit('input', false);
+    selectStartOnTriggerField(wrapper).triggerCustomEvent('input', false);
 
     expect(wrapper).toEmit('input', {
       ...form,
@@ -157,7 +157,7 @@ describe('pbehavior-general-form', () => {
       unit: TIME_UNITS.week,
     };
 
-    selectDurationField(wrapper).vm.$emit('input', newDuration);
+    selectDurationField(wrapper).triggerCustomEvent('input', newDuration);
 
     expect(wrapper).toEmit('input', {
       ...form,
@@ -179,7 +179,7 @@ describe('pbehavior-general-form', () => {
 
     const newTimeStart = new Date(1233266565);
 
-    selectDateTimePickerField(wrapper).vm.$emit('update:start', newTimeStart);
+    selectDateTimePickerField(wrapper).triggerCustomEvent('update:start', newTimeStart);
 
     expect(wrapper).toEmit('input', {
       ...form,
@@ -201,7 +201,7 @@ describe('pbehavior-general-form', () => {
 
     const newTimeStart = new Date(1233266565);
 
-    selectDateTimePickerField(wrapper).vm.$emit('update:end', newTimeStart);
+    selectDateTimePickerField(wrapper).triggerCustomEvent('update:end', newTimeStart);
 
     expect(wrapper).toEmit('input', {
       ...form,
@@ -221,7 +221,7 @@ describe('pbehavior-general-form', () => {
       },
     });
 
-    selectDateTimePickerField(wrapper).vm.$emit('update:end');
+    selectDateTimePickerField(wrapper).triggerCustomEvent('update:end');
 
     expect(wrapper).toEmit('input', {
       ...form,
@@ -241,7 +241,7 @@ describe('pbehavior-general-form', () => {
       },
     });
 
-    selectFullDayCheckbox(wrapper).vm.$emit('change', true);
+    selectFullDayCheckbox(wrapper).triggerCustomEvent('change', true);
     await flushPromises();
 
     expect(wrapper).toEmit('input', {
@@ -264,7 +264,7 @@ describe('pbehavior-general-form', () => {
       },
     });
 
-    selectFullDayCheckbox(wrapper).vm.$emit('change', true);
+    selectFullDayCheckbox(wrapper).triggerCustomEvent('change', true);
     await flushPromises();
 
     expect(wrapper).not.toEmit('input');
@@ -285,7 +285,7 @@ describe('pbehavior-general-form', () => {
       },
     });
 
-    selectNoEndingCheckbox(wrapper).vm.$emit('change', true);
+    selectNoEndingCheckbox(wrapper).triggerCustomEvent('change', true);
     await flushPromises();
 
     expect(wrapper).toEmit('input', {
@@ -313,7 +313,7 @@ describe('pbehavior-general-form', () => {
       },
     });
 
-    selectNoEndingCheckbox(wrapper).vm.$emit('change', false);
+    selectNoEndingCheckbox(wrapper).triggerCustomEvent('change', false);
     await flushPromises();
 
     expect(wrapper).toEmit('input', {
@@ -342,7 +342,7 @@ describe('pbehavior-general-form', () => {
       },
     });
 
-    selectNoEndingCheckbox(wrapper).vm.$emit('change', false);
+    selectNoEndingCheckbox(wrapper).triggerCustomEvent('change', false);
     await flushPromises();
 
     expect(wrapper).not.toEmit('input');
@@ -455,7 +455,7 @@ describe('pbehavior-general-form', () => {
       _id: Faker.datatype.string(),
     };
 
-    selectReasonField(wrapper).vm.$emit('input', newReason);
+    selectReasonField(wrapper).triggerCustomEvent('input', newReason);
 
     expect(wrapper).toEmit('input', {
       ...form,
@@ -475,7 +475,7 @@ describe('pbehavior-general-form', () => {
       _id: Faker.datatype.string(),
     };
 
-    selectTypeField(wrapper).vm.$emit('input', newType);
+    selectTypeField(wrapper).triggerCustomEvent('input', newType);
 
     expect(wrapper).toEmit('input', {
       ...form,

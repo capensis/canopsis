@@ -64,7 +64,7 @@ describe('info-popup-form', () => {
 
     const newTemplate = Faker.datatype.string();
 
-    textEditorField.vm.$emit('input', newTemplate);
+    textEditorField.triggerCustomEvent('input', newTemplate);
 
     expect(wrapper).toEmit('input', {
       template: newTemplate,

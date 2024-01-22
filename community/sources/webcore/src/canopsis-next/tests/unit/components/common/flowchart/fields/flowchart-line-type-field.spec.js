@@ -24,7 +24,7 @@ describe('flowchart-line-type-field', () => {
 
     const selectField = selectSelectField(wrapper);
 
-    selectField.vm.$emit('input', LINE_TYPES.verticalCurve);
+    selectField.triggerCustomEvent('input', LINE_TYPES.verticalCurve);
 
     expect(wrapper).toEmit('input', LINE_TYPES.verticalCurve);
   });

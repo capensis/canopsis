@@ -55,7 +55,7 @@ describe('remediation-instructions-filters-item', () => {
       },
     });
 
-    selectChip(wrapper).vm.$emit('click:close');
+    selectChip(wrapper).triggerCustomEvent('click:close');
 
     expect(wrapper).toEmit('input', {
       ...lockedFilter,
@@ -71,7 +71,7 @@ describe('remediation-instructions-filters-item', () => {
       },
     });
 
-    selectChip(wrapper).vm.$emit('click:close');
+    selectChip(wrapper).triggerCustomEvent('click:close');
 
     expect(wrapper).toEmit('remove');
   });
@@ -90,7 +90,7 @@ describe('remediation-instructions-filters-item', () => {
 
     const chip = selectChip(wrapper);
 
-    chip.vm.$emit('click');
+    chip.triggerCustomEvent('click');
 
     expect($modals.show).toBeCalledTimes(1);
     expect($modals.show).toBeCalledWith(
@@ -116,12 +116,7 @@ describe('remediation-instructions-filters-item', () => {
 
     modalArguments.config.action(actionValue);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual(actionValue);
+    expect(wrapper).toEmit('input', actionValue);
   });
 
   it('Renders `remediation-instructions-filters-item` with default props', () => {

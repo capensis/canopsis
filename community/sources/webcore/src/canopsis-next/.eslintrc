@@ -137,14 +137,6 @@
     "no-restricted-syntax": [
       "error",
       {
-        "selector": "Program > VariableDeclaration CallExpression[callee.name='generateShallowRenderer']",
-        "message": "generateShallowRenderer should be used inside describe."
-      },
-      {
-        "selector": "Program > VariableDeclaration CallExpression[callee.name='generateRenderer']",
-        "message": "generateRenderer should be used inside describe."
-      },
-      {
         "selector": "ImportDeclaration[source.value=/form\\u002Fpartials/]",
         "message": "All fields should be moved inside `/form/fields/`."
       },
@@ -155,6 +147,18 @@
       {
         "selector": "ImportDeclaration[source.value=/\\u002Ffield\\u002F/]",
         "message": "`field` folder deprecated. Please, rename to `field`."
+      },
+      {
+        "selector": "Program > VariableDeclaration CallExpression[callee.name='generateShallowRenderer']",
+        "message": "generateShallowRenderer should be used inside describe."
+      },
+      {
+        "selector": "Program > VariableDeclaration CallExpression[callee.name='generateRenderer']",
+        "message": "generateRenderer should be used inside describe."
+      },
+      {
+        "selector": "CallExpression[callee.object.name='wrapper'][callee.property.name='emitted']",
+        "message": "Should be used `toEmit('input', ...data)` instead of `wrapper.emitted('input')`"
       }
     ],
     "import-newlines/enforce": [

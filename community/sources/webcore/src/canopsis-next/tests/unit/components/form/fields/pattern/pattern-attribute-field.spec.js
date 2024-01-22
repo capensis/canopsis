@@ -31,14 +31,9 @@ describe('pattern-attribute-field', () => {
     });
     const selectElement = selectSelectField(wrapper);
 
-    selectElement.vm.$emit('input', value);
+    selectElement.triggerCustomEvent('input', value);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(value);
+    expect(wrapper).toEmit('input', value);
   });
 
   it('Renders `pattern-attribute-field` with default props', () => {

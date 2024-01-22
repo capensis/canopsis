@@ -38,7 +38,7 @@ describe('storage-settings-junit-form', () => {
 
     const newValue = randomDurationValue();
 
-    selectJunitDeleteAfterField(wrapper).vm.$emit('input', newValue);
+    selectJunitDeleteAfterField(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', { ...form, delete_after: newValue });
   });

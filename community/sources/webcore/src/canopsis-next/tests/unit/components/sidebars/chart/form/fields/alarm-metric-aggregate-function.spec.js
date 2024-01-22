@@ -21,7 +21,7 @@ describe('alarm-metric-aggregate-function', () => {
       },
     });
 
-    selectAlarmMetricPresetsField(wrapper).vm.$emit('input', AGGREGATE_FUNCTIONS.min);
+    selectAlarmMetricPresetsField(wrapper).triggerCustomEvent('input', AGGREGATE_FUNCTIONS.min);
 
     expect(wrapper).toEmit('input', AGGREGATE_FUNCTIONS.min);
   });

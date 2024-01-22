@@ -118,7 +118,7 @@ describe('c-search-field', () => {
     const wrapper = factory({ propsData: { value: search } });
     const submitButton = selectSubmitButton(wrapper);
 
-    submitButton.vm.$emit('click');
+    submitButton.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('submit', search);
   });
@@ -129,7 +129,7 @@ describe('c-search-field', () => {
     const wrapper = factory({ propsData: { value: search } });
     const clearButton = selectClearButton(wrapper);
 
-    clearButton.vm.$emit('click');
+    clearButton.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('clear');
   });

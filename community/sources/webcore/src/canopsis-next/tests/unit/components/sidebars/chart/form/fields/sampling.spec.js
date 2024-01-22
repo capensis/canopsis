@@ -25,7 +25,7 @@ describe('sampling', () => {
 
     const newValue = randomArrayItem(Object.values(SAMPLINGS));
 
-    selectSamplingFieldField(wrapper).vm.$emit('input', newValue);
+    selectSamplingFieldField(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', newValue);
   });

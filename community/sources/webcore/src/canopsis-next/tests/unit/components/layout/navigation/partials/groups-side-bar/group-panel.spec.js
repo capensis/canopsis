@@ -36,7 +36,7 @@ describe('group-panel', () => {
       },
     });
 
-    selectButton(wrapper).vm.$emit('click', new Event('click'));
+    selectButton(wrapper).triggerCustomEvent('click', new Event('click'));
 
     expect(wrapper).toEmit('change');
   });

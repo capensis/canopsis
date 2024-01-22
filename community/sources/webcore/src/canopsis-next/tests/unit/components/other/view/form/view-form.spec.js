@@ -46,7 +46,7 @@ describe('view-form', () => {
 
     const newTitle = Faker.datatype.string();
 
-    selectTitleField(wrapper).vm.$emit('input', newTitle);
+    selectTitleField(wrapper).triggerCustomEvent('input', newTitle);
 
     expect(wrapper).toEmit('input', { ...form, title: newTitle });
   });
@@ -60,7 +60,7 @@ describe('view-form', () => {
 
     const newDescription = Faker.datatype.string();
 
-    selectDescriptionField(wrapper).vm.$emit('input', newDescription);
+    selectDescriptionField(wrapper).triggerCustomEvent('input', newDescription);
 
     expect(wrapper).toEmit('input', { ...form, description: newDescription });
   });
@@ -74,7 +74,7 @@ describe('view-form', () => {
 
     const newEnabled = !form.enabled;
 
-    selectEnabledField(wrapper).vm.$emit('input', newEnabled);
+    selectEnabledField(wrapper).triggerCustomEvent('input', newEnabled);
 
     expect(wrapper).toEmit('input', { ...form, enabled: newEnabled });
   });
@@ -88,7 +88,7 @@ describe('view-form', () => {
 
     const newPeriodicRefresh = randomPeriodicRefresh();
 
-    selectPeriodicRefreshField(wrapper).vm.$emit('input', newPeriodicRefresh);
+    selectPeriodicRefreshField(wrapper).triggerCustomEvent('input', newPeriodicRefresh);
 
     expect(wrapper).toEmit('input', { ...form, periodic_refresh: newPeriodicRefresh });
   });
@@ -102,7 +102,7 @@ describe('view-form', () => {
 
     const newTags = [Faker.datatype.string()];
 
-    selectTagsField(wrapper).vm.$emit('input', newTags);
+    selectTagsField(wrapper).triggerCustomEvent('input', newTags);
 
     expect(wrapper).toEmit('input', { ...form, tags: newTags });
   });
@@ -118,7 +118,7 @@ describe('view-form', () => {
       _id: Faker.datatype.string(),
     };
 
-    selectGroupField(wrapper).vm.$emit('input', newGroup);
+    selectGroupField(wrapper).triggerCustomEvent('input', newGroup);
 
     expect(wrapper).toEmit('input', { ...form, group: newGroup });
   });

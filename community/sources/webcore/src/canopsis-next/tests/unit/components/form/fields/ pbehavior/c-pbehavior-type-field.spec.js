@@ -35,7 +35,7 @@ describe('c-pbehavior-type-field', () => {
       },
     });
 
-    selectSelectField(wrapper).vm.$emit('input', type._id);
+    selectSelectField(wrapper).triggerCustomEvent('input', type._id);
 
     expect(wrapper).toEmit('input', type._id);
   });

@@ -80,7 +80,7 @@ describe('point-form-dialog', () => {
 
     const pointForm = selectPointForm(wrapper);
 
-    pointForm.vm.$emit('input', newPoint);
+    pointForm.triggerCustomEvent('input', newPoint);
 
     const submitButton = selectSubmitButton(wrapper);
     submitButton.trigger('click');
@@ -211,7 +211,7 @@ describe('point-form-dialog', () => {
     };
 
     const pointForm = selectPointForm(wrapper);
-    await pointForm.vm.$emit('input', newPoint);
+    await pointForm.triggerCustomEvent('input', newPoint);
 
     wrapper.clickOutside();
 
@@ -257,7 +257,7 @@ describe('point-form-dialog', () => {
     };
 
     const pointForm = selectPointForm(wrapper);
-    await pointForm.vm.$emit('input', newPoint);
+    await pointForm.triggerCustomEvent('input', newPoint);
 
     wrapper.clickOutside();
 

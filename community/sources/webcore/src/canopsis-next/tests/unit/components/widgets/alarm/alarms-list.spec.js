@@ -390,7 +390,7 @@ describe('alarms-list', () => {
 
     const correlationField = selectVSwitch(wrapper);
 
-    correlationField.vm.$emit('change', !userPreferences.content.isCorrelationEnabled);
+    correlationField.triggerCustomEvent('change', !userPreferences.content.isCorrelationEnabled);
 
     await flushPromises();
 
@@ -452,7 +452,7 @@ describe('alarms-list', () => {
 
     const filterByBookmarkField = selectVSwitch(wrapper);
 
-    filterByBookmarkField.vm.$emit('change', !userPreferences.content.onlyBookmarks);
+    filterByBookmarkField.triggerCustomEvent('change', !userPreferences.content.onlyBookmarks);
 
     await flushPromises();
 
@@ -520,7 +520,7 @@ describe('alarms-list', () => {
       filter: {},
     };
 
-    filterSelectorField.vm.$emit('input', selectedFilter._id);
+    filterSelectorField.triggerCustomEvent('input', selectedFilter._id);
 
     await flushPromises();
 
@@ -598,7 +598,7 @@ describe('alarms-list', () => {
 
     const instructionsFiltersField = selectInstructionsFiltersField(wrapper);
 
-    instructionsFiltersField.vm.$emit('update:filters', newRemediationInstructionsFilters);
+    instructionsFiltersField.triggerCustomEvent('update:filters', newRemediationInstructionsFilters);
 
     await flushPromises();
 
@@ -682,7 +682,7 @@ describe('alarms-list', () => {
 
     const instructionsFiltersField = selectInstructionsFiltersField(wrapper);
 
-    instructionsFiltersField.vm.$emit('update:locked-filters', newRemediationInstructionsFilters);
+    instructionsFiltersField.triggerCustomEvent('update:locked-filters', newRemediationInstructionsFilters);
 
     await flushPromises();
 
@@ -731,7 +731,7 @@ describe('alarms-list', () => {
 
     const removeHistoryButton = selectRemoveHistoryButton(wrapper);
 
-    removeHistoryButton.vm.$emit('click:close');
+    removeHistoryButton.triggerCustomEvent('click:close');
 
     await flushPromises();
 
@@ -766,7 +766,7 @@ describe('alarms-list', () => {
 
     const liveReportingButton = selectLiveReportingButton(wrapper);
 
-    liveReportingButton.vm.$emit('click');
+    liveReportingButton.triggerCustomEvent('click');
 
     await flushPromises();
 
@@ -840,7 +840,7 @@ describe('alarms-list', () => {
       _id: Faker.datatype.string(),
     };
 
-    categoryField.vm.$emit('input', newCategory);
+    categoryField.triggerCustomEvent('input', newCategory);
 
     await flushPromises();
 
@@ -884,7 +884,7 @@ describe('alarms-list', () => {
     updateQuery.mockClear();
 
     const newLimit = Faker.datatype.number();
-    selectAlarmsListTable(wrapper).vm.$emit('update:items-per-page', newLimit);
+    selectAlarmsListTable(wrapper).triggerCustomEvent('update:items-per-page', newLimit);
 
     await flushPromises();
 
@@ -928,7 +928,7 @@ describe('alarms-list', () => {
     updateQuery.mockClear();
 
     const newPage = Faker.datatype.number();
-    selectAlarmsListTable(wrapper).vm.$emit('update:page', newPage);
+    selectAlarmsListTable(wrapper).triggerCustomEvent('update:page', newPage);
 
     await flushPromises();
 
@@ -979,7 +979,7 @@ describe('alarms-list', () => {
 
     const exportButton = selectExportButton(wrapper);
 
-    exportButton.vm.$emit('click');
+    exportButton.triggerCustomEvent('click');
 
     expect(createAlarmsListExport).toHaveBeenCalledWith(
       expect.any(Object),
@@ -1070,7 +1070,7 @@ describe('alarms-list', () => {
 
     const exportButton = selectExportButton(wrapper);
 
-    exportButton.vm.$emit('click');
+    exportButton.triggerCustomEvent('click');
 
     expect(createAlarmsListExport).toHaveBeenCalledWith(
       expect.any(Object),
@@ -1137,7 +1137,7 @@ describe('alarms-list', () => {
 
     const exportButton = selectExportButton(wrapper);
 
-    exportButton.vm.$emit('click');
+    exportButton.triggerCustomEvent('click');
 
     expect(createAlarmsListExport).toHaveBeenCalledWith(
       expect.any(Object),
@@ -1214,7 +1214,7 @@ describe('alarms-list', () => {
 
     const exportButton = selectExportButton(wrapper);
 
-    exportButton.vm.$emit('click');
+    exportButton.triggerCustomEvent('click');
 
     await flushPromises();
 
@@ -1285,7 +1285,7 @@ describe('alarms-list', () => {
 
     const exportButton = selectExportButton(wrapper);
 
-    exportButton.vm.$emit('click');
+    exportButton.triggerCustomEvent('click');
 
     await flushPromises();
 
@@ -1332,7 +1332,7 @@ describe('alarms-list', () => {
 
     const exportButton = selectExportButton(wrapper);
 
-    exportButton.vm.$emit('click');
+    exportButton.triggerCustomEvent('click');
 
     await flushPromises();
 
@@ -1383,7 +1383,7 @@ describe('alarms-list', () => {
 
     const exportButton = selectExportButton(wrapper);
 
-    exportButton.vm.$emit('click');
+    exportButton.triggerCustomEvent('click');
 
     await flushPromises();
 

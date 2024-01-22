@@ -279,9 +279,7 @@ describe('mass-actions-panel', () => {
       undefined,
     );
 
-    const clearItemsEvent = wrapper.emitted('clear:items');
-
-    expect(clearItemsEvent).toHaveLength(1);
+    expect(wrapper).toEmit('clear:items');
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
@@ -317,9 +315,7 @@ describe('mass-actions-panel', () => {
       undefined,
     );
 
-    const clearItemsEvent = wrapper.emitted('clear:items');
-
-    expect(clearItemsEvent).toHaveLength(1);
+    expect(wrapper).toEmit('clear:items');
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 

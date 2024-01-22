@@ -31,16 +31,9 @@ describe('opened-resolved-filter', () => {
         },
       });
 
-      const radioElement = selectRadioElementsByValue(wrapper, value);
+      selectRadioElementsByValue(wrapper, value).trigger('change');
 
-      radioElement.trigger('change');
-
-      const inputEvents = wrapper.emitted('input');
-
-      expect(inputEvents).toHaveLength(1);
-
-      const [eventData] = inputEvents[0];
-      expect(eventData).toBe(value);
+      expect(wrapper).toEmit('input', value);
     },
   );
 

@@ -121,7 +121,7 @@ describe('storage-settings-form', () => {
       delete_after: randomDurationValue(),
     };
 
-    selectStorageSettingsAlarmForm(wrapper).vm.$emit('input', newValue);
+    selectStorageSettingsAlarmForm(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', {
       ...form,
@@ -143,7 +143,7 @@ describe('storage-settings-form', () => {
       delete_mod_stats_after: randomDurationValue(),
     };
 
-    selectStorageSettingsRemediationForm(wrapper).vm.$emit('input', newValue);
+    selectStorageSettingsRemediationForm(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', {
       ...form,
@@ -163,7 +163,7 @@ describe('storage-settings-form', () => {
       delete_after: randomDurationValue(),
     };
 
-    selectStorageSettingsPbehaviorForm(wrapper).vm.$emit('input', newValue);
+    selectStorageSettingsPbehaviorForm(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', {
       ...form,
@@ -183,7 +183,7 @@ describe('storage-settings-form', () => {
       delete_after: randomDurationValue(),
     };
 
-    selectStorageSettingsJunitForm(wrapper).vm.$emit('input', newValue);
+    selectStorageSettingsJunitForm(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', {
       ...form,
@@ -203,7 +203,7 @@ describe('storage-settings-form', () => {
       delete_after: randomDurationValue(),
     };
 
-    selectStorageSettingsHealthCheckForm(wrapper).vm.$emit('input', newValue);
+    selectStorageSettingsHealthCheckForm(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', {
       ...form,
@@ -223,7 +223,7 @@ describe('storage-settings-form', () => {
       delete_after: randomDurationValue(),
     };
 
-    selectStorageSettingsWebhookForm(wrapper).vm.$emit('input', newValue);
+    selectStorageSettingsWebhookForm(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', {
       ...form,
@@ -243,7 +243,7 @@ describe('storage-settings-form', () => {
       delete_after: randomDurationValue(),
     };
 
-    selectStorageSettingsMetricsForm(wrapper).vm.$emit('input', newValue);
+    selectStorageSettingsMetricsForm(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', {
       ...form,
@@ -263,7 +263,7 @@ describe('storage-settings-form', () => {
       delete_after: randomDurationValue(),
     };
 
-    selectStorageSettingsPerfDataMetricsForm(wrapper).vm.$emit('input', newValue);
+    selectStorageSettingsPerfDataMetricsForm(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', {
       ...form,

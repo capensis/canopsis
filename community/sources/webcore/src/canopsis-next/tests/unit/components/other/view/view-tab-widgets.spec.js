@@ -205,7 +205,7 @@ describe('view-tab-widgets', () => {
       newHeightForThirdWidgetOnDesktop,
     );
 
-    gridLayoutElement.vm.$emit('input', newLayouts);
+    gridLayoutElement.triggerCustomEvent('input', newLayouts);
 
     await flushPromises();
     await wrapper.vm.updatePositions();

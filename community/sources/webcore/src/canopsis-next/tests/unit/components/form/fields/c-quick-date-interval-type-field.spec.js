@@ -24,14 +24,9 @@ describe('c-quick-date-interval-type-field', () => {
 
     const selectField = selectSelectField(wrapper);
 
-    selectField.vm.$emit('input', QUICK_RANGES.yesterday);
+    selectField.triggerCustomEvent('input', QUICK_RANGES.yesterday);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(QUICK_RANGES.yesterday);
+    expect(wrapper).toEmit('input', QUICK_RANGES.yesterday);
   });
 
   test('Renders `c-quick-date-interval-type-field` with default props', () => {

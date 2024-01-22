@@ -109,7 +109,7 @@ describe('text-editor', () => {
 
     const variablesMenu = selectVariablesMenu(wrapper);
 
-    variablesMenu.vm.$emit('input', variable);
+    variablesMenu.triggerCustomEvent('input', variable);
 
     expect(wrapper).toEmit('input', `{{ ${variable} }}`);
     expect(focusSpy).toBeCalled();
@@ -165,7 +165,7 @@ describe('text-editor', () => {
 
     const variablesMenu = selectVariablesMenu(wrapper);
 
-    variablesMenu.vm.$emit('input', variable);
+    variablesMenu.triggerCustomEvent('input', variable);
 
     expect(wrapper).toEmit('input', `Variable: {{ ${variable} }}`);
     expect(focusSpy).toBeCalled();
@@ -196,7 +196,7 @@ describe('text-editor', () => {
 
     const variablesMenu = selectVariablesMenu(wrapper);
 
-    variablesMenu.vm.$emit('input', variable);
+    variablesMenu.triggerCustomEvent('input', variable);
 
     expect(wrapper).toEmit('input', `Variable: {{ ${variable} }}`);
     expect(focusSpy).toBeCalled();

@@ -49,7 +49,7 @@ describe('storage-settings-remediation-form', () => {
 
     const newValue = randomDurationValue();
 
-    selectRemediationDeleteAfterField(wrapper).vm.$emit('input', newValue);
+    selectRemediationDeleteAfterField(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', { ...form, delete_after: newValue });
   });
@@ -63,7 +63,7 @@ describe('storage-settings-remediation-form', () => {
 
     const newValue = randomDurationValue();
 
-    selectRemediationDeleteStatsAfterField(wrapper).vm.$emit('input', newValue);
+    selectRemediationDeleteStatsAfterField(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', { ...form, delete_stats_after: newValue });
   });
@@ -77,7 +77,7 @@ describe('storage-settings-remediation-form', () => {
 
     const newValue = randomDurationValue();
 
-    selectRemediationDeleteModStatsAfterField(wrapper).vm.$emit('input', newValue);
+    selectRemediationDeleteModStatsAfterField(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', { ...form, delete_mod_stats_after: newValue });
   });

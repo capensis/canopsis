@@ -36,7 +36,7 @@ describe('service-pause-event-form', () => {
 
     const pbehaviorReasonField = selectPbehaviorReasonField(wrapper);
 
-    pbehaviorReasonField.vm.$emit('input', reason);
+    pbehaviorReasonField.triggerCustomEvent('input', reason);
 
     expect(wrapper).toEmit('input', { ...form, reason });
   });
@@ -56,7 +56,7 @@ describe('service-pause-event-form', () => {
 
     const descriptionField = selectDescriptionField(wrapper);
 
-    descriptionField.vm.$emit('input', comment);
+    descriptionField.triggerCustomEvent('input', comment);
 
     expect(wrapper).toEmit('input', { ...form, comment });
   });

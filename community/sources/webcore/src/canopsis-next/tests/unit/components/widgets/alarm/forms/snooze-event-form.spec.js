@@ -36,7 +36,7 @@ describe('snooze-event-form', () => {
 
     const durationField = selectDurationField(wrapper);
 
-    durationField.vm.$emit('input', duration);
+    durationField.triggerCustomEvent('input', duration);
 
     expect(wrapper).toEmit('input', { ...form, duration });
   });
@@ -57,7 +57,7 @@ describe('snooze-event-form', () => {
 
     const descriptionField = selectDescriptionField(wrapper);
 
-    descriptionField.vm.$emit('input', comment);
+    descriptionField.triggerCustomEvent('input', comment);
 
     expect(wrapper).toEmit('input', { ...form, comment });
   });

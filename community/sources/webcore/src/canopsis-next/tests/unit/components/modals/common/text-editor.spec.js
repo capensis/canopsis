@@ -294,7 +294,7 @@ describe('text-editor', () => {
 
     const newValue = Faker.datatype.string();
 
-    textEditorField.vm.$emit('input', newValue);
+    textEditorField.triggerCustomEvent('input', newValue);
 
     selectSubmitButton(wrapper).trigger('click');
 

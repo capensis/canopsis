@@ -323,7 +323,7 @@ describe('alarm', () => {
       unit: Faker.datatype.string(),
     };
 
-    selectFieldPeriodicRefresh(wrapper).vm.$emit('input', {
+    selectFieldPeriodicRefresh(wrapper).triggerCustomEvent('input', {
       ...wrapper.vm.form.parameters,
       periodic_refresh: periodicRefresh,
     });
@@ -352,7 +352,7 @@ describe('alarm', () => {
 
     const liveWatching = Faker.datatype.boolean();
 
-    selectFieldPeriodicRefresh(wrapper).vm.$emit('input', {
+    selectFieldPeriodicRefresh(wrapper).triggerCustomEvent('input', {
       ...wrapper.vm.form.parameters,
       liveWatching,
     });
@@ -386,7 +386,7 @@ describe('alarm', () => {
       column: Faker.datatype.string(),
     };
 
-    fieldDefaultSortColumn.vm.$emit('input', sort);
+    fieldDefaultSortColumn.triggerCustomEvent('input', sort);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -418,7 +418,7 @@ describe('alarm', () => {
       value: Faker.datatype.string(),
     }];
 
-    fieldColumns.vm.$emit('input', columns);
+    fieldColumns.triggerCustomEvent('input', columns);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -461,7 +461,7 @@ describe('alarm', () => {
       colorIndicator: COLOR_INDICATOR_TYPES.state,
     }];
 
-    fieldColumns.vm.$emit('input', columns);
+    fieldColumns.triggerCustomEvent('input', columns);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -502,7 +502,7 @@ describe('alarm', () => {
       value: Faker.datatype.string(),
     }];
 
-    fieldColumns.vm.$emit('input', columns);
+    fieldColumns.triggerCustomEvent('input', columns);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -535,7 +535,7 @@ describe('alarm', () => {
       value: Faker.datatype.string(),
     }];
 
-    fieldColumns.vm.$emit('input', columns);
+    fieldColumns.triggerCustomEvent('input', columns);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -564,7 +564,7 @@ describe('alarm', () => {
 
     const itemsPerPage = Faker.datatype.number();
 
-    fieldDefaultElementsPerPage.vm.$emit('input', itemsPerPage);
+    fieldDefaultElementsPerPage.triggerCustomEvent('input', itemsPerPage);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -590,7 +590,7 @@ describe('alarm', () => {
 
     const fieldOpenedResolvedFilter = selectFieldOpenedResolvedFilter(wrapper);
 
-    fieldOpenedResolvedFilter.vm.$emit('input', ALARMS_OPENED_VALUES.all);
+    fieldOpenedResolvedFilter.triggerCustomEvent('input', ALARMS_OPENED_VALUES.all);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -638,7 +638,7 @@ describe('alarm', () => {
       filter: Faker.helpers.createTransaction(),
     }];
 
-    fieldFilters.vm.$emit('update:filters', filters);
+    fieldFilters.triggerCustomEvent('update:filters', filters);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -686,7 +686,7 @@ describe('alarm', () => {
       filter: Faker.helpers.createTransaction(),
     };
 
-    fieldFilters.vm.$emit('input', filter);
+    fieldFilters.triggerCustomEvent('input', filter);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -747,7 +747,7 @@ describe('alarm', () => {
       _id: 'id1',
     }];
 
-    fieldRemediationInstructionsFilters.vm.$emit('input', remediationInstructionsFilters);
+    fieldRemediationInstructionsFilters.triggerCustomEvent('input', remediationInstructionsFilters);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -778,7 +778,7 @@ describe('alarm', () => {
       tstop: 2,
     };
 
-    fieldLiveReporting.vm.$emit('input', liveReporting);
+    fieldLiveReporting.triggerCustomEvent('input', liveReporting);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -809,7 +809,7 @@ describe('alarm', () => {
       template: 'Info popup',
     }];
 
-    fieldInfoPopups.vm.$emit('input', infoPopups);
+    fieldInfoPopups.triggerCustomEvent('input', infoPopups);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -838,7 +838,7 @@ describe('alarm', () => {
     const moreInfoTemplate = 'More info template';
     const moreInfoTemplateTemplate = 'template-id';
 
-    fieldTextEditor.vm.$emit('input', moreInfoTemplate, moreInfoTemplateTemplate);
+    fieldTextEditor.triggerCustomEvent('input', moreInfoTemplate, moreInfoTemplateTemplate);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -874,7 +874,7 @@ describe('alarm', () => {
 
     const expandGridRangeSize = [1, 11];
 
-    fieldGridRangeSize.vm.$emit('input', expandGridRangeSize);
+    fieldGridRangeSize.triggerCustomEvent('input', expandGridRangeSize);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -902,7 +902,7 @@ describe('alarm', () => {
 
     const clearFilterDisabled = Faker.datatype.boolean();
 
-    fieldHtmlEnabledSwitcher.vm.$emit('input', clearFilterDisabled);
+    fieldHtmlEnabledSwitcher.triggerCustomEvent('input', clearFilterDisabled);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -928,7 +928,7 @@ describe('alarm', () => {
 
     const showRootCauseByStateClick = Faker.datatype.boolean();
 
-    selectFieldShowRootCauseByStateClick(wrapper).vm.$emit('input', showRootCauseByStateClick);
+    selectFieldShowRootCauseByStateClick(wrapper).triggerCustomEvent('input', showRootCauseByStateClick);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -956,7 +956,7 @@ describe('alarm', () => {
 
     const isHtmlEnabledOnTimeLine = Faker.datatype.boolean();
 
-    fieldHtmlEnabledSwitcher.vm.$emit('input', isHtmlEnabledOnTimeLine);
+    fieldHtmlEnabledSwitcher.triggerCustomEvent('input', isHtmlEnabledOnTimeLine);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -984,7 +984,7 @@ describe('alarm', () => {
 
     const isAckNoteRequired = Faker.datatype.boolean();
 
-    fieldAckNoteRequired.vm.$emit('input', isAckNoteRequired);
+    fieldAckNoteRequired.triggerCustomEvent('input', isAckNoteRequired);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -1012,7 +1012,7 @@ describe('alarm', () => {
 
     const isMultiAckEnabled = Faker.datatype.boolean();
 
-    fieldAckNoteRequired.vm.$emit('input', isMultiAckEnabled);
+    fieldAckNoteRequired.triggerCustomEvent('input', isMultiAckEnabled);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -1043,7 +1043,7 @@ describe('alarm', () => {
       output: Faker.datatype.string(),
     };
 
-    fieldFastAckOutput.vm.$emit('input', fastAckOutput);
+    fieldFastAckOutput.triggerCustomEvent('input', fastAckOutput);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -1074,7 +1074,7 @@ describe('alarm', () => {
       output: Faker.datatype.string(),
     };
 
-    fieldFastCancelOutput.vm.$emit('input', fastAckOutput);
+    fieldFastCancelOutput.triggerCustomEvent('input', fastAckOutput);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -1102,7 +1102,7 @@ describe('alarm', () => {
 
     const isSnoozeNoteRequired = Faker.datatype.boolean();
 
-    fieldSnoozeNoteRequired.vm.$emit('input', isSnoozeNoteRequired);
+    fieldSnoozeNoteRequired.triggerCustomEvent('input', isSnoozeNoteRequired);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -1128,7 +1128,7 @@ describe('alarm', () => {
 
     const isRemoveAlarmsFromMetaAlarmCommentRequired = Faker.datatype.boolean();
 
-    selectFieldRemoveAlarmsFromMetaAlarmCommentRequired(wrapper).vm.$emit('input', isRemoveAlarmsFromMetaAlarmCommentRequired);
+    selectFieldRemoveAlarmsFromMetaAlarmCommentRequired(wrapper).triggerCustomEvent('input', isRemoveAlarmsFromMetaAlarmCommentRequired);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -1165,7 +1165,7 @@ describe('alarm', () => {
       widgetExportColumns: [],
     };
 
-    fieldExportCsvForm.vm.$emit('input', exportProperties);
+    fieldExportCsvForm.triggerCustomEvent('input', exportProperties);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -1201,7 +1201,7 @@ describe('alarm', () => {
 
     const stickyHeader = Faker.datatype.boolean();
 
-    fieldStickyHeader.vm.$emit('input', stickyHeader);
+    fieldStickyHeader.triggerCustomEvent('input', stickyHeader);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -1278,9 +1278,9 @@ describe('alarm', () => {
     const hideMassSelection = Faker.datatype.boolean();
     const hideToolbar = Faker.datatype.boolean();
 
-    fieldKioskHideActions.vm.$emit('input', hideActions);
-    fieldKioskHideMassSelection.vm.$emit('input', hideMassSelection);
-    fieldKioskHideToolbar.vm.$emit('input', hideToolbar);
+    fieldKioskHideActions.triggerCustomEvent('input', hideActions);
+    fieldKioskHideMassSelection.triggerCustomEvent('input', hideMassSelection);
+    fieldKioskHideToolbar.triggerCustomEvent('input', hideToolbar);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -1310,7 +1310,7 @@ describe('alarm', () => {
 
     const isActionsAllowWithOkState = Faker.datatype.boolean();
 
-    selectFieldActionsAllowWithOkState(wrapper).vm.$emit('input', isActionsAllowWithOkState);
+    selectFieldActionsAllowWithOkState(wrapper).triggerCustomEvent('input', isActionsAllowWithOkState);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -1337,7 +1337,7 @@ describe('alarm', () => {
     const chartsForm = selectChartsForm(wrapper);
     const newCharts = [formToAlarmListChart(alarmListChartToForm())];
 
-    chartsForm.vm.$emit('input', newCharts);
+    chartsForm.triggerCustomEvent('input', newCharts);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,

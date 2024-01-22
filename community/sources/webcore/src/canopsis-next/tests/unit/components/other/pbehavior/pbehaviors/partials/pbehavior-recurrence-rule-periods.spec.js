@@ -131,8 +131,8 @@ describe('pbehavior-recurrence-rule-periods', () => {
 
     const selectField = selectTextField(wrapper);
 
-    await selectField.vm.$emit('input', PBEHAVIOR_RRULE_PERIODS_RANGES.nextWeek);
-    await selectField.vm.$emit('change');
+    await selectField.triggerCustomEvent('input', PBEHAVIOR_RRULE_PERIODS_RANGES.nextWeek);
+    await selectField.triggerCustomEvent('change');
 
     expect(fetchTimespansListWithoutStore).toBeCalledWith(
       expect.any(Object),
@@ -161,8 +161,8 @@ describe('pbehavior-recurrence-rule-periods', () => {
 
     const selectField = selectTextField(wrapper);
 
-    await selectField.vm.$emit('input', PBEHAVIOR_RRULE_PERIODS_RANGES.next2Weeks);
-    await selectField.vm.$emit('change');
+    await selectField.triggerCustomEvent('input', PBEHAVIOR_RRULE_PERIODS_RANGES.next2Weeks);
+    await selectField.triggerCustomEvent('change');
 
     expect(fetchTimespansListWithoutStore).toBeCalledWith(
       expect.any(Object),
@@ -191,8 +191,8 @@ describe('pbehavior-recurrence-rule-periods', () => {
 
     const selectField = selectTextField(wrapper);
 
-    await selectField.vm.$emit('input', PBEHAVIOR_RRULE_PERIODS_RANGES.thisMonth);
-    await selectField.vm.$emit('change');
+    await selectField.triggerCustomEvent('input', PBEHAVIOR_RRULE_PERIODS_RANGES.thisMonth);
+    await selectField.triggerCustomEvent('change');
 
     expect(fetchTimespansListWithoutStore).toBeCalledWith(
       expect.any(Object),
@@ -221,8 +221,8 @@ describe('pbehavior-recurrence-rule-periods', () => {
 
     const selectField = selectTextField(wrapper);
 
-    await selectField.vm.$emit('input', PBEHAVIOR_RRULE_PERIODS_RANGES.nextMonth);
-    await selectField.vm.$emit('change');
+    await selectField.triggerCustomEvent('input', PBEHAVIOR_RRULE_PERIODS_RANGES.nextMonth);
+    await selectField.triggerCustomEvent('change');
 
     expect(fetchTimespansListWithoutStore).toBeCalledWith(
       expect.any(Object),
@@ -246,7 +246,7 @@ describe('pbehavior-recurrence-rule-periods', () => {
     });
 
     const actionButton = selectActionButton(wrapper);
-    actionButton.vm.$emit('click');
+    actionButton.triggerCustomEvent('click');
 
     expect($modals.show).toBeCalledWith(
       {

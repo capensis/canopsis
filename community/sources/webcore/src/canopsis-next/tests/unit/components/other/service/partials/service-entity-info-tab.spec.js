@@ -38,7 +38,7 @@ describe('service-entity-info-tab', () => {
       },
     });
 
-    selectServiceEntityActions(wrapper).vm.$emit('apply');
+    selectServiceEntityActions(wrapper).triggerCustomEvent('apply');
 
     expect(applyAction).toHaveBeenCalled();
   });
@@ -51,7 +51,7 @@ describe('service-entity-info-tab', () => {
       },
     });
 
-    selectServiceEntityActions(wrapper).vm.$emit('execute');
+    selectServiceEntityActions(wrapper).triggerCustomEvent('execute');
 
     expect(executeInstruction).toHaveBeenCalled();
   });

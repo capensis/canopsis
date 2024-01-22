@@ -23,7 +23,7 @@ describe('mermaid-theme-field', () => {
 
     const selectField = selectSelectField(wrapper);
 
-    selectField.vm.$emit('input', MERMAID_THEMES.default);
+    selectField.triggerCustomEvent('input', MERMAID_THEMES.default);
 
     expect(wrapper).toEmit('input', MERMAID_THEMES.default);
   });

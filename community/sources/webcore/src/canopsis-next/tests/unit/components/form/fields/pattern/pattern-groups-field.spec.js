@@ -34,14 +34,9 @@ describe('pattern-groups-field', () => {
 
     const secondGroup = selectPatternGroupFieldByIndex(wrapper, 1);
 
-    secondGroup.vm.$emit('remove');
+    secondGroup.triggerCustomEvent('remove');
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual([
+    expect(wrapper).toEmit('input', [
       groups[0],
       groups[2],
     ]);
@@ -62,14 +57,9 @@ describe('pattern-groups-field', () => {
       key: 'new key',
     };
 
-    lastGroup.vm.$emit('input', updatedGroup);
+    lastGroup.triggerCustomEvent('input', updatedGroup);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual([
+    expect(wrapper).toEmit('input', [
       groups[0],
       groups[1],
       updatedGroup,
@@ -91,15 +81,9 @@ describe('pattern-groups-field', () => {
 
     const addButton = selectAddButton(wrapper);
 
-    addButton.vm.$emit('click');
+    addButton.triggerCustomEvent('click');
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-
-    expect(eventData).toEqual([
+    expect(wrapper).toEmit('input', [
       ...groups,
       {
         key: expect.any(String),

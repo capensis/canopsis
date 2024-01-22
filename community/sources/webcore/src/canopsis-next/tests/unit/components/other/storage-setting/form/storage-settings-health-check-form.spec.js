@@ -36,7 +36,7 @@ describe('storage-settings-health-check-form', () => {
 
     const newValue = randomDurationValue();
 
-    selectHealthCheckDeleteAfterField(wrapper).vm.$emit('input', newValue);
+    selectHealthCheckDeleteAfterField(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', { ...form, delete_after: newValue });
   });

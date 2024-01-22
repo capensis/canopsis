@@ -21,7 +21,7 @@ describe('alarm-column-value-state', () => {
       },
     });
 
-    selectAlarmChip(wrapper).vm.$emit('click');
+    selectAlarmChip(wrapper).triggerCustomEvent('click');
 
     expect(wrapper).toEmit('click');
   });

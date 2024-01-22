@@ -28,14 +28,9 @@ describe('c-date-interval-field', () => {
 
     const fromDatePicker = selectFromDateIntervalField(wrapper);
 
-    fromDatePicker.vm.$emit('input', QUICK_RANGES.last3Hour.start);
+    fromDatePicker.triggerCustomEvent('input', QUICK_RANGES.last3Hour.start);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmit('input', {
       from: QUICK_RANGES.last3Hour.start,
       to: QUICK_RANGES.last12Hour.stop,
     });
@@ -53,14 +48,9 @@ describe('c-date-interval-field', () => {
 
     const toDatePicker = selectToDateIntervalField(wrapper);
 
-    toDatePicker.vm.$emit('input', QUICK_RANGES.last3Hour.stop);
+    toDatePicker.triggerCustomEvent('input', QUICK_RANGES.last3Hour.stop);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmit('input', {
       from: QUICK_RANGES.last12Hour.start,
       to: QUICK_RANGES.last3Hour.stop,
     });

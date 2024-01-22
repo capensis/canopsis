@@ -212,7 +212,7 @@ describe('map', () => {
 
     const fieldTitle = selectFieldTitle(wrapper);
 
-    fieldTitle.vm.$emit('input', newTitle);
+    fieldTitle.triggerCustomEvent('input', newTitle);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -244,7 +244,7 @@ describe('map', () => {
       unit: Faker.datatype.string(),
     };
 
-    fieldPeriodicRefresh.vm.$emit('input', {
+    fieldPeriodicRefresh.triggerCustomEvent('input', {
       ...wrapper.vm.form.parameters,
       periodic_refresh: periodicRefresh,
     });
@@ -275,7 +275,7 @@ describe('map', () => {
 
     const newMap = Faker.datatype.string();
 
-    fieldMap.vm.$emit('input', newMap);
+    fieldMap.triggerCustomEvent('input', newMap);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -303,7 +303,7 @@ describe('map', () => {
 
     const newColorIndicator = COLOR_INDICATOR_TYPES.impactState;
 
-    fieldColorIndicator.vm.$emit('input', newColorIndicator);
+    fieldColorIndicator.triggerCustomEvent('input', newColorIndicator);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -329,7 +329,7 @@ describe('map', () => {
 
     const fieldSwitcher = selectFieldSwitcher(wrapper);
 
-    fieldSwitcher.vm.$emit('input', true);
+    fieldSwitcher.triggerCustomEvent('input', true);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -368,7 +368,7 @@ describe('map', () => {
 
     const filter = Faker.datatype.string();
 
-    fieldFilters.vm.$emit('input', filter);
+    fieldFilters.triggerCustomEvent('input', filter);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -400,7 +400,7 @@ describe('map', () => {
 
     const newTemplate = Faker.datatype.string();
 
-    fieldTextEditor.vm.$emit('input', newTemplate);
+    fieldTextEditor.triggerCustomEvent('input', newTemplate);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -433,7 +433,7 @@ describe('map', () => {
       value: Faker.datatype.string(),
     }];
 
-    fieldColumns.vm.$emit('input', newColumns);
+    fieldColumns.triggerCustomEvent('input', newColumns);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -466,7 +466,7 @@ describe('map', () => {
       value: Faker.datatype.string(),
     }];
 
-    fieldColumns.vm.$emit('input', newColumns);
+    fieldColumns.triggerCustomEvent('input', newColumns);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,

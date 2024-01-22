@@ -45,12 +45,7 @@ describe('periodic-refresh', () => {
       },
     });
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmit('input', {
       ...form,
       periodic_refresh: {
         ...form.periodic_refresh,
@@ -77,14 +72,9 @@ describe('periodic-refresh', () => {
       unit: TIME_UNITS.week,
     };
 
-    selectPeriodicRefreshField(wrapper).vm.$emit('input', newValue);
+    selectPeriodicRefreshField(wrapper).triggerCustomEvent('input', newValue);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmit('input', {
       periodic_refresh: newValue,
     });
   });
@@ -106,14 +96,9 @@ describe('periodic-refresh', () => {
 
     const newLiveWatching = true;
 
-    selectLiveWatchingField(wrapper).vm.$emit('input', newLiveWatching);
+    selectLiveWatchingField(wrapper).triggerCustomEvent('input', newLiveWatching);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmit('input', {
       ...form,
       liveWatching: newLiveWatching,
     });

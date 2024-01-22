@@ -25,7 +25,7 @@ describe('variables-menu', () => {
 
     const value = Faker.datatype.string();
 
-    variablesList.vm.$emit('input', value);
+    variablesList.triggerCustomEvent('input', value);
 
     expect(wrapper).toEmit('input', value);
   });

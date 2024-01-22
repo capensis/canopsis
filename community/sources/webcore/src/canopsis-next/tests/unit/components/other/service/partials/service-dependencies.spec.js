@@ -197,7 +197,7 @@ describe('service-dependencies', () => {
     const expandPanel = selectNodeExpandPanel(wrapper).at(2);
     const moreButton = selectServiceDependenciesExpand(expandPanel);
 
-    moreButton.vm.$emit('load', {
+    moreButton.triggerCustomEvent('load', {
       entity: data[2],
       parentId: entity._id,
     });
@@ -239,7 +239,7 @@ describe('service-dependencies', () => {
     const expandPanel = selectNodeExpandPanel(wrapper).at(1);
     const dependenciesModalButton = selectServiceDependenciesExpand(expandPanel);
 
-    dependenciesModalButton.vm.$emit('show', { entity: data[1] });
+    dependenciesModalButton.triggerCustomEvent('show', { entity: data[1] });
 
     const [, entityWithDeps] = data;
 
@@ -277,7 +277,7 @@ describe('service-dependencies', () => {
     const expandPanel = selectNodeExpandPanel(wrapper).at(2);
     const dependenciesModalButton = selectServiceDependenciesExpand(expandPanel);
 
-    dependenciesModalButton.vm.$emit('show', { entity: data[2] });
+    dependenciesModalButton.triggerCustomEvent('show', { entity: data[2] });
 
     expect($modals.show).not.toBeCalled();
   });

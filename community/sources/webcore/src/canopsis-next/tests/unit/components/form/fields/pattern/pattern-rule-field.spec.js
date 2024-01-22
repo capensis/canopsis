@@ -67,7 +67,7 @@ describe('pattern-rule-field', () => {
 
     const patternAttributeField = selectPatternAttributeField(wrapper);
 
-    patternAttributeField.vm.$emit('input', ALARM_PATTERN_FIELDS.displayName);
+    patternAttributeField.triggerCustomEvent('input', ALARM_PATTERN_FIELDS.displayName);
 
     expect(wrapper).toEmit('input', {
       ...emptyRule,
@@ -88,7 +88,7 @@ describe('pattern-rule-field', () => {
 
     const patternOperatorField = selectPatternOperatorField(wrapper);
 
-    patternOperatorField.vm.$emit('input', PATTERN_OPERATORS.beginsWith);
+    patternOperatorField.triggerCustomEvent('input', PATTERN_OPERATORS.beginsWith);
 
     expect(wrapper).toEmit('input', {
       ...rule,
@@ -112,7 +112,7 @@ describe('pattern-rule-field', () => {
 
     const mixedInputField = selectMixedInputField(wrapper);
 
-    mixedInputField.vm.$emit('input', value);
+    mixedInputField.triggerCustomEvent('input', value);
 
     expect(wrapper).toEmit('input', {
       ...rule,
@@ -138,7 +138,7 @@ describe('pattern-rule-field', () => {
 
     const inputTypeField = selectInputTypeField(wrapper);
 
-    inputTypeField.vm.$emit('input', PATTERN_FIELD_TYPES.string);
+    inputTypeField.triggerCustomEvent('input', PATTERN_FIELD_TYPES.string);
 
     expect(wrapper).toEmit('input', {
       ...rule,
@@ -159,7 +159,7 @@ describe('pattern-rule-field', () => {
 
     const patternInfosAttributeField = selectInfosAttributeField(wrapper);
 
-    patternInfosAttributeField.vm.$emit('input', {
+    patternInfosAttributeField.triggerCustomEvent('input', {
       ...emptyRule,
       field,
       dictionary,
@@ -184,7 +184,7 @@ describe('pattern-rule-field', () => {
 
     const patternExtraInfosAttributeField = selectInfosAttributeField(wrapper);
 
-    patternExtraInfosAttributeField.vm.$emit('input', {
+    patternExtraInfosAttributeField.triggerCustomEvent('input', {
       ...emptyRule,
       field,
     });
@@ -209,7 +209,7 @@ describe('pattern-rule-field', () => {
 
     const quickDateIntervalTypeField = selectQuickDateIntervalTypeField(wrapper);
 
-    quickDateIntervalTypeField.vm.$emit('input', QUICK_RANGES.last15Minutes.value);
+    quickDateIntervalTypeField.triggerCustomEvent('input', QUICK_RANGES.last15Minutes.value);
 
     expect(wrapper).toEmit('input', {
       ...rule,
@@ -244,7 +244,7 @@ describe('pattern-rule-field', () => {
       to: Faker.datatype.number(),
     };
 
-    dateTimeIntervalField.vm.$emit('input', newRange);
+    dateTimeIntervalField.triggerCustomEvent('input', newRange);
 
     expect(wrapper).toEmit('input', {
       ...rule,
@@ -272,7 +272,7 @@ describe('pattern-rule-field', () => {
       value: Faker.datatype.number(),
     };
 
-    durationField.vm.$emit('input', duration);
+    durationField.triggerCustomEvent('input', duration);
 
     expect(wrapper).toEmit('input', {
       ...rule,

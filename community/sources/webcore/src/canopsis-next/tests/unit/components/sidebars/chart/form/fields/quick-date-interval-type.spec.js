@@ -25,7 +25,7 @@ describe('quick-date-interval-type', () => {
 
     const newValue = randomArrayItem(Object.values(QUICK_RANGES));
 
-    selectQuickDateIntervalTypeFieldField(wrapper).vm.$emit('input', newValue);
+    selectQuickDateIntervalTypeFieldField(wrapper).triggerCustomEvent('input', newValue);
 
     expect(wrapper).toEmit('input', newValue);
   });

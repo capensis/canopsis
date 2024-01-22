@@ -48,7 +48,7 @@ describe('service-dependencies-expand', () => {
 
     const button = selectButton(wrapper);
 
-    button.vm.$emit('click');
+    button.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('show', item);
   });
@@ -62,7 +62,7 @@ describe('service-dependencies-expand', () => {
 
     const button = selectButton(wrapper);
 
-    button.vm.$emit('click');
+    button.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('load', itemWithLoadMore);
   });

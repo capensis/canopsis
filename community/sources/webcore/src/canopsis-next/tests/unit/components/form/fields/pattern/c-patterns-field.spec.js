@@ -60,7 +60,7 @@ describe('c-patterns-field', () => {
 
     const alarmPatternsField = selectAlarmPatternsField(wrapper);
 
-    alarmPatternsField.vm.$emit('input', alarmPattern);
+    alarmPatternsField.triggerCustomEvent('input', alarmPattern);
 
     expect(wrapper).toEmit('input', {
       ...patterns,
@@ -91,7 +91,7 @@ describe('c-patterns-field', () => {
 
     const entityPatternsField = selectEntityPatternsField(wrapper);
 
-    entityPatternsField.vm.$emit('input', entityPattern);
+    entityPatternsField.triggerCustomEvent('input', entityPattern);
 
     expect(wrapper).toEmit('input', {
       ...patterns,
@@ -122,7 +122,7 @@ describe('c-patterns-field', () => {
 
     const pbehaviorPatternsField = selectPbehaviorPatternsField(wrapper);
 
-    pbehaviorPatternsField.vm.$emit('input', pbehaviorPattern);
+    pbehaviorPatternsField.triggerCustomEvent('input', pbehaviorPattern);
 
     expect(wrapper).toEmit('input', {
       ...patterns,
@@ -153,7 +153,7 @@ describe('c-patterns-field', () => {
 
     const eventFilterPatternsField = selectEventFilterPatternsField(wrapper);
 
-    eventFilterPatternsField.vm.$emit('input', eventFilterPattern);
+    eventFilterPatternsField.triggerCustomEvent('input', eventFilterPattern);
 
     expect(wrapper).toEmit('input', {
       ...patterns,

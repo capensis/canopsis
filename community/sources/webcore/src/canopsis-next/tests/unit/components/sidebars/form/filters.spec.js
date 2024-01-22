@@ -37,7 +37,7 @@ describe('filters', () => {
   it('Selected filters updated after trigger input on the filter selector field', () => {
     const wrapper = factory();
 
-    selectFilterSelectorField(wrapper).vm.$emit('input', filters[0]);
+    selectFilterSelectorField(wrapper).triggerCustomEvent('input', filters[0]);
 
     expect(wrapper).toEmit('input', filters[0]);
   });
@@ -47,7 +47,7 @@ describe('filters', () => {
 
     const newFilters = [...filters].reverse();
 
-    selectFiltersList(wrapper).vm.$emit('input', newFilters);
+    selectFiltersList(wrapper).triggerCustomEvent('input', newFilters);
 
     expect(wrapper).toEmit('update:filters', newFilters);
   });

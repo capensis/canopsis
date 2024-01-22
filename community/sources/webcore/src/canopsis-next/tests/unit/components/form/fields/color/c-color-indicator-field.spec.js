@@ -25,14 +25,10 @@ describe('c-color-indicator-field', () => {
 
   it('Value changed after trigger the input', () => {
     const wrapper = factory({ propsData: { value: COLOR_INDICATOR_TYPES.state } });
-    const input = wrapper.find('input.v-radio-group');
 
-    input.setValue(COLOR_INDICATOR_TYPES.impactState);
+    wrapper.find('input.v-radio-group').setValue(COLOR_INDICATOR_TYPES.impactState);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-    expect(inputEvents[0]).toEqual([COLOR_INDICATOR_TYPES.impactState]);
+    expect(wrapper).toEmit('input', COLOR_INDICATOR_TYPES.impactState);
   });
 
   it('Renders `c-color-indicator-field` with state value correctly', () => {

@@ -41,7 +41,7 @@ describe('c-draggable-list-field', () => {
       items[2],
     ];
 
-    selectDraggable(wrapper).vm.$emit('input', newOrder);
+    selectDraggable(wrapper).triggerCustomEvent('input', newOrder);
 
     expect(wrapper).toEmit('input', newOrder);
   });
@@ -64,7 +64,7 @@ describe('c-draggable-list-field', () => {
       items[2],
     ];
 
-    selectDraggable(wrapper).vm.$emit('input', newItems);
+    selectDraggable(wrapper).triggerCustomEvent('input', newItems);
 
     expect(wrapper).toEmit('input', newItems);
   });
@@ -81,7 +81,7 @@ describe('c-draggable-list-field', () => {
       items[2],
     ];
 
-    selectDraggable(wrapper).vm.$emit('input', newItems);
+    selectDraggable(wrapper).triggerCustomEvent('input', newItems);
 
     expect(wrapper).toEmit('input', newItems);
   });

@@ -67,7 +67,7 @@ describe('flowchart-editor', () => {
 
     const flowchartCodeEditor = selectFlowchart(wrapper);
 
-    flowchartCodeEditor.vm.$emit('update:backgroundColor', newColor);
+    flowchartCodeEditor.triggerCustomEvent('update:backgroundColor', newColor);
 
     expect(wrapper).toEmit('input', {
       ...initialForm,
@@ -86,7 +86,7 @@ describe('flowchart-editor', () => {
 
     const flowchart = selectFlowchart(wrapper);
 
-    flowchart.vm.$emit('input', shapes);
+    flowchart.triggerCustomEvent('input', shapes);
 
     expect(wrapper).toEmit('input', {
       ...initialForm,
@@ -119,7 +119,7 @@ describe('flowchart-editor', () => {
 
     const flowchart = selectFlowchart(wrapper);
 
-    flowchart.vm.$emit('input', newShapes);
+    flowchart.triggerCustomEvent('input', newShapes);
 
     expect(wrapper).toEmit('input', {
       ...initialForm,
@@ -139,7 +139,7 @@ describe('flowchart-editor', () => {
 
     const flowchartPointsEditor = selectFlowchartPointsEditor(wrapper);
 
-    flowchartPointsEditor.vm.$emit('input', newPoints);
+    flowchartPointsEditor.triggerCustomEvent('input', newPoints);
 
     expect(wrapper).toEmit('input', {
       ...initialForm,
@@ -156,7 +156,7 @@ describe('flowchart-editor', () => {
 
     const addLocationBtn = selectAddLocationBtn(wrapper);
 
-    await addLocationBtn.vm.$emit('input', true);
+    await addLocationBtn.triggerCustomEvent('input', true);
 
     const flowchartPointsEditor = selectFlowchartPointsEditor(wrapper);
 

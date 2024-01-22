@@ -24,27 +24,20 @@ describe('c-quick-date-interval-field', () => {
   it('Value changed after trigger date interval field', () => {
     const wrapper = factory();
 
-    const dateIntervalField = selectDateIntervalField(wrapper);
-
     const interval = {
       from: 1384435500000,
       to: 1386435500000,
     };
 
-    dateIntervalField.vm.$emit('input', interval);
+    selectDateIntervalField(wrapper).triggerCustomEvent('input', interval);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(interval);
+    expect(wrapper).toEmit('input', interval);
   });
 
   it('Value changed after trigger quick date interval type field', () => {
     const wrapper = factory();
 
-    selectQuickDateIntervalTypeField(wrapper).vm.$emit('input', QUICK_RANGES.last12Hour);
+    selectQuickDateIntervalTypeField(wrapper).triggerCustomEvent('input', QUICK_RANGES.last12Hour);
 
     expect(wrapper).toEmit('input', {
       from: QUICK_RANGES.last12Hour.start,
@@ -59,7 +52,7 @@ describe('c-quick-date-interval-field', () => {
       },
     });
 
-    selectQuickDateIntervalTypeField(wrapper).vm.$emit('input', QUICK_RANGES.last12Hour);
+    selectQuickDateIntervalTypeField(wrapper).triggerCustomEvent('input', QUICK_RANGES.last12Hour);
 
     expect(wrapper).toEmit('input', {
       from: QUICK_RANGES.last12Hour.start,
@@ -70,7 +63,7 @@ describe('c-quick-date-interval-field', () => {
   it('Value not changed after trigger date interval field with custom quick range', () => {
     const wrapper = factory();
 
-    selectQuickDateIntervalTypeField(wrapper).vm.$emit('input', QUICK_RANGES.custom);
+    selectQuickDateIntervalTypeField(wrapper).triggerCustomEvent('input', QUICK_RANGES.custom);
 
     expect(wrapper).not.toEmit('input');
   });

@@ -57,7 +57,7 @@ describe('patterns-list', () => {
     await selectRowCheckboxByIndex(wrapper, 2).trigger('click');
 
     const massRemoveButton = selectMassRemoveButton(wrapper);
-    await massRemoveButton.vm.$emit('click');
+    await massRemoveButton.triggerCustomEvent('click');
 
     expect(wrapper).toEmit(
       'remove-selected',
@@ -81,7 +81,7 @@ describe('patterns-list', () => {
 
     const removableRowIndex = 2;
 
-    await selectRowRemoveButtonByIndex(wrapper, removableRowIndex).vm.$emit('click');
+    await selectRowRemoveButtonByIndex(wrapper, removableRowIndex).triggerCustomEvent('click');
 
     expect(wrapper).toEmit('remove', patterns[removableRowIndex]._id);
   });
@@ -102,7 +102,7 @@ describe('patterns-list', () => {
 
     const editableRowIndex = 5;
 
-    await selectRowEditButtonByIndex(wrapper, editableRowIndex).vm.$emit('click');
+    await selectRowEditButtonByIndex(wrapper, editableRowIndex).triggerCustomEvent('click');
 
     expect(wrapper).toEmit('edit', patterns[editableRowIndex]);
   });

@@ -59,8 +59,8 @@ describe('base-login', () => {
     const username = Faker.datatype.string();
     const password = Faker.datatype.string();
 
-    selectLoginForm(wrapper).vm.$emit('input', username, ['username']);
-    selectLoginForm(wrapper).vm.$emit('input', password, ['password']);
+    selectLoginForm(wrapper).triggerCustomEvent('input', username, ['username']);
+    selectLoginForm(wrapper).triggerCustomEvent('input', password, ['password']);
 
     selectSubmitButton(wrapper).trigger('click');
 
