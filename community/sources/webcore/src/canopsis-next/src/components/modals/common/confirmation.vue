@@ -25,10 +25,10 @@
           {{ $t('common.no') }}
         </v-btn>
         <v-btn
-          class="ml-2"
-          color="primary"
           :loading="submitting"
           :disabled="isDisabled"
+          class="ml-2"
+          color="primary"
           @click.prevent="submit"
         >
           {{ $t('common.yes') }}

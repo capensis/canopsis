@@ -18,8 +18,8 @@
             color="primary"
           />
           <associate-ticket-event-form
-            class="mt-3"
             v-model="form"
+            class="mt-3"
           />
           <c-description-field
             v-model="form.comment"
@@ -43,9 +43,9 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
-          class="primary"
           :loading="submitting"
           :disabled="isDisabled"
+          class="primary"
           type="submit"
         >
           {{ $t('common.saveChanges') }}

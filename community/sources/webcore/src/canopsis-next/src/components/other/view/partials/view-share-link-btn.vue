@@ -2,11 +2,11 @@
   <v-tooltip left>
     <template #activator="{ on }">
       <v-btn
-        v-on="on"
         color="secondary lighten-2"
         fab
         dark
         small
+        v-on="on"
         @click.stop="showCreateShareTokenModal"
       >
         <v-icon small>

@@ -1,7 +1,7 @@
 <template>
   <v-expansion-panels
-    class="groups-side-bar-playlists"
     v-if="availablePlaylists.length"
+    class="groups-side-bar-playlists"
     multiple
     dark
   >

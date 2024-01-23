@@ -1,8 +1,8 @@
 <template>
   <div
     v-bind="component.bind"
-    v-on="component.on"
     :is="component.bind.is"
+    v-on="component.on"
   />
 </template>
 

@@ -4,10 +4,10 @@
     column
   >
     <kpi-widget-filters
-      class="mx-3"
       :interval="query.interval"
       :min-interval-date="minAvailableDate"
       :sampling="query.sampling"
+      class="mx-3"
       show-interval
       show-sampling
       @update:sampling="updateQueryField('sampling', $event)"

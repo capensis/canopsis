@@ -7,11 +7,11 @@
     />
     <state-settings-summary />
     <c-treeview-data-table
-      class="service-dependencies"
       :items="items"
       :headers="headers"
       :loading="hasActivePending"
       :load-children="loadChildren"
+      class="service-dependencies"
       item-key="key"
     >
       <template #expand="{ item }">
@@ -24,13 +24,13 @@
       </template>
       <template #expand-append="{ item }">
         <div
-          class="expand-append"
           v-if="includeRoot && isInRootIds(item._id)"
+          class="expand-append"
         >
           <v-icon>arrow_right_alt</v-icon>
           <v-chip
-            class="ma-0"
             :color="getEntityColor(item.entity)"
+            class="ma-0"
             text-color="white"
           >
             <span class="px-2 text-body-2 font-weight-bold">{{ item.entity.impact_state }}</span>

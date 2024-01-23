@@ -40,9 +40,9 @@
               />
             </v-flex>
             <v-flex
-              class="mt-2"
               v-for="(action, index) in scenario.actions"
               :key="index"
+              class="mt-2"
               xs12
             >
               <scenario-action-card

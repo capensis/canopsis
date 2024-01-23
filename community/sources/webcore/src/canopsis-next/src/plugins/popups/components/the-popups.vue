@@ -1,7 +1,7 @@
 <template>
   <div
-    class="popups"
     v-if="popups.length"
+    class="popups"
   >
     <popup-item
       v-for="popup in popups"

@@ -21,8 +21,8 @@
       <template #activator="{ on }">
         <v-btn
           class="mx-1 my-0"
-          v-on="on"
           icon
+          v-on="on"
           @click="showCreateFilterModal"
         >
           <v-icon :color="buttonIconColor">

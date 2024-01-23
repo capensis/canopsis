@@ -5,8 +5,8 @@
         {{ $t('stateSetting.criterion') }}: {{ label }}
       </h5>
       <junit-state-setting-thresholds-type-field
-        class="mt-3"
         v-field="value.type"
+        class="mt-3"
       />
     </v-flex>
     <v-flex>

@@ -1,8 +1,8 @@
 <template>
   <div>
     <rating-field
-      class="justify-center"
       v-field="form.rating"
+      class="justify-center"
       hover
     />
     <v-textarea

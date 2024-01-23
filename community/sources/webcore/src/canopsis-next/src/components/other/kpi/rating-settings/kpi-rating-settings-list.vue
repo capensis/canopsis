@@ -15,12 +15,12 @@
       <v-flex xs12>
         <v-expand-transition>
           <v-layout
-            class="ml-3 mt-3"
             v-if="changedIds.length"
+            class="ml-3 mt-3"
           >
             <v-btn
-              outlined
               color="primary"
+              outlined
               @click="resetEnabledRatingSettings"
             >
               {{ $t('common.cancel') }}

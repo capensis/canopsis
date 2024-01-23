@@ -1,7 +1,7 @@
 <template>
   <div
-    class="request-information-content-row"
     v-click-outside.contextmenu="clickOutsideDirective"
+    class="request-information-content-row"
   >
     <v-menu
       v-model="contextmenu.active"

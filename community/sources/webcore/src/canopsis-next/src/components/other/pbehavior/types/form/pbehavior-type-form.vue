@@ -15,9 +15,9 @@
     <v-layout justify-space-between>
       <v-flex xs6>
         <pbehavior-type-default-type-field
-          class="mr-2"
           :value="form.type"
           :disabled="onlyColor"
+          class="mr-2"
           @input="updateDefaultType"
           @update:color="updateColor"
         />
@@ -65,8 +65,8 @@
       :label="$t('pbehavior.types.hidden')"
     />
     <c-color-picker-field
-      class="mt-2"
       v-field="form.color"
+      class="mt-2"
       required
       @input="setColorWasChanged"
     />

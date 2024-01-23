@@ -15,9 +15,9 @@
         :key="id"
       >
         <v-radio
-          class="my-0"
           :value="id"
           :label="label"
+          class="my-0"
           color="primary"
         />
         <c-help-icon

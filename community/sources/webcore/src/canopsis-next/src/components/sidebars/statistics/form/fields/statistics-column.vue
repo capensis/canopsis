@@ -9,9 +9,9 @@
       required
     />
     <c-enabled-field
-      class="pa-0 my-2"
       v-model="customLabel"
       :label="$t('settings.columns.customLabel')"
+      class="pa-0 my-2"
       @change="updateCustomLabel"
     />
     <v-text-field

@@ -3,11 +3,11 @@
     <template #activator="{ on }">
       <v-btn
         class="mx-2"
-        v-on="on"
         fab
         small
         icon
         depressed
+        v-on="on"
         @click="$emit('click', $event)"
       >
         <v-icon>{{ icon }}</v-icon>

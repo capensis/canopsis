@@ -37,9 +37,9 @@
         :label="$t('settings.columns.inlineLinksCount')"
       />
       <v-switch
-        class="pa-0 my-2"
         v-field="column.onlyIcon"
         :label="$t('settings.columns.onlyIcon')"
+        class="pa-0 my-2"
         color="primary"
         hide-details
       />
@@ -58,9 +58,9 @@
     </template>
     <template v-if="withLabel">
       <v-switch
-        class="pa-0 my-2"
         v-model="customLabel"
         :label="$t('settings.columns.customLabel')"
+        class="pa-0 my-2"
         color="primary"
         hide-details
         @change="updateCustomLabel"
@@ -79,19 +79,19 @@
       align-center
     >
       <v-switch
-        class="pa-0 my-2"
         :label="$t('settings.columns.withTemplate')"
         :input-value="!!column.template"
         :true-value="true"
         :false-value="false"
         :value-comparator="isCustomTemplate"
+        class="pa-0 my-2"
         color="primary"
         hide-details
         @change="switchChangeTemplate($event)"
       />
       <v-btn
-        class="primary"
         v-if="column.template"
+        class="primary"
         small
         @click="showEditTemplateModal"
       >
@@ -99,20 +99,20 @@
       </v-btn>
     </v-layout>
     <v-switch
-      class="pa-0 my-2"
       v-if="withHtml"
       v-field="column.isHtml"
       :label="$t('settings.columns.isHtml')"
       :disabled="!!column.template"
+      class="pa-0 my-2"
       color="primary"
       hide-details
     />
     <v-switch
-      class="pa-0 my-2"
       v-if="withColorIndicator"
       :label="$t('settings.colorIndicator.title')"
       :input-value="!!column.colorIndicator"
       :disabled="!!column.template"
+      class="pa-0 my-2"
       color="primary"
       hide-details
       @change="switchChangeColorIndicator($event)"

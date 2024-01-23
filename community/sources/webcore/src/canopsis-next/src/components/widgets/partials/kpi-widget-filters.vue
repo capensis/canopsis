@@ -4,18 +4,18 @@
     wrap
   >
     <c-quick-date-interval-field
-      class="kpi-widget-filters__interval"
       v-if="showInterval"
       :interval="interval"
       :min="minIntervalDate"
       :quick-ranges="quickRanges"
+      class="kpi-widget-filters__interval"
       short
       @input="$emit('update:interval', $event)"
     />
     <c-sampling-field
-      class="kpi-widget-filters__sampling"
       v-if="showSampling"
       :value="sampling"
+      class="kpi-widget-filters__sampling"
       @input="$emit('update:sampling', $event)"
     />
     <v-layout
@@ -23,13 +23,13 @@
       align-end
     >
       <filter-selector
-        class="kpi-widget-filters__filter-selector mr-4"
         :label="$t('settings.selectAFilter')"
         :filters="userFilters"
         :locked-filters="widgetFilters"
         :locked-value="lockedFilter"
         :value="filters"
         :disabled="filterDisabled"
+        class="kpi-widget-filters__filter-selector mr-4"
         clearable
         hide-details
         @input="$emit('update:filters', $event)"

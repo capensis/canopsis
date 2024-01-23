@@ -9,11 +9,11 @@
       @input="updateStartDate"
     />
     <date-time-picker-text-field
-      class="ml-2"
       v-validate="stopRules"
       :value="stopString"
       :label="$t('common.stop')"
       :error-message="errors.collect('stop')"
+      class="ml-2"
       name="stop"
       @input="updateStopDate"
     />

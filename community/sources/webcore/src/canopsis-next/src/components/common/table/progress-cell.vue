@@ -2,12 +2,12 @@
   <td>
     <slot v-if="!pending" />
     <v-progress-circular
-      class="ml-2"
       v-else
-      indeterminate
+      class="ml-2"
       color="primary"
       width="3"
       size="25"
+      indeterminate
     />
   </td>
 </template>

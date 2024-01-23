@@ -31,8 +31,8 @@
               />
               <v-tabs
                 v-else
-                ref="tabs"
                 v-model="activeTab"
+                ref="tabs"
                 slider-color="primary"
                 centered
               >
@@ -50,10 +50,10 @@
                   <v-tab>{{ $t('modals.service.entity.tabs.treeOfDependencies') }}</v-tab>
                   <v-tab-item>
                     <service-entity-tree-of-dependencies-tab
-                      class="pa-2"
                       :entity="entity"
                       :columns="serviceDependenciesColumns"
                       :type="treeOfDependenciesShowType"
+                      class="pa-2"
                     />
                   </v-tab-item>
                 </template>

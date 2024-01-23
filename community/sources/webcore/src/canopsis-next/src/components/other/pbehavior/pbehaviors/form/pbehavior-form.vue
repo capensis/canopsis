@@ -17,8 +17,8 @@
         column
       >
         <pbehavior-general-form
-          ref="general"
           v-field="form"
+          ref="general"
           :no-enabled="noEnabled"
           :with-start-on-trigger="withStartOnTrigger"
         />
@@ -27,25 +27,25 @@
           :label="$t('modals.createPbehavior.steps.color.label')"
         />
         <c-collapse-panel
-          class="mb-2"
           :title="$t('recurrenceRule.title')"
+          class="mb-2"
         >
           <recurrence-rule-form
             v-field="form.rrule"
             :start="form.tstart"
           />
           <pbehavior-recurrence-rule-exceptions-field
-            class="mt-2"
             v-field="form.exdates"
             :exceptions="form.exceptions"
+            class="mt-2"
             with-exdate-type
             @update:exceptions="updateExceptions"
           />
         </c-collapse-panel>
         <c-collapse-panel
-          class="mt-2"
           v-if="!noComments"
           :title="$tc('common.comment', 2)"
+          class="mt-2"
         >
           <pbehavior-comments-field v-field="form.comments" />
         </c-collapse-panel>
@@ -58,8 +58,8 @@
       >
         <v-flex xs12>
           <pbehavior-patterns-form
-            ref="patterns"
             v-field="form.patterns"
+            ref="patterns"
           />
         </v-flex>
       </v-layout>

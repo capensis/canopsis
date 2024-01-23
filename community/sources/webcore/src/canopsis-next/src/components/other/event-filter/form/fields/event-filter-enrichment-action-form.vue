@@ -30,8 +30,8 @@
           </v-expand-transition>
           <v-text-field
             v-field="form.description"
-            :label="$t('common.description')"
             key="description"
+            :label="$t('common.description')"
           />
           <v-layout>
             <v-flex xs5>
@@ -43,34 +43,34 @@
             </v-flex>
             <v-flex xs7>
               <c-payload-text-field
-                class="ml-2"
                 v-if="isStringTemplateValueType"
                 v-field="form.value"
+                key="from"
                 :label="$t('common.value')"
                 :variables="variables"
                 :name="valueFieldName"
-                key="from"
+                class="ml-2"
                 required
                 clearable
               />
               <v-combobox
-                class="ml-2"
                 v-else-if="isStringCopyValueType"
                 v-field="form.value"
                 v-validate="'required'"
+                key="from"
                 :label="$t('common.value')"
                 :error-messages="errors.collect('value')"
                 :items="copyValueVariables"
                 :name="valueFieldName"
-                key="from"
+                class="ml-2"
               />
               <c-mixed-field
-                class="ml-2"
                 v-else
                 v-field="form.value"
+                key="value"
                 :label="$t('common.value')"
                 :name="valueFieldName"
-                key="value"
+                class="ml-2"
               />
             </v-flex>
           </v-layout>

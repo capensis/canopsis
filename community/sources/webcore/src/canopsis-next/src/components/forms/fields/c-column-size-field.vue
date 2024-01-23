@@ -1,9 +1,9 @@
 <template>
   <v-radio-group
-    class="c-column-size-field"
     v-field="value"
     :class="{ 'c-column-size-field--mobile': mobile }"
     :name="name"
+    class="c-column-size-field"
     color="primary"
     hide-details
     mandatory
@@ -17,8 +17,8 @@
     >
       <template #label="">
         <v-img
-          class="my-2"
           :src="item.src"
+          class="my-2"
         />
       </template>
     </v-radio>

@@ -7,10 +7,10 @@
     @change="showEditGroupModal"
   >
     <c-draggable-list-field
-      class="views-panel secondary lighten-1"
       :class="{ 'views-panel--empty': isGroupEmpty }"
       :value="group.views"
       :disabled="!isNavigationEditingMode"
+      class="views-panel secondary lighten-1"
       group="views"
       @input="changeViewsOrdering"
     >

@@ -6,8 +6,8 @@
     >
       <recurrence-rule-information :rrule="pbehavior.rrule" />
       <pbehavior-recurrence-rule-periods
-        class="mt-2"
         :pbehavior="pbehavior"
+        class="mt-2"
       />
     </v-flex>
   </v-layout>

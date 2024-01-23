@@ -1,13 +1,13 @@
 <template>
   <div class="instances-diagram py-2">
     <div
-      class="instances-diagram__node my-2"
       v-for="instanceNumber in optimalInstances"
       :key="instanceNumber"
+      class="instances-diagram__node my-2"
     >
       <div
-        class="instances-diagram__node__circle"
         :style="getInstanceStyle(instanceNumber)"
+        class="instances-diagram__node__circle"
       />
     </div>
   </div>

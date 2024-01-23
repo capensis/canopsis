@@ -1,6 +1,5 @@
 <template>
   <v-select
-    class="mt-0"
     v-validate="rules"
     v-field="category"
     :label="$t('common.category')"
@@ -11,6 +10,7 @@
     :name="name"
     :hide-details="hideDetails"
     :clearable="!required"
+    class="mt-0"
     item-text="name"
     item-value="_id"
     return-object
@@ -21,21 +21,21 @@
       #append-item=""
     >
       <v-text-field
-        class="pb-3 pt-1 px-3"
-        ref="createField"
         v-model.trim="newCategory"
         v-validate="newCategoryRules"
+        ref="createField"
         :label="$t('service.createCategory')"
         :error-messages="errors.collect(newCategoryFieldName)"
         :name="newCategoryFieldName"
+        class="pb-3 pt-1 px-3"
         hide-details
         @keyup.enter="createCategory"
         @blur="clearCategory"
       >
         <template #append="">
           <c-help-icon
-            icon="help"
             :text="$t('service.createCategoryHelp')"
+            icon="help"
             left
           />
         </template>

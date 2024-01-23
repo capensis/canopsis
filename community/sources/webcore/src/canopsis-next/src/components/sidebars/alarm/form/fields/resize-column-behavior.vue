@@ -10,10 +10,10 @@
         :label="$t('settings.columnsSettings.resizing')"
       />
       <v-radio-group
-        class="mt-0"
         v-if="value.resizable"
         v-field="value.cells_content_behavior"
         :label="$t('settings.columnsSettings.cellsContentBehavior')"
+        class="mt-0"
         name="opened"
         hide-details
       >

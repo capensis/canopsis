@@ -1,13 +1,13 @@
 <template>
   <v-expansion-panel
-    class="secondary group-panel"
     :hide-actions="hideActions"
     :class="{ 'group-panel--editing': isEditing }"
     :rounded="false"
+    class="secondary group-panel"
   >
     <v-expansion-panel-header
-      class="pa-0 pr-6"
       :hide-actions="hideActions"
+      class="pa-0 pr-6"
     >
       <div class="px-6 py-4 group-panel__title">
         <slot name="title">

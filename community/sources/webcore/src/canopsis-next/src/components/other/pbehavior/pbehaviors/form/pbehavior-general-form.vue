@@ -14,10 +14,10 @@
       xs12
     >
       <c-enabled-field
-        class="mt-0 mb-1"
         v-if="withStartOnTrigger"
         :value="form.start_on_trigger"
         :label="$t('modals.createPbehavior.steps.general.fields.startOnTrigger')"
+        class="mt-0 mb-1"
         hide-details
         @input="updateStartOnTrigger"
       />
@@ -30,9 +30,9 @@
         <v-layout align-center>
           <v-flex xs3>
             <v-checkbox
-              class="mt-0"
               v-model="fullDay"
               :label="$t('modals.createPbehavior.steps.general.fields.fullDay')"
+              class="mt-0"
               color="primary"
               hide-details
             />
@@ -42,9 +42,9 @@
             xs3
           >
             <v-checkbox
-              class="mt-0"
               v-model="noEnding"
               :label="$t('modals.createPbehavior.steps.general.fields.noEnding')"
+              class="mt-0"
               color="primary"
               hide-details
             />
@@ -70,16 +70,16 @@
       <v-layout>
         <v-flex xs6>
           <c-pbehavior-reason-field
-            class="mr-2"
             v-field="form.reason"
+            class="mr-2"
             required
             return-object
           />
         </v-flex>
         <v-flex xs6>
           <c-pbehavior-type-field
-            class="ml-2"
             v-field="form.type"
+            class="ml-2"
             required
             return-object
           />

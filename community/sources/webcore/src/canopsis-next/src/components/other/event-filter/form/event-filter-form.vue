@@ -3,16 +3,16 @@
     <v-layout>
       <v-flex xs8>
         <c-id-field
-          class="mr-3"
           v-field="form._id"
           :disabled="isDisabledIdField"
           :help-text="$t('eventFilter.idHelp')"
+          class="mr-3"
         />
       </v-flex>
       <v-flex xs4>
         <c-event-filter-type-field
-          class="ml-3"
           v-field="form.type"
+          class="ml-3"
         />
       </v-flex>
     </v-layout>
@@ -28,8 +28,8 @@
       <event-filter-drop-intervals-field v-field="form" />
     </c-information-block>
     <pbehavior-recurrence-rule-field
-      class="mb-3"
       v-field="form"
+      class="mb-3"
     />
     <c-patterns-field
       v-field="form.patterns"
@@ -46,8 +46,8 @@
         "
       >
         <c-collapse-panel
-          class="mb-2"
           :title="$t('externalData.title')"
+          class="mb-2"
         >
           <external-data-form
             v-field="form.external_data"

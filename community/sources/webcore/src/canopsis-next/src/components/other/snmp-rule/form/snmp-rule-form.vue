@@ -4,8 +4,8 @@
     <v-layout>
       <v-flex xs12>
         <v-alert
-          class="mt-3"
           :value="!!selectedModuleMib.description"
+          class="mt-3"
           color="grey darken-1"
         >
           {{ selectedModuleMib.description }}

@@ -1,12 +1,12 @@
 <template>
   <tr
+    :class="classes"
     class="alarm-list-row"
     v-on="listeners"
-    :class="classes"
   >
     <td
-      class="alarm-list-row__icons pr-0"
       v-if="hasRowActions"
+      class="alarm-list-row__icons pr-0"
     >
       <v-layout
         align-center
@@ -15,9 +15,9 @@
         <v-layout class="alarm-list-row__checkbox">
           <template v-if="selectable">
             <v-simple-checkbox
-              class="ma-0"
               v-if="isAlarmSelectable"
               v-field="selected"
+              class="ma-0"
               color="primary"
               hide-details
             />
@@ -52,9 +52,9 @@
       </v-layout>
     </td>
     <td
-      class="alarm-list-row__cell"
       v-for="header in availableHeaders"
       :key="header.value"
+      class="alarm-list-row__cell"
     >
       <actions-panel
         v-if="header.value === 'actions'"
@@ -77,8 +77,8 @@
         @click:state="$emit('click:state', $event)"
       />
       <span
-        class="alarms-list-table__resize-handler"
         v-if="resizing"
+        class="alarms-list-table__resize-handler"
         @mousedown.prevent="$emit('start:resize', header.value)"
         @click.stop=""
       />

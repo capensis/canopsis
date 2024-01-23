@@ -1,8 +1,8 @@
 <template>
   <v-tabs
-    class="expand-panel secondary lighten-2"
     v-model="activeTab"
     :key="tabsKey"
+    class="expand-panel secondary lighten-2"
     background-color="secondary lighten-1"
     slider-color="primary"
     dark

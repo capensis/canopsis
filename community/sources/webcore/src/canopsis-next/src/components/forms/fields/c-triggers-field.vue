@@ -21,9 +21,9 @@
       >
         <template #activator="{ on }">
           <v-chip
-            v-on="on"
             :class="getSelectedClass(item)"
             :close="item.deprecated"
+            v-on="on"
             @click:close="removeItemFromArray(index)"
           >
             {{ getSelectedText(item) }}
@@ -53,12 +53,12 @@
           >
             <v-flex>{{ item.text }}</v-flex>
             <component
-              class="ml-1"
               v-if="additionalValuesComponentsByTypes[item.type]"
               v-bind="additionalValuesComponentsByTypes[item.type].bind"
-              v-on="additionalValuesComponentsByTypes[item.type].on"
               :is="additionalValuesComponentsByTypes[item.type].is"
               :disabled="!attrs.value"
+              class="ml-1"
+              v-on="additionalValuesComponentsByTypes[item.type].on"
               @click.prevent.stop=""
             />
           </v-layout>

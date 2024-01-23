@@ -15,8 +15,8 @@
       >
         <template #activator="{ on }">
           <c-test-suite-chip
-            v-on="on"
             :value="item.status"
+            v-on="on"
           />
         </template>
         <span>{{ item.message }}</span>

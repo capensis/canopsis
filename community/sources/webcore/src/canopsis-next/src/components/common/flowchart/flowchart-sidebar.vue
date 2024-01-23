@@ -8,10 +8,10 @@
     <v-layout column>
       <slot name="prepend" />
       <flowchart-color-field
-        class="flowchart-sidebar__additional-item px-6"
         :value="backgroundColor"
         :label="$t('flowchart.backgroundColor')"
         :palette="backgroundColors"
+        class="flowchart-sidebar__additional-item px-6"
         hide-checkbox
         @input="$emit('update:backgroundColor', $event)"
       />
@@ -39,14 +39,14 @@
               <template #activator="{ on }">
                 <v-btn
                   class="ma-0 pa-0 flowchart-sidebar__button"
-                  v-on="on"
                   text
                   large
+                  v-on="on"
                   @click="button.action"
                 >
                   <component
-                    class="pa-1 text--disabled"
                     :is="button.icon"
+                    class="pa-1 text--disabled"
                   />
                 </v-btn>
               </template>
@@ -65,9 +65,9 @@
                   <template #activator="{ on: tooltipOn }">
                     <v-btn
                       class="ma-0 pa-0 flowchart-sidebar__button"
-                      v-on="{ ...on, ...tooltipOn }"
                       text
                       large
+                      v-on="{ ...on, ...tooltipOn }"
                     >
                       <image-shape-icon class="grey--text text--darken-3" />
                     </v-btn>
@@ -92,15 +92,15 @@
             wrap
           >
             <v-btn
-              class="flowchart-sidebar__button-icon ma-0"
               v-for="(icon, index) in group.icons"
               :key="index"
+              class="flowchart-sidebar__button-icon ma-0"
               text
               @click="addIconAsset(icon)"
             >
               <span
-                class="text--disabled flowchart-sidebar__button-svg"
                 v-html="icon"
+                class="text--disabled flowchart-sidebar__button-svg"
               />
             </v-btn>
             <v-flex xs12>
