@@ -5,6 +5,7 @@ import { flushPromises, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreGetters, createMockedStoreModules } from '@unit/utils/store';
 import { fakeAlarm } from '@unit/data/alarm';
 import { triggerWindowKeyboardEvent, triggerWindowScrollEvent } from '@unit/utils/events';
+import { mockModals } from '@unit/utils/mock-hooks';
 
 import { ALARM_DENSE_TYPES, ALARM_FIELDS } from '@/constants';
 
@@ -29,6 +30,7 @@ const selectTableHead = wrapper => wrapper.find('thead');
 const selectTableBody = wrapper => wrapper.find('tbody');
 
 describe('alarms-list-table', () => {
+  const $modals = mockModals();
   const timestamp = 1386435600;
   const totalItems = 5;
   const alarms = range(totalItems).map(value => ({
@@ -508,13 +510,12 @@ describe('alarms-list-table', () => {
         columns,
         stickyHeader: true,
       },
+      mocks: { $modals },
     });
 
     expect(wrapper.vm.expanded).toEqual({});
 
-    const alarmsListRow = selectAlarmsListRow(wrapper).at(0);
-
-    alarmsListRow.triggerCustomEvent('click:state', true);
+    selectAlarmsListRow(wrapper).at(0).triggerCustomEvent('click:state', true);
 
     /**
      * TODO: Should be tested show modal
