@@ -153,6 +153,7 @@
       "newlines-between": "always"
     }],
     "no-unused-expressions": "off",
+    "no-restricted-syntax": ["off"],
     "no-restricted-imports": ["error", {
       "patterns": [
         {
