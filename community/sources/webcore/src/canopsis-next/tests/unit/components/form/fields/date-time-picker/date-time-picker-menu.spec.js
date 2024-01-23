@@ -44,7 +44,7 @@ describe('date-time-picker-menu', () => {
 
     await dateTimePicker.triggerCustomEvent('input', newDate);
 
-    expect(wrapper).toEmit('input', newDate);
+    expect(wrapper).toEmitInput(newDate);
   });
 
   test('Menu opened after trigger button', async () => {

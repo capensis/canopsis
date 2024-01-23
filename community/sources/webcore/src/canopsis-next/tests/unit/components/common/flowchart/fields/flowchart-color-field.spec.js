@@ -28,7 +28,7 @@ describe('flowchart-color-field', () => {
 
     checkboxField.triggerCustomEvent('change', true);
 
-    expect(wrapper).toEmit('input', firstColor);
+    expect(wrapper).toEmitInput(firstColor);
   });
 
   test('Value changed to transparent after trigger select field with false', () => {
@@ -42,7 +42,7 @@ describe('flowchart-color-field', () => {
 
     checkboxField.triggerCustomEvent('change', false);
 
-    expect(wrapper).toEmit('input', 'transparent');
+    expect(wrapper).toEmitInput('transparent');
   });
 
   test('Color picker modal showed after trigger button', () => {
@@ -78,7 +78,7 @@ describe('flowchart-color-field', () => {
 
     modalArguments.config.action(newColor);
 
-    expect(wrapper).toEmit('input', newColor);
+    expect(wrapper).toEmitInput(newColor);
   });
 
   test('Renders `flowchart-color-field` with default props', () => {

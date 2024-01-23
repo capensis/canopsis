@@ -28,7 +28,7 @@ describe('quick-date-interval-type', () => {
 
     selectQuickDateIntervalTypeFieldField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   test('Renders `quick-date-interval-type` with default props', () => {

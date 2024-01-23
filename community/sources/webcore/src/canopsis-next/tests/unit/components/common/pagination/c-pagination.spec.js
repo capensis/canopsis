@@ -28,7 +28,7 @@ describe('c-pagination', () => {
 
     wrapper.findAll('button').at(0).trigger('click');
 
-    expect(wrapper).toEmit('input', page - 1);
+    expect(wrapper).toEmitInput(page - 1);
   });
 
   it('Pagination on the top. Check prev page button is disabled, when first page.', () => {
@@ -45,7 +45,7 @@ describe('c-pagination', () => {
 
     wrapper.findAll('button').at(1).trigger('click');
 
-    expect(wrapper).toEmit('input', page + 1);
+    expect(wrapper).toEmitInput(page + 1);
   });
 
   it('Pagination on the top. Check next page button is disabled, when last page.', () => {
@@ -63,7 +63,7 @@ describe('c-pagination', () => {
 
     wrapper.find('.v-pagination').setValue(page);
 
-    expect(wrapper).toEmit('input', page);
+    expect(wrapper).toEmitInput(page);
   });
 
   it('Renders `c-pagination` with default props correctly', () => {

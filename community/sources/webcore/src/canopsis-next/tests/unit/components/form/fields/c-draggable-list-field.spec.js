@@ -43,7 +43,7 @@ describe('c-draggable-list-field', () => {
 
     selectDraggable(wrapper).triggerCustomEvent('input', newOrder);
 
-    expect(wrapper).toEmit('input', newOrder);
+    expect(wrapper).toEmitInput(newOrder);
   });
 
   it('Filter position changed after trigger draggable with added event', () => {
@@ -66,7 +66,7 @@ describe('c-draggable-list-field', () => {
 
     selectDraggable(wrapper).triggerCustomEvent('input', newItems);
 
-    expect(wrapper).toEmit('input', newItems);
+    expect(wrapper).toEmitInput(newItems);
   });
 
   it('Filter position changed after trigger draggable with removed event', () => {
@@ -83,7 +83,7 @@ describe('c-draggable-list-field', () => {
 
     selectDraggable(wrapper).triggerCustomEvent('input', newItems);
 
-    expect(wrapper).toEmit('input', newItems);
+    expect(wrapper).toEmitInput(newItems);
   });
 
   it('Renders `c-draggable-list-field` with default props', () => {

@@ -62,7 +62,7 @@ describe('c-patterns-field', () => {
 
     alarmPatternsField.triggerCustomEvent('input', alarmPattern);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...patterns,
       alarm_pattern: alarmPattern,
     });
@@ -93,7 +93,7 @@ describe('c-patterns-field', () => {
 
     entityPatternsField.triggerCustomEvent('input', entityPattern);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...patterns,
       entity_pattern: entityPattern,
     });
@@ -124,7 +124,7 @@ describe('c-patterns-field', () => {
 
     pbehaviorPatternsField.triggerCustomEvent('input', pbehaviorPattern);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...patterns,
       pbehavior_pattern: pbehaviorPattern,
     });
@@ -155,7 +155,7 @@ describe('c-patterns-field', () => {
 
     eventFilterPatternsField.triggerCustomEvent('input', eventFilterPattern);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...patterns,
       event_pattern: eventFilterPattern,
     });

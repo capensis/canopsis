@@ -36,7 +36,7 @@ describe('idle-rule-form', () => {
 
     enabledField.triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', { enabled: newValue });
+    expect(wrapper).toEmitInput({ enabled: newValue });
   });
 
   test('IDLE Rule fields changed after trigger general form', () => {
@@ -55,7 +55,7 @@ describe('idle-rule-form', () => {
 
     generalForm.triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   test('IDLE Rule patterns changed after trigger patterns form', () => {
@@ -77,7 +77,7 @@ describe('idle-rule-form', () => {
 
     patternsForm.triggerCustomEvent('input', newPatterns);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       enabled: true,
       name: 'Name',
       patterns: newPatterns,

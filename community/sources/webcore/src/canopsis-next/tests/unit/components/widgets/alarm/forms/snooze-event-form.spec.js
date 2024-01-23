@@ -39,7 +39,7 @@ describe('snooze-event-form', () => {
 
     durationField.triggerCustomEvent('input', duration);
 
-    expect(wrapper).toEmit('input', { ...form, duration });
+    expect(wrapper).toEmitInput({ ...form, duration });
   });
 
   test('Output changed after trigger description field', () => {
@@ -60,7 +60,7 @@ describe('snooze-event-form', () => {
 
     descriptionField.triggerCustomEvent('input', comment);
 
-    expect(wrapper).toEmit('input', { ...form, comment });
+    expect(wrapper).toEmitInput({ ...form, comment });
   });
 
   test('Renders `snooze-event-form` with required props', () => {

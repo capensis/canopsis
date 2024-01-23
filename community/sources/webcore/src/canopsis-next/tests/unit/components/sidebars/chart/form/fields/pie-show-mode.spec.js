@@ -30,7 +30,7 @@ describe('pie-show-mode', () => {
 
     selectRadioGroup(wrapper).setValue(KPI_PIE_CHART_SHOW_MODS.percent);
 
-    expect(wrapper).toEmit('input', KPI_PIE_CHART_SHOW_MODS.percent);
+    expect(wrapper).toEmitInput(KPI_PIE_CHART_SHOW_MODS.percent);
   });
 
   test('Renders `pie-show-mode` with required props', () => {

@@ -55,7 +55,7 @@ describe('c-pbehavior-reason-field', () => {
 
     selectSelectField(wrapper).triggerCustomEvent('input', reason._id);
 
-    expect(wrapper).toEmit('input', reason._id);
+    expect(wrapper).toEmitInput(reason._id);
   });
 
   test('Renders `c-pbehavior-reason-field` with default props', () => {

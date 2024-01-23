@@ -143,7 +143,7 @@ describe('point-form-dialog', () => {
 
     await flushPromises();
 
-    expect(wrapper).not.toEmit('submit');
+    expect(wrapper).not.toHaveBeenEmit('submit');
   });
 
   test('Point dialog closed after trigger cancel button', () => {
@@ -155,7 +155,7 @@ describe('point-form-dialog', () => {
 
     selectCancelButton(wrapper).trigger('click');
 
-    expect(wrapper).toEmit('cancel');
+    expect(wrapper).toHaveBeenEmit('cancel');
   });
 
   test('Point dialog closed after trigger close button', () => {
@@ -169,7 +169,7 @@ describe('point-form-dialog', () => {
 
     closeButton.trigger('click');
 
-    expect(wrapper).toEmit('cancel');
+    expect(wrapper).toHaveBeenEmit('cancel');
   });
 
   test('Point removed after trigger delete button', () => {
@@ -184,7 +184,7 @@ describe('point-form-dialog', () => {
 
     deleteButton.trigger('click');
 
-    expect(wrapper).toEmit('remove');
+    expect(wrapper).toHaveBeenEmit('remove');
   });
 
   test('Cancel emitted after click outside and confirm close', async () => {
@@ -231,7 +231,7 @@ describe('point-form-dialog', () => {
 
     modalArguments.config.action(false);
 
-    expect(wrapper).toEmit('cancel');
+    expect(wrapper).toHaveBeenEmit('cancel');
   });
 
   test('Submit emitted after click outside and confirm save', async () => {

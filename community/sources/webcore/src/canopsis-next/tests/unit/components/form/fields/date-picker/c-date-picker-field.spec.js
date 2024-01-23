@@ -43,7 +43,7 @@ describe('c-date-picker-field', () => {
 
     selectDatePicker(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   test('Value cleared after trigger text field', () => {
@@ -55,7 +55,7 @@ describe('c-date-picker-field', () => {
 
     selectTextField(wrapper).triggerCustomEvent('click:append');
 
-    expect(wrapper).toEmit('input', null);
+    expect(wrapper).toEmitInput(null);
   });
 
   test('Change event emitted after trigger date picker', () => {

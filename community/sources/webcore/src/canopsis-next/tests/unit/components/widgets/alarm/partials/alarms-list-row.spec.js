@@ -85,7 +85,7 @@ describe('alarms-list-row', () => {
 
     selectCheckbox(wrapper).trigger('click');
 
-    expect(wrapper).toEmit('input', true);
+    expect(wrapper).toEmitInput(true);
   });
 
   it('Listeners from feature called after trigger', () => {
@@ -211,7 +211,7 @@ describe('alarms-list-row', () => {
 
     selectAlarmColumnValue(wrapper).triggerCustomEvent('click:state');
 
-    expect(wrapper).toEmit('click:state');
+    expect(wrapper).toHaveBeenEmit('click:state');
   });
 
   it('Renders `alarms-list-row` with default and required props', () => {

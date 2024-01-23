@@ -56,7 +56,7 @@ describe('export-csv', () => {
 
     selectSeparatorSelectField(wrapper).setValue(EXPORT_CSV_SEPARATORS.semicolon);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       exportCsvSeparator: EXPORT_CSV_SEPARATORS.semicolon,
       exportCsvDatetimeFormat: EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
       widgetExportColumns: columns,
@@ -78,7 +78,7 @@ describe('export-csv', () => {
 
     selectDatetimeFormatSelectField(wrapper).setValue(EXPORT_CSV_DATETIME_FORMATS.dayOfMonthMonthNameYearTime.value);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       exportCsvSeparator: EXPORT_CSV_SEPARATORS.comma,
       exportCsvDatetimeFormat: EXPORT_CSV_DATETIME_FORMATS.dayOfMonthMonthNameYearTime.value,
       widgetExportColumns: columns,
@@ -99,7 +99,7 @@ describe('export-csv', () => {
 
     selectColumnsWithTemplateField(wrapper).triggerCustomEvent('input', columns);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       exportCsvSeparator: EXPORT_CSV_SEPARATORS.comma,
       exportCsvDatetimeFormat: EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
       widgetExportColumns: columns,

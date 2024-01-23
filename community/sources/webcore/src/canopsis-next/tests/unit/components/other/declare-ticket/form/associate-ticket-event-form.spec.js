@@ -45,7 +45,7 @@ describe('associate-ticket-event-form', () => {
 
     selectSystemNameField(wrapper).triggerCustomEvent('input', newName);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       system_name: newName,
     });
@@ -62,7 +62,7 @@ describe('associate-ticket-event-form', () => {
 
     selectDeclareTicketRuleTicketIdField(wrapper).triggerCustomEvent('input', newTicketId);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       ticket_id: newTicketId,
     });
@@ -79,7 +79,7 @@ describe('associate-ticket-event-form', () => {
 
     selectDeclareTicketRuleTicketUrlTextField(wrapper).triggerCustomEvent('input', newTicketUrl);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       ticket_url: newTicketUrl,
     });
@@ -102,7 +102,7 @@ describe('associate-ticket-event-form', () => {
 
     selectDeclareTicketRuleTicketCustomFieldsField(wrapper).triggerCustomEvent('input', newMapping);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       mapping: newMapping,
     });

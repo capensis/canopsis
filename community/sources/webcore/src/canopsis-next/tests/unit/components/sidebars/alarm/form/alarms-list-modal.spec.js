@@ -76,7 +76,7 @@ describe('alarms-list-modal', () => {
 
     selectFieldColumns(wrapper).triggerCustomEvent('input', newColumns);
 
-    expect(wrapper).toEmit('input', { ...form, widgetColumns: newColumns });
+    expect(wrapper).toEmitInput({ ...form, widgetColumns: newColumns });
   });
 
   test('Items per page changed after trigger items per page field', () => {
@@ -90,7 +90,7 @@ describe('alarms-list-modal', () => {
 
     selectFieldDefaultElementsPerPage(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', { ...form, itemsPerPage: newValue });
+    expect(wrapper).toEmitInput({ ...form, itemsPerPage: newValue });
   });
 
   test('Info popups changed after trigger info popup field', () => {
@@ -107,7 +107,7 @@ describe('alarms-list-modal', () => {
 
     selectFieldInfoPopup(wrapper).triggerCustomEvent('input', newInfoPopups);
 
-    expect(wrapper).toEmit('input', { ...form, infoPopups: newInfoPopups });
+    expect(wrapper).toEmitInput({ ...form, infoPopups: newInfoPopups });
   });
 
   test('More info template changed after trigger text editor field', () => {
@@ -119,7 +119,7 @@ describe('alarms-list-modal', () => {
 
     selectFieldTextEditorWithTemplate(wrapper).triggerCustomEvent('input', newTemplate);
 
-    expect(wrapper).toEmit('input', { ...form, moreInfoTemplate: newTemplate });
+    expect(wrapper).toEmitInput({ ...form, moreInfoTemplate: newTemplate });
   });
 
   test('Show root cause by state click changed after trigger switcher field', () => {
@@ -131,7 +131,7 @@ describe('alarms-list-modal', () => {
 
     selectFieldSwitcher(wrapper).triggerCustomEvent('input', newShowRootCauseByStateClick);
 
-    expect(wrapper).toEmit('input', { ...form, showRootCauseByStateClick: newShowRootCauseByStateClick });
+    expect(wrapper).toEmitInput({ ...form, showRootCauseByStateClick: newShowRootCauseByStateClick });
   });
 
   test('Renders `alarms-list-modal` with default props', () => {

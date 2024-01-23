@@ -92,7 +92,7 @@ describe('kpi-rating-criteria-field', () => {
 
     expect(fetchRatingSettings).toBeCalledTimes(1);
 
-    expect(wrapper).toEmit('input', ratingSetting);
+    expect(wrapper).toEmitInput(ratingSetting);
   });
 
   it('First rating not set after fetch without value, if data is empty', async () => {
@@ -115,7 +115,7 @@ describe('kpi-rating-criteria-field', () => {
 
     expect(fetchRatingSettings).toBeCalledTimes(1);
 
-    expect(wrapper).not.toEmit('input');
+    expect(wrapper).not.toHaveBeenEmit('input');
   });
 
   it('First rating settled after fetch, if items doesn\'t includes value', async () => {
@@ -145,7 +145,7 @@ describe('kpi-rating-criteria-field', () => {
 
     expect(fetchRatingSettings).toBeCalledTimes(1);
 
-    expect(wrapper).toEmit('input', ratingSetting);
+    expect(wrapper).toEmitInput(ratingSetting);
   });
 
   it('First rating not settled after fetch, if items includes value', async () => {
@@ -172,7 +172,7 @@ describe('kpi-rating-criteria-field', () => {
 
     expect(fetchRatingSettings).toBeCalledTimes(1);
 
-    expect(wrapper).not.toEmit('input');
+    expect(wrapper).not.toHaveBeenEmit('input');
   });
 
   it('First rating settled after fetch, if value is undefined', async () => {
@@ -198,7 +198,7 @@ describe('kpi-rating-criteria-field', () => {
 
     expect(fetchRatingSettings).toBeCalledTimes(1);
 
-    expect(wrapper).toEmit('input', ratingSettings[0]);
+    expect(wrapper).toEmitInput(ratingSettings[0]);
   });
 
   it('Criteria changed after trigger select field', () => {
@@ -219,7 +219,7 @@ describe('kpi-rating-criteria-field', () => {
 
     wrapper.find('select.v-select').triggerCustomEvent('input', KPI_RATING_CRITERIA.role);
 
-    expect(wrapper).toEmit('input', KPI_RATING_CRITERIA.role);
+    expect(wrapper).toEmitInput(KPI_RATING_CRITERIA.role);
   });
 
   it('Renders `kpi-rating-criteria-field` without props', async () => {

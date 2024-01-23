@@ -32,7 +32,7 @@ describe('kpi-rating-metric-field', () => {
 
     valueElement.setValue(ALARM_METRIC_PARAMETERS.instructionAlarms);
 
-    expect(wrapper).toEmit('input', ALARM_METRIC_PARAMETERS.instructionAlarms);
+    expect(wrapper).toEmitInput(ALARM_METRIC_PARAMETERS.instructionAlarms);
   });
 
   it('Renders `kpi-rating-metric-field` without props', () => {

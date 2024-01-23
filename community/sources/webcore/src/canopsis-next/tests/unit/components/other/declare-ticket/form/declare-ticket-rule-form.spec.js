@@ -41,7 +41,7 @@ describe('declare-ticket-rule-form', () => {
 
     selectDeclareTicketRuleGeneralForm(wrapper).triggerCustomEvent('input', newForm);
 
-    expect(wrapper).toEmit('input', newForm);
+    expect(wrapper).toEmitInput(newForm);
   });
 
   test('Patterns fields changed after trigger input event on patterns form', () => {
@@ -58,7 +58,7 @@ describe('declare-ticket-rule-form', () => {
 
     selectDeclareTicketRulePatternsForm(wrapper).triggerCustomEvent('input', newFormPatterns);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       patterns: newFormPatterns,
     });

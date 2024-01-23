@@ -29,7 +29,7 @@ describe('default-elements-per-page', () => {
 
     selectElementsPerPageField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   it('Renders `default-sort-column` with default props', () => {

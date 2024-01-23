@@ -35,7 +35,7 @@ describe('c-mixed-field', () => {
 
     inputTypeField.triggerCustomEvent('input', PATTERN_FIELD_TYPES.string);
 
-    expect(wrapper).toEmit('input', '12');
+    expect(wrapper).toEmitInput('12');
   });
 
   it('Input type changed after trigger input type field with number value', () => {
@@ -49,7 +49,7 @@ describe('c-mixed-field', () => {
 
     inputTypeField.triggerCustomEvent('input', PATTERN_FIELD_TYPES.number);
 
-    expect(wrapper).toEmit('input', 12);
+    expect(wrapper).toEmitInput(12);
   });
 
   it('Input type changed after trigger input type field with null value', () => {
@@ -63,7 +63,7 @@ describe('c-mixed-field', () => {
 
     inputTypeField.triggerCustomEvent('input', PATTERN_FIELD_TYPES.null);
 
-    expect(wrapper).toEmit('input', null);
+    expect(wrapper).toEmitInput(null);
   });
 
   it('Input type changed after trigger input type field with boolean value', () => {
@@ -77,7 +77,7 @@ describe('c-mixed-field', () => {
 
     inputTypeField.triggerCustomEvent('input', PATTERN_FIELD_TYPES.boolean);
 
-    expect(wrapper).toEmit('input', true);
+    expect(wrapper).toEmitInput(true);
   });
 
   it('Input type changed after trigger input type field with array value', () => {
@@ -91,7 +91,7 @@ describe('c-mixed-field', () => {
 
     inputTypeField.triggerCustomEvent('input', PATTERN_FIELD_TYPES.stringArray);
 
-    expect(wrapper).toEmit('input', ['12']);
+    expect(wrapper).toEmitInput(['12']);
   });
 
   it('Value changed on the first field after remove selected type', async () => {
@@ -114,7 +114,7 @@ describe('c-mixed-field', () => {
       ],
     });
 
-    expect(wrapper).toEmit('input', `${value}`);
+    expect(wrapper).toEmitInput(`${value}`);
   });
 
   it('Value change on undefined after remove all types', async () => {
@@ -134,7 +134,7 @@ describe('c-mixed-field', () => {
       types: [],
     });
 
-    expect(wrapper).toEmit('input', undefined);
+    expect(wrapper).toEmitInput(undefined);
   });
 
   it('Renders `c-mixed-field` with default props', () => {

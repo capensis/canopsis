@@ -34,7 +34,7 @@ describe('alarm-column-value', () => {
 
     selectAlarmColumnCell(wrapper).triggerCustomEvent('click:state');
 
-    expect(wrapper).toEmit('click:state');
+    expect(wrapper).toHaveBeenEmit('click:state');
   });
 
   it('Renders `alarm-column-value` with required props', async () => {

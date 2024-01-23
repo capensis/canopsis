@@ -20,7 +20,7 @@ describe('group-view-panel', () => {
 
     selectEditButton(wrapper).triggerCustomEvent('click', new Event('click'));
 
-    expect(wrapper).toEmit('change');
+    expect(wrapper).toHaveBeenEmit('change');
   });
 
   it('Duplicate event emitted after trigger duplicate button', () => {
@@ -34,7 +34,7 @@ describe('group-view-panel', () => {
 
     selectDuplicateButton(wrapper).triggerCustomEvent('click', new Event('click'));
 
-    expect(wrapper).toEmit('duplicate');
+    expect(wrapper).toHaveBeenEmit('duplicate');
   });
 
   it('Renders `group-view-panel` with required props', () => {

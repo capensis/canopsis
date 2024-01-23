@@ -42,7 +42,7 @@ describe('date-time-splitted-picker-field', () => {
 
     selectDatePickerField(wrapper).triggerCustomEvent('input', '2022-03-11');
 
-    expect(wrapper).toEmit('input', new Date('2022-03-11T14:55:00.000Z'));
+    expect(wrapper).toEmitInput(new Date('2022-03-11T14:55:00.000Z'));
   });
 
   test('Time changed after trigger time field', () => {
@@ -54,7 +54,7 @@ describe('date-time-splitted-picker-field', () => {
 
     selectTimePickerField(wrapper).triggerCustomEvent('input', '12:15');
 
-    expect(wrapper).toEmit('input', new Date('1998-11-01T11:15:00.000Z'));
+    expect(wrapper).toEmitInput(new Date('1998-11-01T11:15:00.000Z'));
   });
 
   test('Renders `date-time-splitted-picker-field` with default props', () => {

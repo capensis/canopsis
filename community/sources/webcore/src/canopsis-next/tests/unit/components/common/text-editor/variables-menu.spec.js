@@ -27,7 +27,7 @@ describe('variables-menu', () => {
 
     variablesList.triggerCustomEvent('input', value);
 
-    expect(wrapper).toEmit('input', value);
+    expect(wrapper).toEmitInput(value);
   });
 
   test('Close event emitted after trigger menu', () => {
@@ -37,7 +37,7 @@ describe('variables-menu', () => {
 
     menuNode.$emit('input');
 
-    expect(wrapper).toEmit('close');
+    expect(wrapper).toHaveBeenEmit('close');
   });
 
   test('Renders `variables-menu` with default props', () => {

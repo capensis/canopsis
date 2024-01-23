@@ -38,7 +38,7 @@ describe('group-panel', () => {
 
     selectButton(wrapper).triggerCustomEvent('click', new Event('click'));
 
-    expect(wrapper).toEmit('change');
+    expect(wrapper).toHaveBeenEmit('change');
   });
 
   it('Renders `group-panel` with required props', () => {

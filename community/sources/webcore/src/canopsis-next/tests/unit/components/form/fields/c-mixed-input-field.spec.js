@@ -48,7 +48,7 @@ describe('c-mixed-input-field', () => {
 
     selectTextField(wrapper).setValue(null);
 
-    expect(wrapper).toEmit('input', '');
+    expect(wrapper).toEmitInput('');
   });
 
   it('Value changed after trigger the input with number value', () => {
@@ -61,7 +61,7 @@ describe('c-mixed-input-field', () => {
     });
     selectTextField(wrapper).setValue(`${newNumber}`);
 
-    expect(wrapper).toEmit('input', newNumber);
+    expect(wrapper).toEmitInput(newNumber);
   });
 
   it('Value changed after trigger the select with items', () => {
@@ -80,7 +80,7 @@ describe('c-mixed-input-field', () => {
 
     combobox.setValue(item.value);
 
-    expect(wrapper).toEmit('input', item.value);
+    expect(wrapper).toEmitInput(item.value);
   });
 
   it('Renders `c-mixed-input-field` with default props correctly', () => {

@@ -45,7 +45,7 @@ describe('default-sort-column', () => {
 
     selectColumnSelectField(wrapper).setValue(secondColumn.value);
 
-    expect(wrapper).toEmit('input', { column: secondColumn.value, order: SORT_ORDERS.desc });
+    expect(wrapper).toEmitInput({ column: secondColumn.value, order: SORT_ORDERS.desc });
   });
 
   it('Order changed after trigger select field with orders', () => {
@@ -62,7 +62,7 @@ describe('default-sort-column', () => {
 
     selectOrderSelectField(wrapper).setValue(SORT_ORDERS.asc);
 
-    expect(wrapper).toEmit('input', { column: firstColumn.value, order: SORT_ORDERS.asc });
+    expect(wrapper).toEmitInput({ column: firstColumn.value, order: SORT_ORDERS.asc });
   });
 
   it('Renders `default-sort-column` with default props', () => {

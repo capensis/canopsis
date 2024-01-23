@@ -46,7 +46,7 @@ describe('fast-action-output', () => {
 
     selectEnabledField(wrapper).triggerCustomEvent('input', false);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...value,
       enabled: false,
     });
@@ -67,7 +67,7 @@ describe('fast-action-output', () => {
 
     selectTextField(wrapper).setValue(newValue);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...value,
       value: newValue,
     });

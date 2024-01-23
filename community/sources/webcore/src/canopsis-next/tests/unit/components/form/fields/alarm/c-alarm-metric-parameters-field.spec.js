@@ -24,7 +24,7 @@ describe('c-alarm-metric-parameters-field', () => {
 
     selectAutocompleteNode(wrapper).$emit('input', ALARM_METRIC_PARAMETERS.maxAck);
 
-    expect(wrapper).toEmit('input', ALARM_METRIC_PARAMETERS.maxAck);
+    expect(wrapper).toEmitInput(ALARM_METRIC_PARAMETERS.maxAck);
   });
 
   it('Renders `c-alarm-metric-parameters-field` with default props', async () => {

@@ -24,7 +24,7 @@ describe('c-alarm-metric-aggregate-function-field', () => {
 
     selectRadioGroup(wrapper).triggerCustomEvent('input', AGGREGATE_FUNCTIONS.max);
 
-    expect(wrapper).toEmit('input', AGGREGATE_FUNCTIONS.max);
+    expect(wrapper).toEmitInput(AGGREGATE_FUNCTIONS.max);
   });
 
   it('Renders `c-alarm-metric-aggregate-function-field` with default props', () => {

@@ -39,7 +39,7 @@ describe('dynamic-info-form', () => {
 
     dynamicInfoGeneralForm.triggerCustomEvent('input', newForm);
 
-    expect(wrapper).toEmit('input', newForm);
+    expect(wrapper).toEmitInput(newForm);
   });
 
   test('Dynamic info infos changed after trigger infos form', () => {
@@ -63,7 +63,7 @@ describe('dynamic-info-form', () => {
 
     dynamicInfoInfosForm.triggerCustomEvent('input', newInfos);
 
-    expect(wrapper).toEmit('input', { infos: newInfos });
+    expect(wrapper).toEmitInput({ infos: newInfos });
   });
 
   test('Dynamic info patterns changed after trigger patterns form', () => {
@@ -85,7 +85,7 @@ describe('dynamic-info-form', () => {
 
     patternsForm.triggerCustomEvent('input', newPatterns);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       infos: [],
       patterns: newPatterns,
     });

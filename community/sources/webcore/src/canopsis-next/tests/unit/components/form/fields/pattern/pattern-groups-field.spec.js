@@ -36,7 +36,7 @@ describe('pattern-groups-field', () => {
 
     secondGroup.triggerCustomEvent('remove');
 
-    expect(wrapper).toEmit('input', [
+    expect(wrapper).toEmitInput([
       groups[0],
       groups[2],
     ]);
@@ -59,7 +59,7 @@ describe('pattern-groups-field', () => {
 
     lastGroup.triggerCustomEvent('input', updatedGroup);
 
-    expect(wrapper).toEmit('input', [
+    expect(wrapper).toEmitInput([
       groups[0],
       groups[1],
       updatedGroup,
@@ -83,7 +83,7 @@ describe('pattern-groups-field', () => {
 
     addButton.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('input', [
+    expect(wrapper).toEmitInput([
       ...groups,
       {
         key: expect.any(String),

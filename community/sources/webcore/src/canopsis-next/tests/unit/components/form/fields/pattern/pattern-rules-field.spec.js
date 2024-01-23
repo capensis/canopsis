@@ -56,7 +56,7 @@ describe('pattern-rules-field', () => {
 
     removeSecondRuleButton.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('input', [
+    expect(wrapper).toEmitInput([
       rules[0],
       rules[2],
     ]);
@@ -81,7 +81,7 @@ describe('pattern-rules-field', () => {
 
     lastRule.triggerCustomEvent('input', updatedRule);
 
-    expect(wrapper).toEmit('input', [
+    expect(wrapper).toEmitInput([
       rules[0],
       rules[1],
       {
@@ -110,7 +110,7 @@ describe('pattern-rules-field', () => {
 
     lastRule.triggerCustomEvent('input', updatedRule);
 
-    expect(wrapper).toEmit('input', [
+    expect(wrapper).toEmitInput([
       rules[0],
       {
         ...updatedRule,
@@ -148,7 +148,7 @@ describe('pattern-rules-field', () => {
 
     lastRule.triggerCustomEvent('input', updatedRule);
 
-    expect(wrapper).toEmit('input', [
+    expect(wrapper).toEmitInput([
       rules[0],
       {
         ...updatedRule,
@@ -175,7 +175,7 @@ describe('pattern-rules-field', () => {
 
     addButton.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('input', [
+    expect(wrapper).toEmitInput([
       ...rules,
       {
         attribute: attribute.value,

@@ -30,7 +30,7 @@ describe('c-date-interval-field', () => {
 
     fromDatePicker.triggerCustomEvent('input', QUICK_RANGES.last3Hour.start);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       from: QUICK_RANGES.last3Hour.start,
       to: QUICK_RANGES.last12Hour.stop,
     });
@@ -50,7 +50,7 @@ describe('c-date-interval-field', () => {
 
     toDatePicker.triggerCustomEvent('input', QUICK_RANGES.last3Hour.stop);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       from: QUICK_RANGES.last12Hour.start,
       to: QUICK_RANGES.last3Hour.stop,
     });
