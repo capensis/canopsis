@@ -11,8 +11,8 @@
             {{ title }}
           </slot>
           <span
-            class="font-italic text-caption ml-1"
             v-if="optional || subTitle"
+            class="font-italic text-caption ml-1"
           >
             <span v-if="optional">({{ $t('common.optional') }})</span>
             <span v-if="subTitle">{{ subTitle }}</span>

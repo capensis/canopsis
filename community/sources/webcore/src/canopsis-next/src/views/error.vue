@@ -13,8 +13,8 @@
       >
       <span class="text-subtitle-1 pt-4">{{ $t('errors.default') }}</span>
       <span
-        class="text-subtitle-1"
         v-if="message"
+        class="text-subtitle-1"
       >
         {{ message }}
       </span>

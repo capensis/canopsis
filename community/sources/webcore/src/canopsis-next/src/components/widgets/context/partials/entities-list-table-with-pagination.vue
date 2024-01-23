@@ -62,8 +62,8 @@
       </template>
       <template #mass-actions="{ selected, clearSelected }">
         <mass-actions-panel
-          class="ml-3"
           :items="selected"
+          class="ml-3"
           @clear:items="clearSelected"
         />
       </template>

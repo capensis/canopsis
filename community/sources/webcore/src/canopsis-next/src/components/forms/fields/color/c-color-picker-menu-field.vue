@@ -9,11 +9,11 @@
   >
     <template #activator="{ on }">
       <v-btn
-        class="c-color-picker-menu-field__button ma-0 pa-0"
-        v-on="on"
         :style="style"
         :disabled="disabled"
+        class="c-color-picker-menu-field__button ma-0 pa-0"
         block
+        v-on="on"
       />
     </template>
     <c-color-chrome-picker-field v-model="colorObject" />

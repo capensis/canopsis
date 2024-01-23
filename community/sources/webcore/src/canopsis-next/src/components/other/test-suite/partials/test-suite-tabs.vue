@@ -1,42 +1,42 @@
 <template>
   <v-tabs
-    centered
     slider-color="primary"
+    centered
   >
     <v-tab>{{ $t('common.summary') }}</v-tab>
     <v-tab-item>
       <test-suite-summary-tab
-        class="pt-3"
         :test-suite="testSuite"
+        class="pt-3"
       />
     </v-tab-item>
     <v-tab>{{ $t('testSuite.tabs.globalMessages') }}</v-tab>
     <v-tab-item>
       <test-suite-messages-tab
-        class="pt-3"
         :test-suite="testSuite"
+        class="pt-3"
       />
     </v-tab-item>
     <v-tab>{{ $t('testSuite.tabs.gantt') }}</v-tab>
     <v-tab-item>
       <test-suite-gantt-tab
-        class="pt-3"
         :test-suite="testSuite"
+        class="pt-3"
       />
     </v-tab-item>
     <v-tab>{{ $t('testSuite.tabs.details') }}</v-tab>
     <v-tab-item>
       <test-suite-details-tab
-        class="pt-3"
         :test-suite="testSuite"
+        class="pt-3"
       />
     </v-tab-item>
     <template v-if="hasScreenshots">
       <v-tab>{{ $t('testSuite.tabs.screenshots') }}</v-tab>
       <v-tab-item>
         <test-suite-screenshots-tab
-          class="pt-3"
           :test-suite="testSuite"
+          class="pt-3"
         />
       </v-tab-item>
     </template>
@@ -44,8 +44,8 @@
       <v-tab>{{ $t('testSuite.tabs.videos') }}</v-tab>
       <v-tab-item>
         <test-suite-videos-tab
-          class="pt-3"
           :test-suite="testSuite"
+          class="pt-3"
         />
       </v-tab-item>
     </template>

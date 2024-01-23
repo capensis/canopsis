@@ -41,9 +41,9 @@
           @change="enableColor($event)"
         />
         <c-color-picker-field
-          class="c-alarm-metric-preset-field__color-picker"
           v-show="preset.color"
           v-field="preset.color"
+          class="c-alarm-metric-preset-field__color-picker"
         />
       </v-layout>
       <c-alarm-metric-aggregate-function-field

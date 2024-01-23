@@ -2,26 +2,26 @@
   <v-layout align-center>
     <template v-if="splitted">
       <v-btn
-        class="mr-3"
-        :disabled="disabled"
         key="splitted"
+        :disabled="disabled"
+        class="mr-3"
         small
         @click="showColorPickerModal"
       >
         {{ label }}
       </v-btn>
       <div
-        class="pa-1 text-center"
         :style="style"
+        class="pa-1 text-center"
       >
         {{ color }}
       </div>
     </template>
     <v-btn
       v-else
+      key="not-splitted"
       :style="style"
       :disabled="disabled"
-      key="not-splitted"
       @click="showColorPickerModal"
     >
       {{ label }}

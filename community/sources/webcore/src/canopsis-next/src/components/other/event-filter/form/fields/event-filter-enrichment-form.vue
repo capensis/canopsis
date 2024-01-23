@@ -1,8 +1,8 @@
 <template>
   <v-layout column>
     <c-collapse-panel
-      class="mb-2"
       :title="$t('eventFilter.editActions')"
+      class="mb-2"
     >
       <event-filter-enrichment-actions-form
         v-field="form.config.actions"
@@ -12,16 +12,16 @@
     </c-collapse-panel>
     <v-layout>
       <v-select
-        class="mr-3"
         v-field="form.config.on_success"
         :label="$t('eventFilter.onSuccess')"
         :items="eventFilterAfterTypes"
+        class="mr-3"
       />
       <v-select
-        class="ml-3"
         v-field="form.config.on_failure"
         :label="$t('eventFilter.onFailure')"
         :items="eventFilterAfterTypes"
+        class="ml-3"
       />
     </v-layout>
     <c-alert

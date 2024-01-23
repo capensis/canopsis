@@ -1,7 +1,7 @@
 <template>
   <v-stepper
-    class="state-setting-form"
     v-model="stepper"
+    class="state-setting-form"
   >
     <v-stepper-header>
       <v-stepper-step
@@ -34,8 +34,8 @@
     <v-stepper-items>
       <v-stepper-content :step="steps.BASICS">
         <state-setting-basics-step
-          ref="basicsForm"
           v-field="form"
+          ref="basicsForm"
         />
       </v-stepper-content>
       <v-stepper-content :step="steps.ENTITY_PATTERN">
@@ -46,8 +46,8 @@
           {{ methodMessage }}
         </c-alert>
         <state-setting-entity-pattern-step
-          ref="entityPatternForm"
           v-field="form.entity_pattern"
+          ref="entityPatternForm"
         />
       </v-stepper-content>
       <v-stepper-content :step="steps.THRESHOLDS">
@@ -58,14 +58,14 @@
           {{ methodMessage }}
         </c-alert>
         <state-setting-inherited-entity-pattern-step
-          ref="thresholdsForm"
           v-if="isInheritedMethod"
           v-field="form.inherited_entity_pattern"
+          ref="thresholdsForm"
         />
         <state-setting-thresholds-step
-          ref="thresholdsForm"
           v-else
           v-field="form.state_thresholds"
+          ref="thresholdsForm"
         />
       </v-stepper-content>
     </v-stepper-items>

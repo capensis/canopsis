@@ -14,8 +14,8 @@
         >
           <template #label="{ item }">
             <slot
-              name="expand"
               :item="item"
+              name="expand"
             >
               <v-avatar
                 class="white--text"
@@ -26,8 +26,8 @@
               </v-avatar>
             </slot>
             <slot
-              name="expand-append"
               :item="item"
+              name="expand-append"
             />
           </template>
         </v-treeview>

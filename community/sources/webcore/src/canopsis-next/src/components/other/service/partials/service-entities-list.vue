@@ -1,19 +1,19 @@
 <template>
   <div>
     <v-layout
-      class="d-inline-flex"
       v-if="serviceEntities.length"
+      class="d-inline-flex"
       align-center
     >
       <v-simple-checkbox
-        class="ml-4 pa-0"
         v-model="isAllSelected"
         :disabled="!entitiesWithActions.length"
+        class="ml-4 pa-0"
       />
       <v-fade-transition mode="out-in">
         <span
-          class="font-italic"
           v-if="!selectedEntities.length"
+          class="font-italic"
         >
           {{ $t('modals.service.massActionsDescription') }}
         </span>
@@ -26,9 +26,9 @@
       </v-fade-transition>
     </v-layout>
     <div
-      class="mt-2"
       v-for="serviceEntity in serviceEntities"
       :key="serviceEntity.key"
+      class="mt-2"
     >
       <service-entity
         :service-id="service._id"
@@ -43,11 +43,11 @@
       />
     </div>
     <c-table-pagination
-      class="mt-1"
       v-if="totalItems > options.itemsPerPage"
       :total-items="totalItems"
       :items-per-page="options.itemsPerPage"
       :page="options.page"
+      class="mt-1"
       @update:page="updatePage"
       @update:items-per-page="updateItemsPerPage"
     />

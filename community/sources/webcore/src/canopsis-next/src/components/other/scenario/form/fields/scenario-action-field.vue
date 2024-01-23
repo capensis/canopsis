@@ -29,9 +29,9 @@
           :label="$t('scenario.skipForChild')"
         />
         <c-enabled-field
-          class="mt-0"
           v-model="parameters.skip_for_instruction"
           :label="$t('scenario.skipForInstruction')"
+          class="mt-0"
         />
       </v-flex>
     </v-layout>
@@ -41,9 +41,9 @@
       :continue-label="$t('scenario.remainingAction')"
     />
     <v-textarea
-      class="mt-2"
       v-field="action.comment"
       :label="$tc('common.comment')"
+      class="mt-2"
     />
     <v-tabs
       v-model="activeTab"
@@ -60,25 +60,25 @@
     </v-tabs>
     <v-divider />
     <v-tabs-items
-      class="pt-2"
       v-model="activeTab"
+      class="pt-2"
     >
       <v-tab-item eager>
         <action-parameters-form
-          class="mt-4"
-          ref="general"
           v-model="parameters"
+          ref="general"
           :name="`${name}.parameters`"
           :type="action.type"
           :has-previous-webhook="hasPreviousWebhook"
+          class="mt-4"
         />
       </v-tab-item>
       <v-tab-item eager>
         <scenario-action-patterns-form
           v-field="action.patterns"
-          class="mt-4"
           ref="patterns"
           :name="name"
+          class="mt-4"
         />
       </v-tab-item>
     </v-tabs-items>

@@ -1,9 +1,9 @@
 <template>
   <v-radio-group
-    class="mt-0"
     v-field="value"
     :name="name"
     :label="label"
+    class="mt-0"
   >
     <v-radio
       v-for="aggregateFunction in availableAggregateFunctions"

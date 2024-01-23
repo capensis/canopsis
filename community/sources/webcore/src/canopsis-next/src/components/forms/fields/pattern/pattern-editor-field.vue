@@ -1,11 +1,11 @@
 <template>
   <v-layout column>
     <c-pattern-field
-      class="mb-2"
       v-if="withType"
       :value="patterns.id"
       :type="type"
       :disabled="disabled || readonly"
+      class="mb-2"
       return-object
       required
       @input="updatePattern"
@@ -24,7 +24,6 @@
       </v-tab>
       <v-tab-item :value="$constants.PATTERN_EDITOR_TABS.simple">
         <pattern-groups-field
-          class="mt-2"
           v-field="patterns.groups"
           :disabled="formDisabled"
           :readonly="readonly"
@@ -32,6 +31,7 @@
           :type="type"
           :required="required"
           :attributes="attributes"
+          class="mt-2"
         />
       </v-tab-item>
       <v-tab :href="`#${$constants.PATTERN_EDITOR_TABS.advanced}`">
@@ -53,9 +53,9 @@
         justify-end
       >
         <v-btn
-          class="mr-0"
           v-if="withType && !isCustomPattern"
           :disabled="disabled"
+          class="mr-0"
           color="primary"
           @click="updatePatternToCustom"
         >
@@ -75,8 +75,8 @@
       </v-layout>
       <v-flex>
         <v-alert
-          class="pre-wrap"
           v-if="errorMessage"
+          class="pre-wrap"
           value="true"
         >
           {{ errorMessage }}

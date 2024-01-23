@@ -1,8 +1,8 @@
 <template>
   <v-select
-    class="select"
     :items="items"
     :value="value"
+    class="select"
     hide-details
     single-line
     dense

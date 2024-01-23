@@ -43,9 +43,9 @@
       <v-tooltip top>
         <template #activator="{ on }">
           <v-btn
-            v-on="on"
             class="mx-2"
             color="secondary"
+            v-on="on"
             @click="refresh"
           >
             <v-icon>refresh</v-icon>

@@ -2,12 +2,12 @@
   <g @dblclick.stop="enableEditingMode">
     <ellipse
       v-bind="shape.properties"
-      v-on="$listeners"
       :cx="centerX"
       :cy="centerY"
       :rx="radiusX"
       :ry="radiusY"
       :cursor="readonly ? '' : 'move'"
+      v-on="$listeners"
     />
     <text-editor
       ref="editor"

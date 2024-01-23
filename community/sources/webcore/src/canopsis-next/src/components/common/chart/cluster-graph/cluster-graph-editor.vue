@@ -2,8 +2,8 @@
   <v-layout class="cluster-graph-editor">
     <v-flex class="cluster-graph-editor__sidebar">
       <cluster-graph-entities-type
-        class="mb-3"
         v-field="form.impact"
+        class="mb-3"
         @change="clearPinnedEntities"
       />
       <cluster-graph-entities-list
@@ -17,10 +17,10 @@
     <v-flex class="cluster-graph-editor__content">
       <c-zoom-overlay>
         <network-graph
-          class="fill-height"
           ref="networkGraph"
           :options="options"
           :node-html-label-options="nodeHtmlLabelsOptions"
+          class="fill-height"
           ctrl-wheel-zoom
         />
       </c-zoom-overlay>

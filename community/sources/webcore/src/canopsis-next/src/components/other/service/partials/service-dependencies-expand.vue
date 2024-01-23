@@ -6,9 +6,9 @@
     >
       <template #activator="{ on }">
         <v-btn
-          v-on="on"
           :loading="pending"
           icon
+          v-on="on"
           @click="$emit('load', item)"
         >
           <v-icon>more_horiz</v-icon>
@@ -48,9 +48,9 @@
       <template #activator="{ on }">
         <v-icon
           class="ml-1"
-          v-on="on"
           color="error"
           size="14"
+          v-on="on"
         >
           autorenew
         </v-icon>

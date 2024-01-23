@@ -133,9 +133,9 @@
         </v-btn>
       </template>
       <v-btn
-        class="mr-0 ml-4"
         :disabled="!hasPatterns"
         :loading="countersPending"
+        class="mr-0 ml-4"
         color="primary"
         @click="checkFilter"
       >

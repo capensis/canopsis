@@ -14,8 +14,8 @@
         <v-list-item-title>
           <v-layout justify-space-between>
             {{ variable.text }}<span
-              class="ml-4 grey--text lighten-1"
               v-if="showValue"
+              class="ml-4 grey--text lighten-1"
             >{{ variable.value }}</span>
           </v-layout>
         </v-list-item-title>

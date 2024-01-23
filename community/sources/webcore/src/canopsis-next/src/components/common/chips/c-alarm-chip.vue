@@ -1,7 +1,7 @@
 <template>
   <div
-    class="chip-container"
     :class="{ 'chip-container--small': small }"
+    class="chip-container"
     @click="$emit('click', $event)"
   >
     <v-badge
@@ -13,8 +13,8 @@
         <span>{{ badgeValue }}</span>
       </template>
       <span
-        class="chip"
         :style="{ backgroundColor: style.color }"
+        class="chip"
       >
         {{ style.text }}
       </span>

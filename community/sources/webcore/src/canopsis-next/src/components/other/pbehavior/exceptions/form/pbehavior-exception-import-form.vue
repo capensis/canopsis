@@ -10,8 +10,8 @@
       required
     />
     <file-selector
-      class="mt-2"
       :error-messages="errors.collect('file')"
+      class="mt-2"
       with-files-list
       @change="changeFiles"
     >
@@ -19,11 +19,11 @@
         <v-tooltip top>
           <template #activator="{ on: tooltipOn }">
             <v-btn
-              v-on="{ ...on, ...tooltipOn }"
               :color="errors.has('file') ? 'error' : 'primary'"
               :disabled="disabled"
               small
               outlined
+              v-on="{ ...on, ...tooltipOn }"
             >
               <v-icon>cloud_upload</v-icon>
             </v-btn>

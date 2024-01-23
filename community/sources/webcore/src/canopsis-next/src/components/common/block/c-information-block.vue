@@ -18,8 +18,8 @@
       />
     </v-layout>
     <v-layout
-      class="mt-2"
       v-if="$slots.subtitle"
+      class="mt-2"
     >
       <span class="text--secondary">
         <slot name="subtitle" />

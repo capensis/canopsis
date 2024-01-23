@@ -1,9 +1,9 @@
 <template>
   <widget-settings-item :title="$t('settings.chart.graphType')">
     <v-radio-group
-      class="pt-0 mt-0"
       v-field="value"
       :name="name"
+      class="pt-0 mt-0"
       hide-details
     >
       <v-radio
