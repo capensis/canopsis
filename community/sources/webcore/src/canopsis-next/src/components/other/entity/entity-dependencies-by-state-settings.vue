@@ -1,10 +1,10 @@
 <template>
   <div class="entity-dependencies-by-state-settings">
     <network-graph
-      class="fill-height black--text"
       ref="networkGraph"
       :options="options"
       :node-html-label-options="nodeHtmlLabelsOptions"
+      class="fill-height black--text"
       ctrl-wheel-zoom
     />
   </div>
