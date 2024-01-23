@@ -1,10 +1,8 @@
 <template>
   <file-selector
-    v-validate="rules"
     v-bind="$attrs"
     :error-messages="errors.collect(name)"
     :name="name"
-    accept=".svg"
     @change="$emit('change', $event)"
   >
     <template #activator="{ clear, on, drop, files }">
@@ -45,10 +43,6 @@ export default {
   components: { FileSelector },
   inheritAttrs: false,
   props: {
-    required: {
-      type: Boolean,
-      default: false,
-    },
     name: {
       type: String,
       default: 'file',
@@ -56,13 +50,6 @@ export default {
     fileTypeLabel: {
       type: String,
       default: '',
-    },
-  },
-  computed: {
-    rules() {
-      return {
-        required: this.required,
-      };
     },
   },
 };

@@ -1,7 +1,7 @@
 <template>
   <file-drag-selector
     :file-type-label="$t('common.fileSelector.fileTypes.svg')"
-    accept=".svg"
+    accept=".svg,.svg+xml"
     required
     @change="chooseIcon"
   >
