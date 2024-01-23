@@ -1,9 +1,9 @@
 <template>
   <c-compiled-template
-    class="alarm-column-value"
     v-if="column.template"
     :template="column.template"
     :context="templateContext"
+    class="alarm-column-value"
   />
   <color-indicator-wrapper
     v-else-if="column.colorIndicatorEnabled"

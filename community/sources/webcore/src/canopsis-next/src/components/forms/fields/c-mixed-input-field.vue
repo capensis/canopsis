@@ -1,8 +1,8 @@
 <template>
   <component
-    class="c-mixed-input-field"
     :is="inputComponent.is"
     v-validate="rules"
+    class="c-mixed-input-field"
     v-bind="inputComponent.bind"
     v-on="inputComponent.on"
   />

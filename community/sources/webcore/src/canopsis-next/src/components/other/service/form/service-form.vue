@@ -10,8 +10,8 @@
         xs6
       >
         <c-entity-category-field
-          class="mt-1"
           v-field="form.category"
+          class="mt-1"
           addable
           required
         />
@@ -59,16 +59,16 @@
       </v-tab>
       <v-tab-item>
         <c-patterns-field
-          class="mt-2"
           v-field="form.patterns"
           :entity-attributes="entityAttributes"
+          class="mt-2"
           with-entity
           entity-counters-type
         />
       </v-tab-item>
       <v-tab
-        class="validation-header"
         :disabled="advancedJsonWasChanged"
+        class="validation-header"
       >
         {{ $t('entity.manageInfos') }}
       </v-tab>

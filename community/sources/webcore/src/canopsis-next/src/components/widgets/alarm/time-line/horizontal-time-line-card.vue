@@ -6,9 +6,9 @@
     >
       <template #activator="{ on }">
         <v-layout
-          v-on="on"
           align-center
           column
+          v-on="on"
         >
           <c-alarm-chip
             v-if="isStepTypeState"

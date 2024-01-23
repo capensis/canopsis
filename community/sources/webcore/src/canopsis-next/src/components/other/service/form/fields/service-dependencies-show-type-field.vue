@@ -1,7 +1,7 @@
 <template>
   <v-radio-group
-    class="mt-0"
     v-field="value"
+    class="mt-0"
     name="opened"
     hide-details
     mandatory

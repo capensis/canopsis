@@ -2,8 +2,8 @@
   <path
     :d="path"
     :fill="color"
-    fill-opacity="0.1"
     :stroke="color"
+    fill-opacity="0.1"
     stroke-width="1"
   />
 </template>

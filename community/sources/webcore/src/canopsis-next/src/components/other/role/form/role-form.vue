@@ -29,9 +29,9 @@
             />
           </c-information-block>
           <c-information-block
-            class="ml-3"
             :title="$t('role.expirationInterval')"
             :help-text="$t('role.expirationIntervalHelpText')"
+            class="ml-3"
           >
             <c-duration-field
               v-field="form.auth_config.expiration_interval"

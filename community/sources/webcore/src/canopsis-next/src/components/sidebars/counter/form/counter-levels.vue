@@ -2,10 +2,10 @@
   <widget-settings-group :title="$t('settings.counterLevels.title')">
     <widget-settings-item :title="$t('settings.counterLevels.fields.counter')">
       <v-select
-        class="select"
         v-field="form.counter"
         :label="$t('settings.counterLevels.fields.counter')"
         :items="availableCounters"
+        class="select"
         hide-details
         single-line
         dense

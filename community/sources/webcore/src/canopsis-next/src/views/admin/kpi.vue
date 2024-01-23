@@ -3,8 +3,8 @@
     <c-page-header />
     <v-card class="ma-4 mt-0">
       <v-layout
-        class="pa-4"
         v-if="pending"
+        class="pa-4"
         justify-center
       >
         <v-progress-circular
@@ -44,8 +44,8 @@
           <v-card-text>
             <v-tab-item :value="$constants.KPI_TABS.graphs">
               <div
-                class="error--text text-center"
                 v-if="!timescaleAvailable"
+                class="error--text text-center"
               >
                 {{ $t('kpi.metricsNotAvailable') }}
               </div>

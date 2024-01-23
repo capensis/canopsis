@@ -1,8 +1,8 @@
 <template>
   <card-with-see-alarms-btn
-    class="white--text cursor-pointer ma-1"
     :style="{ backgroundColor: color }"
     :show-button="hasAlarmsListAccess"
+    class="white--text cursor-pointer ma-1"
     tile
     @click="showTestSuiteInformationModal"
     @show:alarms="showAlarmListModal"

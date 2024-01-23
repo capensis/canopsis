@@ -7,11 +7,11 @@
       {{ $t('declareTicket.emptyWebhooks') }}
     </c-alert>
     <c-card-iterator-field
-      class="mb-2"
       v-field="webhooks"
-      item-key="key"
       :disabled="disabled"
       :draggable-group="draggableGroup"
+      class="mb-2"
+      item-key="key"
     >
       <template #item="{ index, item: webhook }">
         <declare-ticket-rule-webhook-field
@@ -26,17 +26,17 @@
     </c-card-iterator-field>
     <v-layout align-center>
       <v-btn
-        class="ml-0"
         :color="hasWebhooksErrors ? 'error' : 'primary'"
         :disabled="disabled"
+        class="ml-0"
         outlined
         @click="addWebhook"
       >
         {{ $t('declareTicket.addWebhook') }}
       </v-btn>
       <span
-        class="error--text"
         v-show="hasWebhooksErrors"
+        class="error--text"
       >
         {{ $t('declareTicket.errors.webhookRequired') }}
       </span>

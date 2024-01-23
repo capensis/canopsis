@@ -13,8 +13,8 @@
     >
       <template #activator="{ on }">
         <v-btn
-          v-on="on"
           icon
+          v-on="on"
         >
           <v-icon>help_outline</v-icon>
         </v-btn>

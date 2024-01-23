@@ -45,9 +45,9 @@
           </v-layout>
           <v-layout column>
             <remediation-instruction-execute-assigned-jobs-table
-              class="mt-4"
               v-if="operation.jobs.length"
               :jobs="operation.jobs"
+              class="mt-4"
               executable
               cancelable
               @execute-job="executeJob"
@@ -59,17 +59,17 @@
             justify-end
           >
             <v-btn
-              class="accent"
               :disabled="(isFirstOperation && isFirstStep) || nextPending"
               :loading="previousPending"
+              class="accent"
               @click="$listeners.previous"
             >
               {{ $t('common.previous') }}
             </v-btn>
             <v-btn
-              class="primary mr-0"
               :disabled="previousPending"
               :loading="nextPending"
+              class="primary mr-0"
               @click="$listeners.next"
             >
               {{ $t('common.next') }}

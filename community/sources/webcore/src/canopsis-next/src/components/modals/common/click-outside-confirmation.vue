@@ -15,17 +15,17 @@
         {{ $t('modals.clickOutsideConfirmation.buttons.backToForm') }}
       </v-btn>
       <v-btn
-        class="warning"
         :loading="submitting"
         :disabled="isDisabled"
+        class="warning"
         @click.prevent="submit(false)"
       >
         {{ $t('modals.clickOutsideConfirmation.buttons.dontSave') }}
       </v-btn>
       <v-btn
-        class="primary"
         :loading="submitting"
         :disabled="isDisabled"
+        class="primary"
         @click.prevent="submit(true)"
       >
         {{ $t('modals.clickOutsideConfirmation.buttons.save') }}

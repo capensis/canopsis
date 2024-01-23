@@ -21,9 +21,9 @@
     </v-layout>
     <v-expand-transition mode="out-in">
       <v-layout
-        class="c-card-iterator-item__content"
         v-show="expanded"
         :class="{ 'c-card-iterator-item__content--offset': offsetLeft }"
+        class="c-card-iterator-item__content"
         column
       >
         <slot />

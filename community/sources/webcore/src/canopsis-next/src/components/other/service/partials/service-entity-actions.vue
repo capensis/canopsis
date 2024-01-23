@@ -16,9 +16,9 @@
           />
           <v-btn
             v-else
-            class="ml-2"
             :disabled="action.disabled"
             :loading="action.loading"
+            class="ml-2"
             depressed
             small
             light

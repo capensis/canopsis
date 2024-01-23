@@ -2,10 +2,10 @@
   <div class="tree-of-dependencies__preview">
     <c-zoom-overlay>
       <network-graph
-        class="fill-height black--text"
         ref="networkGraph"
         :options="options"
         :node-html-label-options="nodeHtmlLabelsOptions"
+        class="fill-height black--text"
         ctrl-wheel-zoom
       />
     </c-zoom-overlay>

@@ -22,16 +22,16 @@
     </v-layout>
     <v-layout column>
       <c-draggable-list-field
-        class="tabs-draggable-panel secondary lighten-1"
         v-field="tabs"
         :class="{ 'tabs-draggable-panel--empty': isTabsEmpty, 'tabs-draggable-panel--disabled': disabled }"
         :disabled="disabled"
+        class="tabs-draggable-panel secondary lighten-1"
       >
         <tab-panel-content
           v-for="{ tab, view, group } in tabsWithDetails"
+          :key="tab._id"
           :tab="tab"
           hide-actions="hideActions"
-          :key="tab._id"
         >
           <template #title="">
             <playlist-tab-item

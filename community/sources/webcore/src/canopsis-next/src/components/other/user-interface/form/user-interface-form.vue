@@ -102,11 +102,11 @@
         <span class="v-label file-selector__label">{{ $t('userInterface.logo') }}</span>
         <v-layout>
           <file-selector
-            class="mt-1"
-            ref="fileSelector"
             v-validate="`image|size:${$config.MAX_LOGO_SIZE_IN_KB}`"
+            ref="fileSelector"
             :error-messages="errors.collect('logo')"
             :disabled="disabled"
+            class="mt-1"
             accept="image/*"
             name="logo"
             with-files-list

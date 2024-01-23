@@ -34,8 +34,8 @@
       </v-flex>
     </v-layout>
     <external-data-mongo-condition-form
-      v-for="(condition, index) in form.conditions"
       v-field="form.conditions[index]"
+      v-for="(condition, index) in form.conditions"
       :key="condition.key"
       :name="`${name}.conditions.${condition.key}`"
       :disabled-remove="hasOnlyOneCondition"

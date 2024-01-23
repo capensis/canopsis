@@ -1,7 +1,7 @@
 <template>
   <v-combobox
-    ref="field"
     v-validate="rules"
+    ref="field"
     :value="value"
     :search-input="value"
     :label="label || $t('common.payload')"
