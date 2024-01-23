@@ -27,7 +27,7 @@ describe('flowchart-line-type-field', () => {
 
     selectField.triggerCustomEvent('input', LINE_TYPES.verticalCurve);
 
-    expect(wrapper).toEmit('input', LINE_TYPES.verticalCurve);
+    expect(wrapper).toEmitInput(LINE_TYPES.verticalCurve);
   });
 
   test('Renders `flowchart-line-type-field` with default props', () => {

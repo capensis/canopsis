@@ -82,7 +82,7 @@ describe('c-pattern-field', () => {
 
     selectField.triggerCustomEvent('input', PATTERN_CUSTOM_ITEM_VALUE);
 
-    expect(wrapper).toEmit('input', PATTERN_CUSTOM_ITEM_VALUE);
+    expect(wrapper).toEmitInput(PATTERN_CUSTOM_ITEM_VALUE);
   });
 
   test('Renders `c-pattern-field` with default props', () => {

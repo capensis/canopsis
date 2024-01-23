@@ -30,7 +30,7 @@ describe('state-criticity-field', () => {
 
     wrapper.find('input.v-btn-toggle').setValue(ENTITIES_STATES.ok);
 
-    expect(wrapper).toEmit('input', ENTITIES_STATES.ok);
+    expect(wrapper).toEmitInput(ENTITIES_STATES.ok);
   });
 
   it('Renders `state-criticity-field` with default props correctly', () => {

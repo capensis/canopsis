@@ -46,7 +46,7 @@ describe('ack-event-form', () => {
 
     descriptionField.triggerCustomEvent('input', comment);
 
-    expect(wrapper).toEmit('input', { ...form, comment });
+    expect(wrapper).toEmitInput({ ...form, comment });
   });
 
   test('Ack resources changed after trigger checkbox field', async () => {
@@ -66,7 +66,7 @@ describe('ack-event-form', () => {
 
     selectCheckboxField(wrapper).triggerCustomEvent('change', ackResources);
 
-    expect(wrapper).toEmit('input', { ...form, ack_resources: ackResources });
+    expect(wrapper).toEmitInput({ ...form, ack_resources: ackResources });
   });
 
   test('Renders `ack-event-form` with default props', () => {

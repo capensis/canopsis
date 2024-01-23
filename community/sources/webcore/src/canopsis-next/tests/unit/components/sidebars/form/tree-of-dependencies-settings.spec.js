@@ -32,7 +32,7 @@ describe('tree-of-dependencies-settings', () => {
 
     selectRadioGroup(wrapper).setValue(newValue);
 
-    expect(wrapper).toEmit('input', newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   test('Renders `tree-of-dependencies-settings` with default props', () => {

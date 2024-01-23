@@ -33,7 +33,7 @@ describe('geomap-map-form', () => {
 
     nameField.triggerCustomEvent('input', newName);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       name: newName,
     });
@@ -58,7 +58,7 @@ describe('geomap-map-form', () => {
 
     geomapEditor.triggerCustomEvent('input', newParameters);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       parameters: newParameters,
     });

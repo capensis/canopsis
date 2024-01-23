@@ -51,7 +51,7 @@ describe('service-weather-item', () => {
 
     selectCard(wrapper).triggerCustomEvent('show:alarms', new MouseEvent('click'));
 
-    expect(wrapper).toEmit('show:alarms');
+    expect(wrapper).toHaveBeenEmit('show:alarms');
   });
 
   test('Main information modal showed after click on card', async () => {
@@ -67,7 +67,7 @@ describe('service-weather-item', () => {
 
     await wrapper.find('.custom-template').trigger('click');
 
-    expect(wrapper).toEmit('show:service');
+    expect(wrapper).toHaveBeenEmit('show:service');
   });
 
   test('Modal doesn\'t show after click on link', async () => {
@@ -82,7 +82,7 @@ describe('service-weather-item', () => {
 
     await wrapper.find('.custom-template-link').trigger('click');
 
-    expect(wrapper).not.toEmit('show:service');
+    expect(wrapper).not.toHaveBeenEmit('show:service');
   });
 
   test('Renders `service-weather-item` with custom props', async () => {

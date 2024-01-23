@@ -60,7 +60,7 @@ describe('c-duration-field', () => {
 
     valueElement.setValue(newValue);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       unit: duration.unit,
       value: newValue,
     });
@@ -82,7 +82,7 @@ describe('c-duration-field', () => {
 
     valueElement.triggerCustomEvent('change', TIME_UNITS.month);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       unit: TIME_UNITS.month,
       value: duration.value,
     });
@@ -104,7 +104,7 @@ describe('c-duration-field', () => {
 
     valueElement.triggerCustomEvent('change');
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       unit: undefined,
       value: undefined,
     });

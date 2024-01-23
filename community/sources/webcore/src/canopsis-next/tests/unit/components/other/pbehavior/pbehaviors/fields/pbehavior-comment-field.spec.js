@@ -36,7 +36,7 @@ describe('pbehavior-comment-field', () => {
 
     selectMessageField(wrapper).triggerCustomEvent('input', newMessage);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...comment,
       message: newMessage,
     });
@@ -51,7 +51,7 @@ describe('pbehavior-comment-field', () => {
 
     selectRemoveButton(wrapper).triggerCustomEvent('click', newMessage);
 
-    expect(wrapper).toEmit('remove');
+    expect(wrapper).toHaveBeenEmit('remove');
   });
 
   test('Renders `pbehavior-comment-field` with default props', () => {

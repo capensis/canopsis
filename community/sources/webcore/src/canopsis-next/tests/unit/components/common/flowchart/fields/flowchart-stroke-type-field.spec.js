@@ -22,7 +22,7 @@ describe('flowchart-stroke-type-field', () => {
 
     selectField.triggerCustomEvent('input', STROKE_TYPES.dashed);
 
-    expect(wrapper).toEmit('input', STROKE_TYPES.dashed);
+    expect(wrapper).toEmitInput(STROKE_TYPES.dashed);
   });
 
   test('Renders `flowchart-stroke-type-field` with default props', async () => {

@@ -44,7 +44,7 @@ describe('filters-list', () => {
 
     selectFiltersList(wrapper).$emit('input', newFilters);
 
-    expect(wrapper).toEmit('input', newFilters);
+    expect(wrapper).toEmitInput(newFilters);
   });
 
   it('Filters created after trigger add event on filters list', async () => {
@@ -86,7 +86,7 @@ describe('filters-list', () => {
 
     await config.action(newFilter);
 
-    expect(wrapper).toEmit('input', [
+    expect(wrapper).toEmitInput([
       ...filters,
       {
         ...newFilter,
@@ -135,7 +135,7 @@ describe('filters-list', () => {
 
     await config.action(newData);
 
-    expect(wrapper).toEmit('input', [
+    expect(wrapper).toEmitInput([
       filters[0],
       {
         ...updatedFilter,
@@ -169,7 +169,7 @@ describe('filters-list', () => {
 
     await config.action();
 
-    expect(wrapper).toEmit('input', [
+    expect(wrapper).toEmitInput([
       filters[0],
     ]);
   });
@@ -198,7 +198,7 @@ describe('filters-list', () => {
 
     await config.action();
 
-    expect(wrapper).toEmit('input', [
+    expect(wrapper).toEmitInput([
       filters[0],
     ]);
   });

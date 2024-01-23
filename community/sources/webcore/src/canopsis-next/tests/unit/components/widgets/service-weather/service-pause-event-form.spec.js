@@ -38,7 +38,7 @@ describe('service-pause-event-form', () => {
 
     pbehaviorReasonField.triggerCustomEvent('input', reason);
 
-    expect(wrapper).toEmit('input', { ...form, reason });
+    expect(wrapper).toEmitInput({ ...form, reason });
   });
 
   test('Comment changed after trigger textarea', () => {
@@ -58,7 +58,7 @@ describe('service-pause-event-form', () => {
 
     descriptionField.triggerCustomEvent('input', comment);
 
-    expect(wrapper).toEmit('input', { ...form, comment });
+    expect(wrapper).toEmitInput({ ...form, comment });
   });
 
   test('Renders `service-pause-event-form` with default props', () => {

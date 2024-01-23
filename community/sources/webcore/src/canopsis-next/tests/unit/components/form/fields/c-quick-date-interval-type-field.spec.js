@@ -26,7 +26,7 @@ describe('c-quick-date-interval-type-field', () => {
 
     selectField.triggerCustomEvent('input', QUICK_RANGES.yesterday);
 
-    expect(wrapper).toEmit('input', QUICK_RANGES.yesterday);
+    expect(wrapper).toEmitInput(QUICK_RANGES.yesterday);
   });
 
   test('Renders `c-quick-date-interval-type-field` with default props', () => {

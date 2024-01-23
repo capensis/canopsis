@@ -26,7 +26,7 @@ describe('c-input-type-field', () => {
 
     textField.triggerCustomEvent('input', PATTERN_FIELD_TYPES.number);
 
-    expect(wrapper).toEmit('input', PATTERN_FIELD_TYPES.number);
+    expect(wrapper).toEmitInput(PATTERN_FIELD_TYPES.number);
   });
 
   it('Renders `c-input-type-field` with default props', () => {

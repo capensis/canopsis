@@ -54,7 +54,7 @@ describe('flowchart-properties', () => {
 
     fillColorField.triggerCustomEvent('input', newFill);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       first: {
         ...firstShape,
         properties: {
@@ -96,7 +96,7 @@ describe('flowchart-properties', () => {
 
     strokeColorField.triggerCustomEvent('input', newStroke);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       first: {
         ...firstShape,
         properties: {
@@ -138,7 +138,7 @@ describe('flowchart-properties', () => {
 
     strokeWidthField.triggerCustomEvent('input', newStrokeWidth);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       first: {
         ...firstShape,
         properties: {
@@ -180,7 +180,7 @@ describe('flowchart-properties', () => {
 
     strokeTypeField.triggerCustomEvent('input', STROKE_TYPES.dashed);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       first: {
         ...firstShape,
         properties: {
@@ -220,7 +220,7 @@ describe('flowchart-properties', () => {
 
     lineTypeField.triggerCustomEvent('input', LINE_TYPES.rightElbow);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       first: {
         ...firstShape,
         lineType: LINE_TYPES.rightElbow,
@@ -256,7 +256,7 @@ describe('flowchart-properties', () => {
 
     fontColorField.triggerCustomEvent('input', newFontColor);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       first: {
         ...firstShape,
         textProperties: {
@@ -298,7 +298,7 @@ describe('flowchart-properties', () => {
 
     fontBackgroundColorField.triggerCustomEvent('input', newFontBackgroundColor);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       first: {
         ...firstShape,
         textProperties: {
@@ -340,7 +340,7 @@ describe('flowchart-properties', () => {
 
     fontSizeField.triggerCustomEvent('input', newFontSize);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       first: {
         ...firstShape,
         textProperties: {

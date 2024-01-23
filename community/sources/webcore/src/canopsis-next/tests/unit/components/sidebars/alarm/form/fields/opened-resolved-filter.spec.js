@@ -33,7 +33,7 @@ describe('opened-resolved-filter', () => {
 
       selectRadioElementsByValue(wrapper, value).trigger('change');
 
-      expect(wrapper).toEmit('input', value);
+      expect(wrapper).toEmitInput(value);
     },
   );
 

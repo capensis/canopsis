@@ -24,7 +24,7 @@ describe('c-entity-state-field', () => {
 
     valueElement.triggerCustomEvent('input', ENTITIES_STATES.critical);
 
-    expect(wrapper).toEmit('input', ENTITIES_STATES.critical);
+    expect(wrapper).toEmitInput(ENTITIES_STATES.critical);
   });
 
   it('Renders `c-entity-state-field` with default props', () => {

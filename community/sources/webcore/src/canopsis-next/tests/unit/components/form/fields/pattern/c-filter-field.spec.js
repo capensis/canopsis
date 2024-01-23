@@ -105,7 +105,7 @@ describe('c-filter-field', () => {
 
     valueElement.triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   it('Renders `c-filter-field` with default props', () => {

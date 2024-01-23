@@ -48,7 +48,7 @@ describe('view-form', () => {
 
     selectTitleField(wrapper).triggerCustomEvent('input', newTitle);
 
-    expect(wrapper).toEmit('input', { ...form, title: newTitle });
+    expect(wrapper).toEmitInput({ ...form, title: newTitle });
   });
 
   test('Description changed after trigger description field', () => {
@@ -62,7 +62,7 @@ describe('view-form', () => {
 
     selectDescriptionField(wrapper).triggerCustomEvent('input', newDescription);
 
-    expect(wrapper).toEmit('input', { ...form, description: newDescription });
+    expect(wrapper).toEmitInput({ ...form, description: newDescription });
   });
 
   test('Enabled changed after trigger enabled field', () => {
@@ -76,7 +76,7 @@ describe('view-form', () => {
 
     selectEnabledField(wrapper).triggerCustomEvent('input', newEnabled);
 
-    expect(wrapper).toEmit('input', { ...form, enabled: newEnabled });
+    expect(wrapper).toEmitInput({ ...form, enabled: newEnabled });
   });
 
   it('Periodic refresh changed after trigger periodic refresh field', () => {
@@ -90,7 +90,7 @@ describe('view-form', () => {
 
     selectPeriodicRefreshField(wrapper).triggerCustomEvent('input', newPeriodicRefresh);
 
-    expect(wrapper).toEmit('input', { ...form, periodic_refresh: newPeriodicRefresh });
+    expect(wrapper).toEmitInput({ ...form, periodic_refresh: newPeriodicRefresh });
   });
 
   it('Tag changed after trigger tag field', () => {
@@ -104,7 +104,7 @@ describe('view-form', () => {
 
     selectTagsField(wrapper).triggerCustomEvent('input', newTags);
 
-    expect(wrapper).toEmit('input', { ...form, tags: newTags });
+    expect(wrapper).toEmitInput({ ...form, tags: newTags });
   });
 
   it('Group changed after trigger group field', () => {
@@ -120,7 +120,7 @@ describe('view-form', () => {
 
     selectGroupField(wrapper).triggerCustomEvent('input', newGroup);
 
-    expect(wrapper).toEmit('input', { ...form, group: newGroup });
+    expect(wrapper).toEmitInput({ ...form, group: newGroup });
   });
 
   test('Renders `view-form` with default props', () => {

@@ -55,7 +55,7 @@ describe('service-template', () => {
 
     await entitiesList.triggerCustomEvent('refresh');
 
-    expect(wrapper).toEmit('refresh');
+    expect(wrapper).toHaveBeenEmit('refresh');
   });
 
   test('Pagination updated after triggers entities list', async () => {

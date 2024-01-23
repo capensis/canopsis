@@ -65,7 +65,7 @@ describe('filter-selector', () => {
 
     filterSelectField.triggerCustomEvent('input', filter._id);
 
-    expect(wrapper).toEmit('input', filter._id);
+    expect(wrapper).toEmitInput(filter._id);
   });
 
   it('Renders `filter-selector` with default props', () => {

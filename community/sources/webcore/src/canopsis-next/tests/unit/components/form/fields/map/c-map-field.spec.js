@@ -72,7 +72,7 @@ describe('c-map-field', () => {
 
     selectField.triggerCustomEvent('input', map._id);
 
-    expect(wrapper).toEmit('input', map._id);
+    expect(wrapper).toEmitInput(map._id);
   });
 
   it('Renders `c-map-field` with default props', () => {

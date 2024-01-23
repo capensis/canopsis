@@ -22,7 +22,7 @@ describe('kpi-sli-show-mode-field', () => {
 
     wrapper.find('select.v-select').setValue(KPI_SLI_GRAPH_DATA_TYPE.percent);
 
-    expect(wrapper).toEmit('input', KPI_SLI_GRAPH_DATA_TYPE.percent);
+    expect(wrapper).toEmitInput(KPI_SLI_GRAPH_DATA_TYPE.percent);
   });
 
   it('Renders `kpi-sli-show-mode-field` without props', () => {

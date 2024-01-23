@@ -110,7 +110,7 @@ describe('flowchart-sidebar', () => {
     const button = selectButtonByIndex(wrapper, 0);
     await button.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       [id]: rectShapeToForm({
         _id: id,
         height,
@@ -137,7 +137,7 @@ describe('flowchart-sidebar', () => {
     const button = selectButtonByIndex(wrapper, 1);
     await button.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       [id]: rectShapeToForm({
         _id: id,
         height,
@@ -170,7 +170,7 @@ describe('flowchart-sidebar', () => {
     const button = selectButtonByIndex(wrapper, 2);
     await button.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       [id]: rectShapeToForm({
         _id: id,
         height,
@@ -198,7 +198,7 @@ describe('flowchart-sidebar', () => {
     const button = selectButtonByIndex(wrapper, 3);
     await button.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       [id]: rhombusShapeToForm({
         _id: id,
         height,
@@ -225,7 +225,7 @@ describe('flowchart-sidebar', () => {
     const button = selectButtonByIndex(wrapper, 4);
     await button.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       [id]: circleShapeToForm({
         _id: id,
         diameter: 150,
@@ -251,7 +251,7 @@ describe('flowchart-sidebar', () => {
     const button = selectButtonByIndex(wrapper, 5);
     await button.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       [id]: ellipseShapeToForm({
         _id: id,
         height,
@@ -278,7 +278,7 @@ describe('flowchart-sidebar', () => {
     const button = selectButtonByIndex(wrapper, 6);
     await button.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       [id]: parallelogramShapeToForm({
         _id: id,
         height,
@@ -305,7 +305,7 @@ describe('flowchart-sidebar', () => {
     const button = selectButtonByIndex(wrapper, 7);
     await button.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       [id]: processShapeToForm({
         _id: id,
         height,
@@ -332,7 +332,7 @@ describe('flowchart-sidebar', () => {
     const button = selectButtonByIndex(wrapper, 8);
     await button.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       [id]: documentShapeToForm({
         _id: id,
         height,
@@ -359,7 +359,7 @@ describe('flowchart-sidebar', () => {
     const button = selectButtonByIndex(wrapper, 9);
     await button.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       [id]: storageShapeToForm({
         _id: id,
         height,
@@ -404,7 +404,7 @@ describe('flowchart-sidebar', () => {
     const button = selectButtonByIndex(wrapper, 10);
     await button.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       [id]: lineShapeToForm({
         _id: id,
         points,
@@ -447,7 +447,7 @@ describe('flowchart-sidebar', () => {
     const button = selectButtonByIndex(wrapper, 11);
     await button.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       [id]: arrowLineShapeToForm({
         _id: id,
         points,
@@ -490,7 +490,7 @@ describe('flowchart-sidebar', () => {
     const button = selectButtonByIndex(wrapper, 12);
     await button.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       [id]: bidirectionalArrowLineShapeToForm({
         _id: id,
         points,
@@ -533,7 +533,7 @@ describe('flowchart-sidebar', () => {
     const button = selectButtonByIndex(wrapper, 13);
     await button.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       [id]: lineShapeToForm({
         _id: id,
         points,
@@ -576,7 +576,7 @@ describe('flowchart-sidebar', () => {
     const button = selectButtonByIndex(wrapper, 14);
     await button.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       [id]: arrowLineShapeToForm({
         _id: id,
         points,
@@ -619,7 +619,7 @@ describe('flowchart-sidebar', () => {
     const button = selectButtonByIndex(wrapper, 15);
     await button.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       [id]: bidirectionalArrowLineShapeToForm({
         _id: id,
         points,
@@ -644,7 +644,7 @@ describe('flowchart-sidebar', () => {
     const button = selectButtonByIndex(wrapper, 16);
     await button.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       [id]: rectShapeToForm({
         _id: id,
         height,
@@ -673,7 +673,7 @@ describe('flowchart-sidebar', () => {
     const button = selectButtonByIndex(wrapper, 17);
     await button.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       [id]: rectShapeToForm({
         _id: id,
         height,
@@ -717,7 +717,7 @@ describe('flowchart-sidebar', () => {
 
     await flushPromises();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       [id]: imageShapeToForm({
         ...imageProperties,
         _id: id,
@@ -760,7 +760,7 @@ describe('flowchart-sidebar', () => {
 
     await flushPromises();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       [id]: imageShapeToForm({
         _id: id,
         width: 562.5,
@@ -794,7 +794,7 @@ describe('flowchart-sidebar', () => {
 
     await flushPromises();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       [id]: imageShapeToForm({
         _id: id,
         x: 435,

@@ -15,7 +15,7 @@ describe('c-alarm-chip', () => {
 
     selectChipContainer(wrapper).trigger('click');
 
-    expect(wrapper).toEmit('click');
+    expect(wrapper).toHaveBeenEmit('click');
   });
 
   it('Renders `c-alarm-chip` with default props', () => {

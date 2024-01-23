@@ -29,7 +29,7 @@ describe('login-form', () => {
 
     selectTextField(wrapper).triggerCustomEvent('input', username);
 
-    expect(wrapper).toEmit('input', username);
+    expect(wrapper).toEmitInput(username);
   });
 
   it('Password changed after trigger password field', () => {
@@ -44,7 +44,7 @@ describe('login-form', () => {
 
     selectPasswordField(wrapper).triggerCustomEvent('input', password);
 
-    expect(wrapper).toEmit('input', password);
+    expect(wrapper).toEmitInput(password);
   });
 
   it('Renders `login-form` with default props', () => {

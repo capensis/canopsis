@@ -44,7 +44,7 @@ describe('pbehavior-recurrence-rule-exceptions-field', () => {
 
     selectAddExceptionButton(wrapper).triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('input', [
+    expect(wrapper).toEmitInput([
       ...exdates,
       {
         key: expect.any(String),

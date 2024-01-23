@@ -23,7 +23,7 @@ describe('alarm-column-value-state', () => {
 
     selectAlarmChip(wrapper).triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('click');
+    expect(wrapper).toHaveBeenEmit('click');
   });
 
   it('Renders `alarm-column-value-state` with default props', () => {

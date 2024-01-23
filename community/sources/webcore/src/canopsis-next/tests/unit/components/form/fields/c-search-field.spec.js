@@ -80,7 +80,7 @@ describe('c-search-field', () => {
     input.setValue(newSearch);
     input.trigger('keyup');
 
-    expect(wrapper).not.toEmit('submit');
+    expect(wrapper).not.toHaveBeenEmit('submit');
   });
 
   it('Keyup with enter key on input element', async () => {
@@ -131,7 +131,7 @@ describe('c-search-field', () => {
 
     clearButton.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('clear');
+    expect(wrapper).toHaveBeenEmit('clear');
   });
 
   it('Set value into combobox element', () => {

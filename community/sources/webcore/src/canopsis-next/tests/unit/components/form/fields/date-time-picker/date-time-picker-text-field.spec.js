@@ -45,7 +45,7 @@ describe('date-time-picker-text-field', () => {
 
     textField.triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   test('Date object not updated if text field is focused', async () => {
@@ -146,7 +146,7 @@ describe('date-time-picker-text-field', () => {
 
     dateTimePickerButton.triggerCustomEvent('input', nowTimestamp);
 
-    expect(wrapper).toEmit('input', '07/12/2013 18:00');
+    expect(wrapper).toEmitInput('07/12/2013 18:00');
   });
 
   test('Renders `date-time-picker-text-field` with default props', () => {

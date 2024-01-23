@@ -27,7 +27,7 @@ describe('c-enabled-field', () => {
 
     wrapper.find('input.v-switch').setChecked(true);
 
-    expect(wrapper).toEmit('input', true);
+    expect(wrapper).toEmitInput(true);
   });
 
   it('Renders `c-enabled-field` with default props correctly', () => {

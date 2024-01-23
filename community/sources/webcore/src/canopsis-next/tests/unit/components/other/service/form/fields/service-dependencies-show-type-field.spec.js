@@ -29,7 +29,7 @@ describe('service-dependencies-show-type-field', () => {
 
     selectRadioGroup(wrapper).setValue(TREE_OF_DEPENDENCIES_SHOW_TYPES.dependenciesDefiningTheState);
 
-    expect(wrapper).toEmit('input', TREE_OF_DEPENDENCIES_SHOW_TYPES.dependenciesDefiningTheState);
+    expect(wrapper).toEmitInput(TREE_OF_DEPENDENCIES_SHOW_TYPES.dependenciesDefiningTheState);
   });
 
   test('Renders `service-dependencies-show-type-field` with default props', () => {

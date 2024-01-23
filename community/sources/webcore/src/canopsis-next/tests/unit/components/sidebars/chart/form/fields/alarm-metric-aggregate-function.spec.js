@@ -24,7 +24,7 @@ describe('alarm-metric-aggregate-function', () => {
 
     selectAlarmMetricPresetsField(wrapper).triggerCustomEvent('input', AGGREGATE_FUNCTIONS.min);
 
-    expect(wrapper).toEmit('input', AGGREGATE_FUNCTIONS.min);
+    expect(wrapper).toEmitInput(AGGREGATE_FUNCTIONS.min);
   });
 
   test('Renders `alarm-metric-aggregate-function` with default props', () => {

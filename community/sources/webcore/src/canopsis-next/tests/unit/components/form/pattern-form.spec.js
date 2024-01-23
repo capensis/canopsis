@@ -41,7 +41,7 @@ describe('pattern-form', () => {
 
     textField.triggerCustomEvent('input', title);
 
-    expect(wrapper).toEmit('input', { ...form, title });
+    expect(wrapper).toEmitInput({ ...form, title });
   });
 
   test('Alarm pattern changed after trigger alarm patterns field', () => {
@@ -64,7 +64,7 @@ describe('pattern-form', () => {
 
     alarmPatternsField.triggerCustomEvent('input', { ...form, id, groups });
 
-    expect(wrapper).toEmit('input', { ...form, id, groups });
+    expect(wrapper).toEmitInput({ ...form, id, groups });
   });
 
   test('Entity pattern changed after trigger entity patterns field', () => {
@@ -87,7 +87,7 @@ describe('pattern-form', () => {
 
     entityPatternsField.triggerCustomEvent('input', { ...form, id, groups });
 
-    expect(wrapper).toEmit('input', { ...form, id, groups });
+    expect(wrapper).toEmitInput({ ...form, id, groups });
   });
 
   test('Pbehavior pattern changed after trigger pbehavior patterns field', () => {
@@ -110,7 +110,7 @@ describe('pattern-form', () => {
 
     pbehaviorPatternsField.triggerCustomEvent('input', { ...form, id, groups });
 
-    expect(wrapper).toEmit('input', { ...form, id, groups });
+    expect(wrapper).toEmitInput({ ...form, id, groups });
   });
 
   test('Renders `pattern-form` with default props', () => {

@@ -48,7 +48,7 @@ describe('storage-settings-alarm-form', () => {
 
     selectAlarmArchiveAfterField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', { ...form, archive_after: newValue });
+    expect(wrapper).toEmitInput({ ...form, archive_after: newValue });
   });
 
   test('Alarm delete after changed after trigger enabled duration field', () => {
@@ -63,7 +63,7 @@ describe('storage-settings-alarm-form', () => {
 
     selectAlarmDeleteAfterField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', { ...form, delete_after: newValue });
+    expect(wrapper).toEmitInput({ ...form, delete_after: newValue });
   });
 
   test('Renders `storage-settings-alarm-form` with default form', () => {

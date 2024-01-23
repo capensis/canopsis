@@ -23,7 +23,7 @@ describe('c-entity-status-field', () => {
 
     selectElement.triggerCustomEvent('input', ENTITIES_STATUSES.cancelled);
 
-    expect(wrapper).toEmit('input', ENTITIES_STATUSES.cancelled);
+    expect(wrapper).toEmitInput(ENTITIES_STATUSES.cancelled);
   });
 
   it('Renders `c-entity-status-field` with default props', () => {

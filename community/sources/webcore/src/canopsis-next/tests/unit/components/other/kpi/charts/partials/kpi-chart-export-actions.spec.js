@@ -22,7 +22,7 @@ describe('kpi-chart-export-actions', () => {
 
     wrapper.findAll('button.v-btn').at(0).trigger('click');
 
-    expect(wrapper).toEmit('export:csv');
+    expect(wrapper).toHaveBeenEmit('export:csv');
   });
 
   it('Export png event emitted with correct blob', (done) => {

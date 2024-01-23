@@ -24,7 +24,7 @@ export const generateEntityPatternsTests = (Component, name, customProps = {}) =
 
       patternsField.triggerCustomEvent('input', newPatterns);
 
-      expect(wrapper).toEmit('input', newPatterns);
+      expect(wrapper).toEmitInput(newPatterns);
     });
 
     test(`Renders \`${name}\` with default props`, () => {

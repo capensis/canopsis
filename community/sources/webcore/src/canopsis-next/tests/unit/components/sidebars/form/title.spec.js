@@ -42,7 +42,7 @@ describe('title', () => {
 
     selectTextField(wrapper).setValue(newValue);
 
-    expect(wrapper).toEmit('input', newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   it('Renders `title` with default props', () => {

@@ -38,7 +38,7 @@ describe('date-interval-selector', () => {
 
     selectTstartField(wrapper).triggerCustomEvent('input', QUICK_RANGES.last6Hour.start);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...value,
       tstart: QUICK_RANGES.last6Hour.start,
     });
@@ -53,7 +53,7 @@ describe('date-interval-selector', () => {
 
     selectTstopField(wrapper).triggerCustomEvent('input', QUICK_RANGES.last6Hour.stop);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...value,
       tstop: QUICK_RANGES.last6Hour.stop,
     });
@@ -96,7 +96,7 @@ describe('date-interval-selector', () => {
 
     selectQuickDateIntervalTypeField(wrapper).triggerCustomEvent('input', QUICK_RANGES.previousMonth);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...value,
       tstart: QUICK_RANGES.previousMonth.start,
       tstop: QUICK_RANGES.previousMonth.stop,
@@ -112,7 +112,7 @@ describe('date-interval-selector', () => {
 
     selectQuickDateIntervalTypeField(wrapper).triggerCustomEvent('input', QUICK_RANGES.custom);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...value,
       periodUnit: TIME_UNITS.hour,
       periodValue: 1,
@@ -130,7 +130,7 @@ describe('date-interval-selector', () => {
 
     selectQuickDateIntervalTypeField(wrapper).triggerCustomEvent('input', QUICK_RANGES.last3Hour);
 
-    expect(wrapper).not.toEmit('input');
+    expect(wrapper).not.toHaveBeenEmit('input');
   });
 
   test('Dates prepared after trigger prepare callback', () => {

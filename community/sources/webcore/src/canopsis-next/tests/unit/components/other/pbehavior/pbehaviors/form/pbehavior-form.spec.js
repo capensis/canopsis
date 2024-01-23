@@ -60,7 +60,7 @@ describe('pbehavior-form', () => {
 
     selectPbehaviorGeneralForm(wrapper).triggerCustomEvent('input', newForm);
 
-    expect(wrapper).toEmit('input', newForm);
+    expect(wrapper).toEmitInput(newForm);
   });
 
   test('Comments updated after trigger pbehavior comments field', () => {
@@ -85,7 +85,7 @@ describe('pbehavior-form', () => {
 
     selectPbehaviorCommentsField(wrapper).triggerCustomEvent('input', newComments);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       comments: newComments,
     });
@@ -109,7 +109,7 @@ describe('pbehavior-form', () => {
 
     selectPatternsField(wrapper).triggerCustomEvent('input', newPatterns);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       patterns: newPatterns,
     });
@@ -133,7 +133,7 @@ describe('pbehavior-form', () => {
 
     selectEnabledColorPickerField(wrapper).triggerCustomEvent('input', newColor);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
 
       color: newColor,

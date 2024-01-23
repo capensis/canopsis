@@ -25,7 +25,7 @@ describe('alarm-column-cell-popup-body', () => {
 
     selectCloseButton(wrapper).triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('close');
+    expect(wrapper).toHaveBeenEmit('close');
   });
 
   it('Renders `alarm-column-cell-popup-body` with full alarm', async () => {

@@ -61,7 +61,7 @@ describe('pattern-editor-field', () => {
 
     patternField.triggerCustomEvent('input', { _id: PATTERN_CUSTOM_ITEM_VALUE });
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       id: PATTERN_CUSTOM_ITEM_VALUE,
       groups: [],
     });
@@ -98,7 +98,7 @@ describe('pattern-editor-field', () => {
 
     patternField.triggerCustomEvent('input', pattern);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       id,
       groups: [{
         key: expect.any(String),
@@ -165,7 +165,7 @@ describe('pattern-editor-field', () => {
 
     await editButton.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...patterns,
       id: PATTERN_CUSTOM_ITEM_VALUE,
     });
@@ -199,7 +199,7 @@ describe('pattern-editor-field', () => {
       patternRule,
     ]]);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...patterns,
       groups: [{
         key: expect.any(String),

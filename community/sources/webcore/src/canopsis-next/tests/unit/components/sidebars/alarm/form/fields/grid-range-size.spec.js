@@ -41,7 +41,7 @@ describe('grid-range-size', () => {
 
     selectRangeSliderField(wrapper).setValue(newValue);
 
-    expect(wrapper).toEmit('input', newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   it('Renders `grid-range-size` with default and required props', () => {

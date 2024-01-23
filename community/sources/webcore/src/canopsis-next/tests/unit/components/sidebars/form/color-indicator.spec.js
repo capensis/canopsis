@@ -20,7 +20,7 @@ describe('field-color-indicator', () => {
 
     selectNumberField(wrapper).triggerCustomEvent('input', COLOR_INDICATOR_TYPES.impactState);
 
-    expect(wrapper).toEmit('input', COLOR_INDICATOR_TYPES.impactState);
+    expect(wrapper).toEmitInput(COLOR_INDICATOR_TYPES.impactState);
   });
 
   test('Renders `field-color-indicator` with default props', () => {

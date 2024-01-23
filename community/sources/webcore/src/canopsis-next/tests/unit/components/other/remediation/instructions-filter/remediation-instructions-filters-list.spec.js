@@ -59,7 +59,7 @@ describe('remediation-instructions-filters-list', () => {
       .at(0)
       .triggerCustomEvent('input', updatedFilter);
 
-    expect(wrapper).toEmit('input', [
+    expect(wrapper).toEmitInput([
       updatedFilter,
       ...filters.slice(1),
     ]);
@@ -76,7 +76,7 @@ describe('remediation-instructions-filters-list', () => {
       .at(1)
       .triggerCustomEvent('remove');
 
-    expect(wrapper).toEmit('input', filters.slice(0, -1));
+    expect(wrapper).toEmitInput(filters.slice(0, -1));
   });
 
   it('Renders `remediation-instructions-filters-list` with default props', () => {

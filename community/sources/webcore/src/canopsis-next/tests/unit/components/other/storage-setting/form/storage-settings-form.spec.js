@@ -125,7 +125,7 @@ describe('storage-settings-form', () => {
 
     selectStorageSettingsAlarmForm(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       alarm: newValue,
     });
@@ -147,7 +147,7 @@ describe('storage-settings-form', () => {
 
     selectStorageSettingsRemediationForm(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       remediation: newValue,
     });
@@ -167,7 +167,7 @@ describe('storage-settings-form', () => {
 
     selectStorageSettingsPbehaviorForm(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       pbehavior: newValue,
     });
@@ -187,7 +187,7 @@ describe('storage-settings-form', () => {
 
     selectStorageSettingsJunitForm(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       junit: newValue,
     });
@@ -207,7 +207,7 @@ describe('storage-settings-form', () => {
 
     selectStorageSettingsHealthCheckForm(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       health_check: newValue,
     });
@@ -227,7 +227,7 @@ describe('storage-settings-form', () => {
 
     selectStorageSettingsWebhookForm(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       webhook: newValue,
     });
@@ -247,7 +247,7 @@ describe('storage-settings-form', () => {
 
     selectStorageSettingsMetricsForm(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       metrics: newValue,
     });
@@ -267,7 +267,7 @@ describe('storage-settings-form', () => {
 
     selectStorageSettingsPerfDataMetricsForm(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       perf_data_metrics: newValue,
     });

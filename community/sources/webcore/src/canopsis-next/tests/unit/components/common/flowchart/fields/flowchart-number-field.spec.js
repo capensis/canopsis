@@ -24,7 +24,7 @@ describe('flowchart-number-field', () => {
 
     selectField.triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   test('Renders `flowchart-number-field` with default props', async () => {

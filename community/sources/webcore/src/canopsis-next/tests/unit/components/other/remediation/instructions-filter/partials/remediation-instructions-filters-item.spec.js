@@ -58,7 +58,7 @@ describe('remediation-instructions-filters-item', () => {
 
     selectChip(wrapper).triggerCustomEvent('click:close');
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...lockedFilter,
       disabled: !lockedFilter.disabled,
     });
@@ -74,7 +74,7 @@ describe('remediation-instructions-filters-item', () => {
 
     selectChip(wrapper).triggerCustomEvent('click:close');
 
-    expect(wrapper).toEmit('remove');
+    expect(wrapper).toHaveBeenEmit('remove');
   });
 
   it('Edit instruction filter modal opened after trigger click event on the chip', () => {
@@ -117,7 +117,7 @@ describe('remediation-instructions-filters-item', () => {
 
     modalArguments.config.action(actionValue);
 
-    expect(wrapper).toEmit('input', actionValue);
+    expect(wrapper).toEmitInput(actionValue);
   });
 
   it('Renders `remediation-instructions-filters-item` with default props', () => {

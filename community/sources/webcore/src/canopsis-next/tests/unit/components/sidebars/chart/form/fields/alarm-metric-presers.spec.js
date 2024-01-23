@@ -28,7 +28,7 @@ describe('alarm-metric-presets', () => {
 
     selectAlarmMetricPresetsField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   test('Renders `alarm-metric-presets` with default props', () => {

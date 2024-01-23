@@ -31,7 +31,7 @@ describe('c-quick-date-interval-field', () => {
 
     selectDateIntervalField(wrapper).triggerCustomEvent('input', interval);
 
-    expect(wrapper).toEmit('input', interval);
+    expect(wrapper).toEmitInput(interval);
   });
 
   it('Value changed after trigger quick date interval type field', () => {
@@ -39,7 +39,7 @@ describe('c-quick-date-interval-field', () => {
 
     selectQuickDateIntervalTypeField(wrapper).triggerCustomEvent('input', QUICK_RANGES.last12Hour);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       from: QUICK_RANGES.last12Hour.start,
       to: QUICK_RANGES.last12Hour.stop,
     });
@@ -54,7 +54,7 @@ describe('c-quick-date-interval-field', () => {
 
     selectQuickDateIntervalTypeField(wrapper).triggerCustomEvent('input', QUICK_RANGES.last12Hour);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       from: QUICK_RANGES.last12Hour.start,
       to: QUICK_RANGES.last12Hour.stop,
     });
@@ -65,7 +65,7 @@ describe('c-quick-date-interval-field', () => {
 
     selectQuickDateIntervalTypeField(wrapper).triggerCustomEvent('input', QUICK_RANGES.custom);
 
-    expect(wrapper).not.toEmit('input');
+    expect(wrapper).not.toHaveBeenEmit('input');
   });
 
   it('Ranges filtered with accumulatedBefore and min', () => {

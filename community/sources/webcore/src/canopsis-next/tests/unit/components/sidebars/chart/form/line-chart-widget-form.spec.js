@@ -61,7 +61,7 @@ describe('line-chart-widget-form', () => {
     const fieldTitle = selectFieldTitle(wrapper);
 
     fieldTitle.triggerCustomEvent('input', newTitle);
-    expect(wrapper).toEmit('input', getWidgetRequestWithNewProperty(form, 'title', newTitle));
+    expect(wrapper).toEmitInput(getWidgetRequestWithNewProperty(form, 'title', newTitle));
   });
 
   test('Periodic refresh changed after trigger field periodic refresh', async () => {
@@ -85,7 +85,7 @@ describe('line-chart-widget-form', () => {
       periodic_refresh: periodicRefresh,
     });
 
-    expect(wrapper).toEmit('input', getWidgetRequestWithNewParametersProperty(form, 'periodic_refresh', periodicRefresh));
+    expect(wrapper).toEmitInput(getWidgetRequestWithNewParametersProperty(form, 'periodic_refresh', periodicRefresh));
   });
 
   test('Metrics changed after trigger field alarm metric presets', async () => {
@@ -105,7 +105,7 @@ describe('line-chart-widget-form', () => {
     ];
 
     selectFieldAlarmMetricPresets(wrapper).triggerCustomEvent('input', newMetrics);
-    expect(wrapper).toEmit('input', getWidgetRequestWithNewParametersProperty(form, 'metrics', newMetrics));
+    expect(wrapper).toEmitInput(getWidgetRequestWithNewParametersProperty(form, 'metrics', newMetrics));
   });
 
   test('Chart title changed after trigger field chart title', async () => {
@@ -118,7 +118,7 @@ describe('line-chart-widget-form', () => {
     const newChartTitle = Faker.datatype.string();
 
     selectFieldChartTitle(wrapper).triggerCustomEvent('input', newChartTitle);
-    expect(wrapper).toEmit('input', getWidgetRequestWithNewParametersProperty(form, 'chart_title', newChartTitle));
+    expect(wrapper).toEmitInput(getWidgetRequestWithNewParametersProperty(form, 'chart_title', newChartTitle));
   });
 
   test('Filters changed after trigger field filters', async () => {
@@ -132,7 +132,7 @@ describe('line-chart-widget-form', () => {
     const filters = [Faker.datatype.string()];
 
     selectFieldFilters(wrapper).triggerCustomEvent('update:filters', filters);
-    expect(wrapper).toEmit('input', getWidgetRequestWithNewProperty(form, 'filters', filters));
+    expect(wrapper).toEmitInput(getWidgetRequestWithNewProperty(form, 'filters', filters));
   });
 
   test('Quick date interval type changed after trigger field quick date interval', async () => {
@@ -143,8 +143,7 @@ describe('line-chart-widget-form', () => {
     });
 
     selectFieldQuickDateIntervalType(wrapper).triggerCustomEvent('input', QUICK_RANGES.last30Days.value);
-    expect(wrapper).toEmit(
-      'input',
+    expect(wrapper).toEmitInput(
       getWidgetRequestWithNewParametersProperty(form, 'default_time_range', QUICK_RANGES.last30Days.value),
     );
   });
@@ -157,7 +156,7 @@ describe('line-chart-widget-form', () => {
     });
 
     selectFieldSampling(wrapper).triggerCustomEvent('input', SAMPLINGS.month);
-    expect(wrapper).toEmit('input', getWidgetRequestWithNewParametersProperty(form, 'default_sampling', SAMPLINGS.month));
+    expect(wrapper).toEmitInput(getWidgetRequestWithNewParametersProperty(form, 'default_sampling', SAMPLINGS.month));
   });
 
   test('Comparison changed after trigger field comparison', async () => {
@@ -170,7 +169,7 @@ describe('line-chart-widget-form', () => {
     const newComparison = !form.parameters.comparison;
 
     selectFieldSwitcher(wrapper).triggerCustomEvent('input', newComparison);
-    expect(wrapper).toEmit('input', getWidgetRequestWithNewParametersProperty(form, 'comparison', newComparison));
+    expect(wrapper).toEmitInput(getWidgetRequestWithNewParametersProperty(form, 'comparison', newComparison));
   });
 
   test('Renders `line-chart-widget-form` widget settings with default props', async () => {

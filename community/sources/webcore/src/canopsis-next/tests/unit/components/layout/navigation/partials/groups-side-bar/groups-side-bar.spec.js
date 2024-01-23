@@ -59,7 +59,7 @@ describe('groups-side-bar', () => {
 
     selectNavigationDrawer(wrapper).triggerCustomEvent('input', true);
 
-    expect(wrapper).toEmit('input', true);
+    expect(wrapper).toEmitInput(true);
   });
 
   it('Groups fetched after mount', async () => {

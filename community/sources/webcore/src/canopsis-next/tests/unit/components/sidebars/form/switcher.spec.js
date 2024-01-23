@@ -39,7 +39,7 @@ describe('switcher', () => {
 
     selectSwitchField(wrapper).setChecked(true);
 
-    expect(wrapper).toEmit('input', true);
+    expect(wrapper).toEmitInput(true);
   });
 
   it('Renders `switcher` with default and required props', () => {

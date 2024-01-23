@@ -44,7 +44,7 @@ describe('periodic-refresh', () => {
       },
     });
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       periodic_refresh: {
         ...form.periodic_refresh,
@@ -73,7 +73,7 @@ describe('periodic-refresh', () => {
 
     selectPeriodicRefreshField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       periodic_refresh: newValue,
     });
   });
@@ -97,7 +97,7 @@ describe('periodic-refresh', () => {
 
     selectLiveWatchingField(wrapper).triggerCustomEvent('input', newLiveWatching);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       liveWatching: newLiveWatching,
     });

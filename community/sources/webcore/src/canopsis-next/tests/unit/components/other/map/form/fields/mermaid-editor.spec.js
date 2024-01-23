@@ -50,7 +50,7 @@ describe('mermaid-editor', () => {
 
     mermaidCodeEditor.triggerCustomEvent('input', newCode);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...initialForm,
       code: newCode,
     });
@@ -69,7 +69,7 @@ describe('mermaid-editor', () => {
 
     mermaidThemeField.triggerCustomEvent('input', newTheme);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...initialForm,
       theme: newTheme,
     });
@@ -88,7 +88,7 @@ describe('mermaid-editor', () => {
 
     mermaidPoints.triggerCustomEvent('input', newPoints);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...initialForm,
       points: newPoints,
     });

@@ -67,7 +67,7 @@ describe('text-editor', () => {
 
     await wrapper.setProps({ value: newValue });
 
-    expect(wrapper).toEmit('input', newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   test('Value changed after trigger editor', async () => {
@@ -82,7 +82,7 @@ describe('text-editor', () => {
     editor.element.innerHTML = newValue;
     editor.trigger('mousedown');
 
-    expect(wrapper).toEmit('input', newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   test('Value changed after trigger variables', async () => {
@@ -111,7 +111,7 @@ describe('text-editor', () => {
 
     variablesMenu.triggerCustomEvent('input', variable);
 
-    expect(wrapper).toEmit('input', `{{ ${variable} }}`);
+    expect(wrapper).toEmitInput(`{{ ${variable} }}`);
     expect(focusSpy).toBeCalled();
   });
 
@@ -167,7 +167,7 @@ describe('text-editor', () => {
 
     variablesMenu.triggerCustomEvent('input', variable);
 
-    expect(wrapper).toEmit('input', `Variable: {{ ${variable} }}`);
+    expect(wrapper).toEmitInput(`Variable: {{ ${variable} }}`);
     expect(focusSpy).toBeCalled();
   });
 
@@ -198,7 +198,7 @@ describe('text-editor', () => {
 
     variablesMenu.triggerCustomEvent('input', variable);
 
-    expect(wrapper).toEmit('input', `Variable: {{ ${variable} }}`);
+    expect(wrapper).toEmitInput(`Variable: {{ ${variable} }}`);
     expect(focusSpy).toBeCalled();
   });
 
@@ -242,8 +242,7 @@ describe('text-editor', () => {
 
     expect(focusSpy).toBeCalled();
 
-    expect(wrapper).toEmit(
-      'input',
+    expect(wrapper).toEmitInput(
       `<img src="${API_HOST}${API_ROUTES.file}/${fileResponse._id}" style="width: 300px;">`,
     );
     jest.useRealTimers();
@@ -274,8 +273,7 @@ describe('text-editor', () => {
 
     expect(focusSpy).toBeCalled();
 
-    expect(wrapper).toEmit(
-      'input',
+    expect(wrapper).toEmitInput(
       `<img src="${url}" alt="${text}" style="width: 300px;">`,
     );
   });
@@ -350,8 +348,7 @@ describe('text-editor', () => {
 
     const secondEmitData = `${firstEmitData}<a href="${API_HOST}${API_ROUTES.file}/${secondFile._id}" target="_blank">${secondFile.filename}</a>`;
 
-    expect(wrapper).toEmit(
-      'input',
+    expect(wrapper).toEmitInput(
       firstEmitData,
       secondEmitData,
     );

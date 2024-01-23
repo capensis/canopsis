@@ -49,7 +49,7 @@ describe('field-map', () => {
 
     mapField.triggerCustomEvent('input', newMap);
 
-    expect(wrapper).toEmit('input', newMap);
+    expect(wrapper).toEmitInput(newMap);
   });
 
   it('Renders `field-map` with default props', () => {

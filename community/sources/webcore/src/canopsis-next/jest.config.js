@@ -25,7 +25,7 @@ module.exports = {
     ],
   },
   transform: {
-    '^.+\\.vue$': '<rootDir>/tests/unit/jest.vue',
+    '^.+\\.vue$': ['<rootDir>/tests/unit/jest.vue', { isolatedModules: true }],
     '^.+\\.jsx?$': '<rootDir>/tests/unit/jest.transform',
     '^.+\\.svg$': '<rootDir>/tests/unit/jest.svg',
     '^.+\\.html?$': '<rootDir>/tests/unit/jest.html',

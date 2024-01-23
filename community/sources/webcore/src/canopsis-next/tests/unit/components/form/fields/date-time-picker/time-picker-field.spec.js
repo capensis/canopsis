@@ -60,7 +60,7 @@ describe('time-picker-field', () => {
 
     expect(setValue).toBeCalledWith('12:00');
     expect(setSearch).toBeCalledWith('');
-    expect(wrapper).not.toEmit('input');
+    expect(wrapper).not.toHaveBeenEmit('input');
   });
 
   test('List scrolled correctly without value', async () => {
@@ -112,7 +112,7 @@ describe('time-picker-field', () => {
 
     combobox.setValue(newValue);
 
-    expect(wrapper).toEmit('input', newValue);
+    expect(wrapper).toEmitInput(newValue);
 
     expect(setValue).not.toBeCalled();
     expect(setSearch).not.toBeCalled();
@@ -132,7 +132,7 @@ describe('time-picker-field', () => {
 
     combobox.setValue(newValue);
 
-    expect(wrapper).toEmit('input', '13:00');
+    expect(wrapper).toEmitInput('13:00');
 
     expect(setValue).toBeCalledWith('13:00');
     expect(setSearch).toBeCalledWith('');

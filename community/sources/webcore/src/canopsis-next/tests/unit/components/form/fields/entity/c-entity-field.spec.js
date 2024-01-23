@@ -119,7 +119,7 @@ describe('c-entity-field', () => {
 
     autocompleteElement.setValue(items[0].value);
 
-    expect(wrapper).toEmit('input', items[0].value);
+    expect(wrapper).toEmitInput(items[0].value);
   });
 
   it('Renders `c-entity-field` with default props', async () => {

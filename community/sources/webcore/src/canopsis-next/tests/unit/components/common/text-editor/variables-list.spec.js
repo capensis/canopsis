@@ -35,7 +35,7 @@ describe('variables-list', () => {
 
     variableTile.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('input', value);
+    expect(wrapper).toEmitInput(value);
   });
 
   test('Submenu opened when mouseover tile', async () => {
@@ -132,7 +132,7 @@ describe('variables-list', () => {
 
     variablesList.triggerCustomEvent('input', value);
 
-    expect(wrapper).toEmit('input', `${parentValue}.${value}`);
+    expect(wrapper).toEmitInput(`${parentValue}.${value}`);
   });
 
   test('Renders `variables-list` with default props', () => {

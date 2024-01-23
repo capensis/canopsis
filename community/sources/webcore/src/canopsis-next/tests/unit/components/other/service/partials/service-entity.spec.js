@@ -120,7 +120,7 @@ describe('service-entity', () => {
 
     modalArguments.config.onClose();
 
-    expect(wrapper).toEmit('refresh');
+    expect(wrapper).toHaveBeenEmit('refresh');
   });
 
   test('Renders `service-entity` with default props', async () => {

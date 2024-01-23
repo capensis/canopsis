@@ -56,7 +56,7 @@ describe('kpi-alarms-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...initialQuery,
       interval: expectedInterval,
     });
@@ -75,7 +75,7 @@ describe('kpi-alarms-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...initialQuery,
       sampling: SAMPLINGS.month,
     });
@@ -98,7 +98,7 @@ describe('kpi-alarms-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...initialQuery,
       interval: {
         from: nowSubtractYearTimestamp,
@@ -127,7 +127,7 @@ describe('kpi-alarms-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...initialQuery,
       interval: {
         from: nowSubtractYearTimestamp + 1,
@@ -149,7 +149,7 @@ describe('kpi-alarms-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...initialQuery,
       parameters: newParameters,
     });
@@ -169,7 +169,7 @@ describe('kpi-alarms-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...initialQuery,
       filter: expectedFilter,
     });

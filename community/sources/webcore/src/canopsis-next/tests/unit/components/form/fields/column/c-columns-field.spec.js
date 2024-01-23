@@ -42,7 +42,7 @@ describe('c-columns-field', () => {
 
     selectAddCardButton(wrapper).trigger('click');
 
-    expect(wrapper).toEmit('input', [
+    expect(wrapper).toEmitInput([
       ...columns,
       {
         column: '',
@@ -66,7 +66,7 @@ describe('c-columns-field', () => {
 
     selectColumnFieldByIndex(wrapper, 2).triggerCustomEvent('input', newColumn);
 
-    expect(wrapper).toEmit('input', [
+    expect(wrapper).toEmitInput([
       columns[0],
       columns[1],
       newColumn,
@@ -84,7 +84,7 @@ describe('c-columns-field', () => {
 
     selectColumnFieldByIndex(wrapper, columnToRemoveIndex).triggerCustomEvent('remove');
 
-    expect(wrapper).toEmit('input', [
+    expect(wrapper).toEmitInput([
       columns[0],
       columns[1],
       columns[3],

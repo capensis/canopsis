@@ -65,7 +65,7 @@ describe('manual-meta-alarm-form', () => {
 
     comboboxField.setValue(metaAlarm);
 
-    expect(wrapper).toEmit('input', { ...form, metaAlarm });
+    expect(wrapper).toEmitInput({ ...form, metaAlarm });
   });
 
   test('Comment changed after trigger description field', () => {
@@ -85,7 +85,7 @@ describe('manual-meta-alarm-form', () => {
 
     selectTextField(wrapper).setValue(comment);
 
-    expect(wrapper).toEmit('input', { ...form, comment });
+    expect(wrapper).toEmitInput({ ...form, comment });
   });
 
   test('Auto resolve changed after trigger enabled field', () => {
@@ -107,7 +107,7 @@ describe('manual-meta-alarm-form', () => {
 
     enabledField.triggerCustomEvent('input', autoResolve);
 
-    expect(wrapper).toEmit('input', { ...form, auto_resolve: autoResolve });
+    expect(wrapper).toEmitInput({ ...form, auto_resolve: autoResolve });
   });
 
   test('Renders `manual-meta-alarm-form` with default props', () => {

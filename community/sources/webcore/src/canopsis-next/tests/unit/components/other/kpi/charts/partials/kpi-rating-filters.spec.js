@@ -55,7 +55,7 @@ describe('kpi-rating-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...initialQuery,
       interval: expectedInterval,
     });
@@ -75,7 +75,7 @@ describe('kpi-rating-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...initialQuery,
       filter: expectedFilter,
     });
@@ -98,7 +98,7 @@ describe('kpi-rating-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...initialQuery,
       criteria: ratingSetting,
     });
@@ -117,7 +117,7 @@ describe('kpi-rating-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...initialQuery,
       metric: ALARM_METRIC_PARAMETERS.createdAlarms,
       criteria: KPI_RATING_CRITERIA.impactLevel,
@@ -137,7 +137,7 @@ describe('kpi-rating-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...initialQuery,
       metric: ALARM_METRIC_PARAMETERS.cancelAckAlarms,
     });

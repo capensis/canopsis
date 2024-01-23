@@ -30,7 +30,7 @@ describe('pbehavior-comments-field', () => {
 
     selectAddCommentButton(wrapper).triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('input', [
+    expect(wrapper).toEmitInput([
       ...comments,
       {
         key: expect.any(String),
@@ -57,7 +57,7 @@ describe('pbehavior-comments-field', () => {
 
     selectCommentFieldByIndex(wrapper, 1).triggerCustomEvent('input', newComment);
 
-    expect(wrapper).toEmit('input', [
+    expect(wrapper).toEmitInput([
       comments[0],
       newComment,
     ]);
@@ -76,7 +76,7 @@ describe('pbehavior-comments-field', () => {
 
     selectCommentFieldByIndex(wrapper, 1).triggerCustomEvent('remove');
 
-    expect(wrapper).toEmit('input', [
+    expect(wrapper).toEmitInput([
       comments[0],
     ]);
   });

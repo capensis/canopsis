@@ -73,7 +73,7 @@ describe('periodic-refresh-field', () => {
 
     enabledField.triggerCustomEvent('input', false);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...periodicRefresh,
       enabled: false,
     });
@@ -101,7 +101,7 @@ describe('periodic-refresh-field', () => {
 
     durationField.triggerCustomEvent('input', newDuration);
 
-    expect(wrapper).toEmit('input', newDuration);
+    expect(wrapper).toEmitInput(newDuration);
   });
 
   it('Renders `periodic-refresh-field` with default props', () => {

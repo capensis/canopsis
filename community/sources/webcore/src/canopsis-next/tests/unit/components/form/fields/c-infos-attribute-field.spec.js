@@ -32,7 +32,7 @@ describe('c-infos-attribute-field', () => {
 
     dictionarySelect.triggerCustomEvent('input', newDictionary);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       dictionary: newDictionary,
       field: value.field,
     });
@@ -55,7 +55,7 @@ describe('c-infos-attribute-field', () => {
 
     fieldSelect.triggerCustomEvent('input', newField);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       dictionary: value.dictionary,
       field: newField,
     });

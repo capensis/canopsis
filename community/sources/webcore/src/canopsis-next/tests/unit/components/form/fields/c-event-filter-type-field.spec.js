@@ -32,7 +32,7 @@ describe('c-event-filter-type-field', () => {
 
     selectField.setValue(EVENT_FILTER_TYPES.drop);
 
-    expect(wrapper).toEmit('input', EVENT_FILTER_TYPES.drop);
+    expect(wrapper).toEmitInput(EVENT_FILTER_TYPES.drop);
   });
 
   test('Renders `c-event-filter-type-field` with default props', () => {

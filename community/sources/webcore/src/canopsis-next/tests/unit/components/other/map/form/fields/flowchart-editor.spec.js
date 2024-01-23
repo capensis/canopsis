@@ -70,7 +70,7 @@ describe('flowchart-editor', () => {
 
     flowchartCodeEditor.triggerCustomEvent('update:backgroundColor', newColor);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...initialForm,
       background_color: newColor,
     });
@@ -89,7 +89,7 @@ describe('flowchart-editor', () => {
 
     flowchart.triggerCustomEvent('input', shapes);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...initialForm,
       shapes,
     });
@@ -122,7 +122,7 @@ describe('flowchart-editor', () => {
 
     flowchart.triggerCustomEvent('input', newShapes);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...initialForm,
       points: [firstPoint],
       shapes: newShapes,
@@ -142,7 +142,7 @@ describe('flowchart-editor', () => {
 
     flowchartPointsEditor.triggerCustomEvent('input', newPoints);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...initialForm,
       points: newPoints,
     });

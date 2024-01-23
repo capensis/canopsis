@@ -65,7 +65,7 @@ describe('pbehavior-recurrence-rule-field', () => {
       exdates: newExdates,
     });
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       rrule: newRrule,
       exceptions: newExceptions,
       exdates: newExdates,
@@ -95,7 +95,7 @@ describe('pbehavior-recurrence-rule-field', () => {
 
     config.action();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       rrule: '',
     });
   });

@@ -39,7 +39,7 @@ describe('filters', () => {
 
     selectFilterSelectorField(wrapper).triggerCustomEvent('input', filters[0]);
 
-    expect(wrapper).toEmit('input', filters[0]);
+    expect(wrapper).toEmitInput(filters[0]);
   });
 
   it('Filters updated after trigger input event on filters list', () => {

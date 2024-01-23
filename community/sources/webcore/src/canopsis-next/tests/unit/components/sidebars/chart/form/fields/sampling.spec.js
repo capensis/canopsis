@@ -28,7 +28,7 @@ describe('sampling', () => {
 
     selectSamplingFieldField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   test('Renders `sampling` with default props', () => {
