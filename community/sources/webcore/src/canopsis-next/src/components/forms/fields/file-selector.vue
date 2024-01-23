@@ -44,9 +44,10 @@
     <input
       class="hidden"
       ref="fileInput"
-      type="file"
       :multiple="multiple"
       :accept="accept"
+      :name="name"
+      type="file"
       @change="change"
       @click.stop=""
     >
@@ -66,15 +67,6 @@
 import { union } from 'lodash';
 
 export default {
-  $_veeValidate: {
-    value() {
-      return this.files;
-    },
-
-    name() {
-      return this.name;
-    },
-  },
   inject: ['$validator'],
   props: {
     name: {
@@ -105,6 +97,17 @@ export default {
       type: Array,
       default: () => [],
     },
+    /**
+     * File size in kilobytes (KB)
+     */
+    maxFileSize: {
+      type: [String, Number],
+      required: false,
+    },
+    required: {
+      type: Boolean,
+      default: false,
+    },
     hideDetails: {
       type: Boolean,
       default: false,
@@ -113,6 +116,7 @@ export default {
   data() {
     return {
       files: [],
+      filesForValidator: [],
     };
   },
   computed: {
@@ -137,12 +141,39 @@ export default {
         click: this.selectFiles,
       };
     },
-
-    mimeType() {
-      return !this.accept ? '' : new RegExp(this.accept.replace('*', '.*'));
-    },
+  },
+  mounted() {
+    this.attachField();
+  },
+  beforeDestroy() {
+    this.detachField();
   },
   methods: {
+    attachField() {
+      const rules = {
+        required: this.required,
+      };
+
+      if (this.accept) {
+        rules.mimes = this.accept.split(',');
+      }
+
+      if (this.maxFileSize) {
+        rules.size = Number(this.maxFileSize);
+      }
+
+      this.$validator.attach({
+        name: this.name,
+        rules,
+        getter: () => this.filesForValidator,
+        vm: this,
+      });
+    },
+
+    detachField() {
+      this.$validator.detach(this.name);
+    },
+
     selectFiles(event) {
       event?.stopPropagation();
 
@@ -151,45 +182,47 @@ export default {
       }
     },
 
-    dropFiles(event) {
-      event?.preventDefault();
+    async dropFiles(event) {
+      const { files } = event?.dataTransfer ?? {};
 
-      if (event?.dataTransfer.items) {
-        const files = [...event.dataTransfer.items]
-          .filter(({ type }) => this.mimeType && this.mimeType.test(type))
-          .map(item => item.getAsFile());
+      if (files) {
+        this.setFilesForValidator(files);
 
-        if (!files.length) {
-          this.errors.add({
-            field: this.name,
-            msg: this.$t('common.fileSelector.dragAndDrop.fileTypeError', { accept: this.accept }),
-          });
+        const isValid = await this.$validator.validate(this.name);
 
-          return;
+        if (isValid) {
+          this.setFiles(this.filesForValidator);
         }
-
-        this.files = this.multiple
-          ? union(this.files, files)
-          : files;
-
-        this.errors.remove(this.name);
-        this.$emit('change', files);
       }
     },
 
-    change(event) {
-      const files = Object.values(event.target.files);
-      this.files = this.multiple
+    async change(event) {
+      this.setFilesForValidator(event.target.files);
+
+      const isValid = await this.$validator.validate(this.name);
+
+      if (isValid) {
+        this.setFiles(this.filesForValidator);
+      }
+    },
+
+    setFilesForValidator(files) {
+      this.filesForValidator = this.multiple
         ? union(this.files, files)
         : files;
+    },
 
-      this.errors.remove(this.name);
+    setFiles(files) {
+      this.files = files;
       this.$emit('change', this.files);
     },
 
     clear() {
       this.$refs.fileInput.value = null;
       this.files = [];
+      this.filesForValidator = [];
+
+      this.errors.remove(this.name);
     },
 
     internalClear() {
@@ -197,8 +230,16 @@ export default {
       this.$emit('change', this.files);
     },
 
-    removeFileFromSelections(name) {
-      this.files = this.files.filter(file => file.name !== name);
+    async removeFileFromSelections(name) {
+      this.setFilesForValidator(this.files.filter(file => file.name !== name));
+
+      const isValid = await this.$validator.validate(this.name);
+
+      if (!isValid) {
+        return;
+      }
+
+      this.setFiles(this.filesForValidator);
 
       if (!this.files.length) {
         this.internalClear();

@@ -43,11 +43,15 @@ export const vuetifyCustomIconsRegisterMixin = {
     },
 
     async fetchIconsWithRegistering() {
-      const { data: icons } = await this.fetchIconsListWithoutStore({ params: { limit: MAX_LIMIT } });
+      try {
+        const { data: icons } = await this.fetchIconsListWithoutStore({ params: { limit: MAX_LIMIT } });
 
-      icons.map(({ title, content }) => this.registerIconInVuetify(title, content));
+        icons.map(({ title, content }) => this.registerIconInVuetify(title, content));
 
-      this.setRegisteredIcons({ icons });
+        this.setRegisteredIcons({ icons });
+      } catch (err) {
+        console.error(err);
+      }
     },
   },
 };

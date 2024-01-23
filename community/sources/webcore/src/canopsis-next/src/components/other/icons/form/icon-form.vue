@@ -23,11 +23,14 @@
     <icon-file-selector
       v-if="!iconOriginalTitle"
       v-field="form.file"
+      :max-file-size="maxFileSize"
     />
   </v-layout>
 </template>
 
 <script>
+import { MAX_ICON_SIZE_IN_KB } from '@/constants';
+
 import IconFileSelector from './fields/icon-file-selector.vue';
 
 export default {
@@ -49,6 +52,11 @@ export default {
     return {
       iconOriginalTitle: this.form.title,
     };
+  },
+  computed: {
+    maxFileSize() {
+      return MAX_ICON_SIZE_IN_KB;
+    },
   },
 };
 </script>

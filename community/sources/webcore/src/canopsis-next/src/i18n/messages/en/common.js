@@ -560,7 +560,6 @@ export default {
     dragAndDrop: {
       label: 'Drag&drop to upload',
       labelAction: 'or browse',
-      fileTypeError: 'File type should be: {accept}',
     },
     fileTypes: {
       svg: 'svg file',
