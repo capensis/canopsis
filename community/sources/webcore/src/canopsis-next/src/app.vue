@@ -97,7 +97,7 @@ export default {
 
     await Promise.all([
       this.fetchCurrentUserWithErrorHandling(),
-      this.fetchTemplateVars(),
+      this.fetchTemplateVarsWithErrorHandling(),
       this.fetchIconsWithRegistering(),
     ]);
 
@@ -239,6 +239,14 @@ export default {
         console.error(err);
       } finally {
         this.appInfoLocalPending = false;
+      }
+    },
+
+    async fetchTemplateVarsWithErrorHandling() {
+      try {
+        await this.fetchTemplateVars();
+      } catch (err) {
+        console.error(err);
       }
     },
   },
