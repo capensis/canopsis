@@ -68,7 +68,7 @@ describe('text-editor', () => {
 
     modalArguments.config.action(actionValue);
 
-    expect(wrapper).toEmit('input', actionValue);
+    expect(wrapper).toEmitInput(actionValue);
   });
 
   it('Text editor modal opened after trigger edit button', () => {
@@ -103,7 +103,7 @@ describe('text-editor', () => {
 
     modalArguments.config.action(actionValue);
 
-    expect(wrapper).toEmit('input', actionValue);
+    expect(wrapper).toEmitInput(actionValue);
   });
 
   it('Confirmation modal opened after trigger delete button', () => {
@@ -131,7 +131,7 @@ describe('text-editor', () => {
 
     modalArguments.config.action(Faker.datatype.string());
 
-    expect(wrapper).toEmit('input', '');
+    expect(wrapper).toEmitInput('');
   });
 
   it('Renders `text-editor` with default props', () => {

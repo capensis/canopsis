@@ -42,7 +42,7 @@ describe('storage-settings-junit-form', () => {
 
     selectJunitDeleteAfterField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', { ...form, delete_after: newValue });
+    expect(wrapper).toEmitInput({ ...form, delete_after: newValue });
   });
 
   test('Renders `storage-settings-junit-form` with default form', () => {

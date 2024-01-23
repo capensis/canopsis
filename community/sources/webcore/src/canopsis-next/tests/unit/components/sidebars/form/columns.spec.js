@@ -36,7 +36,7 @@ describe('columns', () => {
 
     selectColumnsField(wrapper).triggerCustomEvent('input', columns);
 
-    expect(wrapper).toEmit('input', columns);
+    expect(wrapper).toEmitInput(columns);
   });
 
   it('Renders `columns` with default and required props', () => {

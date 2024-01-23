@@ -52,7 +52,7 @@ describe('remediation-instructions-filters', () => {
 
     selectRemediationInstructionsFiltersListField(wrapper).triggerCustomEvent('input', filters);
 
-    expect(wrapper).toEmit('input', filters);
+    expect(wrapper).toEmitInput(filters);
   });
 
   it('Instruction filter added after separator add button', () => {
@@ -93,7 +93,7 @@ describe('remediation-instructions-filters', () => {
 
     modalArguments.config.action(actionValue);
 
-    expect(wrapper).toEmit('input', [
+    expect(wrapper).toEmitInput([
       ...filters,
       { ...actionValue, _id: expect.any(String) },
     ]);

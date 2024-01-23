@@ -26,7 +26,7 @@ describe('field-modal-type', () => {
 
     selectRadioGroup(wrapper).triggerCustomEvent('input', SERVICE_WEATHER_WIDGET_MODAL_TYPES.both);
 
-    expect(wrapper).toEmit('input', SERVICE_WEATHER_WIDGET_MODAL_TYPES.both);
+    expect(wrapper).toEmitInput(SERVICE_WEATHER_WIDGET_MODAL_TYPES.both);
   });
 
   test('Renders `field-modal-type` with default props', () => {

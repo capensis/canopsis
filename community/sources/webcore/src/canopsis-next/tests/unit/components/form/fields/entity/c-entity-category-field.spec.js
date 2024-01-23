@@ -223,7 +223,7 @@ describe('c-entity-category-field', () => {
     await flushPromises();
 
     expect(validator.errors.has(`${name}.create`)).toBeTruthy();
-    expect(wrapper).not.toEmit('input');
+    expect(wrapper).not.toHaveBeenEmit('input');
 
     wrapper.destroy();
   });
@@ -264,7 +264,7 @@ describe('c-entity-category-field', () => {
 
     expect(createMock).toBeCalledWith(expect.any(Object), { data: { name: categoryName } }, undefined);
     expect(fetchListMock).toBeCalledTimes(2);
-    expect(wrapper).toEmit('input', category);
+    expect(wrapper).toEmitInput(category);
     expect(textField.vm.value).toBe('');
   });
 
@@ -302,7 +302,7 @@ describe('c-entity-category-field', () => {
     await flushPromises();
 
     expect(fetchListMock).toBeCalledTimes(1);
-    expect(wrapper).not.toEmit('input');
+    expect(wrapper).not.toHaveBeenEmit('input');
     expect(textField.vm.value).toBe('');
   });
 

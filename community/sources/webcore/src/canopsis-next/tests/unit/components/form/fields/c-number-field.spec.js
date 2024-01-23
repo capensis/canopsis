@@ -23,7 +23,7 @@ describe('c-number-field', () => {
 
     textField.setValue(newValue);
 
-    expect(wrapper).toEmit('input', newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   it('Renders `c-number-field` with default props', () => {

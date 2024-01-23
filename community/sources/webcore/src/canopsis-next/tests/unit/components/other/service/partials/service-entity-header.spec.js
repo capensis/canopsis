@@ -26,7 +26,7 @@ describe('service-entity-header', () => {
 
     alert.triggerCustomEvent('input');
 
-    expect(wrapper).toEmit('remove:unavailable');
+    expect(wrapper).toHaveBeenEmit('remove:unavailable');
   });
 
   test('Renders `service-entity-header` with default props', () => {

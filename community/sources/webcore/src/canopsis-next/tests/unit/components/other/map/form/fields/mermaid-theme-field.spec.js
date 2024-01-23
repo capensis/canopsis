@@ -26,7 +26,7 @@ describe('mermaid-theme-field', () => {
 
     selectField.triggerCustomEvent('input', MERMAID_THEMES.default);
 
-    expect(wrapper).toEmit('input', MERMAID_THEMES.default);
+    expect(wrapper).toEmitInput(MERMAID_THEMES.default);
   });
 
   test('Renders `mermaid-theme-field` with default props', () => {

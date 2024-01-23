@@ -21,7 +21,7 @@ describe('mermaid-contextmenu', () => {
 
     addPointTile.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('add:point');
+    expect(wrapper).toHaveBeenEmit('add:point');
   });
 
   test('Edit point event emitted after trigger click on edit point', () => {
@@ -37,7 +37,7 @@ describe('mermaid-contextmenu', () => {
 
     editPointTile.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('edit:point');
+    expect(wrapper).toHaveBeenEmit('edit:point');
   });
 
   test('Remove point event emitted after trigger click on remove point', () => {
@@ -53,7 +53,7 @@ describe('mermaid-contextmenu', () => {
 
     removePointTile.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('remove:point');
+    expect(wrapper).toHaveBeenEmit('remove:point');
   });
 
   test('Renders `mermaid-contextmenu` with required props', () => {

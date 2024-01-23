@@ -33,7 +33,7 @@ describe('field-slider', () => {
 
     selectSliderField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   test('Renders `field-slider` with default props', () => {

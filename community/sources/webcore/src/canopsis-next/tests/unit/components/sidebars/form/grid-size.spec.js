@@ -28,7 +28,7 @@ describe('field-grid-size', () => {
 
     columnSizeField.triggerCustomEvent('input', newSize);
 
-    expect(wrapper).toEmit('input', newSize);
+    expect(wrapper).toEmitInput(newSize);
   });
 
   it('Renders `field-grid-size` with default props', () => {

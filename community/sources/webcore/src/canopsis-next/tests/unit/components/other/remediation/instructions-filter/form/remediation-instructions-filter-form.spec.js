@@ -78,7 +78,7 @@ describe('remediation-instructions-filter-form', () => {
     const runningField = selectRunningField(wrapper);
     runningField.triggerCustomEvent('input', false);
 
-    expect(wrapper).toEmit('input', { running: false });
+    expect(wrapper).toEmitInput({ running: false });
   });
 
   test('With enabled after trigger with field', () => {
@@ -95,7 +95,7 @@ describe('remediation-instructions-filter-form', () => {
 
     withField.triggerCustomEvent('input', false);
 
-    expect(wrapper).toEmit('input', { with: false });
+    expect(wrapper).toEmitInput({ with: false });
   });
 
   test('All disabled after trigger all field', () => {
@@ -112,7 +112,7 @@ describe('remediation-instructions-filter-form', () => {
 
     allField.triggerCustomEvent('change', false);
 
-    expect(wrapper).toEmit('input', { all: false });
+    expect(wrapper).toEmitInput({ all: false });
   });
 
   test('All enabled after trigger all field', () => {
@@ -129,7 +129,7 @@ describe('remediation-instructions-filter-form', () => {
 
     allField.triggerCustomEvent('change', true);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       all: true,
       manual: true,
       auto: true,
@@ -156,7 +156,7 @@ describe('remediation-instructions-filter-form', () => {
     const autoField = selectAutoField(wrapper);
 
     autoField.triggerCustomEvent('change', false);
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       auto: false,
       instructions: filter.instructions,
     });
@@ -181,7 +181,7 @@ describe('remediation-instructions-filter-form', () => {
     const manualField = selectManualField(wrapper);
 
     manualField.triggerCustomEvent('change', true);
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       manual: true,
       instructions: [],
     });
@@ -206,7 +206,7 @@ describe('remediation-instructions-filter-form', () => {
     ];
 
     instructionsField.triggerCustomEvent('change', instructions);
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       manual: true,
       instructions,
     });

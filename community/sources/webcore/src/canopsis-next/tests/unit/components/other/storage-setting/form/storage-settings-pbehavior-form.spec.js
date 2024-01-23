@@ -40,7 +40,7 @@ describe('storage-settings-pbehavior-form', () => {
 
     selectPbehaviorDeleteAfterField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', { ...form, delete_after: newValue });
+    expect(wrapper).toEmitInput({ ...form, delete_after: newValue });
   });
 
   test('Renders `storage-settings-pbehavior-form` with default form', () => {

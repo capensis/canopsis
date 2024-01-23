@@ -32,7 +32,7 @@ describe('pattern-operator-field', () => {
 
     selectSelectField(wrapper).setValue(PATTERN_OPERATORS.notExist);
 
-    expect(wrapper).toEmit('input', PATTERN_OPERATORS.notExist);
+    expect(wrapper).toEmitInput(PATTERN_OPERATORS.notExist);
   });
 
   test('Renders `pattern-operator-field` with default props', () => {

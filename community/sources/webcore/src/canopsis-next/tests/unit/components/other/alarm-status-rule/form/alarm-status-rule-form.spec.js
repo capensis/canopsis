@@ -50,7 +50,7 @@ describe('alarm-status-rule-form', () => {
 
     nameField.triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', { name: newValue });
+    expect(wrapper).toEmitInput({ name: newValue });
   });
 
   test('Duration changed after trigger duration field', () => {
@@ -69,7 +69,7 @@ describe('alarm-status-rule-form', () => {
 
     durationField.triggerCustomEvent('input', newDuration);
 
-    expect(wrapper).toEmit('input', { duration: newDuration });
+    expect(wrapper).toEmitInput({ duration: newDuration });
   });
 
   test('Priority changed after trigger priority field', () => {
@@ -85,7 +85,7 @@ describe('alarm-status-rule-form', () => {
 
     priorityField.triggerCustomEvent('input', newPriority);
 
-    expect(wrapper).toEmit('input', { priority: newPriority });
+    expect(wrapper).toEmitInput({ priority: newPriority });
   });
 
   test('Freq limit changed after trigger number field', () => {
@@ -102,7 +102,7 @@ describe('alarm-status-rule-form', () => {
 
     numberField.triggerCustomEvent('input', newFreqLimit);
 
-    expect(wrapper).toEmit('input', { freq_limit: newFreqLimit });
+    expect(wrapper).toEmitInput({ freq_limit: newFreqLimit });
   });
 
   test('Description changed after trigger description field', () => {
@@ -118,7 +118,7 @@ describe('alarm-status-rule-form', () => {
 
     descriptionField.triggerCustomEvent('input', newDescription);
 
-    expect(wrapper).toEmit('input', { description: newDescription });
+    expect(wrapper).toEmitInput({ description: newDescription });
   });
 
   test('Patterns changed after trigger patterns field', () => {
@@ -136,7 +136,7 @@ describe('alarm-status-rule-form', () => {
 
     alarmStatusRulePatternsForm.triggerCustomEvent('input', newPatterns);
 
-    expect(wrapper).toEmit('input', { patterns: newPatterns });
+    expect(wrapper).toEmitInput({ patterns: newPatterns });
   });
 
   test('Renders `alarm-status-rule-form` with default props', () => {

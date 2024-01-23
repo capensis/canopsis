@@ -36,7 +36,7 @@ describe('c-pbehavior-type-field', () => {
 
     selectSelectField(wrapper).triggerCustomEvent('input', type._id);
 
-    expect(wrapper).toEmit('input', type._id);
+    expect(wrapper).toEmitInput(type._id);
   });
 
   test('Renders `c-pbehavior-type-field` with default props', async () => {

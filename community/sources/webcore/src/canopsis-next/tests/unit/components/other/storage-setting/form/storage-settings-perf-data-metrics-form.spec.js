@@ -39,7 +39,7 @@ describe('storage-settings-perf-data-metrics-form', () => {
 
     selectPerfDataMetricsDeleteAfterField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', { ...form, delete_after: newValue });
+    expect(wrapper).toEmitInput({ ...form, delete_after: newValue });
   });
 
   test('Renders `storage-settings-perf-data-metrics-form` with default form', () => {

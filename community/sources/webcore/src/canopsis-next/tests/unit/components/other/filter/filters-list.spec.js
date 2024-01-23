@@ -46,7 +46,7 @@ describe('filters-list', () => {
 
     selectAddButton(wrapper).triggerCustomEvent('click', new Event('click'));
 
-    expect(wrapper).toEmit('add');
+    expect(wrapper).toHaveBeenEmit('add');
   });
 
   it('Edit filter modal opened after trigger edit button', () => {
@@ -102,7 +102,7 @@ describe('filters-list', () => {
 
     draggableField.triggerCustomEvent('input', updatedFilters);
 
-    expect(wrapper).toEmit('input', updatedFilters);
+    expect(wrapper).toEmitInput(updatedFilters);
   });
 
   it('Renders `filters-list` with default props', () => {

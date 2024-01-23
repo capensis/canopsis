@@ -53,7 +53,7 @@ describe('storage-settings-remediation-form', () => {
 
     selectRemediationDeleteAfterField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', { ...form, delete_after: newValue });
+    expect(wrapper).toEmitInput({ ...form, delete_after: newValue });
   });
 
   test('Remediation delete stats after changed after trigger enabled duration field', () => {
@@ -67,7 +67,7 @@ describe('storage-settings-remediation-form', () => {
 
     selectRemediationDeleteStatsAfterField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', { ...form, delete_stats_after: newValue });
+    expect(wrapper).toEmitInput({ ...form, delete_stats_after: newValue });
   });
 
   test('Remediation delete mod stats after changed after trigger enabled duration field', () => {
@@ -81,7 +81,7 @@ describe('storage-settings-remediation-form', () => {
 
     selectRemediationDeleteModStatsAfterField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', { ...form, delete_mod_stats_after: newValue });
+    expect(wrapper).toEmitInput({ ...form, delete_mod_stats_after: newValue });
   });
 
   test('Renders `storage-settings-remediation-form` with default form', () => {

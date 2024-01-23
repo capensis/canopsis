@@ -77,7 +77,7 @@ describe('c-items-per-page-field', () => {
 
     wrapper.find('select.v-select').setValue(value);
 
-    expect(wrapper).toEmit('input', String(value));
+    expect(wrapper).toEmitInput(String(value));
   });
 
   it('Renders `c-items-per-page-field` with default props', async () => {

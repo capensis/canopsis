@@ -53,7 +53,7 @@ describe('kpi-sli-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...initialQuery,
       interval: expectedInterval,
     });
@@ -70,7 +70,7 @@ describe('kpi-sli-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...initialQuery,
       sampling: SAMPLINGS.month,
     });
@@ -87,7 +87,7 @@ describe('kpi-sli-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...initialQuery,
       type: KPI_SLI_GRAPH_DATA_TYPE.time,
     });
@@ -107,7 +107,7 @@ describe('kpi-sli-filters', () => {
 
     await flushPromises();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...initialQuery,
       filter: expectedFilter,
     });

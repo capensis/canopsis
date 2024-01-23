@@ -42,7 +42,7 @@ describe('c-change-state-field', () => {
 
     wrapper.find('input.state-criticity-field').setValue(ENTITIES_STATES.critical);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...initialValue,
       state: ENTITIES_STATES.critical,
     });
@@ -64,7 +64,7 @@ describe('c-change-state-field', () => {
 
     wrapper.find('.v-textarea textarea').setValue(newOutput);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...initialValue,
       output: newOutput,
     });

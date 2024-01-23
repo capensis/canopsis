@@ -38,7 +38,7 @@ describe('field-sort-column', () => {
 
     selectColumnField(wrapper).triggerCustomEvent('input', newColumn);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       column: newColumn,
       order: SORT_ORDERS.asc,
     });
@@ -57,7 +57,7 @@ describe('field-sort-column', () => {
 
     selectOrderField(wrapper).triggerCustomEvent('input', SORT_ORDERS.desc);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       column,
       order: SORT_ORDERS.desc,
     });

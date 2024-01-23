@@ -40,7 +40,7 @@ describe('storage-settings-health-check-form', () => {
 
     selectHealthCheckDeleteAfterField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', { ...form, delete_after: newValue });
+    expect(wrapper).toEmitInput({ ...form, delete_after: newValue });
   });
 
   test('Renders `storage-settings-health-check-form` with default form', () => {

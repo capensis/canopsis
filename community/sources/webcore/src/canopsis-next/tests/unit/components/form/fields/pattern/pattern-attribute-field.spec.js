@@ -33,7 +33,7 @@ describe('pattern-attribute-field', () => {
 
     selectElement.triggerCustomEvent('input', value);
 
-    expect(wrapper).toEmit('input', value);
+    expect(wrapper).toEmitInput(value);
   });
 
   it('Renders `pattern-attribute-field` with default props', () => {

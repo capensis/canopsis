@@ -153,7 +153,7 @@ describe('flowchart-editor', () => {
     await selectShapeByType(wrapper, SHAPES.circle)
       .trigger('mousedown', { ctrlKey: true });
 
-    expect(wrapper).not.toEmit('update:selected');
+    expect(wrapper).not.toHaveBeenEmit('update:selected');
 
     await selectShapeByType(wrapper, SHAPES.circle)
       .trigger('mouseup', { ctrlKey: true });
@@ -302,7 +302,7 @@ describe('flowchart-editor', () => {
 
     await flushPromises();
 
-    expect(wrapper).toEmit('input', omit(shapes, [SHAPES.ellipse, SHAPES.rhombus]));
+    expect(wrapper).toEmitInput(omit(shapes, [SHAPES.ellipse, SHAPES.rhombus]));
   });
 
   test('Shapes moved up after keyboard event triggered', async () => {
@@ -322,7 +322,7 @@ describe('flowchart-editor', () => {
 
     await flushPromises();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...shapes,
       line: {
         ...shapes.line,
@@ -357,7 +357,7 @@ describe('flowchart-editor', () => {
 
     const arrowLine = shapes[SHAPES.arrowLine];
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...shapes,
       [SHAPES.arrowLine]: {
         ...arrowLine,
@@ -390,7 +390,7 @@ describe('flowchart-editor', () => {
 
     await flushPromises();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...shapes,
       line: {
         ...shapes.line,
@@ -425,7 +425,7 @@ describe('flowchart-editor', () => {
 
     const arrowLine = shapes[SHAPES.arrowLine];
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...shapes,
       [SHAPES.arrowLine]: {
         ...arrowLine,
@@ -480,7 +480,7 @@ describe('flowchart-editor', () => {
 
     await flushPromises();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...shapes,
       [copiedRectId]: {
         ...shapes.rect,
@@ -525,7 +525,7 @@ describe('flowchart-editor', () => {
     const offsetX = diffX + startX;
     const offsetY = diffY + startY;
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...shapes,
       circle: {
         ...shapes.circle,
@@ -568,7 +568,7 @@ describe('flowchart-editor', () => {
     const offsetX = diffX + startX;
     const offsetY = diffY + startY;
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...shapes,
       circle: {
         ...shapes.circle,
@@ -636,7 +636,7 @@ describe('flowchart-editor', () => {
 
     await triggerDocumentMouseEvent('mouseup');
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       line: {
         ...lineShape,
         points: [
@@ -689,7 +689,7 @@ describe('flowchart-editor', () => {
 
     await flushPromises();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       line: {
         ...shapes.line,
         points: [
@@ -760,7 +760,7 @@ describe('flowchart-editor', () => {
 
     await flushPromises();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       line: shapes.line,
       rect: shapes.rect,
     });
@@ -815,7 +815,7 @@ describe('flowchart-editor', () => {
       clientY,
     });
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       line: {
         ...lineShape,
         connectedTo: [],
@@ -863,7 +863,7 @@ describe('flowchart-editor', () => {
       clientY,
     });
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...shapes,
       circle: {
         ...shapes.circle,
@@ -904,7 +904,7 @@ describe('flowchart-editor', () => {
       clientY,
     });
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...shapes,
       image: {
         ...shapes.image,
@@ -953,7 +953,7 @@ describe('flowchart-editor', () => {
       clientY,
     });
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...shapes,
       [type]: {
         ...shapes[type],
@@ -991,7 +991,7 @@ describe('flowchart-editor', () => {
 
     await flushPromises();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...shapes,
       [type]: {
         ...shapes[type],

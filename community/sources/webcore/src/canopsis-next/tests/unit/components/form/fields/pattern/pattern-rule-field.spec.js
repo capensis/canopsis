@@ -69,7 +69,7 @@ describe('pattern-rule-field', () => {
 
     patternAttributeField.triggerCustomEvent('input', ALARM_PATTERN_FIELDS.displayName);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...emptyRule,
       attribute: ALARM_PATTERN_FIELDS.displayName,
     });
@@ -90,7 +90,7 @@ describe('pattern-rule-field', () => {
 
     patternOperatorField.triggerCustomEvent('input', PATTERN_OPERATORS.beginsWith);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...rule,
       operator: PATTERN_OPERATORS.beginsWith,
     });
@@ -114,7 +114,7 @@ describe('pattern-rule-field', () => {
 
     mixedInputField.triggerCustomEvent('input', value);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...rule,
       value,
     });
@@ -140,7 +140,7 @@ describe('pattern-rule-field', () => {
 
     inputTypeField.triggerCustomEvent('input', PATTERN_FIELD_TYPES.string);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...rule,
       value: `${rule.value}`,
     });
@@ -165,7 +165,7 @@ describe('pattern-rule-field', () => {
       dictionary,
     });
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...emptyRule,
       field,
       dictionary,
@@ -189,7 +189,7 @@ describe('pattern-rule-field', () => {
       field,
     });
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...emptyRule,
       field,
     });
@@ -211,7 +211,7 @@ describe('pattern-rule-field', () => {
 
     quickDateIntervalTypeField.triggerCustomEvent('input', QUICK_RANGES.last15Minutes.value);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...rule,
       range: {
         ...rule.range,
@@ -246,7 +246,7 @@ describe('pattern-rule-field', () => {
 
     dateTimeIntervalField.triggerCustomEvent('input', newRange);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...rule,
       range: newRange,
     });
@@ -274,7 +274,7 @@ describe('pattern-rule-field', () => {
 
     durationField.triggerCustomEvent('input', duration);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...rule,
       duration,
     });

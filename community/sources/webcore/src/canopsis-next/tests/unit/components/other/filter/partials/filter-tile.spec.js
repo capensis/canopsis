@@ -22,7 +22,7 @@ describe('filter-tile', () => {
 
     selectEditButton(wrapper).triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('edit');
+    expect(wrapper).toHaveBeenEmit('edit');
   });
 
   it('Delete event emitted after trigger delete button', () => {
@@ -34,7 +34,7 @@ describe('filter-tile', () => {
 
     selectDeleteButton(wrapper).triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('delete');
+    expect(wrapper).toHaveBeenEmit('delete');
   });
 
   it('Renders `filter-tile` with default props', () => {

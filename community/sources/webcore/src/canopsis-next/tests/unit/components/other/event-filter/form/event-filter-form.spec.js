@@ -65,7 +65,7 @@ describe('event-filter-form', () => {
 
     idField.triggerCustomEvent('input', newId);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       _id: newId,
     });
@@ -82,7 +82,7 @@ describe('event-filter-form', () => {
 
     eventFilterTypeField.triggerCustomEvent('input', EVENT_FILTER_TYPES.enrichment);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       type: EVENT_FILTER_TYPES.enrichment,
     });
@@ -101,7 +101,7 @@ describe('event-filter-form', () => {
 
     descriptionField.triggerCustomEvent('input', description);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       description,
     });
@@ -120,7 +120,7 @@ describe('event-filter-form', () => {
 
     priorityField.triggerCustomEvent('input', priority);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       priority,
     });
@@ -143,7 +143,7 @@ describe('event-filter-form', () => {
 
     enabledField.triggerCustomEvent('input', newEnabled);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       enabled: newEnabled,
     });
@@ -164,7 +164,7 @@ describe('event-filter-form', () => {
 
     patternsField.triggerCustomEvent('input', newPatterns);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       patterns: newPatterns,
     });
@@ -195,7 +195,7 @@ describe('event-filter-form', () => {
 
     eventFilterChangeEntityForm.triggerCustomEvent('input', newConfig);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...changeEntityForm,
       config: newConfig,
     });
@@ -226,7 +226,7 @@ describe('event-filter-form', () => {
 
     eventFilterEnrichmentForm.triggerCustomEvent('input', updatedForm);
 
-    expect(wrapper).toEmit('input', updatedForm);
+    expect(wrapper).toEmitInput(updatedForm);
   });
 
   test('Drop intervals fields changed after trigger', () => {
@@ -246,7 +246,7 @@ describe('event-filter-form', () => {
 
     eventFilterDropIntervalsField.triggerCustomEvent('input', newData);
 
-    expect(wrapper).toEmit('input', newData);
+    expect(wrapper).toEmitInput(newData);
   });
 
   test('Renders `event-filter-form` with default props', () => {

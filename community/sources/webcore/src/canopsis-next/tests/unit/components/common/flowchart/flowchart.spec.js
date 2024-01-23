@@ -32,7 +32,7 @@ describe('flowchart', () => {
     const flowchartSidebar = selectFlowchartSidebar(wrapper);
     flowchartSidebar.triggerCustomEvent('input', newShapes);
 
-    expect(wrapper).toEmit('input', newShapes);
+    expect(wrapper).toEmitInput(newShapes);
   });
 
   test('Shapes added after trigger flowchart editor', () => {
@@ -48,7 +48,7 @@ describe('flowchart', () => {
     const flowchartEditor = selectFlowchartEditor(wrapper);
     flowchartEditor.triggerCustomEvent('input', newShapes);
 
-    expect(wrapper).toEmit('input', newShapes);
+    expect(wrapper).toEmitInput(newShapes);
   });
 
   test('Shapes added after trigger flowchart properties', async () => {
@@ -70,7 +70,7 @@ describe('flowchart', () => {
     const flowchartProperties = selectFlowchartProperties(wrapper);
     flowchartProperties.triggerCustomEvent('input', newShapes);
 
-    expect(wrapper).toEmit('input', newShapes);
+    expect(wrapper).toEmitInput(newShapes);
   });
 
   test('Points updated after trigger flowchart properties', async () => {
@@ -92,7 +92,7 @@ describe('flowchart', () => {
     const flowchartProperties = selectFlowchartProperties(wrapper);
     flowchartProperties.triggerCustomEvent('input', newShapes);
 
-    expect(wrapper).toEmit('input', newShapes);
+    expect(wrapper).toEmitInput(newShapes);
   });
 
   test('Renders `flowchart` with form', () => {

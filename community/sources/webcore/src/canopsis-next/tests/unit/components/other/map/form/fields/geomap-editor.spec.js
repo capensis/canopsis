@@ -244,7 +244,7 @@ describe('geomap-editor', () => {
 
     const newPoint = fillPointDialog(wrapper);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       points: [newPoint],
     });
 
@@ -295,7 +295,7 @@ describe('geomap-editor', () => {
     await triggerItemContextMenuEvent(wrapper, 0, 'edit');
     const newPoint = fillPointDialog(wrapper, { ...point, entity: 'entity' });
 
-    expect(wrapper).toEmit('input', { points: [newPoint] });
+    expect(wrapper).toEmitInput({ points: [newPoint] });
 
     await flushPromises();
     await checkMenuIsClosed(wrapper);
@@ -315,7 +315,7 @@ describe('geomap-editor', () => {
     await triggerContextMenuEvent(wrapper, 'add', { latlng });
     const newPoint = fillPointDialog(wrapper, { ...point, entity: 'entity' });
 
-    expect(wrapper).toEmit('input', { points: [point, newPoint] });
+    expect(wrapper).toEmitInput({ points: [point, newPoint] });
 
     await flushPromises();
     await checkMenuIsClosed(wrapper);
@@ -353,7 +353,7 @@ describe('geomap-editor', () => {
 
     modalArguments.config.action();
 
-    expect(wrapper).toEmit('input', { points: [] });
+    expect(wrapper).toEmitInput({ points: [] });
 
     await flushPromises();
     await checkMenuIsClosed(wrapper);
@@ -373,7 +373,7 @@ describe('geomap-editor', () => {
     await triggerPointEvent(wrapper, 1, 'dblclick');
     const newPoint = fillPointDialog(wrapper, { ...secondPoint, entity: 'entity' });
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       points: [point, newPoint],
     });
 
@@ -410,7 +410,7 @@ describe('geomap-editor', () => {
 
     modalArguments.config.action();
 
-    expect(wrapper).toEmit('input', { points: [point] });
+    expect(wrapper).toEmitInput({ points: [point] });
   });
 
   test('Coordinates changed after change coordinates by point dialog', async () => {
@@ -463,7 +463,7 @@ describe('geomap-editor', () => {
       },
     });
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       points: [{ ...point, coordinates }, secondPoint],
     });
   });

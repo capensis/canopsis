@@ -55,7 +55,7 @@ describe('field-template', () => {
 
     modalArguments.config.action(newTemplate);
 
-    expect(wrapper).toEmit('input', newTemplate);
+    expect(wrapper).toEmitInput(newTemplate);
   });
 
   test('Renders `field-template` with required props', () => {

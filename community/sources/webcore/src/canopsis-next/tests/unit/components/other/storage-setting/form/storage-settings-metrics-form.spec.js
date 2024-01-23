@@ -39,7 +39,7 @@ describe('storage-settings-metrics-form', () => {
 
     selectMetricsDeleteAfterField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', { ...form, delete_after: newValue });
+    expect(wrapper).toEmitInput({ ...form, delete_after: newValue });
   });
 
   test('Renders `storage-settings-metrics-form` with default form', () => {

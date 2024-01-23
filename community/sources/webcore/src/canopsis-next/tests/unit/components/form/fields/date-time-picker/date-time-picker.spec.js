@@ -75,8 +75,8 @@ describe('date-time-picker', () => {
 
     selectApplyButton(wrapper).triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('close');
-    expect(wrapper).toEmit('input', new Date(nowTimestamp));
+    expect(wrapper).toHaveBeenEmit('close');
+    expect(wrapper).toEmitInput(new Date(nowTimestamp));
   });
 
   test('Value changed after trigger apply button with changes', async () => {
@@ -97,7 +97,7 @@ describe('date-time-picker', () => {
 
     selectApplyButton(wrapper).triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('input', resultDate);
+    expect(wrapper).toEmitInput(resultDate);
   });
 
   test('Close emitted after trigger cancel button', () => {

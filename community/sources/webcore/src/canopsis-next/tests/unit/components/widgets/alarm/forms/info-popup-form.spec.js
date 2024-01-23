@@ -43,7 +43,7 @@ describe('info-popup-form', () => {
 
     columnField.setValue(columns[1].value);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       template,
       column: columns[1].value,
     });
@@ -67,7 +67,7 @@ describe('info-popup-form', () => {
 
     textEditorField.triggerCustomEvent('input', newTemplate);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       template: newTemplate,
       column,
     });

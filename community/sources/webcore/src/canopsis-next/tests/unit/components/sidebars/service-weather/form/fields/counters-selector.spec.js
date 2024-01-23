@@ -50,7 +50,7 @@ describe('field-counters-selector', () => {
 
     selectPbehaviorEnabledField(wrapper).triggerCustomEvent('input', true);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...value,
       pbehavior_enabled: true,
     });
@@ -67,7 +67,7 @@ describe('field-counters-selector', () => {
 
     selectPbehaviorTypeField(wrapper).triggerCustomEvent('input', newPbehaviorTypes);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...value,
       pbehavior_types: newPbehaviorTypes,
     });
@@ -82,7 +82,7 @@ describe('field-counters-selector', () => {
 
     selectStateEnabledField(wrapper).triggerCustomEvent('input', true);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...value,
       state_enabled: true,
     });
@@ -99,7 +99,7 @@ describe('field-counters-selector', () => {
 
     selectServiceWeatherStateCounterField(wrapper).triggerCustomEvent('input', newStateTypes);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...value,
       state_types: newStateTypes,
     });

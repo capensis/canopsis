@@ -51,7 +51,7 @@ describe('pbehavior-exception-field', () => {
 
     selectDateTimePickerField(wrapper).triggerCustomEvent('update:start', newTimeStart);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...value,
       begin: newTimeStart,
     });
@@ -75,7 +75,7 @@ describe('pbehavior-exception-field', () => {
 
     selectDateTimePickerField(wrapper).triggerCustomEvent('update:start', newTimeStart);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...value,
       begin: newTimeStart,
     });
@@ -99,7 +99,7 @@ describe('pbehavior-exception-field', () => {
 
     selectDateTimePickerField(wrapper).triggerCustomEvent('update:end', newTimeStart);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...value,
       end: newTimeStart,
     });
@@ -128,7 +128,7 @@ describe('pbehavior-exception-field', () => {
 
     selectTypeField(wrapper).triggerCustomEvent('input', newType);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...value,
       type: newType,
     });
@@ -144,7 +144,7 @@ describe('pbehavior-exception-field', () => {
 
     selectRemoveButton(wrapper).triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('delete');
+    expect(wrapper).toHaveBeenEmit('delete');
   });
 
   test('Full day enabled after trigger checkbox', async () => {
@@ -162,7 +162,7 @@ describe('pbehavior-exception-field', () => {
     selectFullDayCheckbox(wrapper).triggerCustomEvent('change', true);
     await flushPromises();
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...value,
 
       begin: new Date(1610319600000),
@@ -185,7 +185,7 @@ describe('pbehavior-exception-field', () => {
     selectFullDayCheckbox(wrapper).triggerCustomEvent('change', false);
     await flushPromises();
 
-    expect(wrapper).toEmit('input', value);
+    expect(wrapper).toEmitInput(value);
   });
 
   test('Renders `pbehavior-exception-field` with default props', () => {

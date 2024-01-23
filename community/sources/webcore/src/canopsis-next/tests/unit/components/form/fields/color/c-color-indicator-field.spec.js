@@ -29,7 +29,7 @@ describe('c-color-indicator-field', () => {
 
     wrapper.find('input.v-radio-group').setValue(COLOR_INDICATOR_TYPES.impactState);
 
-    expect(wrapper).toEmit('input', COLOR_INDICATOR_TYPES.impactState);
+    expect(wrapper).toEmitInput(COLOR_INDICATOR_TYPES.impactState);
   });
 
   it('Renders `c-color-indicator-field` with state value correctly', () => {

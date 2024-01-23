@@ -36,7 +36,7 @@ describe('patterns-form', () => {
 
     textField.triggerCustomEvent('input', title);
 
-    expect(wrapper).toEmit('input', { ...form, title });
+    expect(wrapper).toEmitInput({ ...form, title });
   });
 
   test('Patterns changed after trigger patterns field', () => {
@@ -63,7 +63,7 @@ describe('patterns-form', () => {
 
     patternsField.triggerCustomEvent('input', newForm);
 
-    expect(wrapper).toEmit('input', newForm);
+    expect(wrapper).toEmitInput(newForm);
   });
 
   test('Renders `patterns-form` with default props', () => {

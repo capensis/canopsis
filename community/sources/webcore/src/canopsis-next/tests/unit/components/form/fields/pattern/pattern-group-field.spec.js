@@ -29,7 +29,7 @@ describe('pattern-group-field', () => {
 
     patternRulesField.triggerCustomEvent('input', newRules);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       rules: newRules,
     });
   });
@@ -46,7 +46,7 @@ describe('pattern-group-field', () => {
 
     selectPatternRulesField(wrapper).triggerCustomEvent('input', []);
 
-    expect(wrapper).toEmit('remove');
+    expect(wrapper).toHaveBeenEmit('remove');
   });
 
   test('Renders `pattern-group-field` with default props', () => {

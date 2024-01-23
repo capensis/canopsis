@@ -42,7 +42,7 @@ describe('declare-ticket-rule-general-form', () => {
 
     selectNameField(wrapper).triggerCustomEvent('input', newName);
 
-    expect(wrapper).toEmit('input', { ...form, name: newName });
+    expect(wrapper).toEmitInput({ ...form, name: newName });
   });
 
   test('System name changed after trigger name field', () => {
@@ -56,7 +56,7 @@ describe('declare-ticket-rule-general-form', () => {
 
     selectSystemNameField(wrapper).triggerCustomEvent('input', newName);
 
-    expect(wrapper).toEmit('input', { ...form, system_name: newName });
+    expect(wrapper).toEmitInput({ ...form, system_name: newName });
   });
 
   test('Enabled changed after trigger enabled field', () => {
@@ -70,7 +70,7 @@ describe('declare-ticket-rule-general-form', () => {
 
     selectEnabledField(wrapper).triggerCustomEvent('input', newEnabled);
 
-    expect(wrapper).toEmit('input', { ...form, enabled: newEnabled });
+    expect(wrapper).toEmitInput({ ...form, enabled: newEnabled });
   });
 
   test('Emit trigger field changed after trigger enabled field', () => {
@@ -84,7 +84,7 @@ describe('declare-ticket-rule-general-form', () => {
 
     selectEmitTriggerField(wrapper).triggerCustomEvent('input', newEnabled);
 
-    expect(wrapper).toEmit('input', { ...form, emit_trigger: newEnabled });
+    expect(wrapper).toEmitInput({ ...form, emit_trigger: newEnabled });
   });
 
   test('Webhooks field changed after trigger webhooks field', () => {
@@ -101,7 +101,7 @@ describe('declare-ticket-rule-general-form', () => {
 
     selectDeclareTicketRuleWebhooksField(wrapper).triggerCustomEvent('input', newWebhooks);
 
-    expect(wrapper).toEmit('input', { ...form, webhooks: newWebhooks });
+    expect(wrapper).toEmitInput({ ...form, webhooks: newWebhooks });
   });
 
   test('Renders `declare-ticket-rule-general-form` with empty form', () => {
