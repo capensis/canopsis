@@ -153,21 +153,22 @@
       "newlines-between": "always"
     }],
     "no-unused-expressions": "off",
-    "no-restricted-syntax": [
-      "error",
-      {
-        "selector": "ImportDeclaration[source.value=/form\\u002Fpartials/]",
-        "message": "All fields should be moved inside `/form/fields/`."
-      },
-      {
-        "selector": "ImportDeclaration[source.value=/\\u002Fpartial\\u002F/]",
-        "message": "`partial` folder deprecated. Please, rename to `partials`."
-      },
-      {
-        "selector": "ImportDeclaration[source.value=/\\u002Ffield\\u002F/]",
-        "message": "`field` folder deprecated. Please, rename to `field`."
-      }
-    ],
+    "no-restricted-imports": ["error", {
+      "patterns": [
+        {
+          "group": ["**/form/partials/**", "**/form/partial/**"],
+          "message": "All fields should be moved inside `/form/fields/`."
+        },
+        {
+          "group": ["**/field/**"],
+          "message": "`field` folder deprecated. Please, rename to `fields`."
+        },
+        {
+          "group": ["**/partial/**"],
+          "message": "`partial` folder deprecated. Please, rename to `partials`."
+        }
+      ]
+    }],
     "import-newlines/enforce": [
       "error",
       {
