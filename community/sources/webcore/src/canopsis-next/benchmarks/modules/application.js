@@ -2,6 +2,7 @@
 const puppeteer = require('puppeteer');
 
 const { PerformanceMetrics } = require('../utils/PerformanceMetrics');
+const { logInfo } = require('../utils/logger');
 
 class Application {
   browser;
@@ -35,7 +36,11 @@ class Application {
   }
 
   navigate(url) {
-    return this.page.goto(`${this.url}${url}`, { waitUntil: 'load', timeout: 120000 });
+    const resultUrl = `${this.url}${url}`;
+
+    logInfo(`Navigate to ${resultUrl}`);
+
+    return this.page.goto(resultUrl, { waitUntil: 'load', timeout: 120000 });
   }
 
   waitElement(selector) {
