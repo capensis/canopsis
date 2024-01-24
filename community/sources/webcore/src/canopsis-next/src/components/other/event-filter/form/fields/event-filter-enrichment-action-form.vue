@@ -49,7 +49,7 @@
                 :label="$t('common.value')"
                 :variables="variables"
                 :name="valueFieldName"
-                key="from"
+                key="value"
                 required
                 clearable
               />
@@ -59,10 +59,21 @@
                 v-field="form.value"
                 v-validate="'required'"
                 :label="$t('common.value')"
-                :error-messages="errors.collect('value')"
+                :error-messages="errors.collect(valueFieldName)"
                 :items="copyValueVariables"
                 :name="valueFieldName"
-                key="from"
+                key="value"
+              />
+              <v-select
+                class="ml-2"
+                v-else-if="isSelectValueType"
+                v-field="form.value"
+                v-validate="selectValueTypeRules"
+                :label="$t('common.value')"
+                :error-messages="selectValueTypeErrorMessages"
+                :items="setTagsItems"
+                :name="valueFieldName"
+                key="value"
               />
               <c-mixed-field
                 class="ml-2"
@@ -83,11 +94,14 @@
 <script>
 import { ACTION_COPY_PAYLOAD_VARIABLES, EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES } from '@/constants';
 
+import { formMixin } from '@/mixins/form';
+
 import EventFilterEnrichmentActionFormTypeInfo from './event-filter-enrichment-action-form-type-info.vue';
 
 export default {
   inject: ['$validator'],
   components: { EventFilterEnrichmentActionFormTypeInfo },
+  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -104,6 +118,10 @@ export default {
     name: {
       type: String,
       default: 'action',
+    },
+    setTagsItems: {
+      type: Array,
+      default: () => [],
     },
   },
   computed: {
@@ -134,13 +152,42 @@ export default {
       return [
         EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setFieldFromTemplate,
         EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate,
+        EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTagsFromTemplate,
       ].includes(this.form.type);
+    },
+
+    isSelectValueType() {
+      return EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTags === this.form.type;
+    },
+
+    selectValueTypeRules() {
+      return {
+        required: true,
+        regex: /<value>.*<name>|<name>.*<value>/,
+      };
+    },
+
+    selectValueTypeErrorMessages() {
+      return this.errors.collect(this.valueFieldName, null, false).map(error => (
+        error.rule === 'regex'
+          ? this.$t('eventFilter.validation.incorrectRegexOnSetTagsValue')
+          : error.msg
+      ));
     },
   },
   watch: {
     'form.type': function typeWatcher() {
       this.errors.clear();
     },
+
+    /*     setTagsItems: {
+      handler(items) {
+        if (items.every(({ value }) => this.form.value && value !== this.form.value)) {
+          this.updateField('value', '');
+          this.$nextTick(() => this.$validator.validate(this.valueFieldName));
+        }
+      },
+    }, */
   },
   methods: {
     remove() {

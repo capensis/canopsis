@@ -110,7 +110,7 @@
             class="pl-3"
             v-if="rule.operator && operatorHasValue"
             :xs7="isAnyInfosRule"
-            xs6
+            :xs6="!isAnyInfosRule"
           >
             <component
               v-bind="valueComponent.props"

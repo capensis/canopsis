@@ -21,7 +21,10 @@
       required
     />
     <v-layout justify-space-between>
-      <c-enabled-field v-field="form.enabled" />
+      <c-enabled-field
+        class="mr-3"
+        v-field="form.enabled"
+      />
       <c-priority-field v-field="form.priority" />
     </v-layout>
     <c-information-block :title="$t('eventFilter.duringPeriod')">
@@ -56,6 +59,7 @@
           v-if="isEnrichmentType"
           v-field="form"
           :template-variables="actionsDataVariables"
+          :set-tags-items="setTagsItems"
         />
         <event-filter-change-entity-form
           v-else-if="isChangeEntityType"
@@ -68,7 +72,12 @@
 </template>
 
 <script>
-import { EXTERNAL_DATA_DEFAULT_CONDITION_VALUES, EXTERNAL_DATA_PAYLOADS_VARIABLES } from '@/constants';
+import {
+  EVENT_FILTER_SET_TAGS_FIELDS,
+  EXTERNAL_DATA_DEFAULT_CONDITION_VALUES,
+  EXTERNAL_DATA_PAYLOADS_VARIABLES,
+  PATTERN_OPERATORS,
+} from '@/constants';
 
 import {
   isEnrichmentEventFilterRuleType,
@@ -123,6 +132,27 @@ export default {
         value: EXTERNAL_DATA_PAYLOADS_VARIABLES.regexp,
         text: this.$t('common.regexp'),
       }];
+    },
+
+    setTagsItems() {
+      const getRulesForSetTags = rules => (
+        rules
+          .filter(({ attribute, operator }) => (
+            operator === PATTERN_OPERATORS.regexp && EVENT_FILTER_SET_TAGS_FIELDS.includes(attribute)
+          ))
+          .map(({ attribute, dictionary, value }) => ({
+            text: dictionary || attribute,
+            value,
+          }))
+      );
+
+      const { groups = [] } = this.form.patterns.event_pattern;
+
+      return groups.reduce((acc, group) => {
+        acc.push(...getRulesForSetTags(group.rules));
+
+        return acc;
+      }, []);
     },
 
     externalDataVariables() {

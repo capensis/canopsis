@@ -11,6 +11,7 @@
         :name="`${name}.${action.key}`"
         :key="action.key"
         :variables="variables"
+        :set-tags-items="setTagsItems"
         @remove="removeItemFromArray(index)"
       />
       <v-flex>
@@ -54,6 +55,10 @@ export default {
     name: {
       type: String,
       default: 'actions',
+    },
+    setTagsItems: {
+      type: Array,
+      default: () => [],
     },
   },
   methods: {

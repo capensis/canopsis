@@ -55,11 +55,14 @@ export default {
     editObjectRuleField: 'Éditer le groupe de règles',
     removeRuleField: 'Supprimer le groupe/la règle',
   },
+  validation: {
+    incorrectRegexOnSetTagsValue: 'Valeur non valide : la valeur de l\'action set_tags doit contenir une expression régulière pour extraire les groupes <name> et <value>',
+  },
   actionsTypes: {
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy]: {
       text: 'Copier une valeur d\'un champ d\'événement à un autre',
-      message: 'Cette action est utilisée pour copier la valeur d\'un contrôle dans un événement.',
-      description: 'Les paramètres de l\'action sont :\n- description (optionnel) : la description.\n- valeur : le nom du champ dont la valeur doit être copiée. Il peut s\'agir d\'un champ d\'événement, d\'un sous-groupe d\'une expression régulière ou d\'une donnée externe.\n- nom : le nom du champ événement dans lequel la valeur doit être copiée.',
+      message: 'Cette action permet de copier la valeur ou une paire clé+valeur d\'un contrôle dans un événement.',
+      description: 'Les paramètres de l\'action sont :\n- valeur : le nom du champ dont la valeur doit être copiée. Il peut s\'agir d\'un champ d\'événement, d\'un sous-groupe d\'une expression régulière ou d\'une donnée externe.\n- description (facultatif) : la description.\n- nom : le nom du champ événement dans lequel la valeur doit être copiée.',
     },
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copyToEntityInfo]: {
       text: 'Copier une valeur d\'un champ d\'un événement vers une information d\'une entité',
