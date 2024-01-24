@@ -92,6 +92,8 @@
 </template>
 
 <script>
+import { isEqual } from 'lodash';
+
 import { ACTION_COPY_PAYLOAD_VARIABLES, EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
@@ -180,14 +182,18 @@ export default {
       this.errors.clear();
     },
 
-    /*     setTagsItems: {
-      handler(items) {
-        if (items.every(({ value }) => this.form.value && value !== this.form.value)) {
+    setTagsItems: {
+      immediate: true,
+      handler(items, oldItems) {
+        if (
+          this.form.value
+          && !isEqual(items, oldItems)
+          && items.every(({ value }) => value !== this.form.value)
+        ) {
           this.updateField('value', '');
-          this.$nextTick(() => this.$validator.validate(this.valueFieldName));
         }
       },
-    }, */
+    },
   },
   methods: {
     remove() {

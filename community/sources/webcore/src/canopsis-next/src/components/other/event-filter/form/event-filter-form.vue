@@ -72,16 +72,12 @@
 </template>
 
 <script>
-import {
-  EVENT_FILTER_SET_TAGS_FIELDS,
-  EXTERNAL_DATA_DEFAULT_CONDITION_VALUES,
-  EXTERNAL_DATA_PAYLOADS_VARIABLES,
-  PATTERN_OPERATORS,
-} from '@/constants';
+import { EXTERNAL_DATA_DEFAULT_CONDITION_VALUES, EXTERNAL_DATA_PAYLOADS_VARIABLES } from '@/constants';
 
 import {
   isEnrichmentEventFilterRuleType,
   isChangeEntityEventFilterRuleType,
+  getSetTagsItemsFromPattern,
 } from '@/helpers/entities/event-filter/rule/entity';
 
 import PbehaviorRecurrenceRuleField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-recurrence-rule-field.vue';
@@ -135,24 +131,7 @@ export default {
     },
 
     setTagsItems() {
-      const getRulesForSetTags = rules => (
-        rules
-          .filter(({ attribute, operator }) => (
-            operator === PATTERN_OPERATORS.regexp && EVENT_FILTER_SET_TAGS_FIELDS.includes(attribute)
-          ))
-          .map(({ attribute, dictionary, value }) => ({
-            text: dictionary || attribute,
-            value,
-          }))
-      );
-
-      const { groups = [] } = this.form.patterns.event_pattern;
-
-      return groups.reduce((acc, group) => {
-        acc.push(...getRulesForSetTags(group.rules));
-
-        return acc;
-      }, []);
+      return getSetTagsItemsFromPattern(this.form.patterns.event_pattern);
     },
 
     externalDataVariables() {

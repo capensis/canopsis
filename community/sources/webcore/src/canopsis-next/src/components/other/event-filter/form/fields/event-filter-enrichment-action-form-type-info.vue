@@ -35,7 +35,7 @@
 import { MODALS } from '@/constants';
 
 const images = {};
-const requireModule = require.context('@/assets/event-filter-actions-types/');
+const requireModule = require.context('../../../../../assets/event-filter-actions-types/');
 
 requireModule.keys().forEach(key => images[key] = requireModule(key));
 
