@@ -102,6 +102,10 @@ export const payloadFieldMixin = {
       this.updateModel(newValue);
       this.resetVariableSelection();
       this.hideVariablesMenu();
+
+      if (this.errors && this.name) {
+        this.errors.remove(this.name);
+      }
     },
 
     showVariablesMenu() {
