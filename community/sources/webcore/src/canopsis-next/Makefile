@@ -43,9 +43,10 @@ export NODE_OPTIONS="--max-old-space-size=6144" # canopsis/canopsis-pro#4066
 all: $(CURRENT_BUILD_OUTPUT_DIR)/www
 
 $(CURRENT_BUILD_OUTPUT_DIR)/www: jest.config.js package.json src/ vue.config.js
-	if test "$$(node -v | sed 's/v//')" != "$(NODE_VERSION)" ;then\
-		echo "ERROR: Couldn't find NodeJS $(NODE_VERSION) on your system";\
-		exit 1;\
+	if test "$$(node -v | sed -e 's/v//' -e 's/\..*//g')" \
+	    != "$$(echo "$(NODE_VERSION)" | sed -e 's/\..*//g')" ;then \
+	echo "ERROR: Couldn't find NodeJS $$(echo "$(NODE_VERSION)" |  sed -e 's/\..*//g').x on your system"; \
+	exit 1; \
 	fi
 	yarn install
 	yarn build \
