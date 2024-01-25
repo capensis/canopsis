@@ -1,11 +1,11 @@
-<template lang="pug">
-  c-action-btn(
-    :icon="icon",
-    :color="color",
-    :tooltip="tooltip",
-    :disabled="disabled || downloading",
+<template>
+  <c-action-btn
+    :icon="icon"
+    :color="color"
+    :tooltip="tooltip"
+    :disabled="disabled || downloading"
     @click="downloadContent"
-  )
+  />
 </template>
 
 <script>
@@ -84,6 +84,8 @@ export default {
       try {
         await this.download();
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: err.message || err.description || this.$t('errors.default') });
       } finally {
         this.downloading = false;

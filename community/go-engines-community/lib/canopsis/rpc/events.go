@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
@@ -17,12 +18,12 @@ type AxeEvent struct {
 }
 
 type AxeParameters struct {
-	Output    string        `json:"output,omitempty"`
-	Author    string        `json:"author,omitempty"`
-	User      string        `json:"user,omitempty"`
-	Role      string        `json:"role,omitempty"`
-	Initiator string        `json:"initiator,omitempty"`
-	Timestamp types.CpsTime `json:"timestamp,omitempty"`
+	Output    string           `json:"output,omitempty"`
+	Author    string           `json:"author,omitempty"`
+	User      string           `json:"user,omitempty"`
+	Role      string           `json:"role,omitempty"`
+	Initiator string           `json:"initiator,omitempty"`
+	Timestamp datetime.CpsTime `json:"timestamp,omitempty"`
 	// ChangeState
 	State *types.CpsNumber `json:"state,omitempty"`
 	// AssocTicket and Webhook
@@ -36,17 +37,17 @@ type AxeParameters struct {
 	WebhookError      *Error            `json:"webhook_error,omitempty"`
 	EmitTrigger       bool              `json:"emit_trigger,omitempty"`
 	// Snooze and Pbehavior
-	Duration *types.DurationWithUnit `json:"duration,omitempty"`
+	Duration *datetime.DurationWithUnit `json:"duration,omitempty"`
 	// Pbehavior enter
 	PbehaviorInfo types.PbehaviorInfo `json:"pbehavior_info,omitempty"`
 	// Pbehavior create
-	Name           string         `json:"name,omitempty"`
-	Reason         string         `json:"reason,omitempty"`
-	Type           string         `json:"type,omitempty"`
-	RRule          string         `json:"rrule,omitempty"`
-	Tstart         *types.CpsTime `json:"tstart,omitempty"`
-	Tstop          *types.CpsTime `json:"tstop,omitempty"`
-	StartOnTrigger *bool          `json:"start_on_trigger,omitempty"`
+	Name           string            `json:"name,omitempty"`
+	Reason         string            `json:"reason,omitempty"`
+	Type           string            `json:"type,omitempty"`
+	RRule          string            `json:"rrule,omitempty"`
+	Tstart         *datetime.CpsTime `json:"tstart,omitempty"`
+	Tstop          *datetime.CpsTime `json:"tstop,omitempty"`
+	StartOnTrigger *bool             `json:"start_on_trigger,omitempty"`
 	// Instruction
 	Execution   string `json:"execution,omitempty"`
 	Instruction string `json:"instruction,omitempty"`
@@ -91,16 +92,16 @@ type PbehaviorEvent struct {
 }
 
 type PbehaviorParameters struct {
-	Author         string                  `json:"author"`
-	UserID         string                  `json:"user"`
-	Name           string                  `json:"name"`
-	Reason         string                  `json:"reason"`
-	Type           string                  `json:"type"`
-	RRule          string                  `json:"rrule"`
-	Tstart         *types.CpsTime          `json:"tstart,omitempty"`
-	Tstop          *types.CpsTime          `json:"tstop,omitempty"`
-	StartOnTrigger *bool                   `json:"start_on_trigger,omitempty"`
-	Duration       *types.DurationWithUnit `json:"duration,omitempty"`
+	Author         string                     `json:"author"`
+	UserID         string                     `json:"user"`
+	Name           string                     `json:"name"`
+	Reason         string                     `json:"reason"`
+	Type           string                     `json:"type"`
+	RRule          string                     `json:"rrule"`
+	Tstart         *datetime.CpsTime          `json:"tstart,omitempty"`
+	Tstop          *datetime.CpsTime          `json:"tstop,omitempty"`
+	StartOnTrigger *bool                      `json:"start_on_trigger,omitempty"`
+	Duration       *datetime.DurationWithUnit `json:"duration,omitempty"`
 }
 
 type PbehaviorResultEvent struct {

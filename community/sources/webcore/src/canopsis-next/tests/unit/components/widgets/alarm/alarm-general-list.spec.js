@@ -15,7 +15,7 @@ describe('alarm-general-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `alarm-general-list` with alarms', () => {
@@ -25,6 +25,6 @@ describe('alarm-general-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

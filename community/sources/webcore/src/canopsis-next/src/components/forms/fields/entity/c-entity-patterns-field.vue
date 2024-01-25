@@ -1,26 +1,30 @@
-<template lang="pug">
-  pattern-editor-field(
-    v-field="patterns",
-    :disabled="disabled",
-    :readonly="readonly",
-    :name="name",
-    :type="$constants.PATTERN_TYPES.entity",
-    :required="required",
-    :attributes="availableEntityAttributes",
-    :with-type="withType",
+<template>
+  <pattern-editor-field
+    v-field="patterns"
+    :disabled="disabled"
+    :readonly="readonly"
+    :name="name"
+    :type="$constants.PATTERN_TYPES.entity"
+    :required="required"
+    :attributes="availableEntityAttributes"
+    :with-type="withType"
     :counter="counter"
-  )
-    template(#append-count="")
-      v-btn(
-        v-if="counter && counter.count",
-        flat,
-        small,
+  >
+    <template #append-count="">
+      <v-btn
+        v-if="counter && counter.count"
+        text
+        small
         @click="showPatternEntitiesModal"
-      ) {{ $t('common.seeEntities') }}
+      >
+        {{ $t('common.seeEntities') }}
+      </v-btn>
+    </template>
+  </pattern-editor-field>
 </template>
 
 <script>
-import { keyBy, merge } from 'lodash';
+import { keyBy, merge, isArray } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import {
@@ -31,6 +35,7 @@ import {
   PATTERN_NUMBER_OPERATORS,
   PATTERN_OPERATORS,
   PATTERN_RULE_TYPES,
+  PATTERN_STRING_OPERATORS,
 } from '@/constants';
 
 import { formGroupsToPatternRulesQuery } from '@/helpers/entities/pattern/form';
@@ -114,15 +119,8 @@ export default {
     nameOptions() {
       return {
         operators: [
-          PATTERN_OPERATORS.equal,
-          PATTERN_OPERATORS.notEqual,
-          PATTERN_OPERATORS.contains,
-          PATTERN_OPERATORS.notContains,
-          PATTERN_OPERATORS.beginsWith,
-          PATTERN_OPERATORS.notBeginWith,
-          PATTERN_OPERATORS.endsWith,
-          PATTERN_OPERATORS.notEndWith,
-          PATTERN_OPERATORS.regexp,
+          ...PATTERN_STRING_OPERATORS,
+
           PATTERN_OPERATORS.isOneOf,
           PATTERN_OPERATORS.isNotOneOf,
         ],
@@ -218,15 +216,27 @@ export default {
     categoryOptions() {
       return {
         type: PATTERN_RULE_TYPES.string,
-        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+        operators: [
+          PATTERN_OPERATORS.equal,
+          PATTERN_OPERATORS.notEqual,
+          PATTERN_OPERATORS.isOneOf,
+          PATTERN_OPERATORS.isNotOneOf,
+        ],
         valueField: {
           is: 'c-select-field',
-          props: {
-            items: this.categories,
-            loading: this.categoriesPending,
-            itemValue: '_id',
-            itemText: 'name',
-            ellipsis: true,
+          props: (rule) => {
+            const isMultiple = isArray(rule?.value);
+
+            return {
+              items: this.categories,
+              loading: this.categoriesPending,
+              itemValue: '_id',
+              itemText: 'name',
+              ellipsis: true,
+              multiple: isMultiple,
+              deletableChips: isMultiple,
+              smallChips: isMultiple,
+            };
           },
         },
       };
@@ -234,7 +244,12 @@ export default {
 
     typeOptions() {
       return {
-        operators: [PATTERN_OPERATORS.equal, PATTERN_OPERATORS.notEqual],
+        operators: [
+          PATTERN_OPERATORS.equal,
+          PATTERN_OPERATORS.notEqual,
+          PATTERN_OPERATORS.isOneOf,
+          PATTERN_OPERATORS.isNotOneOf,
+        ],
         valueField: {
           is: 'c-entity-type-field',
           props: {

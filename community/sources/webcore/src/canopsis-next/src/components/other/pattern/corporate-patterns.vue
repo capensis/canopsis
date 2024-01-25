@@ -1,14 +1,14 @@
-<template lang="pug">
-  patterns-list(
-    :pagination.sync="pagination",
-    :patterns="corporatePatterns",
-    :total-items="corporatePatternsMeta.total_count",
-    :pending="corporatePatternsPending",
-    corporate,
-    @edit="$listeners.edit",
-    @remove="$listeners.remove",
+<template>
+  <patterns-list
+    :options.sync="options"
+    :patterns="corporatePatterns"
+    :total-items="corporatePatternsMeta.total_count"
+    :pending="corporatePatternsPending"
+    corporate
+    @edit="$listeners.edit"
+    @remove="$listeners.remove"
     @remove-selected="$listeners['remove-selected']"
-  )
+  />
 </template>
 
 <script>

@@ -1,34 +1,50 @@
-<template lang="pug">
-  widget-settings-item(:title="$t('settings.mainParameter.title')")
-    c-progress-overlay(:pending="pending", transition)
-    v-radio-group(
-      v-field="form.criteria",
-      v-validate="'required'",
-      :error-messages="errors.collect('mainParameter')",
+<template>
+  <widget-settings-item :title="$t('settings.mainParameter.title')">
+    <c-progress-overlay
+      :pending="pending"
+      transition
+    />
+    <v-radio-group
+      v-field="form.criteria"
+      v-validate="'required'"
+      :error-messages="errors.collect('mainParameter')"
       name="mainParameter"
-    )
-      v-layout(
-        v-for="{ id, label, tooltip } of mainRatingSettingsWithCustom",
-        :key="id",
-        row
-      )
-        v-radio.my-0(:value="id", :label="label", color="primary")
-        c-help-icon(v-if="tooltip", :text="tooltip", icon="help", top)
-    template(v-if="isCustomCriteria")
-      c-name-field(
-        v-field="form.columnName",
-        :label="$t('settings.columnName')",
-        name="columnName",
+    >
+      <v-layout
+        v-for="{ id, label, tooltip } of mainRatingSettingsWithCustom"
+        :key="id"
+      >
+        <v-radio
+          class="my-0"
+          :value="id"
+          :label="label"
+          color="primary"
+        />
+        <c-help-icon
+          v-if="tooltip"
+          :text="tooltip"
+          icon="help"
+          top
+        />
+      </v-layout>
+    </v-radio-group>
+    <template v-if="isCustomCriteria">
+      <c-name-field
+        v-field="form.columnName"
+        :label="$t('settings.columnName')"
+        name="columnName"
         required
-      )
-      field-filters-list(
-        v-field="form.patterns",
-        name="patterns",
-        with-entity,
-        addable,
-        editable,
+      />
+      <field-filters-list
+        v-field="form.patterns"
+        name="patterns"
+        with-entity
+        addable
+        editable
         required
-      )
+      />
+    </template>
+  </widget-settings-item>
 </template>
 
 <script>

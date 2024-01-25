@@ -1,16 +1,19 @@
-<template lang="pug">
-  v-select(
-    v-field="value",
-    :items="samplings",
-    :disabled="disabled",
-    :label="label || $t('common.sampling')",
-    :name="name",
+<template>
+  <v-select
+    v-field="value"
+    :items="samplings"
+    :disabled="disabled"
+    :label="label || $t('common.sampling')"
+    :name="name"
     hide-details
-  )
-    template(#selection="{ item }")
-      span.text-capitalize {{ item.text }}
-    template(#item="{ item }")
-      span.text-capitalize {{ item.text }}
+  >
+    <template #selection="{ item }">
+      <span class="text-capitalize">{{ item.text }}</span>
+    </template>
+    <template #item="{ item }">
+      <span class="text-capitalize">{{ item.text }}</span>
+    </template>
+  </v-select>
 </template>
 
 <script>

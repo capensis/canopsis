@@ -1,25 +1,57 @@
-<template lang="pug">
-  v-container.admin-rights
-    c-page-header
-    v-card.position-relative
-      v-fade-transition
-        v-layout.progress(v-show="pending", column)
-          v-progress-circular(indeterminate, color="primary")
-      v-tabs(v-if="hasReadAnyRoleAccess", fixed-tabs, slider-color="primary")
-        template(v-for="(permissions, groupKey) in preparedPermissionsGroups")
-          v-tab(:key="`tab-${groupKey}`") {{ groupKey }}
-          v-tab-item(:key="`tab-item-${groupKey}`")
-            permissions-table-wrapper(
-              :permissions="permissions",
-              :roles="preparedRoles",
-              :changed-roles="changedRoles",
-              :disabled="!hasUpdateAnyPermissionAccess",
+<template>
+  <v-container class="admin-rights">
+    <c-page-header />
+    <v-card class="position-relative">
+      <v-fade-transition>
+        <v-layout
+          class="progress"
+          v-show="pending"
+          column
+        >
+          <v-progress-circular
+            indeterminate
+            color="primary"
+          />
+        </v-layout>
+      </v-fade-transition>
+      <v-tabs
+        v-if="hasReadAnyRoleAccess"
+        slider-color="primary"
+        fixed-tabs
+      >
+        <template v-for="(groupPermissions, groupKey) in preparedPermissionsGroups">
+          <v-tab :key="`tab-${groupKey}`">
+            {{ groupKey }}
+          </v-tab>
+          <v-tab-item :key="`tab-item-${groupKey}`">
+            <permissions-table-wrapper
+              :permissions="groupPermissions"
+              :roles="preparedRoles"
+              :changed-roles="changedRoles"
+              :disabled="!hasUpdateAnyPermissionAccess"
               @change="changeCheckboxValue"
-            )
-    v-layout.submit-button.mt-3(v-show="hasChanges")
-      v-btn.primary.ml-3(@click="submit") {{ $t('common.submit') }}
-      v-btn(@click="cancel") {{ $t('common.cancel') }}
-    permissions-fab-buttons(@refresh="fetchList")
+            />
+          </v-tab-item>
+        </template>
+      </v-tabs>
+    </v-card>
+    <v-layout
+      class="submit-button mt-3"
+      v-show="hasChanges"
+    >
+      <v-btn
+        class="ml-3"
+        color="primary"
+        @click="submit"
+      >
+        {{ $t('common.submit') }}
+      </v-btn>
+      <v-btn @click="cancel">
+        {{ $t('common.cancel') }}
+      </v-btn>
+    </v-layout>
+    <permissions-fab-buttons @refresh="fetchList" />
+  </v-container>
 </template>
 
 <script>
@@ -241,6 +273,8 @@ export default {
 
         this.clearChangedRoles();
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: this.$t('errors.default') });
       } finally {
         this.pending = false;
@@ -333,6 +367,11 @@ export default {
   .submit-button {
     position: sticky;
     bottom: 10px;
+    pointer-events: none;
+
+    button {
+      pointer-events: all;
+    }
   }
 
   .admin-rights ::v-deep {

@@ -3,8 +3,9 @@ package httpprovider
 
 import (
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"net/http"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 )
 
 // apikeyProvider implements a ApiKey HTTP Authentication provider.
@@ -31,7 +32,7 @@ func (p *apikeyProvider) Auth(r *http.Request) (*security.User, error, bool) {
 
 	user, err := p.userProvider.FindByAuthApiKey(r.Context(), apiKey)
 	if err != nil {
-		return nil, fmt.Errorf("cannot find user: %v", err), true
+		return nil, fmt.Errorf("cannot find user: %w", err), true
 	}
 
 	if user == nil || !user.IsEnabled {

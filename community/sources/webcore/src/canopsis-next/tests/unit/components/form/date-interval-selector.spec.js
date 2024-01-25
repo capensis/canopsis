@@ -243,7 +243,7 @@ describe('date-interval-selector', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `date-interval-selector` with custom props', () => {
@@ -264,6 +264,6 @@ describe('date-interval-selector', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

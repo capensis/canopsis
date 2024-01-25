@@ -1,33 +1,34 @@
-<template lang="pug">
-  g(@dblclick.stop="enableEditingMode")
-    slot
-    points-line-path(
-      ref="path",
-      v-bind="shape.properties",
-      :points="shape.points",
-      :type="shape.lineType",
-      :marker-end="markerEnd",
+<template>
+  <g @dblclick.stop="enableEditingMode">
+    <slot />
+    <points-line-path
+      ref="path"
+      v-bind="shape.properties"
+      :points="shape.points"
+      :type="shape.lineType"
+      :marker-end="markerEnd"
       :marker-start="markerStart"
-    )
-    points-line-path(
-      v-on="$listeners",
-      :points="shape.points",
-      :type="shape.lineType",
-      :cursor="readonly ? '' : 'move'",
+    />
+    <points-line-path
+      v-on="$listeners"
+      :points="shape.points"
+      :type="shape.lineType"
+      :cursor="readonly ? '' : 'move'"
       stroke-width="10"
-    )
-    text-editor(
-      v-if="labelPosition",
-      ref="editor",
-      v-bind="shape.textProperties",
-      :value="shape.text",
-      :y="labelPosition.y - shape.textProperties.fontSize / 2",
-      :x="labelPosition.x",
-      :editable="editing",
-      align-center,
-      justify-center,
+    />
+    <text-editor
+      v-if="labelPosition"
+      ref="editor"
+      v-bind="shape.textProperties"
+      :value="shape.text"
+      :y="labelPosition.y - shape.textProperties.fontSize / 2"
+      :x="labelPosition.x"
+      :editable="editing"
+      align-center
+      justify-center
       @blur="disableEditingMode"
-    )
+    />
+  </g>
 </template>
 
 <script>

@@ -1,17 +1,20 @@
-<template lang="pug">
-  modal-wrapper(close)
-    template(#title="")
-      span {{ title }}
-    template(#text="")
-      entities-list-table-with-pagination(
-        :widget="widget",
-        :columns="widget.parameters.widgetColumns",
-        :entities="entities",
-        :meta="meta",
-        :loading="pending",
-        :query.sync="query",
+<template>
+  <modal-wrapper close>
+    <template #title="">
+      <span>{{ title }}</span>
+    </template>
+    <template #text="">
+      <entities-list-table-with-pagination
+        :widget="widget"
+        :columns="widget.parameters.widgetColumns"
+        :entities="entities"
+        :meta="meta"
+        :loading="pending"
+        :query.sync="query"
         selectable
-      )
+      />
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>

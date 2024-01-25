@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
@@ -16,7 +16,7 @@ import (
 
 type EventCounter interface {
 	Run(ctx context.Context)
-	Add(id string, lastUpdated types.CpsTime)
+	Add(id string, lastUpdated datetime.CpsTime)
 }
 
 func NewEventCounter(
@@ -41,7 +41,7 @@ type eventCounter struct {
 }
 
 type count struct {
-	LastUpdated types.CpsTime
+	LastUpdated datetime.CpsTime
 	Count       int64
 }
 
@@ -62,7 +62,7 @@ func (s *eventCounter) Run(ctx context.Context) {
 	}
 }
 
-func (s *eventCounter) Add(id string, lastUpdated types.CpsTime) {
+func (s *eventCounter) Add(id string, lastUpdated datetime.CpsTime) {
 	s.countsMx.Lock()
 	defer s.countsMx.Unlock()
 	v, exists := s.counts[id]

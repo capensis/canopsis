@@ -1,14 +1,15 @@
-<template lang="pug">
-  v-card-text
-    planning-exceptions-list(
-      :pbehaviorExceptions="pbehaviorExceptions",
-      :pending="pbehaviorExceptionsPending",
-      :totalItems="pbehaviorExceptionsMeta.total_count",
-      :pagination.sync="pagination",
-      @remove-selected="showRemoveSelectedPbehaviorExceptionModal",
-      @remove="showRemovePbehaviorExceptionModal",
+<template>
+  <v-card-text>
+    <planning-exceptions-list
+      :pbehavior-exceptions="pbehaviorExceptions"
+      :pending="pbehaviorExceptionsPending"
+      :total-items="pbehaviorExceptionsMeta.total_count"
+      :options.sync="options"
+      @remove-selected="showRemoveSelectedPbehaviorExceptionModal"
+      @remove="showRemovePbehaviorExceptionModal"
       @edit="showEditPbehaviorExceptionModal"
-    )
+    />
+  </v-card-text>
 </template>
 
 <script>
@@ -42,6 +43,8 @@ export default {
       try {
         await this.removePbehaviorException({ id: pbehavioExceptionId });
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: err.error || this.$t('errors.default') });
       }
     },

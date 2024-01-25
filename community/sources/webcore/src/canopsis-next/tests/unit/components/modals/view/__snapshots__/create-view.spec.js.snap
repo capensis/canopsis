@@ -6,7 +6,7 @@ exports[`create-view Renders \`create-view\` with empty modal 1`] = `
 >
   <div
     class="modal-wrapper"
-    close="close"
+    close=""
   >
     <div
       class="title"
@@ -15,7 +15,6 @@ exports[`create-view Renders \`create-view\` with empty modal 1`] = `
         Create a view
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -29,14 +28,13 @@ exports[`create-view Renders \`create-view\` with empty modal 1`] = `
         groups=""
       />
     </div>
-     
     <div
       class="actions"
     >
       <button
         class="v-btn"
-        depressed="depressed"
-        flat="flat"
+        depressed=""
+        text=""
         type="button"
       >
         Cancel
@@ -59,7 +57,7 @@ exports[`create-view Renders \`create-view\` with title 1`] = `
 >
   <div
     class="modal-wrapper"
-    close="close"
+    close=""
   >
     <div
       class="title"
@@ -68,7 +66,6 @@ exports[`create-view Renders \`create-view\` with title 1`] = `
         Create view custom title
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -82,14 +79,13 @@ exports[`create-view Renders \`create-view\` with title 1`] = `
         groups=""
       />
     </div>
-     
     <div
       class="actions"
     >
       <button
         class="v-btn"
-        depressed="depressed"
-        flat="flat"
+        depressed=""
+        text=""
         type="button"
       >
         Cancel
@@ -118,7 +114,7 @@ exports[`create-view Renders \`create-view\` without rights 1`] = `
 >
   <div
     class="modal-wrapper"
-    close="close"
+    close=""
   >
     <div
       class="title"
@@ -127,7 +123,6 @@ exports[`create-view Renders \`create-view\` without rights 1`] = `
         Create a view
       </span>
     </div>
-     
     <div
       class="text"
     >
@@ -141,14 +136,13 @@ exports[`create-view Renders \`create-view\` without rights 1`] = `
         groups=""
       />
     </div>
-     
     <div
       class="actions"
     >
       <button
         class="v-btn"
-        depressed="depressed"
-        flat="flat"
+        depressed=""
+        text=""
         type="button"
       >
         Cancel

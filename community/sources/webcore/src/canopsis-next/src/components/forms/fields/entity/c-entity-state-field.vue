@@ -1,14 +1,14 @@
-<template lang="pug">
-  v-select(
-    v-field="value",
-    v-validate="rules",
-    :label="label || $t('common.states')",
-    :items="availableStateTypes",
-    :disabled="disabled",
-    :name="name",
-    :error-messages="errors.collect(name)",
+<template>
+  <v-select
+    v-field="value"
+    v-validate="rules"
+    :label="label || $t('common.states')"
+    :items="availableStateTypes"
+    :disabled="disabled"
+    :name="name"
+    :error-messages="errors.collect(name)"
     hide-details
-  )
+  />
 </template>
 
 <script>

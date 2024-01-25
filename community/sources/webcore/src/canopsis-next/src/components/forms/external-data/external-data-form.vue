@@ -1,26 +1,34 @@
-<template lang="pug">
-  v-layout(column)
-    c-alert(
-      :value="!form.length",
-      type="info",
+<template>
+  <v-layout column>
+    <c-alert
+      :value="!form.length"
+      type="info"
       transition="fade-transition"
-    ) {{ $t('externalData.empty') }}
-    external-data-item-form.mb-3(
-      v-for="(item, index) in form",
-      v-field="form[index]",
-      :name="`${name}.${item.key}`",
-      :key="item.key",
-      :disabled="disabled",
-      :types="types",
-      :variables="variables",
+    >
+      {{ $t('externalData.empty') }}
+    </c-alert>
+    <external-data-item-form
+      class="mb-3"
+      v-for="(item, index) in form"
+      v-field="form[index]"
+      :name="`${name}.${item.key}`"
+      :key="item.key"
+      :disabled="disabled"
+      :types="types"
+      :variables="variables"
       @remove="removeItemFromArray(index)"
-    )
-    v-flex(v-if="!disabled")
-      v-btn.ml-0.my-0(
-        color="primary",
-        outline,
+    />
+    <v-flex v-if="!disabled">
+      <v-btn
+        class="ml-0 my-0"
+        color="primary"
+        outlined
         @click="addItem"
-      ) {{ $t('externalData.add') }}
+      >
+        {{ $t('externalData.add') }}
+      </v-btn>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

@@ -1,25 +1,39 @@
-<template lang="pug">
-  modal-wrapper(close)
-    template(#title="")
-      span {{ $t('common.confirmation') }}
-    template(#text="")
-      v-alert(:value="true", type="info") {{ $t('modals.confirmAckWithTicket.infoMessage') }}
-    template(#actions="")
-      v-btn(
-        depressed,
-        flat,
+<template>
+  <modal-wrapper close>
+    <template #title="">
+      <span>{{ $t('common.confirmation') }}</span>
+    </template>
+    <template #text="">
+      <v-alert type="info">
+        {{ $t('modals.confirmAckWithTicket.infoMessage') }}
+      </v-alert>
+    </template>
+    <template #actions="">
+      <v-btn
+        depressed
+        text
         @click="$modals.hide"
-      ) {{ $t('common.cancel') }}
-      v-btn.primary(
-        :loading="submitting",
-        :disabled="isDisabled || submittingWithTicket",
+      >
+        {{ $t('common.cancel') }}
+      </v-btn>
+      <v-btn
+        class="primary"
+        :loading="submitting"
+        :disabled="isDisabled || submittingWithTicket"
         @click="submit"
-      ) {{ $t('common.continue') }}
-      v-btn.warning(
-        :loading="submittingWithTicket",
-        :disabled="isDisabledWithTicket || submitting",
+      >
+        {{ $t('common.continue') }}
+      </v-btn>
+      <v-btn
+        class="warning"
+        :loading="submittingWithTicket"
+        :disabled="isDisabledWithTicket || submitting"
         @click="submitWithTicket"
-      ) {{ $t('modals.confirmAckWithTicket.continueAndAssociateTicket') }}
+      >
+        {{ $t('modals.confirmAckWithTicket.continueAndAssociateTicket') }}
+      </v-btn>
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>

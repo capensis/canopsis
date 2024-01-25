@@ -9,12 +9,11 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewtab"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
@@ -119,7 +118,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest, withDefaultTab bool) 
 
 		if !group.IsPrivate {
 			// check the api_view create permission here, because user might not have it while having private views permission.
-			ok, err := s.enforcer.Enforce(r.Author, apisecurity.ObjView, model.PermissionCreate)
+			ok, err := s.enforcer.Enforce(r.Author, apisecurity.ObjView, securitymodel.PermissionCreate)
 			if err != nil {
 				panic(err)
 			}
@@ -134,7 +133,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest, withDefaultTab bool) 
 			return err
 		}
 
-		now := types.NewCpsTime()
+		now := datetime.NewCpsTime()
 		id := utils.NewID()
 		_, err = s.collection.InsertOne(ctx, view.View{
 			ID:              id,
@@ -213,7 +212,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 			return common.NewValidationError("group", "Group is public.")
 		}
 
-		now := types.NewCpsTime()
+		now := datetime.NewCpsTime()
 		_, err = s.collection.UpdateOne(ctx, bson.M{"_id": oldView.ID}, bson.M{"$set": bson.M{
 			"enabled":          *r.Enabled,
 			"title":            r.Title,
@@ -631,7 +630,7 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userId string) erro
 		newWidgetFilters := make([]interface{}, 0, len(r.Items))
 		newViewTitles := make(map[string]string, len(r.Items))
 		positionItems := make([]EditPositionItemRequest, 0, len(r.Items))
-		now := types.NewCpsTime()
+		now := datetime.NewCpsTime()
 		for gi, g := range r.Items {
 			groupId := g.ID
 

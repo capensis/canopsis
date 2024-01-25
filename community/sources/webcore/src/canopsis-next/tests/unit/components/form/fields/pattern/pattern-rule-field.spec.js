@@ -42,6 +42,7 @@ describe('pattern-rule-field', () => {
     operator: '',
     value: '',
     field: '',
+    fieldType: PATTERN_FIELD_TYPES.string,
     dictionary: '',
     range: {
       type: '',
@@ -126,6 +127,7 @@ describe('pattern-rule-field', () => {
       operator: PATTERN_OPERATORS.equal,
       value: Faker.datatype.number(),
       field: PATTERN_RULE_INFOS_FIELDS.value,
+      fieldType: PATTERN_FIELD_TYPES.string,
     };
     const wrapper = factory({
       propsData: {
@@ -289,7 +291,7 @@ describe('pattern-rule-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-rule-field` with custom props', () => {
@@ -323,7 +325,7 @@ describe('pattern-rule-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-rule-field` with infos type and field is name', () => {
@@ -339,7 +341,7 @@ describe('pattern-rule-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-rule-field` with extra infos type', () => {
@@ -355,7 +357,7 @@ describe('pattern-rule-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-rule-field` with duration type', () => {
@@ -373,7 +375,7 @@ describe('pattern-rule-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-rule-field` with date type', () => {
@@ -392,6 +394,6 @@ describe('pattern-rule-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

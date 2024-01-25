@@ -1,38 +1,49 @@
-<template lang="pug">
-  v-layout.kpi-widget-filters(wrap)
-    c-quick-date-interval-field.kpi-widget-filters__interval(
-      v-if="showInterval",
-      :interval="interval",
-      :min="minIntervalDate",
-      :quick-ranges="quickRanges",
-      short,
+<template>
+  <v-layout
+    class="kpi-widget-filters"
+    wrap
+  >
+    <c-quick-date-interval-field
+      class="kpi-widget-filters__interval"
+      v-if="showInterval"
+      :interval="interval"
+      :min="minIntervalDate"
+      :quick-ranges="quickRanges"
+      short
       @input="$emit('update:interval', $event)"
-    )
-    c-sampling-field.kpi-widget-filters__sampling(
-      v-if="showSampling",
-      :value="sampling",
+    />
+    <c-sampling-field
+      class="kpi-widget-filters__sampling"
+      v-if="showSampling"
+      :value="sampling"
       @input="$emit('update:sampling', $event)"
-    )
-    v-layout(v-if="showFilter", row, align-end)
-      filter-selector.kpi-widget-filters__filter-selector.mr-4(
-        :label="$t('settings.selectAFilter')",
-        :filters="userFilters",
-        :locked-filters="widgetFilters",
-        :locked-value="lockedFilter",
-        :value="filters",
-        :disabled="filterDisabled",
-        clearable,
-        hide-details,
+    />
+    <v-layout
+      v-if="showFilter"
+      align-end
+    >
+      <filter-selector
+        class="kpi-widget-filters__filter-selector mr-4"
+        :label="$t('settings.selectAFilter')"
+        :filters="userFilters"
+        :locked-filters="widgetFilters"
+        :locked-value="lockedFilter"
+        :value="filters"
+        :disabled="filterDisabled"
+        clearable
+        hide-details
         @input="$emit('update:filters', $event)"
-      )
-      filters-list-btn(
-        v-if="filterAddable || filterEditable",
-        :widget-id="widgetId",
-        :addable="filterAddable",
-        :editable="filterEditable",
-        private,
+      />
+      <filters-list-btn
+        v-if="filterAddable || filterEditable"
+        :widget-id="widgetId"
+        :addable="filterAddable"
+        :editable="filterEditable"
+        private
         with-entity
-      )
+      />
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>

@@ -5,12 +5,12 @@ exports[`service-pause-event-form Renders \`service-pause-event-form\` with cust
   <c-description-field-stub
     label="Comment"
     name="comment"
-    required="required"
+    required=""
     value="comment"
   />
   <c-pbehavior-reason-field-stub
-    required="required"
-    return-object="return-object"
+    required=""
+    return-object=""
     value="reason"
   />
 </div>
@@ -21,11 +21,11 @@ exports[`service-pause-event-form Renders \`service-pause-event-form\` with defa
   <c-description-field-stub
     label="Comment"
     name="comment"
-    required="required"
+    required=""
   />
   <c-pbehavior-reason-field-stub
-    required="required"
-    return-object="return-object"
+    required=""
+    return-object=""
   />
 </div>
 `;

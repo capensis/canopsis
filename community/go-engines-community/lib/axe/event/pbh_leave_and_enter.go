@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
@@ -103,7 +104,7 @@ func (p *pbhLeaveAndEnterProcessor) Process(ctx context.Context, event rpc.AxeEv
 			update := bson.M{
 				"$push": bson.M{"v.steps": bson.M{"$each": bson.A{newLeaveStep, newEnterStep}}},
 			}
-			var inactiveStart *types.CpsTime
+			var inactiveStart *datetime.CpsTime
 			if !event.Parameters.PbehaviorInfo.IsActive() || alarm.Value.Snooze != nil || alarm.InactiveAutoInstructionInProgress {
 				inactiveStart = &event.Parameters.Timestamp
 			}

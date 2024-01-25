@@ -1,18 +1,22 @@
-<template lang="pug">
-  div.position-relative
-    c-progress-overlay(:pending="pending")
-    kpi-sli-filters(v-model="pagination", :min-date="minDate")
-    kpi-sli-chart(
-      :metrics="sliMetrics",
-      :data-type="pagination.type",
-      :sampling="pagination.sampling",
-      :downloading="downloading",
-      :min-date="minDate",
-      responsive,
-      @export:csv="exportMetricsAsCsv",
+<template>
+  <div class="position-relative">
+    <c-progress-overlay :pending="pending" />
+    <kpi-sli-filters
+      v-model="query"
+      :min-date="minDate"
+    />
+    <kpi-sli-chart
+      :metrics="sliMetrics"
+      :data-type="query.type"
+      :sampling="query.sampling"
+      :downloading="downloading"
+      :min-date="minDate"
+      responsive
+      @export:csv="exportMetricsAsCsv"
       @export:png="exportMetricsAsPng"
-    )
-    kpi-error-overlay(v-if="unavailable || fetchError")
+    />
+    <kpi-error-overlay v-if="unavailable || fetchError" />
+  </div>
 </template>
 
 <script>

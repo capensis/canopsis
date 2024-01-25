@@ -6,9 +6,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviortype"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 type ListRequest struct {
@@ -48,7 +48,7 @@ type Service struct {
 	Icon           string                `json:"icon" bson:"icon"`
 	SecondaryIcon  string                `json:"secondary_icon" bson:"secondary_icon"`
 	Output         string                `json:"output" bson:"output"`
-	LastUpdateDate *types.CpsTime        `json:"last_update_date" bson:"last_update_date" swaggertype:"integer"`
+	LastUpdateDate *datetime.CpsTime     `json:"last_update_date" bson:"last_update_date" swaggertype:"integer"`
 	Counters       Counters              `json:"counters" bson:"counters"`
 	PbehaviorInfo  *entity.PbehaviorInfo `json:"pbehavior_info" bson:"pbehavior_info"`
 	Pbehaviors     []alarm.Pbehavior     `json:"pbehaviors" bson:"pbehaviors"`
@@ -56,7 +56,7 @@ type Service struct {
 	ImpactState    int                   `json:"impact_state" bson:"impact_state"`
 	Category       *entity.Category      `json:"category" bson:"category"`
 	IsGrey         bool                  `json:"is_grey" bson:"is_grey"`
-	IdleSince      *types.CpsTime        `json:"idle_since,omitempty" bson:"idle_since,omitempty" swaggertype:"integer"`
+	IdleSince      *datetime.CpsTime     `json:"idle_since,omitempty" bson:"idle_since,omitempty" swaggertype:"integer"`
 }
 
 type Info struct {
@@ -126,8 +126,8 @@ type Entity struct {
 	Ack            *common.AlarmStep          `json:"ack" bson:"ack"`
 	Ticket         *common.AlarmStep          `json:"ticket" bson:"ticket"`
 	Tickets        []common.AlarmStep         `json:"tickets" bson:"tickets"`
-	LastUpdateDate *types.CpsTime             `json:"last_update_date" bson:"last_update_date" swaggertype:"integer"`
-	CreationDate   *types.CpsTime             `json:"alarm_creation_date" bson:"creation_date" swaggertype:"integer"`
+	LastUpdateDate *datetime.CpsTime          `json:"last_update_date" bson:"last_update_date" swaggertype:"integer"`
+	CreationDate   *datetime.CpsTime          `json:"alarm_creation_date" bson:"creation_date" swaggertype:"integer"`
 	DisplayName    string                     `json:"alarm_display_name" bson:"display_name"`
 	Icon           string                     `json:"icon" bson:"icon"`
 	Pbehaviors     []alarm.Pbehavior          `json:"pbehaviors" bson:"pbehaviors"`
@@ -136,15 +136,15 @@ type Entity struct {
 	IsGrey         bool                       `json:"is_grey" bson:"is_grey"`
 	ImpactLevel    int                        `json:"impact_level" bson:"impact_level"`
 	ImpactState    int                        `json:"impact_state" bson:"impact_state"`
-	IdleSince      *types.CpsTime             `json:"idle_since,omitempty" bson:"idle_since,omitempty" swaggertype:"integer"`
+	IdleSince      *datetime.CpsTime          `json:"idle_since,omitempty" bson:"idle_since,omitempty" swaggertype:"integer"`
 	Stats          statistics.EventStatistics `json:"stats" bson:"stats"`
 
 	Links link.LinksByCategory `json:"links" bson:"-"`
 
 	DependsCount int `bson:"depends_count" json:"depends_count"`
 
-	ImportSource string         `bson:"import_source,omitempty" json:"import_source,omitempty"`
-	Imported     *types.CpsTime `bson:"imported,omitempty" json:"imported,omitempty" swaggertype:"integer"`
+	ImportSource string            `bson:"import_source,omitempty" json:"import_source,omitempty"`
+	Imported     *datetime.CpsTime `bson:"imported,omitempty" json:"imported,omitempty" swaggertype:"integer"`
 
 	AssignedDeclareTicketRules []alarm.AssignedDeclareTicketRule `bson:"-" json:"assigned_declare_ticket_rules,omitempty"`
 }

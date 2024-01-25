@@ -5,7 +5,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
   class="c-advanced-data-table"
 >
   <div
-    class="layout row wrap"
+    class="layout wrap"
   >
     <div
       class="flex xs4"
@@ -18,125 +18,235 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
       class="flex xs12"
     >
       <transition-stub
-        mode="in-out"
         name="expand-transition"
       >
-        <!---->
+        <div
+          class="layout px-2 mt-1"
+          style="display: none;"
+        >
+          <c-action-btn-stub
+            type="delete"
+          />
+        </div>
       </transition-stub>
     </div>
   </div>
-  <div>
+  <div
+    class="v-data-table theme--light v-data-table--selectable"
+    header-text="text"
+  >
     <div
-      class="v-table__overflow"
+      class="v-data-table__wrapper"
     >
-      <table
-        class="v-datatable v-table v-datatable--expand v-datatable--select-all theme--light"
-      >
-        <thead>
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="12"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="12"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="12"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="12"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="12"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="12"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="12"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="12"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="12"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="12"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="12"
+        tag="td"
+      />
+      <table>
+        <colgroup>
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+        </colgroup>
+        <thead
+          class="v-data-table-header"
+        >
           <tr>
-            <th>
+            <th
+              aria-label=""
+              class="text-start"
+              data-value="data-table-select"
+              role="columnheader"
+              scope="col"
+              style="width: 1px; min-width: 1px;"
+            >
               <div
-                class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                class="v-data-table__checkbox v-simple-checkbox"
               >
                 <div
-                  class="v-input__control"
+                  class="v-input--selection-controls__input"
                 >
-                  <div
-                    class="v-input__slot"
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
                   >
-                    <div
-                      class="v-input--selection-controls__input"
-                    >
-                      <input
-                        aria-checked="false"
-                        role="checkbox"
-                        type="checkbox"
-                        value=""
-                      />
-                      <div
-                        class="v-input--selection-controls__ripple"
-                      />
-                      <i
-                        aria-hidden="true"
-                        class="v-icon material-icons theme--light"
-                      >
-                        check_box_outline_blank
-                      </i>
-                    </div>
-                  </div>
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
                 </div>
               </div>
             </th>
             <th
+              aria-label=""
+              class="text-start"
+              data-value="data-table-expand"
+              role="columnheader"
+              scope="col"
+              style="width: 1px; min-width: 1px;"
+            >
+              <span />
+            </th>
+            <th
               aria-label="Id: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="_id"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Id
+              <span>
+                Id
+              </span>
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
               >
                 arrow_upward
               </i>
             </th>
             <th
-              aria-label="Type: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label="Type"
+              class="text-start"
               data-value="type"
               role="columnheader"
               scope="col"
             >
-              Type
+              <span>
+                Type
+              </span>
             </th>
             <th
               aria-label="Priority: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="priority"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Priority
+              <span>
+                Priority
+              </span>
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
               >
                 arrow_upward
               </i>
             </th>
             <th
-              aria-label="Enabled: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label="Enabled"
+              class="text-start"
               data-value="enabled"
               role="columnheader"
               scope="col"
             >
-              Enabled
+              <span>
+                Enabled
+              </span>
             </th>
             <th
               aria-label="Errors: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="unread_failures_count"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Errors
+              <span>
+                Errors
+              </span>
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
               >
                 arrow_upward
               </i>
@@ -144,17 +254,18 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
             <th
               aria-label="Author: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="author.display_name"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Author
+              <span>
+                Author
+              </span>
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
               >
                 arrow_upward
               </i>
@@ -162,17 +273,18 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
             <th
               aria-label="Creation date: Sorted descending. Activate to remove sorting."
               aria-sort="descending"
-              class="column active desc sortable text-xs-left"
+              class="text-start sortable active desc"
               data-value="created"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Creation date
+              <span>
+                Creation date
+              </span>
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
               >
                 arrow_upward
               </i>
@@ -180,136 +292,176 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
             <th
               aria-label="Last update date: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="updated"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Last update date
+              <span>
+                Last update date
+              </span>
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
               >
                 arrow_upward
               </i>
             </th>
             <th
-              aria-label="Calendar: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label="Calendar"
+              class="text-start"
               data-value="calendar"
               role="columnheader"
               scope="col"
             >
-              Calendar
+              <span>
+                Calendar
+              </span>
             </th>
             <th
-              aria-label="Actions: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label="Actions"
+              class="text-start"
               data-value="actions"
               role="columnheader"
               scope="col"
             >
-              Actions
+              <span>
+                Actions
+              </span>
             </th>
           </tr>
+        </thead>
+        <thead>
           <tr
-            class="v-datatable__progress"
+            class="v-data-table__progress"
           >
             <th
               class="column"
-              colspan="11"
+              colspan="12"
             >
               <div
                 aria-valuemax="100"
                 aria-valuemin="0"
-                class="v-progress-linear"
+                class="v-progress-linear v-progress-linear--absolute v-progress-linear--visible theme--light"
                 role="progressbar"
                 style="height: 2px;"
               >
                 <div
                   class="v-progress-linear__background primary"
-                  style="height: 2px; opacity: 0.3; width: 100%;"
+                  style="opacity: 0.3; left: 0%; width: 100%;"
                 />
                 <div
-                  class="v-progress-linear__bar"
+                  class="v-progress-linear__buffer"
+                />
+                <transition-stub
+                  name="fade-transition"
                 >
-                  <transition-stub
-                    name="fade-transition"
+                  <div
+                    class="v-progress-linear__indeterminate v-progress-linear__indeterminate--active"
                   >
                     <div
-                      class="v-progress-linear__bar__indeterminate v-progress-linear__bar__indeterminate--active"
-                    >
-                      <div
-                        class="v-progress-linear__bar__indeterminate long primary"
-                      />
-                      <div
-                        class="v-progress-linear__bar__indeterminate short primary"
-                      />
-                    </div>
-                  </transition-stub>
-                  <transition-stub
-                    name="slide-x-transition"
-                  />
-                </div>
+                      class="v-progress-linear__indeterminate long primary"
+                    />
+                    <div
+                      class="v-progress-linear__indeterminate short primary"
+                    />
+                  </div>
+                </transition-stub>
               </div>
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout c-checkbox-wrapper row justify-start"
+                class="v-data-table__checkbox v-simple-checkbox"
               >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
               </div>
             </td>
-            <td>
-              c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-0
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
-              Drop
+            <td
+              class="text-start"
+            >
+        c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-0
             </td>
-            <td>
-              -
+            <td
+              class="text-start"
+            >
+    Drop
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
+    -
+            </td>
+            <td
+              class="text-start"
+            >
               <c-enabled-stub />
             </td>
-            <td>
-              -
+            <td
+              class="text-start"
+            >
+      -
             </td>
-            <td>
-              author-0
+            <td
+              class="text-start"
+            >
+        author-0
             </td>
-            <td>
-              04/03/2021 13:44:48
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
             </td>
-            <td>
-              04/03/2021 13:44:48
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 clear
               </i>
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <c-action-btn-stub
                   type="edit"
@@ -330,66 +482,99 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout c-checkbox-wrapper row justify-start"
+                class="v-data-table__checkbox v-simple-checkbox"
               >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
               </div>
             </td>
-            <td>
-              c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-1
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
-              Break
+            <td
+              class="text-start"
+            >
+        c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-1
             </td>
-            <td>
-              1
+            <td
+              class="text-start"
+            >
+    Break
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
+    1
+            </td>
+            <td
+              class="text-start"
+            >
               <c-enabled-stub
                 value="true"
               />
             </td>
-            <td>
-              -
+            <td
+              class="text-start"
+            >
+      -
             </td>
-            <td>
-              author-1
+            <td
+              class="text-start"
+            >
+        author-1
             </td>
-            <td>
-              04/03/2021 13:44:49
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:49
             </td>
-            <td>
-              04/03/2021 13:44:49
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:49
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 clear
               </i>
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <c-action-btn-stub
                   type="edit"
@@ -410,64 +595,97 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout c-checkbox-wrapper row justify-start"
+                class="v-data-table__checkbox v-simple-checkbox"
               >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
               </div>
             </td>
-            <td>
-              c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-2
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
-              Enrichment
+            <td
+              class="text-start"
+            >
+        c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-2
             </td>
-            <td>
-              2
+            <td
+              class="text-start"
+            >
+    Enrichment
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
+    2
+            </td>
+            <td
+              class="text-start"
+            >
               <c-enabled-stub />
             </td>
-            <td>
-              -
+            <td
+              class="text-start"
+            >
+      -
             </td>
-            <td>
-              author-2
+            <td
+              class="text-start"
+            >
+        author-2
             </td>
-            <td>
-              04/03/2021 13:44:50
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:50
             </td>
-            <td>
-              04/03/2021 13:44:50
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:50
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 clear
               </i>
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <c-action-btn-stub
                   type="edit"
@@ -488,66 +706,99 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout c-checkbox-wrapper row justify-start"
+                class="v-data-table__checkbox v-simple-checkbox"
               >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
               </div>
             </td>
-            <td>
-              c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-3
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
-              Change entity
+            <td
+              class="text-start"
+            >
+        c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-3
             </td>
-            <td>
-              3
+            <td
+              class="text-start"
+            >
+    Change entity
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
+    3
+            </td>
+            <td
+              class="text-start"
+            >
               <c-enabled-stub
                 value="true"
               />
             </td>
-            <td>
-              -
+            <td
+              class="text-start"
+            >
+      -
             </td>
-            <td>
-              author-3
+            <td
+              class="text-start"
+            >
+        author-3
             </td>
-            <td>
-              04/03/2021 13:44:51
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:51
             </td>
-            <td>
-              04/03/2021 13:44:51
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:51
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 clear
               </i>
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <c-action-btn-stub
                   type="edit"
@@ -568,64 +819,97 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout c-checkbox-wrapper row justify-start"
+                class="v-data-table__checkbox v-simple-checkbox"
               >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
               </div>
             </td>
-            <td>
-              c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-4
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
-              Drop
+            <td
+              class="text-start"
+            >
+        c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-4
             </td>
-            <td>
-              4
+            <td
+              class="text-start"
+            >
+    Drop
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
+    4
+            </td>
+            <td
+              class="text-start"
+            >
               <c-enabled-stub />
             </td>
-            <td>
-              -
+            <td
+              class="text-start"
+            >
+      -
             </td>
-            <td>
-              author-4
+            <td
+              class="text-start"
+            >
+        author-4
             </td>
-            <td>
-              04/03/2021 13:44:52
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:52
             </td>
-            <td>
-              04/03/2021 13:44:52
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:52
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 clear
               </i>
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <c-action-btn-stub
                   type="edit"
@@ -646,66 +930,99 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout c-checkbox-wrapper row justify-start"
+                class="v-data-table__checkbox v-simple-checkbox"
               >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
               </div>
             </td>
-            <td>
-              c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-5
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
-              Break
+            <td
+              class="text-start"
+            >
+        c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-5
             </td>
-            <td>
-              5
+            <td
+              class="text-start"
+            >
+    Break
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
+    5
+            </td>
+            <td
+              class="text-start"
+            >
               <c-enabled-stub
                 value="true"
               />
             </td>
-            <td>
-              -
+            <td
+              class="text-start"
+            >
+      -
             </td>
-            <td>
-              author-5
+            <td
+              class="text-start"
+            >
+        author-5
             </td>
-            <td>
-              04/03/2021 13:44:53
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:53
             </td>
-            <td>
-              04/03/2021 13:44:53
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:53
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 clear
               </i>
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <c-action-btn-stub
                   type="edit"
@@ -726,64 +1043,97 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout c-checkbox-wrapper row justify-start"
+                class="v-data-table__checkbox v-simple-checkbox"
               >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
               </div>
             </td>
-            <td>
-              c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-6
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
-              Enrichment
+            <td
+              class="text-start"
+            >
+        c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-6
             </td>
-            <td>
-              6
+            <td
+              class="text-start"
+            >
+    Enrichment
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
+    6
+            </td>
+            <td
+              class="text-start"
+            >
               <c-enabled-stub />
             </td>
-            <td>
-              -
+            <td
+              class="text-start"
+            >
+      -
             </td>
-            <td>
-              author-6
+            <td
+              class="text-start"
+            >
+        author-6
             </td>
-            <td>
-              04/03/2021 13:44:54
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:54
             </td>
-            <td>
-              04/03/2021 13:44:54
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:54
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 clear
               </i>
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <c-action-btn-stub
                   type="edit"
@@ -804,66 +1154,99 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout c-checkbox-wrapper row justify-start"
+                class="v-data-table__checkbox v-simple-checkbox"
               >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
               </div>
             </td>
-            <td>
-              c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-7
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
-              Change entity
+            <td
+              class="text-start"
+            >
+        c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-7
             </td>
-            <td>
-              7
+            <td
+              class="text-start"
+            >
+    Change entity
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
+    7
+            </td>
+            <td
+              class="text-start"
+            >
               <c-enabled-stub
                 value="true"
               />
             </td>
-            <td>
-              -
+            <td
+              class="text-start"
+            >
+      -
             </td>
-            <td>
-              author-7
+            <td
+              class="text-start"
+            >
+        author-7
             </td>
-            <td>
-              04/03/2021 13:44:55
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:55
             </td>
-            <td>
-              04/03/2021 13:44:55
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:55
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 clear
               </i>
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <c-action-btn-stub
                   type="edit"
@@ -884,64 +1267,97 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout c-checkbox-wrapper row justify-start"
+                class="v-data-table__checkbox v-simple-checkbox"
               >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
               </div>
             </td>
-            <td>
-              c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-8
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
-              Drop
+            <td
+              class="text-start"
+            >
+        c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-8
             </td>
-            <td>
-              8
+            <td
+              class="text-start"
+            >
+    Drop
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
+    8
+            </td>
+            <td
+              class="text-start"
+            >
               <c-enabled-stub />
             </td>
-            <td>
-              -
+            <td
+              class="text-start"
+            >
+      -
             </td>
-            <td>
-              author-8
+            <td
+              class="text-start"
+            >
+        author-8
             </td>
-            <td>
-              04/03/2021 13:44:56
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:56
             </td>
-            <td>
-              04/03/2021 13:44:56
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:56
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 clear
               </i>
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <c-action-btn-stub
                   type="edit"
@@ -962,66 +1378,99 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout c-checkbox-wrapper row justify-start"
+                class="v-data-table__checkbox v-simple-checkbox"
               >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
               </div>
             </td>
-            <td>
-              c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-9
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
-              Break
+            <td
+              class="text-start"
+            >
+        c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-9
             </td>
-            <td>
-              9
+            <td
+              class="text-start"
+            >
+    Break
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
+    9
+            </td>
+            <td
+              class="text-start"
+            >
               <c-enabled-stub
                 value="true"
               />
             </td>
-            <td>
-              -
+            <td
+              class="text-start"
+            >
+      -
             </td>
-            <td>
-              author-9
+            <td
+              class="text-start"
+            >
+        author-9
             </td>
-            <td>
-              04/03/2021 13:44:57
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:57
             </td>
-            <td>
-              04/03/2021 13:44:57
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:57
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 clear
               </i>
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <c-action-btn-stub
                   type="edit"
@@ -1042,21 +1491,125 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="11"
-              tag="td"
-            />
+            <td
+              class="text-start"
+            >
+              <div
+                class="v-data-table__checkbox v-simple-checkbox"
+              >
+                <div
+                  class="v-input--selection-controls__input"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon notranslate material-icons theme--light"
+                  >
+                    check_box_outline_blank
+                  </i>
+                  <div
+                    class="v-input--selection-controls__ripple primary--text"
+                  />
+                </div>
+              </div>
+            </td>
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+        c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-10
+            </td>
+            <td
+              class="text-start"
+            >
+    Enrichment
+            </td>
+            <td
+              class="text-start"
+            >
+    10
+            </td>
+            <td
+              class="text-start"
+            >
+              <c-enabled-stub />
+            </td>
+            <td
+              class="text-start"
+            >
+      -
+            </td>
+            <td
+              class="text-start"
+            >
+        author-10
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:58
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:58
+            </td>
+            <td
+              class="text-start"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="duplicate"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+                <pbehaviors-create-action-btn-stub
+                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-10"
+                />
+                <pbehaviors-list-action-btn-stub
+                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-10"
+                />
+              </div>
+            </td>
           </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
         </tbody>
       </table>
     </div>
   </div>
   <c-table-pagination-stub
     page="2"
-    rows-per-page="10"
     total-items="50"
   />
 </div>
@@ -1067,7 +1620,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
   class="c-advanced-data-table"
 >
   <div
-    class="layout row wrap"
+    class="layout wrap"
   >
     <div
       class="flex xs4"
@@ -1078,103 +1631,147 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
       class="flex xs12"
     >
       <transition-stub
-        mode="in-out"
         name="expand-transition"
       >
-        <!---->
+        <div
+          class="layout px-2 mt-1"
+          style="display: none;"
+        />
       </transition-stub>
     </div>
   </div>
-  <div>
+  <div
+    class="v-data-table theme--light"
+    header-text="text"
+  >
     <div
-      class="v-table__overflow"
+      class="v-data-table__wrapper"
     >
-      <table
-        class="v-datatable v-table v-datatable--expand theme--light"
-      >
-        <thead>
+      <table>
+        <colgroup>
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+        </colgroup>
+        <thead
+          class="v-data-table-header"
+        >
           <tr>
             <th
-              aria-label=": Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
-              data-value=""
+              aria-label=""
+              class="text-start"
+              data-value="data-table-expand"
               role="columnheader"
               scope="col"
-              width="20"
+              style="width: 1px; min-width: 1px;"
             >
-              
+              <span />
             </th>
             <th
-              aria-label="Id: Sorted ascending. Activate to sort descending."
-              aria-sort="ascending"
-              class="column active asc sortable text-xs-left"
+              aria-label="Id: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="text-start sortable"
               data-value="_id"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Id
+              <span>
+                Id
+              </span>
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
               >
                 arrow_upward
               </i>
             </th>
             <th
-              aria-label="Type: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label="Type"
+              class="text-start"
               data-value="type"
               role="columnheader"
               scope="col"
             >
-              Type
+              <span>
+                Type
+              </span>
             </th>
             <th
               aria-label="Priority: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="priority"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Priority
+              <span>
+                Priority
+              </span>
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
               >
                 arrow_upward
               </i>
             </th>
             <th
-              aria-label="Enabled: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label="Enabled"
+              class="text-start"
               data-value="enabled"
               role="columnheader"
               scope="col"
             >
-              Enabled
+              <span>
+                Enabled
+              </span>
             </th>
             <th
               aria-label="Errors: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="unread_failures_count"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Errors
+              <span>
+                Errors
+              </span>
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
               >
                 arrow_upward
               </i>
@@ -1182,17 +1779,18 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
             <th
               aria-label="Author: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="author.display_name"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Author
+              <span>
+                Author
+              </span>
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
               >
                 arrow_upward
               </i>
@@ -1200,17 +1798,18 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
             <th
               aria-label="Creation date: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="created"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Creation date
+              <span>
+                Creation date
+              </span>
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
               >
                 arrow_upward
               </i>
@@ -1218,44 +1817,49 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
             <th
               aria-label="Last update date: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="updated"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Last update date
+              <span>
+                Last update date
+              </span>
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
               >
                 arrow_upward
               </i>
             </th>
             <th
-              aria-label="Calendar: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label="Calendar"
+              class="text-start"
               data-value="calendar"
               role="columnheader"
               scope="col"
             >
-              Calendar
+              <span>
+                Calendar
+              </span>
             </th>
             <th
-              aria-label="Actions: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label="Actions"
+              class="text-start"
               data-value="actions"
               role="columnheader"
               scope="col"
             >
-              Actions
+              <span>
+                Actions
+              </span>
             </th>
           </tr>
+        </thead>
+        <thead>
           <tr
-            class="v-datatable__progress"
+            class="v-data-table__progress"
           >
             <th
               class="column"
@@ -1264,46 +1868,43 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
               <div
                 aria-valuemax="100"
                 aria-valuemin="0"
-                class="v-progress-linear"
+                class="v-progress-linear v-progress-linear--absolute v-progress-linear--visible theme--light"
                 role="progressbar"
                 style="height: 2px;"
               >
                 <div
                   class="v-progress-linear__background primary"
-                  style="height: 2px; opacity: 0.3; width: 100%;"
+                  style="opacity: 0.3; left: 0%; width: 100%;"
                 />
                 <div
-                  class="v-progress-linear__bar"
+                  class="v-progress-linear__buffer"
+                />
+                <transition-stub
+                  name="fade-transition"
                 >
-                  <transition-stub
-                    name="fade-transition"
+                  <div
+                    class="v-progress-linear__indeterminate v-progress-linear__indeterminate--active"
                   >
                     <div
-                      class="v-progress-linear__bar__indeterminate v-progress-linear__bar__indeterminate--active"
-                    >
-                      <div
-                        class="v-progress-linear__bar__indeterminate long primary"
-                      />
-                      <div
-                        class="v-progress-linear__bar__indeterminate short primary"
-                      />
-                    </div>
-                  </transition-stub>
-                  <transition-stub
-                    name="slide-x-transition"
-                  />
-                </div>
+                      class="v-progress-linear__indeterminate long primary"
+                    />
+                    <div
+                      class="v-progress-linear__indeterminate short primary"
+                    />
+                  </div>
+                </transition-stub>
               </div>
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr
+            class="v-data-table__empty-wrapper"
+          >
             <td
-              class="text-xs-center"
               colspan="11"
             >
-              No data available
+              Loading items...
             </td>
           </tr>
         </tbody>
@@ -1319,7 +1920,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
   class="c-advanced-data-table"
 >
   <div
-    class="layout row wrap"
+    class="layout wrap"
   >
     <div
       class="flex xs4"
@@ -1332,103 +1933,197 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
       class="flex xs12"
     >
       <transition-stub
-        mode="in-out"
         name="expand-transition"
       >
-        <!---->
+        <div
+          class="layout px-2 mt-1"
+          style="display: none;"
+        />
       </transition-stub>
     </div>
   </div>
-  <div>
+  <div
+    class="v-data-table theme--light"
+    header-text="text"
+  >
     <div
-      class="v-table__overflow"
+      class="v-data-table__wrapper"
     >
-      <table
-        class="v-datatable v-table v-datatable--expand theme--light"
-      >
-        <thead>
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <table>
+        <colgroup>
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+        </colgroup>
+        <thead
+          class="v-data-table-header"
+        >
           <tr>
             <th
-              aria-label=": Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
-              data-value=""
+              aria-label=""
+              class="text-start"
+              data-value="data-table-expand"
               role="columnheader"
               scope="col"
-              width="20"
+              style="width: 1px; min-width: 1px;"
             >
-              
+              <span />
             </th>
             <th
               aria-label="Id: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="_id"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Id
+              <span>
+                Id
+              </span>
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
               >
                 arrow_upward
               </i>
             </th>
             <th
-              aria-label="Type: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label="Type"
+              class="text-start"
               data-value="type"
               role="columnheader"
               scope="col"
             >
-              Type
+              <span>
+                Type
+              </span>
             </th>
             <th
               aria-label="Priority: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="priority"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Priority
+              <span>
+                Priority
+              </span>
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
               >
                 arrow_upward
               </i>
             </th>
             <th
-              aria-label="Enabled: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label="Enabled"
+              class="text-start"
               data-value="enabled"
               role="columnheader"
               scope="col"
             >
-              Enabled
+              <span>
+                Enabled
+              </span>
             </th>
             <th
               aria-label="Errors: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="unread_failures_count"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Errors
+              <span>
+                Errors
+              </span>
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
               >
                 arrow_upward
               </i>
@@ -1436,17 +2131,18 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
             <th
               aria-label="Author: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="author.display_name"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Author
+              <span>
+                Author
+              </span>
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
               >
                 arrow_upward
               </i>
@@ -1454,17 +2150,18 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
             <th
               aria-label="Creation date: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="created"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Creation date
+              <span>
+                Creation date
+              </span>
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
               >
                 arrow_upward
               </i>
@@ -1472,44 +2169,49 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
             <th
               aria-label="Last update date: Not sorted. Activate to sort ascending."
               aria-sort="none"
-              class="column sortable text-xs-left"
+              class="text-start sortable"
               data-value="updated"
               role="columnheader"
               scope="col"
-              tabindex="0"
             >
-              Last update date
+              <span>
+                Last update date
+              </span>
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
               >
                 arrow_upward
               </i>
             </th>
             <th
-              aria-label="Calendar: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label="Calendar"
+              class="text-start"
               data-value="calendar"
               role="columnheader"
               scope="col"
             >
-              Calendar
+              <span>
+                Calendar
+              </span>
             </th>
             <th
-              aria-label="Actions: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label="Actions"
+              class="text-start"
               data-value="actions"
               role="columnheader"
               scope="col"
             >
-              Actions
+              <span>
+                Actions
+              </span>
             </th>
           </tr>
+        </thead>
+        <thead>
           <tr
-            class="v-datatable__progress"
+            class="v-data-table__progress"
           >
             <th
               class="column"
@@ -1518,169 +2220,190 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               <div
                 aria-valuemax="100"
                 aria-valuemin="0"
-                class="v-progress-linear"
+                class="v-progress-linear v-progress-linear--absolute v-progress-linear--visible theme--light"
                 role="progressbar"
                 style="height: 2px;"
               >
                 <div
                   class="v-progress-linear__background primary"
-                  style="height: 2px; opacity: 0.3; width: 100%;"
+                  style="opacity: 0.3; left: 0%; width: 100%;"
                 />
                 <div
-                  class="v-progress-linear__bar"
+                  class="v-progress-linear__buffer"
+                />
+                <transition-stub
+                  name="fade-transition"
                 >
-                  <transition-stub
-                    name="fade-transition"
+                  <div
+                    class="v-progress-linear__indeterminate v-progress-linear__indeterminate--active"
                   >
                     <div
-                      class="v-progress-linear__bar__indeterminate v-progress-linear__bar__indeterminate--active"
-                    >
-                      <div
-                        class="v-progress-linear__bar__indeterminate long primary"
-                      />
-                      <div
-                        class="v-progress-linear__bar__indeterminate short primary"
-                      />
-                    </div>
-                  </transition-stub>
-                  <transition-stub
-                    name="slide-x-transition"
-                  />
-                </div>
+                      class="v-progress-linear__indeterminate long primary"
+                    />
+                    <div
+                      class="v-progress-linear__indeterminate short primary"
+                    />
+                  </div>
+                </transition-stub>
               </div>
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
               >
-                <!---->
-                <c-expand-btn-stub
-                  class="ml-2"
-                  expanded="true"
-                />
-              </div>
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
-              c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-0
+            <td
+              class="text-start"
+            >
+        c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-0
             </td>
-            <td>
-              Drop
+            <td
+              class="text-start"
+            >
+    Drop
             </td>
-            <td>
-              -
+            <td
+              class="text-start"
+            >
+    -
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <c-enabled-stub />
             </td>
-            <td>
-              -
+            <td
+              class="text-start"
+            >
+      -
             </td>
-            <td>
-              author-0
+            <td
+              class="text-start"
+            >
+        author-0
             </td>
-            <td>
-              04/03/2021 13:44:48
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
             </td>
-            <td>
-              04/03/2021 13:44:48
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 clear
               </i>
             </td>
-            <td>
-              <div
-                class="layout row"
-              >
-                <!---->
-                <!---->
-                <!---->
-                <pbehaviors-create-action-btn-stub
-                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-0"
-                />
-                <pbehaviors-list-action-btn-stub
-                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-0"
-                />
-              </div>
-            </td>
-          </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col v-datatable__expand-col--expanded"
-              colspan="11"
-              tag="td"
+            <td
+              class="text-start"
             >
               <div
-                class="v-datatable__expand-content"
-              >
-                <div
-                  class="secondary lighten-2"
-                >
-                  <event-filters-list-expand-panel-stub
-                    eventfilter="[object Object]"
-                  />
-                </div>
-              </div>
-            </transition-group-stub>
-          </tr>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
+                class="layout"
               >
                 <!---->
-                <c-expand-btn-stub
-                  class="ml-2"
+                <!---->
+                <!---->
+                <pbehaviors-create-action-btn-stub
+                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-0"
+                />
+                <pbehaviors-list-action-btn-stub
+                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-0"
                 />
               </div>
             </td>
-            <td>
-              c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-1
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
-              Break
+            <td
+              class="text-start"
+            >
+        c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-1
             </td>
-            <td>
-              1
+            <td
+              class="text-start"
+            >
+    Break
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
+    1
+            </td>
+            <td
+              class="text-start"
+            >
               <c-enabled-stub
                 value="true"
               />
             </td>
-            <td>
-              -
+            <td
+              class="text-start"
+            >
+      -
             </td>
-            <td>
-              author-1
+            <td
+              class="text-start"
+            >
+        author-1
             </td>
-            <td>
-              04/03/2021 13:44:49
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:49
             </td>
-            <td>
-              04/03/2021 13:44:49
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:49
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 clear
               </i>
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <!---->
                 <!---->
@@ -1695,60 +2418,76 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
               >
-                <!---->
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
-              </div>
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
-              c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-2
+            <td
+              class="text-start"
+            >
+        c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-2
             </td>
-            <td>
-              Enrichment
+            <td
+              class="text-start"
+            >
+    Enrichment
             </td>
-            <td>
-              2
+            <td
+              class="text-start"
+            >
+    2
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <c-enabled-stub />
             </td>
-            <td>
-              -
+            <td
+              class="text-start"
+            >
+      -
             </td>
-            <td>
-              author-2
+            <td
+              class="text-start"
+            >
+        author-2
             </td>
-            <td>
-              04/03/2021 13:44:50
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:50
             </td>
-            <td>
-              04/03/2021 13:44:50
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:50
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 clear
               </i>
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <!---->
                 <!---->
@@ -1763,62 +2502,78 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
               >
-                <!---->
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
-              </div>
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
-              c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-3
+            <td
+              class="text-start"
+            >
+        c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-3
             </td>
-            <td>
-              Change entity
+            <td
+              class="text-start"
+            >
+    Change entity
             </td>
-            <td>
-              3
+            <td
+              class="text-start"
+            >
+    3
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <c-enabled-stub
                 value="true"
               />
             </td>
-            <td>
-              -
+            <td
+              class="text-start"
+            >
+      -
             </td>
-            <td>
-              author-3
+            <td
+              class="text-start"
+            >
+        author-3
             </td>
-            <td>
-              04/03/2021 13:44:51
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:51
             </td>
-            <td>
-              04/03/2021 13:44:51
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:51
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 clear
               </i>
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <!---->
                 <!---->
@@ -1833,60 +2588,76 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
               >
-                <!---->
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
-              </div>
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
-              c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-4
+            <td
+              class="text-start"
+            >
+        c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-4
             </td>
-            <td>
-              Drop
+            <td
+              class="text-start"
+            >
+    Drop
             </td>
-            <td>
-              4
+            <td
+              class="text-start"
+            >
+    4
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <c-enabled-stub />
             </td>
-            <td>
-              -
+            <td
+              class="text-start"
+            >
+      -
             </td>
-            <td>
-              author-4
+            <td
+              class="text-start"
+            >
+        author-4
             </td>
-            <td>
-              04/03/2021 13:44:52
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:52
             </td>
-            <td>
-              04/03/2021 13:44:52
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:52
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 clear
               </i>
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <!---->
                 <!---->
@@ -1901,62 +2672,78 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
               >
-                <!---->
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
-              </div>
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
-              c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-5
+            <td
+              class="text-start"
+            >
+        c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-5
             </td>
-            <td>
-              Break
+            <td
+              class="text-start"
+            >
+    Break
             </td>
-            <td>
-              5
+            <td
+              class="text-start"
+            >
+    5
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <c-enabled-stub
                 value="true"
               />
             </td>
-            <td>
-              -
+            <td
+              class="text-start"
+            >
+      -
             </td>
-            <td>
-              author-5
+            <td
+              class="text-start"
+            >
+        author-5
             </td>
-            <td>
-              04/03/2021 13:44:53
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:53
             </td>
-            <td>
-              04/03/2021 13:44:53
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:53
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 clear
               </i>
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <!---->
                 <!---->
@@ -1971,60 +2758,76 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
               >
-                <!---->
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
-              </div>
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
-              c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-6
+            <td
+              class="text-start"
+            >
+        c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-6
             </td>
-            <td>
-              Enrichment
+            <td
+              class="text-start"
+            >
+    Enrichment
             </td>
-            <td>
-              6
+            <td
+              class="text-start"
+            >
+    6
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <c-enabled-stub />
             </td>
-            <td>
-              -
+            <td
+              class="text-start"
+            >
+      -
             </td>
-            <td>
-              author-6
+            <td
+              class="text-start"
+            >
+        author-6
             </td>
-            <td>
-              04/03/2021 13:44:54
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:54
             </td>
-            <td>
-              04/03/2021 13:44:54
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:54
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 clear
               </i>
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <!---->
                 <!---->
@@ -2039,62 +2842,78 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
               >
-                <!---->
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
-              </div>
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
-              c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-7
+            <td
+              class="text-start"
+            >
+        c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-7
             </td>
-            <td>
-              Change entity
+            <td
+              class="text-start"
+            >
+    Change entity
             </td>
-            <td>
-              7
+            <td
+              class="text-start"
+            >
+    7
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <c-enabled-stub
                 value="true"
               />
             </td>
-            <td>
-              -
+            <td
+              class="text-start"
+            >
+      -
             </td>
-            <td>
-              author-7
+            <td
+              class="text-start"
+            >
+        author-7
             </td>
-            <td>
-              04/03/2021 13:44:55
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:55
             </td>
-            <td>
-              04/03/2021 13:44:55
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:55
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 clear
               </i>
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <!---->
                 <!---->
@@ -2109,60 +2928,76 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
               >
-                <!---->
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
-              </div>
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
-              c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-8
+            <td
+              class="text-start"
+            >
+        c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-8
             </td>
-            <td>
-              Drop
+            <td
+              class="text-start"
+            >
+    Drop
             </td>
-            <td>
-              8
+            <td
+              class="text-start"
+            >
+    8
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <c-enabled-stub />
             </td>
-            <td>
-              -
+            <td
+              class="text-start"
+            >
+      -
             </td>
-            <td>
-              author-8
+            <td
+              class="text-start"
+            >
+        author-8
             </td>
-            <td>
-              04/03/2021 13:44:56
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:56
             </td>
-            <td>
-              04/03/2021 13:44:56
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:56
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 clear
               </i>
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <!---->
                 <!---->
@@ -2177,62 +3012,78 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
           >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
               >
-                <!---->
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
-              </div>
+                keyboard_arrow_down
+              </button>
             </td>
-            <td>
-              c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-9
+            <td
+              class="text-start"
+            >
+        c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-9
             </td>
-            <td>
-              Break
+            <td
+              class="text-start"
+            >
+    Break
             </td>
-            <td>
-              9
+            <td
+              class="text-start"
+            >
+    9
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <c-enabled-stub
                 value="true"
               />
             </td>
-            <td>
-              -
+            <td
+              class="text-start"
+            >
+      -
             </td>
-            <td>
-              author-9
+            <td
+              class="text-start"
+            >
+        author-9
             </td>
-            <td>
-              04/03/2021 13:44:57
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:57
             </td>
-            <td>
-              04/03/2021 13:44:57
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:57
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 clear
               </i>
             </td>
-            <td>
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row"
+                class="layout"
               >
                 <!---->
                 <!---->
@@ -2247,21 +3098,1232 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
             </td>
           </tr>
           <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="11"
-              tag="td"
-            />
-          </tr>
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
         </tbody>
       </table>
     </div>
   </div>
   <c-table-pagination-stub
+    items-per-page="10"
     page="1"
-    rows-per-page="10"
+    total-items="50"
+  />
+</div>
+`;
+
+exports[`event-filters-list Renders \`event-filters-list\` with updatable and old_patterns 1`] = `
+<div
+  class="c-advanced-data-table"
+>
+  <div
+    class="layout wrap"
+  >
+    <div
+      class="flex xs4"
+    >
+      <c-search-field-stub
+        value=""
+      />
+    </div>
+    <div
+      class="flex xs12"
+    >
+      <transition-stub
+        name="expand-transition"
+      >
+        <div
+          class="layout px-2 mt-1"
+          style="display: none;"
+        />
+      </transition-stub>
+    </div>
+  </div>
+  <div
+    class="v-data-table theme--light"
+    header-text="text"
+  >
+    <div
+      class="v-data-table__wrapper"
+    >
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <transition-group-stub
+        class="v-data-table__expanded__col"
+        colspan="11"
+        tag="td"
+      />
+      <table>
+        <colgroup>
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+        </colgroup>
+        <thead
+          class="v-data-table-header"
+        >
+          <tr>
+            <th
+              aria-label=""
+              class="text-start"
+              data-value="data-table-expand"
+              role="columnheader"
+              scope="col"
+              style="width: 1px; min-width: 1px;"
+            >
+              <span />
+            </th>
+            <th
+              aria-label="Id: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="text-start sortable"
+              data-value="_id"
+              role="columnheader"
+              scope="col"
+            >
+              <span>
+                Id
+              </span>
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Type"
+              class="text-start"
+              data-value="type"
+              role="columnheader"
+              scope="col"
+            >
+              <span>
+                Type
+              </span>
+            </th>
+            <th
+              aria-label="Priority: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="text-start sortable"
+              data-value="priority"
+              role="columnheader"
+              scope="col"
+            >
+              <span>
+                Priority
+              </span>
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Enabled"
+              class="text-start"
+              data-value="enabled"
+              role="columnheader"
+              scope="col"
+            >
+              <span>
+                Enabled
+              </span>
+            </th>
+            <th
+              aria-label="Errors: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="text-start sortable"
+              data-value="unread_failures_count"
+              role="columnheader"
+              scope="col"
+            >
+              <span>
+                Errors
+              </span>
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Author: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="text-start sortable"
+              data-value="author.display_name"
+              role="columnheader"
+              scope="col"
+            >
+              <span>
+                Author
+              </span>
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Creation date: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="text-start sortable"
+              data-value="created"
+              role="columnheader"
+              scope="col"
+            >
+              <span>
+                Creation date
+              </span>
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Last update date: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="text-start sortable"
+              data-value="updated"
+              role="columnheader"
+              scope="col"
+            >
+              <span>
+                Last update date
+              </span>
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                style="font-size: 18px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Calendar"
+              class="text-start"
+              data-value="calendar"
+              role="columnheader"
+              scope="col"
+            >
+              <span>
+                Calendar
+              </span>
+            </th>
+            <th
+              aria-label="Actions"
+              class="text-start"
+              data-value="actions"
+              role="columnheader"
+              scope="col"
+            >
+              <span>
+                Actions
+              </span>
+            </th>
+          </tr>
+        </thead>
+        <thead>
+          <tr
+            class="v-data-table__progress"
+          >
+            <th
+              class="column"
+              colspan="11"
+            >
+              <div
+                aria-valuemax="100"
+                aria-valuemin="0"
+                class="v-progress-linear v-progress-linear--absolute v-progress-linear--visible theme--light"
+                role="progressbar"
+                style="height: 2px;"
+              >
+                <div
+                  class="v-progress-linear__background primary"
+                  style="opacity: 0.3; left: 0%; width: 100%;"
+                />
+                <div
+                  class="v-progress-linear__buffer"
+                />
+                <transition-stub
+                  name="fade-transition"
+                >
+                  <div
+                    class="v-progress-linear__indeterminate v-progress-linear__indeterminate--active"
+                  >
+                    <div
+                      class="v-progress-linear__indeterminate long primary"
+                    />
+                    <div
+                      class="v-progress-linear__indeterminate short primary"
+                    />
+                  </div>
+                </transition-stub>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+        c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-0
+            </td>
+            <td
+              class="text-start"
+            >
+    Drop
+            </td>
+            <td
+              class="text-start"
+            >
+    -
+            </td>
+            <td
+              class="text-start"
+            >
+              <c-enabled-stub />
+            </td>
+            <td
+              class="text-start"
+            >
+      -
+            </td>
+            <td
+              class="text-start"
+            >
+        author-0
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
+            </td>
+            <td
+              class="text-start"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <!---->
+                <!---->
+                <pbehaviors-create-action-btn-stub
+                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-0"
+                />
+                <pbehaviors-list-action-btn-stub
+                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-0"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+        c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-1
+            </td>
+            <td
+              class="text-start"
+            >
+    Break
+            </td>
+            <td
+              class="text-start"
+            >
+    1
+            </td>
+            <td
+              class="text-start"
+            >
+              <c-enabled-stub
+                value="true"
+              />
+            </td>
+            <td
+              class="text-start"
+            >
+      -
+            </td>
+            <td
+              class="text-start"
+            >
+        author-1
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:49
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:49
+            </td>
+            <td
+              class="text-start"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <!---->
+                <!---->
+                <pbehaviors-create-action-btn-stub
+                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-1"
+                />
+                <pbehaviors-list-action-btn-stub
+                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-1"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+        c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-2
+            </td>
+            <td
+              class="text-start"
+            >
+    Enrichment
+            </td>
+            <td
+              class="text-start"
+            >
+    2
+            </td>
+            <td
+              class="text-start"
+            >
+              <c-enabled-stub />
+            </td>
+            <td
+              class="text-start"
+            >
+      -
+            </td>
+            <td
+              class="text-start"
+            >
+        author-2
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:50
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:50
+            </td>
+            <td
+              class="text-start"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <!---->
+                <!---->
+                <pbehaviors-create-action-btn-stub
+                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-2"
+                />
+                <pbehaviors-list-action-btn-stub
+                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-2"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+        c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-3
+            </td>
+            <td
+              class="text-start"
+            >
+    Change entity
+            </td>
+            <td
+              class="text-start"
+            >
+    3
+            </td>
+            <td
+              class="text-start"
+            >
+              <c-enabled-stub
+                value="true"
+              />
+            </td>
+            <td
+              class="text-start"
+            >
+      -
+            </td>
+            <td
+              class="text-start"
+            >
+        author-3
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:51
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:51
+            </td>
+            <td
+              class="text-start"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <!---->
+                <!---->
+                <pbehaviors-create-action-btn-stub
+                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-3"
+                />
+                <pbehaviors-list-action-btn-stub
+                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-3"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+        c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-4
+            </td>
+            <td
+              class="text-start"
+            >
+    Drop
+            </td>
+            <td
+              class="text-start"
+            >
+    4
+            </td>
+            <td
+              class="text-start"
+            >
+              <c-enabled-stub />
+            </td>
+            <td
+              class="text-start"
+            >
+      -
+            </td>
+            <td
+              class="text-start"
+            >
+        author-4
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:52
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:52
+            </td>
+            <td
+              class="text-start"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <!---->
+                <!---->
+                <pbehaviors-create-action-btn-stub
+                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-4"
+                />
+                <pbehaviors-list-action-btn-stub
+                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-4"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+        c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-5
+            </td>
+            <td
+              class="text-start"
+            >
+    Break
+            </td>
+            <td
+              class="text-start"
+            >
+    5
+            </td>
+            <td
+              class="text-start"
+            >
+              <c-enabled-stub
+                value="true"
+              />
+            </td>
+            <td
+              class="text-start"
+            >
+      -
+            </td>
+            <td
+              class="text-start"
+            >
+        author-5
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:53
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:53
+            </td>
+            <td
+              class="text-start"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <!---->
+                <!---->
+                <pbehaviors-create-action-btn-stub
+                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-5"
+                />
+                <pbehaviors-list-action-btn-stub
+                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-5"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+        c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-6
+            </td>
+            <td
+              class="text-start"
+            >
+    Enrichment
+            </td>
+            <td
+              class="text-start"
+            >
+    6
+            </td>
+            <td
+              class="text-start"
+            >
+              <c-enabled-stub />
+            </td>
+            <td
+              class="text-start"
+            >
+      -
+            </td>
+            <td
+              class="text-start"
+            >
+        author-6
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:54
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:54
+            </td>
+            <td
+              class="text-start"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <!---->
+                <!---->
+                <pbehaviors-create-action-btn-stub
+                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-6"
+                />
+                <pbehaviors-list-action-btn-stub
+                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-6"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+        c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-7
+            </td>
+            <td
+              class="text-start"
+            >
+    Change entity
+            </td>
+            <td
+              class="text-start"
+            >
+    7
+            </td>
+            <td
+              class="text-start"
+            >
+              <c-enabled-stub
+                value="true"
+              />
+            </td>
+            <td
+              class="text-start"
+            >
+      -
+            </td>
+            <td
+              class="text-start"
+            >
+        author-7
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:55
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:55
+            </td>
+            <td
+              class="text-start"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <!---->
+                <!---->
+                <pbehaviors-create-action-btn-stub
+                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-7"
+                />
+                <pbehaviors-list-action-btn-stub
+                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-7"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+        c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-8
+            </td>
+            <td
+              class="text-start"
+            >
+    Drop
+            </td>
+            <td
+              class="text-start"
+            >
+    8
+            </td>
+            <td
+              class="text-start"
+            >
+              <c-enabled-stub />
+            </td>
+            <td
+              class="text-start"
+            >
+      -
+            </td>
+            <td
+              class="text-start"
+            >
+        author-8
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:56
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:56
+            </td>
+            <td
+              class="text-start"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <!---->
+                <!---->
+                <pbehaviors-create-action-btn-stub
+                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-8"
+                />
+                <pbehaviors-list-action-btn-stub
+                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-8"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <button
+                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
+                type="button"
+              >
+                keyboard_arrow_down
+              </button>
+            </td>
+            <td
+              class="text-start"
+            >
+        c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-9
+            </td>
+            <td
+              class="text-start"
+            >
+    Break
+            </td>
+            <td
+              class="text-start"
+            >
+    9
+            </td>
+            <td
+              class="text-start"
+            >
+              <c-enabled-stub
+                value="true"
+              />
+            </td>
+            <td
+              class="text-start"
+            >
+      -
+            </td>
+            <td
+              class="text-start"
+            >
+        author-9
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:57
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:57
+            </td>
+            <td
+              class="text-start"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon notranslate material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td
+              class="text-start"
+            >
+              <div
+                class="layout"
+              >
+                <c-action-btn-stub
+                  type="edit"
+                />
+                <!---->
+                <!---->
+                <pbehaviors-create-action-btn-stub
+                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-9"
+                />
+                <pbehaviors-list-action-btn-stub
+                  entityid="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-9"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr
+            class="v-data-table__expanded v-data-table__expanded__content"
+          />
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <c-table-pagination-stub
+    items-per-page="10"
+    page="1"
     total-items="50"
   />
 </div>

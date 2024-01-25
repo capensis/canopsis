@@ -1,16 +1,35 @@
-<template lang="pug">
-  div
-    v-tooltip.c-extra-details(top)
-      template(#activator="{ on }")
-        span.c-extra-details__badge.blue-grey(v-on="on")
-          v-icon(color="white", small) {{ icon }}
-      div.text-md-center
-        strong {{ $t('alarm.actions.iconsTitles.canceled') }}
-        div {{ $t('common.by') }} : {{ canceled.a }}
-        div {{ $t('common.date') }} : {{ date }}
-        div.c-extra-details__message(
+<template>
+  <div>
+    <v-tooltip
+      class="c-extra-details"
+      top
+    >
+      <template #activator="{ on }">
+        <span
+          class="c-extra-details__badge blue-grey"
+          v-on="on"
+        >
+          <v-icon
+            color="white"
+            small
+          >
+            {{ icon }}
+          </v-icon>
+        </span>
+      </template>
+      <div class="text-md-center">
+        <strong>{{ $t('alarm.actions.iconsTitles.canceled') }}</strong>
+        <div>{{ $t('common.by') }} : {{ canceled.a }}</div>
+        <div>{{ $t('common.date') }} : {{ date }}</div>
+        <div
+          class="c-extra-details__message"
           v-if="canceled.m"
-        ) {{ $tc('common.comment') }} : {{ canceled.m }}
+        >
+          {{ $tc('common.comment') }} : {{ canceled.m }}
+        </div>
+      </div>
+    </v-tooltip>
+  </div>
 </template>
 
 <script>

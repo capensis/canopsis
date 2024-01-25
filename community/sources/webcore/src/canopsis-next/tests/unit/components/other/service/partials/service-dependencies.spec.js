@@ -288,7 +288,7 @@ describe('service-dependencies', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `service-dependencies` with custom props', async () => {
@@ -325,7 +325,7 @@ describe('service-dependencies', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `service-dependencies` with excluded root', async () => {
@@ -343,7 +343,7 @@ describe('service-dependencies', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `service-dependencies` with pages', async () => {
@@ -366,6 +366,6 @@ describe('service-dependencies', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

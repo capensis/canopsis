@@ -15,11 +15,11 @@ export const widgetHeaderStickyAlarmMixin = {
     },
 
     tableHeader() {
-      return this.$el.querySelector('.v-table__overflow > table > thead');
+      return this.$el.querySelector('.alarms-list-table .v-data-table-header');
     },
 
     tableBody() {
-      return this.$el.querySelector('.v-table__overflow > table > tbody');
+      return this.$el.querySelector('.alarms-list-table table  tbody');
     },
   },
 

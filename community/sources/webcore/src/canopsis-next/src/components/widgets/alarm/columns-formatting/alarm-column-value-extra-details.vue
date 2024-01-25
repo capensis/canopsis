@@ -1,39 +1,46 @@
-<template lang="pug">
-  v-layout.alarm-column-value-extra-details(wrap)
-    extra-details-ack(v-if="alarm.v.ack", :ack="alarm.v.ack")
-    extra-details-last-comment(
-      v-if="alarm.v.last_comment && alarm.v.last_comment.m",
+<template>
+  <v-layout
+    class="alarm-column-value-extra-details"
+    wrap
+  >
+    <extra-details-ack
+      v-if="alarm.v.ack"
+      :ack="alarm.v.ack"
+    />
+    <extra-details-last-comment
+      v-if="alarm.v.last_comment && alarm.v.last_comment.m"
       :last-comment="alarm.v.last_comment"
-    )
-    extra-details-ticket(
-      v-if="hasTickets",
+    />
+    <extra-details-ticket
+      v-if="hasTickets"
       :tickets="alarm.v.tickets"
-    )
-    extra-details-canceled(
-      v-if="alarm.v.canceled",
+    />
+    <extra-details-canceled
+      v-if="alarm.v.canceled"
       :canceled="alarm.v.canceled"
-    )
-    extra-details-snooze(
-      v-if="alarm.v.snooze",
+    />
+    <extra-details-snooze
+      v-if="alarm.v.snooze"
       :snooze="alarm.v.snooze"
-    )
-    extra-details-pbehavior(
-      v-if="alarm.pbehavior",
-      :pbehavior="alarm.pbehavior",
+    />
+    <extra-details-pbehavior
+      v-if="alarm.pbehavior"
+      :pbehavior="alarm.pbehavior"
       :pbehavior-info="alarm.v.pbehavior_info"
-    )
-    extra-details-parents(
-      v-if="alarm.parents",
-      :rules="alarm.meta_alarm_rules",
+    />
+    <extra-details-parents
+      v-if="alarm.parents"
+      :rules="alarm.meta_alarm_rules"
       :total="alarm.parents"
-    )
-    extra-details-children(
-      v-if="alarm.children",
-      :total="alarm.children",
-      :opened="alarm.opened_children",
-      :closed="alarm.closed_children",
+    />
+    <extra-details-children
+      v-if="alarm.children"
+      :total="alarm.children"
+      :opened="alarm.opened_children"
+      :closed="alarm.closed_children"
       :rule="alarm.meta_alarm_rule"
-    )
+    />
+  </v-layout>
 </template>
 
 <script>

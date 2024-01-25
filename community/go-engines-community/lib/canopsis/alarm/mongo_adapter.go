@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -219,7 +220,7 @@ func (a mongoAdapter) GetOpenedMetaAlarm(ctx context.Context, ruleId string, val
 
 	err := a.mainDbCollection.FindOne(ctx, query, options.FindOne().SetSort(bson.M{"v.creation_date": -1})).Decode(&al)
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return al, errt.NewNotFound(err)
 		}
 
@@ -252,7 +253,7 @@ func (a mongoAdapter) GetLastAlarm(ctx context.Context, connector, connectorName
 	}
 	err := a.mainDbCollection.FindOne(ctx, query, options.FindOne().SetSort(bson.M{"v.creation_date": -1})).Decode(&alarm)
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return alarm, errt.NewNotFound(err)
 		}
 
@@ -360,7 +361,7 @@ func (a mongoAdapter) MassPartialUpdateOpen(ctx context.Context, updatedAlarm *t
 
 func (a mongoAdapter) GetOpenedAlarmsWithLastDatesBefore(
 	ctx context.Context,
-	time types.CpsTime,
+	time datetime.CpsTime,
 ) (libmongo.Cursor, error) {
 	return a.mainDbCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
@@ -394,7 +395,7 @@ func (a mongoAdapter) GetOpenedAlarmsWithLastDatesBefore(
 	})
 }
 
-func (a mongoAdapter) GetOpenedAlarmsWithEntityAfter(ctx context.Context, createdAfter types.CpsTime) (libmongo.Cursor, error) {
+func (a mongoAdapter) GetOpenedAlarmsWithEntityAfter(ctx context.Context, createdAfter datetime.CpsTime) (libmongo.Cursor, error) {
 	return a.mainDbCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
 			"v.resolved": nil,
@@ -609,7 +610,7 @@ func (a mongoAdapter) getAlarmWithErr(ctx context.Context, filter bson.M) (types
 	alarm := types.Alarm{}
 	err := a.mainDbCollection.FindOne(ctx, filter).Decode(&alarm)
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return alarm, errt.NewNotFound(err)
 		}
 
@@ -640,7 +641,7 @@ func (a *mongoAdapter) CopyAlarmToResolvedCollection(ctx context.Context, alarm 
 	return err
 }
 
-func (a *mongoAdapter) FindToCheckPbehaviorInfo(ctx context.Context, createdBefore types.CpsTime, idsWithPbehaviors []string) (libmongo.Cursor, error) {
+func (a *mongoAdapter) FindToCheckPbehaviorInfo(ctx context.Context, createdBefore datetime.CpsTime, idsWithPbehaviors []string) (libmongo.Cursor, error) {
 	filter := bson.M{
 		"v.resolved": nil,
 		"t":          bson.M{"$lt": createdBefore},
@@ -703,7 +704,7 @@ func (a *mongoAdapter) GetWorstAlarmStateAndMaxLastEventDate(ctx context.Context
 	return 0, 0, nil
 }
 
-func (a *mongoAdapter) UpdateLastEventDate(ctx context.Context, entityIds []string, t types.CpsTime) error {
+func (a *mongoAdapter) UpdateLastEventDate(ctx context.Context, entityIds []string, t datetime.CpsTime) error {
 	_, err := a.mainDbCollection.UpdateMany(ctx, bson.M{
 		"d":          bson.M{"$in": entityIds},
 		"v.resolved": nil,

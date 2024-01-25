@@ -1,5 +1,9 @@
-<template lang="pug">
-  shared-actions-panel(:actions="preparedActions", :small="small", :wrap="wrap")
+<template>
+  <shared-actions-panel
+    :actions="preparedActions"
+    :small="small"
+    :wrap="wrap"
+  />
 </template>
 
 <script>
@@ -429,7 +433,7 @@ export default {
   },
   methods: {
     afterSubmit() {
-      return this.refreshAlarmsList();
+      this.refreshAlarmsList();
     },
 
     showCreateChangeStateEventModal() {

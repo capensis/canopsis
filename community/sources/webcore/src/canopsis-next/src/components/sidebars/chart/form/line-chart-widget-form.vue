@@ -1,33 +1,45 @@
-<template lang="pug">
-  v-layout(column)
-    field-title(v-field="form.title", :required="requiredTitle")
-    field-periodic-refresh(v-if="withPeriodicRefresh", v-field="form.parameters")
-    widget-settings-group(:title="$t('settings.chart.metricsDisplay')")
-      field-alarm-metric-presets(
-        v-field="form.parameters.metrics",
-        :only-external="onlyExternal",
-        with-color,
+<template>
+  <v-layout column>
+    <field-title
+      v-field="form.title"
+      :required="requiredTitle"
+    />
+    <field-periodic-refresh
+      v-if="withPeriodicRefresh"
+      v-field="form.parameters"
+    />
+    <widget-settings-group :title="$t('settings.chart.metricsDisplay')">
+      <field-alarm-metric-presets
+        v-field="form.parameters.metrics"
+        :only-external="onlyExternal"
+        with-color
         with-external
-      )
-    widget-settings-group(:title="$t('settings.advancedSettings')")
-      field-title(
-        v-field="form.parameters.chart_title",
-        :label="$tc('common.header')",
-        :placeholder="$t('settings.headerTitle')",
+      />
+    </widget-settings-group>
+    <widget-settings-group :title="$t('settings.advancedSettings')">
+      <field-title
+        v-field="form.parameters.chart_title"
+        :label="$tc('common.header')"
+        :placeholder="$t('settings.headerTitle')"
         name="chart_title"
-      )
-      field-quick-date-interval-type(v-field="form.parameters.default_time_range")
-      field-sampling(v-field="form.parameters.default_sampling")
-      field-filters(
-        v-if="withFilters",
-        :filters="form.filters",
-        addable,
-        editable,
-        with-entity,
-        hide-selector,
+      />
+      <field-quick-date-interval-type v-field="form.parameters.default_time_range" />
+      <field-sampling v-field="form.parameters.default_sampling" />
+      <field-filters
+        v-if="withFilters"
+        :filters="form.filters"
+        addable
+        editable
+        with-entity
+        hide-selector
         @update:filters="updateFilters"
-      )
-      field-switcher(v-field="form.parameters.comparison", :title="$t('settings.chart.showComparison')")
+      />
+      <field-switcher
+        v-field="form.parameters.comparison"
+        :title="$t('settings.chart.showComparison')"
+      />
+    </widget-settings-group>
+  </v-layout>
 </template>
 
 <script>

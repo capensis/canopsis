@@ -1,36 +1,56 @@
-<template lang="pug">
-  v-layout(row, wrap)
-    v-flex(xs12)
-      v-textarea(
-        v-validate="",
-        v-on="listeners",
-        :value="localValue",
-        :label="label",
-        :name="name",
-        :rows="rows",
-        :auto-grow="autoGrow",
-        :box="box",
-        :readonly="readonly",
-        :outline="outline",
-        :disabled="disabled",
-        :error-messages="errors.collect(name)",
+<template>
+  <v-layout wrap>
+    <v-flex xs12>
+      <v-textarea
+        v-validate=""
+        v-on="listeners"
+        :value="localValue"
+        :label="label"
+        :name="name"
+        :rows="rows"
+        :auto-grow="autoGrow"
+        :filled="box"
+        :readonly="readonly"
+        :outlined="outline"
+        :disabled="disabled"
+        :error-messages="errors.collect(name)"
         data-vv-validate-on="none"
-      )
-        template(#append="")
-          c-help-icon(icon="help", :text="helpText", left)
-    v-flex(v-if="!validateOnBlur && !readonly", xs12)
-      v-btn.ml-0(
-        :disabled="errors.has(name) || !wasChanged",
-        color="primary",
-        outline,
+      >
+        <template
+          v-if="helpText"
+          #append=""
+        >
+          <c-help-icon
+            icon="help"
+            :text="helpText"
+            left
+          />
+        </template>
+      </v-textarea>
+    </v-flex>
+    <v-flex
+      v-if="!validateOnBlur && !readonly"
+      xs12
+    >
+      <v-btn
+        :disabled="errors.has(name) || !wasChanged"
+        color="primary"
+        outlined
         @click="parse"
-      ) {{ $t('common.parse') }}
-      v-btn(
-        :disabled="!wasChanged",
-        color="grey darken-1",
-        outline,
+      >
+        {{ $t('common.parse') }}
+      </v-btn>
+      <v-btn
+        class="v-btn-legacy-m--x"
+        :disabled="!wasChanged"
+        color="grey darken-1"
+        outlined
         @click="reset"
-      ) {{ $t('common.reset') }}
+      >
+        {{ $t('common.reset') }}
+      </v-btn>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
@@ -149,6 +169,8 @@ export default {
           ? convertPayloadToJson(value)
           : stringifyJson(value);
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: this.$t('errors.default') });
 
         return '{}';

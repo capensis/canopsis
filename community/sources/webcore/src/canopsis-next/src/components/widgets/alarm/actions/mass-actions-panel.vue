@@ -1,10 +1,11 @@
-<template lang="pug">
-  shared-mass-actions-panel(:actions="preparedActions")
+<template>
+  <shared-mass-actions-panel :actions="preparedActions" />
 </template>
 
 <script>
 import { difference } from 'lodash';
 
+import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { EVENT_ENTITY_TYPES, ALARM_LIST_ACTIONS_TYPES, BUSINESS_USER_PERMISSIONS_ACTIONS_MAP } from '@/constants';
 
 import featuresService from '@/services/features';
@@ -45,13 +46,18 @@ export default {
       default: () => {},
     },
   },
+  data() {
+    return {
+      localItems: this.items,
+    };
+  },
   computed: {
     openedAlarms() {
-      return this.items.filter(item => !isCancelledAlarmStatus(item) && !isClosedAlarmStatus(item));
+      return this.localItems.filter(item => !isCancelledAlarmStatus(item) && !isClosedAlarmStatus(item));
     },
 
     cancelledAndUnResolvedAlarms() {
-      return this.items.filter(alarm => isCancelledAlarmStatus(alarm) && !isResolvedAlarm(alarm));
+      return this.localItems.filter(alarm => isCancelledAlarmStatus(alarm) && !isResolvedAlarm(alarm));
     },
 
     alarmsWithAssignedDeclareTicketRules() {
@@ -228,9 +234,22 @@ export default {
       }));
     },
   },
-
+  watch: {
+    items(items) {
+      if (!items?.length) {
+        this.itemsTimer = setTimeout(this.setLocalItems, VUETIFY_ANIMATION_DELAY);
+      } else {
+        clearTimeout(this.itemsTimer);
+        this.setLocalItems();
+      }
+    },
+  },
   methods: {
     ...featuresService.get('components.alarmListMassActionsPanel.methods', {}),
+
+    setLocalItems() {
+      this.localItems = this.items;
+    },
 
     clearItems() {
       this.$emit('clear:items');
@@ -239,7 +258,7 @@ export default {
     afterSubmit() {
       this.clearItems();
 
-      return this.refreshAlarmsList();
+      this.refreshAlarmsList();
     },
 
     showSnoozeModal() {

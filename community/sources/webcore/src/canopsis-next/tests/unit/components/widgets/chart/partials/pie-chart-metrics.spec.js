@@ -22,7 +22,7 @@ describe('pie-chart-metrics', () => {
   test('Renders `pie-chart-metrics` with default props', async () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pie-chart-metrics` with custom props', async () => {
@@ -44,7 +44,7 @@ describe('pie-chart-metrics', () => {
 
     const canvas = wrapper.find('canvas');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
 
     expect(canvas.element).toMatchCanvasSnapshot();
   });
@@ -68,7 +68,7 @@ describe('pie-chart-metrics', () => {
 
     const canvas = wrapper.find('canvas');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
 
     expect(canvas.element).toMatchCanvasSnapshot();
   });
@@ -88,7 +88,7 @@ describe('pie-chart-metrics', () => {
 
     const canvas = wrapper.find('canvas');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
 
     expect(canvas.element).toMatchCanvasSnapshot();
   });

@@ -1,6 +1,6 @@
 package healthcheck
 
-import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 
 const (
 	ServiceMongoDB     = "MongoDB"
@@ -42,12 +42,12 @@ type Graph struct {
 }
 
 type Engine struct {
-	Name             string         `json:"name,omitempty"`
-	Instances        *int           `json:"instances,omitempty"`
-	MinInstances     *int           `json:"min_instances,omitempty"`
-	OptimalInstances *int           `json:"optimal_instances,omitempty"`
-	QueueLength      *int           `json:"queue_length,omitempty"`
-	Time             *types.CpsTime `json:"time,omitempty" swaggertype:"integer"`
+	Name             string            `json:"name,omitempty"`
+	Instances        *int              `json:"instances,omitempty"`
+	MinInstances     *int              `json:"min_instances,omitempty"`
+	OptimalInstances *int              `json:"optimal_instances,omitempty"`
+	QueueLength      *int              `json:"queue_length,omitempty"`
+	Time             *datetime.CpsTime `json:"time,omitempty" swaggertype:"integer"`
 
 	IsRunning             bool `json:"is_running"`
 	IsQueueOverflown      bool `json:"is_queue_overflown"`

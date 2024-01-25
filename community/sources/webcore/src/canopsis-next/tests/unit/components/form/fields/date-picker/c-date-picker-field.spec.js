@@ -18,14 +18,18 @@ const stubs = {
 const selectDatePicker = wrapper => wrapper.find('.v-date-picker');
 const selectTextField = wrapper => wrapper.find('.v-text-field');
 
+const mockDatePickerCurrentTime = async (wrapper) => {
+  wrapper.findComponent({ name: 'VDatePicker' }).vm.now = new Date(123456789);
+
+  await flushPromises();
+};
+
 describe('c-date-picker-field', () => {
   const factory = generateShallowRenderer(CDatePickerField, {
-
     stubs,
     attachTo: document.body,
   });
   const snapshotFactory = generateRenderer(CDatePickerField, {
-
     attachTo: document.body,
   });
 
@@ -70,18 +74,24 @@ describe('c-date-picker-field', () => {
   });
 
   test('Renders `c-date-picker-field` with default props', async () => {
-    const wrapper = snapshotFactory();
+    const wrapper = snapshotFactory({
+      propsData: {
+        value: '2018-08-13',
+      },
+    });
 
-    await flushPromises();
+    expect(wrapper).toMatchSnapshot();
 
-    expect(document.body.innerHTML).toMatchSnapshot();
+    await wrapper.activateAllMenus();
+    await mockDatePickerCurrentTime(wrapper);
+
     expect(wrapper).toMatchMenuSnapshot();
   });
 
   test('Renders `c-date-picker-field` with custom props', async () => {
     const wrapper = snapshotFactory({
       propsData: {
-        value: 123123123,
+        value: '2022-01-12',
         label: 'Custom label',
         name: 'customName',
         color: COLORS.secondary,
@@ -96,22 +106,29 @@ describe('c-date-picker-field', () => {
       },
     });
 
-    await flushPromises();
+    expect(wrapper).toMatchSnapshot();
 
-    expect(document.body.innerHTML).toMatchSnapshot();
+    await wrapper.activateAllMenus();
+    await mockDatePickerCurrentTime(wrapper);
+
     expect(wrapper).toMatchMenuSnapshot();
   });
 
   test('Renders `c-date-picker-field` with slots', async () => {
     const wrapper = snapshotFactory({
+      propsData: {
+        value: '2016-09-16',
+      },
       slots: {
         append: '<div class="append-slot" />',
       },
     });
 
-    await flushPromises();
+    expect(wrapper).toMatchSnapshot();
 
-    expect(document.body.innerHTML).toMatchSnapshot();
+    await wrapper.activateAllMenus();
+    await mockDatePickerCurrentTime(wrapper);
+
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -136,9 +153,11 @@ describe('c-date-picker-field', () => {
       },
     ]);
 
-    await flushPromises();
+    expect(wrapper).toMatchSnapshot();
 
-    expect(document.body.innerHTML).toMatchSnapshot();
+    await wrapper.activateAllMenus();
+    await mockDatePickerCurrentTime(wrapper);
+
     expect(wrapper).toMatchMenuSnapshot();
   });
 });

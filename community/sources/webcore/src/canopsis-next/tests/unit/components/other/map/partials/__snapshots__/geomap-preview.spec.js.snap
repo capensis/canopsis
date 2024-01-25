@@ -43,7 +43,7 @@ exports[`geomap-preview Renders \`geomap-preview\` with all point types and colo
         text="Useful shortcuts:
 Ctrl + mouse wheel - zoom in/out
 Left mouse click + drag - pan the area"
-        top="top"
+        top=""
       />
     </geomap-control-stub>
     <geomap-cluster-group-stub
@@ -212,7 +212,7 @@ exports[`geomap-preview Renders \`geomap-preview\` with all point types and colo
         text="Useful shortcuts:
 Ctrl + mouse wheel - zoom in/out
 Left mouse click + drag - pan the area"
-        top="top"
+        top=""
       />
     </geomap-control-stub>
     <geomap-cluster-group-stub
@@ -389,7 +389,7 @@ exports[`geomap-preview Renders \`geomap-preview\` with all point types and pbeh
         text="Useful shortcuts:
 Ctrl + mouse wheel - zoom in/out
 Left mouse click + drag - pan the area"
-        top="top"
+        top=""
       />
     </geomap-control-stub>
     <geomap-cluster-group-stub
@@ -568,7 +568,7 @@ exports[`geomap-preview Renders \`geomap-preview\` with custom props 1`] = `
         text="Useful shortcuts:
 Ctrl + mouse wheel - zoom in/out
 Left mouse click + drag - pan the area"
-        top="top"
+        top=""
       />
     </geomap-control-stub>
     <geomap-cluster-group-stub
@@ -658,7 +658,7 @@ exports[`geomap-preview Renders \`geomap-preview\` with required props 1`] = `
         text="Useful shortcuts:
 Ctrl + mouse wheel - zoom in/out
 Left mouse click + drag - pan the area"
-        top="top"
+        top=""
       />
     </geomap-control-stub>
     <geomap-cluster-group-stub

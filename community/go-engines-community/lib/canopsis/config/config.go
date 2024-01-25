@@ -3,7 +3,7 @@ package config
 import (
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 )
 
 // Some default values related to configuration
@@ -31,6 +31,7 @@ type SectionAlarm struct {
 	AllowDoubleAck           bool   `toml:"AllowDoubleAck"`
 	// ActivateAlarmAfterAutoRemediation if is set then alarm will be activated only after auto remediation execution
 	ActivateAlarmAfterAutoRemediation bool `toml:"ActivateAlarmAfterAutoRemediation"`
+	EnableArraySortingInEntityInfos   bool `toml:"EnableArraySortingInEntityInfos"`
 }
 
 // SectionGlobal ...
@@ -142,6 +143,6 @@ type VersionConf struct {
 	Edition string `bson:"edition"`
 	Stack   string `bson:"stack"`
 
-	Version        string         `bson:"version"`
-	VersionUpdated *types.CpsTime `bson:"version_updated,omitempty"`
+	Version        string            `bson:"version"`
+	VersionUpdated *datetime.CpsTime `bson:"version_updated,omitempty"`
 }

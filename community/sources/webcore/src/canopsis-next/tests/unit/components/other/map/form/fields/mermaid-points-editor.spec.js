@@ -345,8 +345,13 @@ describe('mermaid-points-editor', () => {
       },
     });
 
-    await triggerPointEvent(wrapper, 0, 'dblclick');
+    await flushPromises();
 
+    expect(addEventListener).toHaveBeenNthCalledWith(1, 'resize', expect.any(Function), { passive: true });
+    expect(addEventListener).toHaveBeenNthCalledWith(2, 'resize', expect.any(Function), { passive: true });
+    addEventListener.mockClear();
+
+    await triggerPointEvent(wrapper, 0, 'dblclick');
     await triggerPointEvent(wrapper, 0, 'mousedown');
 
     expect(addEventListener).not.toBeCalled();
@@ -361,7 +366,7 @@ describe('mermaid-points-editor', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `mermaid-points-editor` with custom props', () => {
@@ -382,6 +387,6 @@ describe('mermaid-points-editor', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

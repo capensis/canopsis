@@ -1,16 +1,21 @@
-<template lang="pug">
-  v-select(
-    v-field="value",
-    v-validate="'required'",
-    :items="actionTypes",
-    :error-messages="errors.collect(name)",
-    :label="label || $t('common.type')",
-    :disabled="disabled",
+<template>
+  <v-select
+    v-field="value"
+    v-validate="'required'"
+    :items="actionTypes"
+    :error-messages="errors.collect(name)"
+    :label="label || $t('common.type')"
+    :disabled="disabled"
     :name="name"
-  )
+    :multiple="isMultiple"
+    :deletable-chips="isMultiple"
+    :small-chips="isMultiple"
+  />
 </template>
 
 <script>
+import { isArray } from 'lodash';
+
 import { BASIC_ENTITY_TYPES } from '@/constants';
 
 export default {
@@ -21,7 +26,7 @@ export default {
   },
   props: {
     value: {
-      type: String,
+      type: [String, Array],
       required: false,
     },
     label: {
@@ -49,6 +54,10 @@ export default {
         value: type,
         text: this.$t(`entity.types.${type}`),
       }));
+    },
+
+    isMultiple() {
+      return isArray(this.value);
     },
   },
 };

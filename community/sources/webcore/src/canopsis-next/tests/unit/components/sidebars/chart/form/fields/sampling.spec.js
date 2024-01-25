@@ -33,7 +33,7 @@ describe('sampling', () => {
   test('Renders `sampling` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `sampling` with custom props', () => {
@@ -44,6 +44,6 @@ describe('sampling', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

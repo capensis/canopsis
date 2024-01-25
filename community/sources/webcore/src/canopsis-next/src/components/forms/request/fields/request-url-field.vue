@@ -1,32 +1,49 @@
-<template lang="pug">
-  v-layout(justify-space-between, align-center)
-    v-flex.pr-2(xs6)
-      v-select(
-        v-field="request.method",
-        v-validate="'required'",
-        :items="availableMethods",
-        :label="methodLabel || $t('common.method')",
-        :error-messages="errors.collect(methodFieldName)",
-        :name="methodFieldName",
+<template>
+  <v-layout
+    justify-space-between
+    align-center
+  >
+    <v-flex
+      class="pr-2"
+      xs6
+    >
+      <v-select
+        v-field="request.method"
+        v-validate="'required'"
+        :items="availableMethods"
+        :label="methodLabel || $t('common.method')"
+        :error-messages="errors.collect(methodFieldName)"
+        :name="methodFieldName"
         :disabled="disabled"
-      )
-    v-flex.pl-2(xs6)
-      c-payload-text-field(
-        v-field="request.url",
-        :label="urlLabel || $t('common.url')",
-        :name="urlFieldName",
-        :variables="urlVariables",
-        :disabled="disabled",
-        :error-messages="errors.collect(urlFieldName)",
+      />
+    </v-flex>
+    <v-flex
+      class="pl-2"
+      xs6
+    >
+      <c-payload-text-field
+        v-field="request.url"
+        :label="urlLabel || $t('common.url')"
+        :name="urlFieldName"
+        :variables="urlVariables"
+        :disabled="disabled"
+        :error-messages="errors.collect(urlFieldName)"
         required
-      )
-        template(v-if="helpText", #append="")
-          c-help-icon(
-            :text="helpText",
-            icon="help",
-            color="grey darken-1",
+      >
+        <template
+          v-if="helpText"
+          #append=""
+        >
+          <c-help-icon
+            :text="helpText"
+            icon="help"
+            color="grey darken-1"
             left
-          )
+          />
+        </template>
+      </c-payload-text-field>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

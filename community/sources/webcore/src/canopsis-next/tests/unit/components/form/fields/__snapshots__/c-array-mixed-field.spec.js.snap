@@ -9,7 +9,7 @@ exports[`c-array-text-field Renders \`c-array-text-field\` with all field types 
       class="flex"
     >
       <div
-        class="v-input v-text-field v-input--is-label-active v-input--is-dirty theme--light"
+        class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field"
       >
         <div
           class="v-input__control"
@@ -21,14 +21,12 @@ exports[`c-array-text-field Renders \`c-array-text-field\` with all field types 
               class="v-text-field__slot"
             >
               <label
-                aria-hidden="true"
                 class="v-label v-label--active theme--light"
                 style="left: 0px; position: absolute;"
               >
                 Value
               </label>
               <input
-                aria-label="Value"
                 type="text"
               />
             </div>
@@ -39,8 +37,10 @@ exports[`c-array-text-field Renders \`c-array-text-field\` with all field types 
             <div
               class="v-messages theme--light"
             >
-              <div
+              <transition-group-stub
                 class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
               />
             </div>
           </div>
@@ -58,7 +58,7 @@ exports[`c-array-text-field Renders \`c-array-text-field\` with all field types 
       class="flex"
     >
       <div
-        class="v-input v-text-field v-input--is-label-active v-input--is-dirty theme--light"
+        class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field"
       >
         <div
           class="v-input__control"
@@ -70,14 +70,12 @@ exports[`c-array-text-field Renders \`c-array-text-field\` with all field types 
               class="v-text-field__slot"
             >
               <label
-                aria-hidden="true"
                 class="v-label v-label--active theme--light"
                 style="left: 0px; position: absolute;"
               >
                 Value
               </label>
               <input
-                aria-label="Value"
                 type="text"
               />
             </div>
@@ -88,8 +86,10 @@ exports[`c-array-text-field Renders \`c-array-text-field\` with all field types 
             <div
               class="v-messages theme--light"
             >
-              <div
+              <transition-group-stub
                 class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
               />
             </div>
           </div>
@@ -107,7 +107,7 @@ exports[`c-array-text-field Renders \`c-array-text-field\` with all field types 
       class="flex"
     >
       <div
-        class="v-input v-text-field v-input--is-label-active v-input--is-dirty theme--light"
+        class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field"
       >
         <div
           class="v-input__control"
@@ -119,14 +119,12 @@ exports[`c-array-text-field Renders \`c-array-text-field\` with all field types 
               class="v-text-field__slot"
             >
               <label
-                aria-hidden="true"
                 class="v-label v-label--active theme--light"
                 style="left: 0px; position: absolute;"
               >
                 Value
               </label>
               <input
-                aria-label="Value"
                 type="text"
               />
             </div>
@@ -137,8 +135,10 @@ exports[`c-array-text-field Renders \`c-array-text-field\` with all field types 
             <div
               class="v-messages theme--light"
             >
-              <div
+              <transition-group-stub
                 class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
               />
             </div>
           </div>
@@ -156,7 +156,7 @@ exports[`c-array-text-field Renders \`c-array-text-field\` with all field types 
       class="flex"
     >
       <div
-        class="v-input v-text-field theme--light"
+        class="v-input theme--light v-text-field"
       >
         <div
           class="v-input__control"
@@ -168,14 +168,12 @@ exports[`c-array-text-field Renders \`c-array-text-field\` with all field types 
               class="v-text-field__slot"
             >
               <label
-                aria-hidden="true"
                 class="v-label theme--light"
                 style="left: 0px; position: absolute;"
               >
                 Value
               </label>
               <input
-                aria-label="Value"
                 type="text"
               />
             </div>
@@ -186,8 +184,10 @@ exports[`c-array-text-field Renders \`c-array-text-field\` with all field types 
             <div
               class="v-messages theme--light"
             >
-              <div
+              <transition-group-stub
                 class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
               />
             </div>
           </div>
@@ -198,30 +198,48 @@ exports[`c-array-text-field Renders \`c-array-text-field\` with all field types 
       type="delete"
     />
   </div>
+  <div
+    class="v-messages theme--light error--text"
+  >
+    <transition-group-stub
+      class="v-messages__wrapper"
+      name="message-transition"
+      tag="div"
+    />
+  </div>
   <button
-    class="mx-0 v-btn v-btn--outline v-btn--depressed theme--light primary--text"
+    class="v-btn-legacy-m--y v-btn v-btn--outlined theme--light v-size--default primary--text"
     type="button"
   >
-    <div
+    <span
       class="v-btn__content"
     >
-      Add
-    </div>
+    Add
+    </span>
   </button>
 </div>
 `;
 
 exports[`c-array-text-field Renders \`c-array-text-field\` with default props correctly 1`] = `
 <div>
+  <div
+    class="v-messages theme--light error--text"
+  >
+    <transition-group-stub
+      class="v-messages__wrapper"
+      name="message-transition"
+      tag="div"
+    />
+  </div>
   <button
-    class="mx-0 v-btn v-btn--outline v-btn--depressed theme--light primary--text"
+    class="v-btn-legacy-m--y v-btn v-btn--outlined theme--light v-size--default primary--text"
     type="button"
   >
-    <div
+    <span
       class="v-btn__content"
     >
-      Add
-    </div>
+    Add
+    </span>
   </button>
 </div>
 `;
@@ -235,7 +253,7 @@ exports[`c-array-text-field Renders disabled \`c-array-text-field\` correctly 1`
       class="flex"
     >
       <div
-        class="v-input v-text-field v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
+        class="v-input v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light v-text-field"
       >
         <div
           class="v-input__control"
@@ -247,14 +265,12 @@ exports[`c-array-text-field Renders disabled \`c-array-text-field\` correctly 1`
               class="v-text-field__slot"
             >
               <label
-                aria-hidden="true"
                 class="v-label v-label--active v-label--is-disabled theme--light"
                 style="left: 0px; position: absolute;"
               >
                 Value
               </label>
               <input
-                aria-label="Value"
                 disabled="disabled"
                 type="text"
               />
@@ -266,8 +282,10 @@ exports[`c-array-text-field Renders disabled \`c-array-text-field\` correctly 1`
             <div
               class="v-messages theme--light"
             >
-              <div
+              <transition-group-stub
                 class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
               />
             </div>
           </div>
@@ -283,7 +301,7 @@ exports[`c-array-text-field Renders disabled \`c-array-text-field\` correctly 1`
       class="flex"
     >
       <div
-        class="v-input v-text-field v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
+        class="v-input v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light v-text-field"
       >
         <div
           class="v-input__control"
@@ -295,14 +313,12 @@ exports[`c-array-text-field Renders disabled \`c-array-text-field\` correctly 1`
               class="v-text-field__slot"
             >
               <label
-                aria-hidden="true"
                 class="v-label v-label--active v-label--is-disabled theme--light"
                 style="left: 0px; position: absolute;"
               >
                 Value
               </label>
               <input
-                aria-label="Value"
                 disabled="disabled"
                 type="text"
               />
@@ -314,8 +330,10 @@ exports[`c-array-text-field Renders disabled \`c-array-text-field\` correctly 1`
             <div
               class="v-messages theme--light"
             >
-              <div
+              <transition-group-stub
                 class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
               />
             </div>
           </div>
@@ -324,16 +342,25 @@ exports[`c-array-text-field Renders disabled \`c-array-text-field\` correctly 1`
     </div>
     <!---->
   </div>
+  <div
+    class="v-messages theme--light error--text"
+  >
+    <transition-group-stub
+      class="v-messages__wrapper"
+      name="message-transition"
+      tag="div"
+    />
+  </div>
   <button
-    class="mx-0 v-btn v-btn--disabled v-btn--outline v-btn--depressed theme--light primary--text"
+    class="v-btn-legacy-m--y v-btn v-btn--disabled v-btn--outlined theme--light v-size--default"
     disabled="disabled"
     type="button"
   >
-    <div
+    <span
       class="v-btn__content"
     >
-      Add
-    </div>
+    Add
+    </span>
   </button>
 </div>
 `;

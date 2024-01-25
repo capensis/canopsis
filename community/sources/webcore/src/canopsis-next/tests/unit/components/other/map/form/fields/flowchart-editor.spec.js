@@ -197,7 +197,7 @@ describe('flowchart-editor', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `flowchart-editor` with custom props', () => {
@@ -208,7 +208,7 @@ describe('flowchart-editor', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `flowchart-editor` with validation errors ', async () => {
@@ -223,6 +223,6 @@ describe('flowchart-editor', () => {
 
     await validator.validateAll();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

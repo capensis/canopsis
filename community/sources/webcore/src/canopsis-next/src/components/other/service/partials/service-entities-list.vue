@@ -1,35 +1,57 @@
-<template lang="pug">
-  div
-    v-layout.d-inline-flex(v-if="serviceEntities.length", align-center, row)
-      v-checkbox-functional.ml-3.pa-0(v-model="isAllSelected", :disabled="!entitiesWithActions.length")
-      v-fade-transition(mode="out-in")
-        span.font-italic(v-if="!selectedEntities.length") {{ $t('modals.service.massActionsDescription') }}
-        service-entity-actions(
-          v-else,
-          :actions="actions",
-          :entity="service",
+<template>
+  <div>
+    <v-layout
+      class="d-inline-flex"
+      v-if="serviceEntities.length"
+      align-center
+    >
+      <v-simple-checkbox
+        class="ml-4 pa-0"
+        v-model="isAllSelected"
+        :disabled="!entitiesWithActions.length"
+      />
+      <v-fade-transition mode="out-in">
+        <span
+          class="font-italic"
+          v-if="!selectedEntities.length"
+        >
+          {{ $t('modals.service.massActionsDescription') }}
+        </span>
+        <service-entity-actions
+          v-else
+          :actions="actions"
+          :entity="service"
           @apply="applyActionForSelected"
-        )
-    div.mt-2(v-for="serviceEntity in serviceEntities", :key="serviceEntity.key")
-      service-entity(
-        :service-id="service._id",
-        :entity="serviceEntity",
-        :last-action-unavailable="hasActionError(serviceEntity)",
-        :entity-name-field="entityNameField",
-        :widget-parameters="widgetParameters",
-        :selected="isEntitySelected(serviceEntity)",
-        @update:selected="updateSelected(serviceEntity, $event)",
-        @remove:unavailable="removeEntityFromUnavailable(serviceEntity)",
+        />
+      </v-fade-transition>
+    </v-layout>
+    <div
+      class="mt-2"
+      v-for="serviceEntity in serviceEntities"
+      :key="serviceEntity.key"
+    >
+      <service-entity
+        :service-id="service._id"
+        :entity="serviceEntity"
+        :last-action-unavailable="hasActionError(serviceEntity)"
+        :entity-name-field="entityNameField"
+        :widget-parameters="widgetParameters"
+        :selected="isEntitySelected(serviceEntity)"
+        @update:selected="updateSelected(serviceEntity, $event)"
+        @remove:unavailable="removeEntityFromUnavailable(serviceEntity)"
         @refresh="$listeners.refresh"
-      )
-    c-table-pagination.mt-1(
-      v-if="totalItems > pagination.rowsPerPage",
-      :total-items="totalItems",
-      :rows-per-page="pagination.rowsPerPage",
-      :page="pagination.page",
-      @update:page="updatePage",
-      @update:rows-per-page="updateRecordsPerPage"
-    )
+      />
+    </div>
+    <c-table-pagination
+      class="mt-1"
+      v-if="totalItems > options.itemsPerPage"
+      :total-items="totalItems"
+      :items-per-page="options.itemsPerPage"
+      :page="options.page"
+      @update:page="updatePage"
+      @update:items-per-page="updateItemsPerPage"
+    />
+  </div>
 </template>
 
 <script>
@@ -39,6 +61,7 @@ import {
   isActionTypeAvailableForEntity,
 } from '@/helpers/entities/entity/actions';
 import { filterById, mapIds } from '@/helpers/array';
+import { getPageForNewItemsPerPage } from '@/helpers/pagination';
 
 import { widgetActionPanelServiceEntityMixin } from '@/mixins/widget/actions-panel/service-entity';
 
@@ -56,7 +79,7 @@ export default {
       type: Object,
       required: true,
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },
@@ -145,11 +168,16 @@ export default {
     },
 
     updatePage(page) {
-      this.$emit('update:pagination', { ...this.pagination, page });
+      this.$emit('update:options', { ...this.options, page });
     },
 
-    updateRecordsPerPage(rowsPerPage) {
-      this.$emit('update:pagination', { ...this.pagination, rowsPerPage, page: 1 });
+    updateItemsPerPage(itemsPerPage) {
+      this.$emit('update:options', {
+        ...this.options,
+
+        itemsPerPage,
+        page: getPageForNewItemsPerPage(itemsPerPage, this.options.itemsPerPage, this.options.page),
+      });
     },
   },
 };

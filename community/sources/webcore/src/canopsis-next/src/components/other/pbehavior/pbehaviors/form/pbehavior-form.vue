@@ -1,26 +1,42 @@
-<template lang="pug">
-  pbehavior-general-form(
-    v-if="noPattern",
-    v-field="form",
-    :no-enabled="noEnabled",
+<template>
+  <pbehavior-general-form
+    v-if="noPattern"
+    v-field="form"
+    :no-enabled="noEnabled"
+    :no-comments="noComments"
     :with-start-on-trigger="withStartOnTrigger"
-  )
-  v-tabs(v-else, slider-color="primary", centered, fixed-tabs)
-    v-tab(:class="{ 'error--text': hasGeneralError }") {{ $t('common.general') }}
-    v-tab-item
-      pbehavior-general-form.py-3(
-        ref="general",
-        v-field="form",
-        :no-enabled="noEnabled",
-        :no-comments="noComments",
+  />
+
+  <v-tabs
+    v-else
+    slider-color="primary"
+    centered
+    fixed-tabs
+  >
+    <v-tab :class="{ 'error--text': hasGeneralError }">
+      {{ $t('common.general') }}
+    </v-tab>
+    <v-tab :class="{ 'error--text': hasPatternsError }">
+      {{ $tc('common.pattern', 2) }}
+    </v-tab>
+
+    <v-tab-item eager>
+      <pbehavior-general-form
+        ref="general"
+        v-field="form"
+        :no-enabled="noEnabled"
+        :no-comments="noComments"
         :with-start-on-trigger="withStartOnTrigger"
-      )
-    v-tab(:class="{ 'error--text': hasPatternsError }") {{ $tc('common.pattern', 2) }}
-    v-tab-item
-      pbehavior-patterns-form.py-3(
-        ref="patterns",
+        class="py-3"
+      />
+    </v-tab-item>
+    <v-tab-item eager>
+      <pbehavior-patterns-form
+        ref="patterns"
         v-field="form.patterns"
-      )
+      />
+    </v-tab-item>
+  </v-tabs>
 </template>
 
 <script>

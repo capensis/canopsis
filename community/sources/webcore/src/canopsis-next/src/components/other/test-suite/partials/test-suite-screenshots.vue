@@ -1,12 +1,24 @@
-<template lang="pug">
-  v-container.pa-0(fluid, grid-list-sm)
-    v-layout(row, wrap)
-      v-flex(xs4, v-for="image in images", :key="image.src")
-        v-img.cursor-pointer(
-          :src="image.src",
-          aspect-ratio="1",
+<template>
+  <v-container
+    class="pa-0"
+    fluid
+    grid-list-sm
+  >
+    <v-layout wrap>
+      <v-flex
+        xs4
+        v-for="image in images"
+        :key="image.src"
+      >
+        <v-img
+          class="cursor-pointer"
+          :src="image.src"
+          aspect-ratio="1"
           @click="showImagesModal(image.src)"
-        )
+        />
+      </v-flex>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>

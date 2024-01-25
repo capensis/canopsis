@@ -1,7 +1,9 @@
-<template lang="pug">
-  alarms-time-line-steps(:steps="webhooksTimelineSteps")
-    template(#card="{ step }")
-      declare-ticket-rule-execution-webhooks-timeline-card(:step="step")
+<template>
+  <alarms-time-line-steps :steps="webhooksTimelineSteps">
+    <template #card="{ step }">
+      <declare-ticket-rule-execution-webhooks-timeline-card :step="step" />
+    </template>
+  </alarms-time-line-steps>
 </template>
 
 <script>

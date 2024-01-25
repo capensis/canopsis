@@ -48,7 +48,7 @@ describe('storage-settings-pbehavior-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `storage-settings-pbehavior-form` with custom form and history', () => {
@@ -59,6 +59,6 @@ describe('storage-settings-pbehavior-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

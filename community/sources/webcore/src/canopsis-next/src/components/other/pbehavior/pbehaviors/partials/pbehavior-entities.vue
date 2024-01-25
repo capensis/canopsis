@@ -1,13 +1,13 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :headers="headers",
-    :items="entities",
-    :loading="pending",
-    :pagination.sync="pagination",
-    :total-items="meta.total_count",
-    item-key="_id",
+<template>
+  <c-advanced-data-table
+    :headers="headers"
+    :items="entities"
+    :loading="pending"
+    :options.sync="options"
+    :total-items="meta.total_count"
+    item-key="_id"
     search
-  )
+  />
 </template>
 
 <script>

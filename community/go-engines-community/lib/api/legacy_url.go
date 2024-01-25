@@ -1,9 +1,10 @@
 package api
 
 import (
-	"github.com/rs/zerolog"
 	"net/url"
 	"os"
+
+	"github.com/rs/zerolog"
 )
 
 // GetLegacyURL returns old API url from env var.

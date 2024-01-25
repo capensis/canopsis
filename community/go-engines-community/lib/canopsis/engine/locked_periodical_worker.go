@@ -2,6 +2,7 @@ package engine
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
@@ -45,7 +46,7 @@ func (w *lockedPeriodicalWorker) Work(ctx context.Context) {
 	// Lock periodical, do not release lock to not allow another instance start periodical.
 	_, err := w.lockClient.Obtain(ctx, w.lockKey, ttl, &redislock.Options{})
 	if err != nil {
-		if err == redislock.ErrNotObtained {
+		if errors.Is(err, redislock.ErrNotObtained) {
 			w.logger.Debug().Msg("lock already obtained")
 			return
 		}
