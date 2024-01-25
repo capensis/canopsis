@@ -2,6 +2,7 @@ package role
 
 import (
 	"context"
+	"errors"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
@@ -152,7 +153,7 @@ func (a *api) Delete(c *gin.Context) {
 
 	ok, err := a.store.Delete(c, id)
 	if err != nil {
-		if err == ErrLinkedToUser {
+		if errors.Is(err, ErrLinkedToUser) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 			return
 		}

@@ -1,180 +1,98 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`fast-action-output Renders \`fast-action-output\` with custom props 1`] = `
-<div
-  class="v-list__group"
+<widget-settings-item-stub
+  optional="true"
+  title="Label"
 >
+  <c-enabled-field-stub
+    value="true"
+  />
   <div
-    class="v-list__group__header"
+    class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field"
   >
     <div
-      role="listitem"
+      class="v-input__control"
     >
       <div
-        class="v-list__tile theme--light"
+        class="v-input__slot"
       >
-        Label
         <div
-          class="font-italic caption ml-1"
+          class="v-text-field__slot"
         >
-          (optional)
+          <label
+            class="v-label v-label--active theme--light"
+            style="left: 0px; position: absolute;"
+          >
+            Output
+          </label>
+          <input
+            type="text"
+          />
         </div>
       </div>
-    </div>
-    <div
-      class="v-list__group__header__append-icon"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light"
+      <div
+        class="v-text-field__details"
       >
-        keyboard_arrow_down
-      </i>
+        <div
+          class="v-messages theme--light"
+        >
+          <transition-group-stub
+            class="v-messages__wrapper"
+            name="message-transition"
+            tag="div"
+          />
+        </div>
+      </div>
     </div>
   </div>
-  <transition-stub
-    mode="in-out"
-    name="expand-transition"
-  >
-    <div
-      class="v-list__group__items"
-      style="display: none;"
-    >
-      <div
-        class="container"
-      >
-        <c-enabled-field-stub
-          value="true"
-        />
-        <div
-          class="v-input v-text-field v-input--is-label-active v-input--is-dirty theme--light"
-        >
-          <div
-            class="v-input__control"
-          >
-            <div
-              class="v-input__slot"
-            >
-              <div
-                class="v-text-field__slot"
-              >
-                <label
-                  aria-hidden="true"
-                  class="v-label v-label--active theme--light"
-                  style="left: 0px; position: absolute;"
-                >
-                  Output
-                </label>
-                <input
-                  aria-label="Output"
-                  type="text"
-                />
-              </div>
-            </div>
-            <div
-              class="v-text-field__details"
-            >
-              <div
-                class="v-messages theme--light"
-              >
-                <div
-                  class="v-messages__wrapper"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </transition-stub>
-</div>
+</widget-settings-item-stub>
 `;
 
 exports[`fast-action-output Renders \`fast-action-output\` with default props 1`] = `
-<div
-  class="v-list__group"
+<widget-settings-item-stub
+  optional="true"
+  title=""
 >
+  <c-enabled-field-stub />
   <div
-    class="v-list__group__header"
+    class="v-input v-input--is-disabled theme--light v-text-field"
   >
     <div
-      role="listitem"
+      class="v-input__control"
     >
       <div
-        class="v-list__tile theme--light"
+        class="v-input__slot"
       >
-        
         <div
-          class="font-italic caption ml-1"
+          class="v-text-field__slot"
         >
-          (optional)
+          <label
+            class="v-label v-label--is-disabled theme--light"
+            style="left: 0px; position: absolute;"
+          >
+            Output
+          </label>
+          <input
+            disabled="disabled"
+            type="text"
+          />
         </div>
       </div>
-    </div>
-    <div
-      class="v-list__group__header__append-icon"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light"
+      <div
+        class="v-text-field__details"
       >
-        keyboard_arrow_down
-      </i>
+        <div
+          class="v-messages theme--light"
+        >
+          <transition-group-stub
+            class="v-messages__wrapper"
+            name="message-transition"
+            tag="div"
+          />
+        </div>
+      </div>
     </div>
   </div>
-  <transition-stub
-    mode="in-out"
-    name="expand-transition"
-  >
-    <div
-      class="v-list__group__items"
-      style="display: none;"
-    >
-      <div
-        class="container"
-      >
-        <c-enabled-field-stub />
-        <div
-          class="v-input v-text-field v-input--is-disabled theme--light"
-        >
-          <div
-            class="v-input__control"
-          >
-            <div
-              class="v-input__slot"
-            >
-              <div
-                class="v-text-field__slot"
-              >
-                <label
-                  aria-hidden="true"
-                  class="v-label v-label--is-disabled theme--light"
-                  style="left: 0px; position: absolute;"
-                >
-                  Output
-                </label>
-                <input
-                  aria-label="Output"
-                  disabled="disabled"
-                  type="text"
-                />
-              </div>
-            </div>
-            <div
-              class="v-text-field__details"
-            >
-              <div
-                class="v-messages theme--light"
-              >
-                <div
-                  class="v-messages__wrapper"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </transition-stub>
-</div>
+</widget-settings-item-stub>
 `;

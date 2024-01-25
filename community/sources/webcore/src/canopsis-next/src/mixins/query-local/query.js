@@ -1,17 +1,18 @@
 import { isEqual, omit } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
-import { SORT_ORDERS } from '@/constants';
+
+import { convertSortToRequest } from '@/helpers/entities/shared/query';
 
 export const localQueryMixin = {
   data() {
     return {
       query: {
         page: 1,
-        rowsPerPage: PAGINATION_LIMIT,
+        itemsPerPage: PAGINATION_LIMIT,
         search: '',
-        sortKey: '',
-        sortDir: SORT_ORDERS.asc,
+        sortBy: [],
+        sortDesc: [],
       },
     };
   },
@@ -25,23 +26,32 @@ export const localQueryMixin = {
   },
 
   computed: {
-    pagination: {
+    options: {
+      get() {
+        const { page = 1, itemsPerPage = PAGINATION_LIMIT, sortBy = [], sortDesc = [], ...restQuery } = this.query;
+
+        return { page, itemsPerPage, sortBy, sortDesc, ...restQuery };
+      },
       set(value) {
         this.query = {
           ...this.query,
+
           search: value.search || '',
-          page: value.rowsPerPage <= this.query.rowsPerPage ? value.page : 1,
-          rowsPerPage: value.rowsPerPage || PAGINATION_LIMIT,
-          sortKey: value.sortBy,
-          sortDir: value.descending ? SORT_ORDERS.desc : SORT_ORDERS.asc,
-          ...omit(value, ['search', 'page', 'rowsPerPage', 'totalItems', 'sortBy', 'descending']),
-        };
-      },
-      get() {
-        return {
-          ...omit(this.query, ['sortKey', 'sortDir']),
-          sortBy: this.query.sortKey,
-          descending: this.query.sortDir === SORT_ORDERS.desc,
+          page: value.itemsPerPage <= this.query.itemsPerPage ? value.page : 1,
+          itemsPerPage: value.itemsPerPage || PAGINATION_LIMIT,
+          sortBy: value.sortBy || [],
+          sortDesc: value.sortDesc || [],
+
+          ...omit(value, [
+            'search',
+            'page',
+            'itemsPerPage',
+            'totalItems',
+            'groupBy',
+            'groupDesc',
+            'multiSort',
+            'mustSort',
+          ]),
         };
       },
     },
@@ -62,19 +72,16 @@ export const localQueryMixin = {
     getQuery({
       page,
       search,
-      rowsPerPage,
-      sortKey,
-      sortDir,
+      itemsPerPage,
+      sortBy = [],
+      sortDesc = [],
     } = this.query) {
       const query = {
-        limit: rowsPerPage,
         page,
-      };
+        limit: itemsPerPage,
 
-      if (sortKey) {
-        query.sort_by = sortKey;
-        query.sort = sortDir.toLocaleLowerCase();
-      }
+        ...convertSortToRequest(sortBy, sortDesc),
+      };
 
       if (search) {
         query.search = search;

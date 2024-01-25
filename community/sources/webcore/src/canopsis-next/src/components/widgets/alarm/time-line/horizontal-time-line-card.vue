@@ -1,18 +1,38 @@
-<template lang="pug">
-  span.c-horizontal-time-line-card
-    v-tooltip(:disabled="!step.m", top)
-      template(#activator="{ on }")
-        v-layout(v-on="on", align-center, column)
-          c-alarm-chip(v-if="isStepTypeState", :value="step.val")
-          v-icon(v-else, :style="{ color: style.icon }") {{ style.icon }}
-          span.c-horizontal-time-line-card__time {{ step.t | date('time') }}
-      div.pre-line
-        div
-          strong {{ stepTitle }}
-        c-compiled-template(:template="step.m")
+<template>
+  <span class="c-horizontal-time-line-card">
+    <v-tooltip
+      :disabled="!step.m"
+      top
+    >
+      <template #activator="{ on }">
+        <v-layout
+          v-on="on"
+          align-center
+          column
+        >
+          <c-alarm-chip
+            v-if="isStepTypeState"
+            :value="step.val"
+          />
+          <v-icon
+            v-else
+            :style="{ color: style.icon }"
+          >
+            {{ style.icon }}
+          </v-icon>
+          <span class="c-horizontal-time-line-card__time">{{ step.t | date('time') }}</span>
+        </v-layout>
+      </template>
+      <div class="pre-line">
+        <div><strong>{{ stepTitle }}</strong></div>
+        <div v-html="sanitizedStepMessage" />
+      </div>
+    </v-tooltip>
+  </span>
 </template>
 
 <script>
+import { sanitizeHtml, linkifyHtml } from '@/helpers/html';
 import { formatStep } from '@/helpers/entities/entity/formatting';
 
 import { widgetExpandPanelAlarmTimelineCard } from '@/mixins/widget/expand-panel/alarm/timeline-card';
@@ -28,6 +48,10 @@ export default {
   computed: {
     style() {
       return formatStep(this.step);
+    },
+
+    sanitizedStepMessage() {
+      return sanitizeHtml(linkifyHtml(String(this.step?.m ?? '')));
     },
   },
 };

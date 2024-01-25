@@ -1,16 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`flowchart-properties Renders \`flowchart-properties\` with all properties 1`] = `
-<ul
-  class="v-expansion-panel theme--light"
+<div
+  class="v-item-group theme--light v-expansion-panels"
   color="grey"
 >
-  <li
-    class="v-expansion-panel__container"
-    tabindex="0"
+  <div
+    aria-expanded="true"
+    class="v-expansion-panel v-expansion-panel--active v-item--active"
+    color="grey"
   >
-    <div
-      class="v-expansion-panel__header"
+    <button
+      aria-expanded="true"
+      class="v-expansion-panel-header v-expansion-panel-header--active"
+      type="button"
     >
       <span>
         Properties
@@ -19,97 +22,107 @@ exports[`flowchart-properties Renders \`flowchart-properties\` with all properti
         name="fade-transition"
       >
         <div
-          class="v-expansion-panel__header__icon"
+          class="v-expansion-panel-header__icon"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--light"
+            class="v-icon notranslate material-icons theme--light"
           >
             keyboard_arrow_down
           </i>
         </div>
       </transition-stub>
-    </div>
+    </button>
     <transition-stub
-      mode="in-out"
       name="expand-transition"
     >
       <div
-        class="v-expansion-panel__body"
-        style="display: none;"
+        class="v-expansion-panel-content"
+        style=""
       >
-        <hr
-          class="v-divider theme--light"
-        />
         <div
-          class="v-card v-sheet theme--light"
+          class="v-expansion-panel-content__wrap"
         >
+          <hr
+            aria-orientation="horizontal"
+            class="v-divider theme--light"
+            role="separator"
+          />
           <div
-            class="v-card__text"
+            class="v-card v-card--flat v-sheet theme--light"
           >
-            <flowchart-color-field-stub
-              class="my-1"
-              label="Fill"
-              palette="#fd897f,#fd7faa,#e87ffa,#b287fd,#8b9dfd,#7fd6fd,#83fdfd,#a6fde9,#b8f4c8,#cafd8f,#f2fd80,#fdfd8c,#fde37e,#fdcf7f,#fd9d7f,#d5cac6,#f3f3f3,#cdd6da"
-              value="red"
-            />
-            <flowchart-color-field-stub
-              class="my-1"
-              label="Stroke"
-              palette="#fd1743,#f30056,#d300f7,#641ffd,#2978fd,#00affd,#00b7d2,#1de7b5,#00e475,#75fd03,#c4fd00,#fde800,#fdc200,#fd9000,#fd3d00,#8c6d62,#9d9d9d,#5f7c8a"
-              value="orange"
-            />
-            <flowchart-number-field-stub
-              class="my-1"
-              label="Stroke width"
-              min="1"
-            />
-            <flowchart-stroke-type-field-stub
-              class="my-1"
-              label="Stroke type"
-              value="solid"
-            />
-            <!---->
-            <hr
-              class="v-divider theme--light"
-            />
-            <flowchart-color-field-stub
-              class="my-1"
-              label="Font color"
-              palette="#b61c1c,#870e4e,#49148b,#311b91,#0d46a0,#01569a,#005f63,#004c3f,#1b5d20,#33681e,#9d9c24,#f37e17,#fd6e00,#e45000,#be360c,#4d342e,#414141,#37464e"
-              value="transparent"
-            />
-            <flowchart-color-field-stub
-              class="my-1"
-              label="Font background color"
-              palette="#ffffff,#eceff1,#fafafa,#efebe9,#fbe9e7,#f9fbe7,#fff8e1,#fffde7,#fff3e0,#f1f8e9,#e0f2f1,#e0f7fa,#e8f5e9,#f3e5f5,#ede7f6,#e8eaf6,#e3f2fd,#fce4ec,#ffebee"
-              value="transparent"
-            />
-            <flowchart-number-field-stub
-              class="my-1"
-              label="Font size"
-              min="1"
-              value="12"
-            />
+            <div
+              class="v-card__text"
+            >
+              <flowchart-color-field-stub
+                class="my-1"
+                label="Fill"
+                palette="#fd897f,#fd7faa,#e87ffa,#b287fd,#8b9dfd,#7fd6fd,#83fdfd,#a6fde9,#b8f4c8,#cafd8f,#f2fd80,#fdfd8c,#fde37e,#fdcf7f,#fd9d7f,#d5cac6,#f3f3f3,#cdd6da"
+                value="red"
+              />
+              <flowchart-color-field-stub
+                class="my-1"
+                label="Stroke"
+                palette="#fd1743,#f30056,#d300f7,#641ffd,#2978fd,#00affd,#00b7d2,#1de7b5,#00e475,#75fd03,#c4fd00,#fde800,#fdc200,#fd9000,#fd3d00,#8c6d62,#9d9d9d,#5f7c8a"
+                value="orange"
+              />
+              <flowchart-number-field-stub
+                class="my-1"
+                label="Stroke width"
+                min="1"
+              />
+              <flowchart-stroke-type-field-stub
+                class="my-1"
+                label="Stroke type"
+                value="solid"
+              />
+              <!---->
+              <hr
+                aria-orientation="horizontal"
+                class="v-divider theme--light"
+                role="separator"
+              />
+              <flowchart-color-field-stub
+                class="my-1"
+                label="Font color"
+                palette="#b61c1c,#870e4e,#49148b,#311b91,#0d46a0,#01569a,#005f63,#004c3f,#1b5d20,#33681e,#9d9c24,#f37e17,#fd6e00,#e45000,#be360c,#4d342e,#414141,#37464e"
+                value="transparent"
+              />
+              <flowchart-color-field-stub
+                class="my-1"
+                label="Font background color"
+                palette="#ffffff,#eceff1,#fafafa,#efebe9,#fbe9e7,#f9fbe7,#fff8e1,#fffde7,#fff3e0,#f1f8e9,#e0f2f1,#e0f7fa,#e8f5e9,#f3e5f5,#ede7f6,#e8eaf6,#e3f2fd,#fce4ec,#ffebee"
+                value="transparent"
+              />
+              <flowchart-number-field-stub
+                class="my-1"
+                label="Font size"
+                min="1"
+                value="12"
+              />
+            </div>
           </div>
         </div>
       </div>
     </transition-stub>
-  </li>
-</ul>
+  </div>
+</div>
 `;
 
 exports[`flowchart-properties Renders \`flowchart-properties\` with lines 1`] = `
-<ul
-  class="v-expansion-panel theme--light"
+<div
+  class="v-item-group theme--light v-expansion-panels"
   color="grey"
 >
-  <li
-    class="v-expansion-panel__container"
-    tabindex="0"
+  <div
+    aria-expanded="true"
+    class="v-expansion-panel v-expansion-panel--active v-item--active"
+    color="grey"
   >
-    <div
-      class="v-expansion-panel__header"
+    <button
+      aria-expanded="true"
+      class="v-expansion-panel-header v-expansion-panel-header--active"
+      type="button"
     >
       <span>
         Properties
@@ -118,68 +131,75 @@ exports[`flowchart-properties Renders \`flowchart-properties\` with lines 1`] = 
         name="fade-transition"
       >
         <div
-          class="v-expansion-panel__header__icon"
+          class="v-expansion-panel-header__icon"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--light"
+            class="v-icon notranslate material-icons theme--light"
           >
             keyboard_arrow_down
           </i>
         </div>
       </transition-stub>
-    </div>
+    </button>
     <transition-stub
-      mode="in-out"
       name="expand-transition"
     >
       <div
-        class="v-expansion-panel__body"
-        style="display: none;"
+        class="v-expansion-panel-content"
+        style=""
       >
-        <hr
-          class="v-divider theme--light"
-        />
         <div
-          class="v-card v-sheet theme--light"
+          class="v-expansion-panel-content__wrap"
         >
+          <hr
+            aria-orientation="horizontal"
+            class="v-divider theme--light"
+            role="separator"
+          />
           <div
-            class="v-card__text"
+            class="v-card v-card--flat v-sheet theme--light"
           >
-            <!---->
-            <!---->
-            <!---->
-            <flowchart-line-type-field-stub
-              averagepoints="[object Object],[object Object]"
-              class="my-2"
-              label="Line type"
-              value="line"
-            />
-            <hr
-              class="v-divider theme--light"
-            />
-            <flowchart-color-field-stub
-              class="my-1"
-              label="Font color"
-              palette="#b61c1c,#870e4e,#49148b,#311b91,#0d46a0,#01569a,#005f63,#004c3f,#1b5d20,#33681e,#9d9c24,#f37e17,#fd6e00,#e45000,#be360c,#4d342e,#414141,#37464e"
-              value="transparent"
-            />
-            <flowchart-color-field-stub
-              class="my-1"
-              label="Font background color"
-              palette="#ffffff,#eceff1,#fafafa,#efebe9,#fbe9e7,#f9fbe7,#fff8e1,#fffde7,#fff3e0,#f1f8e9,#e0f2f1,#e0f7fa,#e8f5e9,#f3e5f5,#ede7f6,#e8eaf6,#e3f2fd,#fce4ec,#ffebee"
-              value="transparent"
-            />
-            <flowchart-number-field-stub
-              class="my-1"
-              label="Font size"
-              min="1"
-              value="12"
-            />
+            <div
+              class="v-card__text"
+            >
+              <!---->
+              <!---->
+              <!---->
+              <flowchart-line-type-field-stub
+                averagepoints="[object Object],[object Object]"
+                class="my-2"
+                label="Line type"
+                value="line"
+              />
+              <hr
+                aria-orientation="horizontal"
+                class="v-divider theme--light"
+                role="separator"
+              />
+              <flowchart-color-field-stub
+                class="my-1"
+                label="Font color"
+                palette="#b61c1c,#870e4e,#49148b,#311b91,#0d46a0,#01569a,#005f63,#004c3f,#1b5d20,#33681e,#9d9c24,#f37e17,#fd6e00,#e45000,#be360c,#4d342e,#414141,#37464e"
+                value="transparent"
+              />
+              <flowchart-color-field-stub
+                class="my-1"
+                label="Font background color"
+                palette="#ffffff,#eceff1,#fafafa,#efebe9,#fbe9e7,#f9fbe7,#fff8e1,#fffde7,#fff3e0,#f1f8e9,#e0f2f1,#e0f7fa,#e8f5e9,#f3e5f5,#ede7f6,#e8eaf6,#e3f2fd,#fce4ec,#ffebee"
+                value="transparent"
+              />
+              <flowchart-number-field-stub
+                class="my-1"
+                label="Font size"
+                min="1"
+                value="12"
+              />
+            </div>
           </div>
         </div>
       </div>
     </transition-stub>
-  </li>
-</ul>
+  </div>
+</div>
 `;

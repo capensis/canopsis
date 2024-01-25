@@ -1,18 +1,40 @@
-<template lang="pug">
-  div.v-input.v-textarea.v-text-field.v-text-field--box.v-text-field--enclosed.v-input--is-label-active(
+<template>
+  <div
+    class="v-input v-textarea v-text-field v-text-field--box v-text-field--enclosed v-input--is-label-active"
     :class="['v-input--is-dirty', { 'v-input--is-disabled': disabled }, themeClasses]"
-  )
-    div.v-input__control(@click="$emit('click', $event)")
-      div.v-input__slot
-        div.v-text-field__slot
-          label.v-label(:class="[{ 'v-label--active': value }, themeClasses]") {{ label }}
-          c-compiled-template(ref="content", :template="value", :class="{ 'v-text-field--input__disabled': disabled }")
-      div.v-text-field__details(v-if="!hideDetails")
-        v-messages(:value="errorMessages", color="error")
+  >
+    <div
+      class="v-input__control"
+      @click="$emit('click', $event)"
+    >
+      <div class="v-input__slot">
+        <div class="v-text-field__slot">
+          <label
+            class="v-label"
+            :class="[{ 'v-label--active': value }, themeClasses]"
+          >{{ label }}</label>
+          <c-compiled-template
+            ref="content"
+            :template="value"
+            :class="{ 'v-text-field--input__disabled': disabled }"
+          />
+        </div>
+      </div>
+      <div
+        class="v-text-field__details"
+        v-if="!hideDetails"
+      >
+        <v-messages
+          :value="errorMessages"
+          color="error"
+        />
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import Themeable from 'vuetify/es5/mixins/themeable';
+import Themeable from 'vuetify/lib/mixins/themeable';
 
 import { MODALS } from '@/constants';
 
