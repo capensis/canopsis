@@ -48,7 +48,7 @@ class Application {
   async navigate(url) {
     const resultUrl = `${this.url}${url}`;
 
-    await this.page.goto(resultUrl);
+    await this.page.goto(resultUrl, { timeout: 120_000 });
 
     logInfo(`Navigate to ${resultUrl}`);
   }
