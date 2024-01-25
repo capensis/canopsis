@@ -94,7 +94,11 @@
 <script>
 import { isEqual } from 'lodash';
 
-import { ACTION_COPY_PAYLOAD_VARIABLES, EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES } from '@/constants';
+import {
+  ACTION_COPY_PAYLOAD_VARIABLES,
+  EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
+  EVENT_FILTER_SET_TAGS_REGEX,
+} from '@/constants';
 
 import { formMixin } from '@/mixins/form';
 
@@ -165,7 +169,7 @@ export default {
     selectValueTypeRules() {
       return {
         required: true,
-        regex: /<value>.*<name>|<name>.*<value>/,
+        regex: EVENT_FILTER_SET_TAGS_REGEX,
       };
     },
 
