@@ -2,6 +2,7 @@
 const puppeteer = require('puppeteer');
 
 const { PerformanceMetrics } = require('../utils/PerformanceMetrics');
+const { logInfo } = require('../utils/logger');
 
 class Application {
   browser;
@@ -21,7 +22,13 @@ class Application {
         '--window-size=1920,1040',
       ],
     });
+  }
 
+  closeBrowser() {
+    return this.browser.close();
+  }
+
+  async openPage() {
     this.page = await this.browser.newPage();
 
     await this.page.setViewport({
@@ -30,12 +37,20 @@ class Application {
     });
   }
 
-  closeBrowser() {
-    return this.browser.close();
+  closePage() {
+    return this.page.close();
   }
 
-  navigate(url) {
-    return this.page.goto(`${this.url}${url}`, { waitUntil: 'load', timeout: 120000 });
+  reloadPage() {
+    return this.page.reload();
+  }
+
+  async navigate(url) {
+    const resultUrl = `${this.url}${url}`;
+
+    await this.page.goto(resultUrl);
+
+    logInfo(`Navigate to ${resultUrl}`);
   }
 
   waitElement(selector) {
