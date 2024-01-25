@@ -15,8 +15,14 @@ const changeItemsPerPage = async (itemsPerPage, { url, viewId, tabId }) => {
 
   try {
     await application.openBrowser();
+
+    await application.openPage();
     await loginPage.login();
+    await application.closePage();
+
+    await application.openPage();
     await viewPage.openById(viewId, { tabId });
+
     await alarmsListModule.waitTableRow();
     await alarmsListModule.updateItemsPerPage(itemsPerPage);
     await application.page.waitForTimeout(1000);
@@ -54,14 +60,18 @@ benchmark.each(
       async (slowdown, report) => {
         try {
           await application.openBrowser();
+
+          await application.openPage();
           await loginPage.login();
+          await application.closePage();
+
+          await application.openPage();
           await viewPage.openById(viewId, { tabId });
 
           await application.emulateCPUThrottling(slowdown);
-
           await application.startMeasurePerformance();
 
-          await application.page.reload();
+          await application.reloadPage();
 
           await alarmsListModule.waitTableRow();
 
@@ -85,7 +95,12 @@ benchmark.each(
       async (slowdown, report) => {
         try {
           await application.openBrowser();
+
+          await application.openPage();
           await loginPage.login();
+          await application.closePage();
+
+          await application.openPage();
           await viewPage.openById(viewId, { tabId });
 
           await application.emulateCPUThrottling(slowdown);
@@ -120,7 +135,12 @@ benchmark.each(
       async (slowdown, report) => {
         try {
           await application.openBrowser();
+
+          await application.openPage();
           await loginPage.login();
+          await application.closePage();
+
+          await application.openPage();
           await viewPage.openById(viewId, { tabId });
 
           await application.emulateCPUThrottling(slowdown);
