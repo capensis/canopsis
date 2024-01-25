@@ -7,8 +7,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
@@ -44,7 +44,7 @@ func NewStore(
 }
 
 func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) {
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	rule := transformRequestToModel(r.EditRequest)
 	if r.ID == "" {
 		r.ID = utils.NewID()
@@ -136,7 +136,7 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) {
 	model := transformRequestToModel(r.EditRequest)
 	model.ID = r.ID
-	model.Updated = types.NewCpsTime()
+	model.Updated = datetime.NewCpsTime()
 	var resp *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		resp = nil

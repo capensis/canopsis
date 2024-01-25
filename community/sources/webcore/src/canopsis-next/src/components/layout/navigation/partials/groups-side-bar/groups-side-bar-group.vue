@@ -1,24 +1,27 @@
-<template lang="pug">
-  group-panel(
-    :group="group",
-    :order-changed="isGroupsOrderChanged",
-    :is-editing="isNavigationEditingMode",
-    :editable="hasViewGroupEditAccess && isNavigationEditingMode",
+<template>
+  <group-panel
+    :group="group"
+    :order-changed="isGroupsOrderChanged"
+    :is-editing="isNavigationEditingMode"
+    :editable="hasViewGroupEditAccess && isNavigationEditingMode"
     @change="showEditGroupModal"
-  )
-    c-draggable-list-field.views-panel.secondary.lighten-1(
-      :class="{ empty: isGroupEmpty }",
-      :value="group.views",
-      :disabled="group.is_private || !isNavigationEditingMode",
-      group="views",
+  >
+    <c-draggable-list-field
+      class="views-panel secondary lighten-1"
+      :class="{ 'views-panel--empty': isGroupEmpty }"
+      :value="group.views"
+      :disabled="!isNavigationEditingMode"
+      group="views"
       @input="changeViewsOrdering"
-    )
-      groups-side-bar-group-view(
-        v-for="view in group.views",
-        :key="view._id",
-        :view="view",
+    >
+      <groups-side-bar-group-view
+        v-for="view in group.views"
+        :key="view._id"
+        :view="view"
         :is-groups-order-changed="isGroupsOrderChanged"
-      )
+      />
+    </c-draggable-list-field>
+  </group-panel>
 </template>
 
 <script>
@@ -56,31 +59,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .group-item {
-    & ::v-deep .v-expansion-panel__header {
+.views-panel {
+  &--empty {
+    &:after {
+      content: '';
+      display: block;
       height: 48px;
-    }
-
-    &.editing {
-      & ::v-deep .v-expansion-panel__header {
-        cursor: move;
-      }
-
-      .views-panel.empty {
-        &:after {
-          content: '';
-          display: block;
-          height: 48px;
-          border: 4px dashed #4f6479;
-          border-radius: 5px;
-          position: relative;
-        }
-      }
-    }
-
-    & ::v-deep .v-expansion-panel__body  .v-card {
-      border-radius: 0;
-      box-shadow: 0 0 0 0 rgba(0,0,0,.2),0 0 0 0 rgba(0,0,0,.14),0 0 0 0 rgba(0,0,0,.12)!important;
+      border: 4px dashed #4f6479;
+      border-radius: 5px;
+      position: relative;
     }
   }
+}
 </style>

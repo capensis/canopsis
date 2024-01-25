@@ -1,13 +1,13 @@
-<template lang="pug">
-  patterns-list(
-    :pagination.sync="pagination",
-    :patterns="patterns",
-    :total-items="patternsMeta.total_count",
-    :pending="patternsPending",
-    @edit="$listeners.edit",
-    @remove="$listeners.remove",
+<template>
+  <patterns-list
+    :options.sync="options"
+    :patterns="patterns"
+    :total-items="patternsMeta.total_count"
+    :pending="patternsPending"
+    @edit="$listeners.edit"
+    @remove="$listeners.remove"
     @remove-selected="$listeners['remove-selected']"
-  )
+  />
 </template>
 
 <script>

@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
@@ -371,7 +372,7 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 		UserID:        additionalData.User,
 		Username:      additionalData.Author,
 		Initiator:     types.InitiatorSystem,
-		CreatedAt:     types.NewCpsTime(),
+		CreatedAt:     datetime.NewCpsTime(),
 	}
 
 	err = s.webhookHistoryCollection.FindOneAndUpdate(ctx,

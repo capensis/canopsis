@@ -1,21 +1,21 @@
-<template lang="pug">
-  component(
-    v-field="value",
-    v-validate="rules",
-    :is="component",
-    :items="availableRoles",
-    :label="label || $tc('common.role')",
-    :loading="pending",
-    :name="name",
-    :error-messages="errors.collect(name)",
-    :disabled="disabled",
-    :multiple="multiple",
-    :chips="chips",
-    :small-chips="chips",
-    item-text="name",
-    item-value="_id",
+<template>
+  <component
+    v-field="value"
+    v-validate="rules"
+    :is="component"
+    :items="availableRoles"
+    :label="label || $tc('common.role')"
+    :loading="pending"
+    :name="name"
+    :error-messages="errors.collect(name)"
+    :disabled="disabled"
+    :multiple="multiple"
+    :chips="chips"
+    :small-chips="chips"
+    item-text="name"
+    item-value="_id"
     return-object
-  )
+  />
 </template>
 
 <script>

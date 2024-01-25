@@ -1,17 +1,23 @@
-<template lang="pug">
-  tr
-    td.cursor-pointer
-      c-expand-btn.mr-2(:expanded="expanded", @expand="$emit('expand')")
-      span {{ group.name }}
-    permission-group-row-cell(
-      v-for="role in roles",
-      :key="`role-permission-${role._id}`",
-      :group="group",
-      :role="role",
-      :changed-role="changedRoles[role._id]",
-      :disabled="disabled || isEmptyPermissions",
+<template>
+  <tr>
+    <td class="cursor-pointer">
+      <c-expand-btn
+        class="mr-2"
+        :expanded="expanded"
+        @expand="$emit('expand', !expanded)"
+      />
+      <span>{{ group.name }}</span>
+    </td>
+    <permission-group-row-cell
+      v-for="role in roles"
+      :key="`role-permission-${role._id}`"
+      :group="group"
+      :role="role"
+      :changed-role="changedRoles[role._id]"
+      :disabled="disabled || isEmptyPermissions"
       @change="change"
-    )
+    />
+  </tr>
 </template>
 
 <script>

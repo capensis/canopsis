@@ -1,27 +1,43 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :items="remediationInstructionChanges",
-    :headers="headers",
-    :loading="pending",
-    :pagination.sync="pagination",
-    :total-items="totalItems",
+<template>
+  <c-advanced-data-table
+    :items="remediationInstructionChanges"
+    :headers="headers"
+    :loading="pending"
+    :options.sync="options"
+    :total-items="totalItems"
     advanced-pagination
-  )
-    template(#headerCell="{ header }")
-      span.c-table-header__text--multiline {{ header.text }}
-    template(#modified_on="{ item }")
-      span {{ item.modified_on | date }}
-    template(#execution_count="{ item }")
-      span {{ item.execution_count }}
-    template(#avg_complete_time="{ item }")
-      span(v-if="item.execution_count") {{ item.avg_complete_time | duration }}
-      span(v-else) {{ $t('common.notAvailable') }}
-    template(#alarm_states="{ item }")
-      affect-alarm-states(v-if="item.execution_count", :alarm-states="item.alarm_states")
-      template(v-else) -
-    template(#ok_alarm_states="{ item }")
-      c-state-count-changes-chip(v-if="item.execution_count") {{ item.ok_alarm_states }}
-      template(v-else) -
+  >
+    <template #headerCell="{ header }">
+      <span class="c-table-header__text--multiline">{{ header.text }}</span>
+    </template>
+    <template #modified_on="{ item }">
+      <span>{{ item.modified_on | date }}</span>
+    </template>
+    <template #execution_count="{ item }">
+      <span>{{ item.execution_count }}</span>
+    </template>
+    <template #avg_complete_time="{ item }">
+      <span v-if="item.execution_count">{{ item.avg_complete_time | duration }}</span>
+      <span v-else>{{ $t('common.notAvailable') }}</span>
+    </template>
+    <template #alarm_states="{ item }">
+      <affect-alarm-states
+        v-if="item.execution_count"
+        :alarm-states="item.alarm_states"
+      />
+      <template v-else>
+        -
+      </template>
+    </template>
+    <template #ok_alarm_states="{ item }">
+      <c-state-count-changes-chip v-if="item.execution_count">
+        {{ item.ok_alarm_states }}
+      </c-state-count-changes-chip>
+      <template v-else>
+        -
+      </template>
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>

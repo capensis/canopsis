@@ -1,7 +1,18 @@
-<template lang="pug">
-  bar-chart(:datasets="datasets", :options="chartOptions", :dark="$system.dark")
-    template(#actions="{ chart }")
-      kpi-chart-export-actions.mt-4(:downloading="downloading", :chart="chart", v-on="$listeners")
+<template>
+  <bar-chart
+    :datasets="datasets"
+    :options="chartOptions"
+    :dark="$system.dark"
+  >
+    <template #actions="{ chart }">
+      <kpi-chart-export-actions
+        class="mt-4"
+        :downloading="downloading"
+        :chart="chart"
+        v-on="$listeners"
+      />
+    </template>
+  </bar-chart>
 </template>
 
 <script>

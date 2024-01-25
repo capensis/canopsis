@@ -84,7 +84,7 @@ describe('default-sort-column', () => {
 
     const menuContents = wrapper.findAllMenus();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
 
     menuContents.wrappers.forEach(({ element }) => {
       expect(element).toMatchSnapshot();
@@ -108,7 +108,7 @@ describe('default-sort-column', () => {
 
     const menuContents = wrapper.findAllMenus();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
 
     menuContents.wrappers.forEach(({ element }) => {
       expect(element).toMatchSnapshot();

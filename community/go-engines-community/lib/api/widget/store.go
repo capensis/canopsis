@@ -7,7 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -181,7 +181,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 		}
 	}
 
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	widget := transformEditRequestToModel(r.EditRequest)
 	widget.ID = utils.NewID()
 	widget.Tab = r.Tab
@@ -235,7 +235,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 		return nil, err
 	}
 
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	widget := transformEditRequestToModel(r.EditRequest)
 	widget.ID = oldWidget.ID
 	widget.Updated = now
@@ -420,7 +420,7 @@ func (s *store) CopyForTab(ctx context.Context, tabID, newTabID, author string, 
 }
 
 func (s *store) copy(ctx context.Context, widgetID string, isPrivate bool, r CreateRequest) (*Response, error) {
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	newWidget := view.Widget{
 		ID:             utils.NewID(),
 		Tab:            r.Tab,
@@ -508,7 +508,7 @@ func (s *store) UpdateGridPositions(ctx context.Context, items []EditGridPositio
 			if tabId == "" {
 				tabId = w.Tab
 			} else if tabId != w.Tab {
-				return ValidationErr{error: errors.New("widgets are related to different view tabs")}
+				return ValidationError{error: errors.New("widgets are related to different view tabs")}
 			}
 		}
 
@@ -517,7 +517,7 @@ func (s *store) UpdateGridPositions(ctx context.Context, items []EditGridPositio
 			return err
 		}
 		if count != int64(len(items)) {
-			return ValidationErr{error: errors.New("widgets are missing")}
+			return ValidationError{error: errors.New("widgets are missing")}
 		}
 
 		writeModels := make([]mongodriver.WriteModel, len(widgets))

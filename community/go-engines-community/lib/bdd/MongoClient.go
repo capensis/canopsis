@@ -2,6 +2,7 @@ package bdd
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strconv"
 
@@ -35,7 +36,7 @@ func (c *MongoClient) AlarmShouldBeInTheDb(ctx context.Context, eid string) erro
 	var expectedAlarm types.Alarm
 	res := c.client.Collection(alarm.AlarmCollectionName).FindOne(ctx, bson.M{"d": eid})
 	if err := res.Err(); err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return fmt.Errorf("couldn't find an alarm for eid = %s", eid)
 		}
 
@@ -60,7 +61,7 @@ func (c *MongoClient) EntityShouldBeInTheDb(ctx context.Context, eid string) err
 	var expectedEntity types.Entity
 	err := c.client.Collection(libmongo.EntityMongoCollection).FindOne(ctx, bson.M{"_id": eid}).Decode(&expectedEntity)
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return fmt.Errorf("couldn't find an entity for eid = %s", eid)
 		}
 
@@ -80,7 +81,7 @@ func (c *MongoClient) EntityShouldNotBeInTheDb(ctx context.Context, eid string) 
 	var expectedEntity types.Entity
 	err := c.client.Collection(libmongo.EntityMongoCollection).FindOne(ctx, bson.M{"_id": eid}).Decode(&expectedEntity)
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil
 		}
 

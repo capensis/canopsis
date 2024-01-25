@@ -1,16 +1,21 @@
-<template lang="pug">
-  c-information-block(
-    :title="$t('storageSetting.pbehavior.title')",
+<template>
+  <c-information-block
+    :title="$t('storageSetting.pbehavior.title')"
     help-icon-color="info"
-  )
-    template(v-if="history", #subtitle="")
-      storage-settings-history-message(:history="history")
-    c-enabled-duration-field(
-      v-field="form.delete_after",
-      :label="$t('storageSetting.pbehavior.deleteAfter')",
-      :help-text="$t('storageSetting.pbehavior.deleteAfterHelpText')",
+  >
+    <template
+      v-if="history"
+      #subtitle=""
+    >
+      <storage-settings-history-message :history="history" />
+    </template>
+    <c-enabled-duration-field
+      v-field="form.delete_after"
+      :label="$t('storageSetting.pbehavior.deleteAfter')"
+      :help-text="$t('storageSetting.pbehavior.deleteAfterHelpText')"
       :name="pbehaviorDeleteAfterFieldName"
-    )
+    />
+  </c-information-block>
 </template>
 
 <script>
