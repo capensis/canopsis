@@ -487,6 +487,10 @@ func newWebsocketHub(
 		return nil, fmt.Errorf("fail to register websocket room: %w", err)
 	}
 
+	if err := websocketHub.RegisterRoom(websocket.RoomIcons); err != nil {
+		return nil, fmt.Errorf("fail to register websocket room: %w", err)
+	}
+
 	alarmWatcher := alarmapi.NewWatcher(dbClient, websocketHub, alarmStore, json.NewEncoder(), json.NewDecoder(), logger)
 	err := websocketHub.RegisterGroup(websocket.RoomAlarmsGroup, websocket.GroupParameters{
 		OnJoin:  alarmWatcher.StartWatch,

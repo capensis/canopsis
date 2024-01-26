@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
+	"os"
+	"path"
 	"strconv"
 	"text/template"
 	"time"
@@ -15,11 +17,13 @@ import (
 
 type Templater struct {
 	defaultVars map[string]interface{}
+	dir         string
 }
 
-func NewTemplater(defaultVars map[string]interface{}) *Templater {
+func NewTemplater(defaultVars map[string]interface{}, dir string) *Templater {
 	return &Templater{
 		defaultVars: defaultVars,
+		dir:         dir,
 	}
 }
 
@@ -27,7 +31,7 @@ func (t *Templater) Execute(ctx context.Context, text string) (*bytes.Buffer, er
 	loc, _ := GetTimezone(ctx)
 	tpl, err := template.New("tpl").
 		Option("missingkey=error").
-		Funcs(getTplFuncs(loc)).
+		Funcs(getTplFuncs(loc, t.dir)).
 		Parse(text)
 	if err != nil {
 		return nil, fmt.Errorf("cannot parse template: %w", err)
@@ -53,7 +57,7 @@ func (t *Templater) Execute(ctx context.Context, text string) (*bytes.Buffer, er
 	return buf, nil
 }
 
-func getTplFuncs(location *time.Location) template.FuncMap {
+func getTplFuncs(location *time.Location, dir string) template.FuncMap {
 	return template.FuncMap{
 		// json converts an item to an JSON-compatible element.
 		// For the strings it escapes newline and quote chars
@@ -143,6 +147,14 @@ func getTplFuncs(location *time.Location) template.FuncMap {
 		},
 		"query_escape": func(s string) string {
 			return url.QueryEscape(s)
+		},
+		"file_content": func(filename string) (string, error) {
+			b, err := os.ReadFile(path.Join(dir, filename))
+			if err != nil {
+				return "", err
+			}
+
+			return string(b), nil
 		},
 	}
 }
