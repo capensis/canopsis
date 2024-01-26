@@ -12,15 +12,14 @@
         name="selected"
       />
       <v-layout
-        class="pa-3 grey--text drag-zone"
         v-else
+        class="pa-3 drag-zone"
         align-center
         @drop.prevent="drop"
         @dragover.prevent=""
       >
         <v-icon
           class="mr-3"
-          color="grey"
           large
         >
           upload_file
@@ -58,6 +57,22 @@ export default {
 <style lang="scss" scoped>
 .drag-zone {
   border-radius: 10px;
-  border: 3px dashed #9e9e9e77;
+  border: 3px dashed;
+
+  .theme--light & {
+    border-color: var(--v-application-background-darken2);
+
+    &, & ::v-deep .v-icon {
+      color: var(--v-application-background-darken2);
+    }
+  }
+
+  .theme--dark & {
+    border-color: var(--v-application-background-lighten3);
+
+    &, & ::v-deep .v-icon {
+      color: var(--v-application-background-lighten4);
+    }
+  }
 }
 </style>
