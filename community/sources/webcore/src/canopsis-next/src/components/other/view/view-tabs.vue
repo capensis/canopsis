@@ -8,7 +8,6 @@
     :hide-slider="changed"
     background-color="secondary lighten-2"
     slider-color="primary"
-    dark
   >
     <c-draggable-list-field
       class="d-flex"
