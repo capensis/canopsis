@@ -53,6 +53,7 @@ describe('service-entities-list', () => {
       state: {
         val: ENTITIES_STATES.major,
       },
+      alarm_id: 'alarm-id',
     },
     {
       _id: 'service-entity-2-id',
@@ -61,6 +62,7 @@ describe('service-entities-list', () => {
           type: PBEHAVIOR_TYPE_TYPES.pause,
         },
       }],
+      alarm_id: 'alarm-id',
     },
   ];
   const { authModule } = createAuthModule();
@@ -212,6 +214,7 @@ describe('service-entities-list', () => {
       _id: Faker.datatype.string(),
       ack: {},
       pbehaviors: [],
+      alarm_id: 'alarm-id',
     };
     const wrapper = factory({
       propsData: {

@@ -214,6 +214,7 @@ export default {
     refreshEntities: 'Refresh entities list',
     editPbehaviors: 'Edit pbehaviors',
     massActionsDescription: 'You can choose entities to perform actions',
+    actionInQueue: 'action in queue|actions in queue',
     entity: {
       tabs: {
         info: 'Info',

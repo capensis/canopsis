@@ -27,7 +27,7 @@
           c-pagination(
             v-if="!hidePagination",
             :page="pagination.page",
-            :limit="pagination.limit",
+            :limit="pagination.rowsPerPage",
             :total="totalItems",
             type="top",
             @input="updateQueryPage"
@@ -91,7 +91,7 @@
     c-table-pagination(
       v-if="!hidePagination",
       :total-items="totalItems",
-      :rows-per-page="pagination.limit",
+      :rows-per-page="pagination.rowsPerPage",
       :page="pagination.page",
       @update:page="updateQueryPage",
       @update:rows-per-page="updateRecordsPerPage"
