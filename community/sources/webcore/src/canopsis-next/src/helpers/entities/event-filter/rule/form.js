@@ -9,6 +9,7 @@ import {
 } from '@/constants';
 
 import { uid } from '@/helpers/uid';
+import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/array';
 import {
   exceptionsToForm,
   exceptionsToRequest,
@@ -104,7 +105,7 @@ import {
  * @returns {EventFilterConfigForm}
  */
 export const eventFilterConfigToForm = (eventFilterConfig = {}) => ({
-  actions: eventFilterConfig.actions ? cloneDeep(eventFilterConfig.actions) : [],
+  actions: eventFilterConfig.actions ? addKeyInEntities(cloneDeep(eventFilterConfig.actions)) : [],
   on_success: eventFilterConfig.on_success ?? EVENT_FILTER_ENRICHMENT_AFTER_TYPES.pass,
   on_failure: eventFilterConfig.on_failure ?? EVENT_FILTER_ENRICHMENT_AFTER_TYPES.pass,
   resource: eventFilterConfig.resource ?? '',
@@ -183,7 +184,8 @@ export const formToEventFilter = (eventFilterForm, timezone) => {
       eventFilter.config = pick(config, ['resource', 'component', 'connector', 'connector_name']);
       break;
     case EVENT_FILTER_TYPES.enrichment:
-      eventFilter.config = pick(config, ['actions', 'on_success', 'on_failure']);
+      eventFilter.config = pick(config, ['on_success', 'on_failure']);
+      eventFilter.config.actions = removeKeyFromEntities(config.actions);
       break;
   }
 

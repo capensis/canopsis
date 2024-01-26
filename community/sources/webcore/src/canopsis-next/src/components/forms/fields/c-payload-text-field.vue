@@ -8,7 +8,7 @@
     :items="availableVariables"
     :disabled="disabled"
     :return-object="false"
-    :menu-props="{ value: !!variables.length && variablesShown }"
+    :menu-props="{ value: !!variables.length && variablesShown, offsetY: true }"
     :error-messages="errorMessages"
     :clearable="clearable"
     :name="name"
