@@ -1,4 +1,9 @@
-import { EVENT_FILTER_SET_TAGS_FIELDS, EVENT_FILTER_TYPES, PATTERN_OPERATORS } from '@/constants';
+import {
+  EVENT_FILTER_SET_TAGS_VALUE_PREFIXES,
+  EVENT_FILTER_SET_TAGS_FIELDS,
+  EVENT_FILTER_TYPES,
+  PATTERN_OPERATORS,
+} from '@/constants';
 
 /**
  * Check event filter rule type is enrichment
@@ -32,7 +37,8 @@ export const getSetTagsItemsFromPattern = (pattern = {}) => {
       ))
       .map(({ attribute, dictionary, value }) => ({
         text: dictionary || attribute,
-        value,
+        valueForValidation: value,
+        value: `${EVENT_FILTER_SET_TAGS_VALUE_PREFIXES[attribute]}${dictionary}`,
       }));
 
     acc.push(...rules);
