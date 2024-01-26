@@ -58,7 +58,10 @@
 <script>
 import { isEqual, pick } from 'lodash';
 
+import { PAGINATION_LIMIT } from '@/config';
 import { SORT_ORDERS } from '@/constants';
+
+import { getPageForNewRecordsPerPage } from '@/helpers/pagination';
 
 import { authMixin } from '@/mixins/auth';
 import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
@@ -142,14 +145,26 @@ export default {
 
     pagination: {
       get() {
-        const { sortDir, sortKey: sortBy = null, multiSortBy = [] } = this.query;
+        const {
+          sortDir,
+          sortKey: sortBy = null,
+          multiSortBy = [],
+          page = 1,
+          limit = PAGINATION_LIMIT,
+        } = this.query;
         const descending = sortDir === SORT_ORDERS.desc;
 
-        return { sortBy, descending, multiSortBy };
+        return {
+          page,
+          sortBy,
+          descending,
+          multiSortBy,
+          rowsPerPage: limit,
+        };
       },
 
       set(value) {
-        const paginationKeys = ['sortBy', 'descending', 'multiSortBy'];
+        const paginationKeys = ['sortBy', 'descending', 'multiSortBy', 'page', 'rowsPerPage'];
         const newPagination = pick(value, paginationKeys);
         const oldPagination = pick(this.pagination, paginationKeys);
 
@@ -158,15 +173,19 @@ export default {
         }
 
         const {
+          page = 1,
           sortBy = null,
           descending = false,
           multiSortBy = [],
+          rowsPerPage = PAGINATION_LIMIT,
         } = newPagination;
 
         const newQuery = {
+          multiSortBy,
           sortKey: sortBy,
           sortDir: descending ? SORT_ORDERS.desc : SORT_ORDERS.asc,
-          multiSortBy,
+          page: rowsPerPage <= this.query.rowsPerPage ? page : 1,
+          limit: rowsPerPage || PAGINATION_LIMIT,
         };
 
         this.$emit('update:query', {
@@ -186,8 +205,8 @@ export default {
       this.$emit('update:query', {
         ...this.query,
 
-        page: 1,
         limit,
+        page: getPageForNewRecordsPerPage(limit, this.query.limit, this.query.page),
       });
     },
 
