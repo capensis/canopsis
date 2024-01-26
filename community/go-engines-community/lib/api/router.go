@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"net/url"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
@@ -92,6 +93,8 @@ import (
 const BaseUrl = "/api/v4"
 
 const mimeTypeSvg = "image/svg+xml"
+
+const cacheExpiration = time.Hour
 
 // RegisterRoutes
 // nolint: contextcheck
@@ -2031,36 +2034,43 @@ func RegisterRoutes(
 			)
 		}
 
-		iconRouter := protected.Group("/icons")
+		iconsCacheMiddlewareGetter := middleware.NewCacheMiddlewareGetter(cacheExpiration, nil)
+		iconsPath := "/icons"
+		iconRouter := protected.Group(iconsPath)
 		{
 			iconStore := icon.NewStore(
 				dbClient,
 				libfile.NewStorage(conf.File.Icon, libfile.NewEtagEncoder()),
 			)
-			iconApi := icon.NewApi(iconStore, actionLogger, conf.File.IconMaxSize, []string{mimeTypeSvg})
+			iconApi := icon.NewApi(iconStore, websocketHub, actionLogger, conf.File.IconMaxSize, []string{mimeTypeSvg})
 			iconRouter.POST(
 				"",
 				middleware.Authorize(apisecurity.PermIcon, model.PermissionCan, enforcer),
 				iconApi.Create,
+				iconsCacheMiddlewareGetter.ClearCache(BaseUrl+iconsPath),
 			)
 			iconRouter.GET(
 				"",
+				iconsCacheMiddlewareGetter.Cache(),
 				iconApi.List,
 			)
 			iconRouter.GET(
 				"/:id",
 				security.GetFileAuthMiddleware(),
+				iconsCacheMiddlewareGetter.Cache(),
 				iconApi.Get,
 			)
 			iconRouter.DELETE(
 				"/:id",
 				middleware.Authorize(apisecurity.PermIcon, model.PermissionCan, enforcer),
 				iconApi.Delete,
+				iconsCacheMiddlewareGetter.ClearCache(BaseUrl+iconsPath),
 			)
 			iconRouter.PUT(
 				"/:id",
 				middleware.Authorize(apisecurity.PermIcon, model.PermissionCan, enforcer),
 				iconApi.Update,
+				iconsCacheMiddlewareGetter.ClearCache(BaseUrl+iconsPath),
 			)
 		}
 

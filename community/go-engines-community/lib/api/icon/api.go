@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"mime"
 	"net/http"
-	"os"
 	"path"
 	"slices"
 
@@ -14,18 +13,26 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/file"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"github.com/gin-gonic/gin"
+)
+
+const (
+	websocketMsgTypeCreate = iota
+	websocketMsgTypeUpdate
+	websocketMsgTypeDelete
 )
 
 func NewApi(
 	store Store,
+	websocketHub websocket.Hub,
 	actionLogger logger.ActionLogger,
 	maxSize int64,
 	mimeTypes []string,
 ) common.CrudAPI {
 	return &api{
 		store:        store,
+		websocketHub: websocketHub,
 		actionLogger: actionLogger,
 		maxSize:      maxSize,
 		mimeTypes:    mimeTypes,
@@ -34,9 +41,15 @@ func NewApi(
 
 type api struct {
 	store        Store
+	websocketHub websocket.Hub
 	actionLogger logger.ActionLogger
 	maxSize      int64
 	mimeTypes    []string
+}
+
+type websocketMsg struct {
+	ID   string `json:"_id"`
+	Type int    `json:"type"`
 }
 
 // Create
@@ -74,29 +87,25 @@ func (a *api) Create(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
+	a.websocketHub.Send(c, websocket.RoomIcons, websocketMsg{
+		ID:   res.ID,
+		Type: websocketMsgTypeCreate,
+	})
 	c.JSON(http.StatusCreated, res)
 }
 
 func (a *api) Get(c *gin.Context) {
-	m, err := a.store.Get(c, c.Param("id"))
+	res, err := a.store.Get(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
 
-	if m == nil {
+	if res == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
 
-	c.Header("Etag", fmt.Sprintf("%q", m.Etag))
-	c.Header("Content-Type", m.MimeType)
-	filename := ""
-	exts, err := mime.ExtensionsByType(m.MimeType)
-	if err == nil && len(exts) > 0 {
-		filename = file.Sanitize(m.Title) + exts[0]
-	}
-
-	c.FileAttachment(a.store.GetFilepath(*m), filename)
+	c.JSON(http.StatusOK, res)
 }
 
 // List
@@ -112,17 +121,6 @@ func (a *api) List(c *gin.Context) {
 	aggregationResult, err := a.store.List(c, query)
 	if err != nil {
 		panic(err)
-	}
-
-	// todo: optimize it by adding separate workers, which should read files,
-	// todo: also upgrade file storage to get file contents from cache instead of filesystem
-	for idx, res := range aggregationResult.Data {
-		svgContent, err := os.ReadFile(a.store.GetFilepath(res))
-		if err != nil {
-			panic(err)
-		}
-
-		aggregationResult.Data[idx].Content = string(svgContent)
 	}
 
 	res, err := common.NewPaginatedResponse(query.Query, aggregationResult)
@@ -177,11 +175,16 @@ func (a *api) Update(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
+	a.websocketHub.Send(c, websocket.RoomIcons, websocketMsg{
+		ID:   res.ID,
+		Type: websocketMsgTypeUpdate,
+	})
 	c.JSON(http.StatusOK, res)
 }
 
 func (a *api) Delete(c *gin.Context) {
-	ok, err := a.store.Delete(c, c.Param("id"))
+	id := c.Param("id")
+	ok, err := a.store.Delete(c, id)
 	if err != nil {
 		panic(err)
 	}
@@ -191,6 +194,19 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
+		Action:    logger.ActionDelete,
+		ValueType: logger.ValueTypeIcon,
+		ValueID:   id,
+	})
+	if err != nil {
+		a.actionLogger.Err(err, "failed to log action")
+	}
+
+	a.websocketHub.Send(c, websocket.RoomIcons, websocketMsg{
+		ID:   id,
+		Type: websocketMsgTypeDelete,
+	})
 	c.Status(http.StatusNoContent)
 }
 
