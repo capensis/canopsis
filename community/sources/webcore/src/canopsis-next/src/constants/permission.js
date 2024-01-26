@@ -116,10 +116,10 @@ export const USERS_PERMISSIONS = {
     shareToken: `${USER_PERMISSIONS_PREFIXES.technical.admin}_shareToken`,
     maintenance: `${USER_PERMISSIONS_PREFIXES.technical.admin}_maintenance`,
     widgetTemplate: `${USER_PERMISSIONS_PREFIXES.technical.admin}_widgetTemplate`,
-    stateSetting: `${USER_PERMISSIONS_PREFIXES.technical.admin}_widgetTemplate`, // TODO: _stateSetting
+    stateSetting: `${USER_PERMISSIONS_PREFIXES.technical.admin}_stateSetting`,
     tag: `${USER_PERMISSIONS_PREFIXES.technical.admin}_tag`,
-    storageSettings: `${USER_PERMISSIONS_PREFIXES.technical.admin}_tag`, // TODO: _storageSettings
-    icon: `${USER_PERMISSIONS_PREFIXES.technical.admin}_widgetTemplate`, // TODO: _icon
+    storageSettings: `${USER_PERMISSIONS_PREFIXES.technical.admin}_storageSettings`,
+    icon: `${USER_PERMISSIONS_PREFIXES.technical.admin}_icon`,
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,
