@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"mime/multipart"
+	"os"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -13,7 +14,10 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"golang.org/x/sync/errgroup"
 )
+
+const readFileWorkers = 10
 
 type Store interface {
 	Create(context.Context, EditRequest) (*Response, error)
@@ -31,6 +35,16 @@ type store struct {
 	defaultSearchByFields []string
 }
 
+type readWorkerData struct {
+	idx      int
+	filepath string
+}
+
+type readWorkerResult struct {
+	idx     int
+	content []byte
+}
+
 func NewStore(dbClient mongo.DbClient, storage libfile.Storage) Store {
 	return &store{
 		dbCollection:          dbClient.Collection(mongo.IconCollection),
@@ -43,24 +57,27 @@ func NewStore(dbClient mongo.DbClient, storage libfile.Storage) Store {
 func (s *store) Create(ctx context.Context, r EditRequest) (*Response, error) {
 	id := utils.NewID()
 	res, err := s.storeFile(id, r.File)
+	if err != nil || res == nil {
+		return nil, err
+	}
+
+	now := datetime.NewCpsTime()
+	res.ID = id
+	res.Title = r.Title
+	res.MimeType = r.MimeType
+	res.Created = now
+	res.Updated = now
+	_, err = s.dbCollection.InsertOne(ctx, res)
 	if err != nil {
 		return nil, err
 	}
 
-	if res != nil {
-		now := datetime.NewCpsTime()
-		res.ID = id
-		res.Title = r.Title
-		res.MimeType = r.MimeType
-		res.Created = now
-		res.Updated = now
-		_, err := s.dbCollection.InsertOne(ctx, res)
-		if err != nil {
-			return nil, err
-		}
+	res.Content, err = s.getFileContent(*res)
+	if err != nil {
+		return nil, err
 	}
 
-	return res, err
+	return res, nil
 }
 
 func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
@@ -71,7 +88,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	}
 
 	res, err := s.storeFile(id, r.File)
-	if err != nil {
+	if err != nil || res == nil {
 		return nil, err
 	}
 
@@ -80,19 +97,22 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 		return nil, err
 	}
 
-	if res != nil {
-		now := datetime.NewCpsTime()
-		res.ID = id
-		res.Title = r.Title
-		res.MimeType = r.MimeType
-		res.Updated = now
-		updateRes, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": res})
-		if err != nil || updateRes.MatchedCount == 0 {
-			return nil, err
-		}
+	now := datetime.NewCpsTime()
+	res.ID = id
+	res.Title = r.Title
+	res.MimeType = r.MimeType
+	res.Updated = now
+	updateRes, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": res})
+	if err != nil || updateRes.MatchedCount == 0 {
+		return nil, err
 	}
 
-	return res, err
+	res.Content, err = s.getFileContent(*res)
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
@@ -138,6 +158,74 @@ func (s *store) List(ctx context.Context, query pagination.FilteredQuery) (*Aggr
 		}
 	}
 
+	inputCh := make(chan readWorkerData)
+	outputCh := make(chan readWorkerResult)
+	filepaths := make([]string, len(result.Data))
+	for i, v := range result.Data {
+		filepaths[i] = s.GetFilepath(v)
+	}
+
+	g, ctx := errgroup.WithContext(ctx)
+	g.Go(func() error {
+		defer close(inputCh)
+
+		for i, filepath := range filepaths {
+			select {
+			case <-ctx.Done():
+				return nil
+			case inputCh <- readWorkerData{
+				idx:      i,
+				filepath: filepath,
+			}:
+			}
+		}
+
+		return nil
+	})
+
+	for i := 0; i < readFileWorkers; i++ {
+		g.Go(func() error {
+			for {
+				select {
+				case <-ctx.Done():
+					return nil
+				case d, ok := <-inputCh:
+					if !ok {
+						return nil
+					}
+
+					b, err := os.ReadFile(d.filepath)
+					if err != nil {
+						return err
+					}
+
+					select {
+					case <-ctx.Done():
+						return nil
+					case outputCh <- readWorkerResult{
+						idx:     d.idx,
+						content: b,
+					}:
+					}
+				}
+			}
+		})
+	}
+
+	go func() {
+		_ = g.Wait()
+		close(outputCh)
+	}()
+
+	for v := range outputCh {
+		result.Data[v.idx].Content = string(v.content)
+	}
+
+	err = g.Wait()
+	if err != nil {
+		return nil, err
+	}
+
 	return &result, nil
 }
 
@@ -149,6 +237,11 @@ func (s *store) Get(ctx context.Context, id string) (*Response, error) {
 			return nil, nil
 		}
 
+		return nil, err
+	}
+
+	res.Content, err = s.getFileContent(res)
+	if err != nil {
 		return nil, err
 	}
 
@@ -186,4 +279,13 @@ func (s *store) storeFile(id string, file *multipart.FileHeader) (_ *Response, r
 		Storage: storage,
 		Etag:    etag,
 	}, nil
+}
+
+func (s *store) getFileContent(r Response) (string, error) {
+	b, err := os.ReadFile(s.GetFilepath(r))
+	if err != nil {
+		return "", err
+	}
+
+	return string(b), nil
 }
