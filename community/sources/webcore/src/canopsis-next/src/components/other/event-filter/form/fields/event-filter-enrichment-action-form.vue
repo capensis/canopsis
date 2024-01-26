@@ -36,14 +36,15 @@
           <v-layout>
             <v-flex xs5>
               <c-name-field
+                class="mr-2"
                 v-field="form.name"
+                :name="nameFieldName"
                 key="name"
                 required
               />
             </v-flex>
             <v-flex xs7>
               <c-payload-text-field
-                class="ml-2"
                 v-if="isStringTemplateValueType"
                 v-field="form.value"
                 :label="$t('common.value')"
@@ -54,7 +55,6 @@
                 clearable
               />
               <v-combobox
-                class="ml-2"
                 v-else-if="isStringCopyValueType"
                 v-field="form.value"
                 v-validate="'required'"
@@ -64,19 +64,14 @@
                 :name="valueFieldName"
                 key="value"
               />
-              <v-select
-                class="ml-2"
+              <event-filter-enrichment-action-form-select-rags-value
                 v-else-if="isSelectValueType"
                 v-field="form.value"
-                v-validate="selectValueTypeRules"
-                :label="$t('common.value')"
-                :error-messages="selectValueTypeErrorMessages"
                 :items="setTagsItems"
                 :name="valueFieldName"
                 key="value"
               />
               <c-mixed-field
-                class="ml-2"
                 v-else
                 v-field="form.value"
                 :label="$t('common.value')"
@@ -92,21 +87,19 @@
 </template>
 
 <script>
-import { isEqual } from 'lodash';
-
-import {
-  ACTION_COPY_PAYLOAD_VARIABLES,
-  EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
-  EVENT_FILTER_SET_TAGS_REGEX,
-} from '@/constants';
+import { ACTION_COPY_PAYLOAD_VARIABLES, EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
 
 import EventFilterEnrichmentActionFormTypeInfo from './event-filter-enrichment-action-form-type-info.vue';
+import EventFilterEnrichmentActionFormSelectRagsValue from './event-filter-enrichment-action-form-select-tags-value.vue';
 
 export default {
   inject: ['$validator'],
-  components: { EventFilterEnrichmentActionFormTypeInfo },
+  components: {
+    EventFilterEnrichmentActionFormTypeInfo,
+    EventFilterEnrichmentActionFormSelectRagsValue,
+  },
   mixins: [formMixin],
   model: {
     prop: 'form',
@@ -131,6 +124,10 @@ export default {
     },
   },
   computed: {
+    nameFieldName() {
+      return `${this.name}.name`;
+    },
+
     valueFieldName() {
       return `${this.name}.value`;
     },
@@ -165,38 +162,10 @@ export default {
     isSelectValueType() {
       return EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTags === this.form.type;
     },
-
-    selectValueTypeRules() {
-      return {
-        required: true,
-        regex: EVENT_FILTER_SET_TAGS_REGEX,
-      };
-    },
-
-    selectValueTypeErrorMessages() {
-      return this.errors.collect(this.valueFieldName, null, false).map(error => (
-        error.rule === 'regex'
-          ? this.$t('eventFilter.validation.incorrectRegexOnSetTagsValue')
-          : error.msg
-      ));
-    },
   },
   watch: {
     'form.type': function typeWatcher() {
       this.errors.clear();
-    },
-
-    setTagsItems: {
-      immediate: true,
-      handler(items, oldItems) {
-        if (
-          this.form.value
-          && !isEqual(items, oldItems)
-          && items.every(({ value }) => value !== this.form.value)
-        ) {
-          this.updateField('value', '');
-        }
-      },
     },
   },
   methods: {
