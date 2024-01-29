@@ -13,6 +13,13 @@ type EditRequest struct {
 	MimeType string                `form:"-"`
 }
 
+type PatchRequest struct {
+	ID       string                `form:"-"`
+	Title    string                `form:"title" binding:"max=255"`
+	File     *multipart.FileHeader `form:"file"`
+	MimeType string                `form:"-"`
+}
+
 type Response struct {
 	ID      string           `bson:"_id" json:"_id"`
 	Title   string           `bson:"title" json:"title"`
@@ -23,7 +30,7 @@ type Response struct {
 	Etag     string `bson:"etag" json:"-"`
 	MimeType string `bson:"mime_type" json:"-"`
 
-	Content string `json:"content,omitempty"`
+	Content string `bson:"-" json:"content,omitempty"`
 }
 
 type AggregationResult struct {

@@ -74,10 +74,12 @@ func (g *CacheMiddlewareGetter) Cache() gin.HandlerFunc {
 }
 
 func (g *CacheMiddlewareGetter) ClearCache(path string) gin.HandlerFunc {
+	keyPrefix := libredis.ApiCacheRequestKey + path
+
 	return func(context *gin.Context) {
 		keys := g.memoryStore.Cache.GetKeys()
 		for _, key := range keys {
-			if !strings.HasPrefix(key, libredis.ApiCacheRequestKey+path) {
+			if !strings.HasPrefix(key, keyPrefix) {
 				continue
 			}
 
