@@ -90,10 +90,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.drag-zone {
-  border-radius: 10px;
-  border: 3px dashed #9e9e9e77;
-}
-</style>

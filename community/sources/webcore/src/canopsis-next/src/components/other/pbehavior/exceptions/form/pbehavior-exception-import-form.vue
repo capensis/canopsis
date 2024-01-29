@@ -43,7 +43,6 @@ import { entitiesFieldPbehaviorFieldTypeMixin } from '@/mixins/entities/pbehavio
 import FileSelector from '@/components/forms/fields/file-selector.vue';
 
 export default {
-  inject: ['$validator'],
   components: { FileSelector },
   mixins: [
     formMixin,
@@ -59,19 +58,8 @@ export default {
       default: () => ({}),
     },
   },
-  created() {
-    this.$validator.attach({
-      name: 'file',
-      rules: 'required:true',
-      getter: () => this.form.file,
-      vm: this,
-    });
-  },
   mounted() {
     this.fetchFieldPbehaviorTypesList();
-  },
-  beforeDestroy() {
-    this.$validator.detach('file');
   },
   methods: {
     changeFiles(files = []) {
