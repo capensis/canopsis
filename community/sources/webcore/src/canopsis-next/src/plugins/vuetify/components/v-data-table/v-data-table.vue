@@ -25,7 +25,7 @@ export default {
      */
     serverItemsLength(serverItemsLength) {
       const page = this.options?.page ?? 1;
-      const pageCount = Math.ceil(serverItemsLength / this.computedItemsPerPage);
+      const pageCount = Math.ceil(serverItemsLength / this.computedItemsPerPage) || 1;
 
       if (page > pageCount) {
         this.$emit('update:options', {
