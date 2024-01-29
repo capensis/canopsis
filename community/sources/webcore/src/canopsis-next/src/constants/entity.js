@@ -337,6 +337,11 @@ export const COLOR_INDICATOR_TYPES = {
   impactState: 'impact_state',
 };
 
+export const STATE_SETTING_ENTITY_TYPES = [
+  ENTITY_TYPES.component,
+  ENTITY_TYPES.service,
+];
+
 export const STATE_SETTING_METHODS = {
   inherited: 'inherited',
   dependencies: 'dependencies',
