@@ -882,7 +882,27 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with custom props 1`] =
             <file-selector-stub
               errormessages=""
               hidedetails="true"
-            />
+            >
+              <span
+                class="v-tooltip v-tooltip--top"
+              >
+                <transition-stub
+                  name="slide-y-reverse-transition"
+                />
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <image-shape-icon-stub
+                      class="grey--text text--darken-3"
+                    />
+                  </div>
+                </button>
+              </span>
+            </file-selector-stub>
           </div>
         </div>
       </transition-stub>
@@ -1874,7 +1894,27 @@ exports[`flowchart-sidebar Renders \`flowchart-sidebar\` with form 1`] = `
             <file-selector-stub
               errormessages=""
               hidedetails="true"
-            />
+            >
+              <span
+                class="v-tooltip v-tooltip--top"
+              >
+                <transition-stub
+                  name="slide-y-reverse-transition"
+                />
+                <button
+                  class="ma-0 pa-0 flowchart-sidebar__button v-btn v-btn--flat v-btn--large theme--light"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <image-shape-icon-stub
+                      class="grey--text text--darken-3"
+                    />
+                  </div>
+                </button>
+              </span>
+            </file-selector-stub>
           </div>
         </div>
       </transition-stub>
