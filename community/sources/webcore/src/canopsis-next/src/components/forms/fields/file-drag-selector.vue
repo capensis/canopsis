@@ -2,7 +2,6 @@
   <file-selector
     ref="fileSelector"
     v-bind="$attrs"
-    :error-messages="errors.collect(name)"
     :name="name"
     @change="$emit('change', $event)"
   >
@@ -43,7 +42,6 @@
 import FileSelector from './file-selector.vue';
 
 export default {
-  inject: ['$validator'],
   components: { FileSelector },
   inheritAttrs: false,
   props: {

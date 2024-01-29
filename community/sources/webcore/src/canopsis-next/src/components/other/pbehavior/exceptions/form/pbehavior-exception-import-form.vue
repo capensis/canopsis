@@ -11,7 +11,8 @@
     />
     <file-selector
       class="mt-2"
-      :error-messages="errors.collect('file')"
+      name="file"
+      required
       with-files-list
       @change="changeFiles"
     >
@@ -75,7 +76,6 @@ export default {
   methods: {
     changeFiles(files = []) {
       this.updateField('file', files[0]);
-      this.$nextTick(() => this.$validator.validate('file'));
     },
   },
 };

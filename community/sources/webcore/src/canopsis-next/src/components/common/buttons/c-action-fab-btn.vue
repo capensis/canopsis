@@ -1,7 +1,8 @@
 <template>
   <c-action-btn v-bind="$attrs">
-    <template #button="">
+    <template #button="{ on }">
       <v-btn
+        v-on="on"
         :color="color"
         small
         fab
