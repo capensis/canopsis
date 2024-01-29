@@ -76,6 +76,10 @@ export default {
     },
 
     allIcons() {
+      if (!this.registeredIconsItems.length) {
+        return this.materialIconsItems;
+      }
+
       return [
         ...this.registeredIconsItems,
         { divider: true },
