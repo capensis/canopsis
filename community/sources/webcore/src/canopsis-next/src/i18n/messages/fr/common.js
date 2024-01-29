@@ -555,4 +555,14 @@ export default {
       + '<pre>"https://exampleurl.com?children_count={{ len .Children }}"</pre>'
       + '<pre>"https://exampleurl.com?children={{ range .Children }}{{ .ID }}{{ end }}"</pre>',
   },
+
+  fileSelector: {
+    dragAndDrop: {
+      label: 'Glisser-déposer pour télécharger',
+      labelAction: 'ou parcourir',
+    },
+    fileTypes: {
+      svg: 'fichier SVG',
+    },
+  },
 };
