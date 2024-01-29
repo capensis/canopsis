@@ -1,4 +1,5 @@
 import { keyBy } from 'lodash';
+import Vue from 'vue';
 
 import { API_ROUTES } from '@/config';
 
@@ -27,11 +28,11 @@ export default createCRUDModule({
   },
   mutations: {
     [types.ADD_REGISTERED_ICON](state, { id, icon }) {
-      state.registeredIconsById[id] = icon;
+      Vue.set(state.registeredIconsById, id, icon);
     },
 
     [types.REMOVE_REGISTERED_ICON](state, { id }) {
-      delete state.registeredIconsById[id];
+      Vue.delete(state.registeredIconsById, id);
     },
 
     [types.SET_REGISTERED_ICONS_BY_ID](state, { icons }) {
@@ -58,7 +59,7 @@ export default createCRUDModule({
     },
 
     update(context, { id, data } = {}) {
-      return request.put(`${API_ROUTES.icons}/${id}`, convertObjectToFormData(data), {
+      return request.patch(`${API_ROUTES.icons}/${id}`, convertObjectToFormData(data), {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
     },

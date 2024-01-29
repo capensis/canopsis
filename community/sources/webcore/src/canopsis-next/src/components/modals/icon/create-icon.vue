@@ -31,6 +31,8 @@
 <script>
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
+import { iconToForm, formToRequest } from '@/helpers/entities/icon/form';
+
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { authMixin } from '@/mixins/auth';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -57,13 +59,8 @@ export default {
     confirmableModalMixinCreator(),
   ],
   data() {
-    const { icon = {} } = this.modal.config;
-
     return {
-      form: {
-        title: icon.title ?? '',
-        file: icon.file ?? null,
-      },
+      form: iconToForm(this.modal.config.icon),
     };
   },
   computed: {
@@ -77,7 +74,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(this.form);
+          await this.config.action(formToRequest(this.form));
         }
 
         this.$modals.hide();
