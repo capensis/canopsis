@@ -11,6 +11,9 @@
     <template #enabled="{ item }">
       <c-enabled :value="item.enabled" />
     </template>
+    <template #type="{ item }">
+      {{ item.type || '-' }}
+    </template>
     <template #priority="{ item }">
       {{ item.priority || '-' }}
     </template>
@@ -90,6 +93,10 @@ export default {
         {
           text: this.$t('common.priority'),
           value: 'priority',
+        },
+        {
+          text: this.$t('stateSetting.appliedFor'),
+          value: 'type',
         },
         {
           text: this.$t('common.method'),

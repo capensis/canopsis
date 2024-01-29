@@ -14,6 +14,8 @@ export default {
   addImpactingEntityPattern: 'Modèle d\'entité impactant',
   conditionsError: 'Veuillez ajouter au moins une condition',
   entityThresholdSummary: 'Un état d\'entité ciblé est {state} lorsque le {method} d\'entités impactantes de l\'état {impactingEntitiesState} est {condition} {value}.',
+  appliedFor: 'Appliqué pour',
+  appliedForEntityType: 'Appliqué pour le type d\'entité',
   steps: {
     basics: 'Les bases',
     rulePatterns: 'Définir les entités cibles',
