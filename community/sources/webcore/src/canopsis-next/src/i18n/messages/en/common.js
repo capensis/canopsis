@@ -562,7 +562,7 @@ export default {
       labelAction: 'or browse',
     },
     fileTypes: {
-      svg: 'svg file',
+      svg: 'SVG file',
     },
   },
 };
