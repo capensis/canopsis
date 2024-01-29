@@ -56,7 +56,7 @@
       v-if="!hideDetails"
     >
       <v-messages
-        :value="errorMessages"
+        :value="errors.collect(name)"
         color="error"
       />
     </div>
@@ -92,10 +92,6 @@ export default {
     accept: {
       type: String,
       default: null,
-    },
-    errorMessages: {
-      type: Array,
-      default: () => [],
     },
     /**
      * File size in kilobytes (KB)
@@ -140,6 +136,10 @@ export default {
       return {
         click: this.selectFiles,
       };
+    },
+
+    errorMessages() {
+      return this.$validator.errors.collect();
     },
   },
   mounted() {
@@ -208,12 +208,12 @@ export default {
 
     setFilesForValidator(files) {
       this.filesForValidator = this.multiple
-        ? union(this.files, files)
-        : files;
+        ? union(this.files, [...files])
+        : [...files];
     },
 
     setFiles(files) {
-      this.files = files;
+      this.files = [...files];
       this.$emit('change', this.files);
     },
 

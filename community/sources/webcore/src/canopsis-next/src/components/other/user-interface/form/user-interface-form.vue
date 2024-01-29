@@ -108,8 +108,7 @@
           <file-selector
             class="mt-1"
             ref="fileSelector"
-            v-validate="`image|size:${$config.MAX_LOGO_SIZE_IN_KB}`"
-            :error-messages="errors.collect('logo')"
+            :max-file-size="$config.MAX_LOGO_SIZE_IN_KB"
             :disabled="disabled"
             accept="image/*"
             name="logo"
@@ -129,7 +128,6 @@ import FileSelector from '@/components/forms/fields/file-selector.vue';
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 
 export default {
-  inject: ['$validator'],
   components: {
     FileSelector,
     TextEditorField,
