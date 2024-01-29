@@ -53,19 +53,18 @@
         :type="$constants.ENTITIES_TYPES.alarm"
         @update:template="updateResolvedAlarmsColumnsTemplate"
       />
-      <template v-if="hasAccessToListFilters">
-        <field-filters
-          v-model="form.parameters.mainFilter"
-          :filters.sync="form.filters"
-          :widget-id="widget._id"
-          :addable="hasAccessToAddFilter"
-          :editable="hasAccessToEditFilter"
-          with-alarm
-          with-entity
-          with-pbehavior
-          entity-counters-type
-        />
-      </template>
+      <field-filters
+        v-if="hasAccessToListFilters"
+        v-model="form.parameters.mainFilter"
+        :filters.sync="form.filters"
+        :widget-id="widget._id"
+        :addable="hasAccessToAddFilter"
+        :editable="hasAccessToEditFilter"
+        with-alarm
+        with-entity
+        with-pbehavior
+        entity-counters-type
+      />
       <field-context-entities-types-filter v-model="form.parameters.selectedTypes" />
       <export-csv-form
         v-model="form.parameters"
