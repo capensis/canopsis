@@ -22,6 +22,7 @@ const readFileWorkers = 10
 type Store interface {
 	Create(context.Context, EditRequest) (*Response, error)
 	Update(context.Context, EditRequest) (*Response, error)
+	Patch(context.Context, PatchRequest) (*Response, error)
 	Delete(ctx context.Context, id string) (bool, error)
 	List(ctx context.Context, query pagination.FilteredQuery) (*AggregationResult, error)
 	Get(ctx context.Context, id string) (*Response, error)
@@ -57,7 +58,7 @@ func NewStore(dbClient mongo.DbClient, storage libfile.Storage) Store {
 func (s *store) Create(ctx context.Context, r EditRequest) (*Response, error) {
 	id := utils.NewID()
 	res, err := s.storeFile(id, r.File)
-	if err != nil || res == nil {
+	if err != nil {
 		return nil, err
 	}
 
@@ -88,7 +89,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	}
 
 	res, err := s.storeFile(id, r.File)
-	if err != nil || res == nil {
+	if err != nil {
 		return nil, err
 	}
 
@@ -101,6 +102,56 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	res.ID = id
 	res.Title = r.Title
 	res.MimeType = r.MimeType
+	res.Created = old.Created
+	res.Updated = now
+	updateRes, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": res})
+	if err != nil || updateRes.MatchedCount == 0 {
+		return nil, err
+	}
+
+	res.Content, err = s.getFileContent(*res)
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}
+
+func (s *store) Patch(ctx context.Context, r PatchRequest) (*Response, error) {
+	id := r.ID
+	old, err := s.Get(ctx, id)
+	if err != nil || old == nil {
+		return nil, err
+	}
+
+	res := &Response{}
+	if r.File == nil {
+		res.Storage = old.Storage
+		res.Etag = old.Etag
+		res.MimeType = old.MimeType
+	} else {
+		res, err = s.storeFile(id, r.File)
+		if err != nil {
+			return nil, err
+		}
+
+		err = s.storage.Delete(id, old.Storage)
+		if err != nil {
+			return nil, err
+		}
+
+		res.MimeType = r.MimeType
+	}
+
+	if r.Title == "" {
+		res.Title = old.Title
+	} else {
+		res.Title = r.Title
+	}
+
+	now := datetime.NewCpsTime()
+	res.ID = id
+	res.Created = old.Created
 	res.Updated = now
 	updateRes, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": res})
 	if err != nil || updateRes.MatchedCount == 0 {

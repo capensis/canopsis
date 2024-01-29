@@ -2072,6 +2072,12 @@ func RegisterRoutes(
 				iconApi.Update,
 				iconsCacheMiddlewareGetter.ClearCache(BaseUrl+iconsPath),
 			)
+			iconRouter.PATCH(
+				"/:id",
+				middleware.Authorize(apisecurity.PermIcon, model.PermissionCan, enforcer),
+				iconApi.Patch,
+				iconsCacheMiddlewareGetter.ClearCache(BaseUrl+iconsPath),
+			)
 		}
 
 		resolveRuleRouter := protected.Group("/resolve-rules")
