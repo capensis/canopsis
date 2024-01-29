@@ -108,7 +108,7 @@
           <file-selector
             class="mt-1"
             ref="fileSelector"
-            :max-file-size="$config.MAX_LOGO_SIZE_IN_KB"
+            :max-file-size="maxFileSize"
             :disabled="disabled"
             accept="image/*"
             name="logo"
@@ -122,6 +122,8 @@
 </template>
 
 <script>
+import { MAX_ICON_SIZE_IN_KB } from '@/constants';
+
 import { formMixin } from '@/mixins/form';
 
 import FileSelector from '@/components/forms/fields/file-selector.vue';
@@ -148,6 +150,10 @@ export default {
     },
   },
   computed: {
+    maxFileSize() {
+      return MAX_ICON_SIZE_IN_KB;
+    },
+
     textEditorConfig() {
       return { disabled: this.disabled };
     },
