@@ -1,6 +1,9 @@
 import { createNamespacedHelpers } from 'vuex';
 
+import { SOCKET_ROOMS } from '@/config';
 import { MAX_LIMIT } from '@/constants';
+
+import { ICONS_RESPONSE_MESSAGES_TYPES } from '@/plugins/socket/constants';
 
 import { vuetifyCustomIconsBaseMixin } from './base';
 
@@ -17,9 +20,9 @@ export const vuetifyCustomIconsRegisterMixin = {
     ...mapGetters(['registeredIconsById']),
   },
   async mounted() {
-    /* this.$socket
+    this.$socket
       .join(SOCKET_ROOMS.icons)
-      .addListener(this.setIcon); */
+      .addListener(this.setIcon);
   },
   methods: {
     ...mapActions({
@@ -30,13 +33,21 @@ export const vuetifyCustomIconsRegisterMixin = {
       removeRegisteredIcon: 'removeRegisteredIcon',
     }),
 
-    async setIcon({ id }) {
+    async setIcon({ _id: id, type }) {
       const prevIcon = this.registeredIconsById[id];
-      const icon = await this.fetchIconWithoutStore({ id });
 
       if (prevIcon) {
         this.unregisterIconFromVuetify(prevIcon.title);
       }
+
+      if (type === ICONS_RESPONSE_MESSAGES_TYPES.delete) {
+        await this.$nextTick();
+        this.removeRegisteredIcon({ id });
+
+        return;
+      }
+
+      const icon = await this.fetchIconWithoutStore({ id });
 
       this.registerIconInVuetify(icon.title, icon.content);
       this.addRegisteredIcon({ id, icon });
