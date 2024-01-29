@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"mime"
+	"mime/multipart"
 	"net/http"
 	"path"
 	"slices"
@@ -23,13 +24,18 @@ const (
 	websocketMsgTypeDelete
 )
 
+type API interface {
+	common.CrudAPI
+	Patch(c *gin.Context)
+}
+
 func NewApi(
 	store Store,
 	websocketHub websocket.Hub,
 	actionLogger logger.ActionLogger,
 	maxSize int64,
 	mimeTypes []string,
-) common.CrudAPI {
+) API {
 	return &api{
 		store:        store,
 		websocketHub: websocketHub,
@@ -61,12 +67,13 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	valErr := a.validateFile(&request)
+	mimeType, valErr := a.validateFile(request.File)
 	if valErr != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 		return
 	}
 
+	request.MimeType = mimeType
 	res, err := a.store.Create(c, request)
 	if err != nil {
 		validationError := common.ValidationError{}
@@ -144,13 +151,68 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	valErr := a.validateFile(&request)
+	mimeType, valErr := a.validateFile(request.File)
 	if valErr != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 		return
 	}
 
+	request.MimeType = mimeType
 	res, err := a.store.Update(c, request)
+	if err != nil {
+		validationError := common.ValidationError{}
+		if errors.As(err, &validationError) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, validationError.ValidationErrorResponse())
+			return
+		}
+
+		panic(err)
+	}
+
+	if res == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
+		Action:    logger.ActionUpdate,
+		ValueType: logger.ValueTypeIcon,
+		ValueID:   res.ID,
+	})
+	if err != nil {
+		a.actionLogger.Err(err, "failed to log action")
+	}
+
+	a.websocketHub.Send(c, websocket.RoomIcons, websocketMsg{
+		ID:   res.ID,
+		Type: websocketMsgTypeUpdate,
+	})
+	c.JSON(http.StatusOK, res)
+}
+
+// Patch
+// @Success 200 {object} Response
+func (a *api) Patch(c *gin.Context) {
+	request := PatchRequest{
+		ID: c.Param("id"),
+	}
+
+	if err := c.ShouldBind(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	if request.File != nil {
+		mimeType, valErr := a.validateFile(request.File)
+		if valErr != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+
+		request.MimeType = mimeType
+	}
+
+	res, err := a.store.Patch(c, request)
 	if err != nil {
 		validationError := common.ValidationError{}
 		if errors.As(err, &validationError) {
@@ -210,17 +272,17 @@ func (a *api) Delete(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-func (a *api) validateFile(r *EditRequest) *common.ValidationError {
-	if r.File.Size > a.maxSize {
-		err := common.NewValidationError("file", fmt.Sprintf("File size %d exceeds limit %d", r.File.Size, a.maxSize))
-		return &err
+func (a *api) validateFile(file *multipart.FileHeader) (string, *common.ValidationError) {
+	if file.Size > a.maxSize {
+		err := common.NewValidationError("file", fmt.Sprintf("File size %d exceeds limit %d", file.Size, a.maxSize))
+		return "", &err
 	}
 
-	r.MimeType = mime.TypeByExtension(path.Ext(r.File.Filename))
-	if !slices.Contains(a.mimeTypes, r.MimeType) {
-		err := common.NewValidationError("file", "Invalid mime type: "+r.MimeType)
-		return &err
+	mimeType := mime.TypeByExtension(path.Ext(file.Filename))
+	if !slices.Contains(a.mimeTypes, mimeType) {
+		err := common.NewValidationError("file", "Invalid mime type: "+mimeType)
+		return "", &err
 	}
 
-	return nil
+	return mimeType, nil
 }
