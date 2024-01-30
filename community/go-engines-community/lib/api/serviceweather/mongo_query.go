@@ -606,6 +606,13 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 							}},
 							"then": "$pbehavior_info.icon_name",
 						},
+						{
+							"case": bson.M{"$and": []bson.M{
+								{"$gt": bson.A{"$counters.under_pbh", 0}},
+								{"$eq": bson.A{"$counters.under_pbh", "$counters.depends"}},
+							}},
+							"then": "",
+						},
 					},
 					stateVals...,
 				),
