@@ -74,8 +74,8 @@ export default {
       });
     },
 
-    async fetchList() {
-      await this.fetchIconsList({ params: this.getQuery() });
+    fetchList() {
+      return this.fetchIconsList({ params: this.getQuery() });
     },
   },
 };
