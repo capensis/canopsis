@@ -5,7 +5,7 @@
       v-model="showType"
       class="mb-3"
     />
-    <state-settings-summary />
+    <state-settings-summary :entity="root" />
     <c-treeview-data-table
       :items="items"
       :headers="headers"
@@ -276,14 +276,16 @@ export default {
     async fetchDependenciesById(id, params = { limit: PAGINATION_LIMIT }) {
       this.$set(this.pendingByIds, id, true);
 
+      const selectedType = this.isCustomType
+        ? this.showType
+        : this.type;
+
       const { data, meta } = await this.fetchDependenciesList({
         id,
         params: {
           ...params,
 
-          /**
-           * TODO: Should be added parameter
-           */
+          define_state: selectedType === TREE_OF_DEPENDENCIES_SHOW_TYPES.dependenciesDefiningTheState,
           with_flags: true,
         },
       });
@@ -314,6 +316,8 @@ export default {
 
 <style lang="scss" scoped>
 .service-dependencies ::v-deep .v-treeview-node__label {
+  overflow: initial;
+
   &, .expand-append {
     display: inline-flex;
     align-items: center;

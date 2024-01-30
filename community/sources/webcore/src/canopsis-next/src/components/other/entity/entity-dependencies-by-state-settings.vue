@@ -160,11 +160,11 @@ export default {
           'entity-dependencies-by-state-settings__node-icon',
         );
 
-        el.innerHTML = entity.type === ENTITY_TYPES.service
-          ? engineeringIcon
-          : 'person';
-
-        // 'perm_identity'
+        el.innerHTML = {
+          [ENTITY_TYPES.service]: engineeringIcon,
+          [ENTITY_TYPES.resource]: 'perm_identity',
+          [ENTITY_TYPES.component]: 'developer_board',
+        }[entity.type];
 
         return el;
       };
@@ -244,7 +244,7 @@ export default {
         nodeEl.style.width = `${nodeSize}px`;
         nodeEl.style.height = `${nodeSize}px`;
         nodeEl.style.justifyContent = 'center';
-        nodeEl.style.background = getEntityColor(entity, this.colorIndicator);
+        nodeEl.style.background = getEntityColor(entity);
 
         if (this.hasDependencies(entity) && !dependenciesCount) {
           nodeEl.appendChild(getBadgeEl(entity, opened, pending));
