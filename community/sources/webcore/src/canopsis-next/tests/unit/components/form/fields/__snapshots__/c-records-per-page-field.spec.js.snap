@@ -20,6 +20,7 @@ exports[`c-records-per-page-field Renders \`c-records-per-page-field\` with cust
           <input
             aria-readonly="false"
             autocomplete="on"
+            name="itemsPerPage"
             readonly="readonly"
             type="text"
           />
@@ -140,6 +141,7 @@ exports[`c-records-per-page-field Renders \`c-records-per-page-field\` with defa
           <input
             aria-readonly="false"
             autocomplete="on"
+            name="itemsPerPage"
             readonly="readonly"
             type="text"
           />
