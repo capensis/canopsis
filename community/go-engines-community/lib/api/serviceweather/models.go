@@ -6,8 +6,10 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviortype"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/statesettings"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
 )
 
@@ -27,6 +29,7 @@ type EntitiesListRequest struct {
 	pagination.Query
 	WithInstructions   bool   `form:"with_instructions"`
 	WithDeclareTickets bool   `form:"with_declare_tickets"`
+	WithStateSetting   bool   `form:"with_state_setting"`
 	Sort               string `form:"sort"`
 	SortBy             string `form:"sort_by" json:"sort_by" binding:"oneoforempty=name state infos.* impact_state"`
 	PbhOrigin          string `form:"pbh_origin" json:"pbh_origin"`
@@ -147,6 +150,7 @@ type Entity struct {
 	Imported     *datetime.CpsTime `bson:"imported,omitempty" json:"imported,omitempty" swaggertype:"integer"`
 
 	AssignedDeclareTicketRules []alarm.AssignedDeclareTicketRule `bson:"-" json:"assigned_declare_ticket_rules,omitempty"`
+	StateSetting               *CheckStateSettingResponse        `bson:"state_setting,omitempty" json:"state_setting,omitempty"`
 }
 
 type EntityAggregationResult struct {
@@ -160,4 +164,12 @@ func (r *EntityAggregationResult) GetData() interface{} {
 
 func (r *EntityAggregationResult) GetTotal() int64 {
 	return r.TotalCount
+}
+
+type CheckStateSettingResponse struct {
+	ID                     string                         `bson:"_id" json:"_id"`
+	Title                  string                         `json:"title"`
+	Method                 string                         `json:"method"`
+	InheritedEntityPattern *pattern.Entity                `bson:"inherited_entity_pattern,omitempty" json:"inherited_entity_pattern,omitempty"`
+	StateThresholds        *statesettings.StateThresholds `bson:"state_thresholds,omitempty" json:"state_thresholds,omitempty"`
 }

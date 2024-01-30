@@ -5348,6 +5348,11 @@ paths:
           description: sort query
           schema:
             type: string
+        - name: define_state
+          in: query
+          description: show dependencies defining the state of the entity
+          schema:
+            type: boolean
       responses:
         200:
           description: OK

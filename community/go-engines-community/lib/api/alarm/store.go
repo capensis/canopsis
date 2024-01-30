@@ -10,6 +10,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity/dbquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -70,6 +71,7 @@ type store struct {
 	dbEntityCollection               mongo.DbCollection
 	dbDeclareTicketCollection        mongo.DbCollection
 	dbUserCollection                 mongo.DbCollection
+	stateSettingsCollection          mongo.DbCollection
 	authorProvider                   author.Provider
 
 	linkGenerator link.Generator
@@ -103,6 +105,7 @@ func NewStore(
 		dbEntityCollection:               dbClient.Collection(mongo.EntityMongoCollection),
 		dbDeclareTicketCollection:        dbClient.Collection(mongo.DeclareTicketRuleMongoCollection),
 		dbUserCollection:                 dbClient.Collection(mongo.UserCollection),
+		stateSettingsCollection:          dbClient.Collection(mongo.StateSettingsMongoCollection),
 		authorProvider:                   authorProvider,
 
 		linkGenerator: linkGenerator,
@@ -401,6 +404,7 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userId string)
 		collection = s.resolvedDbCollection
 	}
 
+	const entityLookupName = "entity"
 	pipeline := []bson.M{
 		{"$match": match},
 		{"$addFields": bson.M{
@@ -410,9 +414,9 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userId string)
 			"from":         mongo.EntityMongoCollection,
 			"localField":   "d",
 			"foreignField": "_id",
-			"as":           "entity",
+			"as":           entityLookupName,
 		}},
-		{"$unwind": "$entity"},
+		{"$unwind": "$" + entityLookupName},
 	}
 
 	if r.WithDependencies {
@@ -475,6 +479,7 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userId string)
 	pipeline = append(pipeline, bson.M{"$project": bson.M{
 		"v.steps": 0,
 	}})
+	pipeline = append(pipeline, dbquery.GetStateSettingLookup(entityLookupName)...)
 
 	var details Details
 	cursor, err := collection.Aggregate(ctx, pipeline)

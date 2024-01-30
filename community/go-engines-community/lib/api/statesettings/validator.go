@@ -25,7 +25,7 @@ type baseValidator struct {
 func NewValidator() Validator {
 	return &baseValidator{
 		invalidRulesPatternFields:           common.GetForbiddenFieldsInEntityPattern(mongo.StateSettingsMongoCollection),
-		invalidInheritedEntityPatternFields: append(common.GetForbiddenFieldsInEntityPattern(mongo.StateSettingsMongoCollection), []string{"connector", "type"}...),
+		invalidInheritedEntityPatternFields: append(common.GetForbiddenFieldsInEntityPattern(mongo.StateSettingsMongoCollection), "connector"),
 	}
 }
 
