@@ -35,12 +35,12 @@
     <template #item="{ item, attrs, on, parent }">
       <v-list-item
         v-bind="attrs"
-        :active-class="errors.has(getAdditionalValueFieldName(item.type)) ? 'error--text' : tile.props.activeClass"
+        :active-class="errors.has(getAdditionalValueFieldName(item.type, attrs)) ? 'error--text' : attrs.activeClass"
         @click="on.click"
       >
         <v-list-item-action>
           <v-checkbox
-            :input-value="attrs.value"
+            :input-value="attrs.inputValue"
             :color="parent.color"
             hide-details
           />
