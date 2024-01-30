@@ -891,6 +891,131 @@ default_rights:
     _id: map_category
     crecord_name: <Current()._id>
     description: "Rights on map: Access to 'Category' action"
+  permission_models_remediation_statistics:
+    <<: *permission
+    _id: models_remediationStatistic
+    crecord_name: <Current()._id>
+    description: Remediation statistics
+  permission_barchart_interval:
+    <<: *permission
+    _id: barchart_interval
+    crecord_name: <Current()._id>
+    description: Barchart interval
+  permission_barchart_sampling:
+    <<: *permission
+    _id: barchart_sampling
+    crecord_name: <Current()._id>
+    description: Barchart sampling
+  permission_barchart_listFilters:
+    <<: *permission
+    _id: barchart_listFilters
+    crecord_name: <Current()._id>
+    description: Barchart list filters
+  permission_barchart_editFilter:
+    <<: *permission
+    _id: barchart_editFilter
+    crecord_name: <Current()._id>
+    description: Barchart edit filter
+  permission_barchart_addFilter:
+    <<: *permission
+    _id: barchart_addFilter
+    crecord_name: <Current()._id>
+    description: Barchart add filter
+  permission_barchart_userFilter:
+    <<: *permission
+    _id: barchart_userFilter
+    crecord_name: <Current()._id>
+    description: Barchart user filter
+  permission_linechart_interval:
+    <<: *permission
+    _id: linechart_interval
+    crecord_name: <Current()._id>
+    description: Linechart interval
+  permission_linechart_sampling:
+    <<: *permission
+    _id: linechart_sampling
+    crecord_name: <Current()._id>
+    description: Linechart sampling
+  permission_linechart_listFilters:
+    <<: *permission
+    _id: linechart_listFilters
+    crecord_name: <Current()._id>
+    description: Linechart list filters
+  permission_linechart_editFilter:
+    <<: *permission
+    _id: linechart_editFilter
+    crecord_name: <Current()._id>
+    description: Linechart edit filter
+  permission_linechart_addFilter:
+    <<: *permission
+    _id: linechart_addFilter
+    crecord_name: <Current()._id>
+    description: Linechart add filter
+  permission_linechart_userFilter:
+    <<: *permission
+    _id: linechart_userFilter
+    crecord_name: <Current()._id>
+    description: Linechart user filter
+  permission_piechart_interval:
+    <<: *permission
+    _id: piechart_interval
+    crecord_name: <Current()._id>
+    description: Piechart interval
+  permission_piechart_sampling:
+    <<: *permission
+    _id: piechart_sampling
+    crecord_name: <Current()._id>
+    description: Piechart sampling
+  permission_piechart_listFilters:
+    <<: *permission
+    _id: piechart_listFilters
+    crecord_name: <Current()._id>
+    description: Piechart list filters
+  permission_piechart_editFilter:
+    <<: *permission
+    _id: piechart_editFilter
+    crecord_name: <Current()._id>
+    description: Piechart edit filter
+  permission_piechart_addFilter:
+    <<: *permission
+    _id: piechart_addFilter
+    crecord_name: <Current()._id>
+    description: Piechart add filter
+  permission_piechart_userFilter:
+    <<: *permission
+    _id: piechart_userFilter
+    crecord_name: <Current()._id>
+    description: Piechart user filter
+  permission_numbers_interval:
+    <<: *permission
+    _id: numbers_interval
+    crecord_name: <Current()._id>
+    description: Numbers interval
+  permission_numbers_sampling:
+    <<: *permission
+    _id: numbers_sampling
+    crecord_name: <Current()._id>
+    description: Numbers sampling
+  permission_numbers_listFilters:
+    <<: *permission
+    _id: numbers_listFilters
+    crecord_name: <Current()._id>
+    description: Numbers list filters
+  permission_numbers_editFilter:
+    <<: *permission
+    _id: numbers_editFilter
+    crecord_name: <Current()._id>
+    description: Numbers edit filter
+  permission_numbers_addFilter:
+    <<: *permission
+    _id: numbers_addFilter
+    crecord_name: <Current()._id>
+    description: Numbers add filter
+  permission_numbers_userFilter:
+    <<: *permission
+    _id: numbers_userFilter
+    crecord_name: <Current()._id>
+    description: Numbers user filter
 
   # API permissions
   permission_api_alarm_read:
@@ -1175,131 +1300,6 @@ default_rights:
     _id: "@view_context_explorer"
     crecord_name: <Current()._id>
     description: "Rights on view: Explorateur de Contexte"
-  permission_models_remediation_statistics:
-    <<: *permission
-    _id: models_remediationStatistic
-    crecord_name: <Current()._id>
-    description: Remediation statistics
-  permission_barchart_interval:
-    <<: *permission
-    _id: barchart_interval
-    crecord_name: <Current()._id>
-    description: Barchart interval
-  permission_barchart_sampling:
-    <<: *permission
-    _id: barchart_sampling
-    crecord_name: <Current()._id>
-    description: Barchart sampling
-  permission_barchart_listFilters:
-    <<: *permission
-    _id: barchart_listFilters
-    crecord_name: <Current()._id>
-    description: Barchart list filters
-  permission_barchart_editFilter:
-    <<: *permission
-    _id: barchart_editFilter
-    crecord_name: <Current()._id>
-    description: Barchart edit filter
-  permission_barchart_addFilter:
-    <<: *permission
-    _id: barchart_addFilter
-    crecord_name: <Current()._id>
-    description: Barchart add filter
-  permission_barchart_userFilter:
-    <<: *permission
-    _id: barchart_userFilter
-    crecord_name: <Current()._id>
-    description: Barchart user filter
-  permission_linechart_interval:
-    <<: *permission
-    _id: linechart_interval
-    crecord_name: <Current()._id>
-    description: Linechart interval
-  permission_linechart_sampling:
-    <<: *permission
-    _id: linechart_sampling
-    crecord_name: <Current()._id>
-    description: Linechart sampling
-  permission_linechart_listFilters:
-    <<: *permission
-    _id: linechart_listFilters
-    crecord_name: <Current()._id>
-    description: Linechart list filters
-  permission_linechart_editFilter:
-    <<: *permission
-    _id: linechart_editFilter
-    crecord_name: <Current()._id>
-    description: Linechart edit filter
-  permission_linechart_addFilter:
-    <<: *permission
-    _id: linechart_addFilter
-    crecord_name: <Current()._id>
-    description: Linechart add filter
-  permission_linechart_userFilter:
-    <<: *permission
-    _id: linechart_userFilter
-    crecord_name: <Current()._id>
-    description: Linechart user filter
-  permission_piechart_interval:
-    <<: *permission
-    _id: piechart_interval
-    crecord_name: <Current()._id>
-    description: Piechart interval
-  permission_piechart_sampling:
-    <<: *permission
-    _id: piechart_sampling
-    crecord_name: <Current()._id>
-    description: Piechart sampling
-  permission_piechart_listFilters:
-    <<: *permission
-    _id: piechart_listFilters
-    crecord_name: <Current()._id>
-    description: Piechart list filters
-  permission_piechart_editFilter:
-    <<: *permission
-    _id: piechart_editFilter
-    crecord_name: <Current()._id>
-    description: Piechart edit filter
-  permission_piechart_addFilter:
-    <<: *permission
-    _id: piechart_addFilter
-    crecord_name: <Current()._id>
-    description: Piechart add filter
-  permission_piechart_userFilter:
-    <<: *permission
-    _id: piechart_userFilter
-    crecord_name: <Current()._id>
-    description: Piechart user filter
-  permission_numbers_interval:
-    <<: *permission
-    _id: numbers_interval
-    crecord_name: <Current()._id>
-    description: Numbers interval
-  permission_numbers_sampling:
-    <<: *permission
-    _id: numbers_sampling
-    crecord_name: <Current()._id>
-    description: Numbers sampling
-  permission_numbers_listFilters:
-    <<: *permission
-    _id: numbers_listFilters
-    crecord_name: <Current()._id>
-    description: Numbers list filters
-  permission_numbers_editFilter:
-    <<: *permission
-    _id: numbers_editFilter
-    crecord_name: <Current()._id>
-    description: Numbers edit filter
-  permission_numbers_addFilter:
-    <<: *permission
-    _id: numbers_addFilter
-    crecord_name: <Current()._id>
-    description: Numbers add filter
-  permission_numbers_userFilter:
-    <<: *permission
-    _id: numbers_userFilter
-    crecord_name: <Current()._id>
-    description: Numbers user filter
 
   role_admin:
     <<: *role
@@ -1530,6 +1530,56 @@ default_rights:
         checksum: 1
       "@permission_map_category":
         checksum: 1
+      "@permission_models_remediation_statistics":
+        checksum: 1
+      "@permission_barchart_interval":
+        checksum: 1
+      "@permission_barchart_sampling":
+        checksum: 1
+      "@permission_barchart_listFilters":
+        checksum: 1
+      "@permission_barchart_editFilter":
+        checksum: 1
+      "@permission_barchart_addFilter":
+        checksum: 1
+      "@permission_barchart_userFilter":
+        checksum: 1
+      "@permission_linechart_interval":
+        checksum: 1
+      "@permission_linechart_sampling":
+        checksum: 1
+      "@permission_linechart_listFilters":
+        checksum: 1
+      "@permission_linechart_editFilter":
+        checksum: 1
+      "@permission_linechart_addFilter":
+        checksum: 1
+      "@permission_linechart_userFilter":
+        checksum: 1
+      "@permission_piechart_interval":
+        checksum: 1
+      "@permission_piechart_sampling":
+        checksum: 1
+      "@permission_piechart_listFilters":
+        checksum: 1
+      "@permission_piechart_editFilter":
+        checksum: 1
+      "@permission_piechart_addFilter":
+        checksum: 1
+      "@permission_piechart_userFilter":
+        checksum: 1
+      "@permission_numbers_interval":
+        checksum: 1
+      "@permission_numbers_sampling":
+        checksum: 1
+      "@permission_numbers_listFilters":
+        checksum: 1
+      "@permission_numbers_editFilter":
+        checksum: 1
+      "@permission_numbers_addFilter":
+        checksum: 1
+      "@permission_numbers_userFilter":
+        checksum: 1
       # API permissions
       "@permission_api_alarm_read":
         checksum: 1
@@ -1702,81 +1752,7 @@ default_rights:
       "@permission_view_context_explorer":
         checksum: 15
         crecord_type: right
-      "@permission_models_remediation_statistics":
-        checksum: 1
-        crecord_type: right
-      "@permission_barchart_interval":
-        checksum: 1
-        crecord_type: right
-      "@permission_barchart_sampling":
-        checksum: 1
-        crecord_type: right
-      "@permission_barchart_listFilters":
-        checksum: 1
-        crecord_type: right
-      "@permission_barchart_editFilter":
-        checksum: 1
-        crecord_type: right
-      "@permission_barchart_addFilter":
-        checksum: 1
-        crecord_type: right
-      "@permission_barchart_userFilter":
-        checksum: 1
-        crecord_type: right
-      "@permission_linechart_interval":
-        checksum: 1
-        crecord_type: right
-      "@permission_linechart_sampling":
-        checksum: 1
-        crecord_type: right
-      "@permission_linechart_listFilters":
-        checksum: 1
-        crecord_type: right
-      "@permission_linechart_editFilter":
-        checksum: 1
-        crecord_type: right
-      "@permission_linechart_addFilter":
-        checksum: 1
-        crecord_type: right
-      "@permission_linechart_userFilter":
-        checksum: 1
-        crecord_type: right
-      "@permission_piechart_interval":
-        checksum: 1
-        crecord_type: right
-      "@permission_piechart_sampling":
-        checksum: 1
-        crecord_type: right
-      "@permission_piechart_listFilters":
-        checksum: 1
-        crecord_type: right
-      "@permission_piechart_editFilter":
-        checksum: 1
-        crecord_type: right
-      "@permission_piechart_addFilter":
-        checksum: 1
-        crecord_type: right
-      "@permission_piechart_userFilter":
-        checksum: 1
-        crecord_type: right
-      "@permission_numbers_interval":
-        checksum: 1
-        crecord_type: right
-      "@permission_numbers_sampling":
-        checksum: 1
-        crecord_type: right
-      "@permission_numbers_listFilters":
-        checksum: 1
-        crecord_type: right
-      "@permission_numbers_editFilter":
-        checksum: 1
-        crecord_type: right
-      "@permission_numbers_addFilter":
-        checksum: 1
-        crecord_type: right
-      "@permission_numbers_userFilter":
-        checksum: 1
-        crecord_type: right
+
   user_admin:
     <<: *user
     _id: root
