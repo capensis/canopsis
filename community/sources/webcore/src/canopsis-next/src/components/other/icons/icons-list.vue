@@ -9,9 +9,7 @@
     @update:options="$emit('update:options', $event)"
   >
     <template #icon="{ item }">
-      <v-icon>
-        $vuetify.icons.{{ item.title }}
-      </v-icon>
+      <custom-icon :content="item.content" />
     </template>
     <template #updated="{ item }">
       {{ item.updated | date }}
@@ -34,7 +32,10 @@
 </template>
 
 <script>
+import CustomIcon from './partials/custom-icon.vue';
+
 export default {
+  components: { CustomIcon },
   props: {
     options: {
       type: Object,

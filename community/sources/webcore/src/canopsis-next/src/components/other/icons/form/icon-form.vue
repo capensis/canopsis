@@ -12,24 +12,25 @@
           $vuetify.icons.{{ iconOriginalTitle }}
         </v-icon>
       </v-flex>
-      <c-name-field
+      <v-text-field
         v-field="form.title"
+        v-validate="titleRules"
         :label="$t('common.title')"
-        :error-messages="errors.collect('title')"
+        :error-messages="titleErrorMessages"
         name="title"
-        required
       />
     </v-layout>
     <icon-file-selector
       v-if="!iconOriginalTitle"
       v-field="form.file"
       :max-file-size="maxFileSize"
+      class="mt-2"
     />
   </v-layout>
 </template>
 
 <script>
-import { MAX_ICON_SIZE_IN_KB } from '@/constants';
+import { ICON_TITLE_REGEX, MAX_ICON_SIZE_IN_KB } from '@/constants';
 
 import IconFileSelector from './fields/icon-file-selector.vue';
 
@@ -54,6 +55,18 @@ export default {
     };
   },
   computed: {
+    titleRules() {
+      return {
+        required: true,
+        regex: ICON_TITLE_REGEX,
+      };
+    },
+
+    titleErrorMessages() {
+      return this.errors.collect('title', null, false)
+        .map(({ rule, msg }) => (rule === 'regex' ? this.$t('icon.validation.iconTitleRegex') : msg));
+    },
+
     maxFileSize() {
       return MAX_ICON_SIZE_IN_KB;
     },
