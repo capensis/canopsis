@@ -4,8 +4,8 @@
       {{ title }}
     </template>
     <template #text="">
-      <state-settings-summary />
-      <entity-dependencies-by-state-settings-component :entity="config.entity" />
+      <state-settings-summary :entity="config.entity" />
+      <entity-dependencies-by-state-settings :entity="config.entity" />
     </template>
   </modal-wrapper>
 </template>
@@ -15,7 +15,7 @@ import { MODALS } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 
-import EntityDependenciesByStateSettingsComponent from '@/components/other/entity/entity-dependencies-by-state-settings.vue';
+import EntityDependenciesByStateSettings from '@/components/other/entity/entity-dependencies-by-state-settings.vue';
 import StateSettingsSummary from '@/components/other/state-setting/state-settings-summary.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
@@ -25,7 +25,7 @@ export default {
   components: {
     StateSettingsSummary,
     ModalWrapper,
-    EntityDependenciesByStateSettingsComponent,
+    EntityDependenciesByStateSettings,
   },
   mixins: [modalInnerMixin],
   computed: {
