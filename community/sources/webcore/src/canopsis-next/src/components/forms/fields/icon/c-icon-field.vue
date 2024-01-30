@@ -27,12 +27,15 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
+import { formBaseMixin } from '@/mixins/form';
+
 import materialIconNameByCode from '@/assets/material-icons/MaterialIcons-Regular.json';
 
 const { mapGetters } = createNamespacedHelpers('icon');
 
 export default {
   inject: ['$validator'],
+  mixins: [formBaseMixin],
   model: {
     prop: 'value',
     event: 'input',
@@ -91,6 +94,13 @@ export default {
       return {
         required: this.required,
       };
+    },
+  },
+  watch: {
+    registeredIconsItems(items) {
+      if (!items.some(({ value }) => value === this.value)) {
+        this.updateModel('');
+      }
     },
   },
 };
