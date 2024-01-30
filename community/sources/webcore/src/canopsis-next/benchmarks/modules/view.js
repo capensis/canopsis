@@ -8,7 +8,7 @@ class ViewPage {
   }
 
   clickReload() {
-    return this.application.page.click('.view-fab-btns > .layout > .v-btn');
+    return this.application.page.click('.view-periodic-refresh-btn');
   }
 }
 

@@ -1,7 +1,7 @@
 <template lang="pug">
   v-tooltip(top)
     template(#activator="{ on }")
-      v-btn(
+      v-btn.view-periodic-refresh-btn(
         v-on="on",
         :input-value="isPeriodicRefreshEnabled",
         :loading="pending",
@@ -11,7 +11,7 @@
         @click.stop="refreshHandler"
       )
         v-icon(v-if="!isPeriodicRefreshEnabled") refresh
-        v-progress-circular.periodic-refresh-progress(
+        v-progress-circular(
           v-else,
           :rotate="270",
           :size="30",
@@ -20,7 +20,7 @@
           color="white",
           button
         )
-          span.refresh-btn {{ periodicRefreshProgress | maxDurationByUnit }}
+          span.view-periodic-refresh-btn__progress-content {{ periodicRefreshProgress | maxDurationByUnit }}
     span {{ tooltipContent }}
 </template>
 
@@ -182,8 +182,10 @@ export default {
 </script>
 
 <style lang="scss">
-.refresh-btn {
-  text-decoration: none;
-  text-transform: none;
+.view-periodic-refresh-btn {
+  &__progress-content {
+    text-decoration: none;
+    text-transform: none;
+  }
 }
 </style>
