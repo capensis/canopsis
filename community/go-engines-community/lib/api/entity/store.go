@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/statesettings"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -403,7 +404,10 @@ func (s *store) CheckStateSetting(ctx context.Context, r CheckStateSettingReques
 				"$in": []string{statesetting.MethodInherited, statesetting.MethodDependencies},
 			},
 		},
-		options.Find().SetSort(bson.M{"priority": 1}).SetProjection(bson.M{"title": 1, "entity_pattern": 1}),
+		options.Find().SetSort(bson.M{"priority": 1}).SetProjection(bson.M{
+			"title": 1, "method": 1, "entity_pattern": 1,
+			"inherited_entity_pattern": 1, "state_thresholds": 1,
+		}),
 	)
 	if err != nil {
 		return response, err
@@ -435,11 +439,32 @@ func (s *store) CheckStateSetting(ctx context.Context, r CheckStateSettingReques
 
 		if matched {
 			response.Title = stateSetting.Title
+			response.Method = stateSetting.Method
+			response.InheritedEntityPattern = stateSetting.InheritedEntityPattern
+			if stateSetting.StateThresholds != nil {
+				response.StateThresholds = &statesettings.StateThresholds{}
+				response.StateThresholds.Critical = ConvertStateTreshold(stateSetting.StateThresholds.Critical)
+				response.StateThresholds.Major = ConvertStateTreshold(stateSetting.StateThresholds.Major)
+				response.StateThresholds.Minor = ConvertStateTreshold(stateSetting.StateThresholds.Minor)
+				response.StateThresholds.OK = ConvertStateTreshold(stateSetting.StateThresholds.OK)
+			}
 			return response, nil
 		}
 	}
 
 	return response, nil
+}
+
+func ConvertStateTreshold(src *statesetting.StateThreshold) *statesettings.StateThreshold {
+	if src == nil {
+		return nil
+	}
+	return &statesettings.StateThreshold{
+		Method: src.Method,
+		State:  src.State,
+		Cond:   src.Cond,
+		Value:  src.Value,
+	}
 }
 
 func (s *store) fillConnectorType(result *AggregationResult) {
