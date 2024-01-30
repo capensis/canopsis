@@ -10,6 +10,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity/dbquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
@@ -87,10 +88,10 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 		"enabled": true,
 	}})
 	q.lookups = []lookupWithKey{
-		{key: "category", pipeline: getCategoryLookup()},
+		{key: "category", pipeline: dbquery.GetCategoryLookup()},
 		{key: "alarm", pipeline: getAlarmLookup()},
 		{key: "pbehavior", pipeline: getPbehaviorLookup(q.authorProvider)},
-		{key: "pbehavior_info.icon_name", pipeline: getPbehaviorInfoTypeLookup()},
+		{key: "pbehavior_info.icon_name", pipeline: dbquery.GetPbehaviorInfoTypeLookup()},
 		{key: "counters", pipeline: getPbehaviorAlarmCountersLookup()},
 	}
 	err := q.handleWidgetFilter(ctx, r)
@@ -115,12 +116,15 @@ func (q *MongoQueryBuilder) CreateListDependenciesAggregationPipeline(id string,
 		"enabled":  true,
 	}})
 	q.lookups = []lookupWithKey{
-		{key: "category", pipeline: getCategoryLookup()},
+		{key: "category", pipeline: dbquery.GetCategoryLookup()},
 		{key: "alarm", pipeline: getAlarmLookup()},
 		{key: "pbehavior", pipeline: getPbehaviorLookup(q.authorProvider)},
-		{key: "pbehavior_info.icon_name", pipeline: getPbehaviorInfoTypeLookup()},
+		{key: "pbehavior_info.icon_name", pipeline: dbquery.GetPbehaviorInfoTypeLookup()},
 		{key: "stats", pipeline: getEventStatsLookup(now)},
-		{key: "depends_count", pipeline: getDependsCountPipeline()},
+		{key: "depends_count", pipeline: dbquery.GetDependsCountPipeline()},
+	}
+	if r.WithStateSetting {
+		q.lookups = append(q.lookups, lookupWithKey{key: "state_setting", pipeline: dbquery.GetStateSettingLookup()})
 	}
 	q.handleSort(r.SortBy, r.Sort)
 	q.computedFields = getListDependenciesComputedFields()
@@ -341,18 +345,6 @@ func (q *MongoQueryBuilder) handleSort(sortBy, sort string) {
 	q.sort = bson.M{"$sort": sortQuery}
 }
 
-func getCategoryLookup() []bson.M {
-	return []bson.M{
-		{"$lookup": bson.M{
-			"from":         mongo.EntityCategoryMongoCollection,
-			"localField":   "category",
-			"foreignField": "_id",
-			"as":           "category",
-		}},
-		{"$unwind": bson.M{"path": "$category", "preserveNullAndEmptyArrays": true}},
-	}
-}
-
 func getAlarmLookup() []bson.M {
 	return []bson.M{
 		{"$lookup": bson.M{
@@ -451,29 +443,6 @@ func getPbehaviorLookup(authorProvider author.Provider) []bson.M {
 		}},
 	)
 	return pipeline
-}
-
-func getPbehaviorInfoTypeLookup() []bson.M {
-	return []bson.M{
-		{"$lookup": bson.M{
-			"from":         mongo.PbehaviorTypeMongoCollection,
-			"foreignField": "_id",
-			"localField":   "pbehavior_info.type",
-			"as":           "pbehavior_info_type",
-		}},
-		{"$unwind": bson.M{"path": "$pbehavior_info_type", "preserveNullAndEmptyArrays": true}},
-		{"$addFields": bson.M{
-			"pbehavior_info": bson.M{"$cond": bson.M{
-				"if": "$pbehavior_info",
-				"then": bson.M{"$mergeObjects": bson.A{
-					"$pbehavior_info",
-					bson.M{"icon_name": "$pbehavior_info_type.icon_name"},
-				}},
-				"else": nil,
-			}},
-		}},
-		{"$project": bson.M{"pbehavior_info_type": 0}},
-	}
 }
 
 func getPbehaviorAlarmCountersLookup() []bson.M {
@@ -726,23 +695,5 @@ func getListDependenciesComputedFields() bson.M {
 			),
 			"default": defaultVal,
 		}},
-	}
-}
-
-func getDependsCountPipeline() []bson.M {
-	return []bson.M{
-		{"$lookup": bson.M{
-			"from":         mongo.EntityMongoCollection,
-			"localField":   "_id",
-			"foreignField": "services",
-			"as":           "depends",
-			"pipeline": []bson.M{
-				{"$project": bson.M{"_id": 1}},
-			},
-		}},
-		{"$addFields": bson.M{
-			"depends_count": bson.M{"$size": "$depends"},
-		}},
-		{"$project": bson.M{"depends": 0}},
 	}
 }

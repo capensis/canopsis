@@ -10,8 +10,10 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/statesettings"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"go.mongodb.org/mongo-driver/bson"
@@ -27,8 +29,9 @@ const (
 type ListRequestWithPagination struct {
 	pagination.Query
 	ListRequest
-	WithFlags bool     `form:"with_flags" json:"with_flags"`
-	PerfData  []string `form:"perf_data[]" json:"perf_data"`
+	WithFlags        bool     `form:"with_flags" json:"with_flags"`
+	WithStateSetting bool     `form:"with_state_setting" json:"with_state_setting"`
+	PerfData         []string `form:"perf_data[]" json:"perf_data"`
 }
 
 type ListRequest struct {
@@ -138,6 +141,8 @@ type Entity struct {
 
 	PerfData         []string `bson:"perf_data" json:"-"`
 	FilteredPerfData []string `bson:"filtered_perf_data" json:"filtered_perf_data,omitempty"`
+
+	StateSetting *CheckStateSettingResponse `bson:"state_setting,omitempty" json:"state_setting,omitempty"`
 }
 
 func (e *Entity) fillConnectorType() {
@@ -284,5 +289,9 @@ type CheckStateSettingRequest struct {
 }
 
 type CheckStateSettingResponse struct {
-	Title string `json:"title"`
+	ID                     string                         `bson:"_id" json:"_id"`
+	Title                  string                         `json:"title"`
+	Method                 string                         `json:"method"`
+	InheritedEntityPattern *pattern.Entity                `bson:"inherited_entity_pattern,omitempty" json:"inherited_entity_pattern,omitempty"`
+	StateThresholds        *statesettings.StateThresholds `bson:"state_thresholds,omitempty" json:"state_thresholds,omitempty"`
 }

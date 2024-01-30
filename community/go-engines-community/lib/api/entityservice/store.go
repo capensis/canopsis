@@ -12,6 +12,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -99,7 +102,9 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 func (s *store) GetDependencies(ctx context.Context, r ContextGraphRequest, userId string) (*ContextGraphAggregationResult, error) {
 	service := types.Entity{}
 	err := s.dbCollection.
-		FindOne(ctx, bson.M{"_id": r.ID, "type": types.EntityTypeService, "soft_deleted": bson.M{"$exists": false}}).
+		FindOne(ctx, bson.M{
+			"_id": r.ID, "type": bson.M{"$in": []string{types.EntityTypeService, types.EntityTypeComponent}},
+			"soft_deleted": bson.M{"$exists": false}}).
 		Decode(&service)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -108,7 +113,48 @@ func (s *store) GetDependencies(ctx context.Context, r ContextGraphRequest, user
 		return nil, err
 	}
 	now := datetime.NewCpsTime()
-	match := bson.M{"services": service.ID}
+	var match bson.M
+	switch service.Type {
+	case types.EntityTypeService:
+		match = bson.M{"services": service.ID, "_id": bson.M{"$ne": service.ID}}
+	case types.EntityTypeComponent:
+		if service.StateInfo == nil {
+			return &ContextGraphAggregationResult{Data: make([]entity.Entity, 0)}, nil
+		}
+
+		match = bson.M{"component": service.ID, "_id": bson.M{"$ne": service.ID}}
+	}
+
+	if r.DefineState {
+		ec := entitycounters.EntityCounters{}
+		err = s.entityCounters.FindOne(
+			ctx, bson.M{"_id": service.ID}, options.FindOne().SetProjection(bson.M{"rule": 1})).Decode(&ec)
+		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+			return nil, err
+		}
+		if ec.Rule != nil {
+			var entityPattern *pattern.Entity
+			switch ec.Rule.Method {
+			case statesetting.MethodInherited, statesetting.MethodDependencies:
+				entityPattern = ec.Rule.InheritedEntityPattern
+			}
+			if entityPattern != nil {
+				var patternMongoQuery bson.M
+				patternMongoQuery, err = db.EntityPatternToMongoQuery(*entityPattern, "")
+				if err != nil {
+					return nil, err
+				}
+
+				match = bson.M{
+					"$and": []bson.M{
+						match,
+						patternMongoQuery,
+					},
+				}
+			}
+		}
+	}
+
 	pipeline := s.getQueryBuilder().CreateTreeOfDepsAggregationPipeline(match, r.Query, r.SortRequest, r.Category, r.Search,
 		r.WithFlags, now)
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
@@ -136,9 +182,10 @@ func (s *store) GetDependencies(ctx context.Context, r ContextGraphRequest, user
 
 func (s *store) GetImpacts(ctx context.Context, r ContextGraphRequest, userId string) (*ContextGraphAggregationResult, error) {
 	e := types.Entity{}
-	err := s.dbCollection.
-		FindOne(ctx, bson.M{"_id": r.ID, "soft_deleted": bson.M{"$exists": false}}, options.FindOne().SetProjection(bson.M{"services": 1})).
-		Decode(&e)
+	err := s.dbCollection.FindOne(ctx,
+		bson.M{"_id": r.ID, "soft_deleted": bson.M{"$exists": false}},
+		options.FindOne().SetProjection(bson.M{"services": 1, "component": 1, "type": 1, "state_info": 1}),
+	).Decode(&e)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return nil, nil
@@ -146,14 +193,22 @@ func (s *store) GetImpacts(ctx context.Context, r ContextGraphRequest, userId st
 		return nil, err
 	}
 	result := &ContextGraphAggregationResult{}
-	if len(e.Services) == 0 {
+	if len(e.Services) == 0 && e.Component == "" {
 		result.Data = make([]entity.Entity, 0)
 		return result, nil
 	}
 
-	match := bson.M{
-		"_id":  bson.M{"$in": e.Services},
-		"type": types.EntityTypeService,
+	var match bson.M
+	if (e.Type == types.EntityTypeService || e.Type == types.EntityTypeResource) && len(e.Services) > 0 {
+		match = bson.M{
+			"_id":  bson.M{"$in": e.Services},
+			"type": types.EntityTypeService,
+		}
+	} else {
+		match = bson.M{
+			"_id":  e.Component,
+			"type": types.EntityTypeComponent,
+		}
 	}
 	now := datetime.NewCpsTime()
 	pipeline := s.getQueryBuilder().CreateTreeOfDepsAggregationPipeline(match, r.Query, r.SortRequest, r.Category, r.Search,
