@@ -30,6 +30,7 @@ class Application {
 
   async openPage() {
     this.page = await this.browser.newPage();
+    this.page.setDefaultTimeout(120_000);
 
     await this.page.setViewport({
       width: 1920,
@@ -48,7 +49,7 @@ class Application {
   async navigate(url) {
     const resultUrl = `${this.url}${url}`;
 
-    await this.page.goto(resultUrl, { timeout: 120_000 });
+    await this.page.goto(resultUrl);
 
     logInfo(`Navigate to ${resultUrl}`);
   }

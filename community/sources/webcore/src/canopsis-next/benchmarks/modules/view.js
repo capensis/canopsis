@@ -7,13 +7,8 @@ class ViewPage {
     await this.application.navigate(`/view/${id}${tabId ? `?tabId=${tabId}` : ''}`);
   }
 
-  async clickReload() {
-    await Promise.all([
-      this.application.page.waitForSelector('.v-datatable__progress [role=progressbar]', {
-        hidden: true,
-      }),
-      this.application.page.click('.view-fab-btns > .layout > .v-btn'),
-    ]);
+  clickReload() {
+    return this.application.page.click('.view-fab-btns > .layout > .v-btn');
   }
 }
 
