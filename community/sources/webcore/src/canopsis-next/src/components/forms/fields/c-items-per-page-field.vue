@@ -3,6 +3,7 @@
     class="select"
     :items="items"
     :value="value"
+    name="itemsPerPage"
     hide-details
     single-line
     dense
