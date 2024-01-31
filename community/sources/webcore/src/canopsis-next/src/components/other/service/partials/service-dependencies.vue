@@ -7,6 +7,7 @@
     />
     <state-settings-summary :entity="root" />
     <c-treeview-data-table
+      ref="treeviewDataTable"
       :items="items"
       :headers="headers"
       :loading="hasActivePending"
@@ -192,10 +193,8 @@ export default {
       this.fetchRootDependencies();
     },
   },
-  created() {
-    this.setRootDependencies();
-  },
   mounted() {
+    this.setRootDependencies();
     this.fetchRootDependencies();
   },
   methods: {
@@ -208,6 +207,8 @@ export default {
     },
 
     setRootDependencies() {
+      this.$refs.treeviewDataTable.clearOpened();
+
       const dependenciesByIds = {};
       const rootIds = [];
 

@@ -15,15 +15,17 @@ import { omit } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 import {
-  MODALS,
-  TREE_OF_DEPENDENCIES_GRAPH_OPTIONS,
-  TREE_OF_DEPENDENCIES_GRAPH_LAYOUT_OPTIONS,
+  ROOT_CAUSE_DIAGRAM_OPTIONS,
+  ROOT_CAUSE_DIAGRAM_LAYOUT_OPTIONS,
   ENTITY_TYPES,
+  ROOT_CAUSE_DIAGRAM_NODE_SIZE,
+  ROOT_CAUSE_DIAGRAM_EVENTS_NODE_SIZE,
 } from '@/constants';
 
 import { getEntityColor } from '@/helpers/entities/entity/color';
-import { generatePreparedDefaultContextWidget } from '@/helpers/entities/widget/form';
 import { getMapEntityText, normalizeTreeOfDependenciesMapEntities } from '@/helpers/entities/map/list';
+import { isEntityEventsStateSettings } from '@/helpers/entities/entity/entity';
+import { convertSortToRequest } from '@/helpers/entities/shared/query';
 
 import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
 
@@ -31,6 +33,89 @@ import NetworkGraph from '@/components/common/chart/network-graph.vue';
 
 // eslint-disable-next-line import/no-webpack-loader-syntax
 import engineeringIcon from '!!svg-inline-loader?modules!@/assets/images/engineering.svg';
+
+const getIconElement = (node) => {
+  const { isEvents, entity } = node;
+
+  const el = document.createElement('i');
+  el.classList.add(
+    'v-icon',
+    'material-icons',
+    'theme--light',
+    'white--text',
+    'entity-dependencies-by-state-settings__node-icon',
+  );
+
+  if (isEvents) {
+    el.classList.add('entity-dependencies-by-state-settings__node-icon--events');
+  }
+
+  el.innerHTML = isEvents
+    ? 'textsms'
+    : {
+      [ENTITY_TYPES.service]: engineeringIcon,
+      [ENTITY_TYPES.resource]: 'perm_identity',
+      [ENTITY_TYPES.component]: 'developer_board',
+    }[entity.type];
+
+  return el;
+};
+
+const getProgressElement = () => {
+  const progressContentCircleEl = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  progressContentCircleEl.classList.add('v-progress-circular__overlay');
+  progressContentCircleEl.setAttribute('fill', 'transparent');
+  progressContentCircleEl.setAttribute('cx', '45.714285714285715');
+  progressContentCircleEl.setAttribute('cy', '45.714285714285715');
+  progressContentCircleEl.setAttribute('r', '15');
+  progressContentCircleEl.setAttribute('stroke-width', '3');
+  progressContentCircleEl.setAttribute('stroke-dasharray', '125.664');
+  progressContentCircleEl.setAttribute('stroke-dashoffset', '125.66370614359172px');
+
+  const progressContentEl = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  progressContentEl.setAttribute('viewBox', '22.857142857142858 22.857142857142858 45.714285714285715 45.714285714285715');
+  progressContentEl.appendChild(progressContentCircleEl);
+
+  const progressEl = document.createElement('div');
+  progressEl.appendChild(progressContentEl);
+  progressEl.classList.add(
+    'v-progress-circular',
+    'v-progress-circular--indeterminate',
+    'v-progress-circular--visible',
+    'white--text',
+    'entity-dependencies-by-state-settings__node-progress',
+  );
+
+  return progressEl;
+};
+
+const getContentElement = (node) => {
+  const { entity, pending, isEvents } = node;
+  const nodeSize = isEvents ? ROOT_CAUSE_DIAGRAM_EVENTS_NODE_SIZE : ROOT_CAUSE_DIAGRAM_NODE_SIZE;
+
+  const nodeLabelEl = document.createElement('div');
+  nodeLabelEl.classList.add('position-absolute');
+  nodeLabelEl.style.top = `${nodeSize}px`;
+
+  if (!isEvents) {
+    nodeLabelEl.textContent = getMapEntityText(entity);
+  }
+
+  const nodeEl = document.createElement('div');
+  nodeEl.appendChild(getIconElement(node));
+  nodeEl.appendChild(nodeLabelEl);
+  nodeEl.classList.add('v-btn__content', 'position-relative', 'border-radius-rounded');
+  nodeEl.style.width = `${nodeSize}px`;
+  nodeEl.style.height = `${nodeSize}px`;
+  nodeEl.style.justifyContent = 'center';
+  nodeEl.style.background = getEntityColor(entity);
+
+  if (pending) {
+    nodeEl.appendChild(getProgressElement());
+  }
+
+  return nodeEl.outerHTML;
+};
 
 export default {
   components: { NetworkGraph },
@@ -55,24 +140,21 @@ export default {
   },
   data() {
     return {
+      metaByEntityId: {},
       entitiesById: normalizeTreeOfDependenciesMapEntities([{ entity: this.entity, pinned_entities: [] }]),
     };
   },
   computed: {
-    rootEntities() {
-      return Object.values(this.entitiesById)
-        .filter(entity => entity.dependencies);
+    isEventsStateSettings() {
+      return isEntityEventsStateSettings(this.entity);
     },
 
-    cytoscapeClusters() {
-      return this.rootEntities.map(({ entity, dependencies }) => [
-        entity._id,
-        ...dependencies.filter(id => !this.entitiesById[id].dependencies?.length),
-      ]);
+    entitiesWithDependencies() {
+      return Object.values(this.entitiesById).filter(entity => entity.dependencies);
     },
 
     entitiesElements() {
-      return this.rootEntities.reduce((acc, { entity, dependencies = [] }) => {
+      return this.entitiesWithDependencies.reduce((acc, { entity, dependencies = [] }) => {
         acc.push(
           {
             group: 'nodes',
@@ -80,33 +162,23 @@ export default {
               id: entity._id,
               entity,
               root: true,
-              dependenciesCount: dependencies.length,
             },
           },
         );
 
-        dependencies.forEach((childId) => {
-          const child = this.entitiesById[childId];
+        if (isEntityEventsStateSettings(entity)) {
+          acc.push(...this.getEventsNodeElementByEntity(entity));
 
-          acc.push(
-            {
-              group: 'nodes',
-              data: {
-                id: childId,
-                entity: child.entity,
-              },
-            },
-            {
-              group: 'edges',
-              data: {
-                source: entity._id,
-                target: childId,
-              },
-            },
-          );
-        });
+          return acc;
+        }
 
-        if (dependencies.length && entity[this.countProperty] > dependencies.length) {
+        if (dependencies.length) {
+          acc.push(...this.getEntityDependenciesElement(entity, dependencies));
+        }
+
+        const meta = this.metaByEntityId[entity._id] ?? {};
+
+        if (meta.page < meta.page_count) {
           acc.push(...this.getShowAllElements(entity));
         }
 
@@ -119,8 +191,8 @@ export default {
         {
           selector: 'node',
           style: {
-            width: TREE_OF_DEPENDENCIES_GRAPH_OPTIONS.nodeSize,
-            height: TREE_OF_DEPENDENCIES_GRAPH_OPTIONS.nodeSize,
+            width: ROOT_CAUSE_DIAGRAM_OPTIONS.nodeSize,
+            height: ROOT_CAUSE_DIAGRAM_OPTIONS.nodeSize,
           },
         },
         {
@@ -130,6 +202,13 @@ export default {
             'border-width': 0,
             width: 128,
             height: 34,
+          },
+        },
+        {
+          selector: 'node[isEvents]',
+          style: {
+            width: 30,
+            height: 30,
           },
         },
         {
@@ -143,120 +222,15 @@ export default {
       ];
     },
 
-    countProperty() {
-      return this.impact ? 'impacts_count' : 'depends_count';
-    },
-
     nodeHtmlLabelsOptions() {
-      const { nodeSize } = TREE_OF_DEPENDENCIES_GRAPH_OPTIONS;
-
-      const getIconEl = (entity) => {
-        const el = document.createElement('i');
-        el.classList.add(
-          'v-icon',
-          'material-icons',
-          'theme--light',
-          'white--text',
-          'entity-dependencies-by-state-settings__node-icon',
-        );
-
-        el.innerHTML = {
-          [ENTITY_TYPES.service]: engineeringIcon,
-          [ENTITY_TYPES.resource]: 'perm_identity',
-          [ENTITY_TYPES.component]: 'developer_board',
-        }[entity.type];
-
-        return el;
-      };
-
-      const getProgressElement = () => {
-        const progressContentCircleEl = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        progressContentCircleEl.classList.add('v-progress-circular__overlay');
-        progressContentCircleEl.setAttribute('fill', 'transparent');
-        progressContentCircleEl.setAttribute('cx', '45.714285714285715');
-        progressContentCircleEl.setAttribute('cy', '45.714285714285715');
-        progressContentCircleEl.setAttribute('r', '15');
-        progressContentCircleEl.setAttribute('stroke-width', '3');
-        progressContentCircleEl.setAttribute('stroke-dasharray', '125.664');
-        progressContentCircleEl.setAttribute('stroke-dashoffset', '125.66370614359172px');
-
-        const progressContentEl = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        progressContentEl.setAttribute('viewBox', '22.857142857142858 22.857142857142858 45.714285714285715 45.714285714285715');
-        progressContentEl.appendChild(progressContentCircleEl);
-
-        const progressEl = document.createElement('div');
-        progressEl.appendChild(progressContentEl);
-        progressEl.classList.add(
-          'v-progress-circular',
-          'v-progress-circular--indeterminate',
-          'v-progress-circular--visible',
-          'white--text',
-          'position-relative',
-        );
-
-        return progressEl;
-      };
-
-      const getBadgeIconElement = (entity, opened) => {
-        const badgeIconEl = document.createElement('i');
-        badgeIconEl.classList.add(
-          'v-icon',
-          'material-icons',
-          'theme--light',
-          'white--text',
-          'entity-dependencies-by-state-settings__fetch-dependencies',
-        );
-        badgeIconEl.textContent = opened ? 'remove' : 'add';
-
-        return badgeIconEl;
-      };
-
-      const getBadgeEl = (entity, opened, pending) => {
-        const badgeEl = document.createElement('span');
-        badgeEl.appendChild(pending ? getProgressElement() : getBadgeIconElement(entity, opened));
-        badgeEl.classList.add(
-          'v-badge__badge',
-          'inline-flex',
-          'justify-center',
-          'align-center',
-          'grey',
-          'darken-1',
-          'cursor-pointer',
-          'pa-0',
-        );
-        badgeEl.style.width = '20px';
-        badgeEl.style.height = '20px';
-        badgeEl.dataset.id = entity._id;
-
-        return badgeEl;
-      };
-
-      const getContent = ({ entity, opened, pending, dependenciesCount }) => {
-        const nodeLabelEl = document.createElement('div');
-        nodeLabelEl.classList.add('position-absolute');
-        nodeLabelEl.style.top = `${nodeSize}px`;
-        nodeLabelEl.textContent = getMapEntityText(entity);
-
-        const nodeEl = document.createElement('div');
-        nodeEl.appendChild(getIconEl(entity));
-        nodeEl.appendChild(nodeLabelEl);
-        nodeEl.classList.add('v-btn__content', 'position-relative', 'border-radius-rounded');
-        nodeEl.style.width = `${nodeSize}px`;
-        nodeEl.style.height = `${nodeSize}px`;
-        nodeEl.style.justifyContent = 'center';
-        nodeEl.style.background = getEntityColor(entity);
-
-        if (this.hasDependencies(entity) && !dependenciesCount) {
-          nodeEl.appendChild(getBadgeEl(entity, opened, pending));
-        }
-
-        return nodeEl.outerHTML;
-      };
-
       const getShowAllContent = ({ entity }) => {
+        const meta = this.metaByEntityId[entity._id] ?? {};
+
+        const fetchedEntities = meta.page * meta.per_page;
+
         const btnContentEl = document.createElement('div');
         btnContentEl.classList.add('v-btn__content');
-        btnContentEl.textContent = this.$t('map.showAll', { count: entity[this.countProperty] });
+        btnContentEl.textContent = `Show more (${fetchedEntities} of ${meta.total_count})`;
 
         const btnEl = document.createElement('button');
         btnEl.classList.add(
@@ -275,7 +249,7 @@ export default {
           query: 'node',
           valign: 'center',
           halign: 'center',
-          tpl: getContent,
+          tpl: getContentElement,
         },
         {
           query: 'node[showAll]',
@@ -288,7 +262,7 @@ export default {
 
     options() {
       const options = {
-        ...omit(TREE_OF_DEPENDENCIES_GRAPH_OPTIONS, ['nodeSize']),
+        ...omit(ROOT_CAUSE_DIAGRAM_OPTIONS, ['nodeSize']),
 
         style: this.styleOption,
         elements: this.entitiesElements,
@@ -296,9 +270,7 @@ export default {
 
       if (this.entitiesElements.length) {
         options.layout = {
-          ...TREE_OF_DEPENDENCIES_GRAPH_LAYOUT_OPTIONS,
-
-          clusters: this.cytoscapeClusters,
+          ...ROOT_CAUSE_DIAGRAM_LAYOUT_OPTIONS,
         };
       }
 
@@ -306,8 +278,8 @@ export default {
     },
   },
   watch: {
-    map(map) {
-      this.entitiesById = normalizeTreeOfDependenciesMapEntities(map.parameters?.entities);
+    entity() {
+      this.entitiesById = normalizeTreeOfDependenciesMapEntities([{ entity: this.entity, pinned_entities: [] }]);
 
       /**
        * TODO: investigate this behavior in the future
@@ -315,51 +287,66 @@ export default {
       setTimeout(() => this.resetLayout(), 1000);
     },
   },
-  mounted() {
+  async mounted() {
     this.$refs.networkGraph.$cy.on('tap', this.tapHandler);
+
+    if (!this.isEventsStateSettings) {
+      await this.fetchDependencies(this.entity._id);
+    }
+
+    this.runLayout();
   },
   beforeDestroy() {
     this.$refs.networkGraph.$cy.off('tap', this.tapHandler);
   },
   methods: {
-    hasDependencies(entity) {
-      return !!entity[this.countProperty];
+    getEventsNodeElementByEntity(entity) {
+      const eventsNodeId = `${entity._id}_events-node`;
+
+      return [
+        {
+          group: 'nodes',
+          data: {
+            entity,
+            id: eventsNodeId,
+            isEvents: true,
+          },
+        },
+        {
+          group: 'edges',
+          data: {
+            source: entity._id,
+            target: eventsNodeId,
+          },
+        },
+      ];
     },
 
-    /**
-     * Remove old elements and add new elements to network graph
-     */
-    resetLayout() {
-      this.$refs.networkGraph.$cy.elements().remove();
-      this.$refs.networkGraph.$cy.add(this.entitiesElements);
-      this.runLayout();
+    getEntityDependenciesElement(entity, dependenciesIds = []) {
+      const dependencies = dependenciesIds.map(id => this.entitiesById[id].entity);
+
+      return dependencies.reduce((acc, child) => {
+        acc.push(
+          {
+            group: 'nodes',
+            data: {
+              id: child._id,
+              entity: child,
+            },
+          },
+          {
+            group: 'edges',
+            data: {
+              source: entity._id,
+              target: child._id,
+            },
+          },
+        );
+
+        return acc;
+      }, []);
     },
 
-    /**
-     * Run 'cise' layout for rerender clusters
-     */
-    async runLayout() {
-      if (this.$refs.networkGraph.$cy.nodes().empty()) {
-        return;
-      }
-
-      try {
-        this.$refs.networkGraph.$cy.layout({
-          ...TREE_OF_DEPENDENCIES_GRAPH_LAYOUT_OPTIONS,
-
-          clusters: this.cytoscapeClusters,
-        }).run();
-      } catch (err) {
-        console.warn(err);
-      }
-    },
-
-    /**
-     * Get show all cytoscape elements for special entity
-     *
-     * @param {Entity} entity
-     * @returns {[Object, Object]}
-     */
     getShowAllElements(entity) {
       const showAllId = `show-all-${entity._id}`;
 
@@ -384,75 +371,29 @@ export default {
     },
 
     /**
-     * Add dependencies to cytoscape for special source
-     *
-     * @param {Entity[]} elements
-     * @param {Entity} source
+     * Remove old elements and add new elements to network graph
      */
-    addDependenciesElements(elements, source) {
-      if (!elements.length) {
-        return;
-      }
-
-      const addedElements = elements.reduce((acc, element) => {
-        const items = this.$refs.networkGraph.$cy.getElementById(element._id);
-
-        if (!items.length) {
-          acc.push({
-            group: 'nodes',
-            data: {
-              id: element._id,
-              entity: element,
-            },
-          });
-        }
-
-        acc.push({
-          group: 'edges',
-          data: {
-            source: source._id,
-            target: element._id,
-          },
-        });
-
-        return acc;
-      }, []);
-
-      if (source[this.countProperty] > elements.length) {
-        addedElements.push(...this.getShowAllElements(source));
-      }
-
-      this.$refs.networkGraph.$cy.add(addedElements);
+    resetLayout() {
+      this.$refs.networkGraph.$cy.elements().remove();
+      this.$refs.networkGraph.$cy.add(this.entitiesElements);
+      this.runLayout();
     },
 
     /**
-     * Remove dependencies from cytoscape for special source
-     *
-     * @param {string[]} elementsIds
-     * @param {string} sourceId
+     * Run 'cise' layout for rerender clusters
      */
-    removeDependenciesElements(elementsIds, sourceId) {
-      const nodesForRemoveSelectors = elementsIds.map(id => `node[id = "${id}"]`);
-      nodesForRemoveSelectors.push(`node[id = "show-all-${sourceId}"]`);
-
-      const nodesForRemoveJoinedSelector = nodesForRemoveSelectors.join(',');
-      const openedNodesForRemove = this.$refs.networkGraph.$cy.elements(nodesForRemoveJoinedSelector)
-        .filter(node => node.data().opened);
-
-      if (openedNodesForRemove.length) {
-        openedNodesForRemove.forEach(node => this.hideDependencies(node));
+    async runLayout() {
+      if (this.$refs.networkGraph.$cy.nodes().empty()) {
+        return;
       }
 
-      const filteredNodesForRemove = this.$refs.networkGraph.$cy.elements(nodesForRemoveJoinedSelector)
-        .filter(node => node.connectedEdges().size() === 1);
-
-      const edgesForRemoveSelectors = elementsIds.map(id => `edge[source = "${sourceId}"][target = "${id}"]`);
-      edgesForRemoveSelectors.push(`node[id = "show-all-edge-${sourceId}"]`);
-
-      const edgesForRemove = this.$refs.networkGraph.$cy.elements(edgesForRemoveSelectors.join(','));
-
-      filteredNodesForRemove.remove();
-      edgesForRemove.remove();
+      try {
+        this.$refs.networkGraph.$cy.layout({
+          ...ROOT_CAUSE_DIAGRAM_LAYOUT_OPTIONS,
+        }).run();
+      } catch (err) {
+        console.warn(err);
+      }
     },
 
     /**
@@ -462,25 +403,32 @@ export default {
      * @returns {Promise<void>}
      */
     async showDependencies(target) {
-      const { id, entity, opened } = target.data();
-
-      if (opened) {
-        return;
-      }
+      const { id } = target.data();
+      const { page } = this.metaByEntityId[id] ?? {};
+      const newPage = page ? page + 1 : 1;
 
       target.data({
         pending: true,
       });
 
-      const { data } = await this.fetchDependenciesList({
+      const { data, meta } = await this.fetchDependenciesList({
         id,
-        params: { limit: PAGINATION_LIMIT, with_flags: true },
+        params: {
+          page: newPage,
+          limit: PAGINATION_LIMIT,
+          with_flags: true,
+          /**
+           * TODO: Api doesn't support multi sort
+           */
+          ...convertSortToRequest(['last_update_date', 'state']),
+        },
       });
 
       target.data({
-        opened: true,
         pending: false,
       });
+
+      this.$set(this.metaByEntityId, id, meta);
 
       const ids = data.map((item) => {
         let newEntityItem = { entity: item };
@@ -501,34 +449,13 @@ export default {
         return item._id;
       });
 
-      this.$set(this.entitiesById[id], 'dependencies', ids);
+      this.$set(this.entitiesById[id], 'dependencies', [
+        ...this.entitiesById[id].dependencies,
+        ...ids,
+      ]);
 
-      this.addDependenciesElements(data, entity);
-    },
-
-    /**
-     * Hide dependencies for node
-     *
-     * @param {Object} target
-     * @returns {void}
-     */
-    hideDependencies(target) {
-      const { id, opened } = target.data();
-
-      if (!opened) {
-        return;
-      }
-
-      const { dependencies } = this.entitiesById[id];
-
-      this.removeDependenciesElements(dependencies, id);
-
-      target.data({
-        pending: false,
-        opened: false,
-      });
-
-      this.$delete(this.entitiesById[id], 'dependencies');
+      this.$refs.networkGraph.$cy.elements('*').remove();
+      this.$refs.networkGraph.$cy.add(this.entitiesElements);
     },
 
     /**
@@ -538,41 +465,15 @@ export default {
      */
     async fetchDependencies(id) {
       const target = this.$refs.networkGraph.$cy.getElementById(id);
-      const { opened, entity, pending } = target.data();
+      const { pending } = target.data();
 
-      if (!this.hasDependencies(entity) || pending) {
+      if (pending) {
         return;
       }
 
-      if (opened) {
-        await this.hideDependencies(target);
-      } else {
-        await this.showDependencies(target);
-      }
+      await this.showDependencies(target);
 
       this.runLayout();
-    },
-
-    /**
-     * Show modal window with all entity dependencies
-     *
-     * @param {string} entityId
-     */
-    showAllDependenciesModal(entityId) {
-      const config = {
-        entityId,
-        impact: this.impact,
-      };
-
-      if (this.columns.length) {
-        config.widget = generatePreparedDefaultContextWidget();
-        config.widget.parameters.widgetColumns = this.columns;
-      }
-
-      this.$modals.show({
-        name: MODALS.entityDependenciesList,
-        config,
-      });
     },
 
     /**
@@ -581,29 +482,20 @@ export default {
      * @param {Object} target
      * @param {MouseEvent} originalEvent
      */
-    tapHandler({ target, originalEvent }) {
-      if (originalEvent.target.classList.contains('v-badge__badge')) {
-        const { id } = originalEvent.target.dataset;
-
-        if (id) {
-          this.fetchDependencies(id);
-
-          return;
-        }
-      }
-
+    tapHandler({ target }) {
       const { entity, showAll } = target.data();
 
-      if (!showAll || !entity || !this.hasDependencies(entity)) {
+      if (!showAll || !entity) {
         return;
       }
 
-      this.showAllDependenciesModal(entity._id);
+      this.fetchDependencies(entity._id);
     },
   },
 };
 </script>
-<style lang="scss" scoped>
+
+<style lang="scss">
 .entity-dependencies-by-state-settings {
   position: relative;
   height: 800px;
@@ -611,36 +503,42 @@ export default {
   border-radius: 5px;
   background: white;
 
-  & ::v-deep canvas[data-id='layer0-selectbox'] { // Hide selectbox layer from cytoscape
+  &__node-progress {
+    position: absolute;
+    inset: 0;
+  }
+
+  &__node-icon {
+    --node-size: 30px;
+
+    font-size: var(--node-size) !important;
+
+    svg {
+      height: var(--node-size) !important;
+    }
+
+    &--events {
+      --node-size: 20px;
+    }
+  }
+
+  &__fetch-dependencies {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+  }
+
+  canvas[data-id='layer0-selectbox'] { // Hide selectbox layer from cytoscape
     display: none;
   }
 
-  & ::v-deep .v-badge__badge {
+  .v-badge__badge {
     top: -7px;
     right: -7px;
 
     * {
       pointer-events: none;
     }
-  }
-
-  & ::v-deep .v-progress-circular {
-    width: 20px;
-    height: 20px;
-  }
-
-  & ::v-deep .entity-dependencies-by-state-settings__node-icon {
-    font-size: 30px;
-
-    svg {
-      height: 30px;
-    }
-  }
-
-  & ::v-deep .entity-dependencies-by-state-settings__fetch-dependencies {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
   }
 }
 </style>
