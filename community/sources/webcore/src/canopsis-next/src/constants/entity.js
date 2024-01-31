@@ -514,3 +514,22 @@ export const TREE_OF_DEPENDENCIES_SHOW_TYPES = {
   dependenciesDefiningTheState: 1,
   custom: 2,
 };
+
+export const ROOT_CAUSE_DIAGRAM_NODE_SIZE = 50;
+
+export const ROOT_CAUSE_DIAGRAM_EVENTS_NODE_SIZE = 30;
+
+export const ROOT_CAUSE_DIAGRAM_OPTIONS = {
+  fitPadding: 40,
+  wheelSensitivity: 0.3,
+  minZoom: 0.05,
+  maxZoom: 1.5,
+  nodeSize: ROOT_CAUSE_DIAGRAM_NODE_SIZE,
+};
+
+export const ROOT_CAUSE_DIAGRAM_LAYOUT_OPTIONS = {
+  name: 'dagre',
+  rankDir: 'LR',
+  padding: 100,
+  minLen: 5,
+};

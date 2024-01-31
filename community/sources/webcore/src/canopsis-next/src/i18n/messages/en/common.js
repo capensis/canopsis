@@ -287,6 +287,7 @@ export default {
   regexp: 'Regexp',
   archive: 'Archive',
   convertToCustomColumn: 'Convert column to custom',
+  event: 'Event | Events',
   variableTypes: {
     string: 'String',
     number: 'Number',

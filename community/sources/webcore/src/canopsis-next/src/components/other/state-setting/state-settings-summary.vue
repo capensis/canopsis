@@ -10,19 +10,21 @@
         width="3"
         indeterminate
       />
-      <template v-else>
-        {{ stateMethodName }}
-      </template>
+      <b v-else>{{ stateMethodName }}</b>
     </span>
     <v-expand-transition>
-      <span v-if="!stateSettingPending">{{ stateMethodSummaryText }}</span>
+      <span v-if="!stateSettingPending && stateMethodSummaryText">{{ stateMethodSummaryText }}</span>
     </v-expand-transition>
   </v-layout>
 </template>
 
 <script>
-
 import { createNamespacedHelpers } from 'vuex';
+
+import { JUNIT_STATE_SETTING_METHODS } from '@/constants';
+
+import { infosToArray } from '@/helpers/entities/shared/form';
+import { isEntityEventsStateSettings } from '@/helpers/entities/entity/entity';
 
 const { mapActions: mapEntityActions } = createNamespacedHelpers('entity');
 
@@ -40,27 +42,35 @@ export default {
     };
   },
   computed: {
+    isEventsStateSettings() {
+      return isEntityEventsStateSettings(this.entity);
+    },
+
     stateMethodName() {
-      /**
-       * TODO: Should be changed on real data
-       */
-      return '%rule name%';
+      if (this.isEventsStateSettings) {
+        return this.$tc('common.event', 2);
+      }
+
+      return this.stateSetting.title || this.$t(`stateSetting.junit.methods.${JUNIT_STATE_SETTING_METHODS.worst}`);
     },
 
     stateMethodSummaryText() {
-      /**
-       * TODO: Should be changed on real data
-       */
-      return 'TODO: Should be implemented';
+      if (this.stateSetting.title) {
+        return 'TODO: Should be implemented';
+      }
+
+      return '';
     },
   },
   mounted() {
-    this.checkStateSetting({
-      // name: this.entity.name,
-      // type: this.entity.type,
-      // infos: this.entity.infos,
-      impact_level: this.entity.impact_level,
-    });
+    if (!this.isEventsStateSettings) {
+      this.checkStateSetting({
+        name: this.entity.name,
+        type: this.entity.type,
+        infos: infosToArray(this.entity.infos),
+        impact_level: this.entity.impact_level,
+      });
+    }
   },
   methods: {
     ...mapEntityActions({
