@@ -79,7 +79,6 @@ build_rpm_dev:
     - executor-docker
   image: docker.capensis.fr/docker/images/mock-builder:latest
   variables:
-    RPM_URL: https://nexus.canopsis.net/service/rest/v1/components?repository=canopsis-develop
     ENABLE_NETWORK: 1
   script:
     - export DEFINE_Version="$(printf $CI_COMMIT_TAG | sed 's/-/~/g')"
@@ -102,7 +101,6 @@ build_rpm:
     - executor-docker
   image: docker.capensis.fr/docker/images/mock-builder:latest
   variables:
-    RPM_URL: https://nexus.canopsis.net/service/rest/v1/components?repository=canopsis
     ENABLE_NETWORK: 1
   script:
     - export DEFINE_Version="$(printf $CI_COMMIT_TAG | sed 's/-/~/g')"
