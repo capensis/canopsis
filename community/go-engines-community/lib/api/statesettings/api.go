@@ -101,7 +101,7 @@ func (a *api) Create(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	c.JSON(http.StatusOK, stateSetting)
+	c.JSON(http.StatusCreated, stateSetting)
 }
 
 // Update
