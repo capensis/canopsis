@@ -124,12 +124,14 @@ release-rpm:
   variables:
     RPM_ARCH: x86_64
   script:
-    - publish-rpm -p el8 dist/build/almalinux-8-x86_64/output
-    - publish-rpm -p el9 dist/build/almalinux-9-x86_64/output
+    - for version in community pro; do
+        publish-rpm -p el8 ${version}/dist/build/almalinux-8-x86_64/output
+        publish-rpm -p el9 ${version}/dist/build/almalinux-9-x86_64/output
+      done
   rules:
-    - if: $CI_COMMIT_TAG =~ '/(rc([0-9])?|preview([0-9])?)/'
+    - if: $CI_COMMIT_TAG =~ '/(rc([0-9])?|preview([0-9])?)/' && $CI_PROJECT_NAME == "canopsis-pro"
       variables:
         RPM_REPO: canopsis-develop
-    - if: $CI_COMMIT_TAG && $CI_COMMIT_TAG !~ '/(rc([0-9])?|preview([0-9])?)/'
+    - if: $CI_COMMIT_TAG && $CI_COMMIT_TAG !~ '/(rc([0-9])?|preview([0-9])?)/' && $CI_PROJECT_NAME == "canopsis-pro"
       variables:
         RPM_REPO: canopsis
