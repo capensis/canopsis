@@ -139,6 +139,20 @@ func (mr *MockManagerMockRecorder) InheritComponentFields(arg0, arg1, arg2 inter
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InheritComponentFields", reflect.TypeOf((*MockManager)(nil).InheritComponentFields), arg0, arg1, arg2)
 }
 
+// LoadServices mocks base method.
+func (m *MockManager) LoadServices(arg0 context.Context) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "LoadServices", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// LoadServices indicates an expected call of LoadServices.
+func (mr *MockManagerMockRecorder) LoadServices(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoadServices", reflect.TypeOf((*MockManager)(nil).LoadServices), arg0)
+}
+
 // ProcessComponentDependencies mocks base method.
 func (m *MockManager) ProcessComponentDependencies(arg0 context.Context, arg1 *types.Entity, arg2 mongo.CommandsRegister) ([]string, error) {
 	m.ctrl.T.Helper()
@@ -167,20 +181,6 @@ func (m *MockManager) RecomputeService(arg0 context.Context, arg1 string, arg2 m
 func (mr *MockManagerMockRecorder) RecomputeService(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RecomputeService", reflect.TypeOf((*MockManager)(nil).RecomputeService), arg0, arg1, arg2)
-}
-
-// RefreshServices mocks base method.
-func (m *MockManager) RefreshServices(arg0 context.Context) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RefreshServices", arg0)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// RefreshServices indicates an expected call of RefreshServices.
-func (mr *MockManagerMockRecorder) RefreshServices(arg0 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RefreshServices", reflect.TypeOf((*MockManager)(nil).RefreshServices), arg0)
 }
 
 // UpdateImpactedServicesFromDependencies mocks base method.
