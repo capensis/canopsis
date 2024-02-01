@@ -179,7 +179,7 @@ export default {
         const meta = this.metaByEntityId[entity._id] ?? {};
 
         if (meta.page < meta.page_count) {
-          acc.push(...this.getShowAllElements(entity));
+          acc.push(...this.getShowMoreElements(entity));
         }
 
         return acc;
@@ -196,7 +196,7 @@ export default {
           },
         },
         {
-          selector: 'node[showAll]',
+          selector: 'node[showMore]',
           style: {
             'background-opacity': 0,
             'border-width': 0,
@@ -223,7 +223,7 @@ export default {
     },
 
     nodeHtmlLabelsOptions() {
-      const getShowAllContent = ({ entity }) => {
+      const getShowMoreContent = ({ entity }) => {
         const meta = this.metaByEntityId[entity._id] ?? {};
 
         const fetchedEntities = meta.page * meta.per_page;
@@ -252,10 +252,10 @@ export default {
           tpl: getContentElement,
         },
         {
-          query: 'node[showAll]',
+          query: 'node[showMore]',
           valign: 'center',
           halign: 'center',
-          tpl: getShowAllContent,
+          tpl: getShowMoreContent,
         },
       ];
     },
@@ -347,16 +347,16 @@ export default {
       }, []);
     },
 
-    getShowAllElements(entity) {
-      const showAllId = `show-all-${entity._id}`;
+    getShowMoreElements(entity) {
+      const showMoreId = `show-all-${entity._id}`;
 
       return [
         {
           group: 'nodes',
           data: {
-            id: showAllId,
+            id: showMoreId,
             entity,
-            showAll: true,
+            showMore: true,
           },
         },
         {
@@ -364,7 +364,7 @@ export default {
           data: {
             id: `show-all-edge-${entity._id}`,
             source: entity._id,
-            target: showAllId,
+            target: showMoreId,
           },
         },
       ];
@@ -483,9 +483,9 @@ export default {
      * @param {MouseEvent} originalEvent
      */
     tapHandler({ target }) {
-      const { entity, showAll } = target.data();
+      const { entity, showMore } = target.data();
 
-      if (!showAll || !entity) {
+      if (!showMore || !entity) {
         return;
       }
 
