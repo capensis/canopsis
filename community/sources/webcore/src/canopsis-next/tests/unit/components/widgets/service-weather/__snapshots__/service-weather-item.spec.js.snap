@@ -29,8 +29,8 @@ exports[`service-weather-item Renders \`service-weather-item\` with custom props
           class="mr-1"
           value="3"
         />
+        <!---->
       </div>
-      <!---->
       <i
         aria-hidden="true"
         class="v-icon notranslate service-weather-item__background material-icons theme--light white--text"
@@ -89,23 +89,23 @@ exports[`service-weather-item Renders \`service-weather-item\` with full access 
           class="mr-1"
           value="0"
         />
-      </div>
-      <button
-        class="ma-0 v-btn v-btn--icon v-btn--round theme--light v-size--small"
-        type="button"
-      >
-        <span
-          class="v-btn__content"
+        <button
+          class="ma-0 v-btn v-btn--icon v-btn--round theme--light v-size--small"
+          type="button"
         >
-          <i
-            aria-hidden="true"
-            class="v-icon notranslate material-icons theme--light white--text"
-            style="font-size: 16px;"
+          <span
+            class="v-btn__content"
           >
-            help
-          </i>
-        </span>
-      </button>
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light white--text"
+              style="font-size: 16px;"
+            >
+              help
+            </i>
+          </span>
+        </button>
+      </div>
       <i
         aria-hidden="true"
         class="v-icon notranslate service-weather-item__background material-icons theme--light white--text"
