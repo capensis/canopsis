@@ -1,4 +1,4 @@
-import theme from 'vuetify/es5/components/Vuetify/mixins/theme';
+import themeVuetify from 'vuetify/es5/components/Vuetify/mixins/theme';
 import { kebabCase, merge } from 'lodash';
 
 import { DEFAULT_THEME_COLORS } from '@/config';
@@ -73,7 +73,7 @@ export const systemThemeMixin = {
 
       const variables = themePropertiesToCSSVariables(vuetifyVariables);
 
-      this.$vuetify.theme = theme(variables);
+      this.$vuetify.theme = themeVuetify(variables);
 
       const lightBaseColor = isDark ? black : main.active_color;
       const darkBaseColor = isDark ? main.active_color : white;
