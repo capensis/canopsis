@@ -78,6 +78,7 @@
             :hide-actions="hideActions",
             :medium="isMediumHeight",
             :small="isSmallHeight",
+            :search="search",
             @select:tag="$emit('select:tag', $event)"
           )
         template(#expand="{ item, index }")
@@ -85,6 +86,7 @@
             :alarm="item",
             :parent-alarm-id="parentAlarmId",
             :widget="widget",
+            :search="search",
             :hide-children="hideChildren",
             :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(index)"
           )
@@ -212,6 +214,10 @@ export default {
     densable: {
       type: Boolean,
       default: false,
+    },
+    search: {
+      type: String,
+      default: '',
     },
   },
   data() {
