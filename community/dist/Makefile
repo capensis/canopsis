@@ -1,6 +1,6 @@
 VERSION = HEAD
-BUILD_TARGET = el8 \
-	el9
+BUILD_TARGET = almalinux-8-x86_64 \
+	almalinux-9-x86_64
 CANOPSIS_ARCHIVES = $(addsuffix /SOURCES/canopsis$(PACKAGE_PREFIX).tar.gz, $(addprefix build/, $(BUILD_TARGET)))
 CANOPSIS_SPECS = $(addsuffix /SPECS/canopsis.spec, $(addprefix build/, $(BUILD_TARGET)))
 CANOPSIS_MOCK = $(addsuffix /canopsis.cfg, $(addprefix build/, $(BUILD_TARGET)))
@@ -18,7 +18,9 @@ all: rpm
 
 rpm: $(BUILD_TARGET)
 
-$(BUILD_TARGET): $(CANOPSIS_ARCHIVES) $(CANOPSIS_SPECS) $(CANOPSIS_MOCK)
+prep-rpm: $(CANOPSIS_ARCHIVES) $(CANOPSIS_SPECS) $(CANOPSIS_MOCK)
+
+$(BUILD_TARGET): prep-rpm
 	docker run \
 	--rm \
 	-e MOCK_CONFIG=canopsis \
@@ -35,9 +37,9 @@ $(TREE):
 	mkdir -p $@
 
 $(CANOPSIS_MOCK): $(TREE)
-	if [ "$(word 2,$(subst /, ,$@))" = "el8" ]; then \
+	if [ "$(word 2,$(subst /, ,$@))" = "almalinux-8-x86_64" ]; then \
 	    cp almalinux-8-canopsis.cfg $@; \
-	elif [ "$(word 2,$(subst /, ,$@))" = "el9" ]; then \
+	elif [ "$(word 2,$(subst /, ,$@))" = "almalinux-9-x86_64" ]; then \
 	    cp almalinux-9-canopsis.cfg $@; \
 	fi
 
@@ -47,7 +49,7 @@ $(CANOPSIS_SPECS): $(TREE)
 $(CANOPSIS_ARCHIVES): $(TREE)
 	( \
 	    cd $(MONOREPO_ROOT) && \
-	    git archive $(VERSION) --prefix canopsis$(PACKAGE_PREFIX)-$(VERSION)/ $(ARCHIVE_DIRS) > \
+	    git archive HEAD --prefix canopsis$(PACKAGE_PREFIX)-$(VERSION)/ $(ARCHIVE_DIRS) > \
 	        $(CURDIR)/$@ \
 	)
 
