@@ -38,6 +38,11 @@ describe('service-template', () => {
       service,
       pagination: {},
     },
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
   });
 
   test('Refresh applied after triggers entities list', async () => {

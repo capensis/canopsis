@@ -14,8 +14,22 @@ const stubs = {
 const selectCloseButton = wrapper => wrapper.find('v-btn-stub');
 
 describe('alarm-column-cell-popup-body', () => {
-  const factory = generateShallowRenderer(AlarmColumnCellPopupBody, { stubs });
-  const snapshotFactory = generateRenderer(AlarmColumnCellPopupBody, { stubs });
+  const factory = generateShallowRenderer(AlarmColumnCellPopupBody, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(AlarmColumnCellPopupBody, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
 
   it('Popup template closed after click on the button', async () => {
     const wrapper = factory({
