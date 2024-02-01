@@ -1,7 +1,11 @@
 import promisedHandlebars from 'promised-handlebars';
 import HandlebarsLib from 'handlebars';
 
+import { THEMES_NAMES, THEMES } from '@/config';
+
 import store from '@/store';
+
+import commonMessages from '@/i18n/messages/en/common';
 
 import * as helpers from './helpers';
 
@@ -15,9 +19,17 @@ const Handlebars = promisedHandlebars(HandlebarsLib);
  * @returns {Promise}
  */
 export async function compile(template, context = {}) {
+  const currentUser = store.getters['auth/currentUser'] ?? {};
+  const themeName = currentUser.ui_theme ?? THEMES_NAMES.canopsis;
   const handleBarFunction = Handlebars.compile(template ?? '');
   const preparedContext = {
     env: store.getters['templateVars/items'] ?? {},
+    theme: {
+      ...THEMES[themeName],
+
+      _id: themeName,
+      name: commonMessages.themes[themeName] ?? commonMessages.themes[THEMES_NAMES.canopsis],
+    },
 
     ...context,
   };
