@@ -14,108 +14,16 @@
 import { omit } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
-import {
-  ROOT_CAUSE_DIAGRAM_OPTIONS,
-  ROOT_CAUSE_DIAGRAM_LAYOUT_OPTIONS,
-  ENTITY_TYPES,
-  ROOT_CAUSE_DIAGRAM_NODE_SIZE,
-  ROOT_CAUSE_DIAGRAM_EVENTS_NODE_SIZE,
-} from '@/constants';
+import { ROOT_CAUSE_DIAGRAM_OPTIONS, ROOT_CAUSE_DIAGRAM_LAYOUT_OPTIONS } from '@/constants';
 
-import { getEntityColor } from '@/helpers/entities/entity/color';
-import { getMapEntityText, normalizeTreeOfDependenciesMapEntities } from '@/helpers/entities/map/list';
+import { normalizeTreeOfDependenciesMapEntities } from '@/helpers/entities/map/list';
 import { isEntityEventsStateSettings } from '@/helpers/entities/entity/entity';
 import { convertSortToRequest } from '@/helpers/entities/shared/query';
+import { getButtonHTML, getEntityNodeElementHTML } from '@/helpers/entities/entity/cytoscape';
 
 import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
 
 import NetworkGraph from '@/components/common/chart/network-graph.vue';
-
-// eslint-disable-next-line import/no-webpack-loader-syntax
-import engineeringIcon from '!!svg-inline-loader?modules!@/assets/images/engineering.svg';
-
-const getIconElement = (node) => {
-  const { isEvents, entity } = node;
-
-  const el = document.createElement('i');
-  el.classList.add(
-    'v-icon',
-    'material-icons',
-    'theme--light',
-    'white--text',
-    'entity-dependencies-by-state-settings__node-icon',
-  );
-
-  if (isEvents) {
-    el.classList.add('entity-dependencies-by-state-settings__node-icon--events');
-  }
-
-  el.innerHTML = isEvents
-    ? 'textsms'
-    : {
-      [ENTITY_TYPES.service]: engineeringIcon,
-      [ENTITY_TYPES.resource]: 'perm_identity',
-      [ENTITY_TYPES.component]: 'developer_board',
-    }[entity.type];
-
-  return el;
-};
-
-const getProgressElement = () => {
-  const progressContentCircleEl = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  progressContentCircleEl.classList.add('v-progress-circular__overlay');
-  progressContentCircleEl.setAttribute('fill', 'transparent');
-  progressContentCircleEl.setAttribute('cx', '45.714285714285715');
-  progressContentCircleEl.setAttribute('cy', '45.714285714285715');
-  progressContentCircleEl.setAttribute('r', '15');
-  progressContentCircleEl.setAttribute('stroke-width', '3');
-  progressContentCircleEl.setAttribute('stroke-dasharray', '125.664');
-  progressContentCircleEl.setAttribute('stroke-dashoffset', '125.66370614359172px');
-
-  const progressContentEl = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  progressContentEl.setAttribute('viewBox', '22.857142857142858 22.857142857142858 45.714285714285715 45.714285714285715');
-  progressContentEl.appendChild(progressContentCircleEl);
-
-  const progressEl = document.createElement('div');
-  progressEl.appendChild(progressContentEl);
-  progressEl.classList.add(
-    'v-progress-circular',
-    'v-progress-circular--indeterminate',
-    'v-progress-circular--visible',
-    'white--text',
-    'entity-dependencies-by-state-settings__node-progress',
-  );
-
-  return progressEl;
-};
-
-const getContentElement = (node) => {
-  const { entity, pending, isEvents } = node;
-  const nodeSize = isEvents ? ROOT_CAUSE_DIAGRAM_EVENTS_NODE_SIZE : ROOT_CAUSE_DIAGRAM_NODE_SIZE;
-
-  const nodeLabelEl = document.createElement('div');
-  nodeLabelEl.classList.add('position-absolute');
-  nodeLabelEl.style.top = `${nodeSize}px`;
-
-  if (!isEvents) {
-    nodeLabelEl.textContent = getMapEntityText(entity);
-  }
-
-  const nodeEl = document.createElement('div');
-  nodeEl.appendChild(getIconElement(node));
-  nodeEl.appendChild(nodeLabelEl);
-  nodeEl.classList.add('v-btn__content', 'position-relative', 'border-radius-rounded');
-  nodeEl.style.width = `${nodeSize}px`;
-  nodeEl.style.height = `${nodeSize}px`;
-  nodeEl.style.justifyContent = 'center';
-  nodeEl.style.background = getEntityColor(entity);
-
-  if (pending) {
-    nodeEl.appendChild(getProgressElement());
-  }
-
-  return nodeEl.outerHTML;
-};
 
 export default {
   components: { NetworkGraph },
@@ -154,36 +62,30 @@ export default {
     },
 
     entitiesElements() {
-      return this.entitiesWithDependencies.reduce((acc, { entity, dependencies = [] }) => {
-        acc.push(
-          {
-            group: 'nodes',
-            data: {
-              id: entity._id,
-              entity,
-              root: true,
-            },
+      const rootElement = this.entitiesById[this.entity._id];
+      const { entity, dependencies = [] } = rootElement;
+
+      const elements = [
+        {
+          group: 'nodes',
+          data: {
+            id: entity._id,
+            entity,
+            root: true,
+            opened: true,
           },
-        );
+        },
+      ];
 
-        if (isEntityEventsStateSettings(entity)) {
-          acc.push(...this.getEventsNodeElementByEntity(entity));
+      if (isEntityEventsStateSettings(entity)) {
+        elements.push(...this.getEventsNodeElementByEntity(entity));
 
-          return acc;
-        }
+        return elements;
+      }
 
-        if (dependencies.length) {
-          acc.push(...this.getEntityDependenciesElement(entity, dependencies));
-        }
+      elements.push(...this.getEntityDependenciesElement(entity, dependencies, [entity._id]));
 
-        const meta = this.metaByEntityId[entity._id] ?? {};
-
-        if (meta.page < meta.page_count) {
-          acc.push(...this.getShowMoreElements(entity));
-        }
-
-        return acc;
-      }, []);
+      return elements;
     },
 
     styleOption() {
@@ -223,25 +125,16 @@ export default {
     },
 
     nodeHtmlLabelsOptions() {
-      const getShowMoreContent = ({ entity }) => {
+      const getShowMoreContent = (node) => {
+        const { entity } = node;
         const meta = this.metaByEntityId[entity._id] ?? {};
 
         const fetchedEntities = meta.page * meta.per_page;
 
-        const btnContentEl = document.createElement('div');
-        btnContentEl.classList.add('v-btn__content');
-        btnContentEl.textContent = `Show more (${fetchedEntities} of ${meta.total_count})`;
-
-        const btnEl = document.createElement('button');
-        btnEl.classList.add(
-          'v-btn',
-          'v-btn--round',
-          'theme--light',
-          'tree-of-dependencies__show-all-btn',
-        );
-        btnEl.appendChild(btnContentEl);
-
-        return btnEl.outerHTML;
+        /**
+         * TODO: Should be replaced on translation
+         */
+        return getButtonHTML(`Show more (${fetchedEntities} of ${meta.total_count})`);
       };
 
       return [
@@ -249,7 +142,7 @@ export default {
           query: 'node',
           valign: 'center',
           halign: 'center',
-          tpl: getContentElement,
+          tpl: getEntityNodeElementHTML,
         },
         {
           query: 'node[showMore]',
@@ -322,32 +215,62 @@ export default {
       ];
     },
 
-    getEntityDependenciesElement(entity, dependenciesIds = []) {
-      const dependencies = dependenciesIds.map(id => this.entitiesById[id].entity);
+    getEntityDependenciesElement(entity, dependenciesIds = [], handledDependenciesIds = []) {
+      const dependenciesNodes = dependenciesIds.reduce((acc, childId) => {
+        const { dependencies: childDependenciesIds = [], entity: child } = this.entitiesById[childId];
 
-      return dependencies.reduce((acc, child) => {
-        acc.push(
-          {
-            group: 'nodes',
-            data: {
-              id: child._id,
-              entity: child,
+        const isCycle = handledDependenciesIds.includes(childId);
+
+        const hasDependencies = !!childDependenciesIds.length;
+
+        if (!isCycle) {
+          const childDependencies = this.getEntityDependenciesElement(
+            child,
+            childDependenciesIds,
+            [...handledDependenciesIds, childId],
+          );
+
+          acc.push(
+            {
+              group: 'nodes',
+              data: {
+                id: childId,
+                entity: child,
+                root: hasDependencies,
+                opened: hasDependencies,
+              },
             },
-          },
+            ...childDependencies,
+          );
+        }
+
+        acc.push(
           {
             group: 'edges',
             data: {
               source: entity._id,
-              target: child._id,
+              target: childId,
             },
           },
         );
 
         return acc;
       }, []);
+
+      dependenciesNodes.push(
+        ...this.getShowMoreElements(entity),
+      );
+
+      return dependenciesNodes;
     },
 
     getShowMoreElements(entity) {
+      const meta = this.metaByEntityId[entity._id];
+
+      if (!meta || meta.page >= meta.page_count) {
+        return [];
+      }
+
       const showMoreId = `show-all-${entity._id}`;
 
       return [
@@ -449,8 +372,10 @@ export default {
         return item._id;
       });
 
+      const previousDeps = this.entitiesById[id].dependencies ?? [];
+
       this.$set(this.entitiesById[id], 'dependencies', [
-        ...this.entitiesById[id].dependencies,
+        ...previousDeps,
         ...ids,
       ]);
 
@@ -482,8 +407,22 @@ export default {
      * @param {Object} target
      * @param {MouseEvent} originalEvent
      */
-    tapHandler({ target }) {
-      const { entity, showMore } = target.data();
+    tapHandler({ target, originalEvent }) {
+      const { entity, showMore, cycle } = target.data();
+
+      if (cycle) {
+        return;
+      }
+
+      if (originalEvent.target.classList.contains('v-badge__badge')) {
+        const { id } = originalEvent.target.dataset;
+
+        if (id) {
+          this.fetchDependencies(id);
+
+          return;
+        }
+      }
 
       if (!showMore || !entity) {
         return;
@@ -506,20 +445,6 @@ export default {
   &__node-progress {
     position: absolute;
     inset: 0;
-  }
-
-  &__node-icon {
-    --node-size: 30px;
-
-    font-size: var(--node-size) !important;
-
-    svg {
-      height: var(--node-size) !important;
-    }
-
-    &--events {
-      --node-size: 20px;
-    }
   }
 
   &__fetch-dependencies {
