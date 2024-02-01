@@ -14,7 +14,8 @@
           :alarm="alarm",
           :widget="widget",
           :is-tour-enabled="isTourEnabled",
-          :small="small"
+          :small="small",
+          :search="search"
         )
     td(v-for="column in columns")
       alarm-column-value(
@@ -125,6 +126,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    search: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
@@ -158,9 +163,7 @@ export default {
     },
 
     isNotFiltered() {
-      return this.parentAlarm
-        && this.parentAlarm.filtered_children
-        && !this.parentAlarm.filtered_children.includes(this.alarm._id);
+      return this.alarm.filtered === false;
     },
 
     listeners() {
