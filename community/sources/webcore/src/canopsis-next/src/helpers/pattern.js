@@ -477,7 +477,7 @@ export const getOperatorsByRule = (rule, ruleType) => {
   }
 
   if (
-    (isInfosRuleType(ruleType) || isExtraInfosPatternRuleField(ruleType))
+    (isInfosRuleType(ruleType) || isExtraInfosRuleType(ruleType))
     && rule.field === PATTERN_RULE_INFOS_FIELDS.name
   ) {
     return PATTERN_INFOS_NAME_OPERATORS;
