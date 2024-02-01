@@ -37,10 +37,6 @@ export default {
       type: String,
       required: false,
     },
-    impact: {
-      type: Boolean,
-      required: false,
-    },
     columns: {
       type: Array,
       default: () => [],
@@ -55,10 +51,6 @@ export default {
   computed: {
     isEventsStateSettings() {
       return isEntityEventsStateSettings(this.entity);
-    },
-
-    entitiesWithDependencies() {
-      return Object.values(this.entitiesById).filter(entity => entity.dependencies);
     },
 
     entitiesElements() {
@@ -236,7 +228,6 @@ export default {
               data: {
                 id: childId,
                 entity: child,
-                root: hasDependencies,
                 opened: hasDependencies,
               },
             },
@@ -334,7 +325,7 @@ export default {
         pending: true,
       });
 
-      const { data, meta } = await this.fetchDependenciesList({
+      const { data, meta } = await this.fetchServiceImpactsWithoutStore({
         id,
         params: {
           page: newPage,
@@ -379,8 +370,16 @@ export default {
         ...ids,
       ]);
 
-      this.$refs.networkGraph.$cy.elements('*').remove();
-      this.$refs.networkGraph.$cy.add(this.entitiesElements);
+      this.resetLayout();
+    },
+
+    hideDependencies(target) {
+      const { entity } = target.data();
+
+      this.$set(this.entitiesById[entity._id], 'dependencies', []);
+      this.$delete(this.metaByEntityId, entity._id);
+
+      this.resetLayout();
     },
 
     /**
@@ -390,13 +389,17 @@ export default {
      */
     async fetchDependencies(id) {
       const target = this.$refs.networkGraph.$cy.getElementById(id);
-      const { pending } = target.data();
+      const { pending, opened, root } = target.data();
 
       if (pending) {
         return;
       }
 
-      await this.showDependencies(target);
+      if (!root && opened) {
+        this.hideDependencies(target);
+      } else {
+        await this.showDependencies(target);
+      }
 
       this.runLayout();
     },
@@ -441,17 +444,6 @@ export default {
   width: 100%;
   border-radius: 5px;
   background: white;
-
-  &__node-progress {
-    position: absolute;
-    inset: 0;
-  }
-
-  &__fetch-dependencies {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-  }
 
   canvas[data-id='layer0-selectbox'] { // Hide selectbox layer from cytoscape
     display: none;
