@@ -7,6 +7,7 @@ exports[`service-template Renders \`service-template\` with custom props 1`] = `
     Id: service-id
     Entities: 
   <service-entities-list-stub
+    actionsrequests=""
     entitynamefield="entity._id"
     options="[object Object]"
     service="[object Object]"

@@ -1,5 +1,8 @@
 <template>
-  <v-layout wrap>
+  <v-layout
+    class="gap-4 ml-2"
+    wrap
+  >
     <v-tooltip
       v-for="action in actions"
       :key="action.type"
