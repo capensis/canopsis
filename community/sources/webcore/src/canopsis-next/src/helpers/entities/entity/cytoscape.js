@@ -127,7 +127,7 @@ export const getProgressElement = () => {
  * @return {string}
  */
 export const getEntityNodeElementHTML = (node) => {
-  const { entity, pending, isEvents, opened } = node;
+  const { entity, pending, isEvents, opened, root } = node;
 
   const nodeSize = isEvents ? ROOT_CAUSE_DIAGRAM_EVENTS_NODE_SIZE : ROOT_CAUSE_DIAGRAM_NODE_SIZE;
 
@@ -148,7 +148,7 @@ export const getEntityNodeElementHTML = (node) => {
   nodeEl.style.justifyContent = 'center';
   nodeEl.style.background = getEntityColor(entity);
 
-  if (pending || entity.depends_count > 0) {
+  if (pending || (!root && entity.impacts_count > 0)) {
     const badge = getBadgeElement();
     badge.dataset.id = entity._id;
 
