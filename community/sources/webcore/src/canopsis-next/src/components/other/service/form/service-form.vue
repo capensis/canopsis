@@ -84,6 +84,7 @@ import { get } from 'lodash';
 
 import {
   ENTITY_PATTERN_FIELDS,
+  ENTITY_TYPES,
   SERVICE_WEATHER_STATE_COUNTERS,
   SERVICE_WEATHER_TEMPLATE_COUNTERS_BY_STATE_COUNTERS,
 } from '@/constants';
@@ -141,9 +142,13 @@ export default {
         },
       ];
     },
-
-    formToService() {
-      return formToService;
+  },
+  methods: {
+    formToService(service) {
+      return {
+        ...formToService(service),
+        type: ENTITY_TYPES.service,
+      };
     },
   },
 };
