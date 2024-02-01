@@ -3413,6 +3413,61 @@ definitions:
       updated:
         type: integer
     type: object
+  pbehavior.BulkConnectorCreateRequestItem:
+    properties:
+      color:
+        type: string
+      comment:
+        type: string
+      entities:
+        items:
+          type: string
+        type: array
+      name:
+        maxLength: 255
+        type: string
+      origin:
+        maxLength: 255
+        type: string
+      reason:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
+    required:
+    - comment
+    - entities
+    - name
+    - origin
+    - reason
+    - tstart
+    - tstop
+    - type
+    type: object
+  pbehavior.BulkConnectorDeleteRequestItem:
+    properties:
+      comment:
+        type: string
+      entities:
+        items:
+          type: string
+        type: array
+      origin:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+    required:
+    - comment
+    - entities
+    - origin
+    - tstart
+    - tstop
+    type: object
   pbehavior.BulkDeleteRequestItem:
     properties:
       _id:
@@ -3435,8 +3490,6 @@ definitions:
         maxLength: 255
         type: string
       reason:
-        type: string
-      rrule:
         type: string
       tstart:
         type: integer

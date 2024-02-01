@@ -645,13 +645,12 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 func getPbhOriginLookup(origin string) []bson.M {
 	return []bson.M{
 		{"$lookup": bson.M{
-			"from": mongo.PbehaviorMongoCollection,
-			"let":  bson.M{"id": "$_id"},
+			"from":         mongo.PbehaviorMongoCollection,
+			"localField":   "_id",
+			"foreignField": "entity",
 			"pipeline": []bson.M{
-				{"$match": bson.M{"$and": []bson.M{
-					{"$expr": bson.M{"$eq": bson.A{"$$id", "$entity"}}},
-					{"origin": origin},
-				}}},
+				{"$match": bson.M{"origin": origin}},
+				{"$limit": 1},
 			},
 			"as": "pbh_origin",
 		}},
