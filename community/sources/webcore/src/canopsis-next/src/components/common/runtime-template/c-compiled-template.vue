@@ -32,7 +32,7 @@ export default {
     template: 'compileTemplate',
     context: 'compileTemplate',
     parentElement: 'compileTemplate',
-    '$system.dark': 'compileTemplate',
+    '$system.theme': 'compileTemplate',
   },
   created() {
     this.compileTemplate();
@@ -41,7 +41,11 @@ export default {
     async compileTemplate() {
       try {
         const compiledTemplate = await compile(this.template, {
-          isDarkTheme: this.$system.dark,
+          theme: {
+            ...this.$system.theme,
+
+            dark: this.$system.dark,
+          },
 
           ...this.context,
         });
