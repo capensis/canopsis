@@ -4,6 +4,7 @@
     :entity-attributes="entityAttributes"
     :entity-types="entityTypes"
     :entity-title="$t('stateSetting.addImpactingEntityPattern')"
+    :disabled="disabled"
     name="inherited_entity_pattern"
     required
     with-entity
@@ -27,6 +28,10 @@ export default {
     patterns: {
       type: Object,
       default: () => ({}),
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

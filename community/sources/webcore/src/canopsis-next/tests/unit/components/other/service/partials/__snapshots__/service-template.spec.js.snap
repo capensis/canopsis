@@ -18,4 +18,22 @@ exports[`service-template Renders \`service-template\` with custom props 1`] = `
 </div>
 `;
 
+exports[`service-template Renders \`service-template\` with custom props 2`] = `
+<div
+  itemsperpage="10"
+>
+    Id: service-id
+    Entities: 
+  <service-entities-list-stub
+    entitynamefield="entity._id"
+    options="[object Object]"
+    service="[object Object]"
+    serviceentities="[object Object],[object Object]"
+    totalitems="20"
+    widgetparameters="[object Object]"
+  />
+  <br />
+</div>
+`;
+
 exports[`service-template Renders \`service-template\` with required props 1`] = `<div />`;
