@@ -20,10 +20,6 @@ type Adapter interface {
 	// Update update an alarm
 	Update(ctx context.Context, alarm types.Alarm) error
 
-	PartialUpdateOpen(ctx context.Context, alarm *types.Alarm) error
-
-	PartialMassUpdateOpen(ctx context.Context, alarms []types.Alarm) error
-
 	// GetAlarmsByID finds all alarms with an entity id.
 	GetAlarmsByID(ctx context.Context, id string) ([]types.Alarm, error)
 
@@ -66,9 +62,6 @@ type Adapter interface {
 	// GetOpenedAlarmsByAlarmIDs gets ongoing alarms related the provided alarm ids
 	GetOpenedAlarmsByAlarmIDs(ctx context.Context, ids []string, alarms *[]types.Alarm) error
 	GetOpenedAlarmsWithEntityByAlarmIDs(ctx context.Context, ids []string, alarms *[]types.AlarmWithEntity) error
-
-	// MassPartialUpdateOpen updates opened alarms matching by list of IDs, applying partial update from alarm
-	MassPartialUpdateOpen(context.Context, *types.Alarm, []string) error
 
 	GetOpenedAlarmsWithLastDatesBefore(ctx context.Context, time datetime.CpsTime) (mongo.Cursor, error)
 
