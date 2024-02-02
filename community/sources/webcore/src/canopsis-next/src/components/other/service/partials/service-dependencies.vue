@@ -5,7 +5,12 @@
       v-model="showType"
       class="mb-3"
     />
-    <state-settings-summary :entity="root" />
+    <state-settings-summary
+      v-if="showStateSetting"
+      :state-setting="stateSetting"
+      :pending="stateSettingPending"
+      :entity="root"
+    />
     <c-treeview-data-table
       ref="treeviewDataTable"
       :items="items"
@@ -82,6 +87,7 @@ import {
 } from '@/helpers/entities/service-dependencies/list';
 
 import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
+import { checkStateSettingMixin } from '@/mixins/entities/check-state-setting';
 
 import StateSettingsSummary from '@/components/other/state-setting/state-settings-summary.vue';
 import ServiceDependenciesShowTypeField
@@ -97,7 +103,7 @@ export default {
     ServiceDependenciesExpand,
     ServiceDependenciesEntityCell,
   },
-  mixins: [entitiesEntityDependenciesMixin],
+  mixins: [entitiesEntityDependenciesMixin, checkStateSettingMixin],
   props: {
     root: {
       type: Object,
@@ -116,6 +122,10 @@ export default {
       default: false,
     },
     openableRoot: {
+      type: Boolean,
+      default: false,
+    },
+    showStateSetting: {
       type: Boolean,
       default: false,
     },
@@ -191,6 +201,14 @@ export default {
     showType() {
       this.setRootDependencies();
       this.fetchRootDependencies();
+    },
+    showStateSetting: {
+      immediate: true,
+      handler(value) {
+        if (value) {
+          this.checkStateSetting(this.root);
+        }
+      },
     },
   },
   mounted() {

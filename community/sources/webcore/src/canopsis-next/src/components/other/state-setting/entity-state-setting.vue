@@ -13,11 +13,11 @@
 
 <script>
 import { debounce } from 'lodash';
-import { createNamespacedHelpers } from 'vuex';
 
-const { mapActions } = createNamespacedHelpers('entity');
+import { checkStateSettingMixin } from '@/mixins/entities/check-state-setting';
 
 export default {
+  mixins: [checkStateSettingMixin],
   props: {
     form: {
       type: Object,
@@ -43,24 +43,13 @@ export default {
     },
   },
   created() {
-    this.debouncedCheckStateSetting = debounce(this.checkStateSetting, 500);
+    this.debouncedCheckStateSetting = debounce(this.checkStateSettingByForm, 500);
 
-    this.checkStateSetting(this.form);
+    this.checkStateSettingByForm(this.form);
   },
   methods: {
-    ...mapActions({
-      checkEntityStateSetting: 'checkStateSetting',
-    }),
-
-    async checkStateSetting(form) {
-      try {
-        this.stateSettingPending = true;
-        this.stateSetting = await this.checkEntityStateSetting({ data: this.preparer(form) });
-      } catch (err) {
-        console.error(err);
-      } finally {
-        this.stateSettingPending = false;
-      }
+    checkStateSettingByForm(form) {
+      return this.checkStateSetting(this.preparer(form));
     },
   },
 };

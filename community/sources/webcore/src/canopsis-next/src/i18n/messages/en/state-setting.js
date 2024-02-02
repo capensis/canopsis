@@ -13,9 +13,12 @@ export default {
   computeMethod: 'State compute method',
   addImpactingEntityPattern: 'Impacting entity pattern',
   conditionsError: 'Please add at least one condition',
-  entityThresholdSummary: 'A targeted entity state is {state} when the {method} of impacting entities of the {impactingEntitiesState} state is {condition} {value}.',
+  targetEntityThresholdSummary: 'A targeted entity state is {state} when the {method} of impacting entities of the {impactingEntitiesState} state is {condition} {value}.',
+  entityThresholdSummary: '{name} state is {state} when the {method} of impacting entities of the {impactingEntitiesState} state is {condition} {value}.',
   appliedFor: 'Applied for',
   appliedForEntityType: 'Applied for entity type',
+  stateIsInheritFrom: '{name} state is inherit from',
+  seeFilterPattern: 'See filter pattern',
   steps: {
     basics: 'Basics',
     rulePatterns: 'Define target entities',
