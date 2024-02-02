@@ -3,7 +3,7 @@
     <span>
       {{ $t('stateSetting.computeMethod') }}:
       <v-progress-circular
-        v-if="stateSettingPending"
+        v-if="pending"
         class="ml-1"
         color="primary"
         size="20"
@@ -13,20 +13,40 @@
       <b v-else>{{ stateMethodName }}</b>
     </span>
     <v-expand-transition>
-      <span v-if="!stateSettingPending && stateMethodSummaryText">{{ stateMethodSummaryText }}</span>
+      <div v-if="!pending && stateMethodSummaryText">
+        <p v-if="isInheritedMethod">
+          <i18n path="stateSetting.stateIsInheritFrom" tag="span">
+            <b place="name">{{ entity.name }}</b>
+          </i18n>
+          <v-btn
+            class="ml-2"
+            color="primary"
+            outlined
+            small
+            @click="showStateSettingsPatterns"
+          >
+            {{ $t('stateSetting.seeFilterPattern') }}
+          </v-btn>
+        </p>
+        <v-layout v-else-if="isDependenciesMethod" column>
+          <i-18n path="stateSetting.entityThresholdSummary">
+            <b place="name">{{ entity.name }}</b>
+            <b place="state">{{ entityStateString }}</b>
+            <span place="method">{{ currentCondition.method }}</span>
+            <span place="condition">{{ conditionMethodSummary }}</span>
+            <b place="impactingEntitiesState">{{ currentCondition.state }}</b>
+            <b place="value">{{ conditionValue }}</b>
+          </i-18n>
+        </v-layout>
+      </div>
     </v-expand-transition>
   </v-layout>
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import { ENTITIES_STATES, JUNIT_STATE_SETTING_METHODS, STATE_SETTING_METHODS } from '@/constants';
 
-import { JUNIT_STATE_SETTING_METHODS } from '@/constants';
-
-import { infosToArray } from '@/helpers/entities/shared/form';
 import { isEntityEventsStateSettings } from '@/helpers/entities/entity/entity';
-
-const { mapActions: mapEntityActions } = createNamespacedHelpers('entity');
 
 export default {
   props: {
@@ -34,16 +54,58 @@ export default {
       type: Object,
       required: true,
     },
-  },
-  data() {
-    return {
-      stateSettingPending: false,
-      stateSetting: {},
-    };
+    stateSetting: {
+      type: Object,
+      required: false,
+    },
+    pending: {
+      type: Boolean,
+      required: false,
+    },
   },
   computed: {
     isEventsStateSettings() {
       return isEntityEventsStateSettings(this.entity);
+    },
+
+    isInheritedMethod() {
+      return this.stateSetting?.method === STATE_SETTING_METHODS.inherited;
+    },
+
+    isDependenciesMethod() {
+      return this.stateSetting?.method === STATE_SETTING_METHODS.dependencies;
+    },
+
+    entityState() {
+      return this.entity.state;
+    },
+
+    entityStateString() {
+      return this.$t(`common.stateTypes.${this.entityState}`);
+    },
+
+    currentCondition() {
+      const {
+        ok,
+        minor,
+        major,
+        critical,
+      } = this.stateSetting.state_thresholds;
+
+      return {
+        [ENTITIES_STATES.ok]: ok,
+        [ENTITIES_STATES.minor]: minor,
+        [ENTITIES_STATES.major]: major,
+        [ENTITIES_STATES.critical]: critical,
+      }[this.entityState];
+    },
+
+    conditionMethodSummary() {
+      return this.$t(`stateSetting.thresholdConditions.${this.currentCondition.cond}`).toLowerCase();
+    },
+
+    conditionValue() {
+      return `${this.currentCondition.value}${this.isShareMethod ? '%' : ''}`;
     },
 
     stateMethodName() {
@@ -51,41 +113,46 @@ export default {
         return this.$tc('common.event', 2);
       }
 
-      return this.stateSetting.title || this.$t(`stateSetting.junit.methods.${JUNIT_STATE_SETTING_METHODS.worst}`);
+      return this.stateSetting?.title || this.$t(`stateSetting.junit.methods.${JUNIT_STATE_SETTING_METHODS.worst}`);
     },
 
     stateMethodSummaryText() {
-      if (this.stateSetting.title) {
-        return 'TODO: Should be implemented';
+      if (!this.stateSetting) {
+        return '';
       }
 
-      return '';
+      if (this.isInheritedMethod) {
+        return this.$t('stateSetting.stateIsInheritFrom');
+      }
+
+      const {
+        ok,
+        minor,
+        major,
+        critical,
+      } = this.stateSetting.state_thresholds;
+
+      const currentCondition = {
+        [ENTITIES_STATES.ok]: ok,
+        [ENTITIES_STATES.minor]: minor,
+        [ENTITIES_STATES.major]: major,
+        [ENTITIES_STATES.critical]: critical,
+      }[this.entityState];
+
+      return this.$t('stateSetting.entityThresholdSummary', {
+        state: this.entityStateString,
+        method: currentCondition.method,
+        condition: this.$t(`stateSetting.thresholdConditions.${currentCondition.cond}`).toLowerCase(),
+        impactingEntitiesState: currentCondition.state,
+        value: `${currentCondition.value}${this.isShareMethod ? '%' : ''}`,
+      });
     },
   },
-  mounted() {
-    if (!this.isEventsStateSettings) {
-      this.checkStateSetting({
-        name: this.entity.name,
-        type: this.entity.type,
-        infos: infosToArray(this.entity.infos),
-        impact_level: this.entity.impact_level,
-      });
-    }
-  },
   methods: {
-    ...mapEntityActions({
-      checkEntityStateSetting: 'checkStateSetting',
-    }),
-
-    async checkStateSetting(data) {
-      try {
-        this.stateSettingPending = true;
-        this.stateSetting = await this.checkEntityStateSetting({ data });
-      } catch (err) {
-        console.error(err);
-      } finally {
-        this.stateSettingPending = false;
-      }
+    showStateSettingsPatterns() {
+      /**
+       * TODO: Show state setting patterns
+       */
     },
   },
 };
