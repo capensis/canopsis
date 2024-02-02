@@ -14,7 +14,7 @@
 import { omit } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
-import { ROOT_CAUSE_DIAGRAM_OPTIONS, ROOT_CAUSE_DIAGRAM_LAYOUT_OPTIONS } from '@/constants';
+import { ROOT_CAUSE_DIAGRAM_OPTIONS, ROOT_CAUSE_DIAGRAM_LAYOUT_OPTIONS, STATE_SETTING_METHODS } from '@/constants';
 
 import { normalizeTreeOfDependenciesMapEntities } from '@/helpers/entities/map/list';
 import { isEntityEventsStateSettings } from '@/helpers/entities/entity/entity';
@@ -33,8 +33,8 @@ export default {
       type: Object,
       required: true,
     },
-    colorIndicator: {
-      type: String,
+    stateSetting: {
+      type: Object,
       required: false,
     },
     columns: {
@@ -51,6 +51,10 @@ export default {
   computed: {
     isEventsStateSettings() {
       return isEntityEventsStateSettings(this.entity);
+    },
+
+    isInheritedMethod() {
+      return this.stateSetting?.method === STATE_SETTING_METHODS.inherited;
     },
 
     entitiesElements() {
@@ -245,6 +249,10 @@ export default {
           },
         );
 
+        if (isEntityEventsStateSettings(child)) {
+          acc.push(...this.getEventsNodeElementByEntity(child));
+        }
+
         return acc;
       }, []);
 
@@ -314,6 +322,27 @@ export default {
       }
     },
 
+    getQuery({ page }) {
+      const query = {
+        page,
+        limit: PAGINATION_LIMIT,
+        with_flags: true,
+        /**
+         * TODO: Api doesn't support multi sort
+         */
+        ...convertSortToRequest(['last_update_date', 'state']),
+      };
+
+      if (this.isInheritedMethod) {
+        /**
+         * TODO: Api doesn't support pattern but we need it (Case 3)
+         */
+        query.entity_pattern = JSON.stringify(this.stateSetting.inherited_entity_pattern);
+      }
+
+      return query;
+    },
+
     /**
      * Show dependencies for node
      *
@@ -331,15 +360,7 @@ export default {
 
       const { data, meta } = await this.fetchServiceImpactsWithoutStore({
         id,
-        params: {
-          page: newPage,
-          limit: PAGINATION_LIMIT,
-          with_flags: true,
-          /**
-           * TODO: Api doesn't support multi sort
-           */
-          ...convertSortToRequest(['last_update_date', 'state']),
-        },
+        params: this.getQuery({ page: newPage }),
       });
 
       target.data({
