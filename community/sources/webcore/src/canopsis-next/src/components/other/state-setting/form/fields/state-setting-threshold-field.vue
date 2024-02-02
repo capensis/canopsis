@@ -137,7 +137,7 @@ export default {
       const hasFieldsForSummary = Object.values(fieldsForSummary).every(value => !!String(value));
 
       return hasFieldsForSummary
-        ? this.$t('stateSetting.entityThresholdSummary', {
+        ? this.$t('stateSetting.targetEntityThresholdSummary', {
           state: this.state,
           method: this.condition.method,
           condition: this.$t(`stateSetting.thresholdConditions.${this.condition.cond}`).toLowerCase(),

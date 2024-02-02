@@ -288,6 +288,10 @@ export default {
      * Remove old elements and add new elements to network graph
      */
     resetLayout() {
+      if (!this.$refs?.networkGraph?.$cy) {
+        return;
+      }
+
       this.$refs.networkGraph.$cy.elements().remove();
       this.$refs.networkGraph.$cy.add(this.entitiesElements);
       this.runLayout();
@@ -387,19 +391,23 @@ export default {
      *
      * @param {string} id
      */
-    async fetchDependencies(id) {
+    async toggleDependencies(id) {
       const target = this.$refs.networkGraph.$cy.getElementById(id);
-      const { pending, opened, root } = target.data();
-
-      if (pending) {
-        return;
-      }
+      const { opened, root } = target.data();
 
       if (!root && opened) {
         this.hideDependencies(target);
       } else {
         await this.showDependencies(target);
       }
+
+      this.runLayout();
+    },
+
+    async fetchDependencies(id) {
+      const target = this.$refs.networkGraph.$cy.getElementById(id);
+
+      await this.showDependencies(target);
 
       this.runLayout();
     },
@@ -411,9 +419,9 @@ export default {
      * @param {MouseEvent} originalEvent
      */
     tapHandler({ target, originalEvent }) {
-      const { entity, showMore, cycle } = target.data();
+      const { entity, showMore, pending, cycle } = target.data();
 
-      if (cycle) {
+      if (cycle || pending) {
         return;
       }
 
@@ -421,7 +429,7 @@ export default {
         const { id } = originalEvent.target.dataset;
 
         if (id) {
-          this.fetchDependencies(id);
+          this.toggleDependencies(id);
 
           return;
         }
