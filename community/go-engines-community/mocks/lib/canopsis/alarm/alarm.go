@@ -469,48 +469,6 @@ func (mr *MockAdapterMockRecorder) Insert(arg0, arg1 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Insert", reflect.TypeOf((*MockAdapter)(nil).Insert), arg0, arg1)
 }
 
-// MassPartialUpdateOpen mocks base method.
-func (m *MockAdapter) MassPartialUpdateOpen(arg0 context.Context, arg1 *types.Alarm, arg2 []string) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "MassPartialUpdateOpen", arg0, arg1, arg2)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// MassPartialUpdateOpen indicates an expected call of MassPartialUpdateOpen.
-func (mr *MockAdapterMockRecorder) MassPartialUpdateOpen(arg0, arg1, arg2 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MassPartialUpdateOpen", reflect.TypeOf((*MockAdapter)(nil).MassPartialUpdateOpen), arg0, arg1, arg2)
-}
-
-// PartialMassUpdateOpen mocks base method.
-func (m *MockAdapter) PartialMassUpdateOpen(arg0 context.Context, arg1 []types.Alarm) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PartialMassUpdateOpen", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// PartialMassUpdateOpen indicates an expected call of PartialMassUpdateOpen.
-func (mr *MockAdapterMockRecorder) PartialMassUpdateOpen(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PartialMassUpdateOpen", reflect.TypeOf((*MockAdapter)(nil).PartialMassUpdateOpen), arg0, arg1)
-}
-
-// PartialUpdateOpen mocks base method.
-func (m *MockAdapter) PartialUpdateOpen(arg0 context.Context, arg1 *types.Alarm) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PartialUpdateOpen", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// PartialUpdateOpen indicates an expected call of PartialUpdateOpen.
-func (mr *MockAdapterMockRecorder) PartialUpdateOpen(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PartialUpdateOpen", reflect.TypeOf((*MockAdapter)(nil).PartialUpdateOpen), arg0, arg1)
-}
-
 // Update mocks base method.
 func (m *MockAdapter) Update(arg0 context.Context, arg1 types.Alarm) error {
 	m.ctrl.T.Helper()

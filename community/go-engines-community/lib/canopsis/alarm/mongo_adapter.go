@@ -3,10 +3,8 @@ package alarm
 import (
 	"context"
 	"errors"
-	"math"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
@@ -54,73 +52,6 @@ func (a mongoAdapter) Update(ctx context.Context, alarm types.Alarm) error {
 	}
 
 	return nil
-}
-
-func (a mongoAdapter) PartialUpdateOpen(ctx context.Context, alarm *types.Alarm) error {
-	update := alarm.GetUpdate()
-	if len(update) == 0 {
-		return nil
-	}
-
-	res, err := a.mainDbCollection.UpdateOne(ctx, bson.M{
-		"_id": alarm.ID,
-		"$or": []bson.M{
-			{"v.resolved": nil},
-			{"v.resolved": bson.M{"$exists": false}},
-		},
-	}, update)
-	if err != nil {
-		return err
-	}
-
-	if res.MatchedCount > 0 && res.ModifiedCount > 0 {
-		alarm.CleanUpdate()
-	}
-
-	return nil
-}
-
-func (a mongoAdapter) PartialMassUpdateOpen(ctx context.Context, alarms []types.Alarm) error {
-	var err error
-	writeModels := make([]mongo.WriteModel, 0, int(math.Min(float64(canopsis.DefaultBulkSize), float64(len(alarms)))))
-
-	for idx, alarm := range alarms {
-		update := alarm.GetUpdate()
-		if len(update) == 0 {
-			continue
-		}
-
-		writeModels = append(
-			writeModels,
-			mongo.NewUpdateOneModel().
-				SetFilter(bson.M{
-					"_id": alarm.ID,
-					"$or": []bson.M{
-						{"v.resolved": nil},
-						{"v.resolved": bson.M{"$exists": false}},
-					},
-				}).
-				SetUpdate(update),
-		)
-
-		alarm.CleanUpdate()
-		alarms[idx] = alarm
-
-		if len(writeModels) == canopsis.DefaultBulkSize {
-			_, err = a.mainDbCollection.BulkWrite(ctx, writeModels)
-			if err != nil {
-				return err
-			}
-
-			writeModels = writeModels[:0]
-		}
-	}
-
-	if len(writeModels) > 0 {
-		_, err = a.mainDbCollection.BulkWrite(ctx, writeModels)
-	}
-
-	return err
 }
 
 func (a mongoAdapter) GetAlarmsByID(ctx context.Context, id string) ([]types.Alarm, error) {
@@ -333,30 +264,6 @@ func (a mongoAdapter) GetOpenedAlarmsWithEntityByAlarmIDs(ctx context.Context, i
 
 	return err
 
-}
-
-func (a mongoAdapter) MassPartialUpdateOpen(ctx context.Context, updatedAlarm *types.Alarm, alarmID []string) error {
-	update := updatedAlarm.GetUpdate()
-	if len(update) == 0 {
-		return nil
-	}
-
-	res, err := a.mainDbCollection.UpdateMany(ctx, bson.M{
-		"_id": bson.M{"$in": alarmID},
-		"$or": []bson.M{
-			{"v.resolved": nil},
-			{"v.resolved": bson.M{"$exists": false}},
-		},
-	}, update)
-	if err != nil {
-		return err
-	}
-
-	if res.MatchedCount > 0 && res.ModifiedCount > 0 {
-		updatedAlarm.CleanUpdate()
-	}
-
-	return nil
 }
 
 func (a mongoAdapter) GetOpenedAlarmsWithLastDatesBefore(
