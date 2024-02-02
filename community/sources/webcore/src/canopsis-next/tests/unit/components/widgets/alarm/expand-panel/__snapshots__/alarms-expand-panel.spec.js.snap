@@ -482,6 +482,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
                     includeroot="true"
                     openableroot="true"
                     root="[object Object]"
+                    showstatesetting="true"
                     type="0"
                   />
                 </div>
@@ -515,6 +516,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
                     includeroot="true"
                     openableroot="true"
                     root="[object Object]"
+                    showstatesetting="true"
                     type="0"
                   />
                 </div>

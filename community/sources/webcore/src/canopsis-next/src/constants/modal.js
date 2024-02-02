@@ -115,6 +115,7 @@ export const MODALS = {
 
   createStateSetting: 'create-state-setting',
   createJunitStateSetting: 'create-junit-state-setting',
+  stateSettingInheritedEntityPattern: 'state-setting-inherited-entity-pattern',
 
   archiveDisabledEntities: 'archive-disabled-entities',
 };

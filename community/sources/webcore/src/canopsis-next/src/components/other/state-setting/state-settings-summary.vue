@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import { ENTITIES_STATES, JUNIT_STATE_SETTING_METHODS, STATE_SETTING_METHODS } from '@/constants';
+import { ENTITIES_STATES, JUNIT_STATE_SETTING_METHODS, MODALS, STATE_SETTING_METHODS } from '@/constants';
 
 import { isEntityEventsStateSettings } from '@/helpers/entities/entity/entity';
 
@@ -150,9 +150,12 @@ export default {
   },
   methods: {
     showStateSettingsPatterns() {
-      /**
-       * TODO: Show state setting patterns
-       */
+      this.$modals.show({
+        name: MODALS.stateSettingInheritedEntityPattern,
+        config: {
+          pattern: this.stateSetting.inherited_entity_pattern,
+        },
+      });
     },
   },
 };
