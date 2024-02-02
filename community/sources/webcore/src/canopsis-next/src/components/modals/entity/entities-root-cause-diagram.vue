@@ -14,7 +14,7 @@
       >
         <v-progress-circular color="primary" indeterminate />
       </v-layout>
-      <entity-dependencies-by-state-settings v-else :entity="config.entity" />
+      <entity-dependencies-by-state-settings v-else :entity="config.entity" :state-setting="stateSetting" />
     </template>
   </modal-wrapper>
 </template>
