@@ -325,6 +325,10 @@ export const CreateJunitStateSetting = () => ({
   component: import(/* webpackChunkName: "Parameters" */ './state-setting/create-junit-state-setting.vue'),
   loading: LoaderOverlay,
 });
+export const StateSettingInheritedEntityPattern = () => ({
+  component: import(/* webpackChunkName: "Context" */ './state-setting/state-setting-inherited-entity-pattern.vue'),
+  loading: LoaderOverlay,
+});
 export const ArchiveDisabledEntities = () => ({
   component: import(/* webpackChunkName: "Parameters" */ './storage-setting/archive-disabled-entities.vue'),
   loading: LoaderOverlay,

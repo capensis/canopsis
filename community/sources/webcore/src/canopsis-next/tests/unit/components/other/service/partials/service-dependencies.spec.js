@@ -134,6 +134,7 @@ describe('service-dependencies', () => {
         params: {
           limit: 10,
           with_flags: true,
+          define_state: false,
         },
       },
       undefined,
@@ -164,6 +165,7 @@ describe('service-dependencies', () => {
         params: {
           limit: 10,
           with_flags: true,
+          define_state: false,
         },
       },
       undefined,
@@ -210,6 +212,7 @@ describe('service-dependencies', () => {
           limit: 10,
           page: 2,
           with_flags: true,
+          define_state: false,
         },
       },
       undefined,
@@ -306,6 +309,7 @@ describe('service-dependencies', () => {
         dark: true,
         light: true,
         impact: true,
+        showStateSetting: true,
         columns: [
           {
             label: 'Custom name label',
