@@ -510,6 +510,10 @@ func (e *Event) GetStringField(f string) (string, bool) {
 		return e.EventType, true
 	case "source_type":
 		return e.SourceType, true
+	case "author":
+		return e.Author, true
+	case "initiator":
+		return e.Initiator, true
 	default:
 		return "", false
 	}
