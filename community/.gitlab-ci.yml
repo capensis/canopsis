@@ -14,6 +14,8 @@ variables:
   CANOPSIS_DOCKER_MODE: "test-ci"
   CANOPSIS_ENV_CONFIRM: "0"
   CANOPSIS_EDITION: "community"
+  RPM_REPO_DEVELOP: canopsis-develop
+  RPM_REPO_RELEASE: canopsis
 
 include:
   - community/.gitlab-ci-common.yml

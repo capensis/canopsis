@@ -42,11 +42,12 @@ source_rpm:
   image: debian:latest
   before_script:
     - apt update && apt install -y make git
+    - cd ${CANOPSIS_EDITION}
   script:
     - export DEFINE_Version="$(printf $CI_COMMIT_TAG | sed 's/-/~/g')"
-    - make -C ${CANOPSIS_EDITION}/dist clean
-    - make -C ${CANOPSIS_EDITION}/dist prep-rpm VERSION=$DEFINE_Version
-    - chown -R 1000:1000 ${CANOPSIS_EDITION}/dist/build
+    - make -C dist clean
+    - make -C dist prep-rpm VERSION=$DEFINE_Version
+    - chown -R 1000:1000 dist/build
   artifacts:
     paths:
       - ${CANOPSIS_EDITION}/dist/build
@@ -82,12 +83,12 @@ release-rpm:
   variables:
     RPM_ARCH: x86_64
   script:
-    - publish-rpm -p el8 ${CANOPSIS_EDITION}/dist/build/almalinux-8-x86_64/output
-    - publish-rpm -p el9 ${CANOPSIS_EDITION}/dist/build/almalinux-9-x86_64/output
+    - publish-rpm -p el8/${CANOPSIS_EDITION} dist/build/almalinux-8-x86_64/output
+    - publish-rpm -p el9/${CANOPSIS_EDITION} dist/build/almalinux-9-x86_64/output
   rules:
     - if: $CI_COMMIT_TAG =~ '/(rc([0-9])?|preview([0-9])?)/' && $CI_PROJECT_NAME == "canopsis-pro"
       variables:
-        RPM_REPO: canopsis-develop
+        RPM_REPO: ${RPM_REPO_DEVELOP}
     - if: $CI_COMMIT_TAG && $CI_COMMIT_TAG !~ '/(rc([0-9])?|preview([0-9])?)/' && $CI_PROJECT_NAME == "canopsis-pro"
       variables:
-        RPM_REPO: canopsis
+        RPM_REPO: ${RPM_REPO_RELEASE}
