@@ -18,6 +18,8 @@ type EventRegexMatches struct {
 	LongOutput    RegexMatches
 	EventType     RegexMatches
 	SourceType    RegexMatches
+	Author        RegexMatches
+	Initiator     RegexMatches
 	ExtraInfos    map[string]RegexMatches
 }
 
@@ -43,6 +45,10 @@ func (m *EventRegexMatches) SetRegexMatches(fieldName string, matches RegexMatch
 		m.EventType = matches
 	case "source_type":
 		m.SourceType = matches
+	case "author":
+		m.Author = matches
+	case "initiator":
+		m.Initiator = matches
 	}
 }
 
