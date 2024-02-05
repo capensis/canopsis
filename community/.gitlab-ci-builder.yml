@@ -44,7 +44,7 @@ source_rpm:
     - apt update && apt install -y make git
     - cd ${CANOPSIS_EDITION}
   script:
-    - export DEFINE_Version="$(printf $CI_COMMIT_TAG | sed 's/-/~/g')"
+    - export DEFINE_Version="$(printf $CI_COMMIT_TAG)"
     - make -C dist clean
     - make -C dist prep-rpm VERSION=$DEFINE_Version
     - chown -R 1000:1000 dist/build
@@ -63,7 +63,8 @@ build_rpm:
   variables:
     ENABLE_NETWORK: 1
   script:
-    - export DEFINE_Version="$(printf $CI_COMMIT_TAG | sed 's/-/~/g')"
+    - export DEFINE_Version="$(printf $CI_COMMIT_TAG)"
+    - export DEFINE_Version_safe="$(echo ${DEFINE_Version} | sed -e 's/\(.*\)-\([^g][^-]*\)/\1~\2/g' -e 's/-/_/g')"
     - set -e; for dist in almalinux-8-x86_64 almalinux-9-x86_64; do
           MOCK_CONFIG=dist/build/${dist}/canopsis.cfg RPMBUILD_DIR=dist/build/${dist} /build.sh;
       done
