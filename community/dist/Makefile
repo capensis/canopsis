@@ -1,4 +1,5 @@
 VERSION = HEAD
+VERSION_SAFE ?= $(shell echo "$(VERSION)" | sed -e 's/\(.*\)-\([^g][^-]*\)/\1~\2/g' -e 's/-/_/g')
 BUILD_TARGET = almalinux-8-x86_64 \
 	almalinux-9-x86_64
 CANOPSIS_ARCHIVES = $(addsuffix /SOURCES/canopsis$(PACKAGE_PREFIX).tar.gz, $(addprefix build/, $(BUILD_TARGET)))
@@ -27,6 +28,7 @@ $(BUILD_TARGET): prep-rpm
 	-e MOCK_TARGET=SPECS \
 	-v ./build/$@:/rpmbuild \
 	-v ./build/$@/canopsis.cfg:/etc/mock/canopsis.cfg \
+  -e DEFINE_Version_safe=${VERSION_SAFE} \
 	-e DEFINE_version=${VERSION} \
 	-e ENABLE_NETWORK=1 \
 	--privileged=true \
