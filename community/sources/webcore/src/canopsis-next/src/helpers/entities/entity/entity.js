@@ -6,7 +6,7 @@ export const isEntityResource = entity => entity.type === ENTITY_TYPES.resource;
 
 export const isEntityEventsStateSettings = entity => (
   isEntityComponent(entity) || isEntityResource(entity)
-) && entity.impacts_count === 0;
+) && entity.depends_count === 0;
 
 /**
  * Check if entity may have state setting

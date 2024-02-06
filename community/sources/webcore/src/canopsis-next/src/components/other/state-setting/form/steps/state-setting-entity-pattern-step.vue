@@ -32,6 +32,16 @@ export default {
       return [...STATE_SETTING_ENTITY_TYPES];
     },
 
+    typeOptions() {
+      return {
+        valueField: {
+          props: {
+            types: this.entityTypes,
+          },
+        },
+      };
+    },
+
     entityAttributes() {
       return [
         {
@@ -44,7 +54,7 @@ export default {
         },
         {
           value: ENTITY_PATTERN_FIELDS.type,
-          options: { disabled: true },
+          options: this.typeOptions,
         },
         {
           value: ENTITY_PATTERN_FIELDS.componentInfos,

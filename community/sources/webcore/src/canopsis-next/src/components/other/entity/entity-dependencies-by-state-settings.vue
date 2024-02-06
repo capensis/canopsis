@@ -1,21 +1,24 @@
 <template>
   <div class="entity-dependencies-by-state-settings">
-    <network-graph
-      v-show="!pending"
-      ref="networkGraph"
-      :options="options"
-      :node-html-label-options="nodeHtmlLabelsOptions"
-      class="fill-height black--text"
-      ctrl-wheel-zoom
-    />
+    <c-zoom-overlay>
+      <c-progress-overlay :pending="!ready || pending" />
+      <network-graph
+        ref="networkGraph"
+        :options="options"
+        :node-html-label-options="nodeHtmlLabelsOptions"
+        :class="{ 'entity-dependencies-by-state-settings-network-graph--ready': ready }"
+        class="entity-dependencies-by-state-settings-network-graph fill-height black--text"
+        ctrl-wheel-zoom
+      />
+    </c-zoom-overlay>
   </div>
 </template>
 
 <script>
 import { omit } from 'lodash';
 
-import { PAGINATION_LIMIT } from '@/config';
-import { ROOT_CAUSE_DIAGRAM_OPTIONS, ROOT_CAUSE_DIAGRAM_LAYOUT_OPTIONS, STATE_SETTING_METHODS } from '@/constants';
+import { PAGINATION_LIMIT, VUETIFY_ANIMATION_DELAY } from '@/config';
+import { ROOT_CAUSE_DIAGRAM_OPTIONS, STATE_SETTING_METHODS, ROOT_CAUSE_DIAGRAM_LAYOUT_OPTIONS } from '@/constants';
 
 import { normalizeTreeOfDependenciesMapEntities } from '@/helpers/entities/map/list';
 import { isEntityEventsStateSettings } from '@/helpers/entities/entity/entity';
@@ -41,7 +44,8 @@ export default {
   },
   data() {
     return {
-      pending: false,
+      ready: false,
+      pending: true,
       metaByEntityId: {},
       entitiesById: normalizeTreeOfDependenciesMapEntities([{ entity: this.entity, pinned_entities: [] }]),
     };
@@ -179,13 +183,24 @@ export default {
     },
   },
   async mounted() {
+    this.pending = true;
     this.$refs.networkGraph.$cy.on('tap', this.tapHandler);
+
+    /**
+     * @desc: We are waiting modal showing animation
+     */
+    setTimeout(() => {
+      this.$refs.networkGraph.$cy.center();
+      this.ready = true;
+    }, VUETIFY_ANIMATION_DELAY);
 
     if (!this.isEventsStateSettings) {
       await this.fetchDependencies(this.entity._id);
+    } else {
+      this.runLayout();
     }
 
-    this.runLayout();
+    this.pending = false;
   },
   beforeDestroy() {
     this.$refs.networkGraph.$cy.off('tap', this.tapHandler);
@@ -316,6 +331,8 @@ export default {
       }
 
       try {
+        await this.$nextTick();
+
         this.$refs.networkGraph.$cy.layout({
           ...ROOT_CAUSE_DIAGRAM_LAYOUT_OPTIONS,
         }).run();
@@ -471,10 +488,18 @@ export default {
 <style lang="scss">
 .entity-dependencies-by-state-settings {
   position: relative;
-  height: 800px;
+  height: 650px;
   width: 100%;
   border-radius: 5px;
   background: white;
+
+  &-network-graph {
+    opacity: 0;
+
+    &--ready {
+      opacity: 1;
+    }
+  }
 
   canvas[data-id='layer0-selectbox'] { // Hide selectbox layer from cytoscape
     display: none;

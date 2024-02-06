@@ -145,7 +145,7 @@ export const getEntityNodeElementHTML = (node) => {
   nodeEl.style.justifyContent = 'center';
   nodeEl.style.background = getEntityColor(entity);
 
-  if (pending || (!root && entity.impacts_count > 0)) {
+  if (pending || (!root && entity.depends_count > 0)) {
     const badge = getBadgeElement();
     badge.dataset.id = entity._id;
 
