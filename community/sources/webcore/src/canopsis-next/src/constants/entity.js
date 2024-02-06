@@ -532,8 +532,10 @@ export const ROOT_CAUSE_DIAGRAM_OPTIONS = {
 
 export const ROOT_CAUSE_DIAGRAM_LAYOUT_OPTIONS = {
   name: 'dagre',
+  animate: 'end',
+  fit: true,
   rankDir: 'LR',
-  padding: 100,
+  padding: 40,
   minLen: 5,
 };
 
