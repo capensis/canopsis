@@ -16,6 +16,10 @@ export const checkStateSettingMixin = {
 
     async checkStateSetting(data) {
       try {
+        if (!data.name) {
+          return;
+        }
+
         this.stateSettingPending = true;
         const response = await this.checkEntityStateSetting({ data });
 

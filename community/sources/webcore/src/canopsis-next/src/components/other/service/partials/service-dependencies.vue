@@ -7,8 +7,6 @@
     />
     <state-settings-summary
       v-if="showStateSetting"
-      :state-setting="stateSetting"
-      :pending="stateSettingPending"
       :entity="root"
     />
     <c-treeview-data-table
@@ -87,7 +85,6 @@ import {
 } from '@/helpers/entities/service-dependencies/list';
 
 import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
-import { checkStateSettingMixin } from '@/mixins/entities/check-state-setting';
 
 import StateSettingsSummary from '@/components/other/state-setting/state-settings-summary.vue';
 import ServiceDependenciesShowTypeField
@@ -103,7 +100,7 @@ export default {
     ServiceDependenciesExpand,
     ServiceDependenciesEntityCell,
   },
-  mixins: [entitiesEntityDependenciesMixin, checkStateSettingMixin],
+  mixins: [entitiesEntityDependenciesMixin],
   props: {
     root: {
       type: Object,
@@ -201,14 +198,6 @@ export default {
     showType() {
       this.setRootDependencies();
       this.fetchRootDependencies();
-    },
-    showStateSetting: {
-      immediate: true,
-      handler(value) {
-        if (value) {
-          this.checkStateSetting(this.root);
-        }
-      },
     },
   },
   mounted() {
