@@ -4,7 +4,7 @@
       {{ $t('stateSetting.title') }}
     </h5>
     <v-text-field
-      :value="stateSetting.title"
+      :value="stateSetting?.title"
       :loading="stateSettingPending"
       disabled
     />

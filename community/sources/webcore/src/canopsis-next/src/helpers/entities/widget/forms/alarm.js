@@ -27,6 +27,7 @@ import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 import { convertDurationToString, durationWithEnabledToForm, isValidUnit } from '@/helpers/date/duration';
 import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/array';
 import { kioskParametersToForm } from '@/helpers/entities/shared/kiosk/form';
+import { hasStateSetting } from '@/helpers/entities/entity/entity';
 import { convertAlarmWidgetParametersToActiveColumns } from '@/helpers/entities/alarm/query';
 
 import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html';
@@ -572,10 +573,10 @@ export const getAlarmsListWidgetColumnComponentGetter = (
           },
         };
 
-        if (showRootCauseByStateClick) {
+        if (showRootCauseByStateClick && hasStateSetting(context.alarm.entity)) {
           component.bind.class = 'cursor-pointer';
           component.on = {
-            click: () => context.$emit('click:state', context.alarm.entity),
+            click: () => context.$emit('click:state', { ...context.alarm.entity, state: context.alarm.v?.state?.val }),
           };
         }
 

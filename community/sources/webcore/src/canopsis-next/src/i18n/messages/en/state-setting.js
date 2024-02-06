@@ -9,12 +9,12 @@ import {
 export default {
   title: 'State setting',
   targetEntityState: 'Target entity state',
-  entitiesStates: 'Impacting entities states',
+  entitiesStates: 'Dependencies state',
   computeMethod: 'State compute method',
-  addImpactingEntityPattern: 'Impacting entity pattern',
+  dependenciesEntityPattern: 'Pattern for dependencies',
   conditionsError: 'Please add at least one condition',
-  targetEntityThresholdSummary: 'A targeted entity state is {state} when the {method} of impacting entities of the {impactingEntitiesState} state is {condition} {value}.',
-  entityThresholdSummary: '{name} state is {state} when the {method} of impacting entities of the {impactingEntitiesState} state is {condition} {value}.',
+  targetEntityThresholdSummary: 'A targeted entity state is {state} when the {method} of dependencies of the {dependenciesEntitiesState} state is {condition} {value}.',
+  entityThresholdSummary: '{name} state is {state} when the {method} of dependencies of the {dependenciesEntitiesState} state is {condition} {value}.',
   appliedFor: 'Applied for',
   appliedForEntityType: 'Applied for entity type',
   stateIsInheritFrom: '{name} state is inherit from',
@@ -26,15 +26,15 @@ export default {
   },
   methods: {
     [STATE_SETTING_METHODS.inherited]: {
-      label: 'State is inherited from impacting entities',
-      tooltip: 'State is defined by the one or several impacting resources.\n'
+      label: 'State is inherited from dependencies',
+      tooltip: 'State is defined by the one or several dependencies.\n'
           + 'When several resources are defined, the worst state of them is taken.',
-      stepTitle: 'The target entity state is inherited from one or several impacting resources. When several resources fit the pattern, the worst state is taken.',
+      stepTitle: 'The target entity state is inherited from one or several dependencies. When several dependencies fit the pattern, the worst state is taken.',
     },
     [STATE_SETTING_METHODS.dependencies]: {
-      label: 'State is defined by a share or number of impacting entities of a specific state',
-      tooltip: 'Entity states can be overridden with custom rule defined by number or share of impacting entities of specific states.',
-      stepTitle: 'The target entity states can be overridden by conditions based on a number or share of impacting entities of a specific states.',
+      label: 'State is defined by a share or number of dependencies of a specific state',
+      tooltip: 'Entity states can be overridden with custom rule defined by number or share of dependencies of specific states. ',
+      stepTitle: 'The target entity states can be overridden by conditions based on a number or share of dependencies of a specific states.',
     },
   },
   thresholdMethods: {

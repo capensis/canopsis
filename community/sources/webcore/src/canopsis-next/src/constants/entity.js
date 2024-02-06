@@ -1,5 +1,8 @@
 import { COLORS } from '@/config';
 
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import engineeringIcon from '!!svg-inline-loader?modules!@/assets/images/engineering.svg';
+
 import { PBEHAVIOR_TYPE_TYPES } from './pbehavior';
 
 export const ENTITY_FIELDS = {
@@ -532,4 +535,17 @@ export const ROOT_CAUSE_DIAGRAM_LAYOUT_OPTIONS = {
   rankDir: 'LR',
   padding: 100,
   minLen: 5,
+};
+
+export const ENTITY_TYPES_ICONS = {
+  [ENTITY_TYPES.component]: 'developer_board',
+  [ENTITY_TYPES.connector]: 'perm_identity',
+  [ENTITY_TYPES.resource]: 'perm_identity',
+  [ENTITY_TYPES.service]: '$vuetify.icons.engineering',
+};
+
+export const ENTITY_TYPES_ICONS_FOR_CYTOSCAPE = {
+  ...ENTITY_TYPES_ICONS,
+
+  [ENTITY_TYPES.service]: engineeringIcon,
 };

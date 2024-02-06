@@ -149,7 +149,7 @@ export const dependenciesDenormalize = ({
       parentIds: [...parentIds, id],
     });
 
-    if (meta.page < meta.page_count) {
+    if (meta.page < meta.page_count && denormalizedDependency.children.length) {
       denormalizedDependency.children.push(getLoadMoreDenormalizedChild(denormalizedDependency));
     }
 

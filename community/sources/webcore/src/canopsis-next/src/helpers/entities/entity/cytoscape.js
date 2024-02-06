@@ -1,9 +1,10 @@
-import { ENTITY_TYPES, ROOT_CAUSE_DIAGRAM_EVENTS_NODE_SIZE, ROOT_CAUSE_DIAGRAM_NODE_SIZE } from '@/constants';
+import {
+  ROOT_CAUSE_DIAGRAM_EVENTS_NODE_SIZE,
+  ROOT_CAUSE_DIAGRAM_NODE_SIZE,
+  ENTITY_TYPES_ICONS_FOR_CYTOSCAPE,
+} from '@/constants';
 
 import { getMapEntityText } from '@/helpers/entities/map/list';
-
-// eslint-disable-next-line import/no-webpack-loader-syntax
-import engineeringIcon from '!!svg-inline-loader?modules!@/assets/images/engineering.svg';
 
 import { getEntityColor } from './color';
 
@@ -65,11 +66,7 @@ export const getStateSettingsNodeIconElement = (node) => {
 
   const icon = isEvents
     ? 'textsms'
-    : {
-      [ENTITY_TYPES.service]: engineeringIcon,
-      [ENTITY_TYPES.resource]: 'perm_identity',
-      [ENTITY_TYPES.component]: 'developer_board',
-    }[entity.type];
+    : (ENTITY_TYPES_ICONS_FOR_CYTOSCAPE[entity.type] ?? 'perm_identity');
 
   const element = getIconElement(icon);
 

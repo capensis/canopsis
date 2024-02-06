@@ -3,9 +3,9 @@
     v-field="patterns"
     :entity-attributes="entityAttributes"
     :entity-types="entityTypes"
-    :entity-title="$t('stateSetting.addImpactingEntityPattern')"
+    :entity-title="$t('stateSetting.dependenciesEntityPattern')"
     :disabled="disabled"
-    name="inherited_entity_pattern"
+    entity-name="inherited_entity_pattern"
     required
     with-entity
     entity-counters-type

@@ -141,7 +141,7 @@ export default {
           state: this.state,
           method: this.condition.method,
           condition: this.$t(`stateSetting.thresholdConditions.${this.condition.cond}`).toLowerCase(),
-          impactingEntitiesState: this.condition.state,
+          dependenciesEntitiesState: this.condition.state,
           value: `${this.condition.value}${this.isShareMethod ? '%' : ''}`,
         })
         : '';
