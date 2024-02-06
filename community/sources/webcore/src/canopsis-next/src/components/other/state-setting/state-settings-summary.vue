@@ -2,18 +2,10 @@
   <v-layout column>
     <span>
       {{ $t('stateSetting.computeMethod') }}:
-      <v-progress-circular
-        v-if="pending"
-        class="ml-1"
-        color="primary"
-        size="20"
-        width="3"
-        indeterminate
-      />
-      <b v-else>{{ stateMethodName }}</b>
+      <b>{{ stateMethodName }}</b>
     </span>
     <v-expand-transition>
-      <div v-if="!pending && stateMethodSummaryText">
+      <div v-if="stateMethodSummaryText">
         <p v-if="isInheritedMethod">
           <i18n path="stateSetting.stateIsInheritFrom" tag="span">
             <b place="name">{{ entity.name }}</b>
@@ -29,14 +21,14 @@
           </v-btn>
         </p>
         <v-layout v-else-if="isDependenciesMethod" column>
-          <i-18n path="stateSetting.entityThresholdSummary">
+          <i18n path="stateSetting.entityThresholdSummary">
             <b place="name">{{ entity.name }}</b>
             <b place="state">{{ entityStateString }}</b>
             <span place="method">{{ currentCondition.method }}</span>
             <span place="condition">{{ conditionMethodSummary }}</span>
-            <b place="impactingEntitiesState">{{ currentCondition.state }}</b>
+            <b place="dependenciesEntitiesState">{{ currentCondition.state }}</b>
             <b place="value">{{ conditionValue }}</b>
-          </i-18n>
+          </i18n>
         </v-layout>
       </div>
     </v-expand-transition>
@@ -54,16 +46,58 @@ export default {
       type: Object,
       required: true,
     },
-    stateSetting: {
-      type: Object,
-      required: false,
-    },
-    pending: {
-      type: Boolean,
-      required: false,
-    },
   },
   computed: {
+    stateSetting() {
+      return {
+        _id: '360e2857-8166-4168-af84-602a25b72dcd',
+        method: 'dependencies',
+        title: 'Inherit from imcat',
+        enabled: true,
+        priority: 3,
+        entity_pattern: [
+          [
+            {
+              field: 'name',
+              cond: {
+                type: 'contain',
+                value: 'Service',
+              },
+            },
+          ],
+        ],
+        state_thresholds: {
+          critical: {
+            method: 'share',
+            state: 'minor',
+            cond: 'lt',
+            value: 32,
+          },
+          major: {
+            method: 'share',
+            state: 'major',
+            cond: 'gt',
+            value: 43,
+          },
+          minor: {
+            method: 'share',
+            state: 'major',
+            cond: 'lt',
+            value: 65,
+          },
+          ok: {
+            method: 'number',
+            state: 'major',
+            cond: 'lt',
+            value: 53,
+          },
+        },
+        type: 'service',
+        editable: true,
+        deletable: true,
+      };
+    },
+
     isEventsStateSettings() {
       return isEntityEventsStateSettings(this.entity);
     },
@@ -143,7 +177,7 @@ export default {
         state: this.entityStateString,
         method: currentCondition.method,
         condition: this.$t(`stateSetting.thresholdConditions.${currentCondition.cond}`).toLowerCase(),
-        impactingEntitiesState: currentCondition.state,
+        dependenciesEntitiesState: currentCondition.state,
         value: `${currentCondition.value}${this.isShareMethod ? '%' : ''}`,
       });
     },

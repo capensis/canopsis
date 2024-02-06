@@ -108,6 +108,7 @@ export function convertAlarmWidgetToQuery(widget) {
     with_instructions: true,
     with_declare_tickets: true,
     with_links: true,
+    define_state: true,
     sortBy: [],
     sortDesc: [],
     lockedFilter: mainFilter,

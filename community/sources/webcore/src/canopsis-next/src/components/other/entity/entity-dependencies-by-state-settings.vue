@@ -1,6 +1,7 @@
 <template>
   <div class="entity-dependencies-by-state-settings">
     <network-graph
+      v-show="!pending"
       ref="networkGraph"
       :options="options"
       :node-html-label-options="nodeHtmlLabelsOptions"
@@ -33,10 +34,6 @@ export default {
       type: Object,
       required: true,
     },
-    stateSetting: {
-      type: Object,
-      required: false,
-    },
     columns: {
       type: Array,
       default: () => [],
@@ -44,11 +41,16 @@ export default {
   },
   data() {
     return {
+      pending: false,
       metaByEntityId: {},
       entitiesById: normalizeTreeOfDependenciesMapEntities([{ entity: this.entity, pinned_entities: [] }]),
     };
   },
   computed: {
+    stateSetting() {
+      return this.entity?.stateSetting;
+    },
+
     isEventsStateSettings() {
       return isEntityEventsStateSettings(this.entity);
     },
@@ -358,7 +360,7 @@ export default {
         pending: true,
       });
 
-      const { data, meta } = await this.fetchServiceImpactsWithoutStore({
+      const { data, meta } = await this.fetchServiceDependenciesWithoutStore({
         id,
         params: this.getQuery({ page: newPage }),
       });

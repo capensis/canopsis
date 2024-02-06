@@ -73,11 +73,12 @@
           <slot name="append-count" />
         </v-layout>
       </v-layout>
-      <v-flex>
+      <v-flex class="mt-2">
         <v-alert
-          v-if="errorMessage"
+          :value="!!errorMessage"
           class="pre-wrap"
-          value="true"
+          type="error"
+          transition="fade-transition"
         >
           {{ errorMessage }}
         </v-alert>
