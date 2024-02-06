@@ -321,6 +321,10 @@ func getEventStringField(event types.Event, f string) (string, bool) {
 		return event.EventType, true
 	case "source_type":
 		return event.SourceType, true
+	case "author":
+		return event.Author, true
+	case "initiator":
+		return event.Initiator, true
 	default:
 		return "", false
 	}
