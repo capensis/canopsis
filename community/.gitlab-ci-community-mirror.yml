@@ -1,0 +1,18 @@
+update_canopsis-community_mirror:
+  stage: update_canopsis-community_mirror
+  variables:
+    GIT_STRATEGY: none
+  tags:
+    - git
+    - git-filter-repo
+  rules:
+    - if: '$JOB_NAME == "update_canopsis-community_mirror" && $CI_PIPELINE_SOURCE == "schedule"'
+  script:
+    - git clone --mirror "${CI_REPOSITORY_URL}" canopsis-pro.git
+    - git init --bare canopsis-community.git
+    - git -C canopsis-pro.git show develop:community-files.txt > community-files.txt
+    - git filter-repo --paths-from-file community-files.txt --source canopsis-pro.git --target canopsis-community.git
+    - git -C canopsis-community.git push --all --force "${CI_SERVER_PROTOCOL}://${CANOPSIS_COMMUNITY_PUSH_USER}:${CANOPSIS_COMMUNITY_PUSH_TOKEN}@${CI_SERVER_HOST}:${CI_SERVER_PORT}/canopsis/canopsis-community.git"
+    - git -C canopsis-community.git push --tags --force "${CI_SERVER_PROTOCOL}://${CANOPSIS_COMMUNITY_PUSH_USER}:${CANOPSIS_COMMUNITY_PUSH_TOKEN}@${CI_SERVER_HOST}:${CI_SERVER_PORT}/canopsis/canopsis-community.git"
+  after_script:
+    - rm -rf canopsis-pro canopsis-pro.git canopsis-pro.tmp canopsis-community.git community-files.txt
