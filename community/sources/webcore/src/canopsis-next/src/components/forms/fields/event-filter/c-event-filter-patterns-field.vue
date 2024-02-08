@@ -305,6 +305,16 @@ export default {
           value: EVENT_FILTER_PATTERN_FIELDS.longOutput,
           options: this.stringWithOneOfOptions,
         },
+        {
+          text: this.$t('common.author'),
+          value: EVENT_FILTER_PATTERN_FIELDS.author,
+          options: this.stringWithOneOfOptions,
+        },
+        {
+          text: this.$t('common.initiator'),
+          value: EVENT_FILTER_PATTERN_FIELDS.initiator,
+          options: this.stringWithOneOfOptions,
+        },
       ];
     },
   },
