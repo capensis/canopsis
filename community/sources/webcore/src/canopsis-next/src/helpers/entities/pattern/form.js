@@ -343,6 +343,8 @@ export const isArrayPatternRuleField = value => [
   EVENT_FILTER_PATTERN_FIELDS.longOutput,
   EVENT_FILTER_PATTERN_FIELDS.eventType,
   EVENT_FILTER_PATTERN_FIELDS.sourceType,
+  EVENT_FILTER_PATTERN_FIELDS.initiator,
+  EVENT_FILTER_PATTERN_FIELDS.author,
 ].some((field) => {
   /**
    * @TODO: update babel-eslint for resolving problem with templates inside optional chaiging function call
