@@ -35,6 +35,7 @@ import {
   PATTERN_OPERATORS,
   PATTERN_RULE_TYPES,
   PATTERN_STRING_OPERATORS,
+  PATTERN_EXISTS_OPERATORS,
 } from '@/constants';
 
 import { formGroupsToPatternRulesQuery } from '@/helpers/entities/pattern/form';
@@ -262,6 +263,14 @@ export default {
         operators: [
           PATTERN_OPERATORS.acked,
           PATTERN_OPERATORS.notAcked,
+        ],
+      };
+    },
+
+    existsOptions() {
+      return {
+        operators: [
+          ...PATTERN_EXISTS_OPERATORS,
         ],
       };
     },
@@ -510,6 +519,10 @@ export default {
         {
           value: ALARM_PATTERN_FIELDS.initialLongOutput,
           options: this.stringWithOneOfOptions,
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.changeState,
+          options: this.existsOptions,
         },
         {
           value: ALARM_PATTERN_FIELDS.totalStateChanges,
