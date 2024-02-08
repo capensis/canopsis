@@ -37,6 +37,19 @@ function migrateOldEntityPatterns(oldEntityPatterns, forbiddenFields) {
                 case "infos":
                     for (var infoKey of Object.keys(value)) {
                         var info = value[infoKey];
+
+                        if (info === null) {
+                            newGroup.push({
+                                field: field + "." + infoKey,
+                                cond: {
+                                    type: "exist",
+                                    value: false,
+                                },
+                            });
+
+                            continue
+                        }
+
                         if (info.description || info.name) {
                             return null;
                         }
@@ -57,6 +70,19 @@ function migrateOldEntityPatterns(oldEntityPatterns, forbiddenFields) {
                 case "component_infos":
                     for (var componentInfoKey of Object.keys(value)) {
                         var componentInfo = value[componentInfoKey];
+
+                        if (componentInfo === null) {
+                            newGroup.push({
+                                field: field + "." + componentInfoKey,
+                                cond: {
+                                    type: "exist",
+                                    value: false,
+                                },
+                            });
+
+                            continue
+                        }
+
                         if (componentInfo.description || componentInfo.name) {
                             return null;
                         }
