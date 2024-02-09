@@ -2,7 +2,7 @@ import { registerCustomProtocol } from 'linkifyjs';
 import linkifyHtmlLib from 'linkify-html';
 import sanitizeHtmlLib from 'sanitize-html';
 
-import { LINKIFY_SCHEMAS } from '@/config';
+import { LINKIFY_PROTOCOLS } from '@/config';
 
 const DEFAULT_SANITIZE_OPTIONS = {
   allowedTags: sanitizeHtmlLib.defaults.allowedTags.concat([
@@ -45,7 +45,7 @@ const DEFAULT_LINKIFY_OPTIONS = {
 /**
  * Register custom protocols for linkify
  */
-LINKIFY_SCHEMAS.forEach(registerCustomProtocol);
+LINKIFY_PROTOCOLS.forEach(registerCustomProtocol);
 
 /**
  * Sanitize HTML document

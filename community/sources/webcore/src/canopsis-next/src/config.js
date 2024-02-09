@@ -6,7 +6,7 @@ export const {
   VUE_APP_LOCAL_STORAGE_ACCESS_TOKEN_KEY = '',
   VUE_APP_PAGINATION_LIMIT = '',
   VUE_APP_OPEN_STREET_LAYER_URL = '',
-  VUE_APP_LINKIFY_SCHEMAS = '',
+  VUE_APP_LINKIFY_PROTOCOLS = '',
 } = process.env;
 
 export const APP_HOST = removeTrailingSlashes(`${window.location.origin}${BASE_URL}`);
@@ -33,8 +33,8 @@ export const PAGINATION_PER_PAGE_VALUES = [5, 10, 20, 50, 100];
 
 export const PAGINATION_TOTAL_VISIBLE = 7;
 
-export const LINKIFY_SCHEMAS = [
-  ...VUE_APP_LINKIFY_SCHEMAS.split(',').map(schema => schema.trim()).filter(Boolean),
+export const LINKIFY_PROTOCOLS = [
+  ...VUE_APP_LINKIFY_PROTOCOLS.split(',').map(protocol => protocol.trim()).filter(Boolean),
 
   'ssh',
 ];
