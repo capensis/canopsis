@@ -433,6 +433,13 @@ definitions:
       status:
         type: integer
     type: object
+  alarm.DisplayNameData:
+    properties:
+      _id:
+        type: string
+      display_name:
+        type: string
+    type: object
   alarm.EntityDetails:
     properties:
       _id:
