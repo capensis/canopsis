@@ -14,7 +14,7 @@ exports[`saml-login Renders \`saml-login\` with redirect query and title 1`] = `
     </div>
     <a
       class="v-btn theme--light primary"
-      href="https://canopsis/backend/api/v4/saml/auth?relayState=http%3A%2F%2Flocalhostundefined%2Fredirect"
+      href="https://canopsis/backend/api/v4/saml/auth?relayState=http%3A%2F%2Flocalhost%2Fredirect"
     >
       <div
         class="v-btn__content"
@@ -40,7 +40,7 @@ exports[`saml-login Renders \`saml-login\` without redirect 1`] = `
     </div>
     <a
       class="v-btn theme--light primary"
-      href="https://canopsis/backend/api/v4/saml/auth?relayState=http%3A%2F%2Flocalhostundefined"
+      href="https://canopsis/backend/api/v4/saml/auth?relayState=http%3A%2F%2Flocalhost"
     >
       <div
         class="v-btn__content"
