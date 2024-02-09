@@ -153,6 +153,57 @@ func (q *MongoQueryBuilder) clear(now types.CpsTime, userID string) {
 	q.excludedFields = []string{"bookmarks", "v.steps", "pbehavior.comments", "pbehavior_info_type", "entity.services"}
 }
 
+func (q *MongoQueryBuilder) CreateGetDisplayNamesPipeline(r GetDisplayNamesRequest, now types.CpsTime) ([]bson.M, error) {
+	q.clear(now, "")
+
+	err := q.handlePatterns(FilterRequest{
+		BaseFilterRequest: BaseFilterRequest{
+			AlarmPattern:     r.AlarmPattern,
+			EntityPattern:    r.EntityPattern,
+			PbehaviorPattern: r.PbehaviorPattern,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	match := bson.M{"v.resolved": nil}
+
+	if r.Search != "" {
+		match["v.display_name"] = primitive.Regex{
+			Pattern: fmt.Sprintf(".*%s.*", r.Search),
+			Options: "i",
+		}
+	}
+
+	q.alarmMatch = append(q.alarmMatch, bson.M{"$match": match})
+
+	sortDir := 1
+	if r.Sort == common.SortDesc {
+		sortDir = -1
+	}
+
+	q.sort = bson.M{"$sort": bson.M{"v.display_name": sortDir}}
+
+	// maps are not used need to call functions below
+	addedLookups := make(map[string]bool)
+	addedComputedFields := make(map[string]bool)
+
+	pipeline := make([]bson.M, 0)
+	q.addFieldsToPipeline(q.computedFieldsForAlarmMatch, addedComputedFields, &pipeline)
+	pipeline = append(pipeline, q.alarmMatch...)
+
+	q.addLookupsToPipeline(q.lookupsForAdditionalMatch, addedLookups, &pipeline)
+	pipeline = append(pipeline, q.additionalMatch...)
+
+	return pagination.CreateAggregationPipeline(
+		r.Query,
+		pipeline,
+		q.sort,
+		[]bson.M{{"$project": bson.M{"_id": 1, "display_name": "$v.display_name"}}},
+	), nil
+}
+
 func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r ListRequestWithPagination, now types.CpsTime, userID string) ([]bson.M, error) {
 	q.clear(now, userID)
 
