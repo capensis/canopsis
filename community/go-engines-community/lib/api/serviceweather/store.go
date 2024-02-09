@@ -33,9 +33,10 @@ func NewStore(
 	logger zerolog.Logger,
 ) Store {
 	return &store{
-		dbClient:         dbClient,
-		dbCollection:     dbClient.Collection(mongo.EntityMongoCollection),
-		userDbCollection: dbClient.Collection(mongo.UserCollection),
+		dbClient:                dbClient,
+		dbCollection:            dbClient.Collection(mongo.EntityMongoCollection),
+		userDbCollection:        dbClient.Collection(mongo.UserCollection),
+		stateSettingsCollection: dbClient.Collection(mongo.StateSettingsMongoCollection),
 
 		alarmStore:     alarmStore,
 		linkGenerator:  linkGenerator,
@@ -48,9 +49,10 @@ func NewStore(
 }
 
 type store struct {
-	dbClient         mongo.DbClient
-	dbCollection     mongo.DbCollection
-	userDbCollection mongo.DbCollection
+	dbClient                mongo.DbClient
+	dbCollection            mongo.DbCollection
+	userDbCollection        mongo.DbCollection
+	stateSettingsCollection mongo.DbCollection
 
 	linkGenerator  link.Generator
 	alarmStore     alarmapi.Store
@@ -86,12 +88,11 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 }
 
 func (s *store) FindEntities(ctx context.Context, id string, r EntitiesListRequest, userId string) (*EntityAggregationResult, error) {
-	var service libtypes.Entity
 	err := s.dbCollection.FindOne(ctx, bson.M{
 		"_id":     id,
 		"type":    libtypes.EntityTypeService,
 		"enabled": true,
-	}).Decode(&service)
+	}).Err()
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return nil, nil

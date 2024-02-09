@@ -11,8 +11,10 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorcomment"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/statesettings"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
@@ -204,7 +206,8 @@ type EntityDetails struct {
 	// DependsCount contains only service's dependencies
 	DependsCount int `bson:"depends_count" json:"depends_count"`
 	// ImpactsCount contains only services
-	ImpactsCount int `bson:"impacts_count" json:"impacts_count"`
+	ImpactsCount int                        `bson:"impacts_count" json:"impacts_count"`
+	StateSetting *CheckStateSettingResponse `bson:"state_setting,omitempty" json:"state_setting,omitempty"`
 }
 
 type Details struct {
@@ -230,6 +233,14 @@ type StepDetails struct {
 type ChildrenDetails struct {
 	Data []Alarm              `json:"data"`
 	Meta common.PaginatedMeta `json:"meta"`
+}
+
+type CheckStateSettingResponse struct {
+	ID                     string                         `bson:"_id" json:"_id"`
+	Title                  string                         `json:"title"`
+	Method                 string                         `json:"method"`
+	InheritedEntityPattern *pattern.Entity                `bson:"inherited_entity_pattern,omitempty" json:"inherited_entity_pattern,omitempty"`
+	StateThresholds        *statesettings.StateThresholds `bson:"state_thresholds,omitempty" json:"state_thresholds,omitempty"`
 }
 
 type ExportRequest struct {
