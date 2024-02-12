@@ -12,7 +12,7 @@
         </v-btn>
         <template v-else>
           <v-btn
-            class="primary"
+            class="primary mr-2"
             small
             @click="$emit('edit', $event)"
           >
