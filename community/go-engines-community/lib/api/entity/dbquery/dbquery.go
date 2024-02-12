@@ -1,8 +1,7 @@
 package dbquery
 
 import (
-	"strings"
-
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -48,38 +47,86 @@ func GetDependsCountPipeline() []bson.M {
 			"from":         mongo.EntityMongoCollection,
 			"localField":   "_id",
 			"foreignField": "services",
-			"as":           "depends",
+			"as":           "service_depends",
 			"pipeline": []bson.M{
 				{"$project": bson.M{"_id": 1}},
 			},
 		}},
-		{"$addFields": bson.M{
-			"depends_count": bson.M{"$size": "$depends"},
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "_id",
+			"foreignField": "component",
+			"as":           "component_depends",
+			"pipeline": []bson.M{
+				{"$match": bson.M{"type": types.EntityTypeResource}},
+				{"$project": bson.M{"_id": 1}},
+			},
 		}},
-		{"$project": bson.M{"depends": 0}},
+		{"$addFields": bson.M{
+			"depends_count": bson.M{"$cond": bson.A{
+				bson.M{"$and": []bson.M{
+					{"$eq": bson.A{"$type", types.EntityTypeComponent}},
+					{"$eq": bson.A{bson.M{"$type": "$state_info._id"}, "string"}},
+					{"$ne": bson.A{"$state_info._id", ""}},
+				}},
+				bson.M{"$size": "$component_depends"},
+				bson.M{"$size": "$service_depends"},
+			}},
+		}},
+		{"$project": bson.M{"service_depends": 0, "component_depends": 0}},
 	}
 }
 
-func GetStateSettingLookup(entityPrefix ...string) []bson.M {
-	prefix := ""
-	if len(entityPrefix) > 0 {
-		prefix = strings.TrimRight(entityPrefix[0], ".") + "."
-	}
+func GetImpactsCountPipeline() []bson.M {
 	return []bson.M{
 		{"$lookup": bson.M{
-			"from":         mongo.StateSettingsMongoCollection,
-			"localField":   prefix + "state_info._id",
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "services",
 			"foreignField": "_id",
-			"as":           "state_setting",
+			"as":           "service_impacts",
+			"pipeline": []bson.M{
+				{"$project": bson.M{"_id": 1}},
+			},
 		}},
-		{"$unwind": bson.M{"path": "$state_setting", "preserveNullAndEmptyArrays": true}},
-		{"$addFields": bson.M{prefix + "state_setting": bson.M{
-			"$cond": bson.M{"else": "$$REMOVE", "if": "$state_setting", "then": bson.M{
-				"title":                    "$state_setting.title",
-				"method":                   "$state_setting.method",
-				"inherited_entity_pattern": "$state_setting.inherited_entity_pattern",
-				"state_thresholds":         "$state_setting.state_thresholds",
-			}},
-		}}},
+		{"$unwind": bson.M{"path": "$entity_counters", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "component",
+			"foreignField": "_id",
+			"as":           "component_impacts",
+			"pipeline": []bson.M{
+				{"$project": bson.M{
+					"hasStateSettings": bson.M{
+						"$cond": []interface{}{bson.M{
+							"$and": []bson.M{
+								{"$eq": []interface{}{
+									bson.M{"$type": "$state_info._id"},
+									"string",
+								}},
+								{"$ne": []string{"$state_info._id", ""}},
+							}},
+							true,
+							false,
+						},
+					},
+				}},
+			},
+		}},
+		{"$unwind": bson.M{"path": "$component_impacts", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			"impacts_count": bson.M{
+				"$cond": []interface{}{
+					bson.M{"$and": []interface{}{
+						bson.M{"$eq": []string{
+							"$type", "resource"},
+						},
+						"$component_impacts.hasStateSettings",
+					}},
+					bson.M{"$sum": bson.A{1, "$service_impacts"}},
+					bson.M{"$size": "$service_impacts"},
+				},
+			},
+		}},
+		{"$project": bson.M{"service_impacts": 0, "component_impacts": 0}},
 	}
 }
