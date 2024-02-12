@@ -33,7 +33,7 @@
           class="mx-1"
           v-for="icon in extraIcons"
           :key="icon.icon"
-          :color="icon.color"
+          :style="{ backgroundColor: icon.color }"
           small
           dark
           icon

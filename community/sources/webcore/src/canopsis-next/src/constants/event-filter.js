@@ -31,6 +31,8 @@ export const EVENT_FILTER_PATTERN_FIELDS = {
   extraInfos: 'extra',
   state: 'state',
   longOutput: 'long_output',
+  author: 'author',
+  initiator: 'initiator',
 };
 
 export const EVENT_FILTER_SOURCE_TYPES = {

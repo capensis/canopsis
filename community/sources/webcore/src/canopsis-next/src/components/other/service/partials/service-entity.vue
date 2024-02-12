@@ -83,8 +83,11 @@ import { isNull } from 'lodash';
 import { ENTITY_TYPES, MODALS, USERS_PERMISSIONS } from '@/constants';
 
 import { getEntityColor } from '@/helpers/entities/entity/color';
-import { getAvailableActionsByEntity } from '@/helpers/entities/entity/actions';
 import { isInstructionManual } from '@/helpers/entities/remediation/instruction/form';
+import {
+  getAvailableActionsByEntity,
+  isDisabledActionForEntityByActionsRequests,
+} from '@/helpers/entities/entity/actions';
 
 import { authMixin } from '@/mixins/auth';
 import { vuetifyTabsMixin } from '@/mixins/vuetify/tabs';
@@ -129,6 +132,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    actionsRequests: {
+      type: Array,
+      default: () => [],
+    },
   },
   data() {
     return {
@@ -172,6 +179,8 @@ export default {
         .map(action => ({
           ...action,
           loading: this.pendingByActionType[action.type],
+          disabled: this.pendingByActionType[action.type]
+              || isDisabledActionForEntityByActionsRequests(this.entity._id, action.type, this.actionsRequests),
         }));
     },
   },
@@ -188,7 +197,7 @@ export default {
     },
 
     executeAlarmInstruction(assignedInstruction) {
-      const refreshEntities = () => this.$emit('refresh');
+      const refreshEntities = () => this.$emit('refresh', true);
 
       this.$modals.show({
         name: isInstructionManual(assignedInstruction)

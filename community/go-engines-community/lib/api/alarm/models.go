@@ -318,6 +318,7 @@ type AlarmValue struct {
 	Snooze      *common.AlarmStep  `bson:"snooze,omitempty" json:"snooze,omitempty"`
 	State       *common.AlarmStep  `bson:"state,omitempty" json:"state,omitempty"`
 	Status      *common.AlarmStep  `bson:"status,omitempty" json:"status,omitempty"`
+	ChangeState *common.AlarmStep  `bson:"change_state,omitempty" json:"change_state,omitempty"`
 	Tickets     []common.AlarmStep `bson:"tickets,omitempty" json:"tickets,omitempty"`
 	Ticket      *common.AlarmStep  `bson:"ticket,omitempty" json:"ticket,omitempty"`
 	LastComment *common.AlarmStep  `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
