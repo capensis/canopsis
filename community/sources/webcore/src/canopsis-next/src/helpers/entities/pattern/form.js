@@ -16,7 +16,7 @@ import {
   PATTERN_ARRAY_OPERATORS,
   PATTERN_BOOLEAN_OPERATORS,
   PATTERN_DURATION_OPERATORS,
-  PATTERN_INFOS_NAME_OPERATORS,
+  PATTERN_EXISTS_OPERATORS,
   PATTERN_NULL_OPERATORS,
   PATTERN_NUMBER_OPERATORS,
   PATTERN_OPERATORS_WITHOUT_VALUE,
@@ -340,6 +340,8 @@ export const isArrayPatternRuleField = value => [
   EVENT_FILTER_PATTERN_FIELDS.longOutput,
   EVENT_FILTER_PATTERN_FIELDS.eventType,
   EVENT_FILTER_PATTERN_FIELDS.sourceType,
+  EVENT_FILTER_PATTERN_FIELDS.initiator,
+  EVENT_FILTER_PATTERN_FIELDS.author,
 ].some((field) => {
   /**
    * @TODO: update babel-eslint for resolving problem with templates inside optional chaiging function call
@@ -605,7 +607,7 @@ export const getOperatorsByRule = (rule, ruleType) => {
   const isAnyInfosType = isInfosRuleType(ruleType) || isExtraInfosRuleType(ruleType);
 
   if (isAnyInfosType && rule.field === PATTERN_RULE_INFOS_FIELDS.name) {
-    return PATTERN_INFOS_NAME_OPERATORS;
+    return PATTERN_EXISTS_OPERATORS;
   }
 
   let operators = getOperatorsByFieldType(rule.fieldType);
@@ -879,7 +881,7 @@ export const patternRuleToForm = (rule = {}) => {
       form.dictionary = rule.field.slice(form.attribute.length + 1);
     }
 
-    form.field = PATTERN_INFOS_NAME_OPERATORS.includes(rule.cond.type)
+    form.field = PATTERN_EXISTS_OPERATORS.includes(rule.cond.type)
       ? PATTERN_RULE_INFOS_FIELDS.name
       : PATTERN_RULE_INFOS_FIELDS.value;
   }
