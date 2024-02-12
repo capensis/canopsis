@@ -27,7 +27,8 @@ type Store interface {
 	Toggle(ctx context.Context, id string, enabled bool) (bool, SimplifiedEntity, error)
 	GetContextGraph(ctx context.Context, id string) (*ContextGraphResponse, error)
 	Export(ctx context.Context, t export.Task) (export.DataCursor, error)
-	CheckStateSetting(ctx context.Context, r CheckStateSettingRequest) (CheckStateSettingResponse, error)
+	CheckStateSetting(ctx context.Context, r CheckStateSettingRequest) (StateSettingResponse, error)
+	GetStateSetting(ctx context.Context, id string) (StateSettingResponse, error)
 }
 
 type store struct {
@@ -393,8 +394,8 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 	return export.NewMongoCursor(cursor, t.Fields.Fields(), nil), nil
 }
 
-func (s *store) CheckStateSetting(ctx context.Context, r CheckStateSettingRequest) (CheckStateSettingResponse, error) {
-	response := CheckStateSettingResponse{}
+func (s *store) CheckStateSetting(ctx context.Context, r CheckStateSettingRequest) (StateSettingResponse, error) {
+	response := StateSettingResponse{}
 
 	cursor, err := s.stateSettingsCollection.Find(
 		ctx,
@@ -438,24 +439,64 @@ func (s *store) CheckStateSetting(ctx context.Context, r CheckStateSettingReques
 		}
 
 		if matched {
-			response.Title = stateSetting.Title
-			response.Method = stateSetting.Method
-			response.InheritedEntityPattern = stateSetting.InheritedEntityPattern
-			if stateSetting.StateThresholds != nil {
-				response.StateThresholds = &statesettings.StateThresholds{}
-				response.StateThresholds.Critical = ConvertStateTreshold(stateSetting.StateThresholds.Critical)
-				response.StateThresholds.Major = ConvertStateTreshold(stateSetting.StateThresholds.Major)
-				response.StateThresholds.Minor = ConvertStateTreshold(stateSetting.StateThresholds.Minor)
-				response.StateThresholds.OK = ConvertStateTreshold(stateSetting.StateThresholds.OK)
-			}
-			return response, nil
+			return getStateSettingResponse(stateSetting), nil
 		}
 	}
 
 	return response, nil
 }
 
-func ConvertStateTreshold(src *statesetting.StateThreshold) *statesettings.StateThreshold {
+func (s *store) GetStateSetting(ctx context.Context, id string) (StateSettingResponse, error) {
+	var response StateSettingResponse
+	cursor, err := s.mainCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{"_id": id}},
+		{"$lookup": bson.M{
+			"as":           "state_setting",
+			"from":         mongo.StateSettingsMongoCollection,
+			"localField":   "state_info._id",
+			"foreignField": "_id",
+		}},
+		{"$unwind": bson.M{"path": "$state_setting", "preserveNullAndEmptyArrays": true}},
+		{"$project": bson.M{"state_setting": 1}},
+	})
+	if err != nil {
+		return response, err
+	}
+
+	if !cursor.Next(ctx) {
+		return response, nil
+	}
+
+	defer cursor.Close(ctx)
+	res := struct {
+		StateSetting statesetting.StateSetting `bson:"state_setting"`
+	}{}
+	err = cursor.Decode(&res)
+	if err != nil {
+		return response, err
+	}
+
+	return getStateSettingResponse(res.StateSetting), nil
+}
+
+func getStateSettingResponse(stateSetting statesetting.StateSetting) StateSettingResponse {
+	response := StateSettingResponse{}
+	response.ID = stateSetting.ID
+	response.Title = stateSetting.Title
+	response.Method = stateSetting.Method
+	response.InheritedEntityPattern = stateSetting.InheritedEntityPattern
+	if stateSetting.StateThresholds != nil {
+		response.StateThresholds = &statesettings.StateThresholds{}
+		response.StateThresholds.Critical = convertStateThreshold(stateSetting.StateThresholds.Critical)
+		response.StateThresholds.Major = convertStateThreshold(stateSetting.StateThresholds.Major)
+		response.StateThresholds.Minor = convertStateThreshold(stateSetting.StateThresholds.Minor)
+		response.StateThresholds.OK = convertStateThreshold(stateSetting.StateThresholds.OK)
+	}
+
+	return response
+}
+
+func convertStateThreshold(src *statesetting.StateThreshold) *statesettings.StateThreshold {
 	if src == nil {
 		return nil
 	}

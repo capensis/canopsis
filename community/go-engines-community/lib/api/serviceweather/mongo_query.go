@@ -123,9 +123,6 @@ func (q *MongoQueryBuilder) CreateListDependenciesAggregationPipeline(id string,
 		{key: "stats", pipeline: getEventStatsLookup(now)},
 		{key: "depends_count", pipeline: dbquery.GetDependsCountPipeline()},
 	}
-	if r.WithStateSetting {
-		q.lookups = append(q.lookups, lookupWithKey{key: "state_setting", pipeline: dbquery.GetStateSettingLookup()})
-	}
 	q.handleSort(r.SortBy, r.Sort)
 	q.computedFields = getListDependenciesComputedFields()
 

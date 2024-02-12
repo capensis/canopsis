@@ -29,9 +29,8 @@ const (
 type ListRequestWithPagination struct {
 	pagination.Query
 	ListRequest
-	WithFlags        bool     `form:"with_flags" json:"with_flags"`
-	WithStateSetting bool     `form:"with_state_setting" json:"with_state_setting"`
-	PerfData         []string `form:"perf_data[]" json:"perf_data"`
+	WithFlags bool     `form:"with_flags" json:"with_flags"`
+	PerfData  []string `form:"perf_data[]" json:"perf_data"`
 }
 
 type ListRequest struct {
@@ -141,8 +140,6 @@ type Entity struct {
 
 	PerfData         []string `bson:"perf_data" json:"-"`
 	FilteredPerfData []string `bson:"filtered_perf_data" json:"filtered_perf_data,omitempty"`
-
-	StateSetting *CheckStateSettingResponse `bson:"state_setting,omitempty" json:"state_setting,omitempty"`
 }
 
 func (e *Entity) fillConnectorType() {
@@ -288,7 +285,7 @@ type CheckStateSettingRequest struct {
 	ImpactLevel int64         `json:"impact_level" binding:"required,min=1,max=10"`
 }
 
-type CheckStateSettingResponse struct {
+type StateSettingResponse struct {
 	ID                     string                         `bson:"_id" json:"_id"`
 	Title                  string                         `json:"title"`
 	Method                 string                         `json:"method"`
