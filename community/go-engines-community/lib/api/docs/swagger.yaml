@@ -4773,11 +4773,11 @@ paths:
         required: true
       responses:
         200:
-          description: Created
+          description: OK
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/entity.CheckStateSettingResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/entity.StateSettingResponse'
         400:
           description: Bad Request
           content:
@@ -4915,6 +4915,29 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /entities/state-setting:
+    get:
+      tags:
+        - entities
+      summary: Get state setting by entity id
+      description: |
+        Get if there is matched state setting rule.
+
+        -  PERMISSIONS: `api_state_settings:read`
+      operationId: entities-get-state-setting
+      parameters:
+        - name: _id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/entity.StateSettingResponse'
   /entity-categories:
     get:
       tags:

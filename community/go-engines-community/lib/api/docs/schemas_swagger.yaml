@@ -332,21 +332,6 @@ definitions:
       type:
         type: integer
     type: object
-  alarm.CheckStateSettingResponse:
-    properties:
-      inherited_entity_pattern:
-        items:
-          items:
-            $ref: '#/definitions/pattern.FieldCondition'
-          type: array
-        type: array
-      method:
-        type: string
-      state_thresholds:
-        $ref: '#/definitions/statesettings.StateThresholds'
-      title:
-        type: string
-    type: object
   alarm.ChildDetailsRequest:
     properties:
       limit:
@@ -531,8 +516,6 @@ definitions:
         $ref: '#/definitions/datetime.CpsTime'
       state_info:
         $ref: '#/definitions/types.StateInfo'
-      state_setting:
-        $ref: '#/definitions/alarm.CheckStateSettingResponse'
       type:
         type: string
     type: object
@@ -1573,21 +1556,6 @@ definitions:
     - name
     - type
     type: object
-  entity.CheckStateSettingResponse:
-    properties:
-      inherited_entity_pattern:
-        items:
-          items:
-            $ref: '#/definitions/pattern.FieldCondition'
-          type: array
-        type: array
-      method:
-        type: string
-      state_thresholds:
-        $ref: '#/definitions/statesettings.StateThresholds'
-      title:
-        type: string
-    type: object
   entity.ContextGraphResponse:
     properties:
       depends:
@@ -1678,8 +1646,6 @@ definitions:
       state:
         description: Alarm fields
         type: integer
-      state_setting:
-        $ref: '#/definitions/entity.CheckStateSettingResponse'
       status:
         type: integer
       type:
@@ -1775,6 +1741,23 @@ definitions:
         type: string
       type_name:
         description: TypeName is Name of pbehavior.Type.
+        type: string
+    type: object
+  entity.StateSettingResponse:
+    properties:
+      _id:
+        type: string
+      inherited_entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      method:
+        type: string
+      state_thresholds:
+        $ref: '#/definitions/statesettings.StateThresholds'
+      title:
         type: string
     type: object
   entitybasic.EditRequest:
@@ -1888,8 +1871,6 @@ definitions:
       state:
         description: Alarm fields
         type: integer
-      state_setting:
-        $ref: '#/definitions/entity.CheckStateSettingResponse'
       status:
         type: integer
       type:
@@ -2098,8 +2079,6 @@ definitions:
       state:
         description: Alarm fields
         type: integer
-      state_setting:
-        $ref: '#/definitions/entity.CheckStateSettingResponse'
       status:
         type: integer
       type:
@@ -4808,21 +4787,6 @@ definitions:
       inactivity_interval:
         $ref: '#/definitions/datetime.DurationWithUnit'
     type: object
-  serviceweather.CheckStateSettingResponse:
-    properties:
-      inherited_entity_pattern:
-        items:
-          items:
-            $ref: '#/definitions/pattern.FieldCondition'
-          type: array
-        type: array
-      method:
-        type: string
-      state_thresholds:
-        $ref: '#/definitions/statesettings.StateThresholds'
-      title:
-        type: string
-    type: object
   serviceweather.Counters:
     properties:
       acked:
@@ -4943,8 +4907,6 @@ definitions:
         type: string
       state:
         $ref: '#/definitions/common.AlarmStep'
-      state_setting:
-        $ref: '#/definitions/serviceweather.CheckStateSettingResponse'
       stats:
         $ref: '#/definitions/statistics.EventStatistics'
       status:
@@ -5029,9 +4991,6 @@ definitions:
         $ref: '#/definitions/common.AlarmStep'
       state:
         $ref: '#/definitions/common.AlarmStep'
-      state_setting:
-        $ref: '#/definitions/serviceweather.CheckStateSettingResponse'
-        description: service's state setting
       status:
         $ref: '#/definitions/common.AlarmStep'
     type: object
