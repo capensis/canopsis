@@ -25,7 +25,6 @@ export function convertContextWidgetToQuery(widget) {
     limit: itemsPerPage || PAGINATION_LIMIT,
     lockedFilter: mainFilter,
     perf_data: convertWidgetChartsToPerfDataQuery(charts),
-    define_state: true,
   };
 
   if (widgetColumns) {

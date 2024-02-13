@@ -181,7 +181,6 @@
                   :root="dependency"
                   :columns="widget.parameters.serviceDependenciesColumns"
                   include-root
-                  openable-root
                   show-state-setting
                 />
               </v-card-text>
@@ -202,7 +201,6 @@
                   :columns="widget.parameters.serviceDependenciesColumns"
                   include-root
                   impact
-                  openable-root
                   show-state-setting
                 />
               </v-card-text>
