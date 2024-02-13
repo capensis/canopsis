@@ -166,6 +166,8 @@ func (a *assigner) assignToComponent(ctx context.Context, entity *types.Entity, 
 		if err != nil {
 			return false, err
 		}
+
+		commRegister.RegisterUpdate(entity.ID, bson.M{"state_info": nil})
 	}
 
 	return false, nil
@@ -218,6 +220,8 @@ func (a *assigner) assignToService(ctx context.Context, entity *types.Entity, pr
 		if err != nil {
 			return false, err
 		}
+
+		commRegister.RegisterUpdate(entity.ID, bson.M{"state_info": nil})
 	}
 
 	return false, nil
