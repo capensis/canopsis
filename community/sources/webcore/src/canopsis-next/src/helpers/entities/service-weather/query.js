@@ -15,7 +15,6 @@ export function convertWeatherWidgetToQuery(widget) {
     ...convertSortToQuery(widget),
     limit: limit || DEFAULT_WEATHER_LIMIT,
     lockedFilter: mainFilter,
-    define_state: true,
   };
 }
 

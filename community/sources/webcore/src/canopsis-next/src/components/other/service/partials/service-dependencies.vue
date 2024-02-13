@@ -68,13 +68,7 @@
 import { get, uniq } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
-import {
-  MODALS,
-  ENTITY_TYPES,
-  ENTITY_FIELDS,
-  COLOR_INDICATOR_TYPES,
-  TREE_OF_DEPENDENCIES_SHOW_TYPES,
-} from '@/constants';
+import { MODALS, ENTITY_FIELDS, COLOR_INDICATOR_TYPES, TREE_OF_DEPENDENCIES_SHOW_TYPES } from '@/constants';
 
 import { getEntityColor } from '@/helpers/entities/entity/color';
 import {
@@ -115,10 +109,6 @@ export default {
       required: false,
     },
     impact: {
-      type: Boolean,
-      default: false,
-    },
-    openableRoot: {
       type: Boolean,
       default: false,
     },
@@ -241,10 +231,9 @@ export default {
     showTreeOfDependenciesModal(dependency) {
       const { entity } = dependency;
 
-      if (
-        (!this.openableRoot && this.rootId === entity._id)
-        || (!this.impact && entity.type !== ENTITY_TYPES.service)
-      ) {
+      const hasChildren = this.impact ? !!entity.impacts_count : !!entity.depends_count;
+
+      if (this.rootId === entity._id || !hasChildren) {
         return;
       }
 

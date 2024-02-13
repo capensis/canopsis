@@ -2,10 +2,18 @@
   <v-layout column>
     <span>
       {{ $t('stateSetting.computeMethod') }}:
-      <b>{{ stateMethodName }}</b>
+      <v-progress-circular
+        v-if="pending"
+        class="ml-1"
+        color="primary"
+        size="20"
+        width="3"
+        indeterminate
+      />
+      <b v-else>{{ stateMethodName }}</b>
     </span>
     <v-expand-transition>
-      <div v-if="stateMethodSummaryText">
+      <div v-if="!pending && stateMethodSummaryText">
         <p v-if="isInheritedMethod">
           <i18n path="stateSetting.stateIsInheritFrom" tag="span">
             <b place="name">{{ entity.name }}</b>
@@ -36,9 +44,13 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
+
 import { ENTITIES_STATES, JUNIT_STATE_SETTING_METHODS, MODALS, STATE_SETTING_METHODS } from '@/constants';
 
 import { isEntityEventsStateSettings } from '@/helpers/entities/entity/entity';
+
+const { mapActions } = createNamespacedHelpers('entity');
 
 export default {
   props: {
@@ -47,57 +59,13 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      pending: true,
+      stateSetting: {},
+    };
+  },
   computed: {
-    stateSetting() {
-      return {
-        _id: '360e2857-8166-4168-af84-602a25b72dcd',
-        method: 'dependencies',
-        title: 'Inherit from imcat',
-        enabled: true,
-        priority: 3,
-        entity_pattern: [
-          [
-            {
-              field: 'name',
-              cond: {
-                type: 'contain',
-                value: 'Service',
-              },
-            },
-          ],
-        ],
-        state_thresholds: {
-          critical: {
-            method: 'share',
-            state: 'minor',
-            cond: 'lt',
-            value: 32,
-          },
-          major: {
-            method: 'share',
-            state: 'major',
-            cond: 'gt',
-            value: 43,
-          },
-          minor: {
-            method: 'share',
-            state: 'major',
-            cond: 'lt',
-            value: 65,
-          },
-          ok: {
-            method: 'number',
-            state: 'major',
-            cond: 'lt',
-            value: 53,
-          },
-        },
-        type: 'service',
-        editable: true,
-        deletable: true,
-      };
-    },
-
     isEventsStateSettings() {
       return isEntityEventsStateSettings(this.entity);
     },
@@ -124,7 +92,7 @@ export default {
         minor,
         major,
         critical,
-      } = this.stateSetting.state_thresholds;
+      } = this.stateSetting.state_thresholds ?? {};
 
       return {
         [ENTITIES_STATES.ok]: ok,
@@ -164,7 +132,7 @@ export default {
         minor,
         major,
         critical,
-      } = this.stateSetting.state_thresholds;
+      } = this.stateSetting.state_thresholds ?? {};
 
       const currentCondition = {
         [ENTITIES_STATES.ok]: ok,
@@ -172,6 +140,10 @@ export default {
         [ENTITIES_STATES.major]: major,
         [ENTITIES_STATES.critical]: critical,
       }[this.entityState];
+
+      if (!currentCondition) {
+        return '';
+      }
 
       return this.$t('stateSetting.entityThresholdSummary', {
         state: this.entityStateString,
@@ -182,7 +154,25 @@ export default {
       });
     },
   },
+  mounted() {
+    this.fetchStateSetting({ id: this.entity._id });
+  },
   methods: {
+    ...mapActions({
+      fetchEntityStateSettingWithoutStore: 'fetchStateSettingWithoutStore',
+    }),
+
+    async fetchStateSetting() {
+      try {
+        this.pending = true;
+        this.stateSetting = await this.fetchEntityStateSettingWithoutStore({ params: { _id: this.entity._id } });
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.pending = false;
+      }
+    },
+
     showStateSettingsPatterns() {
       this.$modals.show({
         name: MODALS.stateSettingInheritedEntityPattern,
