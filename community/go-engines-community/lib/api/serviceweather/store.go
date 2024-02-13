@@ -33,10 +33,9 @@ func NewStore(
 	logger zerolog.Logger,
 ) Store {
 	return &store{
-		dbClient:                dbClient,
-		dbCollection:            dbClient.Collection(mongo.EntityMongoCollection),
-		userDbCollection:        dbClient.Collection(mongo.UserCollection),
-		stateSettingsCollection: dbClient.Collection(mongo.StateSettingsMongoCollection),
+		dbClient:         dbClient,
+		dbCollection:     dbClient.Collection(mongo.EntityMongoCollection),
+		userDbCollection: dbClient.Collection(mongo.UserCollection),
 
 		alarmStore:     alarmStore,
 		linkGenerator:  linkGenerator,
@@ -49,10 +48,9 @@ func NewStore(
 }
 
 type store struct {
-	dbClient                mongo.DbClient
-	dbCollection            mongo.DbCollection
-	userDbCollection        mongo.DbCollection
-	stateSettingsCollection mongo.DbCollection
+	dbClient         mongo.DbClient
+	dbCollection     mongo.DbCollection
+	userDbCollection mongo.DbCollection
 
 	linkGenerator  link.Generator
 	alarmStore     alarmapi.Store
