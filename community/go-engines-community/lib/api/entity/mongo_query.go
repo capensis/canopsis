@@ -106,11 +106,8 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 
 	if r.WithFlags {
 		q.addFlags()
-		q.lookups = append(q.lookups, lookupWithKey{key: "depends_count", pipeline: getDependsCountPipeline()})
-		q.lookups = append(q.lookups, lookupWithKey{key: "impacts_count", pipeline: getImpactsCountPipeline()})
-	}
-	if r.WithStateSetting {
-		q.lookups = append(q.lookups, lookupWithKey{key: "state_setting", pipeline: dbquery.GetStateSettingLookup()})
+		q.lookups = append(q.lookups, lookupWithKey{key: "depends_count", pipeline: dbquery.GetDependsCountPipeline()})
+		q.lookups = append(q.lookups, lookupWithKey{key: "impacts_count", pipeline: dbquery.GetImpactsCountPipeline()})
 	}
 
 	beforeLimit, afterLimit := q.createAggregationPipeline()
@@ -145,8 +142,8 @@ func (q *MongoQueryBuilder) CreateTreeOfDepsAggregationPipeline(
 	q.handleSort(sortRequest)
 
 	if withFlags {
-		q.lookups = append(q.lookups, lookupWithKey{key: "depends_count", pipeline: getDependsCountPipeline()})
-		q.lookups = append(q.lookups, lookupWithKey{key: "impacts_count", pipeline: getImpactsCountPipeline()})
+		q.lookups = append(q.lookups, lookupWithKey{key: "depends_count", pipeline: dbquery.GetDependsCountPipeline()})
+		q.lookups = append(q.lookups, lookupWithKey{key: "impacts_count", pipeline: dbquery.GetImpactsCountPipeline()})
 	}
 
 	beforeLimit, afterLimit := q.createAggregationPipeline()
@@ -523,96 +520,6 @@ func getDeletablePipeline() []bson.M {
 			}},
 		}},
 		{"$project": bson.M{"alarms": 0}},
-	}
-}
-
-func getDependsCountPipeline() []bson.M {
-	return []bson.M{
-		{"$lookup": bson.M{
-			"from":         mongo.EntityMongoCollection,
-			"localField":   "_id",
-			"foreignField": "services",
-			"as":           "service_depends",
-			"pipeline": []bson.M{
-				{"$project": bson.M{"_id": 1}},
-			},
-		}},
-		{"$lookup": bson.M{
-			"from":         mongo.EntityMongoCollection,
-			"localField":   "_id",
-			"foreignField": "component",
-			"as":           "component_depends",
-			"pipeline": []bson.M{
-				{"$match": bson.M{"type": types.EntityTypeResource}},
-				{"$project": bson.M{"_id": 1}},
-			},
-		}},
-		{"$addFields": bson.M{
-			"depends_count": bson.M{"$cond": bson.A{
-				bson.M{"$and": []bson.M{
-					{"$eq": bson.A{"$type", types.EntityTypeComponent}},
-					{"$eq": bson.A{bson.M{"$type": "$state_info._id"}, "string"}},
-					{"$ne": bson.A{"$state_info._id", ""}},
-				}},
-				bson.M{"$size": "$component_depends"},
-				bson.M{"$size": "$service_depends"},
-			}},
-		}},
-		{"$project": bson.M{"service_depends": 0, "component_depends": 0}},
-	}
-}
-
-func getImpactsCountPipeline() []bson.M {
-	return []bson.M{
-		{"$lookup": bson.M{
-			"from":         mongo.EntityMongoCollection,
-			"localField":   "services",
-			"foreignField": "_id",
-			"as":           "service_impacts",
-			"pipeline": []bson.M{
-				{"$project": bson.M{"_id": 1}},
-			},
-		}},
-		{"$unwind": bson.M{"path": "$entity_counters", "preserveNullAndEmptyArrays": true}},
-		{"$lookup": bson.M{
-			"from":         mongo.EntityMongoCollection,
-			"localField":   "component",
-			"foreignField": "_id",
-			"as":           "component_impacts",
-			"pipeline": []bson.M{
-				{"$project": bson.M{
-					"hasStateSettings": bson.M{
-						"$cond": []interface{}{bson.M{
-							"$and": []bson.M{
-								{"$eq": []interface{}{
-									bson.M{"$type": "$state_info._id"},
-									"string",
-								}},
-								{"$ne": []string{"$state_info._id", ""}},
-							}},
-							true,
-							false,
-						},
-					},
-				}},
-			},
-		}},
-		{"$unwind": bson.M{"path": "$component_impacts", "preserveNullAndEmptyArrays": true}},
-		{"$addFields": bson.M{
-			"impacts_count": bson.M{
-				"$cond": []interface{}{
-					bson.M{"$and": []interface{}{
-						bson.M{"$eq": []string{
-							"$type", "resource"},
-						},
-						"$component_impacts.hasStateSettings",
-					}},
-					bson.M{"$sum": bson.A{1, "$service_impacts"}},
-					bson.M{"$size": "$service_impacts"},
-				},
-			},
-		}},
-		{"$project": bson.M{"service_impacts": 0, "component_impacts": 0}},
 	}
 }
 

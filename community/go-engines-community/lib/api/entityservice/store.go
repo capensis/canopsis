@@ -184,7 +184,7 @@ func (s *store) GetImpacts(ctx context.Context, r ContextGraphRequest, userId st
 	e := types.Entity{}
 	err := s.dbCollection.FindOne(ctx,
 		bson.M{"_id": r.ID, "soft_deleted": bson.M{"$exists": false}},
-		options.FindOne().SetProjection(bson.M{"services": 1, "component": 1, "type": 1, "state_info": 1}),
+		options.FindOne().SetProjection(bson.M{"services": 1, "component": 1, "type": 1}),
 	).Decode(&e)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -192,26 +192,32 @@ func (s *store) GetImpacts(ctx context.Context, r ContextGraphRequest, userId st
 		}
 		return nil, err
 	}
+
 	result := &ContextGraphAggregationResult{}
-	if len(e.Services) == 0 && e.Component == "" {
+	match := make([]bson.M, 0)
+	if e.Type == types.EntityTypeResource {
+		match = append(match, bson.M{
+			"_id":            e.Component,
+			"type":           types.EntityTypeComponent,
+			"state_info._id": bson.M{"$nin": bson.A{nil, ""}},
+		})
+	}
+
+	if len(e.Services) > 0 {
+		match = append(match, bson.M{
+			"_id":  bson.M{"$in": e.Services},
+			"type": types.EntityTypeService,
+		})
+	}
+
+	if len(match) == 0 {
 		result.Data = make([]entity.Entity, 0)
+
 		return result, nil
 	}
 
-	var match bson.M
-	if (e.Type == types.EntityTypeService || e.Type == types.EntityTypeResource) && len(e.Services) > 0 {
-		match = bson.M{
-			"_id":  bson.M{"$in": e.Services},
-			"type": types.EntityTypeService,
-		}
-	} else {
-		match = bson.M{
-			"_id":  e.Component,
-			"type": types.EntityTypeComponent,
-		}
-	}
 	now := datetime.NewCpsTime()
-	pipeline := s.getQueryBuilder().CreateTreeOfDepsAggregationPipeline(match, r.Query, r.SortRequest, r.Category, r.Search,
+	pipeline := s.getQueryBuilder().CreateTreeOfDepsAggregationPipeline(bson.M{"$or": match}, r.Query, r.SortRequest, r.Category, r.Search,
 		r.WithFlags, now)
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
