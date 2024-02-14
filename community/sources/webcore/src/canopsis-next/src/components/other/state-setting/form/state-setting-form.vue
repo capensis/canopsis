@@ -48,6 +48,7 @@
         <state-setting-entity-pattern-step
           v-field="form.entity_pattern"
           ref="entityPatternForm"
+          :entity-types="patternEntityTypes"
         />
       </v-stepper-content>
       <v-stepper-content :step="steps.THRESHOLDS">
@@ -123,6 +124,10 @@ export default {
 
     methodMessage() {
       return this.$t(`stateSetting.methods.${this.form.method}.stepTitle`);
+    },
+
+    patternEntityTypes() {
+      return [this.form.type];
     },
   },
 

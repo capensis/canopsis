@@ -29,12 +29,14 @@ export default {
   },
   mixins: [modalInnerMixin],
   computed: {
-    title() {
-      return this.config.title ?? this.$t('modals.entityDependenciesList.title');
+    entity() {
+      return this.config.entity ?? {};
     },
 
-    entity() {
-      return this.config.entity;
+    title() {
+      return this.config.title ?? this.$t('modals.entityDependenciesList.title', {
+        name: this.entity.name,
+      });
     },
   },
 };

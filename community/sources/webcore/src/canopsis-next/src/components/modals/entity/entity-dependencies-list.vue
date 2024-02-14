@@ -7,7 +7,7 @@
       <entity-dependencies-list-component
         :widget="widget"
         :columns="widget.parameters.widgetColumns"
-        :entity-id="config.entityId"
+        :entity-id="entity._id"
         :impact="config.impact"
       />
     </template>
@@ -33,8 +33,14 @@ export default {
   },
   mixins: [modalInnerMixin],
   computed: {
+    entity() {
+      return this.config.entity ?? {};
+    },
+
     title() {
-      return this.config.title ?? this.$t('modals.entityDependenciesList.title');
+      return this.config.title ?? this.$t('modals.entityDependenciesList.title', {
+        name: this.entity.name,
+      });
     },
 
     widget() {

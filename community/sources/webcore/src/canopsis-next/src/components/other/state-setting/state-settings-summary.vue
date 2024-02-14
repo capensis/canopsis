@@ -46,7 +46,13 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { ENTITIES_STATES, JUNIT_STATE_SETTING_METHODS, MODALS, STATE_SETTING_METHODS } from '@/constants';
+import {
+  ENTITIES_STATES,
+  JUNIT_STATE_SETTING_METHODS,
+  MODALS,
+  STATE_SETTING_METHODS,
+  STATE_SETTING_THRESHOLDS_METHODS,
+} from '@/constants';
 
 import { isEntityEventsStateSettings } from '@/helpers/entities/entity/entity';
 
@@ -102,12 +108,16 @@ export default {
       }[this.entityState];
     },
 
+    isConditionShareMethod() {
+      return this.currentCondition.method === STATE_SETTING_THRESHOLDS_METHODS.share;
+    },
+
     conditionMethodSummary() {
       return this.$t(`stateSetting.thresholdConditions.${this.currentCondition.cond}`).toLowerCase();
     },
 
     conditionValue() {
-      return `${this.currentCondition.value}${this.isShareMethod ? '%' : ''}`;
+      return `${this.currentCondition.value}${this.isConditionShareMethod ? '%' : ''}`;
     },
 
     stateMethodName() {
@@ -150,7 +160,7 @@ export default {
         method: currentCondition.method,
         condition: this.$t(`stateSetting.thresholdConditions.${currentCondition.cond}`).toLowerCase(),
         dependenciesEntitiesState: currentCondition.state,
-        value: `${currentCondition.value}${this.isShareMethod ? '%' : ''}`,
+        value: `${currentCondition.value}${this.isConditionShareMethod ? '%' : ''}`,
       });
     },
   },
