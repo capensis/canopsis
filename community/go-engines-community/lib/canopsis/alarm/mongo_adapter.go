@@ -7,15 +7,10 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-)
-
-const (
-	AlarmCollectionName = libmongo.AlarmMongoCollection
 )
 
 type mongoAdapter struct {
@@ -30,32 +25,6 @@ func NewAdapter(dbClient libmongo.DbClient) Adapter {
 		resolvedDbCollection: dbClient.Collection(libmongo.ResolvedAlarmMongoCollection),
 		archivedDbCollection: dbClient.Collection(libmongo.ArchivedAlarmMongoCollection),
 	}
-}
-
-func (a mongoAdapter) Insert(ctx context.Context, alarm types.Alarm) error {
-	_, err := a.mainDbCollection.InsertOne(ctx, alarm)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (a mongoAdapter) Update(ctx context.Context, alarm types.Alarm) error {
-	res, err := a.mainDbCollection.UpdateOne(ctx, bson.M{"_id": alarm.ID}, bson.M{"$set": alarm})
-	if err != nil {
-		return err
-	}
-
-	if res.ModifiedCount == 0 {
-		return errors.New("alarm not modified")
-	}
-
-	return nil
-}
-
-func (a mongoAdapter) GetAlarmsByID(ctx context.Context, id string) ([]types.Alarm, error) {
-	return a.getAlarms(ctx, bson.M{"d": id})
 }
 
 func (a mongoAdapter) GetAlarmsWithCancelMark(ctx context.Context) ([]types.Alarm, error) {
@@ -88,21 +57,6 @@ func (a mongoAdapter) GetAlarmsWithFlappingStatus(ctx context.Context) ([]types.
 	})
 }
 
-func (a mongoAdapter) GetAllOpenedResourceAlarmsByComponent(ctx context.Context, component string) ([]types.AlarmWithEntity, error) {
-	req := bson.M{
-		"v.component":  component,
-		"v.resource":   bson.M{"$exists": true},
-		"v.status.val": bson.M{"$ne": 0},
-		"v.meta":       bson.M{"$exists": false},
-		"$or": []bson.M{
-			{"v.resolved": nil},
-			{"v.resolved": bson.M{"$exists": false}},
-		},
-	}
-
-	return a.getAlarmsWithEntity(ctx, req)
-}
-
 func (a mongoAdapter) GetAlarmsWithoutTicketByComponent(ctx context.Context, component string) ([]types.AlarmWithEntity, error) {
 	return a.getAlarmsWithEntity(ctx, bson.M{
 		"v.component": component,
@@ -126,82 +80,6 @@ func (a mongoAdapter) GetAlarmByAlarmId(ctx context.Context, id string) (types.A
 	return a.getAlarmWithErr(ctx, bson.M{
 		"_id": id,
 	})
-}
-
-func (a mongoAdapter) GetOpenedAlarm(ctx context.Context, entityId string) (types.Alarm, error) {
-	return a.getAlarmWithErr(ctx, bson.M{
-		"d":          entityId,
-		"v.resolved": nil,
-	})
-}
-
-func (a mongoAdapter) GetOpenedMetaAlarm(ctx context.Context, ruleId string, valuePath string) (types.Alarm, error) {
-	al := types.Alarm{}
-	query := bson.M{
-		"v.meta": ruleId,
-		"$or": []bson.M{
-			{"v.resolved": nil},
-			{"v.resolved": bson.M{"$exists": false}},
-		},
-	}
-
-	if valuePath != "" {
-		query["v.meta_value_path"] = valuePath
-	}
-
-	err := a.mainDbCollection.FindOne(ctx, query, options.FindOne().SetSort(bson.M{"v.creation_date": -1})).Decode(&al)
-	if err != nil {
-		if errors.Is(err, mongo.ErrNoDocuments) {
-			return al, errt.NewNotFound(err)
-		}
-
-		return al, err
-	}
-
-	al.Value.Transform()
-	return al, nil
-}
-
-func (a mongoAdapter) GetOpenedMetaAlarmWithEntity(ctx context.Context, ruleId string, valuePath string) (types.AlarmWithEntity, error) {
-	filter := bson.M{
-		"v.meta":     ruleId,
-		"v.resolved": nil,
-	}
-
-	if valuePath != "" {
-		filter["v.meta_value_path"] = valuePath
-	}
-
-	return a.getAlarmWithEntity(ctx, filter)
-}
-
-func (a mongoAdapter) GetLastAlarm(ctx context.Context, connector, connectorName, id string) (types.Alarm, error) {
-	alarm := types.Alarm{}
-	query := bson.M{
-		"d":                id,
-		"v.connector":      connector,
-		"v.connector_name": connectorName,
-	}
-	err := a.mainDbCollection.FindOne(ctx, query, options.FindOne().SetSort(bson.M{"v.creation_date": -1})).Decode(&alarm)
-	if err != nil {
-		if errors.Is(err, mongo.ErrNoDocuments) {
-			return alarm, errt.NewNotFound(err)
-		}
-
-		return alarm, err
-	}
-
-	alarm.Value.Transform()
-	return alarm, nil
-}
-
-func (a mongoAdapter) GetLastAlarmWithEntity(ctx context.Context, connector, connectorName, id string) (types.AlarmWithEntity, error) {
-	filter := bson.M{
-		"d":                id,
-		"v.connector":      connector,
-		"v.connector_name": connectorName,
-	}
-	return a.getAlarmWithEntity(ctx, filter)
 }
 
 // GetOpenedAlarmsByIDs gets ongoing alarms related the provided entity ids
@@ -253,19 +131,6 @@ func (a mongoAdapter) GetOpenedAlarmsByAlarmIDs(ctx context.Context, ids []strin
 	return err
 }
 
-func (a mongoAdapter) GetOpenedAlarmsWithEntityByAlarmIDs(ctx context.Context, ids []string, alarms *[]types.AlarmWithEntity) error {
-	filter := bson.M{
-		"_id":        bson.M{"$in": ids},
-		"v.resolved": bson.M{"$in": bson.A{"", nil}},
-	}
-
-	var err error
-	*alarms, err = a.getAlarmsWithEntity(ctx, filter)
-
-	return err
-
-}
-
 func (a mongoAdapter) GetOpenedAlarmsWithLastDatesBefore(
 	ctx context.Context,
 	time datetime.CpsTime,
@@ -299,27 +164,6 @@ func (a mongoAdapter) GetOpenedAlarmsWithLastDatesBefore(
 				types.EntityTypeResource,
 			}},
 		}},
-	})
-}
-
-func (a mongoAdapter) GetOpenedAlarmsWithEntityAfter(ctx context.Context, createdAfter datetime.CpsTime) (libmongo.Cursor, error) {
-	return a.mainDbCollection.Aggregate(ctx, []bson.M{
-		{"$match": bson.M{
-			"v.resolved": nil,
-			"t":          bson.M{"$lt": createdAfter},
-		}},
-		{"$project": bson.M{
-			"alarm": "$$ROOT",
-			"_id":   0,
-		}},
-		{"$lookup": bson.M{
-			"from":         libmongo.EntityMongoCollection,
-			"localField":   "alarm.d",
-			"foreignField": "_id",
-			"as":           "entity",
-		}},
-		{"$unwind": "$entity"},
-		{"$match": bson.M{"entity.enabled": true}},
 	})
 }
 
@@ -457,43 +301,6 @@ func (a mongoAdapter) getAlarmsWithEntity(ctx context.Context, filter bson.M) ([
 	return alarmsWithEntity, nil
 }
 
-func (a mongoAdapter) getAlarmWithEntity(ctx context.Context, filter bson.M) (types.AlarmWithEntity, error) {
-	cursor, err := a.mainDbCollection.Aggregate(ctx, []bson.M{
-		{"$match": filter},
-		{"$sort": bson.M{"v.creation_date": -1}},
-		{"$limit": 1},
-		{"$project": bson.M{
-			"alarm": "$$ROOT",
-			"_id":   0,
-		}},
-		{"$lookup": bson.M{
-			"from":         libmongo.EntityMongoCollection,
-			"localField":   "alarm.d",
-			"foreignField": "_id",
-			"as":           "entity",
-		}},
-		{"$unwind": "$entity"},
-	})
-
-	if err != nil {
-		return types.AlarmWithEntity{}, err
-	}
-
-	defer cursor.Close(ctx)
-
-	if cursor.Next(ctx) {
-		var alarmWithEntity types.AlarmWithEntity
-		err = cursor.Decode(&alarmWithEntity)
-		if err != nil {
-			return alarmWithEntity, err
-		}
-		alarmWithEntity.Alarm.Value.Transform()
-		return alarmWithEntity, err
-	}
-
-	return types.AlarmWithEntity{}, errt.NewNotFound(errors.New("not found document"))
-}
-
 func (a mongoAdapter) getAlarms(ctx context.Context, filter bson.M) ([]types.Alarm, error) {
 	cursor, err := a.mainDbCollection.Find(ctx, filter)
 	if err != nil {
@@ -518,7 +325,7 @@ func (a mongoAdapter) getAlarmWithErr(ctx context.Context, filter bson.M) (types
 	err := a.mainDbCollection.FindOne(ctx, filter).Decode(&alarm)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return alarm, errt.NewNotFound(err)
+			return alarm, err
 		}
 
 		return alarm, err
