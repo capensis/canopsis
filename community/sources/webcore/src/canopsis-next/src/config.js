@@ -107,6 +107,7 @@ export const API_ROUTES = {
   alarmDetails: '/api/v4/alarm-details',
   openAlarms: '/api/v4/open-alarms',
   alarmLinks: '/api/v4/alarm-links',
+  alarmDisplayNames: '/api/v4/alarm-display-names',
   entity: '/api/v4/entities',
   entityContextGraph: '/api/v4/entities/context-graph',
   bulkEntitiesEnable: '/api/v4/bulk/entities/enable',
