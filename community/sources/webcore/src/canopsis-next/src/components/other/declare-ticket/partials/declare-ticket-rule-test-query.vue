@@ -11,7 +11,7 @@
         <c-alarm-field
           v-model="alarm"
           :disabled="pending || isExecutionRunning"
-          :params="alarmsParams"
+          :params="alarmsPatternsParams"
           name="alarms"
         />
       </v-flex>
@@ -125,13 +125,6 @@ export default {
 
           return acc;
         }, {});
-    },
-
-    alarmsParams() {
-      return {
-        opened: true,
-        ...this.alarmsPatternsParams,
-      };
     },
   },
   watch: {

@@ -205,6 +205,10 @@ export default {
       return request.delete(`${API_ROUTES.alarms.list}/${id}/bookmark`);
     },
 
+    fetchDisplayNamesWithoutStore(context, { params } = {}) {
+      return request.get(API_ROUTES.alarmDisplayNames, { params });
+    },
+
     updateItemInStore({ dispatch }, alarm) {
       return dispatch('entities/addToStore', {
         schema: alarmSchema,
