@@ -567,11 +567,11 @@ export default {
     /**
      * Show modal window with all entity dependencies
      *
-     * @param {string} entityId
+     * @param {Entity} entity
      */
-    showAllDependenciesModal(entityId) {
+    showAllDependenciesModal(entity) {
       const config = {
-        entityId,
+        entity,
         impact: this.impact,
       };
 
@@ -609,7 +609,7 @@ export default {
         return;
       }
 
-      this.showAllDependenciesModal(entity._id);
+      this.showAllDependenciesModal(entity);
     },
   },
 };

@@ -26,22 +26,12 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    entityTypes: {
+      type: Array,
+      default: () => [...STATE_SETTING_ENTITY_TYPES],
+    },
   },
   computed: {
-    entityTypes() {
-      return [...STATE_SETTING_ENTITY_TYPES];
-    },
-
-    typeOptions() {
-      return {
-        valueField: {
-          props: {
-            types: this.entityTypes,
-          },
-        },
-      };
-    },
-
     entityAttributes() {
       return [
         {
@@ -54,7 +44,7 @@ export default {
         },
         {
           value: ENTITY_PATTERN_FIELDS.type,
-          options: this.typeOptions,
+          options: { disabled: true },
         },
         {
           value: ENTITY_PATTERN_FIELDS.componentInfos,

@@ -1,3 +1,4 @@
+import { pick } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 const { mapActions: mapEntityActions } = createNamespacedHelpers('entity');
@@ -21,7 +22,9 @@ export const checkStateSettingMixin = {
         }
 
         this.stateSettingPending = true;
-        const response = await this.checkEntityStateSetting({ data });
+        const response = await this.checkEntityStateSetting({
+          data: pick(data, ['name', 'type', 'infos', 'impact_level']),
+        });
 
         this.stateSetting = response?.title ? response : undefined;
       } catch (err) {
