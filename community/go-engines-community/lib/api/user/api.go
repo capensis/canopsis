@@ -14,6 +14,11 @@ import (
 	"github.com/rs/zerolog"
 )
 
+type API interface {
+	common.BulkCrudAPI
+	Patch(c *gin.Context)
+}
+
 type api struct {
 	store        Store
 	actionLogger logger.ActionLogger
@@ -27,7 +32,7 @@ func NewApi(
 	actionLogger logger.ActionLogger,
 	logger zerolog.Logger,
 	metricMetaUpdater metrics.MetaUpdater,
-) common.BulkCrudAPI {
+) API {
 	return &api{
 		store:        store,
 		actionLogger: actionLogger,
@@ -48,7 +53,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	users, err := a.store.Find(c.Request.Context(), query)
+	users, err := a.store.Find(c, query)
 	if err != nil {
 		panic(err)
 	}
@@ -65,10 +70,11 @@ func (a *api) List(c *gin.Context) {
 // Get
 // @Success 200 {object} User
 func (a *api) Get(c *gin.Context) {
-	user, err := a.store.GetOneBy(c.Request.Context(), c.Param("id"))
+	user, err := a.store.GetOneBy(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
+
 	if user == nil {
 		c.JSON(http.StatusNotFound, common.NotFoundResponse)
 		return
@@ -87,10 +93,11 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	user, err := a.store.Insert(c.Request.Context(), request)
+	user, err := a.store.Insert(c, request)
 	if err != nil {
 		panic(err)
 	}
+
 	if user == nil {
 		c.JSON(http.StatusNotFound, common.NotFoundResponse)
 		return
@@ -105,7 +112,7 @@ func (a *api) Create(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.metricMetaUpdater.UpdateById(c.Request.Context(), user.ID)
+	a.metricMetaUpdater.UpdateById(c, user.ID)
 
 	c.JSON(http.StatusCreated, user)
 }
@@ -123,7 +130,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	user, err := a.store.Update(c.Request.Context(), request)
+	user, err := a.store.Update(c, request)
 	if err != nil {
 		panic(err)
 	}
@@ -142,15 +149,52 @@ func (a *api) Update(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.metricMetaUpdater.UpdateById(c.Request.Context(), user.ID)
+	a.metricMetaUpdater.UpdateById(c, user.ID)
+
+	c.JSON(http.StatusOK, user)
+}
+
+// Patch
+// @Param body body PatchRequest true "body"
+// @Success 200 {object} User
+func (a *api) Patch(c *gin.Context) {
+	request := PatchRequest{
+		ID: c.Param("id"),
+	}
+
+	if err := c.ShouldBind(&request); err != nil {
+		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	user, err := a.store.Patch(c, request)
+	if err != nil {
+		panic(err)
+	}
+
+	if user == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
+		Action:    logger.ActionUpdate,
+		ValueType: logger.ValueTypeUser,
+		ValueID:   user.ID,
+	})
+	if err != nil {
+		a.actionLogger.Err(err, "failed to log action")
+	}
+
+	a.metricMetaUpdater.UpdateById(c, user.ID)
 
 	c.JSON(http.StatusOK, user)
 }
 
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, err := a.store.Delete(c.Request.Context(), id)
 
+	ok, err := a.store.Delete(c, id)
 	if err != nil {
 		panic(err)
 	}
@@ -169,7 +213,7 @@ func (a *api) Delete(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.metricMetaUpdater.DeleteById(c.Request.Context(), id)
+	a.metricMetaUpdater.DeleteById(c, id)
 
 	c.Status(http.StatusNoContent)
 }
@@ -197,7 +241,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 		userIds = append(userIds, user.ID)
 		return user.ID, nil
 	}, a.logger)
-	a.metricMetaUpdater.UpdateById(c.Request.Context(), userIds...)
+	a.metricMetaUpdater.UpdateById(c, userIds...)
 }
 
 // BulkUpdate
@@ -223,7 +267,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		userIds = append(userIds, user.ID)
 		return user.ID, nil
 	}, a.logger)
-	a.metricMetaUpdater.UpdateById(c.Request.Context(), userIds...)
+	a.metricMetaUpdater.UpdateById(c, userIds...)
 }
 
 // BulkDelete
@@ -250,5 +294,5 @@ func (a *api) BulkDelete(c *gin.Context) {
 		return request.ID, nil
 	}, a.logger)
 
-	a.metricMetaUpdater.DeleteById(c.Request.Context(), userIds...)
+	a.metricMetaUpdater.DeleteById(c, userIds...)
 }
