@@ -1,16 +1,12 @@
 package encoding
 
-import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
-)
-
 type DecodingError interface {
-	errt.ErrT
+	error
 	IsDecoding()
 }
 
 type decodingError struct {
-	errt.ErrT
+	error
 }
 
 func (e decodingError) IsDecoding() {
@@ -21,17 +17,17 @@ func NewDecodingError(err error) DecodingError {
 		return nil
 	}
 	return decodingError{
-		ErrT: errt.NewErrT(err),
+		error: err,
 	}
 }
 
 type EncodingError interface {
-	errt.ErrT
+	error
 	IsEncoding()
 }
 
 type encodingError struct {
-	errt.ErrT
+	error
 }
 
 func (e encodingError) IsEncoding() {
@@ -42,6 +38,6 @@ func NewEncodingError(err error) EncodingError {
 		return nil
 	}
 	return encodingError{
-		ErrT: errt.NewErrT(err),
+		error: err,
 	}
 }

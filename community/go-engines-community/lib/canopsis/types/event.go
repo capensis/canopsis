@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
 
@@ -303,10 +302,9 @@ func (e *Event) IsMatched(regex string, fields []string) bool {
 }
 
 // IsValid checks if an Event is valid for Canopsis processing.
-// the error returned, if any, is of type errt.UnknownError
 func (e *Event) IsValid() error {
 	if e.Connector == "" || e.ConnectorName == "" {
-		return errt.NewUnknownError(errors.New("missing connector"))
+		return errors.New("missing connector")
 	}
 
 	switch e.SourceType {
@@ -314,21 +312,21 @@ func (e *Event) IsValid() error {
 		/*do nothing*/
 	case SourceTypeComponent, SourceTypeMetaAlarm, SourceTypeService:
 		if e.Component == "" {
-			return errt.NewUnknownError(errors.New("missing component"))
+			return errors.New("missing component")
 		}
 	case SourceTypeResource:
 		if e.Component == "" {
-			return errt.NewUnknownError(errors.New("missing component"))
+			return errors.New("missing component")
 		}
 		if e.Resource == "" {
-			return errt.NewUnknownError(errors.New("missing resource"))
+			return errors.New("missing resource")
 		}
 	default:
-		return errt.NewUnknownError(fmt.Errorf("wrong source type: %v", e.SourceType))
+		return fmt.Errorf("wrong source type: %v", e.SourceType)
 	}
 
 	if !isValidEventType(e.EventType) {
-		return errt.NewUnknownError(fmt.Errorf("wrong event type: %v", e.EventType))
+		return fmt.Errorf("wrong event type: %v", e.EventType)
 	}
 
 	return nil
