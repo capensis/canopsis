@@ -105,7 +105,7 @@ func (p *pbhLeaveProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 				}
 
 				var inactiveStart *datetime.CpsTime
-				if alarm.Value.Snooze != nil || alarm.InactiveAutoInstructionInProgress {
+				if alarm.Value.Snooze != nil || alarm.InactiveAutoInstructionInProgress || alarm.InactiveDelayMetaAlarmInProgress {
 					inactiveStart = &event.Parameters.Timestamp
 				}
 

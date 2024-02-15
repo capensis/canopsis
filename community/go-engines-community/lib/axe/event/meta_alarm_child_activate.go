@@ -13,29 +13,31 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func NewAutoInstructionActivateProcessor(
+func NewMetaAlarmChildActivateProcessor(
 	client mongo.DbClient,
 ) Processor {
-	return &autoInstructionActivateProcessor{
+	return &metaAlarmChildActivateProcessor{
 		alarmCollection: client.Collection(mongo.AlarmMongoCollection),
 	}
 }
 
-type autoInstructionActivateProcessor struct {
+type metaAlarmChildActivateProcessor struct {
 	alarmCollection mongo.DbCollection
 }
 
-func (p *autoInstructionActivateProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
+func (p *metaAlarmChildActivateProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
 	result := Result{}
 	if event.Entity == nil {
 		return result, nil
 	}
 
 	match := getOpenAlarmMatch(event)
-	match["v.activation_date"] = nil
-	match["auto_instruction_in_progress"] = true
+	match["inactive_delay_meta_alarm_in_progress"] = true
 	update := []bson.M{
-		{"$unset": "auto_instruction_in_progress"},
+		{"$unset": bson.A{
+			"inactive_delay_meta_alarm_in_progress",
+			"meta_alarm_inactive_delay",
+		}},
 		{"$set": bson.M{
 			"v.inactive_duration": bson.M{"$sum": bson.A{
 				"$v.inactive_duration",
@@ -48,7 +50,7 @@ func (p *autoInstructionActivateProcessor) Process(ctx context.Context, event rp
 				"if": bson.M{"$and": []bson.M{
 					{"$eq": bson.A{"$v.snooze", nil}},
 					{"$in": bson.A{"$v.pbehavior_info", bson.A{nil, "", pbehavior.TypeActive}}},
-					{"$ne": bson.A{"$inactive_delay_meta_alarm_in_progress", true}},
+					{"$ne": bson.A{"$auto_instruction_in_progress", true}},
 				}},
 				"then": nil,
 				"else": event.Parameters.Timestamp,
@@ -67,7 +69,7 @@ func (p *autoInstructionActivateProcessor) Process(ctx context.Context, event rp
 	}
 
 	alarmChange := types.NewAlarmChange()
-	alarmChange.Type = types.AlarmChangeTypeAutoInstructionActivate
+	alarmChange.Type = types.AlarmChangeTypeMetaAlarmChildActivate
 	result.Forward = true
 	result.Alarm = alarm
 	result.AlarmChange = alarmChange

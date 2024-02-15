@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -13,19 +12,19 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func NewAutoInstructionActivateProcessor(
+func NewMetaAlarmChildDeactivateProcessor(
 	client mongo.DbClient,
 ) Processor {
-	return &autoInstructionActivateProcessor{
+	return &metaAlarmChildDeactivateProcessor{
 		alarmCollection: client.Collection(mongo.AlarmMongoCollection),
 	}
 }
 
-type autoInstructionActivateProcessor struct {
+type metaAlarmChildDeactivateProcessor struct {
 	alarmCollection mongo.DbCollection
 }
 
-func (p *autoInstructionActivateProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
+func (p *metaAlarmChildDeactivateProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
 	result := Result{}
 	if event.Entity == nil {
 		return result, nil
@@ -33,25 +32,21 @@ func (p *autoInstructionActivateProcessor) Process(ctx context.Context, event rp
 
 	match := getOpenAlarmMatch(event)
 	match["v.activation_date"] = nil
-	match["auto_instruction_in_progress"] = true
+	match["inactive_delay_meta_alarm_in_progress"] = nil
 	update := []bson.M{
-		{"$unset": "auto_instruction_in_progress"},
 		{"$set": bson.M{
+			"inactive_delay_meta_alarm_in_progress": true,
+			"v.inactive_start":                      event.Parameters.Timestamp,
 			"v.inactive_duration": bson.M{"$sum": bson.A{
 				"$v.inactive_duration",
-				bson.M{"$subtract": bson.A{
-					event.Parameters.Timestamp,
-					"$v.inactive_start",
+				bson.M{"$cond": bson.M{
+					"if": bson.M{"$gt": bson.A{"$v.inactive_start", 0}},
+					"then": bson.M{"$subtract": bson.A{
+						event.Parameters.Timestamp,
+						"$v.inactive_start",
+					}},
+					"else": 0,
 				}},
-			}},
-			"v.inactive_start": bson.M{"$cond": bson.M{
-				"if": bson.M{"$and": []bson.M{
-					{"$eq": bson.A{"$v.snooze", nil}},
-					{"$in": bson.A{"$v.pbehavior_info", bson.A{nil, "", pbehavior.TypeActive}}},
-					{"$ne": bson.A{"$inactive_delay_meta_alarm_in_progress", true}},
-				}},
-				"then": nil,
-				"else": event.Parameters.Timestamp,
 			}},
 		}},
 	}
@@ -67,7 +62,7 @@ func (p *autoInstructionActivateProcessor) Process(ctx context.Context, event rp
 	}
 
 	alarmChange := types.NewAlarmChange()
-	alarmChange.Type = types.AlarmChangeTypeAutoInstructionActivate
+	alarmChange.Type = types.AlarmChangeTypeMetaAlarmChildDeactivate
 	result.Forward = true
 	result.Alarm = alarm
 	result.AlarmChange = alarmChange

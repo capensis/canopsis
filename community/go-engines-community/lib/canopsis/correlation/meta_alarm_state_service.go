@@ -3,8 +3,9 @@ package correlation
 import (
 	"context"
 	"errors"
-	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -26,6 +27,9 @@ type MetaAlarmStateService interface {
 	PushChild(ctx context.Context, state MetaAlarmState, previousVersion int64, previousState int, entityID string, alarmLastUpdate int64) (bool, error)
 	// RefreshMetaAlarmStateGroup removes resolved alarms and current event entity from the group.
 	RefreshMetaAlarmStateGroup(ctx context.Context, state *MetaAlarmState, entityID string, timeInterval int64) error
+	RemoveInactiveDelay(ctx context.Context, ruleId string, entityIds []string) error
+	AddInactiveDelay(ctx context.Context, entityId, ruleId string, d datetime.CpsTime) error
+	UpdateInactiveDelay(ctx context.Context, entityId, ruleId string, d datetime.CpsTime) error
 }
 
 type metaAlarmStateService struct {
@@ -64,12 +68,13 @@ func (a *metaAlarmStateService) UpdateOpenedState(ctx context.Context, state Met
 				"version": 1,
 			},
 			"$set": bson.M{
-				"children_entity_ids": state.ChildrenEntityIDs,
-				"children_timestamps": state.ChildrenTimestamps,
-				"parents_entity_ids":  state.ParentsEntityIDs,
-				"parents_timestamps":  state.ParentsTimestamps,
-				"meta_alarm_name":     state.MetaAlarmName,
-				"state":               Opened,
+				"children_entity_ids":      state.ChildrenEntityIDs,
+				"children_timestamps":      state.ChildrenTimestamps,
+				"parents_entity_ids":       state.ParentsEntityIDs,
+				"parents_timestamps":       state.ParentsTimestamps,
+				"meta_alarm_name":          state.MetaAlarmName,
+				"state":                    Opened,
+				"child_inactive_expire_at": state.ChildInactiveExpireAt,
 			},
 		},
 		options.Update().SetUpsert(upsert),
@@ -87,7 +92,8 @@ func (a *metaAlarmStateService) UpdateOpenedState(ctx context.Context, state Met
 
 func (a *metaAlarmStateService) ArchiveState(ctx context.Context, state MetaAlarmState) (bool, error) {
 	state.ID = state.ID + "-" + state.MetaAlarmName
-	state.CreatedAt = time.Now()
+	now := datetime.NewCpsTime()
+	state.CreatedAt = &now
 
 	_, err := a.metaAlarmStatesCollection.InsertOne(ctx, state)
 	if err != nil {
@@ -247,4 +253,54 @@ func (a *metaAlarmStateService) SwitchStateToCreated(ctx context.Context, stateI
 	}
 
 	return true, nil
+}
+
+func (a *metaAlarmStateService) RemoveInactiveDelay(ctx context.Context, ruleId string, entityIds []string) error {
+	_, err := a.alarmCollection.UpdateMany(ctx, bson.M{
+		"d":          bson.M{"$in": entityIds},
+		"v.resolved": nil,
+	}, bson.M{
+		"$pull": bson.M{
+			"meta_alarm_inactive_delay": bson.M{"_id": ruleId},
+		},
+	})
+
+	return err
+}
+
+func (a *metaAlarmStateService) AddInactiveDelay(ctx context.Context, entityId, ruleId string, d datetime.CpsTime) error {
+	_, err := a.alarmCollection.UpdateOne(ctx, bson.M{
+		"d":          entityId,
+		"v.resolved": nil,
+	}, bson.M{
+		"$push": bson.M{
+			"meta_alarm_inactive_delay": types.MetaAlarmInactiveDelay{
+				ID:      ruleId,
+				Expired: d,
+			},
+		},
+	})
+
+	return err
+}
+
+func (a *metaAlarmStateService) UpdateInactiveDelay(ctx context.Context, entityId, ruleId string, d datetime.CpsTime) error {
+	_, err := a.alarmCollection.UpdateOne(ctx,
+		bson.M{
+			"d":          entityId,
+			"v.resolved": nil,
+		},
+		bson.M{
+			"$set": bson.M{
+				"meta_alarm_inactive_delay.$[delay].expired": d,
+			},
+		},
+		options.Update().SetArrayFilters(options.ArrayFilters{
+			Filters: []any{bson.M{
+				"delay._id": ruleId,
+			}},
+		}),
+	)
+
+	return err
 }
