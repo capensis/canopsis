@@ -1747,6 +1747,10 @@ definitions:
     properties:
       _id:
         type: string
+      depends_count:
+        type: integer
+      depends_state:
+        type: string
       inherited_entity_pattern:
         items:
           items:
@@ -1755,6 +1759,8 @@ definitions:
         type: array
       method:
         type: string
+      state_depends_count:
+        type: integer
       state_thresholds:
         $ref: '#/definitions/statesettings.StateThresholds'
       title:
