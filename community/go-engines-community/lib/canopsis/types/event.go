@@ -107,6 +107,9 @@ const (
 	EventTypeTrigger = "trigger"
 	// EventTypeAutoInstructionActivate is used to activate alarm when an autoremediation triggered by create trigger is completed
 	EventTypeAutoInstructionActivate = "autoinstructionactivate"
+
+	EventTypeMetaAlarmChildActivate   = "metaalarmchildactivate"
+	EventTypeMetaAlarmChildDeactivate = "metaalarmchilddeactivate"
 )
 
 const (
@@ -580,7 +583,9 @@ func isValidEventType(t string) bool {
 		EventTypeJunitTestSuiteUpdated,
 		EventTypeJunitTestCaseUpdated,
 		EventTypeTrigger,
-		EventTypeAutoInstructionActivate:
+		EventTypeAutoInstructionActivate,
+		EventTypeMetaAlarmChildActivate,
+		EventTypeMetaAlarmChildDeactivate:
 		return true
 	}
 

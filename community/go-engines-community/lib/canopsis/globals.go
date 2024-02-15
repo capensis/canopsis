@@ -20,6 +20,7 @@ const (
 	AxeRPCQueueServerName          = "Engine_axe_rpc_server"
 	AxeConsumerName                = "axe"
 	AxeRPCConsumerName             = "axe_rpc"
+	AxeConnector                   = "axe"
 
 	CheExchangeName = ""
 	CheEngineName   = "engine-che"
@@ -54,9 +55,12 @@ const (
 	FIFOConsumerName    = "fifo"
 	FIFOAckConsumerName = "fifo_ack"
 
-	CorrelationEngineName   = "engine-correlation"
-	CorrelationQueueName    = "Engine_correlation"
-	CorrelationConsumerName = "correlation"
+	CorrelationEngineName            = "engine-correlation"
+	CorrelationQueueName             = "Engine_correlation"
+	CorrelationAxeRPCClientQueueName = "Engine_correlation_axe_rpc_client"
+	CorrelationConsumerName          = "correlation"
+	CorrelationRPCConsumerName       = "correlation_rpc"
+	CorrelationConnector             = "correlation"
 
 	PeriodicalWaitTime     = time.Minute
 	JsonContentType        = "application/json"
