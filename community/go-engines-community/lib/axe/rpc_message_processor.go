@@ -99,6 +99,7 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 	return p.getRpcEvent(rpc.AxeResultEvent{
 		AlarmChangeType: res.AlarmChange.Type,
 		Alarm:           alarm,
+		Origin:          event.Origin,
 	})
 }
 

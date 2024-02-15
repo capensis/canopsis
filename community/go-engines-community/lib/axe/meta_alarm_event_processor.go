@@ -88,11 +88,11 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event rpc
 
 	var updatedChildrenAlarms []types.Alarm
 	var metaAlarm types.Alarm
-
+	var activateChildEvents []types.Event
 	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		updatedChildrenAlarms = make([]types.Alarm, 0)
 		metaAlarm = types.Alarm{}
-
+		activateChildEvents = make([]types.Event, 0)
 		rule, err := p.ruleAdapter.GetRule(ctx, event.Parameters.MetaAlarmRuleID)
 		if err != nil {
 			return fmt.Errorf("cannot fetch meta alarm rule id=%q: %w", event.Parameters.MetaAlarmRuleID, err)
@@ -175,6 +175,20 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event rpc
 						return err
 					}
 
+					if childAlarm.Alarm.InactiveDelayMetaAlarmInProgress {
+						activateChildEvents = append(activateChildEvents, types.Event{
+							EventType:     types.EventTypeMetaAlarmChildActivate,
+							Connector:     canopsis.AxeConnector,
+							ConnectorName: canopsis.AxeConnector,
+							Component:     childAlarm.Alarm.Value.Component,
+							Resource:      childAlarm.Alarm.Value.Resource,
+							SourceType:    childAlarm.Entity.Type,
+							Timestamp:     datetime.NewCpsTime(),
+							Author:        canopsis.DefaultEventAuthor,
+							Initiator:     types.InitiatorSystem,
+						})
+					}
+
 					childWriteModels = append(childWriteModels, mongodriver.NewUpdateOneModel().
 						SetFilter(bson.M{
 							"_id":       childAlarm.Alarm.ID,
@@ -241,6 +255,13 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event rpc
 		return nil, nil, err
 	}
 
+	for _, e := range activateChildEvents {
+		err = p.sendToFifo(ctx, e)
+		if err != nil {
+			return nil, nil, err
+		}
+	}
+
 	return &metaAlarm, updatedChildrenAlarms, nil
 }
 
@@ -250,14 +271,13 @@ func (p *metaAlarmEventProcessor) AttachChildrenToMetaAlarm(ctx context.Context,
 	}
 
 	var updatedChildrenAlarms []types.Alarm
+	var activateChildEvents []types.Event
 	var metaAlarm types.Alarm
-	var err error
-
-	err = p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		updatedChildrenAlarms = make([]types.Alarm, 0)
-		var lastChild types.AlarmWithEntity
-
-		err = p.alarmCollection.FindOne(ctx, bson.M{"d": event.Entity.ID}).Decode(&metaAlarm)
+		activateChildEvents = make([]types.Event, 0)
+		metaAlarm = types.Alarm{}
+		err := p.alarmCollection.FindOne(ctx, bson.M{"d": event.Entity.ID}).Decode(&metaAlarm)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				return nil
@@ -284,7 +304,7 @@ func (p *metaAlarmEventProcessor) AttachChildrenToMetaAlarm(ctx context.Context,
 		eventsCount := types.CpsNumber(0)
 		writeModels := make([]mongodriver.WriteModel, 0, len(alarms))
 		childrenIds := make([]string, 0, len(alarms))
-
+		var lastChild types.AlarmWithEntity
 		for _, childAlarm := range alarms {
 			if !childAlarm.Alarm.AddParent(metaAlarm.EntityID) {
 				continue
@@ -304,6 +324,20 @@ func (p *metaAlarmEventProcessor) AttachChildrenToMetaAlarm(ctx context.Context,
 
 			if childAlarm.Alarm.Value.State.Value > worstState {
 				worstState = childAlarm.Alarm.Value.State.Value
+			}
+
+			if childAlarm.Alarm.InactiveDelayMetaAlarmInProgress {
+				activateChildEvents = append(activateChildEvents, types.Event{
+					EventType:     types.EventTypeMetaAlarmChildActivate,
+					Connector:     canopsis.AxeConnector,
+					ConnectorName: canopsis.AxeConnector,
+					Component:     childAlarm.Alarm.Value.Component,
+					Resource:      childAlarm.Alarm.Value.Resource,
+					SourceType:    childAlarm.Entity.Type,
+					Timestamp:     datetime.NewCpsTime(),
+					Author:        canopsis.DefaultEventAuthor,
+					Initiator:     types.InitiatorSystem,
+				})
 			}
 
 			writeModels = append(writeModels, mongodriver.NewUpdateOneModel().
@@ -395,6 +429,12 @@ func (p *metaAlarmEventProcessor) AttachChildrenToMetaAlarm(ctx context.Context,
 	}
 
 	childrenEvents := p.applyActionsOnChildren(metaAlarm, updatedChildrenAlarms)
+	for _, e := range activateChildEvents {
+		err = p.sendToFifo(ctx, e)
+		if err != nil {
+			return nil, nil, nil, err
+		}
+	}
 
 	return &metaAlarm, updatedChildrenAlarms, childrenEvents, nil
 }
@@ -406,12 +446,10 @@ func (p *metaAlarmEventProcessor) DetachChildrenFromMetaAlarm(ctx context.Contex
 
 	var updatedChildrenAlarms []types.Alarm
 	var metaAlarm types.Alarm
-	var err error
-
-	err = p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		updatedChildrenAlarms = make([]types.Alarm, 0)
-
-		err = p.alarmCollection.FindOne(ctx, bson.M{"d": event.Entity.ID}).Decode(&metaAlarm)
+		metaAlarm = types.Alarm{}
+		err := p.alarmCollection.FindOne(ctx, bson.M{"d": event.Entity.ID}).Decode(&metaAlarm)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				return nil
@@ -790,6 +828,7 @@ func (p *metaAlarmEventProcessor) resolveParents(ctx context.Context, childAlarm
 			for parentId := range ch {
 				var parentAlarm types.AlarmWithEntity
 				err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+					parentAlarm = types.AlarmWithEntity{}
 					alarms := make([]types.AlarmWithEntity, 0)
 					err := p.adapter.GetOpenedAlarmsWithEntityByIDs(ctx, []string{parentId}, &alarms)
 					if err != nil {

@@ -123,7 +123,16 @@ type Alarm struct {
 	// InactiveAutoInstructionInProgress shows that autoremediation is launched and alarm is not active until the remediation is finished
 	InactiveAutoInstructionInProgress bool `bson:"auto_instruction_in_progress,omitempty" json:"auto_instruction_in_progress,omitempty"`
 
+	InactiveDelayMetaAlarmInProgress bool `bson:"inactive_delay_meta_alarm_in_progress,omitempty" json:"inactive_delay_meta_alarm_in_progress,omitempty"`
+	// MetaAlarmInactiveDelay shows that an alarm is matched to some meta alarm rules with child_inactive_delay
+	MetaAlarmInactiveDelay []MetaAlarmInactiveDelay `bson:"meta_alarm_inactive_delay,omitempty" json:"meta_alarm_inactive_delay,omitempty"`
+
 	Healthcheck bool `bson:"healthcheck,omitempty" json:"-"`
+}
+
+type MetaAlarmInactiveDelay struct {
+	ID      string           `bson:"_id"`
+	Expired datetime.CpsTime `bson:"expired"`
 }
 
 // AlarmWithEntity is an encapsulated type, mostly to facilitate the alarm manipulation for the post-processors
@@ -372,7 +381,8 @@ func (a *Alarm) CanActivate() bool {
 	return !a.IsActivated() &&
 		!a.IsSnoozed() &&
 		a.Value.PbehaviorInfo.IsActive() &&
-		!a.InactiveAutoInstructionInProgress
+		!a.InactiveAutoInstructionInProgress &&
+		!a.InactiveDelayMetaAlarmInProgress
 }
 
 // GetStringField is a magic getter for string fields for easier field retrieving when matching alarm pattern
@@ -567,4 +577,14 @@ func (a *Alarm) GetInfoVal(f string) (interface{}, bool) {
 	}
 
 	return nil, false
+}
+
+func (a *Alarm) GetMetaAlarmInactiveExpiration(ruleId string) (datetime.CpsTime, bool) {
+	for _, delay := range a.MetaAlarmInactiveDelay {
+		if delay.ID == ruleId {
+			return delay.Expired, true
+		}
+	}
+
+	return datetime.CpsTime{}, false
 }
