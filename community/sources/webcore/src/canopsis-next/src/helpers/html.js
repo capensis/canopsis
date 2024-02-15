@@ -1,5 +1,8 @@
+import { registerCustomProtocol } from 'linkifyjs';
 import linkifyHtmlLib from 'linkify-html';
 import sanitizeHtmlLib from 'sanitize-html';
+
+import { LINKIFY_PROTOCOLS } from '@/config';
 
 const DEFAULT_SANITIZE_OPTIONS = {
   allowedTags: sanitizeHtmlLib.defaults.allowedTags.concat([
@@ -32,7 +35,16 @@ const DEFAULT_SANITIZE_OPTIONS = {
   allowedSchemes: sanitizeHtmlLib.defaults.allowedSchemes.concat(['data']),
 };
 
-const DEFAULT_LINKIFY_OPTIONS = { target: '_blank' };
+const DEFAULT_LINKIFY_OPTIONS = {
+  target: '_blank',
+  ignoreTags: ['script', 'style'],
+  validate: (str, type, token) => token.hasProtocol(),
+};
+
+/**
+ * Register custom protocols for linkify
+ */
+LINKIFY_PROTOCOLS.forEach(registerCustomProtocol);
 
 /**
  * Sanitize HTML document
