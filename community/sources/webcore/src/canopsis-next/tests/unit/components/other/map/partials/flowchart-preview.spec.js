@@ -153,7 +153,7 @@ describe('flowchart-preview', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `flowchart-preview` with custom props', async () => {
@@ -167,6 +167,6 @@ describe('flowchart-preview', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

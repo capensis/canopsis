@@ -1,10 +1,11 @@
 package statesettings
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
-	"github.com/go-playground/validator/v10"
 	"strconv"
 	"strings"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
+	"github.com/go-playground/validator/v10"
 )
 
 type Validator interface {

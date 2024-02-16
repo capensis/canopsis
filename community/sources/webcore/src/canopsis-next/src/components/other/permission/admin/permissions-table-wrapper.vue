@@ -1,12 +1,13 @@
-<template lang="pug">
-  div.permissions-table-wrapper
-    permissions-groups-table(
-      :groups="permissions",
-      :roles="roles",
-      :changed-roles="changedRoles",
-      :disabled="disabled",
+<template>
+  <div class="permissions-table-wrapper">
+    <permissions-groups-table
+      :groups="permissions"
+      :roles="roles"
+      :changed-roles="changedRoles"
+      :disabled="disabled"
       @change="$listeners.change"
-    )
+    />
+  </div>
 </template>
 
 <script>
@@ -42,8 +43,8 @@ export default {
   $cellPadding: 8px 8px;
 
   .permissions-table-wrapper ::v-deep {
-    .v-table__overflow {
-      overflow: visible;
+    .v-data-table__wrapper {
+      overflow: unset !important;
 
       td, th {
         padding: $cellPadding;

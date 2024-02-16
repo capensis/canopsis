@@ -203,7 +203,7 @@ describe('groups-side-bar', () => {
 
     await flushPromises();
 
-    expect(selectSubmitButton(wrapper).isVisible()).toBe(false);
+    expect(selectSubmitButton(wrapper).isVisible()).toBe(true);
   });
 
   it('Editing mode changed after trigger settings button', async () => {
@@ -217,7 +217,7 @@ describe('groups-side-bar', () => {
   it('Renders `groups-side-bar` with default data', () => {
     const wrapper = snapshotFactory({ store });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `groups-side-bar` with custom data', () => {
@@ -242,6 +242,6 @@ describe('groups-side-bar', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

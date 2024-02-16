@@ -1,27 +1,40 @@
-<template lang="pug">
-  v-layout(align-center)
-    v-layout(row)
-      v-flex.mr-3(xs6)
-        v-text-field(
-          v-field="item[itemText]",
-          v-validate="textValidationRules",
-          :label="textLabel",
-          :disabled="disabled",
-          :name="textFieldName",
+<template>
+  <v-layout align-center>
+    <v-layout>
+      <v-flex
+        class="mr-3"
+        xs6
+      >
+        <v-text-field
+          v-field="item[itemText]"
+          v-validate="textValidationRules"
+          :label="textLabel"
+          :disabled="disabled"
+          :name="textFieldName"
           :error-messages="errors.collect(textFieldName)"
-        )
-      v-flex(xs6)
-        v-text-field(
-          v-field="item[itemValue]",
-          v-validate="valueValidationRules",
-          :label="valueLabel",
-          :disabled="disabled",
-          :name="valueFieldName",
+        />
+      </v-flex>
+      <v-flex xs6>
+        <v-text-field
+          v-field="item[itemValue]"
+          v-validate="valueValidationRules"
+          :label="valueLabel"
+          :disabled="disabled"
+          :name="valueFieldName"
           :error-messages="errors.collect(valueFieldName)"
-        )
-          template(#append="")
-            slot(name="append-value")
-    c-action-btn(v-if="!disabled", type="delete", @click="$emit('remove')")
+        >
+          <template #append="">
+            <slot name="append-value" />
+          </template>
+        </v-text-field>
+      </v-flex>
+    </v-layout>
+    <c-action-btn
+      v-if="!disabled"
+      type="delete"
+      @click="$emit('remove')"
+    />
+  </v-layout>
 </template>
 
 <script>

@@ -1,12 +1,13 @@
-<template lang="pug">
-  v-layout(justify-center)
-    c-progress-overlay(:pending="pending")
-    junit-gantt-chart(
-      :items="ganttIntervals",
-      :total-items="meta.total_count",
-      :query.sync="query",
+<template>
+  <v-layout justify-center>
+    <c-progress-overlay :pending="pending" />
+    <junit-gantt-chart
+      :items="ganttIntervals"
+      :total-items="meta.total_count"
+      :query.sync="query"
       :width="840"
-    )
+    />
+  </v-layout>
 </template>
 
 <script>
@@ -32,7 +33,7 @@ export default {
       meta: {},
       ganttIntervals: [],
       query: {
-        rowsPerPage: PAGINATION_LIMIT,
+        itemsPerPage: PAGINATION_LIMIT,
         page: 1,
       },
     };
@@ -55,7 +56,7 @@ export default {
       try {
         this.pending = true;
 
-        const { page, rowsPerPage: limit } = this.query;
+        const { page, itemsPerPage: limit } = this.query;
         const { data, meta } = await this.fetchEntityGanttIntervalsWithoutStore({
           id: this.alarm.entity._id,
           params: { page, limit },
@@ -64,6 +65,8 @@ export default {
         this.ganttIntervals = data;
         this.meta = meta;
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: err.message || err.description || this.$t('errors.default') });
       } finally {
         this.pending = false;

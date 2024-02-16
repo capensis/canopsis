@@ -1,38 +1,73 @@
-<template lang="pug">
-  modal-wrapper(close)
-    template(#title="")
-      span {{ $t('modals.importExportViews.title') }}
-    template(#text="")
-      v-layout(row)
-        v-flex.pl-1.pr-1(xs4)
-          v-flex.text-xs-center.mb-2 {{ $t('modals.importExportViews.groups') }}
-          draggable-groups(
-            v-model="importedGroups",
-            pull,
-            view-pull,
-            view-put,
+<template>
+  <modal-wrapper close>
+    <template #title="">
+      <span>{{ $t('modals.importExportViews.title') }}</span>
+    </template>
+    <template #text="">
+      <v-layout>
+        <v-flex
+          class="pl-1 pr-1"
+          xs4
+        >
+          <v-flex class="text-center mb-2">
+            {{ $t('modals.importExportViews.groups') }}
+          </v-flex>
+          <draggable-groups
+            v-model="importedGroups"
+            pull
+            view-pull
+            view-put
             @change:group="changeImportedGroupHandler"
-          )
-        v-flex.pl-1(xs4)
-          v-flex.text-xs-center.mb-2 {{ $t('modals.importExportViews.views') }}
-          draggable-group-views(v-model="importedViews", pull)
-        v-divider.ml-1.mr-1.secondary(vertical)
-        v-flex(xs4)
-          v-flex.text-xs-center.mb-2 {{ $t('common.result') }}
-          draggable-groups(
-            v-model="currentGroups",
-            put,
-            pull,
-            view-put,
+          />
+        </v-flex>
+        <v-flex
+          class="pl-1"
+          xs4
+        >
+          <v-flex class="text-center mb-2">
+            {{ $t('modals.importExportViews.views') }}
+          </v-flex>
+          <draggable-group-views
+            v-model="importedViews"
+            pull
+          />
+        </v-flex>
+        <v-divider
+          class="ml-1 mr-1 secondary"
+          vertical
+        />
+        <v-flex xs4>
+          <v-flex class="text-center mb-2">
+            {{ $t('common.result') }}
+          </v-flex>
+          <draggable-groups
+            v-model="currentGroups"
+            put
+            pull
+            view-put
             @change:group="changeCurrentGroupHandler"
-          )
-    template(#actions="")
-      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-      v-btn.primary(
-        :loading="submitting",
-        type="submit",
+          />
+        </v-flex>
+      </v-layout>
+    </template>
+    <template #actions="">
+      <v-btn
+        depressed
+        text
+        @click="$modals.hide"
+      >
+        {{ $t('common.cancel') }}
+      </v-btn>
+      <v-btn
+        class="primary"
+        :loading="submitting"
+        type="submit"
         @click="submit"
-      ) {{ $t('common.saveChanges') }}
+      >
+        {{ $t('common.saveChanges') }}
+      </v-btn>
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>
@@ -108,6 +143,8 @@ export default {
           data: prepareViewGroupsForImportRequest(this.currentGroups),
         });
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: err.description || this.$t('errors.default') });
       } finally {
         await this.fetchAllGroupsListWithWidgetsWithCurrentUser();

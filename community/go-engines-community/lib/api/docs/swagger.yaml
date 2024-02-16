@@ -1924,7 +1924,117 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'                            
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /bulk/connector-pbehaviors:
+    post:
+      tags:
+        - pbehaviors
+      summary: Bulk create connector pbehaviors
+      description: |
+        Bulk create connector pbehaviors.
+        
+        -  PERMISSIONS: `api_pbehavior:create`
+      operationId: connector-pbehaviors-bulk-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkConnectorCreateRequestItem'
+            examples:
+              create:
+                summary: Create
+                description: Create connector pbehaviors
+                value: [
+                  {
+                    "entities": [ "cps_resource/cps_component" ],
+                    "origin": "centreon",
+                    "name": "Downtime",
+                    "tstart": 1650855600,
+                    "tstop": 1650891600,
+                    "type": "53010391-8f34-4e00-a493-0264431eddd6",
+                    "reason": "f8d6373b-15f0-42a0-9cbe-25249343e5a7",
+                    "comment": "Downtime by centreon"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkConnectorCreateRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+    delete:
+      tags:
+        - pbehaviors
+      summary: Bulk delete connector pbehaviors
+      description: |
+        Bulk delete connector pbehaviors.
+        
+        -  PERMISSIONS: `api_pbehavior:delete`
+      operationId: connector-pbehaviors-bulk-delete
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkConnectorDeleteRequestItem'
+            examples:
+              delete:
+                summary: Delete
+                description: Delete entity pbehaviors
+                value: [
+                  {
+                    "entities": [ "cps_resource/cps_component" ],
+                    "origin": "centreon",
+                    "tstart": 1650855600,
+                    "tstop": 1650891600,
+                    "comment": "Downtime by centreon"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/pbehavior.BulkConnectorDeleteRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /bulk/entities/disable:
     put:
       tags:
@@ -6488,6 +6598,16 @@ paths:
         
         -  PERMISSIONS (for private files): `api_file:read`
       operationId: files-list
+      parameters:
+        - name: id
+          in: query
+          description: file id
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
       responses:
         200:
           description: OK
@@ -6558,7 +6678,7 @@ paths:
       tags:
         - auth
       summary: Get file access
-      description: Get file access.
+      description: Get file access. Sets cookie with file access token. Need to be called before downloading file when it's impossible to pass token in header.
       operationId: auth-get-file-access
       responses:
         204:

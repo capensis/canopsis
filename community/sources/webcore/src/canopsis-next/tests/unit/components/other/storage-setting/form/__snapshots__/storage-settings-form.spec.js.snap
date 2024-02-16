@@ -8,9 +8,7 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with custom for
     form="[object Object]"
     history="[object Object]"
   />
-  <storage-settings-entity-disabled-form-stub
-    form="[object Object]"
-  />
+  <storage-settings-entity-disabled-form-stub />
   <storage-settings-entity-unlinked-form-stub
     form="[object Object]"
   />
@@ -54,9 +52,7 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with default fo
   <storage-settings-alarm-form-stub
     form="[object Object]"
   />
-  <storage-settings-entity-disabled-form-stub
-    form="[object Object]"
-  />
+  <storage-settings-entity-disabled-form-stub />
   <storage-settings-entity-unlinked-form-stub
     form="[object Object]"
   />

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"net/http"
 	"os"
 	"time"
@@ -25,7 +26,7 @@ import (
 	"github.com/rs/zerolog"
 )
 
-const JwtSecretEnv = "CPS_JWT_SECRET"
+const JwtSecretEnv = "CPS_JWT_SECRET" //nolint:gosec
 const sessionStoreSessionMaxAge = 24 * time.Hour
 
 // Security is used to init auth methods by config.
@@ -35,7 +36,7 @@ type Security interface {
 	// GetAuthProviders creates providers which are used in auth API request.
 	GetAuthProviders() []libsecurity.Provider
 	// RegisterCallbackRoutes registers callback routes for auth methods.
-	RegisterCallbackRoutes(router gin.IRouter, client mongo.DbClient)
+	RegisterCallbackRoutes(ctx context.Context, router gin.IRouter, client mongo.DbClient)
 	// GetAuthMiddleware returns corresponding config auth middlewares.
 	GetAuthMiddleware() []gin.HandlerFunc
 	// GetFileAuthMiddleware returns auth middleware for files.
@@ -134,7 +135,7 @@ func (s *security) GetAuthProviders() []libsecurity.Provider {
 	return res
 }
 
-func (s *security) RegisterCallbackRoutes(router gin.IRouter, client mongo.DbClient) {
+func (s *security) RegisterCallbackRoutes(ctx context.Context, router gin.IRouter, client mongo.DbClient) {
 	for _, v := range s.config.Security.AuthProviders {
 		switch v {
 		case libsecurity.AuthMethodCas:
@@ -147,9 +148,9 @@ func (s *security) RegisterCallbackRoutes(router gin.IRouter, client mongo.DbCli
 			router.GET("/cas/login", cas.SessionLoginHandler(casConfig))
 			router.GET("/cas/loggedin", cas.SessionCallbackHandler(p, s.enforcer, s.sessionStore))
 			router.GET("/api/v4/cas/login", cas.LoginHandler(casConfig))
-			router.GET("/api/v4/cas/loggedin", cas.CallbackHandler(p, s.enforcer, s.GetTokenService(), s.maintenanceAdapter))
+			router.GET("/api/v4/cas/loggedin", cas.CallbackHandler(p, s.enforcer, s.GetTokenService(), s.maintenanceAdapter)) //nolint: contextcheck
 		case libsecurity.AuthMethodSaml:
-			sp, err := saml.NewServiceProvider(s.newUserProvider(), client.Collection(mongo.RoleCollection), s.sessionStore,
+			sp, err := saml.NewServiceProvider(ctx, s.newUserProvider(), client.Collection(mongo.RoleCollection), s.sessionStore,
 				s.enforcer, s.config, s.GetTokenService(), s.maintenanceAdapter, s.logger)
 			if err != nil {
 				s.logger.Err(err).Msg("RegisterCallbackRoutes: NewServiceProvider error")

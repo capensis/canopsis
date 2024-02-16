@@ -2,177 +2,175 @@
 
 exports[`groups-side-bar Renders \`groups-side-bar\` with custom data 1`] = `
 <div>
-  <aside
+  <nav
     class="side-bar secondary v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open theme--light"
-    style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 250px;"
+    style="height: 100vh; top: 0px; transform: translateX(0%); width: 250px;"
   >
     <div
-      class="side-bar__brand ma-0 secondary lighten-1"
-    >
-      <app-logo-stub
-        class="logo"
-      />
-      <logged-users-count-stub
-        badgecolor="primary"
-      />
-      <app-version-stub
-        class="version"
-      />
-    </div>
-    <section
-      class="side-bar__links"
-    >
-      <c-draggable-list-field-stub
-        class="groups-panel"
-        component="v-expansion-panel"
-        component-data="[object Object]"
-        disabled="true"
-        draggable=".groups-panel__item--public"
-        value="[object Object],[object Object]"
-      >
-        <groups-side-bar-group-stub
-          class="groups-panel__item--public"
-          group="[object Object]"
-        />
-        <groups-side-bar-group-stub
-          class="groups-panel__item--public"
-          group="[object Object]"
-        />
-      </c-draggable-list-field-stub>
-      <hr
-        class="v-divider theme--light"
-      />
-      <groups-side-bar-playlists-stub />
-    </section>
-    <groups-settings-button-stub
-      buttonprops="[object Object]"
-      tooltipright="true"
-      wrapperprops="[object Object]"
-    />
-    <transition-stub
-      name="fade-transition"
+      class="v-navigation-drawer__prepend"
     >
       <div
-        class="v-overlay v-overlay--active"
-        style="display: none;"
+        class="side-bar__brand ma-0 secondary lighten-1"
       >
-        <button
-          class="primary v-btn theme--light"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            Submit
-          </div>
-        </button>
-        <button
-          class="v-btn theme--light"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            Cancel
-          </div>
-        </button>
+        <app-logo-stub
+          class="logo"
+        />
+        <logged-users-count-stub
+          badgecolor="primary"
+        />
+        <app-version-stub
+          class="version"
+        />
       </div>
-    </transition-stub>
+    </div>
+    <div
+      class="v-navigation-drawer__content"
+    >
+      <section
+        class="side-bar__links"
+      >
+        <c-draggable-list-field-stub
+          class="groups-panel"
+          component="v-expansion-panels"
+          component-data="[object Object]"
+          disabled="true"
+          draggable=".groups-panel__item--public"
+          value="[object Object],[object Object]"
+        >
+          <groups-side-bar-group-stub
+            class="groups-panel__item--public"
+            group="[object Object]"
+          />
+          <groups-side-bar-group-stub
+            class="groups-panel__item--public"
+            group="[object Object]"
+          />
+        </c-draggable-list-field-stub>
+        <hr
+          aria-orientation="horizontal"
+          class="v-divider theme--light"
+          role="separator"
+        />
+        <groups-side-bar-playlists-stub />
+      </section>
+      <groups-settings-button-stub
+        buttonprops="[object Object]"
+        tooltipright="true"
+        wrapperprops="[object Object]"
+      />
+      <transition-stub
+        name="fade-transition"
+      >
+        <div
+          class="v-overlay side-bar__overlay theme--dark"
+          style="z-index: 5;"
+        >
+          <div
+            class="v-overlay__scrim"
+            style="opacity: 0; background-color: rgb(33, 33, 33); border-color: #212121;"
+          />
+        </div>
+      </transition-stub>
+    </div>
     <div
       class="v-navigation-drawer__border"
     />
-  </aside>
+  </nav>
   <transition-stub
     name="fade-transition"
   >
     <div
-      class="v-overlay v-overlay--active content-overlay"
-      style="display: none;"
-    />
+      class="v-overlay theme--dark"
+      style="z-index: 8;"
+    >
+      <div
+        class="v-overlay__scrim"
+        style="opacity: 0; background-color: rgb(33, 33, 33); border-color: #212121;"
+      />
+    </div>
   </transition-stub>
 </div>
 `;
 
 exports[`groups-side-bar Renders \`groups-side-bar\` with default data 1`] = `
 <div>
-  <aside
+  <nav
     class="side-bar secondary v-navigation-drawer v-navigation-drawer--close v-navigation-drawer--fixed v-navigation-drawer--is-mobile theme--light"
-    style="height: 100%; margin-top: 0px; transform: translateX(-250px); width: 250px;"
+    style="height: 100vh; top: 0px; transform: translateX(-100%); width: 250px;"
   >
     <div
-      class="side-bar__brand ma-0 secondary lighten-1"
-    >
-      <app-logo-stub
-        class="logo"
-      />
-      <logged-users-count-stub
-        badgecolor="primary"
-      />
-      <app-version-stub
-        class="version"
-      />
-    </div>
-    <section
-      class="side-bar__links"
-    >
-      <c-draggable-list-field-stub
-        class="groups-panel"
-        component="v-expansion-panel"
-        component-data="[object Object]"
-        disabled="true"
-        draggable=".groups-panel__item--public"
-        value=""
-      />
-      <hr
-        class="v-divider theme--light"
-      />
-      <groups-side-bar-playlists-stub />
-    </section>
-    <groups-settings-button-stub
-      buttonprops="[object Object]"
-      tooltipright="true"
-      wrapperprops="[object Object]"
-    />
-    <transition-stub
-      name="fade-transition"
+      class="v-navigation-drawer__prepend"
     >
       <div
-        class="v-overlay v-overlay--active"
-        style="display: none;"
+        class="side-bar__brand ma-0 secondary lighten-1"
       >
-        <button
-          class="primary v-btn theme--light"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            Submit
-          </div>
-        </button>
-        <button
-          class="v-btn theme--light"
-          type="button"
-        >
-          <div
-            class="v-btn__content"
-          >
-            Cancel
-          </div>
-        </button>
+        <app-logo-stub
+          class="logo"
+        />
+        <logged-users-count-stub
+          badgecolor="primary"
+        />
+        <app-version-stub
+          class="version"
+        />
       </div>
-    </transition-stub>
+    </div>
+    <div
+      class="v-navigation-drawer__content"
+    >
+      <section
+        class="side-bar__links"
+      >
+        <c-draggable-list-field-stub
+          class="groups-panel"
+          component="v-expansion-panels"
+          component-data="[object Object]"
+          disabled="true"
+          draggable=".groups-panel__item--public"
+          value=""
+        />
+        <hr
+          aria-orientation="horizontal"
+          class="v-divider theme--light"
+          role="separator"
+        />
+        <groups-side-bar-playlists-stub />
+      </section>
+      <groups-settings-button-stub
+        buttonprops="[object Object]"
+        tooltipright="true"
+        wrapperprops="[object Object]"
+      />
+      <transition-stub
+        name="fade-transition"
+      >
+        <div
+          class="v-overlay side-bar__overlay theme--dark"
+          style="z-index: 5;"
+        >
+          <div
+            class="v-overlay__scrim"
+            style="opacity: 0; background-color: rgb(33, 33, 33); border-color: #212121;"
+          />
+        </div>
+      </transition-stub>
+    </div>
     <div
       class="v-navigation-drawer__border"
     />
-  </aside>
+  </nav>
   <transition-stub
     name="fade-transition"
   >
     <div
-      class="v-overlay v-overlay--active content-overlay"
-      style="display: none;"
-    />
+      class="v-overlay theme--dark"
+      style="z-index: 8;"
+    >
+      <div
+        class="v-overlay__scrim"
+        style="opacity: 0; background-color: rgb(33, 33, 33); border-color: #212121;"
+      />
+    </div>
   </transition-stub>
 </div>
 `;

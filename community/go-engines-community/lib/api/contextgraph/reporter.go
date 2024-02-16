@@ -137,7 +137,7 @@ func (r *mongoReporter) GetStatus(ctx context.Context, id string) (ImportJob, er
 	err := res.Err()
 
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			err = ErrNotFound
 		}
 	} else {

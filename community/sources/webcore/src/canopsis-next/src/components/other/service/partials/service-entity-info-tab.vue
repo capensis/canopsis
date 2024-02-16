@@ -1,15 +1,25 @@
-<template lang="pug">
-  div
-    v-layout.pa-2(v-if="actions.length", align-center, wrap)
-      div {{ $t('common.actionsLabel') }}:
-      service-entity-actions(
-        :actions="actions",
-        :entity="entity",
-        :assigned-instructions="entity.assigned_instructions",
-        @apply="$listeners.apply",
+<template>
+  <div>
+    <v-layout
+      class="pa-2"
+      v-if="actions.length"
+      align-center
+      wrap
+    >
+      <div>{{ $t('common.actionsLabel') }}:</div>
+      <service-entity-actions
+        :actions="actions"
+        :entity="entity"
+        :assigned-instructions="entity.assigned_instructions"
+        @apply="$listeners.apply"
         @execute="$listeners.execute"
-      )
-    service-entity-template(:entity="entity", :template="template")
+      />
+    </v-layout>
+    <service-entity-template
+      :entity="entity"
+      :template="template"
+    />
+  </div>
 </template>
 
 <script>

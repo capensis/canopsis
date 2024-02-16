@@ -1,11 +1,11 @@
-<template lang="pug">
-  c-patterns-field(
-    v-field="form",
-    :entity-attributes="entityAttributes",
-    :readonly="readonly",
-    required,
+<template>
+  <c-patterns-field
+    v-field="form"
+    :entity-attributes="entityAttributes"
+    :readonly="readonly"
+    required
     with-entity
-  )
+  />
 </template>
 
 <script>

@@ -1,43 +1,83 @@
-<template lang="pug">
-  card-with-see-alarms-btn.cursor-pointer.service-weather-item(
-    :class="itemClasses",
-    :show-button="showAlarmsButton",
-    :style="itemStyle",
-    @click.native="handleCardClick",
+<template>
+  <card-with-see-alarms-btn
+    class="cursor-pointer service-weather-item"
+    :class="itemClasses"
+    :show-button="showAlarmsButton"
+    :style="itemStyle"
+    @click.native="handleCardClick"
     @show:alarms="$emit('show:alarms')"
-  )
-    v-layout.fill-height.service-weather-item__content(row, justify-space-between)
-      v-flex.position-relative.fill-height
-        v-layout(:class="{ 'blinking': isBlinking }", justify-start)
-          c-compiled-template.service-weather-item__template.pa-3(
-            :template="template",
+  >
+    <v-layout
+      class="fill-height service-weather-item__content"
+      justify-space-between
+    >
+      <v-flex class="position-relative fill-height">
+        <v-layout
+          :class="{ 'blinking': isBlinking }"
+          justify-start
+        >
+          <c-compiled-template
+            class="service-weather-item__template pa-3"
+            :template="template"
             :context="templateContext"
-          )
-        v-layout.service-weather-item__toolbar.pt-1.pr-1(row, align-center)
-          c-no-events-icon(:value="service.idle_since", :color="color", top)
-          impact-state-indicator.mr-1(v-if="priorityEnabled", :value="service.impact_state")
-          v-btn.ma-0(
-            v-if="showVariablesHelpButton",
-            icon,
-            small,
+          />
+        </v-layout>
+        <v-layout
+          class="service-weather-item__toolbar pt-1 pr-1"
+          align-center
+        >
+          <c-no-events-icon
+            :value="service.idle_since"
+            :color="color"
+            top
+          />
+          <impact-state-indicator
+            class="mr-1"
+            v-if="priorityEnabled"
+            :value="service.impact_state"
+          />
+          <v-btn
+            class="ma-0"
+            v-if="showVariablesHelpButton"
+            icon
+            small
             @click.stop="showVariablesHelpModal(service)"
-          )
-            v-icon(color="white", small) help
-        v-icon.service-weather-item__background(size="5em", :color="color") {{ backgroundIcon }}
-        v-icon.service-weather-item__secondary-icon.mb-1.mr-1(
-          v-if="service.secondary_icon",
+          >
+            <v-icon
+              color="white"
+              small
+            >
+              help
+            </v-icon>
+          </v-btn>
+        </v-layout>
+        <v-icon
+          class="service-weather-item__background"
+          size="5em"
           :color="color"
-        ) {{ service.secondary_icon }}
-      alarm-pbehavior-counters(
-        v-if="isPbehaviorCountersEnabled && hasPbehaviorCounters",
-        :counters="pbehaviorCounters",
+        >
+          {{ backgroundIcon }}
+        </v-icon>
+        <v-icon
+          class="service-weather-item__secondary-icon mb-1 mr-1"
+          v-if="service.secondary_icon"
+          :color="color"
+        >
+          {{ service.secondary_icon }}
+        </v-icon>
+      </v-flex>
+      <alarm-pbehavior-counters
+        v-if="isPbehaviorCountersEnabled && hasPbehaviorCounters"
+        :counters="pbehaviorCounters"
         :types="pbehaviorCountersTypes"
-      )
-      alarm-state-counters(
-        v-if="isStateCountersEnabled",
-        :counters="counters",
+      />
+      <alarm-state-counters
+        v-if="isStateCountersEnabled"
+        :counters="counters"
         :types="stateCountersTypes"
-      )
+      />
+    </v-layout>
+  </card-with-see-alarms-btn>
 </template>
 
 <script>
@@ -225,6 +265,8 @@ export default {
 
 <style lang="scss" scoped>
 .service-weather-item {
+  overflow: hidden;
+
   &__content > * {
     margin-right: 2px;
 

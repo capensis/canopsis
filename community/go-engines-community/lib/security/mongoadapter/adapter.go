@@ -202,8 +202,8 @@ func (a *adapter) getRolesWithPermissions(ctx context.Context) ([]role, error) {
 	}
 
 	// Create a slice of role type
-	var result []role
-	for _, roleItem := range roles {
+	result := make([]role, len(roles))
+	for i, roleItem := range roles {
 		permissions := make(map[string]permission)
 		for permissionID, mask := range roleItem.Permissions {
 			permissionItem := permissionByIDs[permissionID]
@@ -212,10 +212,10 @@ func (a *adapter) getRolesWithPermissions(ctx context.Context) ([]role, error) {
 				Type:    permissionItem.Type,
 			}
 		}
-		result = append(result, role{
+		result[i] = role{
 			ID:          roleItem.ID,
 			Permissions: permissions,
-		})
+		}
 	}
 
 	return result, nil

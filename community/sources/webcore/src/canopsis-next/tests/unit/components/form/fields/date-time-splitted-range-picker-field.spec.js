@@ -82,7 +82,7 @@ describe('date-time-splitted-range-picker-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `date-time-splitted-range-picker-field` with required props', () => {
@@ -102,6 +102,6 @@ describe('date-time-splitted-range-picker-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

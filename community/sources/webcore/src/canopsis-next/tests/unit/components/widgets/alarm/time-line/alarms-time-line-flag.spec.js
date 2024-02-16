@@ -22,7 +22,7 @@ describe('alarms-time-line-flag', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it.each(
@@ -37,7 +37,7 @@ describe('alarms-time-line-flag', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it.each(
@@ -51,6 +51,6 @@ describe('alarms-time-line-flag', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

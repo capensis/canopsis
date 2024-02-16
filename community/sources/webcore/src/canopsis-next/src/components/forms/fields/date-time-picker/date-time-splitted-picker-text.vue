@@ -1,18 +1,25 @@
-<template lang="pug">
-  v-layout.date-time-splitted-field(column)
-    v-layout(row, :reverse="reverse")
-      v-flex.date-time-splitted-field__date
-        date-picker-text(
-          :value="value | date('vuetifyDatePicker', null)",
-          :label="!reverse || fullDay ? label : ''",
+<template>
+  <v-layout
+    class="date-time-splitted-field"
+    column
+  >
+    <v-layout :reverse="reverse">
+      <v-flex class="date-time-splitted-field__date">
+        <date-picker-text
+          :value="value | date('vuetifyDatePicker', null)"
+          :label="!reverse || fullDay ? label : ''"
           hide-details
-        )
-      time-picker-text.date-time-splitted-field__time(
-        v-if="!fullDay",
-        :value="value | date('timePicker', null)",
-        :label="reverse ? label : ''",
+        />
+      </v-flex>
+      <time-picker-text
+        class="date-time-splitted-field__time"
+        v-if="!fullDay"
+        :value="value | date('timePicker', null)"
+        :label="reverse ? label : ''"
         hide-details
-      )
+      />
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>

@@ -18,18 +18,17 @@ exports[`pbehavior-recurrence-rule-exceptions-field Renders \`pbehavior-exceptio
     <c-alert-stub
       type="info"
     >
-      No exceptions added yet
+        No exceptions added yet
     </c-alert-stub>
-     
     <button
-      class="ml-0 v-btn theme--light primary"
+      class="mr-2 v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
         Add an exception date
-      </div>
+      </span>
     </button>
     <pbehavior-recurrence-rule-exceptions-list-menu-stub
       value="[object Object]"
@@ -53,18 +52,17 @@ exports[`pbehavior-recurrence-rule-exceptions-field Renders \`pbehavior-exceptio
       type="info"
       value="true"
     >
-      No exceptions added yet
+        No exceptions added yet
     </c-alert-stub>
-     
     <button
-      class="ml-0 v-btn theme--light primary"
+      class="mr-2 v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
         Add an exception date
-      </div>
+      </span>
     </button>
     <pbehavior-recurrence-rule-exceptions-list-menu-stub
       value=""

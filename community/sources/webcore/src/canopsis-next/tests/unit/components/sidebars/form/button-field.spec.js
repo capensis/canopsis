@@ -19,6 +19,7 @@ describe('button-field', () => {
   it('Create event emitted after click on the button', () => {
     const wrapper = factory({
       propsData: {
+        title: 'Title',
         addable: true,
       },
     });
@@ -38,6 +39,7 @@ describe('button-field', () => {
   it('Edit event emitted after click on the button', () => {
     const wrapper = factory({
       propsData: {
+        title: 'Title',
         isEmpty: false,
       },
     });
@@ -54,17 +56,16 @@ describe('button-field', () => {
     expect(eventData).toEqual(expect.any(Event));
   });
 
-  it('Delete event emitted after click on the button', () => {
+  it('Delete event emitted after click on the button', async () => {
     const wrapper = factory({
       propsData: {
+        title: 'Title',
         isEmpty: false,
         removable: true,
       },
     });
 
-    const deleteButton = selectDeleteButton(wrapper);
-
-    deleteButton.trigger('click');
+    await selectDeleteButton(wrapper).trigger('click');
 
     const deleteEvents = wrapper.emitted('delete');
 
@@ -75,20 +76,25 @@ describe('button-field', () => {
   });
 
   it('Renders `button-field` with default props', () => {
-    const wrapper = snapshotFactory();
+    const wrapper = snapshotFactory({
+      propsData: {
+        title: '',
+      },
+    });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `button-field` with custom props', () => {
     const wrapper = snapshotFactory({
-      title: {
+      propsData: {
+        title: 'Title',
         isEmpty: true,
         addable: true,
         removable: true,
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });
