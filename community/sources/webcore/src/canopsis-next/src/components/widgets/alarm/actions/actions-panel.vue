@@ -391,7 +391,7 @@ export default {
           /**
            * Save previous behavior
            */
-          (isAckAndChangeStateAvailable && this.item.v.ack)
+          isAckAndChangeStateAvailable
           /**
            * Add behavior like in mass actions
            */
