@@ -385,6 +385,7 @@ type AlarmValue struct {
 	State       *AlarmStep  `bson:"state,omitempty" json:"state,omitempty"`
 	Status      *AlarmStep  `bson:"status,omitempty" json:"status,omitempty"`
 	LastComment *AlarmStep  `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
+	ChangeState *AlarmStep  `bson:"change_state,omitempty" json:"change_state,omitempty"`
 	Tickets     []AlarmStep `bson:"tickets,omitempty" json:"tickets,omitempty"`
 	// Ticket contains the last created ticket
 	Ticket *AlarmStep `bson:"ticket,omitempty" json:"ticket,omitempty"`

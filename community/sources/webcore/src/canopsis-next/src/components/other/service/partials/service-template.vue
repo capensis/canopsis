@@ -34,6 +34,10 @@ export default {
       type: Number,
       required: false,
     },
+    actionsRequests: {
+      type: Array,
+      default: () => [],
+    },
   },
   computed: {
     templateContext() {
@@ -48,6 +52,9 @@ export default {
     registerHelper('entities', ({ hash }) => {
       const entityNameField = hash.name || 'entity.name';
 
+      /**
+       * For new properties and events you must put it for sanitizer
+       */
       return new Handlebars.SafeString(`
         <service-entities-list
           :service="service"
@@ -55,9 +62,11 @@ export default {
           :widget-parameters="widgetParameters"
           :pagination="pagination"
           :total-items="totalItems"
+          :actions-requests="actionsRequests"
           entity-name-field="${entityNameField}"
           @refresh="refreshEntities"
           @update:pagination="updatePagination"
+          @add:action="addAction"
         ></service-entities-list>
       `);
     });
@@ -66,12 +75,16 @@ export default {
     unregisterHelper('entities');
   },
   methods: {
+    addAction(action) {
+      this.$emit('add:action', action);
+    },
+
     updatePagination(pagination) {
       this.$emit('update:pagination', pagination);
     },
 
-    refreshEntities() {
-      this.$emit('refresh');
+    refreshEntities(immediate = false) {
+      this.$emit('refresh', immediate);
     },
   },
 };
