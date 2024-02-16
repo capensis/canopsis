@@ -18,6 +18,8 @@
         :entity-name-field="entityNameField",
         :widget-parameters="widgetParameters",
         :selected="isEntitySelected(serviceEntity)",
+        :actions-requests="actionsRequests",
+        @add:action="addAction",
         @update:selected="updateSelected(serviceEntity, $event)",
         @remove:unavailable="removeEntityFromUnavailable(serviceEntity)",
         @refresh="$listeners.refresh"
@@ -39,6 +41,7 @@ import {
   isActionTypeAvailableForEntity,
 } from '@/helpers/entities/entity/actions';
 import { filterById, mapIds } from '@/helpers/array';
+import { getPageForNewRecordsPerPage } from '@/helpers/pagination';
 
 import { widgetActionPanelServiceEntityMixin } from '@/mixins/widget/actions-panel/service-entity';
 
@@ -75,6 +78,10 @@ export default {
     totalItems: {
       type: Number,
       required: false,
+    },
+    actionsRequests: {
+      type: Array,
+      default: () => [],
     },
   },
   data() {
@@ -144,12 +151,21 @@ export default {
       return this.selectedEntitiesIds.includes(entity._id);
     },
 
+    addAction(action) {
+      this.$emit('add:action', action);
+    },
+
     updatePage(page) {
       this.$emit('update:pagination', { ...this.pagination, page });
     },
 
     updateRecordsPerPage(rowsPerPage) {
-      this.$emit('update:pagination', { ...this.pagination, rowsPerPage, page: 1 });
+      this.$emit('update:pagination', {
+        ...this.pagination,
+
+        rowsPerPage,
+        page: getPageForNewRecordsPerPage(rowsPerPage, this.pagination.rowsPerPage, this.pagination.page),
+      });
     },
   },
 };
