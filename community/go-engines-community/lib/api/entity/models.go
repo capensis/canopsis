@@ -291,4 +291,8 @@ type StateSettingResponse struct {
 	Method                 string                         `json:"method"`
 	InheritedEntityPattern *pattern.Entity                `bson:"inherited_entity_pattern,omitempty" json:"inherited_entity_pattern,omitempty"`
 	StateThresholds        *statesettings.StateThresholds `bson:"state_thresholds,omitempty" json:"state_thresholds,omitempty"`
+
+	DependsCount      int    `bson:"-" json:"depends_count,omitempty"`
+	DependsState      string `bson:"-" json:"depends_state,omitempty"`
+	StateDependsCount int    `bson:"-" json:"state_depends_count,omitempty"`
 }

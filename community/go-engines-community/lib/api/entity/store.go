@@ -3,6 +3,7 @@ package entity
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 	"time"
 
@@ -12,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/perfdata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
@@ -451,32 +453,98 @@ func (s *store) GetStateSetting(ctx context.Context, id string) (StateSettingRes
 	cursor, err := s.mainCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{"_id": id}},
 		{"$lookup": bson.M{
-			"as":           "state_setting",
 			"from":         mongo.StateSettingsMongoCollection,
 			"localField":   "state_info._id",
 			"foreignField": "_id",
+			"as":           "state_setting",
 		}},
 		{"$unwind": bson.M{"path": "$state_setting", "preserveNullAndEmptyArrays": true}},
-		{"$project": bson.M{"state_setting": 1}},
+		{"$lookup": bson.M{
+			"from":         mongo.EntityCountersCollection,
+			"localField":   "_id",
+			"foreignField": "_id",
+			"as":           "counters",
+		}},
+		{"$unwind": bson.M{"path": "$counters", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.AlarmMongoCollection,
+			"localField":   "_id",
+			"foreignField": "d",
+			"as":           "alarm",
+			"pipeline": []bson.M{
+				{"$match": bson.M{"v.resolved": nil}},
+			},
+		}},
+		{"$unwind": bson.M{"path": "$alarm", "preserveNullAndEmptyArrays": true}},
+		{"$project": bson.M{
+			"state_setting":  1,
+			"state_counters": "$counters.state",
+			"state":          "$alarm.v.state.val",
+		}},
 	})
 	if err != nil {
 		return response, err
 	}
 
 	if !cursor.Next(ctx) {
-		return response, nil
+		return response, ErrNoFound
 	}
 
 	defer cursor.Close(ctx)
 	res := struct {
-		StateSetting statesetting.StateSetting `bson:"state_setting"`
+		StateSetting  statesetting.StateSetting    `bson:"state_setting"`
+		StateCounters entitycounters.StateCounters `bson:"state_counters"`
+		State         int                          `bson:"state"`
 	}{}
 	err = cursor.Decode(&res)
 	if err != nil {
 		return response, err
 	}
 
-	return getStateSettingResponse(res.StateSetting), nil
+	response = getStateSettingResponse(res.StateSetting)
+	if res.StateSetting.Method == statesetting.MethodDependencies && res.StateSetting.StateThresholds != nil {
+		var stateThreshold statesetting.StateThreshold
+		switch res.State {
+		case types.AlarmStateCritical:
+			if res.StateSetting.StateThresholds.Critical != nil {
+				stateThreshold = *res.StateSetting.StateThresholds.Critical
+			}
+		case types.AlarmStateMajor:
+			if res.StateSetting.StateThresholds.Major != nil {
+				stateThreshold = *res.StateSetting.StateThresholds.Major
+			}
+		case types.AlarmStateMinor:
+			if res.StateSetting.StateThresholds.Minor != nil {
+				stateThreshold = *res.StateSetting.StateThresholds.Minor
+			}
+		case types.AlarmStateOK:
+			if res.StateSetting.StateThresholds.OK != nil {
+				stateThreshold = *res.StateSetting.StateThresholds.OK
+			}
+		default:
+			return response, fmt.Errorf("unknown state %d of entity %q", res.State, id)
+		}
+
+		var stateDependsCount int
+		switch stateThreshold.State {
+		case types.AlarmStateTitleCritical:
+			stateDependsCount = res.StateCounters.Critical
+		case types.AlarmStateTitleMajor:
+			stateDependsCount = res.StateCounters.Major
+		case types.AlarmStateTitleMinor:
+			stateDependsCount = res.StateCounters.Minor
+		case types.AlarmStateTitleOK:
+			stateDependsCount = res.StateCounters.Ok
+		}
+
+		if stateDependsCount > 0 {
+			response.DependsCount = res.StateCounters.Critical + res.StateCounters.Major + res.StateCounters.Minor + res.StateCounters.Ok
+			response.DependsState = stateThreshold.State
+			response.StateDependsCount = stateDependsCount
+		}
+	}
+
+	return response, nil
 }
 
 func getStateSettingResponse(stateSetting statesetting.StateSetting) StateSettingResponse {
