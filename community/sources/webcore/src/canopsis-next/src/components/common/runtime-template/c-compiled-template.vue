@@ -12,6 +12,7 @@ import { sanitizeHtml, linkifyHtml, normalizeHtml } from '@/helpers/html';
 import { compile } from '@/helpers/handlebars';
 
 export default {
+  inject: ['$system'],
   inheritAttrs: false,
   props: {
     template: {
@@ -36,6 +37,7 @@ export default {
     template: 'compileTemplate',
     context: 'compileTemplate',
     parentElement: 'compileTemplate',
+    '$system.theme': 'compileTemplate',
   },
   created() {
     this.compileTemplate();
@@ -43,7 +45,15 @@ export default {
   methods: {
     async compileTemplate() {
       try {
-        const compiledTemplate = await compile(this.template, this.context);
+        const compiledTemplate = await compile(this.template, {
+          theme: {
+            ...this.$system.theme,
+
+            dark: this.$system.dark,
+          },
+
+          ...this.context,
+        });
 
         this.compiledTemplate = `<${this.parentElement}>${
           normalizeHtml(sanitizeHtml(linkifyHtml(compiledTemplate)))
