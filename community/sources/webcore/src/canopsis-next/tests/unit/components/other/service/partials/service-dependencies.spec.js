@@ -53,6 +53,7 @@ describe('service-dependencies', () => {
       state: 1,
       impact_level: 1,
       impact_state: 0,
+      depends_count: 3,
       has_impacts: false,
     },
     {
