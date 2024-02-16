@@ -1,17 +1,35 @@
-<template lang="pug">
-  div
-    p.pre-wrap(v-if="!engine.is_running") {{ systemDownMessage }}
-    div(v-if="engine.is_too_few_instances")
-      div.pre-wrap {{ $t('healthcheck.activeInstances', { instances, minInstances, optimalInstances }) }}
-      healthcheck-engine-instance-diagram(
-        :instances="instances",
-        :min-instances="minInstances",
-        :optimal-instances="optimalInstances",
+<template>
+  <div>
+    <p
+      class="pre-wrap"
+      v-if="!engine.is_running"
+    >
+      {{ systemDownMessage }}
+    </p>
+    <div v-if="engine.is_too_few_instances">
+      <div class="pre-wrap">
+        {{ $t('healthcheck.activeInstances', { instances, minInstances, optimalInstances }) }}
+      </div>
+      <healthcheck-engine-instance-diagram
+        :instances="instances"
+        :min-instances="minInstances"
+        :optimal-instances="optimalInstances"
         :is-pro-engine="isProEngine"
-      )
-    p.pre-wrap(v-if="engine.is_queue_overflown")
-      | {{ $t('healthcheck.queueOverflowed', { queueLength, maxQueueLength }) }}
-    p.pre-wrap(v-if="engine.is_diff_instances_config") {{ $t('healthcheck.invalidInstancesConfiguration') }}
+      />
+    </div>
+    <p
+      class="pre-wrap"
+      v-if="engine.is_queue_overflown"
+    >
+      {{ $t('healthcheck.queueOverflowed', { queueLength, maxQueueLength }) }}
+    </p>
+    <p
+      class="pre-wrap"
+      v-if="engine.is_diff_instances_config"
+    >
+      {{ $t('healthcheck.invalidInstancesConfiguration') }}
+    </p>
+  </div>
 </template>
 
 <script>

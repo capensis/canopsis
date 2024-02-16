@@ -104,7 +104,6 @@ describe('service-dependencies', () => {
   ].map(column => ({
     ...column,
 
-    value: `entity.${column.value}`,
     sortable: false,
     text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
   }));
@@ -288,7 +287,7 @@ describe('service-dependencies', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `service-dependencies` with custom props', async () => {
@@ -315,7 +314,6 @@ describe('service-dependencies', () => {
         ].map(column => ({
           ...column,
 
-          value: `entity.${column.value}`,
           sortable: false,
           text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
         })),
@@ -325,7 +323,7 @@ describe('service-dependencies', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `service-dependencies` with excluded root', async () => {
@@ -343,7 +341,7 @@ describe('service-dependencies', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `service-dependencies` with pages', async () => {
@@ -366,6 +364,6 @@ describe('service-dependencies', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

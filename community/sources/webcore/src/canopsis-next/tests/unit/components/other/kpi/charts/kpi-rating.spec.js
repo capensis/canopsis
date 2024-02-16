@@ -89,7 +89,7 @@ describe('kpi-rating', () => {
         id: expectedDefaultParams.criteria,
       },
       metric: expectedDefaultParams.metric,
-      limit: expectedDefaultParams.limit,
+      itemsPerPage: expectedDefaultParams.limit,
       interval: {
         from: expectedDefaultParams.from,
         to: expectedDefaultParams.to,
@@ -145,7 +145,7 @@ describe('kpi-rating', () => {
         id: expectedDefaultParams.criteria,
       },
       metric: expectedDefaultParams.metric,
-      limit: expectedDefaultParams.limit,
+      itemsPerPage: expectedDefaultParams.itemsPerPage,
       interval: {
         from: expectedDefaultParams.from,
         to: expectedDefaultParams.to,
@@ -281,7 +281,7 @@ describe('kpi-rating', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `kpi-rating` with fetching error', async () => {
@@ -296,6 +296,6 @@ describe('kpi-rating', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

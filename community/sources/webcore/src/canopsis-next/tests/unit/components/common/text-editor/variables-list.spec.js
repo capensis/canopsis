@@ -8,7 +8,7 @@ const stubs = {
   'variables-list': true,
 };
 
-const selectVariableTiles = wrapper => wrapper.findAll('v-list-tile-stub');
+const selectVariableTiles = wrapper => wrapper.findAll('v-list-item-stub');
 const selectVariableTileByIndex = (wrapper, index) => selectVariableTiles(wrapper).at(index);
 const selectMenu = wrapper => wrapper.find('v-menu-stub');
 const selectVariablesList = wrapper => wrapper.find('variables-list-stub');
@@ -138,7 +138,7 @@ describe('variables-list', () => {
   test('Renders `variables-list` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `variables-list` with custom props', () => {
@@ -161,6 +161,6 @@ describe('variables-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

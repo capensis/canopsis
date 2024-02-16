@@ -39,7 +39,7 @@ describe('c-sampling-field', () => {
 
     const menuContent = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
   });
 
@@ -55,7 +55,7 @@ describe('c-sampling-field', () => {
 
     const menuContent = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
   });
 });

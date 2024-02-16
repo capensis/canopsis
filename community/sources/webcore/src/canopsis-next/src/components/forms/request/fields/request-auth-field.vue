@@ -1,25 +1,33 @@
-<template lang="pug">
-  v-layout(row)
-    v-flex(xs4)
-      c-enabled-field(
-        v-field="value.enabled",
-        :label="$t('scenario.withAuth')",
+<template>
+  <v-layout>
+    <v-flex xs4>
+      <c-enabled-field
+        v-field="value.enabled"
+        :label="$t('scenario.withAuth')"
         :disabled="disabled"
-      )
-    template(v-if="value.enabled")
-      v-flex.mr-3(xs4)
-        c-name-field(
-          v-field="value.username",
-          :label="$t('common.username')",
-          :name="`${name}.username`",
+      />
+    </v-flex>
+    <template v-if="value.enabled">
+      <v-flex
+        class="mr-3"
+        xs4
+      >
+        <c-name-field
+          v-field="value.username"
+          :label="$t('common.username')"
+          :name="`${name}.username`"
           :disabled="disabled"
-        )
-      v-flex(xs4)
-        c-password-field(
-          v-field="value.password",
-          :name="`${name}.password`",
+        />
+      </v-flex>
+      <v-flex xs4>
+        <c-password-field
+          v-field="value.password"
+          :name="`${name}.password`"
           :disabled="disabled"
-        )
+        />
+      </v-flex>
+    </template>
+  </v-layout>
 </template>
 
 <script>

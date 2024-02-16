@@ -260,7 +260,7 @@ describe('kpi-sli-chart', () => {
     const canvas = wrapper.find('canvas');
 
     expect(canvas.element).toMatchCanvasSnapshot();
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `kpi-sli-chart` with downloading true', async () => {
@@ -275,6 +275,6 @@ describe('kpi-sli-chart', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

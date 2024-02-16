@@ -1,32 +1,33 @@
-<template lang="pug">
-  widget-settings-group(:title="$t('settings.margin.title')")
-    field-slider(
-      v-field="form.top",
-      :title="$t('settings.margin.top')",
-      :min="min",
+<template>
+  <widget-settings-group :title="$t('settings.margin.title')">
+    <field-slider
+      v-field="form.top"
+      :title="$t('settings.margin.top')"
+      :min="min"
       :max="max"
-    )
-    v-divider
-    field-slider(
-      v-field="form.right",
-      :title="$t('settings.margin.right')",
-      :min="min",
+    />
+    <v-divider />
+    <field-slider
+      v-field="form.right"
+      :title="$t('settings.margin.right')"
+      :min="min"
       :max="max"
-    )
-    v-divider
-    field-slider(
-      v-field="form.bottom",
-      :title="$t('settings.margin.bottom')",
-      :min="min",
+    />
+    <v-divider />
+    <field-slider
+      v-field="form.bottom"
+      :title="$t('settings.margin.bottom')"
+      :min="min"
       :max="max"
-    )
-    v-divider
-    field-slider(
-      v-field="form.left",
-      :title="$t('settings.margin.left')",
-      :min="min",
+    />
+    <v-divider />
+    <field-slider
+      v-field="form.left"
+      :title="$t('settings.margin.left')"
+      :min="min"
       :max="max"
-    )
+    />
+  </widget-settings-group>
 </template>
 
 <script>

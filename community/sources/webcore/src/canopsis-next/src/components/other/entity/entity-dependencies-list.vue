@@ -1,22 +1,30 @@
-<template lang="pug">
-  entities-list-table-with-pagination(
-    :widget="widget",
-    :entities="entities",
-    :pending="pending",
-    :meta="meta",
-    :query.sync="query",
-    :columns="columns",
+<template>
+  <entities-list-table-with-pagination
+    :widget="widget"
+    :entities="entities"
+    :pending="pending"
+    :meta="meta"
+    :query.sync="query"
+    :columns="columns"
     selectable
-  )
-    template(#toolbar="")
-      v-flex
-        c-advanced-search-field(
-          :query.sync="query",
-          :columns="columns",
+  >
+    <template #toolbar="">
+      <v-flex>
+        <c-advanced-search-field
+          :query.sync="query"
+          :columns="columns"
           :tooltip="$t('context.advancedSearch')"
-        )
-      v-flex(v-if="hasAccessToCategory")
-        c-entity-category-field.mr-3(:category="query.category", @input="updateCategory")
+        />
+      </v-flex>
+      <v-flex v-if="hasAccessToCategory">
+        <c-entity-category-field
+          class="mr-3"
+          :category="query.category"
+          @input="updateCategory"
+        />
+      </v-flex>
+    </template>
+  </entities-list-table-with-pagination>
 </template>
 
 <script>

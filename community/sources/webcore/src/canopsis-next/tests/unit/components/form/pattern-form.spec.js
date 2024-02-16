@@ -119,7 +119,7 @@ describe('pattern-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-form` with alarm type', () => {
@@ -133,7 +133,7 @@ describe('pattern-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-form` with entity type', () => {
@@ -147,7 +147,7 @@ describe('pattern-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-form` with entity type', () => {
@@ -161,7 +161,7 @@ describe('pattern-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-form` with errors', async () => {
@@ -177,6 +177,6 @@ describe('pattern-form', () => {
 
     await validator.validateAll();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

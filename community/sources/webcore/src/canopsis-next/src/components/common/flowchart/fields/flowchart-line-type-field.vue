@@ -1,11 +1,37 @@
-<template lang="pug">
-  v-layout(row, justify-space-between, align-center)
-    v-label {{ label }}
-    v-flex(xs3)
-      v-select.mt-0.pt-0(v-field="value", :items="types", hide-details)
-        template(v-for="slotName in ['selection', 'item']", #[slotName]="{ item }")
-          svg(viewBox="0 0 50 40", width="30", height="30")
-            points-line-path(:points="points", :type="item", stroke="currentColor", stroke-width="2")
+<template>
+  <v-layout
+    justify-space-between
+    align-center
+  >
+    <v-label>{{ label }}</v-label>
+    <v-flex xs3>
+      <v-select
+        class="mt-0 pt-0"
+        v-field="value"
+        :items="types"
+        hide-details
+      >
+        <template
+          v-for="slotName in ['selection', 'item']"
+          #[slotName]="{ item }"
+        >
+          <svg
+            :key="slotName"
+            viewBox="0 0 50 40"
+            width="30"
+            height="30"
+          >
+            <points-line-path
+              :points="points"
+              :type="item"
+              stroke="currentColor"
+              stroke-width="2"
+            />
+          </svg>
+        </template>
+      </v-select>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

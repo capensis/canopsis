@@ -73,7 +73,7 @@ describe('ack-event-form', () => {
   test('Renders `ack-event-form` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `ack-event-form` with custom props', () => {
@@ -87,6 +87,6 @@ describe('ack-event-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

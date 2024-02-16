@@ -14,13 +14,15 @@ describe('groups-side-bar-playlists', () => {
 
   const snapshotFactory = generateRenderer(GroupsSideBarPlaylists, { stubs: snapshotStubs });
 
-  it('Renders `groups-side-bar-playlists` with required props', () => {
+  it('Renders `groups-side-bar-playlists` with required props', async () => {
     const wrapper = snapshotFactory({ store });
 
-    expect(wrapper.element).toMatchSnapshot();
+    await wrapper.openAllExpansionPanels();
+
+    expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `groups-side-bar-playlists` with custom props', () => {
+  it('Renders `groups-side-bar-playlists` with custom props', async () => {
     playlists.mockReturnValue([
       {
         _id: 'playlist-1-id',
@@ -42,6 +44,8 @@ describe('groups-side-bar-playlists', () => {
       store: createMockedStoreModules([entitiesModule, playlistModule]),
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    await wrapper.openAllExpansionPanels();
+
+    expect(wrapper).toMatchSnapshot();
   });
 });

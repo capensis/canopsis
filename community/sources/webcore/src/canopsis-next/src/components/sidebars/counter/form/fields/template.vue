@@ -1,11 +1,24 @@
-<template lang="pug">
-  v-container.pa-3(fluid)
-    v-layout(align-center, justify-space-between)
-      div.subheading {{ title }}
-      v-btn.primary(
-        small,
+<template>
+  <v-container
+    class="pa-3"
+    fluid
+  >
+    <v-layout
+      align-center
+      justify-space-between
+    >
+      <div class="text-subtitle-1">
+        {{ title }}
+      </div>
+      <v-btn
+        class="primary"
+        small
         @click="showTextEditorModal"
-      ) {{ $t('common.show') }}/{{ $t('common.edit') }}
+      >
+        {{ $t('common.show') }}/{{ $t('common.edit') }}
+      </v-btn>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>

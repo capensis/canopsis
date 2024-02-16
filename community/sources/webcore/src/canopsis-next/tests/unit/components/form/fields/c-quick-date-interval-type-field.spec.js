@@ -43,7 +43,7 @@ describe('c-quick-date-interval-type-field', () => {
 
     const dropdownContent = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(dropdownContent.element).toMatchSnapshot();
   });
 
@@ -58,7 +58,7 @@ describe('c-quick-date-interval-type-field', () => {
 
     const dropdownContent = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(dropdownContent.element).toMatchSnapshot();
   });
 
@@ -72,7 +72,7 @@ describe('c-quick-date-interval-type-field', () => {
 
     const dropdownContent = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(dropdownContent.element).toMatchSnapshot();
   });
 });

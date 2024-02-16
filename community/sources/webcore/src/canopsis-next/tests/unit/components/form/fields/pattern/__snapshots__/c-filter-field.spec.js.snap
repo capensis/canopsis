@@ -2,29 +2,29 @@
 
 exports[`c-filter-field Renders \`c-filter-field\` with custom props 1`] = `
 <div
-  class="v-input v-text-field v-select v-autocomplete v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
+  class="v-input v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select v-autocomplete"
 >
   <div
     class="v-input__control"
   >
     <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
       class="v-input__slot"
+      role="combobox"
     >
       <div
         class="v-select__slot"
       >
         <label
-          aria-hidden="true"
           class="v-label v-label--active theme--light"
           style="left: 0px; position: absolute;"
         >
           Custom label
         </label>
         <input
-          aria-label="Custom label"
           autocomplete="off"
           name="customName"
-          role="combobox"
           type="text"
         />
         <div
@@ -33,12 +33,14 @@ exports[`c-filter-field Renders \`c-filter-field\` with custom props 1`] = `
           <div
             class="v-input__icon v-input__icon--clear"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon v-icon--link material-icons theme--light"
+            <button
+              aria-label="Clear Custom label"
+              class="v-icon notranslate v-icon--link material-icons theme--light"
+              tabindex="-1"
+              type="button"
             >
               clear
-            </i>
+            </button>
           </div>
         </div>
         <div
@@ -49,128 +51,61 @@ exports[`c-filter-field Renders \`c-filter-field\` with custom props 1`] = `
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light"
+              class="v-icon notranslate material-icons theme--light"
             >
               arrow_drop_down
             </i>
           </div>
         </div>
+        <input
+          name="customName"
+          type="hidden"
+          value="id1"
+        />
       </div>
       <div
         class="v-menu"
-      />
+      >
+        <!---->
+      </div>
     </div>
   </div>
 </div>
 `;
 
-exports[`c-filter-field Renders \`c-filter-field\` with custom props 2`] = `
-<div
-  class="v-menu__content theme--light v-autocomplete__content"
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-select-list v-card theme--light"
-  >
-    <div
-      class="v-list theme--light"
-      role="list"
-    >
-      <div
-        class="primary--text"
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Fake 1
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Fake 2
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Fake 3
-            </div>
-          </div>
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-`;
+exports[`c-filter-field Renders \`c-filter-field\` with custom props 2`] = `undefined`;
 
 exports[`c-filter-field Renders \`c-filter-field\` with default props 1`] = `
 <div
-  class="v-input v-text-field v-select v-autocomplete v-input--hide-details theme--light"
+  class="v-input v-input--hide-details theme--light v-text-field v-select v-autocomplete"
 >
   <div
     class="v-input__control"
   >
     <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
       class="v-input__slot"
+      role="combobox"
     >
       <div
         class="v-select__slot"
       >
         <label
-          aria-hidden="true"
           class="v-label theme--light"
           style="left: 0px; position: absolute;"
         >
           Filters
         </label>
         <input
-          aria-label="Filters"
           autocomplete="off"
           name="filter"
-          role="combobox"
           type="text"
         />
         <div
           class="v-input__append-inner"
         >
-          <div
-            class="v-input__icon v-input__icon--"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon v-icon--link material-icons theme--light"
-            />
-          </div>
+          <div />
         </div>
         <div
           class="v-input__append-inner"
@@ -180,85 +115,88 @@ exports[`c-filter-field Renders \`c-filter-field\` with default props 1`] = `
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light"
+              class="v-icon notranslate material-icons theme--light"
             >
               arrow_drop_down
             </i>
           </div>
         </div>
+        <input
+          name="filter"
+          type="hidden"
+        />
       </div>
       <div
         class="v-menu"
-      />
+      >
+        <!---->
+      </div>
     </div>
   </div>
 </div>
 `;
 
-exports[`c-filter-field Renders \`c-filter-field\` with default props 2`] = `
+exports[`c-filter-field Renders \`c-filter-field\` with default props 2`] = `undefined`;
+
+exports[`c-filter-field Renders \`c-filter-field\` with old_entity_patterns 1`] = `
 <div
-  class="v-menu__content theme--light v-autocomplete__content"
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
+  class="v-input v-input--hide-details theme--light v-text-field v-select v-autocomplete"
 >
   <div
-    class="v-select-list v-card theme--light"
+    class="v-input__control"
   >
     <div
-      class="v-list theme--light"
-      role="list"
+      aria-expanded="false"
+      aria-haspopup="listbox"
+      class="v-input__slot"
+      role="combobox"
     >
       <div
-        role="listitem"
+        class="v-select__slot"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
+        <label
+          class="v-label theme--light"
+          style="left: 0px; position: absolute;"
+        >
+          Custom label
+        </label>
+        <input
+          autocomplete="off"
+          name="customName"
+          type="text"
+        />
+        <div
+          class="v-input__append-inner"
+        >
+          <div />
+        </div>
+        <div
+          class="v-input__append-inner"
         >
           <div
-            class="v-list__tile__content"
+            class="v-input__icon v-input__icon--append"
           >
-            <div
-              class="v-list__tile__title"
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
             >
-              Fake 1
-            </div>
+              arrow_drop_down
+            </i>
           </div>
-        </a>
+        </div>
+        <input
+          name="customName"
+          type="hidden"
+        />
       </div>
       <div
-        role="listitem"
+        class="v-menu"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Fake 2
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Fake 3
-            </div>
-          </div>
-        </a>
+        <!---->
       </div>
     </div>
   </div>
 </div>
 `;
+
+exports[`c-filter-field Renders \`c-filter-field\` with old_entity_patterns 2`] = `undefined`;

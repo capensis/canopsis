@@ -32,6 +32,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with editing mode 1`] = `
       value="desktop"
     />
   </div>
+   
   <div
     class="grid-layout"
     style="height: 20px; max-width: 100%;"
@@ -41,25 +42,32 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with editing mode 1`] = `
       style="transform: translate3d(20px,20px, 0); width: 0px; height: 0px; position: absolute; display: none;"
     >
       <div />
+       
       <div
         class="grid-item__resize-handler"
       >
-        <svg
+        <span
           aria-hidden="true"
-          class="resize_right-svg-icon v-icon v-icon--is-component theme--light"
-          style="font-size: 16px; height: 16px;"
-          viewBox="0 0 18 18"
-          xmlns="http://www.w3.org/2000/svg"
+          class="v-icon notranslate theme--light"
+          style="font-size: 16px; height: 16px; width: 16px;"
         >
-          <path
-            d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
+          <svg
+            class="resize_right-svg-icon v-icon__component theme--light"
+            fill="currentColor"
+            style="font-size: 16px; height: 16px; width: 16px;"
+            viewBox="0 0 18 18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
    0a1 1 0 0 1 -.707-1.707l6.638-6.638a1 1 0 0 1 1.416 1.414l-6.638 6.638a1 1 0 0 1 -.707.293zm-5.84 0a1
     1 0 0 1 -.707-1.707l12.477-12.477a1 1 0 1 1 1.415 1.414l-12.478 12.477a1 1 0 0 1 -.707.293z"
-            fill="currentColor"
-          />
-        </svg>
+            />
+          </svg>
+        </span>
       </div>
     </div>
+     
   </div>
 </div>
 `;
@@ -72,9 +80,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with editing mode without
   <div
     class="portal"
   >
-    
         Portal to: additional-top-bar-items
-        
     <window-size-field-stub
       color="white"
       light="true"
@@ -152,9 +158,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'l' windo
   <div
     class="portal"
   >
-    
         Portal to: additional-top-bar-items
-        
     <window-size-field-stub
       color="white"
       light="true"
@@ -173,20 +177,25 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'l' windo
       <div
         class="grid-item__resize-handler"
       >
-        <svg
+        <span
           aria-hidden="true"
-          class="resize_right-svg-icon v-icon v-icon--is-component theme--light"
-          style="font-size: 16px; height: 16px;"
-          viewBox="0 0 18 18"
-          xmlns="http://www.w3.org/2000/svg"
+          class="v-icon notranslate theme--light"
+          style="font-size: 16px; height: 16px; width: 16px;"
         >
-          <path
-            d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
+          <svg
+            class="resize_right-svg-icon v-icon__component theme--light"
+            fill="currentColor"
+            style="font-size: 16px; height: 16px; width: 16px;"
+            viewBox="0 0 18 18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
    0a1 1 0 0 1 -.707-1.707l6.638-6.638a1 1 0 0 1 1.416 1.414l-6.638 6.638a1 1 0 0 1 -.707.293zm-5.84 0a1
     1 0 0 1 -.707-1.707l12.477-12.477a1 1 0 1 1 1.415 1.414l-12.478 12.477a1 1 0 0 1 -.707.293z"
-            fill="currentColor"
-          />
-        </svg>
+            />
+          </svg>
+        </span>
       </div>
     </div>
     <div
@@ -209,20 +218,25 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'l' windo
       <div
         class="grid-item__resize-handler"
       >
-        <svg
+        <span
           aria-hidden="true"
-          class="resize_right-svg-icon v-icon v-icon--is-component theme--light"
-          style="font-size: 16px; height: 16px;"
-          viewBox="0 0 18 18"
-          xmlns="http://www.w3.org/2000/svg"
+          class="v-icon notranslate theme--light"
+          style="font-size: 16px; height: 16px; width: 16px;"
         >
-          <path
-            d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
+          <svg
+            class="resize_right-svg-icon v-icon__component theme--light"
+            fill="currentColor"
+            style="font-size: 16px; height: 16px; width: 16px;"
+            viewBox="0 0 18 18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
    0a1 1 0 0 1 -.707-1.707l6.638-6.638a1 1 0 0 1 1.416 1.414l-6.638 6.638a1 1 0 0 1 -.707.293zm-5.84 0a1
     1 0 0 1 -.707-1.707l12.477-12.477a1 1 0 1 1 1.415 1.414l-12.478 12.477a1 1 0 0 1 -.707.293z"
-            fill="currentColor"
-          />
-        </svg>
+            />
+          </svg>
+        </span>
       </div>
     </div>
     <div
@@ -245,20 +259,25 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'l' windo
       <div
         class="grid-item__resize-handler"
       >
-        <svg
+        <span
           aria-hidden="true"
-          class="resize_right-svg-icon v-icon v-icon--is-component theme--light"
-          style="font-size: 16px; height: 16px;"
-          viewBox="0 0 18 18"
-          xmlns="http://www.w3.org/2000/svg"
+          class="v-icon notranslate theme--light"
+          style="font-size: 16px; height: 16px; width: 16px;"
         >
-          <path
-            d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
+          <svg
+            class="resize_right-svg-icon v-icon__component theme--light"
+            fill="currentColor"
+            style="font-size: 16px; height: 16px; width: 16px;"
+            viewBox="0 0 18 18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
    0a1 1 0 0 1 -.707-1.707l6.638-6.638a1 1 0 0 1 1.416 1.414l-6.638 6.638a1 1 0 0 1 -.707.293zm-5.84 0a1
     1 0 0 1 -.707-1.707l12.477-12.477a1 1 0 1 1 1.415 1.414l-12.478 12.477a1 1 0 0 1 -.707.293z"
-            fill="currentColor"
-          />
-        </svg>
+            />
+          </svg>
+        </span>
       </div>
     </div>
     <div
@@ -281,20 +300,25 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'l' windo
       <div
         class="grid-item__resize-handler"
       >
-        <svg
+        <span
           aria-hidden="true"
-          class="resize_right-svg-icon v-icon v-icon--is-component theme--light"
-          style="font-size: 16px; height: 16px;"
-          viewBox="0 0 18 18"
-          xmlns="http://www.w3.org/2000/svg"
+          class="v-icon notranslate theme--light"
+          style="font-size: 16px; height: 16px; width: 16px;"
         >
-          <path
-            d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
+          <svg
+            class="resize_right-svg-icon v-icon__component theme--light"
+            fill="currentColor"
+            style="font-size: 16px; height: 16px; width: 16px;"
+            viewBox="0 0 18 18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
    0a1 1 0 0 1 -.707-1.707l6.638-6.638a1 1 0 0 1 1.416 1.414l-6.638 6.638a1 1 0 0 1 -.707.293zm-5.84 0a1
     1 0 0 1 -.707-1.707l12.477-12.477a1 1 0 1 1 1.415 1.414l-12.478 12.477a1 1 0 0 1 -.707.293z"
-            fill="currentColor"
-          />
-        </svg>
+            />
+          </svg>
+        </span>
       </div>
     </div>
   </div>
@@ -309,9 +333,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'm' windo
   <div
     class="portal"
   >
-    
         Portal to: additional-top-bar-items
-        
     <window-size-field-stub
       color="white"
       light="true"
@@ -330,20 +352,25 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'm' windo
       <div
         class="grid-item__resize-handler"
       >
-        <svg
+        <span
           aria-hidden="true"
-          class="resize_right-svg-icon v-icon v-icon--is-component theme--light"
-          style="font-size: 16px; height: 16px;"
-          viewBox="0 0 18 18"
-          xmlns="http://www.w3.org/2000/svg"
+          class="v-icon notranslate theme--light"
+          style="font-size: 16px; height: 16px; width: 16px;"
         >
-          <path
-            d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
+          <svg
+            class="resize_right-svg-icon v-icon__component theme--light"
+            fill="currentColor"
+            style="font-size: 16px; height: 16px; width: 16px;"
+            viewBox="0 0 18 18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
    0a1 1 0 0 1 -.707-1.707l6.638-6.638a1 1 0 0 1 1.416 1.414l-6.638 6.638a1 1 0 0 1 -.707.293zm-5.84 0a1
     1 0 0 1 -.707-1.707l12.477-12.477a1 1 0 1 1 1.415 1.414l-12.478 12.477a1 1 0 0 1 -.707.293z"
-            fill="currentColor"
-          />
-        </svg>
+            />
+          </svg>
+        </span>
       </div>
     </div>
     <div
@@ -366,20 +393,25 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'm' windo
       <div
         class="grid-item__resize-handler"
       >
-        <svg
+        <span
           aria-hidden="true"
-          class="resize_right-svg-icon v-icon v-icon--is-component theme--light"
-          style="font-size: 16px; height: 16px;"
-          viewBox="0 0 18 18"
-          xmlns="http://www.w3.org/2000/svg"
+          class="v-icon notranslate theme--light"
+          style="font-size: 16px; height: 16px; width: 16px;"
         >
-          <path
-            d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
+          <svg
+            class="resize_right-svg-icon v-icon__component theme--light"
+            fill="currentColor"
+            style="font-size: 16px; height: 16px; width: 16px;"
+            viewBox="0 0 18 18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
    0a1 1 0 0 1 -.707-1.707l6.638-6.638a1 1 0 0 1 1.416 1.414l-6.638 6.638a1 1 0 0 1 -.707.293zm-5.84 0a1
     1 0 0 1 -.707-1.707l12.477-12.477a1 1 0 1 1 1.415 1.414l-12.478 12.477a1 1 0 0 1 -.707.293z"
-            fill="currentColor"
-          />
-        </svg>
+            />
+          </svg>
+        </span>
       </div>
     </div>
     <div
@@ -402,20 +434,25 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'm' windo
       <div
         class="grid-item__resize-handler"
       >
-        <svg
+        <span
           aria-hidden="true"
-          class="resize_right-svg-icon v-icon v-icon--is-component theme--light"
-          style="font-size: 16px; height: 16px;"
-          viewBox="0 0 18 18"
-          xmlns="http://www.w3.org/2000/svg"
+          class="v-icon notranslate theme--light"
+          style="font-size: 16px; height: 16px; width: 16px;"
         >
-          <path
-            d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
+          <svg
+            class="resize_right-svg-icon v-icon__component theme--light"
+            fill="currentColor"
+            style="font-size: 16px; height: 16px; width: 16px;"
+            viewBox="0 0 18 18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
    0a1 1 0 0 1 -.707-1.707l6.638-6.638a1 1 0 0 1 1.416 1.414l-6.638 6.638a1 1 0 0 1 -.707.293zm-5.84 0a1
     1 0 0 1 -.707-1.707l12.477-12.477a1 1 0 1 1 1.415 1.414l-12.478 12.477a1 1 0 0 1 -.707.293z"
-            fill="currentColor"
-          />
-        </svg>
+            />
+          </svg>
+        </span>
       </div>
     </div>
     <div
@@ -438,20 +475,25 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'm' windo
       <div
         class="grid-item__resize-handler"
       >
-        <svg
+        <span
           aria-hidden="true"
-          class="resize_right-svg-icon v-icon v-icon--is-component theme--light"
-          style="font-size: 16px; height: 16px;"
-          viewBox="0 0 18 18"
-          xmlns="http://www.w3.org/2000/svg"
+          class="v-icon notranslate theme--light"
+          style="font-size: 16px; height: 16px; width: 16px;"
         >
-          <path
-            d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
+          <svg
+            class="resize_right-svg-icon v-icon__component theme--light"
+            fill="currentColor"
+            style="font-size: 16px; height: 16px; width: 16px;"
+            viewBox="0 0 18 18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
    0a1 1 0 0 1 -.707-1.707l6.638-6.638a1 1 0 0 1 1.416 1.414l-6.638 6.638a1 1 0 0 1 -.707.293zm-5.84 0a1
     1 0 0 1 -.707-1.707l12.477-12.477a1 1 0 1 1 1.415 1.414l-12.478 12.477a1 1 0 0 1 -.707.293z"
-            fill="currentColor"
-          />
-        </svg>
+            />
+          </svg>
+        </span>
       </div>
     </div>
   </div>
@@ -466,9 +508,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 't' windo
   <div
     class="portal"
   >
-    
         Portal to: additional-top-bar-items
-        
     <window-size-field-stub
       color="white"
       light="true"
@@ -487,20 +527,25 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 't' windo
       <div
         class="grid-item__resize-handler"
       >
-        <svg
+        <span
           aria-hidden="true"
-          class="resize_right-svg-icon v-icon v-icon--is-component theme--light"
-          style="font-size: 16px; height: 16px;"
-          viewBox="0 0 18 18"
-          xmlns="http://www.w3.org/2000/svg"
+          class="v-icon notranslate theme--light"
+          style="font-size: 16px; height: 16px; width: 16px;"
         >
-          <path
-            d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
+          <svg
+            class="resize_right-svg-icon v-icon__component theme--light"
+            fill="currentColor"
+            style="font-size: 16px; height: 16px; width: 16px;"
+            viewBox="0 0 18 18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
    0a1 1 0 0 1 -.707-1.707l6.638-6.638a1 1 0 0 1 1.416 1.414l-6.638 6.638a1 1 0 0 1 -.707.293zm-5.84 0a1
     1 0 0 1 -.707-1.707l12.477-12.477a1 1 0 1 1 1.415 1.414l-12.478 12.477a1 1 0 0 1 -.707.293z"
-            fill="currentColor"
-          />
-        </svg>
+            />
+          </svg>
+        </span>
       </div>
     </div>
     <div
@@ -523,20 +568,25 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 't' windo
       <div
         class="grid-item__resize-handler"
       >
-        <svg
+        <span
           aria-hidden="true"
-          class="resize_right-svg-icon v-icon v-icon--is-component theme--light"
-          style="font-size: 16px; height: 16px;"
-          viewBox="0 0 18 18"
-          xmlns="http://www.w3.org/2000/svg"
+          class="v-icon notranslate theme--light"
+          style="font-size: 16px; height: 16px; width: 16px;"
         >
-          <path
-            d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
+          <svg
+            class="resize_right-svg-icon v-icon__component theme--light"
+            fill="currentColor"
+            style="font-size: 16px; height: 16px; width: 16px;"
+            viewBox="0 0 18 18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
    0a1 1 0 0 1 -.707-1.707l6.638-6.638a1 1 0 0 1 1.416 1.414l-6.638 6.638a1 1 0 0 1 -.707.293zm-5.84 0a1
     1 0 0 1 -.707-1.707l12.477-12.477a1 1 0 1 1 1.415 1.414l-12.478 12.477a1 1 0 0 1 -.707.293z"
-            fill="currentColor"
-          />
-        </svg>
+            />
+          </svg>
+        </span>
       </div>
     </div>
     <div
@@ -559,20 +609,25 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 't' windo
       <div
         class="grid-item__resize-handler"
       >
-        <svg
+        <span
           aria-hidden="true"
-          class="resize_right-svg-icon v-icon v-icon--is-component theme--light"
-          style="font-size: 16px; height: 16px;"
-          viewBox="0 0 18 18"
-          xmlns="http://www.w3.org/2000/svg"
+          class="v-icon notranslate theme--light"
+          style="font-size: 16px; height: 16px; width: 16px;"
         >
-          <path
-            d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
+          <svg
+            class="resize_right-svg-icon v-icon__component theme--light"
+            fill="currentColor"
+            style="font-size: 16px; height: 16px; width: 16px;"
+            viewBox="0 0 18 18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
    0a1 1 0 0 1 -.707-1.707l6.638-6.638a1 1 0 0 1 1.416 1.414l-6.638 6.638a1 1 0 0 1 -.707.293zm-5.84 0a1
     1 0 0 1 -.707-1.707l12.477-12.477a1 1 0 1 1 1.415 1.414l-12.478 12.477a1 1 0 0 1 -.707.293z"
-            fill="currentColor"
-          />
-        </svg>
+            />
+          </svg>
+        </span>
       </div>
     </div>
     <div
@@ -595,20 +650,25 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 't' windo
       <div
         class="grid-item__resize-handler"
       >
-        <svg
+        <span
           aria-hidden="true"
-          class="resize_right-svg-icon v-icon v-icon--is-component theme--light"
-          style="font-size: 16px; height: 16px;"
-          viewBox="0 0 18 18"
-          xmlns="http://www.w3.org/2000/svg"
+          class="v-icon notranslate theme--light"
+          style="font-size: 16px; height: 16px; width: 16px;"
         >
-          <path
-            d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
+          <svg
+            class="resize_right-svg-icon v-icon__component theme--light"
+            fill="currentColor"
+            style="font-size: 16px; height: 16px; width: 16px;"
+            viewBox="0 0 18 18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
    0a1 1 0 0 1 -.707-1.707l6.638-6.638a1 1 0 0 1 1.416 1.414l-6.638 6.638a1 1 0 0 1 -.707.293zm-5.84 0a1
     1 0 0 1 -.707-1.707l12.477-12.477a1 1 0 1 1 1.415 1.414l-12.478 12.477a1 1 0 0 1 -.707.293z"
-            fill="currentColor"
-          />
-        </svg>
+            />
+          </svg>
+        </span>
       </div>
     </div>
   </div>
@@ -623,9 +683,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'xl' wind
   <div
     class="portal"
   >
-    
         Portal to: additional-top-bar-items
-        
     <window-size-field-stub
       color="white"
       light="true"
@@ -644,20 +702,25 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'xl' wind
       <div
         class="grid-item__resize-handler"
       >
-        <svg
+        <span
           aria-hidden="true"
-          class="resize_right-svg-icon v-icon v-icon--is-component theme--light"
-          style="font-size: 16px; height: 16px;"
-          viewBox="0 0 18 18"
-          xmlns="http://www.w3.org/2000/svg"
+          class="v-icon notranslate theme--light"
+          style="font-size: 16px; height: 16px; width: 16px;"
         >
-          <path
-            d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
+          <svg
+            class="resize_right-svg-icon v-icon__component theme--light"
+            fill="currentColor"
+            style="font-size: 16px; height: 16px; width: 16px;"
+            viewBox="0 0 18 18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
    0a1 1 0 0 1 -.707-1.707l6.638-6.638a1 1 0 0 1 1.416 1.414l-6.638 6.638a1 1 0 0 1 -.707.293zm-5.84 0a1
     1 0 0 1 -.707-1.707l12.477-12.477a1 1 0 1 1 1.415 1.414l-12.478 12.477a1 1 0 0 1 -.707.293z"
-            fill="currentColor"
-          />
-        </svg>
+            />
+          </svg>
+        </span>
       </div>
     </div>
     <div
@@ -680,20 +743,25 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'xl' wind
       <div
         class="grid-item__resize-handler"
       >
-        <svg
+        <span
           aria-hidden="true"
-          class="resize_right-svg-icon v-icon v-icon--is-component theme--light"
-          style="font-size: 16px; height: 16px;"
-          viewBox="0 0 18 18"
-          xmlns="http://www.w3.org/2000/svg"
+          class="v-icon notranslate theme--light"
+          style="font-size: 16px; height: 16px; width: 16px;"
         >
-          <path
-            d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
+          <svg
+            class="resize_right-svg-icon v-icon__component theme--light"
+            fill="currentColor"
+            style="font-size: 16px; height: 16px; width: 16px;"
+            viewBox="0 0 18 18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
    0a1 1 0 0 1 -.707-1.707l6.638-6.638a1 1 0 0 1 1.416 1.414l-6.638 6.638a1 1 0 0 1 -.707.293zm-5.84 0a1
     1 0 0 1 -.707-1.707l12.477-12.477a1 1 0 1 1 1.415 1.414l-12.478 12.477a1 1 0 0 1 -.707.293z"
-            fill="currentColor"
-          />
-        </svg>
+            />
+          </svg>
+        </span>
       </div>
     </div>
     <div
@@ -716,20 +784,25 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'xl' wind
       <div
         class="grid-item__resize-handler"
       >
-        <svg
+        <span
           aria-hidden="true"
-          class="resize_right-svg-icon v-icon v-icon--is-component theme--light"
-          style="font-size: 16px; height: 16px;"
-          viewBox="0 0 18 18"
-          xmlns="http://www.w3.org/2000/svg"
+          class="v-icon notranslate theme--light"
+          style="font-size: 16px; height: 16px; width: 16px;"
         >
-          <path
-            d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
+          <svg
+            class="resize_right-svg-icon v-icon__component theme--light"
+            fill="currentColor"
+            style="font-size: 16px; height: 16px; width: 16px;"
+            viewBox="0 0 18 18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
    0a1 1 0 0 1 -.707-1.707l6.638-6.638a1 1 0 0 1 1.416 1.414l-6.638 6.638a1 1 0 0 1 -.707.293zm-5.84 0a1
     1 0 0 1 -.707-1.707l12.477-12.477a1 1 0 1 1 1.415 1.414l-12.478 12.477a1 1 0 0 1 -.707.293z"
-            fill="currentColor"
-          />
-        </svg>
+            />
+          </svg>
+        </span>
       </div>
     </div>
     <div
@@ -752,20 +825,25 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'xl' wind
       <div
         class="grid-item__resize-handler"
       >
-        <svg
+        <span
           aria-hidden="true"
-          class="resize_right-svg-icon v-icon v-icon--is-component theme--light"
-          style="font-size: 16px; height: 16px;"
-          viewBox="0 0 18 18"
-          xmlns="http://www.w3.org/2000/svg"
+          class="v-icon notranslate theme--light"
+          style="font-size: 16px; height: 16px; width: 16px;"
         >
-          <path
-            d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
+          <svg
+            class="resize_right-svg-icon v-icon__component theme--light"
+            fill="currentColor"
+            style="font-size: 16px; height: 16px; width: 16px;"
+            viewBox="0 0 18 18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
    0a1 1 0 0 1 -.707-1.707l6.638-6.638a1 1 0 0 1 1.416 1.414l-6.638 6.638a1 1 0 0 1 -.707.293zm-5.84 0a1
     1 0 0 1 -.707-1.707l12.477-12.477a1 1 0 1 1 1.415 1.414l-12.478 12.477a1 1 0 0 1 -.707.293z"
-            fill="currentColor"
-          />
-        </svg>
+            />
+          </svg>
+        </span>
       </div>
     </div>
   </div>
@@ -780,9 +858,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets with editing
   <div
     class="portal"
   >
-    
         Portal to: additional-top-bar-items
-        
     <window-size-field-stub
       color="white"
       light="true"
@@ -801,20 +877,25 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets with editing
       <div
         class="grid-item__resize-handler"
       >
-        <svg
+        <span
           aria-hidden="true"
-          class="resize_right-svg-icon v-icon v-icon--is-component theme--light"
-          style="font-size: 16px; height: 16px;"
-          viewBox="0 0 18 18"
-          xmlns="http://www.w3.org/2000/svg"
+          class="v-icon notranslate theme--light"
+          style="font-size: 16px; height: 16px; width: 16px;"
         >
-          <path
-            d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
+          <svg
+            class="resize_right-svg-icon v-icon__component theme--light"
+            fill="currentColor"
+            style="font-size: 16px; height: 16px; width: 16px;"
+            viewBox="0 0 18 18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
    0a1 1 0 0 1 -.707-1.707l6.638-6.638a1 1 0 0 1 1.416 1.414l-6.638 6.638a1 1 0 0 1 -.707.293zm-5.84 0a1
     1 0 0 1 -.707-1.707l12.477-12.477a1 1 0 1 1 1.415 1.414l-12.478 12.477a1 1 0 0 1 -.707.293z"
-            fill="currentColor"
-          />
-        </svg>
+            />
+          </svg>
+        </span>
       </div>
     </div>
     <div
@@ -837,20 +918,25 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets with editing
       <div
         class="grid-item__resize-handler"
       >
-        <svg
+        <span
           aria-hidden="true"
-          class="resize_right-svg-icon v-icon v-icon--is-component theme--light"
-          style="font-size: 16px; height: 16px;"
-          viewBox="0 0 18 18"
-          xmlns="http://www.w3.org/2000/svg"
+          class="v-icon notranslate theme--light"
+          style="font-size: 16px; height: 16px; width: 16px;"
         >
-          <path
-            d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
+          <svg
+            class="resize_right-svg-icon v-icon__component theme--light"
+            fill="currentColor"
+            style="font-size: 16px; height: 16px; width: 16px;"
+            viewBox="0 0 18 18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
    0a1 1 0 0 1 -.707-1.707l6.638-6.638a1 1 0 0 1 1.416 1.414l-6.638 6.638a1 1 0 0 1 -.707.293zm-5.84 0a1
     1 0 0 1 -.707-1.707l12.477-12.477a1 1 0 1 1 1.415 1.414l-12.478 12.477a1 1 0 0 1 -.707.293z"
-            fill="currentColor"
-          />
-        </svg>
+            />
+          </svg>
+        </span>
       </div>
     </div>
     <div
@@ -873,20 +959,25 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets with editing
       <div
         class="grid-item__resize-handler"
       >
-        <svg
+        <span
           aria-hidden="true"
-          class="resize_right-svg-icon v-icon v-icon--is-component theme--light"
-          style="font-size: 16px; height: 16px;"
-          viewBox="0 0 18 18"
-          xmlns="http://www.w3.org/2000/svg"
+          class="v-icon notranslate theme--light"
+          style="font-size: 16px; height: 16px; width: 16px;"
         >
-          <path
-            d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
+          <svg
+            class="resize_right-svg-icon v-icon__component theme--light"
+            fill="currentColor"
+            style="font-size: 16px; height: 16px; width: 16px;"
+            viewBox="0 0 18 18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
    0a1 1 0 0 1 -.707-1.707l6.638-6.638a1 1 0 0 1 1.416 1.414l-6.638 6.638a1 1 0 0 1 -.707.293zm-5.84 0a1
     1 0 0 1 -.707-1.707l12.477-12.477a1 1 0 1 1 1.415 1.414l-12.478 12.477a1 1 0 0 1 -.707.293z"
-            fill="currentColor"
-          />
-        </svg>
+            />
+          </svg>
+        </span>
       </div>
     </div>
     <div
@@ -909,20 +1000,25 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets with editing
       <div
         class="grid-item__resize-handler"
       >
-        <svg
+        <span
           aria-hidden="true"
-          class="resize_right-svg-icon v-icon v-icon--is-component theme--light"
-          style="font-size: 16px; height: 16px;"
-          viewBox="0 0 18 18"
-          xmlns="http://www.w3.org/2000/svg"
+          class="v-icon notranslate theme--light"
+          style="font-size: 16px; height: 16px; width: 16px;"
         >
-          <path
-            d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
+          <svg
+            class="resize_right-svg-icon v-icon__component theme--light"
+            fill="currentColor"
+            style="font-size: 16px; height: 16px; width: 16px;"
+            viewBox="0 0 18 18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m14.228 16.227a1 1 0 0 1 -.707-1.707l1-1a1 1 0 0 1 1.416 1.414l-1 1a1 1 0 0 1 -.707.293zm-5.638
    0a1 1 0 0 1 -.707-1.707l6.638-6.638a1 1 0 0 1 1.416 1.414l-6.638 6.638a1 1 0 0 1 -.707.293zm-5.84 0a1
     1 0 0 1 -.707-1.707l12.477-12.477a1 1 0 1 1 1.415 1.414l-12.478 12.477a1 1 0 0 1 -.707.293z"
-            fill="currentColor"
-          />
-        </svg>
+            />
+          </svg>
+        </span>
       </div>
     </div>
   </div>

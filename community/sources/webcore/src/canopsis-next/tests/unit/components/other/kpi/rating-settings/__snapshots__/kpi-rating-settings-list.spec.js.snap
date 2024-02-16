@@ -5,7 +5,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
   class="c-advanced-data-table"
 >
   <div
-    class="layout row wrap"
+    class="layout wrap"
   >
     <div
       class="flex xs4"
@@ -18,7 +18,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
       class="flex xs12"
     >
       <transition-stub
-        mode="in-out"
         name="expand-transition"
       >
         <!---->
@@ -26,525 +25,398 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
     </div>
     <!---->
   </div>
-  <div>
+  <div
+    class="v-data-table theme--light"
+    header-text="text"
+  >
     <div
-      class="v-table__overflow"
+      class="v-data-table__wrapper"
     >
-      <table
-        class="v-datatable v-table theme--light"
-      >
-        <thead>
+      <table>
+        <colgroup>
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+        </colgroup>
+        <thead
+          class="v-data-table-header"
+        >
           <tr>
             <th
-              aria-label=": Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label=""
+              class="text-start"
               data-value="enabled"
               role="columnheader"
               scope="col"
-              width="100"
+              style="width: 100px; min-width: 100px;"
             >
-              
+              <span />
             </th>
             <th
-              aria-label="Criteria: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label="Criteria"
+              class="text-start"
               data-value="label"
               role="columnheader"
               scope="col"
             >
-              Criteria
+              <span>
+                Criteria
+              </span>
             </th>
-          </tr>
-          <tr
-            class="v-datatable__progress"
-          >
-            <th
-              class="column"
-              colspan="2"
-            />
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="true"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons primary--text theme--light"
-                        >
-                          check_box
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting
+            <td
+              class="text-start"
+            >
+        Rating setting
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="true"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons primary--text theme--light"
-                        >
-                          check_box
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 2
+            <td
+              class="text-start"
+            >
+        Rating setting 2
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="true"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons primary--text theme--light"
-                        >
-                          check_box
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 3
+            <td
+              class="text-start"
+            >
+        Rating setting 3
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="false"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons theme--light"
-                        >
-                          check_box_outline_blank
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box_outline_blank
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 4
+            <td
+              class="text-start"
+            >
+        Rating setting 4
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="false"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons theme--light"
-                        >
-                          check_box_outline_blank
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box_outline_blank
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 5
+            <td
+              class="text-start"
+            >
+        Rating setting 5
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="false"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons theme--light"
-                        >
-                          check_box_outline_blank
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box_outline_blank
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 6
+            <td
+              class="text-start"
+            >
+        Rating setting 6
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="false"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons theme--light"
-                        >
-                          check_box_outline_blank
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box_outline_blank
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 7
+            <td
+              class="text-start"
+            >
+        Rating setting 7
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="false"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons theme--light"
-                        >
-                          check_box_outline_blank
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box_outline_blank
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 8
+            <td
+              class="text-start"
+            >
+        Rating setting 8
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="false"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons theme--light"
-                        >
-                          check_box_outline_blank
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box_outline_blank
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 9
+            <td
+              class="text-start"
+            >
+        Rating setting 9
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="true"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons primary--text theme--light"
-                        >
-                          check_box
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 10
+            <td
+              class="text-start"
+            >
+        Rating setting 10
             </td>
           </tr>
         </tbody>
@@ -552,8 +424,8 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
     </div>
   </div>
   <c-table-pagination-stub
+    items-per-page="10"
     page="1"
-    rows-per-page="10"
     total-items="50"
   />
 </div>
@@ -564,7 +436,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
   class="c-advanced-data-table"
 >
   <div
-    class="layout row wrap"
+    class="layout wrap"
   >
     <div
       class="flex xs4"
@@ -577,7 +449,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
       class="flex xs12"
     >
       <transition-stub
-        mode="in-out"
         name="expand-transition"
       >
         <!---->
@@ -585,39 +456,52 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
     </div>
     <!---->
   </div>
-  <div>
+  <div
+    class="v-data-table theme--light"
+    header-text="text"
+  >
     <div
-      class="v-table__overflow"
+      class="v-data-table__wrapper"
     >
-      <table
-        class="v-datatable v-table theme--light"
-      >
-        <thead>
+      <table>
+        <colgroup>
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+        </colgroup>
+        <thead
+          class="v-data-table-header"
+        >
           <tr>
             <th
-              aria-label=": Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label=""
+              class="text-start"
               data-value="enabled"
               role="columnheader"
               scope="col"
-              width="100"
+              style="width: 100px; min-width: 100px;"
             >
-              
+              <span />
             </th>
             <th
-              aria-label="Criteria: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label="Criteria"
+              class="text-start"
               data-value="label"
               role="columnheader"
               scope="col"
             >
-              Criteria
+              <span>
+                Criteria
+              </span>
             </th>
           </tr>
+        </thead>
+        <thead>
           <tr
-            class="v-datatable__progress"
+            class="v-data-table__progress"
           >
             <th
               class="column"
@@ -626,518 +510,384 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
               <div
                 aria-valuemax="100"
                 aria-valuemin="0"
-                class="v-progress-linear"
+                class="v-progress-linear v-progress-linear--absolute v-progress-linear--visible theme--light"
                 role="progressbar"
                 style="height: 2px;"
               >
                 <div
                   class="v-progress-linear__background primary"
-                  style="height: 2px; opacity: 0.3; width: 100%;"
+                  style="opacity: 0.3; left: 0%; width: 100%;"
                 />
                 <div
-                  class="v-progress-linear__bar"
+                  class="v-progress-linear__buffer"
+                />
+                <transition-stub
+                  name="fade-transition"
                 >
-                  <transition-stub
-                    name="fade-transition"
+                  <div
+                    class="v-progress-linear__indeterminate v-progress-linear__indeterminate--active"
                   >
                     <div
-                      class="v-progress-linear__bar__indeterminate v-progress-linear__bar__indeterminate--active"
-                    >
-                      <div
-                        class="v-progress-linear__bar__indeterminate long primary"
-                      />
-                      <div
-                        class="v-progress-linear__bar__indeterminate short primary"
-                      />
-                    </div>
-                  </transition-stub>
-                  <transition-stub
-                    name="slide-x-transition"
-                  />
-                </div>
+                      class="v-progress-linear__indeterminate long primary"
+                    />
+                    <div
+                      class="v-progress-linear__indeterminate short primary"
+                    />
+                  </div>
+                </transition-stub>
               </div>
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="true"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons primary--text theme--light"
-                        >
-                          check_box
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting
+            <td
+              class="text-start"
+            >
+        Rating setting
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="true"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons primary--text theme--light"
-                        >
-                          check_box
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 2
+            <td
+              class="text-start"
+            >
+        Rating setting 2
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="true"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons primary--text theme--light"
-                        >
-                          check_box
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 3
+            <td
+              class="text-start"
+            >
+        Rating setting 3
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="false"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons theme--light"
-                        >
-                          check_box_outline_blank
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box_outline_blank
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 4
+            <td
+              class="text-start"
+            >
+        Rating setting 4
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="false"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons theme--light"
-                        >
-                          check_box_outline_blank
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box_outline_blank
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 5
+            <td
+              class="text-start"
+            >
+        Rating setting 5
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="false"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons theme--light"
-                        >
-                          check_box_outline_blank
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box_outline_blank
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 6
+            <td
+              class="text-start"
+            >
+        Rating setting 6
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="false"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons theme--light"
-                        >
-                          check_box_outline_blank
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box_outline_blank
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 7
+            <td
+              class="text-start"
+            >
+        Rating setting 7
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="false"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons theme--light"
-                        >
-                          check_box_outline_blank
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box_outline_blank
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 8
+            <td
+              class="text-start"
+            >
+        Rating setting 8
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="false"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons theme--light"
-                        >
-                          check_box_outline_blank
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box_outline_blank
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 9
+            <td
+              class="text-start"
+            >
+        Rating setting 9
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="true"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons primary--text theme--light"
-                        >
-                          check_box
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 10
+            <td
+              class="text-start"
+            >
+        Rating setting 10
             </td>
           </tr>
         </tbody>
@@ -1145,8 +895,8 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
     </div>
   </div>
   <c-table-pagination-stub
+    items-per-page="10"
     page="2"
-    rows-per-page="10"
     total-items="50"
   />
 </div>
@@ -1157,7 +907,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with defa
   class="c-advanced-data-table"
 >
   <div
-    class="layout row wrap"
+    class="layout wrap"
   >
     <div
       class="flex xs4"
@@ -1168,7 +918,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with defa
       class="flex xs12"
     >
       <transition-stub
-        mode="in-out"
         name="expand-transition"
       >
         <!---->
@@ -1176,50 +925,54 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with defa
     </div>
     <!---->
   </div>
-  <div>
+  <div
+    class="v-data-table theme--light"
+    header-text="text"
+  >
     <div
-      class="v-table__overflow"
+      class="v-data-table__wrapper"
     >
-      <table
-        class="v-datatable v-table theme--light"
-      >
-        <thead>
+      <table>
+        <colgroup>
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+        </colgroup>
+        <thead
+          class="v-data-table-header"
+        >
           <tr>
             <th
-              aria-label=": Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label=""
+              class="text-start"
               data-value="enabled"
               role="columnheader"
               scope="col"
-              width="100"
+              style="width: 100px; min-width: 100px;"
             >
-              
+              <span />
             </th>
             <th
-              aria-label="Criteria: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label="Criteria"
+              class="text-start"
               data-value="label"
               role="columnheader"
               scope="col"
             >
-              Criteria
+              <span>
+                Criteria
+              </span>
             </th>
-          </tr>
-          <tr
-            class="v-datatable__progress"
-          >
-            <th
-              class="column"
-              colspan="2"
-            />
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr
+            class="v-data-table__empty-wrapper"
+          >
             <td
-              class="text-xs-center"
               colspan="2"
             >
               No data available
@@ -1238,7 +991,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
   class="c-advanced-data-table"
 >
   <div
-    class="layout row wrap"
+    class="layout wrap"
   >
     <div
       class="flex xs4"
@@ -1251,556 +1004,428 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
       class="flex xs12"
     >
       <transition-stub
-        mode="in-out"
         name="expand-transition"
       >
         <div
-          class="layout ml-3"
+          class="layout ml-3 mt-3"
         >
           <button
-            class="v-btn v-btn--outline v-btn--depressed theme--light primary--text"
+            class="v-btn v-btn--outlined theme--light v-size--default primary--text"
             type="button"
           >
-            <div
+            <span
               class="v-btn__content"
             >
-              Cancel
-            </div>
+            Cancel
+            </span>
           </button>
           <button
-            class="v-btn theme--light primary"
+            class="ml-2 v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
             type="button"
           >
-            <div
+            <span
               class="v-btn__content"
             >
-              Submit
-            </div>
+            Submit
+            </span>
           </button>
         </div>
       </transition-stub>
     </div>
     <!---->
   </div>
-  <div>
+  <div
+    class="v-data-table theme--light"
+    header-text="text"
+  >
     <div
-      class="v-table__overflow"
+      class="v-data-table__wrapper"
     >
-      <table
-        class="v-datatable v-table theme--light"
-      >
-        <thead>
+      <table>
+        <colgroup>
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+        </colgroup>
+        <thead
+          class="v-data-table-header"
+        >
           <tr>
             <th
-              aria-label=": Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label=""
+              class="text-start"
               data-value="enabled"
               role="columnheader"
               scope="col"
-              width="100"
+              style="width: 100px; min-width: 100px;"
             >
-              
+              <span />
             </th>
             <th
-              aria-label="Criteria: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label="Criteria"
+              class="text-start"
               data-value="label"
               role="columnheader"
               scope="col"
             >
-              Criteria
+              <span>
+                Criteria
+              </span>
             </th>
-          </tr>
-          <tr
-            class="v-datatable__progress"
-          >
-            <th
-              class="column"
-              colspan="2"
-            />
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="false"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons theme--light"
-                        >
-                          check_box_outline_blank
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box_outline_blank
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting
+            <td
+              class="text-start"
+            >
+        Rating setting
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="true"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons primary--text theme--light"
-                        >
-                          check_box
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 2
+            <td
+              class="text-start"
+            >
+        Rating setting 2
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="true"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons primary--text theme--light"
-                        >
-                          check_box
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 3
+            <td
+              class="text-start"
+            >
+        Rating setting 3
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="false"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons theme--light"
-                        >
-                          check_box_outline_blank
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box_outline_blank
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 4
+            <td
+              class="text-start"
+            >
+        Rating setting 4
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="false"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons theme--light"
-                        >
-                          check_box_outline_blank
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box_outline_blank
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 5
+            <td
+              class="text-start"
+            >
+        Rating setting 5
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="false"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons theme--light"
-                        >
-                          check_box_outline_blank
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box_outline_blank
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 6
+            <td
+              class="text-start"
+            >
+        Rating setting 6
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="false"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons theme--light"
-                        >
-                          check_box_outline_blank
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box_outline_blank
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 7
+            <td
+              class="text-start"
+            >
+        Rating setting 7
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="false"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons theme--light"
-                        >
-                          check_box_outline_blank
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box_outline_blank
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 8
+            <td
+              class="text-start"
+            >
+        Rating setting 8
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="false"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons theme--light"
-                        >
-                          check_box_outline_blank
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box_outline_blank
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 9
+            <td
+              class="text-start"
+            >
+        Rating setting 9
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="true"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons primary--text theme--light"
-                        >
-                          check_box
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 10
+            <td
+              class="text-start"
+            >
+        Rating setting 10
             </td>
           </tr>
         </tbody>
@@ -1808,8 +1433,8 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
     </div>
   </div>
   <c-table-pagination-stub
+    items-per-page="10"
     page="1"
-    rows-per-page="10"
     total-items="50"
   />
 </div>
@@ -1820,7 +1445,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
   class="c-advanced-data-table"
 >
   <div
-    class="layout row wrap"
+    class="layout wrap"
   >
     <div
       class="flex xs4"
@@ -1833,7 +1458,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
       class="flex xs12"
     >
       <transition-stub
-        mode="in-out"
         name="expand-transition"
       >
         <!---->
@@ -1841,525 +1465,398 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
     </div>
     <!---->
   </div>
-  <div>
+  <div
+    class="v-data-table theme--light"
+    header-text="text"
+  >
     <div
-      class="v-table__overflow"
+      class="v-data-table__wrapper"
     >
-      <table
-        class="v-datatable v-table theme--light"
-      >
-        <thead>
+      <table>
+        <colgroup>
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
+        </colgroup>
+        <thead
+          class="v-data-table-header"
+        >
           <tr>
             <th
-              aria-label=": Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label=""
+              class="text-start"
               data-value="enabled"
               role="columnheader"
               scope="col"
-              width="100"
+              style="width: 100px; min-width: 100px;"
             >
-              
+              <span />
             </th>
             <th
-              aria-label="Criteria: Not sorted."
-              aria-sort="none"
-              class="column text-xs-left"
+              aria-label="Criteria"
+              class="text-start"
               data-value="label"
               role="columnheader"
               scope="col"
             >
-              Criteria
+              <span>
+                Criteria
+              </span>
             </th>
-          </tr>
-          <tr
-            class="v-datatable__progress"
-          >
-            <th
-              class="column"
-              colspan="2"
-            />
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="true"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons primary--text theme--light"
-                        >
-                          check_box
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting
+            <td
+              class="text-start"
+            >
+        Rating setting
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="true"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons primary--text theme--light"
-                        >
-                          check_box
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 2
+            <td
+              class="text-start"
+            >
+        Rating setting 2
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="true"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons primary--text theme--light"
-                        >
-                          check_box
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 3
+            <td
+              class="text-start"
+            >
+        Rating setting 3
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="false"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons theme--light"
-                        >
-                          check_box_outline_blank
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box_outline_blank
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 4
+            <td
+              class="text-start"
+            >
+        Rating setting 4
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="false"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons theme--light"
-                        >
-                          check_box_outline_blank
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box_outline_blank
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 5
+            <td
+              class="text-start"
+            >
+        Rating setting 5
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="false"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons theme--light"
-                        >
-                          check_box_outline_blank
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box_outline_blank
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 6
+            <td
+              class="text-start"
+            >
+        Rating setting 6
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="false"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons theme--light"
-                        >
-                          check_box_outline_blank
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box_outline_blank
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 7
+            <td
+              class="text-start"
+            >
+        Rating setting 7
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="false"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons theme--light"
-                        >
-                          check_box_outline_blank
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box_outline_blank
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 8
+            <td
+              class="text-start"
+            >
+        Rating setting 8
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="false"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons theme--light"
-                        >
-                          check_box_outline_blank
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box_outline_blank
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 9
+            <td
+              class="text-start"
+            >
+        Rating setting 9
             </td>
           </tr>
-          <tr>
-            <!---->
-            <td>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
               <div
-                class="layout row align-center"
+                class="layout align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+                  class="v-simple-checkbox"
+                  hide-details=""
                 >
                   <div
-                    class="v-input__control"
+                    class="v-input--selection-controls__input"
                   >
-                    <div
-                      class="v-input__slot"
+                    <i
+                      aria-hidden="true"
+                      class="v-icon notranslate material-icons theme--light"
                     >
-                      <div
-                        class="v-input--selection-controls__input"
-                      >
-                        <input
-                          aria-checked="true"
-                          class="hidden"
-                          role="checkbox"
-                          type="checkbox"
-                        />
-                        <div
-                          class="v-input--selection-controls__ripple primary--text"
-                        />
-                        <i
-                          class="v-icon material-icons primary--text theme--light"
-                        >
-                          check_box
-                        </i>
-                      </div>
-                      <label
-                        class="v-label theme--light"
-                        style="display: none;"
-                      >
-                        
-                      </label>
-                    </div>
+                      check_box
+                    </i>
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
                   </div>
                 </div>
               </div>
             </td>
-            <td>
-              Rating setting 10
+            <td
+              class="text-start"
+            >
+        Rating setting 10
             </td>
           </tr>
         </tbody>
@@ -2367,8 +1864,8 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
     </div>
   </div>
   <c-table-pagination-stub
+    items-per-page="10"
     page="1"
-    rows-per-page="10"
     total-items="50"
   />
 </div>

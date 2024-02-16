@@ -82,7 +82,7 @@ describe('mermaid-code-editor', () => {
   test('Renders `mermaid-code-editor` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `mermaid-code-editor` with custom props', () => {
@@ -92,6 +92,6 @@ describe('mermaid-code-editor', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

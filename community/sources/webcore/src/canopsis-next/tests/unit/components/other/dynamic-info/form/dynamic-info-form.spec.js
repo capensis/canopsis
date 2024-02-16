@@ -100,7 +100,7 @@ describe('dynamic-info-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `dynamic-info-form` with custom props', () => {
@@ -114,7 +114,7 @@ describe('dynamic-info-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `dynamic-info-form` with errors', async () => {
@@ -132,6 +132,6 @@ describe('dynamic-info-form', () => {
       hasPatternsFormAnyError: true,
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

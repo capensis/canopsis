@@ -1,25 +1,27 @@
-<template lang="pug">
-  g
-    rect(
-      :x="leftX",
-      :y="topY",
-      :width="selectionWidth",
-      :height="selectionHeight",
-      :stroke="color",
-      fill="transparent",
-      stroke-width="1",
-      stroke-dasharray="4 4",
+<template>
+  <g>
+    <rect
+      :x="leftX"
+      :y="topY"
+      :width="selectionWidth"
+      :height="selectionHeight"
+      :stroke="color"
+      fill="transparent"
+      stroke-width="1"
+      stroke-dasharray="4 4"
       pointer-events="none"
-    )
-    circle(
-      v-for="circle in resizeCircles",
-      :cx="circle.x",
-      :cy="circle.y",
-      :fill="color",
-      :r="cornerRadius",
-      :cursor="`${circle.direction}-resize`",
+    />
+    <circle
+      v-for="circle in resizeCircles"
+      :key="circle.direction"
+      :cx="circle.x"
+      :cy="circle.y"
+      :fill="color"
+      :r="cornerRadius"
+      :cursor="`${circle.direction}-resize`"
       @mousedown.stop="startResize(circle.direction)"
-    )
+    />
+  </g>
 </template>
 
 <script>

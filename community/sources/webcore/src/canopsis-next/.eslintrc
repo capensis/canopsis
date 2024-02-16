@@ -2,7 +2,8 @@
   "root": true,
   "extends": [
     "plugin:vue/strongly-recommended",
-    "@vue/airbnb"
+    "@vue/airbnb",
+    "plugin:vuetify/base"
   ],
 
   "parserOptions": {
@@ -38,6 +39,9 @@
     "vue/component-definition-name-casing": "off",
     "vue/require-default-prop": "off",
     "vue/require-prop-types": "error",
+    "vue/no-unused-components": ["error", {
+      "ignoreWhenBindingPresent": true
+    }],
     "vue/order-in-components": ["error", {
       "order": [
         "el",
@@ -62,6 +66,15 @@
         "renderError"
       ]
     }],
+    "vue/no-v-text-v-html-on-component": "off",
+    "vue/require-component-is": "off",
+    "vuejs-accessibility/label-has-for": "off",
+    "vuejs-accessibility/click-events-have-key-events": "off",
+    "vuejs-accessibility/form-control-has-label": "off",
+    "vuejs-accessibility/no-autofocus": "off",
+    "vuejs-accessibility/media-has-caption": "off",
+    "vuejs-accessibility/no-redundant-roles": "off",
+    "vuejs-accessibility/mouse-events-have-key-events": "off",
     "import/no-cycle": "error",
     "import/prefer-default-export": "off",
     "import/order": ["error", {

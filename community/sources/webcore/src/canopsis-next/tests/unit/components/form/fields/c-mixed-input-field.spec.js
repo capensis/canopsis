@@ -100,7 +100,7 @@ describe('c-mixed-input-field', () => {
   it('Renders `c-mixed-input-field` with default props correctly', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -111,7 +111,7 @@ describe('c-mixed-input-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -134,7 +134,7 @@ describe('c-mixed-input-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -156,7 +156,7 @@ describe('c-mixed-input-field', () => {
 
     const menuContents = wrapper.findAllMenus();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     menuContents.wrappers.forEach((menuContent) => {
       expect(menuContent.element).toMatchSnapshot();
     });
@@ -172,7 +172,7 @@ describe('c-mixed-input-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -186,7 +186,7 @@ describe('c-mixed-input-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -200,7 +200,7 @@ describe('c-mixed-input-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -214,7 +214,7 @@ describe('c-mixed-input-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 });

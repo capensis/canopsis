@@ -25,7 +25,7 @@ describe('c-column-size-field', () => {
   test('Renders `c-column-size-field` with required props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `c-column-size-field` with custom props', () => {
@@ -37,7 +37,7 @@ describe('c-column-size-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `c-column-size-field` with tablet prop', () => {
@@ -48,6 +48,6 @@ describe('c-column-size-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

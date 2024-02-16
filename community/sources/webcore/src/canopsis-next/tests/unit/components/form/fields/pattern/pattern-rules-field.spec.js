@@ -231,7 +231,7 @@ describe('pattern-rules-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-rules-field` with custom props', () => {
@@ -261,6 +261,6 @@ describe('pattern-rules-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

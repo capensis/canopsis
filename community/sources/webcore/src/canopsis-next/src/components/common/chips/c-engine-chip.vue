@@ -1,10 +1,12 @@
-<template lang="pug">
-  div.c-engine-chip.white--text.font-weight-bold(
-    :style="{ background: color }",
-    :class="{ 'cursor-pointer': !!$listeners.click }",
+<template>
+  <div
+    class="c-engine-chip white--text font-weight-bold"
+    :style="{ background: color }"
+    :class="{ 'cursor-pointer': !!$listeners.click }"
     v-on="$listeners"
-  )
-    slot
+  >
+    <slot />
+  </div>
 </template>
 
 <script>

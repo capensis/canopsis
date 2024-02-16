@@ -54,11 +54,13 @@ type PBehavior struct {
 	// RRuleComputedStart is an auxiliary start date to compute rrule faster.
 	RRuleComputedStart *datetime.CpsTime `bson:"rrule_cstart,omitempty"`
 
-	// Origin is used if a pbehavior is created for certain entity.
+	// Origin is used if a pbehavior is created for certain entities.
 	// Origin can contain some feature name or external service name.
 	Origin string `bson:"origin,omitempty"`
-	// Entity is used if a pbehavior is created for certain entity. Such pbehavior cannot be updated.
+	// Entity is used if a pbehavior is created for one certain entity.
 	Entity string `bson:"entity,omitempty"`
+	// Entities is used if a pbehavior is created for multiple certain entities.
+	Entities []string `bson:"entities,omitempty"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
 }

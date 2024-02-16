@@ -1,18 +1,42 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(text-class="pa-0", close)
-      template(#title="")
-        span {{ title }}
-      template(#text="")
-        v-layout(column)
-          broadcast-message(:message="message", :color="form.color")
-          broadcast-message-form.pa-3(v-model="form")
-      template(#actions="")
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-        v-btn.primary.white--text(
-          :disabled="isDisabled",
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper
+      text-class="pa-0"
+      close
+    >
+      <template #title="">
+        <span>{{ title }}</span>
+      </template>
+      <template #text="">
+        <v-layout column>
+          <broadcast-message
+            :message="message"
+            :color="form.color"
+          />
+          <broadcast-message-form
+            class="pa-3"
+            v-model="form"
+          />
+        </v-layout>
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
+          @click="$modals.hide"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          class="primary white--text"
+          :disabled="isDisabled"
           type="submit"
-        ) {{ $t('common.submit') }}
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>

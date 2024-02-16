@@ -1,14 +1,17 @@
-<template lang="pug">
-  modal-wrapper(close)
-    template(#title="")
-      span {{ title }}
-    template(#text="")
-      entity-dependencies-list-component(
-        :widget="widget",
-        :columns="widget.parameters.widgetColumns",
-        :entity-id="config.entityId",
+<template>
+  <modal-wrapper close>
+    <template #title="">
+      <span>{{ title }}</span>
+    </template>
+    <template #text="">
+      <entity-dependencies-list-component
+        :widget="widget"
+        :columns="widget.parameters.widgetColumns"
+        :entity-id="config.entityId"
         :impact="config.impact"
-      )
+      />
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>

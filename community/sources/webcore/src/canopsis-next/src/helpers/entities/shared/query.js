@@ -1,4 +1,4 @@
-import { isArray, omit } from 'lodash';
+import { isArray, isEqual, omit, pick } from 'lodash';
 
 import { DATETIME_FORMATS, SORT_ORDERS } from '@/constants';
 import { PAGINATION_LIMIT } from '@/config';
@@ -6,29 +6,80 @@ import { PAGINATION_LIMIT } from '@/config';
 import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals';
 
 /**
+ * @typedef {Object} DataTableSortOptions
+ * @property {string[]} sortBy
+ * @property {boolean[]} sortDesc
+ */
+
+/**
  * This function converts widget.parameters.sort to query Object
  *
  * @param {Object} widget
- * @returns {{}}
+ * @returns {DataTableSortOptions | {}}
  */
-export function convertSortToQuery({ parameters }) {
+export const convertSortToQuery = ({ parameters }) => {
   const { sort } = parameters;
+  const query = { sortBy: [], sortDesc: [] };
 
   if (sort && sort.column && sort.order) {
-    return { sortKey: sort.column, sortDir: sort.order };
+    query.sortBy = [sort.column];
+    query.sortDesc = [sort.order === SORT_ORDERS.desc];
   }
 
-  return { sortKey: null, sortDir: null };
-}
+  return query;
+};
 
 /**
- * Convert multiSortBy query parameter to request
+ * Convert vuetify data table sort options to sort options with comparison
  *
- * @param {Object[]} multiSortBy
- * @returns {string[]}
+ * @param {DataTableSortOptions} [newOptions = {}]
+ * @param {DataTableSortOptions} [oldOptions = {}]
+ * @param {string[]} [optionsKeys = ['page', 'itemsPerPage', 'sortBy', 'sortDesc']]
+ * @return {DataTableSortOptions}
  */
-export const convertMultiSortToRequest = (multiSortBy = []) => multiSortBy
-  .map(({ sortBy, descending }) => `${sortBy},${(descending ? SORT_ORDERS.desc : SORT_ORDERS.asc).toLowerCase()}`);
+export const convertDataTableOptionsToQuery = (
+  newOptions = {},
+  oldOptions = {},
+  optionsKeys = ['page', 'itemsPerPage', 'sortBy', 'sortDesc'],
+) => {
+  const newOptionsToCompare = pick(newOptions, optionsKeys);
+  const oldOptionsToCompare = pick(oldOptions, optionsKeys);
+
+  if (isEqual(newOptionsToCompare, oldOptionsToCompare)) {
+    return oldOptions;
+  }
+
+  const { page = 1, itemsPerPage = PAGINATION_LIMIT, sortBy = [], sortDesc = [] } = newOptions;
+
+  return { page, itemsPerPage, sortBy, sortDesc };
+};
+
+/**
+ * Convert sortBy and sordDesc query parameters to request
+ *
+ * @param {string[]} sortBy
+ * @param {string[]} sortDesc
+ * @returns {{ sort_by: string, sort: string } | { multi_sort: string[] } | {}}
+ */
+export const convertSortToRequest = (sortBy = [], sortDesc = []) => {
+  if (!sortBy?.length) {
+    return {};
+  }
+
+  if (sortBy.length === 1) {
+    return {
+      sort_by: sortBy[0],
+      sort: (sortDesc?.[0] ? SORT_ORDERS.desc : SORT_ORDERS.asc).toLowerCase(),
+    };
+  }
+
+  return {
+    multi_sort: sortBy
+      .map((property, index) => (
+        `${property},${(sortDesc?.[index] ? SORT_ORDERS.desc : SORT_ORDERS.asc).toLowerCase()}`
+      )),
+  };
+};
 
 /**
  * Convert filter to query filters
@@ -57,31 +108,35 @@ export const convertFiltersToQuery = (filter, lockedFilter) => [
  * @returns {Object}
  */
 export const convertWidgetQueryToRequest = (query) => {
-  const result = omit(query, [
-    'tstart',
-    'tstop',
-    'sortKey',
-    'sortDir',
-    'category',
-    'multiSortBy',
-    'limit',
-    'filter',
-    'lockedFilter',
-    'search',
-  ]);
-
   const {
+    sortBy = [],
+    sortDesc = [],
+    itemsPerPage = PAGINATION_LIMIT,
     tstart,
     tstop,
-    sortKey,
-    sortDir,
     category,
     filter,
     lockedFilter,
     search,
-    multiSortBy = [],
-    limit = PAGINATION_LIMIT,
   } = query;
+
+  const result = {
+    ...omit(query, [
+      'tstart',
+      'tstop',
+      'sortBy',
+      'sortDesc',
+      'category',
+      'filter',
+      'lockedFilter',
+      'search',
+      'itemsPerPage',
+    ]),
+
+    ...convertSortToRequest(sortBy, sortDesc),
+
+    limit: itemsPerPage,
+  };
 
   if (lockedFilter || filter) {
     result.filters = convertFiltersToQuery(filter, lockedFilter);
@@ -95,24 +150,13 @@ export const convertWidgetQueryToRequest = (query) => {
     result.tstop = convertStopDateIntervalToTimestamp(tstop, DATETIME_FORMATS.dateTimePicker);
   }
 
-  if (sortKey) {
-    result.sort_by = sortKey;
-    result.sort = sortDir.toLowerCase();
-  }
-
   if (category) {
     result.category = category;
-  }
-
-  if (multiSortBy.length) {
-    result.multi_sort = convertMultiSortToRequest(multiSortBy);
   }
 
   if (search) {
     result.search = search;
   }
-
-  result.limit = limit;
 
   return result;
 };

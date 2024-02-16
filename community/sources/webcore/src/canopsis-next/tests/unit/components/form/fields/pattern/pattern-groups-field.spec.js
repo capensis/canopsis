@@ -135,7 +135,7 @@ describe('pattern-groups-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-groups-field` with custom props', () => {
@@ -151,7 +151,7 @@ describe('pattern-groups-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-groups-field` with errors', async () => {
@@ -166,6 +166,6 @@ describe('pattern-groups-field', () => {
     const validator = wrapper.getValidator();
     await validator.validateAll();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -1,18 +1,49 @@
-<template lang="pug">
-  v-layout(column)
-    v-layout
-      v-flex.text-xs-center.font-weight-bold(xs4) {{ $tc('common.group') }}
-      v-flex.text-xs-center.font-weight-bold(xs4) {{ $tc('common.view') }}
-      v-flex.text-xs-center.font-weight-bold(xs4) {{ $tc('common.tab') }}
-    v-layout(column)
-      c-draggable-list-field.tabs-draggable-panel.secondary.lighten-1(
-        v-field="tabs",
-        :class="{ 'tabs-draggable-panel--empty': isTabsEmpty, 'tabs-draggable-panel--disabled': disabled }",
+<template>
+  <v-layout column>
+    <v-layout>
+      <v-flex
+        class="text-center font-weight-bold"
+        xs4
+      >
+        {{ $tc('common.group') }}
+      </v-flex>
+      <v-flex
+        class="text-center font-weight-bold"
+        xs4
+      >
+        {{ $tc('common.view') }}
+      </v-flex>
+      <v-flex
+        class="text-center font-weight-bold"
+        xs4
+      >
+        {{ $tc('common.tab') }}
+      </v-flex>
+    </v-layout>
+    <v-layout column>
+      <c-draggable-list-field
+        class="tabs-draggable-panel secondary lighten-1"
+        v-field="tabs"
+        :class="{ 'tabs-draggable-panel--empty': isTabsEmpty, 'tabs-draggable-panel--disabled': disabled }"
         :disabled="disabled"
-      )
-        tab-panel-content(v-for="{ tab, view, group } in tabsWithDetails", :tab="tab", hideActions, :key="tab._id")
-          template(#title="")
-            playlist-tab-item(:tab="tab", :view="view", :group="group")
+      >
+        <tab-panel-content
+          v-for="{ tab, view, group } in tabsWithDetails"
+          :tab="tab"
+          hide-actions="hideActions"
+          :key="tab._id"
+        >
+          <template #title="">
+            <playlist-tab-item
+              :tab="tab"
+              :view="view"
+              :group="group"
+            />
+          </template>
+        </tab-panel-content>
+      </c-draggable-list-field>
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>

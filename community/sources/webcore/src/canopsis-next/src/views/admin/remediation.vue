@@ -1,37 +1,65 @@
-<template lang="pug">
-  div
-    c-page-header
-    v-layout(row, wrap)
-      v-flex(xs12)
-        v-card.ma-4.mt-0
-          v-tabs(v-model="activeTab", slider-color="primary", fixed-tabs)
-            template(v-if="hasReadAnyRemediationInstructionAccess")
-              v-tab(:href="`#${$constants.REMEDIATION_TABS.instructions}`") {{ $t('common.instructions') }}
-              v-tab-item(:value="$constants.REMEDIATION_TABS.instructions", lazy)
-                v-card-text
-                  remediation-instructions
-            template(v-if="hasReadAnyRemediationConfigurationAccess")
-              v-tab(
-                :href="`#${$constants.REMEDIATION_TABS.configurations}`"
-              ) {{ $t('remediation.tabs.configurations') }}
-              v-tab-item(:value="$constants.REMEDIATION_TABS.configurations", lazy)
-                v-card-text
-                  remediation-configurations
-            template(v-if="hasReadAnyRemediationJobAccess")
-              v-tab(:href="`#${$constants.REMEDIATION_TABS.jobs}`") {{ $t('remediation.tabs.jobs') }}
-              v-tab-item(:value="$constants.REMEDIATION_TABS.jobs", lazy)
-                v-card-text
-                  remediation-jobs
-            template(v-if="hasReadRemediationStatisticAccess")
-              v-tab(:href="`#${$constants.REMEDIATION_TABS.statistics}`") {{ $t('remediation.tabs.statistics') }}
-              v-tab-item(:value="$constants.REMEDIATION_TABS.statistics", lazy)
-                v-card-text
-                  remediation-statistics
-    c-fab-btn(
-      v-on="fabListeners",
+<template>
+  <div>
+    <c-page-header />
+    <v-layout wrap>
+      <v-flex xs12>
+        <v-card class="ma-4 mt-0">
+          <v-tabs
+            v-model="activeTab"
+            slider-color="primary"
+            centered
+          >
+            <template v-if="hasReadAnyRemediationInstructionAccess">
+              <v-tab :href="`#${$constants.REMEDIATION_TABS.instructions}`">
+                {{ $t('common.instructions') }}
+              </v-tab>
+              <v-tab-item :value="$constants.REMEDIATION_TABS.instructions">
+                <v-card-text>
+                  <remediation-instructions />
+                </v-card-text>
+              </v-tab-item>
+            </template>
+            <template v-if="hasReadAnyRemediationConfigurationAccess">
+              <v-tab :href="`#${$constants.REMEDIATION_TABS.configurations}`">
+                {{ $t('remediation.tabs.configurations') }}
+              </v-tab>
+              <v-tab-item :value="$constants.REMEDIATION_TABS.configurations">
+                <v-card-text>
+                  <remediation-configurations />
+                </v-card-text>
+              </v-tab-item>
+            </template>
+            <template v-if="hasReadAnyRemediationJobAccess">
+              <v-tab :href="`#${$constants.REMEDIATION_TABS.jobs}`">
+                {{ $t('remediation.tabs.jobs') }}
+              </v-tab>
+              <v-tab-item :value="$constants.REMEDIATION_TABS.jobs">
+                <v-card-text>
+                  <remediation-jobs />
+                </v-card-text>
+              </v-tab-item>
+            </template>
+            <template v-if="hasReadRemediationStatisticAccess">
+              <v-tab :href="`#${$constants.REMEDIATION_TABS.statistics}`">
+                {{ $t('remediation.tabs.statistics') }}
+              </v-tab>
+              <v-tab-item :value="$constants.REMEDIATION_TABS.statistics">
+                <v-card-text>
+                  <remediation-statistics />
+                </v-card-text>
+              </v-tab-item>
+            </template>
+          </v-tabs>
+        </v-card>
+      </v-flex>
+    </v-layout>
+    <c-fab-btn
+      v-on="fabListeners"
       :has-access="hasCreateAccess"
-    )
-      span {{ tooltipText }}
+    >
+      <span>{{ tooltipText }}</span>
+    </c-fab-btn>
+  </div>
 </template>
 
 <script>

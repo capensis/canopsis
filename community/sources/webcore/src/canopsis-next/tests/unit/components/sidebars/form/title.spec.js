@@ -55,7 +55,7 @@ describe('title', () => {
   it('Renders `title` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `title` with custom props', () => {
@@ -66,6 +66,6 @@ describe('title', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

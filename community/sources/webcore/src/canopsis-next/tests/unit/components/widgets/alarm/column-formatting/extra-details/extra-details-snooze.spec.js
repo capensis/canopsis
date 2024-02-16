@@ -1,5 +1,4 @@
 import { omit } from 'lodash';
-import flushPromises from 'flush-promises';
 
 import { generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
@@ -22,48 +21,47 @@ describe('extra-details-snooze', () => {
   };
 
   const snapshotFactory = generateRenderer(ExtraDetailsSnooze, {
-
     attachTo: document.body,
   });
 
   it('Renders `extra-details-snooze` with full snooze', async () => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: {
         snooze,
       },
     });
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 
   it('Renders `extra-details-snooze` without initiator', async () => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: {
         snooze: omit(snooze, ['initiator']),
       },
     });
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 
   it('Renders `extra-details-snooze` without message', async () => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: {
         snooze: omit(snooze, ['m']),
       },
     });
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 
   it('Renders `extra-details-snooze` with date in previous month', async () => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: {
         snooze: {
           ...snooze,
@@ -73,8 +71,8 @@ describe('extra-details-snooze', () => {
       },
     });
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 });

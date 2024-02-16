@@ -86,7 +86,7 @@ describe('pbehavior-comments-field', () => {
       propsData: { comments: [] },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pbehavior-comments-field` with custom props', () => {
@@ -99,6 +99,6 @@ describe('pbehavior-comments-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

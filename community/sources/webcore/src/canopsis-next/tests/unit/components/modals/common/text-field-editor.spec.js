@@ -75,14 +75,14 @@ describe('text-field-editor', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
     expect(action).toBeCalledWith('');
     expect($modals.hide).toBeCalledWith();
+
+    wrapper.destroy();
   });
 
   test('Form submitted with correct value after trigger submit button', async () => {
@@ -105,14 +105,14 @@ describe('text-field-editor', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
     expect(action).toBeCalledWith(value);
     expect($modals.hide).toBeCalledWith();
+
+    wrapper.destroy();
   });
 
   test('Form didn\'t submitted after trigger submit button with error', async () => {
@@ -145,9 +145,7 @@ describe('text-field-editor', () => {
       vm: textField.vm,
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -155,6 +153,8 @@ describe('text-field-editor', () => {
     expect($modals.hide).not.toBeCalled();
 
     validator.detach('name');
+
+    wrapper.destroy();
   });
 
   test('Form submitted after trigger submit button without action', async () => {
@@ -169,13 +169,13 @@ describe('text-field-editor', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
     expect($modals.hide).toBeCalledWith();
+
+    wrapper.destroy();
   });
 
   test('Validation rules applied to form from config', async () => {
@@ -197,9 +197,7 @@ describe('text-field-editor', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -207,6 +205,8 @@ describe('text-field-editor', () => {
 
     expect(action).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
+
+    wrapper.destroy();
   });
 
   test('Errors added after trigger submit button with field error', async () => {
@@ -233,9 +233,7 @@ describe('text-field-editor', () => {
         $modals,
       },
     });
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -244,6 +242,8 @@ describe('text-field-editor', () => {
     expect(formErrors).toEqual(addedErrors);
     expect(action).toBeCalledWith(value);
     expect($modals.hide).not.toBeCalledWith();
+
+    wrapper.destroy();
   });
 
   test('Errors added after trigger submit button with common error', async () => {
@@ -267,9 +267,7 @@ describe('text-field-editor', () => {
         $modals,
       },
     });
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -278,6 +276,8 @@ describe('text-field-editor', () => {
     expect({ [name]: error }).toEqual(addedErrors);
     expect(action).toBeCalledWith('');
     expect($modals.hide).not.toBeCalledWith();
+
+    wrapper.destroy();
   });
 
   test('Errors added after trigger submit button with error message', async () => {
@@ -301,9 +301,7 @@ describe('text-field-editor', () => {
         $modals,
       },
     });
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -312,6 +310,8 @@ describe('text-field-editor', () => {
     expect({ [name]: message }).toEqual(addedErrors);
     expect(action).toBeCalledWith('');
     expect($modals.hide).not.toBeCalledWith();
+
+    wrapper.destroy();
   });
 
   test('Modal submitted with correct data after trigger form', async () => {
@@ -340,14 +340,14 @@ describe('text-field-editor', () => {
 
     textField.setValue(newValue);
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
     expect(action).toBeCalledWith(newValue);
     expect($modals.hide).toBeCalled();
+
+    wrapper.destroy();
   });
 
   test('Modal hidden after trigger cancel button', async () => {
@@ -362,9 +362,7 @@ describe('text-field-editor', () => {
       },
     });
 
-    const cancelButton = selectCancelButton(wrapper);
-
-    cancelButton.trigger('click');
+    selectCancelButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -379,7 +377,7 @@ describe('text-field-editor', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `text-field-editor` with all parameters', () => {
@@ -404,6 +402,6 @@ describe('text-field-editor', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

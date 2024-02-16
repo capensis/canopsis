@@ -1,10 +1,11 @@
-<template lang="pug">
-  widget-settings-item(:title="$t('settings.defaultTimeRange')")
-    c-quick-date-interval-type-field(
-      v-field="value",
-      :name="name",
+<template>
+  <widget-settings-item :title="$t('settings.defaultTimeRange')">
+    <c-quick-date-interval-type-field
+      v-field="value"
+      :name="name"
       :ranges="intervalRanges"
-    )
+    />
+  </widget-settings-item>
 </template>
 
 <script>

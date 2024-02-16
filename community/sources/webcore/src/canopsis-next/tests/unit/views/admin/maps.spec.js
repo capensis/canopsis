@@ -396,7 +396,7 @@ describe('maps', () => {
   test('Renders `maps` without permissions', () => {
     const wrapper = snapshotFactory({ store });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `maps` with permissions', () => {
@@ -417,6 +417,6 @@ describe('maps', () => {
       ]),
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

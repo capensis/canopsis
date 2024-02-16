@@ -77,7 +77,7 @@ describe('info-popup', () => {
   it('Renders `info-popup` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `info-popup` with custom props', () => {
@@ -98,6 +98,6 @@ describe('info-popup', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

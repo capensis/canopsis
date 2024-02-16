@@ -1,5 +1,3 @@
-import flushPromises from 'flush-promises';
-
 import { generateRenderer } from '@unit/utils/vue';
 import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
@@ -30,47 +28,7 @@ const snapshotStubs = {
 
 const selectTreeviewNodes = wrapper => wrapper.findAll('.v-treeview-node');
 const selectTreeviewNodeByIndex = (wrapper, index) => selectTreeviewNodes(wrapper).at(index);
-const selectTreeviewChildren = wrapper => wrapper.find('.v-treeview-node__children');
-const selectListTileByIndex = (wrapper, index) => wrapper.findAll('.v-list__tile').at(index);
-const selectTreeviewNodeToggle = wrapper => wrapper
-  .find('.v-treeview-node__toggle:not(.v-treeview-node__toggle--open)');
-
-const openAllNodes = async (wrapper) => {
-  const { wrappers } = selectTreeviewNodes(wrapper);
-
-  if (!wrappers.length) {
-    return;
-  }
-
-  await Promise.all(
-    wrappers.map(
-      (node) => {
-        const toggle = selectTreeviewNodeToggle(node);
-
-        if (!toggle.element) {
-          return Promise.resolve();
-        }
-
-        return toggle.trigger('click');
-      },
-    ),
-  );
-  await flushPromises();
-  await selectTreeviewNodes(wrapper).wrappers.reduce(
-    (acc, node) => {
-      const children = selectTreeviewChildren(node);
-
-      if (children.element) {
-        return acc.then(
-          () => openAllNodes(selectTreeviewChildren(node)),
-        );
-      }
-
-      return acc;
-    },
-    Promise.resolve(),
-  );
-};
+const selectListTileByIndex = (wrapper, index) => wrapper.findAll('.v-list-item').at(index);
 
 describe('variables-help', () => {
   mockDateNow(1386435600000);
@@ -124,7 +82,7 @@ describe('variables-help', () => {
       },
     });
 
-    await openAllNodes(wrapper);
+    await wrapper.openAllTreeviewNodes(wrapper);
 
     await selectListTileByIndex(selectTreeviewNodeByIndex(wrapper, 10), 0).trigger('click');
 
@@ -144,7 +102,7 @@ describe('variables-help', () => {
       },
     });
 
-    await openAllNodes(wrapper);
+    await wrapper.openAllTreeviewNodes(wrapper);
 
     await selectListTileByIndex(selectTreeviewNodeByIndex(wrapper, 10), 0).trigger('click');
 
@@ -162,7 +120,7 @@ describe('variables-help', () => {
       },
     });
 
-    await openAllNodes(wrapper);
+    await wrapper.openAllTreeviewNodes(wrapper);
 
     await selectListTileByIndex(selectTreeviewNodeByIndex(wrapper, 7), 0).trigger('click');
 
@@ -184,7 +142,7 @@ describe('variables-help', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `variables-help` with all parameters', async () => {
@@ -197,9 +155,9 @@ describe('variables-help', () => {
       },
     });
 
-    await openAllNodes(wrapper);
+    await wrapper.openAllTreeviewNodes(wrapper);
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `variables-help` with original flag', () => {
@@ -219,6 +177,6 @@ describe('variables-help', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

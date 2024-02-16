@@ -76,9 +76,7 @@ describe('info-popup-setting', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -98,9 +96,7 @@ describe('info-popup-setting', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -159,9 +155,7 @@ describe('info-popup-setting', () => {
 
     modalArguments.config.action(newPopup);
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -229,9 +223,7 @@ describe('info-popup-setting', () => {
 
     modalArguments.config.action(newPopupData);
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -272,9 +264,7 @@ describe('info-popup-setting', () => {
 
     removePopupButton.trigger('click');
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -294,9 +284,7 @@ describe('info-popup-setting', () => {
       },
     });
 
-    const cancelButton = selectCancelButton(wrapper);
-
-    cancelButton.trigger('click');
+    selectCancelButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -315,7 +303,7 @@ describe('info-popup-setting', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `info-popup-setting` with interval', () => {
@@ -341,6 +329,6 @@ describe('info-popup-setting', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

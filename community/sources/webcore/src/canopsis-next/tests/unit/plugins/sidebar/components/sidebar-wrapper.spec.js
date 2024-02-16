@@ -174,7 +174,7 @@ describe('sidebar-wrapper', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `sidebar-wrapper` with default slot', async () => {
@@ -193,7 +193,7 @@ describe('sidebar-wrapper', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `sidebar-wrapper` without sidebar name', async () => {
@@ -215,6 +215,6 @@ describe('sidebar-wrapper', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -5,10 +5,10 @@ exports[`storage-settings-alarm-form Renders \`storage-settings-alarm-form\` wit
   class="layout c-information-block column"
 >
   <div
-    class="layout row"
+    class="layout"
   >
     <div
-      class="subheading font-weight-bold"
+      class="text-subtitle-1 font-weight-bold"
     >
       Alarm data storage
     </div>
@@ -17,11 +17,11 @@ exports[`storage-settings-alarm-form Renders \`storage-settings-alarm-form\` wit
       icon-class="ml-2"
       max-width="300"
       text="When switched on, the resolved alarms data will be archived and/or deleted after the defined time period."
-      top="top"
+      top=""
     />
   </div>
   <div
-    class="layout mt-2 row"
+    class="layout mt-2"
   >
     <span
       class="text--secondary"
@@ -51,10 +51,10 @@ exports[`storage-settings-alarm-form Renders \`storage-settings-alarm-form\` wit
   class="layout c-information-block column"
 >
   <div
-    class="layout row"
+    class="layout"
   >
     <div
-      class="subheading font-weight-bold"
+      class="text-subtitle-1 font-weight-bold"
     >
       Alarm data storage
     </div>
@@ -63,7 +63,7 @@ exports[`storage-settings-alarm-form Renders \`storage-settings-alarm-form\` wit
       icon-class="ml-2"
       max-width="300"
       text="When switched on, the resolved alarms data will be archived and/or deleted after the defined time period."
-      top="top"
+      top=""
     />
   </div>
   <!---->

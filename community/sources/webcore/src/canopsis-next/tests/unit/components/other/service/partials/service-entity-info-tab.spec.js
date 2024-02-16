@@ -63,7 +63,7 @@ describe('service-entity-info-tab', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `service-entity-info-tab` with custom props', () => {
@@ -78,6 +78,6 @@ describe('service-entity-info-tab', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

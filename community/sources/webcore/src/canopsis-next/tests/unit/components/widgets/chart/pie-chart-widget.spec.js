@@ -177,7 +177,7 @@ describe('pie-chart-widget', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pie-chart-widget` with custom props', async () => {
@@ -196,6 +196,6 @@ describe('pie-chart-widget', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

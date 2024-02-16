@@ -1,17 +1,25 @@
-<template lang="pug">
-  v-layout(:row="row", :column="column")
-    c-enabled-field(
-      v-model="enabled",
-      :label="label",
-      color="primary",
-      @input="updateColor"
-    )
-    c-color-picker-field(
-      v-field="color",
-      :disabled="!enabled",
-      :required="enabled",
+<template>
+  <v-layout
+    :column="column"
+  >
+    <v-flex
+      :xs12="column"
+      xs6
+    >
+      <c-enabled-field
+        v-model="enabled"
+        :label="label"
+        color="primary"
+        @input="updateColor"
+      />
+    </v-flex>
+    <c-color-picker-field
+      v-field="color"
+      :disabled="!enabled"
+      :required="enabled"
       :name="name"
-    )
+    />
+  </v-layout>
 </template>
 
 <script>
@@ -36,10 +44,6 @@ export default {
     name: {
       type: String,
       default: 'color',
-    },
-    row: {
-      type: Boolean,
-      default: false,
     },
     column: {
       type: Boolean,

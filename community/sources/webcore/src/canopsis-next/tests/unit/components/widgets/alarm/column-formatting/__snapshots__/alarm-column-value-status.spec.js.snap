@@ -1,19 +1,219 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: critical 1`] = `<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"><span>Ongoing</span></div><i aria-hidden="true" class="v-icon d-block material-icons theme--light" style="caret-color: var(--v-state-critical-base);">warning</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>`;
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: critical 1`] = `
+<span
+  class="v-tooltip v-tooltip--top"
+>
+  <!---->
+  <i
+    aria-hidden="true"
+    class="v-icon notranslate material-icons theme--light"
+    style="caret-color: var(--v-state-critical-base);"
+  >
+    warning
+  </i>
+</span>
+`;
 
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: major 1`] = `<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"><span>Ongoing</span></div><i aria-hidden="true" class="v-icon d-block material-icons theme--light" style="caret-color: var(--v-state-major-base);">warning</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>`;
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: critical 2`] = `
+<div
+  class="v-tooltip__content menuable__content__active"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
+>
+  <span>
+    Ongoing
+  </span>
+</div>
+`;
 
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: minor 1`] = `<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"><span>Ongoing</span></div><i aria-hidden="true" class="v-icon d-block material-icons theme--light" style="caret-color: var(--v-state-minor-base);">warning</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>`;
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: major 1`] = `
+<span
+  class="v-tooltip v-tooltip--top"
+>
+  <!---->
+  <i
+    aria-hidden="true"
+    class="v-icon notranslate material-icons theme--light"
+    style="caret-color: var(--v-state-major-base);"
+  >
+    warning
+  </i>
+</span>
+`;
 
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: ok 1`] = `<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"><span>Ongoing</span></div><i aria-hidden="true" class="v-icon d-block material-icons theme--light" style="caret-color: var(--v-state-ok-base);">warning</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>`;
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: major 2`] = `
+<div
+  class="v-tooltip__content menuable__content__active"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
+>
+  <span>
+    Ongoing
+  </span>
+</div>
+`;
 
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: cancelled 1`] = `<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"><span>Canceled</span></div><i aria-hidden="true" class="v-icon d-block material-icons theme--light" style="caret-color: var(--v-status-cancelled-base);">highlight_off</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>`;
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: minor 1`] = `
+<span
+  class="v-tooltip v-tooltip--top"
+>
+  <!---->
+  <i
+    aria-hidden="true"
+    class="v-icon notranslate material-icons theme--light"
+    style="caret-color: var(--v-state-minor-base);"
+  >
+    warning
+  </i>
+</span>
+`;
 
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: closed 1`] = `<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"><span>Closed</span></div><i aria-hidden="true" class="v-icon d-block material-icons theme--light" style="caret-color: var(--v-status-closed-base);">check_circle_outline</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>`;
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: minor 2`] = `
+<div
+  class="v-tooltip__content menuable__content__active"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
+>
+  <span>
+    Ongoing
+  </span>
+</div>
+`;
 
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: flapping 1`] = `<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"><span>Flapping</span></div><i aria-hidden="true" class="v-icon d-block material-icons theme--light" style="caret-color: var(--v-status-flapping-base);">swap_vert</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>`;
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: ok 1`] = `
+<span
+  class="v-tooltip v-tooltip--top"
+>
+  <!---->
+  <i
+    aria-hidden="true"
+    class="v-icon notranslate material-icons theme--light"
+    style="caret-color: var(--v-state-ok-base);"
+  >
+    warning
+  </i>
+</span>
+`;
 
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: noEvents 1`] = `<c-no-events-icon-stub value="1386435600000" color="error" top="top"></c-no-events-icon-stub>`;
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: ok 2`] = `
+<div
+  class="v-tooltip__content menuable__content__active"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
+>
+  <span>
+    Ongoing
+  </span>
+</div>
+`;
 
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: stealthy 1`] = `<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"><span>Stealth</span></div><i aria-hidden="true" class="v-icon d-block material-icons theme--light" style="caret-color: var(--v-status-stealthy-base);">swap_vert</i><span class="v-tooltip v-tooltip--top"><transition-stub name="slide-y-reverse-transition"></transition-stub></span>`;
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: cancelled 1`] = `
+<span
+  class="v-tooltip v-tooltip--top"
+>
+  <!---->
+  <i
+    aria-hidden="true"
+    class="v-icon notranslate material-icons theme--light"
+    style="caret-color: var(--v-status-cancelled-base);"
+  >
+    highlight_off
+  </i>
+</span>
+`;
+
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: cancelled 2`] = `
+<div
+  class="v-tooltip__content menuable__content__active"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
+>
+  <span>
+    Canceled
+  </span>
+</div>
+`;
+
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: closed 1`] = `
+<span
+  class="v-tooltip v-tooltip--top"
+>
+  <!---->
+  <i
+    aria-hidden="true"
+    class="v-icon notranslate material-icons theme--light"
+    style="caret-color: var(--v-status-closed-base);"
+  >
+    check_circle_outline
+  </i>
+</span>
+`;
+
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: closed 2`] = `
+<div
+  class="v-tooltip__content menuable__content__active"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
+>
+  <span>
+    Closed
+  </span>
+</div>
+`;
+
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: flapping 1`] = `
+<span
+  class="v-tooltip v-tooltip--top"
+>
+  <!---->
+  <i
+    aria-hidden="true"
+    class="v-icon notranslate material-icons theme--light"
+    style="caret-color: var(--v-status-flapping-base);"
+  >
+    swap_vert
+  </i>
+</span>
+`;
+
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: flapping 2`] = `
+<div
+  class="v-tooltip__content menuable__content__active"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
+>
+  <span>
+    Flapping
+  </span>
+</div>
+`;
+
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: noEvents 1`] = `
+<c-no-events-icon-stub
+  color="error"
+  top=""
+  value="1386435600000"
+/>
+`;
+
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: noEvents 2`] = `undefined`;
+
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: stealthy 1`] = `
+<span
+  class="v-tooltip v-tooltip--top"
+>
+  <!---->
+  <i
+    aria-hidden="true"
+    class="v-icon notranslate material-icons theme--light"
+    style="caret-color: var(--v-status-stealthy-base);"
+  >
+    swap_vert
+  </i>
+</span>
+`;
+
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: stealthy 2`] = `
+<div
+  class="v-tooltip__content menuable__content__active"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
+>
+  <span>
+    Stealth
+  </span>
+</div>
+`;

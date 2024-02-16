@@ -1,14 +1,27 @@
-<template lang="pug">
-  v-alert.alert-without-border(
-    v-model="visible",
-    v-on="alertListeners",
-    :type="type",
-    transition="fade-transition",
+<template>
+  <v-alert
+    class="alert-without-border"
+    v-model="visible"
+    v-on="alertListeners"
+    :type="type"
+    transition="fade-transition"
     dismissible
-  )
-    div.progress(v-if="autoClose")
-      div.progress-line(:style="progressLineStyle", :class="progressLineClass")
-    c-compiled-template.pre-line(:template="text")
+  >
+    <div
+      class="progress"
+      v-if="autoClose"
+    >
+      <div
+        class="progress-line"
+        :style="progressLineStyle"
+        :class="progressLineClass"
+      />
+    </div>
+    <c-compiled-template
+      class="pre-line"
+      :template="text"
+    />
+  </v-alert>
 </template>
 
 <script>

@@ -1,20 +1,31 @@
-<template lang="pug">
-  v-layout.kpi-widget(column, align-center)
-    h4.kpi-widget__title {{ title }}
-    bar-chart.kpi-widget__chart(
-      :chart-id="chartId",
-      :options="chartOptions",
-      :datasets="datasets",
-      :width="width",
-      :height="height",
+<template>
+  <v-layout
+    class="kpi-widget"
+    column
+    align-center
+  >
+    <h4 class="kpi-widget__title">
+      {{ title }}
+    </h4>
+    <bar-chart
+      class="kpi-widget__chart"
+      :chart-id="chartId"
+      :options="chartOptions"
+      :datasets="datasets"
+      :width="width"
+      :height="height"
       :dark="$system.dark"
-    )
-      template(#actions="{ chart }")
-        kpi-chart-export-actions.mt-4(
-          v-on="$listeners",
-          :downloading="downloading",
+    >
+      <template #actions="{ chart }">
+        <kpi-chart-export-actions
+          class="mt-4"
+          v-on="$listeners"
+          :downloading="downloading"
           :chart="chart"
-        )
+        />
+      </template>
+    </bar-chart>
+  </v-layout>
 </template>
 
 <script>

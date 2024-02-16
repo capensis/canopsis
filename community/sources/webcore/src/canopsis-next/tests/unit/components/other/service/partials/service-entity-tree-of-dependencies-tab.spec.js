@@ -19,7 +19,7 @@ describe('service-entity-tree-of-dependencies-tab', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `service-entity-tree-of-dependencies-tab` with custom props', () => {
@@ -32,6 +32,6 @@ describe('service-entity-tree-of-dependencies-tab', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

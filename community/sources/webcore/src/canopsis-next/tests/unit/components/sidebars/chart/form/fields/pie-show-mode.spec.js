@@ -39,7 +39,7 @@ describe('pie-show-mode', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pie-show-mode` with custom props', () => {
@@ -51,6 +51,6 @@ describe('pie-show-mode', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -54,7 +54,7 @@ describe('grid-range-size', () => {
   it('Renders `grid-range-size` with default and required props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `grid-range-size` with custom props', () => {
@@ -68,6 +68,6 @@ describe('grid-range-size', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

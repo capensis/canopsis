@@ -2,7 +2,7 @@
 
 exports[`c-entity-field Renders \`c-entity-field\` with array value 1`] = `
 <div
-  class="v-input c-select-field c-lazy-search-field v-text-field v-select v-select--chips v-select--chips--small v-autocomplete v-input--is-label-active v-input--is-dirty v-input--is-focused theme--light primary--text"
+  class="v-input c-select-field c-lazy-search-field mt-4 v-input--is-label-active v-input--is-dirty v-input--is-focused v-input--dense theme--light v-text-field v-select v-select--chips v-select--chips--small v-select--is-multi v-autocomplete primary--text"
   items="[object Object],[object Object],[object Object]"
   limit="10"
 >
@@ -10,13 +10,15 @@ exports[`c-entity-field Renders \`c-entity-field\` with array value 1`] = `
     class="v-input__control"
   >
     <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
       class="v-input__slot"
+      role="combobox"
     >
       <div
         class="v-select__slot"
       >
         <label
-          aria-hidden="true"
           class="v-label v-label--active theme--light primary--text"
           style="left: 0px; position: absolute;"
         >
@@ -26,82 +28,70 @@ exports[`c-entity-field Renders \`c-entity-field\` with array value 1`] = `
           class="v-select__selections"
         >
           <span
-            class="v-chip c-lazy-search-field__chip v-chip--small v-chip--removable theme--light"
-            tabindex="0"
+            class="c-lazy-search-field__chip v-chip v-chip--no-color v-chip--removable theme--light v-size--small"
           >
             <span
               class="v-chip__content"
             >
               <span
-                class="ellipsis"
+                class="text-truncate"
               >
                 Text
               </span>
-              <div
-                class="v-chip__close"
+              <button
+                aria-label="Close"
+                class="v-icon notranslate v-chip__close v-icon--link v-icon--right material-icons theme--light"
+                style="font-size: 18px;"
+                type="button"
               >
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                >
-                  cancel
-                </i>
-              </div>
+                cancel
+              </button>
             </span>
           </span>
           <span
-            class="v-chip c-lazy-search-field__chip v-chip--small v-chip--removable theme--light"
-            tabindex="0"
+            class="c-lazy-search-field__chip v-chip v-chip--no-color v-chip--removable theme--light v-size--small"
           >
             <span
               class="v-chip__content"
             >
               <span
-                class="ellipsis"
+                class="text-truncate"
               >
                 Text 2
               </span>
-              <div
-                class="v-chip__close"
+              <button
+                aria-label="Close"
+                class="v-icon notranslate v-chip__close v-icon--link v-icon--right material-icons theme--light"
+                style="font-size: 18px;"
+                type="button"
               >
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                >
-                  cancel
-                </i>
-              </div>
+                cancel
+              </button>
             </span>
           </span>
           <span
-            class="v-chip c-lazy-search-field__chip v-chip--small v-chip--removable theme--light"
-            tabindex="0"
+            class="c-lazy-search-field__chip v-chip v-chip--no-color v-chip--removable theme--light v-size--small"
           >
             <span
               class="v-chip__content"
             >
               <span
-                class="ellipsis"
+                class="text-truncate"
               >
                 Text 3
               </span>
-              <div
-                class="v-chip__close"
+              <button
+                aria-label="Close"
+                class="v-icon notranslate v-chip__close v-icon--link v-icon--right material-icons theme--light"
+                style="font-size: 18px;"
+                type="button"
               >
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                >
-                  cancel
-                </i>
-              </div>
+                cancel
+              </button>
             </span>
           </span>
           <input
-            aria-label="Entities"
             autocomplete="off"
-            name="entities"
-            role="combobox"
             type="text"
           />
         </div>
@@ -113,12 +103,17 @@ exports[`c-entity-field Renders \`c-entity-field\` with array value 1`] = `
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light primary--text"
+              class="v-icon notranslate material-icons theme--light primary--text"
             >
               arrow_drop_down
             </i>
           </div>
         </div>
+        <input
+          name="entities"
+          type="hidden"
+          value="Text,Text 2,Text 3"
+        />
       </div>
       <div
         class="v-menu"
@@ -143,84 +138,75 @@ exports[`c-entity-field Renders \`c-entity-field\` with array value 1`] = `
 
 exports[`c-entity-field Renders \`c-entity-field\` with array value 2`] = `
 <div
-  class="v-menu__content theme--light v-autocomplete__content c-lazy-search-field__list"
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
+  class="v-menu__content theme--light menuable__content__active v-autocomplete__content c-lazy-search-field__list"
+  style="max-height: 304px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8; z-index: 8;"
 >
   <div
-    class="v-select-list v-card theme--light"
+    class="v-list v-select-list v-sheet theme--light v-list--dense theme--light"
+    role="listbox"
+    tabindex="-1"
   >
     <div
-      class="v-list v-list--dense theme--light"
-      role="list"
+      aria-selected="false"
+      class="c-lazy-search-field--tile v-list-item v-list-item--link theme--light"
+      role="option"
+      tabindex="0"
     >
       <div
-        class="c-lazy-search-field--tile"
-        role="listitem"
+        class="v-list-item__content"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            Text
-          </div>
-          <span
-            class="ml-4 grey--text"
-          >
-            type1
-          </span>
-        </a>
+          Text
       </div>
-      <div
-        class="c-lazy-search-field--tile"
-        role="listitem"
+      <span
+        class="ml-4 grey--text"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            Text 2
-          </div>
-          <span
-            class="ml-4 grey--text"
-          >
-            type2
-          </span>
-        </a>
-      </div>
-      <div
-        class="c-lazy-search-field--tile"
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            Text 3
-          </div>
-          <span
-            class="ml-4 grey--text"
-          >
-            type3
-          </span>
-        </a>
-      </div>
-      <div
-        class="c-lazy-search-field__append"
-      />
+        type1
+      </span>
     </div>
+    <div
+      aria-selected="false"
+      class="c-lazy-search-field--tile v-list-item v-list-item--link theme--light"
+      role="option"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__content"
+      >
+          Text 2
+      </div>
+      <span
+        class="ml-4 grey--text"
+      >
+        type2
+      </span>
+    </div>
+    <div
+      aria-selected="false"
+      class="c-lazy-search-field--tile v-list-item v-list-item--link theme--light"
+      role="option"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__content"
+      >
+          Text 3
+      </div>
+      <span
+        class="ml-4 grey--text"
+      >
+        type3
+      </span>
+    </div>
+    <div
+      class="c-lazy-search-field__append"
+    />
   </div>
 </div>
 `;
 
 exports[`c-entity-field Renders \`c-entity-field\` with custom props 1`] = `
 <div
-  class="v-input c-select-field c-lazy-search-field v-text-field v-select v-autocomplete v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
+  class="v-input c-select-field c-lazy-search-field mt-4 v-input--is-label-active v-input--is-dirty v-input--is-disabled v-input--dense theme--light v-text-field v-select v-autocomplete"
   items="[object Object],[object Object],[object Object]"
   limit="10"
   loading="true"
@@ -230,13 +216,15 @@ exports[`c-entity-field Renders \`c-entity-field\` with custom props 1`] = `
     class="v-input__control"
   >
     <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
       class="v-input__slot"
+      role="combobox"
     >
       <div
         class="v-select__slot"
       >
         <label
-          aria-hidden="true"
           class="v-label v-label--active v-label--is-disabled theme--light"
           style="left: 0px; position: absolute;"
         >
@@ -245,13 +233,10 @@ exports[`c-entity-field Renders \`c-entity-field\` with custom props 1`] = `
         <div
           class="v-select__selections"
         >
-          Text 3
+        Text 3
           <input
-            aria-label="Custom label"
             autocomplete="off"
             disabled="disabled"
-            name="customName"
-            role="combobox"
             type="text"
           />
         </div>
@@ -263,12 +248,17 @@ exports[`c-entity-field Renders \`c-entity-field\` with custom props 1`] = `
           >
             <i
               aria-hidden="true"
-              class="v-icon v-icon--disabled material-icons theme--light"
+              class="v-icon notranslate v-icon--disabled material-icons theme--light"
             >
               arrow_drop_down
             </i>
           </div>
         </div>
+        <input
+          name="customName"
+          type="hidden"
+          value="Text 3"
+        />
       </div>
       <div
         class="v-menu"
@@ -293,57 +283,53 @@ exports[`c-entity-field Renders \`c-entity-field\` with custom props 1`] = `
 
 exports[`c-entity-field Renders \`c-entity-field\` with custom props 2`] = `
 <div
-  class="v-menu__content theme--light v-autocomplete__content c-lazy-search-field__list"
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
+  class="v-menu__content theme--light menuable__content__active v-autocomplete__content c-lazy-search-field__list"
+  style="max-height: 304px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8; z-index: 8;"
 >
   <div
-    class="v-select-list v-card theme--light"
+    class="v-list v-select-list v-sheet theme--light v-list--dense theme--light"
+    role="listbox"
+    tabindex="-1"
   >
     <div
-      class="v-list v-list--dense theme--light"
-      role="list"
+      class="v-list-item theme--light"
+      tabindex="-1"
     >
       <div
-        role="listitem"
+        class="v-list-item__content"
       >
         <div
-          class="v-list__tile theme--light"
+          class="v-list-item__title"
         >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              No data available
-            </div>
-          </div>
+          No data available
         </div>
       </div>
-      <div
-        class="c-lazy-search-field__append"
-      />
     </div>
+    <div
+      class="c-lazy-search-field__append"
+    />
   </div>
 </div>
 `;
 
 exports[`c-entity-field Renders \`c-entity-field\` with default props 1`] = `
 <div
-  class="v-input c-select-field c-lazy-search-field v-text-field v-select v-autocomplete v-input--is-focused theme--light primary--text"
+  class="v-input c-select-field c-lazy-search-field mt-4 v-input--is-focused v-input--dense theme--light v-text-field v-select v-autocomplete primary--text"
   limit="10"
 >
   <div
     class="v-input__control"
   >
     <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
       class="v-input__slot"
+      role="combobox"
     >
       <div
         class="v-select__slot"
       >
         <label
-          aria-hidden="true"
           class="v-label v-label--active theme--light primary--text"
           style="left: 0px; position: absolute;"
         >
@@ -353,10 +339,7 @@ exports[`c-entity-field Renders \`c-entity-field\` with default props 1`] = `
           class="v-select__selections"
         >
           <input
-            aria-label="Entity"
             autocomplete="off"
-            name="entities"
-            role="combobox"
             type="text"
           />
         </div>
@@ -368,12 +351,16 @@ exports[`c-entity-field Renders \`c-entity-field\` with default props 1`] = `
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light primary--text"
+              class="v-icon notranslate material-icons theme--light primary--text"
             >
               arrow_drop_down
             </i>
           </div>
         </div>
+        <input
+          name="entities"
+          type="hidden"
+        />
       </div>
       <div
         class="v-menu"
@@ -398,77 +385,68 @@ exports[`c-entity-field Renders \`c-entity-field\` with default props 1`] = `
 
 exports[`c-entity-field Renders \`c-entity-field\` with default props 2`] = `
 <div
-  class="v-menu__content theme--light v-autocomplete__content c-lazy-search-field__list"
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
+  class="v-menu__content theme--light menuable__content__active v-autocomplete__content c-lazy-search-field__list"
+  style="max-height: 304px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8; z-index: 8;"
 >
   <div
-    class="v-select-list v-card theme--light"
+    class="v-list v-select-list v-sheet theme--light v-list--dense theme--light"
+    role="listbox"
+    tabindex="-1"
   >
     <div
-      class="v-list v-list--dense theme--light"
-      role="list"
+      aria-selected="false"
+      class="c-lazy-search-field--tile v-list-item v-list-item--link theme--light"
+      role="option"
+      tabindex="0"
     >
       <div
-        class="c-lazy-search-field--tile"
-        role="listitem"
+        class="v-list-item__content"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            id
-          </div>
-          <span
-            class="ml-4 grey--text"
-          >
-            type1
-          </span>
-        </a>
+          id
       </div>
-      <div
-        class="c-lazy-search-field--tile"
-        role="listitem"
+      <span
+        class="ml-4 grey--text"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            id 2
-          </div>
-          <span
-            class="ml-4 grey--text"
-          >
-            type2
-          </span>
-        </a>
-      </div>
-      <div
-        class="c-lazy-search-field--tile"
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            id 3
-          </div>
-          <span
-            class="ml-4 grey--text"
-          >
-            type3
-          </span>
-        </a>
-      </div>
-      <div
-        class="c-lazy-search-field__append"
-      />
+        type1
+      </span>
     </div>
+    <div
+      aria-selected="false"
+      class="c-lazy-search-field--tile v-list-item v-list-item--link theme--light"
+      role="option"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__content"
+      >
+          id 2
+      </div>
+      <span
+        class="ml-4 grey--text"
+      >
+        type2
+      </span>
+    </div>
+    <div
+      aria-selected="false"
+      class="c-lazy-search-field--tile v-list-item v-list-item--link theme--light"
+      role="option"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__content"
+      >
+          id 3
+      </div>
+      <span
+        class="ml-4 grey--text"
+      >
+        type3
+      </span>
+    </div>
+    <div
+      class="c-lazy-search-field__append"
+    />
   </div>
 </div>
 `;

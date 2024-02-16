@@ -1,28 +1,49 @@
-<template lang="pug">
-  v-layout(column)
-    v-layout(v-for="(rule, index) in rules", :key="rule.key", row, justify-space-between, align-center)
-      v-flex
-        pattern-rule-field(
-          v-bind="getRuleProps(rule)",
-          :rule="rule",
-          :name="rule.key",
-          :attributes="attributes",
+<template>
+  <v-layout column>
+    <v-layout
+      v-for="(rule, index) in rules"
+      :key="rule.key"
+      justify-space-between
+      align-center
+    >
+      <v-flex>
+        <pattern-rule-field
+          v-bind="getRuleProps(rule)"
+          :rule="rule"
+          :name="rule.key"
+          :attributes="attributes"
           @input="updateRule(index, $event)"
-        )
-      c-action-btn(
-        :tooltip="$t('pattern.removeRule')",
-        :disabled="readonly || disabled",
-        type="delete",
+        />
+      </v-flex>
+      <c-action-btn
+        :tooltip="$t('pattern.removeRule')"
+        :disabled="readonly || disabled"
+        type="delete"
         @click="removeItemFromArray(index)"
-      )
-    v-layout(v-if="!readonly", row, align-center)
-      v-btn.ml-0(
-        :disabled="disabled",
-        :color="hasRulesErrors ? 'error' : 'primary'",
-        outline,
+      />
+    </v-layout>
+    <v-layout
+      v-if="!readonly"
+      class="mt-2"
+      align-center
+    >
+      <v-btn
+        class="mr-2"
+        :disabled="disabled"
+        :color="hasRulesErrors ? 'error' : 'primary'"
+        outlined
         @click="addFilterRule"
-      ) {{ $t('pattern.addRule') }}
-      span.error--text(v-show="hasRulesErrors") {{ $t('pattern.errors.existExcluded') }}
+      >
+        {{ $t('pattern.addRule') }}
+      </v-btn>
+      <span
+        class="error--text"
+        v-show="hasRulesErrors"
+      >
+        {{ $t('pattern.errors.existExcluded') }}
+      </span>
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>

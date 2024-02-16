@@ -1,16 +1,23 @@
-<template lang="pug">
-  v-fade-transition
-    v-tooltip(v-if="pageScrolled", top)
-      template(#activator="{ on }")
-        v-btn(
-          v-on="on",
-          color="secondary lighten-2",
-          fab,
-          dark,
+<template>
+  <v-fade-transition>
+    <v-tooltip
+      v-if="pageScrolled"
+      top
+    >
+      <template #activator="{ on }">
+        <v-btn
+          v-on="on"
+          color="secondary lighten-2"
+          fab
+          dark
           @click="scrollToTop"
-        )
-          v-icon arrow_upward
-      span {{ $t('common.toTheTop') }}
+        >
+          <v-icon>arrow_upward</v-icon>
+        </v-btn>
+      </template>
+      <span>{{ $t('common.toTheTop') }}</span>
+    </v-tooltip>
+  </v-fade-transition>
 </template>
 
 <script>

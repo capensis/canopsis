@@ -35,7 +35,7 @@ describe('service-entity-header', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `service-entity-header` with custom props', () => {
@@ -58,6 +58,6 @@ describe('service-entity-header', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

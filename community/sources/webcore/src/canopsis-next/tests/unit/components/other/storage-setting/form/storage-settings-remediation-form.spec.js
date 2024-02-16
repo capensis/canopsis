@@ -89,7 +89,7 @@ describe('storage-settings-remediation-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `storage-settings-remediation-form` with custom form and history', () => {
@@ -100,6 +100,6 @@ describe('storage-settings-remediation-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

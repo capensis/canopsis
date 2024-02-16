@@ -1,23 +1,38 @@
-<template lang="pug">
-  div.kpi-rating-toolbar
-    v-layout.ml-4.my-4(wrap)
-      c-quick-date-interval-field.mr-4(
-        v-field="query.interval",
-        :min="minDate",
+<template>
+  <div class="kpi-rating-toolbar">
+    <v-layout
+      class="ml-4 my-4"
+      wrap
+    >
+      <c-quick-date-interval-field
+        class="mr-4"
+        v-field="query.interval"
+        :min="minDate"
         :quick-ranges="quickRanges"
-      )
-      c-filter-field.mr-4.kpi-rating-toolbar__filters(v-field="query.filter", :disabled="isUserMetric")
-      kpi-rating-criteria-field.mr-4.kpi-rating-toolbar__criteria(
-        :value="query.criteria",
-        mandatory,
+      />
+      <c-filter-field
+        class="mr-4 kpi-rating-toolbar__filters"
+        v-field="query.filter"
+        :disabled="isUserMetric"
+      />
+      <kpi-rating-criteria-field
+        class="mr-4 kpi-rating-toolbar__criteria"
+        :value="query.criteria"
+        mandatory
         @input="updateCriteria"
-      )
-      kpi-rating-metric-field.mr-4.kpi-rating-toolbar__metric(
-        v-field="query.metric",
-        :type="criteriaType",
+      />
+      <kpi-rating-metric-field
+        class="mr-4 kpi-rating-toolbar__metric"
+        v-field="query.metric"
+        :type="criteriaType"
         hide-details
-      )
-      c-records-per-page-field(v-field="query.rowsPerPage")
+      />
+      <c-items-per-page-field
+        class="mt-4"
+        v-field="query.itemsPerPage"
+      />
+    </v-layout>
+  </div>
 </template>
 
 <script>

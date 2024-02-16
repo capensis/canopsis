@@ -36,7 +36,12 @@ describe('service-template', () => {
     stubs,
     propsData: {
       service,
-      pagination: {},
+      options: {},
+    },
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
     },
   });
 
@@ -59,6 +64,25 @@ describe('service-template', () => {
     expect(wrapper).toEmit('refresh');
   });
 
+  test('Add action applied after triggers entities list', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        serviceEntities: [{}, {}],
+        widgetParameters: {
+          modalTemplate,
+        },
+      },
+    });
+
+    await flushPromises();
+
+    const entitiesList = selectEntitiesList(wrapper);
+
+    await entitiesList.vm.$emit('add:action');
+
+    expect(wrapper).toEmit('add:action');
+  });
+
   test('Pagination updated after triggers entities list', async () => {
     const wrapper = snapshotFactory({
       propsData: {
@@ -77,9 +101,9 @@ describe('service-template', () => {
       page: Faker.datatype.number(),
     };
 
-    await entitiesList.vm.$emit('update:pagination', newPagination);
+    await entitiesList.vm.$emit('update:options', newPagination);
 
-    expect(wrapper).toEmit('update:pagination', newPagination);
+    expect(wrapper).toEmit('update:options', newPagination);
   });
 
   test('Renders `service-template` with required props', async () => {
@@ -87,7 +111,7 @@ describe('service-template', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `service-template` with custom props', async () => {
@@ -104,6 +128,6 @@ describe('service-template', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

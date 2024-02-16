@@ -1,14 +1,15 @@
-<template lang="pug">
-  div
-    remediation-instructions-filters-item(
-      v-for="(filter, index) in filters",
-      v-field="filters[index]",
-      :key="filter._id",
-      :filters="filters",
-      :editable="editable",
-      :closable="closable",
+<template>
+  <div>
+    <remediation-instructions-filters-item
+      v-for="(filter, index) in filters"
+      v-field="filters[index]"
+      :key="filter._id"
+      :filters="filters"
+      :editable="editable"
+      :closable="closable"
       @remove="removeItemFromArray(index)"
-    )
+    />
+  </div>
 </template>
 
 <script>

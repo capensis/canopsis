@@ -1,19 +1,31 @@
-<template lang="pug">
-  div(:style="widgetWrapperStyles")
-    template(v-if="widget.title || editing")
-      v-card-title.widget-title.pa-2
-        v-layout(justify-space-between, align-center)
-          v-flex
-            h4.ml-2.font-weight-regular {{ widget.title }}
-          v-spacer
-      v-divider
-    v-card-text.pa-0.position-relative
-      component(
-        v-bind="widgetProps",
-        :widget="preparedWidget",
-        :tab-id="tab._id",
+<template>
+  <div :style="widgetWrapperStyles">
+    <template v-if="widget.title || editing">
+      <v-card-title class="widget-title pa-2">
+        <v-layout
+          justify-space-between
+          align-center
+        >
+          <v-flex>
+            <h4 class="ml-2 font-weight-regular">
+              {{ widget.title }}
+            </h4>
+          </v-flex>
+          <v-spacer />
+        </v-layout>
+      </v-card-title>
+      <v-divider />
+    </template>
+    <v-card-text class="pa-0 position-relative">
+      <component
+        v-bind="widgetProps"
+        :is="widgetProps.is"
+        :widget="preparedWidget"
+        :tab-id="tab._id"
         :visible="visible"
-      )
+      />
+    </v-card-text>
+  </div>
 </template>
 
 <script>

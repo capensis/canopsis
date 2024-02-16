@@ -1,6 +1,11 @@
-<template lang="pug">
-  v-alert.c-alert(v-bind="$attrs", :value="value")
-    slot
+<template>
+  <v-alert
+    class="c-alert"
+    v-bind="$attrs"
+    :value="value"
+  >
+    <slot />
+  </v-alert>
 </template>
 
 <script>

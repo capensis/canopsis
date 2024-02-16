@@ -18,7 +18,7 @@ describe('alarm-column-value-state', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarm-column-value-state` with alarm state', () => {
@@ -36,7 +36,7 @@ describe('alarm-column-value-state', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarm-column-value-state` with custom propertyKey', () => {
@@ -49,6 +49,6 @@ describe('alarm-column-value-state', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

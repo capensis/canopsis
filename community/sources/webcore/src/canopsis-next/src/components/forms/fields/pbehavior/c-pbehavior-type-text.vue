@@ -1,17 +1,17 @@
-<template lang="pug">
-  v-select(
-    :value="value",
-    :label="label || $t('common.type')",
-    :items="fieldPbehaviorTypes",
-    :loading="fieldPbehaviorTypesPending",
-    :multiple="multiple",
-    :chips="chips",
-    :deletable-chips="chips",
-    :small-chips="chips",
-    item-text="name",
-    item-value="_id",
+<template>
+  <v-select
+    :value="value"
+    :label="label || $t('common.type')"
+    :items="fieldPbehaviorTypes"
+    :loading="fieldPbehaviorTypesPending"
+    :multiple="multiple"
+    :chips="chips"
+    :deletable-chips="chips"
+    :small-chips="chips"
+    item-text="name"
+    item-value="_id"
     disabled
-  )
+  />
 </template>
 
 <script>

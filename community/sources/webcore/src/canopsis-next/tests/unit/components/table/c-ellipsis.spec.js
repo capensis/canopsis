@@ -107,12 +107,12 @@ describe('c-ellipsis', () => {
       magnam nulla et consequatur facere sint nam facere sunt aut alias qui omnis rerum corporis totam quibusdam
       nostrum mollitia quia vel amet pariatur eveniet explicabo quia ullam`;
 
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: { text },
     });
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 });

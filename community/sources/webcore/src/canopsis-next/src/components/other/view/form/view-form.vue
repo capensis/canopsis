@@ -1,24 +1,31 @@
-<template lang="pug">
-  v-layout(column)
-    view-duplicate-private-field(v-if="duplicatePrivate", v-field="form.is_private")
-    c-name-field(
-      v-field="form.title",
-      :label="$t('common.title')",
-      name="title",
+<template>
+  <v-layout column>
+    <view-duplicate-private-field
+      v-if="duplicatePrivate"
+      v-field="form.is_private"
+    />
+    <c-name-field
+      v-field="form.title"
+      :label="$t('common.title')"
+      name="title"
       required
-    )
-    v-text-field(
-      v-field="form.description",
-      :label="$t('common.description')",
+    />
+    <v-text-field
+      v-field="form.description"
+      :label="$t('common.description')"
       name="description"
-    )
-    c-enabled-field(v-field="form.enabled")
-    periodic-refresh-field(
-      v-field="form.periodic_refresh",
+    />
+    <c-enabled-field v-field="form.enabled" />
+    <periodic-refresh-field
+      v-field="form.periodic_refresh"
       :label="$t('view.periodicRefresh')"
-    )
-    view-tags-field(v-field="form.tags")
-    view-group-field(v-field="form.group", :groups="groups")
+    />
+    <view-tags-field v-field="form.tags" />
+    <view-group-field
+      v-field="form.group"
+      :groups="groups"
+    />
+  </v-layout>
 </template>
 
 <script>

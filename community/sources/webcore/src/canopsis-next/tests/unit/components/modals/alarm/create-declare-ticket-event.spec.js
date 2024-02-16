@@ -188,6 +188,6 @@ describe('create-declare-ticket-event', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -55,16 +55,9 @@ describe('remediation-instructions-filters-item', () => {
       },
     });
 
-    const chip = selectChip(wrapper);
+    selectChip(wrapper).vm.$emit('click:close');
 
-    chip.vm.$emit('input');
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmit('input', {
       ...lockedFilter,
       disabled: !lockedFilter.disabled,
     });
@@ -78,13 +71,9 @@ describe('remediation-instructions-filters-item', () => {
       },
     });
 
-    const chip = selectChip(wrapper);
+    selectChip(wrapper).vm.$emit('click:close');
 
-    chip.vm.$emit('input');
-
-    const inputEvents = wrapper.emitted('remove');
-
-    expect(inputEvents).toHaveLength(1);
+    expect(wrapper).toEmit('remove');
   });
 
   it('Edit instruction filter modal opened after trigger click event on the chip', () => {
@@ -138,7 +127,7 @@ describe('remediation-instructions-filters-item', () => {
   it('Renders `remediation-instructions-filters-item` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `remediation-instructions-filters-item` with custom props', () => {
@@ -160,7 +149,7 @@ describe('remediation-instructions-filters-item', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `remediation-instructions-filters-item` with filter in progress', () => {
@@ -183,7 +172,7 @@ describe('remediation-instructions-filters-item', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `remediation-instructions-filters-item` with filter instruction in progress', () => {
@@ -206,6 +195,6 @@ describe('remediation-instructions-filters-item', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

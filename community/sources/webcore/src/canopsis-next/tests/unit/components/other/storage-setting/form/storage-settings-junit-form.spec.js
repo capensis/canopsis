@@ -50,7 +50,7 @@ describe('storage-settings-junit-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `storage-settings-junit-form` with custom form and history', () => {
@@ -61,6 +61,6 @@ describe('storage-settings-junit-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -159,7 +159,7 @@ describe('c-search-field', () => {
       propsData: { value: 'c-search-field' },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-search-field` correctly with combobox and items', () => {
@@ -176,7 +176,7 @@ describe('c-search-field', () => {
 
     const menuContent = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
   });
 });

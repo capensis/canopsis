@@ -51,7 +51,7 @@ describe('bar-graph-type', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `bar-graph-type` with custom props', () => {
@@ -62,6 +62,6 @@ describe('bar-graph-type', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

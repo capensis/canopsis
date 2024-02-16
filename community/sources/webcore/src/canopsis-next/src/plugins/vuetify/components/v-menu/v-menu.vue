@@ -1,12 +1,16 @@
 <script>
-import VMenu from 'vuetify/es5/components/VMenu';
-import { getZIndex } from 'vuetify/es5/util/helpers';
+import VMenu from 'vuetify/lib/components/VMenu';
+import Resize from 'vuetify/lib/directives/resize';
+import { getZIndex } from 'vuetify/lib/util/helpers';
 
-import lazyWithUnmountMixin from '../../mixins/lazy-with-unmount';
+import ClickOutside from '../../directives/click-outside';
 
 export default {
+  directives: {
+    ClickOutside,
+    Resize,
+  },
   extends: VMenu,
-  mixins: [lazyWithUnmountMixin],
   props: {
     ignoreClickUpperOutside: {
       type: Boolean,
@@ -22,9 +26,23 @@ export default {
     },
   },
   methods: {
+    /**
+     * We've added offsetOverflow to condition
+     *
+     * @param menuWidth
+     * @return {string}
+     */
+    calcLeft(menuWidth) {
+      return `${
+        this.isAttached && !this.offsetOverflow
+          ? this.computedLeft
+          : this.calcXOverflow(this.computedLeft, menuWidth)
+      }px`;
+    },
+
     calcScrollPosition() {
       const $el = this.$refs.content;
-      const activeTile = $el.querySelector('.v-list__tile--active');
+      const activeTile = $el.querySelector('.v-list-item--active');
       const maxScrollTop = $el.scrollHeight - $el.offsetHeight;
 
       if (activeTile) {
@@ -47,16 +65,23 @@ export default {
       return this.ignoreClickUpperOutside
         ? targetZIndex < contentZIndex
         : this.isActive
+        // eslint-disable-next-line no-underscore-dangle
+          && !this._isDestroyed
           && this.closeOnClick
           && !this.$refs.content.contains(e.target);
     },
 
     genContent() {
       const options = {
-        attrs: this.getScopeIdAttrs(),
+        attrs: {
+          ...this.getScopeIdAttrs(),
+          ...this.contentProps,
+          role: 'role' in this.$attrs ? this.$attrs.role : 'menu',
+        },
         staticClass: 'v-menu__content',
         class: {
           ...this.rootThemeClasses,
+          ...this.roundedClasses,
           'v-menu__content--auto': this.auto,
           'v-menu__content--fixed': this.activatorFixed,
           'v-menu__ignore-click-upper-outside': this.ignoreClickUpperOutside,
@@ -76,15 +101,22 @@ export default {
         },
       };
 
+      if (this.$listeners.scroll) {
+        options.on = options.on || {};
+        options.on.scroll = this.$listeners.scroll;
+      }
+
       if (!this.disabled && this.openOnHover) {
+        options.on = options.on || {};
         options.on.mouseenter = this.mouseEnterHandler;
       }
 
       if (this.openOnHover) {
+        options.on = options.on || {};
         options.on.mouseleave = this.mouseLeaveHandler;
       }
 
-      return this.$createElement('div', options, this.showLazyContent(this.$slots.default));
+      return this.$createElement('div', options, this.getContentSlot());
     },
   },
 };

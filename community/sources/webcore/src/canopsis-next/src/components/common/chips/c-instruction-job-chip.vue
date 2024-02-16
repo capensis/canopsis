@@ -1,6 +1,7 @@
-<template lang="pug">
-  div.instruction-job-chip.primary.white--text
-    slot
+<template>
+  <div class="instruction-job-chip primary white--text">
+    <slot />
+  </div>
 </template>
 
 <style lang="scss">

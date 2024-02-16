@@ -1,22 +1,35 @@
-<template lang="pug">
-  v-layout.py-2(column)
-    kpi-widget-filters.mx-3(
-      :interval="query.interval",
-      :min-interval-date="minAvailableDate",
-      :sampling="query.sampling",
-      show-interval,
-      show-sampling,
-      @update:sampling="updateQueryField('sampling', $event)",
+<template>
+  <v-layout
+    class="py-2"
+    column
+  >
+    <kpi-widget-filters
+      class="mx-3"
+      :interval="query.interval"
+      :min-interval-date="minAvailableDate"
+      :sampling="query.sampling"
+      show-interval
+      show-sampling
+      @update:sampling="updateQueryField('sampling', $event)"
       @update:interval="updateQueryField('interval', $event)"
-    )
-    v-layout.pa-3(column)
-      chart-loader(v-if="pending", :has-metrics="hasMetrics")
-      component(
-        v-if="hasMetrics",
-        v-bind="component",
-        @export:png="exportMetricsAsPng",
+    />
+    <v-layout
+      class="pa-3"
+      column
+    >
+      <chart-loader
+        v-if="pending"
+        :has-metrics="hasMetrics"
+      />
+      <component
+        v-if="hasMetrics"
+        v-bind="component"
+        :is="component.is"
+        @export:png="exportMetricsAsPng"
         @export:csv="exportMetricsAsCsv"
-      )
+      />
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>

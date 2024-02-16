@@ -1,26 +1,43 @@
-<template lang="pug">
-  v-layout(column)
-    v-data-table(:headers="headers", :items="alarms", hide-actions)
-      template(#items="{ item, index }")
-        td(v-if="!hideRowSelect")
-          v-checkbox(
-            :input-value="isEveryTicketsActive(item._id)",
-            color="primary",
-            hide-details,
+<template>
+  <v-layout column>
+    <v-data-table
+      :headers="headers"
+      :items="alarms"
+      hide-default-footer
+    >
+      <template #items="{ item }">
+        <td v-if="!hideRowSelect">
+          <v-checkbox
+            :input-value="isEveryTicketsActive(item._id)"
+            color="primary"
+            hide-details
             @change="updateAllTickets(item._id, $event)"
-          )
-        td.text-xs-left {{ item.v.connector_name }}
-        td.text-xs-left {{ item.v.connector }}
-        td.text-xs-left {{ item.v.component }}
-        td.text-xs-left {{ item.v.resource }}
-        td(v-if="!hideTickets")
-          declare-ticket-event-tickets-field(
-            :alarm-tickets="item.v.tickets",
-            :value="activeTicketsByAlarms[item._id]",
-            :tickets="ticketsByAlarms[item._id]",
+          />
+        </td>
+        <td class="text-left">
+          {{ item.v.connector_name }}
+        </td>
+        <td class="text-left">
+          {{ item.v.connector }}
+        </td>
+        <td class="text-left">
+          {{ item.v.component }}
+        </td>
+        <td class="text-left">
+          {{ item.v.resource }}
+        </td>
+        <td v-if="!hideTickets">
+          <declare-ticket-event-tickets-field
+            :alarm-tickets="item.v.tickets"
+            :value="activeTicketsByAlarms[item._id]"
+            :tickets="ticketsByAlarms[item._id]"
             @input="updateTickets(item._id, $event)"
-          )
-    v-divider
+          />
+        </td>
+      </template>
+    </v-data-table>
+    <v-divider />
+  </v-layout>
 </template>
 
 <script>
@@ -31,12 +48,10 @@ import { revertGroupBy } from '@/helpers/collection';
 
 import { formMixin } from '@/mixins/form';
 
-import ExtraDetailsTicket from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-ticket.vue';
-
 import DeclareTicketEventTicketsField from './declare-ticket-event-tickets-field.vue';
 
 export default {
-  components: { ExtraDetailsTicket, DeclareTicketEventTicketsField },
+  components: { DeclareTicketEventTicketsField },
   mixins: [formMixin],
   model: {
     prop: 'value',

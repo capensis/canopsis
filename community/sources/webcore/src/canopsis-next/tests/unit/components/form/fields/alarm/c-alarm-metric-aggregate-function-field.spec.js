@@ -30,7 +30,7 @@ describe('c-alarm-metric-aggregate-function-field', () => {
   it('Renders `c-alarm-metric-aggregate-function-field` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-alarm-metric-aggregate-function-field` with custom props', () => {
@@ -48,6 +48,6 @@ describe('c-alarm-metric-aggregate-function-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

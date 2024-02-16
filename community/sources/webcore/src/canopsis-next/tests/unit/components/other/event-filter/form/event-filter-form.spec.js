@@ -251,7 +251,7 @@ describe('event-filter-form', () => {
   test('Renders `event-filter-form` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `event-filter-form` with custom props', () => {
@@ -261,7 +261,7 @@ describe('event-filter-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test.each(
@@ -276,6 +276,6 @@ describe('event-filter-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

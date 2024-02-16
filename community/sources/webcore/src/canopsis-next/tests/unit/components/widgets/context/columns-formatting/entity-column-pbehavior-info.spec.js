@@ -8,16 +8,15 @@ describe('entity-column-pbehavior-info', () => {
     attachTo: document.body,
   });
 
-  it('Renders `entity-column-pbehavior-info` with default props', () => {
+  it('Renders `entity-column-pbehavior-info` with default props', async () => {
     const wrapper = snapshotFactory();
 
-    const tooltip = wrapper.findTooltip();
-
-    expect(tooltip.element).toMatchSnapshot();
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 
-  it.each(Object.values(PBEHAVIOR_TYPE_TYPES))('Renders `entity-column-pbehavior-info` with type: %s', (type) => {
+  it.each(Object.values(PBEHAVIOR_TYPE_TYPES))('Renders `entity-column-pbehavior-info` with type: %s', async (type) => {
     const wrapper = snapshotFactory({
       propsData: {
         pbehaviorInfo: {
@@ -27,9 +26,8 @@ describe('entity-column-pbehavior-info', () => {
       },
     });
 
-    const tooltip = wrapper.findTooltip();
-
-    expect(tooltip.element).toMatchSnapshot();
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 });

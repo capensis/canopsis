@@ -1,25 +1,41 @@
-<template lang="pug">
-  div.widget-edit-drag-handler(@pointerdown.left="$emit('pointerdown', $event)")
-    v-layout.widget-edit-drag-handler__controls.pr-1(justify-end, align-center)
-      span(@pointerdown.stop="")
-        v-tooltip(bottom)
-          template(#activator="{ on }")
-            v-btn.ma-0.mr-1(
-              v-on="on",
-              :color="autoHeight ? 'grey lighten-1' : 'transparent'",
-              icon,
-              small,
+<template>
+  <div
+    class="widget-edit-drag-handler"
+    @pointerdown.left="$emit('pointerdown', $event)"
+  >
+    <v-layout
+      class="widget-edit-drag-handler__controls pr-1"
+      justify-end
+      align-center
+    >
+      <span @pointerdown.stop="">
+        <v-tooltip bottom>
+          <template #activator="{ on }">
+            <v-btn
+              class="ma-0 mr-1"
+              v-on="on"
+              :color="autoHeight ? 'grey lighten-1' : 'transparent'"
+              icon
+              small
               @click="$emit('toggle')"
-            )
-              v-icon(
-                :color="autoHeight ? 'black' : 'grey darken-1'",
+            >
+              <v-icon
+                :color="autoHeight ? 'black' : 'grey darken-1'"
                 small
-              ) lock
-          span {{ $t('view.autoHeightButton') }}
-        widget-wrapper-menu(
-          :widget="widget",
+              >
+                lock
+              </v-icon>
+            </v-btn>
+          </template>
+          <span>{{ $t('view.autoHeightButton') }}</span>
+        </v-tooltip>
+        <widget-wrapper-menu
+          :widget="widget"
           :tab="tab"
-        )
+        />
+      </span>
+    </v-layout>
+  </div>
 </template>
 
 <script>

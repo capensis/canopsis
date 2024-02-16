@@ -1,13 +1,14 @@
-<template lang="pug">
-  v-rating.layout(
-    v-field="value",
-    :readonly="readonly",
-    :hover="hover",
-    backgroundColor="primary",
-    medium,
-    half-increments,
+<template>
+  <v-rating
+    class="layout"
+    v-field="value"
+    :readonly="readonly"
+    :hover="hover"
+    background-color="primary"
+    medium
+    half-increments
     @input="$emit('input', $event)"
-  )
+  />
 </template>
 
 <script>

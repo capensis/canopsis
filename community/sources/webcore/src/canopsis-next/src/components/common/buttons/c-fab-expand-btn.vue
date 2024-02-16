@@ -1,19 +1,30 @@
-<template lang="pug">
-  div.fab
-    v-layout(column)
-      c-refresh-btn(@click="$emit('refresh')")
-      v-speed-dial(
-        v-if="hasAccess",
-        v-model="fab",
-        :transition="transition",
+<template>
+  <div class="fab ma-2">
+    <v-layout column>
+      <v-flex class="mb-3">
+        <c-refresh-btn @click="$emit('refresh')" />
+      </v-flex>
+      <c-speed-dial
+        v-if="hasAccess"
+        :transition="transition"
         direction="left"
-      )
-        template(#activator="")
-          v-btn(v-model="fab", color="primary", fab)
-            slot(name="icons")
-              v-icon add
-              v-icon close
-        slot
+      >
+        <template #activator="{ bind }">
+          <v-btn
+            v-bind="bind"
+            color="primary"
+            fab
+          >
+            <slot name="icons">
+              <v-icon>add</v-icon>
+              <v-icon>close</v-icon>
+            </slot>
+          </v-btn>
+        </template>
+        <slot />
+      </c-speed-dial>
+    </v-layout>
+  </div>
 </template>
 
 <script>

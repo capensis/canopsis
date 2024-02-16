@@ -10,7 +10,6 @@ const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,
   'c-search-field': true,
   'v-checkbox': true,
-  'v-checkbox-functional': true,
   'c-expand-btn': true,
   'c-action-btn': true,
   'c-enabled': true,
@@ -47,7 +46,7 @@ describe('declared-tickets-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `declared-tickets-list` without tickets', () => {
@@ -57,7 +56,7 @@ describe('declared-tickets-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `declared-tickets-list` with parant alarm id', () => {
@@ -68,6 +67,6 @@ describe('declared-tickets-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

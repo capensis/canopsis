@@ -31,7 +31,7 @@ describe('field-modal-type', () => {
   test('Renders `field-modal-type` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `field-modal-type` with custom props', () => {
@@ -45,6 +45,6 @@ describe('field-modal-type', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -1,22 +1,32 @@
-<template lang="pug">
-  c-select-field(
-    v-field="value",
-    v-validate="rules",
-    :items="itemsWithCustom",
-    :label="label || $tc('common.pattern')",
-    :loading="pending",
-    :disabled="disabled",
-    :name="name",
-    :return-object="returnObject",
-    item-text="title",
-    item-value="_id",
-    dense,
+<template>
+  <c-select-field
+    v-field="value"
+    v-validate="rules"
+    :items="itemsWithCustom"
+    :label="label || $tc('common.pattern')"
+    :loading="pending"
+    :disabled="disabled"
+    :name="name"
+    :return-object="returnObject"
+    item-text="title"
+    item-value="_id"
     hide-details
-  )
-    template(#item="{ item, tile }")
-      v-list-tile(v-bind="tile.props", v-on="tile.on")
-        v-list-tile-content {{ item.title }}
-        v-icon(v-if="item.is_corporate", size="20") share
+  >
+    <template #item="{ item, attrs, on }">
+      <v-list-item
+        v-bind="attrs"
+        v-on="on"
+      >
+        <v-list-item-content>{{ item.title }}</v-list-item-content>
+        <v-icon
+          v-if="item.is_corporate"
+          size="20"
+        >
+          share
+        </v-icon>
+      </v-list-item>
+    </template>
+  </c-select-field>
 </template>
 
 <script>

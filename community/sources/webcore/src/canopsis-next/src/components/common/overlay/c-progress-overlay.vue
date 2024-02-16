@@ -1,17 +1,30 @@
-<template lang="pug">
-  v-fade-transition(v-if="transition")
-    v-layout.progress(
-      v-if="pending",
-      :class="backgroundColor",
+<template>
+  <v-fade-transition v-if="transition">
+    <v-layout
+      class="progress"
+      v-if="pending"
+      :class="backgroundColor"
       :style="{ opacity }"
-    )
-      v-progress-circular(:color="color", :size="size", indeterminate)
-  v-layout.progress(
-    v-else-if="pending",
-    :class="backgroundColor",
+    >
+      <v-progress-circular
+        :color="color"
+        :size="size"
+        indeterminate
+      />
+    </v-layout>
+  </v-fade-transition>
+  <v-layout
+    class="progress"
+    v-else-if="pending"
+    :class="backgroundColor"
     :style="{ opacity }"
-  )
-    v-progress-circular(:color="color", :size="size", indeterminate)
+  >
+    <v-progress-circular
+      :color="color"
+      :size="size"
+      indeterminate
+    />
+  </v-layout>
 </template>
 
 <script>

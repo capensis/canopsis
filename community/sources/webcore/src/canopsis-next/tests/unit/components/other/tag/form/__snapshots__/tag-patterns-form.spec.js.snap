@@ -5,10 +5,10 @@ exports[`tag-patterns-form Renders \`tag-patterns-form\` with custom props 1`] =
   alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
   class="mt-2"
   entity-attributes="[object Object]"
-  some-required="some-required"
+  some-required=""
   value="[object Object]"
-  with-alarm="with-alarm"
-  with-entity="with-entity"
+  with-alarm=""
+  with-entity=""
 />
 `;
 
@@ -17,9 +17,9 @@ exports[`tag-patterns-form Renders \`tag-patterns-form\` with default props 1`] 
   alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
   class="mt-2"
   entity-attributes="[object Object]"
-  some-required="some-required"
+  some-required=""
   value="[object Object]"
-  with-alarm="with-alarm"
-  with-entity="with-entity"
+  with-alarm=""
+  with-entity=""
 />
 `;

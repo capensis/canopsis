@@ -73,7 +73,7 @@ describe('pbehavior-entities', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pbehavior-entities` with entities', async () => {
@@ -90,6 +90,6 @@ describe('pbehavior-entities', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

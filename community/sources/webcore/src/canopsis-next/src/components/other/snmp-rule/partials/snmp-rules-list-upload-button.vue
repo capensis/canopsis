@@ -1,24 +1,30 @@
-<template lang="pug">
-  file-selector(
-    ref="fileSelector",
-    multiple,
-    hide-details,
+<template>
+  <file-selector
+    ref="fileSelector"
+    multiple
+    hide-details
     @change="changeFiles"
-  )
-    template(#activator="{ on: fileSelectorOn }")
-      v-tooltip(top, custom-activator)
-        template(#activator="{}")
-          v-btn(
-            v-on="fileSelectorOn",
-            :loading="pending",
-            color="indigo",
-            icon,
-            small,
-            dark,
+  >
+    <template #activator="{ on: fileSelectorOn }">
+      <v-tooltip top>
+        <template #activator="{ on: tooltipOn }">
+          <v-btn
+            v-on="{ ...fileSelectorOn, ...tooltipOn }"
+            :loading="pending"
+            color="indigo"
+            small
+            dark
             fab
-          )
-            v-icon cloud_upload
-        span {{ $t('snmpRule.uploadMib') }}
+          >
+            <v-icon small>
+              cloud_upload
+            </v-icon>
+          </v-btn>
+        </template>
+        <span>{{ $t('snmpRule.uploadMib') }}</span>
+      </v-tooltip>
+    </template>
+  </file-selector>
 </template>
 
 <script>

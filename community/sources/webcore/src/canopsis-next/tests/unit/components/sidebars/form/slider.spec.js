@@ -44,7 +44,7 @@ describe('field-slider', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `field-slider` with custom props', () => {
@@ -57,6 +57,6 @@ describe('field-slider', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

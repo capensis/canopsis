@@ -190,6 +190,8 @@ describe('create-associate-ticket-event', () => {
 
     expect(createEvent).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
+
+    validator.detach('name');
   });
 
   test('Errors added after trigger submit button with action errors', async () => {
@@ -302,9 +304,7 @@ describe('create-associate-ticket-event', () => {
       },
     });
 
-    const cancelButton = selectCancelButton(wrapper);
-
-    cancelButton.trigger('click');
+    selectCancelButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -323,7 +323,7 @@ describe('create-associate-ticket-event', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `create-associate-ticket-event` with config data', () => {
@@ -342,6 +342,6 @@ describe('create-associate-ticket-event', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

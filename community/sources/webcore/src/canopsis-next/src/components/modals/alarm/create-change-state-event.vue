@@ -1,24 +1,34 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ $t('modals.createChangeStateEvent.title') }}
-      template(#text="")
-        c-change-state-field(
-          v-model="form",
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ $t('modals.createChangeStateEvent.title') }}</span>
+      </template>
+      <template #text="">
+        <c-change-state-field
+          v-model="form"
           :label="$t('modals.createChangeStateEvent.fields.output')"
-        )
-      template(#actions="")
-        v-btn(
-          depressed,
-          flat,
+        />
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
           @click="$modals.hide"
-        ) {{ $t('common.cancel') }}
-        v-btn.primary(
-          :loading="submitting",
-          :disabled="isDisabled",
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          class="primary"
+          :loading="submitting"
+          :disabled="isDisabled"
           type="submit"
-        ) {{ $t('common.saveChanges') }}
+        >
+          {{ $t('common.saveChanges') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>

@@ -2,72 +2,77 @@
 
 exports[`pbehaviors-list-expand-item Renders \`pbehaviors-list-expand-item\` with custom props 1`] = `
 <div
-  class="v-tabs"
+  class="v-tabs v-tabs--centered theme--dark"
 >
   <div
-    class="v-tabs__bar theme--dark secondary lighten-1"
+    class="v-item-group theme--dark v-slide-group v-tabs-bar v-tabs-bar--is-mobile white--text secondary lighten-1"
+    role="tablist"
   >
-    <transition-stub
-      name="fade-transition"
-    />
     <div
-      class="v-tabs__wrapper"
+      class="v-slide-group__prev v-slide-group__prev--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+    <div
+      class="v-slide-group__wrapper"
     >
       <div
-        class="v-tabs__container v-tabs__container--centered"
+        class="v-slide-group__content v-tabs-bar__content"
       >
         <div
-          class="v-tabs__slider-wrapper"
+          class="v-tabs-slider-wrapper"
           style="transition: none;"
         >
           <div
-            class="v-tabs__slider primary"
+            class="v-tabs-slider primary"
           />
         </div>
         <div
-          class="v-tabs__div"
+          aria-selected="true"
+          class="v-tab v-tab--active"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item v-tabs__item--active"
-          >
-            Patterns
-          </a>
+          Patterns
         </div>
         <div
-          class="v-tabs__div"
+          aria-selected="false"
+          class="v-tab"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item"
-          >
-            Entities
-          </a>
+          Entities
         </div>
         <div
-          class="v-tabs__div"
+          aria-selected="false"
+          class="v-tab"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item"
-          >
-            Comments
-          </a>
+          Comments
         </div>
         <div
-          class="v-tabs__div"
+          aria-selected="false"
+          class="v-tab"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item"
-          >
-            Recurrence
-          </a>
+    Recurrence
         </div>
       </div>
     </div>
-    <transition-stub
-      name="fade-transition"
-    />
+    <div
+      class="v-slide-group__next v-slide-group__next--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
   </div>
   <div
-    class="v-window"
+    class="v-window v-item-group theme--light v-tabs-items"
   >
     <div
       class="v-window__container"
@@ -76,10 +81,10 @@ exports[`pbehaviors-list-expand-item Renders \`pbehaviors-list-expand-item\` wit
         name=""
       >
         <div
-          class="v-window-item"
+          class="v-window-item v-window-item--active"
         >
           <div
-            class="layout py-3 row"
+            class="layout py-3"
           >
             <div
               class="flex xs12 sm10 offset-sm1"
@@ -103,26 +108,17 @@ exports[`pbehaviors-list-expand-item Renders \`pbehaviors-list-expand-item\` wit
       <transition-stub
         name=""
       >
-        <div
-          class="v-window-item"
-          style="display: none;"
-        />
+        <!---->
       </transition-stub>
       <transition-stub
         name=""
       >
-        <div
-          class="v-window-item"
-          style="display: none;"
-        />
+        <!---->
       </transition-stub>
       <transition-stub
         name=""
       >
-        <div
-          class="v-window-item"
-          style="display: none;"
-        />
+        <!---->
       </transition-stub>
     </div>
   </div>
@@ -131,64 +127,70 @@ exports[`pbehaviors-list-expand-item Renders \`pbehaviors-list-expand-item\` wit
 
 exports[`pbehaviors-list-expand-item Renders \`pbehaviors-list-expand-item\` with default props 1`] = `
 <div
-  class="v-tabs"
+  class="v-tabs v-tabs--centered theme--dark"
 >
   <div
-    class="v-tabs__bar theme--dark secondary lighten-1"
+    class="v-item-group theme--dark v-slide-group v-tabs-bar v-tabs-bar--is-mobile white--text secondary lighten-1"
+    role="tablist"
   >
-    <transition-stub
-      name="fade-transition"
-    />
     <div
-      class="v-tabs__wrapper"
+      class="v-slide-group__prev v-slide-group__prev--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+    <div
+      class="v-slide-group__wrapper"
     >
       <div
-        class="v-tabs__container v-tabs__container--centered"
+        class="v-slide-group__content v-tabs-bar__content"
       >
         <div
-          class="v-tabs__slider-wrapper"
+          class="v-tabs-slider-wrapper"
           style="transition: none;"
         >
           <div
-            class="v-tabs__slider primary"
+            class="v-tabs-slider primary"
           />
         </div>
         <div
-          class="v-tabs__div"
+          aria-selected="true"
+          class="v-tab v-tab--active"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item v-tabs__item--active"
-          >
-            Patterns
-          </a>
+          Patterns
         </div>
         <div
-          class="v-tabs__div"
+          aria-selected="false"
+          class="v-tab"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item"
-          >
-            Entities
-          </a>
+          Entities
         </div>
         <div
-          class="v-tabs__div"
+          aria-selected="false"
+          class="v-tab"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item"
-          >
-            Comments
-          </a>
+          Comments
         </div>
         <!---->
       </div>
     </div>
-    <transition-stub
-      name="fade-transition"
-    />
+    <div
+      class="v-slide-group__next v-slide-group__next--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
   </div>
   <div
-    class="v-window"
+    class="v-window v-item-group theme--light v-tabs-items"
   >
     <div
       class="v-window__container"
@@ -197,10 +199,10 @@ exports[`pbehaviors-list-expand-item Renders \`pbehaviors-list-expand-item\` wit
         name=""
       >
         <div
-          class="v-window-item"
+          class="v-window-item v-window-item--active"
         >
           <div
-            class="layout py-3 row"
+            class="layout py-3"
           >
             <div
               class="flex xs12 sm10 offset-sm1"
@@ -224,19 +226,14 @@ exports[`pbehaviors-list-expand-item Renders \`pbehaviors-list-expand-item\` wit
       <transition-stub
         name=""
       >
-        <div
-          class="v-window-item"
-          style="display: none;"
-        />
+        <!---->
       </transition-stub>
       <transition-stub
         name=""
       >
-        <div
-          class="v-window-item"
-          style="display: none;"
-        />
+        <!---->
       </transition-stub>
+      <!---->
     </div>
   </div>
 </div>
@@ -244,77 +241,82 @@ exports[`pbehaviors-list-expand-item Renders \`pbehaviors-list-expand-item\` wit
 
 exports[`pbehaviors-list-expand-item Renders \`pbehaviors-list-expand-item\` with opened comments tab 1`] = `
 <div
-  class="v-tabs"
+  class="v-tabs v-tabs--centered theme--dark"
 >
   <div
-    class="v-tabs__bar theme--dark secondary lighten-1"
+    class="v-item-group theme--dark v-slide-group v-tabs-bar v-tabs-bar--is-mobile white--text secondary lighten-1"
+    role="tablist"
   >
-    <transition-stub
-      name="fade-transition"
-    />
     <div
-      class="v-tabs__wrapper"
+      class="v-slide-group__prev v-slide-group__prev--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+    <div
+      class="v-slide-group__wrapper"
     >
       <div
-        class="v-tabs__container v-tabs__container--centered"
+        class="v-slide-group__content v-tabs-bar__content"
       >
         <div
-          class="v-tabs__slider-wrapper"
+          class="v-tabs-slider-wrapper"
           style="transition: none;"
         >
           <div
-            class="v-tabs__slider primary"
+            class="v-tabs-slider primary"
           />
         </div>
         <div
-          class="v-tabs__div"
+          aria-selected="true"
+          class="v-tab v-tab--active"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item"
-          >
-            Patterns
-          </a>
+          Patterns
         </div>
         <div
-          class="v-tabs__div"
+          aria-selected="false"
+          class="v-tab"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item"
-          >
-            Entities
-          </a>
+          Entities
         </div>
         <div
-          class="v-tabs__div"
+          aria-selected="false"
+          class="v-tab"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item v-tabs__item--active"
-          >
-            Comments
-          </a>
+          Comments
         </div>
         <!---->
       </div>
     </div>
-    <transition-stub
-      name="fade-transition"
-    />
+    <div
+      class="v-slide-group__next v-slide-group__next--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
   </div>
   <div
-    class="v-window"
+    class="v-window v-item-group theme--light v-tabs-items"
   >
     <div
       class="v-window__container"
     >
       <transition-stub
-        name="v-window-x-transition"
+        name=""
       >
         <div
-          class="v-window-item"
-          style="display: none;"
+          class="v-window-item v-window-item--active"
         >
           <div
-            class="layout py-3 row"
+            class="layout py-3"
           >
             <div
               class="flex xs12 sm10 offset-sm1"
@@ -336,41 +338,16 @@ exports[`pbehaviors-list-expand-item Renders \`pbehaviors-list-expand-item\` wit
         </div>
       </transition-stub>
       <transition-stub
-        name="v-window-x-transition"
+        name=""
       >
-        <div
-          class="v-window-item"
-          style="display: none;"
-        />
+        <!---->
       </transition-stub>
       <transition-stub
-        name="v-window-x-transition"
+        name=""
       >
-        <div
-          class="v-window-item"
-          style=""
-        >
-          <div
-            class="layout py-3 row"
-          >
-            <div
-              class="flex xs12 sm10 offset-sm1"
-            >
-              <div
-                class="v-card v-sheet theme--light"
-              >
-                <div
-                  class="v-card__text pa-0"
-                >
-                  <pbehavior-comments-stub
-                    comments="[object Object],[object Object],[object Object]"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <!---->
       </transition-stub>
+      <!---->
     </div>
   </div>
 </div>
@@ -378,77 +355,82 @@ exports[`pbehaviors-list-expand-item Renders \`pbehaviors-list-expand-item\` wit
 
 exports[`pbehaviors-list-expand-item Renders \`pbehaviors-list-expand-item\` with opened entities tab 1`] = `
 <div
-  class="v-tabs"
+  class="v-tabs v-tabs--centered theme--dark"
 >
   <div
-    class="v-tabs__bar theme--dark secondary lighten-1"
+    class="v-item-group theme--dark v-slide-group v-tabs-bar v-tabs-bar--is-mobile white--text secondary lighten-1"
+    role="tablist"
   >
-    <transition-stub
-      name="fade-transition"
-    />
     <div
-      class="v-tabs__wrapper"
+      class="v-slide-group__prev v-slide-group__prev--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+    <div
+      class="v-slide-group__wrapper"
     >
       <div
-        class="v-tabs__container v-tabs__container--centered"
+        class="v-slide-group__content v-tabs-bar__content"
       >
         <div
-          class="v-tabs__slider-wrapper"
+          class="v-tabs-slider-wrapper"
           style="transition: none;"
         >
           <div
-            class="v-tabs__slider primary"
+            class="v-tabs-slider primary"
           />
         </div>
         <div
-          class="v-tabs__div"
+          aria-selected="true"
+          class="v-tab v-tab--active"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item"
-          >
-            Patterns
-          </a>
+          Patterns
         </div>
         <div
-          class="v-tabs__div"
+          aria-selected="false"
+          class="v-tab"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item v-tabs__item--active"
-          >
-            Entities
-          </a>
+          Entities
         </div>
         <div
-          class="v-tabs__div"
+          aria-selected="false"
+          class="v-tab"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item"
-          >
-            Comments
-          </a>
+          Comments
         </div>
         <!---->
       </div>
     </div>
-    <transition-stub
-      name="fade-transition"
-    />
+    <div
+      class="v-slide-group__next v-slide-group__next--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
   </div>
   <div
-    class="v-window"
+    class="v-window v-item-group theme--light v-tabs-items"
   >
     <div
       class="v-window__container"
     >
       <transition-stub
-        name="v-window-x-transition"
+        name=""
       >
         <div
-          class="v-window-item"
-          style="display: none;"
+          class="v-window-item v-window-item--active"
         >
           <div
-            class="layout py-3 row"
+            class="layout py-3"
           >
             <div
               class="flex xs12 sm10 offset-sm1"
@@ -470,41 +452,16 @@ exports[`pbehaviors-list-expand-item Renders \`pbehaviors-list-expand-item\` wit
         </div>
       </transition-stub>
       <transition-stub
-        name="v-window-x-transition"
+        name=""
       >
-        <div
-          class="v-window-item"
-          style=""
-        >
-          <div
-            class="layout py-3 row"
-          >
-            <div
-              class="flex xs12 sm10 offset-sm1"
-            >
-              <div
-                class="v-card v-sheet theme--light"
-              >
-                <div
-                  class="v-card__text"
-                >
-                  <pbehavior-entities-stub
-                    pbehavior="[object Object]"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <!---->
       </transition-stub>
       <transition-stub
-        name="v-window-x-transition"
+        name=""
       >
-        <div
-          class="v-window-item"
-          style="display: none;"
-        />
+        <!---->
       </transition-stub>
+      <!---->
     </div>
   </div>
 </div>
@@ -512,85 +469,89 @@ exports[`pbehaviors-list-expand-item Renders \`pbehaviors-list-expand-item\` wit
 
 exports[`pbehaviors-list-expand-item Renders \`pbehaviors-list-expand-item\` with opened recurrence rule tab 1`] = `
 <div
-  class="v-tabs"
+  class="v-tabs v-tabs--centered theme--dark"
 >
   <div
-    class="v-tabs__bar theme--dark secondary lighten-1"
+    class="v-item-group theme--dark v-slide-group v-tabs-bar v-tabs-bar--is-mobile white--text secondary lighten-1"
+    role="tablist"
   >
-    <transition-stub
-      name="fade-transition"
-    />
     <div
-      class="v-tabs__wrapper"
+      class="v-slide-group__prev v-slide-group__prev--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+    <div
+      class="v-slide-group__wrapper"
     >
       <div
-        class="v-tabs__container v-tabs__container--centered"
+        class="v-slide-group__content v-tabs-bar__content"
       >
         <div
-          class="v-tabs__slider-wrapper"
+          class="v-tabs-slider-wrapper"
           style="transition: none;"
         >
           <div
-            class="v-tabs__slider primary"
+            class="v-tabs-slider primary"
           />
         </div>
         <div
-          class="v-tabs__div"
+          aria-selected="true"
+          class="v-tab v-tab--active"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item"
-          >
-            Patterns
-          </a>
+          Patterns
         </div>
         <div
-          class="v-tabs__div"
+          aria-selected="false"
+          class="v-tab"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item"
-          >
-            Entities
-          </a>
+          Entities
         </div>
         <div
-          class="v-tabs__div"
+          aria-selected="false"
+          class="v-tab"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item"
-          >
-            Comments
-          </a>
+          Comments
         </div>
         <div
-          class="v-tabs__div"
+          aria-selected="false"
+          class="v-tab"
+          role="tab"
+          tabindex="0"
         >
-          <a
-            class="v-tabs__item v-tabs__item--active"
-          >
-            Recurrence
-          </a>
+    Recurrence
         </div>
       </div>
     </div>
-    <transition-stub
-      name="fade-transition"
-    />
+    <div
+      class="v-slide-group__next v-slide-group__next--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
   </div>
   <div
-    class="v-window"
+    class="v-window v-item-group theme--light v-tabs-items"
   >
     <div
       class="v-window__container"
     >
       <transition-stub
-        name="v-window-x-transition"
+        name=""
       >
         <div
-          class="v-window-item"
-          style="display: none;"
+          class="v-window-item v-window-item--active"
         >
           <div
-            class="layout py-3 row"
+            class="layout py-3"
           >
             <div
               class="flex xs12 sm10 offset-sm1"
@@ -612,48 +573,19 @@ exports[`pbehaviors-list-expand-item Renders \`pbehaviors-list-expand-item\` wit
         </div>
       </transition-stub>
       <transition-stub
-        name="v-window-x-transition"
+        name=""
       >
-        <div
-          class="v-window-item"
-          style="display: none;"
-        />
+        <!---->
       </transition-stub>
       <transition-stub
-        name="v-window-x-transition"
+        name=""
       >
-        <div
-          class="v-window-item"
-          style="display: none;"
-        />
+        <!---->
       </transition-stub>
       <transition-stub
-        name="v-window-x-transition"
+        name=""
       >
-        <div
-          class="v-window-item"
-          style=""
-        >
-          <div
-            class="layout py-3 row"
-          >
-            <div
-              class="flex xs12 sm10 offset-sm1"
-            >
-              <div
-                class="v-card v-sheet theme--light"
-              >
-                <div
-                  class="v-card__text"
-                >
-                  <pbehavior-recurrence-rule-stub
-                    pbehavior="[object Object]"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <!---->
       </transition-stub>
     </div>
   </div>

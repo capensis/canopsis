@@ -1,16 +1,16 @@
-<template lang="pug">
-  v-select(
-    v-field="reason",
-    v-validate="rules",
-    :label="$t('common.reason')",
-    :loading="pending",
-    :items="items",
-    :error-messages="errors.collect(name)",
-    :name="name",
-    :return-object="returnObject",
-    item-text="name",
+<template>
+  <v-select
+    v-field="reason"
+    v-validate="rules"
+    :label="$t('common.reason')"
+    :loading="pending"
+    :items="items"
+    :error-messages="errors.collect(name)"
+    :name="name"
+    :return-object="returnObject"
+    item-text="name"
     item-value="_id"
-  )
+  />
 </template>
 
 <script>

@@ -146,7 +146,7 @@ describe('confirmation', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `confirmation` with text, title and actions', () => {
@@ -161,7 +161,7 @@ describe('confirmation', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `confirmation` with hidden title', () => {
@@ -176,6 +176,6 @@ describe('confirmation', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

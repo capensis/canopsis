@@ -1,20 +1,31 @@
-<template lang="pug">
-  v-layout(column)
-    c-alert(:value="!links.length && !errors.has('links')", type="info") {{ $t('linkRule.linksEmpty') }}
-    link-rule-link-form.mb-3(
-      v-for="(link, index) in links",
-      v-field="links[index]",
-      :key="link.key",
-      :name="link.key",
-      :type="type",
+<template>
+  <v-layout column>
+    <c-alert
+      :value="!links.length && !errors.has('links')"
+      type="info"
+    >
+      {{ $t('linkRule.linksEmpty') }}
+    </c-alert>
+    <link-rule-link-form
+      class="mb-3"
+      v-for="(link, index) in links"
+      v-field="links[index]"
+      :key="link.key"
+      :name="link.key"
+      :type="type"
       @remove="removeItemFromArray(index)"
-    )
-    v-flex
-      v-btn.ml-0.my-0(
-        color="primary",
-        outline,
+    />
+    <v-flex>
+      <v-btn
+        class="ml-0 my-0"
+        color="primary"
+        outlined
         @click="addItem"
-      ) {{ $t('linkRule.addLink') }}
+      >
+        {{ $t('linkRule.addLink') }}
+      </v-btn>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

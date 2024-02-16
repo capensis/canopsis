@@ -1,10 +1,16 @@
-<template lang="pug">
-  c-draggable-list-field.views-panel.secondary.lighten-1(
-    v-field="views",
-    :class="{ empty: isViewsEmpty }",
+<template>
+  <c-draggable-list-field
+    class="views-panel secondary lighten-1"
+    v-field="views"
+    :class="{ empty: isViewsEmpty }"
     :group="draggableGroup"
-  )
-    group-view-panel(v-for="view in views", :key="view._id", :view="view")
+  >
+    <group-view-panel
+      v-for="view in views"
+      :key="view._id"
+      :view="view"
+    />
+  </c-draggable-list-field>
 </template>
 
 <script>

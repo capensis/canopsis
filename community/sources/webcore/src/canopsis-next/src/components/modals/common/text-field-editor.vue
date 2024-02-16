@@ -1,26 +1,36 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ config.title }}
-      template(#text="")
-        v-text-field(
-          v-model="text",
-          v-validate="field.validationRules",
-          v-bind="fieldProps",
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ config.title }}</span>
+      </template>
+      <template #text="">
+        <v-text-field
+          v-model="text"
+          v-validate="field.validationRules"
+          v-bind="fieldProps"
           :error-messages="errors.collect(field.name)"
-        )
-      template(#actions="")
-        v-btn(
-          depressed,
-          flat,
+        />
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
           @click="$modals.hide"
-        ) {{ $t('common.cancel') }}
-        v-btn.primary(
-          type="submit",
-          :disabled="isDisabled",
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          class="primary"
+          type="submit"
+          :disabled="isDisabled"
           :loading="submitting"
-        ) {{ $t('common.submit') }}
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>

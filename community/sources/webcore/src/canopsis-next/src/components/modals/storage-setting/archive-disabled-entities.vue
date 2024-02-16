@@ -1,35 +1,52 @@
-<template lang="pug">
-  modal-wrapper(close)
-    template(#title="")
-      span {{ $t('storageSetting.entity.archiveDisabled') }}
-    template(#text="")
-      v-layout(column)
-        p.subheading.pre-wrap {{ $t('modals.archiveDisabledEntities.text') }}
-        v-checkbox(
-          v-field="form.with_dependencies",
-          :label="$t('storageSetting.entity.archiveDependencies')",
+<template>
+  <modal-wrapper close>
+    <template #title="">
+      <span>{{ $t('storageSetting.entity.archiveDisabled') }}</span>
+    </template>
+    <template #text="">
+      <v-layout column="column">
+        <p class="text-subtitle-1 pre-wrap">
+          {{ $t('modals.archiveDisabledEntities.text') }}
+        </p>
+        <v-checkbox
+          v-field="form.with_dependencies"
+          :label="$t('storageSetting.entity.archiveDependencies')"
           color="primary"
-        )
-          template(#append="")
-            c-help-icon(
-              :text="$t('storageSetting.entity.archiveDependenciesHelp')",
-              color="info",
-              max-width="300",
-              top
-            )
-    template(#actions="")
-      v-layout(wrap, justify-center)
-        v-btn(
-          depressed,
-          flat,
+        >
+          <template #append="">
+            <c-help-icon
+              :text="$t('storageSetting.entity.archiveDependenciesHelp')"
+              color="info"
+              max-width="300"
+              top="top"
+            />
+          </template>
+        </v-checkbox>
+      </v-layout>
+    </template>
+    <template #actions="">
+      <v-layout
+        wrap
+        justify-center
+      >
+        <v-btn
+          depressed
+          text
           @click="$modals.hide"
-        ) {{ $t('common.cancel') }}
-        v-btn(
-          :loading="submitting",
-          :disabled="isDisabled",
-          color="primary",
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :loading="submitting"
+          :disabled="isDisabled"
+          color="primary"
           @click.prevent="submit"
-        ) {{ $t('common.archive') }}
+        >
+          {{ $t('common.archive') }}
+        </v-btn>
+      </v-layout>
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>

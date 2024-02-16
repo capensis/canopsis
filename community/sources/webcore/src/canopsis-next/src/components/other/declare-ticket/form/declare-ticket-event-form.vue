@@ -1,19 +1,25 @@
-<template lang="pug">
-  v-layout(column)
-    declare-ticket-event-alarms-tickets-field(
-      v-field="form.alarms_by_tickets",
-      :alarms="alarms",
-      :tickets-by-alarms="ticketsByAlarms",
-      :hide-tickets="hideTickets",
+<template>
+  <v-layout column>
+    <declare-ticket-event-alarms-tickets-field
+      v-field="form.alarms_by_tickets"
+      :alarms="alarms"
+      :tickets-by-alarms="ticketsByAlarms"
+      :hide-tickets="hideTickets"
       :hide-row-select="hideRowSelect"
-    )
-    v-checkbox(
-      v-if="!hideTicketResource",
-      v-field="form.ticket_resources",
-      :label="$t('declareTicket.ticketResources')",
+    />
+    <v-checkbox
+      v-if="!hideTicketResource"
+      v-field="form.ticket_resources"
+      :label="$t('declareTicket.ticketResources')"
       color="primary"
-    )
-    c-description-field.mt-3(v-field="form.comment", :label="$tc('common.comment')", name="comment")
+    />
+    <c-description-field
+      class="mt-3"
+      v-field="form.comment"
+      :label="$tc('common.comment')"
+      name="comment"
+    />
+  </v-layout>
 </template>
 
 <script>

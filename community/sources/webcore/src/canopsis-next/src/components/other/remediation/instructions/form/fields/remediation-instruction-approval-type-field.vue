@@ -1,20 +1,22 @@
-<template lang="pug">
-  v-radio-group.mt-0.row(
-    v-field="type",
-    hide-details,
-    mandatory,
+<template>
+  <v-radio-group
+    class="mt-0 row"
+    v-field="type"
+    hide-details
+    mandatory
     row
-  )
-    v-radio(
-      :label="$tc('common.role')",
-      :value="$constants.REMEDIATION_INSTRUCTION_APPROVAL_TYPES.role",
+  >
+    <v-radio
+      :label="$tc('common.role')"
+      :value="$constants.REMEDIATION_INSTRUCTION_APPROVAL_TYPES.role"
       color="primary"
-    )
-    v-radio(
-      :label="$tc('common.user')",
-      :value="$constants.REMEDIATION_INSTRUCTION_APPROVAL_TYPES.user",
+    />
+    <v-radio
+      :label="$tc('common.user')"
+      :value="$constants.REMEDIATION_INSTRUCTION_APPROVAL_TYPES.user"
       color="primary"
-    )
+    />
+  </v-radio-group>
 </template>
 
 <script>

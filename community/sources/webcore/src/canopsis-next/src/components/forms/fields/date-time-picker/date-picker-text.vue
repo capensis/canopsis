@@ -1,12 +1,12 @@
-<template lang="pug">
-  v-text-field(
-    :class="contentClass",
-    :value="value | date(format)",
-    :label="label",
-    :hide-details="hideDetails",
-    disabled,
+<template>
+  <v-text-field
+    :class="contentClass"
+    :value="value | date(format)"
+    :label="label"
+    :hide-details="hideDetails"
+    disabled
     readonly
-  )
+  />
 </template>
 
 <script>

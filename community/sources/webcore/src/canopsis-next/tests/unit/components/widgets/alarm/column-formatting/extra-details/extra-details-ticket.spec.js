@@ -1,5 +1,3 @@
-import flushPromises from 'flush-promises';
-
 import { generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
 import { EVENT_ENTITY_TYPES } from '@/constants';
@@ -30,31 +28,30 @@ describe('extra-details-ticket', () => {
   ];
 
   const snapshotFactory = generateRenderer(ExtraDetailsTicket, {
-
     attachTo: document.body,
   });
 
   it('Renders `extra-details-ticket` with full tickets', async () => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: {
         tickets,
       },
     });
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 
   it('Renders `extra-details-ticket` with full tickets and without failed last ticket', async () => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: {
         tickets: [...tickets].reverse(),
       },
     });
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 });

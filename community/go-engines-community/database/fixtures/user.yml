@@ -1379,7 +1379,7 @@ permission:
     <<: *permission
     _id: api_maintenance
     name: <Current()._id>
-    description: Maintenance
+    description: Trigger maintenance mode
   permission_api_color_theme:
     <<: *permission_crud
     _id: api_color_theme
@@ -1625,6 +1625,7 @@ role:
       "@permission_api_declare_ticket_execution": 1
       "@permission_api_link_rule": 15
       "@permission_api_alarm_tag": 15
+      "@permission_api_color_theme": 15
       "@permission_api_maintenance": 1
       # Views permissions
       "@permission_view_open_alarms": 15

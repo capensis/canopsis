@@ -1,9 +1,26 @@
-<template lang="pug">
-  v-layout(row)
-    v-flex.mt-2(xs4) {{ label }}
-    v-flex(xs4)
-      c-number-field.ma-1.pa-0(v-if="isNumberType", v-field="value", :name="name")
-      c-percents-field.ma-1.pa-0(v-else, v-field="value", :name="name")
+<template>
+  <v-layout>
+    <v-flex
+      class="mt-2"
+      xs4
+    >
+      {{ label }}
+    </v-flex>
+    <v-flex xs4>
+      <c-number-field
+        class="ma-1 pa-0"
+        v-if="isNumberType"
+        v-field="value"
+        :name="name"
+      />
+      <c-percents-field
+        class="ma-1 pa-0"
+        v-else
+        v-field="value"
+        :name="name"
+      />
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

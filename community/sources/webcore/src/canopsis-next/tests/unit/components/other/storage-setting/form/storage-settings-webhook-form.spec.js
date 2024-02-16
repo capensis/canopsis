@@ -57,7 +57,7 @@ describe('storage-settings-webhook-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `storage-settings-webhook-form` with custom form and history', () => {
@@ -68,6 +68,6 @@ describe('storage-settings-webhook-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

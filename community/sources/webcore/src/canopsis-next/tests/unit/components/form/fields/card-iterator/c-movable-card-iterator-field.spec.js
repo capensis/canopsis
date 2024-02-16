@@ -114,7 +114,7 @@ describe('c-movable-card-iterator-field', () => {
   test('Renders `c-movable-card-iterator-field` with default props', async () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `c-movable-card-iterator-field` with custom props', async () => {
@@ -129,7 +129,7 @@ describe('c-movable-card-iterator-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `c-movable-card-iterator-field` with slots props', async () => {
@@ -157,6 +157,6 @@ describe('c-movable-card-iterator-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

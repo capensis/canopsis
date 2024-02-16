@@ -41,8 +41,8 @@ describe('service-weather', () => {
     category: undefined,
     filter: undefined,
     lockedFilter: null,
-    sortDir: null,
-    sortKey: null,
+    sortDesc: [],
+    sortBy: [],
     limit: DEFAULT_WEATHER_LIMIT,
     hide_grey: false,
   };
@@ -419,9 +419,9 @@ describe('service-weather', () => {
       },
     });
 
-    await flushPromises();
+    await wrapper.activateAllMenus();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchTooltipSnapshot();
   });
 
@@ -456,9 +456,9 @@ describe('service-weather', () => {
       ]),
     });
 
-    await flushPromises();
+    await wrapper.activateAllMenus();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchTooltipSnapshot();
   });
 
@@ -486,9 +486,9 @@ describe('service-weather', () => {
       ]),
     });
 
-    await flushPromises();
+    await wrapper.activateAllMenus();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchTooltipSnapshot();
   });
 });

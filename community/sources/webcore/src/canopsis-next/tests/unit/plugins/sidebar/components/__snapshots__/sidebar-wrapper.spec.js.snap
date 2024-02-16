@@ -2,51 +2,54 @@
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with default slot 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 450px;"
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
 >
-  <div>
-    <nav
-      class="v-toolbar theme--light secondary"
-      style="margin-top: 0px; padding-right: 0px; padding-left: 0px; transform: translateY(0px);"
-    >
+  <div
+    class="v-navigation-drawer__content"
+  >
+    <div>
       <div
-        class="v-toolbar__content"
-        style="height: 64px;"
+        class="v-list v-sheet theme--light secondary"
+        role="list"
       >
         <div
-          class="layout row align-center"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="flex white--text subheading"
+            class="v-list-item__title white--text text-subtitle-1"
           >
-            Alarm list settings
+          Alarm list settings
           </div>
           <button
-            class="v-btn v-btn--icon theme--light"
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
           >
-            <div
+            <span
               class="v-btn__content"
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light white--text"
+                class="v-icon notranslate material-icons theme--light white--text"
               >
                 close
               </i>
-            </div>
+            </span>
           </button>
         </div>
       </div>
-    </nav>
-    <hr
-      class="v-divider theme--light"
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
+    </div>
+    <div
+      class="default-slot"
     />
   </div>
-  <div
-    class="default-slot"
-  />
   <div
     class="v-navigation-drawer__border"
   />
@@ -55,47 +58,50 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with default slot 1`] = `
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: alarm-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 450px;"
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
 >
-  <div>
-    <nav
-      class="v-toolbar theme--light secondary"
-      style="margin-top: 0px; padding-right: 0px; padding-left: 0px; transform: translateY(0px);"
-    >
+  <div
+    class="v-navigation-drawer__content"
+  >
+    <div>
       <div
-        class="v-toolbar__content"
-        style="height: 64px;"
+        class="v-list v-sheet theme--light secondary"
+        role="list"
       >
         <div
-          class="layout row align-center"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="flex white--text subheading"
+            class="v-list-item__title white--text text-subtitle-1"
           >
-            Alarm list settings
+          Alarm list settings
           </div>
           <button
-            class="v-btn v-btn--icon theme--light"
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
           >
-            <div
+            <span
               class="v-btn__content"
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light white--text"
+                class="v-icon notranslate material-icons theme--light white--text"
               >
                 close
               </i>
-            </div>
+            </span>
           </button>
         </div>
       </div>
-    </nav>
-    <hr
-      class="v-divider theme--light"
-    />
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
+    </div>
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -105,47 +111,50 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: alarm-settings 1
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: alarm-statistics-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 450px;"
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
 >
-  <div>
-    <nav
-      class="v-toolbar theme--light secondary"
-      style="margin-top: 0px; padding-right: 0px; padding-left: 0px; transform: translateY(0px);"
-    >
+  <div
+    class="v-navigation-drawer__content"
+  >
+    <div>
       <div
-        class="v-toolbar__content"
-        style="height: 64px;"
+        class="v-list v-sheet theme--light secondary"
+        role="list"
       >
         <div
-          class="layout row align-center"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="flex white--text subheading"
+            class="v-list-item__title white--text text-subtitle-1"
           >
-            Alarm statistics settings
+          Alarm statistics settings
           </div>
           <button
-            class="v-btn v-btn--icon theme--light"
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
           >
-            <div
+            <span
               class="v-btn__content"
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light white--text"
+                class="v-icon notranslate material-icons theme--light white--text"
               >
                 close
               </i>
-            </div>
+            </span>
           </button>
         </div>
       </div>
-    </nav>
-    <hr
-      class="v-divider theme--light"
-    />
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
+    </div>
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -155,47 +164,50 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: alarm-statistics
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: bar-chart-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 450px;"
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
 >
-  <div>
-    <nav
-      class="v-toolbar theme--light secondary"
-      style="margin-top: 0px; padding-right: 0px; padding-left: 0px; transform: translateY(0px);"
-    >
+  <div
+    class="v-navigation-drawer__content"
+  >
+    <div>
       <div
-        class="v-toolbar__content"
-        style="height: 64px;"
+        class="v-list v-sheet theme--light secondary"
+        role="list"
       >
         <div
-          class="layout row align-center"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="flex white--text subheading"
+            class="v-list-item__title white--text text-subtitle-1"
           >
-            Bar chart settings
+          Bar chart settings
           </div>
           <button
-            class="v-btn v-btn--icon theme--light"
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
           >
-            <div
+            <span
               class="v-btn__content"
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light white--text"
+                class="v-icon notranslate material-icons theme--light white--text"
               >
                 close
               </i>
-            </div>
+            </span>
           </button>
         </div>
       </div>
-    </nav>
-    <hr
-      class="v-divider theme--light"
-    />
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
+    </div>
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -205,47 +217,50 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: bar-chart-settin
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: context-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 450px;"
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
 >
-  <div>
-    <nav
-      class="v-toolbar theme--light secondary"
-      style="margin-top: 0px; padding-right: 0px; padding-left: 0px; transform: translateY(0px);"
-    >
+  <div
+    class="v-navigation-drawer__content"
+  >
+    <div>
       <div
-        class="v-toolbar__content"
-        style="height: 64px;"
+        class="v-list v-sheet theme--light secondary"
+        role="list"
       >
         <div
-          class="layout row align-center"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="flex white--text subheading"
+            class="v-list-item__title white--text text-subtitle-1"
           >
-            Context table settings
+          Context table settings
           </div>
           <button
-            class="v-btn v-btn--icon theme--light"
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
           >
-            <div
+            <span
               class="v-btn__content"
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light white--text"
+                class="v-icon notranslate material-icons theme--light white--text"
               >
                 close
               </i>
-            </div>
+            </span>
           </button>
         </div>
       </div>
-    </nav>
-    <hr
-      class="v-divider theme--light"
-    />
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
+    </div>
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -255,47 +270,50 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: context-settings
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: counter-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 450px;"
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
 >
-  <div>
-    <nav
-      class="v-toolbar theme--light secondary"
-      style="margin-top: 0px; padding-right: 0px; padding-left: 0px; transform: translateY(0px);"
-    >
+  <div
+    class="v-navigation-drawer__content"
+  >
+    <div>
       <div
-        class="v-toolbar__content"
-        style="height: 64px;"
+        class="v-list v-sheet theme--light secondary"
+        role="list"
       >
         <div
-          class="layout row align-center"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="flex white--text subheading"
+            class="v-list-item__title white--text text-subtitle-1"
           >
-            Counter settings
+          Counter settings
           </div>
           <button
-            class="v-btn v-btn--icon theme--light"
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
           >
-            <div
+            <span
               class="v-btn__content"
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light white--text"
+                class="v-icon notranslate material-icons theme--light white--text"
               >
                 close
               </i>
-            </div>
+            </span>
           </button>
         </div>
       </div>
-    </nav>
-    <hr
-      class="v-divider theme--light"
-    />
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
+    </div>
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -305,47 +323,50 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: counter-settings
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: line-chart-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 450px;"
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
 >
-  <div>
-    <nav
-      class="v-toolbar theme--light secondary"
-      style="margin-top: 0px; padding-right: 0px; padding-left: 0px; transform: translateY(0px);"
-    >
+  <div
+    class="v-navigation-drawer__content"
+  >
+    <div>
       <div
-        class="v-toolbar__content"
-        style="height: 64px;"
+        class="v-list v-sheet theme--light secondary"
+        role="list"
       >
         <div
-          class="layout row align-center"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="flex white--text subheading"
+            class="v-list-item__title white--text text-subtitle-1"
           >
-            Line chart settings
+          Line chart settings
           </div>
           <button
-            class="v-btn v-btn--icon theme--light"
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
           >
-            <div
+            <span
               class="v-btn__content"
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light white--text"
+                class="v-icon notranslate material-icons theme--light white--text"
               >
                 close
               </i>
-            </div>
+            </span>
           </button>
         </div>
       </div>
-    </nav>
-    <hr
-      class="v-divider theme--light"
-    />
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
+    </div>
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -355,47 +376,50 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: line-chart-setti
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: map-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 450px;"
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
 >
-  <div>
-    <nav
-      class="v-toolbar theme--light secondary"
-      style="margin-top: 0px; padding-right: 0px; padding-left: 0px; transform: translateY(0px);"
-    >
+  <div
+    class="v-navigation-drawer__content"
+  >
+    <div>
       <div
-        class="v-toolbar__content"
-        style="height: 64px;"
+        class="v-list v-sheet theme--light secondary"
+        role="list"
       >
         <div
-          class="layout row align-center"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="flex white--text subheading"
+            class="v-list-item__title white--text text-subtitle-1"
           >
-            Mapping widget settings
+          Mapping widget settings
           </div>
           <button
-            class="v-btn v-btn--icon theme--light"
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
           >
-            <div
+            <span
               class="v-btn__content"
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light white--text"
+                class="v-icon notranslate material-icons theme--light white--text"
               >
                 close
               </i>
-            </div>
+            </span>
           </button>
         </div>
       </div>
-    </nav>
-    <hr
-      class="v-divider theme--light"
-    />
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
+    </div>
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -405,47 +429,50 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: map-settings 1`]
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: numbers-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 450px;"
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
 >
-  <div>
-    <nav
-      class="v-toolbar theme--light secondary"
-      style="margin-top: 0px; padding-right: 0px; padding-left: 0px; transform: translateY(0px);"
-    >
+  <div
+    class="v-navigation-drawer__content"
+  >
+    <div>
       <div
-        class="v-toolbar__content"
-        style="height: 64px;"
+        class="v-list v-sheet theme--light secondary"
+        role="list"
       >
         <div
-          class="layout row align-center"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="flex white--text subheading"
+            class="v-list-item__title white--text text-subtitle-1"
           >
-            Numbers settings
+          Numbers settings
           </div>
           <button
-            class="v-btn v-btn--icon theme--light"
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
           >
-            <div
+            <span
               class="v-btn__content"
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light white--text"
+                class="v-icon notranslate material-icons theme--light white--text"
               >
                 close
               </i>
-            </div>
+            </span>
           </button>
         </div>
       </div>
-    </nav>
-    <hr
-      class="v-divider theme--light"
-    />
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
+    </div>
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -455,47 +482,50 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: numbers-settings
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: pie-chart-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 450px;"
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
 >
-  <div>
-    <nav
-      class="v-toolbar theme--light secondary"
-      style="margin-top: 0px; padding-right: 0px; padding-left: 0px; transform: translateY(0px);"
-    >
+  <div
+    class="v-navigation-drawer__content"
+  >
+    <div>
       <div
-        class="v-toolbar__content"
-        style="height: 64px;"
+        class="v-list v-sheet theme--light secondary"
+        role="list"
       >
         <div
-          class="layout row align-center"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="flex white--text subheading"
+            class="v-list-item__title white--text text-subtitle-1"
           >
-            Pie chart settings
+          Pie chart settings
           </div>
           <button
-            class="v-btn v-btn--icon theme--light"
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
           >
-            <div
+            <span
               class="v-btn__content"
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light white--text"
+                class="v-icon notranslate material-icons theme--light white--text"
               >
                 close
               </i>
-            </div>
+            </span>
           </button>
         </div>
       </div>
-    </nav>
-    <hr
-      class="v-divider theme--light"
-    />
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
+    </div>
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -505,47 +535,50 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: pie-chart-settin
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: service-weather-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 450px;"
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
 >
-  <div>
-    <nav
-      class="v-toolbar theme--light secondary"
-      style="margin-top: 0px; padding-right: 0px; padding-left: 0px; transform: translateY(0px);"
-    >
+  <div
+    class="v-navigation-drawer__content"
+  >
+    <div>
       <div
-        class="v-toolbar__content"
-        style="height: 64px;"
+        class="v-list v-sheet theme--light secondary"
+        role="list"
       >
         <div
-          class="layout row align-center"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="flex white--text subheading"
+            class="v-list-item__title white--text text-subtitle-1"
           >
-            Service weather settings
+          Service weather settings
           </div>
           <button
-            class="v-btn v-btn--icon theme--light"
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
           >
-            <div
+            <span
               class="v-btn__content"
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light white--text"
+                class="v-icon notranslate material-icons theme--light white--text"
               >
                 close
               </i>
-            </div>
+            </span>
           </button>
         </div>
       </div>
-    </nav>
-    <hr
-      class="v-divider theme--light"
-    />
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
+    </div>
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -555,47 +588,50 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: service-weather-
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: stats-calendar-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 450px;"
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
 >
-  <div>
-    <nav
-      class="v-toolbar theme--light secondary"
-      style="margin-top: 0px; padding-right: 0px; padding-left: 0px; transform: translateY(0px);"
-    >
+  <div
+    class="v-navigation-drawer__content"
+  >
+    <div>
       <div
-        class="v-toolbar__content"
-        style="height: 64px;"
+        class="v-list v-sheet theme--light secondary"
+        role="list"
       >
         <div
-          class="layout row align-center"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="flex white--text subheading"
+            class="v-list-item__title white--text text-subtitle-1"
           >
-            Stats calendar settings
+          Stats calendar settings
           </div>
           <button
-            class="v-btn v-btn--icon theme--light"
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
           >
-            <div
+            <span
               class="v-btn__content"
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light white--text"
+                class="v-icon notranslate material-icons theme--light white--text"
               >
                 close
               </i>
-            </div>
+            </span>
           </button>
         </div>
       </div>
-    </nav>
-    <hr
-      class="v-divider theme--light"
-    />
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
+    </div>
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -605,47 +641,50 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: stats-calendar-s
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: testing-weather-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 450px;"
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
 >
-  <div>
-    <nav
-      class="v-toolbar theme--light secondary"
-      style="margin-top: 0px; padding-right: 0px; padding-left: 0px; transform: translateY(0px);"
-    >
+  <div
+    class="v-navigation-drawer__content"
+  >
+    <div>
       <div
-        class="v-toolbar__content"
-        style="height: 64px;"
+        class="v-list v-sheet theme--light secondary"
+        role="list"
       >
         <div
-          class="layout row align-center"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="flex white--text subheading"
+            class="v-list-item__title white--text text-subtitle-1"
           >
-            Testing weather
+          Testing weather
           </div>
           <button
-            class="v-btn v-btn--icon theme--light"
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
           >
-            <div
+            <span
               class="v-btn__content"
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light white--text"
+                class="v-icon notranslate material-icons theme--light white--text"
               >
                 close
               </i>
-            </div>
+            </span>
           </button>
         </div>
       </div>
-    </nav>
-    <hr
-      class="v-divider theme--light"
-    />
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
+    </div>
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -655,47 +694,50 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: testing-weather-
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: text-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 450px;"
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
 >
-  <div>
-    <nav
-      class="v-toolbar theme--light secondary"
-      style="margin-top: 0px; padding-right: 0px; padding-left: 0px; transform: translateY(0px);"
-    >
+  <div
+    class="v-navigation-drawer__content"
+  >
+    <div>
       <div
-        class="v-toolbar__content"
-        style="height: 64px;"
+        class="v-list v-sheet theme--light secondary"
+        role="list"
       >
         <div
-          class="layout row align-center"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="flex white--text subheading"
+            class="v-list-item__title white--text text-subtitle-1"
           >
-            Text settings
+          Text settings
           </div>
           <button
-            class="v-btn v-btn--icon theme--light"
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
           >
-            <div
+            <span
               class="v-btn__content"
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light white--text"
+                class="v-icon notranslate material-icons theme--light white--text"
               >
                 close
               </i>
-            </div>
+            </span>
           </button>
         </div>
       </div>
-    </nav>
-    <hr
-      class="v-divider theme--light"
-    />
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
+    </div>
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -705,47 +747,50 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: text-settings 1`
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: user-statistics-settings 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 450px;"
+  class="v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(0%); width: 450px;"
 >
-  <div>
-    <nav
-      class="v-toolbar theme--light secondary"
-      style="margin-top: 0px; padding-right: 0px; padding-left: 0px; transform: translateY(0px);"
-    >
+  <div
+    class="v-navigation-drawer__content"
+  >
+    <div>
       <div
-        class="v-toolbar__content"
-        style="height: 64px;"
+        class="v-list v-sheet theme--light secondary"
+        role="list"
       >
         <div
-          class="layout row align-center"
+          class="v-list-item theme--light"
+          role="listitem"
+          tabindex="-1"
         >
           <div
-            class="flex white--text subheading"
+            class="v-list-item__title white--text text-subtitle-1"
           >
-            User statistics settings
+          User statistics settings
           </div>
           <button
-            class="v-btn v-btn--icon theme--light"
+            class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
             type="button"
           >
-            <div
+            <span
               class="v-btn__content"
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light white--text"
+                class="v-icon notranslate material-icons theme--light white--text"
               >
                 close
               </i>
-            </div>
+            </span>
           </button>
         </div>
       </div>
-    </nav>
-    <hr
-      class="v-divider theme--light"
-    />
+      <hr
+        aria-orientation="horizontal"
+        class="v-divider theme--light"
+        role="separator"
+      />
+    </div>
   </div>
   <div
     class="v-navigation-drawer__border"
@@ -755,13 +800,17 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: user-statistics-
 
 exports[`sidebar-wrapper Renders \`sidebar-wrapper\` without sidebar name 1`] = `
 <aside
-  class="v-navigation-drawer v-navigation-drawer--close v-navigation-drawer--fixed v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
-  style="height: 100%; margin-top: 0px; transform: translateX(450px); width: 450px;"
+  class="v-navigation-drawer v-navigation-drawer--close v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--right v-navigation-drawer--temporary theme--light"
+  style="height: 100%; top: 0px; transform: translateX(100%); width: 450px;"
 >
-  <!---->
   <div
-    class="default-slot"
-  />
+    class="v-navigation-drawer__content"
+  >
+    <!---->
+    <div
+      class="default-slot"
+    />
+  </div>
   <div
     class="v-navigation-drawer__border"
   />

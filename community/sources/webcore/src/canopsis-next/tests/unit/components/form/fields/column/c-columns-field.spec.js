@@ -94,7 +94,7 @@ describe('c-columns-field', () => {
   test('Renders `c-columns-field` with default props', async () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `c-columns-field` with custom props', async () => {
@@ -111,6 +111,6 @@ describe('c-columns-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

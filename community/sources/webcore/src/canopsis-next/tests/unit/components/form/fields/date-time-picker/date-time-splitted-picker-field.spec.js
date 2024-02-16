@@ -62,7 +62,7 @@ describe('date-time-splitted-picker-field', () => {
   test('Renders `date-time-splitted-picker-field` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `date-time-splitted-picker-field` with custom props', () => {
@@ -79,7 +79,7 @@ describe('date-time-splitted-picker-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `date-time-splitted-picker-field` with errors', async () => {
@@ -99,6 +99,6 @@ describe('date-time-splitted-picker-field', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

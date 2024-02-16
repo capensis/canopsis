@@ -1,35 +1,46 @@
-<template lang="pug">
-  v-list.pa-0(dense)
-    v-list-tile(
-      v-for="variable in variables",
-      :key="variable.value",
-      :value="isActiveVariable(variable)",
-      @click="selectVariable(variable)",
+<template>
+  <v-list
+    class="pa-0"
+    dense
+  >
+    <v-list-item
+      v-for="variable in variables"
+      :key="variable.value"
+      :value="isActiveVariable(variable)"
+      @click="selectVariable(variable)"
       @mouseenter="handleMouseEnter(variable, $event)"
-    )
-      v-list-tile-content
-        v-list-tile-title
-          v-layout(row, justify-space-between)
-            | {{ variable.text }}
-            span.ml-4.grey--text.lighten-1(v-if="showValue") {{ variable.value }}
-
-      v-list-tile-action(v-if="variable.variables")
-        v-icon arrow_right
-    v-menu(
-      v-if="subVariablesShown",
-      :value="subVariablesShown",
-      :position-x="subVariablesPosition.x",
-      :position-y="subVariablesPosition.y",
-      :z-index="zIndex",
-      offset-x,
+    >
+      <v-list-item-content>
+        <v-list-item-title>
+          <v-layout justify-space-between>
+            {{ variable.text }}<span
+              class="ml-4 grey--text lighten-1"
+              v-if="showValue"
+            >{{ variable.value }}</span>
+          </v-layout>
+        </v-list-item-title>
+      </v-list-item-content>
+      <v-list-item-action v-if="variable.variables">
+        <v-icon>arrow_right</v-icon>
+      </v-list-item-action>
+    </v-list-item>
+    <v-menu
+      v-if="subVariablesShown"
+      :value="subVariablesShown"
+      :position-x="subVariablesPosition.x"
+      :position-y="subVariablesPosition.y"
+      :z-index="zIndex"
+      offset-x
       right
-    )
-      variables-list(
-        :variables="parentVariable.variables",
-        :value="subVariableValue",
-        :z-index="zIndex + 1",
+    >
+      <variables-list
+        :variables="parentVariable.variables"
+        :value="subVariableValue"
+        :z-index="zIndex + 1"
         @input="selectSubVariable(parentVariable, $event)"
-      )
+      />
+    </v-menu>
+  </v-list>
 </template>
 
 <script>

@@ -7,13 +7,17 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
     value="Map widget"
   />
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
   <field-periodic-refresh-stub
     form="[object Object]"
   />
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
   <!---->
   <alarms-list-modal-form-stub
@@ -21,20 +25,26 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
     templates=""
   />
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
   <field-number-stub
     title="Limit"
     value="12"
   />
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
   <field-color-indicator-stub
     value="state"
   />
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
   <field-columns-stub
     columns="[object Object],[object Object]"
@@ -45,7 +55,9 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
     withcolorindicator="true"
   />
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
   <widget-settings-group-stub
     title="Advanced settings"
@@ -55,47 +67,57 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
       value="[object Object]"
     />
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <field-default-elements-per-page-stub
       subtitle="(Modal)"
       value="11"
     />
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <field-text-editor-with-template-stub
       defaultvalue=""
       template="Symbol(custom)"
       templates=""
       title="Template - Weather item"
-      value=<div>block-template</div>
+      value="<div>block-template</div>"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <field-text-editor-with-template-stub
       defaultvalue=""
       template="Symbol(custom)"
       templates=""
       title="Template - Modal"
-      value=<div>modal-template</div>
+      value="<div>modal-template</div>"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <field-text-editor-with-template-stub
       defaultvalue=""
       template="Symbol(custom)"
       templates=""
       title="Template - Entities"
-      value=<div>entity-template</div>
+      value="<div>entity-template</div>"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <field-grid-size-stub
       mobile="true"
@@ -103,7 +125,9 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
       value="1"
     />
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <field-grid-size-stub
       tablet="true"
@@ -111,14 +135,18 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
       value="2"
     />
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <field-grid-size-stub
       title="Columns - Desktop"
       value="3"
     />
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <margins-form-stub
       form="[object Object]"
@@ -126,7 +154,9 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
       min="0"
     />
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <field-slider-stub
       max="20"
@@ -135,42 +165,62 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
       value="22"
     />
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <field-counters-selector-stub
       title="Counters"
       value="[object Object]"
     />
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <field-switcher-stub
       title="Show priority"
       value="true"
     />
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <field-switcher-stub
       title="Show hide gray"
       value="true"
     />
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <field-modal-type-stub
       name="modalType"
       value="both"
     />
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <field-action-required-settings-stub
       value="[object Object]"
     />
+    <hr
+      aria-orientation="horizontal"
+      class="v-divider theme--light"
+      role="separator"
+    />
+    <field-switcher-stub
+      title="Stack entities actions and apply simultaneously"
+    />
   </widget-settings-group-stub>
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
 </widget-settings-stub>
 `;
@@ -182,13 +232,17 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
     value=""
   />
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
   <field-periodic-refresh-stub
     form="[object Object]"
   />
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
   <!---->
   <alarms-list-modal-form-stub
@@ -196,20 +250,26 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
     templates=""
   />
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
   <field-number-stub
     title="Limit"
     value="120"
   />
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
   <field-color-indicator-stub
     value="state"
   />
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
   <field-columns-stub
     columns="[object Object],[object Object]"
@@ -220,7 +280,9 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
     withcolorindicator="true"
   />
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
   <widget-settings-group-stub
     title="Advanced settings"
@@ -230,28 +292,34 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
       value="[object Object]"
     />
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <field-default-elements-per-page-stub
       subtitle="(Modal)"
       value="10"
     />
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <field-text-editor-with-template-stub
       defaultvalue=""
       template="Symbol(custom)"
       templates=""
       title="Template - Weather item"
-      value=<p><strong><span style="font-size: 18px;">{{entity.name}}</span></strong></p>
-<hr id="null">
+      value="<p><strong><span style=\\"font-size: 18px;\\">{{entity.name}}</span></strong></p>
+<hr id=\\"null\\">
 <p>{{ entity.output }}</p>
-<p> Dernière mise à jour : {{ timestamp entity.last_update_date }}</p>
+<p> Dernière mise à jour : {{ timestamp entity.last_update_date }}</p>"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <field-text-editor-with-template-stub
       defaultvalue=""
@@ -262,20 +330,24 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <field-text-editor-with-template-stub
       defaultvalue=""
       template="Symbol(custom)"
       templates=""
       title="Template - Entities"
-      value=<ul>
-  <li><strong>Libellé</strong> : {{entity.name}}</li>
-</ul>
+      value="<ul>
+    <li><strong>Libellé</strong> : {{entity.name}}</li>
+</ul>"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <field-grid-size-stub
       mobile="true"
@@ -283,7 +355,9 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
       value="2"
     />
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <field-grid-size-stub
       tablet="true"
@@ -291,14 +365,18 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
       value="3"
     />
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <field-grid-size-stub
       title="Columns - Desktop"
       value="4"
     />
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <margins-form-stub
       form="[object Object]"
@@ -306,7 +384,9 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
       min="0"
     />
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <field-slider-stub
       max="20"
@@ -315,42 +395,62 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
       value="6"
     />
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <field-counters-selector-stub
       title="Counters"
       value="[object Object]"
     />
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <field-switcher-stub
       title="Show priority"
       value="true"
     />
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <field-switcher-stub
       title="Show hide gray"
       value="true"
     />
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <field-modal-type-stub
       name="modalType"
       value="both"
     />
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
     <field-action-required-settings-stub
       value="[object Object]"
     />
+    <hr
+      aria-orientation="horizontal"
+      class="v-divider theme--light"
+      role="separator"
+    />
+    <field-switcher-stub
+      title="Stack entities actions and apply simultaneously"
+    />
   </widget-settings-group-stub>
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
 </widget-settings-stub>
 `;
