@@ -122,17 +122,11 @@ export const getGroupedPermissions = (permissions) => {
     return acc;
   }, {
     business: {
-      [USER_PERMISSIONS_PREFIXES.business.common]: [],
-      [USER_PERMISSIONS_PREFIXES.business.alarmsList]: [],
-      [USER_PERMISSIONS_PREFIXES.business.context]: [],
-      [USER_PERMISSIONS_PREFIXES.business.serviceWeather]: [],
-      [USER_PERMISSIONS_PREFIXES.business.counter]: [],
-      [USER_PERMISSIONS_PREFIXES.business.testingWeather]: [],
-      [USER_PERMISSIONS_PREFIXES.business.map]: [],
-      [USER_PERMISSIONS_PREFIXES.business.barChart]: [],
-      [USER_PERMISSIONS_PREFIXES.business.lineChart]: [],
-      [USER_PERMISSIONS_PREFIXES.business.pieChart]: [],
-      [USER_PERMISSIONS_PREFIXES.business.numbers]: [],
+      ...Object.values(USER_PERMISSIONS_PREFIXES.business).reduce((acc, key) => {
+        acc[key] = [];
+
+        return acc;
+      }, {}),
     },
     view: [],
     playlist: [],

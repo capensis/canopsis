@@ -225,6 +225,8 @@ export default {
 
 <style lang="scss" scoped>
 .service-weather-item {
+  overflow: hidden;
+
   &__content > * {
     margin-right: 2px;
 

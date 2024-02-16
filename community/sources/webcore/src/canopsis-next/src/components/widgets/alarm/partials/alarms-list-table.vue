@@ -25,7 +25,7 @@
         v-flex.alarms-list-table__top-pagination--center-absolute(v-if="!hidePagination", xs4)
           c-pagination(
             :page="pagination.page",
-            :limit="pagination.limit",
+            :limit="pagination.rowsPerPage",
             :total="totalItems",
             type="top",
             @input="updateQueryPage"
@@ -87,8 +87,9 @@
             :key="props.item._id",
             :selectable="selectable",
             :expandable="expandable",
-            :row="props",
             :widget="widget",
+            :expanded="props.expanded",
+            :alarm="props.item",
             :headers="headers",
             :parent-alarm="parentAlarm",
             :refresh-alarms-list="refreshAlarmsList",
@@ -101,7 +102,8 @@
             :wrap-actions="resizableColumn",
             :show-instruction-icon="hasInstructionsAlarms",
             @start:resize="startColumnResize",
-            @select:tag="$emit('select:tag', $event)"
+            @select:tag="$emit('select:tag', $event)",
+            @expand="props.expanded = $event"
           )
         template(#expand="{ item, index }")
           alarms-expand-panel(
@@ -115,7 +117,7 @@
     c-table-pagination(
       v-if="!hidePagination",
       :total-items="totalItems",
-      :rows-per-page="pagination.limit",
+      :rows-per-page="pagination.rowsPerPage",
       :page="pagination.page",
       @update:page="updateQueryPage",
       @update:rows-per-page="updateRecordsPerPage"
@@ -526,6 +528,14 @@ export default {
 
 <style lang="scss">
 .alarms-list-table {
+  .theme--light & {
+    --alarms-list-table-border-color: rgba(0, 0, 0, 0.12);
+  }
+
+  .theme--dark & {
+    --alarms-list-table-border-color: rgba(255, 255, 255, 0.12);
+  }
+
   &__top-pagination {
     position: relative;
     min-height: 48px;
@@ -682,8 +692,17 @@ export default {
   }
 
   &--truncated {
+    .color-indicator {
+      max-width: 100%;
+    }
+
+    .alarms-column-cell__layout .alarm-column-cell__text {
+      display: grid;
+    }
+
     .alarm-list-row__cell {
-      .alarm-column-cell__text > span {
+      .alarm-column-cell__text > span,
+      .alarm-column-value {
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
@@ -694,6 +713,20 @@ export default {
 
   tbody {
     position: relative;
+
+    tr:not(.v-datatable__expand-row):not(:first-child) {
+      border-top: unset !important;
+
+      td:first-child:after {
+        content: ' ';
+        position: absolute;
+        background: var(--alarms-list-table-border-color);
+        height: 1px;
+        right: 0;
+        top: 0;
+        left: 0;
+      }
+    }
   }
 
   thead {
@@ -702,10 +735,27 @@ export default {
     transition-property: opacity, background-color;
     z-index: 1;
 
+    tr:first-child {
+      border-bottom: unset !important;
+
+      &:after {
+        content: ' ';
+        position: absolute;
+        background: var(--alarms-list-table-border-color);
+        height: 1px;
+        right: 0;
+        bottom: 0;
+        left: 0;
+      }
+    }
+
     &.head-shadow {
       tr:first-child {
-        border-bottom: none !important;
         box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.12) !important;
+
+        &:after {
+          content: unset;
+        }
       }
     }
 

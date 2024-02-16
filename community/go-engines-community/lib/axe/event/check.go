@@ -288,6 +288,7 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 	inc := bson.M{
 		"v.events_count": 1,
 	}
+	unset := bson.M{}
 	author := ""
 	if entity.Type != types.EntityTypeService {
 		author = strings.Replace(entity.Connector, "/", ".", 1)
@@ -305,7 +306,7 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 	}
 
 	var stateStep types.AlarmStep
-	if newState != previousState && (alarm.Value.State.Type != types.AlarmStepChangeState || newState == types.AlarmStateOK) {
+	if newState != previousState && (!alarm.IsStateLocked() || newState == types.AlarmStateOK) {
 		stateStep = types.NewAlarmStep(types.AlarmStepStateIncrease, params.Timestamp, author,
 			params.Output, params.User, params.Role, params.Initiator)
 		stateStep.Value = newState
@@ -323,6 +324,11 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 		set["v.state"] = stateStep
 		set["v.last_update_date"] = params.Timestamp
 		inc["v.total_state_changes"] = 1
+
+		if alarm.IsStateLocked() {
+			alarm.Value.ChangeState = nil
+			unset["v.change_state"] = ""
+		}
 	}
 
 	newStatus := p.alarmStatusService.ComputeStatus(alarm, entity)
@@ -362,6 +368,7 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 		"$push":     push,
 		"$inc":      inc,
 		"$addToSet": addToSet,
+		"$unset":    unset,
 	}, options.FindOneAndUpdate().SetReturnDocument(options.After)).Decode(&newAlarm)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {

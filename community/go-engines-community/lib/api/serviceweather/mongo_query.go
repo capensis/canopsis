@@ -571,13 +571,14 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 				}}},
 			}},
 		}},
-		{"$graphLookup": bson.M{
-			"from":             mongo.EntityMongoCollection,
-			"startWith":        "$_id",
-			"connectFromField": "_id",
-			"connectToField":   "services",
-			"as":               "depends",
-			"maxDepth":         0,
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "_id",
+			"foreignField": "services",
+			"as":           "depends",
+			"pipeline": []bson.M{
+				{"$project": bson.M{"_id": 1}},
+			},
 		}},
 		{"$addFields": bson.M{
 			"counters.depends": bson.M{"$size": "$depends"},
@@ -604,6 +605,13 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 								{"$ne": bson.A{"$pbehavior_info.canonical_type", pbehaviorlib.TypeActive}},
 							}},
 							"then": "$pbehavior_info.icon_name",
+						},
+						{
+							"case": bson.M{"$and": []bson.M{
+								{"$gt": bson.A{"$counters.under_pbh", 0}},
+								{"$eq": bson.A{"$counters.under_pbh", "$counters.depends"}},
+							}},
+							"then": "",
 						},
 					},
 					stateVals...,
@@ -744,13 +752,14 @@ func getListDependenciesComputedFields() bson.M {
 
 func getDependsCountPipeline() []bson.M {
 	return []bson.M{
-		{"$graphLookup": bson.M{
-			"from":             mongo.EntityMongoCollection,
-			"startWith":        "$_id",
-			"connectFromField": "_id",
-			"connectToField":   "services",
-			"as":               "depends",
-			"maxDepth":         0,
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "_id",
+			"foreignField": "services",
+			"as":           "depends",
+			"pipeline": []bson.M{
+				{"$project": bson.M{"_id": 1}},
+			},
 		}},
 		{"$addFields": bson.M{
 			"depends_count": bson.M{"$size": "$depends"},

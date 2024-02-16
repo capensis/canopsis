@@ -12,13 +12,12 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-const workers = 10
-
 func NewConcurrentConsumer(
 	name, queue string,
 	consumePrefetchCount, consumePrefetchSize int,
 	purgeQueue bool,
 	nextExchange, nextQueue, fifoExchange, fifoQueue string,
+	workers int,
 	connection libamqp.Connection,
 	processor MessageProcessor,
 	logger zerolog.Logger,
@@ -33,6 +32,7 @@ func NewConcurrentConsumer(
 		nextQueue:            nextQueue,
 		fifoExchange:         fifoExchange,
 		fifoQueue:            fifoQueue,
+		workers:              workers,
 		connection:           connection,
 		processor:            processor,
 		logger:               logger,
@@ -55,6 +55,8 @@ type concurrentConsumer struct {
 	// or if nextQueue is not defined.
 	fifoQueue    string
 	fifoExchange string
+	// amount of workers which process events
+	workers int
 	// connection is AMQP connection.
 	connection libamqp.Connection
 	logger     zerolog.Logger
@@ -83,7 +85,7 @@ func (c *concurrentConsumer) Consume(ctx context.Context) error {
 	}()
 
 	g, ctx := errgroup.WithContext(ctx)
-	for i := 0; i < workers; i++ {
+	for i := 0; i < c.workers; i++ {
 		g.Go(func() (resErr error) {
 			defer func() {
 				if r := recover(); r != nil {

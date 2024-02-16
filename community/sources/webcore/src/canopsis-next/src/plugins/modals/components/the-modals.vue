@@ -49,30 +49,36 @@ $minimizedDialogMaxWidth: 360px;
     align-content: flex-start;
     z-index: 300;
 
-    & ::v-deep .v-dialog__content {
-      &--minimized {
-        margin: 8px 8px 0 8px;
-        position: relative;
-        height: auto;
-        max-width: $minimizedDialogMaxWidth;
-        pointer-events: all;
-        z-index: inherit !important;
+    & ::v-deep {
+      .v-menu__content {
+        pointer-events: auto;
+      }
 
-        .v-dialog {
-          margin: 0;
-          box-shadow: none;
-          transition: none;
+      .v-dialog__content {
+        &--minimized {
+          margin: 8px 8px 0 8px;
+          position: relative;
+          height: auto;
+          max-width: $minimizedDialogMaxWidth;
+          pointer-events: all;
+          z-index: inherit !important;
 
-          .v-card {
-            &.fill-min-height {
-              min-height: auto;
-            }
+          .v-dialog {
+            margin: 0;
+            box-shadow: none;
+            transition: none;
 
-            &__title {
-              padding: 0 10px;
+            .v-card {
+              &.fill-min-height {
+                min-height: auto;
+              }
 
-              .headline {
-                font-size: 16px !important;
+              &__title {
+                padding: 0 10px;
+
+                .headline {
+                  font-size: 16px !important;
+                }
               }
             }
           }

@@ -51,7 +51,7 @@
                   :template="widget.parameters.moreInfoTemplate",
                   @select:tag="$emit('select:tag', $event)"
                 )
-      v-tab-item(:value="$constants.ALARMS_EXPAND_PANEL_TABS.timeLine")
+      v-tab-item(:value="$constants.ALARMS_EXPAND_PANEL_TABS.timeLine", lazy)
         v-layout.pa-3(row)
           v-flex(:class="cardFlexClass")
             v-card.tab-item-card
@@ -66,7 +66,7 @@
                   :is-html-enabled="isHtmlEnabled",
                   @update:page="updateStepsQueryPage"
                 )
-      v-tab-item(v-if="hasTickets", :value="$constants.ALARMS_EXPAND_PANEL_TABS.ticketsDeclared")
+      v-tab-item(v-if="hasTickets", :value="$constants.ALARMS_EXPAND_PANEL_TABS.ticketsDeclared", lazy)
         v-layout.pa-3(row)
           v-flex(:class="cardFlexClass")
             v-card.tab-item-card
@@ -82,7 +82,7 @@
                   :entity="alarm.entity",
                   :available-metrics="filteredPerfData"
                 )
-      v-tab-item(:value="$constants.ALARMS_EXPAND_PANEL_TABS.pbehavior")
+      v-tab-item(:value="$constants.ALARMS_EXPAND_PANEL_TABS.pbehavior", lazy)
         v-layout.pa-3.secondary.lighten-2(row)
           v-flex(:class="cardFlexClass")
             v-card.tab-item-card
@@ -92,7 +92,7 @@
                   :removable="hasDeleteAnyPbehaviorAccess",
                   :updatable="hasUpdateAnyPbehaviorAccess"
                 )
-      v-tab-item(v-if="hasChildren", :value="$constants.ALARMS_EXPAND_PANEL_TABS.alarmsChildren")
+      v-tab-item(v-if="hasChildren", :value="$constants.ALARMS_EXPAND_PANEL_TABS.alarmsChildren", lazy)
         v-layout.pa-3.secondary.lighten-2(row)
           v-flex(:class="cardFlexClass")
             v-card.tab-item-card
@@ -105,7 +105,7 @@
                   :query.sync="childrenQuery",
                   :refresh-alarms-list="fetchList"
                 )
-      v-tab-item(v-if="hasServiceDependencies", :value="$constants.ALARMS_EXPAND_PANEL_TABS.trackSource")
+      v-tab-item(v-if="hasServiceDependencies", :value="$constants.ALARMS_EXPAND_PANEL_TABS.trackSource", lazy)
         v-layout.pa-3.secondary.lighten-2(row)
           v-flex(:class="cardFlexClass")
             v-card.tab-item-card
@@ -116,7 +116,7 @@
                   include-root,
                   openable-root
                 )
-      v-tab-item(v-if="hasImpactsDependencies", :value="$constants.ALARMS_EXPAND_PANEL_TABS.impactChain")
+      v-tab-item(v-if="hasImpactsDependencies", :value="$constants.ALARMS_EXPAND_PANEL_TABS.impactChain", lazy)
         v-layout.pa-3.secondary.lighten-2(row)
           v-flex(:class="cardFlexClass")
             v-card.tab-item-card

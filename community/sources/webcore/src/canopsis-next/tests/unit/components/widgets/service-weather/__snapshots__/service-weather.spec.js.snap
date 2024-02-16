@@ -148,10 +148,7 @@ exports[`service-weather Renders \`service-weather\` with full access 1`] = `
           withentity="true"
           withserviceweather="true"
         />
-        <c-enabled-field-stub
-          class="ml-3"
-          label="Hide gray"
-        />
+        <!---->
       </div>
     </div>
   </div>

@@ -31,6 +31,7 @@ type SectionAlarm struct {
 	AllowDoubleAck           bool   `toml:"AllowDoubleAck"`
 	// ActivateAlarmAfterAutoRemediation if is set then alarm will be activated only after auto remediation execution
 	ActivateAlarmAfterAutoRemediation bool `toml:"ActivateAlarmAfterAutoRemediation"`
+	EnableArraySortingInEntityInfos   bool `toml:"EnableArraySortingInEntityInfos"`
 }
 
 // SectionGlobal ...

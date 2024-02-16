@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    v-tooltip.c-extra-details(top)
+    v-tooltip.c-extra-details(top, lazy)
       template(#activator="{ on }")
         span.c-extra-details__badge.brown.darken-1(v-on="on")
           v-icon(color="white", small) {{ icon }}

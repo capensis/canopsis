@@ -73,14 +73,12 @@ describe('alarms-list-row', () => {
   it('Alarm selected after trigger checkbox', () => {
     const wrapper = snapshotFactory({
       propsData: {
-        row: {
-          item: {
-            v: {
-              status: {},
-            },
+        alarm: {
+          v: {
+            status: {},
           },
-          expanded: false,
         },
+        expanded: false,
         widget: {},
         headers: [],
         selectable: true,
@@ -109,14 +107,12 @@ describe('alarms-list-row', () => {
 
     const wrapper = snapshotFactory({
       propsData: {
-        row: {
-          item: {
-            v: {
-              status: {},
-            },
+        alarm: {
+          v: {
+            status: {},
           },
-          expanded: false,
         },
+        expanded: false,
         widget: {},
         headers: [],
       },
@@ -144,17 +140,15 @@ describe('alarms-list-row', () => {
         status: {},
       },
     };
-    const row = {
-      item: alarm,
-      expanded: false,
-    };
+    const newExpanded = false;
     const wrapper = factory({
       store: createMockedStoreModules([
         alarmModule,
         queryModule,
       ]),
       propsData: {
-        row,
+        alarm,
+        expanded: false,
         widget: {},
         headers: [{}, {}],
         expandable: true,
@@ -164,11 +158,11 @@ describe('alarms-list-row', () => {
 
     const expandButton = selectExpandButton(wrapper);
 
-    expandButton.vm.$emit('input', true);
+    expandButton.vm.$emit('input', newExpanded);
 
     await flushPromises();
 
-    expect(row.expanded).toBe(true);
+    expect(wrapper).toEmit('expand', newExpanded);
   });
 
   it('Row closed after trigger expand button with expanded: true', async () => {
@@ -178,13 +172,11 @@ describe('alarms-list-row', () => {
         status: {},
       },
     };
-    const row = {
-      item: alarm,
-      expanded: true,
-    };
+    const newExpanded = false;
     const wrapper = factory({
       propsData: {
-        row,
+        alarm,
+        expand: true,
         widget: {},
         headers: [{}, {}],
         expandable: true,
@@ -193,25 +185,23 @@ describe('alarms-list-row', () => {
 
     const expandButton = selectExpandButton(wrapper);
 
-    expandButton.vm.$emit('input', false);
+    expandButton.vm.$emit('input', newExpanded);
 
     await flushPromises();
 
-    expect(row.expanded).toBe(false);
+    expect(wrapper).toEmit('expand', newExpanded);
   });
 
   it('Renders `alarms-list-row` with default and required props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         widget: {},
-        row: {
-          item: {
-            v: {
-              status: {},
-            },
+        alarm: {
+          v: {
+            status: {},
           },
-          expanded: false,
         },
+        expanded: false,
         headers: [{ value: 'value1' }, { value: 'value2' }, { value: 'actions' }],
       },
     });
@@ -225,14 +215,12 @@ describe('alarms-list-row', () => {
         selected: true,
         selectable: true,
         expandable: true,
-        row: {
-          item: {
-            v: {
-              status: {},
-            },
+        alarm: {
+          v: {
+            status: {},
           },
-          expanded: false,
         },
+        expanded: false,
         widget: {},
         headers: [{ value: 'value1' }, { value: 'value2' }, { value: 'actions' }],
         columnsFilters: [{}, {}],
@@ -248,16 +236,14 @@ describe('alarms-list-row', () => {
       propsData: {
         selected: true,
         selectable: true,
-        row: {
-          item: {
-            v: {
-              status: {
-                val: 0,
-              },
+        alarm: {
+          v: {
+            status: {
+              val: 0,
             },
           },
-          expanded: false,
         },
+        expanded: false,
         widget: {},
         headers: [{ value: 'actions' }],
       },
@@ -271,14 +257,12 @@ describe('alarms-list-row', () => {
       propsData: {
         selected: true,
         expandable: true,
-        row: {
-          item: {
-            v: {
-              status: {},
-            },
+        alarm: {
+          v: {
+            status: {},
           },
-          expanded: false,
         },
+        expanded: false,
         widget: {},
         headers: [{ value: 'actions' }],
       },
@@ -290,15 +274,13 @@ describe('alarms-list-row', () => {
   it('Renders `alarms-list-row` with instructions', () => {
     const wrapper = snapshotFactory({
       propsData: {
-        row: {
-          item: {
-            assigned_instructions: [{}],
-            v: {
-              status: {},
-            },
+        alarm: {
+          assigned_instructions: [{}],
+          v: {
+            status: {},
           },
-          expanded: false,
         },
+        expanded: false,
         widget: {},
         headers: [{ value: 'actions' }],
         parentAlarm: {
@@ -320,10 +302,8 @@ describe('alarms-list-row', () => {
     };
     const wrapper = snapshotFactory({
       propsData: {
-        row: {
-          item: alarm,
-          expanded: false,
-        },
+        alarm,
+        expanded: false,
         showInstructionIcon: true,
         widget: {},
         headers: [{ value: 'actions' }],
@@ -347,9 +327,7 @@ describe('alarms-list-row', () => {
     };
     const wrapper = snapshotFactory({
       propsData: {
-        row: {
-          item: alarm,
-        },
+        alarm,
         widget: {},
         headers: [{ value: 'actions' }],
       },
@@ -367,15 +345,13 @@ describe('alarms-list-row', () => {
 
     const wrapper = snapshotFactory({
       propsData: {
-        row: {
-          item: {
-            _id: 'alarm-id',
-            v: {
-              status: {},
-            },
+        alarm: {
+          _id: 'alarm-id',
+          v: {
+            status: {},
           },
-          expanded: false,
         },
+        expanded: false,
         widget: {},
         showInstructionIcon: true,
         headers: [{ value: 'actions' }],

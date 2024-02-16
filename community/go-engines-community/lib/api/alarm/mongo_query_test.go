@@ -60,15 +60,12 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 		},
 	})
 	expected := []bson.M{
+		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
 		{"$match": bson.M{"$and": []bson.M{{"v.meta": nil}}}},
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected, []bson.M{
-		{"$match": bson.M{
-			"entity.enabled":     true,
-			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
-			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
-		}},
+		{"$match": bson.M{"$and": []bson.M{{"entity.enabled": true}}}},
 		{"$project": bson.M{"entity": 0}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
@@ -154,6 +151,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		},
 	})
 	expected := []bson.M{
+		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
 			{"v.resource": bson.M{"$eq": "test-resource"}},
 		}}}}},
@@ -164,11 +162,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected, []bson.M{
-		{"$match": bson.M{
-			"entity.enabled":     true,
-			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
-			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
-		}},
+		{"$match": bson.M{"$and": []bson.M{{"entity.enabled": true}}}},
 		{"$project": bson.M{"entity": 0}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
@@ -259,6 +253,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	})
 	expected := []bson.M{
 		{"$addFields": bson.M{"v.duration": durationField}},
+		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
 			{"v.resource": bson.M{"$eq": "test-resource"}},
 			{"v.duration": bson.M{"$gt": 600}},
@@ -267,11 +262,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected, []bson.M{
-		{"$match": bson.M{
-			"entity.enabled":     true,
-			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
-			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
-		}},
+		{"$match": bson.M{"$and": []bson.M{{"entity.enabled": true}}}},
 		{"$project": bson.M{"entity": 0}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
@@ -353,22 +344,16 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	})
 	expected := []bson.M{
 		{"$addFields": bson.M{"v.infos_array": bson.M{"$objectToArray": "$v.infos"}}},
+		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
 			{"v.resource": bson.M{"$eq": "test-resource"}},
-			{"$and": []bson.M{
-				{"v.infos_array.v.info_name": bson.M{"$type": bson.A{"long", "int", "decimal"}}},
-				{"v.infos_array.v.info_name": bson.M{"$eq": 3}},
-			}},
+			{"v.infos_array.v.info_name": bson.M{"$eq": 3}},
 		}}}}},
 		{"$match": bson.M{"$and": []bson.M{{"v.meta": nil}}}},
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected, []bson.M{
-		{"$match": bson.M{
-			"entity.enabled":     true,
-			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
-			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
-		}},
+		{"$match": bson.M{"$and": []bson.M{{"entity.enabled": true}}}},
 		{"$project": bson.M{"entity": 0}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
@@ -464,6 +449,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		},
 	})
 	expected := []bson.M{
+		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
 			{"v.resource": bson.M{"$eq": "test-resource"}},
 		}}}}},
@@ -474,14 +460,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected,
-		bson.M{"$match": bson.M{
-			"entity.enabled":     true,
-			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
-			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
-		}},
 		bson.M{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
 			{"entity.category": bson.M{"$eq": "test-category"}},
 		}}}}},
+		bson.M{"$match": bson.M{"$and": []bson.M{{"entity.enabled": true}}}},
 		bson.M{"$project": bson.M{"entity": 0}},
 		bson.M{"$facet": bson.M{
 			"data":        expectedDataPipeline,
@@ -551,6 +533,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	})
 	expected := []bson.M{
 		{"$addFields": bson.M{"v.infos_array": bson.M{"$objectToArray": "$v.infos"}}},
+		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
 		{"$match": bson.M{"$and": []bson.M{
 			{"v.connector": "test-connector"},
 		}}},
@@ -558,11 +541,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected, []bson.M{
-		{"$match": bson.M{
-			"entity.enabled":     true,
-			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
-			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
-		}},
+		{"$match": bson.M{"$and": []bson.M{{"entity.enabled": true}}}},
 		{"$project": bson.M{"entity": 0}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
@@ -645,17 +624,13 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			"infos":         infosField,
 			"v.infos_array": bson.M{"$objectToArray": "$v.infos"},
 		}},
+		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
 		{"$match": bson.M{"$and": []bson.M{{"v.meta": nil}}}},
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected, getEntityCategoryLookup()...)
 	expected = append(expected, getPbehaviorLookup(authorProvider)...)
 	expected = append(expected,
-		bson.M{"$match": bson.M{
-			"entity.enabled":     true,
-			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
-			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
-		}},
 		bson.M{"$match": bson.M{"$and": []bson.M{
 			{"v.connector": "test-connector"},
 			{"v.duration": bson.M{"$gt": 600}},
@@ -663,6 +638,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			{"entity.category.name": "test-category"},
 			{"v.infos_array.v.info_name": 3},
 		}}},
+		bson.M{"$match": bson.M{"$and": []bson.M{{"entity.enabled": true}}}},
 		bson.M{"$project": bson.M{
 			"entity":          0,
 			"entity.category": 0,
@@ -729,16 +705,13 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithCategor
 		},
 	})
 	expected := []bson.M{
+		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
 		{"$match": bson.M{"$and": []bson.M{{"v.meta": nil}}}},
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected,
-		bson.M{"$match": bson.M{
-			"entity.enabled":     true,
-			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
-			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
-		}},
 		bson.M{"$match": bson.M{"$and": []bson.M{
+			{"entity.enabled": true},
 			{"entity.category": bson.M{"$eq": "test-category"}},
 		}}},
 		bson.M{"$project": bson.M{
@@ -879,27 +852,21 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 			"v.duration":    durationField,
 			"v.infos_array": bson.M{"$objectToArray": "$v.infos"},
 		}},
+		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
 		{"$match": bson.M{"$and": []bson.M{{"v.meta": nil}}}},
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected, getInstructionExecutionLookup(false)...)
 	expected = append(expected,
-		bson.M{"$match": bson.M{
-			"entity.enabled":     true,
-			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
-			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
-		}},
 		bson.M{"$match": bson.M{"$and": []bson.M{
+			{"entity.enabled": true},
 			{"$and": []bson.M{
 				{"instruction_execution.instruction": bson.M{"$nin": []string{instructionId}}},
 				{"$or": []bson.M{
 					{"$and": []bson.M{
 						{"$or": []bson.M{{"$and": []bson.M{
 							{"v.duration": bson.M{"$gt": 600}},
-							{"$and": []bson.M{
-								{"v.infos_array.v.info_name": bson.M{"$type": bson.A{"long", "int", "decimal"}}},
-								{"v.infos_array.v.info_name": bson.M{"$eq": 3}},
-							}},
+							{"v.infos_array.v.info_name": bson.M{"$eq": 3}},
 						}}}},
 						{"$or": []bson.M{{"$and": []bson.M{
 							{"entity.category": bson.M{"$eq": "test-category"}},
@@ -991,20 +958,17 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithEntityS
 	})
 	expected := []bson.M{
 		{"$addFields": bson.M{"v.infos_array": bson.M{"$objectToArray": "$v.infos"}}},
+		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
 		{"$match": bson.M{"$and": []bson.M{{"v.meta": nil}}}},
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected, getPbehaviorLookup(authorProvider)...)
 	expected = append(expected,
-		bson.M{"$match": bson.M{
-			"entity.enabled":     true,
-			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
-			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
-		}},
 		bson.M{"$match": bson.M{"$and": []bson.M{
 			{"pbehavior._id": "test-pbehavior"},
 			{"entity.name": "test-entity"},
 		}}},
+		bson.M{"$match": bson.M{"$and": []bson.M{{"entity.enabled": true}}}},
 		bson.M{"$project": bson.M{"pbehavior": 0}},
 	)
 	expected = append(expected, getEntityCategoryLookup()...)
@@ -1106,6 +1070,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 	})
 	expected := []bson.M{
 		{"$addFields": bson.M{"v.duration": durationField}},
+		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
 			{"v.duration": bson.M{"$gt": 600}},
 		}}}}},
@@ -1113,11 +1078,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected, []bson.M{
-		{"$match": bson.M{
-			"entity.enabled":     true,
-			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
-			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
-		}},
+		{"$match": bson.M{"$and": []bson.M{{"entity.enabled": true}}}},
 		{"$project": bson.M{"entity": 0}},
 		{"$addFields": bson.M{"v.active_duration": activeDurationField}},
 		{"$facet": bson.M{
@@ -1186,6 +1147,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 		},
 	})
 	expected := []bson.M{
+		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
 		{"$match": bson.M{"$and": []bson.M{
 			{"v.meta": nil},
 			{"$or": []bson.M{
@@ -1198,11 +1160,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected, []bson.M{
-		{"$match": bson.M{
-			"entity.enabled":     true,
-			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
-			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
-		}},
+		{"$match": bson.M{"$and": []bson.M{{"entity.enabled": true}}}},
 		{"$project": bson.M{"entity": 0}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
@@ -1287,6 +1245,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 		},
 	}, mongo.AlarmMongoCollection, bson.M{"v.resolved": nil}, false)
 	expected = append(expected,
+		bson.M{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
 		bson.M{"$match": bson.M{"$and": []bson.M{
 			{"v.resolved": nil},
 			{"$or": []bson.M{
@@ -1296,14 +1255,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 			}},
 		}}},
 	)
-	expected = append(expected, getEntityLookup()...)
 	expected = append(expected,
-		bson.M{"$match": bson.M{
-			"entity.enabled":     true,
-			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
-			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
-		}},
-		bson.M{"$project": bson.M{"entity": 0}},
 		bson.M{"$facet": bson.M{
 			"data":        expectedDataPipeline,
 			"total_count": []bson.M{{"$count": "count"}},
@@ -1387,6 +1339,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchB
 		},
 	}, mongo.AlarmMongoCollection, bson.M{"v.resolved": nil}, true)
 	expected = append(expected,
+		bson.M{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
 		bson.M{"$match": bson.M{"$and": []bson.M{
 			{"v.resolved": nil},
 			{"$or": []bson.M{
@@ -1396,14 +1349,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchB
 			}},
 		}}},
 	)
-	expected = append(expected, getEntityLookup()...)
 	expected = append(expected,
-		bson.M{"$match": bson.M{
-			"entity.enabled":     true,
-			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
-			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
-		}},
-		bson.M{"$project": bson.M{"entity": 0}},
 		bson.M{"$facet": bson.M{
 			"data":        expectedDataPipeline,
 			"total_count": []bson.M{{"$count": "count"}},
@@ -1465,6 +1411,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 		},
 	})
 	expected := []bson.M{
+		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
 		{"$match": bson.M{"$and": []bson.M{
 			{"v.meta": nil},
 			{"$and": []bson.M{
@@ -1475,11 +1422,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected, []bson.M{
-		{"$match": bson.M{
-			"entity.enabled":     true,
-			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
-			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
-		}},
+		{"$match": bson.M{"$and": []bson.M{{"entity.enabled": true}}}},
 		{"$project": bson.M{"entity": 0}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
@@ -1548,19 +1491,16 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 		{"$addFields": bson.M{
 			"v.duration": durationField,
 		}},
+		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
 		{"$match": bson.M{"$and": []bson.M{{"v.meta": nil}}}},
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected, []bson.M{
-		{"$match": bson.M{
-			"entity.enabled":     true,
-			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
-			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
-		}},
 		{"$match": bson.M{"$and": []bson.M{
 			{"entity.name": bson.M{"$regex": "test name"}},
 			{"v.duration": bson.M{"$gt": 100}},
 		}}},
+		{"$match": bson.M{"$and": []bson.M{{"entity.enabled": true}}}},
 		{"$project": bson.M{"entity": 0}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
@@ -1629,16 +1569,13 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 		{"$addFields": bson.M{
 			"infos": infosField,
 		}},
+		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
 		{"$match": bson.M{"$and": []bson.M{{"v.meta": nil}}}},
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected, []bson.M{
-		{"$match": bson.M{
-			"entity.enabled":     true,
-			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
-			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
-		}},
 		{"$match": bson.M{"entity.infos.test1.value": bson.M{"$regex": "test val"}}},
+		{"$match": bson.M{"$and": []bson.M{{"entity.enabled": true}}}},
 		{"$project": bson.M{"entity": 0}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,
@@ -1767,6 +1704,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 		},
 	})
 	expected := []bson.M{
+		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
 			{"v.resource": bson.M{"$eq": "test-resource"}},
 		}}}}},
@@ -1783,17 +1721,13 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected,
-		bson.M{"$match": bson.M{
-			"entity.enabled":     true,
-			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
-			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
-		}},
 		bson.M{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
 			{"entity.category": bson.M{"$eq": "test-category"}},
 		}}}}},
 		bson.M{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
 			{"entity.type": bson.M{"$eq": "resource"}},
 		}}}}},
+		bson.M{"$match": bson.M{"$and": []bson.M{{"entity.enabled": true}}}},
 		bson.M{"$project": bson.M{"entity": 0}},
 		bson.M{"$facet": bson.M{
 			"data":        expectedDataPipeline,
@@ -1864,10 +1798,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDepence
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(now, ""),
 	})
@@ -1881,6 +1815,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDepence
 		},
 	})
 	expected := []bson.M{
+		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
 			{"v.resource": bson.M{"$eq": "test-resource"}},
 		}}}}},
@@ -1891,11 +1826,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDepence
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected, []bson.M{
-		{"$match": bson.M{
-			"entity.enabled":     true,
-			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
-			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
-		}},
+		{"$match": bson.M{"$and": []bson.M{{"entity.enabled": true}}}},
 		{"$project": bson.M{"entity": 0}},
 		{"$facet": bson.M{
 			"data":        expectedDataPipeline,

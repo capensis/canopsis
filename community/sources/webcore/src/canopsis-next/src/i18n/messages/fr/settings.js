@@ -69,6 +69,7 @@ export default {
   exportAsCsv: 'Exporter les données du widget en csv',
   criticityLevels: 'Niveaux de criticité',
   isPriorityEnabled: 'Afficher la priorité',
+  isHideGrayEnabled: 'Afficher l\'option Cacher les tuiles grises',
   clearFilterDisabled: 'Désactiver la possibilité d\'effacer le filtre sélectionné',
   alarmsColumns: 'Colonnes de la liste des alarmes',
   resolvedAlarmsColumns: 'Noms de colonne pour les alarmes résolues',
@@ -293,4 +294,5 @@ export default {
   statisticsWidgetColumn: {
     split: 'Diviser les données par chemin de valeur',
   },
+  entitiesActionsInQueue: 'Empiler les actions des entités et les appliquer simultanément',
 };

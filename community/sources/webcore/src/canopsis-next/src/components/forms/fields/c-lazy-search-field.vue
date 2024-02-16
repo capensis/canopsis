@@ -10,9 +10,9 @@
     :item-text="getItemText",
     :item-value="itemValue",
     :item-disabled="itemDisabled",
-    :multiple="isMultiply",
-    :deletable-chips="isMultiply",
-    :small-chips="isMultiply",
+    :multiple="isMultiple",
+    :deletable-chips="isMultiple",
+    :small-chips="isMultiple",
     :error-messages="errors.collect(name)",
     :disabled="disabled",
     :menu-props="{ contentClass: 'c-lazy-search-field__list' }",
@@ -38,7 +38,7 @@
     template(#selection="{ item, index }")
       slot(name="selection", :item="item", :index="index")
         v-chip.c-lazy-search-field__chip(
-          v-if="isMultiply",
+          v-if="isMultiple",
           small,
           close,
           @input="removeItemFromArray(index)"
@@ -143,7 +143,7 @@ export default {
       };
     },
 
-    isMultiply() {
+    isMultiple() {
       return isArray(this.value);
     },
   },

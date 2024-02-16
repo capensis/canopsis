@@ -4,6 +4,7 @@ import {
   omit,
   map,
   uniq,
+  isArray,
 } from 'lodash';
 
 import { ALARMS_OPENED_VALUES, DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS, QUICK_RANGES, SORT_ORDERS } from '@/constants';
@@ -12,7 +13,7 @@ import { PAGINATION_LIMIT } from '@/config';
 import { isResolvedAlarm } from '@/helpers/entities/alarm/form';
 import { convertWidgetChartsToPerfDataQuery } from '@/helpers/entities/metric/query';
 import { convertMultiSortToRequest } from '@/helpers/entities/shared/query';
-import { getTemplateVariables } from '@/helpers/handlebars';
+import { getTemplateVariables } from '@/helpers/handlebars/variables';
 
 /**
  *  This function converts widget.parameters.opened to query Object
@@ -52,9 +53,14 @@ export const getAlarmVariablesByTemplate = template => getTemplateVariables(temp
  * @param {WidgetColumn[]} widgetColumns
  * @param {string} moreInfoTemplate
  * @param {WidgetInfoPopup[]} infoPopups
+ * @param {string[]} usedAlarmProperties
  * @returns {string[]}
  */
-export const convertAlarmWidgetParametersToActiveColumns = ({ widgetColumns, moreInfoTemplate, infoPopups }) => {
+export const convertAlarmWidgetParametersToActiveColumns = ({
+  widgetColumns,
+  moreInfoTemplate,
+  infoPopups,
+}) => {
   const activeColumns = [];
 
   widgetColumns.forEach(({ template, value }) => {
@@ -91,6 +97,7 @@ export function convertAlarmWidgetToQuery(widget) {
     sort,
     mainFilter,
     opened = ALARMS_OPENED_VALUES.opened,
+    usedAlarmProperties,
   } = widget.parameters;
 
   const query = {
@@ -113,7 +120,9 @@ export function convertAlarmWidgetToQuery(widget) {
     query.tstop = QUICK_RANGES.last30Days.stop;
   }
 
-  const activeColumns = convertAlarmWidgetParametersToActiveColumns(widget.parameters);
+  const activeColumns = isArray(usedAlarmProperties)
+    ? usedAlarmProperties
+    : convertAlarmWidgetParametersToActiveColumns(widget.parameters);
 
   if (activeColumns.length) {
     query.active_columns = activeColumns;

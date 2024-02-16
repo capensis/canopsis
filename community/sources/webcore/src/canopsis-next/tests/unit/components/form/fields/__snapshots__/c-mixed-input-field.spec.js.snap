@@ -197,6 +197,7 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with null type corr
 exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with null type correctly 3`] = `
 <c-array-text-field-stub
   class="c-mixed-input-field"
+  errormessages=""
   name="mixedFieldName"
   values="0,1,,false,"
 />

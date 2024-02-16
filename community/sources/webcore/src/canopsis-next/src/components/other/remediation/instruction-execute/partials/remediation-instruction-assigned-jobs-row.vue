@@ -164,6 +164,8 @@ export default {
 
           await this.fetchOutput({ id: this.job._id });
         } catch (err) {
+          console.error(err);
+
           this.$popups.error({ text: err.message || err.description || this.$t('errors.default') });
 
           console.warn(err);

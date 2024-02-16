@@ -20,7 +20,7 @@ exports[`c-entity-field Renders \`c-entity-field\` with array value 1`] = `
           class="v-label v-label--active theme--light primary--text"
           style="left: 0px; position: absolute;"
         >
-          Entity
+          Entities
         </label>
         <div
           class="v-select__selections"
@@ -98,7 +98,7 @@ exports[`c-entity-field Renders \`c-entity-field\` with array value 1`] = `
             </span>
           </span>
           <input
-            aria-label="Entity"
+            aria-label="Entities"
             autocomplete="off"
             name="entities"
             role="combobox"

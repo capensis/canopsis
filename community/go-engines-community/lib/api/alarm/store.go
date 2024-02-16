@@ -146,7 +146,9 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination, userId st
 }
 
 func (s *store) GetByID(ctx context.Context, id, userId string, onlyParents bool) (*Alarm, error) {
-	pipeline, err := s.getQueryBuilder().CreateGetAggregationPipeline(bson.M{"_id": id}, types.NewCpsTime(), userId, onlyParents)
+	now := types.NewCpsTime()
+	pipeline, err := s.getQueryBuilder().CreateGetAggregationPipeline(bson.M{"_id": id}, now, userId,
+		OpenedAndRecentResolved, onlyParents)
 	if err != nil {
 		return nil, err
 	}
@@ -199,10 +201,9 @@ func (s *store) GetOpenByEntityID(ctx context.Context, entityID, userId string) 
 		return nil, false, err
 	}
 
-	pipeline, err := s.getQueryBuilder().CreateGetAggregationPipeline(bson.M{
-		"d":          entityID,
-		"v.resolved": nil,
-	}, types.NewCpsTime(), userId, false)
+	now := types.NewCpsTime()
+	pipeline, err := s.getQueryBuilder().CreateGetAggregationPipeline(bson.M{"d": entityID}, now, userId,
+		OnlyOpened, false)
 	if err != nil {
 		return nil, false, err
 	}
@@ -251,14 +252,20 @@ func (s *store) FindByService(ctx context.Context, id string, r ListByServiceReq
 		}}
 	}
 
-	pipeline, err := s.getQueryBuilder().CreateAggregationPipelineByMatch(
-		ctx,
-		bson.M{"v.resolved": nil},
+	opened := true
+	pipeline, err := s.getQueryBuilder().CreateAggregationPipelineByMatch(ctx,
+		nil,
 		entityMatch,
-		r.Query, r.SortRequest, FilterRequest{BaseFilterRequest: BaseFilterRequest{
+		r.Query,
+		r.SortRequest,
+		FilterRequest{BaseFilterRequest: BaseFilterRequest{
+			Opened:   &opened,
 			Category: r.Category,
 			Search:   r.Search,
-		}}, now, userId)
+		}},
+		now,
+		userId,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -295,11 +302,18 @@ func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest, u
 		return nil, err
 	}
 
-	pipeline, err := s.getQueryBuilder().CreateAggregationPipelineByMatch(
-		ctx,
-		bson.M{"v.resolved": nil},
+	opened := true
+	pipeline, err := s.getQueryBuilder().CreateAggregationPipelineByMatch(ctx,
+		nil,
 		bson.M{"entity.component": component.ID},
-		r.Query, r.SortRequest, FilterRequest{}, now, userId)
+		r.Query,
+		r.SortRequest,
+		FilterRequest{BaseFilterRequest: BaseFilterRequest{
+			Opened: &opened,
+		}},
+		now,
+		userId,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -335,13 +349,20 @@ func (s *store) FindResolved(ctx context.Context, r ResolvedListRequest, userId 
 		return nil, err
 	}
 
-	match := bson.M{"d": r.ID}
 	opened := false
-	pipeline, err := s.getQueryBuilder().CreateAggregationPipelineByMatch(ctx, match, nil, r.Query, r.SortRequest, FilterRequest{BaseFilterRequest: BaseFilterRequest{
-		StartFrom: r.StartFrom,
-		StartTo:   r.StartTo,
-		Opened:    &opened,
-	}}, now, userId)
+	pipeline, err := s.getQueryBuilder().CreateAggregationPipelineByMatch(ctx,
+		bson.M{"d": r.ID},
+		nil,
+		r.Query,
+		r.SortRequest,
+		FilterRequest{BaseFilterRequest: BaseFilterRequest{
+			StartFrom: r.StartFrom,
+			StartTo:   r.StartTo,
+			Opened:    &opened,
+		}},
+		now,
+		userId,
+	)
 	if err != nil {
 		return nil, err
 	}

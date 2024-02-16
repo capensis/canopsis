@@ -1,5 +1,6 @@
 <template lang="pug">
   v-autocomplete(
+    v-bind="$attrs",
     v-field="value",
     v-validate="rules",
     :items="items",
@@ -22,9 +23,10 @@ const { mapActions } = createNamespacedHelpers('user');
 
 export default {
   inject: ['$validator'],
+  inheritAttrs: false,
   props: {
     value: {
-      type: [Object, String],
+      type: [Object, Array, String],
       required: false,
     },
     label: {

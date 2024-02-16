@@ -457,6 +457,8 @@ export default {
 
               this.closePopoverForEvent(event);
             } catch (err) {
+              console.error(err);
+
               this.$popups.error({ text: err.description || err.message || this.$t('errors.default') });
               this.closePopoverForEvent(event);
             }

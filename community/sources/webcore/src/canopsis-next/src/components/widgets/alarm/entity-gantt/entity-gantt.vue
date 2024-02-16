@@ -64,6 +64,8 @@ export default {
         this.ganttIntervals = data;
         this.meta = meta;
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: err.message || err.description || this.$t('errors.default') });
       } finally {
         this.pending = false;
