@@ -17,7 +17,7 @@ import (
 // Interface casbin.IEnforcer is not used because if cannot be mocked by mockgen.
 type Enforcer interface {
 	Enforce(rvals ...interface{}) (bool, error)
-	StartAutoLoadPolicy(context.Context)
+	StartAutoLoadPolicy(context.Context, time.Duration)
 	LoadPolicy() error
 	GetRolesForUser(name string, domain ...string) ([]string, error)
 	GetPermissionsForUser(user string, domain ...string) [][]string
@@ -28,14 +28,13 @@ type enforcer struct {
 	*casbin.SyncedEnforcer
 }
 
-func (e *enforcer) StartAutoLoadPolicy(ctx context.Context) {
-	e.SyncedEnforcer.StartAutoLoadPolicy(autoLoadInterval)
+func (e *enforcer) StartAutoLoadPolicy(ctx context.Context, interval time.Duration) {
+	e.SyncedEnforcer.StartAutoLoadPolicy(interval)
 	defer e.SyncedEnforcer.StopAutoLoadPolicy()
 	<-ctx.Done()
 }
 
 const modelFilePath = "/api/security/rbac_model.conf"
-const autoLoadInterval = 10 * time.Second
 
 // NewEnforcer creates new synced enforcer with mongo adapter.
 func NewEnforcer(configDir string, client mongo.DbClient) (Enforcer, error) {

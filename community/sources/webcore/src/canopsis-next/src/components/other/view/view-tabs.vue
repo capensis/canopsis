@@ -1,48 +1,89 @@
-<template lang="pug">
-  v-tabs.view-tabs(
-    ref="tabs",
-    :key="vTabsKey",
-    :value="$route.fullPath",
-    :class="{ hidden: tabs.length < 2 && !editing, 'tabs-editing': editing }",
-    :hide-slider="changed",
-    color="secondary lighten-2",
-    slider-color="primary",
+<template>
+  <v-tabs
+    class="view-tabs"
+    ref="tabs"
+    :key="vTabsKey"
+    :value="$route.fullPath"
+    :class="{ hidden: tabs.length &lt; 2 && !editing, 'tabs-editing': editing }"
+    :hide-slider="changed"
+    background-color="secondary lighten-2"
+    slider-color="primary"
     dark
-  )
-    c-draggable-list-field.d-flex(
-      v-if="tabs.length",
-      :value="tabs",
-      :disabled="!editing",
-      drag-class="draggable-item--dragging",
-      chosen-class="draggable-item--chosen",
-      @end="onDragEnd",
+  >
+    <c-draggable-list-field
+      class="d-flex"
+      v-if="tabs.length"
+      :value="tabs"
+      :disabled="!editing"
+      drag-class="draggable-item--dragging"
+      chosen-class="draggable-item--chosen"
+      @end="onDragEnd"
       @input="$emit('update:tabs', $event)"
-    )
-      v-tab.draggable-item(
-        v-for="tab in tabs",
-        :key="tab._id",
-        :disabled="changed",
-        :to="getTabHrefById(tab._id)",
-        exact,
+    >
+      <v-tab
+        class="draggable-item"
+        v-for="{ to, tab, title, key } in preparedTabs"
+        :key="key"
+        :to="to"
+        exact
         ripple
-      )
-        span {{ tab.title }}
-        template(v-if="updatable && editing")
-          v-btn(small, flat, icon, @click.prevent="showUpdateTabModal(tab)")
-            v-icon(small) edit
-          v-btn(small, flat, icon, @click.prevent="showSelectViewModal(tab)")
-            v-icon(small) file_copy
-          v-btn(small, flat, icon, @click.prevent="showDeleteTabModal(tab)")
-            v-icon(small) delete
-    template(v-if="$scopedSlots.default")
-      v-tabs-items(touchless)
-        v-tab-item(
-          v-for="tab in tabs",
-          :key="tab._id",
-          :value="getTabHrefById(tab._id)",
-          lazy
-        )
-          slot(:tab="tab")
+      >
+        <span>{{ title }}</span>
+        <template v-if="updatable && editing">
+          <v-btn
+            :disabled="changed"
+            small
+            text
+            icon
+            @click.prevent="showUpdateTabModal(tab)"
+          >
+            <v-icon small>
+              edit
+            </v-icon>
+          </v-btn>
+          <v-btn
+            :disabled="changed"
+            small
+            text
+            icon
+            @click.prevent="showSelectViewModal(tab)"
+          >
+            <v-icon small>
+              file_copy
+            </v-icon>
+          </v-btn>
+          <v-btn
+            :disabled="changed"
+            small
+            text
+            icon
+            @click.prevent="showDeleteTabModal(tab)"
+          >
+            <v-icon small>
+              delete
+            </v-icon>
+          </v-btn>
+        </template>
+      </v-tab>
+    </c-draggable-list-field>
+    <template v-if="$scopedSlots.default">
+      <v-tabs-items
+        :value="$route.fullPath"
+        touchless
+      >
+        <v-tab-item
+          v-for="{ to, tab, key } in preparedTabs"
+          :key="key"
+          :value="to"
+        >
+          <slot
+            :tab="tab"
+            :visible="to === $route.fullPath"
+          />
+        </v-tab-item>
+      </v-tabs-items>
+    </template>
+  </v-tabs>
 </template>
 
 <script>
@@ -79,6 +120,15 @@ export default {
   computed: {
     vTabsKey() {
       return this.view.tabs.map(tab => tab._id).join('-');
+    },
+
+    preparedTabs() {
+      return this.tabs.map(tab => ({
+        key: tab._id,
+        to: this.getTabHrefById(tab._id),
+        title: tab.title,
+        tab,
+      }));
     },
 
     getTabHrefById() {
@@ -205,7 +255,7 @@ export default {
 
 <style lang="scss" scoped>
   .view-tabs.hidden {
-    & ::v-deep > .v-tabs__bar {
+    & ::v-deep > .v-tabs-bar {
       display: none;
     }
   }

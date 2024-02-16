@@ -123,7 +123,7 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 | TimeToKeepResolvedAlarms          | "720h"                | Délai durant lequel les alarmes résolues sont conservées dans la collection principale des alarmes |
 | AllowDoubleAck                    | true,false            | Permet d'acquitter plusieurs fois une alarme |
 | ActivateAlarmAfterAutoRemediation | true,false            | Permet de décaler l'activation d'une alarme après l'exécution de la remédiation automatique |
-
+| EnableArraySortingInEntityInfos   | true,false            | Active ou désactive le tri dans les listes utilisées dans les attributs d'événements. Par exemple, si un événement contient `info1=["item2", "item1"]` et que l'option est activée alors info1 vaudra en sortie `info1=["item1", "item2"]` |
 
 ### Section [Canopsis.timezone]
 

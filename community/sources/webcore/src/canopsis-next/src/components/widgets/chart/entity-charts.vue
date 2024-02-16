@@ -1,12 +1,13 @@
-<template lang="pug">
-  v-layout(column)
-    entity-chart-widget(
-      v-for="(chart, index) in filteredCharts",
-      :key="index",
-      :widget="chart",
-      :entity="entity",
+<template>
+  <v-layout column>
+    <entity-chart-widget
+      v-for="(chart, index) in filteredCharts"
+      :key="index"
+      :widget="chart"
+      :entity="entity"
       :available-metrics="availableMetrics"
-    )
+    />
+  </v-layout>
 </template>
 
 <script>

@@ -1,79 +1,132 @@
-<template lang="pug">
-  v-layout(row)
-    v-flex(:xs5="isAnyInfosRule", xs4)
-      v-layout(row)
-        v-flex(:xs4="isAnyInfosRule", :xs6="isObjectRule")
-          pattern-attribute-field(
-            v-field="rule.attribute",
-            :items="attributes",
-            :name="name",
-            :disabled="disabled",
+<template>
+  <v-layout>
+    <v-flex
+      :xs5="isAnyInfosRule"
+      :xs4="!isAnyInfosRule"
+    >
+      <v-layout>
+        <v-flex
+          :xs4="!isObjectRule && isAnyInfosRule"
+          :xs6="isObjectRule"
+        >
+          <pattern-attribute-field
+            v-field="rule.attribute"
+            :items="attributes"
+            :name="name"
+            :disabled="disabled"
             required
-          )
-        v-flex.pl-3(v-if="isAnyInfosRule", xs8)
-          c-infos-attribute-field(
-            v-field="rule",
-            :items="infos",
-            :name="name",
-            :disabled="disabled",
-            :combobox="isInfosRule",
+          />
+        </v-flex>
+        <v-flex
+          class="pl-3"
+          v-if="isAnyInfosRule"
+          xs8
+        >
+          <c-infos-attribute-field
+            v-field="rule"
+            :items="infos"
+            :name="name"
+            :disabled="disabled"
+            :combobox="isInfosRule"
             row
-          )
-        v-flex.pl-3(v-else-if="isObjectRule", xs6)
-          v-text-field(
-            v-field="rule.dictionary",
-            v-validate="'required'",
-            :name="objectDictionaryName",
-            :disabled="disabled",
-            :label="$t('common.dictionary')",
+          />
+        </v-flex>
+        <v-flex
+          class="pl-3"
+          v-else-if="isObjectRule"
+          xs6
+        >
+          <v-text-field
+            v-field="rule.dictionary"
+            v-validate="'required'"
+            :name="objectDictionaryName"
+            :disabled="disabled"
+            :label="$t('common.dictionary')"
             :error-messages="errors.collect(objectDictionaryName)"
-          )
-
-    v-flex(v-if="rule.attribute", :xs8="!isAnyInfosRule", xs7)
-      v-layout(row)
-        template(v-if="isDateRule")
-          v-flex.pl-3(xs5)
-            c-quick-date-interval-type-field(
-              v-field="rule.range.type",
-              :name="name",
-              :disabled="disabled",
-              :ranges="intervalRanges"
-            )
-          v-flex.pl-3(v-if="isCustomRange", xs7)
-            c-date-time-interval-field(
-              v-field="rule.range",
-              :name="name",
+          />
+        </v-flex>
+      </v-layout>
+    </v-flex>
+    <v-flex
+      v-if="rule.attribute"
+      :xs8="!isAnyInfosRule"
+      :xs7="isAnyInfosRule"
+    >
+      <v-layout>
+        <template v-if="isDateRule">
+          <v-flex
+            class="pl-3"
+            xs5
+          >
+            <c-quick-date-interval-type-field
+              v-field="rule.range.type"
+              :name="name"
               :disabled="disabled"
-            )
-
-        template(v-else)
-          v-flex.pl-3(v-if="isInfosValueField", xs1)
-            c-input-type-field(
-              :value="inputType",
-              :label="$t('common.type')",
-              :types="inputTypes",
-              :disabled="disabled",
-              :name="name",
+              :ranges="intervalRanges"
+            />
+          </v-flex>
+          <v-flex
+            class="pl-3"
+            v-if="isCustomRange"
+            xs7
+          >
+            <c-date-time-interval-field
+              v-field="rule.range"
+              :name="name"
+              :disabled="disabled"
+            />
+          </v-flex>
+        </template>
+        <template v-else>
+          <v-flex
+            class="pl-3"
+            v-if="isInfosValueField"
+            xs1
+          >
+            <c-input-type-field
+              :value="rule.fieldType"
+              :label="$t('common.type')"
+              :types="inputTypes"
+              :disabled="disabled"
+              :name="name"
               @input="updateType"
-            )
-          v-flex.pl-3(v-if="shownOperatorField", :xs6="!isAnyInfosRule", xs4)
-            pattern-operator-field(
-              v-field="rule.operator",
-              :operators="operators",
-              :disabled="disabled",
-              :name="operatorFieldName",
+            />
+          </v-flex>
+          <v-flex
+            class="pl-3"
+            v-if="shownOperatorField"
+            :xs6="!isAnyInfosRule"
+            :xs4="isAnyInfosRule"
+          >
+            <pattern-operator-field
+              v-field="rule.operator"
+              :operators="operators"
+              :disabled="disabled"
+              :name="operatorFieldName"
               required
-            )
-
-          v-flex.pl-3(v-if="rule.operator && operatorHasValue", :xs7="isAnyInfosRule", xs6)
-            component(
-              v-bind="valueComponent.props",
-              v-on="valueComponent.on",
+            />
+          </v-flex>
+          <v-flex
+            class="pl-3"
+            v-if="rule.operator && operatorHasValue"
+            :xs7="isAnyInfosRule"
+            xs6
+          >
+            <component
+              v-bind="valueComponent.props"
+              v-on="valueComponent.on"
               :is="valueComponent.is"
-            )
+            />
+          </v-flex>
+        </template>
+      </v-layout>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
+import { isFunction } from 'lodash';
+
 import {
   PATTERN_FIELD_TYPES,
   PATTERN_QUICK_RANGES,
@@ -214,15 +267,23 @@ export default {
       };
 
       if (this.valueField) {
+        const valueFieldProps = isFunction(this.valueField.props)
+          ? this.valueField.props.call(this, this.rule)
+          : this.valueField.props;
+
+        const valueFieldOn = isFunction(this.valueField.on)
+          ? this.valueField.on.call(this, this.rule)
+          : this.valueField.on;
+
         return {
           is: this.valueField.is,
           props: {
             ...valueProps,
-            ...this.valueField.props,
+            ...valueFieldProps,
           },
           on: {
             ...valueHandlers,
-            ...this.valueField.on,
+            ...valueFieldOn,
           },
         };
       }
@@ -280,7 +341,12 @@ export default {
     },
 
     updateType(type) {
-      this.updateValue(convertValueByType(this.rule.value, type));
+      this.updateModel({
+        ...this.rule,
+
+        fieldType: type,
+        value: convertValueByType(this.rule.value, type),
+      });
     },
   },
 };

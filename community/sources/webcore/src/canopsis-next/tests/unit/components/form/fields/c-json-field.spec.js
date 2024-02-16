@@ -336,7 +336,7 @@ describe('c-json-field', () => {
   it('Renders `c-json-field` with default props correctly', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-json-field` with custom props correctly', () => {
@@ -346,7 +346,7 @@ describe('c-json-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-json-field` with custom props correctly', () => {
@@ -357,7 +357,7 @@ describe('c-json-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-json-field` with custom props correctly', () => {
@@ -376,7 +376,7 @@ describe('c-json-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-json-field` with default props and changed value correctly', async () => {
@@ -389,7 +389,7 @@ describe('c-json-field', () => {
 
     await textarea.setValue(validJsonStringValue);
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-json-field` with default props and incorrect value correctly', async () => {
@@ -400,6 +400,6 @@ describe('c-json-field', () => {
     await textarea.setValue(newValue);
     await textarea.trigger('blur');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

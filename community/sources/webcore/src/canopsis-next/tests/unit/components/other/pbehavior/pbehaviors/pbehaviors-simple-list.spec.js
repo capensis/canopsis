@@ -173,7 +173,7 @@ describe('pbehaviors-simple-list', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pbehaviors-simple-list` with pbehaviors', async () => {
@@ -191,6 +191,6 @@ describe('pbehaviors-simple-list', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

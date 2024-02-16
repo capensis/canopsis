@@ -1,5 +1,8 @@
-<template lang="pug">
-  chrome(v-field="value", v-bind="$attrs")
+<template>
+  <chrome
+    v-field="value"
+    v-bind="$attrs"
+  />
 </template>
 
 <script>

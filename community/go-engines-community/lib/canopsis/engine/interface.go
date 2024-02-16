@@ -7,7 +7,7 @@ import (
 	"context"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
@@ -83,20 +83,20 @@ type RunInfo struct {
 	RpcPublishQueues []string
 	Instances        int
 	QueueLength      int
-	Time             types.CpsTime
+	Time             datetime.CpsTime
 	HasDiffConfig    bool
 }
 
 // InstanceRunInfo is instance of engine run information.
 type InstanceRunInfo struct {
-	ID               string        `json:"_id"`
-	Name             string        `json:"name"`
-	ConsumeQueue     string        `json:"consume_queue"`
-	PublishQueue     string        `json:"publish_queue"`
-	RpcConsumeQueues []string      `json:"rpc_consume_queues"`
-	RpcPublishQueues []string      `json:"rpc_publish_queues"`
-	QueueLength      int           `json:"queue_length"`
-	Time             types.CpsTime `json:"time"`
+	ID               string           `json:"_id"`
+	Name             string           `json:"name"`
+	ConsumeQueue     string           `json:"consume_queue"`
+	PublishQueue     string           `json:"publish_queue"`
+	RpcConsumeQueues []string         `json:"rpc_consume_queues"`
+	RpcPublishQueues []string         `json:"rpc_publish_queues"`
+	QueueLength      int              `json:"queue_length"`
+	Time             datetime.CpsTime `json:"time"`
 }
 
 func NewInstanceRunInfo(name, consumeQueue, publishQueue string, rpcQueues ...[]string) InstanceRunInfo {

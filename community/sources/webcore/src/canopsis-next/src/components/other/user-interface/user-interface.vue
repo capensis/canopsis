@@ -1,21 +1,51 @@
-<template lang="pug">
-  v-layout.my-2(v-if="!form", justify-center)
-    v-progress-circular(color="primary", indeterminate)
-  v-flex(v-else)
-    v-layout(row)
-      v-flex.text-xs-center
-        div.title {{ $t('userInterface.title') }}
-    v-form(@submit.prevent="submit")
-      user-interface-form(v-model="form", ref="userForm")
-      template(v-if="!disabled")
-        v-divider.mt-3
-        v-layout.mt-3(row, justify-end)
-          v-btn(flat, @click="reset") {{ $t('common.cancel') }}
-          v-btn.primary(
-            :disabled="isDisabled",
-            :loading="submitting",
+<template>
+  <v-layout
+    class="my-2"
+    v-if="!form"
+    justify-center
+  >
+    <v-progress-circular
+      color="primary"
+      indeterminate
+    />
+  </v-layout>
+  <v-flex v-else>
+    <v-layout>
+      <v-flex class="text-center">
+        <div class="text-h6">
+          {{ $t('userInterface.title') }}
+        </div>
+      </v-flex>
+    </v-layout>
+    <v-form @submit.prevent="submit">
+      <user-interface-form
+        v-model="form"
+        ref="userForm"
+      />
+      <template v-if="!disabled">
+        <v-divider class="mt-3" />
+        <v-layout
+          class="mt-3"
+          justify-end
+        >
+          <v-btn
+            text
+            @click="reset"
+          >
+            {{ $t('common.cancel') }}
+          </v-btn>
+          <v-btn
+            class="primary"
+            :disabled="isDisabled"
+            :loading="submitting"
             type="submit"
-          ) {{ $t('common.submit') }}
+          >
+            {{ $t('common.submit') }}
+          </v-btn>
+        </v-layout>
+      </template>
+    </v-form>
+  </v-flex>
 </template>
 
 <script>

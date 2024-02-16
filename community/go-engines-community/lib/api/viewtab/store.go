@@ -8,7 +8,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -201,7 +201,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 			}
 		}
 
-		now := types.NewCpsTime()
+		now := datetime.NewCpsTime()
 		tab := view.Tab{
 			ID:        utils.NewID(),
 			Title:     r.Title,
@@ -249,7 +249,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 			IsPrivate: oldTab.IsPrivate,
 			Position:  oldTab.Position,
 			Created:   oldTab.Created,
-			Updated:   types.NewCpsTime(),
+			Updated:   datetime.NewCpsTime(),
 		}})
 		if err != nil {
 			return err
@@ -271,7 +271,7 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 			return err
 		}
 		if isLinked {
-			return ValidationErr{error: errors.New("view tab is linked to playlist")}
+			return ValidationError{err: errors.New("view tab is linked to playlist")}
 		}
 
 		delCount, err := s.collection.DeleteOne(ctx, bson.M{"_id": id})
@@ -358,7 +358,7 @@ func (s *store) copy(ctx context.Context, tabID string, isPrivate bool, r Create
 		return nil, err
 	}
 
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	newTab := view.Tab{
 		ID:        utils.NewID(),
 		Title:     r.Title,
@@ -389,7 +389,7 @@ func (s *store) UpdatePositions(ctx context.Context, tabs []Response) (bool, err
 		if viewId == "" {
 			viewId = tab.View
 		} else if viewId != tab.View {
-			return false, ValidationErr{error: errors.New("view tabs are related to different views")}
+			return false, ValidationError{err: errors.New("view tabs are related to different views")}
 		}
 	}
 
@@ -401,7 +401,7 @@ func (s *store) UpdatePositions(ctx context.Context, tabs []Response) (bool, err
 			return err
 		}
 		if count != int64(len(tabs)) {
-			return ValidationErr{error: errors.New("view tabs are missing")}
+			return ValidationError{err: errors.New("view tabs are missing")}
 		}
 
 		writeModels := make([]mongodriver.WriteModel, len(tabs))

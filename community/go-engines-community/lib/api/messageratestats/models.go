@@ -1,8 +1,6 @@
 package messageratestats
 
-import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-)
+import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 
 const (
 	IntervalMinute = "minute"
@@ -10,9 +8,9 @@ const (
 )
 
 type ListRequest struct {
-	Interval string        `form:"interval" json:"interval" binding:"required,oneof=minute hour"`
-	From     types.CpsTime `form:"from" json:"from" binding:"required" swaggertype:"integer"`
-	To       types.CpsTime `form:"to" json:"to" binding:"required" swaggertype:"integer"`
+	Interval string           `form:"interval" json:"interval" binding:"required,oneof=minute hour"`
+	From     datetime.CpsTime `form:"from" json:"from" binding:"required" swaggertype:"integer"`
+	To       datetime.CpsTime `form:"to" json:"to" binding:"required" swaggertype:"integer"`
 }
 
 type StatsResponse struct {
@@ -23,6 +21,6 @@ type StatsResponse struct {
 type StatsListResponse struct {
 	Data []StatsResponse `json:"data"`
 	Meta struct {
-		DeletedBefore *types.CpsTime `json:"deleted_before,omitempty" swaggertype:"integer"`
+		DeletedBefore *datetime.CpsTime `json:"deleted_before,omitempty" swaggertype:"integer"`
 	} `json:"meta"`
 }

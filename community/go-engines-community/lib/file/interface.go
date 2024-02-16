@@ -1,6 +1,4 @@
-/**
-Package file contains operations with files.
-*/
+// Package file contains operations with files.
 package file
 
 import (

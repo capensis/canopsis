@@ -1,12 +1,15 @@
-<template lang="pug">
-  v-container.pa-3(fluid)
-    v-layout(align-center, justify-space-between)
-      div.subheading {{ $t('settings.infoPopup.title') }}
-      v-layout(justify-end)
-        v-btn.primary(
-          small,
-          @click="edit"
-        ) {{ $t('common.create') }}/{{ $t('common.edit') }}
+<template>
+  <widget-settings-flat-item :title="$t('settings.infoPopup.title')">
+    <template #actions>
+      <v-btn
+        class="primary"
+        small
+        @click="edit"
+      >
+        {{ $t('common.create') }}/{{ $t('common.edit') }}
+      </v-btn>
+    </template>
+  </widget-settings-flat-item>
 </template>
 
 <script>
@@ -14,7 +17,10 @@ import { MODALS } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
 
+import WidgetSettingsFlatItem from '@/components/sidebars/partials/widget-settings-flat-item.vue';
+
 export default {
+  components: { WidgetSettingsFlatItem },
   mixins: [formMixin],
   model: {
     prop: 'popups',

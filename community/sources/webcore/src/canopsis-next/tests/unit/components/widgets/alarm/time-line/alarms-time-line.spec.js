@@ -53,7 +53,7 @@ describe('alarms-time-line', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-time-line` with isHtmlEnabled', () => {
@@ -64,6 +64,6 @@ describe('alarms-time-line', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

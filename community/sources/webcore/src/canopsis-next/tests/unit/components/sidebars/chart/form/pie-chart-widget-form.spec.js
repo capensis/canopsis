@@ -229,7 +229,7 @@ describe('pie-chart-widget-form', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pie-chart-widget-form` widget settings with custom props', async () => {
@@ -258,6 +258,6 @@ describe('pie-chart-widget-form', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

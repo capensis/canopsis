@@ -1,42 +1,93 @@
-<template lang="pug">
-  modal-wrapper(:title-color="color", close)
-    template(#title="")
-      span {{ service.name }}
-    template(#text="")
-      v-tabs.position-relative(slider-color="primary", fixed-tabs)
-        v-tab {{ $t('common.service') }}
-        v-tab-item
-          c-progress-overlay(:pending="pending")
-          service-template(
-            :service="service",
-            :service-entities="serviceEntitiesWithKey",
-            :widget-parameters="widgetParameters",
-            :pagination.sync="pagination",
-            :total-items="serviceEntitiesMeta.total_count",
+<template>
+  <modal-wrapper
+    :title-color="color"
+    close
+  >
+    <template #title="">
+      <span>{{ service.name }}</span>
+    </template>
+    <template #text="">
+      <v-tabs
+        class="position-relative"
+        slider-color="primary"
+        centered
+      >
+        <v-tab>{{ $t('common.service') }}</v-tab>
+        <v-tab-item>
+          <c-progress-overlay :pending="pending" />
+          <service-template
+            :service="service"
+            :service-entities="serviceEntitiesWithKey"
+            :widget-parameters="widgetParameters"
+            :options.sync="options"
+            :total-items="serviceEntitiesMeta.total_count"
+            :actions-requests="actionsRequests"
             @refresh="refresh"
-          )
-        v-tab(:disabled="!hasPbehaviorListAccess") {{ $tc('common.pbehavior', 2) }}
-        v-tab-item(lazy)
-          pbehaviors-simple-list(
-            :entity="service",
-            with-active-status,
-            addable,
-            updatable,
-            removable,
+            @add:action="addAction"
+          />
+        </v-tab-item>
+        <v-tab :disabled="!hasPbehaviorListAccess">
+          {{ $tc('common.pbehavior', 2) }}
+        </v-tab>
+        <v-tab-item>
+          <pbehaviors-simple-list
+            :entity="service"
+            with-active-status
+            addable
+            updatable
+            removable
             dense
-          )
-    template(#actions="")
-      v-tooltip.mx-2(top)
-        template(#activator="{ on }")
-          v-btn.secondary(v-on="on", @click="refresh")
-            v-icon refresh
-        span {{ $t('modals.service.refreshEntities') }}
-      v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.close') }}
+          />
+        </v-tab-item>
+      </v-tabs>
+    </template>
+    <template #actions="">
+      <v-alert
+        class="actions-requests-alert my-0 mr-2 pa-1 pr-2"
+        :value="actionsRequests.length > 0"
+        type="info"
+        dismissible
+        @input="clearActions"
+      >
+        {{ actionsRequests.length }} {{ $tc('modals.service.actionInQueue', actionsRequests.length) }}
+      </v-alert>
+      <v-tooltip top>
+        <template #activator="{ on }">
+          <v-btn
+            class="mx-2"
+            v-on="on"
+            color="secondary"
+            @click="refresh"
+          >
+            <v-icon>refresh</v-icon>
+          </v-btn>
+        </template>
+        <span>{{ $t('modals.service.refreshEntities') }}</span>
+      </v-tooltip>
+      <v-btn
+        depressed
+        text
+        @click="$modals.hide"
+      >
+        {{ $t('common.close') }}
+      </v-btn>
+      <v-btn
+        class="primary"
+        v-if="entitiesActionsInQueue"
+        :loading="submitting"
+        :disabled="submitting || !actionsRequests.length"
+        type="submit"
+        @click="submit"
+      >
+        {{ $t('common.submit') }}
+      </v-btn>
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>
 import { PAGINATION_LIMIT } from '@/config';
-import { MODALS, PBEHAVIOR_ORIGINS, SORT_ORDERS, USERS_PERMISSIONS } from '@/constants';
+import { MODALS, PBEHAVIOR_ORIGINS, USERS_PERMISSIONS } from '@/constants';
 
 import Observer from '@/services/observer';
 
@@ -44,6 +95,8 @@ import { authMixin } from '@/mixins/auth';
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesServiceEntityMixin } from '@/mixins/entities/service-entity';
 import { localQueryMixin } from '@/mixins/query-local/query';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import ServiceTemplate from '@/components/other/service/partials/service-template.vue';
 import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/pbehaviors-simple-list.vue';
@@ -64,15 +117,18 @@ export default {
     localQueryMixin,
     modalInnerMixin,
     entitiesServiceEntityMixin,
+    submittableMixinCreator(),
+    confirmableModalMixinCreator({ field: 'actionsRequests' }),
   ],
   data() {
     return {
       pending: true,
       unavailableEntitiesAction: {},
+      actionsRequests: [],
       query: {
-        rowsPerPage: this.modal.config.widgetParameters.modalItemsPerPage ?? PAGINATION_LIMIT,
-        sortKey: 'state',
-        sortDir: SORT_ORDERS.desc,
+        itemsPerPage: this.modal.config.widgetParameters.modalItemsPerPage ?? PAGINATION_LIMIT,
+        sortBy: ['state'],
+        sortDesc: [true],
       },
     };
   },
@@ -87,6 +143,10 @@ export default {
 
     widgetParameters() {
       return this.config.widgetParameters;
+    },
+
+    entitiesActionsInQueue() {
+      return this.widgetParameters?.entitiesActionsInQueue ?? false;
     },
 
     serviceEntitiesWithKey() {
@@ -118,8 +178,22 @@ export default {
   },
 
   methods: {
-    refresh() {
+    refresh(immediate = false) {
+      if (!immediate && this.entitiesActionsInQueue) {
+        return Promise.resolve();
+      }
+
       return this.$periodicRefresh.notify();
+    },
+
+    addAction(action) {
+      this.actionsRequests.push(action);
+    },
+
+    clearActions(value) {
+      if (!value) {
+        this.actionsRequests = [];
+      }
     },
 
     async fetchList() {
@@ -133,6 +207,18 @@ export default {
 
       this.pending = false;
     },
+
+    async submit() {
+      await Promise.all(this.actionsRequests.map(({ action }) => action()));
+
+      this.$modals.hide();
+    },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.actions-requests-alert {
+  line-height: 15px;
+}
+</style>

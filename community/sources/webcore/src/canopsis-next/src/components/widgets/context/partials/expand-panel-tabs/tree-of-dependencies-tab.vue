@@ -1,5 +1,9 @@
-<template lang="pug">
-  service-dependencies(:root="item", :columns="columns", openable-root)
+<template>
+  <service-dependencies
+    :root="item"
+    :columns="columns"
+    openable-root
+  />
 </template>
 
 <script>

@@ -1,9 +1,24 @@
-<template lang="pug">
-  v-layout(column)
-    v-btn.secondary.ma-0.mb-1(:disabled="disabled || zoomInDisabled", icon, dark, @click="zoomIn")
-      v-icon add
-    v-btn.secondary.ma-0.mb-1(:disabled="disabled || zoomOutDisabled", dark, icon, @click="zoomOut")
-      v-icon remove
+<template>
+  <v-layout column>
+    <v-btn
+      class="secondary ma-0 mb-1"
+      :disabled="disabled || zoomInDisabled"
+      icon
+      dark
+      @click="zoomIn"
+    >
+      <v-icon>add</v-icon>
+    </v-btn>
+    <v-btn
+      class="secondary ma-0 mb-1"
+      :disabled="disabled || zoomOutDisabled"
+      dark
+      icon
+      @click="zoomOut"
+    >
+      <v-icon>remove</v-icon>
+    </v-btn>
+  </v-layout>
 </template>
 
 <script>

@@ -1,40 +1,45 @@
-<template lang="pug">
-  widget-settings(:submitting="submitting", @submit="submit")
-    field-title(v-model="form.title")
-    v-divider
-    alarms-list-modal-form(
-      v-model="form.parameters.alarmsList",
-      :templates="preparedWidgetTemplates",
+<template>
+  <widget-settings
+    :submitting="submitting"
+    @submit="submit"
+  >
+    <field-title v-model="form.title" />
+    <v-divider />
+    <alarms-list-modal-form
+      v-model="form.parameters.alarmsList"
+      :templates="preparedWidgetTemplates"
       :templates-pending="widgetTemplatesPending"
-    )
-    v-divider
-    widget-settings-group(:title="$t('settings.advancedSettings')")
-      field-filters(
-        :filters.sync="form.filters",
-        :widget-id="widget._id",
-        addable,
-        editable,
-        with-alarm,
-        with-entity,
-        with-pbehavior,
+    />
+    <v-divider />
+    <widget-settings-group :title="$t('settings.advancedSettings')">
+      <field-filters
+        :filters.sync="form.filters"
+        :widget-id="widget._id"
+        addable
+        editable
+        with-alarm
+        with-entity
+        with-pbehavior
         hide-selector
-      )
-      v-divider
-      field-opened-resolved-filter(v-field="form.parameters.opened")
-      v-divider
-      field-switcher(
-        v-field="form.parameters.considerPbehaviors",
+      />
+      <v-divider />
+      <field-opened-resolved-filter v-field="form.parameters.opened" />
+      <v-divider />
+      <field-switcher
+        v-field="form.parameters.considerPbehaviors"
         :title="$t('settings.considerPbehaviors.title')"
-      )
-      v-divider
-      field-criticity-levels(v-field="form.parameters.criticityLevels")
-      v-divider
-      field-levels-colors-selector(
-        v-field="form.parameters.criticityLevelsColors",
-        color-type="hex",
+      />
+      <v-divider />
+      <field-criticity-levels v-field="form.parameters.criticityLevels" />
+      <v-divider />
+      <field-levels-colors-selector
+        v-field="form.parameters.criticityLevelsColors"
+        color-type="hex"
         hide-suffix
-      )
-    v-divider
+      />
+    </widget-settings-group>
+    <v-divider />
+  </widget-settings>
 </template>
 
 <script>
@@ -53,7 +58,6 @@ import WidgetSettings from '../partials/widget-settings.vue';
 import WidgetSettingsGroup from '../partials/widget-settings-group.vue';
 import FieldOpenedResolvedFilter from '../alarm/form/fields/opened-resolved-filter.vue';
 
-import StatsCalendarAdvancedForm from './form/stats-calendar-advanced.vue';
 import FieldCriticityLevels from './form/fields/criticity-levels.vue';
 import FieldLevelsColorsSelector from './form/fields/levels-colors-selector.vue';
 
@@ -72,7 +76,6 @@ export default {
     FieldCriticityLevels,
     FieldLevelsColorsSelector,
     AlarmsListModalForm,
-    StatsCalendarAdvancedForm,
   },
   mixins: [
     widgetSettingsMixin,

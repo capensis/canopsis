@@ -9,25 +9,24 @@ exports[`modal-title-buttons Renders \`modal-title-buttons\` with custom props 1
   >
     <div
       class="v-tooltip"
-      left="left"
+      left=""
     >
       <button
-        class="v-btn--minimize my-0 v-btn v-btn--icon theme--light"
+        class="v-btn--minimize my-0 v-btn v-btn--icon v-btn--round theme--light v-size--default"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--light white--text"
+            class="v-icon notranslate material-icons theme--light white--text"
             style="font-size: 36px;"
           >
             minimize
           </i>
-        </div>
+        </span>
       </button>
-       
       <span>
         You already have minimized modal window
       </span>
@@ -37,20 +36,20 @@ exports[`modal-title-buttons Renders \`modal-title-buttons\` with custom props 1
     class="modal-title-button__wrapper"
   >
     <button
-      class="ma-0 v-btn v-btn--icon theme--light"
+      class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
         <i
           aria-hidden="true"
-          class="v-icon material-icons theme--light white--text"
+          class="v-icon notranslate material-icons theme--light white--text"
           style="font-size: 36px;"
         >
           close
         </i>
-      </div>
+      </span>
     </button>
   </div>
 </div>
@@ -73,19 +72,19 @@ exports[`modal-title-buttons Renders \`modal-title-buttons\` with minimized moda
     class="modal-title-button__wrapper"
   >
     <button
-      class="my-0 v-btn v-btn--icon v-btn--small theme--light"
+      class="v-btn-legacy-m--x v-btn v-btn--icon v-btn--round theme--light v-size--small"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
         <i
           aria-hidden="true"
-          class="v-icon material-icons theme--light white--text"
+          class="v-icon notranslate material-icons theme--light white--text"
         >
           maximize
         </i>
-      </div>
+      </span>
     </button>
   </div>
   <!---->

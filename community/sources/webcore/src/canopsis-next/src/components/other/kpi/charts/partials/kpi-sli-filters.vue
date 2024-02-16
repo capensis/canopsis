@@ -1,13 +1,27 @@
-<template lang="pug">
-  v-layout.kpi-sli-toolbar.ml-4.my-4(wrap)
-    c-quick-date-interval-field.mr-4(
-      v-field="query.interval",
-      :min="minDate",
+<template>
+  <v-layout
+    class="kpi-sli-toolbar ml-4 my-4"
+    wrap
+  >
+    <c-quick-date-interval-field
+      class="mr-4"
+      v-field="query.interval"
+      :min="minDate"
       :quick-ranges="quickRanges"
-    )
-    c-sampling-field.mr-4.kpi-sli-toolbar__sampling(v-field="query.sampling")
-    kpi-sli-show-mode-field.mr-4.kpi-sli-toolbar__show-mode(v-field="query.type")
-    c-filter-field.kpi-sli-toolbar__filters(v-field="query.filter")
+    />
+    <c-sampling-field
+      class="mr-4 kpi-sli-toolbar__sampling"
+      v-field="query.sampling"
+    />
+    <kpi-sli-show-mode-field
+      class="mr-4 kpi-sli-toolbar__show-mode"
+      v-field="query.type"
+    />
+    <c-filter-field
+      class="kpi-sli-toolbar__filters"
+      v-field="query.filter"
+    />
+  </v-layout>
 </template>
 
 <script>

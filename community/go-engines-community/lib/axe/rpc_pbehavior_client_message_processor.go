@@ -75,7 +75,7 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 			}
 
 			p.logError(err, "RPC PBehavior Client: cannot update alarm", msg.Body)
-			return p.publishResult(ctx, routingKey, correlationId, p.getErrRpcEvent(fmt.Errorf("cannot update alarm: %v", err)))
+			return p.publishResult(ctx, routingKey, correlationId, p.getErrRpcEvent(fmt.Errorf("cannot update alarm: %w", err)))
 		}
 
 		alarmChangeType = result.AlarmChange.Type

@@ -1,27 +1,51 @@
-<template lang="pug">
-  div
-    c-id-field(
-      v-field="form._id",
-      :disabled="isDisabledIdField",
+<template>
+  <div>
+    <c-id-field
+      v-field="form._id"
+      :disabled="isDisabledIdField"
       :help-text="$t('metaAlarmRule.idHelp')"
-    )
-    c-name-field(v-field="form.name", required)
-    c-description-field(
-      v-field="form.output_template",
-      :label="$t('metaAlarmRule.outputTemplate')",
+    />
+    <c-name-field
+      v-field="form.name"
+      required
+    />
+    <c-description-field
+      v-field="form.output_template"
+      :label="$t('metaAlarmRule.outputTemplate')"
       :help-text="$t('metaAlarmRule.outputTemplateHelp')"
-    )
-    c-enabled-field(v-field="form.auto_resolve", :label="$t('metaAlarmRule.autoResolve')")
-    v-select(v-field="form.type", :items="ruleTypes", :label="$t('common.type')")
-    meta-alarm-rule-corel-form(v-if="isCorelFormShown", v-field="form.config")
-    meta-alarm-rule-threshold-form(v-if="isThresholdFormShown", v-field="form.config")
-    meta-alarm-rule-time-based-form(v-if="isTimeBasedFormShown", v-field="form.config")
-    meta-alarm-rule-value-paths-form.mb-2(v-if="isValuePathsFormShown", v-field="form.config")
-    meta-alarm-rule-patterns-form(
-      v-field="form.patterns",
-      :with-total-entity="withTotalEntityPattern",
+    />
+    <c-enabled-field
+      v-field="form.auto_resolve"
+      :label="$t('metaAlarmRule.autoResolve')"
+    />
+    <v-select
+      v-field="form.type"
+      :items="ruleTypes"
+      :label="$t('common.type')"
+    />
+    <meta-alarm-rule-corel-form
+      v-if="isCorelFormShown"
+      v-field="form.config"
+    />
+    <meta-alarm-rule-threshold-form
+      v-if="isThresholdFormShown"
+      v-field="form.config"
+    />
+    <meta-alarm-rule-time-based-form
+      v-if="isTimeBasedFormShown"
+      v-field="form.config"
+    />
+    <meta-alarm-rule-value-paths-form
+      class="mb-2"
+      v-if="isValuePathsFormShown"
+      v-field="form.config"
+    />
+    <meta-alarm-rule-patterns-form
+      v-field="form.patterns"
+      :with-total-entity="withTotalEntityPattern"
       :some-required="isAttributeType"
-    )
+    />
+  </div>
 </template>
 
 <script>

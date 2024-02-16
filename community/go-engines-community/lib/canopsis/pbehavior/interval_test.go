@@ -2,13 +2,14 @@ package pbehavior_test
 
 import (
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
-	"github.com/teambition/rrule-go"
 	"reflect"
 	"strings"
 	"testing"
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
+	"github.com/teambition/rrule-go"
 )
 
 func TestGetTimeSpans(t *testing.T) {

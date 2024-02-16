@@ -1,12 +1,43 @@
-<template lang="pug">
-  div.pa-2
-    v-fade-transition(v-if="testSuitesPending", key="progress", mode="out-in")
-      v-progress-linear.progress-linear-absolute--top(height="2", indeterminate)
-    v-layout.fill-height(key="content", wrap)
-      template(v-if="testSuites.length")
-        v-flex(v-for="testSuite in testSuites", :key="testSuite._id", xs6, md4, lg3)
-          testing-weather-item(:test-suite="testSuite", :widget="widget")
-      v-alert(v-else, type="info", :value="true") {{ $t('common.noData') }}
+<template>
+  <div class="pa-2">
+    <v-fade-transition
+      v-if="testSuitesPending"
+      key="progress"
+      mode="out-in"
+    >
+      <v-progress-linear
+        class="progress-linear-absolute--top"
+        height="2"
+        indeterminate
+      />
+    </v-fade-transition>
+    <v-layout
+      class="fill-height"
+      key="content"
+      wrap
+    >
+      <template v-if="testSuites.length">
+        <v-flex
+          v-for="testSuite in testSuites"
+          :key="testSuite._id"
+          xs6
+          md4
+          lg3
+        >
+          <testing-weather-item
+            :test-suite="testSuite"
+            :widget="widget"
+          />
+        </v-flex>
+      </template>
+      <v-alert
+        v-else
+        type="info"
+      >
+        {{ $t('common.noData') }}
+      </v-alert>
+    </v-layout>
+  </div>
 </template>
 
 <script>

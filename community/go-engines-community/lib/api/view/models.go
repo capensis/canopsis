@@ -5,7 +5,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewtab"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 )
 
 type EditRequest struct {
@@ -17,7 +17,7 @@ type EditRequest struct {
 	Tags        []string `json:"tags"`
 	Author      string   `json:"author" swaggerignore:"true"`
 
-	PeriodicRefresh *types.DurationWithEnabled `json:"periodic_refresh"`
+	PeriodicRefresh *datetime.DurationWithEnabled `json:"periodic_refresh"`
 }
 
 type EditPositionRequest struct {
@@ -38,27 +38,27 @@ type EditPositionItemRequest struct {
 }
 
 type Response struct {
-	ID              string                     `bson:"_id" json:"_id,omitempty"`
-	Enabled         bool                       `bson:"enabled" json:"enabled"`
-	Title           string                     `bson:"title" json:"title"`
-	Description     string                     `bson:"description" json:"description"`
-	Tabs            *[]viewtab.Response        `bson:"tabs" json:"tabs,omitempty"`
-	Tags            []string                   `bson:"tags" json:"tags"`
-	PeriodicRefresh *types.DurationWithEnabled `bson:"periodic_refresh" json:"periodic_refresh"`
-	Group           *ViewGroup                 `bson:"group" json:"group,omitempty"`
-	Author          *author.Author             `bson:"author" json:"author,omitempty"`
-	Created         *types.CpsTime             `bson:"created" json:"created,omitempty" swaggertype:"integer"`
-	Updated         *types.CpsTime             `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
+	ID              string                        `bson:"_id" json:"_id,omitempty"`
+	Enabled         bool                          `bson:"enabled" json:"enabled"`
+	Title           string                        `bson:"title" json:"title"`
+	Description     string                        `bson:"description" json:"description"`
+	Tabs            *[]viewtab.Response           `bson:"tabs" json:"tabs,omitempty"`
+	Tags            []string                      `bson:"tags" json:"tags"`
+	PeriodicRefresh *datetime.DurationWithEnabled `bson:"periodic_refresh" json:"periodic_refresh"`
+	Group           *ViewGroup                    `bson:"group" json:"group,omitempty"`
+	Author          *author.Author                `bson:"author" json:"author,omitempty"`
+	Created         *datetime.CpsTime             `bson:"created" json:"created,omitempty" swaggertype:"integer"`
+	Updated         *datetime.CpsTime             `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
 
 	IsPrivate bool `bson:"is_private" json:"is_private"`
 }
 
 type ViewGroup struct {
-	ID      string         `bson:"_id" json:"_id,omitempty"`
-	Title   string         `bson:"title" json:"title"`
-	Author  *author.Author `bson:"author" json:"author,omitempty"`
-	Created *types.CpsTime `bson:"created" json:"created,omitempty" swaggertype:"integer"`
-	Updated *types.CpsTime `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
+	ID      string            `bson:"_id" json:"_id,omitempty"`
+	Title   string            `bson:"title" json:"title"`
+	Author  *author.Author    `bson:"author" json:"author,omitempty"`
+	Created *datetime.CpsTime `bson:"created" json:"created,omitempty" swaggertype:"integer"`
+	Updated *datetime.CpsTime `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
 }
 
 type ImportItemRequest struct {

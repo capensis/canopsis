@@ -25,7 +25,7 @@ describe('field-color-indicator', () => {
   test('Renders `field-color-indicator` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `field-color-indicator` with custom props', () => {
@@ -35,6 +35,6 @@ describe('field-color-indicator', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

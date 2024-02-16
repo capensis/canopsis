@@ -127,13 +127,9 @@ exports[`text-editor Renders \`text-editor\` with custom props 1`] = `
                 <svg
                   viewBox="0 0 1792 1792"
                 >
-                  
-    
                   <path
                     d="M1395 736q0 13-10 23l-466 466q-10 10-23 10t-23-10l-466-466q-10-10-10-23t10-23l50-50q10-10 23-10t23 10l393 393 393-393q10-10 23-10t23 10l50 50q10 10 10 23z"
                   />
-                  
-
                 </svg>
               </button>
               <button
@@ -157,28 +153,18 @@ exports[`text-editor Renders \`text-editor\` with custom props 1`] = `
                 <svg
                   viewBox="0 0 16 16"
                 >
-                  
-    
                   <g
                     transform="translate(0,-1036.3622)"
                   >
-                    
-        
                     <path
                       d="m 2,1050.3622 12,-12"
                       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
                     />
-                    
-        
                     <path
                       d="m 2,1038.3622 12,12"
                       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
                     />
-                    
-    
                   </g>
-                  
-
                 </svg>
               </button>
               <button
@@ -225,44 +211,27 @@ exports[`text-editor Renders \`text-editor\` with custom props 1`] = `
                     class="jodit_icon jodit_icon_selectall"
                     viewBox="0 0 18 18"
                   >
-                    
-    
                     <g
                       fill-rule="evenodd"
                       stroke="none"
                       stroke-width="1"
                     >
-                      
-        
                       <g
                         transform="translate(-381.000000, -381.000000)"
                       >
-                        
-            
                         <g
                           transform="translate(381.000000, 381.000000)"
                         >
-                          
-                
                           <path
                             d="M0,2 L2,2 L2,0 C0.9,0 0,0.9 0,2 L0,2 Z M0,10 L2,10 L2,8 L0,8 L0,10 L0,10 Z M4,18 L6,18 L6,16 L4,16 L4,18 L4,18 Z M0,6 L2,6 L2,4 L0,4 L0,6 L0,6 Z M10,0 L8,0 L8,2 L10,2 L10,0 L10,0 Z M16,0 L16,2 L18,2 C18,0.9 17.1,0 16,0 L16,0 Z M2,18 L2,16 L0,16 C0,17.1 0.9,18 2,18 L2,18 Z M0,14 L2,14 L2,12 L0,12 L0,14 L0,14 Z M6,0 L4,0 L4,2 L6,2 L6,0 L6,0 Z M8,18 L10,18 L10,16 L8,16 L8,18 L8,18 Z M16,10 L18,10 L18,8 L16,8 L16,10 L16,10 Z M16,18 C17.1,18 18,17.1 18,16 L16,16 L16,18 L16,18 Z M16,6 L18,6 L18,4 L16,4 L16,6 L16,6 Z M16,14 L18,14 L18,12 L16,12 L16,14 L16,14 Z M12,18 L14,18 L14,16 L12,16 L12,18 L12,18 Z M12,2 L14,2 L14,0 L12,0 L12,2 L12,2 Z M4,14 L14,14 L14,4 L4,4 L4,14 L4,14 Z M6,6 L12,6 L12,12 L6,12 L6,6 L6,6 Z"
                           />
-                          
-            
                         </g>
-                        
-        
                       </g>
-                      
-    
                     </g>
-                    
-
                   </svg>
                 </span>
               </a>
             </li>
-            ﻿
           </ul>
         </div>
       </div>
@@ -277,19 +246,11 @@ exports[`text-editor Renders \`text-editor\` with custom props 1`] = `
             viewBox="0 0 128 128"
             xml:space="preserve"
           >
-            
-    
             <g>
-              
-        
               <polygon
                 points="112.4560547,23.3203125 112.4560547,75.8154297 31.4853516,75.8154297 31.4853516,61.953125     16.0131836,72.6357422 0.5410156,83.3164063 16.0131836,93.9990234 31.4853516,104.6796875 31.4853516,90.8183594     112.4560547,90.8183594 112.4560547,90.8339844 127.4589844,90.8339844 127.4589844,23.3203125   "
               />
-              
-    
             </g>
-            
-
           </svg>
         </span>
       </div>
@@ -334,9 +295,8 @@ exports[`text-editor Renders \`text-editor\` with default props 1`] = `
   <label
     aria-hidden="true"
     class="v-label theme--light"
-    style="left: 0px; position: relative;"
+    style="left: 0px; position: relative; display: none;"
   >
-    
   </label>
   <div
     class="text-editor"
@@ -359,13 +319,9 @@ exports[`text-editor Renders \`text-editor\` with default props 1`] = `
                 class="jodit_icon jodit_icon_source"
                 viewBox="0 0 1792 1792"
               >
-                
-    
                 <path
                   d="M553 1399l-50 50q-10 10-23 10t-23-10l-466-466q-10-10-10-23t10-23l466-466q10-10 23-10t23 10l50 50q10 10 10 23t-10 23l-393 393 393 393q10 10 10 23t-10 23zm591-1067l-373 1291q-4 13-15.5 19.5t-23.5 2.5l-62-17q-13-4-19.5-15.5t-2.5-24.5l373-1291q4-13 15.5-19.5t23.5-2.5l62 17q13 4 19.5 15.5t2.5 24.5zm657 651l-466 466q-10 10-23 10t-23-10l-50-50q-10-10-10-23t10-23l393-393-393-393q-10-10-10-23t10-23l50-50q10-10 23-10t23 10l466 466q10 10 10 23t-10 23z"
                 />
-                
-
               </svg>
             </span>
           </a>
@@ -466,13 +422,9 @@ exports[`text-editor Renders \`text-editor\` with default props 1`] = `
                 role="img"
                 viewBox="0 0 1792 1792"
               >
-                
-    
                 <path
                   d="M381 1620q0 80-54.5 126t-135.5 46q-106 0-172-66l57-88q49 45 106 45 29 0 50.5-14.5t21.5-42.5q0-64-105-56l-26-56q8-10 32.5-43.5t42.5-54 37-38.5v-1q-16 0-48.5 1t-48.5 1v53h-106v-152h333v88l-95 115q51 12 81 49t30 88zm2-627v159h-362q-6-36-6-54 0-51 23.5-93t56.5-68 66-47.5 56.5-43.5 23.5-45q0-25-14.5-38.5t-39.5-13.5q-46 0-81 58l-85-59q24-51 71.5-79.5t105.5-28.5q73 0 123 41.5t50 112.5q0 50-34 91.5t-75 64.5-75.5 50.5-35.5 52.5h127v-60h105zm1409 319v192q0 13-9.5 22.5t-22.5 9.5h-1216q-13 0-22.5-9.5t-9.5-22.5v-192q0-14 9-23t23-9h1216q13 0 22.5 9.5t9.5 22.5zm-1408-899v99h-335v-99h107q0-41 .5-122t.5-121v-12h-2q-8 17-50 54l-71-76 136-127h106v404h108zm1408 387v192q0 13-9.5 22.5t-22.5 9.5h-1216q-13 0-22.5-9.5t-9.5-22.5v-192q0-14 9-23t23-9h1216q13 0 22.5 9.5t9.5 22.5zm0-512v192q0 13-9.5 22.5t-22.5 9.5h-1216q-13 0-22.5-9.5t-9.5-22.5v-192q0-13 9.5-22.5t22.5-9.5h1216q13 0 22.5 9.5t9.5 22.5z"
                 />
-                
-
               </svg>
             </span>
           </a>
@@ -653,13 +605,9 @@ exports[`text-editor Renders \`text-editor\` with default props 1`] = `
                 class="jodit_icon jodit_icon_redo"
                 viewBox="0 0 1792 1792"
               >
-                
-    
                 <path
                   d="M1664 256v448q0 26-19 45t-45 19h-448q-42 0-59-40-17-39 14-69l138-138q-148-137-349-137-104 0-198.5 40.5t-163.5 109.5-109.5 163.5-40.5 198.5 40.5 198.5 109.5 163.5 163.5 109.5 198.5 40.5q119 0 225-52t179-147q7-10 23-12 14 0 25 9l137 138q9 8 9.5 20.5t-7.5 22.5q-109 132-264 204.5t-327 72.5q-156 0-298-61t-245-164-164-245-61-298 61-298 164-245 245-164 298-61q147 0 284.5 55.5t244.5 156.5l130-129q29-31 70-14 39 17 39 59z"
                 />
-                
-
               </svg>
             </span>
           </a>
@@ -743,13 +691,9 @@ exports[`text-editor Renders \`text-editor\` with default props 1`] = `
                 <svg
                   viewBox="0 0 1792 1792"
                 >
-                  
-    
                   <path
                     d="M1395 736q0 13-10 23l-466 466q-10 10-23 10t-23-10l-466-466q-10-10-10-23t10-23l50-50q10-10 23-10t23 10l393 393 393-393q10-10 23-10t23 10l50 50q10 10 10 23z"
                   />
-                  
-
                 </svg>
               </button>
               <button
@@ -773,28 +717,18 @@ exports[`text-editor Renders \`text-editor\` with default props 1`] = `
                 <svg
                   viewBox="0 0 16 16"
                 >
-                  
-    
                   <g
                     transform="translate(0,-1036.3622)"
                   >
-                    
-        
                     <path
                       d="m 2,1050.3622 12,-12"
                       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
                     />
-                    
-        
                     <path
                       d="m 2,1038.3622 12,12"
                       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
                     />
-                    
-    
                   </g>
-                  
-
                 </svg>
               </button>
               <button
@@ -841,44 +775,27 @@ exports[`text-editor Renders \`text-editor\` with default props 1`] = `
                     class="jodit_icon jodit_icon_selectall"
                     viewBox="0 0 18 18"
                   >
-                    
-    
                     <g
                       fill-rule="evenodd"
                       stroke="none"
                       stroke-width="1"
                     >
-                      
-        
                       <g
                         transform="translate(-381.000000, -381.000000)"
                       >
-                        
-            
                         <g
                           transform="translate(381.000000, 381.000000)"
                         >
-                          
-                
                           <path
                             d="M0,2 L2,2 L2,0 C0.9,0 0,0.9 0,2 L0,2 Z M0,10 L2,10 L2,8 L0,8 L0,10 L0,10 Z M4,18 L6,18 L6,16 L4,16 L4,18 L4,18 Z M0,6 L2,6 L2,4 L0,4 L0,6 L0,6 Z M10,0 L8,0 L8,2 L10,2 L10,0 L10,0 Z M16,0 L16,2 L18,2 C18,0.9 17.1,0 16,0 L16,0 Z M2,18 L2,16 L0,16 C0,17.1 0.9,18 2,18 L2,18 Z M0,14 L2,14 L2,12 L0,12 L0,14 L0,14 Z M6,0 L4,0 L4,2 L6,2 L6,0 L6,0 Z M8,18 L10,18 L10,16 L8,16 L8,18 L8,18 Z M16,10 L18,10 L18,8 L16,8 L16,10 L16,10 Z M16,18 C17.1,18 18,17.1 18,16 L16,16 L16,18 L16,18 Z M16,6 L18,6 L18,4 L16,4 L16,6 L16,6 Z M16,14 L18,14 L18,12 L16,12 L16,14 L16,14 Z M12,18 L14,18 L14,16 L12,16 L12,18 L12,18 Z M12,2 L14,2 L14,0 L12,0 L12,2 L12,2 Z M4,14 L14,14 L14,4 L4,4 L4,14 L4,14 Z M6,6 L12,6 L12,12 L6,12 L6,6 L6,6 Z"
                           />
-                          
-            
                         </g>
-                        
-        
                       </g>
-                      
-    
                     </g>
-                    
-
                   </svg>
                 </span>
               </a>
             </li>
-            ﻿
           </ul>
         </div>
       </div>
@@ -893,19 +810,11 @@ exports[`text-editor Renders \`text-editor\` with default props 1`] = `
             viewBox="0 0 128 128"
             xml:space="preserve"
           >
-            
-    
             <g>
-              
-        
               <polygon
                 points="112.4560547,23.3203125 112.4560547,75.8154297 31.4853516,75.8154297 31.4853516,61.953125     16.0131836,72.6357422 0.5410156,83.3164063 16.0131836,93.9990234 31.4853516,104.6796875 31.4853516,90.8183594     112.4560547,90.8183594 112.4560547,90.8339844 127.4589844,90.8339844 127.4589844,23.3203125   "
               />
-              
-    
             </g>
-            
-
           </svg>
         </span>
       </div>
@@ -938,9 +847,8 @@ exports[`text-editor Renders \`text-editor\` with files 1`] = `
   <label
     aria-hidden="true"
     class="v-label theme--light"
-    style="left: 0px; position: relative;"
+    style="left: 0px; position: relative; display: none;"
   >
-    
   </label>
   <div
     class="text-editor"
@@ -963,13 +871,9 @@ exports[`text-editor Renders \`text-editor\` with files 1`] = `
                 class="jodit_icon jodit_icon_source"
                 viewBox="0 0 1792 1792"
               >
-                
-    
                 <path
                   d="M553 1399l-50 50q-10 10-23 10t-23-10l-466-466q-10-10-10-23t10-23l466-466q10-10 23-10t23 10l50 50q10 10 10 23t-10 23l-393 393 393 393q10 10 10 23t-10 23zm591-1067l-373 1291q-4 13-15.5 19.5t-23.5 2.5l-62-17q-13-4-19.5-15.5t-2.5-24.5l373-1291q4-13 15.5-19.5t23.5-2.5l62 17q13 4 19.5 15.5t2.5 24.5zm657 651l-466 466q-10 10-23 10t-23-10l-50-50q-10-10-10-23t10-23l393-393-393-393q-10-10-10-23t10-23l50-50q10-10 23-10t23 10l466 466q10 10 10 23t-10 23z"
                 />
-                
-
               </svg>
             </span>
           </a>
@@ -1070,13 +974,9 @@ exports[`text-editor Renders \`text-editor\` with files 1`] = `
                 role="img"
                 viewBox="0 0 1792 1792"
               >
-                
-    
                 <path
                   d="M381 1620q0 80-54.5 126t-135.5 46q-106 0-172-66l57-88q49 45 106 45 29 0 50.5-14.5t21.5-42.5q0-64-105-56l-26-56q8-10 32.5-43.5t42.5-54 37-38.5v-1q-16 0-48.5 1t-48.5 1v53h-106v-152h333v88l-95 115q51 12 81 49t30 88zm2-627v159h-362q-6-36-6-54 0-51 23.5-93t56.5-68 66-47.5 56.5-43.5 23.5-45q0-25-14.5-38.5t-39.5-13.5q-46 0-81 58l-85-59q24-51 71.5-79.5t105.5-28.5q73 0 123 41.5t50 112.5q0 50-34 91.5t-75 64.5-75.5 50.5-35.5 52.5h127v-60h105zm1409 319v192q0 13-9.5 22.5t-22.5 9.5h-1216q-13 0-22.5-9.5t-9.5-22.5v-192q0-14 9-23t23-9h1216q13 0 22.5 9.5t9.5 22.5zm-1408-899v99h-335v-99h107q0-41 .5-122t.5-121v-12h-2q-8 17-50 54l-71-76 136-127h106v404h108zm1408 387v192q0 13-9.5 22.5t-22.5 9.5h-1216q-13 0-22.5-9.5t-9.5-22.5v-192q0-14 9-23t23-9h1216q13 0 22.5 9.5t9.5 22.5zm0-512v192q0 13-9.5 22.5t-22.5 9.5h-1216q-13 0-22.5-9.5t-9.5-22.5v-192q0-13 9.5-22.5t22.5-9.5h1216q13 0 22.5 9.5t9.5 22.5z"
                 />
-                
-
               </svg>
             </span>
           </a>
@@ -1257,13 +1157,9 @@ exports[`text-editor Renders \`text-editor\` with files 1`] = `
                 class="jodit_icon jodit_icon_redo"
                 viewBox="0 0 1792 1792"
               >
-                
-    
                 <path
                   d="M1664 256v448q0 26-19 45t-45 19h-448q-42 0-59-40-17-39 14-69l138-138q-148-137-349-137-104 0-198.5 40.5t-163.5 109.5-109.5 163.5-40.5 198.5 40.5 198.5 109.5 163.5 163.5 109.5 198.5 40.5q119 0 225-52t179-147q7-10 23-12 14 0 25 9l137 138q9 8 9.5 20.5t-7.5 22.5q-109 132-264 204.5t-327 72.5q-156 0-298-61t-245-164-164-245-61-298 61-298 164-245 245-164 298-61q147 0 284.5 55.5t244.5 156.5l130-129q29-31 70-14 39 17 39 59z"
                 />
-                
-
               </svg>
             </span>
           </a>
@@ -1347,13 +1243,9 @@ exports[`text-editor Renders \`text-editor\` with files 1`] = `
                 <svg
                   viewBox="0 0 1792 1792"
                 >
-                  
-    
                   <path
                     d="M1395 736q0 13-10 23l-466 466q-10 10-23 10t-23-10l-466-466q-10-10-10-23t10-23l50-50q10-10 23-10t23 10l393 393 393-393q10-10 23-10t23 10l50 50q10 10 10 23z"
                   />
-                  
-
                 </svg>
               </button>
               <button
@@ -1377,28 +1269,18 @@ exports[`text-editor Renders \`text-editor\` with files 1`] = `
                 <svg
                   viewBox="0 0 16 16"
                 >
-                  
-    
                   <g
                     transform="translate(0,-1036.3622)"
                   >
-                    
-        
                     <path
                       d="m 2,1050.3622 12,-12"
                       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
                     />
-                    
-        
                     <path
                       d="m 2,1038.3622 12,12"
                       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
                     />
-                    
-    
                   </g>
-                  
-
                 </svg>
               </button>
               <button
@@ -1445,44 +1327,27 @@ exports[`text-editor Renders \`text-editor\` with files 1`] = `
                     class="jodit_icon jodit_icon_selectall"
                     viewBox="0 0 18 18"
                   >
-                    
-    
                     <g
                       fill-rule="evenodd"
                       stroke="none"
                       stroke-width="1"
                     >
-                      
-        
                       <g
                         transform="translate(-381.000000, -381.000000)"
                       >
-                        
-            
                         <g
                           transform="translate(381.000000, 381.000000)"
                         >
-                          
-                
                           <path
                             d="M0,2 L2,2 L2,0 C0.9,0 0,0.9 0,2 L0,2 Z M0,10 L2,10 L2,8 L0,8 L0,10 L0,10 Z M4,18 L6,18 L6,16 L4,16 L4,18 L4,18 Z M0,6 L2,6 L2,4 L0,4 L0,6 L0,6 Z M10,0 L8,0 L8,2 L10,2 L10,0 L10,0 Z M16,0 L16,2 L18,2 C18,0.9 17.1,0 16,0 L16,0 Z M2,18 L2,16 L0,16 C0,17.1 0.9,18 2,18 L2,18 Z M0,14 L2,14 L2,12 L0,12 L0,14 L0,14 Z M6,0 L4,0 L4,2 L6,2 L6,0 L6,0 Z M8,18 L10,18 L10,16 L8,16 L8,18 L8,18 Z M16,10 L18,10 L18,8 L16,8 L16,10 L16,10 Z M16,18 C17.1,18 18,17.1 18,16 L16,16 L16,18 L16,18 Z M16,6 L18,6 L18,4 L16,4 L16,6 L16,6 Z M16,14 L18,14 L18,12 L16,12 L16,14 L16,14 Z M12,18 L14,18 L14,16 L12,16 L12,18 L12,18 Z M12,2 L14,2 L14,0 L12,0 L12,2 L12,2 Z M4,14 L14,14 L14,4 L4,4 L4,14 L4,14 Z M6,6 L12,6 L12,12 L6,12 L6,6 L6,6 Z"
                           />
-                          
-            
                         </g>
-                        
-        
                       </g>
-                      
-    
                     </g>
-                    
-
                   </svg>
                 </span>
               </a>
             </li>
-            ﻿
           </ul>
         </div>
       </div>
@@ -1497,19 +1362,11 @@ exports[`text-editor Renders \`text-editor\` with files 1`] = `
             viewBox="0 0 128 128"
             xml:space="preserve"
           >
-            
-    
             <g>
-              
-        
               <polygon
                 points="112.4560547,23.3203125 112.4560547,75.8154297 31.4853516,75.8154297 31.4853516,61.953125     16.0131836,72.6357422 0.5410156,83.3164063 16.0131836,93.9990234 31.4853516,104.6796875 31.4853516,90.8183594     112.4560547,90.8183594 112.4560547,90.8339844 127.4589844,90.8339844 127.4589844,23.3203125   "
               />
-              
-    
             </g>
-            
-
           </svg>
         </span>
       </div>
@@ -1542,9 +1399,8 @@ exports[`text-editor Renders \`text-editor\` with variables 1`] = `
   <label
     aria-hidden="true"
     class="v-label theme--light"
-    style="left: 0px; position: relative;"
+    style="left: 0px; position: relative; display: none;"
   >
-    
   </label>
   <div
     class="text-editor"
@@ -1567,13 +1423,9 @@ exports[`text-editor Renders \`text-editor\` with variables 1`] = `
                 class="jodit_icon jodit_icon_source"
                 viewBox="0 0 1792 1792"
               >
-                
-    
                 <path
                   d="M553 1399l-50 50q-10 10-23 10t-23-10l-466-466q-10-10-10-23t10-23l466-466q10-10 23-10t23 10l50 50q10 10 10 23t-10 23l-393 393 393 393q10 10 10 23t-10 23zm591-1067l-373 1291q-4 13-15.5 19.5t-23.5 2.5l-62-17q-13-4-19.5-15.5t-2.5-24.5l373-1291q4-13 15.5-19.5t23.5-2.5l62 17q13 4 19.5 15.5t2.5 24.5zm657 651l-466 466q-10 10-23 10t-23-10l-50-50q-10-10-10-23t10-23l393-393-393-393q-10-10-10-23t10-23l50-50q10-10 23-10t23 10l466 466q10 10 10 23t-10 23z"
                 />
-                
-
               </svg>
             </span>
           </a>
@@ -1674,13 +1526,9 @@ exports[`text-editor Renders \`text-editor\` with variables 1`] = `
                 role="img"
                 viewBox="0 0 1792 1792"
               >
-                
-    
                 <path
                   d="M381 1620q0 80-54.5 126t-135.5 46q-106 0-172-66l57-88q49 45 106 45 29 0 50.5-14.5t21.5-42.5q0-64-105-56l-26-56q8-10 32.5-43.5t42.5-54 37-38.5v-1q-16 0-48.5 1t-48.5 1v53h-106v-152h333v88l-95 115q51 12 81 49t30 88zm2-627v159h-362q-6-36-6-54 0-51 23.5-93t56.5-68 66-47.5 56.5-43.5 23.5-45q0-25-14.5-38.5t-39.5-13.5q-46 0-81 58l-85-59q24-51 71.5-79.5t105.5-28.5q73 0 123 41.5t50 112.5q0 50-34 91.5t-75 64.5-75.5 50.5-35.5 52.5h127v-60h105zm1409 319v192q0 13-9.5 22.5t-22.5 9.5h-1216q-13 0-22.5-9.5t-9.5-22.5v-192q0-14 9-23t23-9h1216q13 0 22.5 9.5t9.5 22.5zm-1408-899v99h-335v-99h107q0-41 .5-122t.5-121v-12h-2q-8 17-50 54l-71-76 136-127h106v404h108zm1408 387v192q0 13-9.5 22.5t-22.5 9.5h-1216q-13 0-22.5-9.5t-9.5-22.5v-192q0-14 9-23t23-9h1216q13 0 22.5 9.5t9.5 22.5zm0-512v192q0 13-9.5 22.5t-22.5 9.5h-1216q-13 0-22.5-9.5t-9.5-22.5v-192q0-13 9.5-22.5t22.5-9.5h1216q13 0 22.5 9.5t9.5 22.5z"
                 />
-                
-
               </svg>
             </span>
           </a>
@@ -1861,13 +1709,9 @@ exports[`text-editor Renders \`text-editor\` with variables 1`] = `
                 class="jodit_icon jodit_icon_redo"
                 viewBox="0 0 1792 1792"
               >
-                
-    
                 <path
                   d="M1664 256v448q0 26-19 45t-45 19h-448q-42 0-59-40-17-39 14-69l138-138q-148-137-349-137-104 0-198.5 40.5t-163.5 109.5-109.5 163.5-40.5 198.5 40.5 198.5 109.5 163.5 163.5 109.5 198.5 40.5q119 0 225-52t179-147q7-10 23-12 14 0 25 9l137 138q9 8 9.5 20.5t-7.5 22.5q-109 132-264 204.5t-327 72.5q-156 0-298-61t-245-164-164-245-61-298 61-298 164-245 245-164 298-61q147 0 284.5 55.5t244.5 156.5l130-129q29-31 70-14 39 17 39 59z"
                 />
-                
-
               </svg>
             </span>
           </a>
@@ -1960,13 +1804,9 @@ exports[`text-editor Renders \`text-editor\` with variables 1`] = `
                 <svg
                   viewBox="0 0 1792 1792"
                 >
-                  
-    
                   <path
                     d="M1395 736q0 13-10 23l-466 466q-10 10-23 10t-23-10l-466-466q-10-10-10-23t10-23l50-50q10-10 23-10t23 10l393 393 393-393q10-10 23-10t23 10l50 50q10 10 10 23z"
                   />
-                  
-
                 </svg>
               </button>
               <button
@@ -1990,28 +1830,18 @@ exports[`text-editor Renders \`text-editor\` with variables 1`] = `
                 <svg
                   viewBox="0 0 16 16"
                 >
-                  
-    
                   <g
                     transform="translate(0,-1036.3622)"
                   >
-                    
-        
                     <path
                       d="m 2,1050.3622 12,-12"
                       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
                     />
-                    
-        
                     <path
                       d="m 2,1038.3622 12,12"
                       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
                     />
-                    
-    
                   </g>
-                  
-
                 </svg>
               </button>
               <button
@@ -2058,44 +1888,27 @@ exports[`text-editor Renders \`text-editor\` with variables 1`] = `
                     class="jodit_icon jodit_icon_selectall"
                     viewBox="0 0 18 18"
                   >
-                    
-    
                     <g
                       fill-rule="evenodd"
                       stroke="none"
                       stroke-width="1"
                     >
-                      
-        
                       <g
                         transform="translate(-381.000000, -381.000000)"
                       >
-                        
-            
                         <g
                           transform="translate(381.000000, 381.000000)"
                         >
-                          
-                
                           <path
                             d="M0,2 L2,2 L2,0 C0.9,0 0,0.9 0,2 L0,2 Z M0,10 L2,10 L2,8 L0,8 L0,10 L0,10 Z M4,18 L6,18 L6,16 L4,16 L4,18 L4,18 Z M0,6 L2,6 L2,4 L0,4 L0,6 L0,6 Z M10,0 L8,0 L8,2 L10,2 L10,0 L10,0 Z M16,0 L16,2 L18,2 C18,0.9 17.1,0 16,0 L16,0 Z M2,18 L2,16 L0,16 C0,17.1 0.9,18 2,18 L2,18 Z M0,14 L2,14 L2,12 L0,12 L0,14 L0,14 Z M6,0 L4,0 L4,2 L6,2 L6,0 L6,0 Z M8,18 L10,18 L10,16 L8,16 L8,18 L8,18 Z M16,10 L18,10 L18,8 L16,8 L16,10 L16,10 Z M16,18 C17.1,18 18,17.1 18,16 L16,16 L16,18 L16,18 Z M16,6 L18,6 L18,4 L16,4 L16,6 L16,6 Z M16,14 L18,14 L18,12 L16,12 L16,14 L16,14 Z M12,18 L14,18 L14,16 L12,16 L12,18 L12,18 Z M12,2 L14,2 L14,0 L12,0 L12,2 L12,2 Z M4,14 L14,14 L14,4 L4,4 L4,14 L4,14 Z M6,6 L12,6 L12,12 L6,12 L6,6 L6,6 Z"
                           />
-                          
-            
                         </g>
-                        
-        
                       </g>
-                      
-    
                     </g>
-                    
-
                   </svg>
                 </span>
               </a>
             </li>
-            ﻿
           </ul>
         </div>
       </div>
@@ -2110,19 +1923,11 @@ exports[`text-editor Renders \`text-editor\` with variables 1`] = `
             viewBox="0 0 128 128"
             xml:space="preserve"
           >
-            
-    
             <g>
-              
-        
               <polygon
                 points="112.4560547,23.3203125 112.4560547,75.8154297 31.4853516,75.8154297 31.4853516,61.953125     16.0131836,72.6357422 0.5410156,83.3164063 16.0131836,93.9990234 31.4853516,104.6796875 31.4853516,90.8183594     112.4560547,90.8183594 112.4560547,90.8339844 127.4589844,90.8339844 127.4589844,23.3203125   "
               />
-              
-    
             </g>
-            
-
           </svg>
         </span>
       </div>

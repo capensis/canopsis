@@ -1,23 +1,36 @@
-<template lang="pug">
-  v-layout(column)
-    c-collapse-panel.mb-2(:title="$t('eventFilter.editActions')")
-      event-filter-enrichment-actions-form(
-        v-field="form.config.actions",
-        :variables="templateVariables",
+<template>
+  <v-layout column>
+    <c-collapse-panel
+      class="mb-2"
+      :title="$t('eventFilter.editActions')"
+    >
+      <event-filter-enrichment-actions-form
+        v-field="form.config.actions"
+        :variables="templateVariables"
         :name="name"
-      )
-    v-layout(row)
-      v-select.mr-3(
-        v-field="form.config.on_success",
-        :label="$t('eventFilter.onSuccess')",
+      />
+    </c-collapse-panel>
+    <v-layout>
+      <v-select
+        class="mr-3"
+        v-field="form.config.on_success"
+        :label="$t('eventFilter.onSuccess')"
         :items="eventFilterAfterTypes"
-      )
-      v-select.ml-3(
-        v-field="form.config.on_failure",
-        :label="$t('eventFilter.onFailure')",
+      />
+      <v-select
+        class="ml-3"
+        v-field="form.config.on_failure"
+        :label="$t('eventFilter.onFailure')"
         :items="eventFilterAfterTypes"
-      )
-    c-alert(:value="errors.has(name)", type="error") {{ $t('eventFilter.actionsRequired') }}
+      />
+    </v-layout>
+    <c-alert
+      :value="errors.has(name)"
+      type="error"
+    >
+      {{ $t('eventFilter.actionsRequired') }}
+    </c-alert>
+  </v-layout>
 </template>
 
 <script>

@@ -2,6 +2,7 @@ package broadcastmessage
 
 import (
 	"context"
+	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
@@ -20,7 +21,7 @@ func (v *baseValidator) Validate(ctx context.Context, sl validator.StructLevel) 
 		err := v.dbClient.Collection(mongo.BroadcastMessageMongoCollection).FindOne(ctx, bson.M{"_id": r.ID}).Err()
 		if err == nil {
 			sl.ReportError("_id", "ID", "ID", "unique", "")
-		} else if err != mongodriver.ErrNoDocuments {
+		} else if !errors.Is(err, mongodriver.ErrNoDocuments) {
 			panic(err)
 		}
 	}

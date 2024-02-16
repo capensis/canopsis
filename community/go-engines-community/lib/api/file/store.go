@@ -5,9 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"mime/multipart"
-	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -150,7 +149,7 @@ func (s *store) storeFiles(isPublic bool, files []*multipart.FileHeader) ([]File
 			ID:        id,
 			FileName:  f.Filename,
 			MediaType: f.Header.Get(contentType),
-			Created:   types.CpsTime{Time: time.Now()},
+			Created:   datetime.NewCpsTime(),
 			Storage:   storage,
 			Etag:      etag,
 			IsPublic:  isPublic,

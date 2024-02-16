@@ -8,6 +8,7 @@ import (
 	context "context"
 	reflect "reflect"
 
+	datetime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	entityservice "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	types "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	gomock "github.com/golang/mock/gomock"
@@ -128,7 +129,7 @@ func (mr *MockManagerMockRecorder) UpdateImpactedServicesFromDependencies(arg0 i
 }
 
 // UpdateLastEventDate mocks base method.
-func (m *MockManager) UpdateLastEventDate(arg0 context.Context, arg1, arg2 string, arg3 types.CpsTime) error {
+func (m *MockManager) UpdateLastEventDate(arg0 context.Context, arg1, arg2 string, arg3 datetime.CpsTime) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateLastEventDate", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].(error)

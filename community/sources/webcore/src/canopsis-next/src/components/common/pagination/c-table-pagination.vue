@@ -1,20 +1,27 @@
-<template lang="pug">
-  v-layout(v-show="totalItems", align-center)
-    v-flex(xs10)
-      c-pagination(
-        :page="page",
-        :limit="rowsPerPage",
-        :total="totalItems",
+<template>
+  <v-layout
+    v-show="totalItems"
+    align-center
+  >
+    <v-flex xs10>
+      <c-pagination
+        :page="page"
+        :limit="itemsPerPage"
+        :total="totalItems"
         @input="$emit('update:page', $event)"
-      )
-    v-spacer
-    v-flex(xs2)
-      c-records-per-page-field.pa-0(
-        :value="rowsPerPage",
-        :items="rowsPerPageItems",
-        hide-details,
-        @input="$emit('update:rows-per-page', $event)"
-      )
+      />
+    </v-flex>
+    <v-spacer />
+    <v-flex xs2>
+      <c-items-per-page-field
+        class="pa-0"
+        :value="itemsPerPage"
+        :items="items"
+        hide-details
+        @input="$emit('update:items-per-page', $event)"
+      />
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
@@ -25,7 +32,7 @@ export default {
     CPagination,
   },
   props: {
-    rowsPerPageItems: {
+    items: {
       type: Array,
       required: false,
     },
@@ -37,7 +44,7 @@ export default {
       type: Number,
       required: false,
     },
-    rowsPerPage: {
+    itemsPerPage: {
       type: Number,
       required: false,
     },

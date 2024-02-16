@@ -1,19 +1,37 @@
-<template lang="pug">
-  v-expansion-panel.c-collapse-panel(:style="panelStyle")
-    v-expansion-panel-content(
-      :class="panelContentClass",
-      :style="panelContentStyle",
-      :lazy="lazy"
-    )
-      template(#actions="")
-        slot(name="actions")
-          v-icon(color="white") {{ icon }}
-      template(#header="")
-        slot(name="header")
-          span.white--text {{ title }}
-      v-card
-        v-card-text
-          slot
+<template>
+  <v-expansion-panels
+    class="c-collapse-panel elevation-2"
+    accordion
+    :style="panelStyle"
+  >
+    <v-expansion-panel class="c-collapse-panel__panel">
+      <v-expansion-panel-header :color="headerColor">
+        <slot name="header">
+          <span class="white--text">{{ title }}</span>
+        </slot>
+        <template #actions="">
+          <slot name="actions">
+            <v-icon color="white">
+              {{ icon }}
+            </v-icon>
+          </slot>
+        </template>
+      </v-expansion-panel-header>
+      <v-expansion-panel-content
+        :style="panelContentStyle"
+        eager
+      >
+        <v-card
+          class="c-collapse-panel__card"
+          flat
+        >
+          <v-card-text>
+            <slot />
+          </v-card-text>
+        </v-card>
+      </v-expansion-panel-content>
+    </v-expansion-panel>
+  </v-expansion-panels>
 </template>
 
 <script>
@@ -35,7 +53,7 @@ export default {
     },
     color: {
       type: String,
-      default: 'grey',
+      default: 'rgb(128, 128, 128)',
     },
     outlineColor: {
       type: String,
@@ -44,10 +62,6 @@ export default {
     icon: {
       type: String,
       default: '$vuetify.icons.expand',
-    },
-    lazy: {
-      type: Boolean,
-      default: false,
     },
     error: {
       type: Boolean,
@@ -59,8 +73,8 @@ export default {
       return { outlineColor: this.outlineColor };
     },
 
-    panelContentClass() {
-      return { error: this.hasError };
+    headerColor() {
+      return this.hasError ? 'error' : this.color;
     },
 
     panelContentStyle() {
@@ -76,8 +90,17 @@ export default {
 
 <style lang="scss">
 .c-collapse-panel {
-  border-radius: 5px;
-  overflow: hidden;
+  --c-collapse-panel-border-radius: 5px;
+
   outline: 3px solid transparent;
+  border-radius: var(--c-collapse-panel-border-radius) !important;
+
+  &__panel {
+    overflow: hidden;
+  }
+
+  &__card.v-card {
+    border-radius: 0;
+  }
 }
 </style>

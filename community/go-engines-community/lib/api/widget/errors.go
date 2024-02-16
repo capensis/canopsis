@@ -1,9 +1,9 @@
 package widget
 
-type ValidationErr struct {
+type ValidationError struct {
 	error error
 }
 
-func (v ValidationErr) Error() string {
+func (v ValidationError) Error() string {
 	return v.error.Error()
 }

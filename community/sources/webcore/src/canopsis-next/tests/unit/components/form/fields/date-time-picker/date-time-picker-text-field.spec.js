@@ -168,7 +168,7 @@ describe('date-time-picker-text-field', () => {
 
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
 
     dateSpy.mockClear();
   });
@@ -188,7 +188,7 @@ describe('date-time-picker-text-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
 
     dateSpy.mockClear();
   });

@@ -7,7 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
@@ -79,7 +79,7 @@ func (s *store) Enable(ctx context.Context, message, color string) error {
 	}
 
 	return s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
-		now := types.NewCpsTime()
+		now := datetime.NewCpsTime()
 
 		users, err := s.userProvider.FindWithoutPermission(ctx, apisecurity.PermMaintenance)
 		if err != nil {
@@ -107,7 +107,7 @@ func (s *store) Enable(ctx context.Context, message, color string) error {
 				Color:   color,
 				Message: message,
 				Start:   now,
-				End:     types.NewCpsTime(now.AddDate(1, 0, 0).Unix()),
+				End:     datetime.NewCpsTime(now.AddDate(1, 0, 0).Unix()),
 				Created: &now,
 				Updated: &now,
 			},

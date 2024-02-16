@@ -37,7 +37,7 @@ describe('alarm-metric-presets', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `alarm-metric-presets` with custom props', () => {
@@ -51,6 +51,6 @@ describe('alarm-metric-presets', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

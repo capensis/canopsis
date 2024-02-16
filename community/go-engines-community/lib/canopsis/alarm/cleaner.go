@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -13,10 +14,10 @@ import (
 
 type Cleaner interface {
 	// ArchiveResolvedAlarms archives alarm to archived alarm collection.
-	ArchiveResolvedAlarms(ctx context.Context, before types.CpsTime, limit int64) (int64, error)
+	ArchiveResolvedAlarms(ctx context.Context, before datetime.CpsTime, limit int64) (int64, error)
 
 	// DeleteArchivedResolvedAlarms deletes resolved alarms from archived collection after some time.
-	DeleteArchivedResolvedAlarms(ctx context.Context, before types.CpsTime, limit int64) (int64, error)
+	DeleteArchivedResolvedAlarms(ctx context.Context, before datetime.CpsTime, limit int64) (int64, error)
 }
 
 func NewCleaner(dbClient mongo.DbClient, bulkSize int) Cleaner {
@@ -33,7 +34,7 @@ type cleaner struct {
 	bulkSize             int
 }
 
-func (c *cleaner) ArchiveResolvedAlarms(ctx context.Context, before types.CpsTime, limit int64) (int64, error) {
+func (c *cleaner) ArchiveResolvedAlarms(ctx context.Context, before datetime.CpsTime, limit int64) (int64, error) {
 	opts := options.Find()
 	if limit > 0 {
 		opts.SetLimit(limit)
@@ -126,7 +127,7 @@ func (c *cleaner) ArchiveResolvedAlarms(ctx context.Context, before types.CpsTim
 	return archived, nil
 }
 
-func (c *cleaner) DeleteArchivedResolvedAlarms(ctx context.Context, before types.CpsTime, limit int64) (int64, error) {
+func (c *cleaner) DeleteArchivedResolvedAlarms(ctx context.Context, before datetime.CpsTime, limit int64) (int64, error) {
 	opts := options.Find().SetProjection(bson.M{"_id": 1})
 	if limit > 0 {
 		opts.SetLimit(limit)

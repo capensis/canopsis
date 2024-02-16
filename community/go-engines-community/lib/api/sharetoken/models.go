@@ -3,7 +3,7 @@ package sharetoken
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 )
 
 type ListRequest struct {
@@ -14,29 +14,29 @@ type ListRequest struct {
 }
 
 type EditRequest struct {
-	Duration    *types.DurationWithUnit `json:"duration"`
-	Description string                  `json:"description" binding:"max=500"`
+	Duration    *datetime.DurationWithUnit `json:"duration"`
+	Description string                     `json:"description" binding:"max=500"`
 }
 
 type Response struct {
-	ID          string         `bson:"_id" json:"_id"`
-	Value       string         `bson:"value" json:"value"`
-	User        *author.Author `bson:"user" json:"user"`
-	Roles       []author.Role  `bson:"roles" json:"roles"`
-	Description string         `bson:"description" json:"description"`
-	Created     types.CpsTime  `bson:"created" json:"created" swaggertype:"integer"`
-	Accessed    types.CpsTime  `bson:"accessed" json:"accessed" swaggertype:"integer"`
-	Expired     *types.CpsTime `bson:"expired" json:"expired" swaggertype:"integer"`
+	ID          string            `bson:"_id" json:"_id"`
+	Value       string            `bson:"value" json:"value"`
+	User        *author.Author    `bson:"user" json:"user"`
+	Roles       []author.Role     `bson:"roles" json:"roles"`
+	Description string            `bson:"description" json:"description"`
+	Created     datetime.CpsTime  `bson:"created" json:"created" swaggertype:"integer"`
+	Accessed    datetime.CpsTime  `bson:"accessed" json:"accessed" swaggertype:"integer"`
+	Expired     *datetime.CpsTime `bson:"expired" json:"expired" swaggertype:"integer"`
 }
 
 type Model struct {
-	ID          string         `bson:"_id"`
-	Value       string         `bson:"value"`
-	User        string         `bson:"user"`
-	Description string         `bson:"description"`
-	Created     types.CpsTime  `bson:"created"`
-	Accessed    types.CpsTime  `bson:"accessed"`
-	Expired     *types.CpsTime `bson:"expired,omitempty"`
+	ID          string            `bson:"_id"`
+	Value       string            `bson:"value"`
+	User        string            `bson:"user"`
+	Description string            `bson:"description"`
+	Created     datetime.CpsTime  `bson:"created"`
+	Accessed    datetime.CpsTime  `bson:"accessed"`
+	Expired     *datetime.CpsTime `bson:"expired,omitempty"`
 }
 
 type AggregationResult struct {

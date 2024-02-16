@@ -1,22 +1,25 @@
-<template lang="pug">
-  c-draggable-list-field.groups-panel.secondary(
-    v-field="groups",
-    :class="{ empty: isGroupsEmpty }",
-    :component-data="{ props: { expand: true, dark: true, focusable: true } }",
-    :group="draggableGroup",
+<template>
+  <c-draggable-list-field
+    class="groups-panel secondary"
+    v-field="groups"
+    :class="{ empty: isGroupsEmpty }"
+    :component-data="{ props: { expand: true, dark: true, focusable: true } }"
+    :group="draggableGroup"
     component="v-expansion-panel"
-  )
-    group-panel(
-      v-for="(group, groupIndex) in groups",
-      :group="group",
+  >
+    <group-panel
+      v-for="(group, groupIndex) in groups"
+      :group="group"
       :key="group._id"
-    )
-      draggable-group-views(
-        :views="group.views",
-        :put="viewPut",
-        :pull="viewPull",
+    >
+      <draggable-group-views
+        :views="group.views"
+        :put="viewPut"
+        :pull="viewPull"
         @change="changeViewsHandler(groupIndex, $event)"
-      )
+      />
+    </group-panel>
+  </c-draggable-list-field>
 </template>
 
 <script>

@@ -177,7 +177,7 @@ describe('numbers-widget', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `numbers-widget` with custom props', async () => {
@@ -196,6 +196,6 @@ describe('numbers-widget', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -172,7 +172,7 @@ describe('c-mixed-field', () => {
   it('Renders `c-mixed-field` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-mixed-field` with custom props', () => {
@@ -196,6 +196,6 @@ describe('c-mixed-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

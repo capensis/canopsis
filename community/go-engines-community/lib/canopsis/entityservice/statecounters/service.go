@@ -5,10 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"math"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
@@ -86,7 +86,7 @@ func (s *service) RecomputeAllServices(ctx context.Context) error {
 			Component:     serv.ID,
 			Connector:     types.ConnectorEngineService,
 			ConnectorName: types.ConnectorEngineService,
-			Timestamp:     types.CpsTime{Time: time.Now()},
+			Timestamp:     datetime.NewCpsTime(),
 			Initiator:     types.InitiatorSystem,
 		}
 
@@ -123,7 +123,7 @@ func (s *service) UpdateServiceState(ctx context.Context, serviceID string, serv
 		ConnectorName: types.ConnectorEngineService,
 		State:         types.CpsNumber(serviceInfo.State),
 		Output:        serviceInfo.Output,
-		Timestamp:     types.CpsTime{Time: time.Now()},
+		Timestamp:     datetime.NewCpsTime(),
 		Initiator:     types.InitiatorSystem,
 	}
 
@@ -501,6 +501,19 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 			}
 		}
 
+		countersChanged := false
+		diffCounters := counters.Sub(oldCounters)
+		for _, v := range diffCounters {
+			if v != 0 {
+				countersChanged = true
+				break
+			}
+		}
+
+		if !countersChanged {
+			continue
+		}
+
 		output, err := s.templateExecutor.Execute(counters.OutputTemplate, counters)
 		if err != nil {
 			return nil, err
@@ -514,7 +527,7 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 		newModel = mongodriver.
 			NewUpdateOneModel().
 			SetFilter(bson.M{"_id": counters.ID}).
-			SetUpdate(bson.M{"$inc": counters.Sub(oldCounters)}).
+			SetUpdate(bson.M{"$inc": diffCounters}).
 			SetUpsert(true)
 
 		b, err := bson.Marshal(newModel)

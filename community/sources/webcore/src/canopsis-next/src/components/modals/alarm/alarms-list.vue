@@ -1,19 +1,22 @@
-<template lang="pug">
-  modal-wrapper(close)
-    template(#title="")
-      span {{ title }}
-    template(#text="")
-      alarms-list-table-with-pagination(
-        :widget="widget",
-        :columns="widget.parameters.widgetColumns",
-        :alarms="alarms",
-        :meta="meta",
-        :loading="pending",
-        :query.sync="query",
-        :refresh-alarms-list="fetchList",
-        selectable,
+<template>
+  <modal-wrapper close>
+    <template #title="">
+      <span>{{ title }}</span>
+    </template>
+    <template #text="">
+      <alarms-list-table-with-pagination
+        :widget="widget"
+        :columns="widget.parameters.widgetColumns"
+        :alarms="alarms"
+        :meta="meta"
+        :loading="pending"
+        :query.sync="query"
+        :refresh-alarms-list="fetchList"
+        selectable
         expandable
-      )
+      />
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>

@@ -2,40 +2,38 @@
 
 exports[`variables-list Renders \`variables-list\` with custom props 1`] = `
 <div
-  class="v-list pa-0 v-list--dense theme--light"
+  class="v-list pa-0 v-sheet theme--light v-list--dense"
   role="list"
 >
   <div
+    class="v-list-item v-list-item--link theme--light"
     role="listitem"
+    tabindex="0"
   >
-    <a
-      class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
+    <div
+      class="v-list-item__content"
     >
       <div
-        class="v-list__tile__content"
+        class="v-list-item__title"
       >
         <div
-          class="v-list__tile__title"
+          class="layout justify-space-between"
         >
-          <div
-            class="layout row justify-space-between"
-          >
-            Entity
-            <!---->
-          </div>
+          Entity
+          <!---->
         </div>
       </div>
-      <div
-        class="v-list__tile__action"
+    </div>
+    <div
+      class="v-list-item__action"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate material-icons theme--light"
       >
-        <i
-          aria-hidden="true"
-          class="v-icon material-icons theme--light"
-        >
-          arrow_right
-        </i>
-      </div>
-    </a>
+        arrow_right
+      </i>
+    </div>
   </div>
   <!---->
 </div>
@@ -43,7 +41,7 @@ exports[`variables-list Renders \`variables-list\` with custom props 1`] = `
 
 exports[`variables-list Renders \`variables-list\` with default props 1`] = `
 <div
-  class="v-list pa-0 v-list--dense theme--light"
+  class="v-list pa-0 v-sheet theme--light v-list--dense"
   role="list"
 />
 `;

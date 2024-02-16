@@ -1,8 +1,17 @@
-<template lang="pug">
-  v-card
-    v-card-text
-      div.ml-2.mb-2.font-weight-bold {{ $t('login.loginWithCAS') }}
-      v-btn(:href="casHref", color="primary") {{ title }}
+<template>
+  <v-card>
+    <v-card-text>
+      <div class="ml-2 mb-2 font-weight-bold">
+        {{ $t('login.loginWithCAS') }}
+      </div>
+      <v-btn
+        :href="casHref"
+        color="primary"
+      >
+        {{ title }}
+      </v-btn>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script>

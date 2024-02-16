@@ -1,15 +1,22 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :items="remediationInstructionStatsComments",
-    :headers="headers",
-    :loading="pending",
-    :pagination.sync="pagination",
-    :total-items="totalItems",
+<template>
+  <c-advanced-data-table
+    :items="remediationInstructionStatsComments"
+    :headers="headers"
+    :loading="pending"
+    :options.sync="options"
+    :total-items="totalItems"
     advanced-pagination
-  )
-    template(#created="{ item }") {{ item.created | date }}
-    template(#rating="{ item }")
-      rating-field(:value="item.rating", readonly)
+  >
+    <template #created="{ item }">
+      {{ item.created | date }}
+    </template>
+    <template #rating="{ item }">
+      <rating-field
+        :value="item.rating"
+        readonly
+      />
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>

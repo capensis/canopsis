@@ -1,13 +1,17 @@
-<template lang="pug">
-  div
-    v-tooltip(left)
-      template(#activator="{ on }")
-        div(v-on="on") {{ version }}
-      div
-        div {{ $t('common.stack') }}:
-          strong  {{ stack }}
-        div {{ $t('common.edition') }}:
-          strong  {{ edition }}
+<template>
+  <div>
+    <v-tooltip left>
+      <template #activator="{ on }">
+        <div v-on="on">
+          {{ version }}
+        </div>
+      </template>
+      <div>
+        <div>{{ $t('common.stack') }}:<strong> {{ stack }}</strong></div>
+        <div>{{ $t('common.edition') }}:<strong> {{ edition }}</strong></div>
+      </div>
+    </v-tooltip>
+  </div>
 </template>
 
 <script>

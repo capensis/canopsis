@@ -1,8 +1,9 @@
 package httpprovider
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"net/http"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 )
 
 // queryBasicProvider implements a Query Authentication provider.

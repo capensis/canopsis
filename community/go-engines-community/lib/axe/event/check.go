@@ -11,6 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
@@ -146,7 +147,7 @@ func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 
 func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, event rpc.AxeEvent) (Result, error) {
 	params := event.Parameters
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	result := Result{
 		Forward: true,
 	}
@@ -239,7 +240,7 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 	}
 
 	alarm.InternalTags = p.internalTagAlarmMatcher.Match(entity, alarm)
-	alarm.InternalTagsUpdated = types.NewMicroTime()
+	alarm.InternalTagsUpdated = datetime.NewMicroTime()
 	alarm.Tags = append(alarm.Tags, alarm.InternalTags...)
 	alarm.Healthcheck = event.Healthcheck
 	_, err = p.alarmCollection.InsertOne(ctx, alarm)
@@ -288,6 +289,7 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 	inc := bson.M{
 		"v.events_count": 1,
 	}
+	unset := bson.M{}
 	author := ""
 	if entity.Type != types.EntityTypeService {
 		author = strings.Replace(entity.Connector, "/", ".", 1)
@@ -305,7 +307,7 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 	}
 
 	var stateStep types.AlarmStep
-	if newState != previousState && (alarm.Value.State.Type != types.AlarmStepChangeState || newState == types.AlarmStateOK) {
+	if newState != previousState && (!alarm.IsStateLocked() || newState == types.AlarmStateOK) {
 		stateStep = types.NewAlarmStep(types.AlarmStepStateIncrease, params.Timestamp, author,
 			params.Output, params.User, params.Role, params.Initiator)
 		stateStep.Value = newState
@@ -323,6 +325,11 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 		set["v.state"] = stateStep
 		set["v.last_update_date"] = params.Timestamp
 		inc["v.total_state_changes"] = 1
+
+		if alarm.IsStateLocked() {
+			alarm.Value.ChangeState = nil
+			unset["v.change_state"] = ""
+		}
 	}
 
 	newStatus := p.alarmStatusService.ComputeStatus(alarm, entity)
@@ -362,6 +369,7 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 		"$push":     push,
 		"$inc":      inc,
 		"$addToSet": addToSet,
+		"$unset":    unset,
 	}, options.FindOneAndUpdate().SetReturnDocument(options.After)).Decode(&newAlarm)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -413,7 +421,7 @@ func (p *checkProcessor) newAlarmChange(alarm types.Alarm) types.AlarmChange {
 func (p *checkProcessor) newAlarm(
 	params rpc.AxeParameters,
 	entity types.Entity,
-	timestamp types.CpsTime,
+	timestamp datetime.CpsTime,
 	alarmConfig config.AlarmConfig,
 ) types.Alarm {
 	tags := types.TransformEventTags(params.Tags)
@@ -541,7 +549,7 @@ func (p *checkProcessor) sendEventStatistics(ctx context.Context, event rpc.AxeE
 	p.eventStatisticsSender.Send(ctx, event.Entity.ID, stats)
 }
 
-func resolvePbehaviorInfo(ctx context.Context, entity types.Entity, now types.CpsTime, pbhTypeResolver pbehavior.EntityTypeResolver) (types.PbehaviorInfo, error) {
+func resolvePbehaviorInfo(ctx context.Context, entity types.Entity, now datetime.CpsTime, pbhTypeResolver pbehavior.EntityTypeResolver) (types.PbehaviorInfo, error) {
 	result, err := pbhTypeResolver.Resolve(ctx, entity, now.Time)
 	if err != nil {
 		return types.PbehaviorInfo{}, err
@@ -617,7 +625,7 @@ func updatePbhLastAlarmDate(ctx context.Context, result Result, pbehaviorCollect
 	}
 
 	pbhId := ""
-	var lastAlarmDate *types.CpsTime
+	var lastAlarmDate *datetime.CpsTime
 	if result.Alarm.ID == "" {
 		pbhId = result.Entity.PbehaviorInfo.ID
 		lastAlarmDate = result.Entity.PbehaviorInfo.Timestamp

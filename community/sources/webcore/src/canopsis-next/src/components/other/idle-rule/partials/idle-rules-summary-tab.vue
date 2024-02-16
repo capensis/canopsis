@@ -1,42 +1,43 @@
-<template lang="pug">
-  v-layout(column)
-    idle-rules-summary-row(
-      :label="$t('common.id')",
+<template>
+  <v-layout column>
+    <idle-rules-summary-row
+      :label="$t('common.id')"
       :value="idleRule._id"
-    )
-    idle-rules-summary-row(
-      :label="$t('common.name')",
+    />
+    <idle-rules-summary-row
+      :label="$t('common.name')"
       :value="idleRule.name"
-    )
-    idle-rules-summary-row(
-      :label="$t('common.description')",
+    />
+    <idle-rules-summary-row
+      :label="$t('common.description')"
       :value="idleRule.description"
-    )
-    idle-rules-summary-row(
-      :label="$t('common.type')",
+    />
+    <idle-rules-summary-row
+      :label="$t('common.type')"
       :value="$t(`idleRules.types.${idleRule.type}`)"
-    )
-    idle-rules-summary-row(
-      :label="$t('common.created')",
+    />
+    <idle-rules-summary-row
+      :label="$t('common.created')"
       :value="idleRule.created | date"
-    )
-    idle-rules-summary-row(
-      :label="$t('common.updated')",
+    />
+    <idle-rules-summary-row
+      :label="$t('common.updated')"
       :value="idleRule.updated | date"
-    )
-    idle-rules-summary-row(
-      :label="$t('idleRules.timeAwaiting')",
+    />
+    <idle-rules-summary-row
+      :label="$t('idleRules.timeAwaiting')"
       :value="idleRule.duration | duration"
-    )
-    idle-rules-summary-row(
-      :label="$t('common.priority')",
+    />
+    <idle-rules-summary-row
+      :label="$t('common.priority')"
       :value="idleRule.priority"
-    )
-    idle-rules-summary-row(
-      v-if="disableDuringPeriods",
-      :label="$t('common.disableDuringPeriods')",
+    />
+    <idle-rules-summary-row
+      v-if="disableDuringPeriods"
+      :label="$t('common.disableDuringPeriods')"
       :value="disableDuringPeriods"
-    )
+    />
+  </v-layout>
 </template>
 
 <script>

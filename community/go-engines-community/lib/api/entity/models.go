@@ -8,6 +8,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -61,13 +62,13 @@ type ArchiveDisabledRequest struct {
 }
 
 type ArchiveUnlinkedRequest struct {
-	ArchiveBefore types.DurationWithUnit `json:"archive_before"`
+	ArchiveBefore datetime.DurationWithUnit `json:"archive_before"`
 }
 
 type CleanTask struct {
 	Type                    int
 	ArchiveWithDependencies bool
-	ArchiveBefore           *types.DurationWithUnit
+	ArchiveBefore           *datetime.DurationWithUnit
 	UserID                  string
 }
 
@@ -81,19 +82,19 @@ type ExportResponse struct {
 }
 
 type Entity struct {
-	ID             string         `bson:"_id" json:"_id"`
-	Name           string         `bson:"name" json:"name"`
-	Enabled        bool           `bson:"enabled" json:"enabled"`
-	Infos          Infos          `bson:"infos" json:"infos"`
-	ComponentInfos Infos          `bson:"component_infos,omitempty" json:"component_infos,omitempty"`
-	Type           string         `bson:"type" json:"type"`
-	ImpactLevel    int64          `bson:"impact_level" json:"impact_level"`
-	Category       *Category      `bson:"category" json:"category"`
-	IdleSince      *types.CpsTime `bson:"idle_since,omitempty" json:"idle_since,omitempty" swaggertype:"integer"`
-	LastEventDate  *types.CpsTime `bson:"last_event_date,omitempty" json:"last_event_date,omitempty" swaggertype:"integer"`
+	ID             string            `bson:"_id" json:"_id"`
+	Name           string            `bson:"name" json:"name"`
+	Enabled        bool              `bson:"enabled" json:"enabled"`
+	Infos          Infos             `bson:"infos" json:"infos"`
+	ComponentInfos Infos             `bson:"component_infos,omitempty" json:"component_infos,omitempty"`
+	Type           string            `bson:"type" json:"type"`
+	ImpactLevel    int64             `bson:"impact_level" json:"impact_level"`
+	Category       *Category         `bson:"category" json:"category"`
+	IdleSince      *datetime.CpsTime `bson:"idle_since,omitempty" json:"idle_since,omitempty" swaggertype:"integer"`
+	LastEventDate  *datetime.CpsTime `bson:"last_event_date,omitempty" json:"last_event_date,omitempty" swaggertype:"integer"`
 
-	PbehaviorInfo     *PbehaviorInfo `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
-	LastPbehaviorDate *types.CpsTime `bson:"last_pbehavior_date,omitempty" json:"last_pbehavior_date,omitempty" swaggertype:"integer"`
+	PbehaviorInfo     *PbehaviorInfo    `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
+	LastPbehaviorDate *datetime.CpsTime `bson:"last_pbehavior_date,omitempty" json:"last_pbehavior_date,omitempty" swaggertype:"integer"`
 
 	Connector string `bson:"connector,omitempty" json:"connector,omitempty"`
 	Component string `bson:"component,omitempty" json:"component,omitempty"`
@@ -114,7 +115,7 @@ type Entity struct {
 	Status              *int              `bson:"status" json:"status,omitempty"`
 	Ack                 *common.AlarmStep `bson:"ack" json:"ack,omitempty"`
 	Snooze              *common.AlarmStep `bson:"snooze" json:"snooze,omitempty"`
-	AlarmLastUpdateDate *types.CpsTime    `bson:"alarm_last_update_date" json:"alarm_last_update_date,omitempty" swaggertype:"integer"`
+	AlarmLastUpdateDate *datetime.CpsTime `bson:"alarm_last_update_date" json:"alarm_last_update_date,omitempty" swaggertype:"integer"`
 
 	// Links
 	Links link.LinksByCategory `bson:"-" json:"links,omitempty"`
@@ -130,8 +131,8 @@ type Entity struct {
 
 	Resources []string `bson:"resources,omitempty" json:"-"`
 
-	ImportSource string         `bson:"import_source,omitempty" json:"import_source,omitempty"`
-	Imported     *types.CpsTime `bson:"imported,omitempty" json:"imported,omitempty" swaggertype:"integer"`
+	ImportSource string            `bson:"import_source,omitempty" json:"import_source,omitempty"`
+	Imported     *datetime.CpsTime `bson:"imported,omitempty" json:"imported,omitempty" swaggertype:"integer"`
 
 	PerfData         []string `bson:"perf_data" json:"-"`
 	FilteredPerfData []string `bson:"filtered_perf_data" json:"filtered_perf_data,omitempty"`

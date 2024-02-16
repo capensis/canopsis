@@ -1,15 +1,32 @@
-<template lang="pug">
-  v-layout(row, wrap, align-center)
-    v-flex(xs11)
-      v-chip(
-        v-for="entity in entities",
-        :key="getEntityKey(entity)",
-        :close="!isDisabledEntity(entity)",
-        :class="{ 'error white--text': isEntityExists(entity) }",
-        @input="$emit('remove', entity)"
-      ) {{ contentKey ? entity[contentKey] : entity }}
-    v-flex(v-if="clearable && removableEntities.length", xs1)
-      c-action-btn(:tooltip="$t('common.deleteAll')", type="delete", color="red", small, @click="clear")
+<template>
+  <v-layout
+    wrap
+    align-center
+  >
+    <v-flex xs11>
+      <v-chip
+        v-for="entity in entities"
+        :key="getEntityKey(entity)"
+        :close="!isDisabledEntity(entity)"
+        :class="{ 'error white--text': isEntityExists(entity) }"
+        @click:close="$emit('remove', entity)"
+      >
+        {{ contentKey ? entity[contentKey] : entity }}
+      </v-chip>
+    </v-flex>
+    <v-flex
+      v-if="clearable && removableEntities.length"
+      xs1
+    >
+      <c-action-btn
+        :tooltip="$t('common.deleteAll')"
+        type="delete"
+        color="red"
+        small
+        @click="clear"
+      />
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

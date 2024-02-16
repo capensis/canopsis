@@ -1,16 +1,43 @@
-<template lang="pug">
-  div.pa-2
-    v-fade-transition(v-if="countersPending", key="progress", mode="out-in")
-      v-progress-linear.progress-linear-absolute--top(height="2", indeterminate)
-    v-layout.fill-height(key="content", wrap)
-      v-alert(v-if="hasNoData", type="info", :value="true") {{ $t('common.noData') }}
-      template(v-else)
-        v-flex(v-for="counter in countersWithFilters", :key="counter.filter.title", :class="flexSize")
-          counter-item.weatherItem(
-            :counter="counter",
-            :widget="widget",
+<template>
+  <div class="pa-2">
+    <v-fade-transition
+      v-if="countersPending"
+      key="progress"
+      mode="out-in"
+    >
+      <v-progress-linear
+        class="progress-linear-absolute--top"
+        height="2"
+        indeterminate
+      />
+    </v-fade-transition>
+    <v-layout
+      class="fill-height"
+      key="content"
+      wrap
+    >
+      <v-alert
+        v-if="hasNoData"
+        type="info"
+      >
+        {{ $t('common.noData') }}
+      </v-alert>
+      <template v-else>
+        <v-flex
+          v-for="counter in countersWithFilters"
+          :key="counter.filter.title"
+          :class="flexSize"
+        >
+          <counter-item
+            class="weatherItem"
+            :counter="counter"
+            :widget="widget"
             :query="queryWithoutFilters"
-          )
+          />
+        </v-flex>
+      </template>
+    </v-layout>
+  </div>
 </template>
 
 <script>

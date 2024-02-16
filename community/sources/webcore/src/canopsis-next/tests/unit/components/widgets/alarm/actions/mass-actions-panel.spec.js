@@ -740,11 +740,35 @@ describe('mass-actions-panel', () => {
     expect(wrapper).toEmit('clear:items');
   });
 
-  it('Renders `mass-actions-panel` with empty items', () => {
+  it('Renders `mass-actions-panel` with non empty items', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
         items,
+        widget,
+      },
+    });
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  it('Renders `mass-actions-panel` with empty items', () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        items: [],
+        widget,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `mass-actions-panel` with one item', () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        items: [alarm],
         widget,
       },
     });
@@ -761,6 +785,6 @@ describe('mass-actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

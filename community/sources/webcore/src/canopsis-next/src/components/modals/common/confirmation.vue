@@ -1,21 +1,41 @@
-<template lang="pug">
-  modal-wrapper(close)
-    template(v-if="!config.hideTitle", #title="")
-      span {{ title }}
-    template(v-if="config.text", #text="")
-      span.subheading.pre-wrap {{ config.text }}
-    template(#actions="")
-      v-layout(wrap, justify-center)
-        v-btn(
-          :outline="$system.dark",
-          color="error",
+<template>
+  <modal-wrapper close>
+    <template
+      v-if="!config.hideTitle"
+      #title=""
+    >
+      <span>{{ title }}</span>
+    </template>
+    <template
+      v-if="config.text"
+      #text=""
+    >
+      <span class="text-subtitle-1 pre-wrap">{{ config.text }}</span>
+    </template>
+    <template #actions="">
+      <v-layout
+        wrap
+        justify-center
+      >
+        <v-btn
+          :outlined="$system.dark"
+          color="error"
           @click="cancel"
-        ) {{ $t('common.no') }}
-        v-btn.primary(
-          :loading="submitting",
-          :disabled="isDisabled",
+        >
+          {{ $t('common.no') }}
+        </v-btn>
+        <v-btn
+          class="ml-2"
+          color="primary"
+          :loading="submitting"
+          :disabled="isDisabled"
           @click.prevent="submit"
-        ) {{ $t('common.yes') }}
+        >
+          {{ $t('common.yes') }}
+        </v-btn>
+      </v-layout>
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>

@@ -1,15 +1,41 @@
-<template lang="pug">
-  v-layout.my-2(v-if="!form", justify-center)
-    v-progress-circular(color="primary", indeterminate)
-  v-flex(v-else, xs10, offset-xs1, md8, offset-md2, lg6, offset-lg3)
-    v-form(@submit.prevent="submit")
-      healthcheck-form(v-model="form")
-      v-layout.mt-3(row, justify-end)
-        v-btn.primary.mr-0(
-          :disabled="isDisabled",
-          :loading="submitting",
+<template>
+  <v-layout
+    class="my-2"
+    v-if="!form"
+    justify-center
+  >
+    <v-progress-circular
+      color="primary"
+      indeterminate
+    />
+  </v-layout>
+  <v-flex
+    class="py-2"
+    v-else
+    xs10
+    offset-xs1
+    md8
+    offset-md2
+    lg6
+    offset-lg3
+  >
+    <v-form @submit.prevent="submit">
+      <healthcheck-form v-model="form" />
+      <v-layout
+        class="mt-3"
+        justify-end
+      >
+        <v-btn
+          class="primary mr-0"
+          :disabled="isDisabled"
+          :loading="submitting"
           type="submit"
-        ) {{ $t('common.submit') }}
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+      </v-layout>
+    </v-form>
+  </v-flex>
 </template>
 
 <script>

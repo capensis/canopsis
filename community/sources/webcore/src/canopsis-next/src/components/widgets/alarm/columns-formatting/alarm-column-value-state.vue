@@ -1,7 +1,22 @@
-<template lang="pug">
-  v-layout(:class="classes", align-center)
-    c-alarm-chip(:value="stateId", :badge-value="badgeValue", :small="small")
-    v-icon.d-block(v-if="showIcon", :size="small ? 14 : undefined", color="purple") account_circle
+<template>
+  <v-layout
+    :class="classes"
+    align-center
+  >
+    <c-alarm-chip
+      :value="stateId"
+      :badge-value="badgeValue"
+      :small="small"
+    />
+    <v-icon
+      class="d-block"
+      v-if="showIcon"
+      :size="small ? 14 : undefined"
+      color="purple"
+    >
+      account_circle
+    </v-icon>
+  </v-layout>
 </template>
 
 <script>

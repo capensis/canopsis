@@ -136,7 +136,7 @@ describe('export-csv', () => {
 
     const menuContents = wrapper.findAllMenus();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     menuContents.wrappers.forEach((menuContent) => {
       expect(menuContent.element).toMatchSnapshot();
     });
@@ -157,7 +157,7 @@ describe('export-csv', () => {
 
     const menuContents = wrapper.findAllMenus();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     menuContents.wrappers.forEach((menuContent) => {
       expect(menuContent.element).toMatchSnapshot();
     });

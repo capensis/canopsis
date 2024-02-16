@@ -1,15 +1,16 @@
-<template lang="pug">
-  v-card-text
-    planning-types-list(
-      :pbehavior-types="pbehaviorTypes",
-      :pending="pbehaviorTypesPending",
-      :totalItems="pbehaviorTypesMeta.total_count",
-      :pagination.sync="pagination",
-      :removable="hasDeleteAnyPbehaviorTypeAccess",
-      @remove-selected="showRemoveSelectedPbehaviorTypeModal",
-      @remove="showRemovePbehaviorTypeModal",
+<template>
+  <v-card-text>
+    <planning-types-list
+      :pbehavior-types="pbehaviorTypes"
+      :pending="pbehaviorTypesPending"
+      :total-items="pbehaviorTypesMeta.total_count"
+      :options.sync="options"
+      :removable="hasDeleteAnyPbehaviorTypeAccess"
+      @remove-selected="showRemoveSelectedPbehaviorTypeModal"
+      @remove="showRemovePbehaviorTypeModal"
       @edit="showEditPbehaviorTypeModal"
-    )
+    />
+  </v-card-text>
 </template>
 
 <script>
@@ -50,6 +51,8 @@ export default {
       try {
         await this.removePbehaviorType({ id: pbehaviorTypeId });
       } catch (err) {
+        console.error(err);
+
         this.$popups.error({ text: err.error || this.$t('errors.default') });
       }
     },

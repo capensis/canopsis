@@ -1,41 +1,62 @@
-<template lang="pug">
-  div
-    snmp-rule-form-field-title(label="state")
-    v-layout(row, wrap)
-      v-flex(xs12)
-        v-switch(
-          :input-value="form.type",
-          :false-value="$constants.SNMP_STATE_TYPES.simple",
-          :true-value="$constants.SNMP_STATE_TYPES.template",
-          :label="$t('snmpRule.toCustom')",
-          color="primary",
+<template>
+  <div>
+    <snmp-rule-form-field-title label="state" />
+    <v-layout wrap>
+      <v-flex xs12>
+        <v-switch
+          :input-value="form.type"
+          :false-value="$constants.SNMP_STATE_TYPES.simple"
+          :true-value="$constants.SNMP_STATE_TYPES.template"
+          :label="$t('snmpRule.toCustom')"
+          color="primary"
           @change="updateTypeField"
-        )
-    v-divider(light)
-    template(v-if="isTemplate")
-      snmp-rule-form-module-mib-objects-form(
-        v-field="form.stateoid",
-        :items="items",
+        />
+      </v-flex>
+    </v-layout>
+    <v-divider light />
+    <template v-if="isTemplate">
+      <snmp-rule-form-module-mib-objects-form
+        v-field="form.stateoid"
+        :items="items"
         :label="$t('snmpRule.defineVar')"
-      )
-      v-layout(row, wrap)
-        v-flex(xs12)
-          v-layout(
-            v-for="{ value, color, key, text } in availableStates",
-            :key="value",
-            row,
-            wrap,
+      />
+      <v-layout wrap>
+        <v-flex xs12>
+          <v-layout
+            v-for="{ value, color, key, text } in availableStates"
+            :key="value"
+            wrap
             align-center
-          )
-            v-flex(xs2)
-              v-chip(:style="{ backgroundColor: color }", label)
-                strong.state-title {{ text }}
-            v-flex(xs10)
-              v-text-field(v-field="form[key]", :placeholder="$t('snmpRule.writeTemplate')")
-    template(v-else)
-      v-layout.mt-3(row, wrap)
-        v-flex(xs12)
-          state-criticity-field(v-field="form.state")
+          >
+            <v-flex xs2>
+              <v-chip
+                :style="{ backgroundColor: color }"
+                label
+              >
+                <strong class="state-title">{{ text }}</strong>
+              </v-chip>
+            </v-flex>
+            <v-flex xs10>
+              <v-text-field
+                v-field="form[key]"
+                :placeholder="$t('snmpRule.writeTemplate')"
+              />
+            </v-flex>
+          </v-layout>
+        </v-flex>
+      </v-layout>
+    </template>
+    <template v-else>
+      <v-layout
+        class="mt-3"
+        wrap
+      >
+        <v-flex xs12>
+          <state-criticity-field v-field="form.state" />
+        </v-flex>
+      </v-layout>
+    </template>
+  </div>
 </template>
 
 <script>

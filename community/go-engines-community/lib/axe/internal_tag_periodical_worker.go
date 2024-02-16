@@ -6,6 +6,9 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
@@ -31,8 +34,8 @@ func (w *internalTagPeriodicalWorker) Work(ctx context.Context) {
 		return
 	}
 
-	secNow := types.NewCpsTime()
-	microNow := types.NewMicroTime()
+	secNow := datetime.NewCpsTime()
+	microNow := datetime.NewMicroTime()
 	existedTags := make([]string, len(tags))
 	for i, tag := range tags {
 		existedTags[i] = tag.Value
@@ -70,8 +73,8 @@ func (w *internalTagPeriodicalWorker) addTag(
 	ctx context.Context,
 	tag alarmtag.AlarmTag,
 	tags []alarmtag.AlarmTag,
-	secNow types.CpsTime,
-	microNow types.MicroTime,
+	secNow datetime.CpsTime,
+	microNow datetime.MicroTime,
 ) error {
 	alarmMatch := bson.M{
 		"t": bson.M{"$lt": secNow},
@@ -82,7 +85,7 @@ func (w *internalTagPeriodicalWorker) addTag(
 		"itags": bson.M{"$nin": bson.A{tag.Value}},
 	}
 	if len(tag.AlarmPattern) > 0 {
-		q, err := tag.AlarmPattern.ToMongoQuery("")
+		q, err := db.AlarmPatternToMongoQuery(tag.AlarmPattern, "")
 		if err != nil {
 			return err
 		}
@@ -100,7 +103,7 @@ func (w *internalTagPeriodicalWorker) addTag(
 		{"$unwind": "$entity"},
 	}
 	if len(tag.EntityPattern) > 0 {
-		q, err := tag.EntityPattern.ToMongoQuery("entity")
+		q, err := db.EntityPatternToMongoQuery(tag.EntityPattern, "entity")
 		if err != nil {
 			return err
 		}
@@ -122,8 +125,8 @@ func (w *internalTagPeriodicalWorker) removeTag(
 	ctx context.Context,
 	tag alarmtag.AlarmTag,
 	tags []alarmtag.AlarmTag,
-	secNow types.CpsTime,
-	microNow types.MicroTime,
+	secNow datetime.CpsTime,
+	microNow datetime.MicroTime,
 ) error {
 	alarmMatch := bson.M{
 		"t":         bson.M{"$lt": secNow},
@@ -131,7 +134,7 @@ func (w *internalTagPeriodicalWorker) removeTag(
 		"itags":     tag.Value,
 	}
 	if len(tag.AlarmPattern) > 0 && len(tag.EntityPattern) == 0 {
-		q, err := tag.AlarmPattern.ToNegativeMongoQuery("")
+		q, err := db.AlarmPatternToNegativeMongoQuery(tag.AlarmPattern, "")
 		if err != nil {
 			return err
 		}
@@ -149,13 +152,13 @@ func (w *internalTagPeriodicalWorker) removeTag(
 		{"$unwind": "$entity"},
 	}
 	if len(tag.EntityPattern) > 0 {
-		entityQuery, err := tag.EntityPattern.ToNegativeMongoQuery("entity")
+		entityQuery, err := db.EntityPatternToNegativeMongoQuery(tag.EntityPattern, "entity")
 		if err != nil {
 			return err
 		}
 		var match bson.M
 		if len(tag.AlarmPattern) > 0 {
-			alarmQuery, err := tag.AlarmPattern.ToNegativeMongoQuery("")
+			alarmQuery, err := db.AlarmPatternToNegativeMongoQuery(tag.AlarmPattern, "")
 			if err != nil {
 				return err
 			}
@@ -184,8 +187,8 @@ func (w *internalTagPeriodicalWorker) removeTags(
 	ctx context.Context,
 	existedTags []string,
 	tags []alarmtag.AlarmTag,
-	secNow types.CpsTime,
-	microNow types.MicroTime,
+	secNow datetime.CpsTime,
+	microNow datetime.MicroTime,
 ) error {
 	cursor, err := w.AlarmCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
@@ -218,7 +221,7 @@ func (w *internalTagPeriodicalWorker) updateByCursor(
 	ctx context.Context,
 	cursor mongo.Cursor,
 	tags []alarmtag.AlarmTag,
-	microNow types.MicroTime,
+	microNow datetime.MicroTime,
 ) error {
 	defer cursor.Close(ctx)
 
@@ -278,11 +281,11 @@ func (w *internalTagPeriodicalWorker) updateByCursor(
 func (w *internalTagPeriodicalWorker) matchAlarm(entity types.Entity, alarm types.Alarm, tags []alarmtag.AlarmTag) []string {
 	matchedTags := make([]string, 0)
 	for _, tag := range tags {
-		ok, err := tag.EntityPattern.Match(entity)
+		ok, err := match.MatchEntityPattern(tag.EntityPattern, &entity)
 		if err != nil || !ok {
 			continue
 		}
-		ok, err = tag.AlarmPattern.Match(alarm)
+		ok, err = match.MatchAlarmPattern(tag.AlarmPattern, &alarm)
 		if err != nil || !ok {
 			continue
 		}

@@ -1,55 +1,84 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ $t('modals.infoPopupSetting.title') }}
-      template(#text="")
-        v-layout(justify-end)
-          v-btn(
-            icon,
-            fab,
-            small,
-            color="secondary",
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ $t('modals.infoPopupSetting.title') }}</span>
+      </template>
+      <template #text="">
+        <v-layout justify-end>
+          <v-btn
+            icon
+            fab
+            small
+            color="secondary"
             @click="addPopup"
-          )
-            v-icon add
-        v-layout(column)
-          v-card.my-1(
-            v-for="(popup, index) in form.popups",
-            :key="index",
-            color="secondary white--text",
+          >
+            <v-icon>add</v-icon>
+          </v-btn>
+        </v-layout>
+        <v-layout column>
+          <v-card
+            class="my-1"
+            v-for="(popup, index) in form.popups"
+            :key="index"
+            color="secondary white--text"
             flat
-          )
-            v-card-title
-              v-layout(justify-space-between)
-                div {{ $t('modals.infoPopupSetting.column') }}: {{ popup.column }}
-                div
-                  v-btn(
-                    icon,
-                    small,
+          >
+            <v-card-title>
+              <v-layout justify-space-between>
+                <div>{{ $t('modals.infoPopupSetting.column') }}: {{ popup.column }}</div>
+                <div>
+                  <v-btn
+                    icon
+                    small
                     @click="deletePopup(index)"
-                  )
-                    v-icon(color="error") delete
-                  v-btn(
-                    icon,
-                    small,
+                  >
+                    <v-icon color="error">
+                      delete
+                    </v-icon>
+                  </v-btn>
+                  <v-btn
+                    icon
+                    small
                     @click="editPopup(index, popup)"
-                  )
-                    v-icon(color="primary") edit
-            v-card-text
-              p {{ $t('common.template') }}:
-              v-textarea(:value="popup.template", disabled, dark)
-      template(#actions="")
-        v-btn(
-          depressed,
-          flat,
+                  >
+                    <v-icon color="primary">
+                      edit
+                    </v-icon>
+                  </v-btn>
+                </div>
+              </v-layout>
+            </v-card-title>
+            <v-card-text>
+              <p>{{ $t('common.template') }}:</p>
+              <v-textarea
+                :value="popup.template"
+                disabled
+                dark
+              />
+            </v-card-text>
+          </v-card>
+        </v-layout>
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
           @click="$modals.hide"
-        ) {{ $t('common.cancel') }}
-        v-btn.primary(
-          :loading="submitting",
-          :disabled="isDisabled",
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          class="primary"
+          :loading="submitting"
+          :disabled="isDisabled"
           type="submit"
-        ) {{ $t('common.submit') }}
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>

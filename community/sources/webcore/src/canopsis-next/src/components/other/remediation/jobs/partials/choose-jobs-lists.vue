@@ -1,26 +1,43 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :headers="headers",
-    :items="jobsItems",
-    :loading="pending",
-    :total-items="totalItems",
-    :is-disabled-item="isSelectedJob",
-    :pagination.sync="pagination",
-    select-all,
+<template>
+  <c-advanced-data-table
+    :headers="headers"
+    :items="jobsItems"
+    :loading="pending"
+    :total-items="totalItems"
+    :is-disabled-item="isSelectedJob"
+    :options.sync="options"
+    select-all
     advanced-pagination
-  )
-    template(#toolbar="{ clearSearch, updateSearch }")
-      v-layout(row)
-        c-search-field(@submit="updateSearch", @clear="clearSearch")
-    template(#actions="{ disabled, item }")
-      v-btn(:disabled="disabled", icon, small, @click="$emit('select', [item])")
-        v-icon add
-    template(#mass-actions="{ selected, item, count }")
-      v-btn.ma-2(
-        outline,
-        color="primary",
+  >
+    <template #toolbar="{ clearSearch, updateSearch }">
+      <v-layout>
+        <c-search-field
+          @submit="updateSearch"
+          @clear="clearSearch"
+        />
+      </v-layout>
+    </template>
+    <template #actions="{ disabled, item }">
+      <v-btn
+        :disabled="disabled"
+        icon
+        small
+        @click="$emit('select', [item])"
+      >
+        <v-icon>add</v-icon>
+      </v-btn>
+    </template>
+    <template #mass-actions="{ selected, count }">
+      <v-btn
+        class="ma-2"
+        outlined
+        color="primary"
         @click="$emit('select', selected)"
-      ) {{ $tc('remediation.job.addJobs', count, { count: count }) }}
+      >
+        {{ $tc('remediation.job.addJobs', count, { count: count }) }}
+      </v-btn>
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>
@@ -44,7 +61,7 @@ export default {
       jobsItems: [],
       totalItems: 0,
       query: {
-        rowsPerPage: 5,
+        itemsPerPage: 5,
       },
     };
   },

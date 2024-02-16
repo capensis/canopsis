@@ -6,7 +6,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
@@ -32,7 +32,7 @@ func (w *cleanPeriodicalWorker) Work(ctx context.Context) {
 		return
 	}
 
-	var lastExecuted types.CpsTime
+	var lastExecuted datetime.CpsTime
 	if conf.History.EventFilterFailure != nil {
 		lastExecuted = *conf.History.EventFilterFailure
 	}
@@ -59,7 +59,7 @@ func (w *cleanPeriodicalWorker) Work(ctx context.Context) {
 			w.Logger.Err(err).Msg("cannot disconnect from mongo")
 		}
 	}()
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	maxUpdates := int64(w.DataStorageConfigProvider.Get().MaxUpdates)
 	deleted, err := w.delete(ctx, mongoClient.Collection(mongo.EventFilterFailureCollection), d.SubFrom(now), maxUpdates)
 	if err != nil {
@@ -76,7 +76,7 @@ func (w *cleanPeriodicalWorker) Work(ctx context.Context) {
 	}
 }
 
-func (w *cleanPeriodicalWorker) delete(ctx context.Context, dbCollection mongo.DbCollection, before types.CpsTime, limit int64) (int64, error) {
+func (w *cleanPeriodicalWorker) delete(ctx context.Context, dbCollection mongo.DbCollection, before datetime.CpsTime, limit int64) (int64, error) {
 	opts := options.Find().SetProjection(bson.M{"_id": 1})
 	if limit > 0 {
 		opts.SetLimit(limit)

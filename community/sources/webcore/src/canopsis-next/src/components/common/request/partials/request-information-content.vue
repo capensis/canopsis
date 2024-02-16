@@ -1,9 +1,23 @@
-<template lang="pug">
-  div.request-content
-    request-information-content-row(v-for="(line, index) in request.commonInformationLines", :key="index", :row="line")
-    div.request-content__body(v-if="request.body")
-      json-treeview(v-if="request.isJsonBody", :json="request.body")
-      template(v-else) {{ request.body }}
+<template>
+  <div class="request-content">
+    <request-information-content-row
+      v-for="(line, index) in request.commonInformationLines"
+      :key="index"
+      :row="line"
+    />
+    <div
+      class="request-content__body"
+      v-if="request.body"
+    >
+      <json-treeview
+        v-if="request.isJsonBody"
+        :json="request.body"
+      />
+      <template v-else>
+        {{ request.body }}
+      </template>
+    </div>
+  </div>
 </template>
 
 <script>

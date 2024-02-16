@@ -1,93 +1,141 @@
-<template lang="pug">
-  div.c-advanced-data-table
-    v-layout(row, wrap, v-bind="toolbarProps")
-      v-flex(v-if="shownSearch", xs4)
-        c-search-field(
-          v-if="search",
-          :value="pagination.search",
-          @submit="updateSearchHandler",
+<template>
+  <div class="c-advanced-data-table">
+    <v-layout
+      wrap
+      v-bind="toolbarProps"
+    >
+      <v-flex
+        v-if="shownSearch"
+        xs4
+      >
+        <c-search-field
+          v-if="search"
+          :value="options.search"
+          @submit="updateSearchHandler"
           @clear="clearSearchHandler"
-        )
-        c-advanced-search-field(
-          v-else,
-          :query="pagination",
-          :columns="headers",
-          :tooltip="searchTooltip",
-          @update:query="updatePagination"
-        )
-      slot(
-        name="toolbar",
-        :selected="selected",
-        :updateSearch="updateSearchHandler",
-        :clearSearch="clearSearchHandler"
-      )
-      v-flex(v-if="hasMassActionsSlot", xs12)
-        v-expand-transition
-          v-layout.px-3.mt-1(v-if="selected.length")
-            slot(
-              name="mass-actions",
-              :selected="selected",
-              :count="selected.length",
+        />
+        <c-advanced-search-field
+          v-else
+          :query="options"
+          :columns="headers"
+          :tooltip="searchTooltip"
+          @update:query="updateOptions"
+        />
+      </v-flex>
+      <slot
+        name="toolbar"
+        :selected="selected"
+        :update-search="updateSearchHandler"
+        :clear-search="clearSearchHandler"
+      />
+      <v-flex
+        v-if="hasMassActionsSlot"
+        xs12
+      >
+        <v-expand-transition>
+          <v-layout
+            class="px-2 mt-1"
+            v-show="selected.length"
+          >
+            <slot
+              name="mass-actions"
+              :selected="selected"
+              :count="selected.length"
               :clear-selected="clearSelected"
-            )
-    v-data-table(
-      v-model="selected",
-      :headers="headersWithExpand",
-      :items="visibleItems",
-      :loading="loading",
-      :total-items="totalItems",
-      :no-data-text="noDataText",
-      :pagination="pagination",
-      :header-text="headerText",
-      :rows-per-page-items="rowsPerPageItems",
-      :item-key="itemKey",
-      :select-all="selectAll",
-      :expand="expand",
-      :is-disabled-item="isDisabledItem",
-      :hide-actions="hideActions || advancedPagination || noPagination",
-      :multi-sort="multiSort",
-      :table-class="tableClass",
-      :disable-initial-sort="disableInitialSort",
-      :dense="dense",
-      @update:pagination="updatePagination"
-    )
-      template(#items="props")
-        slot(v-bind="getItemsProps(props)", name="items")
-          tr(:key="props.item[itemKey] || props.index")
-            td(v-if="selectAll || expand", @click.stop="")
-              v-layout.c-checkbox-wrapper(row, justify-start)
-                slot(v-if="selectAll", v-bind="getItemsProps(props)", name="item-select")
-                  v-checkbox-functional(
-                    v-if="!isDisabledItem(props.item)",
-                    v-model="props.selected",
-                    primary,
-                    hide-details
-                  )
-                  v-checkbox-functional(v-else, primary, disabled, hide-details)
-                slot(v-if="expand && isExpandableItem(props.item)", v-bind="getItemsProps(props)", name="item-expand")
-                  c-expand-btn.ml-2(:expanded="props.expanded", @expand="props.expanded = !props.expanded")
-            td(v-for="header in headers", :key="header.value")
-              slot(:name="header.value", v-bind="getItemsProps(props)") {{ props.item | get(header.value) }}
-      template(v-if="hasExpandSlot", #expand="props")
-        div.secondary.lighten-2(v-if="isExpandableItem(props.item)")
-          slot(v-bind="props", name="expand")
-      template(#headerCell="props")
-        slot(name="headerCell", v-bind="props") {{ props.header[headerText] }}
-      template(#progress="props")
-        slot(name="progress", v-bind="props")
-    c-table-pagination(
-      v-if="!noPagination && pagination && advancedPagination",
-      :total-items="totalItems",
-      :rows-per-page-items="rowsPerPageItems",
-      :rows-per-page="pagination.rowsPerPage",
-      :page="pagination.page",
-      @update:page="updatePage",
-      @update:rows-per-page="updateRecordsPerPage"
-    )
+            />
+          </v-layout>
+        </v-expand-transition>
+      </v-flex>
+    </v-layout>
+    <v-data-table
+      v-model="selected"
+      :headers="preparedHeaders"
+      :items="visibleItems"
+      :loading="loading"
+      :server-items-length="totalItems"
+      :no-data-text="noDataText"
+      :options="options"
+      :header-text="headerText"
+      :footer-props="{ itemsPerPageOptions: itemsPerPageItems }"
+      :item-key="itemKey"
+      :show-select="selectAll"
+      :show-expand="expand"
+      :item-selectable="isItemSelectable"
+      :hide-default-footer="hideActions || advancedPagination || noPagination"
+      :table-class="tableClass"
+      :dense="dense"
+      :loader-height="loaderHeight"
+      checkbox-color="primary"
+      @update:options="updateOptions"
+    >
+      <template
+        v-for="header in headers"
+        #[getItemSlotName(header)]="props"
+      >
+        <slot
+          :name="header.value"
+          v-bind="getItemsProps(props)"
+        >
+          {{ props.item | get(header.value) }}
+        </slot>
+      </template>
+
+      <template
+        v-if="hasExpandSlot"
+        #expanded-item="props"
+      >
+        <div
+          class="secondary lighten-2"
+          v-if="isExpandableItem(props.item)"
+        >
+          <slot
+            v-bind="props"
+            name="expand"
+          />
+        </div>
+      </template>
+
+      <template #header="props">
+        <slot
+          name="header"
+          v-bind="props"
+        />
+      </template>
+
+      <template
+        v-for="header in headerScopedSlots"
+        #[header]="props"
+      >
+        <slot
+          :name="header"
+          v-bind="props"
+        />
+      </template>
+
+      <template #progress="props">
+        <slot
+          name="progress"
+          v-bind="props"
+        />
+      </template>
+    </v-data-table>
+
+    <c-table-pagination
+      v-if="!noPagination && options && advancedPagination"
+      :total-items="totalItems"
+      :items-per-page="options.itemsPerPage"
+      :items="itemsPerPageItems"
+      :page="options.page"
+      @update:page="updatePage"
+      @update:items-per-page="updateItemsPerPage"
+    />
+  </div>
 </template>
 
 <script>
 import { omit } from 'lodash';
+
+import { getPageForNewItemsPerPage } from '@/helpers/pagination';
 
 export default {
   model: {
@@ -103,7 +151,7 @@ export default {
       type: Array,
       required: true,
     },
-    rowsPerPageItems: {
+    itemsPerPageItems: {
       type: Array,
       required: false,
     },
@@ -159,13 +207,9 @@ export default {
       type: String,
       default: '',
     },
-    pagination: {
+    options: {
       type: Object,
       required: false,
-    },
-    getPagination: {
-      type: Function,
-      default: pagination => pagination,
     },
     isDisabledItem: {
       type: Function,
@@ -179,21 +223,17 @@ export default {
       type: Object,
       required: false,
     },
-    multiSort: {
-      type: Boolean,
-      default: false,
-    },
     tableClass: {
       type: String,
       required: false,
     },
-    disableInitialSort: {
-      type: Boolean,
-      default: false,
-    },
     dense: {
       type: Boolean,
       default: false,
+    },
+    loaderHeight: {
+      type: [String, Number],
+      default: 2,
     },
   },
   data() {
@@ -202,6 +242,37 @@ export default {
     };
   },
   computed: {
+    preparedHeaders() {
+      const headers = [];
+
+      if (this.selectAll) {
+        headers.push({
+          value: 'data-table-select',
+          text: '',
+          sortable: false,
+          width: '1px',
+        });
+      }
+
+      if (this.expand) {
+        headers.push({
+          value: 'data-table-expand',
+          text: '',
+          sortable: false,
+          width: '1px',
+        });
+      }
+
+      return [
+        ...headers,
+        ...this.headers,
+      ];
+    },
+
+    headerScopedSlots() {
+      return Object.keys(this.$scopedSlots ?? {}).filter(name => name.startsWith('header.'));
+    },
+
     selected: {
       get() {
         return this.selectedItems.filter(item => !this.isDisabledItem(item));
@@ -212,15 +283,7 @@ export default {
     },
 
     visibleItems() {
-      return this.pagination?.rowsPerPage ? this.items.slice(0, this.pagination?.rowsPerPage) : this.items;
-    },
-
-    headersWithExpand() {
-      if (this.expand && !this.selectAll) {
-        return [{ sortable: false, width: 20 }, ...this.headers];
-      }
-
-      return this.headers;
+      return this.options?.itemsPerPage ? this.items.slice(0, this.options?.itemsPerPage) : this.items;
     },
 
     hasExpandSlot() {
@@ -245,26 +308,31 @@ export default {
     },
   },
   methods: {
-    updatePagination(pagination) {
+    updateOptions(options) {
       this.selected = [];
 
-      this.$emit('update:pagination', this.getPagination(pagination));
+      this.$emit('update:options', options);
     },
 
     updateSearchHandler(search) {
-      this.updatePagination({ ...this.pagination, search, page: 1 });
+      this.updateOptions({ ...this.options, search, page: 1 });
     },
 
-    updateRecordsPerPage(rowsPerPage) {
-      this.updatePagination({ ...this.pagination, rowsPerPage });
+    updateItemsPerPage(itemsPerPage) {
+      this.updateOptions({
+        ...this.options,
+
+        itemsPerPage,
+        page: getPageForNewItemsPerPage(itemsPerPage, this.options.itemsPerPage, this.options.page),
+      });
     },
 
     updatePage(page) {
-      this.updatePagination({ ...this.pagination, page });
+      this.updateOptions({ ...this.options, page });
     },
 
     clearSearchHandler() {
-      this.updatePagination(omit(this.pagination, ['search']));
+      this.updateOptions(omit(this.options, ['search']));
     },
 
     clearSelected() {
@@ -278,8 +346,16 @@ export default {
         disabled: this.isDisabledItem(state.item),
         expanded: state.expanded,
         select: value => state.selected = value || !state.selected,
-        expand: value => state.expanded = value || !state.expanded,
+        expand: state.expand,
       };
+    },
+
+    getItemSlotName(header) {
+      return `item.${header.value}`;
+    },
+
+    isItemSelectable(item) {
+      return !this.isDisabledItem(item);
     },
   },
 };

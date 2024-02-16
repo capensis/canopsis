@@ -8,34 +8,20 @@ exports[`service-entity-header Renders \`service-entity-header\` with custom pro
     class="flex"
   >
     <div
-      class="v-input ma-0 pa-0 v-input--selection-controls v-input--checkbox v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
+      class="ma-0 pa-0 v-simple-checkbox"
     >
       <div
-        class="v-input__control"
+        class="v-input--selection-controls__input"
       >
-        <div
-          class="v-input__slot"
+        <i
+          aria-hidden="true"
+          class="v-icon notranslate material-icons theme--dark white--text"
         >
-          <div
-            class="v-input--selection-controls__input"
-          >
-            <input
-              aria-checked="true"
-              role="checkbox"
-              type="checkbox"
-              value=""
-            />
-            <div
-              class="v-input--selection-controls__ripple white--text"
-            />
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light white--text"
-            >
-              check_box
-            </i>
-          </div>
-        </div>
+          check_box
+        </i>
+        <div
+          class="v-input--selection-controls__ripple white--text"
+        />
       </div>
     </div>
   </div>
@@ -44,12 +30,12 @@ exports[`service-entity-header Renders \`service-entity-header\` with custom pro
   >
     <i
       aria-hidden="true"
-      class="v-icon material-icons theme--light white--text"
+      class="v-icon notranslate material-icons theme--light white--text"
       style="font-size: 16px;"
     />
   </div>
   <div
-    class="flex pl-1 white--text subheading xs12"
+    class="flex pl-1 white--text text-subtitle-1 xs12"
   >
     <div
       class="layout align-center"
@@ -60,74 +46,89 @@ exports[`service-entity-header Renders \`service-entity-header\` with custom pro
         entity_name_field
       </div>
       <button
-        class="mx-1 v-btn v-btn--icon v-btn--small theme--dark purple"
+        class="mx-1 v-btn v-btn--icon v-btn--round theme--dark v-size--small"
+        style="background-color: purple;"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--dark"
+            class="v-icon notranslate material-icons theme--dark"
             style="font-size: 16px;"
           >
             check
           </i>
-        </div>
+        </span>
       </button>
       <button
-        class="mx-1 v-btn v-btn--icon v-btn--small theme--dark blue"
+        class="mx-1 v-btn v-btn--icon v-btn--round theme--dark v-size--small"
+        style="background-color: blue;"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--dark"
+            class="v-icon notranslate material-icons theme--dark"
             style="font-size: 16px;"
           >
             local_play
           </i>
-        </div>
+        </span>
       </button>
       <button
-        class="mx-1 v-btn v-btn--icon v-btn--small theme--dark grey darken-1"
+        class="mx-1 v-btn v-btn--icon v-btn--round theme--dark v-size--small"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--dark"
+            class="v-icon notranslate material-icons theme--dark"
             style="font-size: 16px;"
           >
             delete
           </i>
-        </div>
+        </span>
       </button>
       <c-no-events-icon-stub
         color="white"
-        top="top"
+        top=""
       />
       <div>
         <div
-          class="v-alert entity-alert ma-0 px-2 py-1 black"
+          class="v-alert entity-alert ma-0 px-2 py-1 v-sheet theme--light black"
+          role="alert"
         >
-          <div>
-            This action cannot be applied
-          </div>
-          <a
-            class="v-alert__dismissible"
+          <div
+            class="v-alert__wrapper"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon v-icon--right material-icons theme--light"
+            <div
+              class="v-alert__content"
             >
-              cancel
-            </i>
-          </a>
+          This action cannot be applied
+            </div>
+            <button
+              aria-label="Close"
+              class="v-alert__dismissible v-btn v-btn--icon v-btn--round theme--light v-size--small"
+              type="button"
+            >
+              <span
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate material-icons theme--light"
+                >
+                  cancel
+                </i>
+              </span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -143,35 +144,17 @@ exports[`service-entity-header Renders \`service-entity-header\` with default pr
     class="flex"
   >
     <div
-      class="v-input ma-0 pa-0 v-input--selection-controls v-input--checkbox v-input--hide-details v-input--is-disabled theme--light"
+      class="ma-0 pa-0 v-simple-checkbox v-simple-checkbox--disabled"
     >
       <div
-        class="v-input__control"
+        class="v-input--selection-controls__input"
       >
-        <div
-          class="v-input__slot"
+        <i
+          aria-hidden="true"
+          class="v-icon notranslate v-icon--disabled material-icons theme--dark"
         >
-          <div
-            class="v-input--selection-controls__input"
-          >
-            <input
-              aria-checked="false"
-              disabled="disabled"
-              role="checkbox"
-              type="checkbox"
-              value=""
-            />
-            <div
-              class="v-input--selection-controls__ripple"
-            />
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              check_box_outline_blank
-            </i>
-          </div>
-        </div>
+          check_box_outline_blank
+        </i>
       </div>
     </div>
   </div>
@@ -180,12 +163,12 @@ exports[`service-entity-header Renders \`service-entity-header\` with default pr
   >
     <i
       aria-hidden="true"
-      class="v-icon material-icons theme--light white--text"
+      class="v-icon notranslate material-icons theme--light white--text"
       style="font-size: 16px;"
     />
   </div>
   <div
-    class="flex pl-1 white--text subheading xs12"
+    class="flex pl-1 white--text text-subtitle-1 xs12"
   >
     <div
       class="layout align-center"
@@ -197,7 +180,7 @@ exports[`service-entity-header Renders \`service-entity-header\` with default pr
       </div>
       <c-no-events-icon-stub
         color="white"
-        top="top"
+        top=""
       />
       <div>
         <!---->

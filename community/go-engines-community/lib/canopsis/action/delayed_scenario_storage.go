@@ -3,22 +3,23 @@ package action
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/redis/go-redis/v9"
 )
 
 type DelayedScenario struct {
-	ID            string        `json:"id"`
-	ScenarioID    string        `json:"scenario_id"`
-	AlarmID       string        `json:"alarm_id"`
-	ExecutionTime types.CpsTime `json:"execution_time"`
-	Paused        bool          `json:"paused"`
-	TimeLeft      time.Duration `json:"time_left"`
+	ID            string           `json:"id"`
+	ScenarioID    string           `json:"scenario_id"`
+	AlarmID       string           `json:"alarm_id"`
+	ExecutionTime datetime.CpsTime `json:"execution_time"`
+	Paused        bool             `json:"paused"`
+	TimeLeft      time.Duration    `json:"time_left"`
 
 	AdditionalData AdditionalData `json:"additional_data"`
 }
@@ -109,7 +110,7 @@ func (s *redisDelayedScenarioStorage) GetAll(ctx context.Context) ([]DelayedScen
 func (s *redisDelayedScenarioStorage) Get(ctx context.Context, id string) (*DelayedScenario, error) {
 	res := s.client.Get(ctx, s.getKey(id))
 	if err := res.Err(); err != nil {
-		if err == redis.Nil {
+		if errors.Is(err, redis.Nil) {
 			return nil, nil
 		}
 
@@ -143,7 +144,7 @@ func (s *redisDelayedScenarioStorage) Add(ctx context.Context, scenario DelayedS
 func (s *redisDelayedScenarioStorage) Delete(ctx context.Context, id string) (bool, error) {
 	res := s.client.Del(ctx, s.getKey(id))
 	if err := res.Err(); err != nil {
-		if err == redis.Nil {
+		if errors.Is(err, redis.Nil) {
 			return false, nil
 		}
 
@@ -162,7 +163,7 @@ func (s *redisDelayedScenarioStorage) Update(ctx context.Context, scenario Delay
 
 	res := s.client.SetXX(ctx, s.getKey(scenario.ID), v, 0)
 	if err := res.Err(); err != nil {
-		if err == redis.Nil {
+		if errors.Is(err, redis.Nil) {
 			return false, nil
 		}
 

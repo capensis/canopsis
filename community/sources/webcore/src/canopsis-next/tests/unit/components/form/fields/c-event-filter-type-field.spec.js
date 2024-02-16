@@ -41,7 +41,7 @@ describe('c-event-filter-type-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `c-event-filter-type-field` with custom props', () => {
@@ -53,7 +53,7 @@ describe('c-event-filter-type-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `c-event-filter-type-field` with errors', async () => {
@@ -67,6 +67,6 @@ describe('c-event-filter-type-field', () => {
 
     await validator.validateAll();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

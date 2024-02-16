@@ -106,7 +106,7 @@ describe('pbehavior-recurrence-rule-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pbehavior-recurrence-rule-field` with custom props', () => {
@@ -119,6 +119,6 @@ describe('pbehavior-recurrence-rule-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

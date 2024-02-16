@@ -1,36 +1,45 @@
-<template lang="pug">
-  v-menu(
-    v-model="menu",
-    :activator="activator",
-    :close-on-content-click="false",
-    nudge-width="200",
-    max-width="500",
-    transition="fade-transition",
-    ignore-click-upper-outside,
-    offset-overflow,
+<template>
+  <v-menu
+    v-model="menu"
+    :activator="activator"
+    :close-on-content-click="false"
+    nudge-width="200"
+    max-width="500"
+    transition="fade-transition"
+    ignore-click-upper-outside
+    offset-overflow
     offset-x
-  )
-    v-card
-      v-card-text
-        v-layout(
-          v-for="(event, index) in includedEvents",
-          :key="`popover-event-${index}`",
-          row,
+  >
+    <v-card>
+      <v-card-text>
+        <v-layout
+          v-for="(event, index) in includedEvents"
+          :key="`popover-event-${index}`"
           wrap
-        )
-          v-flex(xs12)
-            div.ds-calendar-event-popover-item(
-              :style="{ backgroundColor: getStyleColor(event) }",
-              @click="$emit('event-click', event)"
-            )
-              strong {{ event.data.title }}
-              p {{ event.data.description }}
+        >
+          <v-flex xs12>
+            <div
+              class="stats-calendar-menu__item"
+              :style="{ backgroundColor: getStyleColor(event) }"
+              @click="$emit('click:event', event)"
+            >
+              <strong>{{ event.name }}</strong>
+              <p>{{ event.description }}</p>
+            </div>
+          </v-flex>
+        </v-layout>
+      </v-card-text>
+    </v-card>
+  </v-menu>
 </template>
 
 <script>
 import { get } from 'lodash';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
+
+import { isDateBefore } from '@/helpers/date/date';
+import { colorToRgba } from '@/helpers/color';
 
 export default {
   props: {
@@ -69,23 +78,25 @@ export default {
   },
   methods: {
     getStyleColor(event) {
-      const past = event.schedule.end.isBefore(new Date());
+      const past = isDateBefore(event.end, new Date());
 
-      return this.$dayspan.getStyleColor(this.calendarEvent.data, event, past);
+      return past ? colorToRgba(event.color, 0.5) : event.color;
     },
   },
 };
 </script>
 
 <style lang="scss">
-.ds-calendar-event-popover-item {
-  color: white;
-  margin: 1px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  padding-left: 0.5em;
-  cursor: pointer;
-  border-radius: 2px;
+.stats-calendar-menu {
+  &__item {
+    color: white;
+    margin: 1px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-left: 0.5em;
+    cursor: pointer;
+    border-radius: 2px;
+  }
 }
 </style>

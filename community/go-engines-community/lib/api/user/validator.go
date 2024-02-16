@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"errors"
 	"strconv"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/password"
@@ -82,14 +83,14 @@ func (v *baseValidator) validateEditRequest(ctx context.Context, sl validator.St
 			if res.ID != id {
 				sl.ReportError(r.Name, "Name", "Name", "unique", "")
 			}
-		} else if err == mongodriver.ErrNoDocuments {
+		} else if errors.Is(err, mongodriver.ErrNoDocuments) {
 			// Check unique by name
 			err := v.dbCollection.FindOne(ctx, bson.M{"name": r.Name}).Decode(&res)
 			if err == nil {
 				if res.ID != id {
 					sl.ReportError(r.Name, "Name", "Name", "unique", "")
 				}
-			} else if err != mongodriver.ErrNoDocuments {
+			} else if !errors.Is(err, mongodriver.ErrNoDocuments) {
 				panic(err)
 			}
 		} else {
@@ -101,7 +102,7 @@ func (v *baseValidator) validateEditRequest(ctx context.Context, sl validator.St
 	if r.DefaultView != "" {
 		err := v.dbViewCollection.FindOne(ctx, bson.M{"_id": r.DefaultView}).Err()
 		if err != nil {
-			if err == mongodriver.ErrNoDocuments {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				sl.ReportError(r.DefaultView, "DefaultView", "DefaultView", "not_exist", "")
 			} else {
 				panic(err)
@@ -122,7 +123,7 @@ func (v *baseValidator) validateEditRequest(ctx context.Context, sl validator.St
 	if r.UITheme != "" {
 		err := v.dbColorThemeCollection.FindOne(ctx, bson.M{"_id": r.UITheme}).Err()
 		if err != nil {
-			if err == mongodriver.ErrNoDocuments {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				sl.ReportError(r.UITheme, "UITheme", "UITheme", "not_exist", "")
 			} else {
 				panic(err)

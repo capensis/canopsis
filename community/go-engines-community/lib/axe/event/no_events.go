@@ -10,6 +10,7 @@ import (
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
@@ -124,7 +125,7 @@ func (p *noEventsProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 }
 
 func (p *noEventsProcessor) createAlarm(ctx context.Context, entity types.Entity, params rpc.AxeParameters) (Result, error) {
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	result := Result{}
 	if *params.State == types.AlarmStateOK {
 		return result, nil
@@ -249,6 +250,7 @@ func (p *noEventsProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, 
 	}
 	push := bson.M{}
 	inc := bson.M{}
+	unset := bson.M{}
 
 	var stateStep types.AlarmStep
 	if newState != previousState {
@@ -268,6 +270,11 @@ func (p *noEventsProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, 
 		}
 		set["v.state"] = stateStep
 		inc["v.last_update_date"] = params.Timestamp
+
+		if alarm.IsStateLocked() {
+			alarm.Value.ChangeState = nil
+			unset["v.change_state"] = ""
+		}
 	}
 
 	newStatus := types.CpsNumber(types.AlarmStatusNoEvents)
@@ -304,9 +311,10 @@ func (p *noEventsProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, 
 
 	newAlarm := types.Alarm{}
 	err := p.alarmCollection.FindOneAndUpdate(ctx, match, bson.M{
-		"$set":  set,
-		"$push": push,
-		"$inc":  inc,
+		"$set":   set,
+		"$push":  push,
+		"$inc":   inc,
+		"$unset": unset,
 	}, options.FindOneAndUpdate().SetReturnDocument(options.After)).Decode(&newAlarm)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -351,7 +359,7 @@ func (p *noEventsProcessor) newAlarmChange(alarm types.Alarm) types.AlarmChange 
 func (p *noEventsProcessor) newAlarm(
 	params rpc.AxeParameters,
 	entity types.Entity,
-	timestamp types.CpsTime,
+	timestamp datetime.CpsTime,
 	alarmConfig config.AlarmConfig,
 ) types.Alarm {
 	alarm := types.Alarm{

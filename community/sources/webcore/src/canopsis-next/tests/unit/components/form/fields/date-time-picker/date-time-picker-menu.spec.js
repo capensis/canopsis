@@ -19,13 +19,11 @@ describe('date-time-picker-menu', () => {
   mockDateNow(nowTimestamp);
 
   const factory = generateShallowRenderer(DateTimePickerMenu, {
-
     stubs,
     attachTo: document.body,
   });
 
   const snapshotFactory = generateRenderer(DateTimePickerMenu, {
-
     stubs,
     attachTo: document.body,
   });
@@ -90,11 +88,10 @@ describe('date-time-picker-menu', () => {
       .mockReturnValue(dateObject);
     Date.now = jest.fn().mockReturnValue(nowTimestamp);
 
-    snapshotFactory();
+    const wrapper = snapshotFactory();
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    expect(wrapper).toMatchMenuSnapshot();
 
     dateSpy.mockClear();
   });
@@ -108,12 +105,8 @@ describe('date-time-picker-menu', () => {
       },
     });
 
-    await flushPromises();
-
-    const menuButton = selectMenuButton(wrapper);
-
-    await menuButton.trigger('click');
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
+    expect(wrapper).toMatchMenuSnapshot();
   });
 });

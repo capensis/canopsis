@@ -1,4 +1,10 @@
-import { isEqual, omit } from 'lodash';
+import {
+  difference,
+  isArray,
+  isEqual,
+  isObject,
+  omit,
+} from 'lodash';
 
 /**
  * Is equal objects without keys
@@ -47,3 +53,54 @@ export const revertGroupBy = obj => Object.entries(obj).reduce((acc, [id, values
 
   return acc;
 }, {});
+
+/**
+ * Merge object without change links
+ *
+ * @param {any} oldData
+ * @param {any} newData
+ * @return {any}
+ */
+export const mergeChangedProperties = (oldData, newData) => {
+  if (isArray(newData) && isArray(oldData)) {
+    if (oldData.length !== newData.length) {
+      return newData;
+    }
+
+    if (oldData.length === 0 && newData.length === 0) {
+      return oldData;
+    }
+
+    // eslint-disable-next-line no-plusplus
+    for (let index = 0; index < newData.length; index++) {
+      // eslint-disable-next-line no-param-reassign
+      oldData[index] = mergeChangedProperties(oldData[index], newData[index]);
+    }
+
+    return oldData;
+  }
+
+  if (!isObject(newData) || !isObject(oldData)) {
+    return newData;
+  }
+
+  const oldKeys = Object.keys(oldData);
+  const newKeys = Object.keys(newData);
+
+  const removedKeys = difference(oldKeys, newKeys);
+
+  for (const removedKey of removedKeys) {
+    // eslint-disable-next-line no-param-reassign
+    delete oldData[removedKey];
+  }
+
+  for (const key of newKeys) {
+    const oldValue = oldData[key];
+    const newValue = newData[key];
+
+    // eslint-disable-next-line no-param-reassign
+    oldData[key] = mergeChangedProperties(oldValue, newValue);
+  }
+
+  return oldData;
+};

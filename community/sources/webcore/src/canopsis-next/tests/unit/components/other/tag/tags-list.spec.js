@@ -1,4 +1,5 @@
 import { range } from 'lodash';
+import flushPromises from 'flush-promises';
 
 import { TAG_TYPES } from '@/constants';
 import { generateRenderer } from '@unit/utils/vue';
@@ -18,7 +19,6 @@ const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,
   'c-search-field': true,
   'v-checkbox': true,
-  'v-checkbox-functional': true,
   'c-expand-btn': true,
   'c-action-btn': true,
   'c-table-pagination': true,
@@ -50,17 +50,19 @@ describe('tags-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         tags,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
         },
         totalItems,
         removable: true,
       },
     });
 
-    await selectRowCheckboxByIndex(wrapper, 1).vm.$emit('change', true);
-    await selectRowCheckboxByIndex(wrapper, 2).vm.$emit('change', true);
+    await flushPromises();
+
+    await selectRowCheckboxByIndex(wrapper, 1).trigger('click', true);
+    await selectRowCheckboxByIndex(wrapper, 2).trigger('click', true);
     await selectMassRemoveButton(wrapper).vm.$emit('click');
 
     expect(wrapper).toEmit('remove-selected', [tags[1], tags[2]]);
@@ -70,9 +72,9 @@ describe('tags-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         tags,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
         },
         totalItems,
         removable: true,
@@ -90,9 +92,9 @@ describe('tags-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         tags,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
         },
         totalItems,
         updatable: true,
@@ -110,9 +112,9 @@ describe('tags-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         tags,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
         },
         totalItems,
         duplicable: true,
@@ -130,23 +132,23 @@ describe('tags-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         tags,
-        pagination: {},
+        options: {},
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `tags-list` with custom props', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         tags,
-        pagination: {
+        options: {
           page: 2,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
           search: 'Tag',
-          sortBy: 'updated',
-          descending: true,
+          sortBy: ['updated'],
+          sortDesc: [true],
         },
         totalItems,
         pending: true,
@@ -156,10 +158,8 @@ describe('tags-list', () => {
       },
     });
 
-    const expandButton = selectRowExpandButtonByIndex(wrapper, 0);
+    await selectRowExpandButtonByIndex(wrapper, 0).trigger('click');
 
-    await expandButton.vm.$emit('expand');
-
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

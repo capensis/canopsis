@@ -21,6 +21,6 @@ describe('kpi-charts', () => {
   it('Renders `kpi-charts` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

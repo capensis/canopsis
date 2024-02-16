@@ -1,17 +1,32 @@
-<template lang="pug">
-  v-chip-group(
-    v-if="chips",
-    v-field="value",
-    :items="weekDays",
-    :label="$t('recurrenceRule.byweekday')",
-    multiple
-  )
-  v-select(
-    v-else,
-    v-field="value",
-    :label="$t('recurrenceRule.wkst')",
+<template>
+  <v-layout
+    v-if="chips"
+    class="recurrence-rule-weekday-field"
+    column
+  >
+    <v-subheader class="recurrence-rule-weekday-field__header pl-0">
+      {{ $t('recurrenceRule.byweekday') }}
+    </v-subheader>
+    <v-chip-group
+      v-field="value"
+      active-class="elevation-2 grey lighten-1"
+      multiple
+    >
+      <v-chip
+        v-for="weekDay in weekDays"
+        :key="weekDay.value"
+        :value="weekDay.value"
+      >
+        {{ weekDay.text }}
+      </v-chip>
+    </v-chip-group>
+  </v-layout>
+  <v-select
+    v-else
+    v-field="value"
+    :label="$t('recurrenceRule.wkst')"
     :items="weekDays"
-  )
+  />
 </template>
 
 <script>
@@ -47,3 +62,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.recurrence-rule-weekday-field {
+  &__header {
+    height: unset;
+  }
+}
+</style>

@@ -17,13 +17,15 @@ func TestErrT(t *testing.T) {
 			referr := errors.New("not found")
 			err = errt.NewNotFound(referr)
 
-			ednf, ok := err.(errt.NotFound)
+			var notFoundErr errt.NotFound
+			ok := errors.As(err, &notFoundErr)
 			So(ok, ShouldBeTrue)
-			_, ok = err.(errt.IOError)
+			var ioError errt.IOError
+			ok = errors.As(err, &ioError)
 			So(ok, ShouldBeFalse)
 
-			So(ednf.Error(), ShouldEqual, "not found")
-			So(ednf.Err(), ShouldEqual, referr)
+			So(notFoundErr.Error(), ShouldEqual, "not found")
+			So(notFoundErr.Err(), ShouldEqual, referr)
 		})
 
 		Convey("IOError", func() {
@@ -33,9 +35,11 @@ func TestErrT(t *testing.T) {
 			referr := errors.New("io error")
 			err = errt.NewIOError(referr)
 
-			eio, ok := err.(errt.IOError)
+			var eio errt.IOError
+			ok := errors.As(err, &eio)
 			So(ok, ShouldBeTrue)
-			_, ok = err.(errt.NotFound)
+			var notFoundErr errt.NotFound
+			ok = errors.As(err, &notFoundErr)
 			So(ok, ShouldBeFalse)
 
 			So(eio.Error(), ShouldEqual, "io error")

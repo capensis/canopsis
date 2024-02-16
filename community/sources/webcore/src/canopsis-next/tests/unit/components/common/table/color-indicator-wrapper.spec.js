@@ -1,5 +1,3 @@
-import flushPromises from 'flush-promises';
-
 import { generateRenderer } from '@unit/utils/vue';
 
 import { COLOR_INDICATOR_TYPES, ENTITIES_STATES } from '@/constants';
@@ -10,13 +8,12 @@ const stubs = {};
 
 describe('color-indicator-wrapper', () => {
   const snapshotFactory = generateRenderer(ColorIndicatorWrapper, {
-
     stubs,
     attachTo: document.body,
   });
 
   it('Renders `color-indicator-wrapper` with state type and default slot', async () => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: {
         entity: {},
         alarm: {
@@ -33,13 +30,13 @@ describe('color-indicator-wrapper', () => {
       },
     });
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 
   it('Renders `color-indicator-wrapper` without type but with default slot', async () => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: {
         entity: {},
         alarm: {
@@ -56,13 +53,13 @@ describe('color-indicator-wrapper', () => {
       },
     });
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 
   it('Renders `color-indicator-wrapper` with unresolved type', async () => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: {
         entity: {},
         alarm: {},
@@ -73,13 +70,13 @@ describe('color-indicator-wrapper', () => {
       },
     });
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 
   it('Renders `color-indicator-wrapper` with entity impact level and impact state', async () => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: {
         entity: {
           impact_level: 2,
@@ -89,13 +86,13 @@ describe('color-indicator-wrapper', () => {
       },
     });
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 
   it('Renders `color-indicator-wrapper` with entity impact level and alarm state', async () => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: {
         entity: {
           impact_level: 2,
@@ -111,8 +108,8 @@ describe('color-indicator-wrapper', () => {
       },
     });
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 });

@@ -228,6 +228,8 @@ describe('c-entity-category-field', () => {
 
     expect(validator.errors.has(`${name}.create`)).toBeTruthy();
     expect(inputEvents).toBeFalsy();
+
+    wrapper.destroy();
   });
 
   it('Check creating', async () => {
@@ -317,7 +319,7 @@ describe('c-entity-category-field', () => {
   it('Renders `c-entity-category-field` with default props correctly', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-entity-category-field` with default props and pending', () => {
@@ -335,7 +337,7 @@ describe('c-entity-category-field', () => {
       }]),
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-entity-category-field` with default props and open select', () => {
@@ -346,7 +348,7 @@ describe('c-entity-category-field', () => {
 
     select.trigger('click');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
   });
 
@@ -362,7 +364,7 @@ describe('c-entity-category-field', () => {
 
     select.trigger('click');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
   });
 
@@ -377,6 +379,6 @@ describe('c-entity-category-field', () => {
 
     await validator.validateAll();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -165,7 +165,7 @@ describe('bar-chart-widget', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `bar-chart-widget` with custom props', async () => {
@@ -184,6 +184,6 @@ describe('bar-chart-widget', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

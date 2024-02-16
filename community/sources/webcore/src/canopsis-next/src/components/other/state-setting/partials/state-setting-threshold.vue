@@ -1,21 +1,25 @@
-<template lang="pug">
-  v-layout(column)
-    state-setting-information-row(:label="$t('stateSetting.criterion')", :value="label")
-    state-setting-information-row(
-      :label="$t('stateSetting.states.minor')",
-      :value="threshold.minor",
+<template>
+  <v-layout column>
+    <state-setting-information-row
+      :label="$t('stateSetting.criterion')"
+      :value="label"
+    />
+    <state-setting-information-row
+      :label="$t('stateSetting.states.minor')"
+      :value="threshold.minor"
       :unit="unit"
-    )
-    state-setting-information-row(
-      :label="$t('stateSetting.states.major')",
-      :value="threshold.major",
+    />
+    <state-setting-information-row
+      :label="$t('stateSetting.states.major')"
+      :value="threshold.major"
       :unit="unit"
-    )
-    state-setting-information-row(
-      :label="$t('stateSetting.states.critical')",
-      :value="threshold.critical",
+    />
+    <state-setting-information-row
+      :label="$t('stateSetting.states.critical')"
+      :value="threshold.critical"
       :unit="unit"
-    )
+    />
+  </v-layout>
 </template>
 
 <script>

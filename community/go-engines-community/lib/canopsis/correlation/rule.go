@@ -1,7 +1,9 @@
 package correlation
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -29,8 +31,8 @@ type Rule struct {
 	savedpattern.AlarmPatternFields  `bson:",inline"`
 	TotalEntityPatternFields         `bson:",inline"`
 
-	Created *types.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated *types.CpsTime `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	Created *datetime.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Updated *datetime.CpsTime `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 }
 
 func (r *Rule) Matches(alarmWithEntity types.AlarmWithEntity) (bool, error) {
@@ -44,7 +46,7 @@ func (r *Rule) Matches(alarmWithEntity types.AlarmWithEntity) (bool, error) {
 		}
 	}
 
-	return pattern.Match(alarmWithEntity.Entity, alarmWithEntity.Alarm, r.EntityPattern, r.AlarmPattern)
+	return match.Match(&alarmWithEntity.Entity, &alarmWithEntity.Alarm, r.EntityPattern, r.AlarmPattern)
 }
 
 func (r *Rule) IsManual() bool {

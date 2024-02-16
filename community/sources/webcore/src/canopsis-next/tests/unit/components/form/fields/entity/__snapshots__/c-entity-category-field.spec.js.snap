@@ -2,20 +2,21 @@
 
 exports[`c-entity-category-field Renders \`c-entity-category-field\` with custom props and open select 1`] = `
 <div
-  class="v-input mt-0 v-text-field v-select theme--light"
-  role="combobox"
+  class="v-input mt-0 theme--light v-text-field v-select"
 >
   <div
     class="v-input__control"
   >
     <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
       class="v-input__slot"
+      role="button"
     >
       <div
         class="v-select__slot"
       >
         <label
-          aria-hidden="true"
           class="v-label theme--light"
           style="left: 0px; position: absolute;"
         >
@@ -25,10 +26,8 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with custom
           class="v-select__selections"
         >
           <input
-            aria-label="Category"
             aria-readonly="false"
-            autocomplete="on"
-            name="category"
+            autocomplete="off"
             readonly="readonly"
             type="text"
           />
@@ -36,14 +35,7 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with custom
         <div
           class="v-input__append-inner"
         >
-          <div
-            class="v-input__icon v-input__icon--"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon v-icon--link material-icons theme--light"
-            />
-          </div>
+          <div />
         </div>
         <div
           class="v-input__append-inner"
@@ -53,16 +45,22 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with custom
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light"
+              class="v-icon notranslate material-icons theme--light"
             >
               arrow_drop_down
             </i>
           </div>
         </div>
+        <input
+          name="category"
+          type="hidden"
+        />
       </div>
       <div
         class="v-menu"
-      />
+      >
+        <!---->
+      </div>
     </div>
     <div
       class="v-text-field__details"
@@ -70,8 +68,10 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with custom
       <div
         class="v-messages theme--light"
       >
-        <div
+        <transition-group-stub
           class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
         />
       </div>
     </div>
@@ -79,263 +79,25 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with custom
 </div>
 `;
 
-exports[`c-entity-category-field Renders \`c-entity-category-field\` with custom props and open select 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-select-list v-card theme--light"
-  >
-    <div
-      class="v-list theme--light"
-      role="list"
-    >
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Category
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Category 2
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Category 3
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              New category
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Second category
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Test category
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              categoryasd
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              fdsfdf
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              fdsfdfs
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              test
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              еуые
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        class="v-input pb-3 pt-1 px-3 v-text-field v-input--hide-details theme--light"
-      >
-        <div
-          class="v-input__control"
-        >
-          <div
-            class="v-input__slot"
-          >
-            <div
-              class="v-text-field__slot"
-            >
-              <label
-                aria-hidden="true"
-                class="v-label theme--light"
-                style="left: 0px; position: absolute;"
-              >
-                Add new category
-              </label>
-              <input
-                aria-label="Add new category"
-                name="category.create"
-                type="text"
-              />
-            </div>
-            <div
-              class="v-input__append-inner"
-            >
-              <c-help-icon-stub
-                icon="help"
-                left="left"
-                text="Press <kbd>enter</kbd> to save"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-`;
+exports[`c-entity-category-field Renders \`c-entity-category-field\` with custom props and open select 2`] = `undefined`;
 
 exports[`c-entity-category-field Renders \`c-entity-category-field\` with default props and open select 1`] = `
 <div
-  class="v-input mt-0 v-text-field v-select theme--light"
-  role="combobox"
+  class="v-input mt-0 theme--light v-text-field v-select"
 >
   <div
     class="v-input__control"
   >
     <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
       class="v-input__slot"
+      role="button"
     >
       <div
         class="v-select__slot"
       >
         <label
-          aria-hidden="true"
           class="v-label theme--light"
           style="left: 0px; position: absolute;"
         >
@@ -345,10 +107,8 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with defaul
           class="v-select__selections"
         >
           <input
-            aria-label="Category"
             aria-readonly="false"
-            autocomplete="on"
-            name="category"
+            autocomplete="off"
             readonly="readonly"
             type="text"
           />
@@ -356,14 +116,7 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with defaul
         <div
           class="v-input__append-inner"
         >
-          <div
-            class="v-input__icon v-input__icon--"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon v-icon--link material-icons theme--light"
-            />
-          </div>
+          <div />
         </div>
         <div
           class="v-input__append-inner"
@@ -373,16 +126,22 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with defaul
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light"
+              class="v-icon notranslate material-icons theme--light"
             >
               arrow_drop_down
             </i>
           </div>
         </div>
+        <input
+          name="category"
+          type="hidden"
+        />
       </div>
       <div
         class="v-menu"
-      />
+      >
+        <!---->
+      </div>
     </div>
     <div
       class="v-text-field__details"
@@ -390,8 +149,10 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with defaul
       <div
         class="v-messages theme--light"
       >
-        <div
+        <transition-group-stub
           class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
         />
       </div>
     </div>
@@ -399,226 +160,25 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with defaul
 </div>
 `;
 
-exports[`c-entity-category-field Renders \`c-entity-category-field\` with default props and open select 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-select-list v-card theme--light"
-  >
-    <div
-      class="v-list theme--light"
-      role="list"
-    >
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Category
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Category 2
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Category 3
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              New category
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Second category
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Test category
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              categoryasd
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              fdsfdf
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              fdsfdfs
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              test
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              еуые
-            </div>
-          </div>
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-`;
+exports[`c-entity-category-field Renders \`c-entity-category-field\` with default props and open select 2`] = `undefined`;
 
 exports[`c-entity-category-field Renders \`c-entity-category-field\` with default props and pending 1`] = `
 <div
-  class="v-input mt-0 v-text-field v-select v-input--is-loading theme--light"
-  role="combobox"
+  class="v-input mt-0 v-input--is-loading theme--light v-text-field v-select"
 >
   <div
     class="v-input__control"
   >
     <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
       class="v-input__slot"
+      role="button"
     >
       <div
         class="v-select__slot"
       >
         <label
-          aria-hidden="true"
           class="v-label theme--light"
           style="left: 0px; position: absolute;"
         >
@@ -628,10 +188,8 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with defaul
           class="v-select__selections"
         >
           <input
-            aria-label="Category"
             aria-readonly="false"
-            autocomplete="on"
-            name="category"
+            autocomplete="off"
             readonly="readonly"
             type="text"
           />
@@ -639,14 +197,7 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with defaul
         <div
           class="v-input__append-inner"
         >
-          <div
-            class="v-input__icon v-input__icon--"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon v-icon--link material-icons theme--light"
-            />
-          </div>
+          <div />
         </div>
         <div
           class="v-input__append-inner"
@@ -656,42 +207,50 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with defaul
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light"
+              class="v-icon notranslate material-icons theme--light"
             >
               arrow_drop_down
             </i>
           </div>
         </div>
+        <input
+          name="category"
+          type="hidden"
+        />
       </div>
       <div
         class="v-menu"
-      />
+      >
+        <!---->
+      </div>
       <div
         aria-valuemax="100"
         aria-valuemin="0"
-        class="v-progress-linear"
+        class="v-progress-linear v-progress-linear--absolute v-progress-linear--visible theme--light"
         role="progressbar"
         style="height: 2px;"
       >
         <div
           class="v-progress-linear__background primary"
-          style="height: 2px; opacity: 0.3; width: 100%;"
+          style="opacity: 0.3; left: 0%; width: 100%;"
         />
         <div
-          class="v-progress-linear__bar"
+          class="v-progress-linear__buffer"
+        />
+        <transition-stub
+          name="fade-transition"
         >
           <div
-            class="v-progress-linear__bar__indeterminate v-progress-linear__bar__indeterminate--active"
+            class="v-progress-linear__indeterminate v-progress-linear__indeterminate--active"
           >
             <div
-              class="v-progress-linear__bar__indeterminate long primary"
+              class="v-progress-linear__indeterminate long primary"
             />
             <div
-              class="v-progress-linear__bar__indeterminate short primary"
+              class="v-progress-linear__indeterminate short primary"
             />
           </div>
-          <!---->
-        </div>
+        </transition-stub>
       </div>
     </div>
     <div
@@ -700,8 +259,10 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with defaul
       <div
         class="v-messages theme--light"
       >
-        <div
+        <transition-group-stub
           class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
         />
       </div>
     </div>
@@ -711,20 +272,21 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with defaul
 
 exports[`c-entity-category-field Renders \`c-entity-category-field\` with default props correctly 1`] = `
 <div
-  class="v-input mt-0 v-text-field v-select theme--light"
-  role="combobox"
+  class="v-input mt-0 theme--light v-text-field v-select"
 >
   <div
     class="v-input__control"
   >
     <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
       class="v-input__slot"
+      role="button"
     >
       <div
         class="v-select__slot"
       >
         <label
-          aria-hidden="true"
           class="v-label theme--light"
           style="left: 0px; position: absolute;"
         >
@@ -734,10 +296,8 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with defaul
           class="v-select__selections"
         >
           <input
-            aria-label="Category"
             aria-readonly="false"
-            autocomplete="on"
-            name="category"
+            autocomplete="off"
             readonly="readonly"
             type="text"
           />
@@ -745,14 +305,7 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with defaul
         <div
           class="v-input__append-inner"
         >
-          <div
-            class="v-input__icon v-input__icon--"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon v-icon--link material-icons theme--light"
-            />
-          </div>
+          <div />
         </div>
         <div
           class="v-input__append-inner"
@@ -762,16 +315,22 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with defaul
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light"
+              class="v-icon notranslate material-icons theme--light"
             >
               arrow_drop_down
             </i>
           </div>
         </div>
+        <input
+          name="category"
+          type="hidden"
+        />
       </div>
       <div
         class="v-menu"
-      />
+      >
+        <!---->
+      </div>
     </div>
     <div
       class="v-text-field__details"
@@ -779,8 +338,10 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with defaul
       <div
         class="v-messages theme--light"
       >
-        <div
+        <transition-group-stub
           class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
         />
       </div>
     </div>
@@ -790,20 +351,21 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with defaul
 
 exports[`c-entity-category-field Renders \`c-entity-category-field\` with validator error 1`] = `
 <div
-  class="v-input mt-0 v-text-field v-select v-input--has-state theme--light error--text"
-  role="combobox"
+  class="v-input mt-0 v-input--has-state theme--light v-text-field v-select error--text"
 >
   <div
     class="v-input__control"
   >
     <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
       class="v-input__slot"
+      role="button"
     >
       <div
         class="v-select__slot"
       >
         <label
-          aria-hidden="true"
           class="v-label theme--light error--text"
           style="left: 0px; position: absolute;"
         >
@@ -813,10 +375,8 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with valida
           class="v-select__selections"
         >
           <input
-            aria-label="Category"
             aria-readonly="false"
-            autocomplete="on"
-            name="category"
+            autocomplete="off"
             readonly="readonly"
             type="text"
           />
@@ -829,32 +389,41 @@ exports[`c-entity-category-field Renders \`c-entity-category-field\` with valida
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light error--text"
+              class="v-icon notranslate material-icons theme--light error--text"
             >
               arrow_drop_down
             </i>
           </div>
         </div>
+        <input
+          name="category"
+          type="hidden"
+        />
       </div>
       <div
         class="v-menu"
-      />
+      >
+        <!---->
+      </div>
     </div>
     <div
       class="v-text-field__details"
     >
       <div
         class="v-messages theme--light error--text"
+        role="alert"
       >
-        <div
+        <transition-group-stub
           class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
         >
           <div
-            class="v-messages__message message-transition-enter message-transition-enter-active"
+            class="v-messages__message"
           >
             The field is required
           </div>
-        </div>
+        </transition-group-stub>
       </div>
     </div>
   </div>

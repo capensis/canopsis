@@ -2,51 +2,52 @@
 
 exports[`grid-range-size Renders \`grid-range-size\` with custom props 1`] = `
 <div
-  class="v-list__group"
+  class="v-list-group"
 >
   <div
-    class="v-list__group__header"
+    aria-expanded="false"
+    class="v-list-group__header v-list-item v-list-item--link theme--light"
+    role="button"
+    tabindex="0"
   >
     <div
-      role="listitem"
+      class="v-list-item__content widget-settings-item-title"
     >
       <div
-        class="v-list__tile theme--light"
+        class="v-list-item__title validation-header"
       >
-        <div>
           Custom title
-        </div>
+        <!---->
       </div>
     </div>
     <div
-      class="v-list__group__header__append-icon"
+      class="v-list-item__icon v-list-group__header__append-icon"
     >
       <i
         aria-hidden="true"
-        class="v-icon material-icons theme--light"
+        class="v-icon notranslate material-icons theme--light"
       >
         keyboard_arrow_down
       </i>
     </div>
   </div>
   <transition-stub
-    mode="in-out"
     name="expand-transition"
   >
     <div
-      class="v-list__group__items"
+      class="v-list-group__items"
       style="display: none;"
     >
       <div
         class="container"
       >
         <input
-          always-dirty="always-dirty"
+          always-dirty=""
           class="v-range-slider"
           max="10"
           min="2"
           step="2"
-          thumb-label="thumb-label"
+          thumb-label=""
           ticks="always"
         />
       </div>
@@ -57,51 +58,51 @@ exports[`grid-range-size Renders \`grid-range-size\` with custom props 1`] = `
 
 exports[`grid-range-size Renders \`grid-range-size\` with default and required props 1`] = `
 <div
-  class="v-list__group"
+  class="v-list-group"
 >
   <div
-    class="v-list__group__header"
+    aria-expanded="false"
+    class="v-list-group__header v-list-item v-list-item--link theme--light"
+    role="button"
+    tabindex="0"
   >
     <div
-      role="listitem"
+      class="v-list-item__content widget-settings-item-title"
     >
       <div
-        class="v-list__tile theme--light"
+        class="v-list-item__title validation-header"
       >
-        <div>
-          
-        </div>
+        <!---->
       </div>
     </div>
     <div
-      class="v-list__group__header__append-icon"
+      class="v-list-item__icon v-list-group__header__append-icon"
     >
       <i
         aria-hidden="true"
-        class="v-icon material-icons theme--light"
+        class="v-icon notranslate material-icons theme--light"
       >
         keyboard_arrow_down
       </i>
     </div>
   </div>
   <transition-stub
-    mode="in-out"
     name="expand-transition"
   >
     <div
-      class="v-list__group__items"
+      class="v-list-group__items"
       style="display: none;"
     >
       <div
         class="container"
       >
         <input
-          always-dirty="always-dirty"
+          always-dirty=""
           class="v-range-slider"
           max="12"
           min="0"
           step="1"
-          thumb-label="thumb-label"
+          thumb-label=""
           ticks="always"
         />
       </div>

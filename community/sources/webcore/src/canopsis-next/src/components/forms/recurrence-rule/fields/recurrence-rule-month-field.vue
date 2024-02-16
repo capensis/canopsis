@@ -1,10 +1,26 @@
-<template lang="pug">
-  v-chip-group(
-    v-field="value",
-    :items="months",
-    :label="$t('recurrenceRule.bymonth')",
-    multiple
-  )
+<template>
+  <v-layout
+    class="recurrence-rule-month-field"
+    column
+  >
+    <v-subheader class="recurrence-rule-month-field__header pl-0">
+      {{ $t('recurrenceRule.bymonth') }}
+    </v-subheader>
+    <v-chip-group
+      v-field="value"
+      active-class="elevation-2 grey lighten-1"
+      multiple
+      column
+    >
+      <v-chip
+        v-for="month in months"
+        :key="month.value"
+        :value="month.value"
+      >
+        {{ month.text }}
+      </v-chip>
+    </v-chip-group>
+  </v-layout>
 </template>
 
 <script>
@@ -39,3 +55,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.recurrence-rule-month-field {
+  &__header {
+    height: unset;
+  }
+}
+</style>

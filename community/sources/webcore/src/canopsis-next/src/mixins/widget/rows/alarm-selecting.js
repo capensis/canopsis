@@ -61,15 +61,15 @@ export const widgetRowsSelectingAlarmMixin = {
             y1: position.y,
             y2: position.y + position.height,
           },
-          row: value.$options.propsData.row,
+          alarm: value.$options.propsData.alarm,
         });
 
         return acc;
       }, []);
     },
 
-    getIntersectRowsByPosition(newX, newY, prevX, prevY) {
-      return this.rowsPositions?.reduce((acc, { position, row }) => {
+    getIntersectAlarmsByPosition(newX, newY, prevX, prevY) {
+      return this.rowsPositions?.reduce((acc, { position, alarm }) => {
         if (
           (prevX >= position.x1 && prevX <= position.x2 && prevY >= position.y1 && prevY <= position.y2)
           || (newX < position.x1 && prevX < position.x1)
@@ -80,7 +80,7 @@ export const widgetRowsSelectingAlarmMixin = {
           return acc;
         }
 
-        acc.push(row);
+        acc.push(alarm);
 
         return acc;
       }, []) ?? [];
@@ -99,7 +99,7 @@ export const widgetRowsSelectingAlarmMixin = {
         return;
       }
 
-      const rows = this.getIntersectRowsByPosition(
+      const alarms = this.getIntersectAlarmsByPosition(
         event.clientX,
         event.clientY,
         this.prevEvent.clientX,
@@ -108,7 +108,7 @@ export const widgetRowsSelectingAlarmMixin = {
 
       this.prevEvent = event;
 
-      rows.forEach(row => this.toggleSelected(row.item));
+      alarms.forEach(alarm => this.toggleSelected(alarm));
     },
 
     toggleSelected(alarm) {

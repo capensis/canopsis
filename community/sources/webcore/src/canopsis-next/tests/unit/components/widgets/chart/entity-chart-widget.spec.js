@@ -187,7 +187,7 @@ describe('entity-chart-widget', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `entity-chart-widget` with line type', async () => {
@@ -218,7 +218,7 @@ describe('entity-chart-widget', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `entity-chart-widget` with numbers type', async () => {
@@ -251,6 +251,6 @@ describe('entity-chart-widget', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

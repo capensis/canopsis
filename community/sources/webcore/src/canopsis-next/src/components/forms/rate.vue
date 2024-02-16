@@ -1,7 +1,15 @@
-<template lang="pug">
-  div
-    rating-field.justify-center(v-field="form.rating", hover)
-    v-textarea(v-field="form.comment", :label="$tc('common.comment')")
+<template>
+  <div>
+    <rating-field
+      class="justify-center"
+      v-field="form.rating"
+      hover
+    />
+    <v-textarea
+      v-field="form.comment"
+      :label="$tc('common.comment')"
+    />
+  </div>
 </template>
 
 <script>

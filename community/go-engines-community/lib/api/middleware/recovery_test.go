@@ -19,7 +19,7 @@ func TestRecovery_GivenNoUserKey_ShouldReturnUnauthorizedResponse(t *testing.T) 
 
 	expectedCode := http.StatusUnauthorized
 
-	req := httptest.NewRequest("GET", okURL, nil)
+	req := httptest.NewRequest(http.MethodGet, okURL, nil)
 
 	router := gin.New()
 	router.GET(
@@ -44,7 +44,7 @@ func TestRecovery_GivenPanicErr_ShouldReturnInternalErrorResponse(t *testing.T) 
 
 	expectedCode := http.StatusInternalServerError
 
-	req := httptest.NewRequest("GET", okURL, nil)
+	req := httptest.NewRequest(http.MethodGet, okURL, nil)
 
 	router := gin.New()
 	router.GET(
@@ -69,7 +69,7 @@ func TestRecovery_GivenPanicStr_ShouldReturnInternalErrorResponse(t *testing.T) 
 
 	expectedCode := http.StatusInternalServerError
 
-	req := httptest.NewRequest("GET", okURL, nil)
+	req := httptest.NewRequest(http.MethodGet, okURL, nil)
 
 	router := gin.New()
 	router.GET(
@@ -95,7 +95,7 @@ func TestRecovery_GivenPanicSysCallErr_ShouldReturnInternalErrorResponse(t *test
 	expectedContextAbort := true
 	expectedCode := http.StatusOK
 
-	req := httptest.NewRequest("GET", okURL, nil)
+	req := httptest.NewRequest(http.MethodGet, okURL, nil)
 
 	router := gin.New()
 	router.GET(

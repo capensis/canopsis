@@ -1,21 +1,28 @@
-<template lang="pug">
-  v-radio-group.c-column-size-field(
-    v-field="value",
-    :class="{ 'c-column-size-field--mobile': mobile }",
-    :name="name",
-    color="primary",
-    hide-details,
-    mandatory,
+<template>
+  <v-radio-group
+    class="c-column-size-field"
+    v-field="value"
+    :class="{ 'c-column-size-field--mobile': mobile }"
+    :name="name"
+    color="primary"
+    hide-details
+    mandatory
     row
-  )
-    v-radio.ma-0(
-      v-for="item in availableItems",
-      :key="item.src",
-      :value="item.value",
+  >
+    <v-radio
+      v-for="item in availableItems"
+      :key="item.src"
+      :value="item.value"
       color="primary"
-    )
-      template(#label="")
-        v-img.my-2(:src="item.src")
+    >
+      <template #label="">
+        <v-img
+          class="my-2"
+          :src="item.src"
+        />
+      </template>
+    </v-radio>
+  </v-radio-group>
 </template>
 
 <script>
@@ -32,6 +39,7 @@ import twoColumnDesktopSrc from '@/assets/images/column-desktop-2.svg';
 import threeColumnDesktopSrc from '@/assets/images/column-desktop-3.svg';
 import fourColumnDesktopSrc from '@/assets/images/column-desktop-4.svg';
 import sixColumnDesktopSrc from '@/assets/images/column-desktop-6.svg';
+import twelveColumnDesktopSrc from '@/assets/images/column-desktop-12.svg';
 
 export default {
   props: {
@@ -71,6 +79,7 @@ export default {
       { value: 3, src: threeColumnDesktopSrc },
       { value: 4, src: fourColumnDesktopSrc },
       { value: 6, src: sixColumnDesktopSrc },
+      { value: 12, src: twelveColumnDesktopSrc },
     ]);
 
     const availableItems = computed(() => {

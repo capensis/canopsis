@@ -68,7 +68,7 @@ describe('pattern-group-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-group-field` with custom props', () => {
@@ -84,6 +84,6 @@ describe('pattern-group-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

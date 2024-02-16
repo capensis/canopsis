@@ -2,10 +2,11 @@ package axe
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
-	"github.com/rs/zerolog"
 	"runtime/trace"
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
+	"github.com/rs/zerolog"
 )
 
 type idleSincePeriodicalWorker struct {

@@ -1,8 +1,18 @@
-<template lang="pug">
-  v-layout(column)
-    v-textarea(v-field="value.output", :label="$t('scenario.output')")
-      template(#append="")
-        c-help-icon(:text="$t('scenario.outputHelp')", icon="help", left)
+<template>
+  <v-layout column>
+    <v-textarea
+      v-field="value.output"
+      :label="$t('scenario.output')"
+    >
+      <template #append="">
+        <c-help-icon
+          :text="$t('scenario.outputHelp')"
+          icon="help"
+          left
+        />
+      </template>
+    </v-textarea>
+  </v-layout>
 </template>
 
 <script>

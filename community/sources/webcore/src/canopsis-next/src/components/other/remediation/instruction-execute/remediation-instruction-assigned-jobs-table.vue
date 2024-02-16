@@ -1,28 +1,40 @@
-<template lang="pug">
-  v-data-table.jobs-assigned-table(
-    :items="jobs",
-    :headers-length="4",
-    item-key="_id",
-    expand,
-    hide-actions
-  )
-    template(#headers="")
-      tr
-        th
-        th.text-xs-center.pre-line {{ $t('remediation.instructionExecute.jobs.startedAt') }}
-        th.text-xs-center.pre-line {{ $t('remediation.instructionExecute.jobs.launchedAt') }}
-        th.text-xs-center.pre-line {{ $t('remediation.instructionExecute.jobs.completedAt') }}
-    template(#items="row")
-      remediation-instruction-assigned-jobs-row(
-        :job="row.item",
-        :expanded.sync="row.expanded",
-        :executable="executable",
-        :cancelable="cancelable",
-        @execute-job="$emit('execute-job', $event)",
+<template>
+  <v-data-table
+    class="jobs-assigned-table"
+    :items="jobs"
+    :headers-length="4"
+    item-key="_id"
+    show-expand
+    hide-default-footer
+  >
+    <template #headers="">
+      <tr>
+        <th />
+        <th class="text-center pre-line">
+          {{ $t('remediation.instructionExecute.jobs.startedAt') }}
+        </th>
+        <th class="text-center pre-line">
+          {{ $t('remediation.instructionExecute.jobs.launchedAt') }}
+        </th>
+        <th class="text-center pre-line">
+          {{ $t('remediation.instructionExecute.jobs.completedAt') }}
+        </th>
+      </tr>
+    </template>
+    <template #items="row">
+      <remediation-instruction-assigned-jobs-row
+        :job="row.item"
+        :expanded.sync="row.expanded"
+        :executable="executable"
+        :cancelable="cancelable"
+        @execute-job="$emit('execute-job', $event)"
         @cancel-job-execution="$emit('cancel-job-execution', $event)"
-      )
-    template(#expand="{ item }")
-      remediation-instruction-assigned-jobs-expand-panel(:job="item")
+      />
+    </template>
+    <template #expand="{ item }">
+      <remediation-instruction-assigned-jobs-expand-panel :job="item" />
+    </template>
+  </v-data-table>
 </template>
 
 <script>

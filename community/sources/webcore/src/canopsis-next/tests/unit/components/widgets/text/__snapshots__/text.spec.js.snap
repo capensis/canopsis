@@ -25,21 +25,18 @@ exports[`text Renders \`text\` with request template 1`] = `
       </strong>
       : 1
     </li>
-     
     <li>
       <strong>
         title
       </strong>
       : test
     </li>
-     
     <li>
       <strong>
         completed
       </strong>
       : false
     </li>
-     
     <li>
       <strong>
         id

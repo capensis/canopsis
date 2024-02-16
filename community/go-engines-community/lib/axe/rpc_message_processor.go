@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/axe/event"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
@@ -72,7 +73,7 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 	}
 
 	if event.Parameters.Timestamp.Unix() <= 0 {
-		event.Parameters.Timestamp = types.NewCpsTime()
+		event.Parameters.Timestamp = datetime.NewCpsTime()
 	}
 
 	if event.Parameters.Initiator == "" {
@@ -86,7 +87,7 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 		}
 
 		p.logError(err, "RPC Message Processor: cannot update alarm", msg)
-		return p.getErrRpcEvent(fmt.Errorf("cannot update alarm: %v", err), alarm), nil
+		return p.getErrRpcEvent(fmt.Errorf("cannot update alarm: %w", err), alarm), nil
 	}
 
 	if res.Alarm.ID != "" {
@@ -131,7 +132,7 @@ func (p *rpcMessageProcessor) processPbehaviorEvent(ctx context.Context, event r
 	if err != nil {
 		p.logError(err, "RPC Message Processor: failed to encode rpc call to pbehavior", d.Body)
 
-		return p.getErrRpcEvent(fmt.Errorf("cannot encode rpc event : %v", err), event.Alarm), nil
+		return p.getErrRpcEvent(fmt.Errorf("cannot encode rpc event : %w", err), event.Alarm), nil
 	}
 
 	err = p.PbhRpc.Call(ctx, engine.RPCMessage{
@@ -145,7 +146,7 @@ func (p *rpcMessageProcessor) processPbehaviorEvent(ctx context.Context, event r
 
 		p.logError(err, "RPC Message Processor: failed to send rpc call to pbehavior", d.Body)
 
-		return p.getErrRpcEvent(fmt.Errorf("failed to send rpc call to pbehavior : %v", err), event.Alarm), nil
+		return p.getErrRpcEvent(fmt.Errorf("failed to send rpc call to pbehavior : %w", err), event.Alarm), nil
 	}
 
 	return nil, nil

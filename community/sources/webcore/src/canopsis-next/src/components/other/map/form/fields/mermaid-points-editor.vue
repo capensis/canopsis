@@ -1,45 +1,48 @@
-<template lang="pug">
-  div.mermaid-points(
-    ref="container",
-    :class="{ 'mermaid-points--addable': addOnClick && !moving && !isFormOpened }",
-    @contextmenu.stop.prevent="openContextmenu",
-    @click="openAddPointFormByClick",
+<template>
+  <div
+    class="mermaid-points"
+    ref="container"
+    :class="{ 'mermaid-points--addable': addOnClick && !moving && !isFormOpened }"
+    @contextmenu.stop.prevent="openContextmenu"
+    @click="openAddPointFormByClick"
     @dblclick="openAddPointFormByDoubleClick"
-  )
-    mermaid-point-marker.mermaid-points__point(
-      v-for="(point, index) in pointsData",
-      :key="point._id",
-      :x="point.x",
-      :y="point.y",
-      :entity="point.entity",
-      :size="markerSize",
-      :class="{ 'mermaid-points__point--no-events': moving }",
-      @click.stop="",
-      @contextmenu.stop.prevent="openEditContextmenu(point)",
-      @dblclick.stop="openEditPointFormByDoubleClick(point)",
+  >
+    <mermaid-point-marker
+      class="mermaid-points__point"
+      v-for="(point, index) in pointsData"
+      :key="point._id"
+      :x="point.x"
+      :y="point.y"
+      :entity="point.entity"
+      :size="markerSize"
+      :class="{ 'mermaid-points__point--no-events': moving }"
+      @click.stop=""
+      @contextmenu.stop.prevent="openEditContextmenu(point)"
+      @dblclick.stop="openEditPointFormByDoubleClick(point)"
       @mousedown.stop.prevent.left="startMoving(point, index)"
-    )
-    point-contextmenu(
-      :value="shownMenu",
-      :editing="!!editingPoint",
-      :position-x="clientX",
-      :position-y="clientY",
-      @add:point="openAddPointForm",
-      @edit:point="openEditPointForm",
-      @remove:point="showRemovePointModal",
+    />
+    <point-contextmenu
+      :value="shownMenu"
+      :editing="!!editingPoint"
+      :position-x="clientX"
+      :position-y="clientY"
+      @add:point="openAddPointForm"
+      @edit:point="openEditPointForm"
+      @remove:point="showRemovePointModal"
       @close="clearMenuData"
-    )
-    point-form-dialog-menu(
-      :value="isFormOpened",
-      :point="formPoint",
-      :position-x="clientX",
-      :position-y="clientY",
-      :editing="!!editingPoint",
-      :exists-entities="existsEntities",
-      @cancel="clearMenuData",
-      @submit="submitPointForm",
+    />
+    <point-form-dialog-menu
+      :value="isFormOpened"
+      :point="formPoint"
+      :position-x="clientX"
+      :position-y="clientY"
+      :editing="!!editingPoint"
+      :exists-entities="existsEntities"
+      @cancel="clearMenuData"
+      @submit="submitPointForm"
       @remove="showRemovePointModal"
-    )
+    />
+  </div>
 </template>
 
 <script>

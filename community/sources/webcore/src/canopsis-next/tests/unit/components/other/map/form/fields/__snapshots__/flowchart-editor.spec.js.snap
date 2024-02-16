@@ -10,9 +10,10 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
   >
     <add-location-btn-stub />
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
-     
     <flowchart-points-editor-stub
       iconsize="24"
       points=""
@@ -33,9 +34,10 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with form 1`] = `
   >
     <add-location-btn-stub />
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
-     
     <flowchart-points-editor-stub
       iconsize="24"
       points=""
@@ -57,9 +59,10 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with validation errors  1
   >
     <add-location-btn-stub />
     <hr
+      aria-orientation="horizontal"
       class="v-divider theme--light"
+      role="separator"
     />
-     
     <flowchart-points-editor-stub
       iconsize="24"
       points=""

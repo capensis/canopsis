@@ -1,31 +1,52 @@
-<template lang="pug">
-  v-radio-group(
-    :value="type",
-    :label="$t('common.end')",
+<template>
+  <v-radio-group
+    :value="type"
+    :label="$t('common.end')"
     @change="updateType"
-  )
-    v-radio(:value="types.never", color="primary")
-      template(#label="") {{ $t('recurrenceRule.never') }}
-    v-radio.mb-0(:value="types.date", color="primary")
-      template(#label="")
-        span {{ $t('recurrenceRule.on') }}
-        date-time-splitted-picker-field.ml-3(
-          v-field="value.until",
-          v-validate="dateTimeSplittedRules",
-          :placeholder="$t('common.date')",
-          :disabled="!isDateType",
+  >
+    <v-radio
+      :value="types.never"
+      color="primary"
+    >
+      <template #label="">
+        {{ $t('recurrenceRule.never') }}
+      </template>
+    </v-radio>
+    <v-radio
+      class="mb-0"
+      :value="types.date"
+      color="primary"
+    >
+      <template #label="">
+        <span>{{ $t('recurrenceRule.on') }}</span>
+        <date-time-splitted-picker-field
+          class="ml-3"
+          v-field="value.until"
+          v-validate="dateTimeSplittedRules"
+          :placeholder="$t('common.date')"
+          :disabled="!isDateType"
           name="until"
-        )
-    v-radio.mb-0(:value="types.after", color="primary")
-      template(#label="")
-        span {{ $t('recurrenceRule.after') }}
-        c-number-field.mx-3(
-          v-field="value.count",
-          :disabled="!isAfterType",
-          :required="isAfterType",
+        />
+      </template>
+    </v-radio>
+    <v-radio
+      class="mb-0"
+      :value="types.after"
+      color="primary"
+    >
+      <template #label="">
+        <span>{{ $t('recurrenceRule.after') }}</span>
+        <c-number-field
+          class="mx-3"
+          v-field="value.count"
+          :disabled="!isAfterType"
+          :required="isAfterType"
           name="count"
-        )
-        span.text-lowercase {{ $tc('recurrenceRule.occurrence', value.count || 1) }}
+        />
+        <span class="text-lowercase">{{ $tc('recurrenceRule.occurrence', value.count || 1) }}</span>
+      </template>
+    </v-radio>
+  </v-radio-group>
 </template>
 
 <script>

@@ -1,30 +1,31 @@
-<template lang="pug">
-  g(@click.stop="")
-    rect-selection(
-      v-if="selected",
-      :x="shape.x",
-      :y="shape.y",
-      :width="shape.diameter",
-      :height="shape.diameter",
-      :padding="padding",
-      :color="color",
-      :corner-radius="cornerRadius",
-      resizable,
-      aspect-ratio,
+<template>
+  <g @click.stop="">
+    <rect-selection
+      v-if="selected"
+      :x="shape.x"
+      :y="shape.y"
+      :width="shape.diameter"
+      :height="shape.diameter"
+      :padding="padding"
+      :color="color"
+      :corner-radius="cornerRadius"
+      resizable
+      aspect-ratio
       @update="onRectUpdate"
-    )
-    rect-connectors(
-      v-if="connecting",
-      :x="shape.x",
-      :y="shape.y",
-      :width="shape.diameter",
-      :height="shape.diameter",
-      :padding="padding",
-      :color="color",
-      @connected="$listeners.connected",
-      @connecting="$listeners.connecting",
+    />
+    <rect-connectors
+      v-if="connecting"
+      :x="shape.x"
+      :y="shape.y"
+      :width="shape.diameter"
+      :height="shape.diameter"
+      :padding="padding"
+      :color="color"
+      @connected="$listeners.connected"
+      @connecting="$listeners.connecting"
       @unconnect="$listeners.unconnect"
-    )
+    />
+  </g>
 </template>
 
 <script>

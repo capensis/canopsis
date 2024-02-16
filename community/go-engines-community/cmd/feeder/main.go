@@ -12,6 +12,7 @@ import (
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	cps "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -49,7 +50,7 @@ func (f *Feeder) getCompatEvent(state, Ci, ci, ri int64) types.Event {
 		State:         types.CpsNumber(state),
 		SourceType:    types.SourceTypeResource,
 		EventType:     types.EventTypeCheck,
-		Timestamp:     types.CpsTime{Time: time.Now()},
+		Timestamp:     datetime.NewCpsTime(),
 	}
 }
 
@@ -97,16 +98,16 @@ func (f *Feeder) adjust(target float64, sent, tsent int64) int64 {
 func (f *Feeder) setupAmqp() error {
 	amqpSession, err := libamqp.NewSession()
 	if err != nil {
-		return fmt.Errorf("amqp session: %v", err)
+		return fmt.Errorf("amqp session: %w", err)
 	}
 
 	channelPub, err := amqpSession.Channel()
 	if err != nil {
-		return fmt.Errorf("amqp pub channel: %v", err)
+		return fmt.Errorf("amqp pub channel: %w", err)
 	}
 
 	if err := channelPub.Confirm(false); err != nil {
-		return fmt.Errorf("confirm: %v", err)
+		return fmt.Errorf("confirm: %w", err)
 	}
 
 	f.references = References{

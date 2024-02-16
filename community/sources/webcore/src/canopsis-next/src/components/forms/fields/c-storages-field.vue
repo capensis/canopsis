@@ -1,22 +1,46 @@
-<template lang="pug">
-  v-layout(row, wrap)
-    v-flex(v-show="label", xs12)
-      v-layout
-        h4.subheading.grey--text.text--darken-2 {{ label }}
-        c-help-icon(v-if="helpText", :text="helpText", icon-class="ml-2 storage-help-tooltip", right)
-    v-flex(xs12)
-      v-layout(column)
-        c-storage-field(
-          v-for="(storage, index) in storages",
-          :key="storage.key",
-          :value="storage.directory",
-          :disabled="disabled",
-          @edit="$emit('edit', storage)",
+<template>
+  <v-layout wrap>
+    <v-flex
+      v-show="label"
+      xs12
+    >
+      <v-layout>
+        <h4 class="text-subtitle-1 grey--text text--darken-2">
+          {{ label }}
+        </h4>
+        <c-help-icon
+          v-if="helpText"
+          :text="helpText"
+          icon-class="ml-2 storage-help-tooltip"
+          right
+        />
+      </v-layout>
+    </v-flex>
+    <v-flex xs12>
+      <v-layout column>
+        <c-storage-field
+          v-for="(storage, index) in storages"
+          :key="storage.key"
+          :value="storage.directory"
+          :disabled="disabled"
+          @edit="$emit('edit', storage)"
           @remove="removeItemFromArray(index)"
-        )
-    v-flex(xs12)
-      v-layout
-        v-btn.ml-0(color="primary", :disabled="disabled", @click="$emit('add')") {{ $t('common.add') }}
+        />
+      </v-layout>
+    </v-flex>
+    <v-flex xs12>
+      <v-layout>
+        <v-btn
+          class="ml-0"
+          color="primary"
+          :disabled="disabled"
+          @click="$emit('add')"
+        >
+          {{ $t('common.add') }}
+        </v-btn>
+      </v-layout>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

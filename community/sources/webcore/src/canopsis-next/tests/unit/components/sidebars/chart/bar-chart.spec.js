@@ -234,7 +234,7 @@ describe('bar-chart', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `bar-chart` widget settings with custom props and permissions', async () => {
@@ -276,6 +276,6 @@ describe('bar-chart', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -62,10 +62,7 @@ func (q *MongoQuery) CreateAggregationPipeline(ctx context.Context, r ListReques
 	if err != nil {
 		return nil, err
 	}
-	err = q.handleSort(ctx, r)
-	if err != nil {
-		return nil, err
-	}
+	q.handleSort(r)
 	if r.WithFlags {
 		q.project = append(q.project, bson.M{"$addFields": bson.M{
 			"editable": bson.M{"$cond": bson.M{
@@ -112,7 +109,7 @@ func (q *MongoQuery) handleFilter(ctx context.Context, r ListRequest) error {
 	return nil
 }
 
-func (q *MongoQuery) handleSort(_ context.Context, r ListRequest) error {
+func (q *MongoQuery) handleSort(r ListRequest) {
 	sortBy := r.SortBy
 	if sortBy == "" {
 		sortBy = q.defaultSortBy
@@ -120,8 +117,6 @@ func (q *MongoQuery) handleSort(_ context.Context, r ListRequest) error {
 
 	q.adjustLookupsForSort(sortBy)
 	q.sort = common.GetSortQuery(sortBy, r.Sort)
-
-	return nil
 }
 
 // getSearchFilter returns mongo query for search filter.

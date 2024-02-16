@@ -1,19 +1,23 @@
-<template lang="pug">
-  v-layout(column)
-    v-checkbox(
-      v-for="chip in chips",
-      :key="chip.value",
-      :input-value="chip.active",
-      :label="chip.text",
-      color="primary",
-      hide-details,
+<template>
+  <v-layout column>
+    <v-checkbox
+      v-for="chip in chips"
+      :key="chip.value"
+      :input-value="chip.active"
+      :label="chip.text"
+      color="primary"
+      hide-details
       @change="updateActive(chip.value)"
-    )
-      template(#append="")
-        extra-details-ticket.ml-2(
-          v-if="chip.assignedTickets.length",
+    >
+      <template #append="">
+        <extra-details-ticket
+          class="ml-2"
+          v-if="chip.assignedTickets.length"
           :tickets="chip.assignedTickets"
-        )
+        />
+      </template>
+    </v-checkbox>
+  </v-layout>
 </template>
 
 <script>

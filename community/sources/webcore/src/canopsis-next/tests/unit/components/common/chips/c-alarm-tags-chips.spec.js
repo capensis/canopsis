@@ -37,6 +37,6 @@ describe('c-alarm-tags-chips', () => {
       store,
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -1,28 +1,31 @@
-<template lang="pug">
-  div.c-mixed-field
-    c-input-type-field.c-mixed-field__selector(
-      :types="types",
-      :value="inputType",
-      :label="label",
-      :disabled="disabled",
-      :flat="flat",
-      :name="name",
-      :required="required",
-      @input="updateType"
-    )
-    c-mixed-input-field.ml-2.c-mixed-field__value(
-      v-field="value",
-      :input-type="inputType",
-      :name="name",
-      :disabled="disabled",
-      :flat="flat",
-      :hide-details="hideDetails",
-      :items="items",
-      :item-text="itemText",
-      :item-value="itemValue",
-      :required="required",
+<template>
+  <div class="c-mixed-field">
+    <c-input-type-field
+      class="c-mixed-field__selector"
       :types="types"
-    )
+      :value="inputType"
+      :label="label"
+      :disabled="disabled"
+      :flat="flat"
+      :name="name"
+      :required="required"
+      @input="updateType"
+    />
+    <c-mixed-input-field
+      class="ml-2 c-mixed-field__value"
+      v-field="value"
+      :input-type="inputType"
+      :name="name"
+      :disabled="disabled"
+      :flat="flat"
+      :hide-details="hideDetails"
+      :items="items"
+      :item-text="itemText"
+      :item-value="itemValue"
+      :required="required"
+      :types="types"
+    />
+  </div>
 </template>
 
 <script>

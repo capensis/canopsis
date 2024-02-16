@@ -10,7 +10,7 @@ exports[`pattern-groups-field Renders \`pattern-groups-field\` with custom props
     <!---->
   </div>
   <div
-    class="layout wrap row"
+    class="layout wrap"
   >
     <div
       class="flex xs12"
@@ -30,7 +30,7 @@ exports[`pattern-groups-field Renders \`pattern-groups-field\` with custom props
     </div>
   </div>
   <div
-    class="layout wrap row"
+    class="layout wrap"
   >
     <div
       class="flex xs12"
@@ -50,7 +50,7 @@ exports[`pattern-groups-field Renders \`pattern-groups-field\` with custom props
     </div>
   </div>
   <div
-    class="layout wrap row"
+    class="layout wrap"
   >
     <div
       class="flex xs12"
@@ -71,18 +71,18 @@ exports[`pattern-groups-field Renders \`pattern-groups-field\` with custom props
     </div>
   </div>
   <div
-    class="layout row align-center"
+    class="layout mt-2 align-center"
   >
     <button
-      class="ml-0 v-btn v-btn--disabled theme--light primary--text"
+      class="mr-2 v-btn v-btn--disabled v-btn--has-bg theme--light v-size--default"
       disabled="disabled"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        Add group
-      </div>
+      Add group
+      </span>
     </button>
     <span
       class="error--text"
@@ -102,31 +102,38 @@ exports[`pattern-groups-field Renders \`pattern-groups-field\` with default prop
     class="flex xs12"
   >
     <div
-      class="v-alert info"
+      class="v-alert v-sheet theme--dark info"
+      role="alert"
     >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light v-alert__icon"
+      <div
+        class="v-alert__wrapper"
       >
-        info
-      </i>
-      <div>
-        No pattern set. Click 'Add group' button to start adding fields to the pattern
+        <i
+          aria-hidden="true"
+          class="v-icon notranslate v-alert__icon material-icons theme--dark"
+        >
+          info
+        </i>
+        <div
+          class="v-alert__content"
+        >
+      No pattern set. Click 'Add group' button to start adding fields to the pattern
+        </div>
       </div>
     </div>
   </div>
   <div
-    class="layout row align-center"
+    class="layout mt-2 align-center"
   >
     <button
-      class="ml-0 v-btn theme--light primary"
+      class="mr-2 v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        Add group
-      </div>
+      Add group
+      </span>
     </button>
     <span
       class="error--text"
@@ -146,31 +153,38 @@ exports[`pattern-groups-field Renders \`pattern-groups-field\` with errors 1`] =
     class="flex xs12"
   >
     <div
-      class="v-alert info"
+      class="v-alert v-sheet theme--dark info"
+      role="alert"
     >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light v-alert__icon"
+      <div
+        class="v-alert__wrapper"
       >
-        info
-      </i>
-      <div>
-        No pattern set. Click 'Add group' button to start adding fields to the pattern
+        <i
+          aria-hidden="true"
+          class="v-icon notranslate v-alert__icon material-icons theme--dark"
+        >
+          info
+        </i>
+        <div
+          class="v-alert__content"
+        >
+      No pattern set. Click 'Add group' button to start adding fields to the pattern
+        </div>
       </div>
     </div>
   </div>
   <div
-    class="layout row align-center"
+    class="layout mt-2 align-center"
   >
     <button
-      class="ml-0 v-btn theme--light error"
+      class="mr-2 v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default error"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        Add group
-      </div>
+      Add group
+      </span>
     </button>
     <span
       class="error--text"

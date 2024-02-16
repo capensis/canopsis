@@ -9,7 +9,7 @@ import (
 	reflect "reflect"
 
 	datastorage "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
-	types "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	datetime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -108,7 +108,7 @@ func (mr *MockAdapterMockRecorder) UpdateHistoryEntityUnlinked(arg0, arg1 interf
 }
 
 // UpdateHistoryEventFilterFailure mocks base method.
-func (m *MockAdapter) UpdateHistoryEventFilterFailure(arg0 context.Context, arg1 types.CpsTime) error {
+func (m *MockAdapter) UpdateHistoryEventFilterFailure(arg0 context.Context, arg1 datetime.CpsTime) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateHistoryEventFilterFailure", arg0, arg1)
 	ret0, _ := ret[0].(error)
@@ -122,7 +122,7 @@ func (mr *MockAdapterMockRecorder) UpdateHistoryEventFilterFailure(arg0, arg1 in
 }
 
 // UpdateHistoryHealthCheck mocks base method.
-func (m *MockAdapter) UpdateHistoryHealthCheck(arg0 context.Context, arg1 types.CpsTime) error {
+func (m *MockAdapter) UpdateHistoryHealthCheck(arg0 context.Context, arg1 datetime.CpsTime) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateHistoryHealthCheck", arg0, arg1)
 	ret0, _ := ret[0].(error)
@@ -136,7 +136,7 @@ func (mr *MockAdapterMockRecorder) UpdateHistoryHealthCheck(arg0, arg1 interface
 }
 
 // UpdateHistoryJunit mocks base method.
-func (m *MockAdapter) UpdateHistoryJunit(arg0 context.Context, arg1 types.CpsTime) error {
+func (m *MockAdapter) UpdateHistoryJunit(arg0 context.Context, arg1 datetime.CpsTime) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateHistoryJunit", arg0, arg1)
 	ret0, _ := ret[0].(error)
@@ -150,7 +150,7 @@ func (mr *MockAdapterMockRecorder) UpdateHistoryJunit(arg0, arg1 interface{}) *g
 }
 
 // UpdateHistoryPbehavior mocks base method.
-func (m *MockAdapter) UpdateHistoryPbehavior(arg0 context.Context, arg1 types.CpsTime) error {
+func (m *MockAdapter) UpdateHistoryPbehavior(arg0 context.Context, arg1 datetime.CpsTime) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateHistoryPbehavior", arg0, arg1)
 	ret0, _ := ret[0].(error)
@@ -164,7 +164,7 @@ func (mr *MockAdapterMockRecorder) UpdateHistoryPbehavior(arg0, arg1 interface{}
 }
 
 // UpdateHistoryRemediation mocks base method.
-func (m *MockAdapter) UpdateHistoryRemediation(arg0 context.Context, arg1 types.CpsTime) error {
+func (m *MockAdapter) UpdateHistoryRemediation(arg0 context.Context, arg1 datetime.CpsTime) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateHistoryRemediation", arg0, arg1)
 	ret0, _ := ret[0].(error)
@@ -178,7 +178,7 @@ func (mr *MockAdapterMockRecorder) UpdateHistoryRemediation(arg0, arg1 interface
 }
 
 // UpdateHistoryWebhook mocks base method.
-func (m *MockAdapter) UpdateHistoryWebhook(arg0 context.Context, arg1 types.CpsTime) error {
+func (m *MockAdapter) UpdateHistoryWebhook(arg0 context.Context, arg1 datetime.CpsTime) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateHistoryWebhook", arg0, arg1)
 	ret0, _ := ret[0].(error)

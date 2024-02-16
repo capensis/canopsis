@@ -1,34 +1,47 @@
-<template lang="pug">
-  v-select.mt-0(
-    v-validate="rules",
-    v-field="category",
-    :label="$t('common.category')",
-    :loading="entityCategoriesPending || creating",
-    :readonly="creating",
-    :items="entityCategories",
-    :error-messages="errors.collect(name)",
-    :name="name",
-    :hide-details="hideDetails",
-    :clearable="!required",
-    item-text="name",
-    item-value="_id",
-    return-object,
+<template>
+  <v-select
+    class="mt-0"
+    v-validate="rules"
+    v-field="category"
+    :label="$t('common.category')"
+    :loading="entityCategoriesPending || creating"
+    :readonly="creating"
+    :items="entityCategories"
+    :error-messages="errors.collect(name)"
+    :name="name"
+    :hide-details="hideDetails"
+    :clearable="!required"
+    item-text="name"
+    item-value="_id"
+    return-object
     @keydown.enter.prevent="createCategory"
-  )
-    template(v-if="addable", #append-item="")
-      v-text-field.pb-3.pt-1.px-3(
-        ref="createField",
-        v-model.trim="newCategory",
-        v-validate="newCategoryRules",
-        :label="$t('service.createCategory')",
-        :error-messages="errors.collect(newCategoryFieldName)",
-        :name="newCategoryFieldName",
-        hide-details,
-        @keyup.enter="createCategory",
+  >
+    <template
+      v-if="addable"
+      #append-item=""
+    >
+      <v-text-field
+        class="pb-3 pt-1 px-3"
+        ref="createField"
+        v-model.trim="newCategory"
+        v-validate="newCategoryRules"
+        :label="$t('service.createCategory')"
+        :error-messages="errors.collect(newCategoryFieldName)"
+        :name="newCategoryFieldName"
+        hide-details
+        @keyup.enter="createCategory"
         @blur="clearCategory"
-      )
-        template(#append="")
-          c-help-icon(icon="help", :text="$t('service.createCategoryHelp')", left)
+      >
+        <template #append="">
+          <c-help-icon
+            icon="help"
+            :text="$t('service.createCategoryHelp')"
+            left
+          />
+        </template>
+      </v-text-field>
+    </template>
+  </v-select>
 </template>
 
 <script>

@@ -1,26 +1,29 @@
-<template lang="pug">
-  div
-    c-page-header
-    v-card.ma-4.mt-0
-      maps-list(
-        :maps="maps",
-        :pending="mapsPending",
-        :pagination.sync="pagination",
-        :total-items="mapsMeta.total_count",
-        :updatable="hasUpdateAnyMapAccess",
-        :removable="hasDeleteAnyMapAccess",
-        :duplicable="hasCreateAnyMapAccess",
-        @edit="showEditMapModal",
-        @remove="showRemoveMapModal",
-        @duplicate="showDuplicateMapModal",
+<template>
+  <div>
+    <c-page-header />
+    <v-card class="ma-4 mt-0">
+      <maps-list
+        :maps="maps"
+        :pending="mapsPending"
+        :options.sync="options"
+        :total-items="mapsMeta.total_count"
+        :updatable="hasUpdateAnyMapAccess"
+        :removable="hasDeleteAnyMapAccess"
+        :duplicable="hasCreateAnyMapAccess"
+        @edit="showEditMapModal"
+        @remove="showRemoveMapModal"
+        @duplicate="showDuplicateMapModal"
         @remove-selected="showDeleteSelectedMapsModal"
-      )
-    c-fab-btn(
-      :has-access="hasCreateAnyMapAccess",
-      @refresh="fetchList",
+      />
+    </v-card>
+    <c-fab-btn
+      :has-access="hasCreateAnyMapAccess"
+      @refresh="fetchList"
       @create="showCreateMapModal"
-    )
-      span {{ $t('modals.createMap.title') }}
+    >
+      <span>{{ $t('modals.createMap.title') }}</span>
+    </c-fab-btn>
+  </div>
 </template>
 
 <script>

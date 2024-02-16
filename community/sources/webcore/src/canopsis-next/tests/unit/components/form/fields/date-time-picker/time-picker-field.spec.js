@@ -76,6 +76,8 @@ describe('time-picker-field', () => {
 
     const combobox = selectCombobox(wrapper);
 
+    await wrapper.activateAllMenus();
+
     const content = wrapper.findMenu();
 
     content.element.scrollTop = 200;
@@ -91,6 +93,8 @@ describe('time-picker-field', () => {
     });
 
     const combobox = selectCombobox(wrapper);
+
+    await wrapper.activateAllMenus();
 
     const content = wrapper.findMenu();
 
@@ -151,7 +155,7 @@ describe('time-picker-field', () => {
   test('Renders `time-picker-field` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -164,7 +168,7 @@ describe('time-picker-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -176,7 +180,7 @@ describe('time-picker-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 });

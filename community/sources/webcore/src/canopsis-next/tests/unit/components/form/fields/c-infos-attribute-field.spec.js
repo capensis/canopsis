@@ -72,7 +72,7 @@ describe('c-infos-attribute-field', () => {
     });
   });
 
-  it('Renders `c-pattern-infos-attribute-field` with default props and combobox', () => {
+  it('Renders `c-pattern-infos-attribute-field` with default props and combobox', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: {
@@ -83,11 +83,13 @@ describe('c-infos-attribute-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    await wrapper.activateAllMenus();
+
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
-  it('Renders `c-pattern-infos-attribute-field` with default props', () => {
+  it('Renders `c-pattern-infos-attribute-field` with default props', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: {
@@ -97,11 +99,13 @@ describe('c-infos-attribute-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    await wrapper.activateAllMenus();
+
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
-  it('Renders `c-pattern-infos-attribute-field` with custom props', () => {
+  it('Renders `c-pattern-infos-attribute-field` with custom props', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: {
@@ -120,11 +124,13 @@ describe('c-infos-attribute-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    await wrapper.activateAllMenus();
+
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
-  it('Renders `c-pattern-infos-attribute-field` with custom props', () => {
+  it('Renders `c-pattern-infos-attribute-field` with custom props', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: {
@@ -143,7 +149,9 @@ describe('c-infos-attribute-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    await wrapper.activateAllMenus();
+
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 });

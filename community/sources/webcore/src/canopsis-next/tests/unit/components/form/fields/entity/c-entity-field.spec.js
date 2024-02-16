@@ -133,13 +133,10 @@ describe('c-entity-field', () => {
       store,
     });
 
-    const autocompleteElement = selectInput(wrapper);
+    await selectInput(wrapper).trigger('focus');
 
-    autocompleteElement.trigger('focus');
-
-    await flushPromises();
-
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -159,13 +156,12 @@ describe('c-entity-field', () => {
       },
     });
 
-    const autocompleteElement = selectInput(wrapper);
-
-    autocompleteElement.trigger('focus');
+    selectInput(wrapper).trigger('focus');
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -180,13 +176,12 @@ describe('c-entity-field', () => {
       },
     });
 
-    const autocompleteElement = selectInput(wrapper);
-
-    autocompleteElement.trigger('focus');
+    selectInput(wrapper).trigger('focus');
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllMenus();
     expect(wrapper).toMatchMenuSnapshot();
   });
 });

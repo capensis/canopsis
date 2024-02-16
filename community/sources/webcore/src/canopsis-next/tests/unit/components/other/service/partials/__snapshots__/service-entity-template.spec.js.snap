@@ -3,7 +3,6 @@
 exports[`service-entity-template Renders \`service-entity-template\` with custom props 1`] = `
 <div>
   service-id
-          
   <c-links-list-stub
     category="test"
     links="[object Object]"
@@ -14,7 +13,6 @@ exports[`service-entity-template Renders \`service-entity-template\` with custom
 exports[`service-entity-template Renders \`service-entity-template\` with custom props without right 1`] = `
 <div>
   service-id
-          
   <c-links-list-stub
     category="test"
     links="[object Object]"
