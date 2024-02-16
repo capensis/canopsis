@@ -550,6 +550,38 @@ func getAlarmMatchDataSets() map[string]alarmDataSet {
 			},
 			matchResult: false,
 		},
+		"given exist change_state condition should match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.change_state",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, true),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Value: types.AlarmValue{
+					ChangeState: &types.AlarmStep{},
+				},
+			},
+			matchResult: true,
+		},
+		"given not exist change_state condition should not match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.change_state",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, false),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Value: types.AlarmValue{
+					ChangeState: &types.AlarmStep{},
+				},
+			},
+			matchResult: false,
+		},
 		"given not exist v.output condition should match": {
 			pattern: pattern.Alarm{
 				{
@@ -1144,6 +1176,39 @@ func getAlarmMongoQueryDataSets() map[string]alarmDataSet {
 					{"alarm.v.ticket.ticket": bson.M{"$eq": "test ticket"}},
 					{"alarm.v.ticket.m": bson.M{"$eq": "test message"}},
 					{"alarm.v.ticket.ticket_data.data_1": bson.M{"$eq": "test_1"}},
+				}},
+			}},
+		},
+		"given exist change_state condition": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.change_state",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, true),
+					},
+				},
+			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"alarm.v.change_state": bson.M{"$exists": true, "$ne": nil}},
+				}},
+			}},
+		},
+		"given not exist change_state condition": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.change_state",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, false),
+					},
+				},
+			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"$or": []bson.M{
+						{"alarm.v.change_state": bson.M{"$exists": false}},
+						{"alarm.v.change_state": bson.M{"$eq": nil}},
+					}},
 				}},
 			}},
 		},
