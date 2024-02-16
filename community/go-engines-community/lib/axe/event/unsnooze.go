@@ -48,8 +48,11 @@ func (p *unsnoozeProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 
 	match := getOpenAlarmMatch(event)
 	match["v.snooze"] = bson.M{"$ne": nil}
+	newStep := types.NewAlarmStep(types.AlarmStepUnsnooze, event.Parameters.Timestamp, event.Parameters.Author, event.Parameters.Output,
+		event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
 	update := []bson.M{
 		{"$set": bson.M{
+			"v.steps": bson.M{"$concatArrays": bson.A{"$v.steps", bson.A{newStep}}},
 			"v.snooze_duration": bson.M{"$sum": bson.A{
 				"$v.snooze_duration",
 				bson.M{"$subtract": bson.A{
