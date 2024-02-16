@@ -136,6 +136,7 @@ export default {
 
         ...this.columns.map(column => ({
           ...column,
+          value: `entity.${column.value}`,
           isState: column.value?.endsWith(ENTITY_FIELDS.state),
         })),
       ];

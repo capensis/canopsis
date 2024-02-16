@@ -228,6 +228,8 @@ definitions:
         type: integer
       canceled:
         $ref: '#/definitions/common.AlarmStep'
+      change_state:
+        $ref: '#/definitions/common.AlarmStep'
       children:
         items:
           type: string

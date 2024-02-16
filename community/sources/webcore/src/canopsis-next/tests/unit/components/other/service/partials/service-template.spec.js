@@ -38,6 +38,11 @@ describe('service-template', () => {
       service,
       pagination: {},
     },
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
   });
 
   test('Refresh applied after triggers entities list', async () => {
@@ -57,6 +62,25 @@ describe('service-template', () => {
     await entitiesList.vm.$emit('refresh');
 
     expect(wrapper).toEmit('refresh');
+  });
+
+  test('Add action applied after triggers entities list', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        serviceEntities: [{}, {}],
+        widgetParameters: {
+          modalTemplate,
+        },
+      },
+    });
+
+    await flushPromises();
+
+    const entitiesList = selectEntitiesList(wrapper);
+
+    await entitiesList.vm.$emit('add:action');
+
+    expect(wrapper).toEmit('add:action');
   });
 
   test('Pagination updated after triggers entities list', async () => {
