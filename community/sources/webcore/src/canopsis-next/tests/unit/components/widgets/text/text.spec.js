@@ -16,7 +16,14 @@ const stubs = {
 describe('text', () => {
   const axiosMockAdapter = new AxiosMockAdapter(axios);
 
-  const snapshotFactory = generateRenderer(TextWidget, { stubs });
+  const snapshotFactory = generateRenderer(TextWidget, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
 
   test('Renders `text` with default template', async () => {
     const wrapper = snapshotFactory({

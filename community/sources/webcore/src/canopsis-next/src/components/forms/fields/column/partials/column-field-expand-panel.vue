@@ -263,7 +263,7 @@ export default {
 
         template,
         isHtml: checked && this.column.isHtml ? false : this.column.isHtml,
-        colorIndicator: checked && this.column.isHtml ? null : this.column.isHtml,
+        colorIndicator: checked && this.column.colorIndicator ? null : this.column.colorIndicator,
       });
     },
 
