@@ -1,16 +1,16 @@
-<template lang="pug">
-  text-editor(
-    v-field="value",
-    :label="label",
-    :public="public",
-    :buttons="buttons",
-    :config="config",
-    :extra-buttons="extraButtons",
-    :error-messages="errorMessages",
-    :max-file-size="maxFileSize",
-    :variables="variables",
+<template>
+  <text-editor
+    v-field="value"
+    :label="label"
+    :public="isPublic"
+    :buttons="buttons"
+    :config="config"
+    :extra-buttons="extraButtons"
+    :error-messages="errorMessages"
+    :max-file-size="maxFileSize"
+    :variables="variables"
     :dark="$system.dark"
-  )
+  />
 </template>
 
 <script>
@@ -79,6 +79,11 @@ export default {
     variables: {
       type: Array,
       required: false,
+    },
+  },
+  computed: {
+    isPublic() {
+      return this.public;
     },
   },
 };

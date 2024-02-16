@@ -2,14 +2,16 @@ package statistics
 
 import (
 	"context"
+	"errors"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"time"
 )
 
 type EventStatisticsSender interface {
@@ -17,10 +19,10 @@ type EventStatisticsSender interface {
 }
 
 type EventStatistics struct {
-	OK        int            `json:"ok" bson:"ok"`
-	KO        int            `json:"ko" bson:"ko"`
-	LastEvent *types.CpsTime `json:"last_event,omitempty" bson:"last_event,omitempty" swaggertype:"integer"`
-	LastKO    *types.CpsTime `json:"last_ko,omitempty" bson:"last_ko,omitempty" swaggertype:"integer"`
+	OK        int               `json:"ok" bson:"ok"`
+	KO        int               `json:"ko" bson:"ko"`
+	LastEvent *datetime.CpsTime `json:"last_event,omitempty" bson:"last_event,omitempty" swaggertype:"integer"`
+	LastKO    *datetime.CpsTime `json:"last_ko,omitempty" bson:"last_ko,omitempty" swaggertype:"integer"`
 }
 
 type eventStatisticsSender struct {
@@ -57,12 +59,12 @@ func (s *eventStatisticsSender) Send(ctx context.Context, entityID string, stats
 		},
 		options.FindOneAndUpdate().SetUpsert(true).SetReturnDocument(options.Before),
 	)
-	if err := res.Err(); err != nil && err != mongodriver.ErrNoDocuments {
+	if err := res.Err(); err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 		s.logger.Err(err).Msg("failed to send event statistics")
 	}
 
 	var prev = EventStatistics{}
-	if err := res.Decode(&prev); err != nil && err != mongodriver.ErrNoDocuments {
+	if err := res.Decode(&prev); err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 		s.logger.Err(err).Msg("failed to decode event statistics")
 	}
 

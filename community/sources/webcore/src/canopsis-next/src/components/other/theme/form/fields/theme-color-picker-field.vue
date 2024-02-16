@@ -1,11 +1,27 @@
-<template lang="pug">
-  v-layout.theme-color-picker-field(row, justify-space-between, align-center)
-    v-layout(align-center)
-      label.theme-color-picker-field__label.mr-2(
+<template>
+  <v-layout
+    class="theme-color-picker-field"
+    justify-space-between
+    align-center
+  >
+    <v-layout align-center>
+      <label
+        class="theme-color-picker-field__label mr-2"
         :class="{ 'theme-color-picker-field__label--disabled': disabled }"
-      ) {{ label }}
-      c-help-icon(v-if="helpText", :text="helpText", top)
-    c-color-picker-menu-field(v-field="value", :disabled="disabled")
+      >
+        {{ label }}
+      </label>
+      <c-help-icon
+        v-if="helpText"
+        :text="helpText"
+        top
+      />
+    </v-layout>
+    <c-color-picker-menu-field
+      v-field="value"
+      :disabled="disabled"
+    />
+  </v-layout>
 </template>
 
 <script>

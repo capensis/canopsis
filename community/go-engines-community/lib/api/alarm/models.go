@@ -11,7 +11,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorcomment"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -75,15 +77,15 @@ func (r BaseFilterRequest) GetOpenedFilter() int {
 }
 
 type BaseFilterRequest struct {
-	Filters     []string       `form:"filters[]" json:"filters"`
-	Search      string         `form:"search" json:"search"`
-	TimeField   string         `form:"time_field" json:"time_field" binding:"oneoforempty=t v.creation_date v.resolved v.last_update_date v.last_event_date"`
-	StartFrom   *types.CpsTime `form:"tstart" json:"tstart" swaggertype:"integer"`
-	StartTo     *types.CpsTime `form:"tstop" json:"tstop" swaggertype:"integer"`
-	Opened      *bool          `form:"opened" json:"opened"`
-	OnlyParents bool           `form:"correlation" json:"correlation"`
-	Category    string         `form:"category" json:"category"`
-	Tag         string         `form:"tag" json:"tag"`
+	Filters     []string          `form:"filters[]" json:"filters"`
+	Search      string            `form:"search" json:"search"`
+	TimeField   string            `form:"time_field" json:"time_field" binding:"oneoforempty=t v.creation_date v.resolved v.last_update_date v.last_event_date"`
+	StartFrom   *datetime.CpsTime `form:"tstart" json:"tstart" swaggertype:"integer"`
+	StartTo     *datetime.CpsTime `form:"tstop" json:"tstop" swaggertype:"integer"`
+	Opened      *bool             `form:"opened" json:"opened"`
+	OnlyParents bool              `form:"correlation" json:"correlation"`
+	Category    string            `form:"category" json:"category"`
+	Tag         string            `form:"tag" json:"tag"`
 
 	AlarmPattern     string `form:"alarm_pattern" json:"alarm_pattern"`
 	EntityPattern    string `form:"entity_pattern" json:"entity_pattern"`
@@ -118,9 +120,9 @@ type ListByComponentRequest struct {
 type ResolvedListRequest struct {
 	pagination.Query
 	SortRequest
-	ID        string         `form:"_id" json:"_id" binding:"required"`
-	StartFrom *types.CpsTime `form:"tstart" json:"tstart" swaggertype:"integer"`
-	StartTo   *types.CpsTime `form:"tstop" json:"tstop" swaggertype:"integer"`
+	ID        string            `form:"_id" json:"_id" binding:"required"`
+	StartFrom *datetime.CpsTime `form:"tstart" json:"tstart" swaggertype:"integer"`
+	StartTo   *datetime.CpsTime `form:"tstop" json:"tstop" swaggertype:"integer"`
 }
 
 type SortRequest struct {
@@ -254,7 +256,7 @@ type ExportResponse struct {
 
 type Alarm struct {
 	ID     string                            `bson:"_id" json:"_id"`
-	Time   types.CpsTime                     `bson:"t" json:"t" swaggertype:"integer"`
+	Time   datetime.CpsTime                  `bson:"t" json:"t" swaggertype:"integer"`
 	Entity entity.Entity                     `bson:"entity" json:"entity"`
 	Value  AlarmValue                        `bson:"v" json:"v"`
 	Tags   []string                          `bson:"tags" json:"tags"`
@@ -305,6 +307,7 @@ type AlarmValue struct {
 	Snooze      *common.AlarmStep  `bson:"snooze,omitempty" json:"snooze,omitempty"`
 	State       *common.AlarmStep  `bson:"state,omitempty" json:"state,omitempty"`
 	Status      *common.AlarmStep  `bson:"status,omitempty" json:"status,omitempty"`
+	ChangeState *common.AlarmStep  `bson:"change_state,omitempty" json:"change_state,omitempty"`
 	Tickets     []common.AlarmStep `bson:"tickets,omitempty" json:"tickets,omitempty"`
 	Ticket      *common.AlarmStep  `bson:"ticket,omitempty" json:"ticket,omitempty"`
 	LastComment *common.AlarmStep  `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
@@ -313,18 +316,18 @@ type AlarmValue struct {
 	Component         string                `bson:"component" json:"component"`
 	Connector         string                `bson:"connector" json:"connector"`
 	ConnectorName     string                `bson:"connector_name" json:"connector_name"`
-	CreationDate      types.CpsTime         `bson:"creation_date" json:"creation_date" swaggertype:"integer"`
-	ActivationDate    *types.CpsTime        `bson:"activation_date,omitempty" json:"activation_date,omitempty" swaggertype:"integer"`
+	CreationDate      datetime.CpsTime      `bson:"creation_date" json:"creation_date" swaggertype:"integer"`
+	ActivationDate    *datetime.CpsTime     `bson:"activation_date,omitempty" json:"activation_date,omitempty" swaggertype:"integer"`
 	DisplayName       string                `bson:"display_name" json:"display_name"`
 	InitialOutput     string                `bson:"initial_output" json:"initial_output"`
 	Output            string                `bson:"output" json:"output"`
 	InitialLongOutput string                `bson:"initial_long_output" json:"initial_long_output"`
 	LongOutput        string                `bson:"long_output" json:"long_output"`
 	LongOutputHistory []string              `bson:"long_output_history" json:"long_output_history"`
-	LastUpdateDate    types.CpsTime         `bson:"last_update_date" json:"last_update_date" swaggertype:"integer"`
-	LastEventDate     types.CpsTime         `bson:"last_event_date" json:"last_event_date" swaggertype:"integer"`
+	LastUpdateDate    datetime.CpsTime      `bson:"last_update_date" json:"last_update_date" swaggertype:"integer"`
+	LastEventDate     datetime.CpsTime      `bson:"last_event_date" json:"last_event_date" swaggertype:"integer"`
 	Resource          string                `bson:"resource,omitempty" json:"resource,omitempty"`
-	Resolved          *types.CpsTime        `bson:"resolved,omitempty" json:"resolved,omitempty" swaggertype:"integer"`
+	Resolved          *datetime.CpsTime     `bson:"resolved,omitempty" json:"resolved,omitempty" swaggertype:"integer"`
 	PbehaviorInfo     *entity.PbehaviorInfo `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
 	Meta              string                `bson:"meta,omitempty" json:"meta,omitempty"`
 	Parents           []string              `bson:"parents" json:"parents"`
@@ -350,8 +353,8 @@ type Pbehavior struct {
 	Author *author.Author    `bson:"author" json:"author"`
 	Name   string            `bson:"name" json:"name"`
 	RRule  string            `bson:"rrule" json:"rrule"`
-	Start  *types.CpsTime    `bson:"tstart" json:"tstart" swaggertype:"integer"`
-	Stop   *types.CpsTime    `bson:"tstop" json:"tstop" swaggertype:"integer"`
+	Start  *datetime.CpsTime `bson:"tstart" json:"tstart" swaggertype:"integer"`
+	Stop   *datetime.CpsTime `bson:"tstop" json:"tstop" swaggertype:"integer"`
 	Type   *pbehavior.Type   `bson:"type" json:"type"`
 	Reason *pbehavior.Reason `bson:"reason" json:"reason"`
 
@@ -454,17 +457,17 @@ type DeclareTicketRule struct {
 }
 
 func (r DeclareTicketRule) getDeclareTicketQuery() (bson.M, error) {
-	alarmPatternQuery, err := r.AlarmPattern.ToMongoQuery("")
+	alarmPatternQuery, err := db.AlarmPatternToMongoQuery(r.AlarmPattern, "")
 	if err != nil {
 		return nil, fmt.Errorf("invalid alarm pattern in declare ticket rule id=%q: %w", r.ID, err)
 	}
 
-	entityPatternQuery, err := r.EntityPattern.ToMongoQuery("entity")
+	entityPatternQuery, err := db.EntityPatternToMongoQuery(r.EntityPattern, "entity")
 	if err != nil {
 		return nil, fmt.Errorf("invalid entity pattern in declare ticket rule id=%q: %w", r.ID, err)
 	}
 
-	pbhPatternQuery, err := r.PbehaviorPattern.ToMongoQuery("v")
+	pbhPatternQuery, err := db.PbehaviorInfoPatternToMongoQuery(r.PbehaviorPattern, "v")
 	if err != nil {
 		return nil, fmt.Errorf("invalid pbehavior pattern in declare ticket rule id=%q: %w", r.ID, err)
 	}

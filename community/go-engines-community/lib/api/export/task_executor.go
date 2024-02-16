@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
@@ -180,7 +180,7 @@ func (e *taskExecutor) StartExecute(ctx context.Context, params TaskParameters) 
 	}
 
 	location := e.timezoneConfigProvider.Get().Location
-	now := types.NewCpsTime().In(location)
+	now := datetime.NewCpsTime().In(location)
 	t := Task{
 		ID:         utils.NewID(),
 		Status:     TaskStatusRunning,
@@ -209,7 +209,7 @@ func (e *taskExecutor) StartExecute(ctx context.Context, params TaskParameters) 
 func (e *taskExecutor) Get(ctx context.Context, id string) (*Task, error) {
 	res := e.collection.FindOne(ctx, bson.M{"_id": id})
 	if err := res.Err(); err != nil {
-		if err == mongodriver.ErrNoDocuments {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return nil, nil
 		}
 
@@ -234,7 +234,7 @@ func (e *taskExecutor) executeTask(ctx context.Context, id string) error {
 			"status": TaskStatusRunning,
 		},
 		bson.M{"$set": bson.M{
-			"launched": types.NewCpsTime(),
+			"launched": datetime.NewCpsTime(),
 		}},
 		options.FindOneAndUpdate().SetReturnDocument(options.After),
 	).Decode(&t)
@@ -253,7 +253,7 @@ func (e *taskExecutor) executeTask(ctx context.Context, id string) error {
 	if fetch == nil {
 		_, err := e.collection.UpdateOne(ctx, updateFilter, bson.M{"$set": bson.M{
 			"status":      TaskStatusFailed,
-			"completed":   types.NewCpsTime(),
+			"completed":   datetime.NewCpsTime(),
 			"fail_reason": "unknown type: " + t.Type,
 		}})
 		return err
@@ -263,7 +263,7 @@ func (e *taskExecutor) executeTask(ctx context.Context, id string) error {
 	if err != nil {
 		_, updateErr := e.collection.UpdateOne(ctx, updateFilter, bson.M{"$set": bson.M{
 			"status":      TaskStatusFailed,
-			"completed":   types.NewCpsTime(),
+			"completed":   datetime.NewCpsTime(),
 			"fail_reason": "cannot fetch data: " + err.Error(),
 		}})
 		if updateErr != nil {
@@ -277,7 +277,7 @@ func (e *taskExecutor) executeTask(ctx context.Context, id string) error {
 	if err != nil {
 		_, updateErr := e.collection.UpdateOne(ctx, updateFilter, bson.M{"$set": bson.M{
 			"status":      TaskStatusFailed,
-			"completed":   types.NewCpsTime(),
+			"completed":   datetime.NewCpsTime(),
 			"fail_reason": "cannot fetch data: " + err.Error(),
 		}})
 		if updateErr != nil {
@@ -290,7 +290,7 @@ func (e *taskExecutor) executeTask(ctx context.Context, id string) error {
 	_, err = e.collection.UpdateOne(ctx, updateFilter, bson.M{"$set": bson.M{
 		"status":    TaskStatusSucceeded,
 		"file":      fileName,
-		"completed": types.NewCpsTime(),
+		"completed": datetime.NewCpsTime(),
 	}})
 	if err != nil {
 		return fmt.Errorf("cannot update export task: %w", err)
@@ -311,13 +311,13 @@ func (e *taskExecutor) fetchTasks(ctx context.Context) error {
 		{
 			"status":   TaskStatusRunning,
 			"launched": nil,
-			"started":  bson.M{"$lte": types.CpsTime{Time: time.Now().Add(-e.abandonedInterval)}},
+			"started":  bson.M{"$lte": datetime.CpsTime{Time: time.Now().Add(-e.abandonedInterval)}},
 		},
 		{
 			"status": TaskStatusRunning,
 			"launched": bson.M{
 				"$gt":  0,
-				"$lte": types.CpsTime{Time: time.Now().Add(-e.abandonedLaunchedInterval)},
+				"$lte": datetime.CpsTime{Time: time.Now().Add(-e.abandonedLaunchedInterval)},
 			},
 		},
 	}})
@@ -346,7 +346,7 @@ func (e *taskExecutor) fetchTasks(ctx context.Context) error {
 func (e *taskExecutor) deleteTasks(ctx context.Context) error {
 	cursor, err := e.collection.Find(ctx, bson.M{
 		"status":    bson.M{"$in": bson.A{TaskStatusSucceeded, TaskStatusFailed}},
-		"completed": bson.M{"$lte": types.CpsTime{Time: time.Now().Add(-e.removeInterval)}},
+		"completed": bson.M{"$lte": datetime.CpsTime{Time: time.Now().Add(-e.removeInterval)}},
 	})
 	if err != nil {
 		return fmt.Errorf("cannot find export tasks to delete: %w", err)

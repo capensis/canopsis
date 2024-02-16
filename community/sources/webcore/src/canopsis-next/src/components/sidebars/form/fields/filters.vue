@@ -1,20 +1,22 @@
-<template lang="pug">
-  widget-settings-item(:title="$t('settings.filters')")
-    v-layout(column)
-      filter-selector(
-        v-if="!hideSelector",
-        v-field="value",
-        :label="$t('filter.selector.defaultFilter')",
-        :filters="filters",
+<template>
+  <widget-settings-item :title="$t('settings.filters')">
+    <v-layout column>
+      <filter-selector
+        v-if="!hideSelector"
+        v-field="value"
+        :label="$t('filter.selector.defaultFilter')"
+        :filters="filters"
         hide-multiply
-      )
-      field-filters-list(
-        v-bind="listProps",
-        :filters="filters",
-        :addable="addable",
-        :editable="editable",
+      />
+      <field-filters-list
+        v-bind="listProps"
+        :filters="filters"
+        :addable="addable"
+        :editable="editable"
         @input="updateFilters"
-      )
+      />
+    </v-layout>
+  </widget-settings-item>
 </template>
 
 <script>

@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
@@ -37,13 +37,13 @@ func (s *MongoStore) Exists(ctx context.Context, v string) (bool, error) {
 }
 
 func (s *MongoStore) Access(ctx context.Context, v string) error {
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	_, err := s.collection.UpdateOne(ctx, bson.M{"value": v}, bson.M{"$set": bson.M{"accessed": now}})
 	return err
 }
 
 func (s *MongoStore) DeleteExpired(ctx context.Context) error {
-	now := types.NewCpsTime()
+	now := datetime.NewCpsTime()
 	deleted, err := s.collection.DeleteMany(ctx, bson.M{
 		"expired": bson.M{
 			"$ne": nil,

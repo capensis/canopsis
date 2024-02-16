@@ -1,16 +1,27 @@
-<template lang="pug">
-  div
-    v-subheader {{ $t('common.general') }}
-    v-data-table(
-      :headers="headers",
-      :items="items",
-      hide-actions
-    )
-      template(#items="{ item }")
-        td.text-xs-left {{ item.v.state.a }}
-        td.text-xs-left {{ item.v.connector }}
-        td.text-xs-left {{ item.v.component }}
-        td.text-xs-left {{ item.v.resource }}
+<template>
+  <div>
+    <v-subheader>{{ $t('common.general') }}</v-subheader>
+    <v-data-table
+      :headers="headers"
+      :items="items"
+      hide-default-footer
+    >
+      <template #items="{ item }">
+        <td class="text-left">
+          {{ item.v.state.a }}
+        </td>
+        <td class="text-left">
+          {{ item.v.connector }}
+        </td>
+        <td class="text-left">
+          {{ item.v.component }}
+        </td>
+        <td class="text-left">
+          {{ item.v.resource }}
+        </td>
+      </template>
+    </v-data-table>
+  </div>
 </template>
 
 <script>

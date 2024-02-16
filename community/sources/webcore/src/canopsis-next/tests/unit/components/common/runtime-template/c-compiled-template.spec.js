@@ -10,7 +10,14 @@ const stubs = {
 };
 
 describe('c-compiled-template', () => {
-  const snapshotFactory = generateRenderer(CCompiledTemplate, { stubs });
+  const snapshotFactory = generateRenderer(CCompiledTemplate, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
 
   test('Renders `c-compiled-template` after mount', async () => {
     const wrapper = snapshotFactory({
@@ -19,7 +26,7 @@ describe('c-compiled-template', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `c-compiled-template` with simple template', async () => {
@@ -31,7 +38,7 @@ describe('c-compiled-template', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `c-compiled-template` with context', async () => {
@@ -45,7 +52,7 @@ describe('c-compiled-template', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `c-compiled-template` after update template', async () => {
@@ -59,7 +66,7 @@ describe('c-compiled-template', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `c-compiled-template` after update context', async () => {
@@ -74,7 +81,7 @@ describe('c-compiled-template', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `c-compiled-template` after update parentElement', async () => {
@@ -88,6 +95,6 @@ describe('c-compiled-template', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

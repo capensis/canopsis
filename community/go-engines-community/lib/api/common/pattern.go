@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
@@ -192,7 +193,7 @@ func ValidateAlarmPattern(fl validator.FieldLevel) bool {
 		return false
 	}
 
-	return p.Validate(nil, nil)
+	return match.ValidateAlarmPattern(p, nil, nil)
 }
 
 func ValidateEventPattern(fl validator.FieldLevel) bool {
@@ -205,7 +206,7 @@ func ValidateEventPattern(fl validator.FieldLevel) bool {
 		return false
 	}
 
-	return p.Validate()
+	return match.ValidateEventPattern(p)
 }
 
 func ValidateEntityPattern(fl validator.FieldLevel) bool {
@@ -218,7 +219,7 @@ func ValidateEntityPattern(fl validator.FieldLevel) bool {
 		return false
 	}
 
-	return p.Validate(nil)
+	return match.ValidateEntityPattern(p, nil)
 }
 
 func ValidatePbehaviorPattern(fl validator.FieldLevel) bool {
@@ -231,7 +232,7 @@ func ValidatePbehaviorPattern(fl validator.FieldLevel) bool {
 		return false
 	}
 
-	return p.Validate()
+	return match.ValidatePbehaviorInfoPattern(p)
 }
 
 func GetForbiddenFieldsInEntityPattern(collection string) []string {

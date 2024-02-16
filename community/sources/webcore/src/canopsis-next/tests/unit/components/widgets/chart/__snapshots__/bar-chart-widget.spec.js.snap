@@ -19,7 +19,7 @@ exports[`bar-chart-widget Renders \`bar-chart-widget\` with custom props 1`] = `
       <div
         aria-valuemax="100"
         aria-valuemin="0"
-        class="v-progress-circular v-progress-circular--indeterminate primary--text"
+        class="v-progress-circular v-progress-circular--visible v-progress-circular--indeterminate primary--text"
         role="progressbar"
         style="height: 32px; width: 32px;"
       >
@@ -68,7 +68,7 @@ exports[`bar-chart-widget Renders \`bar-chart-widget\` with required props 1`] =
       <div
         aria-valuemax="100"
         aria-valuemin="0"
-        class="v-progress-circular v-progress-circular--indeterminate primary--text"
+        class="v-progress-circular v-progress-circular--visible v-progress-circular--indeterminate primary--text"
         role="progressbar"
         style="height: 32px; width: 32px;"
       >

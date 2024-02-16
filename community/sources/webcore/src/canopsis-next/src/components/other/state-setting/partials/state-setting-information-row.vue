@@ -1,9 +1,14 @@
-<template lang="pug">
-  v-layout.mb-2.state-setting-information-row(row)
-    v-flex.state-setting-information-row--label
-      span.font-weight-bold {{ label }}
-    v-flex
-      slot {{ value }}{{ unit }}
+<template>
+  <v-layout
+    class="mb-2 state-setting-information-row"
+  >
+    <v-flex class="state-setting-information-row--label">
+      <span class="font-weight-bold">{{ label }}</span>
+    </v-flex>
+    <v-flex>
+      <slot>{{ value }}{{ unit }}</slot>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

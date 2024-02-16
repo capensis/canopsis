@@ -1,51 +1,78 @@
-<template lang="pug">
-  modal-wrapper(close)
-    template(#title="")
-      span {{ $t('common.pbehaviorList') }}
-    template(#text="")
-      c-advanced-data-table(:headers="headers", :items="filteredPbehaviors", expand)
-        template(#enabled="{ item }")
-          c-enabled(:value="item.enabled")
-        template(#tstart="{ item }") {{ item.tstart | timezone($system.timezone) }}
-        template(#tstop="{ item }") {{ item.tstop | timezone($system.timezone) }}
-        template(#rrule="{ item }")
-          v-icon {{ item.rrule ? 'check' : 'clear' }}
-        template(#actions="{ item }")
-          v-layout(row)
-            c-action-btn(
-              v-if="hasAccessToEditPbehavior",
-              type="edit",
+<template>
+  <modal-wrapper close>
+    <template #title="">
+      <span>{{ $t('common.pbehaviorList') }}</span>
+    </template>
+    <template #text="">
+      <c-advanced-data-table
+        :headers="headers"
+        :items="filteredPbehaviors"
+        expand
+      >
+        <template #enabled="{ item }">
+          <c-enabled :value="item.enabled" />
+        </template>
+        <template #tstart="{ item }">
+          {{ item.tstart | timezone($system.timezone) }}
+        </template>
+        <template #tstop="{ item }">
+          {{ item.tstop | timezone($system.timezone) }}
+        </template>
+        <template #rrule="{ item }">
+          <v-icon>{{ item.rrule ? 'check' : 'clear' }}</v-icon>
+        </template>
+        <template #actions="{ item }">
+          <v-layout>
+            <c-action-btn
+              v-if="hasAccessToEditPbehavior"
+              type="edit"
               @click="showEditPbehaviorModal(item)"
-            )
-            c-action-btn(
-              v-if="hasAccessToDeletePbehavior",
-              type="delete",
+            />
+            <c-action-btn
+              v-if="hasAccessToDeletePbehavior"
+              type="delete"
               @click="showRemovePbehaviorModal(item._id)"
-            )
-        template(#is_active_status="{ item }")
-          v-icon(:color="item.is_active_status ? 'primary' : 'error'") $vuetify.icons.settings_sync
-        template(#expand="{ item }")
-          pbehaviors-list-expand-item(:pbehavior="item")
-      v-layout(justify-end)
-        c-action-fab-btn(
-          :tooltip="$t('modals.pbehaviorsCalendar.title')",
-          icon="calendar_today",
-          color="secondary",
-          small,
-          left,
+            />
+          </v-layout>
+        </template>
+        <template #is_active_status="{ item }">
+          <v-icon :color="item.is_active_status ? 'primary' : 'error'">
+            $vuetify.icons.settings_sync
+          </v-icon>
+        </template>
+        <template #expand="{ item }">
+          <pbehaviors-list-expand-item :pbehavior="item" />
+        </template>
+      </c-advanced-data-table>
+      <v-layout justify-end>
+        <c-action-fab-btn
+          :tooltip="$t('modals.pbehaviorsCalendar.title')"
+          icon="calendar_today"
+          color="secondary"
+          left
           @click="showPbehaviorsCalendarModal"
-        )
-        v-btn(
-          v-if="showAddButton",
-          color="primary",
-          icon,
-          fab,
-          small,
+        />
+        <v-btn
+          v-if="showAddButton"
+          color="primary"
+          icon
+          fab
+          small
           @click="showCreatePbehaviorModal"
-        )
-          v-icon add
-    template(#actions="")
-      v-btn.primary(@click="$modals.hide") {{ $t('common.ok') }}
+        >
+          <v-icon>add</v-icon>
+        </v-btn>
+      </v-layout>
+    </template>
+    <template #actions="">
+      <v-btn
+        class="primary"
+        @click="$modals.hide"
+      >
+        {{ $t('common.ok') }}
+      </v-btn>
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>

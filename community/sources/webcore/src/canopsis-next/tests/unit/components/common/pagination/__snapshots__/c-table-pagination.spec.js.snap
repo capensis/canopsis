@@ -20,9 +20,9 @@ exports[`c-table-pagination Renders \`c-table-pagination\` with custom props 1`]
   <div
     class="flex xs2"
   >
-    <c-records-per-page-field-stub
+    <c-items-per-page-field-stub
       class="pa-0"
-      hide-details="hide-details"
+      hide-details=""
       value="10"
     />
   </div>

@@ -52,7 +52,7 @@ describe('switcher', () => {
   it('Renders `switcher` with default and required props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `switcher` with custom props', () => {
@@ -63,6 +63,6 @@ describe('switcher', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

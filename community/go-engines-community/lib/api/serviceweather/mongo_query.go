@@ -11,7 +11,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
 	pbehaviorlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
@@ -105,7 +107,7 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	return q.createPaginationAggregationPipeline(r.Query), nil
 }
 
-func (q *MongoQueryBuilder) CreateListDependenciesAggregationPipeline(id string, r EntitiesListRequest, now types.CpsTime) ([]bson.M, error) {
+func (q *MongoQueryBuilder) CreateListDependenciesAggregationPipeline(id string, r EntitiesListRequest, now datetime.CpsTime) ([]bson.M, error) {
 	q.clear()
 
 	q.entityMatch = append(q.entityMatch, bson.M{"$match": bson.M{
@@ -270,7 +272,7 @@ func (q *MongoQueryBuilder) handlePatterns(r ListRequest) error {
 }
 
 func (q *MongoQueryBuilder) handleEntityPattern(entityPattern pattern.Entity) error {
-	entityPatternQuery, err := entityPattern.ToMongoQuery("")
+	entityPatternQuery, err := db.EntityPatternToMongoQuery(entityPattern, "")
 	if err != nil {
 		return err
 	}
@@ -555,13 +557,14 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 				}}},
 			}},
 		}},
-		{"$graphLookup": bson.M{
-			"from":             mongo.EntityMongoCollection,
-			"startWith":        "$_id",
-			"connectFromField": "_id",
-			"connectToField":   "services",
-			"as":               "depends",
-			"maxDepth":         0,
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "_id",
+			"foreignField": "services",
+			"as":           "depends",
+			"pipeline": []bson.M{
+				{"$project": bson.M{"_id": 1}},
+			},
 		}},
 		{"$addFields": bson.M{
 			"counters.depends": bson.M{"$size": "$depends"},
@@ -588,6 +591,13 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 								{"$ne": bson.A{"$pbehavior_info.canonical_type", pbehaviorlib.TypeActive}},
 							}},
 							"then": "$pbehavior_info.icon_name",
+						},
+						{
+							"case": bson.M{"$and": []bson.M{
+								{"$gt": bson.A{"$counters.under_pbh", 0}},
+								{"$eq": bson.A{"$counters.under_pbh", "$counters.depends"}},
+							}},
+							"then": "",
 						},
 					},
 					stateVals...,
@@ -635,13 +645,12 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 func getPbhOriginLookup(origin string) []bson.M {
 	return []bson.M{
 		{"$lookup": bson.M{
-			"from": mongo.PbehaviorMongoCollection,
-			"let":  bson.M{"id": "$_id"},
+			"from":         mongo.PbehaviorMongoCollection,
+			"localField":   "_id",
+			"foreignField": "entity",
 			"pipeline": []bson.M{
-				{"$match": bson.M{"$and": []bson.M{
-					{"$expr": bson.M{"$eq": bson.A{"$$id", "$entity"}}},
-					{"origin": origin},
-				}}},
+				{"$match": bson.M{"origin": origin}},
+				{"$limit": 1},
 			},
 			"as": "pbh_origin",
 		}},
@@ -660,7 +669,7 @@ func getPbhOriginLookup(origin string) []bson.M {
 	}
 }
 
-func getEventStatsLookup(now types.CpsTime) []bson.M {
+func getEventStatsLookup(now datetime.CpsTime) []bson.M {
 	year, month, day := now.Date()
 	truncatedInLocation := time.Date(year, month, day, 0, 0, 0, 0, now.Location()).Unix()
 
@@ -728,13 +737,14 @@ func getListDependenciesComputedFields() bson.M {
 
 func getDependsCountPipeline() []bson.M {
 	return []bson.M{
-		{"$graphLookup": bson.M{
-			"from":             mongo.EntityMongoCollection,
-			"startWith":        "$_id",
-			"connectFromField": "_id",
-			"connectToField":   "services",
-			"as":               "depends",
-			"maxDepth":         0,
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "_id",
+			"foreignField": "services",
+			"as":           "depends",
+			"pipeline": []bson.M{
+				{"$project": bson.M{"_id": 1}},
+			},
 		}},
 		{"$addFields": bson.M{
 			"depends_count": bson.M{"$size": "$depends"},
