@@ -306,11 +306,18 @@ func (a *api) GetStateSetting(c *gin.Context) {
 	request := ContextGraphRequest{}
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+
 		return
 	}
 
 	response, err := a.store.GetStateSetting(c, request.ID)
 	if err != nil {
+		if errors.Is(err, ErrNoFound) {
+			c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+
+			return
+		}
+
 		panic(err)
 	}
 
