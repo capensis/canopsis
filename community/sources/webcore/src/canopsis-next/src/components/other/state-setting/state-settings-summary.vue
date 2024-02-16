@@ -1,5 +1,5 @@
 <template>
-  <v-layout column>
+  <v-layout class="text-subtitle-1" column>
     <span>
       {{ $t('stateSetting.computeMethod') }}:
       <v-progress-circular
@@ -29,7 +29,7 @@
           </v-btn>
         </p>
         <v-layout v-else-if="isDependenciesMethod" column>
-          <i18n path="stateSetting.entityThresholdSummary">
+          <i18n class="mb-2" path="stateSetting.entityThresholdSummary">
             <b place="name">{{ entity.name }}</b>
             <b place="state">{{ entityStateString }}</b>
             <span place="method">{{ currentCondition.method }}</span>
@@ -37,6 +37,22 @@
             <b place="dependenciesEntitiesState">{{ currentCondition.state }}</b>
             <b place="value">{{ conditionValue }}</b>
           </i18n>
+          <v-layout
+            v-for="{ message, count } in counts"
+            :key="message"
+            class="text-body-2 font-weight-regular"
+            align-center
+          >
+            <v-flex
+              lg3
+              md4
+              sm5
+              xs6
+            >
+              {{ message }}:
+            </v-flex>
+            <v-flex><b>{{ count }}</b></v-flex>
+          </v-layout>
         </v-layout>
       </div>
     </v-expand-transition>
@@ -44,6 +60,7 @@
 </template>
 
 <script>
+import { isUndefined } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import {
@@ -162,6 +179,27 @@ export default {
         dependenciesEntitiesState: currentCondition.state,
         value: `${currentCondition.value}${this.isConditionShareMethod ? '%' : ''}`,
       });
+    },
+
+    counts() {
+      const {
+        depends_count: dependsCount,
+        state_depends_count: stateDependsCount,
+        depends_state: dependsState,
+      } = this.stateSetting;
+
+      return isUndefined(dependsCount)
+        ? []
+        : [
+          {
+            message: this.$t('stateSetting.dependsCount'),
+            count: dependsCount,
+          },
+          {
+            message: this.$t('stateSetting.stateDependsCount', { state: dependsState }),
+            count: stateDependsCount,
+          },
+        ];
     },
   },
   mounted() {

@@ -19,6 +19,8 @@ export default {
   appliedForEntityType: 'Applied for entity type',
   stateIsInheritFrom: '{name} state is inherit from',
   seeFilterPattern: 'See filter pattern',
+  dependsCount: 'Total number of dependencies',
+  stateDependsCount: 'Number of dependencies of the {state} state',
   steps: {
     basics: 'Basics',
     rulePatterns: 'Define target entities',
