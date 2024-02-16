@@ -365,7 +365,7 @@ describe('text-editor', () => {
     await flushPromises();
     jest.runAllTimers();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     jest.useRealTimers();
   });
 
@@ -378,7 +378,7 @@ describe('text-editor', () => {
     await flushPromises();
     jest.runAllTimers();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     jest.useRealTimers();
   });
 
@@ -400,7 +400,7 @@ describe('text-editor', () => {
     await flushPromises();
     jest.runAllTimers();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     jest.useRealTimers();
   });
 
@@ -426,7 +426,7 @@ describe('text-editor', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     jest.useRealTimers();
   });
 });

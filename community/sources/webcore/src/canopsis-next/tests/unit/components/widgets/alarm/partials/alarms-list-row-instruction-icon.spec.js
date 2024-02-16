@@ -15,7 +15,7 @@ describe('alarms-list-row-instructions-icon', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchTooltipSnapshot();
   });
 
@@ -28,11 +28,11 @@ describe('alarms-list-row-instructions-icon', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchTooltipSnapshot();
   });
 
-  it('Renders `alarms-list-row-instructions-icon` with auto instruction failed', () => {
+  it('Renders `alarms-list-row-instructions-icon` with auto instruction failed', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {
@@ -41,11 +41,12 @@ describe('alarms-list-row-instructions-icon', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
     expect(wrapper).toMatchTooltipSnapshot();
   });
 
-  it('Renders `alarms-list-row-instructions-icon` with auto instruction running', () => {
+  it('Renders `alarms-list-row-instructions-icon` with auto instruction running', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {
@@ -54,11 +55,12 @@ describe('alarms-list-row-instructions-icon', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
     expect(wrapper).toMatchTooltipSnapshot();
   });
 
-  it('Renders `alarms-list-row-instructions-icon` with manual instruction waiting result', () => {
+  it('Renders `alarms-list-row-instructions-icon` with manual instruction waiting result', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {
@@ -67,11 +69,12 @@ describe('alarms-list-row-instructions-icon', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
     expect(wrapper).toMatchTooltipSnapshot();
   });
 
-  it('Renders `alarms-list-row-instructions-icon` with manual instruction running', () => {
+  it('Renders `alarms-list-row-instructions-icon` with manual instruction running', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {
@@ -80,7 +83,8 @@ describe('alarms-list-row-instructions-icon', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
     expect(wrapper).toMatchTooltipSnapshot();
   });
 });

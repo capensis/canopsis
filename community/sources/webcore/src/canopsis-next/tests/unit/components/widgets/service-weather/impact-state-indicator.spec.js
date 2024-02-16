@@ -8,7 +8,7 @@ describe('impact-state-indicator', () => {
   it('Renders `impact-state-indicator` with default props correctly', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `impact-state-indicator` with custom props correctly', () => {
@@ -18,6 +18,6 @@ describe('impact-state-indicator', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

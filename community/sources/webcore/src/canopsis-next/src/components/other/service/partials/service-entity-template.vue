@@ -1,5 +1,8 @@
-<template lang="pug">
-  c-compiled-template(:template="template", :context="templateContext")
+<template>
+  <c-compiled-template
+    :template="template"
+    :context="templateContext"
+  />
 </template>
 
 <script>

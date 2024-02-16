@@ -1,6 +1,7 @@
-<template lang="pug">
-  v-layout
-    test-suite-videos(:videos="testSuite.videos")
+<template>
+  <v-layout>
+    <test-suite-videos :videos="testSuite.videos" />
+  </v-layout>
 </template>
 
 <script>

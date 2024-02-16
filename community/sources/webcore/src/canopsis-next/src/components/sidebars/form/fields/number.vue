@@ -1,6 +1,10 @@
-<template lang="pug">
-  widget-settings-item(:title="title", optional)
-    c-number-field(v-field="value")
+<template>
+  <widget-settings-item
+    :title="title"
+    optional
+  >
+    <c-number-field v-field="value" />
+  </widget-settings-item>
 </template>
 
 <script>

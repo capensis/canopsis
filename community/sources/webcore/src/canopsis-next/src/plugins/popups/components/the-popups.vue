@@ -1,6 +1,14 @@
-<template lang="pug">
-  div.popups(v-if="popups.length")
-    popup-item(v-for="popup in popups", v-bind="popup", :key="popup.id")
+<template>
+  <div
+    class="popups"
+    v-if="popups.length"
+  >
+    <popup-item
+      v-for="popup in popups"
+      v-bind="popup"
+      :key="popup.id"
+    />
+  </div>
 </template>
 
 <script>

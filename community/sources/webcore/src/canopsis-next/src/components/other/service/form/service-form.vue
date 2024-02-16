@@ -1,39 +1,78 @@
-<template lang="pug">
-  v-layout(column)
-    c-name-field(v-field="form.name", required)
-    v-layout
-      v-flex.pr-3(xs6)
-        c-entity-category-field(v-field="form.category", addable, required)
-      v-flex.pr-3(xs4)
-        c-entity-state-field(
-          v-field="form.sli_avail_state",
-          :label="$t('service.availabilityState')",
+<template>
+  <v-layout column>
+    <c-name-field
+      v-field="form.name"
+      required
+    />
+    <v-layout>
+      <v-flex
+        class="pr-3"
+        xs6
+      >
+        <c-entity-category-field
+          class="mt-1"
+          v-field="form.category"
+          addable
           required
-        )
-      v-flex(xs2)
-        c-impact-level-field(v-field="form.impact_level", required)
-    c-coordinates-field(v-field="form.coordinates", row)
-    text-editor-field(
-      v-validate="'required'",
-      v-field="form.output_template",
-      :label="$t('service.outputTemplate')",
-      :error-messages="errors.collect('output_template')",
-      :variables="outputVariables",
+        />
+      </v-flex>
+      <v-flex
+        class="pr-3"
+        xs4
+      >
+        <c-entity-state-field
+          v-field="form.sli_avail_state"
+          :label="$t('service.availabilityState')"
+          required
+        />
+      </v-flex>
+      <v-flex xs2>
+        <c-impact-level-field
+          v-field="form.impact_level"
+          required
+        />
+      </v-flex>
+    </v-layout>
+    <c-coordinates-field
+      v-field="form.coordinates"
+      row
+    />
+    <text-editor-field
+      v-validate="'required'"
+      v-field="form.output_template"
+      :label="$t('service.outputTemplate')"
+      :error-messages="errors.collect('output_template')"
+      :variables="outputVariables"
       name="output_template"
-    )
-    c-enabled-field(v-field="form.enabled")
-    v-tabs(slider-color="primary", centered)
-      v-tab(:class="{ 'error--text': errors.has('entity_patterns') }") {{ $t('common.entityPatterns') }}
-      v-tab-item
-        c-patterns-field.mt-2(
-          v-field="form.patterns",
-          :entity-attributes="entityAttributes",
-          with-entity,
+    />
+    <c-enabled-field v-field="form.enabled" />
+    <v-tabs
+      slider-color="primary"
+      centered
+    >
+      <v-tab :class="{ 'error--text': errors.has('entity_patterns') }">
+        {{ $t('common.entityPatterns') }}
+      </v-tab>
+      <v-tab-item>
+        <c-patterns-field
+          class="mt-2"
+          v-field="form.patterns"
+          :entity-attributes="entityAttributes"
+          with-entity
           entity-counters-type
-        )
-      v-tab.validation-header(:disabled="advancedJsonWasChanged") {{ $t('entity.manageInfos') }}
-      v-tab-item
-        manage-infos(v-field="form.infos")
+        />
+      </v-tab-item>
+      <v-tab
+        class="validation-header"
+        :disabled="advancedJsonWasChanged"
+      >
+        {{ $t('entity.manageInfos') }}
+      </v-tab>
+      <v-tab-item>
+        <manage-infos v-field="form.infos" />
+      </v-tab-item>
+    </v-tabs>
+  </v-layout>
 </template>
 
 <script>

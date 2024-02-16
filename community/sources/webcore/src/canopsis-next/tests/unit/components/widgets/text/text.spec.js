@@ -16,7 +16,14 @@ const stubs = {
 describe('text', () => {
   const axiosMockAdapter = new AxiosMockAdapter(axios);
 
-  const snapshotFactory = generateRenderer(TextWidget, { stubs });
+  const snapshotFactory = generateRenderer(TextWidget, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
 
   test('Renders `text` with default template', async () => {
     const wrapper = snapshotFactory({
@@ -31,7 +38,7 @@ describe('text', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `text` with request template', async () => {
@@ -69,6 +76,6 @@ describe('text', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

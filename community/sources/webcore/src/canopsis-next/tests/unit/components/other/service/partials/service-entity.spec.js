@@ -25,7 +25,7 @@ const snapshotStubs = {
 
 const selectServiceEntityHeader = wrapper => wrapper.find('service-entity-header-stub');
 const selectServiceEntityInfoTab = wrapper => wrapper.find('service-entity-info-tab-stub');
-const selectTabItems = wrapper => wrapper.findAll('a.v-tabs__item');
+const selectTabItems = wrapper => wrapper.findAll('.v-tab');
 const selectTabItemByIndex = (wrapper, index) => selectTabItems(wrapper).at(index);
 
 describe('service-entity', () => {
@@ -123,19 +123,22 @@ describe('service-entity', () => {
     expect(wrapper).toEmit('refresh');
   });
 
-  test('Renders `service-entity` with default props', () => {
+  test('Renders `service-entity` with default props', async () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    await wrapper.openAllExpansionPanels();
+
+    expect(wrapper).toMatchSnapshot();
   });
 
-  test('Renders `service-entity` with custom props', () => {
+  test('Renders `service-entity` with custom props', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         entity: {
           _id: 'service-id',
           source_type: ENTITY_TYPES.component,
           pbehaviors: [],
+          alarm_id: 'alarm-id',
         },
         selected: true,
         lastActionUnavailable: true,
@@ -146,15 +149,19 @@ describe('service-entity', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    await wrapper.openAllExpansionPanels();
+
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `service-entity` with tree of deps tab', async () => {
     const wrapper = snapshotFactory({});
 
+    await wrapper.openAllExpansionPanels();
+
     await selectTabItemByIndex(wrapper, 1).trigger('click');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `service-entity` with pbehaviors tab', async () => {
@@ -168,9 +175,11 @@ describe('service-entity', () => {
       store: createMockedStoreModules([authModule]),
     });
 
+    await wrapper.openAllExpansionPanels();
+
     await selectTabItemByIndex(wrapper, 2).trigger('click');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `service-entity` after opened flag updated', async () => {
@@ -178,6 +187,6 @@ describe('service-entity', () => {
 
     await wrapper.setData({ opened: [true] });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

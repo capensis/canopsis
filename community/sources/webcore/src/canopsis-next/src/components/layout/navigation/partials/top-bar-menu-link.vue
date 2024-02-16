@@ -1,10 +1,27 @@
-<template lang="pug">
-  v-list-tile.top-bar-menu-link(:to="link.route", active-class="", @click="handleClick")
-    v-list-tile-title
-      v-layout(justify-space-between)
-        span {{ link.title }}
-    v-list-tile-avatar.ml-2(size="24")
-      v-icon(size="24") {{ link.icon }}
+<template>
+  <v-list-item
+    class="top-bar-menu-link"
+    :to="link.route"
+    active-class=""
+    @click="handleClick"
+  >
+    <v-list-item-title>
+      <v-layout justify-space-between>
+        <span>{{ link.title }}</span>
+      </v-layout>
+    </v-list-item-title>
+    <v-list-item-avatar
+      class="ml-2"
+      size="24"
+    >
+      <v-icon
+        class="text--secondary"
+        size="24"
+      >
+        {{ link.icon }}
+      </v-icon>
+    </v-list-item-avatar>
+  </v-list-item>
 </template>
 
 <script>
@@ -28,7 +45,7 @@ export default {
   text-decoration: none;
   color: inherit;
 
-  .v-list__tile__avatar {
+  .v-list-item__avatar {
     min-width: unset;
   }
 }

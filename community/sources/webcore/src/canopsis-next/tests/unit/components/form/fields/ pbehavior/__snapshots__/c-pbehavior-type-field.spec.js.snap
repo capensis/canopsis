@@ -2,20 +2,21 @@
 
 exports[`c-pbehavior-type-field Renders \`c-pbehavior-type-field\` with custom props 1`] = `
 <div
-  class="v-input v-text-field v-select v-select--chips v-select--chips--small v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
-  role="combobox"
+  class="v-input v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light v-text-field v-select v-select--chips v-select--chips--small v-select--is-multi"
 >
   <div
     class="v-input__control"
   >
     <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
       class="v-input__slot"
+      role="button"
     >
       <div
         class="v-select__slot"
       >
         <label
-          aria-hidden="true"
           class="v-label v-label--active v-label--is-disabled theme--light"
           style="left: 0px; position: absolute;"
         >
@@ -25,7 +26,7 @@ exports[`c-pbehavior-type-field Renders \`c-pbehavior-type-field\` with custom p
           class="v-select__selections"
         >
           <span
-            class="v-chip v-chip--select-multi v-chip--disabled v-chip--small theme--light"
+            class="v-chip--select v-chip v-chip--disabled v-chip--no-color theme--light v-size--small"
             tabindex="-1"
           >
             <span
@@ -35,7 +36,7 @@ exports[`c-pbehavior-type-field Renders \`c-pbehavior-type-field\` with custom p
             </span>
           </span>
           <span
-            class="v-chip v-chip--select-multi v-chip--disabled v-chip--small theme--light"
+            class="v-chip--select v-chip v-chip--disabled v-chip--no-color theme--light v-size--small"
             tabindex="-1"
           >
             <span
@@ -45,11 +46,9 @@ exports[`c-pbehavior-type-field Renders \`c-pbehavior-type-field\` with custom p
             </span>
           </span>
           <input
-            aria-label="Custom label"
             aria-readonly="false"
-            autocomplete="on"
+            autocomplete="off"
             disabled="disabled"
-            name="customName"
             readonly="readonly"
             type="text"
           />
@@ -62,16 +61,23 @@ exports[`c-pbehavior-type-field Renders \`c-pbehavior-type-field\` with custom p
           >
             <i
               aria-hidden="true"
-              class="v-icon v-icon--disabled material-icons theme--light"
+              class="v-icon notranslate v-icon--disabled material-icons theme--light"
             >
               arrow_drop_down
             </i>
           </div>
         </div>
+        <input
+          name="customName"
+          type="hidden"
+          value="type-id-1,type-id-3"
+        />
       </div>
       <div
         class="v-menu"
-      />
+      >
+        <!---->
+      </div>
     </div>
     <div
       class="v-text-field__details"
@@ -79,8 +85,10 @@ exports[`c-pbehavior-type-field Renders \`c-pbehavior-type-field\` with custom p
       <div
         class="v-messages theme--light"
       >
-        <div
+        <transition-group-stub
           class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
         />
       </div>
     </div>
@@ -90,194 +98,114 @@ exports[`c-pbehavior-type-field Renders \`c-pbehavior-type-field\` with custom p
 
 exports[`c-pbehavior-type-field Renders \`c-pbehavior-type-field\` with custom props 2`] = `
 <div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
+  class="v-menu__content theme--light menuable__content__active "
+  style="max-height: 304px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8;"
 >
   <div
-    class="v-select-list v-card theme--light"
+    class="v-list v-select-list v-sheet theme--light theme--light"
+    role="listbox"
+    tabindex="-1"
   >
     <div
-      class="v-list theme--light"
-      role="list"
+      aria-selected="true"
+      class="v-list-item primary--text v-list-item--active v-list-item--link theme--light v-list-item--highlighted"
+      role="option"
+      tabindex="0"
     >
       <div
-        class="primary--text"
-        role="listitem"
+        class="v-list-item__action"
       >
-        <a
-          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
+        <div
+          class="v-simple-checkbox"
         >
           <div
-            class="v-list__tile__action"
+            class="v-input--selection-controls__input"
           >
-            <div
-              class="v-input v-input--selection-controls v-input--checkbox v-input--is-label-active v-input--is-dirty theme--light"
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light primary--text"
             >
-              <div
-                class="v-input__control"
-              >
-                <div
-                  class="v-input__slot"
-                >
-                  <div
-                    class="v-input--selection-controls__input"
-                  >
-                    <input
-                      aria-checked="true"
-                      role="checkbox"
-                      type="checkbox"
-                      value=""
-                    />
-                    <div
-                      class="v-input--selection-controls__ripple primary--text"
-                    />
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light primary--text"
-                    >
-                      check_box
-                    </i>
-                  </div>
-                </div>
-                <div
-                  class="v-messages theme--light"
-                >
-                  <div
-                    class="v-messages__wrapper"
-                  />
-                </div>
-              </div>
-            </div>
+              check_box
+            </i>
           </div>
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              type-name-1
-            </div>
-          </div>
-        </a>
+        </div>
       </div>
       <div
-        role="listitem"
+        class="v-list-item__content"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
+        <div
+          class="v-list-item__title"
+        >
+          type-name-1
+        </div>
+      </div>
+    </div>
+    <div
+      aria-selected="false"
+      class="v-list-item v-list-item--link theme--light"
+      role="option"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__action"
+      >
+        <div
+          class="v-simple-checkbox"
         >
           <div
-            class="v-list__tile__action"
+            class="v-input--selection-controls__input"
           >
-            <div
-              class="v-input v-input--selection-controls v-input--checkbox theme--light"
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
             >
-              <div
-                class="v-input__control"
-              >
-                <div
-                  class="v-input__slot"
-                >
-                  <div
-                    class="v-input--selection-controls__input"
-                  >
-                    <input
-                      aria-checked="false"
-                      role="checkbox"
-                      type="checkbox"
-                      value=""
-                    />
-                    <div
-                      class="v-input--selection-controls__ripple"
-                    />
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light"
-                    >
-                      check_box_outline_blank
-                    </i>
-                  </div>
-                </div>
-                <div
-                  class="v-messages theme--light"
-                >
-                  <div
-                    class="v-messages__wrapper"
-                  />
-                </div>
-              </div>
-            </div>
+              check_box_outline_blank
+            </i>
           </div>
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              type-name-2
-            </div>
-          </div>
-        </a>
+        </div>
       </div>
       <div
-        class="primary--text"
-        role="listitem"
+        class="v-list-item__content"
       >
-        <a
-          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
+        <div
+          class="v-list-item__title"
+        >
+          type-name-2
+        </div>
+      </div>
+    </div>
+    <div
+      aria-selected="true"
+      class="v-list-item primary--text v-list-item--active v-list-item--link theme--light"
+      role="option"
+      tabindex="0"
+    >
+      <div
+        class="v-list-item__action"
+      >
+        <div
+          class="v-simple-checkbox"
         >
           <div
-            class="v-list__tile__action"
+            class="v-input--selection-controls__input"
           >
-            <div
-              class="v-input v-input--selection-controls v-input--checkbox v-input--is-label-active v-input--is-dirty theme--light"
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light primary--text"
             >
-              <div
-                class="v-input__control"
-              >
-                <div
-                  class="v-input__slot"
-                >
-                  <div
-                    class="v-input--selection-controls__input"
-                  >
-                    <input
-                      aria-checked="true"
-                      role="checkbox"
-                      type="checkbox"
-                      value=""
-                    />
-                    <div
-                      class="v-input--selection-controls__ripple primary--text"
-                    />
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light primary--text"
-                    >
-                      check_box
-                    </i>
-                  </div>
-                </div>
-                <div
-                  class="v-messages theme--light"
-                >
-                  <div
-                    class="v-messages__wrapper"
-                  />
-                </div>
-              </div>
-            </div>
+              check_box
+            </i>
           </div>
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              type-name-3
-            </div>
-          </div>
-        </a>
+        </div>
+      </div>
+      <div
+        class="v-list-item__content"
+      >
+        <div
+          class="v-list-item__title"
+        >
+          type-name-3
+        </div>
       </div>
     </div>
   </div>
@@ -286,20 +214,21 @@ exports[`c-pbehavior-type-field Renders \`c-pbehavior-type-field\` with custom p
 
 exports[`c-pbehavior-type-field Renders \`c-pbehavior-type-field\` with default props 1`] = `
 <div
-  class="v-input v-text-field v-select theme--light"
-  role="combobox"
+  class="v-input theme--light v-text-field v-select"
 >
   <div
     class="v-input__control"
   >
     <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
       class="v-input__slot"
+      role="button"
     >
       <div
         class="v-select__slot"
       >
         <label
-          aria-hidden="true"
           class="v-label theme--light"
           style="left: 0px; position: absolute;"
         >
@@ -309,10 +238,8 @@ exports[`c-pbehavior-type-field Renders \`c-pbehavior-type-field\` with default 
           class="v-select__selections"
         >
           <input
-            aria-label="Type"
             aria-readonly="false"
-            autocomplete="on"
-            name="type"
+            autocomplete="off"
             readonly="readonly"
             type="text"
           />
@@ -325,16 +252,22 @@ exports[`c-pbehavior-type-field Renders \`c-pbehavior-type-field\` with default 
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light"
+              class="v-icon notranslate material-icons theme--light"
             >
               arrow_drop_down
             </i>
           </div>
         </div>
+        <input
+          name="type"
+          type="hidden"
+        />
       </div>
       <div
         class="v-menu"
-      />
+      >
+        <!---->
+      </div>
     </div>
     <div
       class="v-text-field__details"
@@ -342,8 +275,10 @@ exports[`c-pbehavior-type-field Renders \`c-pbehavior-type-field\` with default 
       <div
         class="v-messages theme--light"
       >
-        <div
+        <transition-group-stub
           class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
         />
       </div>
     </div>
@@ -353,31 +288,25 @@ exports[`c-pbehavior-type-field Renders \`c-pbehavior-type-field\` with default 
 
 exports[`c-pbehavior-type-field Renders \`c-pbehavior-type-field\` with default props 2`] = `
 <div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
+  class="v-menu__content theme--light menuable__content__active "
+  style="max-height: 304px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8;"
 >
   <div
-    class="v-select-list v-card theme--light"
+    class="v-list v-select-list v-sheet theme--light theme--light"
+    role="listbox"
+    tabindex="-1"
   >
     <div
-      class="v-list theme--light"
-      role="list"
+      class="v-list-item theme--light"
+      tabindex="-1"
     >
       <div
-        role="listitem"
+        class="v-list-item__content"
       >
         <div
-          class="v-list__tile theme--light"
+          class="v-list-item__title"
         >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              No data available
-            </div>
-          </div>
+          No data available
         </div>
       </div>
     </div>
@@ -387,20 +316,21 @@ exports[`c-pbehavior-type-field Renders \`c-pbehavior-type-field\` with default 
 
 exports[`c-pbehavior-type-field Renders \`c-pbehavior-type-field\` with max prop 1`] = `
 <div
-  class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
-  role="combobox"
+  class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
 >
   <div
     class="v-input__control"
   >
     <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
       class="v-input__slot"
+      role="button"
     >
       <div
         class="v-select__slot"
       >
         <label
-          aria-hidden="true"
           class="v-label v-label--active theme--light"
           style="left: 0px; position: absolute;"
         >
@@ -415,10 +345,8 @@ exports[`c-pbehavior-type-field Renders \`c-pbehavior-type-field\` with max prop
             type-name-1
           </div>
           <input
-            aria-label="Type"
             aria-readonly="false"
-            autocomplete="on"
-            name="type"
+            autocomplete="off"
             readonly="readonly"
             type="text"
           />
@@ -431,16 +359,23 @@ exports[`c-pbehavior-type-field Renders \`c-pbehavior-type-field\` with max prop
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light"
+              class="v-icon notranslate material-icons theme--light"
             >
               arrow_drop_down
             </i>
           </div>
         </div>
+        <input
+          name="type"
+          type="hidden"
+          value="type-id-1"
+        />
       </div>
       <div
         class="v-menu"
-      />
+      >
+        <!---->
+      </div>
     </div>
     <div
       class="v-text-field__details"
@@ -448,8 +383,10 @@ exports[`c-pbehavior-type-field Renders \`c-pbehavior-type-field\` with max prop
       <div
         class="v-messages theme--light"
       >
-        <div
+        <transition-group-stub
           class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
         />
       </div>
     </div>
@@ -459,67 +396,60 @@ exports[`c-pbehavior-type-field Renders \`c-pbehavior-type-field\` with max prop
 
 exports[`c-pbehavior-type-field Renders \`c-pbehavior-type-field\` with max prop 2`] = `
 <div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
+  class="v-menu__content theme--light menuable__content__active "
+  style="max-height: 304px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8;"
 >
   <div
-    class="v-select-list v-card theme--light"
+    class="v-list v-select-list v-sheet theme--light theme--light"
+    role="listbox"
+    tabindex="-1"
   >
     <div
-      class="v-list theme--light"
-      role="list"
+      aria-selected="true"
+      class="v-list-item primary--text v-list-item--active v-list-item--link theme--light v-list-item--highlighted"
+      role="option"
+      tabindex="0"
     >
       <div
-        class="primary--text"
-        role="listitem"
+        class="v-list-item__content"
       >
-        <a
-          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
+        <div
+          class="v-list-item__title"
         >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              type-name-1
-            </div>
-          </div>
-        </a>
+          type-name-1
+        </div>
       </div>
+    </div>
+    <div
+      aria-selected="false"
+      class="v-list-item v-list-item--link theme--light"
+      role="option"
+      tabindex="0"
+    >
       <div
-        role="listitem"
+        class="v-list-item__content"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
+        <div
+          class="v-list-item__title"
         >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              type-name-2
-            </div>
-          </div>
-        </a>
+          type-name-2
+        </div>
       </div>
+    </div>
+    <div
+      aria-selected="false"
+      class="v-list-item v-list-item--link theme--light"
+      role="option"
+      tabindex="0"
+    >
       <div
-        role="listitem"
+        class="v-list-item__content"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
+        <div
+          class="v-list-item__title"
         >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              type-name-3
-            </div>
-          </div>
-        </a>
+          type-name-3
+        </div>
       </div>
     </div>
   </div>

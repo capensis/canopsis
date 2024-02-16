@@ -6,7 +6,7 @@ exports[`patterns Renders \`patterns\` corporate tab with permissions 1`] = `
     Patterns
   </c-page-header-stub>
   <div
-    class="layout row wrap"
+    class="layout wrap"
   >
     <div
       class="flex xs12"
@@ -15,79 +15,81 @@ exports[`patterns Renders \`patterns\` corporate tab with permissions 1`] = `
         class="ma-2 v-card v-sheet theme--light"
       >
         <div
-          class="v-tabs"
+          class="v-tabs v-tabs--fixed-tabs theme--light"
         >
           <div
-            class="v-tabs__bar theme--light"
+            class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
+            role="tablist"
           >
-            <transition-stub
-              name="fade-transition"
-            />
             <div
-              class="v-tabs__wrapper"
+              class="v-slide-group__prev v-slide-group__prev--disabled"
+            >
+              <transition-stub
+                name="fade-transition"
+              />
+            </div>
+            <div
+              class="v-slide-group__wrapper"
             >
               <div
-                class="v-tabs__container v-tabs__container--fixed-tabs"
+                class="v-slide-group__content v-tabs-bar__content"
               >
                 <div
-                  class="v-tabs__slider-wrapper"
+                  class="v-tabs-slider-wrapper"
                   style="transition: none;"
                 >
                   <div
-                    class="v-tabs__slider primary"
+                    class="v-tabs-slider primary"
                   />
                 </div>
-                <div
-                  class="v-tabs__div"
+                <a
+                  aria-selected="true"
+                  class="v-tab v-tab--active"
+                  href="#patterns"
+                  role="tab"
+                  tabindex="0"
                 >
-                  <a
-                    class="v-tabs__item"
-                    href="#patterns"
-                  >
-                    My patterns
-                  </a>
-                </div>
-                <div
-                  class="v-tabs__div"
+            My patterns
+                </a>
+                <a
+                  aria-selected="false"
+                  class="v-tab"
+                  href="#corporatePatterns"
+                  role="tab"
+                  tabindex="0"
                 >
-                  <a
-                    class="v-tabs__item v-tabs__item--active"
-                    href="#corporatePatterns"
-                  >
-                    Shared patterns
-                  </a>
-                </div>
+            Shared patterns
+                </a>
               </div>
             </div>
-            <transition-stub
-              name="fade-transition"
-            />
+            <div
+              class="v-slide-group__next v-slide-group__next--disabled"
+            >
+              <transition-stub
+                name="fade-transition"
+              />
+            </div>
           </div>
           <div
-            class="v-window"
+            class="v-window v-item-group theme--light v-tabs-items"
           >
             <div
               class="v-window__container"
             >
               <transition-stub
-                name="v-window-x-transition"
+                name=""
               >
                 <div
-                  class="v-window-item"
-                  style="display: none;"
+                  class="v-window-item v-window-item--active"
+                  id="patterns"
                 >
                   <patterns-stub />
                 </div>
               </transition-stub>
               <transition-stub
-                name="v-window-x-transition"
+                name=""
               >
-                <div
-                  class="v-window-item"
-                  style=""
-                >
-                  <corporate-patterns-stub />
-                </div>
+                <!---->
               </transition-stub>
             </div>
           </div>
@@ -101,23 +103,20 @@ exports[`patterns Renders \`patterns\` corporate tab with permissions 1`] = `
     <c-action-fab-btn-stub
       color="grey darken-1"
       icon="pause"
-      small="small"
       tooltip="Create shared pbehavior filter"
-      top="top"
+      top=""
     />
     <c-action-fab-btn-stub
       color="blue"
       icon="perm_identity"
-      small="small"
       tooltip="Create shared entity filter"
-      top="top"
+      top=""
     />
     <c-action-fab-btn-stub
       color="error"
       icon="notification_important"
-      small="small"
       tooltip="Create shared alarm filter"
-      top="top"
+      top=""
     />
   </c-fab-expand-btn-stub>
 </div>
@@ -129,7 +128,7 @@ exports[`patterns Renders \`patterns\` with permissions 1`] = `
     Patterns
   </c-page-header-stub>
   <div
-    class="layout row wrap"
+    class="layout wrap"
   >
     <div
       class="flex xs12"
@@ -138,56 +137,63 @@ exports[`patterns Renders \`patterns\` with permissions 1`] = `
         class="ma-2 v-card v-sheet theme--light"
       >
         <div
-          class="v-tabs"
+          class="v-tabs v-tabs--fixed-tabs theme--light"
         >
           <div
-            class="v-tabs__bar theme--light"
+            class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
+            role="tablist"
           >
-            <transition-stub
-              name="fade-transition"
-            />
             <div
-              class="v-tabs__wrapper"
+              class="v-slide-group__prev v-slide-group__prev--disabled"
+            >
+              <transition-stub
+                name="fade-transition"
+              />
+            </div>
+            <div
+              class="v-slide-group__wrapper"
             >
               <div
-                class="v-tabs__container v-tabs__container--fixed-tabs"
+                class="v-slide-group__content v-tabs-bar__content"
               >
                 <div
-                  class="v-tabs__slider-wrapper"
+                  class="v-tabs-slider-wrapper"
                   style="transition: none;"
                 >
                   <div
-                    class="v-tabs__slider primary"
+                    class="v-tabs-slider primary"
                   />
                 </div>
-                <div
-                  class="v-tabs__div"
+                <a
+                  aria-selected="true"
+                  class="v-tab v-tab--active"
+                  href="#patterns"
+                  role="tab"
+                  tabindex="0"
                 >
-                  <a
-                    class="v-tabs__item v-tabs__item--active"
-                    href="#patterns"
-                  >
-                    My patterns
-                  </a>
-                </div>
-                <div
-                  class="v-tabs__div"
+            My patterns
+                </a>
+                <a
+                  aria-selected="false"
+                  class="v-tab"
+                  href="#corporatePatterns"
+                  role="tab"
+                  tabindex="0"
                 >
-                  <a
-                    class="v-tabs__item"
-                    href="#corporatePatterns"
-                  >
-                    Shared patterns
-                  </a>
-                </div>
+            Shared patterns
+                </a>
               </div>
             </div>
-            <transition-stub
-              name="fade-transition"
-            />
+            <div
+              class="v-slide-group__next v-slide-group__next--disabled"
+            >
+              <transition-stub
+                name="fade-transition"
+              />
+            </div>
           </div>
           <div
-            class="v-window"
+            class="v-window v-item-group theme--light v-tabs-items"
           >
             <div
               class="v-window__container"
@@ -196,7 +202,8 @@ exports[`patterns Renders \`patterns\` with permissions 1`] = `
                 name=""
               >
                 <div
-                  class="v-window-item"
+                  class="v-window-item v-window-item--active"
+                  id="patterns"
                 >
                   <patterns-stub />
                 </div>
@@ -204,10 +211,7 @@ exports[`patterns Renders \`patterns\` with permissions 1`] = `
               <transition-stub
                 name=""
               >
-                <div
-                  class="v-window-item"
-                  style="display: none;"
-                />
+                <!---->
               </transition-stub>
             </div>
           </div>
@@ -221,23 +225,20 @@ exports[`patterns Renders \`patterns\` with permissions 1`] = `
     <c-action-fab-btn-stub
       color="grey darken-1"
       icon="pause"
-      small="small"
       tooltip="Create pbehavior filter"
-      top="top"
+      top=""
     />
     <c-action-fab-btn-stub
       color="blue"
       icon="perm_identity"
-      small="small"
       tooltip="Create entity filter"
-      top="top"
+      top=""
     />
     <c-action-fab-btn-stub
       color="error"
       icon="notification_important"
-      small="small"
       tooltip="Create alarm filter"
-      top="top"
+      top=""
     />
   </c-fab-expand-btn-stub>
 </div>
@@ -249,7 +250,7 @@ exports[`patterns Renders \`patterns\` without permissions 1`] = `
     Patterns
   </c-page-header-stub>
   <div
-    class="layout row wrap"
+    class="layout wrap"
   >
     <div
       class="flex xs12"
@@ -267,23 +268,20 @@ exports[`patterns Renders \`patterns\` without permissions 1`] = `
     <c-action-fab-btn-stub
       color="grey darken-1"
       icon="pause"
-      small="small"
       tooltip="Create pbehavior filter"
-      top="top"
+      top=""
     />
     <c-action-fab-btn-stub
       color="blue"
       icon="perm_identity"
-      small="small"
       tooltip="Create entity filter"
-      top="top"
+      top=""
     />
     <c-action-fab-btn-stub
       color="error"
       icon="notification_important"
-      small="small"
       tooltip="Create alarm filter"
-      top="top"
+      top=""
     />
   </c-fab-expand-btn-stub>
 </div>
