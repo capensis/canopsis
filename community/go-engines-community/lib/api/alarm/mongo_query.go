@@ -126,23 +126,20 @@ func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider)
 
 func (q *MongoQueryBuilder) clear(now types.CpsTime, userID string) {
 	q.searchPipeline = make([]bson.M, 0)
-	q.alarmMatch = make([]bson.M, 0)
-	q.additionalMatch = []bson.M{
+	q.alarmMatch = []bson.M{
 		{"$match": bson.M{
-			"entity.enabled":     true,
-			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
-			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
+			"healthcheck": bson.M{"$in": bson.A{nil, false}},
 		}},
 	}
+	q.additionalMatch = make([]bson.M, 0)
 
-	q.lookupsForAdditionalMatch = map[string]bool{"entity": true}
+	q.lookupsForAdditionalMatch = make(map[string]bool)
 	q.lookupsOnlyForAdditionalMatch = make(map[string]bool)
 	q.lookupsForSort = make(map[string]bool)
 	q.excludeLookupsBeforeSort = make([]string, 0)
 	q.lookups = []lookupWithKey{
 		{key: "entity", pipeline: getEntityLookup()},
 		{key: "entity.category", pipeline: getEntityCategoryLookup()},
-		{key: "entity.impacts_counts", pipeline: getImpactsCountPipeline()},
 		{key: "pbehavior", pipeline: getPbehaviorLookup(q.authorProvider)},
 		{key: "pbehavior.type", pipeline: getPbehaviorTypeLookup()},
 		{key: "v.pbehavior_info.icon_name", pipeline: getPbehaviorInfoTypeLookup()},
@@ -201,14 +198,13 @@ func (q *MongoQueryBuilder) CreateGetAggregationPipeline(
 	match bson.M,
 	now types.CpsTime,
 	userID string,
+	opened int,
 	onlyParents bool,
 ) ([]bson.M, error) {
 	q.clear(now, userID)
-
-	q.alarmMatch = append(q.alarmMatch,
-		bson.M{"$match": match},
-	)
-
+	q.handleOpened(opened)
+	q.handleDependencies(true)
+	q.alarmMatch = append(q.alarmMatch, bson.M{"$match": match})
 	if onlyParents {
 		q.computedFields["is_meta_alarm"] = getIsMetaAlarmField()
 		q.lookups = append(q.lookups, lookupWithKey{key: "meta_alarm_rule", pipeline: getMetaAlarmRuleLookup()})
@@ -220,6 +216,7 @@ func (q *MongoQueryBuilder) CreateGetAggregationPipeline(
 		Page:  1,
 		Limit: 1,
 	}
+
 	return q.createPaginationAggregationPipeline(query), nil
 }
 
@@ -251,6 +248,7 @@ func (q *MongoQueryBuilder) CreateAggregationPipelineByMatch(
 	if err != nil {
 		return nil, err
 	}
+	q.handleDependencies(true)
 
 	return q.createPaginationAggregationPipeline(paginationQuery), nil
 }
@@ -265,18 +263,9 @@ func (q *MongoQueryBuilder) CreateChildrenAggregationPipeline(
 	now types.CpsTime,
 ) ([]bson.M, error) {
 	q.clear(now, userID)
-
-	match := bson.M{
-		"v.parents": parentId,
-	}
-	if opened == OnlyOpened {
-		match["v.resolved"] = nil
-	}
-
-	q.alarmMatch = append(q.alarmMatch,
-		bson.M{"$match": match},
-	)
-
+	q.handleOpened(opened)
+	q.handleDependencies(true)
+	q.alarmMatch = append(q.alarmMatch, bson.M{"$match": bson.M{"v.parents": parentId}})
 	q.lookups = append(q.lookups, lookupWithKey{key: "parents", pipeline: []bson.M{
 		{"$graphLookup": bson.M{
 			"from":                    mongo.AlarmMongoCollection,
@@ -514,8 +503,9 @@ func (q *MongoQueryBuilder) addFieldsToPipeline(fieldsMap, addedFields map[strin
 
 func (q *MongoQueryBuilder) handleFilter(ctx context.Context, r FilterRequest, userID string) error {
 	alarmMatch := make([]bson.M, 0)
+	entityMatch := make([]bson.M, 0)
 
-	q.addOpenedFilter(r, &alarmMatch)
+	q.addOpenedFilter(r.GetOpenedFilter(), &alarmMatch, &entityMatch)
 	q.addStartFromFilter(r, &alarmMatch)
 	q.addStartToFilter(r, &alarmMatch)
 	q.addOnlyParentsFilter(r, &alarmMatch)
@@ -537,7 +527,6 @@ func (q *MongoQueryBuilder) handleFilter(ctx context.Context, r FilterRequest, u
 		q.alarmMatch = append(q.alarmMatch, bson.M{"$match": bson.M{"$and": alarmMatch}})
 	}
 
-	entityMatch := make([]bson.M, 0)
 	q.addCategoryFilter(r, &entityMatch)
 	err = q.addInstructionsFilter(ctx, r, &entityMatch)
 	if err != nil {
@@ -836,12 +825,14 @@ func (q *MongoQueryBuilder) getTimeField(r FilterRequest) string {
 	return r.TimeField
 }
 
-func (q *MongoQueryBuilder) addOpenedFilter(r FilterRequest, match *[]bson.M) {
-	if r.GetOpenedFilter() != OnlyOpened {
+func (q *MongoQueryBuilder) addOpenedFilter(opened int, match *[]bson.M, entityMatch *[]bson.M) {
+	if opened == OnlyOpened {
+		*match = append(*match, bson.M{"v.resolved": nil})
 		return
 	}
 
-	*match = append(*match, bson.M{"v.resolved": nil})
+	// disabled entity cannot have open alarm but can have resolved
+	*entityMatch = append(*entityMatch, bson.M{"entity.enabled": true})
 }
 
 func (q *MongoQueryBuilder) addCategoryFilter(r FilterRequest, match *[]bson.M) {
@@ -1211,14 +1202,23 @@ func (q *MongoQueryBuilder) resolveAlias(v string) string {
 	return prefix + v
 }
 
+func (q *MongoQueryBuilder) handleOpened(opened int) {
+	alarmMatch := make([]bson.M, 0)
+	entityMatch := make([]bson.M, 0)
+	q.addOpenedFilter(opened, &alarmMatch, &entityMatch)
+	if len(alarmMatch) > 0 {
+		q.alarmMatch = append(q.alarmMatch, bson.M{"$match": bson.M{"$and": alarmMatch}})
+	}
+
+	if len(entityMatch) > 0 {
+		q.lookupsForAdditionalMatch["entity"] = true
+		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": bson.M{"$and": entityMatch}})
+	}
+}
+
 func (q *MongoQueryBuilder) handleDependencies(withDependencies bool) {
-	if !withDependencies {
-		for i := 0; i < len(q.lookups); i++ {
-			if q.lookups[i].key == "entity.impacts_counts" {
-				q.lookups = append(q.lookups[:i], q.lookups[i+1:]...)
-				break
-			}
-		}
+	if withDependencies {
+		q.lookups = append(q.lookups, lookupWithKey{key: "entity.impacts_counts", pipeline: getImpactsCountPipeline()})
 	}
 }
 
@@ -1500,33 +1500,18 @@ func getInstructionQuery(instruction Instruction) (bson.M, error) {
 func getImpactsCountPipeline() []bson.M {
 	return []bson.M{
 		{"$lookup": bson.M{
-			"from": mongo.EntityMongoCollection,
-			"let": bson.M{"services": bson.M{"$cond": bson.M{
-				"if":   "$entity.services",
-				"then": "$entity.services",
-				"else": bson.A{},
-			}}},
-			"pipeline": []bson.M{
-				{"$match": bson.M{
-					"$expr": bson.M{"$in": bson.A{"$_id", "$$services"}},
-				}},
-				{"$project": bson.M{"_id": 1}},
-			},
-			"as": "service_impacts",
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "entity.services",
+			"foreignField": "_id",
+			"as":           "service_impacts",
+			"pipeline":     []bson.M{{"$project": bson.M{"_id": 1}}},
 		}},
 		{"$lookup": bson.M{
-			"from": mongo.EntityMongoCollection,
-			"let":  bson.M{"service": "$entity._id"},
-			"pipeline": []bson.M{
-				{"$match": bson.M{
-					"$expr": bson.M{"$and": []bson.M{
-						{"$isArray": "$services"},
-						{"$in": bson.A{"$$service", "$services"}},
-					}},
-				}},
-				{"$project": bson.M{"_id": 1}},
-			},
-			"as": "depends",
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "entity._id",
+			"foreignField": "services",
+			"as":           "depends",
+			"pipeline":     []bson.M{{"$project": bson.M{"_id": 1}}},
 		}},
 		{"$addFields": bson.M{
 			"entity.depends_count": bson.M{"$size": "$depends"},

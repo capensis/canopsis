@@ -2,12 +2,14 @@
   div
     v-layout.d-inline-flex(v-if="serviceEntities.length", align-center, row)
       v-checkbox-functional.ml-3.pa-0(v-model="isAllSelected", :disabled="!entitiesWithActions.length")
-      service-entity-actions(
-        v-if="selectedEntities.length",
-        :actions="actions",
-        :entity="service",
-        @apply="applyActionForSelected"
-      )
+      v-fade-transition(mode="out-in")
+        span.font-italic(v-if="!selectedEntities.length") {{ $t('modals.service.massActionsDescription') }}
+        service-entity-actions(
+          v-else,
+          :actions="actions",
+          :entity="service",
+          @apply="applyActionForSelected"
+        )
     div.mt-2(v-for="serviceEntity in serviceEntities", :key="serviceEntity.key")
       service-entity(
         :service-id="service._id",
@@ -16,6 +18,8 @@
         :entity-name-field="entityNameField",
         :widget-parameters="widgetParameters",
         :selected="isEntitySelected(serviceEntity)",
+        :actions-requests="actionsRequests",
+        @add:action="addAction",
         @update:selected="updateSelected(serviceEntity, $event)",
         @remove:unavailable="removeEntityFromUnavailable(serviceEntity)",
         @refresh="$listeners.refresh"
@@ -37,6 +41,7 @@ import {
   isActionTypeAvailableForEntity,
 } from '@/helpers/entities/entity/actions';
 import { filterById, mapIds } from '@/helpers/array';
+import { getPageForNewRecordsPerPage } from '@/helpers/pagination';
 
 import { widgetActionPanelServiceEntityMixin } from '@/mixins/widget/actions-panel/service-entity';
 
@@ -73,6 +78,10 @@ export default {
     totalItems: {
       type: Number,
       required: false,
+    },
+    actionsRequests: {
+      type: Array,
+      default: () => [],
     },
   },
   data() {
@@ -142,12 +151,21 @@ export default {
       return this.selectedEntitiesIds.includes(entity._id);
     },
 
+    addAction(action) {
+      this.$emit('add:action', action);
+    },
+
     updatePage(page) {
       this.$emit('update:pagination', { ...this.pagination, page });
     },
 
     updateRecordsPerPage(rowsPerPage) {
-      this.$emit('update:pagination', { ...this.pagination, rowsPerPage, page: 1 });
+      this.$emit('update:pagination', {
+        ...this.pagination,
+
+        rowsPerPage,
+        page: getPageForNewRecordsPerPage(rowsPerPage, this.pagination.rowsPerPage, this.pagination.page),
+      });
     },
   },
 };

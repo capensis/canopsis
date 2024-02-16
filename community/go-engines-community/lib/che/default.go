@@ -70,7 +70,7 @@ func NewEngine(
 	))
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(
 		externalDataContainer,
-		eventfilter.NewActionProcessor(eventFilterFailureService, templateExecutor, techMetricsSender),
+		eventfilter.NewActionProcessor(alarmConfigProvider, eventFilterFailureService, templateExecutor, techMetricsSender),
 		eventFilterFailureService,
 	))
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeDrop, eventfilter.NewDropApplicator())
@@ -193,7 +193,7 @@ func NewEngine(
 		Decoder:             json.NewDecoder(),
 		Logger:              logger,
 	}
-	engine.AddConsumer(libengine.NewDefaultConsumer(
+	engine.AddConsumer(libengine.NewConcurrentConsumer(
 		canopsis.CheConsumerName,
 		options.ConsumeFromQueue,
 		cfg.Global.PrefetchCount,
@@ -203,6 +203,7 @@ func NewEngine(
 		options.PublishToQueue,
 		options.FifoAckExchange,
 		canopsis.FIFOAckQueueName,
+		options.Workers,
 		amqpConnection,
 		mainMessageProcessor,
 		logger,

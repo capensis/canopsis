@@ -1,5 +1,13 @@
 <template lang="pug">
   v-layout(justify-center, column)
+    v-text-field(
+      v-if="withField",
+      v-validate="'required'",
+      v-field="column.column",
+      :label="$t('common.field')",
+      :error-messages="columnValueErrorMessages",
+      :name="columnValueFieldName"
+    )
     template(v-if="!withoutInfosAttributes")
       c-alarm-infos-attribute-field(
         v-if="isAlarmInfos",
@@ -37,21 +45,22 @@
       )
         template(#append="")
           c-help-icon(:text="$t('settings.columns.linksInRowCountTooltip')", left)
-    v-switch.pa-0.my-2(
-      v-model="customLabel",
-      :label="$t('settings.columns.customLabel')",
-      color="primary",
-      hide-details,
-      @change="updateCustomLabel"
-    )
-    v-text-field(
-      v-if="customLabel",
-      v-field="column.label",
-      v-validate="'required'",
-      :label="$t('common.label')",
-      :error-messages="errors.collect(`${name}.label`)",
-      :name="`${name}.label`"
-    )
+    template(v-if="withLabel")
+      v-switch.pa-0.my-2(
+        v-model="customLabel",
+        :label="$t('settings.columns.customLabel')",
+        color="primary",
+        hide-details,
+        @change="updateCustomLabel"
+      )
+      v-text-field(
+        v-if="customLabel",
+        v-field="column.label",
+        v-validate="'required'",
+        :label="$t('common.label')",
+        :error-messages="errors.collect(`${name}.label`)",
+        :name="`${name}.label`"
+      )
     v-layout(v-if="withTemplate || withSimpleTemplate", row, align-center)
       v-switch.pa-0.my-2(
         :label="$t('settings.columns.withTemplate')",
@@ -164,10 +173,18 @@ export default {
       type: Array,
       required: false,
     },
+    withLabel: {
+      type: Boolean,
+      default: false,
+    },
+    withField: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
-      customLabel: !!this.column.label,
+      customLabel: false,
     };
   },
   computed: {
@@ -214,6 +231,22 @@ export default {
     templateModalName() {
       return this.withSimpleTemplate ? MODALS.payloadTextareaEditor : MODALS.textEditor;
     },
+
+    columnValueFieldName() {
+      return `${this.name}.column`;
+    },
+
+    columnValueErrorMessages() {
+      return this.errors.collect(this.columnValueFieldName);
+    },
+  },
+  watch: {
+    withLabel: {
+      immediate: true,
+      handler() {
+        this.customLabel = !!this.column.label;
+      },
+    },
   },
   methods: {
     updateCustomLabel(checked) {
@@ -230,7 +263,7 @@ export default {
 
         template,
         isHtml: checked && this.column.isHtml ? false : this.column.isHtml,
-        colorIndicator: checked && this.column.isHtml ? null : this.column.isHtml,
+        colorIndicator: checked && this.column.colorIndicator ? null : this.column.colorIndicator,
       });
     },
 
@@ -245,7 +278,7 @@ export default {
         name: this.templateModalName,
         config: {
           ...this.templateModalConfig,
-          template: this.withSimpleTemplate ? '' : DEFAULT_COLUMN_TEMPLATE_VALUE,
+          text: this.withSimpleTemplate ? '' : DEFAULT_COLUMN_TEMPLATE_VALUE,
           action: value => this.updateModelByTemplate(checked, value),
         },
       });

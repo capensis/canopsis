@@ -6,6 +6,7 @@ import {
   ALARM_PATTERN_FIELDS,
   PATTERN_CONDITIONS,
   PATTERN_CUSTOM_ITEM_VALUE,
+  PATTERN_FIELD_TYPES,
   PATTERN_OPERATORS,
   PATTERN_TYPES,
   QUICK_RANGES,
@@ -110,6 +111,7 @@ describe('pattern-editor-field', () => {
             },
             dictionary: '',
             field: '',
+            fieldType: PATTERN_FIELD_TYPES.string,
             key: expect.any(String),
             operator: PATTERN_OPERATORS.notEqual,
             range: {
@@ -186,6 +188,7 @@ describe('pattern-editor-field', () => {
 
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.displayName,
+      fieldType: PATTERN_FIELD_TYPES.string,
       cond: {
         type: PATTERN_CONDITIONS.equal,
         value: Faker.datatype.string(),
@@ -210,6 +213,7 @@ describe('pattern-editor-field', () => {
             },
             dictionary: '',
             field: '',
+            fieldType: PATTERN_FIELD_TYPES.string,
             operator: PATTERN_OPERATORS.equal,
             range: {
               from: 0,

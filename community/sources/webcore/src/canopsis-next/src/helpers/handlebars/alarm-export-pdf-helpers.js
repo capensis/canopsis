@@ -104,7 +104,7 @@ export function infosHelper() {
   const tbody = document.createElement('tbody');
 
   Object.values(infos).forEach((info, rootIndex, rootArray) => {
-    Object.entries(info).forEach(([key, value], index, array) => {
+    Object.entries(info ?? {}).forEach(([key, value], index, array) => {
       const lastRow = index === array.length - 1 && rootIndex === rootArray.length - 1;
 
       tbody.appendChild(createTableRow(key, value, lastRow));
@@ -153,7 +153,7 @@ export function ticketHelper() {
 
   const table = createTable();
   const tbody = document.createElement('tbody');
-  const ticketDataArray = Object.entries(ticket.ticket_data);
+  const ticketDataArray = Object.entries(ticket.ticket_data ?? {});
 
   tbody.appendChild(createTableRow('Ticket ID', ticket.ticket));
   tbody.appendChild(createTableRow('Ticket URL', ticket.ticket_url, !ticketDataArray.length));
