@@ -2,10 +2,11 @@
   v-select.select(
     :items="items",
     :value="value",
-    @input="$emit('input', $event)",
+    name="itemsPerPage",
     hide-details,
     single-line,
-    dense
+    dense,
+    @input="$emit('input', $event)"
   )
 </template>
 

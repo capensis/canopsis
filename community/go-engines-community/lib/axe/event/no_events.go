@@ -249,6 +249,7 @@ func (p *noEventsProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, 
 	}
 	push := bson.M{}
 	inc := bson.M{}
+	unset := bson.M{}
 
 	var stateStep types.AlarmStep
 	if newState != previousState {
@@ -268,6 +269,11 @@ func (p *noEventsProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, 
 		}
 		set["v.state"] = stateStep
 		inc["v.last_update_date"] = params.Timestamp
+
+		if alarm.IsStateLocked() {
+			alarm.Value.ChangeState = nil
+			unset["v.change_state"] = ""
+		}
 	}
 
 	newStatus := types.CpsNumber(types.AlarmStatusNoEvents)
@@ -304,9 +310,10 @@ func (p *noEventsProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, 
 
 	newAlarm := types.Alarm{}
 	err := p.alarmCollection.FindOneAndUpdate(ctx, match, bson.M{
-		"$set":  set,
-		"$push": push,
-		"$inc":  inc,
+		"$set":   set,
+		"$push":  push,
+		"$inc":   inc,
+		"$unset": unset,
 	}, options.FindOneAndUpdate().SetReturnDocument(options.After)).Decode(&newAlarm)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
