@@ -90,7 +90,7 @@ describe('mermaid-points-preview', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `mermaid-points-preview` with custom props', async () => {
@@ -111,6 +111,6 @@ describe('mermaid-points-preview', () => {
       width: 5,
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

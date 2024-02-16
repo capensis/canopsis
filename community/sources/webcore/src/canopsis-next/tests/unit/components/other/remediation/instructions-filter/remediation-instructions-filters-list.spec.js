@@ -95,7 +95,7 @@ describe('remediation-instructions-filters-list', () => {
   it('Renders `remediation-instructions-filters-list` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `remediation-instructions-filters-list` with custom props', () => {
@@ -107,6 +107,6 @@ describe('remediation-instructions-filters-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

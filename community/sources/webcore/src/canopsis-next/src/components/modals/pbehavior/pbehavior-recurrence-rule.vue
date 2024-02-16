@@ -1,9 +1,12 @@
-<template lang="pug">
-  modal-wrapper(close)
-    template(#title="")
-      span {{ config.pbehavior.name }}
-    template(#text="")
-      pbehavior-recurrence-rule-calendar(:pbehavior="config.pbehavior")
+<template>
+  <modal-wrapper close>
+    <template #title="">
+      <span>{{ config.pbehavior.name }}</span>
+    </template>
+    <template #text="">
+      <pbehavior-recurrence-rule-calendar :pbehavior="config.pbehavior" />
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>

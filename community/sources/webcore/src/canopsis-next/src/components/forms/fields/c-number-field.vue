@@ -1,23 +1,25 @@
-<template lang="pug">
-  v-text-field(
-    v-bind="$attrs",
-    v-field.number="value",
-    v-validate="rules",
-    :label="label",
-    :error-messages="errors.collect(name)",
-    :disabled="disabled",
-    :hide-details="hideDetails",
-    :name="name",
-    :min="min",
-    :max="max",
-    :step="step",
-    :loading="loading",
-    type="number",
-    @paste="$emit('paste', $event)",
+<template>
+  <v-text-field
+    v-bind="$attrs"
+    v-field.number="value"
+    v-validate="rules"
+    :label="label"
+    :error-messages="errors.collect(name)"
+    :disabled="disabled"
+    :hide-details="hideDetails"
+    :name="name"
+    :min="min"
+    :max="max"
+    :step="step"
+    :loading="loading"
+    type="number"
+    @paste="$emit('paste', $event)"
     @click="$emit('click', $event)"
-  )
-    template(#append="")
-      slot(name="append")
+  >
+    <template #append="">
+      <slot name="append" />
+    </template>
+  </v-text-field>
 </template>
 
 <script>

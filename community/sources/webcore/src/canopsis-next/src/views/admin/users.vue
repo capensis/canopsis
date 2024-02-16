@@ -1,30 +1,44 @@
-<template lang="pug">
-  div
-    c-page-header
-    v-card.ma-4.mt-0
-      v-tabs(v-model="activeTab", slider-color="primary", centered)
-        v-tab(
-          v-if="hasReadAnyUserAccess",
+<template>
+  <div>
+    <c-page-header />
+    <v-card class="ma-4 mt-0">
+      <v-tabs
+        v-model="activeTab"
+        slider-color="primary"
+        centered
+      >
+        <v-tab
+          v-if="hasReadAnyUserAccess"
           :href="`#${$constants.USERS_TABS.users}`"
-        ) {{ $tc('common.user', 2) }}
-        v-tab(
-          v-if="hasReadAnyShareTokenAccess",
+        >
+          {{ $tc('common.user', 2) }}
+        </v-tab>
+        <v-tab
+          v-if="hasReadAnyShareTokenAccess"
           :href="`#${$constants.USERS_TABS.shareTokens}`"
-        ) {{ $t('common.sharedTokens') }}
-
-      v-tabs-items(v-model="activeTab")
-        v-card-text
-          v-tab-item(:value="$constants.USERS_TABS.users")
-            users
-          v-tab-item(:value="$constants.USERS_TABS.shareTokens", lazy)
-            share-tokens
-
-    c-fab-btn(
-      :has-access="hasCreateAccess",
-      @refresh="refresh",
+        >
+          {{ $t('common.sharedTokens') }}
+        </v-tab>
+      </v-tabs>
+      <v-tabs-items v-model="activeTab">
+        <v-card-text>
+          <v-tab-item :value="$constants.USERS_TABS.users">
+            <users />
+          </v-tab-item>
+          <v-tab-item :value="$constants.USERS_TABS.shareTokens">
+            <share-tokens />
+          </v-tab-item>
+        </v-card-text>
+      </v-tabs-items>
+    </v-card>
+    <c-fab-btn
+      :has-access="hasCreateAccess"
+      @refresh="refresh"
       @create="create"
-    )
-      span {{ $t('modals.createUser.create.title') }}
+    >
+      <span>{{ $t('modals.createUser.create.title') }}</span>
+    </c-fab-btn>
+  </div>
 </template>
 
 <script>

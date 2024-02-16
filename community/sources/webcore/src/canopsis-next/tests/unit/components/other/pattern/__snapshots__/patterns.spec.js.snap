@@ -2,7 +2,7 @@
 
 exports[`patterns Renders \`patterns\` with patterns 1`] = `
 <patterns-list-stub
-  pagination="[object Object]"
+  options="[object Object]"
   patterns="[object Object]"
   totalitems="1"
 />
@@ -10,7 +10,7 @@ exports[`patterns Renders \`patterns\` with patterns 1`] = `
 
 exports[`patterns Renders \`patterns\` without patterns 1`] = `
 <patterns-list-stub
-  pagination="[object Object]"
+  options="[object Object]"
   patterns=""
   totalitems="0"
 />

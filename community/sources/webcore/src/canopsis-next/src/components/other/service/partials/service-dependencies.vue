@@ -1,51 +1,94 @@
-<template lang="pug">
-  c-treeview-data-table.service-dependencies(
-    :items="items",
-    :headers="headers",
-    :loading="hasActivePending",
-    :load-children="loadChildren",
+<template>
+  <c-treeview-data-table
+    class="service-dependencies"
+    :items="items"
+    :headers="headers"
+    :loading="hasActivePending"
+    :load-children="loadChildren"
     item-key="key"
-  )
-    template(#expand="{ item }")
-      v-tooltip(v-if="item.loadMore", right)
-        template(#activator="{ on }")
-          v-btn(
-            v-on="on",
-            :loading="pendingByIds[item.parentId]",
-            icon,
+  >
+    <template #expand="{ item }">
+      <v-tooltip
+        v-if="item.loadMore"
+        right
+      >
+        <template #activator="{ on }">
+          <v-btn
+            v-on="on"
+            :loading="pendingByIds[item.parentId]"
+            fab
+            small
+            depressed
             @click="loadMore(item.parentId)"
-          )
-            v-icon more_horiz
-        span {{ $t('common.loadMore') }}
-      v-btn(
-        v-else,
-        :color="getEntityColor(item.entity)",
-        icon,
-        dark,
+          >
+            <v-icon>more_horiz</v-icon>
+          </v-btn>
+        </template>
+        <span>{{ $t('common.loadMore') }}</span>
+      </v-tooltip>
+      <v-btn
+        v-else
+        :color="getEntityColor(item.entity)"
+        fab
+        small
+        depressed
+        dark
         @click="showTreeOfDependenciesModal(item)"
-      )
-        v-icon {{ getIconByEntity(item.entity) }}
-      v-tooltip(v-if="item.cycle", top)
-        template(#activator="{ on }")
-          v-icon(v-on="on", color="error", size="14") autorenew
-        span {{ $t('common.cycleDependency') }}
-    template(#expand-append="{ item }")
-      div.expand-append(v-if="includeRoot && isInRootIds(item._id)")
-        v-icon arrow_right_alt
-        v-chip.ma-0(
-          :color="getEntityColor(item.entity)",
+      >
+        <v-icon>{{ getIconByEntity(item.entity) }}</v-icon>
+      </v-btn>
+      <v-tooltip
+        v-if="item.cycle"
+        top
+      >
+        <template #activator="{ on }">
+          <v-icon
+            class="mx-1"
+            v-on="on"
+            color="error"
+            size="14"
+          >
+            autorenew
+          </v-icon>
+        </template>
+        <span>{{ $t('common.cycleDependency') }}</span>
+      </v-tooltip>
+    </template>
+    <template #expand-append="{ item }">
+      <div
+        class="expand-append"
+        v-if="includeRoot && isInRootIds(item._id)"
+      >
+        <v-icon>arrow_right_alt</v-icon>
+        <v-chip
+          class="ma-0"
+          :color="getEntityColor(item.entity)"
           text-color="white"
-        )
-          span.px-2.body-2.font-weight-bold {{ item.entity.impact_state }}
-    template(#items="{ item }")
-      tr
-        td(v-for="(header, index) in headers", :key="header.value")
-          c-no-events-icon(v-if="!index", :value="item.entity | get('idle_since')", top)
-          service-dependencies-entity-cell(
-            v-else-if="item.entity",
-            :item="item",
+        >
+          <span class="px-2 text-body-2 font-weight-bold">{{ item.entity.impact_state }}</span>
+        </v-chip>
+      </div>
+    </template>
+    <template #items="{ item }">
+      <tr>
+        <td
+          v-for="(header, index) in headers"
+          :key="header.value"
+        >
+          <c-no-events-icon
+            v-if="!index"
+            :value="item.entity | get('idle_since')"
+            top
+          />
+          <service-dependencies-entity-cell
+            v-else-if="item.entity"
+            :item="item"
             :column="header"
-           )
+          />
+        </td>
+      </tr>
+    </template>
+  </c-treeview-data-table>
 </template>
 
 <script>
@@ -136,6 +179,7 @@ export default {
 
         ...this.columns.map(column => ({
           ...column,
+          value: `entity.${column.value}`,
           isState: column.value?.endsWith(ENTITY_FIELDS.state),
         })),
       ];
