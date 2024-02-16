@@ -1,0 +1,57 @@
+stages:
+  - build_doc
+  - publish_doc
+
+build_doc:
+  stage: build_doc
+  tags: 
+    - executor-docker
+  image: python:alpine
+  variables:
+    MKDOCS_BRANCH: mkdocs
+    URL_REPO: https://${ACCESS_TOKEN_NAME}:${ACCESS_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git
+    GIT_DEPTH: 0
+  before_script:
+    - pip install -r community/sources/docs/requirements.txt
+    - apk add git
+    - git config user.name $ACCESS_TOKEN_NAME
+    - git config user.email ${ACCESS_TOKEN_NAME}@${CI_SERVER_HOST}
+  script:
+   - export LAST_VERSION=$(git tag --sort=-v:refname | head -1)
+   - cd community
+   - |
+     if [ $CI_COMMIT_TAG = $LAST_VERSION ]; then
+       mike deploy --rebase -f -r $URL_REPO -p -b $MKDOCS_BRANCH -u $CI_COMMIT_TAG latest;
+     else
+       mike deploy --rebase -f -r $URL_REPO -p -b $MKDOCS_BRANCH -u $CI_COMMIT_TAG;
+     fi
+   - mike set-default --rebase -f -r $URL_REPO -p -b $MKDOCS_BRANCH latest
+   - mkdir build
+   - git --work-tree=build/ checkout $MKDOCS_BRANCH -- .
+   - tar -czf mkdocs.tar.gz build/*
+  artifacts:
+    when: on_success
+    expire_in: "3 days"
+    paths:
+      - "community/mkdocs.tar.gz"
+  rules:
+    - if: $CI_COMMIT_TAG =~ '/^[0-9]+\.[0-9]+(\.[0-9]+)?$/' && $CI_COMMIT_TAG !~ '/(rc([0-9])?|preview([0-9])?)/' && $CI_PROJECT_NAME == "canopsis-pro"
+
+publish_doc:
+  stage: publish_doc
+  tags:
+  - executor-docker
+  image: alpine
+  before_script:
+    - 'command -v ssh-agent >/dev/null || ( apk add openssh-client )'
+    - apk add rsync
+    - eval $(ssh-agent -s)
+    - chmod 400 "$SSH_PRIVATE_KEY"
+    - ssh-add "$SSH_PRIVATE_KEY"
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+  script:
+    - rsync -e "ssh -o StrictHostKeychecking=no" -avz "community/mkdocs.tar.gz" $DOC_USER@$DOC_HOST:/opt/docs/
+    - ssh -o StrictHostKeychecking=no $DOC_USER@$DOC_HOST "sh /opt/push_doc-mike.sh"
+  rules:
+    - if: $CI_COMMIT_TAG =~ '/^[0-9]+\.[0-9]+(\.[0-9]+)?$/' && $CI_COMMIT_TAG !~ '/(rc([0-9])?|preview([0-9])?)/' && $CI_PROJECT_NAME == "canopsis-pro"
