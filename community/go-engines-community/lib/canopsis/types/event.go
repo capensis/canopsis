@@ -209,7 +209,6 @@ type Event struct {
 //
 //	"timestamp" is fill with time.Now()
 //	"event_type" is fill with EventTypeCheck
-//	if "entity" is not null, "impacts" and "depends" are ensured to be initialized
 func (e *Event) Format() {
 	//events can't be later or earlier than MaxEventTimestampVariation
 	now := datetime.NewCpsTime()
@@ -525,6 +524,10 @@ func (e *Event) GetStringField(f string) (string, bool) {
 		return e.EventType, true
 	case "source_type":
 		return e.SourceType, true
+	case "author":
+		return e.Author, true
+	case "initiator":
+		return e.Initiator, true
 	default:
 		return "", false
 	}

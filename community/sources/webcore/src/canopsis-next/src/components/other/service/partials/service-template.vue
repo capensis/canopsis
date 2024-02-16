@@ -38,6 +38,10 @@ export default {
       type: Number,
       required: false,
     },
+    actionsRequests: {
+      type: Array,
+      default: () => [],
+    },
   },
   computed: {
     templateContext() {
@@ -52,6 +56,9 @@ export default {
     registerHelper('entities', ({ hash }) => {
       const entityNameField = hash.name || 'entity.name';
 
+      /**
+       * For new properties and events you must put it for sanitizer
+       */
       return new Handlebars.SafeString(`
         <service-entities-list
           :service="service"
@@ -59,9 +66,11 @@ export default {
           :widget-parameters="widgetParameters"
           :options="options"
           :total-items="totalItems"
+          :actions-requests="actionsRequests"
           entity-name-field="${entityNameField}"
           @refresh="refreshEntities"
           @update:options="updateOptions"
+          @add:action="addAction"
         ></service-entities-list>
       `);
     });
@@ -70,12 +79,16 @@ export default {
     unregisterHelper('entities');
   },
   methods: {
+    addAction(action) {
+      this.$emit('add:action', action);
+    },
+
     updateOptions(pagination) {
       this.$emit('update:options', pagination);
     },
 
-    refreshEntities() {
-      this.$emit('refresh');
+    refreshEntities(immediate = false) {
+      this.$emit('refresh', immediate);
     },
   },
 };

@@ -1,12 +1,12 @@
 <template>
   <div>
     <v-layout
-      class="d-inline-flex"
+      class="d-inline-flex my-1"
       v-if="serviceEntities.length"
       align-center
     >
       <v-simple-checkbox
-        class="ml-4 pa-0"
+        class="ml-4 my-2"
         v-model="isAllSelected"
         :disabled="!entitiesWithActions.length"
       />
@@ -37,6 +37,8 @@
         :entity-name-field="entityNameField"
         :widget-parameters="widgetParameters"
         :selected="isEntitySelected(serviceEntity)"
+        :actions-requests="actionsRequests"
+        @add:action="addAction"
         @update:selected="updateSelected(serviceEntity, $event)"
         @remove:unavailable="removeEntityFromUnavailable(serviceEntity)"
         @refresh="$listeners.refresh"
@@ -98,6 +100,10 @@ export default {
     totalItems: {
       type: Number,
       required: false,
+    },
+    actionsRequests: {
+      type: Array,
+      default: () => [],
     },
   },
   data() {
@@ -165,6 +171,10 @@ export default {
 
     isEntitySelected(entity) {
       return this.selectedEntitiesIds.includes(entity._id);
+    },
+
+    addAction(action) {
+      this.$emit('add:action', action);
     },
 
     updatePage(page) {
