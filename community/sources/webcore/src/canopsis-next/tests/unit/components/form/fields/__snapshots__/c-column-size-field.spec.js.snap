@@ -358,6 +358,52 @@ exports[`c-column-size-field Renders \`c-column-size-field\` with required props
             </div>
           </label>
         </div>
+        <div
+          class="v-radio ma-0 theme--light"
+        >
+          <div
+            class="v-input--selection-controls__input"
+          >
+            <input
+              aria-checked="false"
+              name="size"
+              role="radio"
+              type="radio"
+              value="12"
+            />
+            <div
+              class="v-input--selection-controls__ripple"
+            />
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light"
+            >
+              radio_button_unchecked
+            </i>
+          </div>
+          <label
+            aria-hidden="true"
+            class="v-label theme--light"
+            style="left: 0px; position: relative;"
+          >
+            <div
+              class="v-responsive v-image my-2"
+            >
+              <transition-stub
+                mode="in-out"
+                name="fade-transition"
+              >
+                <div
+                  class="v-image__image v-image__image--preload v-image__image--cover"
+                  style="background-position: center center;"
+                />
+              </transition-stub>
+              <div
+                class="v-responsive__content"
+              />
+            </div>
+          </label>
+        </div>
       </div>
     </div>
   </div>

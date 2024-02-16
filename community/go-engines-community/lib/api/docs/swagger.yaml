@@ -6488,6 +6488,16 @@ paths:
         
         -  PERMISSIONS (for private files): `api_file:read`
       operationId: files-list
+      parameters:
+        - name: id
+          in: query
+          description: file id
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
       responses:
         200:
           description: OK
@@ -6558,7 +6568,7 @@ paths:
       tags:
         - auth
       summary: Get file access
-      description: Get file access.
+      description: Get file access. Sets cookie with file access token. Need to be called before downloading file when it's impossible to pass token in header.
       operationId: auth-get-file-access
       responses:
         204:
@@ -11542,7 +11552,7 @@ paths:
                       "label": "Dashboard",
                       "category": "Prod",
                       "icon_name": "build",
-                      "url": "https://prod.local?{{ .range Alarms }}resources[]={{ .Entity.ID }}&{{ end }}",
+                      "url": "https://prod.local?user={{ .User.Username }}&{{ .range Alarms }}resources[]={{ .Entity.ID }}&{{ end }}",
                       "action": "open",
                       "single": false
                     }
@@ -11576,7 +11586,7 @@ paths:
                 value: {
                   "name": "Link rule",
                   "enabled": true,
-                  "source_code": "function generate(alarms, data) {\n    var queryStr = \"\";\n    for (var alarm of alarms) {\n        queryStr += \"resources[]=\" + alarm.Entity.ID + \"&\";\n    }\n    return [{\"label\": \"Dashboard\", \"category\": \"Prod\", \"icon_name\": \"build\", \"url\": \"https://prod.local\" + queryStr, \"action\": \"copy\", \"single\": false}];\n}",
+                  "source_code": "function generate(alarms, user) {\n    var queryStr = \"user=\" + user.Username + \"&\";\n    for (var alarm of alarms) {\n        queryStr += \"resources[]=\" + alarm.Entity.ID + \"&\";\n    }\n    return [{\"label\": \"Dashboard\", \"category\": \"Prod\", \"icon_name\": \"build\", \"url\": \"https://prod.local\" + queryStr, \"action\": \"copy\", \"single\": false}];\n}",
                   "entity_pattern": [
                     [
                       {
@@ -11679,7 +11689,7 @@ paths:
                         "label": "Dashboard",
                         "category": "Prod",
                         "icon_name": "build",
-                        "url": "https://prod.local?{{ .range Alarms }}resources[]={{ .Entity.ID }}&{{ end }}",
+                        "url": "https://prod.local?user={{ .User.Username }}&{{ .range Alarms }}resources[]={{ .Entity.ID }}&{{ end }}",
                         "action": "open",
                         "single": true
                       }

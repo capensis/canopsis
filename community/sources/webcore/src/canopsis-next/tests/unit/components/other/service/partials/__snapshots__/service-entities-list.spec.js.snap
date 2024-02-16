@@ -41,12 +41,22 @@ exports[`service-entities-list Renders \`service-entities-list\` with custom pro
         </div>
       </div>
     </div>
-    <!---->
+    <transition-stub
+      mode="out-in"
+      name="fade-transition"
+    >
+      <span
+        class="font-italic"
+      >
+        You can choose entities to perform actions
+      </span>
+    </transition-stub>
   </div>
   <div
     class="mt-2"
   >
     <service-entity-stub
+      actionsrequests=""
       entity="[object Object]"
       entitynamefield="custom-entity-name"
       service-id="service-id"
@@ -57,6 +67,7 @@ exports[`service-entities-list Renders \`service-entities-list\` with custom pro
     class="mt-2"
   >
     <service-entity-stub
+      actionsrequests=""
       entity="[object Object]"
       entitynamefield="custom-entity-name"
       service-id="service-id"
@@ -115,16 +126,22 @@ exports[`service-entities-list Renders \`service-entities-list\` with selected e
         </div>
       </div>
     </div>
-    <service-entity-actions-stub
-      actions="[object Object],[object Object]"
-      assignedinstructions=""
-      entity="[object Object]"
-    />
+    <transition-stub
+      mode="out-in"
+      name="fade-transition"
+    >
+      <service-entity-actions-stub
+        actions="[object Object],[object Object]"
+        assignedinstructions=""
+        entity="[object Object]"
+      />
+    </transition-stub>
   </div>
   <div
     class="mt-2"
   >
     <service-entity-stub
+      actionsrequests=""
       entity="[object Object]"
       entitynamefield="custom-entity-name"
       selected="true"
@@ -136,6 +153,7 @@ exports[`service-entities-list Renders \`service-entities-list\` with selected e
     class="mt-2"
   >
     <service-entity-stub
+      actionsrequests=""
       entity="[object Object]"
       entitynamefield="custom-entity-name"
       service-id="service-id"
