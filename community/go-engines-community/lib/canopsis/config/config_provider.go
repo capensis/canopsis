@@ -119,6 +119,7 @@ type AlarmConfig struct {
 	AllowDoubleAck                    bool
 	ActivateAlarmAfterAutoRemediation bool
 	EnableArraySortingInEntityInfos   bool
+	CropStepsNumber                   int
 }
 
 type TimezoneConfig struct {
@@ -236,12 +237,21 @@ func NewAlarmConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseAlarmC
 	}
 
 	if cfg.Alarm.LongOutputLength <= 0 {
-		logger.Warn().Msg("LongOutputLength of alarm config section is not set or less than 1: the event's long_output won't be truncated")
+		logger.Warn().Msg("LongOutputLength of alarm config section is not set or less than 1: an event's long_output won't be truncated")
 	} else {
 		conf.LongOutputLength = cfg.Alarm.LongOutputLength
 		logger.Info().
 			Int("value", conf.LongOutputLength).
 			Msg("LongOutputLength of alarm config section is used")
+	}
+
+	if cfg.Alarm.CropStepsNumber <= 0 {
+		logger.Info().Msg("CropStepsNumber of alarm config section is not set or less than 1: alarm's steps won't be cropped")
+	} else {
+		conf.CropStepsNumber = cfg.Alarm.CropStepsNumber
+		logger.Info().
+			Int("value", conf.CropStepsNumber).
+			Msg("CropStepsNumber of alarm config section is used")
 	}
 
 	return &BaseAlarmConfigProvider{
@@ -278,7 +288,7 @@ func (p *BaseAlarmConfigProvider) Update(cfg CanopsisConf) {
 			p.logger.Warn().
 				Int("previous", p.conf.OutputLength).
 				Int("new", cfg.Alarm.OutputLength).
-				Msg("OutputLength of alarm config section is loaded, value is not set or less than 1: the event's output and long_output won't be truncated")
+				Msg("OutputLength of alarm config section is loaded, value is not set or less than 1: an event's output and long_output won't be truncated")
 		} else {
 			p.conf.OutputLength = cfg.Alarm.OutputLength
 			p.logger.Info().
@@ -316,6 +326,22 @@ func (p *BaseAlarmConfigProvider) Update(cfg CanopsisConf) {
 	b, ok = parseUpdatedBool(cfg.Alarm.EnableArraySortingInEntityInfos, p.conf.EnableArraySortingInEntityInfos, "EnableArraySortingInEntityInfos", sectionName, p.logger)
 	if ok {
 		p.conf.EnableArraySortingInEntityInfos = b
+	}
+
+	if cfg.Alarm.CropStepsNumber != p.conf.CropStepsNumber {
+		if cfg.Alarm.CropStepsNumber <= 0 {
+			p.conf.CropStepsNumber = 0
+			p.logger.Info().
+				Int("previous", p.conf.CropStepsNumber).
+				Int("new", cfg.Alarm.CropStepsNumber).
+				Msg("CropStepsNumber of alarm config section is loaded, value is not set or less than 1: alarm's steps won't be cropped")
+		} else {
+			p.conf.CropStepsNumber = cfg.Alarm.CropStepsNumber
+			p.logger.Info().
+				Int("previous", p.conf.CropStepsNumber).
+				Int("new", cfg.Alarm.CropStepsNumber).
+				Msg("CropStepsNumber of alarm config section is loaded")
+		}
 	}
 }
 
