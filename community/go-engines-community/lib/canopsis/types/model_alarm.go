@@ -57,6 +57,7 @@ const (
 	AlarmStepUncancel        = "uncancel"
 	AlarmStepComment         = "comment"
 	AlarmStepSnooze          = "snooze"
+	AlarmStepUnsnooze        = "unsnooze"
 	AlarmStepStateCounter    = "statecounter"
 	AlarmStepChangeState     = "changestate"
 	AlarmStepPbhEnter        = "pbhenter"
