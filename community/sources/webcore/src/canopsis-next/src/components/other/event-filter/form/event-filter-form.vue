@@ -21,7 +21,10 @@
       required
     />
     <v-layout justify-space-between>
-      <c-enabled-field v-field="form.enabled" />
+      <c-enabled-field
+        class="mr-3"
+        v-field="form.enabled"
+      />
       <c-priority-field v-field="form.priority" />
     </v-layout>
     <c-information-block :title="$t('eventFilter.duringPeriod')">
@@ -56,6 +59,7 @@
           v-if="isEnrichmentType"
           v-field="form"
           :template-variables="actionsDataVariables"
+          :set-tags-items="setTagsItems"
         />
         <event-filter-change-entity-form
           v-else-if="isChangeEntityType"
@@ -73,6 +77,7 @@ import { EXTERNAL_DATA_DEFAULT_CONDITION_VALUES, EXTERNAL_DATA_PAYLOADS_VARIABLE
 import {
   isEnrichmentEventFilterRuleType,
   isChangeEntityEventFilterRuleType,
+  getSetTagsItemsFromPattern,
 } from '@/helpers/entities/event-filter/rule/entity';
 
 import PbehaviorRecurrenceRuleField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-recurrence-rule-field.vue';
@@ -123,6 +128,10 @@ export default {
         value: EXTERNAL_DATA_PAYLOADS_VARIABLES.regexp,
         text: this.$t('common.regexp'),
       }];
+    },
+
+    setTagsItems() {
+      return getSetTagsItemsFromPattern(this.form.patterns.event_pattern);
     },
 
     externalDataVariables() {
