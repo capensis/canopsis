@@ -530,6 +530,8 @@ export const ROOT_CAUSE_DIAGRAM_OPTIONS = {
   nodeSize: ROOT_CAUSE_DIAGRAM_NODE_SIZE,
 };
 
+export const ROOT_CAUSE_DIAGRAM_TOOLTIP_OFFSET = 5;
+
 export const ROOT_CAUSE_DIAGRAM_LAYOUT_OPTIONS = {
   name: 'dagre',
   animate: 'end',
