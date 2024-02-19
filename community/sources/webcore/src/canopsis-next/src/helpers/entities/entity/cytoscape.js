@@ -14,7 +14,7 @@ import { getEntityColor } from './color';
  * @param {string} name
  * @return {HTMLElement}
  */
-const getIconElement = (name) => {
+export const getIconElement = (name) => {
   const badgeIconEl = document.createElement('i');
   badgeIconEl.classList.add(
     'v-icon',
@@ -37,7 +37,7 @@ const getIconElement = (name) => {
  *
  * @return {HTMLSpanElement}
  */
-const getBadgeElement = () => {
+export const getBadgeElement = () => {
   const badgeEl = document.createElement('span');
   badgeEl.classList.add(
     'v-badge__badge',
@@ -121,10 +121,10 @@ export const getProgressElement = () => {
  * Create entity node button html
  *
  * @property {Object} node
- * @return {string}
+ * @return {HTMLDivElement}
  */
-export const getEntityNodeElementHTML = (node) => {
-  const { entity, pending, isEvents, opened, root } = node;
+export const getEntityNodeElement = (node) => {
+  const { entity, isEvents } = node;
 
   const nodeSize = isEvents ? ROOT_CAUSE_DIAGRAM_EVENTS_NODE_SIZE : ROOT_CAUSE_DIAGRAM_NODE_SIZE;
 
@@ -137,26 +137,16 @@ export const getEntityNodeElementHTML = (node) => {
   }
 
   const nodeEl = document.createElement('div');
-  nodeEl.appendChild(getStateSettingsNodeIconElement(node));
-  nodeEl.appendChild(nodeLabelEl);
   nodeEl.classList.add('v-btn__content', 'position-relative', 'border-radius-rounded');
   nodeEl.style.width = `${nodeSize}px`;
   nodeEl.style.height = `${nodeSize}px`;
   nodeEl.style.justifyContent = 'center';
   nodeEl.style.background = getEntityColor(entity);
 
-  if (pending || (!root && entity.depends_count > 0)) {
-    const badge = getBadgeElement();
-    badge.dataset.id = entity._id;
+  nodeEl.appendChild(getStateSettingsNodeIconElement(node));
+  nodeEl.appendChild(nodeLabelEl);
 
-    badge.appendChild(
-      pending ? getProgressElement() : getIconElement(opened ? 'remove' : 'add'),
-    );
-
-    nodeEl.appendChild(badge);
-  }
-
-  return nodeEl.outerHTML;
+  return nodeEl;
 };
 
 /**

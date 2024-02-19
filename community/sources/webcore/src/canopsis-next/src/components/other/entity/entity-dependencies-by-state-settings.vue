@@ -17,24 +17,30 @@
 
 <script>
 import { omit } from 'lodash';
+import { createNamespacedHelpers } from 'vuex';
 
 import { PAGINATION_LIMIT, VUETIFY_ANIMATION_DELAY } from '@/config';
 import {
   ROOT_CAUSE_DIAGRAM_OPTIONS,
-  STATE_SETTING_METHODS,
   ROOT_CAUSE_DIAGRAM_LAYOUT_OPTIONS,
   JUNIT_STATE_SETTING_METHODS,
   ROOT_CAUSE_DIAGRAM_TOOLTIP_OFFSET,
 } from '@/constants';
 
 import { normalizeTreeOfDependenciesMapEntities } from '@/helpers/entities/map/list';
-import { isEntityEventsStateSettings } from '@/helpers/entities/entity/entity';
-import { convertSortToRequest } from '@/helpers/entities/shared/query';
-import { getButtonHTML, getEntityNodeElementHTML } from '@/helpers/entities/entity/cytoscape';
+import {
+  getBadgeElement,
+  getButtonHTML,
+  getEntityNodeElement,
+  getIconElement,
+  getProgressElement,
+} from '@/helpers/entities/entity/cytoscape';
 
 import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
 
 import NetworkGraph from '@/components/common/chart/network-graph.vue';
+
+const { mapActions: mapEntityActions } = createNamespacedHelpers('entity');
 
 export default {
   components: { NetworkGraph },
@@ -53,21 +59,14 @@ export default {
     return {
       ready: false,
       pending: true,
+      stateSetting: {},
       metaByEntityId: {},
       entitiesById: normalizeTreeOfDependenciesMapEntities([{ entity: this.entity, pinned_entities: [] }]),
     };
   },
   computed: {
-    stateSetting() {
-      return this.entity?.stateSetting;
-    },
-
     isEventsStateSettings() {
-      return isEntityEventsStateSettings(this.entity);
-    },
-
-    isInheritedMethod() {
-      return this.stateSetting?.method === STATE_SETTING_METHODS.inherited;
+      return !this.stateSetting?.title;
     },
 
     entitiesElements() {
@@ -86,7 +85,7 @@ export default {
         },
       ];
 
-      if (isEntityEventsStateSettings(entity)) {
+      if (this.isEventsStateSettings) {
         elements.push(...this.getEventsNodeElementByEntity(entity));
 
         return elements;
@@ -139,7 +138,7 @@ export default {
           query: 'node',
           valign: 'center',
           halign: 'center',
-          tpl: getEntityNodeElementHTML,
+          tpl: this.getNodeContent,
         },
         {
           query: 'node[showMore]',
@@ -175,10 +174,6 @@ export default {
             return '';
           }
 
-          if (isEntityEventsStateSettings(entity)) {
-            return this.$tc('common.event', 2);
-          }
-
           return entity.state_setting?.title
             || this.$t(`stateSetting.junit.methods.${JUNIT_STATE_SETTING_METHODS.worst}`);
         },
@@ -198,6 +193,8 @@ export default {
   async mounted() {
     this.pending = true;
     this.$refs.networkGraph.$cy.on('tap', this.tapHandler);
+
+    await this.fetchEntityStateSetting();
 
     /**
      * @desc: We are waiting modal showing animation
@@ -219,6 +216,18 @@ export default {
     this.$refs.networkGraph.$cy.off('tap', this.tapHandler);
   },
   methods: {
+    ...mapEntityActions({
+      fetchEntityStateSettingWithoutStore: 'fetchStateSettingWithoutStore',
+    }),
+
+    async fetchEntityStateSetting() {
+      try {
+        this.stateSetting = await this.fetchEntityStateSettingWithoutStore({ params: { _id: this.entity._id } });
+      } catch (err) {
+        console.error(err);
+      }
+    },
+
     getEventsNodeElementByEntity(entity) {
       const eventsNodeId = `${entity._id}_events-node`;
 
@@ -279,7 +288,7 @@ export default {
           },
         );
 
-        if (isEntityEventsStateSettings(child)) {
+        if (false) {
           acc.push(...this.getEventsNodeElementByEntity(child));
         }
 
@@ -291,6 +300,28 @@ export default {
       );
 
       return dependenciesNodes;
+    },
+
+    getNodeContent(node) {
+      const { entity, pending, opened, root } = node;
+
+      const element = getEntityNodeElement(node);
+
+      /**
+       * TODO: Should be changed on state settings deps count
+       */
+      if (pending || (!root && entity.depends_count > 0)) {
+        const badge = getBadgeElement();
+        badge.dataset.id = entity._id;
+
+        badge.appendChild(
+          pending ? getProgressElement() : getIconElement(opened ? 'remove' : 'add'),
+        );
+
+        element.appendChild(badge);
+      }
+
+      return element.outerHTML;
     },
 
     getShowMoreButtonContent(node) {
@@ -359,27 +390,11 @@ export default {
 
         this.$refs.networkGraph.$cy.layout({
           ...ROOT_CAUSE_DIAGRAM_LAYOUT_OPTIONS,
+          animate: false,
         }).run();
       } catch (err) {
         console.warn(err);
       }
-    },
-
-    getQuery({ page }) {
-      const query = {
-        page,
-        limit: PAGINATION_LIMIT,
-        with_flags: true,
-        with_state_setting: true,
-
-        ...convertSortToRequest(['last_update_date', 'state']),
-      };
-
-      if (this.isInheritedMethod) {
-        query.entity_pattern = JSON.stringify(this.stateSetting.inherited_entity_pattern);
-      }
-
-      return query;
     },
 
     /**
@@ -399,7 +414,13 @@ export default {
 
       const { data, meta } = await this.fetchServiceDependenciesWithoutStore({
         id,
-        params: this.getQuery({ page: newPage }),
+        params: {
+          page: newPage,
+          limit: PAGINATION_LIMIT,
+          with_flags: true,
+          with_state_setting: true,
+          define_state: true,
+        },
       });
 
       target.data({

@@ -63,17 +63,9 @@
 import { isUndefined } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
-import {
-  ENTITIES_STATES,
-  JUNIT_STATE_SETTING_METHODS,
-  MODALS,
-  STATE_SETTING_METHODS,
-  STATE_SETTING_THRESHOLDS_METHODS,
-} from '@/constants';
+import { ENTITIES_STATES, MODALS, STATE_SETTING_METHODS, STATE_SETTING_THRESHOLDS_METHODS } from '@/constants';
 
-import { isEntityEventsStateSettings } from '@/helpers/entities/entity/entity';
-
-const { mapActions } = createNamespacedHelpers('entity');
+const { mapActions: mapEntityActions } = createNamespacedHelpers('entity');
 
 export default {
   props: {
@@ -89,10 +81,6 @@ export default {
     };
   },
   computed: {
-    isEventsStateSettings() {
-      return isEntityEventsStateSettings(this.entity);
-    },
-
     isInheritedMethod() {
       return this.stateSetting?.method === STATE_SETTING_METHODS.inherited;
     },
@@ -138,11 +126,7 @@ export default {
     },
 
     stateMethodName() {
-      if (this.isEventsStateSettings) {
-        return this.$tc('common.event', 2);
-      }
-
-      return this.stateSetting?.title || this.$t(`stateSetting.junit.methods.${JUNIT_STATE_SETTING_METHODS.worst}`);
+      return this.stateSetting?.title || this.$tc('common.event', 2);
     },
 
     stateMethodSummaryText() {
@@ -206,7 +190,7 @@ export default {
     this.fetchStateSetting({ id: this.entity._id });
   },
   methods: {
-    ...mapActions({
+    ...mapEntityActions({
       fetchEntityStateSettingWithoutStore: 'fetchStateSettingWithoutStore',
     }),
 
