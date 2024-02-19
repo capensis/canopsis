@@ -1749,8 +1749,6 @@ definitions:
         type: string
       depends_count:
         type: integer
-      depends_state:
-        type: string
       inherited_entity_pattern:
         items:
           items:
@@ -1759,10 +1757,12 @@ definitions:
         type: array
       method:
         type: string
-      state_depends_count:
-        type: integer
       state_thresholds:
         $ref: '#/definitions/statesettings.StateThresholds'
+      threshold_state:
+        type: string
+      threshold_state_depends_count:
+        type: integer
       title:
         type: string
     type: object
@@ -1959,6 +1959,94 @@ definitions:
     - output_template
     - sli_avail_state
     type: object
+  entityservice.ContextGraphEntity:
+    properties:
+      _id:
+        type: string
+      ack:
+        $ref: '#/definitions/common.AlarmStep'
+      alarm_last_update_date:
+        type: integer
+      category:
+        $ref: '#/definitions/entity.Category'
+      component:
+        type: string
+      component_infos:
+        $ref: '#/definitions/entity.Infos'
+      connector:
+        type: string
+      connector_type:
+        description: ConnectorType contains a part before "/" of connector id.
+        type: string
+      coordinates:
+        $ref: '#/definitions/types.Coordinates'
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
+        type: string
+      deletable:
+        description: Flags
+        type: boolean
+      depends_count:
+        description: DependsCount contains only service's dependencies
+        type: integer
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      filtered_perf_data:
+        items:
+          type: string
+        type: array
+      idle_since:
+        type: integer
+      impact_level:
+        type: integer
+      impact_state:
+        type: integer
+      impacts_count:
+        description: ImpactsCount contains only services
+        type: integer
+      import_source:
+        type: string
+      imported:
+        type: integer
+      infos:
+        $ref: '#/definitions/entity.Infos'
+      ko_events:
+        type: integer
+      last_event_date:
+        type: integer
+      last_pbehavior_date:
+        type: integer
+      links:
+        $ref: '#/definitions/link.LinksByCategory'
+        description: Links
+      name:
+        type: string
+      ok_events:
+        description: Stats
+        type: integer
+      pbehavior_info:
+        $ref: '#/definitions/entity.PbehaviorInfo'
+      snooze:
+        $ref: '#/definitions/common.AlarmStep'
+      state:
+        description: Alarm fields
+        type: integer
+      state_depends_count:
+        type: integer
+      state_setting:
+        $ref: '#/definitions/entityservice.StateSettingResponse'
+      status:
+        type: integer
+      type:
+        type: string
+    type: object
   entityservice.CreateRequest:
     properties:
       _id:
@@ -2088,6 +2176,15 @@ definitions:
       status:
         type: integer
       type:
+        type: string
+    type: object
+  entityservice.StateSettingResponse:
+    properties:
+      _id:
+        type: string
+      method:
+        type: string
+      title:
         type: string
     type: object
   entityservice.UpdateRequest:
