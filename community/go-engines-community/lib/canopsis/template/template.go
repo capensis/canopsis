@@ -3,6 +3,7 @@ package template
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"reflect"
@@ -18,6 +19,9 @@ import (
 )
 
 const EnvVar = "Env"
+
+var ErrFailedConvertToFloat = errors.New("failed convert to float64")
+var ErrDivisionByZero = errors.New("division by zero")
 
 type ParsedTemplate struct {
 	Text string
@@ -288,6 +292,116 @@ func GetFunctions(appLocation *time.Location) template.FuncMap {
 
 			return ""
 		},
+		"strLeft": func(str string, n int) string {
+			runeStr := []rune(str)
+
+			if n < 1 {
+				return ""
+			}
+
+			if n >= len(runeStr) {
+				return str
+			}
+
+			return string(runeStr[:n])
+		},
+		"strRight": func(str string, n int) string {
+			runeStr := []rune(str)
+
+			if n < 1 {
+				return ""
+			}
+
+			if n >= len(runeStr) {
+				return str
+			}
+
+			return string(runeStr[len(runeStr)-n:])
+		},
+		"substr": func(str string, start, n int) string {
+			runeStr := []rune(str)
+
+			if start < 0 || start >= len(runeStr) || n < 1 {
+				return ""
+			}
+
+			end := start + n
+
+			if end >= len(runeStr) {
+				return string(runeStr[start:])
+			}
+
+			return string(runeStr[start:end])
+		},
+		"add": func(a, b any) (float64, error) {
+			return wrapFloatArithmeticFunc(a, b, func(x, y float64) (float64, error) {
+				return x + y, nil
+			})
+		},
+		"sub": func(a, b any) (float64, error) {
+			return wrapFloatArithmeticFunc(a, b, func(x, y float64) (float64, error) {
+				return x - y, nil
+			})
+		},
+		"mult": func(a, b any) (float64, error) {
+			return wrapFloatArithmeticFunc(a, b, func(x, y float64) (float64, error) {
+				return x * y, nil
+			})
+		},
+		"div": func(a, b any) (float64, error) {
+			return wrapFloatArithmeticFunc(a, b, func(x, y float64) (float64, error) {
+				if y == 0 {
+					return 0, ErrDivisionByZero
+				}
+
+				return x / y, nil
+			})
+		},
+	}
+}
+
+func wrapFloatArithmeticFunc(a, b any, f func(x, y float64) (float64, error)) (float64, error) {
+	aFloat, ok := toFloat64(a)
+	if !ok {
+		return 0, ErrFailedConvertToFloat
+	}
+
+	bFloat, ok := toFloat64(b)
+	if !ok {
+		return 0, ErrFailedConvertToFloat
+	}
+
+	return f(aFloat, bFloat)
+}
+
+func toFloat64(v any) (float64, bool) {
+	switch val := v.(type) {
+	case float32:
+		return float64(val), true
+	case float64:
+		return val, true
+	case int:
+		return float64(val), true
+	case int8:
+		return float64(val), true
+	case int16:
+		return float64(val), true
+	case int32:
+		return float64(val), true
+	case int64:
+		return float64(val), true
+	case uint:
+		return float64(val), true
+	case uint8:
+		return float64(val), true
+	case uint16:
+		return float64(val), true
+	case uint32:
+		return float64(val), true
+	case uint64:
+		return float64(val), true
+	default:
+		return 0, false
 	}
 }
 
