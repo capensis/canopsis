@@ -142,12 +142,12 @@ type AlarmWithEntity struct {
 
 // CropSteps calls Crop() on Alarm.Value.Steps with alarm parameters.
 // returns true if the alarm was modified.
-func (a *Alarm) CropSteps() bool {
+func (a *Alarm) CropSteps(cropNum int) bool {
 	updated := false
 	if a.Value.Status != nil {
 		croppedSteps, cropUpdate := a.Value.Steps.Crop(
 			a.Value.Status,
-			AlarmStepCropMinStates,
+			cropNum,
 		)
 		// Updates the alarm steps
 		a.Value.Steps = croppedSteps
