@@ -257,6 +257,8 @@ AllowDoubleAck = false
 ActivateAlarmAfterAutoRemediation = false
 # EnableArraySortingInEntityInfos enables sorting string array infos before saving to an entity.
 EnableArraySortingInEntityInfos = true
+# CropStepsNumber defines how many sequential stateinc and statedec steps after the current status should be replaced with a statecounter step.
+CropStepsNumber = 0
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.timezone]

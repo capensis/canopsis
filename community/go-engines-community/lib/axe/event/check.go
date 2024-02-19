@@ -230,7 +230,7 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 		alarmChange.Type = types.AlarmChangeTypeCreateAndPbhEnter
 	}
 
-	if p.alarmConfigProvider.Get().ActivateAlarmAfterAutoRemediation {
+	if alarmConfig.ActivateAlarmAfterAutoRemediation {
 		matched, err := p.autoInstructionMatcher.Match(alarmChange.GetTriggers(), types.AlarmWithEntity{Alarm: alarm, Entity: entity})
 		if err != nil {
 			return result, err
@@ -379,7 +379,8 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 	}
 
 	// Update cropped steps if needed
-	if newAlarm.CropSteps() {
+	cropStepsNumber := p.alarmConfigProvider.Get().CropStepsNumber
+	if cropStepsNumber > 0 && newAlarm.CropSteps(cropStepsNumber) {
 		_, err = p.alarmCollection.UpdateOne(ctx, bson.M{"_id": newAlarm.ID, "v.resolved": nil}, bson.M{
 			"$set": bson.M{
 				"v.steps": newAlarm.Value.Steps,
@@ -391,14 +392,14 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 	}
 
 	if entity.IdleSince != nil || entity.LastIdleRuleApply != "" {
-		unset := bson.M{"idle_since": ""}
+		unsetIdleFields := bson.M{"idle_since": ""}
 		alarmLastUpdateRule := fmt.Sprintf("%s_%s", idlerule.RuleTypeAlarm, idlerule.RuleAlarmConditionLastUpdate)
 		if entity.LastIdleRuleApply != alarmLastUpdateRule ||
 			entity.LastIdleRuleApply == alarmLastUpdateRule && alarmChange.Type != types.AlarmChangeTypeNone {
-			unset["last_idle_rule_apply"] = ""
+			unsetIdleFields["last_idle_rule_apply"] = ""
 		}
 
-		result.Entity, err = updateEntityByID(ctx, entity.ID, bson.M{"$unset": unset}, p.entityCollection)
+		result.Entity, err = updateEntityByID(ctx, entity.ID, bson.M{"$unset": unsetIdleFields}, p.entityCollection)
 		if err != nil {
 			return result, err
 		}
