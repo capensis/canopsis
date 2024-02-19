@@ -5,6 +5,7 @@
       <network-graph
         ref="networkGraph"
         :options="options"
+        :tooltip-options="tooltipOptions"
         :node-html-label-options="nodeHtmlLabelsOptions"
         :class="{ 'entity-dependencies-by-state-settings-network-graph--ready': ready }"
         class="entity-dependencies-by-state-settings-network-graph fill-height black--text"
@@ -18,7 +19,13 @@
 import { omit } from 'lodash';
 
 import { PAGINATION_LIMIT, VUETIFY_ANIMATION_DELAY } from '@/config';
-import { ROOT_CAUSE_DIAGRAM_OPTIONS, STATE_SETTING_METHODS, ROOT_CAUSE_DIAGRAM_LAYOUT_OPTIONS } from '@/constants';
+import {
+  ROOT_CAUSE_DIAGRAM_OPTIONS,
+  STATE_SETTING_METHODS,
+  ROOT_CAUSE_DIAGRAM_LAYOUT_OPTIONS,
+  JUNIT_STATE_SETTING_METHODS,
+  ROOT_CAUSE_DIAGRAM_TOOLTIP_OFFSET,
+} from '@/constants';
 
 import { normalizeTreeOfDependenciesMapEntities } from '@/helpers/entities/map/list';
 import { isEntityEventsStateSettings } from '@/helpers/entities/entity/entity';
@@ -127,18 +134,6 @@ export default {
     },
 
     nodeHtmlLabelsOptions() {
-      const getShowMoreContent = (node) => {
-        const { entity } = node;
-        const meta = this.metaByEntityId[entity._id] ?? {};
-
-        const fetchedEntities = meta.page * meta.per_page;
-
-        /**
-         * TODO: Should be replaced on translation
-         */
-        return getButtonHTML(`Show more (${fetchedEntities} of ${meta.total_count})`);
-      };
-
       return [
         {
           query: 'node',
@@ -150,7 +145,7 @@ export default {
           query: 'node[showMore]',
           valign: 'center',
           halign: 'center',
-          tpl: getShowMoreContent,
+          tpl: this.getShowMoreButtonContent,
         },
       ];
     },
@@ -170,6 +165,24 @@ export default {
       }
 
       return options;
+    },
+
+    tooltipOptions() {
+      return {
+        offsetY: (ROOT_CAUSE_DIAGRAM_OPTIONS.nodeSize / 2) + ROOT_CAUSE_DIAGRAM_TOOLTIP_OFFSET,
+        getContent: ({ isEvents, entity, root }) => {
+          if (isEvents || root) {
+            return '';
+          }
+
+          if (isEntityEventsStateSettings(entity)) {
+            return this.$tc('common.event', 2);
+          }
+
+          return entity.state_setting?.title
+            || this.$t(`stateSetting.junit.methods.${JUNIT_STATE_SETTING_METHODS.worst}`);
+        },
+      };
     },
   },
   watch: {
@@ -280,6 +293,17 @@ export default {
       return dependenciesNodes;
     },
 
+    getShowMoreButtonContent(node) {
+      const { entity } = node;
+      const meta = this.metaByEntityId[entity._id] ?? {};
+
+      const fetchedEntities = meta.page * meta.per_page;
+
+      return getButtonHTML(
+        this.$t('common.showMore', { current: fetchedEntities, total: meta.total_count }),
+      );
+    },
+
     getShowMoreElements(entity) {
       const meta = this.metaByEntityId[entity._id];
 
@@ -346,16 +370,12 @@ export default {
         page,
         limit: PAGINATION_LIMIT,
         with_flags: true,
-        /**
-         * TODO: Api doesn't support multi sort
-         */
+        with_state_setting: true,
+
         ...convertSortToRequest(['last_update_date', 'state']),
       };
 
       if (this.isInheritedMethod) {
-        /**
-         * TODO: Api doesn't support pattern but we need it (Case 3)
-         */
         query.entity_pattern = JSON.stringify(this.stateSetting.inherited_entity_pattern);
       }
 

@@ -288,6 +288,7 @@ export default {
   archive: 'Archive',
   convertToCustomColumn: 'Convert column to custom',
   event: 'Event | Events',
+  showMore: 'Show more ({current} of {total})',
   variableTypes: {
     string: 'String',
     number: 'Number',
