@@ -186,6 +186,296 @@ func TestFunctions(t *testing.T) {
 				ExpectedRes: "",
 			},
 		},
+		"strLeft": {
+			{
+				Tpl: `{{strLeft .String 5 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "Hello",
+			},
+			{
+				Tpl: `{{strLeft .String 0 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "",
+			},
+			{
+				Tpl: `{{strLeft .String 13 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "Hello, world!",
+			},
+			{
+				Tpl: `{{strLeft .String 100000 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "Hello, world!",
+			},
+			{
+				Tpl: `{{strLeft .String -100000 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "",
+			},
+			{
+				Tpl: `{{strLeft .String 8 }}`,
+				TplData: map[string]any{
+					"String": "Hello, 世界",
+				},
+				ExpectedRes: "Hello, 世",
+			},
+		},
+		"strRight": {
+			{
+				Tpl: `{{strRight .String 6 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "world!",
+			},
+			{
+				Tpl: `{{strRight .String 0 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "",
+			},
+			{
+				Tpl: `{{strRight .String 13 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "Hello, world!",
+			},
+			{
+				Tpl: `{{strRight .String 100000 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "Hello, world!",
+			},
+			{
+				Tpl: `{{strRight .String -100000 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "",
+			},
+			{
+				Tpl: `{{strRight .String 2 }}`,
+				TplData: map[string]any{
+					"String": "Hello, 世界",
+				},
+				ExpectedRes: "世界",
+			},
+		},
+		"substr": {
+			{
+				Tpl: `{{substr .String 0 5 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "Hello",
+			},
+			{
+				Tpl: `{{substr .String 7 5 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "world",
+			},
+			{
+				Tpl: `{{substr .String 7 1000000 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "world!",
+			},
+			{
+				Tpl: `{{substr .String 0 1000000 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "Hello, world!",
+			},
+			{
+				Tpl: `{{substr .String -1 1000000 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "",
+			},
+			{
+				Tpl: `{{substr .String 5 0 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "",
+			},
+			{
+				Tpl: `{{substr .String 0 -1000000 }}`,
+				TplData: map[string]any{
+					"String": "Hello, world!",
+				},
+				ExpectedRes: "",
+			},
+			{
+				Tpl: `{{substr .String 7 1 }}`,
+				TplData: map[string]any{
+					"String": "Hello, 世界",
+				},
+				ExpectedRes: "世",
+			},
+		},
+		"add": {
+			{
+				Tpl: `{{ add .A .B }}`,
+				TplData: map[string]any{
+					"A": 2,
+					"B": 2,
+				},
+				ExpectedRes: "4",
+			},
+			{
+				Tpl: `{{ add .A .B }}`,
+				TplData: map[string]any{
+					"A": 2.5,
+					"B": 2.5,
+				},
+				ExpectedRes: "5",
+			},
+			{
+				Tpl: `{{ add .A .B }}`,
+				TplData: map[string]any{
+					"A": 2,
+					"B": 2.5,
+				},
+				ExpectedRes: "4.5",
+			},
+			{
+				Tpl: `{{ add .A .B }}`,
+				TplData: map[string]any{
+					"A": "2.5",
+					"B": 2.5,
+				},
+				ExpectedErr: ErrFailedConvertToFloat,
+			},
+		},
+		"sub": {
+			{
+				Tpl: `{{ sub .A .B }}`,
+				TplData: map[string]any{
+					"A": 4,
+					"B": 2,
+				},
+				ExpectedRes: "2",
+			},
+			{
+				Tpl: `{{ sub .A .B }}`,
+				TplData: map[string]any{
+					"A": 5.5,
+					"B": 2.5,
+				},
+				ExpectedRes: "3",
+			},
+			{
+				Tpl: `{{ sub .A .B }}`,
+				TplData: map[string]any{
+					"A": 5,
+					"B": 2.5,
+				},
+				ExpectedRes: "2.5",
+			},
+			{
+				Tpl: `{{ sub .A .B }}`,
+				TplData: map[string]any{
+					"A": "5",
+					"B": 2.5,
+				},
+				ExpectedErr: ErrFailedConvertToFloat,
+			},
+		},
+		"mult": {
+			{
+				Tpl: `{{ mult .A .B }}`,
+				TplData: map[string]any{
+					"A": 2,
+					"B": 2,
+				},
+				ExpectedRes: "4",
+			},
+			{
+				Tpl: `{{ mult .A .B }}`,
+				TplData: map[string]any{
+					"A": 2.5,
+					"B": 2.5,
+				},
+				ExpectedRes: "6.25",
+			},
+			{
+				Tpl: `{{ mult .A .B }}`,
+				TplData: map[string]any{
+					"A": 3,
+					"B": 2.5,
+				},
+				ExpectedRes: "7.5",
+			},
+			{
+				Tpl: `{{ mult .A .B }}`,
+				TplData: map[string]any{
+					"A": "2.5",
+					"B": 2.5,
+				},
+				ExpectedErr: ErrFailedConvertToFloat,
+			},
+		},
+		"div": {
+			{
+				Tpl: `{{ div .A .B }}`,
+				TplData: map[string]any{
+					"A": 4,
+					"B": 2,
+				},
+				ExpectedRes: "2",
+			},
+			{
+				Tpl: `{{ div .A .B }}`,
+				TplData: map[string]any{
+					"A": 6.25,
+					"B": 2.5,
+				},
+				ExpectedRes: "2.5",
+			},
+			{
+				Tpl: `{{ div .A .B }}`,
+				TplData: map[string]any{
+					"A": 6,
+					"B": 1.5,
+				},
+				ExpectedRes: "4",
+			},
+			{
+				Tpl: `{{ div .A .B }}`,
+				TplData: map[string]any{
+					"A": 6.25,
+					"B": 0,
+				},
+				ExpectedErr: ErrDivisionByZero,
+			},
+			{
+				Tpl: `{{ div .A .B }}`,
+				TplData: map[string]any{
+					"A": "6.25",
+					"B": 2.5,
+				},
+				ExpectedErr: ErrFailedConvertToFloat,
+			},
+		},
 	}
 
 	for name, v := range dataSets {
