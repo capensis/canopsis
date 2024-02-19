@@ -5499,7 +5499,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: 'schemas_swagger.yaml#/definitions/entity.Entity'
+                          $ref: 'schemas_swagger.yaml#/definitions/entityservice.ContextGraphEntity'
         404:
           description: Not Found
           content:
@@ -5551,7 +5551,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: 'schemas_swagger.yaml#/definitions/entity.Entity'
+                          $ref: 'schemas_swagger.yaml#/definitions/entityservice.ContextGraphEntity'
         404:
           description: Not Found
           content:

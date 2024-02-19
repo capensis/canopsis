@@ -15,6 +15,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -126,14 +127,15 @@ func (q *MongoQueryBuilder) CreateTreeOfDepsAggregationPipeline(
 	sortRequest SortRequest,
 	category, search string,
 	withFlags bool,
+	withStateDependsCount bool,
 	now datetime.CpsTime,
 ) []bson.M {
 	q.clear(now)
-
 	and := []bson.M{match}
 	if category != "" {
 		and = append(and, bson.M{"category": bson.M{"$eq": category}})
 	}
+
 	if search != "" {
 		and = append(and, common.GetSearchQuery(search, q.defaultSearchByFields))
 	}
@@ -144,6 +146,10 @@ func (q *MongoQueryBuilder) CreateTreeOfDepsAggregationPipeline(
 	if withFlags {
 		q.lookups = append(q.lookups, lookupWithKey{key: "depends_count", pipeline: dbquery.GetDependsCountPipeline()})
 		q.lookups = append(q.lookups, lookupWithKey{key: "impacts_count", pipeline: dbquery.GetImpactsCountPipeline()})
+		if withStateDependsCount {
+			q.lookups = append(q.lookups, lookupWithKey{key: "state_setting", pipeline: dbquery.GetStateSettingPipeline()})
+			q.lookups = append(q.lookups, lookupWithKey{key: "state_depends_count", pipeline: getStateDependsCountPipeline()})
+		}
 	}
 
 	beforeLimit, afterLimit := q.createAggregationPipeline()
@@ -564,4 +570,48 @@ func getDurationField(now datetime.CpsTime) bson.M {
 			"$alarm.v.creation_date",
 		}},
 	}}
+}
+
+func getStateDependsCountPipeline() []bson.M {
+	return []bson.M{
+		{"$lookup": bson.M{
+			"from":         mongo.EntityCountersCollection,
+			"localField":   "_id",
+			"foreignField": "_id",
+			"as":           "counters",
+		}},
+		{"$unwind": bson.M{"path": "$counters", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			"state_depends_count": bson.M{"$switch": bson.M{
+				"branches": []bson.M{
+					{
+						"case": bson.M{"$and": []bson.M{
+							{"$eq": bson.A{"$state_setting.method", statesetting.MethodInherited}},
+							{"$eq": bson.A{"$type", types.EntityTypeService}},
+						}},
+						"then": bson.M{"$sum": bson.A{
+							"$counters.inherited_state.ok",
+							"$counters.inherited_state.minor",
+							"$counters.inherited_state.major",
+							"$counters.inherited_state.critical",
+						}},
+					},
+					{
+						"case": bson.M{"$and": []bson.M{
+							{"$eq": bson.A{"$state_setting.method", statesetting.MethodInherited}},
+							{"$eq": bson.A{"$type", types.EntityTypeComponent}},
+						}},
+						"then": bson.M{"$sum": bson.A{
+							"$counters.state.ok",
+							"$counters.state.minor",
+							"$counters.state.major",
+							"$counters.state.critical",
+						}},
+					},
+				},
+				"default": "$depends_count",
+			}},
+		}},
+		{"$project": bson.M{"counters": 0}},
+	}
 }

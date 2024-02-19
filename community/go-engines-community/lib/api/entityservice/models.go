@@ -61,9 +61,15 @@ type EditRequest struct {
 	common.EntityPatternFieldsRequest
 }
 
+type ContextGraphEntity struct {
+	entity.Entity     `bson:",inline"`
+	StateDependsCount *int                  `bson:"state_depends_count" json:"state_depends_count,omitempty"`
+	StateSetting      *StateSettingResponse `bson:"state_setting" json:"state_setting,omitempty"`
+}
+
 type ContextGraphAggregationResult struct {
-	Data       []entity.Entity `bson:"data"`
-	TotalCount int64           `bson:"total_count" json:"total_count"`
+	Data       []ContextGraphEntity `bson:"data"`
+	TotalCount int64                `bson:"total_count" json:"total_count"`
 }
 
 func (r *ContextGraphAggregationResult) GetData() interface{} {
@@ -72,4 +78,10 @@ func (r *ContextGraphAggregationResult) GetData() interface{} {
 
 func (r *ContextGraphAggregationResult) GetTotal() int64 {
 	return r.TotalCount
+}
+
+type StateSettingResponse struct {
+	ID     string `bson:"_id" json:"_id"`
+	Title  string `bson:"title" json:"title"`
+	Method string `bson:"method" json:"method"`
 }
