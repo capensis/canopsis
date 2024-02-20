@@ -186,92 +186,92 @@ func TestFunctions(t *testing.T) {
 				ExpectedRes: "",
 			},
 		},
-		"strLeft": {
+		"substrLeft": {
 			{
-				Tpl: `{{strLeft .String 5 }}`,
+				Tpl: `{{substrLeft .String 5 }}`,
 				TplData: map[string]any{
 					"String": "Hello, world!",
 				},
 				ExpectedRes: "Hello",
 			},
 			{
-				Tpl: `{{strLeft .String 0 }}`,
+				Tpl: `{{substrLeft .String 0 }}`,
 				TplData: map[string]any{
 					"String": "Hello, world!",
 				},
 				ExpectedRes: "",
 			},
 			{
-				Tpl: `{{strLeft .String 13 }}`,
+				Tpl: `{{substrLeft .String 13 }}`,
 				TplData: map[string]any{
 					"String": "Hello, world!",
 				},
 				ExpectedRes: "Hello, world!",
 			},
 			{
-				Tpl: `{{strLeft .String 100000 }}`,
+				Tpl: `{{substrLeft .String 100000 }}`,
 				TplData: map[string]any{
 					"String": "Hello, world!",
 				},
 				ExpectedRes: "Hello, world!",
 			},
 			{
-				Tpl: `{{strLeft .String -100000 }}`,
+				Tpl: `{{substrLeft .String -100000 }}`,
 				TplData: map[string]any{
 					"String": "Hello, world!",
 				},
 				ExpectedRes: "",
 			},
 			{
-				Tpl: `{{strLeft .String 8 }}`,
+				Tpl: `{{substrLeft .String 8 }}`,
 				TplData: map[string]any{
-					"String": "Hello, 世界",
+					"String": "élémentaire",
 				},
-				ExpectedRes: "Hello, 世",
+				ExpectedRes: "élémenta",
 			},
 		},
-		"strRight": {
+		"substrRight": {
 			{
-				Tpl: `{{strRight .String 6 }}`,
+				Tpl: `{{substrRight .String 6 }}`,
 				TplData: map[string]any{
 					"String": "Hello, world!",
 				},
 				ExpectedRes: "world!",
 			},
 			{
-				Tpl: `{{strRight .String 0 }}`,
+				Tpl: `{{substrRight .String 0 }}`,
 				TplData: map[string]any{
 					"String": "Hello, world!",
 				},
 				ExpectedRes: "",
 			},
 			{
-				Tpl: `{{strRight .String 13 }}`,
+				Tpl: `{{substrRight .String 13 }}`,
 				TplData: map[string]any{
 					"String": "Hello, world!",
 				},
 				ExpectedRes: "Hello, world!",
 			},
 			{
-				Tpl: `{{strRight .String 100000 }}`,
+				Tpl: `{{substrRight .String 100000 }}`,
 				TplData: map[string]any{
 					"String": "Hello, world!",
 				},
 				ExpectedRes: "Hello, world!",
 			},
 			{
-				Tpl: `{{strRight .String -100000 }}`,
+				Tpl: `{{substrRight .String -100000 }}`,
 				TplData: map[string]any{
 					"String": "Hello, world!",
 				},
 				ExpectedRes: "",
 			},
 			{
-				Tpl: `{{strRight .String 2 }}`,
+				Tpl: `{{substrRight .String 6 }}`,
 				TplData: map[string]any{
-					"String": "Hello, 世界",
+					"String": "élémenta",
 				},
-				ExpectedRes: "世界",
+				ExpectedRes: "émenta",
 			},
 		},
 		"substr": {
@@ -325,11 +325,11 @@ func TestFunctions(t *testing.T) {
 				ExpectedRes: "",
 			},
 			{
-				Tpl: `{{substr .String 7 1 }}`,
+				Tpl: `{{substr .String 1 2 }}`,
 				TplData: map[string]any{
-					"String": "Hello, 世界",
+					"String": "élémenta",
 				},
-				ExpectedRes: "世",
+				ExpectedRes: "lé",
 			},
 		},
 		"add": {
@@ -344,26 +344,10 @@ func TestFunctions(t *testing.T) {
 			{
 				Tpl: `{{ add .A .B }}`,
 				TplData: map[string]any{
-					"A": 2.5,
-					"B": 2.5,
-				},
-				ExpectedRes: "5",
-			},
-			{
-				Tpl: `{{ add .A .B }}`,
-				TplData: map[string]any{
-					"A": 2,
-					"B": 2.5,
-				},
-				ExpectedRes: "4.5",
-			},
-			{
-				Tpl: `{{ add .A .B }}`,
-				TplData: map[string]any{
 					"A": "2.5",
 					"B": 2.5,
 				},
-				ExpectedErr: ErrFailedConvertToFloat,
+				ExpectedErr: ErrFailedConvertToInt64,
 			},
 		},
 		"sub": {
@@ -378,26 +362,10 @@ func TestFunctions(t *testing.T) {
 			{
 				Tpl: `{{ sub .A .B }}`,
 				TplData: map[string]any{
-					"A": 5.5,
-					"B": 2.5,
-				},
-				ExpectedRes: "3",
-			},
-			{
-				Tpl: `{{ sub .A .B }}`,
-				TplData: map[string]any{
-					"A": 5,
-					"B": 2.5,
-				},
-				ExpectedRes: "2.5",
-			},
-			{
-				Tpl: `{{ sub .A .B }}`,
-				TplData: map[string]any{
 					"A": "5",
 					"B": 2.5,
 				},
-				ExpectedErr: ErrFailedConvertToFloat,
+				ExpectedErr: ErrFailedConvertToInt64,
 			},
 		},
 		"mult": {
@@ -412,26 +380,10 @@ func TestFunctions(t *testing.T) {
 			{
 				Tpl: `{{ mult .A .B }}`,
 				TplData: map[string]any{
-					"A": 2.5,
-					"B": 2.5,
-				},
-				ExpectedRes: "6.25",
-			},
-			{
-				Tpl: `{{ mult .A .B }}`,
-				TplData: map[string]any{
-					"A": 3,
-					"B": 2.5,
-				},
-				ExpectedRes: "7.5",
-			},
-			{
-				Tpl: `{{ mult .A .B }}`,
-				TplData: map[string]any{
 					"A": "2.5",
 					"B": 2.5,
 				},
-				ExpectedErr: ErrFailedConvertToFloat,
+				ExpectedErr: ErrFailedConvertToInt64,
 			},
 		},
 		"div": {
@@ -446,23 +398,15 @@ func TestFunctions(t *testing.T) {
 			{
 				Tpl: `{{ div .A .B }}`,
 				TplData: map[string]any{
-					"A": 6.25,
-					"B": 2.5,
+					"A": 13,
+					"B": 2,
 				},
-				ExpectedRes: "2.5",
+				ExpectedRes: "6",
 			},
 			{
 				Tpl: `{{ div .A .B }}`,
 				TplData: map[string]any{
 					"A": 6,
-					"B": 1.5,
-				},
-				ExpectedRes: "4",
-			},
-			{
-				Tpl: `{{ div .A .B }}`,
-				TplData: map[string]any{
-					"A": 6.25,
 					"B": 0,
 				},
 				ExpectedErr: ErrDivisionByZero,
@@ -473,7 +417,18 @@ func TestFunctions(t *testing.T) {
 					"A": "6.25",
 					"B": 2.5,
 				},
-				ExpectedErr: ErrFailedConvertToFloat,
+				ExpectedErr: ErrFailedConvertToInt64,
+			},
+		},
+		"substr_add_example": {
+			{
+				Tpl: `{{ $var := add .A .B }}{{ substrLeft .String $var }}`,
+				TplData: map[string]any{
+					"A":      1,
+					"B":      2,
+					"String": "qwerty",
+				},
+				ExpectedRes: "qwe",
 			},
 		},
 	}
