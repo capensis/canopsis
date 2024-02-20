@@ -16,7 +16,14 @@ const stubs = {
 const selectAlarmColumnCell = wrapper => wrapper.find('alarm-column-cell-stub');
 
 describe('alarm-column-value', () => {
-  const snapshotFactory = generateRenderer(AlarmColumnValue, { stubs });
+  const snapshotFactory = generateRenderer(AlarmColumnValue, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
   const factory = generateShallowRenderer(AlarmColumnValue, { stubs });
 
   it('Click state emitted after trigger click state event on alarm cell', async () => {

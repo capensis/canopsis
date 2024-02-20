@@ -32,7 +32,7 @@
         <v-btn
           v-for="icon in extraIcons"
           :key="icon.icon"
-          :color="icon.color"
+          :style="{ backgroundColor: icon.color }"
           class="mx-1"
           small
           dark
