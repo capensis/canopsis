@@ -25,6 +25,8 @@ import {
   ROOT_CAUSE_DIAGRAM_LAYOUT_OPTIONS,
   JUNIT_STATE_SETTING_METHODS,
   ROOT_CAUSE_DIAGRAM_TOOLTIP_OFFSET,
+  ENTITY_FIELDS,
+  SORT_ORDERS,
 } from '@/constants';
 
 import { normalizeTreeOfDependenciesMapEntities } from '@/helpers/entities/map/list';
@@ -307,10 +309,7 @@ export default {
 
       const element = getEntityNodeElement(node);
 
-      /**
-       * TODO: Should be changed on state settings deps count
-       */
-      if (pending || (!root && entity.depends_count > 0)) {
+      if (pending || (!root && entity.state_depends_count > 0)) {
         const badge = getBadgeElement();
         badge.dataset.id = entity._id;
 
@@ -418,8 +417,9 @@ export default {
           page: newPage,
           limit: PAGINATION_LIMIT,
           with_flags: true,
-          with_state_setting: true,
           define_state: true,
+          sort_by: ENTITY_FIELDS.impactState,
+          sort: SORT_ORDERS.desc.toLowerCase(),
         },
       });
 

@@ -168,8 +168,8 @@ export default {
     counts() {
       const {
         depends_count: dependsCount,
-        state_depends_count: stateDependsCount,
-        depends_state: dependsState,
+        threshold_state_depends_count: thresholdStateDependsCount,
+        threshold_state: thresholdState,
       } = this.stateSetting;
 
       return isUndefined(dependsCount)
@@ -180,8 +180,8 @@ export default {
             count: dependsCount,
           },
           {
-            message: this.$t('stateSetting.stateDependsCount', { state: dependsState }),
-            count: stateDependsCount,
+            message: this.$t('stateSetting.stateDependsCount', { state: thresholdState }),
+            count: thresholdStateDependsCount,
           },
         ];
     },
