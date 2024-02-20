@@ -58,7 +58,7 @@ exports[`button-field Renders \`button-field\` with default props 1`] = `
       class="layout justify-end"
     >
       <button
-        class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--small"
+        class="primary mr-2 v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--small"
         type="button"
       >
         <span

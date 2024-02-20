@@ -33,11 +33,21 @@ describe('service-weather-item', () => {
   const factory = generateShallowRenderer(ServiceWeatherItem, {
     stubs,
     attachTo: document.body,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
   });
 
   const snapshotFactory = generateRenderer(ServiceWeatherItem, {
     stubs,
     attachTo: document.body,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
   });
 
   test('Alarms list modal showed after click on button', async () => {

@@ -183,9 +183,17 @@ export default {
     column-gap: 4px;
   }
 
-  &__more-btn {
+  & &__more-btn {
     width: 24px;
     height: 24px;
+
+    .theme--light & {
+      background-color: var(--v-application-background-darken2);
+    }
+
+    .theme--dark & {
+      background-color: var(--v-application-background-lighten4);
+    }
   }
 }
 </style>
