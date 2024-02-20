@@ -13,7 +13,7 @@ build_doc:
     - git config user.name $ACCESS_TOKEN_NAME
     - git config user.email ${ACCESS_TOKEN_NAME}@${CI_SERVER_HOST}
   script:
-   - export LAST_VERSION=$(git tag --sort=-v:refname | head -1)
+   - export LAST_VERSION=$(git tag --sort=-v:refname | grep -E '^[0-9]+\.[0-9]+(\.[0-9]+)?$' | head -1)
    - cd community
    - |
      if [ $CI_COMMIT_TAG = $LAST_VERSION ]; then
