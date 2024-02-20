@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math/big"
 	"reflect"
-	"regexp"
 	"strconv"
 
 	"github.com/google/uuid"
@@ -83,22 +82,55 @@ func FindStringSubmatchMapWithRegexExpression(re RegexExpression, s string) map[
 	return nil
 }
 
-// FindStringSubmatchMap returns a map containing the values of the named
-// subexpressions of the lefmost match of the regular expression re in s. A
+// FindAllStringSubmatchMapWithRegexExpression returns a slice of maps containing the values of the named
+// subexpressions of all matches of the regular expression re in s. A
 // return value of nil indicates no match.
-func FindStringSubmatchMap(re *regexp.Regexp, s string) map[string]string {
-	match := re.FindStringSubmatch(s)
-	if match == nil {
-		return nil
+func FindAllStringSubmatchMapWithRegexExpression(re RegexExpression, s string) []map[string]string {
+	switch regex := re.(type) {
+	case WrapperBuiltInRegex:
+		matches := regex.FindAllStringSubmatch(s, -1)
+		if matches == nil {
+			return nil
+		}
+
+		names := regex.SubexpNames()
+		submatches := make([]map[string]string, 0, len(names))
+		for i, match := range matches {
+			unnamedCount := 1
+			for j := 1; j < len(names); j++ {
+				if len(submatches) == i {
+					submatches = append(submatches, make(map[string]string))
+				}
+				if names[j] == "" {
+					submatches[i][strconv.Itoa(unnamedCount)] = match[j]
+					unnamedCount++
+				} else {
+					submatches[i][names[j]] = match[j]
+				}
+			}
+		}
+		return submatches
+	case WrapperRegex2:
+		match, err := regex.FindStringMatch(s)
+		if err != nil || match == nil {
+			return nil
+		}
+		submatches := make([]map[string]string, 0, match.GroupCount())
+
+		for i := 0; err == nil && match != nil; i++ {
+			names := regex.GetGroupNames()
+			if len(names) > 1 {
+				submatches = append(submatches, make(map[string]string, len(names)-1))
+				for _, name := range names[1:] {
+					submatches[i][name] = match.GroupByName(name).String()
+				}
+			}
+			match, err = regex.FindNextMatch(match)
+		}
+		return submatches
 	}
 
-	names := re.SubexpNames()
-	submatches := make(map[string]string)
-	for i := 1; i < len(names); i++ {
-		submatches[names[i]] = match[i]
-	}
-
-	return submatches
+	return nil
 }
 
 // AsString tries to convert an interface{} into a string, and returns its

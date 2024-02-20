@@ -41,6 +41,7 @@ exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with custom p
           </div>
         </div>
         <input
+          name="itemsPerPage"
           type="hidden"
           value="10"
         />
@@ -163,6 +164,7 @@ exports[`c-items-per-page-field Renders \`c-items-per-page-field\` with default 
           </div>
         </div>
         <input
+          name="itemsPerPage"
           type="hidden"
           value="10"
         />
