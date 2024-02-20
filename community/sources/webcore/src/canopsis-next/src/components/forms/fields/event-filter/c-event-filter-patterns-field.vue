@@ -14,6 +14,7 @@
 import { isArray } from 'lodash';
 
 import {
+  ALARM_EVENT_INITIATORS,
   BASIC_ENTITY_TYPES,
   ENTITIES_STATES,
   EVENT_ENTITY_TYPES,
@@ -227,6 +228,26 @@ export default {
       };
     },
 
+    initiatorOptions() {
+      return {
+        operators: [
+          PATTERN_OPERATORS.equal,
+          PATTERN_OPERATORS.notEqual,
+          PATTERN_OPERATORS.contains,
+          PATTERN_OPERATORS.notContains,
+          PATTERN_OPERATORS.regexp,
+          PATTERN_OPERATORS.isOneOf,
+          PATTERN_OPERATORS.isNotOneOf,
+        ],
+        valueField: {
+          is: 'c-select-field',
+          props: {
+            items: Object.values(ALARM_EVENT_INITIATORS),
+          },
+        },
+      };
+    },
+
     stateOptions() {
       return {
         operators: [
@@ -304,6 +325,16 @@ export default {
           text: this.$t('common.longOutput'),
           value: EVENT_FILTER_PATTERN_FIELDS.longOutput,
           options: this.stringWithOneOfOptions,
+        },
+        {
+          text: this.$t('common.author'),
+          value: EVENT_FILTER_PATTERN_FIELDS.author,
+          options: this.stringWithOneOfOptions,
+        },
+        {
+          text: this.$t('common.initiator'),
+          value: EVENT_FILTER_PATTERN_FIELDS.initiator,
+          options: this.initiatorOptions,
         },
       ];
     },

@@ -15,7 +15,14 @@ const stubs = {
 };
 
 describe('alarm-column-value', () => {
-  const snapshotFactory = generateRenderer(AlarmColumnValue, { stubs });
+  const snapshotFactory = generateRenderer(AlarmColumnValue, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
 
   it('Renders `alarm-column-value` with required props', async () => {
     const wrapper = snapshotFactory({

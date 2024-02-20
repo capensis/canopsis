@@ -65,7 +65,7 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with custom props 1`]
         />
       </div>
       <div
-        class="flex pl-3 xs7 xs6"
+        class="flex pl-3 xs7"
       >
         <custom-component-stub
           disabled="true"
