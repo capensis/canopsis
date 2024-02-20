@@ -23,7 +23,6 @@ import { PAGINATION_LIMIT, VUETIFY_ANIMATION_DELAY } from '@/config';
 import {
   ROOT_CAUSE_DIAGRAM_OPTIONS,
   ROOT_CAUSE_DIAGRAM_LAYOUT_OPTIONS,
-  JUNIT_STATE_SETTING_METHODS,
   ROOT_CAUSE_DIAGRAM_TOOLTIP_OFFSET,
   ENTITY_FIELDS,
   SORT_ORDERS,
@@ -61,14 +60,14 @@ export default {
     return {
       ready: false,
       pending: true,
-      stateSetting: {},
+      stateSetting: undefined,
       metaByEntityId: {},
       entitiesById: normalizeTreeOfDependenciesMapEntities([{ entity: this.entity, pinned_entities: [] }]),
     };
   },
   computed: {
     isEventsStateSettings() {
-      return !this.stateSetting?.title;
+      return this.stateSetting && !this.stateSetting?.title;
     },
 
     entitiesElements() {
@@ -176,8 +175,7 @@ export default {
             return '';
           }
 
-          return entity.state_setting?.title
-            || this.$t(`stateSetting.junit.methods.${JUNIT_STATE_SETTING_METHODS.worst}`);
+          return entity.state_setting?.title || this.$tc('common.event', 2);
         },
       };
     },
@@ -209,7 +207,7 @@ export default {
     if (!this.isEventsStateSettings) {
       await this.fetchDependencies(this.entity._id);
     } else {
-      this.runLayout();
+      this.resetLayout();
     }
 
     this.pending = false;
@@ -290,7 +288,7 @@ export default {
           },
         );
 
-        if (false) {
+        if (!child.state_setting?.title) {
           acc.push(...this.getEventsNodeElementByEntity(child));
         }
 
@@ -309,7 +307,7 @@ export default {
 
       const element = getEntityNodeElement(node);
 
-      if (pending || (!root && entity.state_depends_count > 0)) {
+      if (pending || (!root && entity.state_setting?.title && entity.state_depends_count > 0)) {
         const badge = getBadgeElement();
         badge.dataset.id = entity._id;
 
