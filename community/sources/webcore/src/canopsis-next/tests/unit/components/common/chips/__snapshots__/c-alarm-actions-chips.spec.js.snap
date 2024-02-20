@@ -16,7 +16,7 @@ exports[`c-alarm-actions-chips Renders \`c-alarm-actions-chips\` with selected t
     class="v-menu"
   >
     <button
-      class="c-alarm-actions-chips__more-btn ma-0 v-btn v-btn--icon v-btn--round theme--light v-size--default"
+      class="c-alarm-actions-chips__more-btn ma-0 v-btn v-btn--icon v-btn--round theme--light v-size--default grey--text"
       type="button"
     >
       <span
@@ -70,7 +70,7 @@ exports[`c-alarm-actions-chips Renders \`c-alarm-actions-chips\` without selecte
     class="v-menu"
   >
     <button
-      class="c-alarm-actions-chips__more-btn ma-0 v-btn v-btn--icon v-btn--round theme--light v-size--default"
+      class="c-alarm-actions-chips__more-btn ma-0 v-btn v-btn--icon v-btn--round theme--light v-size--default grey--text"
       type="button"
     >
       <span

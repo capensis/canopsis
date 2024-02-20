@@ -75,7 +75,7 @@ describe('service-template', () => {
 
     await flushPromises();
 
-    await selectEntitiesList(wrapper).triggerCustonEvent('add:action');
+    await selectEntitiesList(wrapper).triggerCustomEvent('add:action');
 
     expect(wrapper).toHaveBeenEmit('add:action');
   });
