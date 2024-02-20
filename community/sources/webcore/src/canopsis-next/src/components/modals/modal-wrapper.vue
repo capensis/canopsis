@@ -29,7 +29,7 @@
         <v-divider key="divider" />
         <v-card-actions
           key="actions"
-          class="justify-end px-2 py-3"
+          class="justify-end align-center px-2 py-3"
         >
           <slot name="actions" />
         </v-card-actions>
