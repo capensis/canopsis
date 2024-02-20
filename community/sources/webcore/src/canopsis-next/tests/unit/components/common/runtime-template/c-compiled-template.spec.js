@@ -8,7 +8,14 @@ const stubs = {
 };
 
 describe('c-compiled-template', () => {
-  const snapshotFactory = generateRenderer(CCompiledTemplate, { stubs });
+  const snapshotFactory = generateRenderer(CCompiledTemplate, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
 
   test('Renders `c-compiled-template` after mount', async () => {
     const wrapper = snapshotFactory({

@@ -183,7 +183,6 @@ type BulkEntityCreateRequestItem struct {
 	Origin  string            `json:"origin" binding:"required,max=255"`
 	Name    string            `json:"name" binding:"required,max=255"`
 	Reason  string            `json:"reason" binding:"required"`
-	RRule   string            `json:"rrule"`
 	Start   *datetime.CpsTime `json:"tstart" binding:"required" swaggertype:"integer"`
 	Stop    *datetime.CpsTime `json:"tstop" swaggertype:"integer"`
 	Type    string            `json:"type" binding:"required"`
@@ -194,4 +193,26 @@ type BulkEntityCreateRequestItem struct {
 type BulkEntityDeleteRequestItem struct {
 	Entity string `json:"entity" binding:"required"`
 	Origin string `json:"origin" binding:"required"`
+}
+
+type BulkConnectorCreateRequestItem struct {
+	Author   string            `json:"author" swaggerignore:"true"`
+	Entities []string          `json:"entities" binding:"required,notblank"`
+	Origin   string            `json:"origin" binding:"required,max=255"`
+	Start    *datetime.CpsTime `json:"tstart" binding:"required" swaggertype:"integer"`
+	Stop     *datetime.CpsTime `json:"tstop" binding:"required" swaggertype:"integer"`
+	Comment  string            `json:"comment" binding:"required"`
+	Name     string            `json:"name" binding:"required,max=255"`
+	Reason   string            `json:"reason" binding:"required"`
+	Type     string            `json:"type" binding:"required"`
+	Color    string            `json:"color" binding:"iscolororempty"`
+}
+
+type BulkConnectorDeleteRequestItem struct {
+	Author   string            `json:"author" swaggerignore:"true"`
+	Entities []string          `json:"entities" binding:"required,notblank"`
+	Origin   string            `json:"origin" binding:"required"`
+	Start    *datetime.CpsTime `json:"tstart" binding:"required" swaggertype:"integer"`
+	Stop     *datetime.CpsTime `json:"tstop" binding:"required" swaggertype:"integer"`
+	Comment  string            `json:"comment" binding:"required"`
 }
