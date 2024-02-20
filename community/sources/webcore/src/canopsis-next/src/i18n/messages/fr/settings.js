@@ -296,4 +296,5 @@ export default {
   statisticsWidgetColumn: {
     split: 'Diviser les données par chemin de valeur',
   },
+  entitiesActionsInQueue: 'Empiler les actions des entités et les appliquer simultanément',
 };

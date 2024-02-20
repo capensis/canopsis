@@ -105,7 +105,6 @@ describe('service-dependencies', () => {
   ].map(column => ({
     ...column,
 
-    value: `entity.${column.value}`,
     sortable: false,
     text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
   }));
@@ -323,7 +322,6 @@ describe('service-dependencies', () => {
         ].map(column => ({
           ...column,
 
-          value: `entity.${column.value}`,
           sortable: false,
           text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
         })),

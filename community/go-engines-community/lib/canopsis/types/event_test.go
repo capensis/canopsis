@@ -169,7 +169,11 @@ func TestEvent_SetField(t *testing.T) {
 		"state":3,
 		"connector":"bla",
 		"connector_name":"bla",
-		"extra_info":"ulyss31"
+		"extra_info":"ulyss31",
+		"tags": {
+			"tag3": "value3",
+			"tag2": "value2a"
+		}
 	}`
 	event := types.Event{}
 	err := json.Unmarshal([]byte(str), &event)
@@ -183,9 +187,10 @@ func TestEvent_SetField(t *testing.T) {
 	}
 
 	dataSet := []struct {
-		Field string
-		Value any
-		Err   error
+		Field    string
+		Value    any
+		Err      error
+		Expected any
 	}{
 		{
 			Field: "extra_info",
@@ -247,6 +252,18 @@ func TestEvent_SetField(t *testing.T) {
 			Field: "Debug",
 			Value: true,
 		},
+		{
+			Field: "Tags",
+			Value: map[string]any{
+				"tag1": "value1",
+				"tag2": "value2",
+			},
+			Expected: map[string]string{
+				"tag1": "value1",
+				"tag2": "value2",
+				"tag3": "value3",
+			},
+		},
 	}
 
 	for i, data := range dataSet {
@@ -277,9 +294,17 @@ func TestEvent_SetField(t *testing.T) {
 					if diff := pretty.Compare(event.Debug, data.Value); diff != "" {
 						t.Errorf("expected %v but got %v", data.Value, event.Debug)
 					}
+				case "Tags":
+					expected := data.Expected
+					if expected == nil {
+						expected = data.Value
+					}
+					if diff := pretty.Compare(expected, event.Tags); diff != "" {
+						t.Errorf("unexpected tags: %s", diff)
+					}
 				default:
-					if diff := pretty.Compare(event.ExtraInfos[data.Field], data.Value); diff != "" {
-						t.Errorf("expected %v but got %v", data.Value, event.Status)
+					if diff := pretty.Compare(data.Value, event.ExtraInfos[data.Field]); diff != "" {
+						t.Errorf("unexpected extra infos %s", diff)
 					}
 				}
 			}
