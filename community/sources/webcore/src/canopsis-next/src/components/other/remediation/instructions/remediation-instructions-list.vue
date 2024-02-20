@@ -29,8 +29,11 @@
           v-if="item.approval"
           bottom
         >
-          <template #activator>
-            <v-icon color="black">
+          <template #activator="{ on }">
+            <v-icon
+              color="black"
+              v-on="on"
+            >
               query_builder
             </v-icon>
           </template>

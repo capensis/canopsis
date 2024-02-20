@@ -10,7 +10,14 @@ const stubs = {
 };
 
 describe('alarms-expand-panel-more-infos', () => {
-  const snapshotFactory = generateRenderer(AlarmsExpandPanelMoreInfos, { stubs });
+  const snapshotFactory = generateRenderer(AlarmsExpandPanelMoreInfos, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
 
   it('Renders `alarms-expand-panel-more-infos` without template', () => {
     const wrapper = snapshotFactory();

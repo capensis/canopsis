@@ -1,6 +1,6 @@
 %define debug_package %{nil}
 Name: canopsis
-Version: %{version}
+Version: %{version_safe}
 Release: 1%{?dist}
 Summary: Canopsis community edition
 License: AGPL-3.0-only
@@ -19,7 +19,7 @@ Prefix: /opt
 Canopsis Community RPM Package
 
 %prep
-%setup -q
+%setup -n %{name}-%{Version} -q
 GOLANG_VERSION=$(grep "^GOLANG_VERSION" community/.env |awk -F '=' '{print $NF}' | sed 's/ //g')
 echo "install golang $GOLANG_VERSION."
 wget https://go.dev/dl/go$GOLANG_VERSION.linux-amd64.tar.gz

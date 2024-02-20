@@ -10,6 +10,7 @@
         :key="action.key"
         :name="`${name}.${action.key}`"
         :variables="variables"
+        :set-tags-items="setTagsItems"
         class="mb-3"
         @remove="removeItemFromArray(index)"
       />
@@ -54,6 +55,10 @@ export default {
     name: {
       type: String,
       default: 'actions',
+    },
+    setTagsItems: {
+      type: Array,
+      default: () => [],
     },
   },
   methods: {

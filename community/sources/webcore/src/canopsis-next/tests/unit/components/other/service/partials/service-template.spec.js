@@ -37,6 +37,11 @@ describe('service-template', () => {
       service,
       options: {},
     },
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
   });
 
   test('Refresh applied after triggers entities list', async () => {
@@ -56,6 +61,23 @@ describe('service-template', () => {
     await entitiesList.triggerCustomEvent('refresh');
 
     expect(wrapper).toHaveBeenEmit('refresh');
+  });
+
+  test('Add action applied after triggers entities list', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        serviceEntities: [{}, {}],
+        widgetParameters: {
+          modalTemplate,
+        },
+      },
+    });
+
+    await flushPromises();
+
+    await selectEntitiesList(wrapper).triggerCustonEvent('add:action');
+
+    expect(wrapper).toHaveBeenEmit('add:action');
   });
 
   test('Pagination updated after triggers entities list', async () => {

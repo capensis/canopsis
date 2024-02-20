@@ -12,7 +12,8 @@
     "e2e:consistently": "E2E_TESTS_MODE=consistently yarn e2e",
     "e2e:parallel": "E2E_TESTS_MODE=parallel yarn e2e",
     "unit": "vue-cli-service test:unit",
-    "postinstall": "cd ../../../../.. && husky install community/sources/webcore/src/canopsis-next/.husky"
+    "postinstall": "cd ../../../../.. && husky install community/sources/webcore/src/canopsis-next/.husky",
+    "benchmarks": "node ./benchmarks/index.js"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -96,6 +97,7 @@
     "babel-plugin-require-context-hook": "^1.0.0",
     "cache-loader": "^4.1.0",
     "canvas": "^2.11.2",
+    "chartjs-node-canvas": "^4.1.6",
     "chromedriver": "^92.0.0",
     "css-loader": "^3.5.3",
     "deepmerge": "^3.2.0",
@@ -123,6 +125,7 @@
     "p-queue": "^6.2.0",
     "path-browserify": "^1.0.1",
     "process": "^0.11.10",
+    "puppeteer": "^21.6.0",
     "resize-observer-polyfill": "^1.5.1",
     "sass": "1.32.12",
     "sass-loader": "13.3.2",
@@ -137,7 +140,8 @@
     "vue-template-compiler": "2.7.14",
     "vuetify-loader": "^1.9.2",
     "webpack": "^5.88.2",
-    "webpack-bundle-analyzer": "^4.9.1"
+    "webpack-bundle-analyzer": "^4.9.1",
+    "yargs": "^17.7.2"
   },
   "browserslist": [
     "> 1%",

@@ -22,7 +22,14 @@ describe('pbehavior-comments', () => {
     message: `message-pbehavior-comment-${index}`,
   }));
 
-  const snapshotFactory = generateRenderer(PbehaviorComments, { stubs });
+  const snapshotFactory = generateRenderer(PbehaviorComments, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
 
   test('Renders `pbehavior-comments` without comments', async () => {
     const wrapper = snapshotFactory();
