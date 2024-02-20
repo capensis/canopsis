@@ -54,7 +54,8 @@ export const systemThemeMixin = {
       document.head.removeChild(this.styleElement);
     },
 
-    setTheme({ colors, font_size: fontSize }) {
+    setTheme(theme) {
+      const { colors, font_size: fontSize } = theme;
       const { main, table, state } = colors;
 
       const white = '#fff';
@@ -116,6 +117,7 @@ export const systemThemeMixin = {
         stepper,
       };
       this.system.dark = isDark;
+      this.system.theme = theme;
     },
   },
 };

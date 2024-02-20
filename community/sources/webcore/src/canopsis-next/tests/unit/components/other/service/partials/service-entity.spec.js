@@ -138,6 +138,7 @@ describe('service-entity', () => {
           _id: 'service-id',
           source_type: ENTITY_TYPES.component,
           pbehaviors: [],
+          alarm_id: 'alarm-id',
         },
         selected: true,
         lastActionUnavailable: true,

@@ -109,8 +109,8 @@
           <v-flex
             v-if="rule.operator && operatorHasValue"
             :xs7="isAnyInfosRule"
+            :xs6="!isAnyInfosRule"
             class="pl-3"
-            xs6
           >
             <component
               v-bind="valueComponent.props"

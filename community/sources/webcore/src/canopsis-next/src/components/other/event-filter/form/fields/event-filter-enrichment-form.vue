@@ -8,6 +8,7 @@
         v-field="form.config.actions"
         :variables="templateVariables"
         :name="name"
+        :set-tags-items="setTagsItems"
       />
     </c-collapse-panel>
     <v-layout>
@@ -61,6 +62,10 @@ export default {
       default: 'config.actions',
     },
     templateVariables: {
+      type: Array,
+      default: () => [],
+    },
+    setTagsItems: {
       type: Array,
       default: () => [],
     },

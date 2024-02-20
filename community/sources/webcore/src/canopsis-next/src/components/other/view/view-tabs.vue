@@ -8,7 +8,6 @@
     class="view-tabs"
     background-color="secondary lighten-2"
     slider-color="primary"
-    dark
   >
     <c-draggable-list-field
       v-if="tabs.length"
