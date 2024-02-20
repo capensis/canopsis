@@ -4,6 +4,7 @@ import { uid } from '@/helpers/uid';
  * @typedef {Service | Entity} ServiceDependency
  * @property {number} impact_state
  * @property {number} [depends_count]
+ * @property {number} [state_depends_count]
  * @property {number} [impacts_count]
  */
 
