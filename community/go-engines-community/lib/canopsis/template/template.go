@@ -20,7 +20,7 @@ import (
 
 const EnvVar = "Env"
 
-var ErrFailedConvertToFloat = errors.New("failed convert to float64")
+var ErrFailedConvertToInt64 = errors.New("failed convert to int64")
 var ErrDivisionByZero = errors.New("division by zero")
 
 type ParsedTemplate struct {
@@ -292,64 +292,66 @@ func GetFunctions(appLocation *time.Location) template.FuncMap {
 
 			return ""
 		},
-		"strLeft": func(str string, n int) string {
+		"substrLeft": func(str string, n int64) string {
 			runeStr := []rune(str)
 
 			if n < 1 {
 				return ""
 			}
 
-			if n >= len(runeStr) {
+			if n >= int64(len(runeStr)) {
 				return str
 			}
 
 			return string(runeStr[:n])
 		},
-		"strRight": func(str string, n int) string {
+		"substrRight": func(str string, n int64) string {
 			runeStr := []rune(str)
+			lenRuneStr := int64(len(runeStr))
 
 			if n < 1 {
 				return ""
 			}
 
-			if n >= len(runeStr) {
+			if n >= lenRuneStr {
 				return str
 			}
 
-			return string(runeStr[len(runeStr)-n:])
+			return string(runeStr[lenRuneStr-n:])
 		},
-		"substr": func(str string, start, n int) string {
+		"substr": func(str string, start, n int64) string {
 			runeStr := []rune(str)
+			lenRuneStr := int64(len(runeStr))
 
-			if start < 0 || start >= len(runeStr) || n < 1 {
+			if start < 0 || start >= lenRuneStr || n < 1 {
 				return ""
 			}
 
 			end := start + n
 
-			if end >= len(runeStr) {
+			if end >= lenRuneStr {
 				return string(runeStr[start:])
 			}
 
 			return string(runeStr[start:end])
 		},
-		"add": func(a, b any) (float64, error) {
-			return wrapFloatArithmeticFunc(a, b, func(x, y float64) (float64, error) {
+		"add": func(a, b any) (int64, error) {
+			return wrapInt64ArithmeticFunc(a, b, func(x, y int64) (int64, error) {
 				return x + y, nil
 			})
 		},
-		"sub": func(a, b any) (float64, error) {
-			return wrapFloatArithmeticFunc(a, b, func(x, y float64) (float64, error) {
+		"sub": func(a, b any) (int64, error) {
+			return wrapInt64ArithmeticFunc(a, b, func(x, y int64) (int64, error) {
 				return x - y, nil
 			})
 		},
-		"mult": func(a, b any) (float64, error) {
-			return wrapFloatArithmeticFunc(a, b, func(x, y float64) (float64, error) {
+		"mult": func(a, b any) (int64, error) {
+			return wrapInt64ArithmeticFunc(a, b, func(x, y int64) (int64, error) {
 				return x * y, nil
 			})
 		},
-		"div": func(a, b any) (float64, error) {
-			return wrapFloatArithmeticFunc(a, b, func(x, y float64) (float64, error) {
+		"div": func(a, b any) (int64, error) {
+			return wrapInt64ArithmeticFunc(a, b, func(x, y int64) (int64, error) {
 				if y == 0 {
 					return 0, ErrDivisionByZero
 				}
@@ -360,46 +362,42 @@ func GetFunctions(appLocation *time.Location) template.FuncMap {
 	}
 }
 
-func wrapFloatArithmeticFunc(a, b any, f func(x, y float64) (float64, error)) (float64, error) {
-	aFloat, ok := toFloat64(a)
+func wrapInt64ArithmeticFunc(a, b any, f func(x, y int64) (int64, error)) (int64, error) {
+	aInt64, ok := toInt64(a)
 	if !ok {
-		return 0, ErrFailedConvertToFloat
+		return 0, ErrFailedConvertToInt64
 	}
 
-	bFloat, ok := toFloat64(b)
+	bInt64, ok := toInt64(b)
 	if !ok {
-		return 0, ErrFailedConvertToFloat
+		return 0, ErrFailedConvertToInt64
 	}
 
-	return f(aFloat, bFloat)
+	return f(aInt64, bInt64)
 }
 
-func toFloat64(v any) (float64, bool) {
+func toInt64(v any) (int64, bool) {
 	switch val := v.(type) {
-	case float32:
-		return float64(val), true
-	case float64:
-		return val, true
 	case int:
-		return float64(val), true
+		return int64(val), true
 	case int8:
-		return float64(val), true
+		return int64(val), true
 	case int16:
-		return float64(val), true
+		return int64(val), true
 	case int32:
-		return float64(val), true
+		return int64(val), true
 	case int64:
-		return float64(val), true
+		return val, true
 	case uint:
-		return float64(val), true
+		return int64(val), true
 	case uint8:
-		return float64(val), true
+		return int64(val), true
 	case uint16:
-		return float64(val), true
+		return int64(val), true
 	case uint32:
-		return float64(val), true
+		return int64(val), true
 	case uint64:
-		return float64(val), true
+		return int64(val), true
 	default:
 		return 0, false
 	}
