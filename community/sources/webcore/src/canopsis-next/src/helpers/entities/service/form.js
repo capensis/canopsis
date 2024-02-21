@@ -32,6 +32,7 @@ import { infosToArray } from '../shared/form';
  * @returns {ServiceForm}
  */
 export const serviceToForm = (service = {}) => ({
+  _id: service._id ?? '',
   impact_level: service.impact_level ?? 1,
   name: service.name ?? '',
   category: service.category ?? '',
@@ -57,7 +58,7 @@ export const serviceToForm = (service = {}) => ({
  */
 export const formToService = (form = {}) => {
   const service = {
-    ...omit(form, ['patterns', 'coordinates']),
+    ...omit(form, ['patterns', 'coordinates', '_id']),
     ...formFilterToPatterns(form.patterns, [PATTERNS_FIELDS.entity]),
     category: form.category._id,
   };
