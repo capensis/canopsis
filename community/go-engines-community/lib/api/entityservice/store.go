@@ -42,13 +42,12 @@ type store struct {
 	resolvedAlarmDbCollection mongo.DbCollection
 	serviceCountersCollection mongo.DbCollection
 	userDbCollection          mongo.DbCollection
-
-	linkGenerator link.Generator
-
-	logger zerolog.Logger
+	linkGenerator             link.Generator
+	enableSameServiceNames    bool
+	logger                    zerolog.Logger
 }
 
-func NewStore(db mongo.DbClient, linkGenerator link.Generator, logger zerolog.Logger) Store {
+func NewStore(db mongo.DbClient, linkGenerator link.Generator, enableSameServiceNames bool, logger zerolog.Logger) Store {
 	return &store{
 		dbClient:                  db,
 		dbCollection:              db.Collection(mongo.EntityMongoCollection),
@@ -56,10 +55,9 @@ func NewStore(db mongo.DbClient, linkGenerator link.Generator, logger zerolog.Lo
 		resolvedAlarmDbCollection: db.Collection(mongo.ResolvedAlarmMongoCollection),
 		serviceCountersCollection: db.Collection(mongo.EntityServiceCountersCollection),
 		userDbCollection:          db.Collection(mongo.UserCollection),
-
-		linkGenerator: linkGenerator,
-
-		logger: logger,
+		linkGenerator:             linkGenerator,
+		enableSameServiceNames:    enableSameServiceNames,
+		logger:                    logger,
 	}
 }
 
@@ -218,6 +216,21 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 	var response *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
+		if !s.enableSameServiceNames {
+			err := s.dbCollection.FindOne(ctx, bson.M{
+				"name":         service.Name,
+				"type":         types.EntityTypeService,
+				"soft_deleted": nil,
+			}).Err()
+			if err == nil {
+				return common.NewValidationError("name", "Name already exists.")
+			}
+
+			if !errors.Is(err, mongodriver.ErrNoDocuments) {
+				return err
+			}
+		}
+
 		_, err := s.dbCollection.InsertOne(ctx, service)
 		if err != nil {
 			return err
@@ -272,6 +285,22 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, S
 		service = nil
 		serviceChanges = ServiceChanges{}
 		oldValues := &entityservice.EntityService{}
+		if !s.enableSameServiceNames {
+			err := s.dbCollection.FindOne(ctx, bson.M{
+				"_id":          bson.M{"$ne": request.ID},
+				"name":         request.Name,
+				"type":         types.EntityTypeService,
+				"soft_deleted": nil,
+			}).Err()
+			if err == nil {
+				return common.NewValidationError("name", "Name already exists.")
+			}
+
+			if !errors.Is(err, mongodriver.ErrNoDocuments) {
+				return err
+			}
+		}
+
 		err := s.dbCollection.FindOneAndUpdate(
 			ctx,
 			bson.M{
