@@ -2705,6 +2705,8 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.Initiator = string(in.String())
 		case "exec":
 			out.Execution = string(in.String())
+		case "in_pbh":
+			out.InPbehaviorInterval = bool(in.Bool())
 		case "ticket":
 			out.Ticket = string(in.String())
 		case "ticket_url":
@@ -2807,6 +2809,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"exec\":"
 		out.RawString(prefix)
 		out.String(string(in.Execution))
+	}
+	if in.InPbehaviorInterval {
+		const prefix string = ",\"in_pbh\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.InPbehaviorInterval))
 	}
 	if in.Ticket != "" {
 		const prefix string = ",\"ticket\":"

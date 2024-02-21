@@ -50,13 +50,14 @@ func (p *assocTicketProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 	match := getOpenAlarmMatchWithStepsLimit(event)
 	newStep := types.NewTicketStep(types.AlarmStepAssocTicket, event.Parameters.Timestamp, event.Parameters.Author,
 		event.Parameters.TicketInfo.GetStepMessage(), event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator,
-		event.Parameters.TicketInfo)
-	update := bson.M{
-		"$set": bson.M{"v.ticket": newStep},
-		"$push": bson.M{
-			"v.steps":   newStep,
-			"v.tickets": newStep,
-		},
+		event.Parameters.TicketInfo, false)
+	newStepQuery := stepUpdateQuery(newStep)
+	update := []bson.M{
+		{"$set": bson.M{
+			"v.ticket":  newStepQuery,
+			"v.steps":   addStepUpdateQuery(newStepQuery),
+			"v.tickets": addTicketUpdateQuery(newStepQuery),
+		}},
 	}
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
@@ -121,4 +122,15 @@ func (p *assocTicketProcessor) postProcess(
 	if err != nil {
 		p.logger.Err(err).Msg("cannot process meta alarm")
 	}
+}
+
+func addTicketUpdateQuery(newStepQuery bson.M) bson.M {
+	return bson.M{"$concatArrays": bson.A{
+		bson.M{"$cond": bson.M{
+			"if":   "$v.tickets",
+			"then": "$v.tickets",
+			"else": bson.A{},
+		}},
+		bson.A{newStepQuery},
+	}}
 }

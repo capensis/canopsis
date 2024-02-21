@@ -61,15 +61,18 @@ func (p *ackProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result,
 	conf := p.configProvider.Get()
 	output := utils.TruncateString(event.Parameters.Output, conf.OutputLength)
 	newStep := types.NewAlarmStep(types.AlarmStepAck, event.Parameters.Timestamp, event.Parameters.Author, output,
-		event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
-	update := bson.M{
-		"$set":  bson.M{"v.ack": newStep},
-		"$push": bson.M{"v.steps": newStep},
-		"$unset": bson.M{
-			"not_acked_metric_type":      "",
-			"not_acked_metric_send_time": "",
-			"not_acked_since":            "",
-		},
+		event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator, true)
+	newStepQuery := stepUpdateQuery(newStep)
+	update := []bson.M{
+		{"$set": bson.M{
+			"v.ack":   newStepQuery,
+			"v.steps": addStepUpdateQuery(newStepQuery),
+		}},
+		{"$unset": bson.A{
+			"not_acked_metric_type",
+			"not_acked_metric_send_time",
+			"not_acked_since",
+		}},
 	}
 	var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
 	notAckedMetricType := ""
@@ -215,4 +218,22 @@ func getOpenAlarmMatchWithStepsLimit(event rpc.AxeEvent) bson.M {
 	match := getOpenAlarmMatch(event)
 	match["$expr"] = bson.M{"$lt": bson.A{bson.M{"$size": "$v.steps"}, types.AlarmStepsHardLimit}}
 	return match
+}
+
+func stepUpdateQuery(newStep types.AlarmStep) bson.M {
+	return bson.M{"$cond": bson.M{
+		"if": bson.M{"$and": []bson.M{
+			{"$eq": bson.A{bson.M{"$type": "$v.pbehavior_info.id"}, "string"}},
+			{"$ne": bson.A{"$v.pbehavior_info.id", ""}},
+		}},
+		"then": bson.M{"$mergeObjects": bson.A{
+			newStep,
+			bson.M{"in_pbh": true},
+		}},
+		"else": newStep,
+	}}
+}
+
+func addStepUpdateQuery(newStepQueries ...bson.M) bson.M {
+	return bson.M{"$concatArrays": bson.A{"$v.steps", newStepQueries}}
 }

@@ -1215,6 +1215,8 @@ definitions:
         type: string
       a:
         type: string
+      in_pbh:
+        type: boolean
       initiator:
         type: string
       m:

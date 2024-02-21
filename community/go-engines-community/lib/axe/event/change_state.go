@@ -91,11 +91,7 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
 	conf := p.alarmConfigProvider.Get()
 	output := utils.TruncateString(event.Parameters.Output, conf.OutputLength)
-	newStepState := types.NewAlarmStep(types.AlarmStepChangeState, event.Parameters.Timestamp, event.Parameters.Author, output,
-		event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
-	newStepState.Value = *event.Parameters.State
 	var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
-
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
 		updatedServiceStates = nil
@@ -110,6 +106,9 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 			return err
 		}
 
+		newStepState := types.NewAlarmStep(types.AlarmStepChangeState, event.Parameters.Timestamp, event.Parameters.Author, output,
+			event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator, !alarm.Value.PbehaviorInfo.IsDefaultActive())
+		newStepState.Value = *event.Parameters.State
 		alarmChange := types.NewAlarmChange()
 		alarmChange.PreviousState = alarm.Value.State.Value
 		alarmChange.PreviousStateChange = alarm.Value.State.Timestamp
@@ -134,7 +133,7 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 			}
 		} else {
 			newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, event.Parameters.Timestamp, event.Parameters.Author, output,
-				event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
+				event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator, !alarm.Value.PbehaviorInfo.IsDefaultActive())
 			newStepStatus.Value = newStatus
 			if alarm.Value.Status.Value > newStatus {
 				newStepStatus.Type = types.AlarmStepStatusDecrease
