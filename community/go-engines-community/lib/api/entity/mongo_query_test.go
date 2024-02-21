@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"testing"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity/dbquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
@@ -39,8 +40,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 		{"$limit": 10},
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(),
@@ -122,8 +123,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		{"$limit": 10},
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(),
@@ -221,8 +222,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		{"$limit": 10},
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(),
@@ -318,8 +319,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		{"$limit": 10},
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(),
@@ -403,8 +404,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		{"$limit": 10},
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(),
@@ -488,8 +489,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithAlarmSo
 		{"$skip": 0},
 		{"$limit": 10},
 	}
-	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	computedFields := getComputedFields()
 	stateField := computedFields["state"]
@@ -561,8 +562,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 		{"$limit": 10},
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(),
@@ -628,8 +629,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 		{"$limit": 10},
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(),
@@ -755,8 +756,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 		{"$limit": 10},
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getAlarmLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getCategoryLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEventStatsLookup(now)...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$addFields": getComputedFields(),

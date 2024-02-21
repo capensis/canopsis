@@ -112,7 +112,7 @@ type FailureResponse struct {
 	Type      int64            `bson:"type" json:"type"`
 	Timestamp datetime.CpsTime `bson:"t" json:"t" swaggertype:"integer"`
 	Message   string           `bson:"message" json:"message"`
-	Event     map[string]any   `bson:"event" json:"event"`
+	Event     map[string]any   `bson:"event" json:"event" swaggertype:"object"`
 	Unread    bool             `bson:"unread" json:"unread"`
 }
 

@@ -25,13 +25,14 @@ func TestActionProcessor(t *testing.T) {
 	defer ctrl.Finish()
 	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}, zerolog.Nop()), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	dataSets := []struct {
-		testName      string
-		action        eventfilter.ParsedAction
-		event         types.Event
-		regexMatches  eventfilter.RegexMatch
-		externalData  map[string]interface{}
-		expectedEvent types.Event
-		expectedError bool
+		testName              string
+		action                eventfilter.ParsedAction
+		event                 types.Event
+		regexMatches          eventfilter.RegexMatch
+		externalData          map[string]interface{}
+		expectedEvent         types.Event
+		expectedError         bool
+		expectedEntityUpdated bool
 	}{
 		{
 			testName: "given set_field action should return success",
@@ -46,7 +47,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedEvent: types.Event{
 				Output: "test output",
 			},
-			expectedError: false,
+			expectedError:         false,
+			expectedEntityUpdated: false,
 		},
 		{
 			testName: "given set_field action should return error, because of wrong value field type",
@@ -55,11 +57,12 @@ func TestActionProcessor(t *testing.T) {
 				Name:  "Output",
 				Value: 5,
 			},
-			event:         types.Event{},
-			regexMatches:  eventfilter.RegexMatch{},
-			externalData:  map[string]interface{}{},
-			expectedEvent: types.Event{},
-			expectedError: true,
+			event:                 types.Event{},
+			regexMatches:          eventfilter.RegexMatch{},
+			externalData:          map[string]interface{}{},
+			expectedEvent:         types.Event{},
+			expectedError:         true,
+			expectedEntityUpdated: false,
 		},
 		{
 			testName: "given set_field_from_template action should return success",
@@ -76,7 +79,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedEvent: types.Event{
 				Output: "test output",
 			},
-			expectedError: false,
+			expectedError:         false,
+			expectedEntityUpdated: false,
 		},
 		{
 			testName: "given set_field_from_template action should return error, because of wrong template",
@@ -90,8 +94,9 @@ func TestActionProcessor(t *testing.T) {
 			externalData: map[string]interface{}{
 				"data_1": "test output",
 			},
-			expectedEvent: types.Event{},
-			expectedError: true,
+			expectedEvent:         types.Event{},
+			expectedError:         true,
+			expectedEntityUpdated: false,
 		},
 		{
 			testName: "given set_field_from_template action should return error, because value should be a string",
@@ -105,8 +110,9 @@ func TestActionProcessor(t *testing.T) {
 			externalData: map[string]interface{}{
 				"data_1": "test output",
 			},
-			expectedEvent: types.Event{},
-			expectedError: true,
+			expectedEvent:         types.Event{},
+			expectedError:         true,
+			expectedEntityUpdated: false,
 		},
 		{
 			testName: "given set_entity_info action should return success with string type",
@@ -130,10 +136,10 @@ func TestActionProcessor(t *testing.T) {
 							Value:       "test output",
 						},
 					},
-					IsUpdated: true,
 				},
 			},
-			expectedError: false,
+			expectedError:         false,
+			expectedEntityUpdated: true,
 		},
 		{
 			testName: "given set_entity_info action should return success with int type",
@@ -157,10 +163,10 @@ func TestActionProcessor(t *testing.T) {
 							Value:       123,
 						},
 					},
-					IsUpdated: true,
 				},
 			},
-			expectedError: false,
+			expectedError:         false,
+			expectedEntityUpdated: true,
 		},
 		{
 			testName: "given set_entity_info action should return success with bool type",
@@ -184,10 +190,10 @@ func TestActionProcessor(t *testing.T) {
 							Value:       true,
 						},
 					},
-					IsUpdated: true,
 				},
 			},
-			expectedError: false,
+			expectedError:         false,
+			expectedEntityUpdated: true,
 		},
 		{
 			testName: "given set_entity_info action should return success with string slice type",
@@ -211,10 +217,10 @@ func TestActionProcessor(t *testing.T) {
 							Value:       []string{"test", "test2"},
 						},
 					},
-					IsUpdated: true,
 				},
 			},
-			expectedError: false,
+			expectedError:         false,
+			expectedEntityUpdated: true,
 		},
 		{
 			testName: "given set_entity_info action should return success with slice of interfaces but all items are strings",
@@ -238,10 +244,10 @@ func TestActionProcessor(t *testing.T) {
 							Value:       []string{"test", "test2"},
 						},
 					},
-					IsUpdated: true,
 				},
 			},
-			expectedError: false,
+			expectedError:         false,
+			expectedEntityUpdated: true,
 		},
 		{
 			testName: "given set_entity_info action should return success with primitive.A",
@@ -273,10 +279,10 @@ func TestActionProcessor(t *testing.T) {
 							Value:       []string{"test", "test2"},
 						},
 					},
-					IsUpdated: true,
 				},
 			},
-			expectedError: false,
+			expectedError:         false,
+			expectedEntityUpdated: true,
 		},
 		{
 			testName: "given set_entity_info action should return success with float64 as a whole number",
@@ -300,10 +306,10 @@ func TestActionProcessor(t *testing.T) {
 							Value:       float64(2),
 						},
 					},
-					IsUpdated: true,
 				},
 			},
-			expectedError: false,
+			expectedError:         false,
+			expectedEntityUpdated: true,
 		},
 		{
 			testName: "given set_entity_info action should return success with float32 as a whole number",
@@ -327,10 +333,10 @@ func TestActionProcessor(t *testing.T) {
 							Value:       float32(2),
 						},
 					},
-					IsUpdated: true,
 				},
 			},
-			expectedError: false,
+			expectedError:         false,
+			expectedEntityUpdated: true,
 		},
 		{
 			testName: "given set_entity_info action should return error with float value",
@@ -348,7 +354,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedEvent: types.Event{
 				Entity: &types.Entity{},
 			},
-			expectedError: true,
+			expectedError:         true,
+			expectedEntityUpdated: false,
 		},
 		{
 			testName: "given set_entity_info action should return error with slice of interfaces, where some are not strings",
@@ -366,7 +373,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedEvent: types.Event{
 				Entity: &types.Entity{},
 			},
-			expectedError: true,
+			expectedError:         true,
+			expectedEntityUpdated: false,
 		},
 		{
 			testName: "given set_entity_info action should return error with primitive.A, where some are not strings",
@@ -384,7 +392,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedEvent: types.Event{
 				Entity: &types.Entity{},
 			},
-			expectedError: true,
+			expectedError:         true,
+			expectedEntityUpdated: false,
 		},
 		{
 			testName: "given set_entity_info action should return error with structs",
@@ -404,7 +413,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedEvent: types.Event{
 				Entity: &types.Entity{},
 			},
-			expectedError: true,
+			expectedError:         true,
+			expectedEntityUpdated: false,
 		},
 		{
 			testName: "given set_entity_info action should return updated entity true, if infos is changed",
@@ -436,10 +446,10 @@ func TestActionProcessor(t *testing.T) {
 							Value:       "new info",
 						},
 					},
-					IsUpdated: true,
 				},
 			},
-			expectedError: false,
+			expectedError:         false,
+			expectedEntityUpdated: true,
 		},
 		{
 			testName: "given set_entity_info action should not return updated entity true, if info is not changed",
@@ -473,7 +483,8 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			expectedError: false,
+			expectedError:         false,
+			expectedEntityUpdated: false,
 		},
 		{
 			testName: "given set_entity_info_from_template action should return success",
@@ -499,10 +510,10 @@ func TestActionProcessor(t *testing.T) {
 							Value:       "test output",
 						},
 					},
-					IsUpdated: true,
 				},
 			},
-			expectedError: false,
+			expectedError:         false,
+			expectedEntityUpdated: true,
 		},
 		{
 			testName: "given set_entity_info_from_template action should return error, because of wrong template",
@@ -520,7 +531,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedEvent: types.Event{
 				Entity: &types.Entity{},
 			},
-			expectedError: true,
+			expectedError:         true,
+			expectedEntityUpdated: false,
 		},
 		{
 			testName: "given set_entity_info_from_template action should return error, because value should be a string",
@@ -538,7 +550,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedEvent: types.Event{
 				Entity: &types.Entity{},
 			},
-			expectedError: true,
+			expectedError:         true,
+			expectedEntityUpdated: false,
 		},
 		{
 			testName: "given set_entity_info_from_template action should return updated entity true, if infos is changed",
@@ -570,10 +583,10 @@ func TestActionProcessor(t *testing.T) {
 							Value:       "new info",
 						},
 					},
-					IsUpdated: true,
 				},
 			},
-			expectedError: false,
+			expectedError:         false,
+			expectedEntityUpdated: true,
 		},
 		{
 			testName: "given set_entity_info_from_template action should not return updated entity true, if info is not changed",
@@ -607,7 +620,8 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			expectedError: false,
+			expectedError:         false,
+			expectedEntityUpdated: false,
 		},
 		{
 			testName: "given copy action should return success",
@@ -625,7 +639,8 @@ func TestActionProcessor(t *testing.T) {
 				Resource: "test resource",
 				Output:   "test resource",
 			},
-			expectedError: false,
+			expectedError:         false,
+			expectedEntityUpdated: false,
 		},
 		{
 			testName: "given copy action should return error, because value should be a string",
@@ -642,7 +657,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedEvent: types.Event{
 				Resource: "test resource",
 			},
-			expectedError: true,
+			expectedError:         true,
+			expectedEntityUpdated: false,
 		},
 		{
 			testName: "given copy action should return error, because get field doesn't exist",
@@ -659,7 +675,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedEvent: types.Event{
 				Resource: "test resource",
 			},
-			expectedError: true,
+			expectedError:         true,
+			expectedEntityUpdated: false,
 		},
 		{
 			testName: "given copy action should return error, because set field doesn't exist",
@@ -676,7 +693,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedEvent: types.Event{
 				Resource: "test resource",
 			},
-			expectedError: true,
+			expectedError:         true,
+			expectedEntityUpdated: false,
 		},
 		{
 			testName: "given copy action should return success with Tags copied from ExtraInfos",
@@ -718,7 +736,8 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			expectedError: false,
+			expectedError:         false,
+			expectedEntityUpdated: false,
 		},
 		{
 			testName: "given copy action should return error because ExtraInfos value is incompatible type with Tags",
@@ -777,10 +796,10 @@ func TestActionProcessor(t *testing.T) {
 							Value:       "test resource",
 						},
 					},
-					IsUpdated: true,
 				},
 			},
-			expectedError: false,
+			expectedError:         false,
+			expectedEntityUpdated: true,
 		},
 		{
 			testName: "given copy_to_entity_info action should return success with int type",
@@ -808,10 +827,10 @@ func TestActionProcessor(t *testing.T) {
 							Value:       123,
 						},
 					},
-					IsUpdated: true,
 				},
 			},
-			expectedError: false,
+			expectedError:         false,
+			expectedEntityUpdated: true,
 		},
 		{
 			testName: "given copy_to_entity_info action should return success with bool type",
@@ -839,10 +858,10 @@ func TestActionProcessor(t *testing.T) {
 							Value:       true,
 						},
 					},
-					IsUpdated: true,
 				},
 			},
-			expectedError: false,
+			expectedError:         false,
+			expectedEntityUpdated: true,
 		},
 		{
 			testName: "given copy_to_entity_info action should return success with string type",
@@ -868,10 +887,10 @@ func TestActionProcessor(t *testing.T) {
 							Value:       "test resource",
 						},
 					},
-					IsUpdated: true,
 				},
 			},
-			expectedError: false,
+			expectedError:         false,
+			expectedEntityUpdated: true,
 		},
 		{
 			testName: "given copy_to_entity_info action should return success with string slice type",
@@ -898,13 +917,13 @@ func TestActionProcessor(t *testing.T) {
 							Value:       []string{"test", "test2"},
 						},
 					},
-					IsUpdated: true,
 				},
 				ExtraInfos: map[string]interface{}{
 					"Test": []string{"test", "test2"},
 				},
 			},
-			expectedError: false,
+			expectedError:         false,
+			expectedEntityUpdated: true,
 		},
 		{
 			testName: "given copy_to_entity_info action should return success with slice of interfaces but all items are strings",
@@ -931,13 +950,13 @@ func TestActionProcessor(t *testing.T) {
 							Value:       []string{"test", "test2"},
 						},
 					},
-					IsUpdated: true,
 				},
 				ExtraInfos: map[string]interface{}{
 					"Test": []interface{}{"test2", "test"},
 				},
 			},
-			expectedError: false,
+			expectedError:         false,
+			expectedEntityUpdated: true,
 		},
 		{
 			testName: "given copy_to_entity_info action should return success with primitive.A",
@@ -964,13 +983,13 @@ func TestActionProcessor(t *testing.T) {
 							Value:       []string{"test", "test2"},
 						},
 					},
-					IsUpdated: true,
 				},
 				ExtraInfos: map[string]interface{}{
 					"Test": primitive.A{"test2", "test"},
 				},
 			},
-			expectedError: false,
+			expectedError:         false,
+			expectedEntityUpdated: true,
 		},
 		{
 			testName: "given copy_to_entity_info action should return success  with float64 as a whole number",
@@ -997,13 +1016,13 @@ func TestActionProcessor(t *testing.T) {
 							Value:       float64(2),
 						},
 					},
-					IsUpdated: true,
 				},
 				ExtraInfos: map[string]interface{}{
 					"Test": float64(2),
 				},
 			},
-			expectedError: false,
+			expectedError:         false,
+			expectedEntityUpdated: true,
 		},
 		{
 			testName: "given copy_to_entity_info action should return success  with float32 as a whole number",
@@ -1030,13 +1049,13 @@ func TestActionProcessor(t *testing.T) {
 							Value:       float32(2),
 						},
 					},
-					IsUpdated: true,
 				},
 				ExtraInfos: map[string]interface{}{
 					"Test": float32(2),
 				},
 			},
-			expectedError: false,
+			expectedError:         false,
+			expectedEntityUpdated: true,
 		},
 		{
 			testName: "given copy_to_entity_info action should return error with float value",
@@ -1060,7 +1079,8 @@ func TestActionProcessor(t *testing.T) {
 					"Test": 1.2,
 				},
 			},
-			expectedError: true,
+			expectedError:         true,
+			expectedEntityUpdated: false,
 		},
 		{
 			testName: "given copy_to_entity_info action should return error with slice of interfaces, where some are not strings",
@@ -1084,7 +1104,8 @@ func TestActionProcessor(t *testing.T) {
 					"Test": []interface{}{"test1", 1, "test2"},
 				},
 			},
-			expectedError: true,
+			expectedError:         true,
+			expectedEntityUpdated: false,
 		},
 		{
 			testName: "given copy_to_entity_info action should return error with primitive.A, where some are not strings",
@@ -1108,7 +1129,8 @@ func TestActionProcessor(t *testing.T) {
 					"Test": primitive.A{"test1", 1, "test2"},
 				},
 			},
-			expectedError: true,
+			expectedError:         true,
+			expectedEntityUpdated: false,
 		},
 		{
 			testName: "given copy_to_entity_info action should return error with structs",
@@ -1136,7 +1158,8 @@ func TestActionProcessor(t *testing.T) {
 					}{Test: "test"},
 				},
 			},
-			expectedError: true,
+			expectedError:         true,
+			expectedEntityUpdated: false,
 		},
 		{
 			testName: "given copy_to_entity_info action should change existing info",
@@ -1170,10 +1193,10 @@ func TestActionProcessor(t *testing.T) {
 							Value:       "test resource",
 						},
 					},
-					IsUpdated: true,
 				},
 			},
-			expectedError: false,
+			expectedError:         false,
+			expectedEntityUpdated: true,
 		},
 		{
 			testName: "given copy_to_entity_info action should not return entity updated true, if info is not changed",
@@ -1209,7 +1232,8 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			expectedError: false,
+			expectedError:         false,
+			expectedEntityUpdated: false,
 		},
 		{
 			testName: "given copy_to_entity_info action should return error, because value is not a string",
@@ -1229,7 +1253,8 @@ func TestActionProcessor(t *testing.T) {
 				Resource: "test resource",
 				Entity:   &types.Entity{},
 			},
-			expectedError: true,
+			expectedError:         true,
+			expectedEntityUpdated: false,
 		},
 		{
 			testName: "given copy_to_entity_info action should return error, because value field is not exist",
@@ -1249,7 +1274,8 @@ func TestActionProcessor(t *testing.T) {
 				Resource: "test resource",
 				Entity:   &types.Entity{},
 			},
-			expectedError: true,
+			expectedError:         true,
+			expectedEntityUpdated: false,
 		},
 		{
 			testName: "given set_entity_info action with string slice with another order of items then in entity should return is updated false",
@@ -1543,14 +1569,18 @@ func TestActionProcessor(t *testing.T) {
 	for _, dataset := range dataSets {
 		dataset := dataset
 		t.Run(dataset.testName, func(t *testing.T) {
-			resultEvent, resultErr := processor.Process(context.Background(), "test", dataset.action, dataset.event,
+			resultEntityUpdated, resultErr := processor.Process(context.Background(), "test", dataset.action, &dataset.event,
 				dataset.regexMatches, dataset.externalData)
-			if diff := pretty.Compare(dataset.expectedEvent, resultEvent); diff != "" {
+			if diff := pretty.Compare(dataset.expectedEvent, dataset.event); diff != "" {
 				t.Errorf("unexpected event: %s", diff)
 			}
 
 			if dataset.expectedError && resultErr == nil {
 				t.Error("expected an error")
+			}
+
+			if dataset.expectedEntityUpdated != resultEntityUpdated {
+				t.Errorf("expected an entityUpdated = %v, but got %v", dataset.expectedEntityUpdated, resultEntityUpdated)
 			}
 
 			if !dataset.expectedError && resultErr != nil {
