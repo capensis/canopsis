@@ -337,15 +337,39 @@ export const COLOR_INDICATOR_TYPES = {
   impactState: 'impact_state',
 };
 
+export const STATE_SETTING_ENTITY_TYPES = [
+  ENTITY_TYPES.component,
+  ENTITY_TYPES.service,
+];
+
 export const STATE_SETTING_METHODS = {
+  inherited: 'inherited',
+  dependencies: 'dependencies',
+};
+
+export const STATE_SETTING_THRESHOLDS_METHODS = {
+  share: 'share',
+  number: 'number',
+};
+
+export const JUNIT_STATE_SETTING_METHODS = {
   worst: 'worst',
   worstOfShare: 'worst_of_share',
 };
 
-export const STATE_SETTING_THRESHOLD_TYPES = {
+export const JUNIT_STATE_SETTING_THRESHOLDS_TYPES = {
   number: 0,
   percent: 1,
 };
+
+export const STATE_SETTING_THRESHOLDS_CONDITIONS = {
+  greater: 'gt',
+  less: 'lt',
+};
+
+export const JUNIT_STATE_SETTING_ID = 'junit';
+
+export const SERVICE_STATE_SETTING_ID = 'service';
 
 export const CONTEXT_ACTIONS_TYPES = {
   createEntity: 'createEntity',

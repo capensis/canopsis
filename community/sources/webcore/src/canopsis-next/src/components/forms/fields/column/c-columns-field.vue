@@ -31,8 +31,8 @@
             class="mr-2 mx-0"
             v-on="on"
             color="primary"
-            icon
-            large
+            fab
+            small
             @click.prevent="add"
           >
             <v-icon>add</v-icon>

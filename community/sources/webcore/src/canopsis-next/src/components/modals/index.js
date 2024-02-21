@@ -313,8 +313,12 @@ export const TestSuite = () => ({
   component: import(/* webpackChunkName: "Junit" */ './test-suite/test-suite.vue'),
   loading: LoaderOverlay,
 });
-export const StateSetting = () => ({
-  component: import(/* webpackChunkName: "Parameters" */ './state-setting/state-setting.vue'),
+export const CreateStateSetting = () => ({
+  component: import(/* webpackChunkName: "Parameters" */ './state-setting/create-state-setting.vue'),
+  loading: LoaderOverlay,
+});
+export const CreateJunitStateSetting = () => ({
+  component: import(/* webpackChunkName: "Parameters" */ './state-setting/create-junit-state-setting.vue'),
   loading: LoaderOverlay,
 });
 export const ArchiveDisabledEntities = () => ({

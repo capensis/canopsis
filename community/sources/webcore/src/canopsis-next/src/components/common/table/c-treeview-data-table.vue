@@ -45,7 +45,7 @@
           loader-height="2"
           hide-default-footer
         >
-          <template #items="props">
+          <template #item="props">
             <slot
               v-bind="props"
               name="items"

@@ -7,7 +7,7 @@
       v-if="isStateColumn"
       :value="item.entity.state"
     />
-    <span v-else>{{ item | get(column.value) }}</span>
+    <span v-else>{{ item.entity | get(column.value) }}</span>
   </component>
 </template>
 

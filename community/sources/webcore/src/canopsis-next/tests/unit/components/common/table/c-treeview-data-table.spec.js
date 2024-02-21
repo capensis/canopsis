@@ -29,19 +29,6 @@ describe('c-treeview-data-table', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `c-treeview-data-table` with default and required props', async () => {
-    const wrapper = snapshotFactory({
-      propsData: {
-        headers,
-        items: snapshotItems,
-      },
-    });
-
-    await flushPromises();
-
-    expect(wrapper).toMatchSnapshot();
-  });
-
   it('Renders `c-treeview-data-table` with custom props', async () => {
     const wrapper = snapshotFactory({
       propsData: {
