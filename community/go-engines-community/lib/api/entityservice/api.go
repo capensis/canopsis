@@ -73,7 +73,7 @@ func (a *api) Get(c *gin.Context) {
 }
 
 // GetDependencies
-// @Success 200 {object} common.PaginatedListResponse{data=[]entity.Entity}
+// @Success 200 {object} common.PaginatedListResponse{data=[]ContextGraphEntity}
 func (a *api) GetDependencies(c *gin.Context) {
 	var r ContextGraphRequest
 	r.Query = pagination.GetDefaultQuery()
@@ -104,7 +104,7 @@ func (a *api) GetDependencies(c *gin.Context) {
 }
 
 // GetImpacts
-// @Success 200 {object} common.PaginatedListResponse{data=[]entity.Entity}
+// @Success 200 {object} common.PaginatedListResponse{data=[]ContextGraphEntity}
 func (a *api) GetImpacts(c *gin.Context) {
 	var r ContextGraphRequest
 	r.Query = pagination.GetDefaultQuery()
