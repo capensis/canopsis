@@ -4182,6 +4182,52 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /entities/check-state-setting:
+    post:
+      tags:
+        - entities
+      summary: Check state setting
+      description: |
+        Check if there is matched state setting rule.
+        
+        -  PERMISSIONS: `api_state_settings:read`
+      operationId: entities-check-state-setting
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/entity.CheckStateSettingRequest'
+            examples:
+              create:
+                summary: Check state setting
+                description: Check state setting.
+                value: {
+                  "name": "cps_service_1",
+                  "type": "service",
+                  "infos": [
+                    {
+                      "description": "Custom name infos",
+                      "name": "custom_name",
+                      "value": "service_1"
+                    }
+                  ],
+                  "impact_level": 1
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/entity.StateSettingResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /entities/clean-archived:
     post:
       tags:
@@ -4313,6 +4359,29 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /entities/state-setting:
+    get:
+      tags:
+        - entities
+      summary: Get state setting by entity id
+      description: |
+        Get if there is matched state setting rule.
+
+        -  PERMISSIONS: `api_state_settings:read`
+      operationId: entities-get-state-setting
+      parameters:
+        - name: _id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/entity.StateSettingResponse'
   /entity-categories:
     get:
       tags:
@@ -4856,6 +4925,11 @@ paths:
           description: sort query
           schema:
             type: string
+        - name: define_state
+          in: query
+          description: show dependencies defining the state of the entity
+          schema:
+            type: boolean
       responses:
         200:
           description: OK
@@ -4869,7 +4943,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: 'schemas_swagger.yaml#/definitions/entity.Entity'
+                          $ref: 'schemas_swagger.yaml#/definitions/entityservice.ContextGraphEntity'
         404:
           description: Not Found
           content:
@@ -4921,7 +4995,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: 'schemas_swagger.yaml#/definitions/entity.Entity'
+                          $ref: 'schemas_swagger.yaml#/definitions/entityservice.ContextGraphEntity'
         404:
           description: Not Found
           content:
@@ -10876,15 +10950,16 @@ paths:
     get:
       tags:
         - state-settings
-      summary: Find all state settings for a widget
+      summary: Find all state settings
       description: |
         Get paginated list of state settings.
         
-        -  PERMISSIONS: `api_state_settings`
-      operationId: state-settings-list
+        -  PERMISSIONS: `api_state_settings:read`
+      operationId: state-settings-find-all
       parameters:
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
       responses:
         200:
           description: OK
@@ -10898,21 +10973,163 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: 'schemas_swagger.yaml#/definitions/statesettings.StateSetting'
+                          $ref: 'schemas_swagger.yaml#/definitions/statesettings.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    post:
+      tags:
+        - state-settings
+      summary: Create state setting
+      description: |
+        Create state setting.
+        
+        -  PERMISSIONS: `api_state_settings:create`
+      operationId: state-settings-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/statesettings.EditRequest'
+            examples:
+              create_inherited:
+                summary: Create inherited state setting
+                description: Create inherited state setting
+                value: {
+                  "title": "Inherited state setting",
+                  "method": "inherited",
+                  "enabled": true,
+                  "type": "component",
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "some_service"
+                        }
+                      }
+                    ]
+                  ],
+                  "inherited_entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              create_dependencies:
+                summary: Create dependencies state setting
+                description: Create dependencies state setting
+                value: {
+                  "title": "Dependencies state setting",
+                  "method": "dependencies",
+                  "enabled": true,
+                  "type": "component",
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "some_service"
+                        }
+                      }
+                    ]
+                  ],
+                  "state_thresholds": {
+                    "critical": {
+                      "method": "share",
+                      "state": "major",
+                      "cond": "gt",
+                      "value": 20
+                    },
+                    "major": {
+                      "method": "number",
+                      "state": "major",
+                      "cond": "lt",
+                      "value": 10
+                    },
+                    "minor": {
+                      "method": "number",
+                      "state": "ok",
+                      "cond": "lt",
+                      "value": 10
+                    },
+                    "ok": {
+                      "method": "share",
+                      "state": "minor",
+                      "cond": "gt",
+                      "value": 10
+                    }
+                  }
+                }
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/statesettings.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /state-settings/{id}:
+    get:
+      tags:
+        - state-settings
+      summary: Get state setting by id
+      description: |
+        Get state setting by id.
+        
+        -  PERMISSIONS: `api_state_settings:read`
+      operationId: state-settings-get-by-id
+      parameters:
+        - name: id
+          in: path
+          description: state setting id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/statesettings.Response'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
     put:
       tags:
         - state-settings
-      summary: Update state setting type by id
+      summary: Update state setting by id
       description: |
-        Update state setting type by id.
+        Update state setting by id.
         
-        -  PERMISSIONS: `api_state_settings`
+        -  PERMISSIONS: `api_state_settings:update`
       operationId: state-settings-update-by-id
       parameters:
         - name: id
           in: path
-          description: type id
+          description: state setting id
           required: true
           schema:
             type: string
@@ -10921,7 +11138,117 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/statesettings.StateSettingRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/statesettings.EditRequest'
+            examples:
+              update_inherited:
+                summary: Update an inherited state setting
+                description: Update an inherited state setting
+                value: {
+                  "title": "Inherited state setting",
+                  "method": "inherited",
+                  "enabled": true,
+                  "type": "component",
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "some_service"
+                        }
+                      }
+                    ]
+                  ],
+                  "inherited_entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              update_dependencies:
+                summary: Update a dependencies state setting
+                description: Update a dependencies state setting
+                value: {
+                  "title": "Dependencies state setting",
+                  "method": "dependencies",
+                  "enabled": true,
+                  "type": "component",
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "some_service"
+                        }
+                      }
+                    ]
+                  ],
+                  "state_thresholds": {
+                    "critical": {
+                      "method": "share",
+                      "state": "major",
+                      "cond": "gt",
+                      "value": 20
+                    },
+                    "major": {
+                      "method": "number",
+                      "state": "major",
+                      "cond": "lt",
+                      "value": 10
+                    },
+                    "minor": {
+                      "method": "number",
+                      "state": "ok",
+                      "cond": "lt",
+                      "value": 10
+                    },
+                    "ok": {
+                      "method": "share",
+                      "state": "minor",
+                      "cond": "gt",
+                      "value": 10
+                    }
+                  }
+                }
+              update_junit_worst_of_share:
+                summary: Update a junit state setting with worst_of_share method
+                description: Update a junit state setting with worst_of_share method
+                value: {
+                  "method": "worst_of_share",
+                  "junit_thresholds": {
+                    "skipped": {
+                      "minor": 15,
+                      "major": 20,
+                      "critical": 30,
+                      "type": 1
+                    },
+                    "errors": {
+                      "minor": 10,
+                      "major": 20,
+                      "critical": 30,
+                      "type": 1
+                    },
+                    "failures": {
+                      "minor": 0,
+                      "major": 20,
+                      "critical": 30,
+                      "type": 0
+                    }
+                  }
+                }
+              update_junit_worst:
+                summary: Update a junit state setting with worst method
+                description: Update a junit state setting with worst method
+                value: {
+                  "method": "worst"
+                }
         required: true
       responses:
         200:
@@ -10929,7 +11256,38 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/statesettings.StateSetting'
+                $ref: 'schemas_swagger.yaml#/definitions/statesettings.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    delete:
+      tags:
+        - state-settings
+      summary: Delete state setting by id
+      description: |
+        Delete state setting by id.
+        
+        -  PERMISSIONS: `api_state_settings:delete`
+      operationId: state-settings-delete-by-id
+      parameters:
+        - name: id
+          in: path
+          description: state setting id
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: OK
         400:
           description: Bad Request
           content:

@@ -92,9 +92,11 @@ const (
 	EventFilterRuleCollection    = "eventfilter"
 	EventFilterFailureCollection = "eventfilter_failure"
 
-	EntityServiceCountersCollection = "entity_service_counters"
+	EntityCountersCollection = "entity_counters"
 
 	MetaAlarmStatesCollection = "meta_alarm_states"
 
 	ColorThemeCollection = "color_theme"
+
+	EngineNotificationCollection = "engine_notification"
 )
