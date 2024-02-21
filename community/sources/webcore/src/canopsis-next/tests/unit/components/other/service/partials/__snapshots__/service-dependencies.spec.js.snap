@@ -114,7 +114,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                   <th
                     aria-label="Custom name label"
                     class="text-start"
-                    data-value="entity.name"
+                    data-value="name"
                     role="columnheader"
                     scope="col"
                   >
@@ -125,7 +125,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                   <th
                     aria-label="Custom type label"
                     class="text-start"
-                    data-value="entity.type"
+                    data-value="type"
                     role="columnheader"
                     scope="col"
                   >
@@ -341,7 +341,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                   <th
                     aria-label="Name"
                     class="text-start"
-                    data-value="entity.name"
+                    data-value="name"
                     role="columnheader"
                     scope="col"
                   >
@@ -352,7 +352,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                   <th
                     aria-label="Type"
                     class="text-start"
-                    data-value="entity.type"
+                    data-value="type"
                     role="columnheader"
                     scope="col"
                   >
@@ -601,7 +601,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                   <th
                     aria-label="Name"
                     class="text-start"
-                    data-value="entity.name"
+                    data-value="name"
                     role="columnheader"
                     scope="col"
                   >
@@ -612,7 +612,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                   <th
                     aria-label="Type"
                     class="text-start"
-                    data-value="entity.type"
+                    data-value="type"
                     role="columnheader"
                     scope="col"
                   >
@@ -734,7 +734,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with required pro
                   <th
                     aria-label="Name"
                     class="text-start"
-                    data-value="entity.name"
+                    data-value="name"
                     role="columnheader"
                     scope="col"
                   >
@@ -745,7 +745,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with required pro
                   <th
                     aria-label="Type"
                     class="text-start"
-                    data-value="entity.type"
+                    data-value="type"
                     role="columnheader"
                     scope="col"
                   >
