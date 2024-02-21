@@ -514,7 +514,6 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
                     impact="true"
                     includeroot="true"
                     root="[object Object]"
-                    showstatesetting="true"
                     type="0"
                   />
                 </div>
