@@ -10,12 +10,18 @@
         <v-icon>help</v-icon>
       </v-btn>
     </v-layout>
-    <v-expand-transition v-if="opened">
-      <v-layout column>
-        <div class="pre-wrap">
-          {{ description }}
-        </div>
+    <v-expand-transition>
+      <v-layout
+        v-show="opened"
+        column
+      >
+        <div
+          class="pre-wrap"
+          v-html="description"
+        />
         <img
+          class="my-2"
+          v-if="image"
           :src="image"
           alt=""
           @click="showImageViewerModal"
@@ -27,6 +33,8 @@
 
 <script>
 import { MODALS } from '@/constants';
+
+import { eventFilterActionsTypesImages } from '@/assets';
 
 export default {
   props: {
@@ -50,8 +58,11 @@ export default {
     },
 
     image() {
-      // eslint-disable-next-line import/no-dynamic-require,global-require
-      return require(`@/assets/event-filter-actions-types/${this.$i18n.locale.toUpperCase()}_${this.type}.png`);
+      const imageName = `${this.$i18n.locale.toUpperCase()}_${this.type}`;
+
+      return eventFilterActionsTypesImages[`./${imageName}.png`]
+        ?? eventFilterActionsTypesImages[`./${imageName}.svg`]
+        ?? '';
     },
   },
   methods: {

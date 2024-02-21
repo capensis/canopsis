@@ -43,7 +43,7 @@ import StateSettingForm from '@/components/other/state-setting/form/state-settin
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
-  name: MODALS.stateSetting,
+  name: MODALS.createStateSetting,
   $_veeValidate: {
     validator: 'new',
     delay: VALIDATION_DELAY,
@@ -65,7 +65,7 @@ export default {
   },
   computed: {
     title() {
-      return this.config.title || this.$t('modals.stateSetting.title');
+      return this.config.title || this.$t('modals.createStateSetting.create.title');
     },
   },
   methods: {

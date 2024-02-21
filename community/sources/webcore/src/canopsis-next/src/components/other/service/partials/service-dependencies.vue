@@ -8,51 +8,12 @@
     item-key="key"
   >
     <template #expand="{ item }">
-      <v-tooltip
-        v-if="item.loadMore"
-        right
-      >
-        <template #activator="{ on }">
-          <v-btn
-            v-on="on"
-            :loading="pendingByIds[item.parentId]"
-            fab
-            small
-            depressed
-            @click="loadMore(item.parentId)"
-          >
-            <v-icon>more_horiz</v-icon>
-          </v-btn>
-        </template>
-        <span>{{ $t('common.loadMore') }}</span>
-      </v-tooltip>
-      <v-btn
-        v-else
-        :color="getEntityColor(item.entity)"
-        fab
-        small
-        depressed
-        dark
-        @click="showTreeOfDependenciesModal(item)"
-      >
-        <v-icon>{{ getIconByEntity(item.entity) }}</v-icon>
-      </v-btn>
-      <v-tooltip
-        v-if="item.cycle"
-        top
-      >
-        <template #activator="{ on }">
-          <v-icon
-            class="mx-1"
-            v-on="on"
-            color="error"
-            size="14"
-          >
-            autorenew
-          </v-icon>
-        </template>
-        <span>{{ $t('common.cycleDependency') }}</span>
-      </v-tooltip>
+      <service-dependencies-expand
+        :item="item"
+        :pending="pendingByIds[item.parentId]"
+        @load="loadMore"
+        @show="showTreeOfDependenciesModal"
+      />
     </template>
     <template #expand-append="{ item }">
       <div
@@ -97,7 +58,6 @@ import { get, uniq } from 'lodash';
 import { PAGINATION_LIMIT } from '@/config';
 import { MODALS, ENTITY_TYPES, ENTITY_FIELDS, COLOR_INDICATOR_TYPES } from '@/constants';
 
-import { getIconByEntityType } from '@/helpers/entities/entity/icons';
 import { getEntityColor } from '@/helpers/entities/entity/color';
 import {
   dependencyToTreeviewDependency,
@@ -108,10 +68,14 @@ import {
 
 import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
 
+import ServiceDependenciesExpand from './service-dependencies-expand.vue';
 import ServiceDependenciesEntityCell from './service-dependencies-entity-cell.vue';
 
 export default {
-  components: { ServiceDependenciesEntityCell },
+  components: {
+    ServiceDependenciesExpand,
+    ServiceDependenciesEntityCell,
+  },
   mixins: [entitiesEntityDependenciesMixin],
   props: {
     root: {
@@ -179,6 +143,7 @@ export default {
 
         ...this.columns.map(column => ({
           ...column,
+          value: `entity.${column.value}`,
           isState: column.value?.endsWith(ENTITY_FIELDS.state),
         })),
       ];
@@ -206,10 +171,6 @@ export default {
     }
   },
   methods: {
-    getIconByEntity(entity) {
-      return getIconByEntityType(entity.type);
-    },
-
     getEntityColor(entity) {
       return getEntityColor(entity, COLOR_INDICATOR_TYPES.impactState);
     },
@@ -238,15 +199,15 @@ export default {
       });
     },
 
-    async loadMore(id) {
-      const isRoot = this.rootId === id;
-      const meta = this.metaByIds[id] || {};
+    async loadMore({ parentId } = {}) {
+      const isRoot = this.rootId === parentId;
+      const meta = this.metaByIds[parentId] || {};
       const params = {
         page: meta.page + 1,
         limit: PAGINATION_LIMIT,
       };
 
-      const ids = await this.fetchDependenciesById(id, params);
+      const ids = await this.fetchDependenciesById(parentId, params);
 
       if (!this.includeRoot && isRoot) {
         this.rootIds.push(...ids);
@@ -308,5 +269,4 @@ export default {
     }
   }
 }
-
 </style>
