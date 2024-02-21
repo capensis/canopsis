@@ -44,6 +44,10 @@ func (p *actionProcessor) Process(
 	regexMatch RegexMatch,
 	externalData map[string]any,
 ) (bool, error) {
+	const (
+		TagsNameVar  = "name"
+		TagsValueVar = "value"
+	)
 	switch action.Type {
 	case ActionSetField:
 		err := event.SetField(action.Name, action.Value)
@@ -55,21 +59,7 @@ func (p *actionProcessor) Process(
 
 		return false, nil
 	case ActionSetFieldFromTemplate:
-		if action.ParsedValue.Text == "" {
-			failReason := fmt.Sprintf("action %d cannot set %q field: %v must be template", action.Index,
-				action.Name, action.Value)
-			p.failureService.Add(ruleID, FailureTypeOther, failReason, nil)
-			return false, ErrShouldBeAString
-		}
-
-		tplData := Template{
-			Event:        event,
-			RegexMatch:   regexMatch,
-			ExternalData: externalData,
-		}
-		value, err := ExecuteParsedTemplate(ruleID, "Actions."+strconv.Itoa(action.Index)+".Value",
-			action.ParsedValue, tplData, event, p.failureService,
-			p.templateExecutor)
+		value, err := p.actionExecuteParsedTemplate(action, ruleID, "field", event, regexMatch, externalData)
 		if err != nil {
 			return false, err
 		}
@@ -94,21 +84,7 @@ func (p *actionProcessor) Process(
 
 		return entityUpdated, nil
 	case ActionSetEntityInfoFromTemplate:
-		if action.ParsedValue.Text == "" {
-			failReason := fmt.Sprintf("action %d cannot set %q entity info: %v must be template", action.Index,
-				action.Name, action.Value)
-			p.failureService.Add(ruleID, FailureTypeOther, failReason, nil)
-			return false, ErrShouldBeAString
-		}
-
-		tplData := Template{
-			Event:        event,
-			RegexMatch:   regexMatch,
-			ExternalData: externalData,
-		}
-		value, err := ExecuteParsedTemplate(ruleID, "Actions."+strconv.Itoa(action.Index)+".Value",
-			action.ParsedValue, tplData, event, p.failureService,
-			p.templateExecutor)
+		value, err := p.actionExecuteParsedTemplate(action, ruleID, "entity info", event, regexMatch, externalData)
 		if err != nil {
 			return false, err
 		}
@@ -187,12 +163,120 @@ func (p *actionProcessor) Process(
 		entityUpdated := p.setEntityInfo(event.Entity, value, action.Name, action.Description)
 
 		return entityUpdated, nil
+	case ActionSetTags:
+		strValue, ok := action.Value.(string)
+		if !ok {
+			failReason := fmt.Sprintf("action %d cannot set tags in %q: value %v must be path to field", action.Index,
+				action.Name, action.Value)
+			p.failureService.Add(ruleID, FailureTypeOther, failReason, nil)
+
+			return false, ErrShouldBeAString
+		}
+		t := Template{
+			Event:        event,
+			RegexMatch:   regexMatch,
+			ExternalData: externalData,
+		}
+
+		value, err := utils.GetField(t, strValue)
+		if err != nil {
+			failReason := fmt.Sprintf("action %d cannot read source field to set tags in %q: %s", action.Index, action.Name, err)
+			p.failureService.Add(ruleID, FailureTypeOther, failReason, &event)
+			return false, err
+		}
+		if regexMatch.MatchedRegexp == nil {
+			return false, nil
+		}
+		fieldValue, ok := value.(string)
+		if !ok {
+			failReason := fmt.Sprintf("action %d cannot assert field's type as string to set tags in %q: %s",
+				action.Index, action.Name, err)
+			p.failureService.Add(ruleID, FailureTypeOther, failReason, &event)
+
+			return false, ErrShouldBeAString
+		}
+
+		matches := utils.FindAllStringSubmatchMapWithRegexExpression(regexMatch.MatchedRegexp, fieldValue)
+		if len(matches) == 0 {
+			return false, nil
+		}
+
+		tags := make(map[string]string, len(matches))
+		for i := range matches {
+			tagName := matches[i][TagsNameVar]
+			tagValue := matches[i][TagsValueVar]
+			if tagName != "" && tagValue != "" {
+				tags[tagName] = tagValue
+			}
+		}
+
+		if len(tags) == 0 {
+			return false, nil
+		}
+
+		err = event.SetField(action.Name, tags)
+		if err != nil {
+		    return false, err
+		}
+
+		return true, nil
+	case ActionSetTagsFromTemplate:
+		value, err := p.actionExecuteParsedTemplate(action, ruleID, "tags", event, regexMatch, externalData)
+		if err != nil {
+			return false, err
+		}
+
+		var tags map[string]string
+		if regexMatch.MatchedRegexp != nil {
+			matches := utils.FindAllStringSubmatchMapWithRegexExpression(regexMatch.MatchedRegexp, value)
+			tags = make(map[string]string, len(matches))
+			for i := range matches {
+				tagName := matches[i][TagsNameVar]
+				tagValue := matches[i][TagsValueVar]
+				if tagName != "" && tagValue != "" {
+					tags[tagName] = tagValue
+				}
+			}
+			if len(tags) == 0 {
+				return false, nil
+			}
+		} else {
+			tags = map[string]string{
+				action.Name: value,
+			}
+		}
+
+		err = event.SetField("Tags", tags)
+		if err != nil {
+		    return false, err
+		}
+
+		return true, nil
 	}
 
 	failReason := fmt.Sprintf("action %d has invalid type %q", action.Index, action.Type)
 	p.failureService.Add(ruleID, FailureTypeOther, failReason, event)
 
 	return false, fmt.Errorf("action type = %s is invalid", action.Type)
+}
+
+func (p *actionProcessor) actionExecuteParsedTemplate(action ParsedAction, ruleID, target string, event types.Event, regexMatch RegexMatch, externalData map[string]any) (string, error) {
+	if action.ParsedValue.Text == "" {
+		failReason := fmt.Sprintf("action %d cannot set %q %s: %v must be template", action.Index,
+			action.Name, target, action.Value)
+		p.failureService.Add(ruleID, FailureTypeOther, failReason, nil)
+		return "", ErrShouldBeAString
+	}
+
+	tplData := Template{
+		Event:        event,
+		RegexMatch:   regexMatch,
+		ExternalData: externalData,
+	}
+	value, err := ExecuteParsedTemplate(ruleID, "Actions."+strconv.Itoa(action.Index)+".Value",
+		action.ParsedValue, tplData, event, p.failureService,
+		p.templateExecutor)
+	return value, err
 }
 
 func (p *actionProcessor) setEntityInfo(entity *types.Entity, value any, name, description string) bool {

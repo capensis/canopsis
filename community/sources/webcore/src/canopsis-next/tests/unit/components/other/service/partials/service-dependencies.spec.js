@@ -14,13 +14,13 @@ import ServiceDependencies from '@/components/other/service/partials/service-dep
 const stubs = {
   'c-treeview-data-table': CTreeviewDataTable,
   'c-no-events-icon': true,
+  'service-dependencies-expand': true,
   'service-dependencies-entity-cell': true,
 };
 
 const selectTreeviewTable = wrapper => wrapper.find('.service-dependencies');
 const selectNodeExpandPanel = wrapper => wrapper.findAll('.v-treeview-node__label');
-const selectMoreButton = wrapper => wrapper.find('button.v-btn');
-const selectDependenciesModalButton = wrapper => wrapper.find('button.v-btn');
+const selectServiceDependenciesExpand = wrapper => wrapper.find('service-dependencies-expand-stub');
 
 describe('service-dependencies', () => {
   const $modals = mockModals();
@@ -104,7 +104,6 @@ describe('service-dependencies', () => {
   ].map(column => ({
     ...column,
 
-    value: `entity.${column.value}`,
     sortable: false,
     text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
   }));
@@ -193,9 +192,12 @@ describe('service-dependencies', () => {
     fetchDependenciesWithoutStore.mockClear();
 
     const expandPanel = selectNodeExpandPanel(wrapper).at(2);
-    const moreButton = selectMoreButton(expandPanel);
+    const moreButton = selectServiceDependenciesExpand(expandPanel);
 
-    moreButton.trigger('click');
+    moreButton.vm.$emit('load', {
+      entity: data[2],
+      parentId: entity._id,
+    });
 
     await flushPromises();
 
@@ -232,9 +234,9 @@ describe('service-dependencies', () => {
     await flushPromises();
 
     const expandPanel = selectNodeExpandPanel(wrapper).at(1);
-    const dependenciesModalButton = selectDependenciesModalButton(expandPanel);
+    const dependenciesModalButton = selectServiceDependenciesExpand(expandPanel);
 
-    dependenciesModalButton.trigger('click');
+    dependenciesModalButton.vm.$emit('show', { entity: data[1] });
 
     const [, entityWithDeps] = data;
 
@@ -270,9 +272,9 @@ describe('service-dependencies', () => {
     await flushPromises();
 
     const expandPanel = selectNodeExpandPanel(wrapper).at(2);
-    const dependenciesModalButton = selectDependenciesModalButton(expandPanel);
+    const dependenciesModalButton = selectServiceDependenciesExpand(expandPanel);
 
-    dependenciesModalButton.trigger('click');
+    dependenciesModalButton.vm.$emit('show', { entity: data[2] });
 
     expect($modals.show).not.toBeCalled();
   });
@@ -315,7 +317,6 @@ describe('service-dependencies', () => {
         ].map(column => ({
           ...column,
 
-          value: `entity.${column.value}`,
           sortable: false,
           text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
         })),

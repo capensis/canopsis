@@ -4,11 +4,10 @@
       <v-flex xs12>
         <v-card class="ma-2">
           <v-tabs
-            class="parameters__tabs"
             v-model="activeTab"
             slider-color="primary"
             transition="slide-y"
-            vertical
+            centered
           >
             <v-tab :href="`#${$constants.PARAMETERS_TABS.parameters}`">
               {{ $t('parameters.tabs.parameters') }}
@@ -74,11 +73,10 @@
     </v-layout>
     <v-fade-transition>
       <c-fab-btn
-        v-if="hasFabButton"
-        @create="showSelectWidgetTemplateTypeModal"
-        @refresh="refresh"
+        v-if="fabData"
+        v-on="fabData.on"
       >
-        <span>{{ $t('modals.createWidgetTemplate.create.title') }}</span>
+        <span>{{ fabData.label }}</span>
       </c-fab-btn>
     </v-fade-transition>
   </v-container>
@@ -88,6 +86,7 @@
 import { MODALS, PARAMETERS_TABS } from '@/constants';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
+import { entitiesStateSettingMixin } from '@/mixins/entities/state-setting';
 import { entitiesWidgetTemplatesMixin } from '@/mixins/entities/widget-template';
 import { permissionsTechnicalParametersMixin } from '@/mixins/permissions/technical/parameters';
 import { permissionsTechnicalWidgetTemplateMixin } from '@/mixins/permissions/technical/widget-templates';
@@ -110,6 +109,7 @@ export default {
   },
   mixins: [
     entitiesInfoMixin,
+    entitiesStateSettingMixin,
     entitiesWidgetTemplatesMixin,
     permissionsTechnicalParametersMixin,
     permissionsTechnicalWidgetTemplateMixin,
@@ -120,15 +120,26 @@ export default {
     };
   },
   computed: {
-    hasFabButton() {
-      return this.activeTab === PARAMETERS_TABS.widgetTemplates;
+    fabData() {
+      return {
+        [PARAMETERS_TABS.widgetTemplates]: {
+          label: this.$t('modals.createWidgetTemplate.create.title'),
+          on: {
+            refresh: this.fetchWidgetTemplatesListWithPreviousParams,
+            create: this.showSelectWidgetTemplateTypeModal,
+          },
+        },
+        [PARAMETERS_TABS.stateSettings]: {
+          label: this.$t('modals.createStateSetting.create.title'),
+          on: {
+            refresh: this.fetchStateSettingsListWithPreviousParams,
+            create: this.showCreateStateSettingModal,
+          },
+        },
+      }[this.activeTab];
     },
   },
   methods: {
-    refresh() {
-      this.fetchWidgetTemplatesListWithPreviousParams();
-    },
-
     showSelectWidgetTemplateTypeModal() {
       this.$modals.show({
         name: MODALS.selectWidgetTemplateType,
@@ -137,7 +148,22 @@ export default {
           action: async (newWidgetTemplate) => {
             await this.createWidgetTemplate({ data: newWidgetTemplate });
 
-            return this.refresh();
+            this.fabData?.on.refresh();
+          },
+        },
+      });
+    },
+
+    showCreateStateSettingModal() {
+      this.$modals.show({
+        name: MODALS.createStateSetting,
+        config: {
+          title: this.$t('modals.createStateSetting.create.title'),
+          action: async (newStateSetting) => {
+            await this.createStateSetting({ data: newStateSetting });
+
+            this.$popups.success({ text: this.$t('modals.createStateSetting.create.success') });
+            this.fabData?.on.refresh();
           },
         },
       });
@@ -145,18 +171,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-.parameters__tabs .v-slide-group__wrapper {
-  position: relative;
-  background: transparent;
-
-  &:before {
-    content: '';
-    position: absolute;
-    inset: 0 0;
-    background-color: var(--v-application-background-base);
-    opacity: .5;
-  }
-}
-</style>

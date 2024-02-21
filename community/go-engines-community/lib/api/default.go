@@ -33,8 +33,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
-	libcontextgraphV1 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph/v1"
-	libcontextgraphV2 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph/v2"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	linkv1 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link/v1"
 	linkv2 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link/v2"
@@ -176,12 +174,7 @@ func Default(
 		cfg,
 		contextgraph.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
 		contextgraph.NewMongoStatusReporter(dbClient),
-		libcontextgraphV1.NewWorker(
-			dbClient,
-			importcontextgraph.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
-			metricsEntityMetaUpdater,
-		),
-		libcontextgraphV2.NewWorker(
+		importcontextgraph.NewWorker(
 			dbClient,
 			importcontextgraph.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
 			metricsEntityMetaUpdater,
@@ -318,7 +311,7 @@ func Default(
 			})
 		})
 
-		RegisterValidators(dbClient, flags.EnableSameServiceNames)
+		RegisterValidators(dbClient)
 		RegisterRoutes(
 			ctx,
 			cfg,
@@ -352,6 +345,7 @@ func Default(
 			healthcheckStore,
 			tplExecutor,
 			stateSettingsUpdatesChan,
+			flags.EnableSameServiceNames,
 			logger,
 		)
 	})

@@ -1,35 +1,69 @@
-import { isNumber } from 'lodash';
+import { omit, mapValues, pickBy } from 'lodash';
 
-import { STATE_SETTING_METHODS, STATE_SETTING_THRESHOLD_TYPES } from '@/constants';
+import {
+  ENTITIES_STATES_KEYS,
+  PATTERNS_FIELDS,
+  STATE_SETTING_THRESHOLDS_METHODS,
+  STATE_SETTING_METHODS,
+  ENTITY_TYPES,
+} from '@/constants';
+
+import { filterPatternsToForm, formFilterToPatterns } from '../filter/form';
 
 /**
- * @typedef { 'worst' | 'worst_of_share' } StateSettingMethod
+ * @typedef { 'inherited' | 'dependencies_state' } StateSettingMethod
  */
 
 /**
- * @typedef {Object} StateThreshold
- * @property {number} critical
- * @property {number} major
- * @property {number} minor
- * @property {number} type
+ * @typedef { 'component' | 'service' } StateSettingType
  */
 
 /**
- * @typedef {Object} StateSettingThresholds
- * @property {StateThreshold} errors
- * @property {StateThreshold} failures
- * @property {StateThreshold} skipped
+ * @typedef { 'ok' | 'minor' | 'major' | 'critical' } StateSettingThresholdState
  */
 
 /**
- * @typedef {Object} StateSetting
- * @property {StateSettingThresholds} junit_thresholds
+ * @typedef { 'number' | 'share' } StateSettingThresholdMethod
+ */
+
+/**
+ * @typedef { 'lt' | 'gt' } StateSettingThresholdCondition
+ */
+
+/**
+ * @typedef {Object} StateSettingThreshold
+ * @property {StateSettingThresholdMethod} method
+ * @property {StateSettingThresholdState} state
+ * @property {StateSettingThresholdCondition} cond
+ * @property {number} value
+ */
+
+/**
+ * @typedef {Object<StateSettingThresholdState, StateSettingThreshold>} StateSettingThresholds
+ */
+
+/**
+ * @typedef StateSettingInherited
+ * @property {PatternGroups} inherited_entity_pattern
+ */
+
+/**
+ * @typedef StateSettingDependenciesState
+ * @property {StateSettingThresholds} state_thresholds
+ */
+
+/**
+ * @typedef {StateSettingInherited | StateSettingDependenciesState} StateSetting
+ * @property {string} title
+ * @property {number} priority
+ * @property {StateSettingType} type
+ * @property {boolean} enabled
  * @property {StateSettingMethod} method
- * @property {string} type
  */
 
 /**
- * @typedef {StateThreshold} StateThresholdForm
+ * @typedef {StateSettingThreshold} StateSettingThresholdForm
+ * @property {boolean} enabled
  */
 
 /**
@@ -37,56 +71,108 @@ import { STATE_SETTING_METHODS, STATE_SETTING_THRESHOLD_TYPES } from '@/constant
  */
 
 /**
- * @typedef {StateSetting} StateSettingForm
+ * @typedef StateSettingInheritedForm
+ * @property {FilterPatternsForm} inherited_entity_pattern
  */
 
 /**
- * Convert state setting threshold criterion to form state setting threshold criterion
- *
- * @param {StateThreshold} thresholdCriterion
- * @return {StateThresholdForm}
+ * @typedef StateSettingDependenciesStateForm
+ * @property {StateSettingThresholdsForm} state_thresholds
  */
-const stateThresholdToFormStateThreshold = (thresholdCriterion = {}) => ({
-  critical: thresholdCriterion.critical || 40,
-  major: thresholdCriterion.major || 25,
-  minor: thresholdCriterion.minor || 10,
-  type: isNumber(thresholdCriterion.type)
-    ? thresholdCriterion.type
-    : STATE_SETTING_THRESHOLD_TYPES.percent,
+
+/**
+ * @typedef {StateSettingInheritedForm | StateSettingDependenciesStateForm} StateSettingForm
+ * @property {string} title
+ * @property {number} priority
+ * @property {StateSettingType} type
+ * @property {boolean} enabled
+ * @property {StateSettingMethod} method
+ * @property {FilterPatternsForm} entity_pattern
+ */
+
+/**
+ * Convert state setting threshold to form
+ *
+ * @param {StateSettingThreshold} [threshold = {}]
+ * @return {StateSettingThresholdForm}
+ */
+const stateSettingThresholdToForm = (threshold = {}) => ({
+  method: threshold.method ?? STATE_SETTING_THRESHOLDS_METHODS.share,
+  state: threshold.state ?? '',
+  cond: threshold.cond ?? '',
+  value: threshold.value ?? '',
+  enabled: !!threshold.method,
 });
 
 /**
- * Convert state setting thresholds to form state setting thresholds
+ * Convert state setting thresholds to form
  *
- * @param {StateSettingThresholds} [thresholds={}]
+ * @param {StateSettingThresholds} [thresholds = {}]
  * @return {StateSettingThresholdsForm}
  */
-const thresholdsToFormThresholds = (thresholds = {}) => ({
-  errors: stateThresholdToFormStateThreshold(thresholds.errors),
-  failures: stateThresholdToFormStateThreshold(thresholds.failures),
-  skipped: stateThresholdToFormStateThreshold(thresholds.skipped),
-});
+const stateSettingThresholdsToForm = (thresholds = {}) => (
+  mapValues(ENTITIES_STATES_KEYS, stateKey => stateSettingThresholdToForm(thresholds[stateKey]))
+);
 
 /**
- * Convert state setting to form state setting
+ * Convert state setting to form
  *
- * @param {StateSetting} [stateSetting={}]
+ * @param {StateSetting} [stateSetting = {}]
  * @return {StateSettingForm}
  */
 export const stateSettingToForm = (stateSetting = {}) => ({
-  junit_thresholds: thresholdsToFormThresholds(stateSetting.junit_thresholds),
-  method: stateSetting.method || STATE_SETTING_METHODS.worstOfShare,
-  type: stateSetting.type || '',
+  title: stateSetting.title ?? '',
+  priority: stateSetting.priority ?? 1,
+  enabled: stateSetting.enabled ?? true,
+  method: stateSetting.method ?? STATE_SETTING_METHODS.inherited,
+  type: stateSetting.type ?? ENTITY_TYPES.component,
+  entity_pattern: filterPatternsToForm(
+    { [PATTERNS_FIELDS.entity]: stateSetting.entity_pattern },
+    [PATTERNS_FIELDS.entity],
+  ),
+  inherited_entity_pattern: filterPatternsToForm(
+    { [PATTERNS_FIELDS.entity]: stateSetting.inherited_entity_pattern },
+    [PATTERNS_FIELDS.entity],
+  ),
+  state_thresholds: stateSettingThresholdsToForm(stateSetting.state_thresholds),
 });
 
 /**
- * Convert form state setting to state setting
+ * Convert form to state setting threshold
+ *
+ * @param {StateSettingThresholdForm} form
+ * @return {StateSettingThreshold}
+ */
+export const formToStateSettingThreshold = form => omit(form, ['enabled']);
+
+/**
+ * Convert form to state setting thresholds
+ *
+ * @param {StateSettingThresholdsForm} form
+ * @return {StateSettingThresholds}
+ */
+export const formToStateSettingThresholds = form => (
+  mapValues(pickBy(form, ({ enabled }) => enabled), formToStateSettingThreshold)
+);
+
+/**
+ * Convert form to state setting
  *
  * @param {StateSettingForm} form
  * @return {StateSetting}
  */
-export const formToStateSetting = form => ({
-  ...form,
+export const formToStateSetting = (form) => {
+  const stateSetting = omit(form, ['entity_pattern', 'inherited_entity_pattern', 'state_thresholds']);
 
-  junit_thresholds: form.method === STATE_SETTING_METHODS.worstOfShare ? form.junit_thresholds : undefined,
-});
+  stateSetting.entity_pattern = formFilterToPatterns(form.entity_pattern)[PATTERNS_FIELDS.entity];
+
+  if (form.method === STATE_SETTING_METHODS.inherited) {
+    stateSetting.inherited_entity_pattern = (
+      formFilterToPatterns(form.inherited_entity_pattern)[PATTERNS_FIELDS.entity]
+    );
+  } else {
+    stateSetting.state_thresholds = formToStateSettingThresholds(form.state_thresholds);
+  }
+
+  return stateSetting;
+};

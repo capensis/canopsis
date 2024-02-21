@@ -1,45 +1,75 @@
 <template>
-  <v-layout column>
-    <v-layout>
-      <v-flex xs4>
-        <state-setting-method-field v-field="form.method" />
-      </v-flex>
-    </v-layout>
-    <v-layout
-      v-if="isWorstOfShareMethod"
-      column
-    >
-      <v-layout>
-        <h4 class="text-subtitle-1 font-weight-bold">
-          {{ $t('stateSetting.worstLabel') }}
-        </h4>
-        <c-help-icon
-          :text="$t('stateSetting.worstHelpText')"
-          icon-class="ml-2"
-          max-width="220"
-          right
+  <v-stepper
+    class="state-setting-form"
+    v-model="stepper"
+  >
+    <v-stepper-header>
+      <v-stepper-step
+        :complete="stepper > steps.BASICS"
+        :step="steps.BASICS"
+        :rules="[() => !hasBasicsFormAnyError]"
+        editable
+      >
+        {{ $t('stateSetting.steps.basics') }}
+      </v-stepper-step>
+      <v-divider />
+      <v-stepper-step
+        :complete="stepper > steps.ENTITY_PATTERN"
+        :step="steps.ENTITY_PATTERN"
+        :rules="[() => !hasEntityPatternFormAnyError]"
+        editable
+      >
+        {{ $t('stateSetting.steps.rulePatterns') }}
+      </v-stepper-step>
+      <v-divider />
+      <v-stepper-step
+        :complete="stepper > steps.THRESHOLDS"
+        :step="steps.THRESHOLDS"
+        :rules="[() => !hasThresholdsFormAnyError]"
+        editable
+      >
+        {{ $t('stateSetting.steps.conditions') }}
+      </v-stepper-step>
+    </v-stepper-header>
+    <v-stepper-items>
+      <v-stepper-content :step="steps.BASICS">
+        <state-setting-basics-step
+          ref="basicsForm"
+          v-field="form"
         />
-      </v-layout>
-      <state-setting-threshold-field
-        class="pl-4 pt-2"
-        v-field="form.junit_thresholds.skipped"
-        :label="$t('common.skipped')"
-        name="junit_thresholds.skipped"
-      />
-      <state-setting-threshold-field
-        class="pl-4 pt-2"
-        v-field="form.junit_thresholds.errors"
-        :label="$tc('common.error', 2)"
-        name="junit_thresholds.errors"
-      />
-      <state-setting-threshold-field
-        class="pl-4 pt-2"
-        v-field="form.junit_thresholds.failures"
-        :label="$t('common.failures')"
-        name="junit_thresholds.failures"
-      />
-    </v-layout>
-  </v-layout>
+      </v-stepper-content>
+      <v-stepper-content :step="steps.ENTITY_PATTERN">
+        <c-alert
+          class="mb-4"
+          type="info"
+        >
+          {{ methodMessage }}
+        </c-alert>
+        <state-setting-entity-pattern-step
+          ref="entityPatternForm"
+          v-field="form.entity_pattern"
+        />
+      </v-stepper-content>
+      <v-stepper-content :step="steps.THRESHOLDS">
+        <c-alert
+          class="mb-4"
+          type="info"
+        >
+          {{ methodMessage }}
+        </c-alert>
+        <state-setting-inherited-entity-pattern-step
+          ref="thresholdsForm"
+          v-if="isInheritedMethod"
+          v-field="form.inherited_entity_pattern"
+        />
+        <state-setting-thresholds-step
+          ref="thresholdsForm"
+          v-else
+          v-field="form.state_thresholds"
+        />
+      </v-stepper-content>
+    </v-stepper-items>
+  </v-stepper>
 </template>
 
 <script>
@@ -47,12 +77,18 @@ import { STATE_SETTING_METHODS } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
 
-import StateSettingMethodField from './fields/state-setting-method-field.vue';
-import StateSettingThresholdField from './fields/state-setting-thresholds-field.vue';
+import StateSettingBasicsStep from './steps/state-setting-basics-step.vue';
+import StateSettingEntityPatternStep from './steps/state-setting-entity-pattern-step.vue';
+import StateSettingInheritedEntityPatternStep from './steps/state-setting-inherited-entity-pattern-step.vue';
+import StateSettingThresholdsStep from './steps/state-setting-thresholds-step.vue';
 
 export default {
-  inject: ['$validator'],
-  components: { StateSettingThresholdField, StateSettingMethodField },
+  components: {
+    StateSettingBasicsStep,
+    StateSettingEntityPatternStep,
+    StateSettingInheritedEntityPatternStep,
+    StateSettingThresholdsStep,
+  },
   mixins: [formMixin],
   model: {
     prop: 'form',
@@ -64,10 +100,54 @@ export default {
       default: () => ({}),
     },
   },
+  data() {
+    return {
+      stepper: 1,
+      hasBasicsFormAnyError: false,
+      hasEntityPatternFormAnyError: false,
+      hasThresholdsFormAnyError: false,
+    };
+  },
   computed: {
-    isWorstOfShareMethod() {
-      return this.form.method === STATE_SETTING_METHODS.worstOfShare;
+    steps() {
+      return {
+        BASICS: 1,
+        ENTITY_PATTERN: 2,
+        THRESHOLDS: 3,
+      };
     },
+
+    isInheritedMethod() {
+      return this.form.method === STATE_SETTING_METHODS.inherited;
+    },
+
+    methodMessage() {
+      return this.$t(`stateSetting.methods.${this.form.method}.stepTitle`);
+    },
+  },
+
+  mounted() {
+    this.$watch(() => this.$refs.basicsForm.hasAnyError, (value) => {
+      this.hasBasicsFormAnyError = value;
+    });
+
+    this.$watch(() => this.$refs.entityPatternForm.hasAnyError, (value) => {
+      this.hasEntityPatternFormAnyError = value;
+    });
+
+    this.$watch(() => this.$refs.thresholdsForm.hasAnyError, (value) => {
+      this.hasThresholdsFormAnyError = value;
+    });
   },
 };
 </script>
+
+<style lang="scss">
+.state-setting-form {
+  background-color: transparent !important;
+
+  .v-stepper__wrapper {
+    overflow: unset;
+  }
+}
+</style>

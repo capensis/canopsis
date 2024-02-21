@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { STATE_SETTING_THRESHOLD_TYPES } from '@/constants';
+import { JUNIT_STATE_SETTING_THRESHOLDS_TYPES } from '@/constants';
 
 export default {
   inject: ['$validator'],
@@ -43,7 +43,7 @@ export default {
     },
     type: {
       type: Number,
-      default: STATE_SETTING_THRESHOLD_TYPES.number,
+      default: JUNIT_STATE_SETTING_THRESHOLDS_TYPES.number,
     },
     name: {
       type: String,
@@ -52,7 +52,7 @@ export default {
   },
   computed: {
     isNumberType() {
-      return this.type === STATE_SETTING_THRESHOLD_TYPES.number;
+      return this.type === JUNIT_STATE_SETTING_THRESHOLDS_TYPES.number;
     },
   },
 };

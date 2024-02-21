@@ -410,6 +410,7 @@ var cpsTimeType = reflect.TypeOf(datetime.CpsTime{})
 var stringType = reflect.TypeOf("")
 var stringPtrType = reflect.PtrTo(stringType)
 var boolType = reflect.TypeOf(false)
+var mapStringStringType = reflect.TypeOf(map[string]string{})
 
 // SetField sets the value of a field of an event given its name.
 func (e *Event) SetField(name string, value interface{}) (err error) {
@@ -481,6 +482,19 @@ func (e *Event) SetField(name string, value interface{}) (err error) {
 		}
 		field.Set(reflect.ValueOf(boolValue))
 
+	case mapStringStringType:
+		var err error
+		if m1, ok := value.(map[string]any); ok {
+			err = setMapStringStringField(field, m1)
+		} else if m2, ok := value.(map[string]string); ok {
+			err = setMapStringStringField(field, m2)
+		} else {
+			return fmt.Errorf("%[1]T value cannot be assigned to a map[string]string: %+[1]v", value)
+		}
+		if err != nil {
+			return err
+		}
+
 	default:
 		return fmt.Errorf("cannot set field %s of type %v", name, field.Type())
 	}
@@ -539,6 +553,22 @@ func (e *Event) GetExtraInfoVal(f string) (interface{}, bool) {
 	}
 
 	return nil, false
+}
+
+// setMapStringStringField sets the value of a field of type map[string]string
+func setMapStringStringField[T any | string](field reflect.Value, value map[string]T) error {
+	if field.IsNil() {
+		field.Set(reflect.MakeMap(field.Type()))
+	}
+
+	for key, value := range value {
+		stringValue, success := utils.AsString(value)
+		if !success {
+			return fmt.Errorf("value cannot be assigned to a map[string]string under key %q: %+v", key, value)
+		}
+		field.SetMapIndex(reflect.ValueOf(key), reflect.ValueOf(stringValue))
+	}
+	return nil
 }
 
 func isValidEventType(t string) bool {
