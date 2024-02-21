@@ -5,8 +5,12 @@
       v-model="showType"
       class="mb-3"
     />
-    <state-settings-summary />
+    <state-settings-summary
+      v-if="showStateSetting"
+      :entity="root"
+    />
     <c-treeview-data-table
+      ref="treeviewDataTable"
       :items="items"
       :headers="headers"
       :loading="hasActivePending"
@@ -64,13 +68,7 @@
 import { get, uniq } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
-import {
-  MODALS,
-  ENTITY_TYPES,
-  ENTITY_FIELDS,
-  COLOR_INDICATOR_TYPES,
-  TREE_OF_DEPENDENCIES_SHOW_TYPES,
-} from '@/constants';
+import { MODALS, ENTITY_FIELDS, COLOR_INDICATOR_TYPES, TREE_OF_DEPENDENCIES_SHOW_TYPES } from '@/constants';
 
 import { getEntityColor } from '@/helpers/entities/entity/color';
 import {
@@ -114,7 +112,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    openableRoot: {
+    showStateSetting: {
       type: Boolean,
       default: false,
     },
@@ -163,7 +161,6 @@ export default {
 
         ...this.columns.map(column => ({
           ...column,
-          value: `entity.${column.value}`,
           isState: column.value?.endsWith(ENTITY_FIELDS.state),
         })),
       ];
@@ -193,10 +190,8 @@ export default {
       this.fetchRootDependencies();
     },
   },
-  created() {
-    this.setRootDependencies();
-  },
   mounted() {
+    this.setRootDependencies();
     this.fetchRootDependencies();
   },
   methods: {
@@ -209,6 +204,8 @@ export default {
     },
 
     setRootDependencies() {
+      this.$refs.treeviewDataTable.clearOpened();
+
       const dependenciesByIds = {};
       const rootIds = [];
 
@@ -234,10 +231,9 @@ export default {
     showTreeOfDependenciesModal(dependency) {
       const { entity } = dependency;
 
-      if (
-        (!this.openableRoot && this.rootId === entity._id)
-        || (!this.impact && entity.type !== ENTITY_TYPES.service)
-      ) {
+      const hasChildren = this.impact ? !!entity.impacts_count : !!entity.depends_count;
+
+      if (this.rootId === entity._id || !hasChildren) {
         return;
       }
 
@@ -277,14 +273,16 @@ export default {
     async fetchDependenciesById(id, params = { limit: PAGINATION_LIMIT }) {
       this.$set(this.pendingByIds, id, true);
 
+      const selectedType = this.isCustomType
+        ? this.showType
+        : this.type;
+
       const { data, meta } = await this.fetchDependenciesList({
         id,
         params: {
           ...params,
 
-          /**
-           * TODO: Should be added parameter
-           */
+          define_state: selectedType === TREE_OF_DEPENDENCIES_SHOW_TYPES.dependenciesDefiningTheState,
           with_flags: true,
         },
       });
@@ -315,6 +313,8 @@ export default {
 
 <style lang="scss" scoped>
 .service-dependencies ::v-deep .v-treeview-node__label {
+  overflow: initial;
+
   &, .expand-append {
     display: inline-flex;
     align-items: center;

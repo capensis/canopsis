@@ -3,7 +3,7 @@
     :root="item"
     :columns="columns"
     :type="type"
-    openable-root
+    show-state-setting
   />
 </template>
 

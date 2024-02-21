@@ -42,10 +42,7 @@
       removable
       @input="updateExportPdf"
     />
-    <field-switcher
-      v-field="form.showRootCauseByStateClick"
-      :title="$t('settings.showRootCauseByStateClick')"
-    />
+    <field-root-cause-settings v-field="form" />
   </widget-settings-group>
 </template>
 
@@ -66,13 +63,13 @@ import FieldInfoPopup from '@/components/sidebars/alarm/form/fields/info-popup.v
 import FieldTextEditorWithTemplate from '@/components/sidebars/form/fields/text-editor-with-template.vue';
 import FieldDefaultElementsPerPage from '@/components/sidebars/form/fields/default-elements-per-page.vue';
 import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
-import FieldSwitcher from '@/components/sidebars/form/fields/switcher.vue';
+import FieldRootCauseSettings from '@/components/sidebars/form/fields/root-cause-settings.vue';
 
 import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html';
 
 export default {
   components: {
-    FieldSwitcher,
+    FieldRootCauseSettings,
     WidgetSettingsGroup,
     FieldDefaultSortColumn,
     FieldColumns,
