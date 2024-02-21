@@ -17,8 +17,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
-	libcontextgraphV1 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph/v1"
-	libcontextgraphV2 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph/v2"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitybasic"
@@ -1411,36 +1409,21 @@ func RegisterRoutes(
 			)
 		}
 
-		contextGraphAPIV1 := libcontextgraphV1.NewApi(conf, contextgraph.NewMongoStatusReporter(dbClient), logger)
-		contextGraphRouter := protected.Group("/contextgraph")
-		{
-			contextGraphRouter.PUT(
-				"import",
-				middleware.Authorize(apisecurity.ObjContextGraph, model.PermissionCreate, enforcer),
-				contextGraphAPIV1.ImportAll,
-			)
-			contextGraphRouter.PUT(
-				"import-partial",
-				middleware.Authorize(apisecurity.ObjContextGraph, model.PermissionCreate, enforcer),
-				contextGraphAPIV1.ImportPartial,
-			)
-			contextGraphRouter.GET(
-				"import/status/:id",
-				middleware.Authorize(apisecurity.ObjContextGraph, model.PermissionRead, enforcer),
-				contextGraphAPIV1.Status,
-			)
-		}
-
-		contextGraphAPIV2 := libcontextgraphV2.NewApi(conf, contextgraph.NewMongoStatusReporter(dbClient), logger)
+		contextGraphAPI := contextgraph.NewApi(conf, contextgraph.NewMongoStatusReporter(dbClient), logger)
 		protected.PUT(
 			"contextgraph-import",
 			middleware.Authorize(apisecurity.ObjContextGraph, model.PermissionCreate, enforcer),
-			contextGraphAPIV2.ImportAll,
+			contextGraphAPI.ImportAll,
 		)
 		protected.PUT(
 			"contextgraph-import-partial",
 			middleware.Authorize(apisecurity.ObjContextGraph, model.PermissionCreate, enforcer),
-			contextGraphAPIV2.ImportPartial,
+			contextGraphAPI.ImportPartial,
+		)
+		protected.GET(
+			"contextgraph-import-status/:id",
+			middleware.Authorize(apisecurity.ObjContextGraph, model.PermissionRead, enforcer),
+			contextGraphAPI.Status,
 		)
 
 		stateSettingsRouter := protected.Group("/state-settings")
