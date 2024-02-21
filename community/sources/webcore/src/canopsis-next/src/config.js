@@ -116,6 +116,7 @@ export const API_ROUTES = {
   alarmLinks: '/api/v4/alarm-links',
   entity: '/api/v4/entities',
   entityContextGraph: '/api/v4/entities/context-graph',
+  entityCheckStateSetting: '/api/v4/entities/check-state-setting',
   bulkEntitiesEnable: '/api/v4/bulk/entities/enable',
   bulkEntitiesDisable: '/api/v4/bulk/entities/disable',
   entityBasics: '/api/v4/entitybasics',
