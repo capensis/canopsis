@@ -130,3 +130,15 @@ func GetImpactsCountPipeline() []bson.M {
 		{"$project": bson.M{"service_impacts": 0, "component_impacts": 0}},
 	}
 }
+
+func GetStateSettingPipeline() []bson.M {
+	return []bson.M{
+		{"$lookup": bson.M{
+			"from":         mongo.StateSettingsMongoCollection,
+			"localField":   "state_info._id",
+			"foreignField": "_id",
+			"as":           "state_setting",
+		}},
+		{"$unwind": bson.M{"path": "$state_setting", "preserveNullAndEmptyArrays": true}},
+	}
+}
