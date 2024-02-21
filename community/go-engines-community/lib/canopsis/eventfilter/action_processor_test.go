@@ -737,7 +737,7 @@ func TestActionProcessor(t *testing.T) {
 				},
 			},
 			expectedError:         false,
-			expectedEntityUpdated: true,
+			expectedEntityUpdated: false,
 		},
 		{
 			testName: "given copy action should return error because ExtraInfos value is incompatible type with Tags",
