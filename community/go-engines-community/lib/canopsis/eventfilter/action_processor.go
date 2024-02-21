@@ -181,7 +181,7 @@ func (p *actionProcessor) Process(
 		value, err := utils.GetField(t, strValue)
 		if err != nil {
 			failReason := fmt.Sprintf("action %d cannot read source field to set tags in %q: %s", action.Index, action.Name, err)
-			p.failureService.Add(ruleID, FailureTypeOther, failReason, &event)
+			p.failureService.Add(ruleID, FailureTypeOther, failReason, event)
 			return false, err
 		}
 		if regexMatch.MatchedRegexp == nil {
@@ -191,7 +191,7 @@ func (p *actionProcessor) Process(
 		if !ok {
 			failReason := fmt.Sprintf("action %d cannot assert field's type as string to set tags in %q: %s",
 				action.Index, action.Name, err)
-			p.failureService.Add(ruleID, FailureTypeOther, failReason, &event)
+			p.failureService.Add(ruleID, FailureTypeOther, failReason, event)
 
 			return false, ErrShouldBeAString
 		}
@@ -216,10 +216,10 @@ func (p *actionProcessor) Process(
 
 		err = event.SetField(action.Name, tags)
 		if err != nil {
-		    return false, err
+			return false, err
 		}
 
-		return true, nil
+		return false, nil
 	case ActionSetTagsFromTemplate:
 		value, err := p.actionExecuteParsedTemplate(action, ruleID, "tags", event, regexMatch, externalData)
 		if err != nil {
@@ -248,10 +248,10 @@ func (p *actionProcessor) Process(
 
 		err = event.SetField("Tags", tags)
 		if err != nil {
-		    return false, err
+			return false, err
 		}
 
-		return true, nil
+		return false, nil
 	}
 
 	failReason := fmt.Sprintf("action %d has invalid type %q", action.Index, action.Type)
@@ -260,7 +260,7 @@ func (p *actionProcessor) Process(
 	return false, fmt.Errorf("action type = %s is invalid", action.Type)
 }
 
-func (p *actionProcessor) actionExecuteParsedTemplate(action ParsedAction, ruleID, target string, event types.Event, regexMatch RegexMatch, externalData map[string]any) (string, error) {
+func (p *actionProcessor) actionExecuteParsedTemplate(action ParsedAction, ruleID, target string, event *types.Event, regexMatch RegexMatch, externalData map[string]any) (string, error) {
 	if action.ParsedValue.Text == "" {
 		failReason := fmt.Sprintf("action %d cannot set %q %s: %v must be template", action.Index,
 			action.Name, target, action.Value)
