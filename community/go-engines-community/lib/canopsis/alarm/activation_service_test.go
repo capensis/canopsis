@@ -55,7 +55,7 @@ func TestActivationService_Process_GivenInactiveAlarm_ShouldPublishEvent(t *test
 		).
 		Times(1)
 
-	_, err := service.Process(ctx, alarm, datetime.NewMicroTime())
+	_, err := service.Process(ctx, alarm, datetime.NewMicroTime(), types.EntityTypeResource)
 	if err != nil {
 		t.Errorf("exepected not error but got %v", err)
 	}
@@ -121,7 +121,7 @@ func TestActivationService_Process_GivenInactiveAlarm_ShouldPublishActiveEvent(t
 			gomock.Any(),
 		)
 
-	_, err := service.Process(ctx, alarm, datetime.NewMicroTime())
+	_, err := service.Process(ctx, alarm, datetime.NewMicroTime(), types.EntityTypeResource)
 	if err != nil {
 		t.Errorf("exepected not error but got %v", err)
 	}
@@ -165,7 +165,7 @@ func TestActivationService_Process_GivenInactiveAndSnoozedAlarm_ShouldNotPublish
 		).
 		Times(0)
 
-	_, err := service.Process(ctx, alarm, datetime.NewMicroTime())
+	_, err := service.Process(ctx, alarm, datetime.NewMicroTime(), types.EntityTypeResource)
 	if err != nil {
 		t.Errorf("exepected not error but got %v", err)
 	}
@@ -208,7 +208,7 @@ func TestActivationService_Process_GivenInactiveAlarmWithActivePBehavior_ShouldN
 		).
 		Times(0)
 
-	_, err := service.Process(ctx, alarm, datetime.NewMicroTime())
+	_, err := service.Process(ctx, alarm, datetime.NewMicroTime(), types.EntityTypeResource)
 	if err != nil {
 		t.Errorf("exepected not error but got %v", err)
 	}
@@ -252,7 +252,7 @@ func TestActivationService_Process_GivenActiveAlarm_ShouldNotPublishEvent(t *tes
 		).
 		Times(0)
 
-	_, err := service.Process(ctx, alarm, datetime.NewMicroTime())
+	_, err := service.Process(ctx, alarm, datetime.NewMicroTime(), types.EntityTypeResource)
 	if err != nil {
 		t.Errorf("exepected not error but got %v", err)
 	}
