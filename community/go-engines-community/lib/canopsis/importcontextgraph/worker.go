@@ -1,4 +1,4 @@
-package v2
+package importcontextgraph
 
 import (
 	"context"
@@ -13,7 +13,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitycategory"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -52,7 +51,7 @@ type worker struct {
 	alarmCollection         libmongo.DbCollection
 	alarmResolvedCollection libmongo.DbCollection
 
-	publisher         importcontextgraph.EventPublisher
+	publisher         EventPublisher
 	metricMetaUpdater metrics.MetaUpdater
 
 	logger zerolog.Logger
@@ -60,10 +59,10 @@ type worker struct {
 
 func NewWorker(
 	dbClient libmongo.DbClient,
-	publisher importcontextgraph.EventPublisher,
+	publisher EventPublisher,
 	metricMetaUpdater metrics.MetaUpdater,
 	logger zerolog.Logger,
-) importcontextgraph.Worker {
+) Worker {
 	return &worker{
 		entityCollection:        dbClient.Collection(libmongo.EntityMongoCollection),
 		categoryCollection:      dbClient.Collection(libmongo.EntityCategoryMongoCollection),
@@ -77,7 +76,7 @@ func NewWorker(
 	}
 }
 
-func (w *worker) Work(ctx context.Context, filename, source string) (stats importcontextgraph.Stats, resErr error) {
+func (w *worker) Work(ctx context.Context, filename, source string) (stats Stats, resErr error) {
 	startTime := time.Now()
 	defer func() {
 		stats.ExecTime = time.Since(startTime)
@@ -109,7 +108,7 @@ func (w *worker) Work(ctx context.Context, filename, source string) (stats impor
 	return stats, nil
 }
 
-func (w *worker) WorkPartial(ctx context.Context, filename, source string) (stats importcontextgraph.Stats, resErr error) {
+func (w *worker) WorkPartial(ctx context.Context, filename, source string) (stats Stats, resErr error) {
 	startTime := time.Now()
 	defer func() {
 		stats.ExecTime = time.Since(startTime)
@@ -251,7 +250,7 @@ func (w *worker) parseEntities(
 	basicEntityEvents := make([]types.Event, 0)
 
 	for decoder.More() {
-		var ci importcontextgraph.EntityConfiguration
+		var ci EntityConfiguration
 		err := decoder.Decode(&ci)
 		if err != nil {
 			return res, fmt.Errorf("failed to decode cis item: %w", err)
@@ -296,8 +295,8 @@ func (w *worker) parseEntities(
 
 		eventType := ""
 		var oldEntity struct {
-			importcontextgraph.EntityConfiguration `bson:",inline"`
-			Resources                              []string `bson:"resources"`
+			EntityConfiguration `bson:",inline"`
+			Resources           []string `bson:"resources"`
 		}
 
 		findCriteria := bson.M{"soft_deleted": bson.M{"$exists": false}}
@@ -338,7 +337,7 @@ func (w *worker) parseEntities(
 		}
 
 		switch ci.Action {
-		case importcontextgraph.ActionSet:
+		case ActionSet:
 			if ci.Type == types.EntityTypeComponent {
 				componentInfos[ci.ID] = ci.Infos
 				componentsExist[ci.ID] = true
@@ -374,7 +373,7 @@ func (w *worker) parseEntities(
 					}
 				}
 			}
-		case importcontextgraph.ActionDelete:
+		case ActionDelete:
 			if oldEntity.ID == "" {
 				if ci.Type == types.EntityTypeService {
 					err = fmt.Errorf("failed to delete an entity service with name = %s", ci.Name)
@@ -403,7 +402,7 @@ func (w *worker) parseEntities(
 
 			writeModels = append(writeModels, w.deleteEntity(oldEntity.ID, now)...)
 			removedIds = append(removedIds, oldEntity.ID)
-		case importcontextgraph.ActionEnable:
+		case ActionEnable:
 			if oldEntity.ID == "" {
 				if ci.Type == types.EntityTypeService {
 					err = fmt.Errorf("failed to enable an entity service with name = %s", ci.Name)
@@ -427,7 +426,7 @@ func (w *worker) parseEntities(
 
 			writeModels = append(writeModels, w.changeState(oldEntity.ID, true, source, now))
 			updatedIds = append(updatedIds, oldEntity.ID)
-		case importcontextgraph.ActionDisable:
+		case ActionDisable:
 			if oldEntity.ID == "" {
 				if ci.Type == types.EntityTypeService {
 					err = fmt.Errorf("failed to disable an entity service with name = %s", ci.Name)
@@ -497,7 +496,7 @@ func (w *worker) parseEntities(
 			}
 
 			if errors.Is(err, mongo.ErrNoDocuments) {
-				ci := importcontextgraph.EntityConfiguration{
+				ci := EntityConfiguration{
 					ID:           componentName,
 					Name:         componentName,
 					Component:    componentName,
@@ -615,10 +614,10 @@ func (w *worker) bulkWrite(ctx context.Context, writeModels []mongo.WriteModel, 
 	return updated, deleted, nil
 }
 
-func (w *worker) validate(ci importcontextgraph.EntityConfiguration) error {
+func (w *worker) validate(ci EntityConfiguration) error {
 	switch ci.Type {
 	case types.EntityTypeService:
-		if len(ci.EntityPattern) == 0 && ci.Action == importcontextgraph.ActionSet {
+		if len(ci.EntityPattern) == 0 && ci.Action == ActionSet {
 			return fmt.Errorf("service %s contains empty pattern", ci.Name)
 		}
 	case types.EntityTypeResource:
@@ -641,7 +640,7 @@ func (w *worker) validate(ci importcontextgraph.EntityConfiguration) error {
 	return nil
 }
 
-func (w *worker) fillDefaultFields(ci *importcontextgraph.EntityConfiguration, source string, now datetime.CpsTime) {
+func (w *worker) fillDefaultFields(ci *EntityConfiguration, source string, now datetime.CpsTime) {
 	switch ci.Type {
 	case types.EntityTypeService:
 		ci.ID = ci.Name
@@ -659,7 +658,7 @@ func (w *worker) fillDefaultFields(ci *importcontextgraph.EntityConfiguration, s
 	ci.Imported = now
 }
 
-func (w *worker) createEntity(ci importcontextgraph.EntityConfiguration) mongo.WriteModel {
+func (w *worker) createEntity(ci EntityConfiguration) mongo.WriteModel {
 	ci.Services = []string{}
 	ci.EnableHistory = make([]int64, 0)
 
@@ -681,7 +680,7 @@ func (w *worker) createEntity(ci importcontextgraph.EntityConfiguration) mongo.W
 		SetUpsert(true)
 }
 
-func (w *worker) updateEntity(ci *importcontextgraph.EntityConfiguration, oldEntity importcontextgraph.EntityConfiguration, mergeInfos bool) mongo.WriteModel {
+func (w *worker) updateEntity(ci *EntityConfiguration, oldEntity EntityConfiguration, mergeInfos bool) mongo.WriteModel {
 	ci.EnableHistory = oldEntity.EnableHistory
 
 	if ci.Type == types.EntityTypeComponent {
@@ -738,7 +737,7 @@ func (w *worker) updateComponentInfos(componentID string, infos map[string]types
 		SetUpdate(bson.M{"$set": bson.M{"component_infos": infos}})
 }
 
-func (w *worker) createServiceEvent(ci importcontextgraph.EntityConfiguration, eventType string, now datetime.CpsTime) types.Event {
+func (w *worker) createServiceEvent(ci EntityConfiguration, eventType string, now datetime.CpsTime) types.Event {
 	return types.Event{
 		EventType:     eventType,
 		Timestamp:     now,
