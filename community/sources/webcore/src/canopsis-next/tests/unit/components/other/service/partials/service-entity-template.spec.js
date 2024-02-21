@@ -20,8 +20,12 @@ describe('service-entity-template', () => {
   const store = createMockedStoreModules([authModule]);
 
   const snapshotFactory = generateRenderer(ServiceEntityTemplate, {
-
     stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
   });
 
   test('Renders `service-entity-template` with default props', async () => {

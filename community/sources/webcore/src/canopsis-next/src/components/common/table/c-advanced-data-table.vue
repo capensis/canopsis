@@ -135,6 +135,8 @@
 <script>
 import { omit } from 'lodash';
 
+import { getPageForNewItemsPerPage } from '@/helpers/pagination';
+
 export default {
   model: {
     prop: 'selected',
@@ -317,7 +319,12 @@ export default {
     },
 
     updateItemsPerPage(itemsPerPage) {
-      this.updateOptions({ ...this.options, itemsPerPage });
+      this.updateOptions({
+        ...this.options,
+
+        itemsPerPage,
+        page: getPageForNewItemsPerPage(itemsPerPage, this.options.itemsPerPage, this.options.page),
+      });
     },
 
     updatePage(page) {

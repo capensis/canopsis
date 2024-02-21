@@ -111,7 +111,7 @@
       </v-flex>
     </v-layout>
     <alarms-list-table
-      class="mt-1"
+      class="mt-2"
       ref="alarmsTable"
       :widget="widget"
       :alarms="alarms"
@@ -135,7 +135,7 @@
       densable
       @select:tag="selectTag"
       @update:dense="updateDense"
-      @update:page="updateQueryPage"
+      @update:page="updatePage"
       @update:items-per-page="updateItemsPerPage"
       @update:columns-settings="updateColumnsSettings"
       @clear:tag="clearTag"
@@ -151,6 +151,7 @@ import { MODALS, USERS_PERMISSIONS } from '@/constants';
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 import { getAlarmListExportDownloadFileUrl } from '@/helpers/entities/alarm/url';
 import { setSeveralFields } from '@/helpers/immutable';
+import { getPageForNewItemsPerPage } from '@/helpers/pagination';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
@@ -361,17 +362,12 @@ export default {
         ...this.query,
 
         itemsPerPage,
+        page: getPageForNewItemsPerPage(itemsPerPage, this.query.itemsPerPage, this.query.page),
       };
     },
 
     updateDense(dense) {
       this.updateContentInUserPreference({ dense });
-    },
-
-    expandFirstAlarm() {
-      if (!this.firstAlarmExpanded) {
-        this.$set(this.$refs.alarmsTable.expanded, this.alarms[0]._id, true);
-      }
     },
 
     removeHistoryFilter() {

@@ -228,6 +228,8 @@ definitions:
         type: integer
       canceled:
         $ref: '#/definitions/common.AlarmStep'
+      change_state:
+        $ref: '#/definitions/common.AlarmStep'
       children:
         items:
           type: string
@@ -1332,20 +1334,6 @@ definitions:
         $ref: '#/definitions/importcontextgraph.Stats'
       status:
         type: string
-    type: object
-  contextgraph.ImportRequest:
-    properties:
-      json:
-        properties:
-          cis:
-            items:
-              $ref: '#/definitions/importcontextgraph.ConfigurationItem'
-            type: array
-          links:
-            items:
-              $ref: '#/definitions/importcontextgraph.Link'
-            type: array
-        type: object
     type: object
   contextgraph.ImportResponse:
     properties:
@@ -2939,49 +2927,6 @@ definitions:
       updated:
         type: integer
     type: object
-  importcontextgraph.ConfigurationItem:
-    properties:
-      _id:
-        type: string
-      action:
-        enum:
-        - set
-        - create
-        - update
-        - delete
-        - enable
-        - disable
-        type: string
-      category:
-        type: string
-      enabled:
-        type: boolean
-      entity_pattern:
-        items:
-          items:
-            $ref: '#/definitions/pattern.FieldCondition'
-          type: array
-        type: array
-      impact_level:
-        type: integer
-      infos:
-        additionalProperties: true
-        type: object
-      measurements:
-        items: {}
-        type: array
-      name:
-        type: string
-      output_template:
-        type: string
-      type:
-        enum:
-        - connector
-        - component
-        - resource
-        - service
-        type: string
-    type: object
   importcontextgraph.EntityConfiguration:
     properties:
       action:
@@ -3013,26 +2958,6 @@ definitions:
     required:
     - name
     - type
-    type: object
-  importcontextgraph.Link:
-    properties:
-      _id:
-        type: string
-      action:
-        enum:
-        - create
-        - delete
-        type: string
-      action_properties: {}
-      from:
-        items:
-          type: string
-        type: array
-      infos:
-        additionalProperties: true
-        type: object
-      to:
-        type: string
     type: object
   importcontextgraph.Stats:
     properties:
@@ -3413,6 +3338,61 @@ definitions:
       updated:
         type: integer
     type: object
+  pbehavior.BulkConnectorCreateRequestItem:
+    properties:
+      color:
+        type: string
+      comment:
+        type: string
+      entities:
+        items:
+          type: string
+        type: array
+      name:
+        maxLength: 255
+        type: string
+      origin:
+        maxLength: 255
+        type: string
+      reason:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
+    required:
+    - comment
+    - entities
+    - name
+    - origin
+    - reason
+    - tstart
+    - tstop
+    - type
+    type: object
+  pbehavior.BulkConnectorDeleteRequestItem:
+    properties:
+      comment:
+        type: string
+      entities:
+        items:
+          type: string
+        type: array
+      origin:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+    required:
+    - comment
+    - entities
+    - origin
+    - tstart
+    - tstop
+    type: object
   pbehavior.BulkDeleteRequestItem:
     properties:
       _id:
@@ -3435,8 +3415,6 @@ definitions:
         maxLength: 255
         type: string
       reason:
-        type: string
-      rrule:
         type: string
       tstart:
         type: integer

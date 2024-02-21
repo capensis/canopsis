@@ -77,6 +77,7 @@ const selectFieldCounters = wrapper => wrapper.find('field-counters-selector-stu
 const selectFieldSwitcherByIndex = (wrapper, index) => wrapper.findAll('field-switcher-stub').at(index);
 const selectIsPriorityField = wrapper => selectFieldSwitcherByIndex(wrapper, 0);
 const selectIsHideGrayField = wrapper => selectFieldSwitcherByIndex(wrapper, 1);
+const selectEntitiesActionsInQueueField = wrapper => selectFieldSwitcherByIndex(wrapper, 2);
 const selectFieldModalType = wrapper => wrapper.find('field-modal-type-stub');
 const selectFieldActionRequiredSettingsType = wrapper => wrapper.find('field-action-required-settings-stub');
 
@@ -644,6 +645,22 @@ describe('service-weather', () => {
       expectData: {
         id: widget._id,
         data: getWidgetRequestWithNewParametersProperty(widget, 'isHideGrayEnabled', true),
+      },
+    });
+  });
+
+  test('Is entities actions in queue changed after trigger switcher field', async () => {
+    const wrapper = factory();
+
+    selectEntitiesActionsInQueueField(wrapper).vm.$emit('input', true);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'entitiesActionsInQueue', true),
       },
     });
   });

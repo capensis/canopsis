@@ -1,12 +1,12 @@
 <template>
   <div>
     <v-layout
-      class="d-inline-flex"
+      class="d-inline-flex my-1"
       v-if="serviceEntities.length"
       align-center
     >
       <v-simple-checkbox
-        class="ml-4 pa-0"
+        class="ml-4 my-2"
         v-model="isAllSelected"
         :disabled="!entitiesWithActions.length"
       />
@@ -37,6 +37,8 @@
         :entity-name-field="entityNameField"
         :widget-parameters="widgetParameters"
         :selected="isEntitySelected(serviceEntity)"
+        :actions-requests="actionsRequests"
+        @add:action="addAction"
         @update:selected="updateSelected(serviceEntity, $event)"
         @remove:unavailable="removeEntityFromUnavailable(serviceEntity)"
         @refresh="$listeners.refresh"
@@ -44,9 +46,9 @@
     </div>
     <c-table-pagination
       class="mt-1"
-      v-if="totalItems > options?.itemsPerPage"
+      v-if="totalItems > options.itemsPerPage"
       :total-items="totalItems"
-      :items-per-page="options?.itemsPerPage"
+      :items-per-page="options.itemsPerPage"
       :page="options.page"
       @update:page="updatePage"
       @update:items-per-page="updateItemsPerPage"
@@ -61,6 +63,7 @@ import {
   isActionTypeAvailableForEntity,
 } from '@/helpers/entities/entity/actions';
 import { filterById, mapIds } from '@/helpers/array';
+import { getPageForNewItemsPerPage } from '@/helpers/pagination';
 
 import { widgetActionPanelServiceEntityMixin } from '@/mixins/widget/actions-panel/service-entity';
 
@@ -97,6 +100,10 @@ export default {
     totalItems: {
       type: Number,
       required: false,
+    },
+    actionsRequests: {
+      type: Array,
+      default: () => [],
     },
   },
   data() {
@@ -166,15 +173,22 @@ export default {
       return this.selectedEntitiesIds.includes(entity._id);
     },
 
+    addAction(action) {
+      this.$emit('add:action', action);
+    },
+
     updatePage(page) {
       this.$emit('update:options', { ...this.options, page });
     },
 
     updateItemsPerPage(itemsPerPage) {
-      this.$emit('update:options', { ...this.options, itemsPerPage, page: 1 });
+      this.$emit('update:options', {
+        ...this.options,
+
+        itemsPerPage,
+        page: getPageForNewItemsPerPage(itemsPerPage, this.options.itemsPerPage, this.options.page),
+      });
     },
   },
 };
-</script>
-<script setup>
 </script>
