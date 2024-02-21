@@ -66,7 +66,7 @@ func ParseRule(rule Rule, tplExecutor libtemplate.Executor) ParsedRule {
 	for i, action := range rule.Config.Actions {
 		var parsedValue libtemplate.ParsedTemplate
 		switch action.Type {
-		case ActionSetFieldFromTemplate, ActionSetEntityInfoFromTemplate:
+		case ActionSetFieldFromTemplate, ActionSetEntityInfoFromTemplate, ActionSetTagsFromTemplate:
 			if str, ok := action.Value.(string); ok {
 				parsedValue = tplExecutor.Parse(str)
 			}

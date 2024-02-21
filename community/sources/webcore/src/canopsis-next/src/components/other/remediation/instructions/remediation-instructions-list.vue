@@ -152,6 +152,10 @@ export default {
           value: 'last_modified',
         },
         {
+          text: this.$t('common.priority'),
+          value: 'priority',
+        },
+        {
           text: this.$t('common.status'),
           value: 'status',
         },

@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { STATE_SETTING_THRESHOLD_TYPES } from '@/constants';
+import { JUNIT_STATE_SETTING_THRESHOLDS_TYPES } from '@/constants';
 
 export default {
   inject: ['$validator'],
@@ -32,7 +32,7 @@ export default {
   props: {
     value: {
       type: [Number, String],
-      default: STATE_SETTING_THRESHOLD_TYPES.number,
+      default: JUNIT_STATE_SETTING_THRESHOLDS_TYPES.number,
     },
     label: {
       type: String,
@@ -40,11 +40,11 @@ export default {
     },
     numberValue: {
       type: [Number, String],
-      default: STATE_SETTING_THRESHOLD_TYPES.number,
+      default: JUNIT_STATE_SETTING_THRESHOLDS_TYPES.number,
     },
     percentValue: {
       type: [Number, String],
-      default: STATE_SETTING_THRESHOLD_TYPES.percent,
+      default: JUNIT_STATE_SETTING_THRESHOLDS_TYPES.percent,
     },
     name: {
       type: String,
