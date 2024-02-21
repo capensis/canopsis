@@ -5,7 +5,7 @@
     </template>
     <template #text="">
       <state-settings-summary :entity="config.entity" />
-      <entity-dependencies-by-state-settings :entity="config.entity" />
+      <entity-dependencies-by-state-settings :entity="config.entity" :color-indicator="config.colorIndicator" />
     </template>
   </modal-wrapper>
 </template>

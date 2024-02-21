@@ -6,8 +6,6 @@ import {
 
 import { getMapEntityText } from '@/helpers/entities/map/list';
 
-import { getEntityColor } from './color';
-
 /**
  * Create vuetify icon element
  *
@@ -141,7 +139,6 @@ export const getEntityNodeElement = (node) => {
   nodeEl.style.width = `${nodeSize}px`;
   nodeEl.style.height = `${nodeSize}px`;
   nodeEl.style.justifyContent = 'center';
-  nodeEl.style.background = getEntityColor(entity);
 
   nodeEl.appendChild(getStateSettingsNodeIconElement(node));
   nodeEl.appendChild(nodeLabelEl);
