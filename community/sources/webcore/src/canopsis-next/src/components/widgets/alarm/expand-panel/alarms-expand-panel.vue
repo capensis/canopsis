@@ -201,7 +201,6 @@
                   :columns="widget.parameters.serviceDependenciesColumns"
                   include-root
                   impact
-                  show-state-setting
                 />
               </v-card-text>
             </v-card>
