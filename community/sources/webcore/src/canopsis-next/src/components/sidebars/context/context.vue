@@ -31,10 +31,7 @@
         @update:template="updateServiceDependenciesColumnsTemplate"
       />
       <field-tree-of-dependencies-settings v-model="form.parameters.treeOfDependenciesShowType" />
-      <field-switcher
-        v-model="form.parameters.showRootCauseByStateClick"
-        :title="$t('settings.showRootCauseByStateClick')"
-      />
+      <field-root-cause-settings v-model="form.parameters" />
       <field-columns
         v-model="form.parameters.activeAlarmsColumns"
         :template="form.parameters.activeAlarmsColumnsTemplate"
@@ -53,19 +50,18 @@
         :type="$constants.ENTITIES_TYPES.alarm"
         @update:template="updateResolvedAlarmsColumnsTemplate"
       />
-      <template v-if="hasAccessToListFilters">
-        <field-filters
-          v-model="form.parameters.mainFilter"
-          :filters.sync="form.filters"
-          :widget-id="widget._id"
-          :addable="hasAccessToAddFilter"
-          :editable="hasAccessToEditFilter"
-          with-alarm
-          with-entity
-          with-pbehavior
-          entity-counters-type
-        />
-      </template>
+      <field-filters
+        v-if="hasAccessToListFilters"
+        v-model="form.parameters.mainFilter"
+        :filters.sync="form.filters"
+        :widget-id="widget._id"
+        :addable="hasAccessToAddFilter"
+        :editable="hasAccessToEditFilter"
+        with-alarm
+        with-entity
+        with-pbehavior
+        entity-counters-type
+      />
       <field-context-entities-types-filter v-model="form.parameters.selectedTypes" />
       <export-csv-form
         v-model="form.parameters"
@@ -91,9 +87,9 @@ import { entitiesInfosMixin } from '@/mixins/entities/infos';
 import { widgetTemplatesMixin } from '@/mixins/widget/templates';
 import { permissionsWidgetsContextFilters } from '@/mixins/permissions/widgets/context/filters';
 
-import FieldSwitcher from '@/components/sidebars/form/fields/switcher.vue';
 import FieldTreeOfDependenciesSettings from '@/components/sidebars/form/fields/tree-of-dependencies-settings.vue';
 
+import FieldRootCauseSettings from '../form/fields/root-cause-settings.vue';
 import FieldTitle from '../form/fields/title.vue';
 import FieldDefaultSortColumn from '../form/fields/default-sort-column.vue';
 import FieldColumns from '../form/fields/columns.vue';
@@ -108,8 +104,8 @@ import FieldContextEntitiesTypesFilter from './form/fields/context-entities-type
 export default {
   name: SIDE_BARS.contextSettings,
   components: {
+    FieldRootCauseSettings,
     FieldTreeOfDependenciesSettings,
-    FieldSwitcher,
     FieldTitle,
     FieldDefaultSortColumn,
     FieldColumns,

@@ -91,6 +91,7 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.createGeoMap]: { maxWidth: 1280 },
       [MODALS.createFlowchartMap]: { maxWidth: 1600 },
       [MODALS.entityDependenciesList]: { maxWidth: 1600 },
+      [MODALS.entitiesRootCauseDiagram]: { maxWidth: 1600 },
       [MODALS.createDeclareTicketRule]: { maxWidth: 1280 },
       [MODALS.createDeclareTicketEvent]: { maxWidth: 1280 },
       [MODALS.executeDeclareTickets]: { maxWidth: 920 },
@@ -98,6 +99,7 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.createAlarmChart]: { maxWidth: 500 },
       [MODALS.createTag]: { maxWidth: 920 },
       [MODALS.createStateSetting]: { maxWidth: 960 },
+      [MODALS.stateSettingInheritedEntityPattern]: { maxWidth: 960 },
 
       ...featuresService.get('components.modals.dialogPropsMap'),
     },

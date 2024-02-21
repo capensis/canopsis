@@ -59,9 +59,14 @@
           fab
           @click="toggleEditing"
         >
-          <v-icon>edit</v-icon>
-          <v-icon color="primary">
+          <v-icon
+            v-if="editing"
+            color="primary"
+          >
             check
+          </v-icon>
+          <v-icon v-else>
+            edit
           </v-icon>
         </v-btn>
         <v-btn

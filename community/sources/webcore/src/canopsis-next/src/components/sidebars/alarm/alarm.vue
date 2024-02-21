@@ -75,10 +75,7 @@
         v-model="form.parameters.clearFilterDisabled"
         :title="$t('settings.clearFilterDisabled')"
       />
-      <field-switcher
-        v-model="form.parameters.showRootCauseByStateClick"
-        :title="$t('settings.showRootCauseByStateClick')"
-      />
+      <field-root-cause-settings v-model="form.parameters" />
       <field-live-reporting v-model="form.parameters.liveReporting" />
       <field-info-popup
         v-model="form.parameters.infoPopups"
@@ -218,6 +215,7 @@ import FieldTextEditorWithTemplate from '../form/fields/text-editor-with-templat
 import FieldSwitcher from '../form/fields/switcher.vue';
 import ExportCsvForm from '../form/export-csv.vue';
 import ChartsForm from '../chart/form/charts-form.vue';
+import FieldRootCauseSettings from '../form/fields/root-cause-settings.vue';
 
 import FieldGridRangeSize from './form/fields/grid-range-size.vue';
 import FieldRemediationInstructionsFilters from './form/fields/remediation-instructions-filters.vue';
@@ -234,6 +232,7 @@ import FieldResizeColumnBehavior from './form/fields/resize-column-behavior.vue'
 export default {
   name: SIDE_BARS.alarmSettings,
   components: {
+    FieldRootCauseSettings,
     WidgetSettingsGroup,
     WidgetSettings,
     FieldTitle,

@@ -1,15 +1,11 @@
 <template>
   <modal-wrapper close>
     <template #title="">
-      <span>{{ title }}</span>
+      {{ title }}
     </template>
     <template #text="">
-      <entity-dependencies-list-component
-        :widget="widget"
-        :columns="widget.parameters.widgetColumns"
-        :entity-id="entity._id"
-        :impact="config.impact"
-      />
+      <state-settings-summary :entity="config.entity" />
+      <entity-dependencies-by-state-settings :entity="config.entity" :color-indicator="config.colorIndicator" />
     </template>
   </modal-wrapper>
 </template>
@@ -17,19 +13,19 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { generatePreparedDefaultContextWidget } from '@/helpers/entities/widget/form';
-
 import { modalInnerMixin } from '@/mixins/modal/inner';
 
-import EntityDependenciesListComponent from '@/components/other/entity/entity-dependencies-list.vue';
+import EntityDependenciesByStateSettings from '@/components/other/entity/entity-dependencies-by-state-settings.vue';
+import StateSettingsSummary from '@/components/other/state-setting/state-settings-summary.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
-  name: MODALS.entityDependenciesList,
+  name: MODALS.entitiesRootCauseDiagram,
   components: {
+    StateSettingsSummary,
     ModalWrapper,
-    EntityDependenciesListComponent,
+    EntityDependenciesByStateSettings,
   },
   mixins: [modalInnerMixin],
   computed: {
@@ -41,10 +37,6 @@ export default {
       return this.config.title ?? this.$t('modals.entityDependenciesList.title', {
         name: this.entity.name,
       });
-    },
-
-    widget() {
-      return this.config.widget ?? generatePreparedDefaultContextWidget();
     },
   },
 };

@@ -2,6 +2,9 @@ import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
+import { createInputStub } from '@unit/stubs/input';
+
+import { COLOR_INDICATOR_TYPES } from '@/constants';
 
 import AlarmsListModal from '@/components/sidebars/alarm/form/alarms-list-modal.vue';
 
@@ -12,6 +15,7 @@ const stubs = {
   'field-default-elements-per-page': true,
   'field-info-popup': true,
   'field-text-editor-with-template': true,
+  'field-root-cause-settings': createInputStub('field-root-cause-settings'),
 };
 
 const snapshotStubs = {
@@ -21,14 +25,14 @@ const snapshotStubs = {
   'field-default-elements-per-page': true,
   'field-info-popup': true,
   'field-text-editor-with-template': true,
-  'field-switcher': true,
+  'field-root-cause-settings': true,
 };
 
 const selectFieldColumns = wrapper => wrapper.find('field-columns-stub');
 const selectFieldDefaultElementsPerPage = wrapper => wrapper.find('field-default-elements-per-page-stub');
 const selectFieldInfoPopup = wrapper => wrapper.find('field-info-popup-stub');
 const selectFieldTextEditorWithTemplate = wrapper => wrapper.find('field-text-editor-with-template-stub');
-const selectFieldSwitcher = wrapper => wrapper.find('field-switcher-stub');
+const selectFieldRootCauseSettings = wrapper => wrapper.find('.field-root-cause-settings');
 
 describe('alarms-list-modal', () => {
   const form = {
@@ -127,11 +131,14 @@ describe('alarms-list-modal', () => {
       propsData: { form },
     });
 
-    const newShowRootCauseByStateClick = Faker.datatype.boolean();
+    const newParameters = {
+      ...form,
+      showRootCauseByStateClick: false,
+      rootCauseColorIndicator: COLOR_INDICATOR_TYPES.impactState,
+    };
+    selectFieldRootCauseSettings(wrapper).triggerCustomEvent('input', newParameters);
 
-    selectFieldSwitcher(wrapper).triggerCustomEvent('input', newShowRootCauseByStateClick);
-
-    expect(wrapper).toEmitInput({ ...form, showRootCauseByStateClick: newShowRootCauseByStateClick });
+    expect(wrapper).toEmitInput(newParameters);
   });
 
   test('Renders `alarms-list-modal` with default props', () => {

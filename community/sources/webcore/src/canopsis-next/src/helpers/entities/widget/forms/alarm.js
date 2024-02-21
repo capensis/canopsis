@@ -27,6 +27,7 @@ import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 import { convertDurationToString, durationWithEnabledToForm, isValidUnit } from '@/helpers/date/duration';
 import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/array';
 import { kioskParametersToForm } from '@/helpers/entities/shared/kiosk/form';
+import { hasStateSetting } from '@/helpers/entities/entity/entity';
 import { convertAlarmWidgetParametersToActiveColumns } from '@/helpers/entities/alarm/query';
 
 import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html';
@@ -139,6 +140,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {string} exportPdfTemplate
  * @property {string} exportPdfTemplateTemplate
  * @property {boolean} showRootCauseByStateClick
+ * @property {ColorIndicator} rootCauseColorIndicator
  */
 
 /**
@@ -170,8 +172,8 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {boolean} isActionsAllowWithOkState
  * @property {boolean} sticky_header
  * @property {boolean} dense
- * @property {boolean} dense
  * @property {boolean} showRootCauseByStateClick
+ * @property {ColorIndicator} rootCauseColorIndicator
  */
 
 /**
@@ -286,6 +288,7 @@ export const alarmListBaseParametersToForm = (alarmListParameters = {}) => ({
   exportPdfTemplate: alarmListParameters.exportPdfTemplate ?? ALARM_EXPORT_PDF_TEMPLATE,
   exportPdfTemplateTemplate: widgetTemplateValueToForm(alarmListParameters.exportPdfTemplateTemplate),
   showRootCauseByStateClick: alarmListParameters.showRootCauseByStateClick ?? true,
+  rootCauseColorIndicator: alarmListParameters.rootCauseColorIndicator ?? COLOR_INDICATOR_TYPES.state,
 });
 
 /**
@@ -377,6 +380,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   exportPdfTemplate: parameters.exportPdfTemplate ?? ALARM_EXPORT_PDF_TEMPLATE,
   exportPdfTemplateTemplate: widgetTemplateValueToForm(parameters.exportPdfTemplateTemplate),
   showRootCauseByStateClick: parameters.showRootCauseByStateClick ?? true,
+  rootCauseColorIndicator: parameters.rootCauseColorIndicator ?? COLOR_INDICATOR_TYPES.state,
 });
 
 /**
@@ -573,10 +577,10 @@ export const getAlarmsListWidgetColumnComponentGetter = (
           },
         };
 
-        if (showRootCauseByStateClick) {
+        if (showRootCauseByStateClick && hasStateSetting(context.alarm.entity)) {
           component.bind.class = 'cursor-pointer';
           component.on = {
-            click: () => context.$emit('click:state', context.alarm.entity),
+            click: () => context.$emit('click:state', { ...context.alarm.entity, state: context.alarm.v?.state?.val }),
           };
         }
 

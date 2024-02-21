@@ -12,6 +12,7 @@ import { get } from 'lodash';
 import { ENTITY_INFOS_TYPE, ENTITY_FIELDS } from '@/constants';
 
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
+import { hasStateSetting } from '@/helpers/entities/entity/entity';
 
 import { widgetColumnsFiltersMixin } from '@/mixins/widget/columns-filters';
 
@@ -78,7 +79,7 @@ export default {
         },
       };
 
-      if (this.showRootCauseByStateClick) {
+      if (this.showRootCauseByStateClick && hasStateSetting(this.entity)) {
         component.bind.class = 'cursor-pointer';
         component.on = {
           click: () => this.$emit('click:state', this.entity),

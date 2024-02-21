@@ -97,9 +97,33 @@ exports[`pattern-editor-field Renders \`pattern-editor-field\` with advanced tab
     <!---->
   </div>
   <div
-    class="flex"
+    class="flex mt-2"
   >
-    <!---->
+    <transition-stub
+      class="pre-wrap"
+      name="fade-transition"
+    >
+      <div
+        class="v-alert v-sheet theme--dark error"
+        role="alert"
+        style="display: none;"
+      >
+        <div
+          class="v-alert__wrapper"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate v-alert__icon material-icons theme--dark"
+          >
+            warning
+          </i>
+          <div
+            class="v-alert__content"
+          >
+          </div>
+        </div>
+      </div>
+    </transition-stub>
     <transition-stub
       name="fade-transition"
     >
@@ -333,9 +357,33 @@ exports[`pattern-editor-field Renders \`pattern-editor-field\` with default prop
     <!---->
   </div>
   <div
-    class="flex"
+    class="flex mt-2"
   >
-    <!---->
+    <transition-stub
+      class="pre-wrap"
+      name="fade-transition"
+    >
+      <div
+        class="v-alert v-sheet theme--dark error"
+        role="alert"
+        style="display: none;"
+      >
+        <div
+          class="v-alert__wrapper"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate v-alert__icon material-icons theme--dark"
+          >
+            warning
+          </i>
+          <div
+            class="v-alert__content"
+          >
+          </div>
+        </div>
+      </div>
+    </transition-stub>
     <transition-stub
       name="fade-transition"
     >
