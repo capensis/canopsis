@@ -46,12 +46,13 @@ func (p *snoozeProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resu
 	match := getOpenAlarmMatchWithStepsLimit(event)
 	match["v.snooze"] = nil
 	newStep := types.NewAlarmStep(types.AlarmStepSnooze, event.Parameters.Timestamp, event.Parameters.Author, event.Parameters.Output,
-		event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
+		event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator, false)
 	newStep.Value = types.CpsNumber(event.Parameters.Duration.AddTo(event.Parameters.Timestamp).Unix())
+	newStepQuery := stepUpdateQuery(newStep)
 	update := []bson.M{
 		{"$set": bson.M{
-			"v.snooze":         newStep,
-			"v.steps":          bson.M{"$concatArrays": bson.A{"$v.steps", bson.A{newStep}}},
+			"v.snooze":         newStepQuery,
+			"v.steps":          addStepUpdateQuery(newStepQuery),
 			"v.inactive_start": event.Parameters.Timestamp,
 			"v.inactive_duration": bson.M{"$sum": bson.A{
 				"$v.inactive_duration",

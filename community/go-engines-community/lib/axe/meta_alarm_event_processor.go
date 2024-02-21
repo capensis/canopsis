@@ -156,7 +156,6 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event rpc
 				lastChild = childAlarms[len(childAlarms)-1]
 			}
 
-			newStep := types.NewMetaAlarmAttachStep(metaAlarm, rule.Name)
 			for _, childAlarm := range childAlarms {
 				if childAlarm.Alarm.Value.State != nil {
 					childState := childAlarm.Alarm.Value.State.Value
@@ -167,6 +166,7 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event rpc
 
 				if !childAlarm.Alarm.HasParentByEID(metaAlarm.EntityID) {
 					childAlarm.Alarm.AddParent(metaAlarm.EntityID)
+					newStep := types.NewMetaAlarmAttachStep(metaAlarm, rule.Name, !childAlarm.Alarm.Value.PbehaviorInfo.IsDefaultActive())
 					err = childAlarm.Alarm.PartialUpdateAddStepWithStep(newStep)
 					if err != nil {
 						return err
@@ -265,7 +265,6 @@ func (p *metaAlarmEventProcessor) AttachChildrenToMetaAlarm(ctx context.Context,
 		}
 
 		lastEventDate := metaAlarm.Value.LastEventDate
-		newStep := types.NewMetaAlarmAttachStep(metaAlarm, rule.Name)
 		worstState := types.CpsNumber(types.AlarmStateOK)
 		eventsCount := types.CpsNumber(0)
 
@@ -280,6 +279,7 @@ func (p *metaAlarmEventProcessor) AttachChildrenToMetaAlarm(ctx context.Context,
 				lastEventDate = childAlarm.Alarm.Value.LastEventDate
 			}
 
+			newStep := types.NewMetaAlarmAttachStep(metaAlarm, rule.Name, !childAlarm.Alarm.Value.PbehaviorInfo.IsDefaultActive())
 			err = childAlarm.Alarm.PartialUpdateAddStepWithStep(newStep)
 			if err != nil {
 				return err
@@ -1025,7 +1025,7 @@ func updateMetaAlarmState(alarm *types.Alarm, entity types.Entity, timestamp dat
 		}
 
 		// Create new Step to keep track of the alarm history
-		newStep := types.NewAlarmStep(types.AlarmStepStateIncrease, timestamp, author, output, "", "", types.InitiatorSystem)
+		newStep := types.NewAlarmStep(types.AlarmStepStateIncrease, timestamp, author, output, "", "", types.InitiatorSystem, !entity.PbehaviorInfo.IsDefaultActive())
 		newStep.Value = state
 
 		if state < currentState {
@@ -1061,7 +1061,7 @@ func updateMetaAlarmState(alarm *types.Alarm, entity types.Entity, timestamp dat
 	}
 
 	// Create new Step to keep track of the alarm history
-	newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, timestamp, author, output, "", "", types.InitiatorSystem)
+	newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, timestamp, author, output, "", "", types.InitiatorSystem, !entity.PbehaviorInfo.IsDefaultActive())
 	newStepStatus.Value = newStatus
 
 	if newStatus < currentStatus {
