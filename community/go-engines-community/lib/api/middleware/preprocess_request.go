@@ -23,7 +23,8 @@ func SetAuthor() func(c *gin.Context) {
 		encodedBody := json.NewDecoder(c.Request.Body)
 		err := encodedBody.Decode(&body)
 		if err != nil {
-			if errors.Is(err, io.EOF) {
+			var syntaxError *json.SyntaxError
+			if errors.Is(err, io.EOF) || errors.As(err, &syntaxError) {
 				c.Next()
 				return
 			}

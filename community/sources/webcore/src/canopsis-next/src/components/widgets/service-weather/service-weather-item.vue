@@ -36,21 +36,21 @@
             v-if="priorityEnabled"
             :value="service.impact_state"
           />
-        </v-layout>
-        <v-btn
-          class="ma-0"
-          v-if="showVariablesHelpButton"
-          icon
-          small
-          @click.stop="showVariablesHelpModal(service)"
-        >
-          <v-icon
-            color="white"
+          <v-btn
+            class="ma-0"
+            v-if="showVariablesHelpButton"
+            icon
             small
+            @click.stop="showVariablesHelpModal(service)"
           >
-            help
-          </v-icon>
-        </v-btn>
+            <v-icon
+              color="white"
+              small
+            >
+              help
+            </v-icon>
+          </v-btn>
+        </v-layout>
         <v-icon
           class="service-weather-item__background"
           size="5em"
