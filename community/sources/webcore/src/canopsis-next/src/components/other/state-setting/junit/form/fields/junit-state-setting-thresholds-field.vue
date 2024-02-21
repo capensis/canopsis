@@ -2,27 +2,27 @@
   <v-layout>
     <v-flex xs4>
       <h5 class="text-subtitle-1 font-weight-bold">
-        {{ $t('stateSetting.criterion') }}: {{ label }}
+        {{ $t('stateSetting.junit.criterion') }}: {{ label }}
       </h5>
-      <state-setting-thresholds-type-field
+      <junit-state-setting-thresholds-type-field
         class="mt-3"
         v-field="value.type"
       />
     </v-flex>
     <v-flex>
-      <state-setting-threshold-state-field
+      <junit-state-setting-threshold-state-field
         v-field="value.minor"
         :type="value.type"
         :name="`${name}.minor`"
         :label="$t('stateSetting.states.minor')"
       />
-      <state-setting-threshold-state-field
+      <junit-state-setting-threshold-state-field
         v-field="value.major"
         :type="value.type"
         :name="`${name}.major`"
         :label="$t('stateSetting.states.major')"
       />
-      <state-setting-threshold-state-field
+      <junit-state-setting-threshold-state-field
         v-field="value.critical"
         :type="value.type"
         :name="`${name}.critical`"
@@ -33,12 +33,14 @@
 </template>
 
 <script>
-import StateSettingThresholdsTypeField from './state-setting-thresholds-type-field.vue';
-import StateSettingThresholdStateField from './state-setting-threshold-state-field.vue';
+import JunitStateSettingThresholdsTypeField from './junit-state-setting-thresholds-type-field.vue';
+import JunitStateSettingThresholdStateField from './junit-state-setting-threshold-state-field.vue';
 
 export default {
-  inject: ['$validator'],
-  components: { StateSettingThresholdStateField, StateSettingThresholdsTypeField },
+  components: {
+    JunitStateSettingThresholdsTypeField,
+    JunitStateSettingThresholdStateField,
+  },
   model: {
     prop: 'value',
     event: 'input',
