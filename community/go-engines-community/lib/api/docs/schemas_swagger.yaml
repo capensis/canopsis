@@ -1335,20 +1335,6 @@ definitions:
       status:
         type: string
     type: object
-  contextgraph.ImportRequest:
-    properties:
-      json:
-        properties:
-          cis:
-            items:
-              $ref: '#/definitions/importcontextgraph.ConfigurationItem'
-            type: array
-          links:
-            items:
-              $ref: '#/definitions/importcontextgraph.Link'
-            type: array
-        type: object
-    type: object
   contextgraph.ImportResponse:
     properties:
       _id:
@@ -2941,49 +2927,6 @@ definitions:
       updated:
         type: integer
     type: object
-  importcontextgraph.ConfigurationItem:
-    properties:
-      _id:
-        type: string
-      action:
-        enum:
-        - set
-        - create
-        - update
-        - delete
-        - enable
-        - disable
-        type: string
-      category:
-        type: string
-      enabled:
-        type: boolean
-      entity_pattern:
-        items:
-          items:
-            $ref: '#/definitions/pattern.FieldCondition'
-          type: array
-        type: array
-      impact_level:
-        type: integer
-      infos:
-        additionalProperties: true
-        type: object
-      measurements:
-        items: {}
-        type: array
-      name:
-        type: string
-      output_template:
-        type: string
-      type:
-        enum:
-        - connector
-        - component
-        - resource
-        - service
-        type: string
-    type: object
   importcontextgraph.EntityConfiguration:
     properties:
       action:
@@ -3015,26 +2958,6 @@ definitions:
     required:
     - name
     - type
-    type: object
-  importcontextgraph.Link:
-    properties:
-      _id:
-        type: string
-      action:
-        enum:
-        - create
-        - delete
-        type: string
-      action_properties: {}
-      from:
-        items:
-          type: string
-        type: array
-      infos:
-        additionalProperties: true
-        type: object
-      to:
-        type: string
     type: object
   importcontextgraph.Stats:
     properties:
