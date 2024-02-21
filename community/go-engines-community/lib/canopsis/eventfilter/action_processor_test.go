@@ -2,17 +2,20 @@ package eventfilter_test
 
 import (
 	"context"
-	"reflect"
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
 	mock_eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/eventfilter"
 	mock_techmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/techmetrics"
 	"github.com/golang/mock/gomock"
+	"github.com/kylelemons/godebug/pretty"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -676,33 +679,79 @@ func TestActionProcessor(t *testing.T) {
 			expectedError: true,
 		},
 		{
-			testName: "given copy_to_entity_info action should return success with string type",
+			testName: "given copy action should return success with Tags copied from ExtraInfos",
 			action: eventfilter.ParsedAction{
-				Type:        eventfilter.ActionCopyToEntityInfo,
-				Name:        "Info 1",
-				Description: "Test description",
-				Value:       "Event.Resource",
+				Type:  eventfilter.ActionCopy,
+				Name:  "Tags",
+				Value: "Event.ExtraInfos.newtags",
 			},
 			event: types.Event{
-				Resource: "test resource",
-				Entity:   &types.Entity{},
+				Tags: map[string]string{
+					"tag0": "",
+					"tag1": "value1",
+					"tag2": "value2",
+					"tag3": "value3",
+				},
+				ExtraInfos: map[string]interface{}{
+					"newtags": map[string]interface{}{
+						"tag1": "value1a",
+						"tag2": "value2a",
+						"tag4": "",
+					},
+				},
 			},
 			regexMatches: eventfilter.RegexMatch{},
 			externalData: map[string]interface{}{},
 			expectedEvent: types.Event{
-				Resource: "test resource",
-				Entity: &types.Entity{
-					Infos: map[string]types.Info{
-						"Info 1": {
-							Name:        "Info 1",
-							Description: "Test description",
-							Value:       "test resource",
-						},
+				Tags: map[string]string{
+					"tag0": "",
+					"tag1": "value1a",
+					"tag2": "value2a",
+					"tag3": "value3",
+					"tag4": "",
+				},
+				ExtraInfos: map[string]interface{}{
+					"newtags": map[string]interface{}{
+						"tag1": "value1a",
+						"tag2": "value2a",
+						"tag4": "",
 					},
-					IsUpdated: true,
 				},
 			},
 			expectedError: false,
+		},
+		{
+			testName: "given copy action should return error because ExtraInfos value is incompatible type with Tags",
+			action: eventfilter.ParsedAction{
+				Type:  eventfilter.ActionCopy,
+				Name:  "Tags",
+				Value: "Event.ExtraInfos.newtags",
+			},
+			event: types.Event{
+				Tags: map[string]string{
+					"tag0": "",
+					"tag1": "value1",
+					"tag2": "value2",
+					"tag3": "value3",
+				},
+				ExtraInfos: map[string]interface{}{
+					"newtags": []string{"tag1", "tag2", "tag4"},
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]interface{}{},
+			expectedEvent: types.Event{
+				Tags: map[string]string{
+					"tag0": "",
+					"tag1": "value1",
+					"tag2": "value2",
+					"tag3": "value3",
+				},
+				ExtraInfos: map[string]interface{}{
+					"newtags": []string{"tag1", "tag2", "tag4"},
+				},
+			},
+			expectedError: true,
 		},
 		{
 			testName: "given copy_to_entity_info action should return success with string type",
@@ -1237,6 +1286,249 @@ func TestActionProcessor(t *testing.T) {
 			},
 			expectedError: false,
 		},
+		{
+			testName: "given set_tags action should return success with tags assigned from regex",
+			action: eventfilter.ParsedAction{
+				Type:        eventfilter.ActionSetTags,
+				Name:        "Tags",
+				Description: "Test description",
+				Value:       "Event.Output",
+			},
+			event: types.Event{
+				Output: "Some text preceding tags. Prod ENV; Critical Severity;",
+				Entity: &types.Entity{},
+				Tags: map[string]string{
+					"tag0": "",
+					"tag1": "value1",
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{
+				EventRegexMatches: match.EventRegexMatches{
+					MatchedRegexp: func(s string) utils.RegexExpression {
+						v, err := utils.NewRegexExpression(s)
+						if err != nil {
+							panic(err)
+						}
+						return v
+					}(`(?P<value>[a-zA-Z]+)\s+(?P<name>[a-zA-Z]+);`),
+					Output: pattern.RegexMatches{
+						"value": "Prod",
+					},
+				},
+			},
+			expectedEvent: types.Event{
+				Output: "Some text preceding tags. Prod ENV; Critical Severity;",
+				Entity: &types.Entity{},
+				Tags: map[string]string{
+					"tag0":     "",
+					"tag1":     "value1",
+					"ENV":      "Prod",
+					"Severity": "Critical",
+				},
+			},
+		},
+		{
+			testName: "given set_tags action should return success with tags assigned from regex and tags from ExtraInfos",
+			action: eventfilter.ParsedAction{
+				Type:        eventfilter.ActionSetTags,
+				Name:        "Tags",
+				Description: "Test description",
+				Value:       "Event.ExtraInfos.strparam",
+			},
+			event: types.Event{
+				Entity: &types.Entity{},
+				Tags: map[string]string{
+					"tag0": "",
+					"tag1": "value1",
+				},
+				ExtraInfos: map[string]interface{}{
+					"strparam": "Prod ENV; Critical Severity;",
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{
+				EventRegexMatches: match.EventRegexMatches{
+					MatchedRegexp: func(s string) utils.RegexExpression {
+						v, err := utils.NewRegexExpression(s)
+						if err != nil {
+							panic(err)
+						}
+						return v
+					}(`(?P<value>[a-zA-Z]+)\s+(?P<name>[a-zA-Z]+);`),
+					ExtraInfos: map[string]pattern.RegexMatches{
+						"strparam": {
+							"value": "Prod",
+						},
+					},
+				},
+			},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{},
+				Tags: map[string]string{
+					"tag0":     "",
+					"tag1":     "value1",
+					"ENV":      "Prod",
+					"Severity": "Critical",
+				},
+				ExtraInfos: map[string]interface{}{
+					"strparam": "Prod ENV; Critical Severity;",
+				},
+			},
+		},
+		{
+			testName: "given set_tags_from_template action should return success with tag assigned from template",
+			action: eventfilter.ParsedAction{
+				Type:        eventfilter.ActionSetTagsFromTemplate,
+				Name:        "ENV",
+				Description: "Test description",
+				ParsedValue: tplExecutor.Parse("{{.ExternalData.data_1}}"),
+			},
+			event: types.Event{
+				Entity: &types.Entity{},
+				Tags: map[string]string{
+					"tag0": "",
+					"tag1": "value1",
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]interface{}{
+				"data_1": "Prod",
+			},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{},
+				Tags: map[string]string{
+					"tag0": "",
+					"tag1": "value1",
+					"ENV":  "Prod",
+				},
+			},
+		},
+		{
+			testName: "given set_tags_from_template action should return success with tag assigned from template and pattern matched Output",
+			action: eventfilter.ParsedAction{
+				Type:        eventfilter.ActionSetTagsFromTemplate,
+				Name:        "ENV",
+				Description: "Test description",
+				ParsedValue: tplExecutor.Parse("{{.Event.Output}}"),
+			},
+			event: types.Event{
+				Entity: &types.Entity{},
+				Tags: map[string]string{
+					"tag0": "",
+					"tag1": "value1",
+				},
+				Output: "Some text preceding tags. Prod ENV; Critical Severity;",
+			},
+			regexMatches: eventfilter.RegexMatch{
+				EventRegexMatches: match.EventRegexMatches{
+					MatchedRegexp: func(s string) utils.RegexExpression {
+						v, err := utils.NewRegexExpression(s)
+						if err != nil {
+							panic(err)
+						}
+						return v
+					}(`(?P<value>[a-zA-Z]+)\s+(?P<name>[a-zA-Z]+);`),
+					Output: pattern.RegexMatches{
+						"value": "Prod",
+					},
+				},
+			},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{},
+				Output: "Some text preceding tags. Prod ENV; Critical Severity;",
+				Tags: map[string]string{
+					"tag0":     "",
+					"tag1":     "value1",
+					"ENV":      "Prod",
+					"Severity": "Critical",
+				},
+			},
+		},
+		{
+			testName: "successful set_tags_from_template action set tags from template and pattern matched name-value pairs from ExtraInfos",
+			action: eventfilter.ParsedAction{
+				Type:        eventfilter.ActionSetTagsFromTemplate,
+				Name:        "ENV",
+				Description: "Test description",
+				ParsedValue: tplExecutor.Parse("{{.Event.ExtraInfos.strparam}}"),
+			},
+			event: types.Event{
+				Entity: &types.Entity{},
+				Tags: map[string]string{
+					"tag0": "",
+					"tag1": "value1",
+				},
+				ExtraInfos: map[string]interface{}{
+					"strparam": "Some text preceding tags. Prod ENV; Critical Severity;",
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{
+				EventRegexMatches: match.EventRegexMatches{
+					MatchedRegexp: func(s string) utils.RegexExpression {
+						v, err := utils.NewRegexExpression(s)
+						if err != nil {
+							panic(err)
+						}
+						return v
+					}(`(?P<value>[a-zA-Z]+)\s+(?P<name>[a-zA-Z]+);`),
+					ExtraInfos: map[string]pattern.RegexMatches{
+						"strparam": {
+							"value": "Prod",
+						},
+					},
+				},
+			},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{},
+				Tags: map[string]string{
+					"tag0":     "",
+					"tag1":     "value1",
+					"ENV":      "Prod",
+					"Severity": "Critical",
+				},
+				ExtraInfos: map[string]interface{}{
+					"strparam": "Some text preceding tags. Prod ENV; Critical Severity;",
+				},
+			},
+		},
+		{
+			testName: "given set_tags_from_template action should return success with tag assigned from template and named as ParsedAction.Name",
+			action: eventfilter.ParsedAction{
+				Type:        eventfilter.ActionSetTagsFromTemplate,
+				Name:        "ENV",
+				Description: "Test description",
+				ParsedValue: tplExecutor.Parse("{{.Event.ExtraInfos.strparam}}"),
+			},
+			event: types.Event{
+				Entity: &types.Entity{},
+				Tags: map[string]string{
+					"tag0": "",
+					"tag1": "value1",
+				},
+				ExtraInfos: map[string]interface{}{
+					"strparam": "Prod ENV; Critical Severity;",
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{
+				EventRegexMatches: match.EventRegexMatches{
+					ExtraInfos: map[string]pattern.RegexMatches{
+						"strparam": {
+							"value": "Prod",
+						},
+					},
+				},
+			},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{},
+				Tags: map[string]string{
+					"tag0": "",
+					"tag1": "value1",
+					"ENV":  "Prod ENV; Critical Severity;",
+				},
+				ExtraInfos: map[string]interface{}{
+					"strparam": "Prod ENV; Critical Severity;",
+				},
+			},
+		},
 	}
 
 	mockAlarmConfigProvider := mock_config.NewMockAlarmConfigProvider(ctrl)
@@ -1249,11 +1541,12 @@ func TestActionProcessor(t *testing.T) {
 	mockTechMetricsSender.EXPECT().SendCheEntityInfo(gomock.Any(), gomock.Any()).AnyTimes()
 	processor := eventfilter.NewActionProcessor(mockAlarmConfigProvider, mockFailureService, tplExecutor, mockTechMetricsSender)
 	for _, dataset := range dataSets {
+		dataset := dataset
 		t.Run(dataset.testName, func(t *testing.T) {
 			resultEvent, resultErr := processor.Process(context.Background(), "test", dataset.action, dataset.event,
 				dataset.regexMatches, dataset.externalData)
-			if !reflect.DeepEqual(resultEvent, dataset.expectedEvent) {
-				t.Errorf("expected an event = %v, but got %v", dataset.expectedEvent, resultEvent)
+			if diff := pretty.Compare(dataset.expectedEvent, resultEvent); diff != "" {
+				t.Errorf("unexpected event: %s", diff)
 			}
 
 			if dataset.expectedError && resultErr == nil {
@@ -1262,6 +1555,9 @@ func TestActionProcessor(t *testing.T) {
 
 			if !dataset.expectedError && resultErr != nil {
 				t.Errorf("expected no error but got %+v", resultErr)
+			}
+			if resultErr != nil {
+				t.Logf("%s returned: %s", dataset.testName, resultErr)
 			}
 		})
 	}

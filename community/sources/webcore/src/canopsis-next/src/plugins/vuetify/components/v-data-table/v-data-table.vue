@@ -19,6 +19,23 @@ export default {
       required: false,
     },
   },
+  watch: {
+    /**
+     * We've added watcher for resetting page if page is out of range
+     */
+    serverItemsLength(serverItemsLength) {
+      const page = this.options?.page ?? 1;
+      const pageCount = Math.ceil(serverItemsLength / this.computedItemsPerPage) || 1;
+
+      if (page > pageCount) {
+        this.$emit('update:options', {
+          ...this.options,
+
+          page: pageCount,
+        });
+      }
+    },
+  },
   methods: {
     /**
      * We've added expand transition here

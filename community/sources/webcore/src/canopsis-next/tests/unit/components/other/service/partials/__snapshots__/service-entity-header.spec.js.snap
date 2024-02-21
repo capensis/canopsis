@@ -46,7 +46,8 @@ exports[`service-entity-header Renders \`service-entity-header\` with custom pro
         entity_name_field
       </div>
       <button
-        class="mx-1 v-btn v-btn--icon v-btn--round theme--dark v-size--small purple--text"
+        class="mx-1 v-btn v-btn--icon v-btn--round theme--dark v-size--small"
+        style="background-color: purple;"
         type="button"
       >
         <span
@@ -62,7 +63,8 @@ exports[`service-entity-header Renders \`service-entity-header\` with custom pro
         </span>
       </button>
       <button
-        class="mx-1 v-btn v-btn--icon v-btn--round theme--dark v-size--small blue--text"
+        class="mx-1 v-btn v-btn--icon v-btn--round theme--dark v-size--small"
+        style="background-color: blue;"
         type="button"
       >
         <span
@@ -78,7 +80,7 @@ exports[`service-entity-header Renders \`service-entity-header\` with custom pro
         </span>
       </button>
       <button
-        class="mx-1 v-btn v-btn--icon v-btn--round theme--dark v-size--small grey--text text--darken-1"
+        class="mx-1 v-btn v-btn--icon v-btn--round theme--dark v-size--small"
         type="button"
       >
         <span

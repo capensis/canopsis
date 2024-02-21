@@ -24,11 +24,11 @@
             align-center
           >
             <c-pagination
-              :page="query.page"
-              :limit="query.limit"
+              :page="options.page"
+              :limit="options.itemsPerPage"
               :total="meta.total_count"
               type="top"
-              @input="updateQueryPage"
+              @input="updatePage"
             />
           </v-layout>
         </v-flex>
@@ -67,20 +67,19 @@
     </c-advanced-data-table>
     <c-table-pagination
       :total-items="meta.total_count"
-      :items-per-page="query.limit"
-      :page="query.page"
-      @update:page="updateQueryPage"
+      :items-per-page="options.itemsPerPage"
+      :page="options.page"
+      @update:page="updatePage"
       @update:items-per-page="updateItemsPerPage"
     />
   </div>
 </template>
 
 <script>
-import { PAGINATION_LIMIT } from '@/config';
-
-import { convertDataTableOptionsToQuery } from '@/helpers/entities/shared/query';
+import { getPageForNewItemsPerPage } from '@/helpers/pagination';
 
 import { authMixin } from '@/mixins/auth';
+import { widgetOptionsMixin } from '@/mixins/widget/options';
 import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
 
 import EntityColumnCell from '../columns-formatting/entity-column-cell.vue';
@@ -98,6 +97,7 @@ export default {
   },
   mixins: [
     authMixin,
+    widgetOptionsMixin,
     entitiesAlarmColumnsFiltersMixin,
   ],
   props: {
@@ -153,21 +153,6 @@ export default {
         ]
         : [];
     },
-
-    options: {
-      get() {
-        const { page = 1, itemsPerPage = PAGINATION_LIMIT, sortBy = [], sortDesc = [] } = this.query;
-
-        return { page, itemsPerPage, sortBy, sortDesc };
-      },
-
-      set(newOptions) {
-        this.$emit('update:query', {
-          ...this.query,
-          ...convertDataTableOptionsToQuery(newOptions, this.options),
-        });
-      },
-    },
   },
   async mounted() {
     this.columnsFiltersPending = true;
@@ -180,11 +165,11 @@ export default {
         ...this.query,
 
         itemsPerPage,
-        page: 1,
+        page: getPageForNewItemsPerPage(itemsPerPage, this.query.itemsPerPage, this.query.page),
       });
     },
 
-    updateQueryPage(page) {
+    updatePage(page) {
       this.$emit('update:query', {
         ...this.query,
 

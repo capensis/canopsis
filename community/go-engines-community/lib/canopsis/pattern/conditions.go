@@ -18,6 +18,7 @@ import (
 var ErrUnsupportedField = errors.New("unsupported field")
 var ErrUnsupportedConditionType = errors.New("unsupported condition type")
 var ErrWrongConditionValue = errors.New("wrong condition value")
+var ErrOverwriteMatchedRegexp = errors.New("attempt to overwrite matched regex with groups")
 
 const (
 	ConditionEqual        = "eq"
@@ -1121,6 +1122,10 @@ func (c *FieldCondition) MatchInfoCondition(infoVal any, infoExists bool) (bool,
 	}
 
 	return matched, err
+}
+
+func (c *Condition) GetRegexp() utils.RegexExpression {
+	return c.valueRegexp
 }
 
 func GetStringValue(v interface{}) (string, error) {
