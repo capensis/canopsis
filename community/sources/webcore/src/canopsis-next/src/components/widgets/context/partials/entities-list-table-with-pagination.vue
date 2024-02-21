@@ -191,6 +191,7 @@ export default {
         name: MODALS.entitiesRootCauseDiagram,
         config: {
           entity,
+          colorIndicator: this.widget.parameters.rootCauseColorIndicator,
         },
       });
     },

@@ -26,6 +26,7 @@ import {
   ROOT_CAUSE_DIAGRAM_TOOLTIP_OFFSET,
   ENTITY_FIELDS,
   SORT_ORDERS,
+  COLOR_INDICATOR_TYPES,
 } from '@/constants';
 
 import { normalizeTreeOfDependenciesMapEntities } from '@/helpers/entities/map/list';
@@ -36,6 +37,7 @@ import {
   getIconElement,
   getProgressElement,
 } from '@/helpers/entities/entity/cytoscape';
+import { getEntityColor } from '@/helpers/entities/entity/color';
 
 import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
 
@@ -51,9 +53,9 @@ export default {
       type: Object,
       required: true,
     },
-    columns: {
-      type: Array,
-      default: () => [],
+    colorIndicator: {
+      type: String,
+      default: COLOR_INDICATOR_TYPES.state,
     },
   },
   data() {
@@ -306,6 +308,7 @@ export default {
       const { entity, pending, opened, root } = node;
 
       const element = getEntityNodeElement(node);
+      element.style.background = getEntityColor(entity, this.colorIndicator);
 
       if (pending || (!root && entity.state_setting?.title && entity.state_depends_count > 0)) {
         const badge = getBadgeElement();

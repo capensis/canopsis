@@ -48,7 +48,7 @@ const stubs = {
   'field-default-sort-column': createInputStub('field-default-sort-column'),
   'field-columns': createInputStub('field-columns'),
   'field-tree-of-dependencies-settings': createInputStub('field-tree-of-dependencies-settings'),
-  'field-switcher': createInputStub('field-switcher'),
+  'field-root-cause-settings': createInputStub('field-root-cause-settings'),
   'field-filters': createInputStub('field-filters'),
   'field-context-entities-types-filter': createInputStub('field-context-entities-types-filter'),
   'export-csv-form': createInputStub('export-csv-form'),
@@ -64,14 +64,13 @@ const snapshotStubs = {
   'field-default-sort-column': true,
   'field-columns': true,
   'field-tree-of-dependencies-settings': true,
-  'field-switcher': true,
+  'field-root-cause-settings': true,
   'field-filters': true,
   'field-context-entities-types-filter': true,
   'export-csv-form': true,
   'charts-form': true,
 };
 
-const selectSwitcherFieldByTitle = (wrapper, title) => wrapper.find(`input.field-switcher[title="${title}"]`);
 const selectFieldTitle = wrapper => wrapper.find('input.field-title');
 const selectFieldDefaultSortColumn = wrapper => wrapper.find('input.field-default-sort-column');
 const selectFieldWidgetColumns = wrapper => wrapper.findAll('input.field-columns').at(0);
@@ -83,10 +82,7 @@ const selectFieldContextEntitiesTypesFilter = wrapper => wrapper.find('input.fie
 const selectFieldExportCsvForm = wrapper => wrapper.find('input.export-csv-form');
 const selectChartsForm = wrapper => wrapper.find('input.charts-form');
 const selectFieldFilters = wrapper => wrapper.find('input.field-filters');
-const selectFieldShowRootCauseByStateClick = wrapper => selectSwitcherFieldByTitle(
-  wrapper,
-  'Show root cause diagram called from Severity column',
-);
+const selectFieldRootCauseSettings = wrapper => wrapper.find('.field-root-cause-settings');
 
 describe('context', () => {
   const $sidebar = mockSidebar();
@@ -561,7 +557,7 @@ describe('context', () => {
     });
   });
 
-  test('Filter changed after trigger input on filters field', async () => {
+  test('Root cause settings changed after trigger root cause settings field', async () => {
     currentUserPermissionsById.mockReturnValueOnce({
       [USERS_PERMISSIONS.business.context.actions.listFilters]: {
         actions: [],
@@ -582,8 +578,12 @@ describe('context', () => {
       },
     });
 
-    const newValue = false;
-    selectFieldShowRootCauseByStateClick(wrapper).triggerCustomEvent('input', newValue);
+    const newParameters = {
+      ...widget.parameters,
+      showRootCauseByStateClick: false,
+      rootCauseColorIndicator: COLOR_INDICATOR_TYPES.impactState,
+    };
+    selectFieldRootCauseSettings(wrapper).triggerCustomEvent('input', newParameters);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -591,10 +591,13 @@ describe('context', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(
+        data: getWidgetRequestWithNewProperty(
           widget,
-          'showRootCauseByStateClick',
-          newValue,
+          'parameters',
+          formToWidgetParameters({
+            type: WIDGET_TYPES.context,
+            parameters: newParameters,
+          }),
         ),
       },
     });

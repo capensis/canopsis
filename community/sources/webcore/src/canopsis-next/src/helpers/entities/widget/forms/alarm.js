@@ -140,6 +140,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {string} exportPdfTemplate
  * @property {string} exportPdfTemplateTemplate
  * @property {boolean} showRootCauseByStateClick
+ * @property {ColorIndicator} rootCauseColorIndicator
  */
 
 /**
@@ -172,6 +173,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {boolean} sticky_header
  * @property {boolean} dense
  * @property {boolean} showRootCauseByStateClick
+ * @property {ColorIndicator} rootCauseColorIndicator
  */
 
 /**
@@ -286,6 +288,7 @@ export const alarmListBaseParametersToForm = (alarmListParameters = {}) => ({
   exportPdfTemplate: alarmListParameters.exportPdfTemplate ?? ALARM_EXPORT_PDF_TEMPLATE,
   exportPdfTemplateTemplate: widgetTemplateValueToForm(alarmListParameters.exportPdfTemplateTemplate),
   showRootCauseByStateClick: alarmListParameters.showRootCauseByStateClick ?? true,
+  rootCauseColorIndicator: alarmListParameters.rootCauseColorIndicator ?? COLOR_INDICATOR_TYPES.state,
 });
 
 /**
@@ -377,6 +380,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   exportPdfTemplate: parameters.exportPdfTemplate ?? ALARM_EXPORT_PDF_TEMPLATE,
   exportPdfTemplateTemplate: widgetTemplateValueToForm(parameters.exportPdfTemplateTemplate),
   showRootCauseByStateClick: parameters.showRootCauseByStateClick ?? true,
+  rootCauseColorIndicator: parameters.rootCauseColorIndicator ?? COLOR_INDICATOR_TYPES.state,
 });
 
 /**

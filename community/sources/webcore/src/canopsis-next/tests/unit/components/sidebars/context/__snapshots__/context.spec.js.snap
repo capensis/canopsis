@@ -34,9 +34,8 @@ exports[`context Renders \`context\` widget settings with all rights 1`] = `
     <field-tree-of-dependencies-settings-stub
       value="2"
     />
-    <field-switcher-stub
-      title="Show root cause diagram called from Severity column"
-      value="true"
+    <field-root-cause-settings-stub
+      parameters="[object Object]"
     />
     <field-columns-stub
       columns="[object Object],[object Object],[object Object],[object Object]"
@@ -112,9 +111,8 @@ exports[`context Renders \`context\` widget settings with custom props 1`] = `
     <field-tree-of-dependencies-settings-stub
       value="1"
     />
-    <field-switcher-stub
-      title="Show root cause diagram called from Severity column"
-      value="true"
+    <field-root-cause-settings-stub
+      parameters="[object Object]"
     />
     <field-columns-stub
       columns="[object Object],[object Object],[object Object],[object Object]"
@@ -181,9 +179,8 @@ exports[`context Renders \`context\` widget settings with default props 1`] = `
     <field-tree-of-dependencies-settings-stub
       value="2"
     />
-    <field-switcher-stub
-      title="Show root cause diagram called from Severity column"
-      value="true"
+    <field-root-cause-settings-stub
+      parameters="[object Object]"
     />
     <field-columns-stub
       columns="[object Object],[object Object],[object Object],[object Object]"
