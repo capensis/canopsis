@@ -398,7 +398,6 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 
 func (s *store) CheckStateSetting(ctx context.Context, r CheckStateSettingRequest) (StateSettingResponse, error) {
 	response := StateSettingResponse{}
-
 	cursor, err := s.stateSettingsCollection.Find(
 		ctx,
 		bson.M{
@@ -445,6 +444,10 @@ func (s *store) CheckStateSetting(ctx context.Context, r CheckStateSettingReques
 		}
 	}
 
+	if r.Type == types.EntityTypeService {
+		return s.getDefaultStateSettingForService(ctx)
+	}
+
 	return response, nil
 }
 
@@ -477,6 +480,7 @@ func (s *store) GetStateSetting(ctx context.Context, id string) (StateSettingRes
 		}},
 		{"$unwind": bson.M{"path": "$alarm", "preserveNullAndEmptyArrays": true}},
 		{"$project": bson.M{
+			"type":           1,
 			"state_setting":  1,
 			"state_counters": "$counters.state",
 			"state":          "$alarm.v.state.val",
@@ -492,6 +496,7 @@ func (s *store) GetStateSetting(ctx context.Context, id string) (StateSettingRes
 
 	defer cursor.Close(ctx)
 	res := struct {
+		Type          string                       `bson:"type"`
 		StateSetting  statesetting.StateSetting    `bson:"state_setting"`
 		StateCounters entitycounters.StateCounters `bson:"state_counters"`
 		State         int                          `bson:"state"`
@@ -502,6 +507,10 @@ func (s *store) GetStateSetting(ctx context.Context, id string) (StateSettingRes
 	}
 
 	response = getStateSettingResponse(res.StateSetting)
+	if response.ID == "" && res.Type == types.EntityTypeService {
+		return s.getDefaultStateSettingForService(ctx)
+	}
+
 	if res.StateSetting.Method == statesetting.MethodDependencies && res.StateSetting.StateThresholds != nil {
 		var stateThreshold statesetting.StateThreshold
 		switch res.State {
@@ -525,26 +534,65 @@ func (s *store) GetStateSetting(ctx context.Context, id string) (StateSettingRes
 			return response, fmt.Errorf("unknown state %d of entity %q", res.State, id)
 		}
 
-		var stateDependsCount int
+		var thresholdStateDependsCount int
 		switch stateThreshold.State {
 		case types.AlarmStateTitleCritical:
-			stateDependsCount = res.StateCounters.Critical
+			thresholdStateDependsCount = res.StateCounters.Critical
 		case types.AlarmStateTitleMajor:
-			stateDependsCount = res.StateCounters.Major
+			thresholdStateDependsCount = res.StateCounters.Major
 		case types.AlarmStateTitleMinor:
-			stateDependsCount = res.StateCounters.Minor
+			thresholdStateDependsCount = res.StateCounters.Minor
 		case types.AlarmStateTitleOK:
-			stateDependsCount = res.StateCounters.Ok
+			thresholdStateDependsCount = res.StateCounters.Ok
 		}
 
-		if stateDependsCount > 0 {
+		if thresholdStateDependsCount > 0 {
 			response.DependsCount = res.StateCounters.Critical + res.StateCounters.Major + res.StateCounters.Minor + res.StateCounters.Ok
-			response.DependsState = stateThreshold.State
-			response.StateDependsCount = stateDependsCount
+			response.ThresholdState = stateThreshold.State
+			response.ThresholdStateDependsCount = thresholdStateDependsCount
 		}
 	}
 
 	return response, nil
+}
+
+func (s *store) fillConnectorType(result *AggregationResult) {
+	if result == nil {
+		return
+	}
+	for i := range result.Data {
+		result.Data[i].fillConnectorType()
+	}
+}
+
+func (s *store) getQueryBuilder() *MongoQueryBuilder {
+	return NewMongoQueryBuilder(s.db)
+}
+
+func (s *store) fillPerfData(result *AggregationResult, perfData []string) {
+	if len(perfData) == 0 {
+		return
+	}
+
+	perfDataRe := perfdata.Parse(perfData)
+	for i, entity := range result.Data {
+		result.Data[i].FilteredPerfData = perfdata.Filter(perfData, perfDataRe, entity.PerfData)
+	}
+}
+
+func (s *store) getDefaultStateSettingForService(ctx context.Context) (StateSettingResponse, error) {
+	var response StateSettingResponse
+	var stateSetting statesetting.StateSetting
+	err := s.stateSettingsCollection.FindOne(ctx, bson.M{"_id": statesetting.ServiceID}).Decode(&stateSetting)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return response, nil
+		}
+
+		return response, err
+	}
+
+	return getStateSettingResponse(stateSetting), nil
 }
 
 func getStateSettingResponse(stateSetting statesetting.StateSetting) StateSettingResponse {
@@ -573,29 +621,5 @@ func convertStateThreshold(src *statesetting.StateThreshold) *statesettings.Stat
 		State:  src.State,
 		Cond:   src.Cond,
 		Value:  src.Value,
-	}
-}
-
-func (s *store) fillConnectorType(result *AggregationResult) {
-	if result == nil {
-		return
-	}
-	for i := range result.Data {
-		result.Data[i].fillConnectorType()
-	}
-}
-
-func (s *store) getQueryBuilder() *MongoQueryBuilder {
-	return NewMongoQueryBuilder(s.db)
-}
-
-func (s *store) fillPerfData(result *AggregationResult, perfData []string) {
-	if len(perfData) == 0 {
-		return
-	}
-
-	perfDataRe := perfdata.Parse(perfData)
-	for i, entity := range result.Data {
-		result.Data[i].FilteredPerfData = perfdata.Filter(perfData, perfDataRe, entity.PerfData)
 	}
 }

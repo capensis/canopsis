@@ -45,6 +45,7 @@ type store struct {
 	resolvedAlarmDbCollection mongo.DbCollection
 	entityCounters            mongo.DbCollection
 	userDbCollection          mongo.DbCollection
+	stateSettingDbCollection  mongo.DbCollection
 
 	linkGenerator link.Generator
 
@@ -59,6 +60,7 @@ func NewStore(db mongo.DbClient, linkGenerator link.Generator, logger zerolog.Lo
 		resolvedAlarmDbCollection: db.Collection(mongo.ResolvedAlarmMongoCollection),
 		entityCounters:            db.Collection(mongo.EntityCountersCollection),
 		userDbCollection:          db.Collection(mongo.UserCollection),
+		stateSettingDbCollection:  db.Collection(mongo.StateSettingsMongoCollection),
 
 		linkGenerator: linkGenerator,
 
@@ -119,7 +121,7 @@ func (s *store) GetDependencies(ctx context.Context, r ContextGraphRequest, user
 		match = bson.M{"services": service.ID, "_id": bson.M{"$ne": service.ID}}
 	case types.EntityTypeComponent:
 		if service.StateInfo == nil {
-			return &ContextGraphAggregationResult{Data: make([]entity.Entity, 0)}, nil
+			return &ContextGraphAggregationResult{Data: make([]ContextGraphEntity, 0)}, nil
 		}
 
 		match = bson.M{"component": service.ID, "_id": bson.M{"$ne": service.ID}}
@@ -156,7 +158,7 @@ func (s *store) GetDependencies(ctx context.Context, r ContextGraphRequest, user
 	}
 
 	pipeline := s.getQueryBuilder().CreateTreeOfDepsAggregationPipeline(match, r.Query, r.SortRequest, r.Category, r.Search,
-		r.WithFlags, now)
+		r.WithFlags, r.DefineState, now)
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
@@ -175,6 +177,26 @@ func (s *store) GetDependencies(ctx context.Context, r ContextGraphRequest, user
 	err = s.fillLinks(ctx, result, userId)
 	if err != nil {
 		s.logger.Err(err).Msg("cannot fetch links")
+	}
+
+	if r.WithFlags && r.DefineState {
+		var defaultStateSetting StateSettingResponse
+		for i := range result.Data {
+			if result.Data[i].StateSetting == nil && result.Data[i].Type == types.EntityTypeService {
+				if defaultStateSetting.ID == "" {
+					err = s.stateSettingDbCollection.FindOne(ctx, bson.M{"_id": statesetting.ServiceID}).Decode(&defaultStateSetting)
+					if err != nil {
+						if errors.Is(err, mongodriver.ErrNoDocuments) {
+							return result, nil
+						}
+
+						return nil, err
+					}
+				}
+
+				result.Data[i].StateSetting = &defaultStateSetting
+			}
+		}
 	}
 
 	return result, nil
@@ -211,14 +233,14 @@ func (s *store) GetImpacts(ctx context.Context, r ContextGraphRequest, userId st
 	}
 
 	if len(match) == 0 {
-		result.Data = make([]entity.Entity, 0)
+		result.Data = make([]ContextGraphEntity, 0)
 
 		return result, nil
 	}
 
 	now := datetime.NewCpsTime()
 	pipeline := s.getQueryBuilder().CreateTreeOfDepsAggregationPipeline(bson.M{"$or": match}, r.Query, r.SortRequest, r.Category, r.Search,
-		r.WithFlags, now)
+		r.WithFlags, false, now)
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
