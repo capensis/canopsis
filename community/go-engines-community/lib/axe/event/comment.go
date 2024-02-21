@@ -47,10 +47,13 @@ func (p *commentProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Res
 	conf := p.configProvider.Get()
 	output := utils.TruncateString(event.Parameters.Output, conf.OutputLength)
 	newStep := types.NewAlarmStep(types.AlarmStepComment, event.Parameters.Timestamp, event.Parameters.Author, output,
-		event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
-	update := bson.M{
-		"$set":  bson.M{"v.last_comment": newStep},
-		"$push": bson.M{"v.steps": newStep},
+		event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator, false)
+	newStepQuery := stepUpdateQuery(newStep)
+	update := []bson.M{
+		{"$set": bson.M{
+			"v.last_comment": newStepQuery,
+			"v.steps":        addStepUpdateQuery(newStepQuery),
+		}},
 	}
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
 	alarm := types.Alarm{}

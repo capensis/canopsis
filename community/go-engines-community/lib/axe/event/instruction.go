@@ -98,15 +98,16 @@ func (p *instructionProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 
 	match := getOpenAlarmMatchWithStepsLimit(event)
 	newStep := types.NewAlarmStep(alarmStepType, event.Parameters.Timestamp, event.Parameters.Author, event.Parameters.Output,
-		event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
+		event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator, false)
 	newStep.Execution = event.Parameters.Execution
-	var update any
+	newStepQuery := stepUpdateQuery(newStep)
+	var update []bson.M
 
 	switch alarmChangeType {
 	case types.AlarmStepAutoInstructionStart:
 		update = []bson.M{
 			{"$set": bson.M{
-				"v.steps": bson.M{"$concatArrays": bson.A{"$v.steps", bson.A{newStep}}},
+				"v.steps": addStepUpdateQuery(newStepQuery),
 				"v.inactive_start": bson.M{"$cond": bson.M{
 					"if":   "$auto_instruction_in_progress",
 					"then": event.Parameters.Timestamp,
@@ -131,7 +132,7 @@ func (p *instructionProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 	case types.AlarmStepInstructionComplete, types.AlarmStepInstructionFail:
 		update = []bson.M{
 			{"$set": bson.M{
-				"v.steps": bson.M{"$concatArrays": bson.A{"$v.steps", bson.A{newStep}}},
+				"v.steps": addStepUpdateQuery(newStepQuery),
 				"kpi_executed_instructions": bson.M{"$concatArrays": bson.A{
 					bson.M{"$cond": bson.M{
 						"if":   "$kpi_executed_instructions",
@@ -164,13 +165,24 @@ func (p *instructionProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 			}},
 		}
 	case types.AlarmStepAutoInstructionComplete, types.AlarmStepAutoInstructionFail:
-		update = bson.M{
-			"$push":     bson.M{"v.steps": newStep},
-			"$addToSet": bson.M{"kpi_executed_auto_instructions": event.Parameters.Instruction},
+		update = []bson.M{
+			{"$set": bson.M{
+				"v.steps": addStepUpdateQuery(newStepQuery),
+				"kpi_executed_auto_instructions": bson.M{"$setUnion": bson.A{
+					bson.M{"$cond": bson.M{
+						"if":   "$kpi_executed_auto_instructions",
+						"then": "$kpi_executed_auto_instructions",
+						"else": bson.A{},
+					}},
+					bson.A{event.Parameters.Instruction},
+				}},
+			}},
 		}
 	default:
-		update = bson.M{
-			"$push": bson.M{"v.steps": newStep},
+		update = []bson.M{
+			{"$set": bson.M{
+				"v.steps": addStepUpdateQuery(newStepQuery),
+			}},
 		}
 	}
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)

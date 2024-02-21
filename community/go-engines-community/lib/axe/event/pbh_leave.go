@@ -91,7 +91,7 @@ func (p *pbhLeaveProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 			alarmChange.PreviousPbehaviorTypeID = alarm.Value.PbehaviorInfo.TypeID
 			alarmChange.PreviousPbehaviorCannonicalType = alarm.Value.PbehaviorInfo.CanonicalType
 			newStep := types.NewAlarmStep(types.AlarmStepPbhLeave, event.Parameters.Timestamp, event.Parameters.Author, event.Parameters.Output,
-				event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
+				event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator, false)
 			newStep.PbehaviorCanonicalType = alarm.Value.PbehaviorInfo.CanonicalType
 			update := bson.M{
 				"$push":  bson.M{"v.steps": newStep},

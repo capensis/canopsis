@@ -48,33 +48,34 @@ func (p *autoWebhookCompleteProcessor) Process(ctx context.Context, event rpc.Ax
 		"_t":   bson.M{"$in": bson.A{types.AlarmStepWebhookComplete, types.AlarmStepWebhookFail}},
 	}}}
 	alarmChange := types.NewAlarmChange()
-	var update bson.M
+	var update []bson.M
 	if event.Parameters.Ticket == "" {
 		newStep := types.NewAlarmStep(types.AlarmStepWebhookComplete, event.Parameters.Timestamp, event.Parameters.Author,
-			event.Parameters.Output, event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
+			event.Parameters.Output, event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator, false)
 		newStep.Execution = event.Parameters.Execution
-		update = bson.M{
-			"$push": bson.M{
-				"v.steps": newStep,
-			},
+		newStepQuery := stepUpdateQuery(newStep)
+		update = []bson.M{
+			{"$set": bson.M{
+				"v.steps": addStepUpdateQuery(newStepQuery),
+			}},
 		}
 		alarmChange.Type = types.AlarmChangeTypeAutoWebhookComplete
 	} else {
 		newStep := types.NewAlarmStep(types.AlarmStepWebhookComplete, event.Parameters.Timestamp, event.Parameters.Author,
-			event.Parameters.Output, event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
+			event.Parameters.Output, event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator, false)
 		newStep.Execution = event.Parameters.Execution
+		newStepQuery := stepUpdateQuery(newStep)
 		newTicketStep := types.NewTicketStep(types.AlarmStepDeclareTicket, event.Parameters.Timestamp, event.Parameters.Author,
 			event.Parameters.TicketInfo.GetStepMessage(), event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator,
-			event.Parameters.TicketInfo)
+			event.Parameters.TicketInfo, false)
 		newTicketStep.Execution = event.Parameters.Execution
-		update = bson.M{
-			"$set": bson.M{
-				"v.ticket": newTicketStep,
-			},
-			"$push": bson.M{
-				"v.tickets": newTicketStep,
-				"v.steps":   bson.M{"$each": bson.A{newStep, newTicketStep}},
-			},
+		newTicketStepQuery := stepUpdateQuery(newTicketStep)
+		update = []bson.M{
+			{"$set": bson.M{
+				"v.ticket":  newTicketStepQuery,
+				"v.tickets": addTicketUpdateQuery(newTicketStepQuery),
+				"v.steps":   addStepUpdateQuery(newStepQuery, newTicketStepQuery),
+			}},
 		}
 		alarmChange.Type = types.AlarmChangeTypeAutoDeclareTicketWebhook
 	}
