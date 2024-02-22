@@ -6,9 +6,8 @@
       :handle="`.${dragItemHandleClass}`"
     >
       <column-field
-        class="mb-3"
-        v-for="(column, index) in columns"
         v-field="columns[index]"
+        v-for="(column, index) in columns"
         :key="column.key"
         :name="column.key"
         :type="type"
@@ -21,6 +20,7 @@
         :with-simple-template="withSimpleTemplate"
         :without-infos-attributes="withoutInfosAttributes"
         :variables="variables"
+        class="mb-3"
         @remove="remove(index)"
       />
     </c-draggable-list-field>
@@ -29,10 +29,10 @@
         <template #activator="{ on }">
           <v-btn
             class="mr-2 mx-0"
-            v-on="on"
             color="primary"
-            icon
-            large
+            fab
+            small
+            v-on="on"
             @click.prevent="add"
           >
             <v-icon>add</v-icon>

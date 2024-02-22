@@ -44,10 +44,18 @@ configuration:
       - "#9E9E9E"
 
 state_settings:
+  service:
+    _id: service
+    title: Service
+    method: worst
+    enabled: true
+    on_top: 2
   junit:
     _id: junit
-    type: junit
+    title: Junit
     method: worst_of_share
+    enabled: true
+    on_top: 1
     junit_thresholds:
       skipped:
         minor: 10

@@ -14,8 +14,8 @@
         <template #activator="{ on: tooltipOn }">
           <v-btn
             class="primary"
-            v-on="tooltipOn"
             v-bind="{ ...speedDialBind, ...buttonProps }"
+            v-on="tooltipOn"
           >
             <v-icon :small="buttonProps.small">
               settings
@@ -36,12 +36,12 @@
     >
       <template #activator="{ on }">
         <v-btn
-          v-on="on"
           :input-value="isNavigationEditingMode"
           color="blue darken-4"
           small
           dark
           fab
+          v-on="on"
           @click.stop="$emit('toggleEditingMode')"
         >
           <v-icon
@@ -68,11 +68,11 @@
     >
       <template #activator="{ on }">
         <v-btn
-          v-on="on"
           color="green darken-4"
           small
           dark
           fab
+          v-on="on"
           @click.stop="showCreateViewModal"
         >
           <v-icon
@@ -93,11 +93,11 @@
     >
       <template #activator="{ on }">
         <v-btn
-          v-on="on"
           color="blue darken-3"
           small
           dark
           fab
+          v-on="on"
           @click.stop="showCreatePrivateViewModal"
         >
           <v-icon

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`service-dependencies Renders \`service-dependencies-entity-cell\` with column 1`] = `
+exports[`service-dependencies-entity-cell Renders \`service-dependencies-entity-cell\` with column 1`] = `
 <span>
   <span>
     Data alarm 2 entity
@@ -8,7 +8,7 @@ exports[`service-dependencies Renders \`service-dependencies-entity-cell\` with 
 </span>
 `;
 
-exports[`service-dependencies Renders \`service-dependencies-entity-cell\` with column with impact state color indicator 1`] = `
+exports[`service-dependencies-entity-cell Renders \`service-dependencies-entity-cell\` with column with impact state color indicator 1`] = `
 <color-indicator-wrapper-stub
   alarm="[object Object]"
   entity="[object Object]"
@@ -20,7 +20,7 @@ exports[`service-dependencies Renders \`service-dependencies-entity-cell\` with 
 </color-indicator-wrapper-stub>
 `;
 
-exports[`service-dependencies Renders \`service-dependencies-entity-cell\` with column with state color indicator 1`] = `
+exports[`service-dependencies-entity-cell Renders \`service-dependencies-entity-cell\` with column with state color indicator 1`] = `
 <color-indicator-wrapper-stub
   alarm="[object Object]"
   entity="[object Object]"
@@ -32,7 +32,7 @@ exports[`service-dependencies Renders \`service-dependencies-entity-cell\` with 
 </color-indicator-wrapper-stub>
 `;
 
-exports[`service-dependencies Renders \`service-dependencies-entity-cell\` with state column 1`] = `
+exports[`service-dependencies-entity-cell Renders \`service-dependencies-entity-cell\` with state column 1`] = `
 <span>
   <c-alarm-chip-stub
     value="1"
@@ -40,7 +40,7 @@ exports[`service-dependencies Renders \`service-dependencies-entity-cell\` with 
 </span>
 `;
 
-exports[`service-dependencies Renders \`service-dependencies-entity-cell\` with state column with impact state color indicator 1`] = `
+exports[`service-dependencies-entity-cell Renders \`service-dependencies-entity-cell\` with state column with impact state color indicator 1`] = `
 <color-indicator-wrapper-stub
   alarm="[object Object]"
   entity="[object Object]"
@@ -52,7 +52,7 @@ exports[`service-dependencies Renders \`service-dependencies-entity-cell\` with 
 </color-indicator-wrapper-stub>
 `;
 
-exports[`service-dependencies Renders \`service-dependencies-entity-cell\` with state column with state color indicator 1`] = `
+exports[`service-dependencies-entity-cell Renders \`service-dependencies-entity-cell\` with state column with state color indicator 1`] = `
 <color-indicator-wrapper-stub
   alarm="[object Object]"
   entity="[object Object]"

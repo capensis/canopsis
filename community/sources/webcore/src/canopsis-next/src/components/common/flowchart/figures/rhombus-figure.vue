@@ -1,7 +1,7 @@
 <template>
   <path
-    v-on="$listeners"
     :d="rhombusPath"
+    v-on="$listeners"
   />
 </template>
 

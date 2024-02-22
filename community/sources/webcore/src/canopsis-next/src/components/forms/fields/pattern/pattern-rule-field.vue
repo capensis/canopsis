@@ -18,8 +18,8 @@
           />
         </v-flex>
         <v-flex
-          class="pl-3"
           v-if="isAnyInfosRule"
+          class="pl-3"
           xs8
         >
           <c-infos-attribute-field
@@ -32,8 +32,8 @@
           />
         </v-flex>
         <v-flex
-          class="pl-3"
           v-else-if="isObjectRule"
+          class="pl-3"
           xs6
         >
           <v-text-field
@@ -66,8 +66,8 @@
             />
           </v-flex>
           <v-flex
-            class="pl-3"
             v-if="isCustomRange"
+            class="pl-3"
             xs7
           >
             <c-date-time-interval-field
@@ -79,8 +79,8 @@
         </template>
         <template v-else>
           <v-flex
-            class="pl-3"
             v-if="isInfosValueField"
+            class="pl-3"
             xs1
           >
             <c-input-type-field
@@ -93,10 +93,10 @@
             />
           </v-flex>
           <v-flex
-            class="pl-3"
             v-if="shownOperatorField"
             :xs6="!isAnyInfosRule"
             :xs4="isAnyInfosRule"
+            class="pl-3"
           >
             <pattern-operator-field
               v-field="rule.operator"
@@ -107,15 +107,15 @@
             />
           </v-flex>
           <v-flex
-            class="pl-3"
             v-if="rule.operator && operatorHasValue"
             :xs7="isAnyInfosRule"
-            xs6
+            :xs6="!isAnyInfosRule"
+            class="pl-3"
           >
             <component
               v-bind="valueComponent.props"
-              v-on="valueComponent.on"
               :is="valueComponent.is"
+              v-on="valueComponent.on"
             />
           </v-flex>
         </template>

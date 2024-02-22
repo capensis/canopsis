@@ -1,7 +1,7 @@
 <template>
   <v-breadcrumbs
-    class="pa-0"
     :items="breadcrumbs"
+    class="pa-0"
   >
     <template #item="{ item }">
       <v-btn

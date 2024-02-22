@@ -8,9 +8,9 @@
       :error-messages="errors.collect('configuration')"
       :loading="pending"
       name="configuration"
-      return-object
       item-text="name"
       item-value="_id"
+      return-object
     />
   </v-layout>
 </template>

@@ -17,9 +17,7 @@
       mandatory
     >
       <v-tab-item>
-        <v-layout
-          class="py-3"
-        >
+        <v-layout class="py-3">
           <v-flex
             xs12
             sm10
@@ -37,9 +35,7 @@
         </v-layout>
       </v-tab-item>
       <v-tab-item>
-        <v-layout
-          class="py-3"
-        >
+        <v-layout class="py-3">
           <v-flex
             xs12
             sm10
@@ -54,9 +50,7 @@
         </v-layout>
       </v-tab-item>
       <v-tab-item>
-        <v-layout
-          class="py-3"
-        >
+        <v-layout class="py-3">
           <v-flex
             xs12
             sm10
@@ -71,9 +65,7 @@
         </v-layout>
       </v-tab-item>
       <v-tab-item v-if="pbehavior.rrule">
-        <v-layout
-          class="py-3"
-        >
+        <v-layout class="py-3">
           <v-flex
             xs12
             sm10

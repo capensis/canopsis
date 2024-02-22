@@ -1,8 +1,8 @@
 <template>
   <v-data-table
-    class="jobs-assigned-table"
     :items="jobs"
     :headers-length="4"
+    class="jobs-assigned-table"
     item-key="_id"
     show-expand
     hide-default-footer

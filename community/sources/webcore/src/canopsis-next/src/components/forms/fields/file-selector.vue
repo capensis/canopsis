@@ -2,9 +2,9 @@
   <div>
     <div v-if="withFilesList">
       <div
-        class="ml-2 font-italic"
         v-for="file in files"
         :key="file.name"
+        class="ml-2 font-italic"
       >
         {{ file.name }}
         <v-btn
@@ -20,9 +20,9 @@
       </div>
     </div>
     <div
+      :class="{ disabled: fullDisabled }"
       class="file-selector-button-wrapper"
       v-on="wrapperListeners"
-      :class="{ disabled: fullDisabled }"
     >
       <slot
         :disabled="fullDisabled"
@@ -31,26 +31,26 @@
         name="activator"
       >
         <v-btn
-          v-on="scopedActivatorSlotListeners"
           :disabled="fullDisabled"
           :loading="loading"
+          v-on="scopedActivatorSlotListeners"
         >
           <v-icon>cloud_upload</v-icon>
         </v-btn>
       </slot>
     </div>
     <input
-      class="hidden"
       ref="fileInput"
-      type="file"
       :multiple="multiple"
       :accept="accept"
+      class="hidden"
+      type="file"
       @change="change"
       @click.stop=""
     >
     <div
-      class="mt-2"
       v-if="!hideDetails"
+      class="mt-2"
     >
       <v-messages
         :value="errorMessages"

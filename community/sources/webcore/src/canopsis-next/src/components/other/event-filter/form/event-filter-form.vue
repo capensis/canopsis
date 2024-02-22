@@ -3,16 +3,16 @@
     <v-layout>
       <v-flex xs8>
         <c-id-field
-          class="mr-3"
           v-field="form._id"
           :disabled="isDisabledIdField"
           :help-text="$t('eventFilter.idHelp')"
+          class="mr-3"
         />
       </v-flex>
       <v-flex xs4>
         <c-event-filter-type-field
-          class="ml-3"
           v-field="form.type"
+          class="ml-3"
         />
       </v-flex>
     </v-layout>
@@ -21,15 +21,18 @@
       required
     />
     <v-layout justify-space-between>
-      <c-enabled-field v-field="form.enabled" />
+      <c-enabled-field
+        v-field="form.enabled"
+        class="mr-3"
+      />
       <c-priority-field v-field="form.priority" />
     </v-layout>
     <c-information-block :title="$t('eventFilter.duringPeriod')">
       <event-filter-drop-intervals-field v-field="form" />
     </c-information-block>
     <pbehavior-recurrence-rule-field
-      class="mb-3"
       v-field="form"
+      class="mb-3"
     />
     <c-patterns-field
       v-field="form.patterns"
@@ -41,11 +44,13 @@
     <template v-if="hasAdditionalOptions">
       <v-divider class="my-3" />
       <c-information-block
-        :title="isEnrichmentType ? $t('eventFilter.enrichmentOptions') : $t('eventFilter.changeEntityOptions')"
+        :title="
+          isEnrichmentType ? $t('eventFilter.enrichmentOptions') : $t('eventFilter.changeEntityOptions')
+        "
       >
         <c-collapse-panel
-          class="mb-2"
           :title="$t('externalData.title')"
+          class="mb-2"
         >
           <external-data-form
             v-field="form.external_data"
@@ -56,6 +61,7 @@
           v-if="isEnrichmentType"
           v-field="form"
           :template-variables="actionsDataVariables"
+          :set-tags-items="setTagsItems"
         />
         <event-filter-change-entity-form
           v-else-if="isChangeEntityType"
@@ -73,6 +79,7 @@ import { EXTERNAL_DATA_DEFAULT_CONDITION_VALUES, EXTERNAL_DATA_PAYLOADS_VARIABLE
 import {
   isEnrichmentEventFilterRuleType,
   isChangeEntityEventFilterRuleType,
+  getSetTagsItemsFromPattern,
 } from '@/helpers/entities/event-filter/rule/entity';
 
 import PbehaviorRecurrenceRuleField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-recurrence-rule-field.vue';
@@ -123,6 +130,10 @@ export default {
         value: EXTERNAL_DATA_PAYLOADS_VARIABLES.regexp,
         text: this.$t('common.regexp'),
       }];
+    },
+
+    setTagsItems() {
+      return getSetTagsItemsFromPattern(this.form.patterns.event_pattern);
     },
 
     externalDataVariables() {

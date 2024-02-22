@@ -43,20 +43,22 @@ describe('v-data-table', () => {
 
     await selectTableHeader(wrapper).at(0).trigger('click');
 
-    const updatePaginationEvents = wrapper.emitted('update:options');
-    const [eventData] = updatePaginationEvents[1];
-    expect(eventData).toEqual({
-      page,
-      itemsPerPage: 10,
+    expect(wrapper).toEmit(
+      'update:options',
+      expect.any(Object),
+      {
+        page,
+        itemsPerPage: 10,
 
-      multiSort: false,
-      mustSort: false,
-      sortDesc: [false],
-      sortBy: [sortableHeader.value],
+        multiSort: false,
+        mustSort: false,
+        sortDesc: [false],
+        sortBy: [sortableHeader.value],
 
-      groupBy: [],
-      groupDesc: [],
-    });
+        groupBy: [],
+        groupDesc: [],
+      },
+    );
   });
 
   it('Other column sorted by ASC after click on the header', async () => {
@@ -82,20 +84,22 @@ describe('v-data-table', () => {
 
     await selectTableHeader(wrapper).at(2).trigger('click');
 
-    const updatePaginationEvents = wrapper.emitted('update:options');
-    const [eventData] = updatePaginationEvents[1];
-    expect(eventData).toEqual({
-      page,
-      itemsPerPage: 10,
+    expect(wrapper).toEmit(
+      'update:options',
+      expect.any(Object),
+      {
+        page,
+        itemsPerPage: 10,
 
-      multiSort: false,
-      mustSort: false,
-      sortDesc: [false],
-      sortBy: [sortableHeaderTwo.value],
+        multiSort: false,
+        mustSort: false,
+        sortDesc: [false],
+        sortBy: [sortableHeaderTwo.value],
 
-      groupBy: [],
-      groupDesc: [],
-    });
+        groupBy: [],
+        groupDesc: [],
+      },
+    );
   });
 
   it('Column sort reset after click on the header', async () => {
@@ -128,21 +132,24 @@ describe('v-data-table', () => {
       groupDesc: [],
     };
 
-    const updatePaginationEventsAfterMount = wrapper.emitted('update:options');
-    const [eventDataAfterMount] = updatePaginationEventsAfterMount[0];
-    expect(eventDataAfterMount).toEqual(newOptions);
-
     await selectTableHeader(wrapper).at(2).trigger('click');
     await selectTableHeader(wrapper).at(2).trigger('click');
 
-    const updatePaginationEvents = wrapper.emitted('update:options');
-    const [eventData] = updatePaginationEvents[2];
-    expect(eventData).toEqual({
-      ...newOptions,
+    expect(wrapper).toEmit(
+      'update:options',
+      newOptions,
+      {
+        ...newOptions,
 
-      sortBy: [],
-      sortDesc: [],
-    });
+        sortDesc: [true],
+      },
+      {
+        ...newOptions,
+
+        sortBy: [],
+        sortDesc: [],
+      },
+    );
   });
 
   it('Column sorted by DESC after click on the header with must sort', async () => {
@@ -168,20 +175,18 @@ describe('v-data-table', () => {
       },
     });
 
-    const updatePaginationEventsAfterMount = wrapper.emitted('update:options');
-    const [eventDataAfterMount] = updatePaginationEventsAfterMount[0];
-    expect(eventDataAfterMount).toEqual(pagination);
-
     await selectTableHeader(wrapper).at(2).trigger('click');
 
-    const updatePaginationEvents = wrapper.emitted('update:options');
-    const [eventData] = updatePaginationEvents[1];
-    expect(eventData).toEqual({
-      ...pagination,
+    expect(wrapper).toEmit(
+      'update:options',
+      pagination,
+      {
+        ...pagination,
 
-      sortBy: [],
-      sortDesc: [],
-    });
+        sortBy: [],
+        sortDesc: [],
+      },
+    );
   });
 
   it('First column sorted by DESC after click on the header with multi sort', async () => {
@@ -207,27 +212,24 @@ describe('v-data-table', () => {
       },
     });
 
-    const updatePaginationEventsAfterMount = wrapper.emitted('update:options');
-    const [eventDataAfterMount] = updatePaginationEventsAfterMount[0];
-    expect(eventDataAfterMount).toEqual(pagination);
-
     await selectTableHeader(wrapper).at(0).trigger('click');
 
-    const updatePaginationEvents = wrapper.emitted('update:options');
-    const [eventData] = updatePaginationEvents[1];
+    expect(wrapper).toEmit(
+      'update:options',
+      pagination,
+      {
+        ...pagination,
 
-    expect(eventData).toEqual({
-      ...pagination,
-
-      sortBy: [
-        sortableHeaderTwo.value,
-        sortableHeader.value,
-      ],
-      sortDesc: [
-        true,
-        false,
-      ],
-    });
+        sortBy: [
+          sortableHeaderTwo.value,
+          sortableHeader.value,
+        ],
+        sortDesc: [
+          true,
+          false,
+        ],
+      },
+    );
   });
 
   it('First column sorted by ASC after click on the header with multi sort', async () => {
@@ -253,21 +255,19 @@ describe('v-data-table', () => {
       },
     });
 
-    const updatePaginationEventsAfterMount = wrapper.emitted('update:options');
-    const [eventDataAfterMount] = updatePaginationEventsAfterMount[0];
-    expect(eventDataAfterMount).toEqual(pagination);
-
     await selectTableHeader(wrapper).at(0).trigger('click');
 
-    const updatePaginationEvents = wrapper.emitted('update:options');
-    const [eventData] = updatePaginationEvents[1];
-    expect(eventData).toEqual({
-      ...pagination,
+    expect(wrapper).toEmit(
+      'update:options',
+      pagination,
+      {
+        ...pagination,
 
-      sortDesc: [
-        true,
-      ],
-    });
+        sortDesc: [
+          true,
+        ],
+      },
+    );
   });
 
   it('Second column sorted by DESC after click on the header with multi sort', async () => {
@@ -293,20 +293,18 @@ describe('v-data-table', () => {
       },
     });
 
-    const updatePaginationEventsAfterMount = wrapper.emitted('update:options');
-    const [eventDataAfterMount] = updatePaginationEventsAfterMount[0];
-    expect(eventDataAfterMount).toEqual(pagination);
-
     await selectTableHeader(wrapper).at(2).trigger('click');
 
-    const updatePaginationEvents = wrapper.emitted('update:options');
-    const [eventData] = updatePaginationEvents[1];
-    expect(eventData).toEqual({
-      ...pagination,
+    expect(wrapper).toEmit(
+      'update:options',
+      pagination,
+      {
+        ...pagination,
 
-      sortBy: [sortableHeader.value, sortableHeaderTwo.value],
-      sortDesc: [false, false],
-    });
+        sortBy: [sortableHeader.value, sortableHeaderTwo.value],
+        sortDesc: [false, false],
+      },
+    );
   });
 
   it('Second column sorted by ASC after click on the header with multi sort', async () => {
@@ -335,23 +333,21 @@ describe('v-data-table', () => {
       },
     });
 
-    const updatePaginationEventsAfterMount = wrapper.emitted('update:options');
-    const [eventDataAfterMount] = updatePaginationEventsAfterMount[0];
-    expect(eventDataAfterMount).toEqual(pagination);
-
     await selectTableHeader(wrapper).at(2).trigger('click');
 
-    const updatePaginationEvents = wrapper.emitted('update:options');
-    const [eventData] = updatePaginationEvents[1];
-    expect(eventData).toEqual({
-      ...pagination,
+    expect(wrapper).toEmit(
+      'update:options',
+      pagination,
+      {
+        ...pagination,
 
-      sortBy: [
-        sortableHeader.value,
-        sortableHeaderTwo.value,
-      ],
-      sortDesc: [false, true],
-    });
+        sortBy: [
+          sortableHeader.value,
+          sortableHeaderTwo.value,
+        ],
+        sortDesc: [false, true],
+      },
+    );
   });
 
   it('Second column sort reset after click on the header with multi sort', async () => {
@@ -380,22 +376,20 @@ describe('v-data-table', () => {
       },
     });
 
-    const updatePaginationEventsAfterMount = wrapper.emitted('update:options');
-    const [eventDataAfterMount] = updatePaginationEventsAfterMount[0];
-    expect(eventDataAfterMount).toEqual(pagination);
-
     await selectTableHeader(wrapper).at(2).trigger('click');
 
-    const updatePaginationEvents = wrapper.emitted('update:options');
-    const [eventData] = updatePaginationEvents[1];
-    expect(eventData).toEqual({
-      ...pagination,
+    expect(wrapper).toEmit(
+      'update:options',
+      pagination,
+      {
+        ...pagination,
 
-      sortBy: [
-        sortableHeader.value,
-      ],
-      sortDesc: [false],
-    });
+        sortBy: [
+          sortableHeader.value,
+        ],
+        sortDesc: [false],
+      },
+    );
   });
 
   it('Column sort reset after click on the header with multi sort', async () => {
@@ -423,20 +417,18 @@ describe('v-data-table', () => {
       },
     });
 
-    const updatePaginationEventsAfterMount = wrapper.emitted('update:options');
-    const [eventDataAfterMount] = updatePaginationEventsAfterMount[0];
-    expect(eventDataAfterMount).toEqual(pagination);
-
     await selectTableHeader(wrapper).at(0).trigger('click');
 
-    const updatePaginationEvents = wrapper.emitted('update:options');
-    const [eventData] = updatePaginationEvents[1];
-    expect(eventData).toEqual({
-      ...pagination,
+    expect(wrapper).toEmit(
+      'update:options',
+      pagination,
+      {
+        ...pagination,
 
-      sortBy: [],
-      sortDesc: [],
-    });
+        sortBy: [],
+        sortDesc: [],
+      },
+    );
   });
 
   it('Renders `v-data-table` with required props', () => {

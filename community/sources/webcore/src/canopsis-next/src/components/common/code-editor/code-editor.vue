@@ -11,8 +11,8 @@
       @click="reset"
     />
     <div
-      class="code-editor"
       ref="codeEditor"
+      class="code-editor"
     />
   </div>
 </template>

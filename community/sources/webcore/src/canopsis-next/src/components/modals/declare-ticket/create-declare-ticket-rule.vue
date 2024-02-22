@@ -24,8 +24,8 @@
           {{ $t('declareTicket.checkSyntax') }}
         </v-btn>
         <v-btn
-          class="primary"
           :loading="submitting"
+          class="primary"
           type="submit"
         >
           {{ $t('common.submit') }}

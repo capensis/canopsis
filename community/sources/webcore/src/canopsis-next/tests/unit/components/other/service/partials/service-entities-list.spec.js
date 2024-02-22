@@ -1,8 +1,6 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
-
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import {
   createAlarmModule,
   createAuthModule,
@@ -11,8 +9,9 @@ import {
   createPbehaviorModule,
   createPbehaviorTypesModule,
 } from '@unit/utils/store';
-import { uid } from '@/helpers/uid';
 import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
+import { createCheckboxInputStub } from '@unit/stubs/input';
+
 import {
   ENTITIES_STATES,
   MODALS,
@@ -25,8 +24,9 @@ import {
 } from '@/constants';
 import { COLORS } from '@/config';
 
+import { uid } from '@/helpers/uid';
+
 import ServiceEntitiesList from '@/components/other/service/partials/service-entities-list.vue';
-import { createCheckboxInputStub } from '@unit/stubs/input';
 
 jest.mock('@/helpers/uid');
 
@@ -47,7 +47,7 @@ const selectCheckbox = wrapper => wrapper.find('.v-simple-checkbox');
 const applyEntitiesAction = async (wrapper, type) => {
   const entityActions = selectEntityActions(wrapper);
 
-  await entityActions.vm.$emit('apply', { type });
+  await entityActions.triggerCustomEvent('apply', { type });
 };
 
 describe('service-entities-list', () => {
@@ -140,11 +140,11 @@ describe('service-entities-list', () => {
       },
     });
 
-    await selectServiceEntityByIndex(wrapper, 1).vm.$emit('update:selected', true);
+    await selectServiceEntityByIndex(wrapper, 1).triggerCustomEvent('update:selected', true);
 
     expect(wrapper.vm.selectedEntities).toEqual([serviceEntities[1]]);
 
-    await selectServiceEntityByIndex(wrapper, 1).vm.$emit('update:selected', false);
+    await selectServiceEntityByIndex(wrapper, 1).triggerCustomEvent('update:selected', false);
 
     expect(wrapper.vm.selectedEntities).toEqual([]);
   });
@@ -156,10 +156,10 @@ describe('service-entities-list', () => {
       },
     });
 
-    await selectCheckbox(wrapper).vm.$emit('change', true);
+    await selectCheckbox(wrapper).triggerCustomEvent('change', true);
     expect(wrapper.vm.selectedEntities).toEqual(serviceEntities);
 
-    await selectCheckbox(wrapper).vm.$emit('change', false);
+    await selectCheckbox(wrapper).triggerCustomEvent('change', false);
     expect(wrapper.vm.selectedEntities).toEqual([]);
   });
 
@@ -176,7 +176,7 @@ describe('service-entities-list', () => {
       },
     });
 
-    await selectCheckbox(wrapper).vm.$emit('change', true);
+    await selectCheckbox(wrapper).triggerCustomEvent('change', true);
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityAckRemove);
 
@@ -225,7 +225,7 @@ describe('service-entities-list', () => {
       },
     });
 
-    await selectCheckbox(wrapper).vm.$emit('change', true);
+    await selectCheckbox(wrapper).triggerCustomEvent('change', true);
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityAssocTicket);
 
@@ -282,7 +282,7 @@ describe('service-entities-list', () => {
       },
     });
 
-    await selectCheckbox(wrapper).vm.$emit('change', true);
+    await selectCheckbox(wrapper).triggerCustomEvent('change', true);
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityValidate);
     await flushPromises();
@@ -332,7 +332,7 @@ describe('service-entities-list', () => {
       },
     });
 
-    await selectCheckbox(wrapper).vm.$emit('change', true);
+    await selectCheckbox(wrapper).triggerCustomEvent('change', true);
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityInvalidate);
 
@@ -376,7 +376,7 @@ describe('service-entities-list', () => {
       },
     });
 
-    await selectCheckbox(wrapper).vm.$emit('change', true);
+    await selectCheckbox(wrapper).triggerCustomEvent('change', true);
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityPause);
 
@@ -441,7 +441,7 @@ describe('service-entities-list', () => {
       },
     });
 
-    await selectCheckbox(wrapper).vm.$emit('change', true);
+    await selectCheckbox(wrapper).triggerCustomEvent('change', true);
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityPlay);
 
@@ -471,7 +471,7 @@ describe('service-entities-list', () => {
       },
     });
 
-    await selectCheckbox(wrapper).vm.$emit('change', true);
+    await selectCheckbox(wrapper).triggerCustomEvent('change', true);
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityCancel);
 
@@ -512,7 +512,7 @@ describe('service-entities-list', () => {
       },
     });
 
-    await selectCheckbox(wrapper).vm.$emit('change', true);
+    await selectCheckbox(wrapper).triggerCustomEvent('change', true);
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityComment);
 
@@ -575,7 +575,7 @@ describe('service-entities-list', () => {
       },
     });
 
-    await selectCheckbox(wrapper).vm.$emit('change', true);
+    await selectCheckbox(wrapper).triggerCustomEvent('change', true);
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.declareTicket);
 
@@ -626,7 +626,7 @@ describe('service-entities-list', () => {
       },
     });
 
-    await selectCheckbox(wrapper).vm.$emit('change', true);
+    await selectCheckbox(wrapper).triggerCustomEvent('change', true);
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityAck);
 
@@ -648,7 +648,7 @@ describe('service-entities-list', () => {
       },
     });
 
-    await selectServiceEntityByIndex(wrapper, 0).vm.$emit('remove:unavailable');
+    await selectServiceEntityByIndex(wrapper, 0).triggerCustomEvent('remove:unavailable');
 
     expect(wrapper.vm.unavailableEntitiesAction).toEqual({
       [entity._id]: false,
@@ -662,7 +662,7 @@ describe('service-entities-list', () => {
       },
     });
 
-    await selectServiceEntityByIndex(wrapper, 0).vm.$emit('refresh');
+    await selectServiceEntityByIndex(wrapper, 0).triggerCustomEvent('refresh');
 
     expect(refresh).toHaveBeenCalled();
   });
@@ -681,7 +681,7 @@ describe('service-entities-list', () => {
     });
 
     const newPage = 2;
-    await selectTablePagination(wrapper).vm.$emit('update:page', newPage);
+    await selectTablePagination(wrapper).triggerCustomEvent('update:page', newPage);
 
     expect(wrapper).toEmit('update:options', {
       ...options,
@@ -703,7 +703,7 @@ describe('service-entities-list', () => {
     });
 
     const newItemsPerPage = 11;
-    await selectTablePagination(wrapper).vm.$emit('update:items-per-page', newItemsPerPage);
+    await selectTablePagination(wrapper).triggerCustomEvent('update:items-per-page', newItemsPerPage);
 
     expect(wrapper).toEmit('update:options', {
       ...options,
@@ -718,7 +718,7 @@ describe('service-entities-list', () => {
       },
     });
 
-    await selectServiceEntityByIndex(wrapper, 1).vm.$emit('update:selected', true);
+    await selectServiceEntityByIndex(wrapper, 1).triggerCustomEvent('update:selected', true);
 
     expect(wrapper.vm.selectedEntities).toEqual([serviceEntities[1]]);
 
@@ -760,7 +760,7 @@ describe('service-entities-list', () => {
 
     const firstEntity = selectServiceEntityByIndex(wrapper, 0);
 
-    await firstEntity.vm.$emit('update:selected', true);
+    await firstEntity.triggerCustomEvent('update:selected', true);
 
     expect(wrapper).toMatchSnapshot();
   });

@@ -1,4 +1,4 @@
-const { createTransformer } = require('babel-jest');
+const { default: { createTransformer } } = require('babel-jest');
 
 const babelOptions = {
   presets: ['@vue/app'],

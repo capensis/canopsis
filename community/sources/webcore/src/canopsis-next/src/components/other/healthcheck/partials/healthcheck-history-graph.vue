@@ -15,11 +15,11 @@
     </v-layout>
     <div class="healthcheck-history__graph">
       <limited-time-line-chart
-        class="text--primary"
         ref="chart"
         :datasets="datasets"
         :options="historyChartOptions"
         :dark="$system.dark"
+        class="text--primary"
       >
         <template #actions="{ chart }">
           <v-layout

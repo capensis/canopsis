@@ -48,10 +48,10 @@
       :label="$t('user.language')"
     />
     <v-select
-      class="mt-0"
       v-field="form.ui_groups_navigation_type"
       :label="$t('user.navigationType')"
       :items="groupsNavigationItems"
+      class="mt-0"
     />
     <c-theme-field v-field="form.ui_theme" />
     <v-layout
