@@ -1,6 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createSelectInputStub } from '@unit/stubs/input';
+
 import { ENTITIES_STATES } from '@/constants';
 
 import CEntityStateField from '@/components/forms/fields/entity/c-entity-state-field.vue';
@@ -22,14 +22,9 @@ describe('c-entity-state-field', () => {
 
     const valueElement = wrapper.find('select.v-select');
 
-    valueElement.vm.$emit('input', ENTITIES_STATES.critical);
+    valueElement.triggerCustomEvent('input', ENTITIES_STATES.critical);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(ENTITIES_STATES.critical);
+    expect(wrapper).toEmitInput(ENTITIES_STATES.critical);
   });
 
   it('Renders `c-entity-state-field` with default props', () => {
@@ -37,7 +32,7 @@ describe('c-entity-state-field', () => {
 
     const menuContent = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
   });
 
@@ -54,7 +49,7 @@ describe('c-entity-state-field', () => {
 
     const menuContent = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(menuContent.element).toMatchSnapshot();
   });
 
@@ -69,6 +64,6 @@ describe('c-entity-state-field', () => {
 
     await validator.validateAll();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

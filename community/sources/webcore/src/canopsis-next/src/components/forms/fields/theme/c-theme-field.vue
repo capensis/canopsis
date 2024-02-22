@@ -1,17 +1,17 @@
-<template lang="pug">
-  v-select(
-    v-field="value",
-    v-validate="rules",
-    :items="themes",
-    :label="label || $tc('common.theme')",
-    :loading="pending",
-    :disabled="disabled",
-    :name="name",
-    :error-messages="errors.collect(name)",
-    :hide-details="hideDetails",
-    item-text="name",
+<template>
+  <v-select
+    v-field="value"
+    v-validate="rules"
+    :items="themes"
+    :label="label || $tc('common.theme')"
+    :loading="pending"
+    :disabled="disabled"
+    :name="name"
+    :error-messages="errors.collect(name)"
+    :hide-details="hideDetails"
+    item-text="name"
     item-value="_id"
-  )
+  />
 </template>
 
 <script>

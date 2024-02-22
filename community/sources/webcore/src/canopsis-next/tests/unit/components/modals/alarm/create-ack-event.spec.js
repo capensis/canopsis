@@ -1,11 +1,11 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { createModalWrapperStub } from '@unit/stubs/modal';
+
 import ClickOutside from '@/services/click-outside';
 
 import CreateAckEvent from '@/components/modals/alarm/create-ack-event.vue';
@@ -122,9 +122,7 @@ describe('create-ack-event', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -158,9 +156,7 @@ describe('create-ack-event', () => {
       vm: ackEventForm.vm,
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -187,9 +183,7 @@ describe('create-ack-event', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -220,9 +214,7 @@ describe('create-ack-event', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -259,11 +251,9 @@ describe('create-ack-event', () => {
       ack_resources: true,
     };
 
-    ackEventForm.vm.$emit('input', newForm);
+    ackEventForm.triggerCustomEvent('input', newForm);
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -280,9 +270,7 @@ describe('create-ack-event', () => {
       },
     });
 
-    const cancelButton = selectCancelButton(wrapper);
-
-    cancelButton.trigger('click');
+    selectCancelButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -298,7 +286,7 @@ describe('create-ack-event', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `create-ack-event` with config data', () => {
@@ -313,6 +301,6 @@ describe('create-ack-event', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

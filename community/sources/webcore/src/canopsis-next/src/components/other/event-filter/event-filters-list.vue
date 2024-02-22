@@ -1,54 +1,80 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :items="eventFilters",
-    :headers="headers",
-    :loading="pending",
-    :total-items="totalItems",
-    :pagination="pagination",
-    :select-all="removable",
-    advanced-pagination,
-    search,
-    expand,
-    @update:pagination="$emit('update:pagination', $event)"
-  )
-    template(#mass-actions="{ selected }")
-      c-action-btn(
-        v-if="removable",
-        type="delete",
+<template>
+  <c-advanced-data-table
+    :items="eventFilters"
+    :headers="headers"
+    :loading="pending"
+    :total-items="totalItems"
+    :options="options"
+    :select-all="removable"
+    advanced-pagination
+    search
+    expand
+    @update:options="$emit('update:options', $event)"
+  >
+    <template #mass-actions="{ selected }">
+      <c-action-btn
+        v-if="removable"
+        type="delete"
         @click="$emit('remove-selected', selected)"
-      )
-    template(#priority="{ item }") {{ item.priority || '-' }}
-    template(#type="{ item }") {{ $t(`eventFilter.types.${item.type}`) }}
-    template(#enabled="{ item }")
-      c-enabled(:value="item | get('enabled', true)")
-    template(#unread_failures_count="{ item }")
-      c-circle-badge.error(v-if="item.unread_failures_count") {{ item.unread_failures_count }}
-      template(v-else) -
-    template(#created="{ item }") {{ item.created | date }}
-    template(#updated="{ item }") {{ item.updated | date }}
-    template(#calendar="{ item }")
-      v-icon {{ isCalendarRule(item) ? 'check' : 'clear' }}
-    template(#actions="{ item }")
-      v-layout(row)
-        c-action-btn(
-          v-if="updatable",
-          type="edit",
+      />
+    </template>
+    <template #priority="{ item }">
+      {{ item.priority || '-' }}
+    </template>
+    <template #type="{ item }">
+      {{ $t(`eventFilter.types.${item.type}`) }}
+    </template>
+    <template #enabled="{ item }">
+      <c-enabled :value="item | get('enabled', true)" />
+    </template>
+    <template #unread_failures_count="{ item }">
+      <c-circle-badge
+        v-if="item.unread_failures_count"
+        class="error"
+      >
+        {{ item.unread_failures_count }}
+      </c-circle-badge>
+      <template v-else>
+        -
+      </template>
+    </template>
+    <template #created="{ item }">
+      {{ item.created | date }}
+    </template>
+    <template #updated="{ item }">
+      {{ item.updated | date }}
+    </template>
+    <template #calendar="{ item }">
+      <v-icon>{{ isCalendarRule(item) ? 'check' : 'clear' }}</v-icon>
+    </template>
+    <template #actions="{ item }">
+      <v-layout>
+        <c-action-btn
+          v-if="updatable"
+          type="edit"
           @click="$emit('edit', item)"
-        )
-        c-action-btn(
-          v-if="duplicable",
-          type="duplicate",
+        />
+        <c-action-btn
+          v-if="duplicable"
+          type="duplicate"
           @click="$emit('duplicate', item)"
-        )
-        c-action-btn(
-          v-if="removable",
-          type="delete",
+        />
+        <c-action-btn
+          v-if="removable"
+          type="delete"
           @click="$emit('remove', item._id)"
-        )
-        pbehaviors-create-action-btn(:entity-id="item._id")
-        pbehaviors-list-action-btn(:entity-id="item._id")
-    template(#expand="{ item }")
-      event-filters-list-expand-panel(:event-filter="item", @refresh="$emit('refresh')")
+        />
+        <pbehaviors-create-action-btn :entity-id="item._id" />
+        <pbehaviors-list-action-btn :entity-id="item._id" />
+      </v-layout>
+    </template>
+    <template #expand="{ item }">
+      <event-filters-list-expand-panel
+        :event-filter="item"
+        @refresh="$emit('refresh')"
+      />
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>
@@ -76,7 +102,7 @@ export default {
       type: Number,
       required: false,
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },

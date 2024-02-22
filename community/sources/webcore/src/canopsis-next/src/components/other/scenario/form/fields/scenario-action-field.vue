@@ -1,47 +1,88 @@
-<template lang="pug">
-  c-card-iterator-item(:item-number="actionNumber", @remove="removeAction")
-    template(#header="")
-      c-action-type-field(v-field="action.type", :name="`${name}.type`")
-
-    v-layout(row)
-      v-flex(xs6)
-        c-enabled-field(v-field="action.emit_trigger", :label="$t('common.emitTrigger')")
-        action-author-field(v-if="!isPbehaviorAction", v-model="parameters")
-      v-flex(v-if="isWebhookActionType", xs6)
-        c-enabled-field(
-          v-model="parameters.skip_for_child",
+<template>
+  <c-card-iterator-item
+    :item-number="actionNumber"
+    @remove="removeAction"
+  >
+    <template #header="">
+      <c-action-type-field
+        v-field="action.type"
+        :name="`${name}.type`"
+      />
+    </template>
+    <v-layout>
+      <v-flex xs6>
+        <c-enabled-field
+          v-field="action.emit_trigger"
+          :label="$t('common.emitTrigger')"
+        />
+        <action-author-field
+          v-if="!isPbehaviorAction"
+          v-model="parameters"
+        />
+      </v-flex>
+      <v-flex
+        v-if="isWebhookActionType"
+        xs6
+      >
+        <c-enabled-field
+          v-model="parameters.skip_for_child"
           :label="$t('scenario.skipForChild')"
-        )
-        c-enabled-field.mt-0(
-          v-model="parameters.skip_for_instruction",
+        />
+        <c-enabled-field
+          v-model="parameters.skip_for_instruction"
           :label="$t('scenario.skipForInstruction')"
-        )
-    c-workflow-field(
-      v-field="action.drop_scenario_if_not_matched",
-      :label="$t('scenario.workflow')",
+          class="mt-0"
+        />
+      </v-flex>
+    </v-layout>
+    <c-workflow-field
+      v-field="action.drop_scenario_if_not_matched"
+      :label="$t('scenario.workflow')"
       :continue-label="$t('scenario.remainingAction')"
-    )
-    v-textarea.mt-2(v-field="action.comment", :label="$tc('common.comment')")
-
-    v-tabs(v-model="activeTab", centered, slider-color="primary", color="transparent", fixed-tabs)
-      v-tab(:class="{ 'error--text': hasGeneralError }") {{ $t('common.general') }}
-      v-tab(:class="{ 'error--text': hasPatternsError }") {{ $tc('common.pattern') }}
-    v-divider
-    v-tabs-items.pt-2(v-model="activeTab")
-      v-tab-item
-        action-parameters-form.mt-4(
-          ref="general",
-          v-model="parameters",
-          :name="`${name}.parameters`",
-          :type="action.type",
+    />
+    <v-textarea
+      v-field="action.comment"
+      :label="$tc('common.comment')"
+      class="mt-2"
+    />
+    <v-tabs
+      v-model="activeTab"
+      slider-color="primary"
+      background-color="transparent"
+      centered
+    >
+      <v-tab :class="{ 'error--text': hasGeneralError }">
+        {{ $t('common.general') }}
+      </v-tab>
+      <v-tab :class="{ 'error--text': hasPatternsError }">
+        {{ $tc('common.pattern') }}
+      </v-tab>
+    </v-tabs>
+    <v-divider />
+    <v-tabs-items
+      v-model="activeTab"
+      class="pt-2"
+    >
+      <v-tab-item eager>
+        <action-parameters-form
+          v-model="parameters"
+          ref="general"
+          :name="`${name}.parameters`"
+          :type="action.type"
           :has-previous-webhook="hasPreviousWebhook"
-        )
-      v-tab-item
-        scenario-action-patterns-form.mt-4(
-          ref="patterns",
-          v-model="action.patterns",
+          class="mt-4"
+        />
+      </v-tab-item>
+      <v-tab-item eager>
+        <scenario-action-patterns-form
+          v-field="action.patterns"
+          ref="patterns"
           :name="name"
-        )
+          class="mt-4"
+        />
+      </v-tab-item>
+    </v-tabs-items>
+  </c-card-iterator-item>
 </template>
 
 <script>

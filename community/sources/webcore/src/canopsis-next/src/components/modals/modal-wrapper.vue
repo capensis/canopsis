@@ -1,22 +1,41 @@
-<template lang="pug">
-  v-card(:class="{ 'fill-min-height': fillHeight }")
-    v-card-title.white--text(v-if="$slots.title", :style="titleStyle")
-      div.modal-wrapper__title.headline
-        div
-          slot(name="title")
-        div
-          modal-title-buttons(
-            :minimize="minimize",
+<template>
+  <v-card :class="{ 'fill-min-height': fillHeight }">
+    <v-card-title
+      v-if="$slots.title"
+      :style="titleStyle"
+      class="white--text"
+    >
+      <div class="modal-wrapper__title text-h5">
+        <div>
+          <slot name="title" />
+        </div>
+        <div>
+          <modal-title-buttons
+            :minimize="minimize"
             :close="close"
-          )
-    template(v-if="!$modal.minimized")
-      v-card-text(v-if="$slots.text", :class="textClass", key="text")
-        slot(name="text")
-      template(v-if="$slots.actions")
-        v-divider(key="divider")
-        v-card-actions(key="actions")
-          v-layout.py-1(justify-end)
-            slot(name="actions")
+          />
+        </div>
+      </div>
+    </v-card-title>
+    <template v-if="!$modal.minimized">
+      <v-card-text
+        v-if="$slots.text"
+        key="text"
+        :class="textClass"
+      >
+        <slot name="text" />
+      </v-card-text>
+      <template v-if="$slots.actions">
+        <v-divider key="divider" />
+        <v-card-actions
+          key="actions"
+          class="justify-end align-center px-2 py-3"
+        >
+          <slot name="actions" />
+        </v-card-actions>
+      </template>
+    </template>
+  </v-card>
 </template>
 
 <script>

@@ -1,65 +1,94 @@
-<template lang="pug">
-  div.instruction-list
-    c-advanced-data-table(
-      :headers="headers",
-      :items="remediationInstructions",
-      :loading="pending",
-      :total-items="totalItems",
-      :pagination="pagination",
-      :select-all="removable",
-      search,
-      advanced-pagination,
-      @update:pagination="$emit('update:pagination', $event)"
-    )
-      template(#mass-actions="{ selected }")
-        c-action-btn(
-          v-if="removable",
-          type="delete",
+<template>
+  <div class="instruction-list">
+    <c-advanced-data-table
+      :headers="headers"
+      :items="remediationInstructions"
+      :loading="pending"
+      :total-items="totalItems"
+      :options="options"
+      :select-all="removable"
+      search
+      advanced-pagination
+      @update:options="$emit('update:options', $event)"
+    >
+      <template #mass-actions="{ selected }">
+        <c-action-btn
+          v-if="removable"
+          type="delete"
           @click="$emit('remove-selected', selected)"
-        )
-      template(#headerCell="{ header }")
-        span.c-table-header__text--multiline {{ header.text }}
-      template(#enabled="{ item }")
-        c-enabled(:value="item.enabled")
-      template(#status="{ item }")
-        v-tooltip(v-if="item.approval", bottom)
-          template(#activator="{ on }")
-            v-icon(color="black") query_builder
-          span {{ $t('remediation.instruction.approvalPending') }}
-        v-icon(v-else, color="primary") check_circle
-      template(#type="{ item }") {{ $t(`remediation.instruction.types.${item.type}`) }}
-      template(#last_modified="{ item }") {{ item.last_modified | date }}
-      template(#last_executed_on="{ item }") {{ item.last_executed_on | date }}
-      template(#actions="{ item }")
-        v-layout(row, justify-end)
-          c-action-btn(
-            v-if="item.approval && isApprovalForCurrentUser(item.approval)",
-            :tooltip="$t('remediation.instruction.needApprove')",
-            icon="notification_important",
-            color="error",
+        />
+      </template>
+      <template #headerCell="{ header }">
+        <span class="c-table-header__text--multiline">{{ header.text }}</span>
+      </template>
+      <template #enabled="{ item }">
+        <c-enabled :value="item.enabled" />
+      </template>
+      <template #status="{ item }">
+        <v-tooltip
+          v-if="item.approval"
+          bottom
+        >
+          <template #activator="{ on }">
+            <v-icon
+              color="black"
+              v-on="on"
+            >
+              query_builder
+            </v-icon>
+          </template>
+          <span>{{ $t('remediation.instruction.approvalPending') }}</span>
+        </v-tooltip>
+        <v-icon
+          v-else
+          color="primary"
+        >
+          check_circle
+        </v-icon>
+      </template>
+      <template #type="{ item }">
+        {{ $t(`remediation.instruction.types.${item.type}`) }}
+      </template>
+      <template #last_modified="{ item }">
+        {{ item.last_modified | date }}
+      </template>
+      <template #last_executed_on="{ item }">
+        {{ item.last_executed_on | date }}
+      </template>
+      <template #actions="{ item }">
+        <v-layout justify-end>
+          <c-action-btn
+            v-if="item.approval && isApprovalForCurrentUser(item.approval)"
+            :tooltip="$t('remediation.instruction.needApprove')"
+            icon="notification_important"
+            color="error"
             @click="$emit('approve', item)"
-          )
-          c-action-btn(
-            v-if="updatable",
-            type="edit",
+          />
+          <c-action-btn
+            v-if="updatable"
+            type="edit"
             @click="$emit('edit', item)"
-          )
-          c-action-btn(
-            v-if="updatable",
-            :tooltip="$t('modals.patterns.title')",
-            icon="assignment",
+          />
+          <c-action-btn
+            v-if="updatable"
+            :tooltip="$t('modals.patterns.title')"
+            icon="assignment"
             @click="$emit('assign-patterns', item)"
-          )
-          c-action-btn(
-            v-if="duplicable",
-            type="duplicate",
+          />
+          <c-action-btn
+            v-if="duplicable"
+            type="duplicate"
             @click="$emit('duplicate', item)"
-          )
-          c-action-btn(
-            v-if="removable",
-            type="delete",
+          />
+          <c-action-btn
+            v-if="removable"
+            type="delete"
             @click="$emit('remove', item)"
-          )
+          />
+        </v-layout>
+      </template>
+    </c-advanced-data-table>
+  </div>
 </template>
 
 <script>
@@ -82,7 +111,7 @@ export default {
       type: Number,
       required: false,
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },
@@ -121,6 +150,10 @@ export default {
         {
           text: this.$t('common.lastModifiedOn'),
           value: 'last_modified',
+        },
+        {
+          text: this.$t('common.priority'),
+          value: 'priority',
         },
         {
           text: this.$t('common.status'),

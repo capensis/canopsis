@@ -1,61 +1,72 @@
-<template lang="pug">
-  div
-    c-page-header {{ $t('pattern.patterns') }}
-    v-layout(row, wrap)
-      v-flex(xs12)
-        v-card.ma-2
-          v-tabs(
-            v-if="hasReadAnyCorporatePatternAccess",
-            v-model="activeTab",
-            slider-color="primary",
+<template>
+  <div>
+    <c-page-header>{{ $t('pattern.patterns') }}</c-page-header>
+    <v-layout wrap>
+      <v-flex xs12>
+        <v-card class="ma-2">
+          <v-tabs
+            v-if="hasReadAnyCorporatePatternAccess"
+            v-model="activeTab"
+            slider-color="primary"
             fixed-tabs
-          )
-            v-tab(:href="`#${$constants.PATTERN_TABS.patterns}`") {{ $t('pattern.myPatterns') }}
-            v-tab-item(:value="$constants.PATTERN_TABS.patterns")
-              patterns(
-                @edit="showEditPatternModal",
-                @remove="showDeletePatternModal",
+          >
+            <v-tab :href="`#${$constants.PATTERN_TABS.patterns}`">
+              {{ $t('pattern.myPatterns') }}
+            </v-tab>
+            <v-tab-item :value="$constants.PATTERN_TABS.patterns">
+              <patterns
+                @edit="showEditPatternModal"
+                @remove="showDeletePatternModal"
                 @remove-selected="showDeleteSelectedPatternsModal"
-              )
-            v-tab(:href="`#${$constants.PATTERN_TABS.corporatePatterns}`") {{ $t('pattern.corporatePatterns') }}
-            v-tab-item(:value="$constants.PATTERN_TABS.corporatePatterns", lazy)
-              corporate-patterns(
-                @edit="showEditPatternModal",
-                @remove="showDeletePatternModal",
+              />
+            </v-tab-item>
+            <v-tab :href="`#${$constants.PATTERN_TABS.corporatePatterns}`">
+              {{ $t('pattern.corporatePatterns') }}
+            </v-tab>
+            <v-tab-item :value="$constants.PATTERN_TABS.corporatePatterns">
+              <corporate-patterns
+                @edit="showEditPatternModal"
+                @remove="showDeletePatternModal"
                 @remove-selected="showDeleteSelectedPatternsModal"
-              )
-          patterns(
-            v-else,
-            @edit="showEditPatternModal",
-            @remove="showDeletePatternModal",
+              />
+            </v-tab-item>
+          </v-tabs>
+          <patterns
+            v-else
+            @edit="showEditPatternModal"
+            @remove="showDeletePatternModal"
             @remove-selected="showDeleteSelectedPatternsModal"
-          )
-
-    c-fab-expand-btn(@refresh="refresh", :has-access="hasAccessToCreatePattern")
-      c-action-fab-btn(
-        :tooltip="createPbehaviorTitle",
-        icon="pause",
-        color="grey darken-1",
-        top,
-        small,
+          />
+        </v-card>
+      </v-flex>
+    </v-layout>
+    <c-fab-expand-btn
+      :has-access="hasAccessToCreatePattern"
+      @refresh="refresh"
+    >
+      <c-action-fab-btn
+        :tooltip="createPbehaviorTitle"
+        icon="pause"
+        color="grey darken-1"
+        top
         @click.stop="showCreatePbehaviorPatternModal"
-      )
-      c-action-fab-btn(
-        :tooltip="createEntityTitle",
-        icon="perm_identity",
-        color="blue",
-        top,
-        small,
+      />
+      <c-action-fab-btn
+        :tooltip="createEntityTitle"
+        icon="perm_identity"
+        color="blue"
+        top
         @click.stop="showCreateEntityPatternModal"
-      )
-      c-action-fab-btn(
-        :tooltip="createAlarmTitle",
-        icon="notification_important",
-        color="error",
-        top,
-        small,
+      />
+      <c-action-fab-btn
+        :tooltip="createAlarmTitle"
+        icon="notification_important"
+        color="error"
+        top
         @click.stop="showCreateAlarmPatternModal"
-      )
+      />
+    </c-fab-expand-btn>
+  </div>
 </template>
 
 <script>

@@ -1,10 +1,10 @@
-<template lang="pug">
-  c-action-btn(
-    v-if="hasCreateAnyPbehaviorAccess",
-    :tooltip="$t('modals.createPbehavior.create.title')",
-    icon="pause",
+<template>
+  <c-action-btn
+    v-if="hasCreateAnyPbehaviorAccess"
+    :tooltip="$t('modals.createPbehavior.create.title')"
+    icon="pause"
     @click="showCreatePbehaviorModal"
-  )
+  />
 </template>
 
 <script>

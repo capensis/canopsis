@@ -1,52 +1,65 @@
-<template lang="pug">
-  v-layout(column)
-    c-enabled-field(v-field="form.multiple_executions", :label="$t('remediation.job.multipleExecutions')")
-    c-name-field(v-field="form.name", required)
-    remediation-job-configuration-field(v-field="form.config")
-    c-id-field(
-      v-field="form.job_id",
-      :label="$t('remediation.job.jobId')",
-      name="job_id",
+<template>
+  <v-layout column>
+    <c-enabled-field
+      v-field="form.multiple_executions"
+      :label="$t('remediation.job.multipleExecutions')"
+    />
+    <c-name-field
+      v-field="form.name"
       required
-    )
-    v-layout(row)
-      c-enabled-duration-field(
-        v-field="form.job_wait_interval",
-        :label="$t('remediation.job.jobWaitInterval')",
-        :units="jobWaitIntervalUnits",
+    />
+    <remediation-job-configuration-field v-field="form.config" />
+    <c-id-field
+      v-field="form.job_id"
+      :label="$t('remediation.job.jobId')"
+      name="job_id"
+      required
+    />
+    <v-layout>
+      <c-enabled-duration-field
+        v-field="form.job_wait_interval"
+        :label="$t('remediation.job.jobWaitInterval')"
+        :units="jobWaitIntervalUnits"
         name="job_wait_interval"
-      )
-    v-layout(v-if="withPayload", row)
-      v-btn.ml-0(
-        v-if="!form.payload",
-        color="primary",
-        outline,
+      />
+    </v-layout>
+    <v-layout v-if="withPayload">
+      <v-btn
+        v-if="!form.payload"
+        class="ml-0"
+        color="primary"
+        outlined
         @click="addPayload"
-      ) {{ $t('remediation.job.addPayload') }}
-      template(v-else)
-        c-json-field(
-          v-field="form.payload",
-          :label="$t('common.payload')",
-          :help-text="$t('remediation.job.payloadHelp')",
-          name="payload",
+      >
+        {{ $t('remediation.job.addPayload') }}
+      </v-btn>
+      <template v-else>
+        <c-json-field
+          v-field="form.payload"
+          :label="$t('common.payload')"
+          :help-text="$t('remediation.job.payloadHelp')"
+          name="payload"
           variables
-        )
-        c-action-btn(
-          :tooltip="$t('remediation.job.deletePayload')",
-          icon="delete",
-          color="error",
-          bottom,
+        />
+        <c-action-btn
+          :tooltip="$t('remediation.job.deletePayload')"
+          icon="delete"
+          color="error"
+          bottom
           @click="removePayload"
-        )
-    c-text-pairs-field(
-      v-if="withQuery",
-      v-field="form.query",
-      :title="$t('remediation.job.query')",
-      :text-label="$t('common.field')",
-      :value-label="$t('common.value')",
-      name="query",
+        />
+      </template>
+    </v-layout>
+    <c-text-pairs-field
+      v-if="withQuery"
+      v-field="form.query"
+      :title="$t('remediation.job.query')"
+      :text-label="$t('common.field')"
+      :value-label="$t('common.value')"
+      name="query"
       text-required
-    )
+    />
+  </v-layout>
 </template>
 
 <script>

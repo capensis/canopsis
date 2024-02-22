@@ -1,18 +1,23 @@
-<template lang="pug">
-  v-textarea(
-    v-field="value",
-    v-validate="rules",
-    :label="label || $t('common.description')",
-    :error-messages="errors.collect(name)",
-    :disabled="disabled",
+<template>
+  <v-textarea
+    v-field="value"
+    v-validate="rules"
+    :label="label || $t('common.description')"
+    :error-messages="errors.collect(name)"
+    :disabled="disabled"
     :name="name"
-  )
-    template(v-if="helpText", #append="")
-      c-help-icon(
-        :text="helpText",
-        icon="help",
+  >
+    <template
+      v-if="helpText"
+      #append=""
+    >
+      <c-help-icon
+        :text="helpText"
+        icon="help"
         left
-      )
+      />
+    </template>
+  </v-textarea>
 </template>
 
 <script>

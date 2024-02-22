@@ -404,6 +404,39 @@ func getAlarmMongoQueryDataSets() map[string]alarmDataSet {
 				}},
 			}},
 		},
+		"given exist change_state condition": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.change_state",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, true),
+					},
+				},
+			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"alarm.v.change_state": bson.M{"$exists": true, "$ne": nil}},
+				}},
+			}},
+		},
+		"given not exist change_state condition": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.change_state",
+						Condition: pattern.NewBoolCondition(pattern.ConditionExist, false),
+					},
+				},
+			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"$or": []bson.M{
+						{"alarm.v.change_state": bson.M{"$exists": false}},
+						{"alarm.v.change_state": bson.M{"$eq": nil}},
+					}},
+				}},
+			}},
+		},
 	}
 }
 

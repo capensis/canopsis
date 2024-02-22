@@ -1,26 +1,24 @@
-<template lang="pug">
-  ds-calendar-app(
-    :calendar="calendar",
-    :pending="pending",
-    read-only,
-    fluid,
-    fill-height,
-    current-time-for-today,
-    @change="fetchEvents"
-  )
-    template(#calendarAppLoader="")
-      c-progress-overlay(:pending="pending")
+<template>
+  <c-calendar
+    ref="calendar"
+    :events="events"
+    :loading="pending"
+    readonly
+    hide-details-menu
+    @change:pagination="fetchEvents"
+  />
 </template>
 
 <script>
-import { Calendar } from 'dayspan';
-
 import { DATETIME_FORMATS } from '@/constants';
 
 import { getMostReadableTextColor } from '@/helpers/color';
-import { getPbehaviorColor } from '@/helpers/entities/pbehavior/form';
-import { getScheduleForSpan, getSpanForTimestamps } from '@/helpers/calendar/dayspan';
-import { convertDateToString, convertDateToTimestampByTimezone } from '@/helpers/date/date';
+import { getPbehaviorColor, isFullDayEvent } from '@/helpers/entities/pbehavior/form';
+import {
+  convertDateToDateObjectByTimezone,
+  convertDateToString,
+  convertDateToTimestampByTimezone,
+} from '@/helpers/date/date';
 
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 import { entitiesPbehaviorTimespansMixin } from '@/mixins/entities/pbehavior/timespans';
@@ -38,69 +36,44 @@ export default {
     },
   },
   data() {
-    const calendar = Calendar.months();
-
-    calendar.set({ listTimes: false });
-
     return {
-      calendar,
-
       pending: false,
       events: [],
     };
-  },
-  computed: {
-    viewInterval() {
-      return {
-        from: convertDateToTimestampByTimezone(this.calendar.filled.start.date, this.$system.timezone),
-        to: convertDateToTimestampByTimezone(this.calendar.filled.end.date, this.$system.timezone),
-      };
-    },
   },
   mounted() {
     this.fetchEvents();
   },
   methods: {
-    async applyEvents() {
-      if (this.events) {
-        this.calendar.removeEvents(null, true);
-        await this.calendar.addEventsAsync(this.events);
-      }
-    },
-
     convertPbehaviorsCalendarToEvents(pbehaviors) {
-      const defaultEvent = this.$dayspan.getDefaultEventDetails();
-
       return pbehaviors.map((pbehavior, index) => {
-        const daySpan = getSpanForTimestamps({
-          start: pbehavior.from,
-          end: pbehavior.to,
-          timezone: this.$system.timezone,
-        });
+        const start = convertDateToDateObjectByTimezone(pbehavior.from, this.$system.timezone);
+        const end = convertDateToDateObjectByTimezone(pbehavior.to, this.$system.timezone);
+
+        const isTimed = !isFullDayEvent(start, end);
+
         const fromString = convertDateToString(pbehavior.from, DATETIME_FORMATS.medium);
         const toString = convertDateToString(pbehavior.to, DATETIME_FORMATS.medium);
         const color = getPbehaviorColor(pbehavior);
-        const forecolor = getMostReadableTextColor(color, { level: 'AA', size: 'large' });
+        const iconColor = getMostReadableTextColor(color, { level: 'AA', size: 'large' });
 
         return {
           id: index,
-          data: {
-            ...defaultEvent,
-
-            color,
-            forecolor,
-            title: `${fromString} - ${toString} ${pbehavior.title}`,
-            icon: pbehavior.type.icon_name,
-          },
-          schedule: getScheduleForSpan(daySpan),
+          color,
+          iconColor,
+          start,
+          end,
+          icon: pbehavior.type.icon_name,
+          name: `${fromString} - ${toString} ${pbehavior.title}`,
+          timed: isTimed,
         };
       });
     },
 
     fetchPbehaviorsCalendar() {
       const params = {
-        from: this.viewInterval.from,
-        to: this.viewInterval.to,
+        from: convertDateToTimestampByTimezone(this.$refs.calendar.filled.start, this.$system.timezone),
+        to: convertDateToTimestampByTimezone(this.$refs.calendar.filled.end, this.$system.timezone),
       };
 
       if (this.entityId) {
@@ -118,8 +91,6 @@ export default {
       const pbehaviorsCalendar = await this.fetchPbehaviorsCalendar();
 
       this.events = this.convertPbehaviorsCalendarToEvents(pbehaviorsCalendar);
-
-      await this.applyEvents();
 
       this.pending = false;
     },

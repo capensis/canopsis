@@ -1,31 +1,56 @@
-<template lang="pug">
-  v-menu.group-item(
-    content-class="group-v-menu-content secondary",
-    close-delay="0",
-    open-on-hover,
-    offset-y,
-    bottom,
+<template>
+  <v-menu
+    class="group-item"
+    content-class="group-v-menu-content secondary"
+    close-delay="0"
+    open-on-hover
+    offset-y
+    bottom
     dark
-  )
-    template(#activator="{ on }")
-      v-btn.group-item__dropdown-btn(v-on="on", flat, dark)
-        span {{ group.title }}
-        v-icon.ml-1(v-if="group.is_private", color="white", small) lock
-        v-btn(
-          v-show="isNavigationEditingMode",
-          depressed,
-          small,
-          icon,
+  >
+    <template #activator="{ on }">
+      <v-btn
+        class="group-item__dropdown-btn"
+        text
+        dark
+        v-on="on"
+      >
+        <span>{{ group.title }}</span>
+        <v-icon
+          v-if="group.is_private"
+          color="white"
+          small
+        >
+          lock
+        </v-icon>
+        <v-btn
+          v-show="isNavigationEditingMode"
+          depressed
+          small
+          icon
           @click.stop="showEditGroupModal"
-        )
-          v-icon(small) edit
-        v-icon.ml-0(right, dark) arrow_drop_down
-    v-list
-      groups-top-bar-group-view(
-        v-for="view in group.views",
-        :key="view._id",
+        >
+          <v-icon small>
+            edit
+          </v-icon>
+        </v-btn>
+        <v-icon
+          class="ml-0"
+          right
+          dark
+        >
+          arrow_drop_down
+        </v-icon>
+      </v-btn>
+    </template>
+    <v-list>
+      <groups-top-bar-group-view
+        v-for="view in group.views"
+        :key="view._id"
         :view="view"
-      )
+      />
+    </v-list>
+  </v-menu>
 </template>
 
 <script>
@@ -42,6 +67,7 @@ export default {
 <style lang="scss">
 .group-item {
   &__dropdown-btn {
+    margin: 6px;
     text-transform: none;
   }
 }

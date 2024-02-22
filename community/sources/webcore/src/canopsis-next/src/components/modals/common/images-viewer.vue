@@ -1,8 +1,20 @@
-<template lang="pug">
-  div
-    c-images-viewer(:images="imagesWithKey", :active="config.active", item-key="key")
-    v-btn.ma-1.images-viewer__close-btn(icon, @click="$modals.hide")
-      v-icon(color="white") close
+<template>
+  <div>
+    <c-images-viewer
+      :images="imagesWithKey"
+      :active="config.active"
+      item-key="key"
+    />
+    <v-btn
+      class="ma-1 images-viewer__close-btn"
+      icon
+      @click="$modals.hide"
+    >
+      <v-icon color="white">
+        close
+      </v-icon>
+    </v-btn>
+  </div>
 </template>
 
 <script>

@@ -1,5 +1,9 @@
-<template lang="pug">
-  code-editor(v-field="value", :options="editorOptions", :error-markers="errorMarkers")
+<template>
+  <code-editor
+    v-field="value"
+    :options="editorOptions"
+    :error-markers="errorMarkers"
+  />
 </template>
 
 <script>

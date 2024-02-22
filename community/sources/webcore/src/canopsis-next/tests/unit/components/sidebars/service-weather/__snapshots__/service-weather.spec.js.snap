@@ -1,40 +1,27 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`service-weather Renders \`service-weather\` widget settings with custom props 1`] = `
-<widget-settings-stub>
+<widget-settings-stub
+  divider="true"
+>
   <field-title-stub
     name="title"
     value="Map widget"
   />
-  <hr
-    class="v-divider theme--light"
-  />
   <field-periodic-refresh-stub
     form="[object Object]"
-  />
-  <hr
-    class="v-divider theme--light"
   />
   <!---->
   <alarms-list-modal-form-stub
     form="[object Object]"
     templates=""
   />
-  <hr
-    class="v-divider theme--light"
-  />
   <field-number-stub
     title="Limit"
     value="12"
   />
-  <hr
-    class="v-divider theme--light"
-  />
   <field-color-indicator-stub
     value="state"
-  />
-  <hr
-    class="v-divider theme--light"
   />
   <field-columns-stub
     columns="[object Object],[object Object]"
@@ -44,8 +31,8 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
     type="entity"
     withcolorindicator="true"
   />
-  <hr
-    class="v-divider theme--light"
+  <field-tree-of-dependencies-settings-stub
+    value="2"
   />
   <widget-settings-group-stub
     title="Advanced settings"
@@ -54,79 +41,52 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
       columns="[object Object],[object Object]"
       value="[object Object]"
     />
-    <hr
-      class="v-divider theme--light"
-    />
     <field-default-elements-per-page-stub
       subtitle="(Modal)"
       value="11"
-    />
-    <hr
-      class="v-divider theme--light"
     />
     <field-text-editor-with-template-stub
       defaultvalue=""
       template="Symbol(custom)"
       templates=""
       title="Template - Weather item"
-      value=<div>block-template</div>
+      value="<div>block-template</div>"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-    />
-    <hr
-      class="v-divider theme--light"
     />
     <field-text-editor-with-template-stub
       defaultvalue=""
       template="Symbol(custom)"
       templates=""
       title="Template - Modal"
-      value=<div>modal-template</div>
+      value="<div>modal-template</div>"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-    />
-    <hr
-      class="v-divider theme--light"
     />
     <field-text-editor-with-template-stub
       defaultvalue=""
       template="Symbol(custom)"
       templates=""
       title="Template - Entities"
-      value=<div>entity-template</div>
+      value="<div>entity-template</div>"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-    />
-    <hr
-      class="v-divider theme--light"
     />
     <field-grid-size-stub
       mobile="true"
       title="Columns - Mobile"
       value="1"
     />
-    <hr
-      class="v-divider theme--light"
-    />
     <field-grid-size-stub
       tablet="true"
       title="Columns - Tablet"
       value="2"
     />
-    <hr
-      class="v-divider theme--light"
-    />
     <field-grid-size-stub
       title="Columns - Desktop"
       value="3"
-    />
-    <hr
-      class="v-divider theme--light"
     />
     <margins-form-stub
       form="[object Object]"
       max="5"
       min="0"
-    />
-    <hr
-      class="v-divider theme--light"
     />
     <field-slider-stub
       max="20"
@@ -134,82 +94,59 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
       title="Height"
       value="22"
     />
-    <hr
-      class="v-divider theme--light"
-    />
     <field-counters-selector-stub
       title="Counters"
       value="[object Object]"
-    />
-    <hr
-      class="v-divider theme--light"
     />
     <field-switcher-stub
       title="Show priority"
       value="true"
     />
-    <hr
-      class="v-divider theme--light"
-    />
     <field-switcher-stub
       title="Show hide gray"
       value="true"
-    />
-    <hr
-      class="v-divider theme--light"
     />
     <field-modal-type-stub
       name="modalType"
       value="both"
     />
-    <hr
-      class="v-divider theme--light"
-    />
     <field-action-required-settings-stub
       value="[object Object]"
     />
+    <hr
+      aria-orientation="horizontal"
+      class="v-divider theme--light"
+      role="separator"
+    />
+    <field-switcher-stub
+      title="Stack entities actions and apply simultaneously"
+    />
   </widget-settings-group-stub>
-  <hr
-    class="v-divider theme--light"
-  />
 </widget-settings-stub>
 `;
 
 exports[`service-weather Renders \`service-weather\` widget settings with default props 1`] = `
-<widget-settings-stub>
+<widget-settings-stub
+  divider="true"
+>
   <field-title-stub
     name="title"
     value=""
   />
-  <hr
-    class="v-divider theme--light"
-  />
   <field-periodic-refresh-stub
     form="[object Object]"
-  />
-  <hr
-    class="v-divider theme--light"
   />
   <!---->
   <alarms-list-modal-form-stub
     form="[object Object]"
     templates=""
   />
-  <hr
-    class="v-divider theme--light"
-  />
   <field-number-stub
     title="Limit"
     value="120"
   />
-  <hr
-    class="v-divider theme--light"
-  />
   <field-color-indicator-stub
     value="state"
-  />
-  <hr
-    class="v-divider theme--light"
   />
   <field-columns-stub
     columns="[object Object],[object Object]"
@@ -219,8 +156,8 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
     type="entity"
     withcolorindicator="true"
   />
-  <hr
-    class="v-divider theme--light"
+  <field-tree-of-dependencies-settings-stub
+    value="2"
   />
   <widget-settings-group-stub
     title="Advanced settings"
@@ -229,29 +166,20 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
       columns="[object Object],[object Object]"
       value="[object Object]"
     />
-    <hr
-      class="v-divider theme--light"
-    />
     <field-default-elements-per-page-stub
       subtitle="(Modal)"
       value="10"
-    />
-    <hr
-      class="v-divider theme--light"
     />
     <field-text-editor-with-template-stub
       defaultvalue=""
       template="Symbol(custom)"
       templates=""
       title="Template - Weather item"
-      value=<p><strong><span style="font-size: 18px;">{{entity.name}}</span></strong></p>
-<hr id="null">
+      value="<p><strong><span style=\\"font-size: 18px;\\">{{entity.name}}</span></strong></p>
+<hr id=\\"null\\">
 <p>{{ entity.output }}</p>
-<p> Dernière mise à jour : {{ timestamp entity.last_update_date }}</p>
+<p> Dernière mise à jour : {{ timestamp entity.last_update_date }}</p>"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-    />
-    <hr
-      class="v-divider theme--light"
     />
     <field-text-editor-with-template-stub
       defaultvalue=""
@@ -261,52 +189,34 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
       value="{{ entities name=\\"entity._id\\" }}"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
-    <hr
-      class="v-divider theme--light"
-    />
     <field-text-editor-with-template-stub
       defaultvalue=""
       template="Symbol(custom)"
       templates=""
       title="Template - Entities"
-      value=<ul>
-  <li><strong>Libellé</strong> : {{entity.name}}</li>
-</ul>
+      value="<ul>
+    <li><strong>Libellé</strong> : {{entity.name}}</li>
+</ul>"
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-    />
-    <hr
-      class="v-divider theme--light"
     />
     <field-grid-size-stub
       mobile="true"
       title="Columns - Mobile"
       value="2"
     />
-    <hr
-      class="v-divider theme--light"
-    />
     <field-grid-size-stub
       tablet="true"
       title="Columns - Tablet"
       value="3"
     />
-    <hr
-      class="v-divider theme--light"
-    />
     <field-grid-size-stub
       title="Columns - Desktop"
       value="4"
-    />
-    <hr
-      class="v-divider theme--light"
     />
     <margins-form-stub
       form="[object Object]"
       max="5"
       min="0"
-    />
-    <hr
-      class="v-divider theme--light"
     />
     <field-slider-stub
       max="20"
@@ -314,43 +224,33 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
       title="Height"
       value="6"
     />
-    <hr
-      class="v-divider theme--light"
-    />
     <field-counters-selector-stub
       title="Counters"
       value="[object Object]"
-    />
-    <hr
-      class="v-divider theme--light"
     />
     <field-switcher-stub
       title="Show priority"
       value="true"
     />
-    <hr
-      class="v-divider theme--light"
-    />
     <field-switcher-stub
       title="Show hide gray"
       value="true"
-    />
-    <hr
-      class="v-divider theme--light"
     />
     <field-modal-type-stub
       name="modalType"
       value="both"
     />
-    <hr
-      class="v-divider theme--light"
-    />
     <field-action-required-settings-stub
       value="[object Object]"
     />
+    <hr
+      aria-orientation="horizontal"
+      class="v-divider theme--light"
+      role="separator"
+    />
+    <field-switcher-stub
+      title="Stack entities actions and apply simultaneously"
+    />
   </widget-settings-group-stub>
-  <hr
-    class="v-divider theme--light"
-  />
 </widget-settings-stub>
 `;

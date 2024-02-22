@@ -1,10 +1,7 @@
-import flushPromises from 'flush-promises';
-
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
-
 import { createMockedStoreModules } from '@unit/utils/store';
+
 import { ALARM_METRIC_PARAMETERS, QUICK_RANGES, SAMPLINGS } from '@/constants';
 
 import KpiAlarms from '@/components/other/kpi/charts/kpi-alarms';
@@ -95,7 +92,7 @@ describe('kpi-alarms', () => {
 
     const kpiSliFiltersElement = wrapper.find('kpi-alarms-filters-stub');
 
-    kpiSliFiltersElement.vm.$emit('input', {
+    kpiSliFiltersElement.triggerCustomEvent('input', {
       parameters: [ALARM_METRIC_PARAMETERS.createdAlarms],
       sampling: SAMPLINGS.day,
       filter: null,
@@ -154,7 +151,7 @@ describe('kpi-alarms', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `kpi-alarms` with fetching error', async () => {
@@ -169,6 +166,6 @@ describe('kpi-alarms', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

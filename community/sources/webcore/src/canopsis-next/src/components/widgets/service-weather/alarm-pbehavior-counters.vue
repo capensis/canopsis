@@ -1,27 +1,42 @@
-<template lang="pug">
-  v-layout.alarm-counters(column)
-    v-tooltip(
-      v-for="counter in preparedCounters.selected",
-      :key="counter.key",
+<template>
+  <v-layout
+    class="alarm-counters"
+    column
+  >
+    <v-tooltip
+      v-for="counter in preparedCounters.selected"
+      :key="counter.key"
       top
-    )
-      template(#activator="{ on }")
-        alarm-counter(
-          v-on="on",
-          :count="counter.count",
+    >
+      <template #activator="{ on }">
+        <alarm-counter
+          :count="counter.count"
           :icon="counter.icon"
-        )
-      span {{ counter.name }}
-    v-tooltip(v-if="otherCountersValue", top)
-      template(#activator="{ on }")
-        alarm-counter(
-          v-on="on",
-          :count="otherCountersValue",
+          v-on="on"
+        />
+      </template>
+      <span>{{ counter.name }}</span>
+    </v-tooltip>
+    <v-tooltip
+      v-if="otherCountersValue"
+      top
+    >
+      <template #activator="{ on }">
+        <alarm-counter
+          :count="otherCountersValue"
           icon="more_horiz"
-        )
-      div(v-for="otherCounter in preparedCounters.other", :key="otherCounter.key")
-        strong {{ otherCounter.name }}
-        span : {{ otherCounter.count }}
+          v-on="on"
+        />
+      </template>
+      <div
+        v-for="otherCounter in preparedCounters.other"
+        :key="otherCounter.key"
+      >
+        <strong>{{ otherCounter.name }}</strong>
+        <span>: {{ otherCounter.count }}</span>
+      </div>
+    </v-tooltip>
+  </v-layout>
 </template>
 
 <script>

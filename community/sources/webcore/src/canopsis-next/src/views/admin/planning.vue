@@ -1,53 +1,77 @@
-<template lang="pug">
-  v-container
-    c-page-header
-    v-layout(row, wrap)
-      v-flex(xs12)
-        v-card.ma-2
-          v-tabs(v-model="activeTab", fixed-tabs, slider-color="primary")
-            template(v-if="hasReadAnyPbehaviorTypeAccess")
-              v-tab(:href="`#${$constants.PLANNING_TABS.types}`") {{ $t('pbehavior.tabs.type') }}
-              v-tab-item(:value="$constants.PLANNING_TABS.types", lazy)
-                v-card-text
-                  planning-types
-            template(v-if="hasReadAnyPbehaviorReasonAccess")
-              v-tab(:href="`#${$constants.PLANNING_TABS.reasons}`") {{ $t('pbehavior.tabs.reason') }}
-              v-tab-item(:value="$constants.PLANNING_TABS.reasons", lazy)
-                v-card-text
-                  planning-reasons
-            template(v-if="hasReadAnyPbehaviorExceptionAccess")
-              v-tab(:href="`#${$constants.PLANNING_TABS.exceptions}`") {{ $t('pbehavior.tabs.exceptions') }}
-              v-tab-item(:value="$constants.PLANNING_TABS.exceptions", lazy)
-                v-card-text
-                  planning-exceptions
-    c-fab-expand-btn(
-      v-if="isExceptionTab",
-      :has-access="hasCreateAccess",
+<template>
+  <v-container>
+    <c-page-header />
+    <v-layout wrap>
+      <v-flex xs12>
+        <v-card class="ma-2">
+          <v-tabs
+            v-model="activeTab"
+            slider-color="primary"
+            fixed-tabs
+          >
+            <template v-if="hasReadAnyPbehaviorTypeAccess">
+              <v-tab :href="`#${$constants.PLANNING_TABS.types}`">
+                {{ $t('pbehavior.tabs.type') }}
+              </v-tab>
+              <v-tab-item :value="$constants.PLANNING_TABS.types">
+                <v-card-text>
+                  <planning-types />
+                </v-card-text>
+              </v-tab-item>
+            </template>
+            <template v-if="hasReadAnyPbehaviorReasonAccess">
+              <v-tab :href="`#${$constants.PLANNING_TABS.reasons}`">
+                {{ $t('pbehavior.tabs.reason') }}
+              </v-tab>
+              <v-tab-item :value="$constants.PLANNING_TABS.reasons">
+                <v-card-text>
+                  <planning-reasons />
+                </v-card-text>
+              </v-tab-item>
+            </template>
+            <template v-if="hasReadAnyPbehaviorExceptionAccess">
+              <v-tab :href="`#${$constants.PLANNING_TABS.exceptions}`">
+                {{ $t('pbehavior.tabs.exceptions') }}
+              </v-tab>
+              <v-tab-item :value="$constants.PLANNING_TABS.exceptions">
+                <v-card-text>
+                  <planning-exceptions />
+                </v-card-text>
+              </v-tab-item>
+            </template>
+          </v-tabs>
+        </v-card>
+      </v-flex>
+    </v-layout>
+    <c-fab-expand-btn
+      v-if="isExceptionTab"
+      :has-access="hasCreateAccess"
       @refresh="refresh"
-    )
-      c-action-fab-btn(
-        :tooltip="$t('modals.importPbehaviorException.title')",
-        color="indigo",
-        icon="upload_file",
-        small,
-        top,
+    >
+      <c-action-fab-btn
+        :tooltip="$t('modals.importPbehaviorException.title')"
+        color="indigo"
+        icon="upload_file"
+        top
         @click="showImportExceptionsModal"
-      )
-      c-action-fab-btn(
-        :tooltip="$t('modals.createPbehaviorException.title')",
-        color="deep-purple",
-        icon="event",
-        small,
-        top,
+      />
+      <c-action-fab-btn
+        :tooltip="$t('modals.createPbehaviorException.title')"
+        color="deep-purple"
+        icon="event"
+        top
         @click="showCreateExceptionModal"
-      )
-    c-fab-btn(
-      v-else,
-      :has-access="hasCreateAccess",
-      @create="create",
+      />
+    </c-fab-expand-btn>
+    <c-fab-btn
+      v-else
+      :has-access="hasCreateAccess"
+      @create="create"
       @refresh="refresh"
-    )
-      span {{ tooltipText }}
+    >
+      <span>{{ tooltipText }}</span>
+    </c-fab-btn>
+  </v-container>
 </template>
 
 <script>

@@ -56,15 +56,11 @@ describe('time-picker-field', () => {
       },
     });
 
-    const combobox = selectCombobox(wrapper);
-
-    combobox.setValue('');
-
-    const inputEvents = wrapper.emitted('input');
+    selectCombobox(wrapper).setValue('');
 
     expect(setValue).toBeCalledWith('12:00');
     expect(setSearch).toBeCalledWith('');
-    expect(inputEvents).toBeFalsy();
+    expect(wrapper).not.toHaveBeenEmit('input');
   });
 
   test('List scrolled correctly without value', async () => {
@@ -75,6 +71,8 @@ describe('time-picker-field', () => {
     });
 
     const combobox = selectCombobox(wrapper);
+
+    await wrapper.activateAllMenus();
 
     const content = wrapper.findMenu();
 
@@ -91,6 +89,8 @@ describe('time-picker-field', () => {
     });
 
     const combobox = selectCombobox(wrapper);
+
+    await wrapper.activateAllMenus();
 
     const content = wrapper.findMenu();
 
@@ -112,12 +112,7 @@ describe('time-picker-field', () => {
 
     combobox.setValue(newValue);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual(newValue);
+    expect(wrapper).toEmitInput(newValue);
 
     expect(setValue).not.toBeCalled();
     expect(setSearch).not.toBeCalled();
@@ -137,12 +132,7 @@ describe('time-picker-field', () => {
 
     combobox.setValue(newValue);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual('13:00');
+    expect(wrapper).toEmitInput('13:00');
 
     expect(setValue).toBeCalledWith('13:00');
     expect(setSearch).toBeCalledWith('');
@@ -151,7 +141,7 @@ describe('time-picker-field', () => {
   test('Renders `time-picker-field` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -164,7 +154,7 @@ describe('time-picker-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -176,7 +166,7 @@ describe('time-picker-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 });

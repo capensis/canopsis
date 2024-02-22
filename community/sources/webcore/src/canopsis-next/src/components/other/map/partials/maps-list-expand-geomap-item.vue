@@ -1,5 +1,5 @@
-<template lang="pug">
-  geomap-preview(:map="map")
+<template>
+  <geomap-preview :map="map" />
 </template>
 
 <script>

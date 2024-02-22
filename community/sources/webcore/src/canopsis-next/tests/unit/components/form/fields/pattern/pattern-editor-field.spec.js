@@ -21,7 +21,7 @@ const stubs = {
   'pattern-advanced-editor-field': true,
 };
 
-const selectTabItems = wrapper => wrapper.findAll('a.v-tabs__item');
+const selectTabItems = wrapper => wrapper.findAll('.v-tab');
 const selectAdvancedTab = wrapper => selectTabItems(wrapper).at(1);
 const selectPatternField = wrapper => wrapper.find('c-pattern-field-stub');
 const selectEditButton = wrapper => wrapper.find('v-btn-stub');
@@ -59,9 +59,9 @@ describe('pattern-editor-field', () => {
 
     const patternField = selectPatternField(wrapper);
 
-    patternField.vm.$emit('input', { _id: PATTERN_CUSTOM_ITEM_VALUE });
+    patternField.triggerCustomEvent('input', { _id: PATTERN_CUSTOM_ITEM_VALUE });
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       id: PATTERN_CUSTOM_ITEM_VALUE,
       groups: [],
     });
@@ -96,9 +96,9 @@ describe('pattern-editor-field', () => {
       ],
     };
 
-    patternField.vm.$emit('input', pattern);
+    patternField.triggerCustomEvent('input', pattern);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       id,
       groups: [{
         key: expect.any(String),
@@ -163,9 +163,9 @@ describe('pattern-editor-field', () => {
 
     const editButton = selectEditButton(wrapper);
 
-    await editButton.vm.$emit('click');
+    await editButton.triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...patterns,
       id: PATTERN_CUSTOM_ITEM_VALUE,
     });
@@ -195,11 +195,11 @@ describe('pattern-editor-field', () => {
       },
     };
 
-    advancedEditor.vm.$emit('input', [[
+    advancedEditor.triggerCustomEvent('input', [[
       patternRule,
     ]]);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...patterns,
       groups: [{
         key: expect.any(String),
@@ -238,7 +238,7 @@ describe('pattern-editor-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-editor-field` with custom props', () => {
@@ -262,7 +262,7 @@ describe('pattern-editor-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-editor-field` with advanced tab', async () => {
@@ -276,10 +276,8 @@ describe('pattern-editor-field', () => {
       },
     });
 
-    const advancedTab = selectAdvancedTab(wrapper);
+    await selectAdvancedTab(wrapper).trigger('click');
 
-    await advancedTab.trigger('click');
-
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

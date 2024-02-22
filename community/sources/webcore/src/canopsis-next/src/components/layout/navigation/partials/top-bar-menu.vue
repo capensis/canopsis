@@ -1,13 +1,26 @@
-<template lang="pug">
-  v-menu(v-if="preparedLinks.length", bottom, offset-y)
-    template(#activator="{ on }")
-      v-btn.white--text(v-on="on", flat) {{ title }}
-    v-list.py-0
-      top-bar-menu-link(
-        v-for="link in preparedLinks",
-        :key="link.title",
+<template>
+  <v-menu
+    v-if="preparedLinks.length"
+    bottom
+    offset-y
+  >
+    <template #activator="{ on }">
+      <v-btn
+        class="white--text"
+        text
+        v-on="on"
+      >
+        {{ title }}
+      </v-btn>
+    </template>
+    <v-list class="py-0">
+      <top-bar-menu-link
+        v-for="link in preparedLinks"
+        :key="link.title"
         :link="link"
-      )
+      />
+    </v-list>
+  </v-menu>
 </template>
 
 <script>

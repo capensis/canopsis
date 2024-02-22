@@ -1,9 +1,9 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
+
 import {
   CRUD_ACTIONS,
   MODALS,
@@ -89,7 +89,7 @@ describe('patterns', () => {
 
     const fabButton = selectFabExpandButton(wrapper);
 
-    fabButton.vm.$emit('refresh');
+    fabButton.triggerCustomEvent('refresh');
 
     await flushPromises();
 
@@ -107,7 +107,7 @@ describe('patterns', () => {
       activeTab: PATTERN_TABS.corporatePatterns,
     });
 
-    fabButton.vm.$emit('refresh');
+    fabButton.triggerCustomEvent('refresh');
 
     await flushPromises();
 
@@ -125,7 +125,7 @@ describe('patterns', () => {
       type: PATTERN_TYPES.entity,
     };
 
-    patternsList.vm.$emit('edit', pattern);
+    patternsList.triggerCustomEvent('edit', pattern);
 
     await flushPromises();
 
@@ -171,7 +171,7 @@ describe('patterns', () => {
       is_corporate: true,
     };
 
-    patternsList.vm.$emit('edit', pattern);
+    patternsList.triggerCustomEvent('edit', pattern);
 
     await flushPromises();
 
@@ -193,7 +193,7 @@ describe('patterns', () => {
 
     const createAlarmPatternButton = selectCreateAlarmPatternButton(wrapper);
 
-    createAlarmPatternButton.vm.$emit('click', new Event('click'));
+    createAlarmPatternButton.triggerCustomEvent('click', new Event('click'));
 
     await flushPromises();
 
@@ -233,7 +233,7 @@ describe('patterns', () => {
 
     const createEntityPatternButton = selectCreateEntityPatternButton(wrapper);
 
-    createEntityPatternButton.vm.$emit('click', new Event('click'));
+    createEntityPatternButton.triggerCustomEvent('click', new Event('click'));
 
     await flushPromises();
 
@@ -273,7 +273,7 @@ describe('patterns', () => {
 
     const createPbehaviorPatternButton = selectCreatePbehaviorPatternButton(wrapper);
 
-    createPbehaviorPatternButton.vm.$emit('click', new Event('click'));
+    createPbehaviorPatternButton.triggerCustomEvent('click', new Event('click'));
 
     await flushPromises();
 
@@ -317,7 +317,7 @@ describe('patterns', () => {
       type: PATTERN_TYPES.entity,
     };
 
-    patternsList.vm.$emit('remove', pattern._id);
+    patternsList.triggerCustomEvent('remove', pattern._id);
 
     await flushPromises();
 
@@ -348,7 +348,7 @@ describe('patterns', () => {
       { _id: Faker.datatype.string() },
     ];
 
-    patternsList.vm.$emit('remove-selected', patterns);
+    patternsList.triggerCustomEvent('remove-selected', patterns);
 
     await flushPromises();
 
@@ -372,7 +372,7 @@ describe('patterns', () => {
   it('Renders `patterns` without permissions', () => {
     const wrapper = snapshotFactory({ store });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `patterns` with permissions', () => {
@@ -394,7 +394,7 @@ describe('patterns', () => {
       ]),
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `patterns` corporate tab with permissions', async () => {
@@ -420,6 +420,6 @@ describe('patterns', () => {
       activeTab: PATTERN_TABS.corporatePatterns,
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

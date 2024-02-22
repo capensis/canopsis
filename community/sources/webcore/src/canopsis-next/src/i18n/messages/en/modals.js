@@ -200,6 +200,7 @@ export default {
     refreshEntities: 'Refresh entities list',
     editPbehaviors: 'Edit pbehaviors',
     massActionsDescription: 'You can choose entities to perform actions',
+    actionInQueue: 'action in queue|actions in queue',
     entity: {
       tabs: {
         info: 'Info',
@@ -647,8 +648,28 @@ export default {
       title: 'Dependencies for {name}',
     },
   },
-  stateSetting: {
-    title: 'JUnit test suite state settings',
+  createStateSetting: {
+    create: {
+      title: 'Create state compute method',
+      success: 'State compute method created!',
+    },
+    edit: {
+      title: 'Edit state compute method',
+      success: 'State compute method edited!',
+    },
+    duplicate: {
+      title: 'Duplicate state compute method',
+      success: 'State compute method duplicated!',
+    },
+    remove: {
+      success: 'State compute method deleted!',
+    },
+  },
+  createJunitStateSetting: {
+    edit: {
+      title: 'JUnit test suite state settings',
+      success: 'JUnit test suite state setting edited!',
+    },
   },
   defineStorage: {
     title: 'Define result storage',
@@ -887,7 +908,7 @@ export default {
     title: 'Select widget template type',
   },
   entityDependenciesList: {
-    title: 'Centreon impacted entities',
+    title: '{name} impacted entities',
   },
   createDeclareTicketRule: {
     create: {

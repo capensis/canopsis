@@ -1,20 +1,29 @@
-<template lang="pug">
-  v-layout(column)
-    v-card(
-      :color="backgroundColor",
-      :style="{ color, fontSize: `${fontSize}px` }",
+<template>
+  <v-layout column>
+    <v-card
+      :color="backgroundColor"
+      :style="{ color, fontSize: `${fontSize}px` }"
       :dark="isDarkBackground"
-    )
-      v-card-text
-        v-layout(justify-space-between, align-center)
-          span {{ $t('theme.exampleText') }}
-          v-icon(:color="color") help
-
-    v-messages.mt-2(
-      v-if="!isTableColorReadable",
-      :value="[$t('theme.errors.notReadable')]",
+    >
+      <v-card-text>
+        <v-layout
+          justify-space-between
+          align-center
+        >
+          <span>{{ $t('theme.exampleText') }}</span>
+          <v-icon :color="color">
+            help
+          </v-icon>
+        </v-layout>
+      </v-card-text>
+    </v-card>
+    <v-messages
+      v-if="!isTableColorReadable"
+      :value="[$t('theme.errors.notReadable')]"
+      class="mt-2"
       color="error"
-    )
+    />
+  </v-layout>
 </template>
 
 <script>

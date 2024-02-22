@@ -21,7 +21,7 @@ describe('alarm-header-cell', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarm-header-cell` with custom header', () => {
@@ -34,6 +34,6 @@ describe('alarm-header-cell', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

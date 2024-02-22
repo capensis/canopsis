@@ -1,17 +1,34 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ title }}
-      template(#text="")
-        pbehavior-form(v-model="form", :no-pattern="noPattern")
-      template(#actions="")
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-        v-btn.primary(
-          :disabled="isDisabled",
-          :loading="submitting",
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ title }}</span>
+      </template>
+      <template #text="">
+        <pbehavior-form
+          v-model="form"
+          :no-pattern="noPattern"
+        />
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
+          @click="$modals.hide"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :disabled="isDisabled"
+          :loading="submitting"
+          class="primary"
           type="submit"
-        ) {{ $t('common.submit') }}
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>
