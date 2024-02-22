@@ -2,18 +2,16 @@
   <widget-settings-group :title="$t('settings.counterLevels.title')">
     <widget-settings-item :title="$t('settings.counterLevels.fields.counter')">
       <v-select
-        class="select"
         v-field="form.counter"
         :label="$t('settings.counterLevels.fields.counter')"
         :items="availableCounters"
+        class="select"
         hide-details
         single-line
         dense
       />
     </widget-settings-item>
-    <v-divider />
     <field-criticity-levels v-field="form.values" />
-    <v-divider />
     <field-levels-colors-selector
       v-field="form.colors"
       color-type="hex"

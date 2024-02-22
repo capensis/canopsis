@@ -1,6 +1,5 @@
 <template>
   <v-select
-    class="filter-selector mt-0"
     v-field="value"
     :items="preparedFilters"
     :label="label"
@@ -11,15 +10,16 @@
     :item-disabled="isFilterItemDisabled"
     :multiple="isMultiple"
     :hide-details="hideDetails"
+    class="filter-selector mt-0"
   >
     <template
       v-if="!hideMultiply"
       #prepend-item=""
     >
       <c-enabled-field
-        class="mx-3"
         v-model="isMultiple"
         :label="$t('filter.selector.fields.mixFilters')"
+        class="mx-3"
         hide-details
       />
       <v-divider class="mt-3" />
@@ -32,8 +32,8 @@
       >
         <template #activator="{ on }">
           <v-chip
-            v-on="on"
             small
+            v-on="on"
           >
             <span>{{ getItemText(lockedItem) }}</span>
             <v-icon
@@ -72,8 +72,8 @@
           <v-list-item-title>
             <span>{{ item.title }}</span>
             <v-icon
-              class="ml-2"
               :color="attrs.value ? parent.color : ''"
+              class="ml-2"
               small
             >
               {{ getItemIcon(item) }}

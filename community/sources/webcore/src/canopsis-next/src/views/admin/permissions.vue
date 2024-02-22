@@ -4,13 +4,13 @@
     <v-card class="position-relative">
       <v-fade-transition>
         <v-layout
-          class="progress"
           v-show="pending"
+          class="progress"
           column
         >
           <v-progress-circular
-            indeterminate
             color="primary"
+            indeterminate
           />
         </v-layout>
       </v-fade-transition>
@@ -36,8 +36,8 @@
       </v-tabs>
     </v-card>
     <v-layout
-      class="submit-button mt-3"
       v-show="hasChanges"
+      class="submit-button mt-3"
     >
       <v-btn
         class="ml-3"

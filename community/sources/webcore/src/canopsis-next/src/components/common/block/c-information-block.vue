@@ -3,9 +3,7 @@
     class="c-information-block"
     column
   >
-    <v-layout
-      v-if="title || helpText"
-    >
+    <v-layout v-if="title || helpText">
       <div class="text-subtitle-1 font-weight-bold">
         {{ title }}
       </div>
@@ -20,8 +18,8 @@
       />
     </v-layout>
     <v-layout
-      class="mt-2"
       v-if="$slots.subtitle"
+      class="mt-2"
     >
       <span class="text--secondary">
         <slot name="subtitle" />

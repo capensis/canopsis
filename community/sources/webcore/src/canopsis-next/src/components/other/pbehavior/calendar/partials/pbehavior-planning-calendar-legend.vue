@@ -12,8 +12,8 @@
       <v-tooltip top>
         <template #activator="{ on: tooltipOn }">
           <v-btn
-            v-on="{ ...tooltipOn, ...on }"
             icon
+            v-on="{ ...tooltipOn, ...on }"
           >
             <v-icon>info</v-icon>
           </v-btn>
@@ -25,13 +25,13 @@
       <v-card-text>
         <template v-if="exceptionTypes.length">
           <div
-            class="my-1"
             v-for="type in exceptionTypes"
             :key="type._id"
+            class="my-1"
           >
             <div
-              class="text-body-1"
               :style="getStyleForType(type)"
+              class="text-body-1"
             >
               <v-icon
                 class="px-1"
@@ -45,8 +45,8 @@
           </div>
         </template>
         <span
-          class="text-subtitle-1"
           v-else
+          class="text-subtitle-1"
         >
           {{ $t('calendar.pbehaviorPlanningLegend.noData') }}
         </span>

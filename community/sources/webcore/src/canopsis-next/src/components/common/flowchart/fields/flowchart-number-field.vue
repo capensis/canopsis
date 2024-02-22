@@ -6,9 +6,9 @@
     <v-label>{{ label }}</v-label>
     <v-flex xs3>
       <v-select
-        class="mt-0 pt-0"
         v-field="value"
         :items="numbers"
+        class="mt-0 pt-0"
         hide-details
       />
     </v-flex>

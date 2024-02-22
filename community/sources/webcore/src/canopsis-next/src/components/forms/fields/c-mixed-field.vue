@@ -1,7 +1,6 @@
 <template>
   <div class="c-mixed-field">
     <c-input-type-field
-      class="c-mixed-field__selector"
       :types="types"
       :value="inputType"
       :label="label"
@@ -9,10 +8,10 @@
       :flat="flat"
       :name="name"
       :required="required"
+      class="c-mixed-field__selector"
       @input="updateType"
     />
     <c-mixed-input-field
-      class="ml-2 c-mixed-field__value"
       v-field="value"
       :input-type="inputType"
       :name="name"
@@ -24,6 +23,7 @@
       :item-value="itemValue"
       :required="required"
       :types="types"
+      class="ml-2 c-mixed-field__value"
     />
   </div>
 </template>

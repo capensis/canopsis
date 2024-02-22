@@ -1,7 +1,7 @@
 <template>
   <div
-    class="actions-panel"
     :class="{ 'actions-panel--small': small }"
+    class="actions-panel"
   >
     <v-layout
       :wrap="wrap"
@@ -28,8 +28,8 @@
         >
           <template #activator="{ on }">
             <v-btn
-              v-on="on"
               icon
+              v-on="on"
             >
               <v-icon>more_vert</v-icon>
             </v-btn>
@@ -51,10 +51,10 @@
                     indeterminate
                   />
                   <v-icon
-                    class="ma-0 pa-0"
                     v-else
                     :color="action.iconColor"
                     :disabled="action.disabled"
+                    class="ma-0 pa-0"
                     left
                     small
                   >
@@ -62,8 +62,8 @@
                   </v-icon>
                 </span>
                 <span
-                  class="text-body-1"
                   :class="action.cssClass"
+                  class="text-body-1"
                 >
                   {{ action.title }}
                 </span>

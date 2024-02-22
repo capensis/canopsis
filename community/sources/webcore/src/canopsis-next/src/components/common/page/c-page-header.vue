@@ -3,8 +3,8 @@
     <h2 class="text-center text-h4 font-weight-medium mt-4 mb-2">
       <slot>{{ $t(`pageHeaders.${name}.title`) }}</slot>
       <v-btn
-        class="ml-2 my-2"
         v-if="hasMessage"
+        class="ml-2 my-2"
         icon
         @click="toggleMessageVisibility"
       >
@@ -20,18 +20,18 @@
           justify-center
         >
           <c-compiled-template
-            class="text-subtitle-1 page-header__message pre-wrap"
             :template="message"
+            class="text-subtitle-1 page-header__message pre-wrap"
           />
         </v-layout>
         <v-layout
-          class="pb-2"
           v-if="!messageWasHidden"
+          class="pb-2"
           justify-center
         >
           <v-btn
-            class="my-2"
             :loading="isHidePending"
+            class="my-2"
             color="primary"
             @click="hideMessage"
           >

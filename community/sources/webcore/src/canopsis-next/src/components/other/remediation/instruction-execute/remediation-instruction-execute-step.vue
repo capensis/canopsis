@@ -17,8 +17,8 @@
           {{ stepNumber }}
         </v-avatar>
         <span
-          class="step-line primary mt-3"
           v-if="!isLastStep"
+          class="step-line primary mt-3"
         />
       </v-layout>
     </v-flex>

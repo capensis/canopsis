@@ -16,8 +16,8 @@
           arrow_right_alt
         </v-icon>
         <v-chip
-          class="chip-small va-middle"
           v-show="source[field]"
+          class="chip-small va-middle"
           color="warning"
           text-color="white"
         >

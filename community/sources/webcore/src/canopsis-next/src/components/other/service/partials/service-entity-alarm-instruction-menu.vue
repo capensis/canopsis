@@ -5,10 +5,10 @@
   >
     <template #activator="{ on }">
       <v-btn
-        v-on="on"
         depressed
         small
         light
+        v-on="on"
       >
         <v-icon>{{ icon }}</v-icon>
       </v-btn>

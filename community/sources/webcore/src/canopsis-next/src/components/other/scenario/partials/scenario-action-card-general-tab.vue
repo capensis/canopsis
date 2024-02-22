@@ -4,10 +4,10 @@
     wrap
   >
     <v-flex
-      class="mt-1"
       v-for="(item, index) in items"
-      :class="item.flexClass || 'xs12'"
       :key="index"
+      :class="item.flexClass || 'xs12'"
+      class="mt-1"
     >
       <scenario-info-item
         :icon="item.icon"

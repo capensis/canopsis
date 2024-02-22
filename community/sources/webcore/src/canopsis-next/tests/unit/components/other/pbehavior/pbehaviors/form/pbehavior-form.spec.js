@@ -51,9 +51,9 @@ describe('pbehavior-form', () => {
       comments: [],
     };
 
-    selectPbehaviorGeneralForm(wrapper).vm.$emit('input', newForm);
+    selectPbehaviorGeneralForm(wrapper).triggerCustomEvent('input', newForm);
 
-    expect(wrapper).toEmit('input', newForm);
+    expect(wrapper).toEmitInput(newForm);
   });
 
   test('Filter updated after trigger pbehavior filter field', () => {
@@ -72,9 +72,9 @@ describe('pbehavior-form', () => {
     const newPatterns = [
     ];
 
-    selectPatternsField(wrapper).vm.$emit('input', newPatterns);
+    selectPatternsField(wrapper).triggerCustomEvent('input', newPatterns);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       patterns: newPatterns,
     });

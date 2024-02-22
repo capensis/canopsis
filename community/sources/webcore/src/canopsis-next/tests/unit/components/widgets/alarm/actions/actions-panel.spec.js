@@ -1,7 +1,6 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import {
   createAlarmModule,
   createAlarmDetailsModule,
@@ -12,6 +11,7 @@ import {
   createMockedStoreModules,
 } from '@unit/utils/store';
 import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
+
 import {
   ALARM_LIST_ACTIONS_TYPES,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,

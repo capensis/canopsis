@@ -14,8 +14,8 @@
       </v-icon>
     </v-list-item-avatar>
     <v-list-item-title
-      class="text-uppercase text-body-2"
       :class="{ [`${link.color}--text`]: link.color }"
+      class="text-uppercase text-body-2"
     >
       {{ link.title }}
     </v-list-item-title>

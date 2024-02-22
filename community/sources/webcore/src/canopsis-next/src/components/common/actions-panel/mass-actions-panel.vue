@@ -22,8 +22,8 @@
       >
         <template #activator="{ on }">
           <v-btn
-            v-on="on"
             icon
+            v-on="on"
           >
             <v-icon>more_vert</v-icon>
           </v-btn>
@@ -37,17 +37,17 @@
           >
             <v-list-item-title>
               <v-icon
-                class="pr-3"
                 :color="action.iconColor"
                 :disabled="action.disabled"
+                class="pr-3"
                 left
                 small
               >
                 {{ action.icon }}
               </v-icon>
               <span
-                class="text-body-1"
                 :class="action.cssClass"
+                class="text-body-1"
               >
                 {{ action.title }}
               </span>

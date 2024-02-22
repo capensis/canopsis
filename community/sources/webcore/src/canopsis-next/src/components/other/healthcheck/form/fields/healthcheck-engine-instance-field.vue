@@ -41,7 +41,6 @@
           </v-flex>
           <v-flex xs6>
             <c-number-field
-              class="mt-0"
               v-field="value.optimal"
               :error-messages="getErrorMessages(optimalFieldName)"
               :name="optimalFieldName"
@@ -49,6 +48,7 @@
               :disabled="!value.enabled"
               :required="value.enabled"
               :min="+value.minimal"
+              class="mt-0"
             />
           </v-flex>
         </v-layout>

@@ -25,8 +25,8 @@
     </v-layout>
     <v-layout v-if="withPayload">
       <v-btn
-        class="ml-0"
         v-if="!form.payload"
+        class="ml-0"
         color="primary"
         outlined
         @click="addPayload"

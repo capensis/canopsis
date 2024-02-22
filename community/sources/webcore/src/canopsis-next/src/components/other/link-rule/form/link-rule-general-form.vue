@@ -13,9 +13,9 @@
         >
           <v-radio
             v-for="type in types"
+            :key="type.value"
             :value="type.value"
             :label="type.label"
-            :key="type.value"
             color="primary"
           />
         </v-radio-group>
@@ -25,8 +25,8 @@
       </v-flex>
     </v-layout>
     <c-name-field
-      class="mb-3"
       v-field="form.name"
+      class="mb-3"
       required
     />
     <c-patterns-field
@@ -38,8 +38,8 @@
       with-entity
     />
     <c-collapse-panel
-      class="my-3"
       :title="$t('externalData.title')"
+      class="my-3"
     >
       <external-data-form
         v-field="form.external_data"

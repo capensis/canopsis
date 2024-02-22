@@ -5,19 +5,19 @@
       column
     >
       <geomap
-        class="geomap-editor__map mb-2"
         ref="map"
         :style="mapStyles"
         :disabled="shown"
         :min-zoom="minZoom"
         :options="mapOptions"
         :center.sync="center"
+        class="geomap-editor__map mb-2"
         @click="openAddingPointDialogByClick"
         @dblclick="openAddingPointDialog"
       >
         <geomap-control-zoom
-          position="topleft"
           :disabled="shown"
+          position="topleft"
         />
         <geomap-control-layers position="topright" />
         <geomap-contextmenu
@@ -28,18 +28,18 @@
         />
         <geomap-control position="topleft">
           <v-tooltip
-            right
             max-width="unset"
             min-width="max-content"
+            right
           >
             <template #activator="{ on }">
               <v-btn
-                class="secondary ma-0"
-                v-on="on"
                 :class="{ 'lighten-4': !addOnClick }"
                 :disabled="shown"
+                class="secondary ma-0"
                 icon
                 dark
+                v-on="on"
                 @click="toggleAddingMode"
               >
                 <v-icon>add_location</v-icon>

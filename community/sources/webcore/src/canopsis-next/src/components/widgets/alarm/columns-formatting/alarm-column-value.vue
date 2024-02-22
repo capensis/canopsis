@@ -1,9 +1,9 @@
 <template>
   <c-compiled-template
-    class="alarm-column-value"
     v-if="column.template"
     :template="column.template"
     :context="templateContext"
+    class="alarm-column-value"
   />
   <color-indicator-wrapper
     v-else-if="column.colorIndicatorEnabled"
@@ -19,6 +19,7 @@
       :selected-tag="selectedTag"
       @activate="$emit('activate', $event)"
       @select:tag="$emit('select:tag', $event)"
+      @click:state="$emit('click:state', $event)"
     />
   </color-indicator-wrapper>
   <alarm-column-cell
@@ -30,6 +31,7 @@
     :selected-tag="selectedTag"
     @activate="$emit('activate', $event)"
     @select:tag="$emit('select:tag', $event)"
+    @click:state="$emit('click:state', $event)"
   />
 </template>
 

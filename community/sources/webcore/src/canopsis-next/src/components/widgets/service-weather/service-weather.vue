@@ -9,8 +9,8 @@
         xs3
       >
         <c-entity-category-field
-          class="mr-3"
           :category="query.category"
+          class="mr-3"
           @input="updateCategory"
         />
       </v-flex>
@@ -39,10 +39,10 @@
             />
           </template>
           <c-enabled-field
-            class="ml-3"
             v-if="isHideGrayEnabled"
             :value="query.hide_grey"
             :label="$t('serviceWeather.hideGrey')"
+            class="ml-3"
             @input="updateHideGray"
           />
         </v-layout>
@@ -60,8 +60,8 @@
       />
     </v-fade-transition>
     <v-layout
-      class="fill-height"
       key="content"
+      class="fill-height"
       wrap
     >
       <v-layout

@@ -3,8 +3,9 @@
     v-field="patterns"
     :entity-attributes="entityAttributes"
     :entity-types="entityTypes"
-    :entity-title="$t('stateSetting.addImpactingEntityPattern')"
-    name="inherited_entity_pattern"
+    :entity-title="$t('stateSetting.dependenciesEntityPattern')"
+    :disabled="disabled"
+    entity-name="inherited_entity_pattern"
     required
     with-entity
     entity-counters-type
@@ -27,6 +28,10 @@ export default {
     patterns: {
       type: Object,
       default: () => ({}),
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

@@ -1,8 +1,8 @@
 <template>
   <tree-of-dependencies-preview
-    class="tree-of-dependencies-expand-panel"
     :map="map"
     :columns="columns"
+    class="tree-of-dependencies-expand-panel"
   />
 </template>
 

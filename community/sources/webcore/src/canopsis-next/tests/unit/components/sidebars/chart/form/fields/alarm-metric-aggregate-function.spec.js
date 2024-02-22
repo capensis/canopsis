@@ -1,4 +1,5 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+
 import { AGGREGATE_FUNCTIONS } from '@/constants';
 
 import AlarmMetricAggregateFunction from '@/components/sidebars/chart/form/fields/alarm-metric-aggregate-function.vue';
@@ -21,9 +22,9 @@ describe('alarm-metric-aggregate-function', () => {
       },
     });
 
-    selectAlarmMetricPresetsField(wrapper).vm.$emit('input', AGGREGATE_FUNCTIONS.min);
+    selectAlarmMetricPresetsField(wrapper).triggerCustomEvent('input', AGGREGATE_FUNCTIONS.min);
 
-    expect(wrapper).toEmit('input', AGGREGATE_FUNCTIONS.min);
+    expect(wrapper).toEmitInput(AGGREGATE_FUNCTIONS.min);
   });
 
   test('Renders `alarm-metric-aggregate-function` with default props', () => {

@@ -14,9 +14,9 @@
       color="primary"
     />
     <c-description-field
-      class="mt-3"
       v-field="form.comment"
       :label="$tc('common.comment')"
+      class="mt-3"
       name="comment"
     />
   </v-layout>

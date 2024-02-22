@@ -1,6 +1,5 @@
 <template>
   <c-alarm-actions-chips
-    v-on="$listeners"
     :items="tags"
     :active-item="selectedTag"
     :small="small"
@@ -8,6 +7,7 @@
     item-text="text"
     item-value="text"
     row
+    v-on="$listeners"
   />
 </template>
 

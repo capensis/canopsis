@@ -1,10 +1,9 @@
-import flushPromises from 'flush-promises';
-
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { createModalWrapperStub } from '@unit/stubs/modal';
+
 import ClickOutside from '@/services/click-outside';
 
 import CreateRemediationInstructionsFilter from '@/components/modals/remediation/create-remediation-instructions-filter.vue';
@@ -245,7 +244,7 @@ describe('create-remediation-instructions-filter', () => {
       instructions: [{}],
     };
 
-    remediationInstructionsFilterForm.vm.$emit('input', newForm);
+    remediationInstructionsFilterForm.triggerCustomEvent('input', newForm);
 
     selectSubmitButton(wrapper).trigger('click');
 

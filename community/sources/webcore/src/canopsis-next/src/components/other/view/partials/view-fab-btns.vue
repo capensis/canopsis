@@ -37,12 +37,12 @@
         <v-tooltip left>
           <template #activator="{ on }">
             <v-btn
-              class="view-fab-btns__add-widget-btn"
               v-if="updatable"
-              v-on="on"
+              class="view-fab-btns__add-widget-btn"
               fab
               dark
               small
+              v-on="on"
               @click.stop="showCreateWidgetModal"
             >
               <v-icon small>
@@ -56,11 +56,11 @@
           <template #activator="{ on }">
             <v-btn
               v-if="updatable"
-              v-on="on"
               color="green"
               fab
               dark
               small
+              v-on="on"
               @click.stop="showCreateTabModal"
             >
               <v-icon small>

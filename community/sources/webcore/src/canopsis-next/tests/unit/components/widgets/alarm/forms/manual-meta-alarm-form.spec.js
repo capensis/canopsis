@@ -1,7 +1,6 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createInputStub } from '@unit/stubs/input';
 import { createMockedStoreModules } from '@unit/utils/store';
 
@@ -66,7 +65,7 @@ describe('manual-meta-alarm-form', () => {
 
     comboboxField.setValue(metaAlarm);
 
-    expect(wrapper).toEmit('input', { ...form, metaAlarm });
+    expect(wrapper).toEmitInput({ ...form, metaAlarm });
   });
 
   test('Comment changed after trigger description field', () => {
@@ -84,11 +83,9 @@ describe('manual-meta-alarm-form', () => {
 
     const comment = Faker.datatype.string();
 
-    const textField = selectTextField(wrapper);
+    selectTextField(wrapper).setValue(comment);
 
-    textField.setValue(comment);
-
-    expect(wrapper).toEmit('input', { ...form, comment });
+    expect(wrapper).toEmitInput({ ...form, comment });
   });
 
   test('Auto resolve changed after trigger enabled field', () => {
@@ -108,9 +105,9 @@ describe('manual-meta-alarm-form', () => {
 
     const enabledField = selectEnabledField(wrapper);
 
-    enabledField.vm.$emit('input', autoResolve);
+    enabledField.triggerCustomEvent('input', autoResolve);
 
-    expect(wrapper).toEmit('input', { ...form, auto_resolve: autoResolve });
+    expect(wrapper).toEmitInput({ ...form, auto_resolve: autoResolve });
   });
 
   test('Renders `manual-meta-alarm-form` with default props', () => {

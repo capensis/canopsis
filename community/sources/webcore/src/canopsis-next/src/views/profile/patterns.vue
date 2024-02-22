@@ -41,8 +41,8 @@
       </v-flex>
     </v-layout>
     <c-fab-expand-btn
-      @refresh="refresh"
       :has-access="hasAccessToCreatePattern"
+      @refresh="refresh"
     >
       <c-action-fab-btn
         :tooltip="createPbehaviorTitle"

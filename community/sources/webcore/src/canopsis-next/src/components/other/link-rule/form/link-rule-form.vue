@@ -21,9 +21,9 @@
       eager
     >
       <link-rule-general-form
-        class="mt-2"
-        ref="general"
         v-field="form"
+        ref="general"
+        class="mt-2"
       />
     </v-tab-item>
     <v-tab-item
@@ -38,8 +38,8 @@
         {{ $t('linkRule.linksEmptyError') }}
       </c-alert>
       <link-rule-simple-form
-        ref="simple"
         v-field="form.links"
+        ref="simple"
         :type="form.type"
         @input="resetLinksErrors"
       />
@@ -56,8 +56,8 @@
         {{ $t('linkRule.linksEmptyError') }}
       </c-alert>
       <link-rule-advanced-form
-        ref="advanced"
         v-field="form.source_code"
+        ref="advanced"
         @input="resetLinksErrors"
       />
     </v-tab-item>

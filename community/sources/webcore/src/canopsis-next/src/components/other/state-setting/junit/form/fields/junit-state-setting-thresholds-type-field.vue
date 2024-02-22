@@ -1,11 +1,11 @@
 <template>
   <v-radio-group
-    class="mt-0"
     v-field="value"
     :label="label"
+    class="mt-0"
+    color="primary"
     hide-details
     mandatory
-    color="primary"
   >
     <v-radio
       :label="$t('common.variableTypes.number')"

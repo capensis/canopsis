@@ -1,11 +1,11 @@
 <template>
   <div
-    class="modal-title-buttons"
     :class="{ 'close': close, 'minimize': minimize }"
+    class="modal-title-buttons"
   >
     <div
-      class="modal-title-button__wrapper"
       v-if="minimize"
+      class="modal-title-button__wrapper"
     >
       <v-tooltip
         v-if="!$modal.minimized"
@@ -14,8 +14,8 @@
         <template #activator="{ on }">
           <v-btn
             class="v-btn--minimize my-0"
-            v-on="on"
             icon
+            v-on="on"
             @click="$modals.minimize({ id: $modal.id })"
           >
             <v-icon
@@ -29,8 +29,8 @@
         <span>{{ $t('modals.common.titleButtons.minimizeTooltip') }}</span>
       </v-tooltip>
       <v-btn
-        class="v-btn-legacy-m--x"
         v-else
+        class="v-btn-legacy-m--x"
         icon
         small
         @click="$modals.maximize({ id: $modal.id })"
@@ -41,8 +41,8 @@
       </v-btn>
     </div>
     <div
-      class="modal-title-button__wrapper"
       v-if="close"
+      class="modal-title-button__wrapper"
     >
       <v-btn
         :small="$modal.minimized"
@@ -50,8 +50,8 @@
         @click="closeHandler"
       >
         <v-icon
-          color="white"
           :large="!$modal.minimized"
+          color="white"
         >
           close
         </v-icon>

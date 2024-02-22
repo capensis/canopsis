@@ -31,8 +31,8 @@
         >
           <template #activator="{ on }">
             <v-icon
-              v-on="on"
               color="black"
+              v-on="on"
             >
               query_builder
             </v-icon>

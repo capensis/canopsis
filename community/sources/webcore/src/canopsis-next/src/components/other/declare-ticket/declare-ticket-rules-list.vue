@@ -12,8 +12,8 @@
   >
     <template #mass-actions="{ selected }">
       <c-action-btn
-        class="ml-3"
         v-if="removable"
+        class="ml-3"
         type="delete"
         @click="$emit('remove-selected', selected)"
       />

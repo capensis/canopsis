@@ -11,9 +11,9 @@
     >
       <template #append="">
         <extra-details-ticket
-          class="ml-2"
           v-if="chip.assignedTickets.length"
           :tickets="chip.assignedTickets"
+          class="ml-2"
         />
       </template>
     </v-checkbox>

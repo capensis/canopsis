@@ -1,15 +1,15 @@
 <template>
   <v-card
-    class="card-with-see-alarms-btn"
-    v-on="$listeners"
     :class="itemClasses"
+    class="card-with-see-alarms-btn"
     tile
     dark
+    v-on="$listeners"
   >
     <slot />
     <v-btn
-      class="card-with-see-alarms-btn__btn"
       v-if="showButton"
+      class="card-with-see-alarms-btn__btn"
       text
       @click.stop="$emit('show:alarms')"
     >

@@ -3,7 +3,7 @@
 exports[`groups-side-bar-group Renders \`groups-side-bar-group\` with custom data 1`] = `
 <group-panel-stub
   group="[object Object]"
-  order-changed="true"
+  orderchanged="true"
 >
   <c-draggable-list-field-stub
     class="views-panel secondary lighten-1"
@@ -46,7 +46,7 @@ exports[`groups-side-bar-group Renders \`groups-side-bar-group\` with default da
 exports[`groups-side-bar-group Renders \`groups-side-bar-group\` with empty groups 1`] = `
 <group-panel-stub
   group="[object Object]"
-  order-changed="true"
+  orderchanged="true"
 >
   <c-draggable-list-field-stub
     class="views-panel secondary lighten-1 views-panel--empty"

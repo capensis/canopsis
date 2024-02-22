@@ -1,9 +1,9 @@
 <template>
   <div class="c-horizontal-time-line">
     <div
-      class="c-horizontal-time-line__groups"
       v-for="(group, groupIndex) in groupedSteps"
       :key="group.day"
+      class="c-horizontal-time-line__groups"
     >
       <span class="c-horizontal-time-line__day">{{ group.day }}</span>
       <v-divider
@@ -13,13 +13,13 @@
       <div class="c-horizontal-time-line__cards">
         <template v-for="(step, stepIndex) in group.steps">
           <horizontal-time-line-card
-            :step="step"
             :key="`card-${stepIndex}`"
+            :step="step"
           />
           <v-icon
-            class="mx-2"
             v-if="groupIndex !== groupedSteps.length - 1 || stepIndex !== group.steps.length - 1"
             :key="`arrow-${stepIndex}`"
+            class="mx-2"
             size="16"
           >
             arrow_forward
