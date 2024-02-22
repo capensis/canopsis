@@ -40,16 +40,14 @@
             :label="$t('common.description')"
             hide-details
           />
-          <v-layout
-            class="mt-4"
-          >
+          <v-layout class="mt-4">
             <span class="text-subtitle-1">{{ $t('remediation.instructionExecute.jobs.title') }}</span>
           </v-layout>
           <v-layout column>
             <remediation-instruction-execute-assigned-jobs-table
-              class="mt-4"
               v-if="operation.jobs.length"
               :jobs="operation.jobs"
+              class="mt-4"
               executable
               cancelable
               @execute-job="executeJob"
@@ -61,17 +59,17 @@
             justify-end
           >
             <v-btn
-              class="accent"
               :disabled="(isFirstOperation && isFirstStep) || nextPending"
               :loading="previousPending"
+              class="accent"
               @click="$listeners.previous"
             >
               {{ $t('common.previous') }}
             </v-btn>
             <v-btn
-              class="primary mr-0"
               :disabled="previousPending"
               :loading="nextPending"
+              class="primary mr-0"
               @click="$listeners.next"
             >
               {{ $t('common.next') }}

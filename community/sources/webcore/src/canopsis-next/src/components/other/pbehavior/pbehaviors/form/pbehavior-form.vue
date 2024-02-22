@@ -22,8 +22,8 @@
 
     <v-tab-item eager>
       <pbehavior-general-form
-        ref="general"
         v-field="form"
+        ref="general"
         :no-enabled="noEnabled"
         :no-comments="noComments"
         :with-start-on-trigger="withStartOnTrigger"
@@ -32,8 +32,8 @@
     </v-tab-item>
     <v-tab-item eager>
       <pbehavior-patterns-form
-        ref="patterns"
         v-field="form.patterns"
+        ref="patterns"
       />
     </v-tab-item>
   </v-tabs>

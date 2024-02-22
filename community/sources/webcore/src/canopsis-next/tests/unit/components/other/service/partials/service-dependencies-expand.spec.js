@@ -1,10 +1,9 @@
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { createActivatorElementStub } from '@unit/stubs/vuetify';
 
 import { ENTITY_TYPES } from '@/constants';
 
 import ServiceDependenciesExpand from '@/components/other/service/partials/service-dependencies-expand.vue';
-
-import { createActivatorElementStub } from '@unit/stubs/vuetify';
 
 const stubs = {
   'v-tooltip': createActivatorElementStub('v-tooltip'),
@@ -48,7 +47,7 @@ describe('service-dependencies-expand', () => {
 
     const button = selectButton(wrapper);
 
-    button.vm.$emit('click');
+    button.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('show', item);
   });
@@ -62,7 +61,7 @@ describe('service-dependencies-expand', () => {
 
     const button = selectButton(wrapper);
 
-    button.vm.$emit('click');
+    button.triggerCustomEvent('click');
 
     expect(wrapper).toEmit('load', itemWithLoadMore);
   });

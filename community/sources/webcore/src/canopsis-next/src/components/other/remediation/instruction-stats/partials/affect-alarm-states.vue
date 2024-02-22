@@ -5,14 +5,14 @@
       :color="minorColor"
     />
     <c-state-count-changes-chips
-      class="ml-2"
       :affect="alarmStates.major"
       :color="majorColor"
+      class="ml-2"
     />
     <c-state-count-changes-chips
-      class="ml-2"
       :affect="alarmStates.critical"
       :color="criticalColor"
+      class="ml-2"
     />
   </div>
 </template>

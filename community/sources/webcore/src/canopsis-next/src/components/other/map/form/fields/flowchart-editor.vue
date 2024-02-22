@@ -1,11 +1,11 @@
 <template>
   <v-layout column>
     <flowchart
-      class="flowchart-map-editor mb-2"
       :shapes="form.shapes"
       :background-color="form.background_color"
       :style="editorStyles"
       :cursor-style="addOnClick ? 'crosshair' : undefined"
+      class="flowchart-map-editor mb-2"
       @input="updateShapes"
       @update:backgroundColor="updateBackgroundColor"
     >

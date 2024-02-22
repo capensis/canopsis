@@ -1,10 +1,10 @@
 <template>
   <v-layout class="c-responsive-list">
     <div
-      class="c-responsive-list__container"
       v-resize="setContainerWidth"
-      :class="layoutClass"
       ref="listContainer"
+      :class="layoutClass"
+      class="c-responsive-list__container"
     >
       <div
         v-for="item in visibleItems"
@@ -24,22 +24,22 @@
       <template #activator="{ on }">
         <v-btn
           class="ma-1"
-          v-on="on"
           icon
           small
+          v-on="on"
         >
           <v-icon
-            small
             color="white"
+            small
           >
             more_vert
           </v-icon>
         </v-btn>
       </template>
       <div
-        class="white"
         v-for="item in hiddenItems"
         :key="item.key"
+        class="white"
       >
         <slot :item="item">
           {{ getValue(item) }}

@@ -1,15 +1,6 @@
 <template>
-  <v-container
-    class="pa-3"
-    fluid
-  >
-    <v-layout
-      align-center
-      justify-space-between
-    >
-      <div class="text-subtitle-1">
-        {{ title }}
-      </div>
+  <widget-settings-flat-item :title="title">
+    <template #actions>
       <v-btn
         class="primary"
         small
@@ -17,14 +8,17 @@
       >
         {{ $t('common.show') }}/{{ $t('common.edit') }}
       </v-btn>
-    </v-layout>
-  </v-container>
+    </template>
+  </widget-settings-flat-item>
 </template>
 
 <script>
 import { MODALS } from '@/constants';
 
+import WidgetSettingsFlatItem from '@/components/sidebars/partials/widget-settings-flat-item.vue';
+
 export default {
+  components: { WidgetSettingsFlatItem },
   props: {
     value: {
       type: String,

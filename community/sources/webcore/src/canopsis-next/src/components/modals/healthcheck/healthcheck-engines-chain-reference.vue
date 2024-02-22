@@ -21,8 +21,8 @@
           />
         </v-layout>
         <div
-          class="healthcheck-engine-chain-reference"
           v-else
+          class="healthcheck-engine-chain-reference"
         >
           <healthcheck-network-graph
             :engines-graph="enginesGraph"

@@ -1,12 +1,12 @@
 <template>
   <v-select
-    class="ml-2"
     v-field="value"
     v-validate="'required'"
     :label="$t('common.value')"
     :error-messages="errorMessages"
     :items="items"
     :name="name"
+    class="ml-2"
     @change="validateRegex"
   />
 </template>

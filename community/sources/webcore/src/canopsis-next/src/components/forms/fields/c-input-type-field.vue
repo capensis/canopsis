@@ -1,6 +1,5 @@
 <template>
   <v-select
-    class="mt-4 c-input-type-field"
     v-field="value"
     v-validate="rules"
     :items="preparedTypes"
@@ -9,6 +8,7 @@
     :flat="flat"
     :error="hasError"
     :name="name"
+    class="mt-4 c-input-type-field"
     hide-details
     dense
   >

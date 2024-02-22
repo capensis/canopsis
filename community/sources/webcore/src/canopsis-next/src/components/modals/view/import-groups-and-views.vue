@@ -59,8 +59,8 @@
         {{ $t('common.cancel') }}
       </v-btn>
       <v-btn
-        class="primary"
         :loading="submitting"
+        class="primary"
         type="submit"
         @click="submit"
       >

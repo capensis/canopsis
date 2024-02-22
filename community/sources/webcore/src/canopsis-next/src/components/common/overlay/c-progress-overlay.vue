@@ -1,10 +1,10 @@
 <template>
   <v-fade-transition v-if="transition">
     <v-layout
-      class="progress"
       v-if="pending"
       :class="backgroundColor"
       :style="{ opacity }"
+      class="progress"
     >
       <v-progress-circular
         :color="color"
@@ -14,10 +14,10 @@
     </v-layout>
   </v-fade-transition>
   <v-layout
-    class="progress"
     v-else-if="pending"
     :class="backgroundColor"
     :style="{ opacity }"
+    class="progress"
   >
     <v-progress-circular
       :color="color"

@@ -16,8 +16,8 @@
       :close-delay="transitionDelay"
       :open-delay="transitionDelay"
       :activator="$refs.activator"
-      ignore-content-leave
       content-class="c-clickable-tooltip__content"
+      ignore-content-leave
     >
       <div
         @mouseenter="showTooltip"
