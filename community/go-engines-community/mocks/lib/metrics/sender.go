@@ -384,6 +384,18 @@ func (mr *MockSenderMockRecorder) SendResolve(arg0, arg1, arg2 interface{}) *gom
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendResolve", reflect.TypeOf((*MockSender)(nil).SendResolve), arg0, arg1, arg2)
 }
 
+// SendSliMetric mocks base method.
+func (m *MockSender) SendSliMetric(arg0 time.Time, arg1 types.Alarm, arg2 types.Entity) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendSliMetric", arg0, arg1, arg2)
+}
+
+// SendSliMetric indicates an expected call of SendSliMetric.
+func (mr *MockSenderMockRecorder) SendSliMetric(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendSliMetric", reflect.TypeOf((*MockSender)(nil).SendSliMetric), arg0, arg1, arg2)
+}
+
 // SendTicket mocks base method.
 func (m *MockSender) SendTicket(arg0 types.Alarm, arg1 string, arg2 time.Time) {
 	m.ctrl.T.Helper()

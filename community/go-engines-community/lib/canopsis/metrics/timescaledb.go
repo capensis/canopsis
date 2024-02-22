@@ -166,6 +166,10 @@ func (s *timescaleDBSender) SendEventMetrics(_ types.Alarm, _ types.Entity, _ ty
 
 }
 
+func (s *timescaleDBSender) SendSliMetric(_ time.Time, _ types.Alarm, _ types.Entity) {
+
+}
+
 func (s *timescaleDBSender) SendMessageRate(timestamp time.Time) {
 	query := "INSERT INTO " + MessageRate + " (time) VALUES ($1)"
 	s.addBatch(MessageRate, batchItem{
