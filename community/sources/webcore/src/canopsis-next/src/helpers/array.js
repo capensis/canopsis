@@ -77,3 +77,12 @@ export const filterById = (items, item, idKey = '_id') => items
  * @param {string | number} removingValue
  */
 export const filterValue = (items, removingValue) => items.filter(item => item !== removingValue);
+
+/**
+ * Create range number array
+ *
+ * @param {number} length
+ * @param {number} [start = 0]
+ * @return {number[]}
+ */
+export const createRangeArray = (length, start = 0) => Array.from({ length }, (_, index) => start + index);

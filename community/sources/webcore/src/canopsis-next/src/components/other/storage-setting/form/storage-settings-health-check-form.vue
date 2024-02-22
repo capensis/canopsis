@@ -1,16 +1,22 @@
-<template lang="pug">
-  v-layout(column)
-    c-information-block(
-      :title="$t('storageSetting.healthCheck.title')",
+<template>
+  <v-layout column>
+    <c-information-block
+      :title="$t('storageSetting.healthCheck.title')"
       help-icon-color="info"
-    )
-      template(v-if="history", #subtitle="")
-        storage-settings-history-message(:history="history")
-      c-enabled-duration-field(
-        v-field="form.delete_after",
-        :label="$t('storageSetting.healthCheck.deleteAfter')",
+    >
+      <template
+        v-if="history"
+        #subtitle=""
+      >
+        <storage-settings-history-message :history="history" />
+      </template>
+      <c-enabled-duration-field
+        v-field="form.delete_after"
+        :label="$t('storageSetting.healthCheck.deleteAfter')"
         :name="healthCheckDeleteAfterFieldName"
-      )
+      />
+    </c-information-block>
+  </v-layout>
 </template>
 
 <script>

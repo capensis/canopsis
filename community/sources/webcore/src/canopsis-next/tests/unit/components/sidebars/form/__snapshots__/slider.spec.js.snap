@@ -5,7 +5,7 @@ exports[`field-slider Renders \`field-slider\` with custom props 1`] = `
   title="Custom title"
 >
   <div
-    class="v-input v-input--slider v-input--slider--ticks v-input--slider--thumb-label v-input--is-label-active v-input--is-dirty theme--light"
+    class="v-input v-input--is-label-active v-input--is-dirty theme--light v-input__slider"
   >
     <div
       class="v-input__control"
@@ -14,23 +14,21 @@ exports[`field-slider Renders \`field-slider\` with custom props 1`] = `
         class="v-input__slot"
       >
         <div
-          class="v-slider"
+          class="v-slider v-slider--horizontal theme--light"
         >
           <input
-            aria-readonly="false"
-            aria-valuemax="25"
-            aria-valuemin="20"
-            aria-valuenow="22"
+            always-dirty=""
+            disabled="disabled"
             readonly="readonly"
-            role="slider"
+            tabindex="-1"
             value="22"
           />
           <div
-            class="v-slider__track__container"
+            class="v-slider__track-container"
           >
             <div
-              class="v-slider__track"
-              style="left: 0px; width: 100%;"
+              class="v-slider__track-background primary lighten-3"
+              style="right: 0px; width: calc(60%);"
             />
             <div
               class="v-slider__track-fill primary"
@@ -38,36 +36,43 @@ exports[`field-slider Renders \`field-slider\` with custom props 1`] = `
             />
           </div>
           <div
-            class="v-slider__ticks-container"
+            class="v-slider__ticks-container v-slider__ticks-container--always-show"
           >
             <span
-              class="v-slider__ticks v-slider__ticks--always-show"
-              style="border-width: 1px; left: 0%;"
+              class="v-slider__tick v-slider__tick--filled"
+              style="width: 2px; height: 2px; left: calc(0% - 1px); top: calc(50% - 1px);"
             />
             <span
-              class="v-slider__ticks v-slider__ticks--always-show"
-              style="border-width: 1px; left: 20%;"
+              class="v-slider__tick v-slider__tick--filled"
+              style="width: 2px; height: 2px; left: calc(20% - 1px); top: calc(50% - 1px);"
             />
             <span
-              class="v-slider__ticks v-slider__ticks--always-show"
-              style="border-width: 1px; left: 40%;"
+              class="v-slider__tick"
+              style="width: 2px; height: 2px; left: calc(40% - 1px); top: calc(50% - 1px);"
             />
             <span
-              class="v-slider__ticks v-slider__ticks--always-show"
-              style="border-width: 1px; left: 60%;"
+              class="v-slider__tick"
+              style="width: 2px; height: 2px; left: calc(60% - 1px); top: calc(50% - 1px);"
             />
             <span
-              class="v-slider__ticks v-slider__ticks--always-show"
-              style="border-width: 1px; left: 80%;"
+              class="v-slider__tick"
+              style="width: 2px; height: 2px; left: calc(80% - 1px); top: calc(50% - 1px);"
             />
             <span
-              class="v-slider__ticks v-slider__ticks--always-show"
-              style="border-width: 1px; left: 100%;"
+              class="v-slider__tick"
+              style="width: 2px; height: 2px; left: calc(100% - 1px); top: calc(50% - 1px);"
             />
           </div>
           <div
+            aria-orientation="horizontal"
+            aria-readonly="false"
+            aria-valuemax="25"
+            aria-valuemin="20"
+            aria-valuenow="22"
             class="v-slider__thumb-container v-slider__thumb-container--show-label primary--text"
+            role="slider"
             style="left: 40%;"
+            tabindex="0"
           >
             <div
               class="v-slider__thumb primary"
@@ -76,16 +81,18 @@ exports[`field-slider Renders \`field-slider\` with custom props 1`] = `
               name="scale-transition"
             >
               <div
-                class="v-slider__thumb-label__container"
+                class="v-slider__thumb-label-container"
                 style="display: none;"
               >
                 <div
                   class="v-slider__thumb-label primary"
-                  style="height: 32px; width: 32px;"
+                  style="height: 32px; width: 32px; transform: translateY(-20%) translateY(-12px) translateX(-50%) rotate(45deg);"
                 >
-                  <span>
-                    22
-                  </span>
+                  <div>
+                    <span>
+                      22
+                    </span>
+                  </div>
                 </div>
               </div>
             </transition-stub>
@@ -111,7 +118,7 @@ exports[`field-slider Renders \`field-slider\` with default props 1`] = `
   title="Custom required title"
 >
   <div
-    class="v-input v-input--slider v-input--slider--ticks v-input--slider--thumb-label v-input--is-label-active v-input--is-dirty theme--light"
+    class="v-input v-input--is-label-active v-input--is-dirty theme--light v-input__slider"
   >
     <div
       class="v-input__control"
@@ -120,23 +127,21 @@ exports[`field-slider Renders \`field-slider\` with default props 1`] = `
         class="v-input__slot"
       >
         <div
-          class="v-slider"
+          class="v-slider v-slider--horizontal theme--light"
         >
           <input
-            aria-readonly="false"
-            aria-valuemax="5"
-            aria-valuemin="0"
-            aria-valuenow="3"
+            always-dirty=""
+            disabled="disabled"
             readonly="readonly"
-            role="slider"
+            tabindex="-1"
             value="3"
           />
           <div
-            class="v-slider__track__container"
+            class="v-slider__track-container"
           >
             <div
-              class="v-slider__track"
-              style="left: 0px; width: 100%;"
+              class="v-slider__track-background primary lighten-3"
+              style="right: 0px; width: calc(40%);"
             />
             <div
               class="v-slider__track-fill primary"
@@ -144,36 +149,43 @@ exports[`field-slider Renders \`field-slider\` with default props 1`] = `
             />
           </div>
           <div
-            class="v-slider__ticks-container"
+            class="v-slider__ticks-container v-slider__ticks-container--always-show"
           >
             <span
-              class="v-slider__ticks v-slider__ticks--always-show"
-              style="border-width: 1px; left: 0%;"
+              class="v-slider__tick v-slider__tick--filled"
+              style="width: 2px; height: 2px; left: calc(0% - 1px); top: calc(50% - 1px);"
             />
             <span
-              class="v-slider__ticks v-slider__ticks--always-show"
-              style="border-width: 1px; left: 20%;"
+              class="v-slider__tick v-slider__tick--filled"
+              style="width: 2px; height: 2px; left: calc(20% - 1px); top: calc(50% - 1px);"
             />
             <span
-              class="v-slider__ticks v-slider__ticks--always-show"
-              style="border-width: 1px; left: 40%;"
+              class="v-slider__tick v-slider__tick--filled"
+              style="width: 2px; height: 2px; left: calc(40% - 1px); top: calc(50% - 1px);"
             />
             <span
-              class="v-slider__ticks v-slider__ticks--always-show"
-              style="border-width: 1px; left: 60%;"
+              class="v-slider__tick"
+              style="width: 2px; height: 2px; left: calc(60% - 1px); top: calc(50% - 1px);"
             />
             <span
-              class="v-slider__ticks v-slider__ticks--always-show"
-              style="border-width: 1px; left: 80%;"
+              class="v-slider__tick"
+              style="width: 2px; height: 2px; left: calc(80% - 1px); top: calc(50% - 1px);"
             />
             <span
-              class="v-slider__ticks v-slider__ticks--always-show"
-              style="border-width: 1px; left: 100%;"
+              class="v-slider__tick"
+              style="width: 2px; height: 2px; left: calc(100% - 1px); top: calc(50% - 1px);"
             />
           </div>
           <div
+            aria-orientation="horizontal"
+            aria-readonly="false"
+            aria-valuemax="5"
+            aria-valuemin="0"
+            aria-valuenow="3"
             class="v-slider__thumb-container v-slider__thumb-container--show-label primary--text"
+            role="slider"
             style="left: 60%;"
+            tabindex="0"
           >
             <div
               class="v-slider__thumb primary"
@@ -182,16 +194,18 @@ exports[`field-slider Renders \`field-slider\` with default props 1`] = `
               name="scale-transition"
             >
               <div
-                class="v-slider__thumb-label__container"
+                class="v-slider__thumb-label-container"
                 style="display: none;"
               >
                 <div
                   class="v-slider__thumb-label primary"
-                  style="height: 32px; width: 32px;"
+                  style="height: 32px; width: 32px; transform: translateY(-20%) translateY(-12px) translateX(-50%) rotate(45deg);"
                 >
-                  <span>
-                    3
-                  </span>
+                  <div>
+                    <span>
+                      3
+                    </span>
+                  </div>
                 </div>
               </div>
             </transition-stub>

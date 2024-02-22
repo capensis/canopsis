@@ -1,10 +1,12 @@
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+
+import { LINE_TYPES, STROKE_TYPES } from '@/constants';
+
 import { lineShapeToForm, rectShapeToForm } from '@/helpers/flowchart/shapes';
 
 import FlowchartProperties from '@/components/common/flowchart/flowchart-properties.vue';
-import { LINE_TYPES, STROKE_TYPES } from '@/constants';
 
 const stubs = {
   'flowchart-color-field': true,
@@ -50,9 +52,9 @@ describe('flowchart-properties', () => {
 
     const newFill = Faker.internet.color();
 
-    fillColorField.vm.$emit('input', newFill);
+    fillColorField.triggerCustomEvent('input', newFill);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       first: {
         ...firstShape,
         properties: {
@@ -92,9 +94,9 @@ describe('flowchart-properties', () => {
 
     const newStroke = Faker.internet.color();
 
-    strokeColorField.vm.$emit('input', newStroke);
+    strokeColorField.triggerCustomEvent('input', newStroke);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       first: {
         ...firstShape,
         properties: {
@@ -134,9 +136,9 @@ describe('flowchart-properties', () => {
 
     const newStrokeWidth = Faker.datatype.number();
 
-    strokeWidthField.vm.$emit('input', newStrokeWidth);
+    strokeWidthField.triggerCustomEvent('input', newStrokeWidth);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       first: {
         ...firstShape,
         properties: {
@@ -176,9 +178,9 @@ describe('flowchart-properties', () => {
 
     const strokeTypeField = selectStrokeTypeField(wrapper);
 
-    strokeTypeField.vm.$emit('input', STROKE_TYPES.dashed);
+    strokeTypeField.triggerCustomEvent('input', STROKE_TYPES.dashed);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       first: {
         ...firstShape,
         properties: {
@@ -216,9 +218,9 @@ describe('flowchart-properties', () => {
 
     const lineTypeField = selectLineTypeField(wrapper);
 
-    lineTypeField.vm.$emit('input', LINE_TYPES.rightElbow);
+    lineTypeField.triggerCustomEvent('input', LINE_TYPES.rightElbow);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       first: {
         ...firstShape,
         lineType: LINE_TYPES.rightElbow,
@@ -252,9 +254,9 @@ describe('flowchart-properties', () => {
 
     const newFontColor = Faker.internet.color();
 
-    fontColorField.vm.$emit('input', newFontColor);
+    fontColorField.triggerCustomEvent('input', newFontColor);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       first: {
         ...firstShape,
         textProperties: {
@@ -294,9 +296,9 @@ describe('flowchart-properties', () => {
 
     const newFontBackgroundColor = Faker.internet.color();
 
-    fontBackgroundColorField.vm.$emit('input', newFontBackgroundColor);
+    fontBackgroundColorField.triggerCustomEvent('input', newFontBackgroundColor);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       first: {
         ...firstShape,
         textProperties: {
@@ -336,9 +338,9 @@ describe('flowchart-properties', () => {
 
     const newFontSize = Faker.datatype.number();
 
-    fontSizeField.vm.$emit('input', newFontSize);
+    fontSizeField.triggerCustomEvent('input', newFontSize);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       first: {
         ...firstShape,
         textProperties: {
@@ -356,7 +358,7 @@ describe('flowchart-properties', () => {
     });
   });
 
-  test('Renders `flowchart-properties` with all properties', () => {
+  test('Renders `flowchart-properties` with all properties', async () => {
     const fill = 'red';
     const stroke = 'orange';
     const shapes = {
@@ -376,10 +378,12 @@ describe('flowchart-properties', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    await wrapper.openAllExpansionPanels();
+
+    expect(wrapper).toMatchSnapshot();
   });
 
-  test('Renders `flowchart-properties` with lines', () => {
+  test('Renders `flowchart-properties` with lines', async () => {
     const shapes = {
       first: lineShapeToForm({
         _id: 'first',
@@ -395,6 +399,8 @@ describe('flowchart-properties', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    await wrapper.openAllExpansionPanels();
+
+    expect(wrapper).toMatchSnapshot();
   });
 });

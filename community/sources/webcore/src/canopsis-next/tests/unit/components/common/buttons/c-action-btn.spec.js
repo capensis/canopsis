@@ -1,5 +1,4 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createActivatorElementStub } from '@unit/stubs/vuetify';
@@ -112,47 +111,47 @@ describe('c-action-btn', () => {
   });
 
   it('Renders `c-action-btn` with default edit type correctly.', async () => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: { type: 'edit' },
     });
 
-    await flushPromises();
-
-    expect(document.body).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 
   it('Renders `c-action-btn` with default duplicate type correctly.', async () => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: { type: 'duplicate' },
     });
 
-    await flushPromises();
-
-    expect(document.body).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 
   it('Renders `c-action-btn` with default delete type correctly.', async () => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: { type: 'delete' },
     });
 
-    await flushPromises();
-
-    expect(document.body).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 
   it('Renders `c-action-btn` with custom type correctly.', async () => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: { icon: 'test_icon', color: 'color', tooltip: 'tooltip' },
     });
 
-    await flushPromises();
-
-    expect(document.body).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 
   it('Renders `c-action-btn` with badge.', async () => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: {
         type: 'edit',
         tooltip: 'TOOLTIP',
@@ -161,8 +160,8 @@ describe('c-action-btn', () => {
       },
     });
 
-    await flushPromises();
-
-    expect(document.body).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 });

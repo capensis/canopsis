@@ -13,7 +13,7 @@ export const selectTable = wrapper => wrapper.find('.c-advanced-data-table, .v-d
  * @return {WrapperArray}
  */
 export const selectTableRows = wrapper => selectTable(wrapper)
-  .findAll('tbody > tr:not(.v-datatable__expand-row)');
+  .findAll('tbody > tr:not(.v-data-table__expanded)');
 
 /**
  * Select an advanced table row by index
@@ -33,7 +33,7 @@ export const selectTableRowByIndex = (wrapper, index) => selectTableRows(wrapper
  * @return {Wrapper}
  */
 export const selectRowCheckboxByIndex = (wrapper, index) => selectTableRowByIndex(wrapper, index)
-  .find('td:first-child v-checkbox-functional-stub');
+  .find('td:first-child .v-data-table__checkbox');
 
 /**
  * Select an advanced table row select expand button by row index
@@ -43,7 +43,7 @@ export const selectRowCheckboxByIndex = (wrapper, index) => selectTableRowByInde
  * @return {Wrapper}
  */
 export const selectRowExpandButtonByIndex = (wrapper, index) => selectTableRowByIndex(wrapper, index)
-  .find('td:first-child c-expand-btn-stub');
+  .find('td .v-data-table__expand-icon');
 
 /**
  * Select an advanced table mass actions

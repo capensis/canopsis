@@ -2,8 +2,7 @@
 
 exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with boolean type correctly 1`] = `
 <div
-  class="v-input c-mixed-input-field v-input--selection-controls v-input--switch v-input--hide-details theme--light ma-0 c-mixed-input-field__switch"
-  name="mixedFieldName"
+  class="v-input c-mixed-input-field v-input--hide-details theme--light v-input--selection-controls v-input--switch ma-0 c-mixed-input-field__switch"
 >
   <div
     class="v-input__control"
@@ -16,9 +15,9 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with boolean type c
       >
         <input
           aria-checked="false"
-          aria-label="false"
+          aria-disabled="false"
           name="mixedFieldName"
-          role="checkbox"
+          role="switch"
           type="checkbox"
           value=""
         />
@@ -38,7 +37,6 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with boolean type c
         </div>
       </div>
       <label
-        aria-hidden="true"
         class="v-label theme--light"
         style="left: 0px; position: relative;"
       >
@@ -53,7 +51,7 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with boolean type c
 
 exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with custom props correctly 1`] = `
 <div
-  class="v-input c-mixed-input-field v-text-field v-text-field--single-line v-text-field--solo-flat v-input--hide-details v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light c-mixed-input-field__text"
+  class="v-input c-mixed-input-field v-input--hide-details v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light v-text-field v-text-field--single-line v-text-field--solo-flat v-text-field--placeholder c-mixed-input-field__text"
   errormessages="First error message,Second error message"
 >
   <div
@@ -66,10 +64,9 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with custom props c
         class="v-text-field__slot"
       >
         <input
-          aria-label="Mixed field label"
-          dense="true"
           disabled="disabled"
           name="mixedFieldName"
+          placeholder="Mixed field label"
           type="text"
         />
       </div>
@@ -82,7 +79,7 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with custom props c
 
 exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with default props correctly 1`] = `
 <div
-  class="v-input c-mixed-input-field v-text-field v-text-field--single-line theme--light c-mixed-input-field__text"
+  class="v-input c-mixed-input-field theme--light v-text-field v-text-field--single-line c-mixed-input-field__text"
 >
   <div
     class="v-input__control"
@@ -94,9 +91,8 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with default props 
         class="v-text-field__slot"
       >
         <input
-          aria-label=""
-          dense="true"
           name="value"
+          placeholder=""
           type="text"
         />
       </div>
@@ -107,8 +103,10 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with default props 
       <div
         class="v-messages theme--light"
       >
-        <div
+        <transition-group-stub
           class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
         />
       </div>
     </div>
@@ -120,7 +118,7 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with default props 
 
 exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with errors correctly 1`] = `
 <div
-  class="v-input c-mixed-input-field v-text-field v-text-field--single-line theme--light c-mixed-input-field__text"
+  class="v-input c-mixed-input-field theme--light v-text-field v-text-field--single-line c-mixed-input-field__text"
   errormessages="First error message,Second error message"
 >
   <div
@@ -133,9 +131,8 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with errors correct
         class="v-text-field__slot"
       >
         <input
-          aria-label=""
-          dense="true"
           name="value"
+          placeholder=""
           type="text"
         />
       </div>
@@ -146,8 +143,10 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with errors correct
       <div
         class="v-messages theme--light"
       >
-        <div
+        <transition-group-stub
           class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
         />
       </div>
     </div>
@@ -159,7 +158,7 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with errors correct
 
 exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with null type correctly 1`] = `
 <div
-  class="v-input c-mixed-input-field v-text-field v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
+  class="v-input c-mixed-input-field v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light v-text-field"
 >
   <div
     class="v-input__control"
@@ -183,8 +182,10 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with null type corr
       <div
         class="v-messages theme--light"
       >
-        <div
+        <transition-group-stub
           class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
         />
       </div>
     </div>
@@ -207,7 +208,7 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with null type corr
 
 exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with number type correctly 1`] = `
 <div
-  class="v-input c-mixed-input-field v-text-field v-text-field--single-line v-input--is-label-active v-input--is-dirty theme--light c-mixed-input-field__text"
+  class="v-input c-mixed-input-field v-input--is-label-active v-input--is-dirty theme--light v-text-field v-text-field--single-line v-text-field--placeholder c-mixed-input-field__text"
 >
   <div
     class="v-input__control"
@@ -219,9 +220,8 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with number type co
         class="v-text-field__slot"
       >
         <input
-          aria-label="Mixed field with number type"
-          dense="true"
           name="mixedFieldName"
+          placeholder="Mixed field with number type"
           type="number"
         />
       </div>
@@ -232,8 +232,10 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with number type co
       <div
         class="v-messages theme--light"
       >
-        <div
+        <transition-group-stub
           class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
         />
       </div>
     </div>
@@ -245,8 +247,7 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with number type co
 
 exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with string type and items correctly 1`] = `
 <div
-  class="v-input c-mixed-input-field v-input--selection-controls v-input--switch v-input--hide-details theme--light ma-0 c-mixed-input-field__switch"
-  name="mixedFieldName"
+  class="v-input c-mixed-input-field v-input--hide-details theme--light v-input--selection-controls v-input--switch ma-0 c-mixed-input-field__switch"
 >
   <div
     class="v-input__control"
@@ -259,9 +260,9 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with string type an
       >
         <input
           aria-checked="false"
-          aria-label="false"
+          aria-disabled="false"
           name="mixedFieldName"
-          role="checkbox"
+          role="switch"
           type="checkbox"
           value=""
         />
@@ -281,7 +282,6 @@ exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with string type an
         </div>
       </div>
       <label
-        aria-hidden="true"
         class="v-label theme--light"
         style="left: 0px; position: relative;"
       >

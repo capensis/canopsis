@@ -1,30 +1,46 @@
-<template lang="pug">
-  div
-    slot(v-if="!names.length", name="no-data")
-    v-layout(
-      v-for="(name, index) in names",
-      :key="name.key",
-      row,
+<template>
+  <div>
+    <slot
+      v-if="!names.length"
+      name="no-data"
+    />
+    <v-layout
+      v-for="(name, index) in names"
+      :key="name.key"
       justify-space-between
-    )
-      v-flex(xs11)
-        v-text-field(
-          v-field="names[index].value",
-          v-validate="'required'",
-          :error-messages="errors.collect(`name[${name.key}]`)",
-          :name="`name[${name.key}]`",
+    >
+      <v-flex xs11>
+        <v-text-field
+          v-field="names[index].value"
+          v-validate="'required'"
+          :error-messages="errors.collect(`name[${name.key}]`)"
+          :name="`name[${name.key}]`"
           :placeholder="$t('common.name')"
-        )
-      v-flex(xs1)
-        v-btn(
-          color="error",
-          icon,
+        />
+      </v-flex>
+      <v-flex xs1>
+        <v-btn
+          color="error"
+          icon
           @click="removeItemFromArray(index)"
-        )
-          v-icon delete
-    v-btn.primary.mx-0(@click="showAddValueModal") {{ $t('modals.createDynamicInfoTemplate.buttons.addName') }}
-    v-alert(:value="errors.has('names')", type="error")
-      span {{ $t('modals.createDynamicInfoTemplate.errors.noNames') }}
+        >
+          <v-icon>delete</v-icon>
+        </v-btn>
+      </v-flex>
+    </v-layout>
+    <v-btn
+      class="primary mx-0"
+      @click="showAddValueModal"
+    >
+      {{ $t('modals.createDynamicInfoTemplate.buttons.addName') }}
+    </v-btn>
+    <v-alert
+      :value="errors.has('names')"
+      type="error"
+    >
+      <span>{{ $t('modals.createDynamicInfoTemplate.errors.noNames') }}</span>
+    </v-alert>
+  </div>
 </template>
 
 <script>

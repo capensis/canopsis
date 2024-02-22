@@ -1,33 +1,59 @@
-<template lang="pug">
-  v-layout.declare-ticket-test-query(column)
-    v-layout(row, align-center, justify-space-between)
-      v-flex(xs10)
-        c-alarm-field(
-          v-model="alarm",
-          :disabled="pending || isExecutionRunning",
-          :params="alarmsParams",
+<template>
+  <v-layout
+    class="declare-ticket-test-query"
+    column
+  >
+    <v-layout
+      align-center
+      justify-space-between
+    >
+      <v-flex xs10>
+        <c-alarm-field
+          v-model="alarm"
+          :disabled="pending || isExecutionRunning"
+          :params="alarmsParams"
           name="alarms"
-        )
-      v-btn.white--text(
-        :disabled="hasErrors || !alarm",
-        :loading="pending || isExecutionRunning",
-        color="orange",
+        />
+      </v-flex>
+      <v-btn
+        :disabled="hasErrors || !alarm"
+        :loading="pending || isExecutionRunning"
+        class="white--text"
+        color="orange"
         @click="runTestExecution"
-      ) {{ $t('declareTicket.runTest') }}
-    v-expand-transition
-      v-layout(v-if="executionStatus", column)
-        v-layout.mb-4(row, align-center)
-          span.subheading.mr-5 {{ $t('declareTicket.webhookStatus') }}:
-          declare-ticket-rule-execution-status(
-            :running="isExecutionRunning",
-            :success="isExecutionSucceeded",
+      >
+        {{ $t('declareTicket.runTest') }}
+      </v-btn>
+    </v-layout>
+    <v-expand-transition>
+      <v-layout
+        v-if="executionStatus"
+        column
+      >
+        <v-layout
+          class="mb-4"
+          align-center
+        >
+          <span class="text-subtitle-1 mr-5">{{ $t('declareTicket.webhookStatus') }}:</span>
+          <declare-ticket-rule-execution-status
+            :running="isExecutionRunning"
+            :success="isExecutionSucceeded"
             :fail-reason="executionStatus.fail_reason"
-          )
-          c-action-btn(v-if="isExecutionSucceeded || isExecutionFailed", type="delete", @click="clearWebhookStatus")
-
-        v-card(v-if="isSomeOneWebhookStarted")
-          v-card-text
-            declare-ticket-rule-execution-webhooks-timeline(:webhooks="executionStatus.webhooks")
+          />
+          <c-action-btn
+            v-if="isExecutionSucceeded || isExecutionFailed"
+            type="delete"
+            @click="clearWebhookStatus"
+          />
+        </v-layout>
+        <v-card v-if="isSomeOneWebhookStarted">
+          <v-card-text>
+            <declare-ticket-rule-execution-webhooks-timeline :webhooks="executionStatus.webhooks" />
+          </v-card-text>
+        </v-card>
+      </v-layout>
+    </v-expand-transition>
+  </v-layout>
 </template>
 
 <script>

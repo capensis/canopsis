@@ -1,21 +1,35 @@
-<template lang="pug">
-  v-form(@submit.stop.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ title }}
-      template(#text="")
-        entity-info-form(
-          v-model="form",
-          :entity-info="config.entityInfo",
+<template>
+  <v-form @submit.stop.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ title }}</span>
+      </template>
+      <template #text="">
+        <entity-info-form
+          v-model="form"
+          :entity-info="config.entityInfo"
           :infos="config.infos"
-        )
-      template(#actions="")
-        v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
-        v-btn.primary(
-          :disabled="isDisabled",
-          :loading="submitting",
+        />
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
+          @click="$modals.hide"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :disabled="isDisabled"
+          :loading="submitting"
+          class="primary"
           type="submit"
-        ) {{ $t('common.add') }}
+        >
+          {{ $t('common.add') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>

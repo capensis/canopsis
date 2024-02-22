@@ -36,9 +36,12 @@ export const widgetColumnsAlarmMixin = {
       return (this.columns ?? []).map(column => ({
         ...column,
 
-        popupTemplate: this.infoPopupsMap[column.value],
+        popupTemplate: this.infoPopupsMap[column.value] ?? this.infoPopupsMap[`alarm.${column.value}`],
         filter: this.$i18n.locale && this.getColumnFilter(column.value),
-        getComponent: getAlarmsListWidgetColumnComponentGetter(column),
+        getComponent: getAlarmsListWidgetColumnComponentGetter(
+          column,
+          { showRootCauseByStateClick: this.widget.parameters?.showRootCauseByStateClick ?? true },
+        ),
         colorIndicatorEnabled: Object.values(COLOR_INDICATOR_TYPES).includes(column.colorIndicator),
       }));
     },

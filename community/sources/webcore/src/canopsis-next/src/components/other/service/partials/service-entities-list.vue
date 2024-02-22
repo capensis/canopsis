@@ -1,35 +1,59 @@
-<template lang="pug">
-  div
-    v-layout.d-inline-flex(v-if="serviceEntities.length", align-center, row)
-      v-checkbox-functional.ml-3.pa-0(v-model="isAllSelected", :disabled="!entitiesWithActions.length")
-      v-fade-transition(mode="out-in")
-        span.font-italic(v-if="!selectedEntities.length") {{ $t('modals.service.massActionsDescription') }}
-        service-entity-actions(
-          v-else,
-          :actions="actions",
-          :entity="service",
+<template>
+  <div>
+    <v-layout
+      v-if="serviceEntities.length"
+      class="d-inline-flex my-1"
+      align-center
+    >
+      <v-simple-checkbox
+        v-model="isAllSelected"
+        :disabled="!entitiesWithActions.length"
+        class="ml-4 my-2"
+      />
+      <v-fade-transition mode="out-in">
+        <span
+          v-if="!selectedEntities.length"
+          class="font-italic"
+        >
+          {{ $t('modals.service.massActionsDescription') }}
+        </span>
+        <service-entity-actions
+          v-else
+          :actions="actions"
+          :entity="service"
           @apply="applyActionForSelected"
-        )
-    div.mt-2(v-for="serviceEntity in serviceEntities", :key="serviceEntity.key")
-      service-entity(
-        :service-id="service._id",
-        :entity="serviceEntity",
-        :last-action-unavailable="hasActionError(serviceEntity)",
-        :entity-name-field="entityNameField",
-        :widget-parameters="widgetParameters",
-        :selected="isEntitySelected(serviceEntity)",
-        @update:selected="updateSelected(serviceEntity, $event)",
-        @remove:unavailable="removeEntityFromUnavailable(serviceEntity)",
+        />
+      </v-fade-transition>
+    </v-layout>
+    <div
+      v-for="serviceEntity in serviceEntities"
+      :key="serviceEntity.key"
+      class="mt-2"
+    >
+      <service-entity
+        :service-id="service._id"
+        :entity="serviceEntity"
+        :last-action-unavailable="hasActionError(serviceEntity)"
+        :entity-name-field="entityNameField"
+        :widget-parameters="widgetParameters"
+        :selected="isEntitySelected(serviceEntity)"
+        :actions-requests="actionsRequests"
+        @add:action="addAction"
+        @update:selected="updateSelected(serviceEntity, $event)"
+        @remove:unavailable="removeEntityFromUnavailable(serviceEntity)"
         @refresh="$listeners.refresh"
-      )
-    c-table-pagination.mt-1(
-      v-if="totalItems > pagination.rowsPerPage",
-      :total-items="totalItems",
-      :rows-per-page="pagination.rowsPerPage",
-      :page="pagination.page",
-      @update:page="updatePage",
-      @update:rows-per-page="updateRecordsPerPage"
-    )
+      />
+    </div>
+    <c-table-pagination
+      v-if="totalItems > options.itemsPerPage"
+      :total-items="totalItems"
+      :items-per-page="options.itemsPerPage"
+      :page="options.page"
+      class="mt-1"
+      @update:page="updatePage"
+      @update:items-per-page="updateItemsPerPage"
+    />
+  </div>
 </template>
 
 <script>
@@ -39,6 +63,7 @@ import {
   isActionTypeAvailableForEntity,
 } from '@/helpers/entities/entity/actions';
 import { filterById, mapIds } from '@/helpers/array';
+import { getPageForNewItemsPerPage } from '@/helpers/pagination';
 
 import { widgetActionPanelServiceEntityMixin } from '@/mixins/widget/actions-panel/service-entity';
 
@@ -56,7 +81,7 @@ export default {
       type: Object,
       required: true,
     },
-    pagination: {
+    options: {
       type: Object,
       required: true,
     },
@@ -75,6 +100,10 @@ export default {
     totalItems: {
       type: Number,
       required: false,
+    },
+    actionsRequests: {
+      type: Array,
+      default: () => [],
     },
   },
   data() {
@@ -144,12 +173,21 @@ export default {
       return this.selectedEntitiesIds.includes(entity._id);
     },
 
-    updatePage(page) {
-      this.$emit('update:pagination', { ...this.pagination, page });
+    addAction(action) {
+      this.$emit('add:action', action);
     },
 
-    updateRecordsPerPage(rowsPerPage) {
-      this.$emit('update:pagination', { ...this.pagination, rowsPerPage, page: 1 });
+    updatePage(page) {
+      this.$emit('update:options', { ...this.options, page });
+    },
+
+    updateItemsPerPage(itemsPerPage) {
+      this.$emit('update:options', {
+        ...this.options,
+
+        itemsPerPage,
+        page: getPageForNewItemsPerPage(itemsPerPage, this.options.itemsPerPage, this.options.page),
+      });
     },
   },
 };

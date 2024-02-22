@@ -15,29 +15,27 @@ describe('c-no-events-icon', () => {
     attachTo: document.body,
   });
 
-  it('Renders `c-no-events-icon` with default props correctly', () => {
+  it('Renders `c-no-events-icon` with default props correctly', async () => {
     const wrapper = factory();
 
-    const tooltipContent = wrapper.find('.v-tooltip__content');
-
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 
-  it('Renders `c-no-events-icon` with value correctly', () => {
+  it('Renders `c-no-events-icon` with value correctly', async () => {
     const wrapper = factory({
       propsData: {
         value: mockData.firstTimestamp,
       },
     });
 
-    const tooltipContent = wrapper.find('.v-tooltip__content');
-
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 
-  it('Renders `c-no-events-icon` with custom props correctly', () => {
+  it('Renders `c-no-events-icon` with custom props correctly', async () => {
     const wrapper = factory({
       propsData: {
         value: mockData.firstTimestamp,
@@ -47,9 +45,8 @@ describe('c-no-events-icon', () => {
       },
     });
 
-    const tooltipContent = wrapper.find('.v-tooltip__content');
-
-    expect(wrapper.element).toMatchSnapshot();
-    expect(tooltipContent.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 });

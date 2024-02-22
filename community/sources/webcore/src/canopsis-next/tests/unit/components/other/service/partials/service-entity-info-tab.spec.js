@@ -38,7 +38,7 @@ describe('service-entity-info-tab', () => {
       },
     });
 
-    selectServiceEntityActions(wrapper).vm.$emit('apply');
+    selectServiceEntityActions(wrapper).triggerCustomEvent('apply');
 
     expect(applyAction).toHaveBeenCalled();
   });
@@ -51,7 +51,7 @@ describe('service-entity-info-tab', () => {
       },
     });
 
-    selectServiceEntityActions(wrapper).vm.$emit('execute');
+    selectServiceEntityActions(wrapper).triggerCustomEvent('execute');
 
     expect(executeInstruction).toHaveBeenCalled();
   });
@@ -63,7 +63,7 @@ describe('service-entity-info-tab', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `service-entity-info-tab` with custom props', () => {
@@ -78,6 +78,6 @@ describe('service-entity-info-tab', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

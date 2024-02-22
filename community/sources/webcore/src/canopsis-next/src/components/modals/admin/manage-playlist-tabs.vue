@@ -1,21 +1,34 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ $t('modals.createPlaylist.manageTabs') }}
-      template(#text="")
-        manage-playlist-tabs-form(v-model="form.selectedTabs", :groups="groups")
-      template(#actions="")
-        v-btn(
-          depressed,
-          flat,
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ $t('modals.createPlaylist.manageTabs') }}</span>
+      </template>
+      <template #text="">
+        <manage-playlist-tabs-form
+          v-model="form.selectedTabs"
+          :groups="groups"
+        />
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
           @click="$modals.hide"
-        ) {{ $t('common.cancel') }}
-        v-btn.primary(
-          :disabled="isDisabled",
-          :loading="submitting",
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :disabled="isDisabled"
+          :loading="submitting"
+          class="primary"
           type="submit"
-        ) {{ $t('common.saveChanges') }}
+        >
+          {{ $t('common.saveChanges') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>

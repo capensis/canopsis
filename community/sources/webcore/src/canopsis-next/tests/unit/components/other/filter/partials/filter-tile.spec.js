@@ -20,13 +20,9 @@ describe('filter-tile', () => {
       },
     });
 
-    const editButton = selectEditButton(wrapper);
+    selectEditButton(wrapper).triggerCustomEvent('click');
 
-    editButton.vm.$emit('click');
-
-    const editEvents = wrapper.emitted('edit');
-
-    expect(editEvents).toHaveLength(1);
+    expect(wrapper).toHaveBeenEmit('edit');
   });
 
   it('Delete event emitted after trigger delete button', () => {
@@ -36,19 +32,15 @@ describe('filter-tile', () => {
       },
     });
 
-    const deleteButton = selectDeleteButton(wrapper);
+    selectDeleteButton(wrapper).triggerCustomEvent('click');
 
-    deleteButton.vm.$emit('click');
-
-    const deleteEvents = wrapper.emitted('delete');
-
-    expect(deleteEvents).toHaveLength(1);
+    expect(wrapper).toHaveBeenEmit('delete');
   });
 
   it('Renders `filter-tile` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `filter-tile` with custom props', () => {
@@ -61,6 +53,20 @@ describe('filter-tile', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  it('Renders `filter-tile` with old pattern', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        filter: {
+          title: 'Filter title',
+          old_mongo_query: {},
+        },
+        editable: true,
+      },
+    });
+
+    expect(wrapper).toMatchSnapshot();
   });
 });

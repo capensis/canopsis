@@ -1,11 +1,11 @@
-<template lang="pug">
-  c-action-btn(
-    :icon="icon",
-    :color="color",
-    :tooltip="tooltip",
-    :disabled="disabled || downloading",
+<template>
+  <c-action-btn
+    :icon="icon"
+    :color="color"
+    :tooltip="tooltip"
+    :disabled="disabled || downloading"
     @click="downloadContent"
-  )
+  />
 </template>
 
 <script>

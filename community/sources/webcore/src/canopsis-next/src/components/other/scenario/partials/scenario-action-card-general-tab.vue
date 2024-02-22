@@ -1,20 +1,26 @@
-<template lang="pug">
-  v-layout.scenario-action-card-general-tab(row, wrap)
-    v-flex.mt-1(
-      v-for="(item, index) in items",
-      :class="item.flexClass || 'xs12'",
+<template>
+  <v-layout
+    class="scenario-action-card-general-tab"
+    wrap
+  >
+    <v-flex
+      v-for="(item, index) in items"
       :key="index"
-    )
-      scenario-info-item(
-        :icon="item.icon",
-        :label="item.label",
+      :class="item.flexClass || 'xs12'"
+      class="mt-1"
+    >
+      <scenario-info-item
+        :icon="item.icon"
+        :label="item.label"
         :value="item.value"
-      )
-      component(
-        v-if="item.subcomponent",
-        :is="item.subcomponent",
+      />
+      <component
+        v-if="item.subcomponent"
+        :is="item.subcomponent"
         v-bind="item.subcomponentProps"
-      )
+      />
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

@@ -1,9 +1,11 @@
 import { generateRenderer } from '@unit/utils/vue';
+import { randomDurationValue } from '@unit/utils/duration';
+
 import { TIME_UNITS } from '@/constants';
+
 import { dataStorageSettingsToForm } from '@/helpers/entities/data-storage/form';
 
 import StorageSettingsPbehaviorForm from '@/components/other/storage-setting/form/storage-settings-pbehavior-form.vue';
-import { randomDurationValue } from '@unit/utils/duration';
 import CInformationBlock from '@/components/common/block/c-information-block.vue';
 
 const stubs = {
@@ -36,9 +38,9 @@ describe('storage-settings-pbehavior-form', () => {
 
     const newValue = randomDurationValue();
 
-    selectPbehaviorDeleteAfterField(wrapper).vm.$emit('input', newValue);
+    selectPbehaviorDeleteAfterField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', { ...form, delete_after: newValue });
+    expect(wrapper).toEmitInput({ ...form, delete_after: newValue });
   });
 
   test('Renders `storage-settings-pbehavior-form` with default form', () => {
@@ -48,7 +50,7 @@ describe('storage-settings-pbehavior-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `storage-settings-pbehavior-form` with custom form and history', () => {
@@ -59,6 +61,6 @@ describe('storage-settings-pbehavior-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

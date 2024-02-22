@@ -10,7 +10,7 @@ exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with 
     >
       <i
         aria-hidden="true"
-        class="v-icon material-icons theme--light white--text"
+        class="v-icon notranslate material-icons theme--light white--text"
         style="font-size: 16px;"
       >
         comment
@@ -20,44 +20,12 @@ exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with 
   <span
     class="v-tooltip v-tooltip--top"
   >
-    <transition-stub
-      name="slide-y-reverse-transition"
-    />
-    <span />
+    <!---->
   </span>
 </div>
 `;
 
-exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with date in previous month 2`] = `
-<div
-  class="v-tooltip__content"
-  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
->
-  <span>
-    <div
-      class="text-md-center"
-    >
-      <strong>
-        Comment
-      </strong>
-      <div>
-        By: lastComment-author
-      </div>
-      <div>
-        Date: 07/08/2013 19:00:00
-      </div>
-      <div
-        class="c-extra-details__message"
-      >
-        Comment: 
-        <span>
-          lastComment-message
-        </span>
-      </div>
-    </div>
-  </span>
-</div>
-`;
+exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with date in previous month 2`] = `undefined`;
 
 exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with full last comment 1`] = `
 <div
@@ -69,7 +37,7 @@ exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with 
     >
       <i
         aria-hidden="true"
-        class="v-icon material-icons theme--light white--text"
+        class="v-icon notranslate material-icons theme--light white--text"
         style="font-size: 16px;"
       >
         comment
@@ -79,41 +47,9 @@ exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with 
   <span
     class="v-tooltip v-tooltip--top"
   >
-    <transition-stub
-      name="slide-y-reverse-transition"
-    />
-    <span />
+    <!---->
   </span>
 </div>
 `;
 
-exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with full last comment 2`] = `
-<div
-  class="v-tooltip__content"
-  style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
->
-  <span>
-    <div
-      class="text-md-center"
-    >
-      <strong>
-        Comment
-      </strong>
-      <div>
-        By: lastComment-author
-      </div>
-      <div>
-        Date: 6:00:00
-      </div>
-      <div
-        class="c-extra-details__message"
-      >
-        Comment: 
-        <span>
-          lastComment-message
-        </span>
-      </div>
-    </div>
-  </span>
-</div>
-`;
+exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with full last comment 2`] = `undefined`;

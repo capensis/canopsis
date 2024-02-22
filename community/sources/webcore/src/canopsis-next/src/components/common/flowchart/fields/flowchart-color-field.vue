@@ -1,21 +1,37 @@
-<template lang="pug">
-  v-layout.flowchart-color-field(row, justify-space-between, align-center)
-    v-checkbox.mt-0(
-      v-if="!hideCheckbox",
-      :input-value="isFilled",
-      :label="label || $t('flowchart.color')",
-      color="primary",
-      hide-details,
+<template>
+  <v-layout
+    class="flowchart-color-field"
+    justify-space-between
+    align-center
+  >
+    <v-checkbox
+      v-if="!hideCheckbox"
+      :input-value="isFilled"
+      :label="label || $t('flowchart.color')"
+      class="mt-0"
+      color="primary"
+      hide-details
       @change="updateIsFilled"
-    )
-    span.v-label(v-else) {{ label }}
-    v-flex(v-show="isFilled || hideCheckbox", xs3)
-      v-btn.flowchart-color-field__button.ma-0.pa-0(
-        :style="style",
-        small,
-        block,
+    />
+    <span
+      v-else
+      class="v-label"
+    >
+      {{ label }}
+    </span>
+    <v-flex
+      v-show="isFilled || hideCheckbox"
+      xs3
+    >
+      <v-btn
+        :style="style"
+        class="flowchart-color-field__button ma-0 pa-0"
+        small
+        block
         @click="showColorPickerModal"
-      )
+      />
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

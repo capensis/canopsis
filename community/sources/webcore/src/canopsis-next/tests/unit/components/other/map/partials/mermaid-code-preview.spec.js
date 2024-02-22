@@ -1,8 +1,10 @@
 import { generateRenderer } from '@unit/utils/vue';
 
-import MermaidCodePreview from '@/components/other/map/partials/mermaid-code-preview.vue';
 import { MERMAID_THEMES } from '@/constants';
+
 import { renderMermaid } from '@/helpers/mermaid';
+
+import MermaidCodePreview from '@/components/other/map/partials/mermaid-code-preview.vue';
 
 jest.mock('@/helpers/mermaid', () => ({
   renderMermaid: jest.fn(
@@ -16,7 +18,7 @@ describe('mermaid-code-preview', () => {
   test('Renders `mermaid-code-preview` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `mermaid-code-preview` with custom props', () => {
@@ -33,7 +35,7 @@ describe('mermaid-code-preview', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `mermaid-code-preview` with error', () => {
@@ -42,6 +44,6 @@ describe('mermaid-code-preview', () => {
     });
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -1,32 +1,61 @@
-<template lang="pug">
-  div
-    v-layout
-      v-flex.export-views-block.mr-0.ma-4(xs6)
-        v-checkbox(
-          v-model="isAllSelected",
-          :label="$t('view.selectAll')",
+<template>
+  <div>
+    <v-layout>
+      <v-flex
+        class="export-views-block ma-6"
+        xs6
+      >
+        <v-checkbox
+          v-model="isAllSelected"
+          :label="$t('view.selectAll')"
           color="primary"
-        )
-        views-export-expansion-panel(v-model="selected", :groups="availableGroups")
-      v-flex(xs2)
-        v-layout(column, justify-center, fill-height)
-          v-btn(
-            :disabled="selectedEmpty",
-            color="primary",
+        />
+        <views-export-expansion-panel
+          v-model="selected"
+          :groups="availableGroups"
+        />
+      </v-flex>
+      <v-flex xs2>
+        <v-layout
+          column
+          justify-center
+          fill-height
+        >
+          <v-btn
+            :disabled="selectedEmpty"
+            color="primary"
             @click="exportViews"
-          )
-            v-icon(left) file_upload
-            span {{ $t('common.export') }}
-          file-selector.ma-2.view-import-selector(
-            ref="fileSelector",
-            multiple,
-            hide-details,
+          >
+            <v-icon left>
+              file_upload
+            </v-icon>
+            <span>{{ $t('common.export') }}</span>
+          </v-btn>
+          <file-selector
+            ref="fileSelector"
+            class="my-2 view-import-selector"
+            multiple
+            hide-details
             @change="importViews"
-          )
-            template(#activator="{ on, ...attrs }")
-              v-btn.import-btn.ma-0(v-bind="attrs", v-on="on", color="primary")
-                v-icon(left) file_download
-                span {{ $t('common.import') }}
+          >
+            <template #activator="{ on, ...attrs }">
+              <v-btn
+                class="import-btn ma-0"
+                v-bind="attrs"
+                color="primary"
+                v-on="on"
+              >
+                <v-icon left>
+                  file_download
+                </v-icon>
+                <span>{{ $t('common.import') }}</span>
+              </v-btn>
+            </template>
+          </file-selector>
+        </v-layout>
+      </v-flex>
+    </v-layout>
+  </div>
 </template>
 
 <script>

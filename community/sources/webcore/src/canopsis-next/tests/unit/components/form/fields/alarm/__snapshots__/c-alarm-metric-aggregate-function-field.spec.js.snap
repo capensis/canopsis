@@ -2,7 +2,7 @@
 
 exports[`c-alarm-metric-aggregate-function-field Renders \`c-alarm-metric-aggregate-function-field\` with custom props 1`] = `
 <div
-  class="v-input mt-0 v-input--selection-controls v-input--radio-group v-input--radio-group--column v-input--is-label-active v-input--is-dirty theme--light"
+  class="v-input mt-0 v-input--is-label-active v-input--is-dirty theme--light v-input--selection-controls v-input--radio-group v-input--radio-group--column"
   hidedetails="true"
 >
   <div
@@ -16,39 +16,36 @@ exports[`c-alarm-metric-aggregate-function-field Renders \`c-alarm-metric-aggreg
         class="v-input--radio-group__input"
         role="radiogroup"
       >
-        <label
-          aria-hidden="true"
+        <legend
           class="v-label theme--light"
           style="left: 0px; position: relative;"
         >
           Custom label
-        </label>
+        </legend>
         <div
-          class="v-radio theme--light"
+          class="v-radio theme--light v-item--active"
         >
           <div
             class="v-input--selection-controls__input"
           >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light primary--text"
+            >
+              radio_button_checked
+            </i>
             <input
-              aria-checked="false"
-              aria-label="Average"
+              aria-checked="true"
               name="custom_name"
               role="radio"
               type="radio"
               value="avg"
             />
             <div
-              class="v-input--selection-controls__ripple"
+              class="v-input--selection-controls__ripple primary--text"
             />
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              radio_button_unchecked
-            </i>
           </div>
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
@@ -61,9 +58,14 @@ exports[`c-alarm-metric-aggregate-function-field Renders \`c-alarm-metric-aggreg
           <div
             class="v-input--selection-controls__input"
           >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              radio_button_unchecked
+            </i>
             <input
               aria-checked="false"
-              aria-label="Sum"
               name="custom_name"
               role="radio"
               type="radio"
@@ -72,15 +74,8 @@ exports[`c-alarm-metric-aggregate-function-field Renders \`c-alarm-metric-aggreg
             <div
               class="v-input--selection-controls__ripple"
             />
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              radio_button_unchecked
-            </i>
           </div>
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
@@ -93,9 +88,14 @@ exports[`c-alarm-metric-aggregate-function-field Renders \`c-alarm-metric-aggreg
           <div
             class="v-input--selection-controls__input"
           >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              radio_button_unchecked
+            </i>
             <input
               aria-checked="false"
-              aria-label="Min"
               name="custom_name"
               role="radio"
               type="radio"
@@ -104,15 +104,8 @@ exports[`c-alarm-metric-aggregate-function-field Renders \`c-alarm-metric-aggreg
             <div
               class="v-input--selection-controls__ripple"
             />
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              radio_button_unchecked
-            </i>
           </div>
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
@@ -136,7 +129,7 @@ exports[`c-alarm-metric-aggregate-function-field Renders \`c-alarm-metric-aggreg
 
 exports[`c-alarm-metric-aggregate-function-field Renders \`c-alarm-metric-aggregate-function-field\` with default props 1`] = `
 <div
-  class="v-input mt-0 v-input--selection-controls v-input--radio-group v-input--radio-group--column theme--light"
+  class="v-input mt-0 theme--light v-input--selection-controls v-input--radio-group v-input--radio-group--column"
 >
   <div
     class="v-input__control"
@@ -155,9 +148,14 @@ exports[`c-alarm-metric-aggregate-function-field Renders \`c-alarm-metric-aggreg
           <div
             class="v-input--selection-controls__input"
           >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              radio_button_unchecked
+            </i>
             <input
               aria-checked="false"
-              aria-label="Sum"
               name="aggregate_func"
               role="radio"
               type="radio"
@@ -166,15 +164,8 @@ exports[`c-alarm-metric-aggregate-function-field Renders \`c-alarm-metric-aggreg
             <div
               class="v-input--selection-controls__ripple"
             />
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              radio_button_unchecked
-            </i>
           </div>
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
@@ -187,9 +178,14 @@ exports[`c-alarm-metric-aggregate-function-field Renders \`c-alarm-metric-aggreg
           <div
             class="v-input--selection-controls__input"
           >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              radio_button_unchecked
+            </i>
             <input
               aria-checked="false"
-              aria-label="Average"
               name="aggregate_func"
               role="radio"
               type="radio"
@@ -198,15 +194,8 @@ exports[`c-alarm-metric-aggregate-function-field Renders \`c-alarm-metric-aggreg
             <div
               class="v-input--selection-controls__ripple"
             />
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              radio_button_unchecked
-            </i>
           </div>
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
@@ -219,9 +208,14 @@ exports[`c-alarm-metric-aggregate-function-field Renders \`c-alarm-metric-aggreg
           <div
             class="v-input--selection-controls__input"
           >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              radio_button_unchecked
+            </i>
             <input
               aria-checked="false"
-              aria-label="Min"
               name="aggregate_func"
               role="radio"
               type="radio"
@@ -230,15 +224,8 @@ exports[`c-alarm-metric-aggregate-function-field Renders \`c-alarm-metric-aggreg
             <div
               class="v-input--selection-controls__ripple"
             />
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              radio_button_unchecked
-            </i>
           </div>
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
@@ -251,9 +238,14 @@ exports[`c-alarm-metric-aggregate-function-field Renders \`c-alarm-metric-aggreg
           <div
             class="v-input--selection-controls__input"
           >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              radio_button_unchecked
+            </i>
             <input
               aria-checked="false"
-              aria-label="Max"
               name="aggregate_func"
               role="radio"
               type="radio"
@@ -262,15 +254,8 @@ exports[`c-alarm-metric-aggregate-function-field Renders \`c-alarm-metric-aggreg
             <div
               class="v-input--selection-controls__ripple"
             />
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              radio_button_unchecked
-            </i>
           </div>
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >
@@ -283,9 +268,14 @@ exports[`c-alarm-metric-aggregate-function-field Renders \`c-alarm-metric-aggreg
           <div
             class="v-input--selection-controls__input"
           >
+            <i
+              aria-hidden="true"
+              class="v-icon notranslate material-icons theme--light"
+            >
+              radio_button_unchecked
+            </i>
             <input
               aria-checked="false"
-              aria-label="Last"
               name="aggregate_func"
               role="radio"
               type="radio"
@@ -294,15 +284,8 @@ exports[`c-alarm-metric-aggregate-function-field Renders \`c-alarm-metric-aggreg
             <div
               class="v-input--selection-controls__ripple"
             />
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              radio_button_unchecked
-            </i>
           </div>
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: relative;"
           >

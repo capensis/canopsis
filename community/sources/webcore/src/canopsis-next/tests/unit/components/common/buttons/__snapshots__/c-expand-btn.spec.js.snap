@@ -2,54 +2,54 @@
 
 exports[`c-expand-btn Renders \`c-expand-btn\` correctly. 1`] = `
 <button
-  class="ma-0 v-btn v-btn--icon v-btn--small theme--light"
+  class="v-btn v-btn--icon v-btn--round theme--light v-size--small"
   type="button"
 >
-  <div
+  <span
     class="v-btn__content"
   >
     <i
       aria-hidden="true"
-      class="v-icon material-icons theme--light"
+      class="v-icon notranslate material-icons theme--light"
     >
       keyboard_arrow_down
     </i>
-  </div>
+  </span>
 </button>
 `;
 
 exports[`c-expand-btn Renders \`c-expand-btn\` expanded correctly. 1`] = `
 <button
-  class="ma-0 v-btn v-btn--icon v-btn--small theme--light"
+  class="v-btn v-btn--icon v-btn--round theme--light v-size--small"
   type="button"
 >
-  <div
+  <span
     class="v-btn__content"
   >
     <i
       aria-hidden="true"
-      class="v-icon material-icons theme--light"
+      class="v-icon notranslate material-icons theme--light"
     >
       keyboard_arrow_up
     </i>
-  </div>
+  </span>
 </button>
 `;
 
 exports[`c-expand-btn Renders \`c-expand-btn\` with custom color correctly. 1`] = `
 <button
-  class="ma-0 v-btn v-btn--icon v-btn--small theme--light"
+  class="v-btn v-btn--icon v-btn--round theme--light v-size--small"
   type="button"
 >
-  <div
+  <span
     class="v-btn__content"
   >
     <i
       aria-hidden="true"
-      class="v-icon material-icons theme--light custom-color--text"
+      class="v-icon notranslate material-icons theme--light custom-color--text"
     >
       keyboard_arrow_down
     </i>
-  </div>
+  </span>
 </button>
 `;

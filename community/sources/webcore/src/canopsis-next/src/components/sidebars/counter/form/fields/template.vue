@@ -1,17 +1,24 @@
-<template lang="pug">
-  v-container.pa-3(fluid)
-    v-layout(align-center, justify-space-between)
-      div.subheading {{ title }}
-      v-btn.primary(
-        small,
+<template>
+  <widget-settings-flat-item :title="title">
+    <template #actions>
+      <v-btn
+        class="primary"
+        small
         @click="showTextEditorModal"
-      ) {{ $t('common.show') }}/{{ $t('common.edit') }}
+      >
+        {{ $t('common.show') }}/{{ $t('common.edit') }}
+      </v-btn>
+    </template>
+  </widget-settings-flat-item>
 </template>
 
 <script>
 import { MODALS } from '@/constants';
 
+import WidgetSettingsFlatItem from '@/components/sidebars/partials/widget-settings-flat-item.vue';
+
 export default {
+  components: { WidgetSettingsFlatItem },
   props: {
     value: {
       type: String,

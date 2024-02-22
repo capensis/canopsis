@@ -1,71 +1,80 @@
-<template lang="pug">
-  v-layout(column)
-    c-id-field(v-field="form._id", :disabled="onlyUserPrefs || !isNew")
-    c-name-field(
-      v-field="form.name",
-      :label="$t('common.username')",
-      :disabled="onlyUserPrefs",
-      browser-autocomplete="new-password",
+<template>
+  <v-layout column>
+    <c-id-field
+      v-field="form._id"
+      :disabled="onlyUserPrefs || !isNew"
+    />
+    <c-name-field
+      v-field="form.name"
+      :label="$t('common.username')"
+      :disabled="onlyUserPrefs"
+      autocomplete="new-password"
       required
-    )
-    v-text-field(
-      v-field="form.firstname",
-      :label="$t('user.firstName')",
+    />
+    <v-text-field
+      v-field="form.firstname"
+      :label="$t('user.firstName')"
       :disabled="onlyUserPrefs"
-    )
-    v-text-field(
-      v-field="form.lastname",
-      :label="$t('user.lastName')",
+    />
+    <v-text-field
+      v-field="form.lastname"
+      :label="$t('user.lastName')"
       :disabled="onlyUserPrefs"
-    )
-    v-text-field(
-      v-field="form.email",
-      v-validate="'required|email'",
-      :label="$t('user.email')",
-      :disabled="onlyUserPrefs",
-      :error-messages="errors.collect('email')",
-      name="email",
-      browser-autocomplete="new-password"
-    )
-    c-password-field(
-      v-field="form.password",
-      :required="isNew",
-      browser-autocomplete="new-password"
-    )
-    c-role-field(
-      v-field="form.roles",
-      :disabled="onlyUserPrefs",
-      :label="$tc('common.role', 2)",
-      required,
-      multiple,
+    />
+    <v-text-field
+      v-field="form.email"
+      v-validate="'required|email'"
+      :label="$t('user.email')"
+      :disabled="onlyUserPrefs"
+      :error-messages="errors.collect('email')"
+      name="email"
+      autocomplete="new-password"
+    />
+    <c-password-field
+      v-field="form.password"
+      :required="isNew"
+      autocomplete="new-password"
+    />
+    <c-role-field
+      v-field="form.roles"
+      :disabled="onlyUserPrefs"
+      :label="$tc('common.role', 2)"
+      required
+      multiple
       chips
-    )
-    c-language-field(
-      v-field="form.ui_language",
+    />
+    <c-language-field
+      v-field="form.ui_language"
       :label="$t('user.language')"
-    )
-    v-select.mt-0(
-      v-field="form.ui_groups_navigation_type",
-      :label="$t('user.navigationType')",
+    />
+    <v-select
+      v-field="form.ui_groups_navigation_type"
+      :label="$t('user.navigationType')"
       :items="groupsNavigationItems"
-    )
-    c-theme-field(v-field="form.ui_theme")
-    v-layout(v-if="!isNew", row, align-center)
-      div {{ $t('common.authKey') }}: {{ user.authkey }}
-      c-copy-btn(
-        :value="user.authkey",
-        :tooltip="$t('common.copyToClipboard')",
-        small,
-        fab,
-        left,
-        @success="showCopyAuthKeySuccessPopup",
+      class="mt-0"
+    />
+    <c-theme-field v-field="form.ui_theme" />
+    <v-layout
+      v-if="!isNew"
+      align-center
+    >
+      <div>{{ $t('common.authKey') }}: {{ user.authkey }}</div>
+      <c-copy-btn
+        :value="user.authkey"
+        :tooltip="$t('common.copyToClipboard')"
+        small
+        fab
+        left
+        @success="showCopyAuthKeySuccessPopup"
         @error="showCopyAuthKeyErrorPopup"
-      )
-    c-enabled-field(
-      v-field="form.enable",
+      />
+    </v-layout>
+    <c-enabled-field
+      v-field="form.enable"
       :disabled="onlyUserPrefs"
-    )
-    view-selector(v-field="form.defaultview")
+    />
+    <view-selector v-field="form.defaultview" />
+  </v-layout>
 </template>
 
 <script>

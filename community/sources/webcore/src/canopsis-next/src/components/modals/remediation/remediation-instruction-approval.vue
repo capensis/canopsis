@@ -1,38 +1,61 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ $t('modals.remediationInstructionApproval.title') }}
-      template(#text="")
-        v-fade-transition
-          v-layout(v-if="!remediationInstructionApproval", justify-center)
-            v-progress-circular(color="primary", indeterminate)
-          v-layout(v-else, column)
-            remediation-instruction-approval-alert(
-              :approval="remediationInstructionApproval.approval"
-            )
-            remediation-instruction-approval-tabs(
-              :original="remediationInstructionApproval.original",
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ $t('modals.remediationInstructionApproval.title') }}</span>
+      </template>
+      <template #text="">
+        <v-fade-transition>
+          <v-layout
+            v-if="!remediationInstructionApproval"
+            justify-center
+          >
+            <v-progress-circular
+              color="primary"
+              indeterminate
+            />
+          </v-layout>
+          <v-layout
+            v-else
+            column
+          >
+            <remediation-instruction-approval-alert :approval="remediationInstructionApproval.approval" />
+            <remediation-instruction-approval-tabs
+              :original="remediationInstructionApproval.original"
               :updated="remediationInstructionApproval.updated"
-            )
-      template(#actions="")
-        v-btn(
-          depressed,
-          flat,
+            />
+          </v-layout>
+        </v-fade-transition>
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
           @click="$modals.hide"
-        ) {{ $t('common.cancel') }}
-        v-btn.warning(
-          :disabled="isDisabled || !remediationInstructionApproval",
-          :loading="submitting",
-          depressed,
-          flat,
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :disabled="isDisabled || !remediationInstructionApproval"
+          :loading="submitting"
+          class="warning"
+          depressed
+          text
           @click="dismiss"
-        ) {{ $t('common.dismiss') }}
-        v-btn.primary(
-          :disabled="isDisabled || !remediationInstructionApproval",
-          :loading="submitting",
+        >
+          {{ $t('common.dismiss') }}
+        </v-btn>
+        <v-btn
+          :disabled="isDisabled || !remediationInstructionApproval"
+          :loading="submitting"
+          class="primary"
           @click="approve"
-        ) {{ $t('common.approve') }}
+        >
+          {{ $t('common.approve') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>

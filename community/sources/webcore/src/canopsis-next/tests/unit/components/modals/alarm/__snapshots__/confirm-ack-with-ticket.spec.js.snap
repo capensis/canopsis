@@ -3,7 +3,7 @@
 exports[`confirm-ack-with-ticket Renders \`confirm-ack-with-ticket\` with empty modal 1`] = `
 <div
   class="modal-wrapper"
-  close="close"
+  close=""
 >
   <div
     class="title"
@@ -12,61 +12,66 @@ exports[`confirm-ack-with-ticket Renders \`confirm-ack-with-ticket\` with empty 
       Are you sure?
     </span>
   </div>
-   
   <div
     class="text"
   >
     <div
-      class="v-alert info"
+      class="v-alert v-sheet theme--dark info"
+      role="alert"
     >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light v-alert__icon"
+      <div
+        class="v-alert__wrapper"
       >
-        info
-      </i>
-      <div>
-        A ticket number has been specified.
+        <i
+          aria-hidden="true"
+          class="v-icon notranslate v-alert__icon material-icons theme--dark"
+        >
+          info
+        </i>
+        <div
+          class="v-alert__content"
+        >
+      A ticket number has been specified.
         Maybe you wanted to associate this ticket number to the alarm.
         If so, click on "Continue and associate ticket" button.
         To continue the ack action without taking ticket number into account,
         click on "Continue" button.
+        </div>
       </div>
     </div>
   </div>
-   
   <div
     class="actions"
   >
     <button
-      class="v-btn v-btn--flat theme--light"
+      class="v-btn v-btn--text theme--light v-size--default"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        Cancel
-      </div>
+      Cancel
+      </span>
     </button>
     <button
-      class="primary v-btn theme--light"
+      class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        Continue
-      </div>
+      Continue
+      </span>
     </button>
     <button
-      class="warning v-btn theme--light"
+      class="warning v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        Continue and associate ticket
-      </div>
+      Continue and associate ticket
+      </span>
     </button>
   </div>
 </div>

@@ -1,28 +1,38 @@
-<template lang="pug">
-  v-layout(column)
-    c-name-field(v-field="form.name", required)
-    c-pbehavior-type-field(
-      v-field="form.type",
-      name="type",
+<template>
+  <v-layout column>
+    <c-name-field
+      v-field="form.name"
       required
-    )
-    file-selector.mt-2(
-      :error-messages="errors.collect('file')",
-      with-files-list,
+    />
+    <c-pbehavior-type-field
+      v-field="form.type"
+      name="type"
+      required
+    />
+    <file-selector
+      :error-messages="errors.collect('file')"
+      class="mt-2"
+      with-files-list
       @change="changeFiles"
-    )
-      template(#activator="{ on, disabled }")
-        v-tooltip(top)
-          template(#activator="{ on: tooltipOn }")
-            v-btn.ma-0(
-              v-on="{ ...on, ...tooltipOn }",
-              :color="errors.has('file') ? 'error' : 'primary'",
-              :disabled="disabled",
-              small,
-              outline
-            )
-              v-icon cloud_upload
-          span {{ $t('common.chooseFile') }}
+    >
+      <template #activator="{ on, disabled }">
+        <v-tooltip top>
+          <template #activator="{ on: tooltipOn }">
+            <v-btn
+              :color="errors.has('file') ? 'error' : 'primary'"
+              :disabled="disabled"
+              small
+              outlined
+              v-on="{ ...on, ...tooltipOn }"
+            >
+              <v-icon>cloud_upload</v-icon>
+            </v-btn>
+          </template>
+          <span>{{ $t('common.chooseFile') }}</span>
+        </v-tooltip>
+      </template>
+    </file-selector>
+  </v-layout>
 </template>
 
 <script>

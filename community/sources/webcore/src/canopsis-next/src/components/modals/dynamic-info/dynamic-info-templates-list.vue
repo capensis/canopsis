@@ -1,46 +1,67 @@
-<template lang="pug">
-  modal-wrapper(close)
-    template(#title="")
-      span {{ $t('modals.dynamicInfoTemplatesList.title') }}
-    template(#text="")
-      div
-        v-layout(justify-end)
-          v-btn.primary(fab, small, flat, @click="showAddTemplateModal")
-            v-icon add
-        v-data-table(
-          :items="templates",
-          :headers="headers",
-          :loading="pending",
-          item-key="_id",
-          expand
-        )
-          template(#items="props")
-            tr(@click="props.expanded = !props.expanded")
-              td {{ props.item.title }}
-              td
-                v-layout(row)
-                  c-action-btn(
-                    :tooltip="$t('modals.createDynamicInfo.create.title')",
-                    icon="assignment",
-                    @click="selectTemplate(props.item)"
-                  )
-                  c-action-btn(
-                    type="edit",
-                    @click="showEditTemplateModal(props.item)"
-                  )
-                  c-action-btn(
-                    type="delete",
-                    @click="showDeleteTemplateModal(props.item._id)"
-                  )
-          template(#expand="{ item }")
-            v-container.secondary.lighten-2
-              v-card
-                v-card-text
-                  v-data-iterator(:items="item.names")
-                    template(#item="nameProps")
-                      v-flex
-                        v-card
-                          v-card-title {{ nameProps.item }}
+<template>
+  <modal-wrapper close>
+    <template #title="">
+      <span>{{ $t('modals.dynamicInfoTemplatesList.title') }}</span>
+    </template>
+    <template #text="">
+      <div>
+        <v-layout justify-end>
+          <v-btn
+            class="primary"
+            fab
+            small
+            text
+            @click="showAddTemplateModal"
+          >
+            <v-icon>add</v-icon>
+          </v-btn>
+        </v-layout>
+        <v-data-table
+          :items="templates"
+          :headers="headers"
+          :loading="pending"
+          item-key="_id"
+          loader-height="2"
+          show-expand
+        >
+          <template #item.actions="{ item }">
+            <v-layout>
+              <c-action-btn
+                :tooltip="$t('modals.createDynamicInfo.create.title')"
+                icon="assignment"
+                @click="selectTemplate(item)"
+              />
+              <c-action-btn
+                type="edit"
+                @click="showEditTemplateModal(item)"
+              />
+              <c-action-btn
+                type="delete"
+                @click="showDeleteTemplateModal(item._id)"
+              />
+            </v-layout>
+          </template>
+          <template #expanded-item="{ item }">
+            <v-container class="secondary lighten-2">
+              <v-card>
+                <v-card-text>
+                  <v-data-iterator :items="item.names">
+                    <template #item="nameProps">
+                      <v-flex>
+                        <v-card>
+                          <v-card-title>{{ nameProps.item }}</v-card-title>
+                        </v-card>
+                      </v-flex>
+                    </template>
+                  </v-data-iterator>
+                </v-card-text>
+              </v-card>
+            </v-container>
+          </template>
+        </v-data-table>
+      </div>
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>
@@ -73,6 +94,7 @@ export default {
         },
         {
           text: this.$t('common.actionsLabel'),
+          value: 'actions',
           sortable: false,
         },
       ];

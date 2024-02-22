@@ -12,7 +12,7 @@ import { PAGINATION_LIMIT } from '@/config';
 
 import { isResolvedAlarm } from '@/helpers/entities/alarm/form';
 import { convertWidgetChartsToPerfDataQuery } from '@/helpers/entities/metric/query';
-import { convertMultiSortToRequest } from '@/helpers/entities/shared/query';
+import { convertSortToRequest } from '@/helpers/entities/shared/query';
 import { getTemplateVariables } from '@/helpers/handlebars/variables';
 
 /**
@@ -93,21 +93,23 @@ export const convertAlarmWidgetParametersToActiveColumns = ({
 export function convertAlarmWidgetToQuery(widget) {
   const {
     liveReporting = {},
-    itemsPerPage,
+    itemsPerPage = PAGINATION_LIMIT,
+    opened = ALARMS_OPENED_VALUES.opened,
     sort,
     mainFilter,
-    opened = ALARMS_OPENED_VALUES.opened,
     usedAlarmProperties,
   } = widget.parameters;
 
   const query = {
     opened,
+    itemsPerPage,
+
     page: 1,
-    limit: itemsPerPage || PAGINATION_LIMIT,
     with_instructions: true,
     with_declare_tickets: true,
     with_links: true,
-    multiSortBy: [],
+    sortBy: [],
+    sortDesc: [],
     lockedFilter: mainFilter,
   };
 
@@ -128,11 +130,9 @@ export function convertAlarmWidgetToQuery(widget) {
     query.active_columns = activeColumns;
   }
 
-  if (sort && sort.column && sort.order) {
-    query.multiSortBy.push({
-      sortBy: sort.column,
-      descending: sort.order === SORT_ORDERS.desc,
-    });
+  if (sort?.column && sort?.order) {
+    query.sortBy = [sort.column];
+    query.sortDesc = [sort.order === SORT_ORDERS.desc];
   }
 
   return query;
@@ -161,7 +161,7 @@ export function convertAlarmUserPreferenceToQuery({ content }) {
   };
 
   if (itemsPerPage) {
-    query.limit = itemsPerPage;
+    query.itemsPerPage = itemsPerPage;
   }
 
   return query;
@@ -220,8 +220,7 @@ export const convertAlarmDetailsQueryToRequest = query => ({
   ...query,
 
   children: {
-    ...omit(query.children, ['multiSortBy']),
-
-    multi_sort: convertMultiSortToRequest(query.children?.multiSortBy),
+    ...omit(query.children, ['sortBy', 'sortDesc']),
+    ...convertSortToRequest(query.children?.sortBy, query.children?.sortDesc),
   },
 });

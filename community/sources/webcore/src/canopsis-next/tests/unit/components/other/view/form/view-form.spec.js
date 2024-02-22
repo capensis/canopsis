@@ -46,9 +46,9 @@ describe('view-form', () => {
 
     const newTitle = Faker.datatype.string();
 
-    selectTitleField(wrapper).vm.$emit('input', newTitle);
+    selectTitleField(wrapper).triggerCustomEvent('input', newTitle);
 
-    expect(wrapper).toEmit('input', { ...form, title: newTitle });
+    expect(wrapper).toEmitInput({ ...form, title: newTitle });
   });
 
   test('Description changed after trigger description field', () => {
@@ -60,9 +60,9 @@ describe('view-form', () => {
 
     const newDescription = Faker.datatype.string();
 
-    selectDescriptionField(wrapper).vm.$emit('input', newDescription);
+    selectDescriptionField(wrapper).triggerCustomEvent('input', newDescription);
 
-    expect(wrapper).toEmit('input', { ...form, description: newDescription });
+    expect(wrapper).toEmitInput({ ...form, description: newDescription });
   });
 
   test('Enabled changed after trigger enabled field', () => {
@@ -74,9 +74,9 @@ describe('view-form', () => {
 
     const newEnabled = !form.enabled;
 
-    selectEnabledField(wrapper).vm.$emit('input', newEnabled);
+    selectEnabledField(wrapper).triggerCustomEvent('input', newEnabled);
 
-    expect(wrapper).toEmit('input', { ...form, enabled: newEnabled });
+    expect(wrapper).toEmitInput({ ...form, enabled: newEnabled });
   });
 
   it('Periodic refresh changed after trigger periodic refresh field', () => {
@@ -88,9 +88,9 @@ describe('view-form', () => {
 
     const newPeriodicRefresh = randomPeriodicRefresh();
 
-    selectPeriodicRefreshField(wrapper).vm.$emit('input', newPeriodicRefresh);
+    selectPeriodicRefreshField(wrapper).triggerCustomEvent('input', newPeriodicRefresh);
 
-    expect(wrapper).toEmit('input', { ...form, periodic_refresh: newPeriodicRefresh });
+    expect(wrapper).toEmitInput({ ...form, periodic_refresh: newPeriodicRefresh });
   });
 
   it('Tag changed after trigger tag field', () => {
@@ -102,9 +102,9 @@ describe('view-form', () => {
 
     const newTags = [Faker.datatype.string()];
 
-    selectTagsField(wrapper).vm.$emit('input', newTags);
+    selectTagsField(wrapper).triggerCustomEvent('input', newTags);
 
-    expect(wrapper).toEmit('input', { ...form, tags: newTags });
+    expect(wrapper).toEmitInput({ ...form, tags: newTags });
   });
 
   it('Group changed after trigger group field', () => {
@@ -118,15 +118,15 @@ describe('view-form', () => {
       _id: Faker.datatype.string(),
     };
 
-    selectGroupField(wrapper).vm.$emit('input', newGroup);
+    selectGroupField(wrapper).triggerCustomEvent('input', newGroup);
 
-    expect(wrapper).toEmit('input', { ...form, group: newGroup });
+    expect(wrapper).toEmitInput({ ...form, group: newGroup });
   });
 
   test('Renders `view-form` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `view-form` with custom props', () => {
@@ -146,6 +146,6 @@ describe('view-form', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

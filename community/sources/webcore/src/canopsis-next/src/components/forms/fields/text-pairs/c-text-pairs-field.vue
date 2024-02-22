@@ -1,28 +1,60 @@
-<template lang="pug">
-  v-layout.text-pairs(:class="{ 'text-pairs__disabled': disabled }", row, wrap)
-    v-flex(v-show="title", xs12)
-      h4.ml-1 {{ title }}
-    v-flex(xs12)
-      slot(v-if="!items.length", name="no-data")
-      c-text-pair-field(
-        v-for="(item, index) in items",
-        v-field="items[index]",
-        :key="item[itemKey]",
-        :disabled="disabled",
-        :value-required="valueRequired",
-        :text-required="textRequired",
-        :text-label="textLabel",
-        :value-label="valueLabel",
-        :item-text="itemText",
-        :item-value="itemValue",
-        :name="item[itemKey]",
+<template>
+  <v-layout
+    :class="{ 'text-pairs__disabled': disabled }"
+    class="text-pairs"
+    wrap
+  >
+    <v-flex
+      v-show="title"
+      xs12
+    >
+      <h4 class="ml-1">
+        {{ title }}
+      </h4>
+    </v-flex>
+    <v-flex xs12>
+      <slot
+        v-if="!items.length"
+        name="no-data"
+      />
+      <c-text-pair-field
+        v-field="items[index]"
+        v-for="(item, index) in items"
+        :key="item[itemKey]"
+        :disabled="disabled"
+        :value-required="valueRequired"
+        :text-required="textRequired"
+        :text-label="textLabel"
+        :value-label="valueLabel"
+        :item-text="itemText"
+        :item-value="itemValue"
+        :name="item[itemKey]"
         @remove="removeItemFromArray(index)"
-      )
-        template(#append-value="")
-          slot(name="append-value", :item="item")
-    v-flex(v-if="!disabled", xs12)
-      v-layout
-        v-btn.ml-0(color="primary", outline, @click="addItem") {{ addButtonLabel || $t('common.add') }}
+      >
+        <template #append-value="">
+          <slot
+            :item="item"
+            name="append-value"
+          />
+        </template>
+      </c-text-pair-field>
+    </v-flex>
+    <v-flex
+      v-if="!disabled"
+      xs12
+    >
+      <v-layout>
+        <v-btn
+          class="ml-0"
+          color="primary"
+          outlined
+          @click="addItem"
+        >
+          {{ addButtonLabel || $t('common.add') }}
+        </v-btn>
+      </v-layout>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

@@ -8,7 +8,7 @@ exports[`tag-form Renders \`tag-form\` with custom props 1`] = `
     disabled="true"
     max-length="11"
     name="value"
-    required="required"
+    required=""
   />
   <c-color-picker-field-stub
     value="#2b3e4f"
@@ -24,7 +24,7 @@ exports[`tag-form Renders \`tag-form\` with default props 1`] = `
   <c-name-field-stub
     max-length="20"
     name="value"
-    required="required"
+    required=""
   />
   <c-color-picker-field-stub />
   <tag-patterns-form-stub

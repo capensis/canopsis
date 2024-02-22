@@ -20,7 +20,7 @@ exports[`mermaid-editor Renders \`mermaid-editor\` with custom props 1`] = `
       class="flex mermaid-editor__content"
     >
       <div
-        class="layout mermaid-editor__toolbar px-2 row align-center justify-end"
+        class="layout mermaid-editor__toolbar px-2 align-center justify-end"
       >
         <add-location-btn-stub
           class="mr-2"
@@ -73,7 +73,7 @@ exports[`mermaid-editor Renders \`mermaid-editor\` with form 1`] = `
       class="flex mermaid-editor__content"
     >
       <div
-        class="layout mermaid-editor__toolbar px-2 row align-center justify-end"
+        class="layout mermaid-editor__toolbar px-2 align-center justify-end"
       >
         <add-location-btn-stub
           class="mr-2"
@@ -126,7 +126,7 @@ exports[`mermaid-editor Renders \`mermaid-editor\` with validation errors  1`] =
       class="flex mermaid-editor__content"
     >
       <div
-        class="layout mermaid-editor__toolbar px-2 row align-center justify-end"
+        class="layout mermaid-editor__toolbar px-2 align-center justify-end"
       >
         <add-location-btn-stub
           class="mr-2"

@@ -1,35 +1,63 @@
-<template lang="pug">
-  div
-    div(v-if="withFilesList")
-      div.ml-2.font-italic(v-for="file in files", :key="file.name") {{ file.name }}
-        v-btn(icon, flat, small, @click="removeFileFromSelections(file.name)")
-          v-icon(small) close
-    div.file-selector-button-wrapper(
-      v-on="wrapperListeners",
+<template>
+  <div>
+    <div v-if="withFilesList">
+      <div
+        v-for="file in files"
+        :key="file.name"
+        class="ml-2 font-italic"
+      >
+        {{ file.name }}
+        <v-btn
+          icon
+          text
+          small
+          @click="removeFileFromSelections(file.name)"
+        >
+          <v-icon small>
+            close
+          </v-icon>
+        </v-btn>
+      </div>
+    </div>
+    <div
       :class="{ disabled: fullDisabled }"
-    )
-      slot(
-        :disabled="fullDisabled",
-        :loading="loading",
-        :on="scopedActivatorSlotListeners",
+      class="file-selector-button-wrapper"
+      v-on="wrapperListeners"
+    >
+      <slot
+        :disabled="fullDisabled"
+        :loading="loading"
+        :on="scopedActivatorSlotListeners"
         name="activator"
-      )
-        v-btn(
-          v-on="scopedActivatorSlotListeners",
-          :disabled="fullDisabled",
+      >
+        <v-btn
+          :disabled="fullDisabled"
           :loading="loading"
-        )
-          v-icon cloud_upload
-    input.hidden(
-      ref="fileInput",
-      type="file",
-      :multiple="multiple",
-      :accept="accept",
-      @change="change",
+          v-on="scopedActivatorSlotListeners"
+        >
+          <v-icon>cloud_upload</v-icon>
+        </v-btn>
+      </slot>
+    </div>
+    <input
+      ref="fileInput"
+      :multiple="multiple"
+      :accept="accept"
+      class="hidden"
+      type="file"
+      @change="change"
       @click.stop=""
-    )
-    div.mt-2(v-if="!hideDetails")
-      v-messages(:value="errorMessages", color="error")
+    >
+    <div
+      v-if="!hideDetails"
+      class="mt-2"
+    >
+      <v-messages
+        :value="errorMessages"
+        color="error"
+      />
+    </div>
+  </div>
 </template>
 
 <script>

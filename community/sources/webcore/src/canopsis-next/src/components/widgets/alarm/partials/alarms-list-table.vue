@@ -1,138 +1,192 @@
-<template lang="pug">
-  v-flex(
-    v-on="wrapperListeners",
+<template>
+  <v-flex
     v-resize="changeHeaderPositionOnResize"
-  )
-    c-empty-data-table-columns(v-if="!columns.length")
-    div(v-else)
-      v-layout.alarms-list-table__top-pagination.px-4.position-relative(
-        v-if="shownTopPagination",
-        ref="actions",
-        row,
+    v-on="wrapperListeners"
+  >
+    <c-empty-data-table-columns v-if="!columns.length" />
+    <div v-else>
+      <v-layout
+        v-if="shownTopPagination"
+        ref="actions"
+        class="alarms-list-table__top-pagination px-4 position-relative"
         align-center
-      )
-        v-flex.alarms-list-table__top-pagination--left(v-if="densable || !hideActions", xs6)
-          v-layout(row, align-center, justify-start)
-            c-density-btn-toggle(v-if="densable", :value="dense", @change="$emit('update:dense', $event)")
-            v-fade-transition(v-if="!hideActions")
-              v-flex.px-1(v-show="unresolvedSelected.length")
-                mass-actions-panel(
-                  :items="unresolvedSelected",
-                  :widget="widget",
-                  :refresh-alarms-list="refreshAlarmsList",
+      >
+        <v-flex
+          v-if="densable || !hideActions"
+          class="alarms-list-table__top-pagination--left"
+          xs6
+        >
+          <v-layout
+            align-center
+            justify-start
+          >
+            <c-density-btn-toggle
+              v-if="densable"
+              :value="dense"
+              @change="$emit('update:dense', $event)"
+            />
+            <v-fade-transition v-if="!hideActions">
+              <v-flex
+                v-show="unresolvedSelected.length"
+                class="px-1"
+              >
+                <mass-actions-panel
+                  :items="unresolvedSelected"
+                  :widget="widget"
+                  :refresh-alarms-list="refreshAlarmsList"
                   @clear:items="clearSelected"
-                )
-        v-flex.alarms-list-table__top-pagination--center-absolute(v-if="!hidePagination", xs4)
-          c-pagination(
-            :page="pagination.page",
-            :limit="pagination.limit",
-            :total="totalItems",
-            type="top",
-            @input="updateQueryPage"
-          )
-        v-flex.alarms-list-table__top-pagination--right-absolute(v-if="resizableColumn || draggableColumn")
-          c-action-btn(
-            v-if="isColumnsChanging",
-            :tooltip="$t('alarm.tooltips.resetChangeColumns')",
-            icon="$vuetify.icons.restart_alt",
+                />
+              </v-flex>
+            </v-fade-transition>
+          </v-layout>
+        </v-flex>
+        <v-flex
+          v-if="!hidePagination"
+          class="alarms-list-table__top-pagination--center-absolute"
+          xs4
+        >
+          <c-pagination
+            :page="options.page"
+            :limit="options.itemsPerPage"
+            :total="totalItems"
+            type="top"
+            @input="updatePage"
+          />
+        </v-flex>
+        <v-flex
+          v-if="resizableColumn || draggableColumn"
+          class="alarms-list-table__top-pagination--right-absolute"
+        >
+          <c-action-btn
+            v-if="isColumnsChanging"
+            :tooltip="$t('alarm.tooltips.resetChangeColumns')"
+            icon="$vuetify.icons.restart_alt"
             @click="resetColumnsSettings"
-          )
-          c-action-btn(
-            :icon="isColumnsChanging ? 'lock_open' : 'lock_outline'",
-            :tooltip="$t(`alarm.tooltips.${isColumnsChanging ? 'finishChangeColumns' : 'startChangeColumns'}`)",
+          />
+          <c-action-btn
+            :icon="isColumnsChanging ? 'lock_open' : 'lock_outline'"
+            :tooltip="$t(`alarm.tooltips.${isColumnsChanging ? 'finishChangeColumns' : 'startChangeColumns'}`)"
             @click="toggleColumnEditingMode"
-          )
-      v-data-table.alarms-list-table(
-        ref="dataTable",
-        v-model="selected",
-        :class="vDataTableClass",
-        :style="vDataTableStyle",
-        :items="alarms",
-        :headers="headersWithWidth",
-        :total-items="totalItems",
-        :pagination="pagination",
-        :select-all="selectable",
-        :loading="loading || columnsFiltersPending",
-        :expand="expandable",
-        :dense="isMediumDense",
-        :ultra-dense="isSmallDense",
-        header-key="value",
-        item-key="_id",
-        hide-actions,
-        multi-sort,
-        @update:pagination="updatePaginationHandler"
-      )
-        template(#progress="")
-          v-fade-transition
-            v-progress-linear(color="primary", height="2", indeterminate)
-        template(#headerCell="{ header, index }")
-          alarm-header-cell(
-            :header="header",
-            :selected-tag="selectedTag",
-            :resizing="resizingMode",
+          />
+        </v-flex>
+      </v-layout>
+      <v-data-table
+        v-model="selected"
+        ref="dataTable"
+        :class="vDataTableClass"
+        :style="vDataTableStyle"
+        :items="alarms"
+        :headers="headersWithWidth"
+        :server-items-length="totalItems"
+        :options="options"
+        :show-select="selectable"
+        :loading="loading || columnsFiltersPending"
+        :dense="isMediumDense"
+        :ultra-dense="isSmallDense"
+        class="alarms-list-table"
+        item-key="_id"
+        loader-height="2"
+        hide-default-footer
+        multi-sort
+        @update:options="$emit('update:options', $event)"
+      >
+        <template #progress="">
+          <v-fade-transition>
+            <v-progress-linear
+              color="primary"
+              height="2"
+              indeterminate
+            />
+          </v-fade-transition>
+        </template>
+        <template
+          v-for="item in headers"
+          #[`header.${item.value}`]="{ header }"
+        >
+          <alarm-header-cell
+            :key="`header.${item.value}`"
+            :header="header"
+            :selected-tag="selectedTag"
+            :resizing="resizingMode"
             @clear:tag="$emit('clear:tag')"
-          )
-          template
-            span.alarms-list-table__dragging-handler(v-if="draggingMode", @click.stop="")
-            span.alarms-list-table__resize-handler(
-              v-if="resizingMode",
-              @mousedown.stop.prevent="startColumnResize(header.value)",
+          />
+          <template>
+            <span
+              v-if="draggingMode"
+              :key="`header.${item.value}.drag`"
+              class="alarms-list-table__dragging-handler"
               @click.stop=""
-            )
-        template(#items="props")
-          alarms-list-row(
-            v-model="props.selected",
-            v-on="rowListeners",
-            :ref="`row${props.item._id}`",
-            :key="props.item._id",
-            :selectable="selectable",
-            :expandable="expandable",
-            :widget="widget",
-            :expanded="props.expanded",
-            :alarm="props.item",
-            :headers="headers",
-            :parent-alarm="parentAlarm",
-            :refresh-alarms-list="refreshAlarmsList",
-            :selecting="selecting",
-            :selected-tag="selectedTag",
-            :medium="isMediumDense",
-            :small="isSmallDense",
-            :resizing="resizingMode",
-            :search="search",
-            :wrap-actions="resizableColumn",
-            :show-instruction-icon="hasInstructionsAlarms",
-            @start:resize="startColumnResize",
-            @select:tag="$emit('select:tag', $event)",
-            @expand="props.expanded = $event"
-          )
-        template(#expand="{ item, index }")
-          alarms-expand-panel(
-            :alarm="item",
-            :parent-alarm-id="parentAlarmId",
-            :widget="widget",
-            :search="search",
-            :hide-children="hideChildren",
+            />
+            <span
+              v-if="resizingMode"
+              :key="`header.cell.${item.value}.resize`"
+              class="alarms-list-table__resize-handler"
+              @mousedown.stop.prevent="startColumnResize(header.value)"
+              @click.stop=""
+            />
+          </template>
+        </template>
+        <template #item="{ isSelected, isExpanded, item, select, expand }">
+          <alarms-list-row
+            :ref="`row${item._id}`"
+            :key="item._id"
+            :selected="isSelected"
+            :selectable="selectable"
+            :expandable="expandable"
+            :expanded="isExpanded"
+            :alarm="item"
+            :widget="widget"
+            :headers="headers"
+            :parent-alarm="parentAlarm"
+            :refresh-alarms-list="refreshAlarmsList"
+            :selecting="selecting"
+            :selected-tag="selectedTag"
+            :medium="isMediumDense"
+            :small="isSmallDense"
+            :resizing="resizingMode"
+            :search="search"
+            :wrap-actions="resizableColumn"
+            :show-instruction-icon="hasInstructionsAlarms"
+            v-on="rowListeners"
+            @start:resize="startColumnResize"
             @select:tag="$emit('select:tag', $event)"
-          )
-    c-table-pagination(
-      v-if="!hidePagination",
-      :total-items="totalItems",
-      :rows-per-page="pagination.limit",
-      :page="pagination.page",
-      @update:page="updateQueryPage",
-      @update:rows-per-page="updateRecordsPerPage"
-    )
-    component(
-      v-bind="additionalComponent.props",
-      v-on="additionalComponent.on",
+            @click:state="openRootCauseDiagram"
+            @expand="expand"
+            @input="select"
+          />
+        </template>
+        <template #expanded-item="{ item }">
+          <alarms-expand-panel
+            :alarm="item"
+            :parent-alarm-id="parentAlarmId"
+            :widget="widget"
+            :search="search"
+            :hide-children="hideChildren"
+            @select:tag="$emit('select:tag', $event)"
+          />
+        </template>
+      </v-data-table>
+    </div>
+    <c-table-pagination
+      v-if="!hidePagination"
+      :total-items="totalItems"
+      :items-per-page="options.itemsPerPage"
+      :page="options.page"
+      @update:page="updatePage"
+      @update:items-per-page="updateItemsPerPage"
+    />
+    <component
+      v-bind="additionalComponent.props"
       :is="additionalComponent.is"
-    )
+      v-on="additionalComponent.on"
+    />
+  </v-flex>
 </template>
 
 <script>
 import { get, intersectionBy } from 'lodash';
 
-import { ALARM_DENSE_TYPES, ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS } from '@/constants';
+import { ALARM_DENSE_TYPES, ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS, MODALS } from '@/constants';
 
 import featuresService from '@/services/features';
 
@@ -187,7 +241,7 @@ export default {
       type: Number,
       required: false,
     },
-    pagination: {
+    options: {
       type: Object,
       default: () => ({}),
     },
@@ -273,7 +327,7 @@ export default {
     },
 
     expanded() {
-      return this.$refs.dataTable.expanded;
+      return this.$refs.dataTable.expansion;
     },
 
     isColumnsChanging() {
@@ -501,11 +555,11 @@ export default {
       }
     },
 
-    updateRecordsPerPage(limit) {
-      this.$emit('update:rows-per-page', limit);
+    updateItemsPerPage(limit) {
+      this.$emit('update:items-per-page', limit);
     },
 
-    updateQueryPage(page) {
+    updatePage(page) {
       this.$emit('update:page', page);
     },
 
@@ -519,8 +573,14 @@ export default {
       }
     },
 
-    updatePaginationHandler(data) {
-      this.$emit('update:pagination', data);
+    openRootCauseDiagram(entity) {
+      this.$modals.show({
+        name: MODALS.entitiesRootCauseDiagram,
+        config: {
+          entity,
+          colorIndicator: this.widget.parameters.rootCauseColorIndicator,
+        },
+      });
     },
   },
 };
@@ -635,7 +695,7 @@ export default {
   }
 
   &__selecting {
-    & > .v-table__overflow > table > tbody > .alarm-list-row:after {
+    & > .v-data-table__wrapper > table > tbody > .alarm-list-row:after {
       pointer-events: auto;
       opacity: 1;
     }
@@ -648,7 +708,7 @@ export default {
   }
 
   &__grid {
-    & > .v-table__overflow > table {
+    & > .v-data-table__wrapper > table {
       & > tbody > tr > td,
       & > thead > tr > th {
         position: relative;
@@ -659,7 +719,7 @@ export default {
           position: absolute;
           right: -1px;
           top: 0;
-          width: 2px;
+          width: 1px;
           height: 100%;
         }
       }
@@ -667,7 +727,7 @@ export default {
   }
 
   &--fixed {
-    & > .v-table__overflow > table {
+    & > .v-data-table__wrapper > table {
       table-layout: fixed;
       /**
        * TODO: Should be used v-bind later. We should update compiler.
@@ -685,7 +745,7 @@ export default {
   }
 
   &--wrapped {
-    & > .v-table__overflow > table > tbody > tr > td:not(:last-of-type) {
+    & > .v-data-table__wrapper > table > tbody > tr > td:not(:last-of-type) {
       word-break: break-all;
       word-wrap: break-word;
     }
@@ -713,20 +773,6 @@ export default {
 
   tbody {
     position: relative;
-
-    tr:not(.v-datatable__expand-row):not(:first-child) {
-      border-top: unset !important;
-
-      td:first-child:after {
-        content: ' ';
-        position: absolute;
-        background: var(--alarms-list-table-border-color);
-        height: 1px;
-        right: 0;
-        top: 0;
-        left: 0;
-      }
-    }
   }
 
   thead {
@@ -734,20 +780,6 @@ export default {
     transition: .3s cubic-bezier(.25, .8, .5,1);
     transition-property: opacity, background-color;
     z-index: 1;
-
-    tr:first-child {
-      border-bottom: unset !important;
-
-      &:after {
-        content: ' ';
-        position: absolute;
-        background: var(--alarms-list-table-border-color);
-        height: 1px;
-        right: 0;
-        bottom: 0;
-        left: 0;
-      }
-    }
 
     &.head-shadow {
       tr:first-child {
@@ -774,21 +806,19 @@ export default {
     }
   }
 
-  th:not([role='columnheader']) {
-    width: 120px;
+  tr:not(.v-data-table__expanded) th:first-of-type {
+    width: 120px !important;
   }
 
-  .v-datatable--dense,
-  .v-datatable--ultra-dense {
-    thead {
-      th:not([role='columnheader']) {
-        width: 100px;
-      }
+  &.v-data-table--dense,
+  &.v-data-table--ultra-dense {
+    thead tr:not(.v-data-table__expanded) th:first-of-type {
+      width: 100px !important;
     }
   }
 
-  &.columns-lg .v-table {
-    &:not(.v-datatable--dense) {
+  &.columns-lg table {
+    &:not(.v-data-table--dense) {
       td, th {
         padding: 0 8px;
       }

@@ -1,34 +1,35 @@
-<template lang="pug">
-  v-menu(
-    ref="menu",
-    v-model="opened",
-    :close-on-content-click="false",
-    :disabled="disabled",
-    content-class="date-time-picker",
-    transition="slide-y-transition",
-    max-width="290px",
-    right,
-    lazy-with-unmount,
-    lazy
-  )
-    template(#activator="{ on }")
-      div(v-on="on")
-        v-text-field(
-          :label="label",
-          :error-messages="errors.collect(name)",
-          :value="dateTextValue",
-          :append-icon="clearable ? 'close' : ''",
-          :disabled="disabled",
-          readonly,
+<template>
+  <v-menu
+    v-model="opened"
+    ref="menu"
+    :close-on-content-click="false"
+    :disabled="disabled"
+    content-class="date-time-picker"
+    transition="slide-y-transition"
+    max-width="290px"
+    right
+  >
+    <template #activator="{ on }">
+      <div v-on="on">
+        <v-text-field
+          :label="label"
+          :error-messages="errors.collect(name)"
+          :value="dateTextValue"
+          :append-icon="clearable ? 'close' : ''"
+          :disabled="disabled"
+          readonly
           @click:append="clear"
-        )
-    date-time-picker(
-      :value="value",
-      :label="label",
-      :round-hours="roundHours",
-      @close="close",
+        />
+      </div>
+    </template>
+    <date-time-picker
+      :value="value"
+      :label="label"
+      :round-hours="roundHours"
+      @close="close"
       @input="input"
-    )
+    />
+  </v-menu>
 </template>
 
 <script>

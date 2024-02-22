@@ -1,35 +1,57 @@
-<template lang="pug">
-  v-layout.mt-2(column)
-    v-layout(row)
-      v-flex(v-if="!operations.length", xs11)
-        v-alert(:value="true", type="info") {{ $t('remediation.instruction.emptyOperations') }}
-    c-draggable-list-field(
-      v-field="operations",
-      :disabled="disabled",
-      :class="{ 'grey lighten-1': isDragging }",
-      :group="draggableGroup",
-      ghost-class="grey",
-      handle=".operation-drag-handler",
-      @start="startDragging",
+<template>
+  <v-layout
+    class="mt-2"
+    column
+  >
+    <v-layout>
+      <v-flex xs11>
+        <v-alert
+          :value="!operations.length"
+          type="info"
+        >
+          {{ $t('remediation.instruction.emptyOperations') }}
+        </v-alert>
+      </v-flex>
+    </v-layout>
+    <c-draggable-list-field
+      v-field="operations"
+      :disabled="disabled"
+      :class="{ 'grey lighten-1': isDragging }"
+      :group="draggableGroup"
+      ghost-class="grey"
+      handle=".operation-drag-handler"
+      @start="startDragging"
       @end="endDragging"
-    )
-      remediation-instruction-operation-field.py-1(
-        v-for="(operation, index) in operations",
-        v-field="operations[index]",
-        :key="operation.key",
-        :index="index",
-        :operation-number="getOperationNumber(index)",
-        :disabled="disabled",
+    >
+      <remediation-instruction-operation-field
+        v-field="operations[index]"
+        v-for="(operation, index) in operations"
+        :key="operation.key"
+        :index="index"
+        :operation-number="getOperationNumber(index)"
+        :disabled="disabled"
+        class="py-1"
         @remove="removeOperation(index)"
-      )
-    v-layout(row, align-center)
-      v-btn.ml-0(
-        :color="hasOperationsErrors ? 'error' : 'primary'",
-        :disabled="disabled",
-        outline,
+      />
+    </c-draggable-list-field>
+    <v-layout align-center>
+      <v-btn
+        :color="hasOperationsErrors ? 'error' : 'primary'"
+        :disabled="disabled"
+        class="mr-2"
+        outlined
         @click="addOperation"
-      ) {{ $t('remediation.instruction.addOperation') }}
-      span.error--text(v-show="hasOperationsErrors") {{ $t('remediation.instruction.errors.operationRequired') }}
+      >
+        {{ $t('remediation.instruction.addOperation') }}
+      </v-btn>
+      <span
+        v-show="hasOperationsErrors"
+        class="error--text"
+      >
+        {{ $t('remediation.instruction.errors.operationRequired') }}
+      </span>
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>

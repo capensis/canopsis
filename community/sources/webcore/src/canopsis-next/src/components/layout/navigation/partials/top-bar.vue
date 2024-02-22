@@ -1,30 +1,48 @@
-<template lang="pug">
-  v-toolbar.top-bar.primary(
-    :height="$config.TOP_BAR_HEIGHT",
-    dense,
-    fixed,
+<template>
+  <v-app-bar
+    :height="$config.TOP_BAR_HEIGHT"
+    class="top-bar primary"
+    dense
+    fixed
     app
-  )
-    v-toolbar-side-icon.ml-2.white--text(
-      v-if="isShownGroupsSideBar && !$route.meta.simpleNavigation",
+  >
+    <v-app-bar-nav-icon
+      v-if="isShownGroupsSideBar && !$route.meta.simpleNavigation"
+      class="ml-0 white--text"
       @click="$emit('toggleSideBar')"
-    )
-    v-layout(v-else, fill-height, align-center)
-      app-logo.canopsis-logo.mr-2
-      v-layout.version.ml-1(fill-height, align-end)
-        logged-users-count(badge-color="secondary")
-        app-version
-    top-bar-title(:title="appTitle")
-    healthcheck-chips-list(v-if="isProVersion && hasAccessToHealthcheckStatus")
-    v-spacer(v-else)
-    portal-target(:name="$constants.PORTALS_NAMES.additionalTopBarItems")
-    v-toolbar-items(v-if="!$route.meta.simpleNavigation")
-      top-bar-exploitation-menu
-      top-bar-administration-menu
-      top-bar-notifications-menu
-      top-bar-user-menu
-    template(v-if="isShownGroupsTopBar", #extension="")
-      groups-top-bar
+    />
+    <v-layout
+      v-else
+      fill-height
+      align-center
+    >
+      <app-logo class="canopsis-logo mr-2" />
+      <v-layout
+        class="version ml-1"
+        fill-height
+        align-end
+      >
+        <logged-users-count badge-color="secondary" />
+        <app-version />
+      </v-layout>
+    </v-layout>
+    <top-bar-title :title="appTitle" />
+    <healthcheck-chips-list v-if="isProVersion && hasAccessToHealthcheckStatus" />
+    <v-spacer v-else />
+    <portal-target :name="$constants.PORTALS_NAMES.additionalTopBarItems" />
+    <v-toolbar-items v-if="!$route.meta.simpleNavigation">
+      <top-bar-exploitation-menu />
+      <top-bar-administration-menu />
+      <top-bar-notifications-menu />
+      <top-bar-user-menu />
+    </v-toolbar-items>
+    <template
+      v-if="isShownGroupsTopBar"
+      #extension=""
+    >
+      <groups-top-bar />
+    </template>
+  </v-app-bar>
 </template>
 
 <script>

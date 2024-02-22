@@ -1,23 +1,48 @@
-<template lang="pug">
-  div
-    v-alert(:value="errors.has(name)", type="error") {{ errorMessages }}
-    v-layout(justify-end)
-      v-btn.primary(fab, small, flat, @click="showAddInfoModal")
-        v-icon add
-    v-data-table(
-      :headers="headers",
-      :items="form",
-      :no-data-text="$t('common.noData')",
+<template>
+  <div>
+    <v-alert
+      :value="errors.has(name)"
+      type="error"
+    >
+      {{ errorMessages }}
+    </v-alert>
+    <v-layout justify-end>
+      <v-btn
+        class="primary"
+        fab
+        small
+        text
+        @click="showAddInfoModal"
+      >
+        <v-icon>add</v-icon>
+      </v-btn>
+    </v-layout>
+    <v-data-table
+      :headers="headers"
+      :items="form"
+      :no-data-text="$t('common.noData')"
       item-key="key"
-    )
-      template(#items="{ item }")
-        tr
-          td {{ item.name }}
-          td {{ item.value }}
-          td
-            v-layout(row)
-              c-action-btn(type="edit", @click="showEditInfoModal(item)")
-              c-action-btn(type="delete", @click="removeInfo(item)")
+    >
+      <template #items="{ item }">
+        <tr>
+          <td>{{ item.name }}</td>
+          <td>{{ item.value }}</td>
+          <td>
+            <v-layout>
+              <c-action-btn
+                type="edit"
+                @click="showEditInfoModal(item)"
+              />
+              <c-action-btn
+                type="delete"
+                @click="removeInfo(item)"
+              />
+            </v-layout>
+          </td>
+        </tr>
+      </template>
+    </v-data-table>
+  </div>
 </template>
 
 <script>

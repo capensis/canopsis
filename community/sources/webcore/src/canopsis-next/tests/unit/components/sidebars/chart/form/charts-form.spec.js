@@ -3,12 +3,13 @@ import Faker from 'faker';
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { createActivatorElementStub } from '@unit/stubs/vuetify';
-
 import { createButtonStub } from '@unit/stubs/button';
+
+import { MODALS, WIDGET_TYPES } from '@/constants';
+
 import { alarmListChartToForm, formToAlarmListChart } from '@/helpers/entities/widget/forms/alarm';
 
 import ChartsForm from '@/components/sidebars/chart/form/charts-form.vue';
-import { MODALS, WIDGET_TYPES } from '@/constants';
 
 const stubs = {
   'widget-settings-group': true,
@@ -16,14 +17,14 @@ const stubs = {
   'v-menu': createActivatorElementStub('v-menu'),
   'v-btn': createButtonStub('v-btn'),
   'v-list': true,
-  'v-list-tile': createButtonStub('v-list-tile'),
+  'v-list-item': createButtonStub('v-list-item'),
 };
 const snapshotStubs = {
   ...stubs,
 
   'v-menu': true,
   'v-btn': true,
-  'v-list-tile': true,
+  'v-list-item': true,
 };
 
 const selectAddChartButton = wrapper => wrapper.find('.v-btn, v-btn-stub');
@@ -49,7 +50,7 @@ describe('charts-form', () => {
 
     addChartButton.trigger('click');
 
-    const button = wrapper.findAll('.v-list-tile').at(CHARTS_TYPES_TO_LIST_TILE_INDEXES[type]);
+    const button = wrapper.findAll('.v-list-item').at(CHARTS_TYPES_TO_LIST_TILE_INDEXES[type]);
 
     button.trigger('click');
 
@@ -72,7 +73,7 @@ describe('charts-form', () => {
 
     const dropdownContent = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(dropdownContent.element).toMatchSnapshot();
   });
 
@@ -85,7 +86,7 @@ describe('charts-form', () => {
 
     const dropdownContent = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(dropdownContent.element).toMatchSnapshot();
   });
 });

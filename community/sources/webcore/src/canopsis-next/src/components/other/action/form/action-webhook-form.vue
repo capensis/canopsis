@@ -1,20 +1,24 @@
-<template lang="pug">
-  v-layout(column)
-    request-form(
-      v-field="webhook.request",
-      :name="`${name}.request`",
-      :headers-variables="payloadVariables",
-      :payload-variables="payloadVariables",
+<template>
+  <v-layout column>
+    <request-form
+      v-field="webhook.request"
+      :name="`${name}.request`"
+      :headers-variables="payloadVariables"
+      :payload-variables="payloadVariables"
       :url-variables="payloadVariables"
-    )
-    declare-ticket-rule-ticket-mapping-field(v-field="webhook.declare_ticket")
-    v-layout(row, justify-end)
-      v-btn(
-        :loading="checking",
-        color="orange",
-        dark,
+    />
+    <declare-ticket-rule-ticket-mapping-field v-field="webhook.declare_ticket" />
+    <v-layout justify-end>
+      <v-btn
+        :loading="checking"
+        color="orange"
+        dark
         @click="validateTemplateVariables"
-      ) {{ $t('declareTicket.checkSyntax') }}
+      >
+        {{ $t('declareTicket.checkSyntax') }}
+      </v-btn>
+    </v-layout>
+  </v-layout>
 </template>
 
 <script>

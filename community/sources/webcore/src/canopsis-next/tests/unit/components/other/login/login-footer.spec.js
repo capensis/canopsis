@@ -12,7 +12,7 @@ describe('login-footer', () => {
   it('Renders `login-footer` without version', () => {
     const wrapper = snapshotFactory({ store });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `login-footer` without version', () => {
@@ -20,6 +20,6 @@ describe('login-footer', () => {
 
     const wrapper = snapshotFactory({ store: createMockedStoreModules([infoModule]) });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

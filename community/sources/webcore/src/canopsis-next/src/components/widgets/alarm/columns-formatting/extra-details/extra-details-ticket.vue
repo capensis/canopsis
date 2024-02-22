@@ -1,25 +1,63 @@
-<template lang="pug">
-  div
-    v-tooltip.c-extra-details.extra-details-ticket(top, lazy)
-      template(#activator="{ on }")
-        v-badge.time-line-flag(:value="isLastFailed", color="transparent", overlap)
-          template(#badge="")
-            v-icon.extra-details-ticket__badge-icon(color="error", size="14") error
-          span.c-extra-details__badge.blue(v-on="on")
-            v-icon(color="white", small) {{ icon }}
-      v-layout.extra-details-ticket__list(column)
-        div.text-md-center(v-for="(ticket, index) in shownTickets", :key="index")
-          strong {{ ticket.ticket_rule_name }} {{ getTicketStatusText(ticket) }}
-          div {{ $t('common.by') }} : {{ ticket.a }}
-          div {{ $t('common.date') }} : {{ convertDateWithToday(ticket.t) }}
-          div(
-            v-if="ticket.ticket"
-          ) {{ $t('alarm.actions.iconsFields.ticketNumber') }} : {{ ticket.ticket }}
-          div(
-            v-if="ticket.ticket_comment"
-          ) {{ $tc('common.comment') }} : {{ ticket.ticket_comment }}
-      div.mt-2
-        i(v-if="tickets.length > limit") {{ $t('alarm.otherTickets') }}
+<template>
+  <div>
+    <v-tooltip
+      class="c-extra-details extra-details-ticket"
+      top
+    >
+      <template #activator="{ on }">
+        <v-badge
+          :value="isLastFailed"
+          class="time-line-flag"
+          color="transparent"
+          overlap
+        >
+          <template #badge="">
+            <v-icon
+              class="extra-details-ticket__badge-icon"
+              color="error"
+              size="14"
+            >
+              error
+            </v-icon>
+          </template>
+          <span
+            class="c-extra-details__badge blue"
+            v-on="on"
+          >
+            <v-icon
+              color="white"
+              small
+            >
+              {{ icon }}
+            </v-icon>
+          </span>
+        </v-badge>
+      </template>
+      <v-layout
+        class="extra-details-ticket__list"
+        column
+      >
+        <div
+          v-for="(ticket, index) in shownTickets"
+          :key="index"
+          class="text-md-center"
+        >
+          <strong>{{ ticket.ticket_rule_name }} {{ getTicketStatusText(ticket) }}</strong>
+          <div>{{ $t('common.by') }} : {{ ticket.a }}</div>
+          <div>{{ $t('common.date') }} : {{ convertDateWithToday(ticket.t) }}</div>
+          <div v-if="ticket.ticket">
+            {{ $t('alarm.actions.iconsFields.ticketNumber') }} : {{ ticket.ticket }}
+          </div>
+          <div v-if="ticket.ticket_comment">
+            {{ $tc('common.comment') }} : {{ ticket.ticket_comment }}
+          </div>
+        </div>
+      </v-layout>
+      <div class="mt-2">
+        <i v-if="tickets.length > limit">{{ $t('alarm.otherTickets') }}</i>
+      </div>
+    </v-tooltip>
+  </div>
 </template>
 
 <script>

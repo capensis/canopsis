@@ -1,8 +1,9 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 
-import CEventFilterTypeField from '@/components/forms/fields/c-event-filter-type-field.vue';
 import { EVENT_FILTER_TYPES } from '@/constants';
+
+import CEventFilterTypeField from '@/components/forms/fields/c-event-filter-type-field.vue';
 
 const stubs = {
   'v-select': createSelectInputStub('v-select'),
@@ -31,7 +32,7 @@ describe('c-event-filter-type-field', () => {
 
     selectField.setValue(EVENT_FILTER_TYPES.drop);
 
-    expect(wrapper).toEmit('input', EVENT_FILTER_TYPES.drop);
+    expect(wrapper).toEmitInput(EVENT_FILTER_TYPES.drop);
   });
 
   test('Renders `c-event-filter-type-field` with default props', () => {
@@ -41,7 +42,7 @@ describe('c-event-filter-type-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `c-event-filter-type-field` with custom props', () => {
@@ -53,7 +54,7 @@ describe('c-event-filter-type-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `c-event-filter-type-field` with errors', async () => {
@@ -67,6 +68,6 @@ describe('c-event-filter-type-field', () => {
 
     await validator.validateAll();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

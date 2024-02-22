@@ -1,8 +1,7 @@
 import { range } from 'lodash';
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules, createPbehaviorEntitiesModule } from '@unit/utils/store';
 
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
@@ -73,7 +72,7 @@ describe('pbehavior-entities', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pbehavior-entities` with entities', async () => {
@@ -90,6 +89,6 @@ describe('pbehavior-entities', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

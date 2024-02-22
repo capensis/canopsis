@@ -1,20 +1,32 @@
-<template lang="pug">
-  div.text-editor
-    v-label(v-show="label") {{ label }}
-    div.text-editor(:class="{ 'error--text': hasError }", @blur="$emit('blur', $event)")
-      div(ref="textEditor")
-      variables-menu(
-        v-if="variables",
-        :variables="variables",
-        :visible="variablesShown",
-        :value="variablesMenuValue",
-        :position-x="variablesMenuPosition.x",
-        :position-y="variablesMenuPosition.y",
-        @input="pasteVariable",
+<template>
+  <div class="text-editor">
+    <v-label v-show="label">
+      {{ label }}
+    </v-label>
+    <div
+      :class="{ 'error--text': hasError }"
+      class="text-editor"
+      @blur="$emit('blur', $event)"
+    >
+      <div ref="textEditor" />
+      <variables-menu
+        v-if="variables"
+        :variables="variables"
+        :visible="variablesShown"
+        :value="variablesMenuValue"
+        :position-x="variablesMenuPosition.x"
+        :position-y="variablesMenuPosition.y"
+        @input="pasteVariable"
         @close="closeVariablesMenu"
-      )
-      div.text-editor__details
-        v-messages(:value="errorMessages", color="error")
+      />
+      <div class="text-editor__details">
+        <v-messages
+          :value="errorMessages"
+          color="error"
+        />
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>

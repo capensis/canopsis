@@ -26,10 +26,10 @@ func NewChangeEntityApplicator(
 	}
 }
 
-func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, event types.Event, regexMatch RegexMatch) (string, types.Event, error) {
+func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, event *types.Event, regexMatch RegexMatch) (string, bool, error) {
 	externalData, err := a.getExternalData(ctx, rule, event, regexMatch)
 	if err != nil {
-		return OutcomeDrop, event, err
+		return OutcomeDrop, false, err
 	}
 
 	templateParams := Template{
@@ -42,7 +42,7 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, eve
 		resource, err := ExecuteParsedTemplate(rule.ID, "Resource", rule.Config.Resource,
 			templateParams, event, a.failureService, a.templateExecutor)
 		if err != nil {
-			return OutcomeDrop, event, err
+			return OutcomeDrop, false, err
 		}
 
 		event.Resource = resource
@@ -52,7 +52,7 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, eve
 		component, err := ExecuteParsedTemplate(rule.ID, "Component", rule.Config.Component,
 			templateParams, event, a.failureService, a.templateExecutor)
 		if err != nil {
-			return OutcomeDrop, event, err
+			return OutcomeDrop, false, err
 		}
 
 		event.Component = component
@@ -62,7 +62,7 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, eve
 		connector, err := ExecuteParsedTemplate(rule.ID, "Connector", rule.Config.Connector,
 			templateParams, event, a.failureService, a.templateExecutor)
 		if err != nil {
-			return OutcomeDrop, event, err
+			return OutcomeDrop, false, err
 		}
 
 		event.Connector = connector
@@ -72,16 +72,16 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, eve
 		connectorName, err := ExecuteParsedTemplate(rule.ID, "ConnectorName", rule.Config.ConnectorName,
 			templateParams, event, a.failureService, a.templateExecutor)
 		if err != nil {
-			return OutcomeDrop, event, err
+			return OutcomeDrop, false, err
 		}
 
 		event.ConnectorName = connectorName
 	}
 
-	return OutcomePass, event, nil
+	return OutcomePass, false, nil
 }
 
-func (a *changeEntityApplicator) getExternalData(ctx context.Context, rule ParsedRule, event types.Event, regexMatch RegexMatch) (map[string]interface{}, error) {
+func (a *changeEntityApplicator) getExternalData(ctx context.Context, rule ParsedRule, event *types.Event, regexMatch RegexMatch) (map[string]interface{}, error) {
 	externalData := make(map[string]interface{})
 
 	for name, parameters := range rule.ExternalData {

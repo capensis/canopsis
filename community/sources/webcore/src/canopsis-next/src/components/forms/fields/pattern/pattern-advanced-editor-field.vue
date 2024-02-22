@@ -1,13 +1,13 @@
-<template lang="pug">
-  c-json-field(
-    :value="value",
-    :label="$t('pattern.advancedEditor')",
-    :readonly="disabled",
-    :name="name",
-    validate-on="button",
-    rows="10",
+<template>
+  <c-json-field
+    :value="value"
+    :label="$t('pattern.advancedEditor')"
+    :readonly="disabled"
+    :name="name"
+    validate-on="button"
+    rows="10"
     @input="updatePatternsFromJSON"
-  )
+  />
 </template>
 
 <script>

@@ -1,15 +1,16 @@
-<template lang="pug">
-  g
-    path(
-      v-for="connectorTriangle in connectorTriangles",
-      :key="connectorTriangle.side",
-      :d="connectorTriangle.path",
-      fill="transparent",
-      @mouseenter="onMouseEnter(connectorTriangle.side)",
-      @mouseleave="onMouseLeave",
-      @mouseup="onConnectFinish(connectorTriangle)",
+<template>
+  <g>
+    <path
+      v-for="connectorTriangle in connectorTriangles"
+      :key="connectorTriangle.side"
+      :d="connectorTriangle.path"
+      fill="transparent"
+      @mouseenter="onMouseEnter(connectorTriangle.side)"
+      @mouseleave="onMouseLeave"
+      @mouseup="onConnectFinish(connectorTriangle)"
       @mousemove.stop=""
-    )
+    />
+  </g>
 </template>
 
 <script>

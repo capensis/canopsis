@@ -1,19 +1,36 @@
-<template lang="pug">
-  v-toolbar-title.white--text.font-weight-regular.top-bar-title
-    c-compiled-template(:template="title", parent-element="span")
-    div.badge-wrapper(v-if="showBadge")
-      v-tooltip(right)
-        template(#activator="{ on, attrs }")
-          v-btn.badge-button(
-            v-on="on",
-            v-bind="attrs",
-            color="error",
-            icon,
-            small,
+<template>
+  <v-toolbar-title class="white--text font-weight-regular top-bar-title">
+    <c-compiled-template
+      :template="title"
+      parent-element="span"
+    />
+    <div
+      v-if="showBadge"
+      class="badge-wrapper"
+    >
+      <v-tooltip right>
+        <template #activator="{ on, attrs }">
+          <v-btn
+            class="badge-button"
+            v-bind="attrs"
+            color="error"
+            icon
+            small
+            v-on="on"
             @click="showInfoModal"
-          )
-            v-icon(color="white", size="12px") priority_high
-        span {{ $t('modals.webSocketError.title') }}
+          >
+            <v-icon
+              color="white"
+              size="12px"
+            >
+              priority_high
+            </v-icon>
+          </v-btn>
+        </template>
+        <span>{{ $t('modals.webSocketError.title') }}</span>
+      </v-tooltip>
+    </div>
+  </v-toolbar-title>
 </template>
 
 <script>

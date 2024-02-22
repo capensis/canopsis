@@ -5,7 +5,7 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with cu
   class="layout pbehavior-exception-field column"
 >
   <div
-    class="layout row justify-space-between"
+    class="layout justify-space-between"
   >
     <div
       class="flex pbehavior-exception-field__interval xs6"
@@ -27,14 +27,14 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with cu
       <c-pbehavior-type-field-stub
         disabled="true"
         name="type"
-        return-object="return-object"
+        return-object=""
         value=""
       />
     </div>
     <!---->
   </div>
   <div
-    class="layout row"
+    class="layout"
   >
     <v-checkbox-stub
       backgroundcolor=""
@@ -44,11 +44,11 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with cu
       errorcount="1"
       errormessages=""
       hidedetails="true"
-      indeterminateicon="$vuetify.icons.checkboxIndeterminate"
+      indeterminateicon="$checkboxIndeterminate"
       label="Whole day"
       messages=""
-      officon="$vuetify.icons.checkboxOff"
-      onicon="$vuetify.icons.checkboxOn"
+      officon="$checkboxOff"
+      onicon="$checkboxOn"
       ripple="true"
       rules=""
       successmessages=""
@@ -63,7 +63,7 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with cu
   class="layout pbehavior-exception-field column"
 >
   <div
-    class="layout row justify-space-between"
+    class="layout justify-space-between"
   >
     <div
       class="flex pbehavior-exception-field__interval xs6"
@@ -85,7 +85,7 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with cu
     <!---->
   </div>
   <div
-    class="layout row"
+    class="layout"
   >
     <v-checkbox-stub
       backgroundcolor=""
@@ -95,11 +95,11 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with cu
       errorcount="1"
       errormessages=""
       hidedetails="true"
-      indeterminateicon="$vuetify.icons.checkboxIndeterminate"
+      indeterminateicon="$checkboxIndeterminate"
       label="Whole day"
       messages=""
-      officon="$vuetify.icons.checkboxOff"
-      onicon="$vuetify.icons.checkboxOn"
+      officon="$checkboxOff"
+      onicon="$checkboxOn"
       ripple="true"
       rules=""
       successmessages=""
@@ -114,7 +114,7 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with de
   class="layout pbehavior-exception-field column"
 >
   <div
-    class="layout row justify-space-between"
+    class="layout justify-space-between"
   >
     <div
       class="flex pbehavior-exception-field__interval xs6"
@@ -132,45 +132,39 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with de
       class="flex pbehavior-exception-field__actions"
     >
       <button
-        class="btn--editing v-btn v-btn--active v-btn--floating v-btn--icon theme--light"
+        class="btn--editing v-btn v-btn--active v-btn--fab v-btn--icon v-btn--round theme--light v-size--default"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--light"
-          >
-            edit
-          </i>
-          <i
-            aria-hidden="true"
-            class="v-icon material-icons theme--light primary--text"
+            class="v-icon notranslate material-icons theme--light primary--text"
           >
             check
           </i>
-        </div>
+        </span>
       </button>
       <button
-        class="mx-0 v-btn v-btn--icon theme--light error"
+        class="v-btn-legacy-m--y v-btn v-btn--icon v-btn--round theme--light v-size--default error--text"
         type="button"
       >
-        <div
+        <span
           class="v-btn__content"
         >
           <i
             aria-hidden="true"
-            class="v-icon material-icons theme--light"
+            class="v-icon notranslate material-icons theme--light"
           >
             delete
           </i>
-        </div>
+        </span>
       </button>
     </div>
   </div>
   <div
-    class="layout row"
+    class="layout"
   >
     <v-checkbox-stub
       backgroundcolor=""
@@ -179,11 +173,11 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with de
       errorcount="1"
       errormessages=""
       hidedetails="true"
-      indeterminateicon="$vuetify.icons.checkboxIndeterminate"
+      indeterminateicon="$checkboxIndeterminate"
       label="Whole day"
       messages=""
-      officon="$vuetify.icons.checkboxOff"
-      onicon="$vuetify.icons.checkboxOn"
+      officon="$checkboxOff"
+      onicon="$checkboxOn"
       ripple="true"
       rules=""
       successmessages=""

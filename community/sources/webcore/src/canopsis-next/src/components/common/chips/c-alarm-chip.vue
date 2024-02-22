@@ -1,9 +1,25 @@
-<template lang="pug">
-  div.chip-container(:class="{ 'chip-container--small': small }")
-    v-badge(:value="!!badgeValue", color="secondary", overlap)
-      template(#badge="")
-        span.px-1 {{ badgeValue }}
-      span.chip(:style="{ backgroundColor: style.color }") {{ style.text }}
+<template>
+  <div
+    :class="{ 'chip-container--small': small }"
+    class="chip-container"
+    @click="$emit('click', $event)"
+  >
+    <v-badge
+      :value="!!badgeValue"
+      color="secondary"
+      overlap
+    >
+      <template #badge="">
+        <span class="px-1">{{ badgeValue }}</span>
+      </template>
+      <span
+        :style="{ backgroundColor: style.color }"
+        class="chip"
+      >
+        {{ style.text }}
+      </span>
+    </v-badge>
+  </div>
 </template>
 
 <script>
@@ -63,13 +79,14 @@ export default {
     }
 
     & ::v-deep .v-badge--overlap .v-badge__badge {
+      padding: 0;
       font-size: 10px;
       border-radius: 5px;
       min-width: 16px;
       width: auto;
       height: 16px;
-      top: -12px;
-      right: -6px;
+      inset: -14px -6px auto auto !important;
+      line-height: 16px;
     }
 
     &--small {
@@ -88,8 +105,8 @@ export default {
           font-size: 8px;
           min-width: 12px;
           height: 12px;
-          top: -9px;
-          right: -6px;
+          line-height: 15px;
+          inset: -9px -6px auto auto !important;
         }
       }
     }

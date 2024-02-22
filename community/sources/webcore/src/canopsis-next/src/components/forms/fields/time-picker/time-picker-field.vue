@@ -1,19 +1,20 @@
-<template lang="pug">
-  v-combobox.time-picker__select(
-    ref="combobox",
-    :value="value",
-    :items="items",
-    :menu-props="menuProps",
-    :return-object="false",
-    :filter="filter",
-    :label="label",
-    :disabled="disabled",
-    :error="error",
-    placeholder="−−:−−",
-    append-icon="",
-    hide-details,
+<template>
+  <v-combobox
+    ref="combobox"
+    :value="value"
+    :items="items"
+    :menu-props="menuProps"
+    :return-object="false"
+    :filter="filter"
+    :label="label"
+    :disabled="disabled"
+    :error="error"
+    class="time-picker__select"
+    placeholder="−−:−−"
+    append-icon=""
+    hide-details
     @change="change"
-  )
+  />
 </template>
 
 <script>
@@ -88,7 +89,7 @@ export default {
 
       const maxScrollTop = el.scrollHeight - el.offsetHeight;
       const index = this.items.findIndex(item => item >= this.value);
-      const elements = el.querySelectorAll('.v-list__tile');
+      const elements = el.querySelectorAll('.v-list-item');
 
       const activeTile = elements[index === -1 ? elements.length - 1 : index];
 

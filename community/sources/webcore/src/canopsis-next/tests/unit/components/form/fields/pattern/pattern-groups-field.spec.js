@@ -34,14 +34,9 @@ describe('pattern-groups-field', () => {
 
     const secondGroup = selectPatternGroupFieldByIndex(wrapper, 1);
 
-    secondGroup.vm.$emit('remove');
+    secondGroup.triggerCustomEvent('remove');
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual([
+    expect(wrapper).toEmitInput([
       groups[0],
       groups[2],
     ]);
@@ -62,14 +57,9 @@ describe('pattern-groups-field', () => {
       key: 'new key',
     };
 
-    lastGroup.vm.$emit('input', updatedGroup);
+    lastGroup.triggerCustomEvent('input', updatedGroup);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual([
+    expect(wrapper).toEmitInput([
       groups[0],
       groups[1],
       updatedGroup,
@@ -91,15 +81,9 @@ describe('pattern-groups-field', () => {
 
     const addButton = selectAddButton(wrapper);
 
-    addButton.vm.$emit('click');
+    addButton.triggerCustomEvent('click');
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-
-    expect(eventData).toEqual([
+    expect(wrapper).toEmitInput([
       ...groups,
       {
         key: expect.any(String),
@@ -135,7 +119,7 @@ describe('pattern-groups-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-groups-field` with custom props', () => {
@@ -151,7 +135,7 @@ describe('pattern-groups-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pattern-groups-field` with errors', async () => {
@@ -166,6 +150,6 @@ describe('pattern-groups-field', () => {
     const validator = wrapper.getValidator();
     await validator.validateAll();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

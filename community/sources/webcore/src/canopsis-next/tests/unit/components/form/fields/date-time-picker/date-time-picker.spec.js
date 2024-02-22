@@ -1,5 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
+
 import { DATETIME_FORMATS } from '@/constants';
 
 import DateTimePicker from '@/components/forms/fields/date-time-picker/date-time-picker.vue';
@@ -44,7 +45,7 @@ describe('date-time-picker', () => {
 
     const newTime = '12:45';
 
-    await timePickerField.vm.$emit('input', newTime);
+    await timePickerField.triggerCustomEvent('input', newTime);
 
     expect(timePickerField.attributes('value')).toBe(newTime);
   });
@@ -60,7 +61,7 @@ describe('date-time-picker', () => {
 
     const newDate = '2015-12-12';
 
-    await datePicker.vm.$emit('input', newDate);
+    await datePicker.triggerCustomEvent('input', newDate);
 
     expect(datePicker.attributes('value')).toBe(newDate);
   });
@@ -72,18 +73,10 @@ describe('date-time-picker', () => {
       },
     });
 
-    const applyButton = selectApplyButton(wrapper);
+    selectApplyButton(wrapper).triggerCustomEvent('click');
 
-    applyButton.vm.$emit('click');
-
-    const inputEvents = wrapper.emitted('input');
-    const closeEvents = wrapper.emitted('close');
-
-    expect(closeEvents).toHaveLength(1);
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData.getTime()).toEqual(nowTimestamp);
+    expect(wrapper).toHaveBeenEmit('close');
+    expect(wrapper).toEmitInput(new Date(nowTimestamp));
   });
 
   test('Value changed after trigger apply button with changes', async () => {
@@ -99,19 +92,12 @@ describe('date-time-picker', () => {
     const newDate = '2015-12-12';
     const resultDate = new Date(`${newDate} ${newTime}`);
 
-    await timePickerField.vm.$emit('input', newTime);
-    await datePicker.vm.$emit('input', newDate);
+    await timePickerField.triggerCustomEvent('input', newTime);
+    await datePicker.triggerCustomEvent('input', newDate);
 
-    const applyButton = selectApplyButton(wrapper);
+    selectApplyButton(wrapper).triggerCustomEvent('click');
 
-    applyButton.vm.$emit('click');
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData.getTime()).toEqual(resultDate.getTime());
+    expect(wrapper).toEmitInput(resultDate);
   });
 
   test('Close emitted after trigger cancel button', () => {
@@ -125,9 +111,7 @@ describe('date-time-picker', () => {
       },
     });
 
-    const cancelButton = selectCancelButton(wrapper);
-
-    cancelButton.vm.$emit('click');
+    selectCancelButton(wrapper).triggerCustomEvent('click');
 
     expect(close).toBeCalled();
   });
@@ -139,7 +123,7 @@ describe('date-time-picker', () => {
 
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
 
     dateSpy.mockClear();
   });
@@ -154,7 +138,7 @@ describe('date-time-picker', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `date-time-picker` without value', async () => {
@@ -167,6 +151,6 @@ describe('date-time-picker', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

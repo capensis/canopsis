@@ -1,5 +1,5 @@
 <script>
-import VListGroup from 'vuetify/es5/components/VList/VListGroup';
+import VListGroup from 'vuetify/lib/components/VList/VListGroup';
 
 export default {
   extends: VListGroup,

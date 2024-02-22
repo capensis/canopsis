@@ -1,9 +1,12 @@
-<template lang="pug">
-  v-layout.mb-3.c-idle-rules-summary-row(row)
-    v-flex.c-idle-rules-summary-row--label
-      span.font-weight-bold {{ label }}
-    v-flex
-      slot {{ value }}
+<template>
+  <v-layout class="mb-3 c-idle-rules-summary-row">
+    <v-flex class="c-idle-rules-summary-row--label">
+      <span class="font-weight-bold">{{ label }}</span>
+    </v-flex>
+    <v-flex>
+      <slot>{{ value }}</slot>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

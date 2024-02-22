@@ -1,7 +1,6 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createActivatorElementStub } from '@unit/stubs/vuetify';
 
 import CEllipsis from '@/components/common/table/c-ellipsis.vue';
@@ -81,9 +80,7 @@ describe('c-ellipsis', () => {
 
     wrapper.find('div > span').trigger('click');
 
-    const textClickedEvents = wrapper.emitted('textClicked');
-
-    expect(textClickedEvents).toHaveLength(1);
+    expect(wrapper).toHaveBeenEmit('textClicked');
   });
 
   it('Click on text with text letters count more then default max letters', () => {
@@ -93,9 +90,7 @@ describe('c-ellipsis', () => {
 
     wrapper.find('div > span').trigger('click');
 
-    const textClickedEvents = wrapper.emitted('textClicked');
-
-    expect(textClickedEvents).toHaveLength(1);
+    expect(wrapper).toHaveBeenEmit('textClicked');
   });
 
   it('Renders `c-ellipsis` correctly', async () => {
@@ -107,12 +102,12 @@ describe('c-ellipsis', () => {
       magnam nulla et consequatur facere sint nam facere sunt aut alias qui omnis rerum corporis totam quibusdam
       nostrum mollitia quia vel amet pariatur eveniet explicabo quia ullam`;
 
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: { text },
     });
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 });

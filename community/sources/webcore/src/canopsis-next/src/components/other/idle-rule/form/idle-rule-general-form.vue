@@ -1,28 +1,52 @@
-<template lang="pug">
-  v-layout(column)
-    template(v-if="!isEntityType")
-      idle-rule-alarm-type-field.mb-2(v-field="form.alarm_condition", :label="$t('common.type')")
-    c-name-field(v-field="form.name", required)
-    c-description-field(v-field="form.description", required)
-    v-layout(row, justify-space-between)
-      v-flex(xs7)
-        c-duration-field(
-          v-field="form.duration",
-          :label="$t('idleRules.timeRangeAwaiting')",
+<template>
+  <v-layout column>
+    <template v-if="!isEntityType">
+      <idle-rule-alarm-type-field
+        v-field="form.alarm_condition"
+        :label="$t('common.type')"
+        class="mb-2"
+      />
+    </template>
+    <c-name-field
+      v-field="form.name"
+      required
+    />
+    <c-description-field
+      v-field="form.description"
+      required
+    />
+    <v-layout justify-space-between>
+      <v-flex xs7>
+        <c-duration-field
+          v-field="form.duration"
+          :label="$t('idleRules.timeRangeAwaiting')"
           required
-        )
-      v-flex(xs3)
-        c-priority-field(v-field="form.priority")
-    c-disable-during-periods-field(v-field="form.disable_during_periods")
-    template(v-if="!isEntityType")
-      c-action-type-field(v-field="form.operation.type", :types="actionTypes", name="operation.type")
-      action-parameters-form(v-model="parameters", :type="form.operation.type", name="operation.parameters")
-      c-description-field(
-        v-if="isAssociateTicketAction",
-        v-field="form.comment",
-        :label="$tc('common.comment')",
+        />
+      </v-flex>
+      <v-flex xs3>
+        <c-priority-field v-field="form.priority" />
+      </v-flex>
+    </v-layout>
+    <c-disable-during-periods-field v-field="form.disable_during_periods" />
+    <template v-if="!isEntityType">
+      <c-action-type-field
+        v-field="form.operation.type"
+        :types="actionTypes"
+        name="operation.type"
+      />
+      <action-parameters-form
+        v-model="parameters"
+        :type="form.operation.type"
+        name="operation.parameters"
+      />
+      <c-description-field
+        v-if="isAssociateTicketAction"
+        v-field="form.comment"
+        :label="$tc('common.comment')"
         name="comment"
-      )
+      />
+    </template>
+  </v-layout>
 </template>
 
 <script>

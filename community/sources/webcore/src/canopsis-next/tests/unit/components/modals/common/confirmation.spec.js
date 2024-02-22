@@ -1,8 +1,6 @@
-import flushPromises from 'flush-promises';
-
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
-
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
+
 import Confirmation from '@/components/modals/common/confirmation.vue';
 
 const stubs = {
@@ -51,7 +49,7 @@ describe('confirmation', () => {
 
     const submitButton = selectSubmitButton(wrapper);
 
-    submitButton.vm.$emit('click', new Event('click'));
+    submitButton.triggerCustomEvent('click', new Event('click'));
 
     await flushPromises();
 
@@ -80,7 +78,7 @@ describe('confirmation', () => {
 
     const submitButton = selectSubmitButton(wrapper);
 
-    submitButton.vm.$emit('click', new Event('click'));
+    submitButton.triggerCustomEvent('click', new Event('click'));
 
     await flushPromises();
 
@@ -106,9 +104,7 @@ describe('confirmation', () => {
       },
     });
 
-    const cancelButton = selectCancelButton(wrapper);
-
-    cancelButton.vm.$emit('click', new Event('click'));
+    selectCancelButton(wrapper).triggerCustomEvent('click', new Event('click'));
 
     expect($modals.hide).toBeCalledWith();
 
@@ -146,7 +142,7 @@ describe('confirmation', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `confirmation` with text, title and actions', () => {
@@ -161,7 +157,7 @@ describe('confirmation', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `confirmation` with hidden title', () => {
@@ -176,6 +172,6 @@ describe('confirmation', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

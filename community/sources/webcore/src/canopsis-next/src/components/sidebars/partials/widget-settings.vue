@@ -1,15 +1,25 @@
-<template lang="pug">
-  v-form.widget-settings(
-    :class="{ 'widget-settings--divider': divider }",
+<template>
+  <v-form
+    :class="{ 'widget-settings--divider': divider }"
+    class="widget-settings"
     @submit.prevent="$emit('submit')"
-  )
-    v-list.widget-settings__list.py-0.mb-2(expand)
-      slot
-    v-btn.primary(
-      :loading="submitting",
-      :disabled="submitting || errors.any()",
+  >
+    <v-list
+      class="widget-settings__list py-0 mb-2"
+      expand
+    >
+      <slot />
+    </v-list>
+    <v-btn
+      :loading="submitting"
+      :disabled="submitting || errors.any()"
+      class="mx-2 my-1"
       type="submit"
-    ) {{ $t('common.save') }}
+      color="primary"
+    >
+      {{ $t('common.save') }}
+    </v-btn>
+  </v-form>
 </template>
 
 <script>
@@ -41,8 +51,10 @@ export default {
   }
 
   &--divider {
-    .v-list__group:not(:last-of-type) {
-      border-bottom: var(--item-divider-border);
+    .v-list-group, .widget-settings-flat-item {
+      &:not(:last-of-type) {
+        border-bottom: var(--item-divider-border);
+      }
     }
   }
 

@@ -37,9 +37,9 @@ describe('filters', () => {
   it('Selected filters updated after trigger input on the filter selector field', () => {
     const wrapper = factory();
 
-    selectFilterSelectorField(wrapper).vm.$emit('input', filters[0]);
+    selectFilterSelectorField(wrapper).triggerCustomEvent('input', filters[0]);
 
-    expect(wrapper).toEmit('input', filters[0]);
+    expect(wrapper).toEmitInput(filters[0]);
   });
 
   it('Filters updated after trigger input event on filters list', () => {
@@ -47,7 +47,7 @@ describe('filters', () => {
 
     const newFilters = [...filters].reverse();
 
-    selectFiltersList(wrapper).vm.$emit('input', newFilters);
+    selectFiltersList(wrapper).triggerCustomEvent('input', newFilters);
 
     expect(wrapper).toEmit('update:filters', newFilters);
   });
@@ -55,7 +55,7 @@ describe('filters', () => {
   it('Renders `filters` with default and required props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `filters` with custom props', () => {
@@ -72,6 +72,6 @@ describe('filters', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

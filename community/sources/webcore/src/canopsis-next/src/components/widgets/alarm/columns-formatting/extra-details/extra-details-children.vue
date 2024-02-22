@@ -1,15 +1,31 @@
-<template lang="pug">
-  div
-    v-tooltip.c-extra-details(top, lazy)
-      template(#activator="{ on }")
-        span.c-extra-details__badge.brown.darken-1(v-on="on")
-          v-icon(color="white", small) {{ icon }}
-      div.text-md-center
-        strong {{ $t('alarm.actions.iconsTitles.grouping') }}
-        div {{ $t('common.title') }} : {{ ruleName }}
-        div {{ $t('alarm.actions.iconsFields.children') }} : {{ total }}
-        div {{ $t('alarm.fields.openedChildren') }} : {{ opened }}
-        div {{ $t('alarm.fields.closedChildren') }} : {{ closed }}
+<template>
+  <div>
+    <v-tooltip
+      class="c-extra-details"
+      top
+    >
+      <template #activator="{ on }">
+        <span
+          class="c-extra-details__badge brown darken-1"
+          v-on="on"
+        >
+          <v-icon
+            color="white"
+            small
+          >
+            {{ icon }}
+          </v-icon>
+        </span>
+      </template>
+      <div class="text-md-center">
+        <strong>{{ $t('alarm.actions.iconsTitles.grouping') }}</strong>
+        <div>{{ $t('common.title') }} : {{ ruleName }}</div>
+        <div>{{ $t('alarm.actions.iconsFields.children') }} : {{ total }}</div>
+        <div>{{ $t('alarm.fields.openedChildren') }} : {{ opened }}</div>
+        <div>{{ $t('alarm.fields.closedChildren') }} : {{ closed }}</div>
+      </div>
+    </v-tooltip>
+  </div>
 </template>
 
 <script>

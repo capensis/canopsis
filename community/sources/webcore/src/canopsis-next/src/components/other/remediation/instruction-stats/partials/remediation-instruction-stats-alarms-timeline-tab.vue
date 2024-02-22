@@ -1,36 +1,52 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :items="remediationInstructionExecutions",
-    :headers="headers",
-    :loading="pending",
-    :pagination.sync="pagination",
-    :total-items="totalItems",
-    search,
+<template>
+  <c-advanced-data-table
+    :items="remediationInstructionExecutions"
+    :headers="headers"
+    :loading="pending"
+    :options.sync="options"
+    :total-items="totalItems"
+    search
     advanced-pagination
-  )
-    template(#toolbar="")
-      v-layout(align-center)
-        c-enabled-field(
-          v-model="showFailed",
-          :label="$t('remediation.instructionStat.showFailedExecutions')",
+  >
+    <template #toolbar="">
+      <v-layout align-center>
+        <c-enabled-field
+          v-model="showFailed"
+          :label="$t('remediation.instructionStat.showFailedExecutions')"
           hide-details
-        )
-    template(#executed_on="{ item }")
-      span.c-nowrap {{ (item.alarm ? item.executed_on : item.instruction_modified_on) | date }}
-    template(#result="{ item }")
-      c-enabled(
-        v-if="item.alarm",
+        />
+      </v-layout>
+    </template>
+    <template #executed_on="{ item }">
+      <span class="c-nowrap">{{ (item.alarm ? item.executed_on : item.instruction_modified_on) | date }}</span>
+    </template>
+    <template #result="{ item }">
+      <c-enabled
+        v-if="item.alarm"
         :value="item.status === $constants.REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.completed"
-      )
-    template(#duration="{ item }")
-      span {{ item.duration | duration }}
-    template(#resolved="{ item }")
-      span {{ item.alarm | get('v.resolved') | date }}
-    template(#timeout_after_execution="{ item }")
-      span {{ item.timeout_after_execution | duration }}
-    template(#timeline="{ item }")
-      span.text--secondary(v-if="!item.alarm") {{ $t('remediation.instructionStat.instructionChanged') }}
-      alarm-horizontal-time-line.my-2(v-else, :alarm="item.alarm")
+      />
+    </template>
+    <template #duration="{ item }">
+      <span>{{ item.duration | duration }}</span>
+    </template>
+    <template #resolved="{ item }">
+      <span>{{ item.alarm | get('v.resolved') | date }}</span>
+    </template>
+    <template #timeout_after_execution="{ item }">
+      <span>{{ item.timeout_after_execution | duration }}</span>
+    </template>
+    <template #timeline="{ item }">
+      <span
+        v-if="!item.alarm"
+        class="text--secondary"
+      >{{ $t('remediation.instructionStat.instructionChanged') }}</span>
+      <alarm-horizontal-time-line
+        v-else
+        :alarm="item.alarm"
+        class="my-2"
+      />
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>
