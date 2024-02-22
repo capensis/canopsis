@@ -1,7 +1,7 @@
 <template>
   <v-radio-group
-    class="mt-0 row"
     v-field="type"
+    class="mt-0 row"
     hide-details
     mandatory
     row

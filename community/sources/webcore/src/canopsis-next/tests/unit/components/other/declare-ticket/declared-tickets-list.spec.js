@@ -1,6 +1,7 @@
 import { range } from 'lodash';
 
 import { generateRenderer } from '@unit/utils/vue';
+
 import { EVENT_ENTITY_TYPES } from '@/constants';
 
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';

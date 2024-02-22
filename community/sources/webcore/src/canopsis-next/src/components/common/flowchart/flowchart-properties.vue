@@ -9,62 +9,62 @@
         <v-card flat>
           <v-card-text>
             <flowchart-color-field
-              class="my-1"
               v-if="showFill"
               :label="$t('flowchart.fill')"
               :value="fillValue"
               :palette="shapesColors"
+              class="my-1"
               @input="updateFill"
             />
             <flowchart-color-field
-              class="my-1"
               v-if="showStroke"
               :label="$t('flowchart.stroke')"
               :value="stroke"
               :palette="borderColors"
+              class="my-1"
               @input="updateStroke"
             />
             <template v-if="showStroke && isStrokeEnabled">
               <flowchart-number-field
-                class="my-1"
                 :label="$t('flowchart.strokeWidth')"
                 :value="strokeWidth"
+                class="my-1"
                 @input="updateStrokeWidth"
               />
               <flowchart-stroke-type-field
-                class="my-1"
                 :label="$t('flowchart.strokeType')"
                 :value="strokeType"
+                class="my-1"
                 @input="updateStrokeType"
               />
             </template>
             <flowchart-line-type-field
-              class="my-2"
               v-if="showLineType"
               :label="$t('flowchart.lineType')"
               :value="lineType"
               :average-points="lineAveragePoints"
+              class="my-2"
               @input="updateLineType"
             />
             <v-divider v-if="showLineType || showStroke || showFill" />
             <flowchart-color-field
-              class="my-1"
               :label="$t('flowchart.fontColor')"
               :value="textColor"
               :palette="textColors"
+              class="my-1"
               @input="updateTextColor"
             />
             <flowchart-color-field
-              class="my-1"
               :label="$t('flowchart.fontBackgroundColor')"
               :value="textBackgroundColor"
               :palette="backgroundColors"
+              class="my-1"
               @input="updateTextBackgroundColor"
             />
             <flowchart-number-field
-              class="my-1"
               :label="$t('flowchart.fontSize')"
               :value="textFontSize"
+              class="my-1"
               @input="updateFontSize"
             />
           </v-card-text>

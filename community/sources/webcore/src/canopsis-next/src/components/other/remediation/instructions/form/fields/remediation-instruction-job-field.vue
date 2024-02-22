@@ -6,9 +6,9 @@
         xs1
       >
         <c-draggable-step-number
-          drag-class="job-drag-handler"
           :disabled="disabled"
           :color="hasChildrenError ? 'error' : 'primary'"
+          drag-class="job-drag-handler"
         >
           {{ jobNumber }}
         </c-draggable-step-number>

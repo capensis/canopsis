@@ -31,10 +31,10 @@
               />
               <v-tabs
                 v-else
-                ref="tabs"
                 v-model="activeTab"
+                ref="tabs"
                 slider-color="primary"
-                fixed-tabs
+                centered
               >
                 <v-tab>{{ $t('modals.service.entity.tabs.info') }}</v-tab>
                 <v-tab-item>
@@ -50,9 +50,10 @@
                   <v-tab>{{ $t('modals.service.entity.tabs.treeOfDependencies') }}</v-tab>
                   <v-tab-item>
                     <service-entity-tree-of-dependencies-tab
-                      class="pa-2"
                       :entity="entity"
                       :columns="serviceDependenciesColumns"
+                      :type="treeOfDependenciesShowType"
+                      class="pa-2"
                     />
                   </v-tab-item>
                 </template>
@@ -80,7 +81,7 @@
 <script>
 import { isNull } from 'lodash';
 
-import { ENTITY_TYPES, MODALS, USERS_PERMISSIONS } from '@/constants';
+import { ENTITY_TYPES, MODALS, TREE_OF_DEPENDENCIES_SHOW_TYPES, USERS_PERMISSIONS } from '@/constants';
 
 import { getEntityColor } from '@/helpers/entities/entity/color';
 import { isInstructionManual } from '@/helpers/entities/remediation/instruction/form';
@@ -150,6 +151,10 @@ export default {
 
     serviceDependenciesColumns() {
       return this.widgetParameters.serviceDependenciesColumns;
+    },
+
+    treeOfDependenciesShowType() {
+      return this.widgetParameters.treeOfDependenciesShowType ?? TREE_OF_DEPENDENCIES_SHOW_TYPES.custom;
     },
 
     colorIndicator() {

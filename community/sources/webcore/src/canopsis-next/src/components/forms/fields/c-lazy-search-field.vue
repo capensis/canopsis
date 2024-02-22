@@ -1,6 +1,5 @@
 <template>
   <c-select-field
-    class="c-lazy-search-field mt-4"
     v-field="value"
     v-validate="rules"
     :search-input="search"
@@ -22,6 +21,7 @@
     :combobox="!autocomplete"
     :return-object="returnObject"
     :no-data-text="noDataText"
+    class="c-lazy-search-field mt-4"
     no-filter
     dense
     @focus="onFocus"
@@ -30,11 +30,11 @@
   >
     <template #item="{ item, attrs, on, parent }">
       <slot
-        name="item"
         :attrs="attrs"
         :on="on"
         :item="item"
         :parent="parent"
+        name="item"
       >
         <v-list-item
           class="c-lazy-search-field--tile"
@@ -42,8 +42,8 @@
           v-on="on"
         >
           <slot
-            name="icon"
             :item="item"
+            name="icon"
           />
           <v-list-item-content>
             {{ getItemText(item) }}
@@ -54,19 +54,19 @@
     </template>
     <template #append-item="">
       <div
-        class="c-lazy-search-field__append"
         ref="append"
+        class="c-lazy-search-field__append"
       />
     </template>
     <template #selection="{ item, index }">
       <slot
-        name="selection"
         :item="item"
         :index="index"
+        name="selection"
       >
         <v-chip
-          class="c-lazy-search-field__chip"
           v-if="isMultiple"
+          class="c-lazy-search-field__chip"
           small
           close
           @click:close="removeItemFromArray(index)"
@@ -75,8 +75,8 @@
         </v-chip>
         <slot
           v-else
-          name="selection"
           :item="item"
+          name="selection"
         >
           {{ getItemText(item) }}
         </slot>

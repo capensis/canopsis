@@ -1,110 +1,78 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`group-panel Renders \`group-panel\` with custom props 1`] = `
-<li
-  class="v-expansion-panel__container secondary group-item editing"
-  isgroupsorderchanged="true"
-  tabindex="0"
+<div
+  aria-expanded="false"
+  class="v-expansion-panel secondary group-panel group-panel--editing"
+  hide-actions="true"
 >
-  <div
-    class="v-expansion-panel__header"
+  <button
+    class="v-expansion-panel-header pa-0 pr-6"
+    type="button"
   >
     <div
-      class="panel-header"
+      class="px-6 py-4 group-panel__title"
     >
-      <span>
         Custom group title
-      </span>
-      <button
-        class="v-btn v-btn--disabled v-btn--icon v-btn--depressed v-btn--small theme--light"
-        disabled="disabled"
-        type="button"
-      >
-        <div
-          class="v-btn__content"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon notranslate material-icons theme--light"
-            style="font-size: 16px;"
-          >
-            edit
-          </i>
-        </div>
-      </button>
     </div>
-  </div>
-  <transition-stub
-    mode="in-out"
-    name="expand-transition"
-  >
     <div
-      class="v-expansion-panel__body"
-      style="display: none;"
+      class="group-panel__actions"
+    />
+  </button>
+  <button
+    class="v-btn v-btn--disabled v-btn--icon v-btn--round theme--light v-size--small"
+    disabled="disabled"
+    type="button"
+  >
+    <span
+      class="v-btn__content"
     >
-      <div
-        class="default-slot"
-      />
-    </div>
-  </transition-stub>
-</li>
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate material-icons theme--light"
+        style="font-size: 16px;"
+      >
+        edit
+      </i>
+    </span>
+  </button>
+</div>
 `;
 
 exports[`group-panel Renders \`group-panel\` with required props 1`] = `
-<li
-  class="v-expansion-panel__container secondary group-item"
-  tabindex="0"
+<div
+  aria-expanded="false"
+  class="v-expansion-panel secondary group-panel"
 >
-  <div
-    class="v-expansion-panel__header"
+  <button
+    class="v-expansion-panel-header pa-0 pr-6"
+    type="button"
   >
     <div
-      class="panel-header"
+      class="px-6 py-4 group-panel__title"
     >
-      <span>
         Group title
-      </span>
-      <button
-        class="v-btn v-btn--icon v-btn--depressed v-btn--small theme--light"
-        style="display: none;"
-        type="button"
-      >
-        <div
-          class="v-btn__content"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon notranslate material-icons theme--light"
-            style="font-size: 16px;"
-          >
-            edit
-          </i>
-        </div>
-      </button>
     </div>
-    <transition-stub
-      name="fade-transition"
-    >
-      <div
-        class="v-expansion-panel__header__icon"
-      >
-        <i
-          aria-hidden="true"
-          class="v-icon notranslate material-icons theme--light"
-        >
-          keyboard_arrow_down
-        </i>
-      </div>
-    </transition-stub>
-  </div>
-  <transition-stub
-    mode="in-out"
-    name="expand-transition"
-  >
     <div
-      class="v-expansion-panel__body"
-      style="display: none;"
+      class="group-panel__actions"
     />
-  </transition-stub>
-</li>
+  </button>
+  <button
+    class="v-btn v-btn--icon v-btn--round theme--light v-size--small"
+    style="display: none;"
+    type="button"
+  >
+    <span
+      class="v-btn__content"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate material-icons theme--light"
+        style="font-size: 16px;"
+      >
+        edit
+      </i>
+    </span>
+  </button>
+</div>
 `;

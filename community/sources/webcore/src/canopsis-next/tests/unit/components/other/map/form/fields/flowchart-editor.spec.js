@@ -1,13 +1,14 @@
 import Faker from 'faker';
 import { keyBy } from 'lodash';
-import flushPromises from 'flush-promises';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+
 import { MERMAID_THEMES, SHAPES } from '@/constants';
+
 import { flowchartPointToForm } from '@/helpers/entities/map/form';
+import { shapeToForm } from '@/helpers/flowchart/shapes';
 
 import FlowchartEditor from '@/components/other/map/form/fields/flowchart-editor.vue';
-import { shapeToForm } from '@/helpers/flowchart/shapes';
 
 const stubs = {
   flowchart: {
@@ -67,9 +68,9 @@ describe('flowchart-editor', () => {
 
     const flowchartCodeEditor = selectFlowchart(wrapper);
 
-    flowchartCodeEditor.vm.$emit('update:backgroundColor', newColor);
+    flowchartCodeEditor.triggerCustomEvent('update:backgroundColor', newColor);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...initialForm,
       background_color: newColor,
     });
@@ -86,9 +87,9 @@ describe('flowchart-editor', () => {
 
     const flowchart = selectFlowchart(wrapper);
 
-    flowchart.vm.$emit('input', shapes);
+    flowchart.triggerCustomEvent('input', shapes);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...initialForm,
       shapes,
     });
@@ -119,9 +120,9 @@ describe('flowchart-editor', () => {
 
     const flowchart = selectFlowchart(wrapper);
 
-    flowchart.vm.$emit('input', newShapes);
+    flowchart.triggerCustomEvent('input', newShapes);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...initialForm,
       points: [firstPoint],
       shapes: newShapes,
@@ -139,9 +140,9 @@ describe('flowchart-editor', () => {
 
     const flowchartPointsEditor = selectFlowchartPointsEditor(wrapper);
 
-    flowchartPointsEditor.vm.$emit('input', newPoints);
+    flowchartPointsEditor.triggerCustomEvent('input', newPoints);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...initialForm,
       points: newPoints,
     });
@@ -156,7 +157,7 @@ describe('flowchart-editor', () => {
 
     const addLocationBtn = selectAddLocationBtn(wrapper);
 
-    await addLocationBtn.vm.$emit('input', true);
+    await addLocationBtn.triggerCustomEvent('input', true);
 
     const flowchartPointsEditor = selectFlowchartPointsEditor(wrapper);
 

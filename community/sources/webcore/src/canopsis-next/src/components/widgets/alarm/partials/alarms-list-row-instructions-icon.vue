@@ -2,17 +2,17 @@
   <v-tooltip top>
     <template #activator="{ on }">
       <v-icon
-        class="instruction-icon"
-        v-on="on"
         :class="iconClass"
+        class="instruction-icon"
         size="22"
+        v-on="on"
       >
         {{ iconName }}
       </v-icon>
     </template>
     <span
-      class="pre-wrap"
       v-html="iconTooltip"
+      class="pre-wrap"
     />
   </v-tooltip>
 </template>

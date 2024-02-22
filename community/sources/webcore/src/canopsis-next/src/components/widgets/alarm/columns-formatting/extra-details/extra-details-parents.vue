@@ -22,9 +22,9 @@
         <v-layout column>
           <div>{{ $tc('common.rule', rules.length) }}&nbsp;:</div>
           <div
-            class="rule-name"
             v-for="rule in rules"
             :key="rule.id"
+            class="rule-name"
           >
             &nbsp;{{ rule.name }}
           </div>

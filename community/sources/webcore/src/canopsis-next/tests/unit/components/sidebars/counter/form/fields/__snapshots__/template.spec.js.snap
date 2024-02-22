@@ -2,16 +2,21 @@
 
 exports[`field-template Renders \`field-template\` with custom props 1`] = `
 <div
-  class="container pa-3 container--fluid"
+  class="widget-settings-flat-item v-list-item theme--light"
+  tabindex="-1"
 >
   <div
-    class="layout align-center justify-space-between"
+    class="v-list-item__content"
   >
     <div
-      class="text-subtitle-1"
+      class="v-list-item__title"
     >
       Custom title
     </div>
+  </div>
+  <div
+    class="v-list-item__action mr-3"
+  >
     <button
       class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--small"
       type="button"
@@ -28,16 +33,21 @@ exports[`field-template Renders \`field-template\` with custom props 1`] = `
 
 exports[`field-template Renders \`field-template\` with required props 1`] = `
 <div
-  class="container pa-3 container--fluid"
+  class="widget-settings-flat-item v-list-item theme--light"
+  tabindex="-1"
 >
   <div
-    class="layout align-center justify-space-between"
+    class="v-list-item__content"
   >
     <div
-      class="text-subtitle-1"
+      class="v-list-item__title"
     >
       Custom required title
     </div>
+  </div>
+  <div
+    class="v-list-item__action mr-3"
+  >
     <button
       class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--small"
       type="button"

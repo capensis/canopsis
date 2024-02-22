@@ -4,8 +4,8 @@
       {{ label }}
     </v-label>
     <div
-      class="text-editor"
       :class="{ 'error--text': hasError }"
+      class="text-editor"
       @blur="$emit('blur', $event)"
     >
       <div ref="textEditor" />

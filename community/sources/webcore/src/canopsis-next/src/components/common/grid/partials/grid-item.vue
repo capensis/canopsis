@@ -1,8 +1,8 @@
 <template>
   <v-card
-    class="grid-item"
     :class="cardClass"
     :style="style"
+    class="grid-item"
   >
     <div ref="defaultSlotWrapper">
       <slot
@@ -11,8 +11,8 @@
       />
     </div>
     <div
-      class="grid-item__resize-handler"
       v-if="!disabled"
+      class="grid-item__resize-handler"
       v-on="resizeHandlerOn"
     >
       <v-icon small>

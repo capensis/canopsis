@@ -10,8 +10,8 @@
         xs6
       >
         <c-entity-category-field
-          class="mt-1"
           v-field="form.category"
+          class="mt-1"
           addable
           required
         />
@@ -59,16 +59,16 @@
       </v-tab>
       <v-tab-item>
         <c-patterns-field
-          class="mt-2"
           v-field="form.patterns"
           :entity-attributes="entityAttributes"
+          class="mt-2"
           with-entity
           entity-counters-type
         />
       </v-tab-item>
       <v-tab
-        class="validation-header"
         :disabled="advancedJsonWasChanged"
+        class="validation-header"
       >
         {{ $t('entity.manageInfos') }}
       </v-tab>
@@ -84,6 +84,7 @@ import { get } from 'lodash';
 
 import {
   ENTITY_PATTERN_FIELDS,
+  ENTITY_TYPES,
   SERVICE_WEATHER_STATE_COUNTERS,
   SERVICE_WEATHER_TEMPLATE_COUNTERS_BY_STATE_COUNTERS,
 } from '@/constants';
@@ -141,9 +142,13 @@ export default {
         },
       ];
     },
-
-    formToService() {
-      return formToService;
+  },
+  methods: {
+    formToService(service) {
+      return {
+        ...formToService(service),
+        type: ENTITY_TYPES.service,
+      };
     },
   },
 };

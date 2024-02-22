@@ -1,6 +1,7 @@
 import { omit } from 'lodash';
 
 import { generateRenderer } from '@unit/utils/vue';
+
 import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
 
 import AlarmColumnValueStatus from '@/components/widgets/alarm/columns-formatting/alarm-column-value-status.vue';

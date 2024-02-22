@@ -4,8 +4,11 @@ import AxiosMockAdapter from 'axios-mock-adapter';
 import { generateShallowRenderer } from '@unit/utils/vue';
 
 import { API_ROUTES } from '@/config';
+
 import request from '@/services/request';
+
 import store from '@/store';
+
 import { entitiesEventFilterMixin } from '@/mixins/entities/event-filter';
 
 describe('Entities event filter mixin', () => {

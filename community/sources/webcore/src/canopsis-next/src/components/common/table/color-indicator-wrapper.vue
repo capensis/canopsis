@@ -5,10 +5,10 @@
   >
     <template #activator="{ on }">
       <div
-        class="color-indicator"
-        v-on="on"
         :class="{ 'color-indicator--invalid': !text }"
         :style="{ backgroundColor: color }"
+        class="color-indicator"
+        v-on="on"
       >
         <slot>{{ value }}</slot>
       </div>

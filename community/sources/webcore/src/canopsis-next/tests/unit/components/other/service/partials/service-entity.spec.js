@@ -1,7 +1,7 @@
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createAuthModule, createMockedStoreModules } from '@unit/utils/store';
-
 import { mockModals } from '@unit/utils/mock-hooks';
+
 import { ENTITY_TYPES, MODALS, PBEHAVIOR_TYPE_TYPES, USERS_PERMISSIONS } from '@/constants';
 
 import ServiceEntity from '@/components/other/service/partials/service-entity.vue';
@@ -81,7 +81,7 @@ describe('service-entity', () => {
 
     const header = selectServiceEntityHeader(wrapper);
 
-    await header.vm.$emit('update:selected');
+    await header.triggerCustomEvent('update:selected');
 
     expect(updateSelected).toHaveBeenCalled();
   });
@@ -91,7 +91,7 @@ describe('service-entity', () => {
 
     const header = selectServiceEntityHeader(wrapper);
 
-    await header.vm.$emit('remove:unavailable');
+    await header.triggerCustomEvent('remove:unavailable');
 
     expect(removeUnavailable).toHaveBeenCalled();
   });
@@ -102,7 +102,7 @@ describe('service-entity', () => {
     const info = selectServiceEntityInfoTab(wrapper);
     const assignedInstruction = {};
 
-    await info.vm.$emit('execute', assignedInstruction);
+    await info.triggerCustomEvent('execute', assignedInstruction);
 
     expect($modals.show).toBeCalledWith(
       {
@@ -120,7 +120,7 @@ describe('service-entity', () => {
 
     modalArguments.config.onClose();
 
-    expect(wrapper).toEmit('refresh');
+    expect(wrapper).toHaveBeenEmit('refresh');
   });
 
   test('Renders `service-entity` with default props', async () => {

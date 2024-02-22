@@ -1,24 +1,24 @@
 <template>
   <div
-    class="grid-layout"
     ref="layout"
     :class="{ 'grid-layout--disabled': disabled }"
     :style="style"
+    class="grid-layout"
   >
     <grid-item
-      class="grid-layout__placeholder primary darken-1"
       v-if="!disabled"
       v-show="resizing || moving"
       v-bind="itemBind"
-      :item="placeholder"
       key="placeholder"
+      :item="placeholder"
+      class="grid-layout__placeholder primary darken-1"
     />
     <grid-item
       v-for="layoutItem in layout"
-      v-on="itemOn"
       v-bind="itemBind"
       :key="layoutItem.i"
       :item="layoutItem"
+      v-on="itemOn"
     >
       <template #default="props">
         <slot

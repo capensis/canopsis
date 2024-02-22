@@ -10,9 +10,9 @@
     >
       <template #activator="{ on }">
         <alarm-counter
-          v-on="on"
           :count="counter.count"
           :icon="counter.icon"
+          v-on="on"
         />
       </template>
       <span>{{ counter.name }}</span>
@@ -23,9 +23,9 @@
     >
       <template #activator="{ on }">
         <alarm-counter
-          v-on="on"
           :count="otherCountersValue"
           icon="more_horiz"
+          v-on="on"
         />
       </template>
       <div

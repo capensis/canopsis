@@ -17,17 +17,17 @@
         {{ $t('common.cancel') }}
       </v-btn>
       <v-btn
-        class="primary"
         :loading="submitting"
         :disabled="isDisabled || submittingWithTicket"
+        class="primary"
         @click="submit"
       >
         {{ $t('common.continue') }}
       </v-btn>
       <v-btn
-        class="warning"
         :loading="submittingWithTicket"
         :disabled="isDisabledWithTicket || submitting"
+        class="warning"
         @click="submitWithTicket"
       >
         {{ $t('modals.confirmAckWithTicket.continueAndAssociateTicket') }}

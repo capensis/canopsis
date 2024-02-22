@@ -1,22 +1,22 @@
 <template>
   <c-draggable-list-field
-    class="c-card-iterator-field"
     v-field="data"
-    handle=".item-drag-handler"
-    ghost-class="grey"
     :disabled="disabled"
     :group="draggableGroup"
+    class="c-card-iterator-field"
+    handle=".item-drag-handler"
+    ghost-class="grey"
   >
     <template v-for="(item, index) in data">
       <v-card
-        class="lighten-2"
         :key="item[itemKey]"
+        class="lighten-2"
       >
         <v-card-text>
           <slot
-            name="item"
             :item="item"
             :index="index"
+            name="item"
           />
         </v-card-text>
       </v-card>

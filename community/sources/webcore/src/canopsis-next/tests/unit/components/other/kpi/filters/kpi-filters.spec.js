@@ -1,8 +1,8 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
+
 import { CRUD_ACTIONS, MODALS, USERS_PERMISSIONS } from '@/constants';
 
 import KpiFilters from '@/components/other/kpi/filters/kpi-filters.vue';
@@ -114,7 +114,7 @@ describe('kpi-filters', () => {
     const itemsPerPage = Faker.datatype.number({ max: initialItemsPerPage });
     const page = Faker.datatype.number();
 
-    kpiFiltersListElement.vm.$emit('update:options', {
+    kpiFiltersListElement.triggerCustomEvent('update:options', {
       itemsPerPage,
       page,
     });
@@ -175,7 +175,7 @@ describe('kpi-filters', () => {
       name: Faker.datatype.string(),
       entity_pattern: [],
     };
-    kpiFiltersListElement.vm.$emit('edit', filter);
+    kpiFiltersListElement.triggerCustomEvent('edit', filter);
 
     expect(showModal).toBeCalledTimes(1);
     expect(showModal).toBeCalledWith(
@@ -251,7 +251,7 @@ describe('kpi-filters', () => {
       name: Faker.datatype.string(),
       entity_pattern: [[]],
     };
-    kpiFiltersListElement.vm.$emit('duplicate', filter);
+    kpiFiltersListElement.triggerCustomEvent('duplicate', filter);
 
     expect(showModal).toBeCalledTimes(1);
     expect(showModal).toBeCalledWith(
@@ -329,7 +329,7 @@ describe('kpi-filters', () => {
       name: Faker.datatype.string(),
       entity_pattern: [],
     };
-    kpiFiltersListElement.vm.$emit('remove', filter._id);
+    kpiFiltersListElement.triggerCustomEvent('remove', filter._id);
 
     expect(showModal).toBeCalledTimes(1);
     expect(showModal).toBeCalledWith(
