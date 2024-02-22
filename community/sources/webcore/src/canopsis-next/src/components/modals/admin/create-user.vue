@@ -1,22 +1,36 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ title }}
-      template(#text="")
-        user-form(
-          v-model="form",
-          :is-new="isNew",
-          :user="config.user",
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ title }}</span>
+      </template>
+      <template #text="">
+        <user-form
+          v-model="form"
+          :is-new="isNew"
+          :user="config.user"
           :only-user-prefs="config.onlyUserPrefs"
-        )
-      template(#actions="")
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-        v-btn.primary(
-          :disabled="isDisabled",
-          type="submit",
+        />
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
+          @click="$modals.hide"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :disabled="isDisabled"
+          class="primary"
+          type="submit"
           data-test="submitButton"
-        ) {{ $t('common.submit') }}
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>

@@ -7,12 +7,16 @@ export const entitiesStateSettingMixin = {
     ...mapGetters({
       stateSettings: 'items',
       stateSettingsPending: 'pending',
+      stateSettingsMeta: 'meta',
     }),
   },
   methods: {
     ...mapActions({
       fetchStateSettingsList: 'fetchList',
+      fetchStateSettingsListWithPreviousParams: 'fetchListWithPreviousParams',
+      createStateSetting: 'create',
       updateStateSetting: 'update',
+      removeStateSetting: 'remove',
     }),
   },
 };

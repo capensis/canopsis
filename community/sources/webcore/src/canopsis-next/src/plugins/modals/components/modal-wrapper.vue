@@ -1,7 +1,11 @@
-<template lang="pug">
-  v-dialog(v-model="isOpen", v-bind="dialogProps")
-    // @slot use this slot default
-    slot
+<template>
+  <v-dialog
+    v-model="isOpen"
+    v-bind="dialogProps"
+  >
+    <!-- @slot use this slot default-->
+    <slot />
+  </v-dialog>
 </template>
 
 <script>
@@ -34,7 +38,12 @@ export default {
       },
     },
     dialogProps() {
-      const defaultDialogProps = { maxWidth: 700, lazy: true, attach: '.modals-wrapper', absolute: true };
+      const defaultDialogProps = {
+        maxWidth: 700,
+        attach: '.modals-wrapper',
+        absolute: true,
+        retainFocus: false,
+      };
       const { dialogPropsMap = {} } = this.$modals;
       const { name, dialogProps, minimized } = this.modal;
 

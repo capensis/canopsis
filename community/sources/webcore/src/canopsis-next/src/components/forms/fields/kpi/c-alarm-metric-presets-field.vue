@@ -1,29 +1,48 @@
-<template lang="pug">
-  c-movable-card-iterator-field(v-field="metrics", :addable="!onlyExternal", @add="addMetric")
-    template(#item="{ item, index }")
-      c-alarm-metric-preset-field(
-        v-field="metrics[index]",
-        :with-color="withColor",
-        :with-aggregate-function="withAggregateFunction",
-        :parameters="parameters",
-        :disabled-parameters="disabledParameters",
-        :with-external="withExternal",
-        :only-external="onlyExternal",
+<template>
+  <c-movable-card-iterator-field
+    v-field="metrics"
+    :addable="!onlyExternal"
+    @add="addMetric"
+  >
+    <template #item="{ item, index }">
+      <c-alarm-metric-preset-field
+        v-field="metrics[index]"
+        :with-color="withColor"
+        :with-aggregate-function="withAggregateFunction"
+        :parameters="parameters"
+        :disabled-parameters="disabledParameters"
+        :with-external="withExternal"
+        :only-external="onlyExternal"
         :name="`${name}[${item.key}]`"
-      )
-    template(#append="")
-      c-alert(v-if="errorMessage", type="error") {{ errorMessage }}
-    template(#actions="")
-      v-btn.mr-2.mx-0(
-        v-if="withExternal",
-        color="primary",
+      />
+    </template>
+    <template #append="">
+      <c-alert
+        v-if="errorMessage"
+        type="error"
+      >
+        {{ errorMessage }}
+      </c-alert>
+    </template>
+    <template #actions="">
+      <v-btn
+        v-if="withExternal"
+        class="mr-2 mx-0"
+        color="primary"
         @click.prevent="addExternal"
-      ) {{ $t('kpi.addExternal') }}
-      v-btn.mr-2.mx-0(
-        v-if="withExternal",
-        color="primary",
+      >
+        {{ $t('kpi.addExternal') }}
+      </v-btn>
+      <v-btn
+        v-if="withExternal"
+        class="mr-2 mx-0"
+        color="primary"
         @click.prevent="addAuto"
-      ) {{ $t('kpi.autoAdd') }}
+      >
+        {{ $t('kpi.autoAdd') }}
+      </v-btn>
+    </template>
+  </c-movable-card-iterator-field>
 </template>
 
 <script>

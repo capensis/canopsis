@@ -32,7 +32,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with editing mode 1`] = `
         <h4
           class="ml-2 font-weight-regular"
         >
-          
         </h4>
       </div>
       <div
@@ -41,7 +40,9 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with editing mode 1`] = `
     </div>
   </div>
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
   <div
     class="v-card__text pa-0 position-relative"
@@ -70,7 +71,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with title and editing mode 1
         <h4
           class="ml-2 font-weight-regular"
         >
-          Title
+            Title
         </h4>
       </div>
       <div
@@ -79,7 +80,9 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with title and editing mode 1
     </div>
   </div>
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
   <div
     class="v-card__text pa-0 position-relative"
@@ -584,7 +587,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with widget title 1`] = `
         <h4
           class="ml-2 font-weight-regular"
         >
-          Title
+            Title
         </h4>
       </div>
       <div
@@ -593,7 +596,9 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with widget title 1`] = `
     </div>
   </div>
   <hr
+    aria-orientation="horizontal"
     class="v-divider theme--light"
+    role="separator"
   />
   <div
     class="v-card__text pa-0 position-relative"

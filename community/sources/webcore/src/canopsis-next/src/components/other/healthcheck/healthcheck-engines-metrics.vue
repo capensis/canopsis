@@ -1,43 +1,65 @@
-<template lang="pug">
-  v-data-table(:headers="headers", :items="metrics", :loading="pending")
-    template(#no-data="")
-      td.text-xs-center(colspan="2")
-        div {{ $t('techMetric.noDumps') }}
-      td
-        c-action-btn(
-          :disabled="exporting",
-          :tooltip="$t('techMetric.generateDump')",
-          icon="play_circle_filled",
-          color="secondary",
-          @click="exportTechMetrics"
-        )
-    template(#items="{ item }")
-      td.text-xs-center(
-        v-if="!exporting && (item.disabled || isMetricNotCreated(item))",
+<template>
+  <v-data-table
+    :headers="headers"
+    :items="metrics"
+    :loading="pending"
+    loader-height="2"
+  >
+    <template #no-data="">
+      <td
+        class="text-center"
         colspan="2"
-      )
-        div {{ item.disabled ? $t('techMetric.metricsDisabled') : $t('techMetric.noDumps') }}
-      template(v-else)
-        td {{ item.created | date }}
-        td
-          v-progress-circular(v-if="exporting", color="primary", indeterminate)
-          span(v-else) {{ item.duration | duration }}
-      td
-        c-action-btn(
-          :disabled="exporting || item.disabled",
-          :tooltip="$t('techMetric.generateDump')",
-          icon="play_circle_filled",
-          color="secondary",
+      >
+        <div>{{ $t('techMetric.noDumps') }}</div>
+      </td>
+      <td>
+        <c-action-btn
+          :disabled="exporting"
+          :tooltip="$t('techMetric.generateDump')"
+          icon="play_circle_filled"
+          color="secondary"
           @click="exportTechMetrics"
-        )
-        c-action-btn(
-          v-if="isMetricReadyToDownload(item)",
-          :disabled="exporting",
-          :tooltip="$t('techMetric.downloadDump')",
-          icon="save_alt",
-          color="secondary",
+        />
+      </td>
+    </template>
+    <template #item="{ item }">
+      <td
+        v-if="!exporting && (item.disabled || isMetricNotCreated(item))"
+        class="text-center"
+        colspan="2"
+      >
+        <div>{{ item.disabled ? $t('techMetric.metricsDisabled') : $t('techMetric.noDumps') }}</div>
+      </td>
+      <template v-else>
+        <td>{{ item.created | date }}</td>
+        <td>
+          <v-progress-circular
+            v-if="exporting"
+            color="primary"
+            indeterminate
+          />
+          <span v-else>{{ item.duration | duration }}</span>
+        </td>
+      </template>
+      <td>
+        <c-action-btn
+          :disabled="exporting || item.disabled"
+          :tooltip="$t('techMetric.generateDump')"
+          icon="play_circle_filled"
+          color="secondary"
+          @click="exportTechMetrics"
+        />
+        <c-action-btn
+          v-if="isMetricReadyToDownload(item)"
+          :disabled="exporting"
+          :tooltip="$t('techMetric.downloadDump')"
+          icon="save_alt"
+          color="secondary"
           @click="downloadTechMetrics"
-        )
+        />
+      </td>
+    </template>
+  </v-data-table>
 </template>
 
 <script>

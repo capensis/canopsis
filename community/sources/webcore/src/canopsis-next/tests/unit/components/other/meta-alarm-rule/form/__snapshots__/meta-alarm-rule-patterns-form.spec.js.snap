@@ -3,22 +3,22 @@
 exports[`meta-alarm-rule-patterns-form Renders \`meta-alarm-rule-patterns-form\` with custom props 1`] = `
 <c-patterns-field-stub
   alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-  both-counters="both-counters"
+  both-counters=""
   disabled="true"
   entity-attributes="[object Object]"
   value="[object Object]"
-  with-alarm="with-alarm"
-  with-entity="with-entity"
+  with-alarm=""
+  with-entity=""
 />
 `;
 
 exports[`meta-alarm-rule-patterns-form Renders \`meta-alarm-rule-patterns-form\` with default props 1`] = `
 <c-patterns-field-stub
   alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-  both-counters="both-counters"
+  both-counters=""
   entity-attributes="[object Object]"
   value="[object Object]"
-  with-alarm="with-alarm"
-  with-entity="with-entity"
+  with-alarm=""
+  with-entity=""
 />
 `;

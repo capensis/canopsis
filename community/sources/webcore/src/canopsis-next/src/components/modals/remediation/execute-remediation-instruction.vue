@@ -1,23 +1,38 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(:close="close", minimize)
-      template(#title="")
-        span {{ config.assignedInstruction.name }}
-      template(#text="")
-        v-fade-transition
-          remediation-instruction-execute(
-            v-if="instructionExecution",
-            :instruction-execution="instructionExecution",
-            :next-pending="nextPending",
-            :previous-pending="previousPending",
-            @next-step="nextStep",
-            @next-operation="nextOperation",
-            @previous-operation="previousOperation",
-            @execute-job="executeJob",
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper
+      :close="close"
+      minimize
+    >
+      <template #title="">
+        <span>{{ config.assignedInstruction.name }}</span>
+      </template>
+      <template #text="">
+        <v-fade-transition>
+          <remediation-instruction-execute
+            v-if="instructionExecution"
+            :instruction-execution="instructionExecution"
+            :next-pending="nextPending"
+            :previous-pending="previousPending"
+            @next-step="nextStep"
+            @next-operation="nextOperation"
+            @previous-operation="previousOperation"
+            @execute-job="executeJob"
             @cancel-job-execution="cancelJobExecution"
-          )
-          v-layout(v-else, justify-center)
-            v-progress-circular(color="primary", indeterminate)
+          />
+          <v-layout
+            v-else
+            justify-center
+          >
+            <v-progress-circular
+              color="primary"
+              indeterminate
+            />
+          </v-layout>
+        </v-fade-transition>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>

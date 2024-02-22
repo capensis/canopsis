@@ -16,7 +16,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -318,6 +319,8 @@ func benchmarkMessageProcessor(
 		b.Fatalf("unexpected error %v", err)
 	}
 
+	eventsSender := entitycounters.NewEventSender(json.NewEncoder(), amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName)
+
 	m := DependencyMaker{}
 	p := MessageProcessor{
 		FeaturePrintEventOnError: true,
@@ -328,7 +331,9 @@ func benchmarkMessageProcessor(
 			alarmStatusService,
 			pbehavior.NewEntityTypeResolver(pbhStore, logger),
 			event.NewNullAutoInstructionMatcher(),
-			statecounters.NewStateCountersService(dbClient, amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), template.NewExecutor(templateConfigProvider, tzConfigProvider), logger),
+			calculator.NewEntityServiceCountersCalculator(dbClient, template.NewExecutor(templateConfigProvider, tzConfigProvider), eventsSender),
+			calculator.NewComponentCountersCalculator(dbClient, eventsSender),
+			eventsSender,
 			metaAlarmEventProcessor,
 			metricsSender,
 			statistics.NewEventStatisticsSender(dbClient, logger, tzConfigProvider),

@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 
 import featuresService from '@/services/features';
@@ -8,7 +6,6 @@ import featuresService from '@/services/features';
 import AlarmsListRow from '@/components/widgets/alarm/partials/alarms-list-row.vue';
 
 const stubs = {
-  'v-checkbox-functional': true,
   'alarms-list-row-instructions-icon': true,
   'alarms-list-row-bookmark-icon': true,
   'alarms-expand-panel-btn': true,
@@ -18,7 +15,8 @@ const stubs = {
 
 const selectExpandButton = wrapper => wrapper.find('alarms-expand-panel-btn-stub');
 const selectTableRow = wrapper => wrapper.find('tr');
-const selectCheckbox = wrapper => wrapper.find('v-checkbox-functional-stub');
+const selectCheckbox = wrapper => wrapper.find('.v-simple-checkbox');
+const selectAlarmColumnValue = wrapper => wrapper.find('alarm-column-value-stub');
 
 describe('alarms-list-row', () => {
   const fetchItem = jest.fn();
@@ -85,16 +83,9 @@ describe('alarms-list-row', () => {
       },
     });
 
-    const checkbox = selectCheckbox(wrapper);
+    selectCheckbox(wrapper).trigger('click');
 
-    checkbox.vm.$emit('change', true);
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(true);
+    expect(wrapper).toEmitInput(true);
   });
 
   it('Listeners from feature called after trigger', () => {
@@ -140,6 +131,7 @@ describe('alarms-list-row', () => {
         status: {},
       },
     };
+
     const newExpanded = false;
     const wrapper = factory({
       store: createMockedStoreModules([
@@ -158,7 +150,7 @@ describe('alarms-list-row', () => {
 
     const expandButton = selectExpandButton(wrapper);
 
-    expandButton.vm.$emit('input', newExpanded);
+    expandButton.triggerCustomEvent('input', newExpanded);
 
     await flushPromises();
 
@@ -172,6 +164,7 @@ describe('alarms-list-row', () => {
         status: {},
       },
     };
+
     const newExpanded = false;
     const wrapper = factory({
       propsData: {
@@ -185,11 +178,40 @@ describe('alarms-list-row', () => {
 
     const expandButton = selectExpandButton(wrapper);
 
-    expandButton.vm.$emit('input', newExpanded);
+    expandButton.triggerCustomEvent('input', newExpanded);
 
     await flushPromises();
 
     expect(wrapper).toEmit('expand', newExpanded);
+  });
+
+  it('Click state emitted after trigger click state event', async () => {
+    const entity = {
+      _id: 'alarm-entity',
+    };
+    const alarm = {
+      _id: 'alarm-id',
+      v: {
+        status: {},
+      },
+      entity,
+    };
+
+    const wrapper = factory({
+      propsData: {
+        alarm,
+        expand: true,
+        widget: {},
+        headers: [{ value: 'first' }, { value: 'second' }],
+        expandable: true,
+      },
+    });
+
+    await flushPromises();
+
+    selectAlarmColumnValue(wrapper).triggerCustomEvent('click:state');
+
+    expect(wrapper).toHaveBeenEmit('click:state');
   });
 
   it('Renders `alarms-list-row` with default and required props', () => {
@@ -206,7 +228,7 @@ describe('alarms-list-row', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-row` with custom props', () => {
@@ -228,7 +250,7 @@ describe('alarms-list-row', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-row` with resolved alarm', () => {
@@ -249,7 +271,7 @@ describe('alarms-list-row', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-row` with expand button', () => {
@@ -268,7 +290,7 @@ describe('alarms-list-row', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-row` with instructions', () => {
@@ -289,7 +311,7 @@ describe('alarms-list-row', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-row` with filtered children in parent alarm', () => {
@@ -314,7 +336,7 @@ describe('alarms-list-row', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-row` with bookmarked alarm', () => {
@@ -333,7 +355,7 @@ describe('alarms-list-row', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `alarms-list-row` with feature classes', () => {
@@ -358,7 +380,7 @@ describe('alarms-list-row', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
 
     hasFeatureSpy.mockClear();
     callFeatureSpy.mockClear();

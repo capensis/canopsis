@@ -1,14 +1,21 @@
-<template lang="pug">
-  div.impact-state-indicator
-    span.impact-state-text.white--text {{ value }}
-    div.pointer-wrapper
-      div.pointer(:style="pointerStyle")
-      div.section-wrapper
-        div.section(
-          v-for="color in $config.COLORS.impactState",
-          :key="color",
+<template>
+  <div class="impact-state-indicator">
+    <span class="impact-state-text white--text">{{ value }}</span>
+    <div class="pointer-wrapper">
+      <div
+        :style="pointerStyle"
+        class="pointer"
+      />
+      <div class="section-wrapper">
+        <div
+          v-for="color in $config.COLORS.impactState"
+          :key="color"
           :style="{ backgroundColor: color }"
-        )
+          class="section"
+        />
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>

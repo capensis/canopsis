@@ -1,97 +1,125 @@
-<template lang="pug">
-  c-zoom-overlay
-    v-layout.geomap-editor(column)
-      geomap.geomap-editor__map.mb-2(
-        ref="map",
-        :style="mapStyles",
-        :disabled="shown",
-        :min-zoom="minZoom",
-        :options="mapOptions",
-        :center.sync="center",
-        @click="openAddingPointDialogByClick",
+<template>
+  <c-zoom-overlay>
+    <v-layout
+      class="geomap-editor"
+      column
+    >
+      <geomap
+        ref="map"
+        :style="mapStyles"
+        :disabled="shown"
+        :min-zoom="minZoom"
+        :options="mapOptions"
+        :center.sync="center"
+        class="geomap-editor__map mb-2"
+        @click="openAddingPointDialogByClick"
         @dblclick="openAddingPointDialog"
-      )
-        geomap-control-zoom(position="topleft", :disabled="shown")
-        geomap-control-layers(position="topright")
-
-        geomap-contextmenu(
-          ref="contextmenu",
-          :disabled="shown",
-          :items="mapItems",
+      >
+        <geomap-control-zoom
+          :disabled="shown"
+          position="topleft"
+        />
+        <geomap-control-layers position="topright" />
+        <geomap-contextmenu
+          ref="contextmenu"
+          :disabled="shown"
+          :items="mapItems"
           :marker-items="markerItems"
-        )
-
-        geomap-control(position="topleft")
-          v-tooltip(right, max-width="unset", min-width="max-content")
-            template(#activator="{ on }")
-              v-btn.secondary.ma-0(
-                v-on="on",
-                :class="{ 'lighten-4': !addOnClick }",
-                :disabled="shown",
-                icon,
-                dark,
+        />
+        <geomap-control position="topleft">
+          <v-tooltip
+            max-width="unset"
+            min-width="max-content"
+            right
+          >
+            <template #activator="{ on }">
+              <v-btn
+                :class="{ 'lighten-4': !addOnClick }"
+                :disabled="shown"
+                class="secondary ma-0"
+                icon
+                dark
+                v-on="on"
                 @click="toggleAddingMode"
-              )
-                v-icon add_location
-            span {{ $t('map.toggleAddingPointMode') }}
-
-        geomap-control(position="bottomright")
-          c-help-icon(
-            :text="$t('geomap.panzoom.helpText')",
-            size="32",
-            color="secondary",
-            icon="help",
+              >
+                <v-icon>add_location</v-icon>
+              </v-btn>
+            </template>
+            <span>{{ $t('map.toggleAddingPointMode') }}</span>
+          </v-tooltip>
+        </geomap-control>
+        <geomap-control position="bottomright">
+          <c-help-icon
+            :text="$t('geomap.panzoom.helpText')"
+            size="32"
+            color="secondary"
+            icon="help"
             top
-          )
-
-        geomap-tile-layer(
-          :name="$t('map.layers.openStreetMap')",
-          :url="$config.OPEN_STREET_LAYER_URL",
-          :visible="true",
-          layer-type="base",
+          />
+        </geomap-control>
+        <geomap-tile-layer
+          :name="$t('map.layers.openStreetMap')"
+          :url="$config.OPEN_STREET_LAYER_URL"
+          :visible="true"
+          layer-type="base"
           no-wrap
-        )
-
-        geomap-cluster-group(
-          ref="pointsFeatureGroup",
-          :name="$t('map.layers.points')",
+        />
+        <geomap-cluster-group
+          ref="pointsFeatureGroup"
+          :name="$t('map.layers.points')"
           layer-type="overlay"
-        )
-          geomap-marker(
-            v-for="{ coordinates, id, data, icon } in markers",
-            :key="id",
-            :lat-lng="coordinates",
-            :options="{ data }",
-            :draggable="!data.is_entity_coordinates && !shown",
-            @dragend="finishMovingMarker",
-            @dblclick="openEditPointForm(data)",
-            @click=""
-          )
-            geomap-icon(:icon-anchor="icon.anchor")
-              point-icon(:style="icon.style", :entity="data.entity", :size="icon.size")
-
-        geomap-marker(v-if="pointDialog", :lat-lng="placeholderPoint.coordinates")
-          geomap-icon(:icon-anchor="placeholderPoint.icon.anchor")
-            point-icon(
-              :style="placeholderPoint.icon.style",
-              :entity="placeholderPoint.data.entity",
+        >
+          <geomap-marker
+            v-for="{ coordinates, id, data, icon } in markers"
+            :key="id"
+            :lat-lng="coordinates"
+            :options="{ data }"
+            :draggable="!data.is_entity_coordinates && !shown"
+            @dragend="finishMovingMarker"
+            @dblclick="openEditPointForm(data)"
+          >
+            <geomap-icon :icon-anchor="icon.anchor">
+              <point-icon
+                :style="icon.style"
+                :entity="data.entity"
+                :size="icon.size"
+              />
+            </geomap-icon>
+          </geomap-marker>
+        </geomap-cluster-group>
+        <geomap-marker
+          v-if="pointDialog"
+          :lat-lng="placeholderPoint.coordinates"
+        >
+          <geomap-icon :icon-anchor="placeholderPoint.icon.anchor">
+            <point-icon
+              :style="placeholderPoint.icon.style"
+              :entity="placeholderPoint.data.entity"
               :size="placeholderPoint.icon.size"
-            )
-
-        point-form-dialog-menu(
-          :value="shown",
-          :point="pointDialog",
-          :position-x="clientX",
-          :position-y="clientY",
-          :editing="!!editingPoint",
-          :exists-entities="existsEntities",
-          coordinates,
-          @cancel="closePointDialog",
-          @submit="submitPointDialog",
-          @remove="showRemovePointModal",
+            />
+          </geomap-icon>
+        </geomap-marker>
+        <point-form-dialog-menu
+          :value="shown"
+          :point="pointDialog"
+          :position-x="clientX"
+          :position-y="clientY"
+          :editing="!!editingPoint"
+          :exists-entities="existsEntities"
+          coordinates
+          @cancel="closePointDialog"
+          @submit="submitPointDialog"
+          @remove="showRemovePointModal"
           @fly:coordinates="handleUpdateCoordinates"
-        )
-      v-messages(v-if="hasChildrenError", :value="errorMessages", color="error")
+        />
+      </geomap>
+      <v-messages
+        v-if="hasChildrenError"
+        :value="errorMessages"
+        color="error"
+      />
+    </v-layout>
+  </c-zoom-overlay>
 </template>
 
 <script>

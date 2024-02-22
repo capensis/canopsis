@@ -1,32 +1,129 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` with entity impact level and alarm state 1`] = `
-<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"><span>2 of 30</span></div>
-<div class="color-indicator" style="background-color: rgb(205, 220, 57);">2</div><span class="v-tooltip v-tooltip--right"><transition-stub name="slide-x-transition"></transition-stub></span>
+<span
+  class="v-tooltip v-tooltip--right"
+>
+  <!---->
+  <div
+    class="color-indicator"
+    style="background-color: rgb(205, 220, 57);"
+  >
+    2
+  </div>
+</span>
+`;
+
+exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` with entity impact level and alarm state 2`] = `
+<div
+  class="v-tooltip__content menuable__content__active"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
+>
+  <span>
+    2 of 30
+  </span>
+</div>
 `;
 
 exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` with entity impact level and impact state 1`] = `
-<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"><span>12 of 30</span></div>
-<div class="color-indicator" style="background-color: rgb(245, 124, 0);">12</div><span class="v-tooltip v-tooltip--right"><transition-stub name="slide-x-transition"></transition-stub></span>
+<span
+  class="v-tooltip v-tooltip--right"
+>
+  <!---->
+  <div
+    class="color-indicator"
+    style="background-color: rgb(245, 124, 0);"
+  >
+    12
+  </div>
+</span>
+`;
+
+exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` with entity impact level and impact state 2`] = `
+<div
+  class="v-tooltip__content menuable__content__active"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
+>
+  <span>
+    12 of 30
+  </span>
+</div>
 `;
 
 exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` with state type and default slot 1`] = `
-<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"><span>Major</span></div>
-<div class="color-indicator">
-  <div class="default-slot"></div>
-</div><span class="v-tooltip v-tooltip--right"><transition-stub name="slide-x-transition"></transition-stub></span>
+<span
+  class="v-tooltip v-tooltip--right"
+>
+  <!---->
+  <div
+    class="color-indicator"
+  >
+    <div
+      class="default-slot"
+    />
+  </div>
+</span>
+`;
+
+exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` with state type and default slot 2`] = `
+<div
+  class="v-tooltip__content menuable__content__active"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
+>
+  <span>
+    Major
+  </span>
+</div>
 `;
 
 exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` with unresolved type 1`] = `
-<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"><span>Ok</span></div>
-<div class="color-indicator">
-  <div class="default-slot"></div>
-</div><span class="v-tooltip v-tooltip--right"><transition-stub name="slide-x-transition"></transition-stub></span>
+<span
+  class="v-tooltip v-tooltip--right"
+>
+  <!---->
+  <div
+    class="color-indicator"
+  >
+    <div
+      class="default-slot"
+    />
+  </div>
+</span>
+`;
+
+exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` with unresolved type 2`] = `
+<div
+  class="v-tooltip__content menuable__content__active"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
+>
+  <span>
+    Ok
+  </span>
+</div>
 `;
 
 exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` without type but with default slot 1`] = `
-<div class="v-tooltip__content" style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"><span>Critical</span></div>
-<div class="color-indicator">
-  <div class="default-slot"></div>
-</div><span class="v-tooltip v-tooltip--right"><transition-stub name="slide-x-transition"></transition-stub></span>
+<span
+  class="v-tooltip v-tooltip--right"
+>
+  <!---->
+  <div
+    class="color-indicator"
+  >
+    <div
+      class="default-slot"
+    />
+  </div>
+</span>
+`;
+
+exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` without type but with default slot 2`] = `
+<div
+  class="v-tooltip__content menuable__content__active"
+  style="left: 0px; max-width: auto; top: 12px; z-index: 8;"
+>
+  <span>
+    Critical
+  </span>
+</div>
 `;

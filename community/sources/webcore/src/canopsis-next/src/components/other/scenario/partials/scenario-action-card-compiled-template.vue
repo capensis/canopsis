@@ -1,6 +1,7 @@
-<template lang="pug">
-  div.compiled-template__wrapper.background.darken-1.pa-1
-    c-compiled-template(:template="template")
+<template>
+  <div class="compiled-template__wrapper background darken-1 pa-1">
+    <c-compiled-template :template="template" />
+  </div>
 </template>
 
 <script>

@@ -1,16 +1,16 @@
-<template lang="pug">
-  alarms-list-table-with-pagination(
-    v-on="$listeners",
-    :parent-alarm="alarm",
-    :widget="widget",
-    :alarms="alarms",
-    :meta="meta",
-    :query="query",
-    :columns="widget.parameters.widgetGroupColumns",
-    :loading="pending",
-    :refresh-alarms-list="refreshAlarmsList",
+<template>
+  <alarms-list-table-with-pagination
+    :parent-alarm="alarm"
+    :widget="widget"
+    :alarms="alarms"
+    :meta="meta"
+    :query="query"
+    :columns="widget.parameters.widgetGroupColumns"
+    :loading="pending"
+    :refresh-alarms-list="refreshAlarmsList"
     expandable
-  )
+    v-on="$listeners"
+  />
 </template>
 
 <script>

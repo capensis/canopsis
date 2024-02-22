@@ -1,5 +1,4 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { deleteAction, editAction, fakeAction } from '@unit/data/actions-panel';
 import { createButtonStub } from '@unit/stubs/button';
 
@@ -7,7 +6,7 @@ import MassActionsPanel from '@/components/common/actions-panel/mass-actions-pan
 
 const stubs = {
   'c-action-btn': createButtonStub('c-action-btn'),
-  'v-list-tile': createButtonStub('v-list-tile'),
+  'v-list-item': createButtonStub('v-list-item'),
 };
 
 const snapshotStubs = {
@@ -58,7 +57,7 @@ describe('mass-actions-panel', () => {
       },
     });
 
-    const dropdownActionElements = wrapper.findAll('v-menu-stub button.v-list-tile');
+    const dropdownActionElements = wrapper.findAll('v-menu-stub button.v-list-item');
 
     expect(dropdownActionElements).toHaveLength(actions.length);
 
@@ -79,7 +78,7 @@ describe('mass-actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `mass-actions-panel` with actions correctly on the tablet size', () => {
@@ -94,7 +93,7 @@ describe('mass-actions-panel', () => {
 
     const dropdownContent = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(dropdownContent.element).toMatchSnapshot();
   });
 
@@ -110,7 +109,7 @@ describe('mass-actions-panel', () => {
 
     const dropdownContent = wrapper.findMenu();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(dropdownContent.element).toMatchSnapshot();
   });
 });

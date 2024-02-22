@@ -1,8 +1,10 @@
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
-import MermaidPreview from '@/components/other/map/partials/mermaid-preview.vue';
 import { COLOR_INDICATOR_TYPES } from '@/constants';
+
 import { mermaidPointToForm } from '@/helpers/entities/map/form';
+
+import MermaidPreview from '@/components/other/map/partials/mermaid-preview.vue';
 
 const stubs = {
   panzoom: true,
@@ -38,7 +40,7 @@ describe('mermaid-preview', () => {
     const mermaidPointsPreview = selectMermaidPointsPreview(wrapper);
 
     const linkedMap = { _id: 'map' };
-    mermaidPointsPreview.vm.$emit('show:map', linkedMap);
+    mermaidPointsPreview.triggerCustomEvent('show:map', linkedMap);
 
     expect(wrapper).toEmit('show:map', linkedMap);
   });
@@ -53,7 +55,7 @@ describe('mermaid-preview', () => {
     const mermaidPointsPreview = selectMermaidPointsPreview(wrapper);
 
     const linkedPoint = mermaidPointToForm({ x: 1, y: 2 });
-    mermaidPointsPreview.vm.$emit('show:alarms', linkedPoint);
+    mermaidPointsPreview.triggerCustomEvent('show:alarms', linkedPoint);
 
     expect(wrapper).toEmit('show:alarms', linkedPoint);
   });
@@ -91,7 +93,7 @@ describe('mermaid-preview', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `mermaid-preview` with custom props', async () => {
@@ -105,6 +107,6 @@ describe('mermaid-preview', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

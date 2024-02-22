@@ -4,9 +4,7 @@ exports[`mermaid-contextmenu Renders \`mermaid-contextmenu\` with custom props 1
 <div
   class="v-menu"
 >
-  <transition-stub
-    name="v-menu-transition"
-  />
+  <!---->
 </div>
 `;
 
@@ -14,8 +12,6 @@ exports[`mermaid-contextmenu Renders \`mermaid-contextmenu\` with required props
 <div
   class="v-menu"
 >
-  <transition-stub
-    name="v-menu-transition"
-  />
+  <!---->
 </div>
 `;

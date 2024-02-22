@@ -1,13 +1,21 @@
-<template lang="pug">
-  v-layout(row, align-center)
-    v-flex(xs6)
-      c-number-field(
-        v-field="value.interval",
-        :label="$t('recurrenceRule.repeatEvery')",
-        :min="1",
+<template>
+  <v-layout align-center>
+    <v-flex xs6>
+      <c-number-field
+        v-field="value.interval"
+        :label="$t('recurrenceRule.repeatEvery')"
+        :min="1"
         name="interval"
-      )
-    v-flex.pl-2(v-if="value.interval", xs6) {{ intervalTimeString }}
+      />
+    </v-flex>
+    <v-flex
+      v-if="value.interval"
+      class="pl-2"
+      xs6
+    >
+      {{ intervalTimeString }}
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

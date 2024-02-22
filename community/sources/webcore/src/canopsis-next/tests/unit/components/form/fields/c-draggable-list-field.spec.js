@@ -41,9 +41,9 @@ describe('c-draggable-list-field', () => {
       items[2],
     ];
 
-    selectDraggable(wrapper).vm.$emit('input', newOrder);
+    selectDraggable(wrapper).triggerCustomEvent('input', newOrder);
 
-    expect(wrapper).toEmit('input', newOrder);
+    expect(wrapper).toEmitInput(newOrder);
   });
 
   it('Filter position changed after trigger draggable with added event', () => {
@@ -64,9 +64,9 @@ describe('c-draggable-list-field', () => {
       items[2],
     ];
 
-    selectDraggable(wrapper).vm.$emit('input', newItems);
+    selectDraggable(wrapper).triggerCustomEvent('input', newItems);
 
-    expect(wrapper).toEmit('input', newItems);
+    expect(wrapper).toEmitInput(newItems);
   });
 
   it('Filter position changed after trigger draggable with removed event', () => {
@@ -81,15 +81,15 @@ describe('c-draggable-list-field', () => {
       items[2],
     ];
 
-    selectDraggable(wrapper).vm.$emit('input', newItems);
+    selectDraggable(wrapper).triggerCustomEvent('input', newItems);
 
-    expect(wrapper).toEmit('input', newItems);
+    expect(wrapper).toEmitInput(newItems);
   });
 
   it('Renders `c-draggable-list-field` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `c-draggable-list-field` with custom props', () => {
@@ -105,6 +105,6 @@ describe('c-draggable-list-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

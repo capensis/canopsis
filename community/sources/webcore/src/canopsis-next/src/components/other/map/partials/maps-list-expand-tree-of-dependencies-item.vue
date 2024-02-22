@@ -1,8 +1,9 @@
-<template lang="pug">
-  tree-of-dependencies-preview.tree-of-dependencies-expand-panel(
-    :map="map",
+<template>
+  <tree-of-dependencies-preview
+    :map="map"
     :columns="columns"
-  )
+    class="tree-of-dependencies-expand-panel"
+  />
 </template>
 
 <script>

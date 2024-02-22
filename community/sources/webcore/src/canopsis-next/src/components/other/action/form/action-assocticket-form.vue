@@ -1,5 +1,8 @@
-<template lang="pug">
-  associate-ticket-event-form(v-field="value", :name="name")
+<template>
+  <associate-ticket-event-form
+    v-field="value"
+    :name="name"
+  />
 </template>
 
 <script>

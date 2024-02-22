@@ -9,7 +9,7 @@ exports[`maps Renders \`maps\` with permissions 1`] = `
     <maps-list-stub
       duplicable="true"
       maps=""
-      pagination="[object Object]"
+      options="[object Object]"
       removable="true"
       totalitems="0"
       updatable="true"
@@ -33,7 +33,7 @@ exports[`maps Renders \`maps\` without permissions 1`] = `
   >
     <maps-list-stub
       maps=""
-      pagination="[object Object]"
+      options="[object Object]"
       totalitems="0"
     />
   </div>

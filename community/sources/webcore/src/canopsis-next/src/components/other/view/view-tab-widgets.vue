@@ -1,30 +1,44 @@
-<template lang="pug">
-  div.view(:id="`view-tab-${tab._id}`")
-    portal(v-if="editing", :to="$constants.PORTALS_NAMES.additionalTopBarItems")
-      window-size-field(v-model="size", color="white", light)
-    grid-layout(
-      v-model="layouts[size]",
-      :margin="[$constants.WIDGET_GRID_ROW_HEIGHT, $constants.WIDGET_GRID_ROW_HEIGHT]",
-      :columns-count="$constants.WIDGET_GRID_COLUMNS_COUNT",
-      :row-height="$constants.WIDGET_GRID_ROW_HEIGHT",
-      :style="layoutStyle",
+<template>
+  <div
+    :id="`view-tab-${tab._id}`"
+    class="view"
+  >
+    <portal
+      v-if="editing"
+      :to="$constants.PORTALS_NAMES.additionalTopBarItems"
+    >
+      <window-size-field
+        v-model="size"
+        color="white"
+        light
+      />
+    </portal>
+    <grid-layout
+      v-model="layouts[size]"
+      :margin="[$constants.WIDGET_GRID_ROW_HEIGHT, $constants.WIDGET_GRID_ROW_HEIGHT]"
+      :columns-count="$constants.WIDGET_GRID_COLUMNS_COUNT"
+      :row-height="$constants.WIDGET_GRID_ROW_HEIGHT"
+      :style="layoutStyle"
       :disabled="!editing"
-    )
-      template(#item="{ on, item }")
-        widget-edit-drag-handler(
-          v-if="editing",
-          v-on="on",
-          :widget="item.widget",
-          :auto-height="item.autoHeight",
+    >
+      <template #item="{ on, item }">
+        <widget-edit-drag-handler
+          v-if="editing"
+          :widget="item.widget"
+          :auto-height="item.autoHeight"
           :tab="tab"
-        )
-        widget-wrapper(
-          :widget="item.widget",
-          :tab="tab",
-          :kiosk="kiosk",
-          :editing="editing",
+          v-on="on"
+        />
+        <widget-wrapper
+          :widget="item.widget"
+          :tab="tab"
+          :kiosk="kiosk"
+          :editing="editing"
           :visible="visible"
-        )
+        />
+      </template>
+    </grid-layout>
+  </div>
 </template>
 
 <script>

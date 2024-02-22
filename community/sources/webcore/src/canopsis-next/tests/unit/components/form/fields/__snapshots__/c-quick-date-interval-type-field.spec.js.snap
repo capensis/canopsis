@@ -2,20 +2,21 @@
 
 exports[`c-quick-date-interval-type-field Renders \`c-quick-date-interval-type-field\` with custom props 1`] = `
 <div
-  class="v-input v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
-  role="combobox"
+  class="v-input v-input--hide-details v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light v-text-field v-select"
 >
   <div
     class="v-input__control"
   >
     <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
       class="v-input__slot"
+      role="button"
     >
       <div
         class="v-select__slot"
       >
         <label
-          aria-hidden="true"
           class="v-label v-label--active v-label--is-disabled theme--light"
           style="left: 0px; position: absolute;"
         >
@@ -30,9 +31,8 @@ exports[`c-quick-date-interval-type-field Renders \`c-quick-date-interval-type-f
             Last 2 days
           </div>
           <input
-            aria-label="Quick ranges"
             aria-readonly="false"
-            autocomplete="on"
+            autocomplete="off"
             disabled="disabled"
             readonly="readonly"
             type="text"
@@ -46,395 +46,46 @@ exports[`c-quick-date-interval-type-field Renders \`c-quick-date-interval-type-f
           >
             <i
               aria-hidden="true"
-              class="v-icon v-icon--disabled material-icons theme--light"
+              class="v-icon notranslate v-icon--disabled material-icons theme--light"
             >
               arrow_drop_down
             </i>
           </div>
         </div>
+        <input
+          type="hidden"
+          value="[object Object]"
+        />
       </div>
       <div
         class="v-menu"
-      />
+      >
+        <!---->
+      </div>
     </div>
   </div>
 </div>
 `;
 
-exports[`c-quick-date-interval-type-field Renders \`c-quick-date-interval-type-field\` with custom props 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-select-list v-card theme--light"
-  >
-    <div
-      class="v-list theme--light"
-      role="list"
-    >
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Last 15 minutes
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Last 30 minutes
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Last 1 hour
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Last 3 hour
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Last 6 hour
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Last 12 hour
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Last 24 hour
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        class="primary--text"
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Last 2 days
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Last 7 days
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Last 30 days
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Last 1 year
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Yesterday
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Previous week
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Previous month
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Today
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Today so far
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              This week
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              This week so far
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              This month
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              This month so far
-            </div>
-          </div>
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-`;
+exports[`c-quick-date-interval-type-field Renders \`c-quick-date-interval-type-field\` with custom props 2`] = `undefined`;
 
 exports[`c-quick-date-interval-type-field Renders \`c-quick-date-interval-type-field\` with custom ranges 1`] = `
 <div
-  class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
-  role="combobox"
+  class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
 >
   <div
     class="v-input__control"
   >
     <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
       class="v-input__slot"
+      role="button"
     >
       <div
         class="v-select__slot"
       >
         <label
-          aria-hidden="true"
           class="v-label v-label--active theme--light"
           style="left: 0px; position: absolute;"
         >
@@ -449,9 +100,8 @@ exports[`c-quick-date-interval-type-field Renders \`c-quick-date-interval-type-f
             Custom
           </div>
           <input
-            aria-label="Quick ranges"
             aria-readonly="false"
-            autocomplete="on"
+            autocomplete="off"
             readonly="readonly"
             type="text"
           />
@@ -464,16 +114,22 @@ exports[`c-quick-date-interval-type-field Renders \`c-quick-date-interval-type-f
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light"
+              class="v-icon notranslate material-icons theme--light"
             >
               arrow_drop_down
             </i>
           </div>
         </div>
+        <input
+          type="hidden"
+          value="[object Object]"
+        />
       </div>
       <div
         class="v-menu"
-      />
+      >
+        <!---->
+      </div>
     </div>
     <div
       class="v-text-field__details"
@@ -481,8 +137,10 @@ exports[`c-quick-date-interval-type-field Renders \`c-quick-date-interval-type-f
       <div
         class="v-messages theme--light"
       >
-        <div
+        <transition-group-stub
           class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
         />
       </div>
     </div>
@@ -490,74 +148,25 @@ exports[`c-quick-date-interval-type-field Renders \`c-quick-date-interval-type-f
 </div>
 `;
 
-exports[`c-quick-date-interval-type-field Renders \`c-quick-date-interval-type-field\` with custom ranges 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-select-list v-card theme--light"
-  >
-    <div
-      class="v-list theme--light"
-      role="list"
-    >
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Last 2 days
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        class="primary--text"
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Custom
-            </div>
-          </div>
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-`;
+exports[`c-quick-date-interval-type-field Renders \`c-quick-date-interval-type-field\` with custom ranges 2`] = `undefined`;
 
 exports[`c-quick-date-interval-type-field Renders \`c-quick-date-interval-type-field\` with default props 1`] = `
 <div
-  class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
-  role="combobox"
+  class="v-input v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
 >
   <div
     class="v-input__control"
   >
     <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
       class="v-input__slot"
+      role="button"
     >
       <div
         class="v-select__slot"
       >
         <label
-          aria-hidden="true"
           class="v-label v-label--active theme--light"
           style="left: 0px; position: absolute;"
         >
@@ -572,9 +181,8 @@ exports[`c-quick-date-interval-type-field Renders \`c-quick-date-interval-type-f
             Last 2 days
           </div>
           <input
-            aria-label="Quick ranges"
             aria-readonly="false"
-            autocomplete="on"
+            autocomplete="off"
             readonly="readonly"
             type="text"
           />
@@ -587,16 +195,22 @@ exports[`c-quick-date-interval-type-field Renders \`c-quick-date-interval-type-f
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light"
+              class="v-icon notranslate material-icons theme--light"
             >
               arrow_drop_down
             </i>
           </div>
         </div>
+        <input
+          type="hidden"
+          value="[object Object]"
+        />
       </div>
       <div
         class="v-menu"
-      />
+      >
+        <!---->
+      </div>
     </div>
     <div
       class="v-text-field__details"
@@ -604,8 +218,10 @@ exports[`c-quick-date-interval-type-field Renders \`c-quick-date-interval-type-f
       <div
         class="v-messages theme--light"
       >
-        <div
+        <transition-group-stub
           class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
         />
       </div>
     </div>
@@ -613,360 +229,4 @@ exports[`c-quick-date-interval-type-field Renders \`c-quick-date-interval-type-f
 </div>
 `;
 
-exports[`c-quick-date-interval-type-field Renders \`c-quick-date-interval-type-field\` with default props 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-select-list v-card theme--light"
-  >
-    <div
-      class="v-list theme--light"
-      role="list"
-    >
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Last 15 minutes
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Last 30 minutes
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Last 1 hour
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Last 3 hour
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Last 6 hour
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Last 12 hour
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Last 24 hour
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        class="primary--text"
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Last 2 days
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Last 7 days
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Last 30 days
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Last 1 year
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Yesterday
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Previous week
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Previous month
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Today
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              Today so far
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              This week
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              This week so far
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              This month
-            </div>
-          </div>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              This month so far
-            </div>
-          </div>
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-`;
+exports[`c-quick-date-interval-type-field Renders \`c-quick-date-interval-type-field\` with default props 2`] = `undefined`;

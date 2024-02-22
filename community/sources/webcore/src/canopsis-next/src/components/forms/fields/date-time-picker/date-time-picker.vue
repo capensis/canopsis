@@ -1,32 +1,64 @@
-<template lang="pug">
-  v-sheet
-    div.v-picker__title.primary.text-xs-center(v-if="label")
-      span.headline {{ label }}
-    div.date-time-picker__body
-      v-layout.py-2(row, align-center, justify-center)
-        v-flex.v-date-time-picker__subtitle-wrapper
-          span.v-date-time-picker__subtitle(
+<template>
+  <v-sheet>
+    <div
+      v-if="label"
+      class="v-picker__title primary text-center"
+    >
+      <span class="text-h5">{{ label }}</span>
+    </div>
+    <div class="date-time-picker__body">
+      <v-layout
+        class="py-2"
+        align-center
+        justify-center
+      >
+        <v-flex class="v-date-time-picker__subtitle-wrapper">
+          <span
             :class="{ 'grey--text darken-1': !localValue }"
-          ) {{ valueString }}
-        v-flex.v-date-time-picker__subtitle-wrapper
-          time-picker-field.v-date-time-picker__subtitle(
-            :value="timeString",
-            :round-hours="roundHours",
+            class="v-date-time-picker__subtitle"
+          >{{ valueString }}</span>
+        </v-flex>
+        <v-flex class="v-date-time-picker__subtitle-wrapper">
+          <time-picker-field
+            :value="timeString"
+            :round-hours="roundHours"
+            class="v-date-time-picker__subtitle"
             @input="updateTime"
-          )
-      div
-        v-date-picker(
-          :locale="$i18n.locale",
-          :value="dateString",
-          color="primary",
-          no-title,
+          />
+        </v-flex>
+      </v-layout>
+      <div>
+        <v-date-picker
+          :locale="$i18n.locale"
+          :value="dateString"
+          color="primary"
+          no-title
           @input="updateDate"
-        )
-    slot(name="footer")
-      v-divider
-      v-layout.mt-1(justify-space-around)
-        v-btn(depressed, flat, @click="$listeners.close") {{ $t('common.cancel') }}
-        v-btn.primary(@click="submit") {{ $t('common.apply') }}
+        />
+      </div>
+    </div>
+    <slot name="footer">
+      <v-divider />
+      <v-layout
+        class="mt-1 py-2"
+        justify-space-around
+      >
+        <v-btn
+          depressed
+          text
+          @click="$listeners.close"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          class="primary"
+          @click="submit"
+        >
+          {{ $t('common.apply') }}
+        </v-btn>
+      </v-layout>
+    </slot>
+  </v-sheet>
 </template>
 
 <script>

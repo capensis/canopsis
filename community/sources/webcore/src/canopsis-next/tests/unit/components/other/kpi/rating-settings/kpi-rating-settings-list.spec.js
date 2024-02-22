@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 
 import KpiRatingSettingsList from '@/components/other/kpi/rating-settings/kpi-rating-settings-list.vue';
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
@@ -78,12 +76,12 @@ describe('kpi-rating-settings-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         ratingSettings: ratingSettingsItems,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
           search: '',
-          sortBy: '',
-          descending: false,
+          sortBy: [],
+          sortDesc: [],
         },
         totalItems: 50,
         updatable: true,
@@ -92,22 +90,14 @@ describe('kpi-rating-settings-list', () => {
 
     const rows = wrapper.findAll('tr > td');
 
-    const enableButton = rows.at(0).find('input');
+    const enableButton = rows.at(0).find('.v-simple-checkbox');
 
     await enableButton.trigger('click');
 
-    const submitButton = wrapper.findAll('.v-btn').at(1);
-
-    submitButton.trigger('click');
-
-    const changeSelectedEvents = wrapper.emitted('change-selected');
-
-    expect(changeSelectedEvents).toHaveLength(1);
-
-    const [eventData] = changeSelectedEvents[0];
+    wrapper.findAll('.v-btn').at(1).trigger('click');
 
     const [firstRatingSetting] = ratingSettingsItems;
-    expect(eventData).toEqual([{
+    expect(wrapper).toEmit('change-selected', [{
       ...firstRatingSetting,
       enabled: !firstRatingSetting.enabled,
     }]);
@@ -117,23 +107,23 @@ describe('kpi-rating-settings-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         ratingSettings: [],
-        pagination: {},
+        options: {},
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `kpi-rating-settings-list` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         ratingSettings: ratingSettingsItems,
-        pagination: {
+        options: {
           page: 2,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
           search: 'Rating setting',
-          sortBy: '',
-          descending: false,
+          sortBy: [],
+          sortDesc: [],
         },
         totalItems: 50,
         pending: true,
@@ -141,19 +131,19 @@ describe('kpi-rating-settings-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `kpi-rating-settings-list` with enable rating', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         ratingSettings: ratingSettingsItems,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
           search: '',
-          sortBy: '',
-          descending: false,
+          sortBy: [],
+          sortDesc: [],
         },
         totalItems: 50,
         updatable: true,
@@ -163,31 +153,31 @@ describe('kpi-rating-settings-list', () => {
     const enableButton = wrapper
       .findAll('tr > td')
       .at(0)
-      .find('input');
+      .find('.v-simple-checkbox');
 
     enableButton.trigger('click');
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
 
     enableButton.trigger('click');
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `kpi-rating-settings-list` after updated rating settings prop', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         ratingSettings: [],
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
           search: '',
-          sortBy: '',
-          descending: false,
+          sortBy: [],
+          sortDesc: [],
         },
         totalItems: 50,
         updatable: true,
@@ -198,6 +188,6 @@ describe('kpi-rating-settings-list', () => {
       ratingSettings: ratingSettingsItems,
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

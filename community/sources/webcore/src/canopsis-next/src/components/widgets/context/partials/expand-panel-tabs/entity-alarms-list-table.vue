@@ -1,14 +1,14 @@
-<template lang="pug">
-  alarms-list-table-with-pagination(
-    :widget="widget",
-    :meta="meta",
-    :alarms="alarms",
-    :columns="columns",
-    :query.sync="query",
-    :expandable="!resolved",
-    :hide-pagination="!resolved",
+<template>
+  <alarms-list-table-with-pagination
+    :widget="widget"
+    :meta="meta"
+    :alarms="alarms"
+    :columns="columns"
+    :query.sync="query"
+    :expandable="!resolved"
+    :hide-pagination="!resolved"
     hide-actions
-  )
+  />
 </template>
 
 <script>

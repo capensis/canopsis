@@ -2,20 +2,21 @@
 
 exports[`c-event-filter-type-field Renders \`c-event-filter-type-field\` with custom props 1`] = `
 <div
-  class="v-input v-text-field v-select theme--light"
-  role="combobox"
+  class="v-input theme--light v-text-field v-select"
 >
   <div
     class="v-input__control"
   >
     <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
       class="v-input__slot"
+      role="button"
     >
       <div
         class="v-select__slot"
       >
         <label
-          aria-hidden="true"
           class="v-label theme--light"
           style="left: 0px; position: absolute;"
         >
@@ -25,10 +26,8 @@ exports[`c-event-filter-type-field Renders \`c-event-filter-type-field\` with cu
           class="v-select__selections"
         >
           <input
-            aria-label="Custom label"
             aria-readonly="false"
-            autocomplete="on"
-            name="customName"
+            autocomplete="off"
             readonly="readonly"
             type="text"
           />
@@ -41,16 +40,23 @@ exports[`c-event-filter-type-field Renders \`c-event-filter-type-field\` with cu
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light"
+              class="v-icon notranslate material-icons theme--light"
             >
               arrow_drop_down
             </i>
           </div>
         </div>
+        <input
+          name="customName"
+          type="hidden"
+          value="Custom value"
+        />
       </div>
       <div
         class="v-menu"
-      />
+      >
+        <!---->
+      </div>
     </div>
     <div
       class="v-text-field__details"
@@ -58,8 +64,10 @@ exports[`c-event-filter-type-field Renders \`c-event-filter-type-field\` with cu
       <div
         class="v-messages theme--light"
       >
-        <div
+        <transition-group-stub
           class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
         />
       </div>
     </div>
@@ -69,20 +77,21 @@ exports[`c-event-filter-type-field Renders \`c-event-filter-type-field\` with cu
 
 exports[`c-event-filter-type-field Renders \`c-event-filter-type-field\` with default props 1`] = `
 <div
-  class="v-input v-text-field v-select theme--light"
-  role="combobox"
+  class="v-input theme--light v-text-field v-select"
 >
   <div
     class="v-input__control"
   >
     <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
       class="v-input__slot"
+      role="button"
     >
       <div
         class="v-select__slot"
       >
         <label
-          aria-hidden="true"
           class="v-label theme--light"
           style="left: 0px; position: absolute;"
         >
@@ -92,10 +101,8 @@ exports[`c-event-filter-type-field Renders \`c-event-filter-type-field\` with de
           class="v-select__selections"
         >
           <input
-            aria-label="Type"
             aria-readonly="false"
-            autocomplete="on"
-            name="type"
+            autocomplete="off"
             readonly="readonly"
             type="text"
           />
@@ -108,16 +115,23 @@ exports[`c-event-filter-type-field Renders \`c-event-filter-type-field\` with de
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light"
+              class="v-icon notranslate material-icons theme--light"
             >
               arrow_drop_down
             </i>
           </div>
         </div>
+        <input
+          name="type"
+          type="hidden"
+          value="Default value"
+        />
       </div>
       <div
         class="v-menu"
-      />
+      >
+        <!---->
+      </div>
     </div>
     <div
       class="v-text-field__details"
@@ -125,8 +139,10 @@ exports[`c-event-filter-type-field Renders \`c-event-filter-type-field\` with de
       <div
         class="v-messages theme--light"
       >
-        <div
+        <transition-group-stub
           class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
         />
       </div>
     </div>
@@ -136,20 +152,21 @@ exports[`c-event-filter-type-field Renders \`c-event-filter-type-field\` with de
 
 exports[`c-event-filter-type-field Renders \`c-event-filter-type-field\` with errors 1`] = `
 <div
-  class="v-input v-text-field v-select v-input--has-state theme--light error--text"
-  role="combobox"
+  class="v-input v-input--has-state theme--light v-text-field v-select error--text"
 >
   <div
     class="v-input__control"
   >
     <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
       class="v-input__slot"
+      role="button"
     >
       <div
         class="v-select__slot"
       >
         <label
-          aria-hidden="true"
           class="v-label theme--light error--text"
           style="left: 0px; position: absolute;"
         >
@@ -159,10 +176,8 @@ exports[`c-event-filter-type-field Renders \`c-event-filter-type-field\` with er
           class="v-select__selections"
         >
           <input
-            aria-label="Type"
             aria-readonly="false"
-            autocomplete="on"
-            name="type"
+            autocomplete="off"
             readonly="readonly"
             type="text"
           />
@@ -175,32 +190,41 @@ exports[`c-event-filter-type-field Renders \`c-event-filter-type-field\` with er
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light error--text"
+              class="v-icon notranslate material-icons theme--light error--text"
             >
               arrow_drop_down
             </i>
           </div>
         </div>
+        <input
+          name="type"
+          type="hidden"
+        />
       </div>
       <div
         class="v-menu"
-      />
+      >
+        <!---->
+      </div>
     </div>
     <div
       class="v-text-field__details"
     >
       <div
         class="v-messages theme--light error--text"
+        role="alert"
       >
-        <div
+        <transition-group-stub
           class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
         >
           <div
-            class="v-messages__message message-transition-enter message-transition-enter-active"
+            class="v-messages__message"
           >
             The field is required
           </div>
-        </div>
+        </transition-group-stub>
       </div>
     </div>
   </div>

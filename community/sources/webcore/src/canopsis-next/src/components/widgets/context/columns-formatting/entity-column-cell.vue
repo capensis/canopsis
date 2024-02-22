@@ -1,5 +1,9 @@
-<template lang="pug">
-  div(v-bind="component.bind")
+<template>
+  <div
+    v-bind="component.bind"
+    :is="component.bind.is"
+    v-on="component.on"
+  />
 </template>
 
 <script>
@@ -8,6 +12,7 @@ import { get } from 'lodash';
 import { ENTITY_INFOS_TYPE, ENTITY_FIELDS } from '@/constants';
 
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
+import { hasStateSetting } from '@/helpers/entities/entity/entity';
 
 import { widgetColumnsFiltersMixin } from '@/mixins/widget/columns-filters';
 
@@ -32,6 +37,10 @@ export default {
     columnsFilters: {
       type: Array,
       default: () => [],
+    },
+    showRootCauseByStateClick: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
@@ -59,6 +68,25 @@ export default {
       const value = get(this.entity, this.column.value, '');
 
       return this.columnFilter ? this.columnFilter(value) : value;
+    },
+
+    stateCellProperties() {
+      const component = {
+        bind: {
+          is: 'c-alarm-chip',
+          type: ENTITY_INFOS_TYPE.state,
+          value: this.value,
+        },
+      };
+
+      if (this.showRootCauseByStateClick && hasStateSetting(this.entity)) {
+        component.bind.class = 'cursor-pointer';
+        component.on = {
+          click: () => this.$emit('click:state', this.entity),
+        };
+      }
+
+      return component;
     },
 
     component() {
@@ -94,13 +122,7 @@ export default {
             pbehaviorInfo: this.entity.pbehavior_info,
           },
         },
-        state: {
-          bind: {
-            is: 'c-alarm-chip',
-            type: ENTITY_INFOS_TYPE.state,
-            value: this.value,
-          },
-        },
+        state: this.stateCellProperties,
       };
 
       const cell = PROPERTIES_COMPONENTS_MAP[this.column.value];

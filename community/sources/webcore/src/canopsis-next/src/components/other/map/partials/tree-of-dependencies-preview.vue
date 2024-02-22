@@ -1,20 +1,23 @@
-<template lang="pug">
-  div.tree-of-dependencies__preview
-    c-zoom-overlay
-      network-graph.fill-height.black--text(
-        ref="networkGraph",
-        :options="options",
-        :node-html-label-options="nodeHtmlLabelsOptions",
+<template>
+  <div class="tree-of-dependencies__preview">
+    <c-zoom-overlay>
+      <network-graph
+        ref="networkGraph"
+        :options="options"
+        :node-html-label-options="nodeHtmlLabelsOptions"
+        class="fill-height black--text"
         ctrl-wheel-zoom
-      )
-    c-help-icon(
-      :text="$t('treeOfDependencies.panzoom.helpText')",
-      size="32",
-      icon-class="map-preview__help-icon",
-      color="secondary",
-      icon="help",
+      />
+    </c-zoom-overlay>
+    <c-help-icon
+      :text="$t('treeOfDependencies.panzoom.helpText')"
+      size="32"
+      icon-class="map-preview__help-icon"
+      color="secondary"
+      icon="help"
       top
-    )
+    />
+  </div>
 </template>
 
 <script>
@@ -195,6 +198,7 @@ export default {
         progressEl.classList.add(
           'v-progress-circular',
           'v-progress-circular--indeterminate',
+          'v-progress-circular--visible',
           'white--text',
           'position-relative',
         );
@@ -221,10 +225,16 @@ export default {
         badgeEl.appendChild(pending ? getProgressEl() : getBadgeIconEl(entity, opened));
         badgeEl.classList.add(
           'v-badge__badge',
+          'd-inline-flex',
+          'justify-center',
+          'align-center',
           'grey',
           'darken-1',
           'cursor-pointer',
+          'pa-0',
         );
+        badgeEl.style.width = '20px';
+        badgeEl.style.height = '20px';
         badgeEl.dataset.id = entity._id;
 
         return badgeEl;
@@ -242,6 +252,7 @@ export default {
         nodeEl.classList.add('v-btn__content', 'position-relative', 'border-radius-rounded');
         nodeEl.style.width = `${nodeSize}px`;
         nodeEl.style.height = `${nodeSize}px`;
+        nodeEl.style.justifyContent = 'center';
         nodeEl.style.background = !this.colorIndicator
           ? COLORS.secondary
           : getEntityColor(entity, this.colorIndicator);
@@ -556,11 +567,11 @@ export default {
     /**
      * Show modal window with all entity dependencies
      *
-     * @param {string} entityId
+     * @param {Entity} entity
      */
-    showAllDependenciesModal(entityId) {
+    showAllDependenciesModal(entity) {
       const config = {
-        entityId,
+        entity,
         impact: this.impact,
       };
 
@@ -598,7 +609,7 @@ export default {
         return;
       }
 
-      this.showAllDependenciesModal(entity._id);
+      this.showAllDependenciesModal(entity);
     },
   },
 };

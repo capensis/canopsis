@@ -1,14 +1,37 @@
-<template lang="pug">
-  div.login(:class="{ 'login--maintenance': maintenance }")
-    div.login__image(v-if="maintenance")
-      v-icon(size="120", color="white") $vuetify.icons.miscellaneous_services
-    div.login__description
-      c-compiled-template(:template="description")
-    div.login__container
-      base-login
-      cas-login.mt-2(v-if="isCASAuthEnabled", key="cas")
-      saml-login.mt-2(v-if="isSAMLAuthEnabled", key="saml")
-    login-footer
+<template>
+  <div
+    :class="{ 'login--maintenance': maintenance }"
+    class="login"
+  >
+    <div
+      v-if="maintenance"
+      class="login__image"
+    >
+      <v-icon
+        size="120"
+        color="white"
+      >
+        $vuetify.icons.miscellaneous_services
+      </v-icon>
+    </div>
+    <div class="login__description">
+      <c-compiled-template :template="description" />
+    </div>
+    <div class="login__container">
+      <base-login />
+      <cas-login
+        v-if="isCASAuthEnabled"
+        key="cas"
+        class="mt-2"
+      />
+      <saml-login
+        v-if="isSAMLAuthEnabled"
+        key="saml"
+        class="mt-2"
+      />
+    </div>
+    <login-footer />
+  </div>
 </template>
 
 <script>

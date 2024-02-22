@@ -1,11 +1,12 @@
 import { removeTrailingSlashes } from '@/helpers/url';
 
 export const {
-  BASE_URL,
-  VUE_APP_API_HOST,
-  VUE_APP_LOCAL_STORAGE_ACCESS_TOKEN_KEY,
-  VUE_APP_PAGINATION_LIMIT,
-  VUE_APP_OPEN_STREET_LAYER_URL,
+  BASE_URL = '',
+  VUE_APP_API_HOST = '',
+  VUE_APP_LOCAL_STORAGE_ACCESS_TOKEN_KEY = '',
+  VUE_APP_PAGINATION_LIMIT = '',
+  VUE_APP_OPEN_STREET_LAYER_URL = '',
+  VUE_APP_LINKIFY_PROTOCOLS = '',
 } = process.env;
 
 export const APP_HOST = removeTrailingSlashes(`${window.location.origin}${BASE_URL}`);
@@ -32,11 +33,22 @@ export const PAGINATION_PER_PAGE_VALUES = [5, 10, 20, 50, 100];
 
 export const PAGINATION_TOTAL_VISIBLE = 7;
 
+export const LINKIFY_PROTOCOLS = [
+  ...VUE_APP_LINKIFY_PROTOCOLS.split(',').map(protocol => protocol.trim()).filter(Boolean),
+
+  'ssh',
+];
+
 export const DEFAULT_MAX_MULTI_SORT_COLUMNS_COUNT = 3;
 
 export const DEFAULT_WEATHER_LIMIT = 120;
 
 export const DEFAULT_LOCALE = 'en';
+
+export const LOCALES = {
+  en: 'en',
+  fr: 'fr',
+};
 
 export const DEFAULT_VIEW_STATS_INTERVAL = 120000;
 
@@ -104,6 +116,8 @@ export const API_ROUTES = {
   alarmLinks: '/api/v4/alarm-links',
   entity: '/api/v4/entities',
   entityContextGraph: '/api/v4/entities/context-graph',
+  entityCheckStateSetting: '/api/v4/entities/check-state-setting',
+  entityStateSetting: '/api/v4/entities/state-setting',
   bulkEntitiesEnable: '/api/v4/bulk/entities/enable',
   bulkEntitiesDisable: '/api/v4/bulk/entities/disable',
   entityBasics: '/api/v4/entitybasics',

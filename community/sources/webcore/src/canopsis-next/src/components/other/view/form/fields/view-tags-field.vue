@@ -1,14 +1,14 @@
-<template lang="pug">
-  v-combobox(
-    v-field="value",
-    :label="$t('view.groupTags')",
-    append-icon="",
-    tags,
-    clearable,
-    multiple,
-    chips,
+<template>
+  <v-combobox
+    v-field="value"
+    :label="$t('view.groupTags')"
+    append-icon=""
+    tags
+    clearable
+    multiple
+    chips
     deletable-chips
-  )
+  />
 </template>
 
 <script>

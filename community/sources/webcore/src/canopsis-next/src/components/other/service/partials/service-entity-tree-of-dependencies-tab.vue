@@ -1,9 +1,10 @@
-<template lang="pug">
-  service-dependencies(
-    :root="entity",
-    :columns="columns",
-    openable-root
-  )
+<template>
+  <service-dependencies
+    :root="entity"
+    :columns="columns"
+    :type="type"
+    show-state-setting
+  />
 </template>
 
 <script>
@@ -18,6 +19,10 @@ export default {
     },
     columns: {
       type: Array,
+      required: false,
+    },
+    type: {
+      type: Number,
       required: false,
     },
   },

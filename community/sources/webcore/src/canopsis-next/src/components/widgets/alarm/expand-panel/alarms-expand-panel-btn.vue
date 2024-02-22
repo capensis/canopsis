@@ -1,10 +1,11 @@
-<template lang="pug">
-  c-expand-btn.alarms-expand-panel-btn(
-    :class="expandButtonClass",
-    :expanded="expanded",
-    :loading="pending",
+<template>
+  <c-expand-btn
+    :class="expandButtonClass"
+    :expanded="expanded"
+    :loading="pending"
+    class="alarms-expand-panel-btn"
     @expand="showExpandPanel"
-  )
+  />
 </template>
 
 <script>
@@ -70,8 +71,9 @@ export default {
 .alarms-expand-panel-btn {
   &--small {
     width: 22px;
-    max-width: 22px;
     height: 22px;
+    max-width: 22px;
+    max-height: 22px;
   }
 }
 </style>

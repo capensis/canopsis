@@ -1,5 +1,4 @@
 import { omit } from 'lodash';
-import flushPromises from 'flush-promises';
 
 import { generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
@@ -20,36 +19,35 @@ describe('extra-details-canceled', () => {
   };
 
   const snapshotFactory = generateRenderer(ExtraDetailsCanceled, {
-
     attachTo: document.body,
   });
 
   it('Renders `extra-details-canceled` with full canceled', async () => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: {
         canceled,
       },
     });
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 
   it('Renders `extra-details-canceled` without message', async () => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: {
         canceled: omit(canceled, ['m']),
       },
     });
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 
   it('Renders `extra-details-canceled` with date in previous month', async () => {
-    snapshotFactory({
+    const wrapper = snapshotFactory({
       propsData: {
         canceled: {
           ...canceled,
@@ -58,8 +56,8 @@ describe('extra-details-canceled', () => {
       },
     });
 
-    await flushPromises();
-
-    expect(document.body.innerHTML).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+    await wrapper.activateAllTooltips();
+    expect(wrapper).toMatchTooltipSnapshot();
   });
 });

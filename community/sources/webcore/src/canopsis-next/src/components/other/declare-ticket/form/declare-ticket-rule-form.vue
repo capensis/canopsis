@@ -1,16 +1,44 @@
-<template lang="pug">
-  v-tabs(slider-color="primary", color="transparent", fixed-tabs, centered)
-    v-tab(:class="{ 'error--text': hasGeneralError }") {{ $t('common.general') }}
-    v-tab-item
-      declare-ticket-rule-general-form.mt-2(ref="general", v-field="form")
-    v-tab(:class="{ 'error--text': hasPatternsError }") {{ $tc('common.pattern') }}
-    v-tab-item
-      declare-ticket-rule-patterns-form.mt-2(ref="patterns", v-field="form.patterns")
-    v-tab {{ $t('declareTicket.testQuery') }}
-    v-tab-item(lazy)
-      v-layout(row)
-        v-flex(offset-xs1, xs10)
-          declare-ticket-rule-test-query.mt-2(:form="form")
+<template>
+  <v-tabs
+    slider-color="primary"
+    centered
+  >
+    <v-tab :class="{ 'error--text': hasGeneralError }">
+      {{ $t('common.general') }}
+    </v-tab>
+    <v-tab :class="{ 'error--text': hasPatternsError }">
+      {{ $tc('common.pattern') }}
+    </v-tab>
+    <v-tab>{{ $t('declareTicket.testQuery') }}</v-tab>
+
+    <v-tab-item eager>
+      <declare-ticket-rule-general-form
+        v-field="form"
+        ref="general"
+        class="mt-2"
+      />
+    </v-tab-item>
+    <v-tab-item eager>
+      <declare-ticket-rule-patterns-form
+        v-field="form.patterns"
+        ref="patterns"
+        class="mt-2"
+      />
+    </v-tab-item>
+    <v-tab-item>
+      <v-layout>
+        <v-flex
+          offset-xs1
+          xs10
+        >
+          <declare-ticket-rule-test-query
+            :form="form"
+            class="mt-2"
+          />
+        </v-flex>
+      </v-layout>
+    </v-tab-item>
+  </v-tabs>
 </template>
 
 <script>

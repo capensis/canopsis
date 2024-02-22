@@ -1,14 +1,15 @@
-<template lang="pug">
-  div.position-relative
-    c-progress-overlay(:pending="pending")
-    test-suite-historical-data-months-field(v-model="query.months")
-    junit-gantt-chart(
-      :items="ganttIntervals",
-      :historical="historical",
-      :total-items="meta.total_count",
-      :query.sync="query",
+<template>
+  <div class="position-relative">
+    <c-progress-overlay :pending="pending" />
+    <test-suite-historical-data-months-field v-model="query.months" />
+    <junit-gantt-chart
+      :items="ganttIntervals"
+      :historical="historical"
+      :total-items="meta.total_count"
+      :query.sync="query"
       :width="840"
-    )
+    />
+  </div>
 </template>
 
 <script>
@@ -39,7 +40,7 @@ export default {
       meta: {},
       query: {
         page: 1,
-        rowsPerPage: PAGINATION_LIMIT,
+        itemsPerPage: PAGINATION_LIMIT,
         months: 0,
       },
     };
@@ -64,7 +65,7 @@ export default {
       try {
         this.pending = true;
 
-        const { page, rowsPerPage: limit, months } = this.query;
+        const { page, itemsPerPage: limit, months } = this.query;
         const { data = [], meta } = await this.fetchTestSuiteItemGanttIntervalsWithoutStore({
           id: this.testSuite._id,
           params: { page, limit, months },

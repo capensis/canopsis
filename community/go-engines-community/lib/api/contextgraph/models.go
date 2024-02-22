@@ -25,7 +25,6 @@ type ImportJob struct {
 	Stats importcontextgraph.Stats `bson:"stats" json:"stats"`
 
 	IsPartial bool `bson:"is_partial" json:"-"`
-	IsOld     bool `bson:"is_old" json:"-"`
 }
 
 type ImportResponse struct {
@@ -34,12 +33,4 @@ type ImportResponse struct {
 
 type ImportQuery struct {
 	Source string `form:"source" binding:"required"`
-}
-
-// ImportRequest is used only for swagger docs.
-type ImportRequest struct {
-	Json struct {
-		Cis   []importcontextgraph.ConfigurationItem `json:"cis"`
-		Links []importcontextgraph.Link              `json:"links"`
-	} `json:"json"`
 }

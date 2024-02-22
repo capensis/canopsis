@@ -1,4 +1,5 @@
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+
 import { ENTITIES_STATUSES, ENTITY_TYPES } from '@/constants';
 
 import ServiceEntityHeader from '@/components/other/service/partials/service-entity-header.vue';
@@ -23,9 +24,9 @@ describe('service-entity-header', () => {
 
     const alert = selectAlert(wrapper);
 
-    alert.vm.$emit('input');
+    alert.triggerCustomEvent('input');
 
-    expect(wrapper).toEmit('remove:unavailable');
+    expect(wrapper).toHaveBeenEmit('remove:unavailable');
   });
 
   test('Renders `service-entity-header` with default props', () => {
@@ -35,7 +36,7 @@ describe('service-entity-header', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `service-entity-header` with custom props', () => {
@@ -58,6 +59,6 @@ describe('service-entity-header', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

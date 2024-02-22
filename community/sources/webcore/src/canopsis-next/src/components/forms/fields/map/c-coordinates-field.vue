@@ -1,28 +1,29 @@
-<template lang="pug">
-  v-layout(:column="!row")
-    c-number-field(
-      v-field.number="value.lat",
-      :class="{ 'mr-3': row }",
-      :label="$t('map.latitude')",
-      :name="`${name}.lat`",
-      :disabled="disabled",
-      :min="-90",
-      :max="90",
-      :step="step",
-      :required="isFieldRequired",
+<template>
+  <v-layout :column="!row">
+    <c-number-field
+      v-field.number="value.lat"
+      :class="{ 'mr-3': row }"
+      :label="$t('map.latitude')"
+      :name="`${name}.lat`"
+      :disabled="disabled"
+      :min="-90"
+      :max="90"
+      :step="step"
+      :required="isFieldRequired"
       @paste="pasteHandler('lat', $event)"
-    )
-    c-number-field(
-      v-field.number="value.lng",
-      :label="$t('map.longitude')",
-      :name="`${name}.lng`",
-      :disabled="disabled",
-      :min="-180",
-      :max="180",
-      :step="step",
-      :required="isFieldRequired",
+    />
+    <c-number-field
+      v-field.number="value.lng"
+      :label="$t('map.longitude')"
+      :name="`${name}.lng`"
+      :disabled="disabled"
+      :min="-180"
+      :max="180"
+      :step="step"
+      :required="isFieldRequired"
       @paste="pasteHandler('lng', $event)"
-    )
+    />
+  </v-layout>
 </template>
 
 <script>

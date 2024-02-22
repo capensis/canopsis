@@ -1,9 +1,29 @@
-<template lang="pug">
-  v-tooltip(:max-width="maxWidth", :top="top", :right="right", :bottom="bottom", :left="left")
-    template(#activator="{ bind, on }")
-      v-icon(v-bind="bind", v-on="on", :color="color", :size="size", :class="iconClass") {{ icon }}
-    slot
-      div.pre-wrap(v-html="text")
+<template>
+  <v-tooltip
+    :max-width="maxWidth"
+    :top="top"
+    :right="right"
+    :bottom="bottom"
+    :left="left"
+  >
+    <template #activator="{ bind, on }">
+      <v-icon
+        v-bind="bind"
+        :color="color"
+        :size="size"
+        :class="iconClass"
+        v-on="on"
+      >
+        {{ icon }}
+      </v-icon>
+    </template>
+    <slot>
+      <div
+        v-html="text"
+        class="pre-wrap"
+      />
+    </slot>
+  </v-tooltip>
 </template>
 
 <script>

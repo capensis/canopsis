@@ -1,64 +1,58 @@
-<template lang="pug">
-  widget-settings(:submitting="submitting", @submit="submit")
-    field-title(v-model="form.title")
-    v-divider
-    field-filters(
-      :filters.sync="form.filters",
-      addable,
-      editable,
-      with-alarm,
-      with-entity,
-      with-pbehavior,
+<template>
+  <widget-settings
+    :submitting="submitting"
+    divider
+    @submit="submit"
+  >
+    <field-title v-model="form.title" />
+    <field-filters
+      :filters.sync="form.filters"
+      addable
+      editable
+      with-alarm
+      with-entity
+      with-pbehavior
       hide-selector
-    )
-    v-divider
-    field-opened-resolved-filter(v-model="form.parameters.opened")
-    v-divider
-    alarms-list-modal-form(
-      v-model="form.parameters.alarmsList",
-      :templates="preparedWidgetTemplates",
+    />
+    <field-opened-resolved-filter v-model="form.parameters.opened" />
+    <alarms-list-modal-form
+      v-model="form.parameters.alarmsList"
+      :templates="preparedWidgetTemplates"
       :templates-pending="widgetTemplatesPending"
-    )
-    v-divider
-    widget-settings-group(:title="$t('settings.advancedSettings')")
-      field-template(
-        v-model="form.parameters.blockTemplate",
+    />
+    <widget-settings-group :title="$t('settings.advancedSettings')">
+      <field-template
+        v-model="form.parameters.blockTemplate"
         :title="$t('settings.blockTemplate')"
-      )
-      v-divider
-      field-grid-size(
-        v-model="form.parameters.columnMobile",
-        :title="$t('settings.columnMobile')",
+      />
+      <field-grid-size
+        v-model="form.parameters.columnMobile"
+        :title="$t('settings.columnMobile')"
         mobile
-      )
-      v-divider
-      field-grid-size(
-        v-model="form.parameters.columnTablet",
-        :title="$t('settings.columnTablet')",
+      />
+      <field-grid-size
+        v-model="form.parameters.columnTablet"
+        :title="$t('settings.columnTablet')"
         tablet
-      )
-      v-divider
-      field-grid-size(
-        v-model="form.parameters.columnDesktop",
+      />
+      <field-grid-size
+        v-model="form.parameters.columnDesktop"
         :title="$t('settings.columnDesktop')"
-      )
-      v-divider
-      margins-form(v-model="form.parameters.margin")
-      v-divider
-      field-slider(
-        v-model="form.parameters.heightFactor",
-        :title="$t('settings.height')",
-        :min="1",
+      />
+      <margins-form v-model="form.parameters.margin" />
+      <field-slider
+        v-model="form.parameters.heightFactor"
+        :title="$t('settings.height')"
+        :min="1"
         :max="20"
-      )
-      v-divider
-      counter-levels-form(v-model="form.parameters.levels")
-      v-divider
-      field-switcher(
-        v-model="form.parameters.isCorrelationEnabled",
+      />
+      <counter-levels-form v-model="form.parameters.levels" />
+      <field-switcher
+        v-model="form.parameters.isCorrelationEnabled"
         :title="$t('settings.isCorrelationEnabled')"
-      )
-    v-divider
+      />
+    </widget-settings-group>
+  </widget-settings>
 </template>
 
 <script>

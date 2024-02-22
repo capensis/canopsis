@@ -1,7 +1,6 @@
 import Faker from 'faker';
-import flushPromises from 'flush-promises';
 
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import {
   createAlarmModule,
   createAlarmDetailsModule,
@@ -12,6 +11,7 @@ import {
   createMockedStoreModules,
 } from '@unit/utils/store';
 import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
+
 import {
   ALARM_LIST_ACTIONS_TYPES,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
@@ -763,6 +763,116 @@ describe('actions-panel', () => {
     );
   });
 
+  it('Fast cancel and cancel action available when status is flapping and state is ok', async () => {
+    const flappingAlarm = {
+      ...alarm,
+      v: {
+        connector: 'alarm-connector',
+        connector_name: 'alarm-connector-name',
+        component: 'alarm-component',
+        resource: 'alarm-resource',
+        status: {
+          val: ENTITIES_STATUSES.flapping,
+        },
+        state: {
+          val: ENTITIES_STATES.ok,
+        },
+      },
+    };
+
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        alarmModule,
+        manualMetaAlarmModule,
+      ]),
+      propsData: {
+        item: flappingAlarm,
+        widget,
+        parentAlarm,
+      },
+    });
+
+    expect(selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.fastCancel).exists()).toBeTruthy();
+    expect(selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.cancel).exists()).toBeTruthy();
+  });
+
+  it('Fast cancel and cancel action available when status is closed and state is ok', async () => {
+    const flappingAlarm = {
+      ...alarm,
+      v: {
+        connector: 'alarm-connector',
+        connector_name: 'alarm-connector-name',
+        component: 'alarm-component',
+        resource: 'alarm-resource',
+        resolved: null,
+        status: {
+          val: ENTITIES_STATUSES.closed,
+        },
+        state: {
+          val: ENTITIES_STATES.ok,
+        },
+      },
+    };
+
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        alarmModule,
+        manualMetaAlarmModule,
+      ]),
+      propsData: {
+        item: flappingAlarm,
+        widget: {
+          ...widget,
+          parameters: {
+            ...widget.parameters,
+            isActionsAllowWithOkState: true,
+          },
+        },
+        parentAlarm,
+      },
+    });
+
+    expect(selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.fastCancel).exists()).toBeTruthy();
+    expect(selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.cancel).exists()).toBeTruthy();
+  });
+
+  it('Fast cancel and cancel action doesn\'t available when status is closed and state is ok and isActionsAllowWithOkState is disabled', async () => {
+    const flappingAlarm = {
+      ...alarm,
+      v: {
+        connector: 'alarm-connector',
+        connector_name: 'alarm-connector-name',
+        component: 'alarm-component',
+        resource: 'alarm-resource',
+        resolved: null,
+        status: {
+          val: ENTITIES_STATUSES.closed,
+        },
+        state: {
+          val: ENTITIES_STATES.ok,
+        },
+      },
+    };
+
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        alarmModule,
+        manualMetaAlarmModule,
+      ]),
+      propsData: {
+        item: flappingAlarm,
+        widget,
+        parentAlarm,
+      },
+    });
+
+    expect(selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.fastCancel).exists()).toBeFalsy();
+    expect(selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.cancel).exists()).toBeFalsy();
+  });
+
   it('Variables modal showed after trigger variables help action', () => {
     const widgetData = {
       _id: Faker.datatype.string(),
@@ -1336,7 +1446,7 @@ describe('actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `actions-panel` with simple manual instruction in running', () => {
@@ -1364,7 +1474,7 @@ describe('actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `actions-panel` with manual instruction in waiting result', () => {
@@ -1383,7 +1493,7 @@ describe('actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `actions-panel` with auto instruction in running', () => {
@@ -1402,7 +1512,7 @@ describe('actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `actions-panel` with paused manual instruction', () => {
@@ -1421,7 +1531,7 @@ describe('actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `actions-panel` with unresolved alarm and flapping status', () => {
@@ -1437,7 +1547,7 @@ describe('actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `actions-panel` with unresolved alarm and ongoing status', () => {
@@ -1460,7 +1570,7 @@ describe('actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `actions-panel` with resolved alarm', () => {
@@ -1484,7 +1594,7 @@ describe('actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `actions-panel` with full unresolved alarm, but without access', () => {
@@ -1497,7 +1607,7 @@ describe('actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `actions-panel` without entity, instructions, but with status stealthy', () => {
@@ -1521,7 +1631,7 @@ describe('actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `actions-panel` without assigned_declare_ticket_rules', () => {
@@ -1540,7 +1650,7 @@ describe('actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `actions-panel` with links in alarm', () => {
@@ -1574,7 +1684,7 @@ describe('actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `actions-panel` with links in resolved alarm', () => {
@@ -1606,7 +1716,7 @@ describe('actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `actions-panel` with parentAlarm with auto meta alarm', () => {
@@ -1626,6 +1736,6 @@ describe('actions-panel', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

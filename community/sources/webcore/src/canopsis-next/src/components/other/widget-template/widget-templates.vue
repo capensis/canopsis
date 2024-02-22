@@ -1,14 +1,14 @@
-<template lang="pug">
-  widget-templates-list(
-    :pagination.sync="pagination",
-    :widget-templates="widgetTemplates",
-    :pending="widgetTemplatesPending",
-    :total-items="widgetTemplatesMeta.total_count",
-    :updatable="hasUpdateAnyWidgetTemplateAccess",
-    :removable="hasDeleteAnyWidgetTemplateAccess",
-    @edit="showEditWidgetTemplateModal",
+<template>
+  <widget-templates-list
+    :options.sync="options"
+    :widget-templates="widgetTemplates"
+    :pending="widgetTemplatesPending"
+    :total-items="widgetTemplatesMeta.total_count"
+    :updatable="hasUpdateAnyWidgetTemplateAccess"
+    :removable="hasDeleteAnyWidgetTemplateAccess"
+    @edit="showEditWidgetTemplateModal"
     @remove="showRemoveWidgetTemplateModal"
-  )
+  />
 </template>
 
 <script>
@@ -60,8 +60,8 @@ export default {
       });
     },
 
-    async fetchList() {
-      this.fetchWidgetTemplatesList({ params: this.getQuery() });
+    fetchList() {
+      return this.fetchWidgetTemplatesList({ params: this.getQuery() });
     },
   },
 };

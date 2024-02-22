@@ -6,7 +6,7 @@ exports[`pattern-rules-field Renders \`pattern-rules-field\` with custom props 1
   required="required"
 >
   <div
-    class="layout row justify-space-between align-center"
+    class="layout justify-space-between align-center"
   >
     <div
       class="flex"
@@ -30,7 +30,7 @@ exports[`pattern-rules-field Renders \`pattern-rules-field\` with custom props 1
     />
   </div>
   <div
-    class="layout row justify-space-between align-center"
+    class="layout justify-space-between align-center"
   >
     <div
       class="flex"
@@ -54,7 +54,7 @@ exports[`pattern-rules-field Renders \`pattern-rules-field\` with custom props 1
     />
   </div>
   <div
-    class="layout row justify-space-between align-center"
+    class="layout justify-space-between align-center"
   >
     <div
       class="flex"
@@ -78,7 +78,7 @@ exports[`pattern-rules-field Renders \`pattern-rules-field\` with custom props 1
     />
   </div>
   <div
-    class="layout row justify-space-between align-center"
+    class="layout justify-space-between align-center"
   >
     <div
       class="flex"
@@ -103,18 +103,18 @@ exports[`pattern-rules-field Renders \`pattern-rules-field\` with custom props 1
     />
   </div>
   <div
-    class="layout row align-center"
+    class="layout mt-2 align-center"
   >
     <button
-      class="ml-0 v-btn v-btn--disabled v-btn--outline v-btn--depressed theme--light primary--text"
+      class="mr-2 v-btn v-btn--disabled v-btn--outlined theme--light v-size--default"
       disabled="disabled"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        Add rule
-      </div>
+      Add rule
+      </span>
     </button>
     <span
       class="error--text"
@@ -131,17 +131,17 @@ exports[`pattern-rules-field Renders \`pattern-rules-field\` with default props 
   class="layout column"
 >
   <div
-    class="layout row align-center"
+    class="layout mt-2 align-center"
   >
     <button
-      class="ml-0 v-btn v-btn--outline v-btn--depressed theme--light primary--text"
+      class="mr-2 v-btn v-btn--outlined theme--light v-size--default primary--text"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        Add rule
-      </div>
+      Add rule
+      </span>
     </button>
     <span
       class="error--text"

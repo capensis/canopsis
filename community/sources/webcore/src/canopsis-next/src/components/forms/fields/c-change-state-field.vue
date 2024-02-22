@@ -1,18 +1,21 @@
-<template lang="pug">
-  div.mt-3
-    v-layout(row)
-      state-criticity-field(
-        v-field="value.state",
+<template>
+  <div class="mt-3">
+    <v-layout>
+      <state-criticity-field
+        v-field="value.state"
         :state-values="availableStateValues"
-      )
-    v-layout.mt-4(row)
-      v-textarea(
-        v-field="value.output",
-        v-validate="'required'",
-        :label="label || $t('common.note')",
-        :error-messages="errors.collect(outputFieldName)",
+      />
+    </v-layout>
+    <v-layout class="mt-4">
+      <v-textarea
+        v-field="value.output"
+        v-validate="'required'"
+        :label="label || $t('common.note')"
+        :error-messages="errors.collect(outputFieldName)"
         :name="outputFieldName"
-      )
+      />
+    </v-layout>
+  </div>
 </template>
 
 <script>

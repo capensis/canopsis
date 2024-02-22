@@ -2,7 +2,7 @@
 
 exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with custom props 1`] = `
 <div
-  class="layout row justify-space-between align-center"
+  class="layout justify-space-between align-center"
 >
   <label
     aria-hidden="true"
@@ -15,14 +15,16 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with cu
     class="flex xs3"
   >
     <div
-      class="v-input mt-0 pt-0 v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
-      role="combobox"
+      class="v-input mt-0 pt-0 v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
     >
       <div
         class="v-input__control"
       >
         <div
+          aria-expanded="false"
+          aria-haspopup="listbox"
           class="v-input__slot"
+          role="button"
         >
           <div
             class="v-select__slot"
@@ -36,7 +38,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with cu
                 width="30"
               >
                 <points-line-path-stub
-                  curveOffset="0.6"
+                  curveoffset="0.6"
                   fill="transparent"
                   points="[object Object],[object Object]"
                   stroke="currentColor"
@@ -46,7 +48,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with cu
               </svg>
               <input
                 aria-readonly="false"
-                autocomplete="on"
+                autocomplete="off"
                 readonly="readonly"
                 type="text"
               />
@@ -59,16 +61,22 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with cu
               >
                 <i
                   aria-hidden="true"
-                  class="v-icon material-icons theme--light"
+                  class="v-icon notranslate material-icons theme--light"
                 >
                   arrow_drop_down
                 </i>
               </div>
             </div>
+            <input
+              type="hidden"
+              value="line"
+            />
           </div>
           <div
             class="v-menu"
-          />
+          >
+            <!---->
+          </div>
         </div>
       </div>
     </div>
@@ -76,225 +84,11 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with cu
 </div>
 `;
 
-exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with custom props 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-select-list v-card theme--light"
-  >
-    <div
-      class="v-list theme--light"
-      role="list"
-    >
-      <div
-        class="primary--text"
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
-        >
-          <svg
-            height="30"
-            viewBox="0 0 50 40"
-            width="30"
-          >
-            <points-line-path-stub
-              curveOffset="0.6"
-              fill="transparent"
-              points="[object Object],[object Object]"
-              stroke="currentColor"
-              stroke-width="2"
-              type="line"
-            />
-          </svg>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <svg
-            height="30"
-            viewBox="0 0 50 40"
-            width="30"
-          >
-            <points-line-path-stub
-              curveOffset="0.6"
-              fill="transparent"
-              points="[object Object],[object Object]"
-              stroke="currentColor"
-              stroke-width="2"
-              type="verticalCurve"
-            />
-          </svg>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <svg
-            height="30"
-            viewBox="0 0 50 40"
-            width="30"
-          >
-            <points-line-path-stub
-              curveOffset="0.6"
-              fill="transparent"
-              points="[object Object],[object Object]"
-              stroke="currentColor"
-              stroke-width="2"
-              type="horizontalCurve"
-            />
-          </svg>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <svg
-            height="30"
-            viewBox="0 0 50 40"
-            width="30"
-          >
-            <points-line-path-stub
-              curveOffset="0.6"
-              fill="transparent"
-              points="[object Object],[object Object]"
-              stroke="currentColor"
-              stroke-width="2"
-              type="leftCurvedAngle"
-            />
-          </svg>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <svg
-            height="30"
-            viewBox="0 0 50 40"
-            width="30"
-          >
-            <points-line-path-stub
-              curveOffset="0.6"
-              fill="transparent"
-              points="[object Object],[object Object]"
-              stroke="currentColor"
-              stroke-width="2"
-              type="rightCurvedAngle"
-            />
-          </svg>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <svg
-            height="30"
-            viewBox="0 0 50 40"
-            width="30"
-          >
-            <points-line-path-stub
-              curveOffset="0.6"
-              fill="transparent"
-              points="[object Object],[object Object]"
-              stroke="currentColor"
-              stroke-width="2"
-              type="rightElbow"
-            />
-          </svg>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <svg
-            height="30"
-            viewBox="0 0 50 40"
-            width="30"
-          >
-            <points-line-path-stub
-              curveOffset="0.6"
-              fill="transparent"
-              points="[object Object],[object Object]"
-              stroke="currentColor"
-              stroke-width="2"
-              type="leftElbow"
-            />
-          </svg>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <svg
-            height="30"
-            viewBox="0 0 50 40"
-            width="30"
-          >
-            <points-line-path-stub
-              curveOffset="0.6"
-              fill="transparent"
-              points="[object Object],[object Object]"
-              stroke="currentColor"
-              stroke-width="2"
-              type="verticalStepped"
-            />
-          </svg>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <svg
-            height="30"
-            viewBox="0 0 50 40"
-            width="30"
-          >
-            <points-line-path-stub
-              curveOffset="0.6"
-              fill="transparent"
-              points="[object Object],[object Object]"
-              stroke="currentColor"
-              stroke-width="2"
-              type="horizontalStepped"
-            />
-          </svg>
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-`;
+exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with custom props 2`] = `undefined`;
 
 exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with default averagePoints 1`] = `
 <div
-  class="layout row justify-space-between align-center"
+  class="layout justify-space-between align-center"
 >
   <label
     aria-hidden="true"
@@ -307,14 +101,16 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with de
     class="flex xs3"
   >
     <div
-      class="v-input mt-0 pt-0 v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
-      role="combobox"
+      class="v-input mt-0 pt-0 v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light v-text-field v-select"
     >
       <div
         class="v-input__control"
       >
         <div
+          aria-expanded="false"
+          aria-haspopup="listbox"
           class="v-input__slot"
+          role="button"
         >
           <div
             class="v-select__slot"
@@ -328,7 +124,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with de
                 width="30"
               >
                 <points-line-path-stub
-                  curveOffset="0.6"
+                  curveoffset="0.6"
                   fill="transparent"
                   points="[object Object],[object Object]"
                   stroke="currentColor"
@@ -338,7 +134,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with de
               </svg>
               <input
                 aria-readonly="false"
-                autocomplete="on"
+                autocomplete="off"
                 readonly="readonly"
                 type="text"
               />
@@ -351,16 +147,22 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with de
               >
                 <i
                   aria-hidden="true"
-                  class="v-icon material-icons theme--light"
+                  class="v-icon notranslate material-icons theme--light"
                 >
                   arrow_drop_down
                 </i>
               </div>
             </div>
+            <input
+              type="hidden"
+              value="line"
+            />
           </div>
           <div
             class="v-menu"
-          />
+          >
+            <!---->
+          </div>
         </div>
       </div>
     </div>
@@ -368,245 +170,31 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with de
 </div>
 `;
 
-exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with default averagePoints 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-select-list v-card theme--light"
-  >
-    <div
-      class="v-list theme--light"
-      role="list"
-    >
-      <div
-        class="primary--text"
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
-        >
-          <svg
-            height="30"
-            viewBox="0 0 50 40"
-            width="30"
-          >
-            <points-line-path-stub
-              curveOffset="0.6"
-              fill="transparent"
-              points="[object Object],[object Object]"
-              stroke="currentColor"
-              stroke-width="2"
-              type="line"
-            />
-          </svg>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <svg
-            height="30"
-            viewBox="0 0 50 40"
-            width="30"
-          >
-            <points-line-path-stub
-              curveOffset="0.6"
-              fill="transparent"
-              points="[object Object],[object Object]"
-              stroke="currentColor"
-              stroke-width="2"
-              type="verticalCurve"
-            />
-          </svg>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <svg
-            height="30"
-            viewBox="0 0 50 40"
-            width="30"
-          >
-            <points-line-path-stub
-              curveOffset="0.6"
-              fill="transparent"
-              points="[object Object],[object Object]"
-              stroke="currentColor"
-              stroke-width="2"
-              type="horizontalCurve"
-            />
-          </svg>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <svg
-            height="30"
-            viewBox="0 0 50 40"
-            width="30"
-          >
-            <points-line-path-stub
-              curveOffset="0.6"
-              fill="transparent"
-              points="[object Object],[object Object]"
-              stroke="currentColor"
-              stroke-width="2"
-              type="leftCurvedAngle"
-            />
-          </svg>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <svg
-            height="30"
-            viewBox="0 0 50 40"
-            width="30"
-          >
-            <points-line-path-stub
-              curveOffset="0.6"
-              fill="transparent"
-              points="[object Object],[object Object]"
-              stroke="currentColor"
-              stroke-width="2"
-              type="rightCurvedAngle"
-            />
-          </svg>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <svg
-            height="30"
-            viewBox="0 0 50 40"
-            width="30"
-          >
-            <points-line-path-stub
-              curveOffset="0.6"
-              fill="transparent"
-              points="[object Object],[object Object]"
-              stroke="currentColor"
-              stroke-width="2"
-              type="rightElbow"
-            />
-          </svg>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <svg
-            height="30"
-            viewBox="0 0 50 40"
-            width="30"
-          >
-            <points-line-path-stub
-              curveOffset="0.6"
-              fill="transparent"
-              points="[object Object],[object Object]"
-              stroke="currentColor"
-              stroke-width="2"
-              type="leftElbow"
-            />
-          </svg>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <svg
-            height="30"
-            viewBox="0 0 50 40"
-            width="30"
-          >
-            <points-line-path-stub
-              curveOffset="0.6"
-              fill="transparent"
-              points="[object Object],[object Object]"
-              stroke="currentColor"
-              stroke-width="2"
-              type="verticalStepped"
-            />
-          </svg>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <svg
-            height="30"
-            viewBox="0 0 50 40"
-            width="30"
-          >
-            <points-line-path-stub
-              curveOffset="0.6"
-              fill="transparent"
-              points="[object Object],[object Object]"
-              stroke="currentColor"
-              stroke-width="2"
-              type="horizontalStepped"
-            />
-          </svg>
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-`;
+exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with default averagePoints 2`] = `undefined`;
 
 exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with default props 1`] = `
 <div
-  class="layout row justify-space-between align-center"
+  class="layout justify-space-between align-center"
 >
   <label
     aria-hidden="true"
     class="v-label theme--light"
     style="left: 0px; position: relative;"
-  >
-    
-  </label>
+  />
   <div
     class="flex xs3"
   >
     <div
-      class="v-input mt-0 pt-0 v-text-field v-select v-input--hide-details theme--light"
-      role="combobox"
+      class="v-input mt-0 pt-0 v-input--hide-details theme--light v-text-field v-select"
     >
       <div
         class="v-input__control"
       >
         <div
+          aria-expanded="false"
+          aria-haspopup="listbox"
           class="v-input__slot"
+          role="button"
         >
           <div
             class="v-select__slot"
@@ -616,7 +204,7 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with de
             >
               <input
                 aria-readonly="false"
-                autocomplete="on"
+                autocomplete="off"
                 readonly="readonly"
                 type="text"
               />
@@ -629,16 +217,21 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with de
               >
                 <i
                   aria-hidden="true"
-                  class="v-icon material-icons theme--light"
+                  class="v-icon notranslate material-icons theme--light"
                 >
                   arrow_drop_down
                 </i>
               </div>
             </div>
+            <input
+              type="hidden"
+            />
           </div>
           <div
             class="v-menu"
-          />
+          >
+            <!---->
+          </div>
         </div>
       </div>
     </div>
@@ -646,217 +239,4 @@ exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with de
 </div>
 `;
 
-exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with default props 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-select-list v-card theme--light"
-  >
-    <div
-      class="v-list theme--light"
-      role="list"
-    >
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <svg
-            height="30"
-            viewBox="0 0 50 40"
-            width="30"
-          >
-            <points-line-path-stub
-              curveOffset="0.6"
-              fill="transparent"
-              points="[object Object],[object Object]"
-              stroke="currentColor"
-              stroke-width="2"
-              type="line"
-            />
-          </svg>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <svg
-            height="30"
-            viewBox="0 0 50 40"
-            width="30"
-          >
-            <points-line-path-stub
-              curveOffset="0.6"
-              fill="transparent"
-              points="[object Object],[object Object]"
-              stroke="currentColor"
-              stroke-width="2"
-              type="verticalCurve"
-            />
-          </svg>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <svg
-            height="30"
-            viewBox="0 0 50 40"
-            width="30"
-          >
-            <points-line-path-stub
-              curveOffset="0.6"
-              fill="transparent"
-              points="[object Object],[object Object]"
-              stroke="currentColor"
-              stroke-width="2"
-              type="horizontalCurve"
-            />
-          </svg>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <svg
-            height="30"
-            viewBox="0 0 50 40"
-            width="30"
-          >
-            <points-line-path-stub
-              curveOffset="0.6"
-              fill="transparent"
-              points="[object Object],[object Object]"
-              stroke="currentColor"
-              stroke-width="2"
-              type="leftCurvedAngle"
-            />
-          </svg>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <svg
-            height="30"
-            viewBox="0 0 50 40"
-            width="30"
-          >
-            <points-line-path-stub
-              curveOffset="0.6"
-              fill="transparent"
-              points="[object Object],[object Object]"
-              stroke="currentColor"
-              stroke-width="2"
-              type="rightCurvedAngle"
-            />
-          </svg>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <svg
-            height="30"
-            viewBox="0 0 50 40"
-            width="30"
-          >
-            <points-line-path-stub
-              curveOffset="0.6"
-              fill="transparent"
-              points="[object Object],[object Object]"
-              stroke="currentColor"
-              stroke-width="2"
-              type="rightElbow"
-            />
-          </svg>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <svg
-            height="30"
-            viewBox="0 0 50 40"
-            width="30"
-          >
-            <points-line-path-stub
-              curveOffset="0.6"
-              fill="transparent"
-              points="[object Object],[object Object]"
-              stroke="currentColor"
-              stroke-width="2"
-              type="leftElbow"
-            />
-          </svg>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <svg
-            height="30"
-            viewBox="0 0 50 40"
-            width="30"
-          >
-            <points-line-path-stub
-              curveOffset="0.6"
-              fill="transparent"
-              points="[object Object],[object Object]"
-              stroke="currentColor"
-              stroke-width="2"
-              type="verticalStepped"
-            />
-          </svg>
-        </a>
-      </div>
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <svg
-            height="30"
-            viewBox="0 0 50 40"
-            width="30"
-          >
-            <points-line-path-stub
-              curveOffset="0.6"
-              fill="transparent"
-              points="[object Object],[object Object]"
-              stroke="currentColor"
-              stroke-width="2"
-              type="horizontalStepped"
-            />
-          </svg>
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-`;
+exports[`flowchart-line-type-field Renders \`flowchart-line-type-field\` with default props 2`] = `undefined`;

@@ -1,13 +1,20 @@
-<template lang="pug">
-  widget-settings-item(:title="$t('settings.chart.sharesType')")
-    v-radio-group.mt-0(v-field="value", :name="name", :label="label")
-      v-radio(
-        v-for="showMode in showModes",
-        :key="showMode.value",
-        :label="showMode.label",
-        :value="showMode.value",
+<template>
+  <widget-settings-item :title="$t('settings.chart.sharesType')">
+    <v-radio-group
+      v-field="value"
+      :name="name"
+      :label="label"
+      class="mt-0"
+    >
+      <v-radio
+        v-for="showMode in showModes"
+        :key="showMode.value"
+        :label="showMode.label"
+        :value="showMode.value"
         color="primary"
-      )
+      />
+    </v-radio-group>
+  </widget-settings-item>
 </template>
 
 <script>

@@ -1,20 +1,32 @@
-<template lang="pug">
-  v-layout.c-information-block(column)
-    v-layout(v-if="title || helpText", row)
-      div.subheading.font-weight-bold {{ title }}
-      c-help-icon(
-        v-if="helpText",
-        :text="helpText",
-        :icon="helpIcon",
-        :color="helpIconColor",
-        icon-class="ml-2",
-        max-width="300",
+<template>
+  <v-layout
+    class="c-information-block"
+    column
+  >
+    <v-layout v-if="title || helpText">
+      <div class="text-subtitle-1 font-weight-bold">
+        {{ title }}
+      </div>
+      <c-help-icon
+        v-if="helpText"
+        :text="helpText"
+        :icon="helpIcon"
+        :color="helpIconColor"
+        icon-class="ml-2"
+        max-width="300"
         top
-      )
-    v-layout.mt-2(v-if="$slots.subtitle", row)
-      span.text--secondary
-        slot(name="subtitle")
-    slot
+      />
+    </v-layout>
+    <v-layout
+      v-if="$slots.subtitle"
+      class="mt-2"
+    >
+      <span class="text--secondary">
+        <slot name="subtitle" />
+      </span>
+    </v-layout>
+    <slot />
+  </v-layout>
 </template>
 
 <script>

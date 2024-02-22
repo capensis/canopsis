@@ -5,20 +5,21 @@ exports[`info-popup-form Renders \`info-popup-form\` with custom props 1`] = `
   class="layout column"
 >
   <div
-    class="v-input v-text-field v-select theme--light"
-    role="combobox"
+    class="v-input theme--light v-text-field v-select"
   >
     <div
       class="v-input__control"
     >
       <div
+        aria-expanded="false"
+        aria-haspopup="listbox"
         class="v-input__slot"
+        role="button"
       >
         <div
           class="v-select__slot"
         >
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: absolute;"
           >
@@ -28,10 +29,8 @@ exports[`info-popup-form Renders \`info-popup-form\` with custom props 1`] = `
             class="v-select__selections"
           >
             <input
-              aria-label="Column"
               aria-readonly="false"
-              autocomplete="on"
-              name="column"
+              autocomplete="off"
               readonly="readonly"
               type="text"
             />
@@ -44,16 +43,23 @@ exports[`info-popup-form Renders \`info-popup-form\` with custom props 1`] = `
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 arrow_drop_down
               </i>
             </div>
           </div>
+          <input
+            name="column"
+            type="hidden"
+            value="column"
+          />
         </div>
         <div
           class="v-menu"
-        />
+        >
+          <!---->
+        </div>
       </div>
       <div
         class="v-text-field__details"
@@ -61,8 +67,10 @@ exports[`info-popup-form Renders \`info-popup-form\` with custom props 1`] = `
         <div
           class="v-messages theme--light"
         >
-          <div
+          <transition-group-stub
             class="v-messages__wrapper"
+            name="message-transition"
+            tag="div"
           />
         </div>
       </div>
@@ -78,59 +86,28 @@ exports[`info-popup-form Renders \`info-popup-form\` with custom props 1`] = `
 </div>
 `;
 
-exports[`info-popup-form Renders \`info-popup-form\` with custom props 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-select-list v-card theme--light"
-  >
-    <div
-      class="v-list theme--light"
-      role="list"
-    >
-      <div
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              [object Object]
-            </div>
-          </div>
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-`;
+exports[`info-popup-form Renders \`info-popup-form\` with custom props 2`] = `undefined`;
 
 exports[`info-popup-form Renders \`info-popup-form\` with default props 1`] = `
 <div
   class="layout column"
 >
   <div
-    class="v-input v-text-field v-select theme--light"
-    role="combobox"
+    class="v-input theme--light v-text-field v-select"
   >
     <div
       class="v-input__control"
     >
       <div
+        aria-expanded="false"
+        aria-haspopup="listbox"
         class="v-input__slot"
+        role="button"
       >
         <div
           class="v-select__slot"
         >
           <label
-            aria-hidden="true"
             class="v-label theme--light"
             style="left: 0px; position: absolute;"
           >
@@ -140,10 +117,8 @@ exports[`info-popup-form Renders \`info-popup-form\` with default props 1`] = `
             class="v-select__selections"
           >
             <input
-              aria-label="Column"
               aria-readonly="false"
-              autocomplete="on"
-              name="column"
+              autocomplete="off"
               readonly="readonly"
               type="text"
             />
@@ -156,16 +131,22 @@ exports[`info-popup-form Renders \`info-popup-form\` with default props 1`] = `
             >
               <i
                 aria-hidden="true"
-                class="v-icon material-icons theme--light"
+                class="v-icon notranslate material-icons theme--light"
               >
                 arrow_drop_down
               </i>
             </div>
           </div>
+          <input
+            name="column"
+            type="hidden"
+          />
         </div>
         <div
           class="v-menu"
-        />
+        >
+          <!---->
+        </div>
       </div>
       <div
         class="v-text-field__details"
@@ -173,8 +154,10 @@ exports[`info-popup-form Renders \`info-popup-form\` with default props 1`] = `
         <div
           class="v-messages theme--light"
         >
-          <div
+          <transition-group-stub
             class="v-messages__wrapper"
+            name="message-transition"
+            tag="div"
           />
         </div>
       </div>
@@ -190,36 +173,4 @@ exports[`info-popup-form Renders \`info-popup-form\` with default props 1`] = `
 </div>
 `;
 
-exports[`info-popup-form Renders \`info-popup-form\` with default props 2`] = `
-<div
-  class="v-menu__content theme--light "
-  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
->
-  <div
-    class="v-select-list v-card theme--light"
-  >
-    <div
-      class="v-list theme--light"
-      role="list"
-    >
-      <div
-        role="listitem"
-      >
-        <div
-          class="v-list__tile theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            <div
-              class="v-list__tile__title"
-            >
-              No data available
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-`;
+exports[`info-popup-form Renders \`info-popup-form\` with default props 2`] = `undefined`;

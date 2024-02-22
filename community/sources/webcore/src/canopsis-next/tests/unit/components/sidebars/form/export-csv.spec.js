@@ -54,16 +54,9 @@ describe('export-csv', () => {
       },
     });
 
-    const separatorField = selectSeparatorSelectField(wrapper);
+    selectSeparatorSelectField(wrapper).setValue(EXPORT_CSV_SEPARATORS.semicolon);
 
-    separatorField.setValue(EXPORT_CSV_SEPARATORS.semicolon);
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmitInput({
       exportCsvSeparator: EXPORT_CSV_SEPARATORS.semicolon,
       exportCsvDatetimeFormat: EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
       widgetExportColumns: columns,
@@ -83,16 +76,9 @@ describe('export-csv', () => {
       },
     });
 
-    const datetimeFormatSelectField = selectDatetimeFormatSelectField(wrapper);
+    selectDatetimeFormatSelectField(wrapper).setValue(EXPORT_CSV_DATETIME_FORMATS.dayOfMonthMonthNameYearTime.value);
 
-    datetimeFormatSelectField.setValue(EXPORT_CSV_DATETIME_FORMATS.dayOfMonthMonthNameYearTime.value);
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmitInput({
       exportCsvSeparator: EXPORT_CSV_SEPARATORS.comma,
       exportCsvDatetimeFormat: EXPORT_CSV_DATETIME_FORMATS.dayOfMonthMonthNameYearTime.value,
       widgetExportColumns: columns,
@@ -111,16 +97,9 @@ describe('export-csv', () => {
       },
     });
 
-    const columnsField = selectColumnsWithTemplateField(wrapper);
+    selectColumnsWithTemplateField(wrapper).triggerCustomEvent('input', columns);
 
-    columnsField.vm.$emit('input', columns);
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmitInput({
       exportCsvSeparator: EXPORT_CSV_SEPARATORS.comma,
       exportCsvDatetimeFormat: EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
       widgetExportColumns: columns,
@@ -136,7 +115,7 @@ describe('export-csv', () => {
 
     const menuContents = wrapper.findAllMenus();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     menuContents.wrappers.forEach((menuContent) => {
       expect(menuContent.element).toMatchSnapshot();
     });
@@ -157,7 +136,7 @@ describe('export-csv', () => {
 
     const menuContents = wrapper.findAllMenus();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     menuContents.wrappers.forEach((menuContent) => {
       expect(menuContent.element).toMatchSnapshot();
     });

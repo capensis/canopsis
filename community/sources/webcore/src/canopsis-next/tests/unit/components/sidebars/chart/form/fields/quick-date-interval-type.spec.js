@@ -1,5 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { randomArrayItem } from '@unit/utils/array';
+
 import { QUICK_RANGES } from '@/constants';
 
 import FieldQuickDateIntervalType from '@/components/sidebars/chart/form/fields/quick-date-interval-type.vue';
@@ -25,15 +26,15 @@ describe('quick-date-interval-type', () => {
 
     const newValue = randomArrayItem(Object.values(QUICK_RANGES));
 
-    selectQuickDateIntervalTypeFieldField(wrapper).vm.$emit('input', newValue);
+    selectQuickDateIntervalTypeFieldField(wrapper).triggerCustomEvent('input', newValue);
 
-    expect(wrapper).toEmit('input', newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   test('Renders `quick-date-interval-type` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `quick-date-interval-type` with custom props', () => {
@@ -44,6 +45,6 @@ describe('quick-date-interval-type', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

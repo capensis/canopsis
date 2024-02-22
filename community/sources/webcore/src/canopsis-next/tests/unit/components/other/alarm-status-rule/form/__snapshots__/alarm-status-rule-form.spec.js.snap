@@ -5,11 +5,11 @@ exports[`alarm-status-rule-form Renders \`alarm-status-rule-form\` with custom p
   class="layout column"
 >
   <c-name-field-stub
-    required="required"
+    required=""
     value="name"
   />
   <c-duration-field-stub
-    required="required"
+    required=""
     value="[object Object]"
   />
   <c-priority-field-stub
@@ -22,7 +22,7 @@ exports[`alarm-status-rule-form Renders \`alarm-status-rule-form\` with custom p
     value="3"
   />
   <c-description-field-stub
-    required="required"
+    required=""
     value="description"
   />
   <alarm-status-rule-patterns-form-stub
@@ -38,15 +38,15 @@ exports[`alarm-status-rule-form Renders \`alarm-status-rule-form\` with default 
   class="layout column"
 >
   <c-name-field-stub
-    required="required"
+    required=""
   />
   <c-duration-field-stub
-    required="required"
+    required=""
   />
   <c-priority-field-stub />
   <!---->
   <c-description-field-stub
-    required="required"
+    required=""
   />
   <alarm-status-rule-patterns-form-stub
     class="mt-2"

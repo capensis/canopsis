@@ -1,13 +1,37 @@
-<template lang="pug">
-  div.alarms-timeline-steps
-    ul(v-for="(steps, day) in groupedSteps", :key="day")
-      li(v-for="(step, index) in steps", :key="index")
-        div.alarms-timeline-steps-date.text--disabled(v-show="index === 0")
-          div.date {{ day }}
-        div.alarms-timeline-steps-card
-          div.time.text--disabled {{ step.t | date('time') }}
-          alarms-time-line-flag.flag(:step="step")
-          slot(name="card", :step="step")
+<template>
+  <div class="alarms-timeline-steps">
+    <ul
+      v-for="(groupSteps, day) in groupedSteps"
+      :key="day"
+    >
+      <li
+        v-for="(step, index) in groupSteps"
+        :key="index"
+      >
+        <div
+          v-show="index === 0"
+          class="alarms-timeline-steps-date text--disabled"
+        >
+          <div class="date">
+            {{ day }}
+          </div>
+        </div>
+        <div class="alarms-timeline-steps-card">
+          <div class="time text--disabled">
+            {{ step.t | date('time') }}
+          </div>
+          <alarms-time-line-flag
+            :step="step"
+            class="flag"
+          />
+          <slot
+            :step="step"
+            name="card"
+          />
+        </div>
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script>

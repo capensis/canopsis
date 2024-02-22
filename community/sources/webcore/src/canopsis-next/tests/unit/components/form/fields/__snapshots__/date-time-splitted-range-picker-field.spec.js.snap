@@ -2,7 +2,7 @@
 
 exports[`date-time-splitted-range-picker-field Renders \`date-time-splitted-range-picker-field\` with default props 1`] = `
 <div
-  class="layout date-time-splitted-range-picker-field row"
+  class="layout date-time-splitted-range-picker-field"
 >
   <div
     class="flex date-time-splitted-range-picker-field__start"
@@ -16,7 +16,7 @@ exports[`date-time-splitted-range-picker-field Renders \`date-time-splitted-rang
   <div
     class="date-time-splitted-range-picker-field__time-dash"
   >
-    –
+      –
   </div>
   <div
     class="flex date-time-splitted-range-picker-field__end"
@@ -33,7 +33,7 @@ exports[`date-time-splitted-range-picker-field Renders \`date-time-splitted-rang
 
 exports[`date-time-splitted-range-picker-field Renders \`date-time-splitted-range-picker-field\` with required props 1`] = `
 <div
-  class="layout date-time-splitted-range-picker-field row"
+  class="layout date-time-splitted-range-picker-field"
 >
   <div
     class="flex date-time-splitted-range-picker-field__start"
@@ -50,7 +50,7 @@ exports[`date-time-splitted-range-picker-field Renders \`date-time-splitted-rang
   <div
     class="date-time-splitted-range-picker-field__time-dash"
   >
-    –
+      –
   </div>
   <div
     class="flex date-time-splitted-range-picker-field__end"

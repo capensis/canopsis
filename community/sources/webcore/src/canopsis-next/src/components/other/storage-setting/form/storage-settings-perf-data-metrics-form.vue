@@ -1,15 +1,16 @@
-<template lang="pug">
-  c-information-block(
-    :title="$t('storageSetting.perfDataMetrics.title')",
-    :help-text="$t('storageSetting.perfDataMetrics.titleHelp')",
+<template>
+  <c-information-block
+    :title="$t('storageSetting.perfDataMetrics.title')"
+    :help-text="$t('storageSetting.perfDataMetrics.titleHelp')"
     help-icon-color="info"
-  )
-    c-enabled-duration-field(
-      v-field="form.delete_after",
-      :label="$t('storageSetting.perfDataMetrics.deleteAfter')",
-      :help-text="$t('storageSetting.perfDataMetrics.deleteAfterHelpText')",
+  >
+    <c-enabled-duration-field
+      v-field="form.delete_after"
+      :label="$t('storageSetting.perfDataMetrics.deleteAfter')"
+      :help-text="$t('storageSetting.perfDataMetrics.deleteAfterHelpText')"
       :name="perfDataMetricsDeleteAfterFieldName"
-    )
+    />
+  </c-information-block>
 </template>
 
 <script>

@@ -1,10 +1,10 @@
-import flushPromises from 'flush-promises';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { COLOR_INDICATOR_TYPES, ENTITIES_STATES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
+
+import { geomapPointToForm } from '@/helpers/entities/map/form';
 
 import GeomapPreview from '@/components/other/map/partials/geomap-preview.vue';
-import { COLOR_INDICATOR_TYPES, ENTITIES_STATES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
-import { geomapPointToForm } from '@/helpers/entities/map/form';
 
 const fitBounds = jest.fn();
 
@@ -42,7 +42,7 @@ const triggerPointClick = async (wrapper, index, rect = { left: 0, top: 0, width
   const getBoundingClientRect = jest.spyOn(pointMarker.element, 'getBoundingClientRect')
     .mockReturnValue(rect);
 
-  await pointMarker.vm.$emit('click', {
+  await pointMarker.triggerCustomEvent('click', {
     originalEvent: {
       target: pointMarker.element,
     },
@@ -114,7 +114,7 @@ describe('geomap-preview', () => {
     await triggerPointClick(wrapper, 0);
 
     const pointPopupDialog = selectPointPopupDialog(wrapper);
-    pointPopupDialog.vm.$emit('show:alarms');
+    pointPopupDialog.triggerCustomEvent('show:alarms');
 
     expect(wrapper).toEmit('show:alarms', point);
   });
@@ -187,7 +187,7 @@ describe('geomap-preview', () => {
     await triggerPointClick(wrapper, 0);
 
     const pointPopupDialog = selectPointPopupDialog(wrapper);
-    pointPopupDialog.vm.$emit('show:map');
+    pointPopupDialog.triggerCustomEvent('show:map');
 
     expect(wrapper).toEmit('show:map', point.map);
   });
@@ -208,7 +208,7 @@ describe('geomap-preview', () => {
     await triggerPointClick(wrapper, 0);
 
     const pointPopupDialog = selectPointPopupDialog(wrapper);
-    await pointPopupDialog.vm.$emit('close');
+    await pointPopupDialog.triggerCustomEvent('close');
 
     expect(selectPointPopupDialog(wrapper).element).toBeFalsy();
   });
@@ -224,7 +224,7 @@ describe('geomap-preview', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `geomap-preview` with custom props', async () => {
@@ -249,7 +249,7 @@ describe('geomap-preview', () => {
       width: 5,
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `geomap-preview` with all point types and color indicator impact state', async () => {
@@ -264,7 +264,7 @@ describe('geomap-preview', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `geomap-preview` with all point types and color indicator state', async () => {
@@ -279,7 +279,7 @@ describe('geomap-preview', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `geomap-preview` with all point types and pbehavior enabled', async () => {
@@ -294,6 +294,6 @@ describe('geomap-preview', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

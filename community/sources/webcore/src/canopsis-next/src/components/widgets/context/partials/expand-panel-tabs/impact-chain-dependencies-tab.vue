@@ -1,10 +1,10 @@
-<template lang="pug">
-  service-dependencies.pa-3(
-    :root="item",
-    :columns="columns",
-    impact,
-    openable-root
-  )
+<template>
+  <service-dependencies
+    :root="item"
+    :columns="columns"
+    class="pa-3"
+    impact
+  />
 </template>
 
 <script>

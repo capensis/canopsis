@@ -1,17 +1,20 @@
-<template lang="pug">
-  v-switch(
-    v-field="value",
-    v-on="listeners",
-    :label="label || $t('common.enabled')",
-    :color="color",
-    :disabled="disabled",
-    :readonly="readonly",
+<template>
+  <v-switch
+    v-field="value"
+    :label="label || $t('common.enabled')"
+    :color="color"
+    :disabled="disabled"
+    :readonly="readonly"
     :hide-details="hideDetails"
-  )
-    template(#label="")
-      slot(name="label")
-    template(#append="")
-      slot(name="append")
+    v-on="listeners"
+  >
+    <template #label="">
+      <slot name="label" />
+    </template>
+    <template #append="">
+      <slot name="append" />
+    </template>
+  </v-switch>
 </template>
 
 <script>

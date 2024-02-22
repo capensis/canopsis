@@ -1,8 +1,13 @@
-<template lang="pug">
-  v-list(subheader)
-    v-subheader {{ $t('kpi.collectionSetting.basicMetrics') }}
-    v-list-tile(v-for="basicMetric in basicMetrics", :key="basicMetric")
-      v-list-tile-content {{ basicMetric }}
+<template>
+  <v-list subheader>
+    <v-subheader>{{ $t('kpi.collectionSetting.basicMetrics') }}</v-subheader>
+    <v-list-item
+      v-for="basicMetric in basicMetrics"
+      :key="basicMetric"
+    >
+      <v-list-item-content>{{ basicMetric }}</v-list-item-content>
+    </v-list-item>
+  </v-list>
 </template>
 
 <script>

@@ -1,25 +1,37 @@
-<template lang="pug">
-  card-with-see-alarms-btn.counter-item(
-    :class="itemClasses",
-    :style="itemStyle",
-    :show-button="hasAlarmsListAccess",
-    tile,
+<template>
+  <card-with-see-alarms-btn
+    :class="itemClasses"
+    :style="itemStyle"
+    :show-button="hasAlarmsListAccess"
+    class="counter-item"
+    tile
     @show:alarms="showAlarmListModal"
-  )
-    v-btn.counter-item__help-btn.ma-0(
-      v-if="hasVariablesHelpAccess",
-      icon,
-      small,
+  >
+    <v-btn
+      v-if="hasVariablesHelpAccess"
+      class="counter-item__help-btn ma-0"
+      icon
+      small
       @click.stop="showVariablesHelpModal"
-    )
-      v-icon help
-    div
-      v-layout(justify-start)
-        v-icon.px-3.py-2(size="2em") {{ icon }}
-        c-compiled-template.counter-item__template.pt-3(
-          :template="widget.parameters.blockTemplate",
+    >
+      <v-icon>help</v-icon>
+    </v-btn>
+    <div>
+      <v-layout justify-start>
+        <v-icon
+          class="px-3 py-2"
+          size="2em"
+        >
+          {{ icon }}
+        </v-icon>
+        <c-compiled-template
+          :template="widget.parameters.blockTemplate"
           :context="templateContext"
-        )
+          class="counter-item__template pt-3"
+        />
+      </v-layout>
+    </div>
+  </card-with-see-alarms-btn>
 </template>
 
 <script>

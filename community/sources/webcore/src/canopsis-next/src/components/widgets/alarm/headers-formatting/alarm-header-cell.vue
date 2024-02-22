@@ -1,9 +1,11 @@
-<template lang="pug">
-  component(
-    v-on="component.on",
-    v-bind="component.bind",
+<template>
+  <component
+    v-bind="component.bind"
     :is="component.is"
-  ) {{ component.text }}
+    v-on="component.on"
+  >
+    {{ component.text }}
+  </component>
 </template>
 
 <script>
@@ -59,6 +61,11 @@ export default {
       return {
         is: component || 'span',
         text: this.header.text,
+        bind: {
+          style: {
+            'white-space': 'normal',
+          },
+        },
       };
     },
   },

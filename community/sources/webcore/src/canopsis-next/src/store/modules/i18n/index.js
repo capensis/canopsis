@@ -27,9 +27,6 @@ export default {
 
         Vue.set(i18n, 'locale', locale);
 
-        Vue.$dayspan.setLocale(locale);
-        Vue.$dayspan.refreshTimes(true);
-
         commit(types.SET_LOCALE_PRIORITY, { priority });
       }
     },

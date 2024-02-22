@@ -1,10 +1,8 @@
-import flushPromises from 'flush-promises';
-
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import JunitGanttChart from '@/components/common/chart/junit-gantt-chart.vue';
 
-const newRowsPerPage = 20;
+const newItemsPerPage = 20;
 
 const snapshotStubs = {
   'c-table-pagination': true,
@@ -16,7 +14,7 @@ const stubs = {
     template: `
       <div class="c-table-pagination">
         <button class="next-page" @click="$listeners['update:page'](page + 1)"></button>
-        <button class="rows-per-page" @click="$listeners['update:rows-per-page'](${newRowsPerPage})"></button>
+        <button class="items-per-page" @click="$listeners['update:items-per-page'](${newItemsPerPage})"></button>
       </div>
     `,
   },
@@ -32,7 +30,7 @@ const tooltipFactory = (dataIndex = 0) => ({
 });
 
 describe('junit-gantt-chart', () => {
-  const query = { page: 1, rowsPerPage: 10 };
+  const query = { page: 1, itemsPerPage: 10 };
   const historicalItems = [
     {
       _id: '5d72a420-ca3d-429f-a765-276af1d4cd55',
@@ -234,15 +232,9 @@ describe('junit-gantt-chart', () => {
       },
     });
 
-    const nextPageButton = wrapper.find('.c-table-pagination .next-page');
+    await wrapper.find('.c-table-pagination .next-page').trigger('click');
 
-    await nextPageButton.trigger('click');
-
-    const updateQueryEvents = wrapper.emitted('update:query');
-    const [eventData] = updateQueryEvents[0];
-
-    expect(updateQueryEvents).toHaveLength(1);
-    expect(eventData).toEqual({ ...query, page: query.page + 1 });
+    expect(wrapper).toEmit('update:query', { ...query, page: query.page + 1 });
   });
 
   it('Pagination rows per page event', async () => {
@@ -253,15 +245,9 @@ describe('junit-gantt-chart', () => {
       },
     });
 
-    const rowsPerPageButton = wrapper.find('.c-table-pagination .rows-per-page');
+    await wrapper.find('.c-table-pagination .items-per-page').trigger('click');
 
-    await rowsPerPageButton.trigger('click');
-
-    const updateQueryEvents = wrapper.emitted('update:query');
-    const [eventData] = updateQueryEvents[0];
-
-    expect(updateQueryEvents).toHaveLength(1);
-    expect(eventData).toEqual({ ...query, rowsPerPage: newRowsPerPage, page: 1 });
+    expect(wrapper).toEmit('update:query', { ...query, itemsPerPage: newItemsPerPage, page: 1 });
   });
 
   it('Renders `junit-gantt-chart` tooltip.', async () => {
@@ -275,7 +261,7 @@ describe('junit-gantt-chart', () => {
 
     wrapper.vm.getTooltip({ tooltip: tooltipFactory(0) });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `junit-gantt-chart` tooltip without.', async () => {
@@ -289,7 +275,7 @@ describe('junit-gantt-chart', () => {
 
     wrapper.vm.getTooltip({ tooltip: tooltipFactory(4) });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `junit-gantt-chart` tooltip with opacity 0.', async () => {
@@ -309,7 +295,7 @@ describe('junit-gantt-chart', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `junit-gantt-chart` historical and tooltip (no icon).', async () => {

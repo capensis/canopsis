@@ -2,13 +2,13 @@
 
 exports[`c-json-field Renders \`c-json-field\` with custom props correctly 1`] = `
 <div
-  class="layout row wrap"
+  class="layout wrap"
 >
   <div
     class="flex xs12"
   >
     <div
-      class="v-input v-textarea v-text-field v-input--is-label-active v-input--is-dirty theme--light"
+      class="v-input v-textarea v-input--is-label-active v-input--is-dirty theme--light v-text-field"
     >
       <div
         class="v-input__control"
@@ -20,19 +20,9 @@ exports[`c-json-field Renders \`c-json-field\` with custom props correctly 1`] =
             class="v-text-field__slot"
           >
             <textarea
-              aria-label=""
               data-vv-validate-on="none"
               name="json"
               rows="5"
-            />
-          </div>
-          <div
-            class="v-input__append-inner"
-          >
-            <c-help-icon-stub
-              icon="help"
-              left="left"
-              text=""
             />
           </div>
         </div>
@@ -56,26 +46,26 @@ exports[`c-json-field Renders \`c-json-field\` with custom props correctly 1`] =
     class="flex xs12"
   >
     <button
-      class="ml-0 v-btn v-btn--disabled v-btn--outline v-btn--depressed theme--light primary--text"
+      class="v-btn v-btn--disabled v-btn--outlined theme--light v-size--default"
       disabled="disabled"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        Parse
-      </div>
+      Parse
+      </span>
     </button>
     <button
-      class="v-btn v-btn--disabled v-btn--outline v-btn--depressed theme--light grey--text text--darken-1"
+      class="v-btn-legacy-m--x v-btn v-btn--disabled v-btn--outlined theme--light v-size--default"
       disabled="disabled"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        Reset
-      </div>
+      Reset
+      </span>
     </button>
   </div>
 </div>
@@ -83,13 +73,13 @@ exports[`c-json-field Renders \`c-json-field\` with custom props correctly 1`] =
 
 exports[`c-json-field Renders \`c-json-field\` with custom props correctly 2`] = `
 <div
-  class="layout row wrap"
+  class="layout wrap"
 >
   <div
     class="flex xs12"
   >
     <div
-      class="v-input v-textarea v-text-field v-input--is-label-active v-input--is-dirty v-input--is-readonly theme--light"
+      class="v-input v-textarea v-input--is-label-active v-input--is-dirty v-input--is-readonly theme--light v-text-field"
     >
       <div
         class="v-input__control"
@@ -101,20 +91,10 @@ exports[`c-json-field Renders \`c-json-field\` with custom props correctly 2`] =
             class="v-text-field__slot"
           >
             <textarea
-              aria-label=""
               data-vv-validate-on="none"
               name="json"
               readonly="readonly"
               rows="5"
-            />
-          </div>
-          <div
-            class="v-input__append-inner"
-          >
-            <c-help-icon-stub
-              icon="help"
-              left="left"
-              text=""
             />
           </div>
         </div>
@@ -140,13 +120,13 @@ exports[`c-json-field Renders \`c-json-field\` with custom props correctly 2`] =
 
 exports[`c-json-field Renders \`c-json-field\` with custom props correctly 3`] = `
 <div
-  class="layout row wrap"
+  class="layout wrap"
 >
   <div
     class="flex xs12"
   >
     <div
-      class="v-input v-textarea v-textarea--auto-grow v-textarea--no-resize v-text-field v-text-field--box v-text-field--enclosed v-text-field--outline v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
+      class="v-input v-textarea v-textarea--auto-grow v-textarea--no-resize v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light v-text-field v-text-field--filled v-text-field--enclosed v-text-field--outlined"
     >
       <div
         class="v-input__control"
@@ -154,18 +134,29 @@ exports[`c-json-field Renders \`c-json-field\` with custom props correctly 3`] =
         <div
           class="v-input__slot"
         >
+          <fieldset
+            aria-hidden="true"
+          >
+            <legend
+              style="width: 0px;"
+            >
+              <span
+                class="notranslate"
+              >
+                ​
+              </span>
+            </legend>
+          </fieldset>
           <div
             class="v-text-field__slot"
           >
             <label
-              aria-hidden="true"
               class="v-label v-label--active v-label--is-disabled theme--light"
               style="left: 0px; position: absolute;"
             >
               JSON field
             </label>
             <textarea
-              aria-label="JSON field"
               data-vv-validate-on="none"
               disabled="disabled"
               name="jsonField"
@@ -177,7 +168,7 @@ exports[`c-json-field Renders \`c-json-field\` with custom props correctly 3`] =
           >
             <c-help-icon-stub
               icon="help"
-              left="left"
+              left=""
               text="Test text"
             />
           </div>
@@ -202,26 +193,26 @@ exports[`c-json-field Renders \`c-json-field\` with custom props correctly 3`] =
     class="flex xs12"
   >
     <button
-      class="ml-0 v-btn v-btn--disabled v-btn--outline v-btn--depressed theme--light primary--text"
+      class="v-btn v-btn--disabled v-btn--outlined theme--light v-size--default"
       disabled="disabled"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        Parse
-      </div>
+      Parse
+      </span>
     </button>
     <button
-      class="v-btn v-btn--disabled v-btn--outline v-btn--depressed theme--light grey--text text--darken-1"
+      class="v-btn-legacy-m--x v-btn v-btn--disabled v-btn--outlined theme--light v-size--default"
       disabled="disabled"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        Reset
-      </div>
+      Reset
+      </span>
     </button>
   </div>
 </div>
@@ -229,13 +220,13 @@ exports[`c-json-field Renders \`c-json-field\` with custom props correctly 3`] =
 
 exports[`c-json-field Renders \`c-json-field\` with default props and changed value correctly 1`] = `
 <div
-  class="layout row wrap"
+  class="layout wrap"
 >
   <div
     class="flex xs12"
   >
     <div
-      class="v-input v-textarea v-text-field v-input--is-label-active v-input--is-dirty theme--light"
+      class="v-input v-textarea v-input--is-label-active v-input--is-dirty theme--light v-text-field"
     >
       <div
         class="v-input__control"
@@ -247,19 +238,9 @@ exports[`c-json-field Renders \`c-json-field\` with default props and changed va
             class="v-text-field__slot"
           >
             <textarea
-              aria-label=""
               data-vv-validate-on="none"
               name="json"
               rows="5"
-            />
-          </div>
-          <div
-            class="v-input__append-inner"
-          >
-            <c-help-icon-stub
-              icon="help"
-              left="left"
-              text=""
             />
           </div>
         </div>
@@ -283,24 +264,24 @@ exports[`c-json-field Renders \`c-json-field\` with default props and changed va
     class="flex xs12"
   >
     <button
-      class="ml-0 v-btn v-btn--outline v-btn--depressed theme--light primary--text"
+      class="v-btn v-btn--outlined theme--light v-size--default primary--text"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        Parse
-      </div>
+      Parse
+      </span>
     </button>
     <button
-      class="v-btn v-btn--outline v-btn--depressed theme--light grey--text text--darken-1"
+      class="v-btn-legacy-m--x v-btn v-btn--outlined theme--light v-size--default grey--text text--darken-1"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
-        Reset
-      </div>
+      Reset
+      </span>
     </button>
   </div>
 </div>
@@ -308,13 +289,13 @@ exports[`c-json-field Renders \`c-json-field\` with default props and changed va
 
 exports[`c-json-field Renders \`c-json-field\` with default props and incorrect value correctly 1`] = `
 <div
-  class="layout row wrap"
+  class="layout wrap"
 >
   <div
     class="flex xs12"
   >
     <div
-      class="v-input v-textarea v-text-field v-input--has-state v-input--is-label-active v-input--is-dirty theme--light error--text"
+      class="v-input v-textarea v-input--has-state v-input--is-label-active v-input--is-dirty theme--light v-text-field error--text"
     >
       <div
         class="v-input__control"
@@ -326,19 +307,9 @@ exports[`c-json-field Renders \`c-json-field\` with default props and incorrect 
             class="v-text-field__slot"
           >
             <textarea
-              aria-label=""
               data-vv-validate-on="none"
               name="json"
               rows="5"
-            />
-          </div>
-          <div
-            class="v-input__append-inner"
-          >
-            <c-help-icon-stub
-              icon="help"
-              left="left"
-              text=""
             />
           </div>
         </div>
@@ -347,6 +318,7 @@ exports[`c-json-field Renders \`c-json-field\` with default props and incorrect 
         >
           <div
             class="v-messages theme--light error--text"
+            role="alert"
           >
             <transition-group-stub
               class="v-messages__wrapper"
@@ -370,13 +342,13 @@ exports[`c-json-field Renders \`c-json-field\` with default props and incorrect 
 
 exports[`c-json-field Renders \`c-json-field\` with default props correctly 1`] = `
 <div
-  class="layout row wrap"
+  class="layout wrap"
 >
   <div
     class="flex xs12"
   >
     <div
-      class="v-input v-textarea v-text-field v-input--is-label-active v-input--is-dirty theme--light"
+      class="v-input v-textarea v-input--is-label-active v-input--is-dirty theme--light v-text-field"
     >
       <div
         class="v-input__control"
@@ -388,19 +360,9 @@ exports[`c-json-field Renders \`c-json-field\` with default props correctly 1`] 
             class="v-text-field__slot"
           >
             <textarea
-              aria-label=""
               data-vv-validate-on="none"
               name="json"
               rows="5"
-            />
-          </div>
-          <div
-            class="v-input__append-inner"
-          >
-            <c-help-icon-stub
-              icon="help"
-              left="left"
-              text=""
             />
           </div>
         </div>

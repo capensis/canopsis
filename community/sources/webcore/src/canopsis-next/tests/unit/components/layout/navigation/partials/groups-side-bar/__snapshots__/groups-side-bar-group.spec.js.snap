@@ -49,7 +49,7 @@ exports[`groups-side-bar-group Renders \`groups-side-bar-group\` with empty grou
   orderchanged="true"
 >
   <c-draggable-list-field-stub
-    class="views-panel secondary lighten-1 empty"
+    class="views-panel secondary lighten-1 views-panel--empty"
     disabled="true"
     group="views"
     value=""

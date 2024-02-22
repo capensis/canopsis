@@ -23,6 +23,8 @@ type API interface {
 	ListEntities(c *gin.Context)
 	BulkEntityCreate(c *gin.Context)
 	BulkEntityDelete(c *gin.Context)
+	BulkConnectorCreate(c *gin.Context)
+	BulkConnectorDelete(c *gin.Context)
 }
 
 type api struct {
@@ -416,10 +418,13 @@ func (a *api) BulkCreate(c *gin.Context) {
 		}
 
 		ids = append(ids, pbh.ID)
+
 		return pbh.ID, nil
 	}, a.logger)
 
-	a.sendComputeTask(ids)
+	if len(ids) > 0 {
+		a.sendComputeTask(ids)
+	}
 }
 
 // BulkUpdate
@@ -427,6 +432,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 func (a *api) BulkUpdate(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	ids := make([]string, 0)
+	exists := make(map[string]struct{})
 	bulk.Handler(c, func(request BulkUpdateRequestItem) (string, error) {
 		err := a.transformEditRequest(c, &request.EditRequest)
 		if err != nil {
@@ -447,11 +453,17 @@ func (a *api) BulkUpdate(c *gin.Context) {
 			a.actionLogger.Err(err, "failed to log action")
 		}
 
-		ids = append(ids, pbh.ID)
+		if _, ok := exists[pbh.ID]; !ok {
+			ids = append(ids, pbh.ID)
+			exists[pbh.ID] = struct{}{}
+		}
+
 		return pbh.ID, nil
 	}, a.logger)
 
-	a.sendComputeTask(ids)
+	if len(ids) > 0 {
+		a.sendComputeTask(ids)
+	}
 }
 
 // BulkDelete
@@ -475,10 +487,13 @@ func (a *api) BulkDelete(c *gin.Context) {
 		}
 
 		ids = append(ids, request.ID)
+
 		return request.ID, nil
 	}, a.logger)
 
-	a.sendComputeTask(ids)
+	if len(ids) > 0 {
+		a.sendComputeTask(ids)
+	}
 }
 
 // BulkEntityCreate
@@ -502,9 +517,13 @@ func (a *api) BulkEntityCreate(c *gin.Context) {
 		}
 
 		ids = append(ids, pbh.ID)
+
 		return pbh.ID, nil
 	}, a.logger)
-	a.sendComputeTask(ids)
+
+	if len(ids) > 0 {
+		a.sendComputeTask(ids)
+	}
 }
 
 // BulkEntityDelete
@@ -528,10 +547,81 @@ func (a *api) BulkEntityDelete(c *gin.Context) {
 		}
 
 		ids = append(ids, id)
+
 		return id, nil
 	}, a.logger)
 
-	a.sendComputeTask(ids)
+	if len(ids) > 0 {
+		a.sendComputeTask(ids)
+	}
+}
+
+// BulkConnectorCreate
+// @Param body body []BulkConnectorCreateRequestItem true "body"
+func (a *api) BulkConnectorCreate(c *gin.Context) {
+	userId := c.MustGet(auth.UserKey).(string)
+	ids := make([]string, 0)
+	exists := make(map[string]struct{})
+	bulk.Handler(c, func(request BulkConnectorCreateRequestItem) (string, error) {
+		pbh, err := a.store.ConnectorCreate(c, request)
+		if err != nil || pbh == nil {
+			return "", err
+		}
+
+		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
+			Action:    logger.ActionCreate,
+			ValueType: logger.ValueTypePbehavior,
+			ValueID:   pbh.ID,
+		})
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+
+		if _, ok := exists[pbh.ID]; !ok {
+			ids = append(ids, pbh.ID)
+			exists[pbh.ID] = struct{}{}
+		}
+
+		return pbh.ID, nil
+	}, a.logger)
+
+	if len(ids) > 0 {
+		a.sendComputeTask(ids)
+	}
+}
+
+// BulkConnectorDelete
+// @Param body body []BulkConnectorDeleteRequestItem true "body"
+func (a *api) BulkConnectorDelete(c *gin.Context) {
+	userId := c.MustGet(auth.UserKey).(string)
+	ids := make([]string, 0)
+	exists := make(map[string]struct{})
+	bulk.Handler(c, func(request BulkConnectorDeleteRequestItem) (string, error) {
+		id, err := a.store.ConnectorDelete(c, request)
+		if err != nil || id == "" {
+			return "", err
+		}
+
+		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
+			Action:    logger.ActionDelete,
+			ValueType: logger.ValueTypePbehavior,
+			ValueID:   id,
+		})
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+
+		if _, ok := exists[id]; !ok {
+			ids = append(ids, id)
+			exists[id] = struct{}{}
+		}
+
+		return id, nil
+	}, a.logger)
+
+	if len(ids) > 0 {
+		a.sendComputeTask(ids)
+	}
 }
 
 func (a *api) sendComputeTask(ids []string) {

@@ -19,7 +19,7 @@ describe('cas-login', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `cas-login` without redirect', () => {
@@ -30,6 +30,6 @@ describe('cas-login', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

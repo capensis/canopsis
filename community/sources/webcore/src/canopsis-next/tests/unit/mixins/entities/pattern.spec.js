@@ -4,8 +4,11 @@ import AxiosMockAdapter from 'axios-mock-adapter';
 import { generateShallowRenderer } from '@unit/utils/vue';
 
 import { API_ROUTES } from '@/config';
+
 import request from '@/services/request';
+
 import store from '@/store';
+
 import { entitiesPatternsMixin } from '@/mixins/entities/pattern';
 
 describe('Entities pattern mixin', () => {
@@ -73,7 +76,7 @@ describe('Entities pattern mixin', () => {
   });
 
   test('Patterns list fetched with error', async () => {
-    const error = Faker.datatype.string();
+    const error = Faker.lorem.word();
     const params = {
       page: Faker.datatype.string(),
     };

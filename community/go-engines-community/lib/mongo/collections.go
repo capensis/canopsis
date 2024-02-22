@@ -47,9 +47,7 @@ const (
 	JobConfigMongoCollection            = "job_config"
 	JobMongoCollection                  = "job"
 	JobHistoryMongoCollection           = "job_history"
-	// InstructionWeekStatsMongoCollection
-	// Deprecated : keep for backward compatibility, remove in the next release
-	InstructionWeekStatsMongoCollection = "instruction_week_stats"
+
 	// Data storage alarm collections
 	ResolvedAlarmMongoCollection = "resolved_alarms"
 	ArchivedAlarmMongoCollection = "archived_alarms"
@@ -94,9 +92,11 @@ const (
 	EventFilterRuleCollection    = "eventfilter"
 	EventFilterFailureCollection = "eventfilter_failure"
 
-	EntityServiceCountersCollection = "entity_service_counters"
+	EntityCountersCollection = "entity_counters"
 
 	MetaAlarmStatesCollection = "meta_alarm_states"
 
 	ColorThemeCollection = "color_theme"
+
+	EngineNotificationCollection = "engine_notification"
 )

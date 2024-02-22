@@ -1,28 +1,43 @@
-<template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(close)
-      template(#title="")
-        span {{ $t('modals.createManualMetaAlarm.title') }}
-      template(#text="")
-        v-layout(row)
-          v-flex.text-xs-center
-            alarm-general-table(:items="alarms")
-        v-layout(row)
-          v-divider.my-3
-        v-layout(row)
-          v-flex(xs12)
-            manual-meta-alarm-form(v-model="form")
-      template(#actions="")
-        v-btn(
-          depressed,
-          flat,
+<template>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ $t('modals.createManualMetaAlarm.title') }}</span>
+      </template>
+      <template #text="">
+        <v-layout>
+          <v-flex class="text-center">
+            <alarm-general-table :items="alarms" />
+          </v-flex>
+        </v-layout>
+        <v-layout>
+          <v-divider class="my-3" />
+        </v-layout>
+        <v-layout>
+          <v-flex xs12>
+            <manual-meta-alarm-form v-model="form" />
+          </v-flex>
+        </v-layout>
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
           @click="$modals.hide"
-        ) {{ $t('common.cancel') }}
-        v-btn.primary(
-          :loading="submitting",
-          :disabled="isDisabled",
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :loading="submitting"
+          :disabled="isDisabled"
+          class="primary"
           type="submit"
-        ) {{ $t('common.saveChanges') }}
+        >
+          {{ $t('common.saveChanges') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>

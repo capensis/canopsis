@@ -1,20 +1,25 @@
-<template lang="pug">
-  v-text-field(
-    v-validate="rules",
-    v-field="value",
-    :label="label || $t('common.id')",
-    :error-messages="errors.collect(name)",
-    :disabled="disabled",
-    :readonly="disabled",
-    :name="name",
+<template>
+  <v-text-field
+    v-validate="rules"
+    v-field="value"
+    :label="label || $t('common.id')"
+    :error-messages="errors.collect(name)"
+    :disabled="disabled"
+    :readonly="disabled"
+    :name="name"
     @input="errors.remove(name)"
-  )
-    template(v-if="helpText", #append="")
-      c-help-icon(
-        :text="helpText",
-        icon="help",
+  >
+    <template
+      v-if="helpText"
+      #append=""
+    >
+      <c-help-icon
+        :text="helpText"
+        icon="help"
         left
-      )
+      />
+    </template>
+  </v-text-field>
 </template>
 
 <script>

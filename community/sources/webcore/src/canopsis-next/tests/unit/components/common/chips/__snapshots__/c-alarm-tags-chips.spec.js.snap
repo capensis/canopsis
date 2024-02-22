@@ -7,6 +7,6 @@ exports[`c-alarm-tags-chips Renders \`c-alarm-tags-chips\` with selectedTag and 
   item-text="text"
   item-value="text"
   items="[object Object]"
-  row="row"
+  row=""
 />
 `;

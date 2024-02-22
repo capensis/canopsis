@@ -9,18 +9,19 @@ const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,
   'c-advanced-search-field': true,
   'c-expand-btn': true,
-  'pbehavior-actions': true,
+  'c-action-btn': true,
   'c-table-pagination': true,
   'c-ellipsis': true,
   'c-enabled': true,
   'pbehaviors-mass-actions-panel': true,
+  'pbehavior-actions': true,
   'pbehaviors-list-expand-item': true,
 };
 
 const selectExpandButtonByRow = (wrapper, index) => wrapper
   .findAll('tbody > tr')
   .at(index)
-  .find('c-expand-btn-stub');
+  .find('.v-data-table__expand-icon');
 
 describe('pbehaviors-list', () => {
   const totalItems = 11;
@@ -57,23 +58,23 @@ describe('pbehaviors-list', () => {
     const wrapper = snapshotFactory({
       propsData: {
         pbehaviors: [],
-        pagination: {},
+        options: {},
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pbehaviors-list` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         pbehaviors: pbehaviorsItems,
-        pagination: {
+        options: {
           page: 2,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
           search: 'Filter',
-          sortBy: 'created',
-          descending: true,
+          sortBy: ['created'],
+          sortDesc: [true],
         },
         totalItems: 50,
         pending: true,
@@ -85,26 +86,47 @@ describe('pbehaviors-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pbehaviors-list` with expanded panel', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         pbehaviors: pbehaviorsItems,
-        pagination: {
+        options: {
           page: 1,
-          rowsPerPage: 10,
+          itemsPerPage: 10,
           search: '',
-          sortBy: '',
-          descending: false,
+          sortBy: [],
+          sortDesc: [],
         },
         totalItems: 50,
       },
     });
 
-    await selectExpandButtonByRow(wrapper, 0).vm.$emit('expand');
+    await selectExpandButtonByRow(wrapper, 0).triggerCustomEvent('expand');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  test('Renders `pbehaviors-list` with updatable and old_mongo_query', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        pbehaviors: pbehaviorsItems.map(item => ({ ...item, old_mongo_query: true })),
+        options: {
+          page: 1,
+          itemsPerPage: 10,
+          search: '',
+          sortBy: [],
+          sortDesc: [],
+        },
+        updatable: true,
+        totalItems: 50,
+      },
+    });
+
+    await selectExpandButtonByRow(wrapper, 0).triggerCustomEvent('expand');
+
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -1,12 +1,13 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
+
 import { PATTERN_TYPES } from '@/constants';
+
 import ClickOutside from '@/services/click-outside';
 
 import CreatePattern from '@/components/modals/pattern/create-pattern.vue';
@@ -66,9 +67,7 @@ describe('create-pattern', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -108,14 +107,14 @@ describe('create-pattern', () => {
       vm: patternForm.vm,
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
     expect(action).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
+
+    validator.detach('name');
   });
 
   test('Form submitted after trigger submit button without action', async () => {
@@ -130,9 +129,7 @@ describe('create-pattern', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -159,9 +156,7 @@ describe('create-pattern', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -207,9 +202,7 @@ describe('create-pattern', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -253,11 +246,9 @@ describe('create-pattern', () => {
       instructions: [{}],
     };
 
-    patternForm.vm.$emit('input', newForm);
+    patternForm.triggerCustomEvent('input', newForm);
 
-    const submitButton = selectSubmitButton(wrapper);
-
-    submitButton.trigger('click');
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -277,9 +268,7 @@ describe('create-pattern', () => {
       },
     });
 
-    const cancelButton = selectCancelButton(wrapper);
-
-    cancelButton.trigger('click');
+    selectCancelButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -298,7 +287,7 @@ describe('create-pattern', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `create-pattern` with pattern', () => {
@@ -323,7 +312,7 @@ describe('create-pattern', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `create-pattern` with hidden title', () => {
@@ -341,6 +330,6 @@ describe('create-pattern', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

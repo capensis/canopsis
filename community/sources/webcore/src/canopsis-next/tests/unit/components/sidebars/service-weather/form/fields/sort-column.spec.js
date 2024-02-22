@@ -2,6 +2,7 @@ import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
+
 import { SORT_ORDERS } from '@/constants';
 
 import FieldSortColumn from '@/components/sidebars/service-weather/form/fields/sort-column.vue';
@@ -35,9 +36,9 @@ describe('field-sort-column', () => {
 
     const newColumn = Faker.datatype.string();
 
-    selectColumnField(wrapper).vm.$emit('input', newColumn);
+    selectColumnField(wrapper).triggerCustomEvent('input', newColumn);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       column: newColumn,
       order: SORT_ORDERS.asc,
     });
@@ -54,9 +55,9 @@ describe('field-sort-column', () => {
       },
     });
 
-    selectOrderField(wrapper).vm.$emit('input', SORT_ORDERS.desc);
+    selectOrderField(wrapper).triggerCustomEvent('input', SORT_ORDERS.desc);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       column,
       order: SORT_ORDERS.desc,
     });
@@ -65,7 +66,7 @@ describe('field-sort-column', () => {
   test('Renders `field-sort-column` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
@@ -83,7 +84,7 @@ describe('field-sort-column', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 });

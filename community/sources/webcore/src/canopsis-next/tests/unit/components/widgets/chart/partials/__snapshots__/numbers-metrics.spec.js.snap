@@ -10,7 +10,7 @@ exports[`numbers-metrics Renders \`numbers-metrics\` with custom props 1`] = `
     Custom title
   </h4>
   <div
-    class="layout kpi-widget__list row wrap"
+    class="layout kpi-widget__list wrap"
   >
     <numbers-metrics-item-stub
       metric="[object Object]"
@@ -24,18 +24,18 @@ exports[`numbers-metrics Renders \`numbers-metrics\` with custom props 1`] = `
     />
   </div>
   <div
-    class="layout kpi-widget__actions mt-4 row justify-end"
+    class="layout kpi-widget__actions mt-4 justify-end"
   >
     <button
-      class="ma-0 v-btn v-btn--small theme--light primary"
+      class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--small primary"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
         <i
           aria-hidden="true"
-          class="v-icon v-icon--left material-icons theme--light"
+          class="v-icon notranslate v-icon--left material-icons theme--light"
           style="font-size: 16px;"
         >
           file_download
@@ -43,7 +43,7 @@ exports[`numbers-metrics Renders \`numbers-metrics\` with custom props 1`] = `
         <span>
           Export as csv
         </span>
-      </div>
+      </span>
     </button>
   </div>
 </div>
@@ -56,24 +56,23 @@ exports[`numbers-metrics Renders \`numbers-metrics\` with default props 1`] = `
   <h4
     class="kpi-widget__title"
   >
-    
   </h4>
   <div
-    class="layout kpi-widget__list row wrap"
+    class="layout kpi-widget__list wrap"
   />
   <div
-    class="layout kpi-widget__actions mt-4 row justify-end"
+    class="layout kpi-widget__actions mt-4 justify-end"
   >
     <button
-      class="ma-0 v-btn v-btn--small theme--light primary"
+      class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--small primary"
       type="button"
     >
-      <div
+      <span
         class="v-btn__content"
       >
         <i
           aria-hidden="true"
-          class="v-icon v-icon--left material-icons theme--light"
+          class="v-icon notranslate v-icon--left material-icons theme--light"
           style="font-size: 16px;"
         >
           file_download
@@ -81,7 +80,7 @@ exports[`numbers-metrics Renders \`numbers-metrics\` with default props 1`] = `
         <span>
           Export as csv
         </span>
-      </div>
+      </span>
     </button>
   </div>
 </div>

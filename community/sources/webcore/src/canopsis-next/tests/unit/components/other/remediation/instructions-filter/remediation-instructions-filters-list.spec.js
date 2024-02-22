@@ -46,9 +46,6 @@ describe('remediation-instructions-filters-list', () => {
       },
     });
 
-    const remediationInstructionsFiltersItemField = selectRemediationInstructionsFiltersItemsField(wrapper)
-      .at(0);
-
     const updatedFilter = {
       with: true,
       all: false,
@@ -58,14 +55,11 @@ describe('remediation-instructions-filters-list', () => {
       _id: 'id1',
     };
 
-    remediationInstructionsFiltersItemField.vm.$emit('input', updatedFilter);
+    selectRemediationInstructionsFiltersItemsField(wrapper)
+      .at(0)
+      .triggerCustomEvent('input', updatedFilter);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual([
+    expect(wrapper).toEmitInput([
       updatedFilter,
       ...filters.slice(1),
     ]);
@@ -78,24 +72,17 @@ describe('remediation-instructions-filters-list', () => {
       },
     });
 
-    const remediationInstructionsFiltersItemField = selectRemediationInstructionsFiltersItemsField(wrapper)
-      .at(1);
+    selectRemediationInstructionsFiltersItemsField(wrapper)
+      .at(1)
+      .triggerCustomEvent('remove');
 
-    remediationInstructionsFiltersItemField.vm.$emit('remove');
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-
-    expect(eventData).toEqual(filters.slice(0, -1));
+    expect(wrapper).toEmitInput(filters.slice(0, -1));
   });
 
   it('Renders `remediation-instructions-filters-list` with default props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `remediation-instructions-filters-list` with custom props', () => {
@@ -107,6 +94,6 @@ describe('remediation-instructions-filters-list', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

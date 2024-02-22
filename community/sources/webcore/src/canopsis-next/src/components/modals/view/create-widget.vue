@@ -1,27 +1,58 @@
-<template lang="pug">
-  modal-wrapper(close)
-    template(#title="")
-      span {{ $t('modals.createWidget.title') }}
-    template(#text="")
-      v-layout(column)
-        v-card.my-1.cursor-pointer(
-          v-for="{ type, text, icon, on, children } in availableTypes",
-          v-on="on",
+<template>
+  <modal-wrapper close>
+    <template #title="">
+      <span>{{ $t('modals.createWidget.title') }}</span>
+    </template>
+    <template #text="">
+      <v-layout column>
+        <v-card
+          v-for="{ type, text, icon, on, children } in availableTypes"
           :key="type"
-        )
-          v-menu(:disabled="!children", top, offset-y)
-            template(#activator="{ on: menuOn }")
-              v-card-title(v-on="menuOn", primary-title)
-                v-layout(wrap, justify-between)
-                  v-flex(xs11)
-                    div.subheading {{ text }}
-                  v-flex
-                    v-icon {{ icon }}
-            v-list
-              v-list-tile(v-for="child in children", v-on="child.on", :key="child.type")
-                v-list-tile-avatar
-                  v-icon {{ child.icon }}
-                v-list-tile-title {{ child.text }}
+          class="my-1 cursor-pointer"
+          v-on="on"
+        >
+          <v-menu
+            :disabled="!children"
+            top
+            offset-y
+          >
+            <template #activator="{ on: menuOn }">
+              <v-card-title
+                primary-title
+                v-on="menuOn"
+              >
+                <v-layout
+                  wrap
+                  justify-between
+                >
+                  <v-flex xs11>
+                    <div class="text-subtitle-1">
+                      {{ text }}
+                    </div>
+                  </v-flex>
+                  <v-flex>
+                    <v-icon>{{ icon }}</v-icon>
+                  </v-flex>
+                </v-layout>
+              </v-card-title>
+            </template>
+            <v-list>
+              <v-list-item
+                v-for="child in children"
+                :key="child.type"
+                v-on="child.on"
+              >
+                <v-list-item-avatar>
+                  <v-icon>{{ child.icon }}</v-icon>
+                </v-list-item-avatar>
+                <v-list-item-title>{{ child.text }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </v-card>
+      </v-layout>
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>
