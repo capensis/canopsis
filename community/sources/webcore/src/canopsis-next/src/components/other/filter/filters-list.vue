@@ -13,16 +13,16 @@
     >
       <filter-tile
         v-for="(filter, index) in filters"
-        :filter="filter"
         :key="filter._id"
+        :filter="filter"
         :editable="editable"
         @edit="$emit('edit', filter, index)"
         @delete="$emit('delete', filter, index)"
       />
     </c-draggable-list-field>
     <v-btn
-      class="v-btn-legacy-m--y"
       v-if="addable"
+      class="v-btn-legacy-m--y"
       color="primary"
       outlined
       @click.prevent="$emit('add', $event)"

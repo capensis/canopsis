@@ -4,22 +4,22 @@
     skip-shift
   >
     <panzoom
-      class="mermaid-preview"
       ref="panzoom"
       :style="containerStyles"
       :help-text="$t('mermaid.panzoom.helpText')"
+      class="mermaid-preview"
     >
       <mermaid-code-preview
-        class="mermaid-preview__preview"
         :value="map.parameters.code"
+        class="mermaid-preview__preview"
       />
       <mermaid-points-preview
-        class="mermaid-preview__points"
         :points="map.parameters.points"
         :popup-template="popupTemplate"
         :popup-actions="popupActions"
         :color-indicator="colorIndicator"
         :pbehavior-enabled="pbehaviorEnabled"
+        class="mermaid-preview__points"
         @show:map="$emit('show:map', $event)"
         @show:alarms="$emit('show:alarms', $event)"
       />

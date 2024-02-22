@@ -2,18 +2,18 @@
   <div class="mini-bar-chart">
     <div class="mini-bar-chart--bars">
       <span
-        class="mini-bar-chart--bar"
         v-for="(bar, index) in bars"
-        :style="{ height: bar.height }"
         :key="index"
+        :style="{ height: bar.height }"
         :title="bar.title"
         :class="color"
+        class="mini-bar-chart--bar"
       />
     </div>
     <span
-      class="ml-1 font-weight-bold"
       v-if="lastHistory"
       :class="`${color}--text`"
+      class="ml-1 font-weight-bold"
     >
       {{ lastHistory | fixed(digits) }}{{ unit }}
     </span>

@@ -1,7 +1,7 @@
 <template>
   <v-btn-toggle
-    class="window-size transparent"
     v-field="value"
+    class="window-size transparent"
     light
     tile
     group
@@ -9,8 +9,8 @@
   >
     <v-btn
       v-for="size in availableSizes"
-      :ripple="false"
       :key="size.value"
+      :ripple="false"
       :value="size.value"
       :dark="dark"
       :light="light"

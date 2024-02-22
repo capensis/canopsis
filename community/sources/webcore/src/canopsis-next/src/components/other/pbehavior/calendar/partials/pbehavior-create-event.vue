@@ -1,7 +1,7 @@
 <template>
   <v-form
-    class="pbehavior-form"
     v-click-outside.zIndex="clickOutsideDirective"
+    class="pbehavior-form"
     @submit.prevent="submitHandler"
   >
     <pbehavior-form
@@ -13,9 +13,9 @@
       justify-end
     >
       <v-btn
-        class="error"
         v-show="pbehavior"
         :outlined="$system.dark"
+        class="error"
         @click="remove"
       >
         {{ $t('common.delete') }}

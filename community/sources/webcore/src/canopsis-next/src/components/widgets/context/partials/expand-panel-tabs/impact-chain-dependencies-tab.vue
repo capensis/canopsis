@@ -1,10 +1,9 @@
 <template>
   <service-dependencies
-    class="pa-3"
     :root="item"
     :columns="columns"
+    class="pa-3"
     impact
-    openable-root
   />
 </template>
 

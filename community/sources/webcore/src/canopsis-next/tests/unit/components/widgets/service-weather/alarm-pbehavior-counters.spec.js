@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 
 import AlarmPbehaviorCounters from '@/components/widgets/service-weather/alarm-pbehavior-counters.vue';
 

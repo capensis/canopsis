@@ -31,9 +31,9 @@ describe('flowchart-map-form', () => {
 
     const nameField = selectNameField(wrapper);
 
-    nameField.vm.$emit('input', newName);
+    nameField.triggerCustomEvent('input', newName);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       name: newName,
     });
@@ -56,9 +56,9 @@ describe('flowchart-map-form', () => {
 
     const flowchartEditor = selectFlowchartEditor(wrapper);
 
-    flowchartEditor.vm.$emit('input', newParameters);
+    flowchartEditor.triggerCustomEvent('input', newParameters);
 
-    expect(wrapper).toEmit('input', {
+    expect(wrapper).toEmitInput({
       ...form,
       parameters: newParameters,
     });

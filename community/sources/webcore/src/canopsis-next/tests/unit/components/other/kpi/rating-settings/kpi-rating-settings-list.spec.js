@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 
 import KpiRatingSettingsList from '@/components/other/kpi/rating-settings/kpi-rating-settings-list.vue';
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
@@ -96,18 +94,10 @@ describe('kpi-rating-settings-list', () => {
 
     await enableButton.trigger('click');
 
-    const submitButton = wrapper.findAll('.v-btn').at(1);
-
-    submitButton.trigger('click');
-
-    const changeSelectedEvents = wrapper.emitted('change-selected');
-
-    expect(changeSelectedEvents).toHaveLength(1);
-
-    const [eventData] = changeSelectedEvents[0];
+    wrapper.findAll('.v-btn').at(1).trigger('click');
 
     const [firstRatingSetting] = ratingSettingsItems;
-    expect(eventData).toEqual([{
+    expect(wrapper).toEmit('change-selected', [{
       ...firstRatingSetting,
       enabled: !firstRatingSetting.enabled,
     }]);

@@ -1,13 +1,13 @@
 <template>
   <div>
     <c-advanced-data-table
-      class="v-table-small"
       :headers="headers"
       :items="items"
       :loading="pending"
       :total-items="totalItems"
       :options="options"
       :select-all="removable"
+      class="v-table-small"
       advanced-pagination
       search
       @update:options="$emit('update:options', $event)"

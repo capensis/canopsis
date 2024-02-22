@@ -1,7 +1,7 @@
 <template>
   <v-list-item
-    class="top-bar-menu-link"
     :to="link.route"
+    class="top-bar-menu-link"
     active-class=""
     @click="handleClick"
   >

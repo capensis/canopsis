@@ -1,7 +1,6 @@
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createNumberInputStub } from '@unit/stubs/input';
 
 import CNumberField from '@/components/forms/fields/c-number-field.vue';
@@ -24,12 +23,7 @@ describe('c-number-field', () => {
 
     textField.setValue(newValue);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(newValue);
+    expect(wrapper).toEmitInput(newValue);
   });
 
   it('Renders `c-number-field` with default props', () => {

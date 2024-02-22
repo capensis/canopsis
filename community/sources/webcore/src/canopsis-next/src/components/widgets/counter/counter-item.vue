@@ -1,15 +1,15 @@
 <template>
   <card-with-see-alarms-btn
-    class="counter-item"
     :class="itemClasses"
     :style="itemStyle"
     :show-button="hasAlarmsListAccess"
+    class="counter-item"
     tile
     @show:alarms="showAlarmListModal"
   >
     <v-btn
-      class="counter-item__help-btn ma-0"
       v-if="hasVariablesHelpAccess"
+      class="counter-item__help-btn ma-0"
       icon
       small
       @click.stop="showVariablesHelpModal"
@@ -25,9 +25,9 @@
           {{ icon }}
         </v-icon>
         <c-compiled-template
-          class="counter-item__template pt-3"
           :template="widget.parameters.blockTemplate"
           :context="templateContext"
+          class="counter-item__template pt-3"
         />
       </v-layout>
     </div>

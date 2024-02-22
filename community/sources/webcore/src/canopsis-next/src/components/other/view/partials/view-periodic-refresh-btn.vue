@@ -2,24 +2,24 @@
   <v-tooltip top>
     <template #activator="{ on }">
       <v-btn
-        v-on="on"
         :input-value="isPeriodicRefreshEnabled"
         :loading="pending"
         color="secondary"
         fab
         dark
+        v-on="on"
         @click.stop="refreshHandler"
       >
         <v-icon v-if="!isPeriodicRefreshEnabled">
           refresh
         </v-icon>
         <v-progress-circular
-          class="periodic-refresh-progress"
           v-else
           :rotate="270"
           :size="30"
           :width="2"
           :value="periodicRefreshProgressValue"
+          class="periodic-refresh-progress"
           color="white"
           button
         >

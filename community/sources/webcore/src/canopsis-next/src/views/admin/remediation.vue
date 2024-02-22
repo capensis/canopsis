@@ -54,8 +54,8 @@
       </v-flex>
     </v-layout>
     <c-fab-btn
-      v-on="fabListeners"
       :has-access="hasCreateAccess"
+      v-on="fabListeners"
     >
       <span>{{ tooltipText }}</span>
     </c-fab-btn>

@@ -1,6 +1,4 @@
-import flushPromises from 'flush-promises';
-
-import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { ALARM_FIELDS, DATETIME_FORMATS } from '@/constants';
 
@@ -428,7 +426,7 @@ describe('alarm-column-cell', () => {
 
     const popupBody = selectAlarmColumnPopupBody(wrapper);
 
-    popupBody.vm.$emit('close');
+    popupBody.triggerCustomEvent('close');
 
     await flushPromises();
 

@@ -6,10 +6,10 @@
     >
       <template #activator="{ on }">
         <v-btn
-          v-on="on"
           color="secondary lighten-2"
           fab
           dark
+          v-on="on"
           @click="scrollToTop"
         >
           <v-icon>arrow_upward</v-icon>

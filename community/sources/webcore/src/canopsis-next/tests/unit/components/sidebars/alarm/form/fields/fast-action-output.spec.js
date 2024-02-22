@@ -1,7 +1,6 @@
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-
 import { createInputStub } from '@unit/stubs/input';
 
 import FastActionOutput from '@/components/sidebars/alarm/form/fields/fast-action-output.vue';
@@ -45,16 +44,9 @@ describe('fast-action-output', () => {
       },
     });
 
-    const enabledField = selectEnabledField(wrapper);
+    selectEnabledField(wrapper).triggerCustomEvent('input', false);
 
-    enabledField.vm.$emit('input', false);
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmitInput({
       ...value,
       enabled: false,
     });
@@ -71,18 +63,11 @@ describe('fast-action-output', () => {
       },
     });
 
-    const textField = selectTextField(wrapper);
-
     const newValue = Faker.datatype.string();
 
-    textField.setValue(newValue);
+    selectTextField(wrapper).setValue(newValue);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toEqual({
+    expect(wrapper).toEmitInput({
       ...value,
       value: newValue,
     });

@@ -1,12 +1,12 @@
 <template>
   <div class="network-graph">
     <div
-      class="network-graph__canvas-wrapper"
       ref="canvasWrapper"
+      class="network-graph__canvas-wrapper"
     />
     <div
-      class="v-tooltip__content menuable__content__active network-graph__tooltip"
       ref="tooltip"
+      class="v-tooltip__content menuable__content__active network-graph__tooltip"
     />
   </div>
 </template>

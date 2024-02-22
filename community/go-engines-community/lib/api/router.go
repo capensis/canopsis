@@ -18,8 +18,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
-	libcontextgraphV1 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph/v1"
-	libcontextgraphV2 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph/v2"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitybasic"
@@ -77,6 +75,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	libfile "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/file"
@@ -129,6 +128,8 @@ func RegisterRoutes(
 	authorProvider author.Provider,
 	healthcheckStore healthcheck.Store,
 	tplExecutor libtemplate.Executor,
+	stateSettingsUpdatesChan chan statesetting.RuleUpdatedMessage,
+	enableSameServiceNames bool,
 	logger zerolog.Logger,
 ) {
 	sessionStore := security.GetSessionStore()
@@ -586,6 +587,18 @@ func RegisterRoutes(
 				entityAPI.GetContextGraph,
 			)
 
+			entityRouter.POST(
+				"/check-state-setting",
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionRead, enforcer),
+				entityAPI.CheckStateSetting,
+			)
+
+			entityRouter.GET(
+				"/state-setting",
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionRead, enforcer),
+				entityAPI.GetStateSetting,
+			)
+
 			entityRouter.GET(
 				"/pbehaviors",
 				middleware.Authorize(apisecurity.ObjEntity, model.PermissionRead, enforcer),
@@ -622,7 +635,7 @@ func RegisterRoutes(
 			)
 		}
 
-		entityserviceAPI := entityservice.NewApi(entityservice.NewStore(dbClient, linkGenerator, logger), entityPublChan,
+		entityserviceAPI := entityservice.NewApi(entityservice.NewStore(dbClient, linkGenerator, enableSameServiceNames, logger), entityPublChan,
 			metricsEntityMetaUpdater, common.NewPatternFieldsTransformer(dbClient), actionLogger, logger)
 		entityserviceRouter := protected.Group("/entityservices")
 		{
@@ -1415,50 +1428,50 @@ func RegisterRoutes(
 			)
 		}
 
-		contextGraphAPIV1 := libcontextgraphV1.NewApi(conf, contextgraph.NewMongoStatusReporter(dbClient), logger)
-		contextGraphRouter := protected.Group("/contextgraph")
-		{
-			contextGraphRouter.PUT(
-				"import",
-				middleware.Authorize(apisecurity.ObjContextGraph, model.PermissionCreate, enforcer),
-				contextGraphAPIV1.ImportAll,
-			)
-			contextGraphRouter.PUT(
-				"import-partial",
-				middleware.Authorize(apisecurity.ObjContextGraph, model.PermissionCreate, enforcer),
-				contextGraphAPIV1.ImportPartial,
-			)
-			contextGraphRouter.GET(
-				"import/status/:id",
-				middleware.Authorize(apisecurity.ObjContextGraph, model.PermissionRead, enforcer),
-				contextGraphAPIV1.Status,
-			)
-		}
-
-		contextGraphAPIV2 := libcontextgraphV2.NewApi(conf, contextgraph.NewMongoStatusReporter(dbClient), logger)
+		contextGraphAPI := contextgraph.NewApi(conf, contextgraph.NewMongoStatusReporter(dbClient), logger)
 		protected.PUT(
 			"contextgraph-import",
 			middleware.Authorize(apisecurity.ObjContextGraph, model.PermissionCreate, enforcer),
-			contextGraphAPIV2.ImportAll,
+			contextGraphAPI.ImportAll,
 		)
 		protected.PUT(
 			"contextgraph-import-partial",
 			middleware.Authorize(apisecurity.ObjContextGraph, model.PermissionCreate, enforcer),
-			contextGraphAPIV2.ImportPartial,
+			contextGraphAPI.ImportPartial,
+		)
+		protected.GET(
+			"contextgraph-import-status/:id",
+			middleware.Authorize(apisecurity.ObjContextGraph, model.PermissionRead, enforcer),
+			contextGraphAPI.Status,
 		)
 
 		stateSettingsRouter := protected.Group("/state-settings")
 		{
-			stateSettingsApi := statesettings.NewApi(statesettings.NewStore(dbClient), actionLogger)
-			stateSettingsRouter.PUT(
-				"/:id",
-				middleware.Authorize(apisecurity.PermStateSettings, model.PermissionCan, enforcer),
-				stateSettingsApi.Update,
+			stateSettingsApi := statesettings.NewApi(statesettings.NewStore(dbClient, stateSettingsUpdatesChan), actionLogger)
+			stateSettingsRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionCreate, enforcer),
+				stateSettingsApi.Create,
 			)
 			stateSettingsRouter.GET(
 				"",
-				middleware.Authorize(apisecurity.PermStateSettings, model.PermissionCan, enforcer),
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionRead, enforcer),
 				stateSettingsApi.List,
+			)
+			stateSettingsRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionRead, enforcer),
+				stateSettingsApi.Get,
+			)
+			stateSettingsRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionUpdate, enforcer),
+				stateSettingsApi.Update,
+			)
+			stateSettingsRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionDelete, enforcer),
+				stateSettingsApi.Delete,
 			)
 		}
 
@@ -1888,6 +1901,22 @@ func RegisterRoutes(
 					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionDelete, enforcer),
 					middleware.PreProcessBulk(apiConfigProvider, false),
 					pbehaviorApi.BulkEntityDelete,
+				)
+			}
+
+			connectorPbehaviorRouter := bulkRouter.Group("/connector-pbehaviors")
+			{
+				connectorPbehaviorRouter.POST(
+					"",
+					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionCreate, enforcer),
+					middleware.PreProcessBulk(apiConfigProvider, true),
+					pbehaviorApi.BulkConnectorCreate,
+				)
+				connectorPbehaviorRouter.DELETE(
+					"",
+					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionDelete, enforcer),
+					middleware.PreProcessBulk(apiConfigProvider, true),
+					pbehaviorApi.BulkConnectorDelete,
 				)
 			}
 
