@@ -1098,6 +1098,11 @@ permission:
     _id: models_profile_color_theme
     name: <Current()._id>
     description: Color theme
+  permission_models_stateSetting:
+    <<: *permission_crud
+    _id: models_stateSetting
+    name: <Current()._id>
+    description: State settings
 
   # API permissions
   permission_api_alarm_read:
@@ -1241,7 +1246,7 @@ permission:
     name: <Current()._id>
     description: Roles, permissions, users
   permission_api_state_settings:
-    <<: *permission
+    <<: *permission_crud
     _id: api_state_settings
     name: <Current()._id>
     description: State settings
@@ -1462,6 +1467,7 @@ role:
       "@permission_models_widgetTemplate": 15
       "@permission_models_tag": 15
       "@permission_models_profile_color_theme": 15
+      "@permission_models_stateSetting": 15
       "@permission_listalarm_ack": 1
       "@permission_listalarm_fastAck": 1
       "@permission_listalarm_cancelAck": 1
@@ -1603,7 +1609,7 @@ role:
       "@permission_api_entity": 15
       "@permission_api_contextgraph": 15
       "@permission_api_acl": 15
-      "@permission_api_state_settings": 1
+      "@permission_api_state_settings": 15
       "@permission_api_broadcast_message": 15
       "@permission_api_associative_table": 15
       "@permission_api_user_interface_update": 1

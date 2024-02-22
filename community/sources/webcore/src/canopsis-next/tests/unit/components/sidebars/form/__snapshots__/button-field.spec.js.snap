@@ -11,6 +11,7 @@ exports[`button-field Renders \`button-field\` with custom props 1`] = `
     <div
       class="v-list-item__title"
     >
+      Title
     </div>
   </div>
   <div
@@ -27,11 +28,10 @@ exports[`button-field Renders \`button-field\` with custom props 1`] = `
           class="v-btn__content"
         >
           <span>
-            Edit
+            Create
           </span>
         </span>
       </button>
-      <!---->
     </div>
   </div>
 </div>
@@ -48,6 +48,7 @@ exports[`button-field Renders \`button-field\` with default props 1`] = `
     <div
       class="v-list-item__title"
     >
+      Custom title
     </div>
   </div>
   <div
@@ -57,7 +58,7 @@ exports[`button-field Renders \`button-field\` with default props 1`] = `
       class="layout justify-end"
     >
       <button
-        class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--small"
+        class="primary mr-2 v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--small"
         type="button"
       >
         <span

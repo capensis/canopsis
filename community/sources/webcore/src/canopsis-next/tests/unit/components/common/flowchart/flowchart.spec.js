@@ -1,7 +1,8 @@
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
-import Flowchart from '@/components/common/flowchart/flowchart.vue';
 import { circleShapeToForm, rectShapeToForm } from '@/helpers/flowchart/shapes';
+
+import Flowchart from '@/components/common/flowchart/flowchart.vue';
 
 const stubs = {
   'c-zoom-overlay': true,
@@ -29,9 +30,9 @@ describe('flowchart', () => {
       rect: rectShapeToForm({ _id: 'rect' }),
     };
     const flowchartSidebar = selectFlowchartSidebar(wrapper);
-    flowchartSidebar.vm.$emit('input', newShapes);
+    flowchartSidebar.triggerCustomEvent('input', newShapes);
 
-    expect(wrapper).toEmit('input', newShapes);
+    expect(wrapper).toEmitInput(newShapes);
   });
 
   test('Shapes added after trigger flowchart editor', () => {
@@ -45,9 +46,9 @@ describe('flowchart', () => {
       rect: rectShapeToForm({ _id: 'rect' }),
     };
     const flowchartEditor = selectFlowchartEditor(wrapper);
-    flowchartEditor.vm.$emit('input', newShapes);
+    flowchartEditor.triggerCustomEvent('input', newShapes);
 
-    expect(wrapper).toEmit('input', newShapes);
+    expect(wrapper).toEmitInput(newShapes);
   });
 
   test('Shapes added after trigger flowchart properties', async () => {
@@ -61,15 +62,15 @@ describe('flowchart', () => {
     });
 
     const flowchartSidebar = selectFlowchartSidebar(wrapper);
-    await flowchartSidebar.vm.$emit('update:selected', [shapes.rect]);
+    await flowchartSidebar.triggerCustomEvent('update:selected', [shapes.rect]);
 
     const newShapes = {
       circle: circleShapeToForm({ _id: 'circle' }),
     };
     const flowchartProperties = selectFlowchartProperties(wrapper);
-    flowchartProperties.vm.$emit('input', newShapes);
+    flowchartProperties.triggerCustomEvent('input', newShapes);
 
-    expect(wrapper).toEmit('input', newShapes);
+    expect(wrapper).toEmitInput(newShapes);
   });
 
   test('Points updated after trigger flowchart properties', async () => {
@@ -83,15 +84,15 @@ describe('flowchart', () => {
     });
 
     const flowchartSidebar = selectFlowchartSidebar(wrapper);
-    await flowchartSidebar.vm.$emit('update:selected', [shapes.rect]);
+    await flowchartSidebar.triggerCustomEvent('update:selected', [shapes.rect]);
 
     const newShapes = {
       circle: circleShapeToForm({ _id: 'circle' }),
     };
     const flowchartProperties = selectFlowchartProperties(wrapper);
-    flowchartProperties.vm.$emit('input', newShapes);
+    flowchartProperties.triggerCustomEvent('input', newShapes);
 
-    expect(wrapper).toEmit('input', newShapes);
+    expect(wrapper).toEmitInput(newShapes);
   });
 
   test('Renders `flowchart` with form', () => {

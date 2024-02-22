@@ -29,8 +29,11 @@
           v-if="item.approval"
           bottom
         >
-          <template #activator>
-            <v-icon color="black">
+          <template #activator="{ on }">
+            <v-icon
+              color="black"
+              v-on="on"
+            >
               query_builder
             </v-icon>
           </template>
@@ -147,6 +150,10 @@ export default {
         {
           text: this.$t('common.lastModifiedOn'),
           value: 'last_modified',
+        },
+        {
+          text: this.$t('common.priority'),
+          value: 'priority',
         },
         {
           text: this.$t('common.status'),

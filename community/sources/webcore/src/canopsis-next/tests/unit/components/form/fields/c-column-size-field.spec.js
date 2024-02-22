@@ -19,7 +19,7 @@ describe('c-column-size-field', () => {
 
     radioGroupNode.$emit('change', newSize);
 
-    expect(wrapper).toEmit('input', newSize);
+    expect(wrapper).toEmitInput(newSize);
   });
 
   test('Renders `c-column-size-field` with required props', () => {

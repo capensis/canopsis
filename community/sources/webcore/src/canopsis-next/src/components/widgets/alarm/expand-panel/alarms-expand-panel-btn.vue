@@ -1,9 +1,9 @@
 <template>
   <c-expand-btn
-    class="alarms-expand-panel-btn"
     :class="expandButtonClass"
     :expanded="expanded"
     :loading="pending"
+    class="alarms-expand-panel-btn"
     @expand="showExpandPanel"
   />
 </template>

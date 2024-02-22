@@ -3,7 +3,6 @@
     <v-flex xs12>
       <v-textarea
         v-validate=""
-        v-on="listeners"
         :value="localValue"
         :label="label"
         :name="name"
@@ -15,14 +14,15 @@
         :disabled="disabled"
         :error-messages="errors.collect(name)"
         data-vv-validate-on="none"
+        v-on="listeners"
       >
         <template
           v-if="helpText"
           #append=""
         >
           <c-help-icon
-            icon="help"
             :text="helpText"
+            icon="help"
             left
           />
         </template>
@@ -41,8 +41,8 @@
         {{ $t('common.parse') }}
       </v-btn>
       <v-btn
-        class="v-btn-legacy-m--x"
         :disabled="!wasChanged"
+        class="v-btn-legacy-m--x"
         color="grey darken-1"
         outlined
         @click="reset"

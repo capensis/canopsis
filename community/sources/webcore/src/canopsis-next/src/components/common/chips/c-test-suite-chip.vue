@@ -1,8 +1,8 @@
 <template>
   <div
+    :style="{ background: color }"
     class="test-suite-chip white--text"
     v-on="$listeners"
-    :style="{ background: color }"
   >
     <slot>{{ $t(`testSuite.statuses.${value}`) }}</slot>
   </div>

@@ -3,8 +3,8 @@
     <v-layout align-center>
       <v-layout align-center>
         <v-icon
-          class="draggable ml-0 mr-3 action-drag-handler"
           v-if="editable"
+          class="draggable ml-0 mr-3 action-drag-handler"
           small
         >
           drag_indicator

@@ -5,9 +5,9 @@
   >
     <v-flex @click.stop="">
       <v-simple-checkbox
-        class="ma-0 pa-0"
         :value="selected"
         :disabled="!selectable"
+        class="ma-0 pa-0"
         color="white"
         dark
         @input="$emit('update:selected', $event)"
@@ -30,10 +30,10 @@
           {{ entityName }}
         </div>
         <v-btn
-          class="mx-1"
           v-for="icon in extraIcons"
           :key="icon.icon"
-          :color="icon.color"
+          :style="{ backgroundColor: icon.color }"
+          class="mx-1"
           small
           dark
           icon
@@ -49,9 +49,9 @@
         />
         <div @click.stop="">
           <v-alert
-            class="entity-alert ma-0 px-2 py-1"
             v-if="lastActionUnavailable"
             :value="lastActionUnavailable"
+            class="entity-alert ma-0 px-2 py-1"
             color="black"
             dismissible
             @input="hideAlert"

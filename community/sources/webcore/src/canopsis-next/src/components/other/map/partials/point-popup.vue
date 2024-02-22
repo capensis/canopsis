@@ -4,8 +4,8 @@
     width="400"
   >
     <v-card-title
-      class="pa-2 white--text"
       :style="{ backgroundColor: color }"
+      class="pa-2 white--text"
     >
       <v-layout
         justify-space-between
@@ -41,20 +41,20 @@
       </v-layout>
     </v-card-text>
     <v-layout
-      class="ma-0 background darken-1"
       v-if="actions"
+      class="ma-0 background darken-1"
     >
       <v-btn
-        class="point-popup__action"
         v-if="hasAlarmsListAccess && point.entity"
+        class="point-popup__action"
         text
         @click.stop="$emit('show:alarms')"
       >
         {{ $t('common.seeAlarms') }}
       </v-btn>
       <v-btn
-        class="point-popup__action"
         v-if="point.map"
+        class="point-popup__action"
         text
         @click.stop="$emit('show:map')"
       >

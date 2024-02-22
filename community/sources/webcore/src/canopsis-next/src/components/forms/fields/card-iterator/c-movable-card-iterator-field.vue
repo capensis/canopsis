@@ -2,28 +2,28 @@
   <div>
     <slot name="prepend" />
     <movable-card-iterator-item
-      class="my-2"
       v-for="(item, index) in items"
       :key="item[itemKey]"
       :disabled-up="index === 0"
       :disabled-down="index === items.length - 1"
+      class="my-2"
       @up="up(index)"
       @down="down(index)"
       @remove="removeItemFromArray(index)"
     >
       <template>
         <slot
-          name="item"
           :item="item"
           :index="index"
+          name="item"
         />
       </template>
     </movable-card-iterator-item>
     <slot name="append" />
     <v-layout wrap>
       <v-btn
-        class="mr-2 mx-0"
         v-if="addable"
+        class="mr-2 mx-0"
         color="primary"
         outlined
         @click.prevent="$emit('add')"

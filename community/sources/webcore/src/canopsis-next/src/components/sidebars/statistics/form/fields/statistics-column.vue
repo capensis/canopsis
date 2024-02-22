@@ -9,9 +9,10 @@
       required
     />
     <c-enabled-field
-      class="pa-0 my-2"
       v-model="customLabel"
       :label="$t('settings.columns.customLabel')"
+      class="pa-0 my-2"
+      hide-details
       @change="updateCustomLabel"
     />
     <v-text-field
@@ -26,6 +27,7 @@
       v-field="column.split"
       :label="$t('settings.statisticsWidgetColumn.split')"
       :disabled="!hasPossibilityToSplit"
+      hide-details
     />
     <c-select-field
       v-if="column.split"

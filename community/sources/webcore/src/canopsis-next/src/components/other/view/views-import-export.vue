@@ -32,8 +32,8 @@
             <span>{{ $t('common.export') }}</span>
           </v-btn>
           <file-selector
-            class="my-2 view-import-selector"
             ref="fileSelector"
+            class="my-2 view-import-selector"
             multiple
             hide-details
             @change="importViews"
@@ -42,8 +42,8 @@
               <v-btn
                 class="import-btn ma-0"
                 v-bind="attrs"
-                v-on="on"
                 color="primary"
+                v-on="on"
               >
                 <v-icon left>
                   file_download

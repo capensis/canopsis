@@ -6,97 +6,97 @@
     <c-collapse-panel
       v-if="withAlarm"
       :outline-color="alarmPatternOutlineColor"
-      :title="$t('common.alarmPatterns')"
+      :title="alarmTitle || $t('common.alarmPatterns')"
     >
       <c-alarm-patterns-field
         v-field="value.alarm_pattern"
         :required="isPatternRequired"
         :disabled="disabled"
         :readonly="readonly"
-        :name="alarmFieldName"
+        :name="alarmName"
         :attributes="alarmAttributes"
         :counter="counters.alarm_pattern"
         with-type
-        @input="errors.remove(alarmFieldName)"
+        @input="errors.remove(alarmName)"
       />
     </c-collapse-panel>
     <c-collapse-panel
       v-if="withEntity"
       :outline-color="entityPatternOutlineColor"
-      :title="$t('common.entityPatterns')"
+      :title="entityTitle || $t('common.entityPatterns')"
     >
       <c-entity-patterns-field
         v-field="value.entity_pattern"
         :required="isPatternRequired"
         :disabled="disabled"
         :readonly="readonly"
-        :name="entityFieldName"
+        :name="entityName"
         :attributes="entityAttributes"
         :entity-types="entityTypes"
         :counter="counters.entity_pattern"
         with-type
-        @input="errors.remove(entityFieldName)"
+        @input="errors.remove(entityName)"
       />
     </c-collapse-panel>
     <c-collapse-panel
       v-if="withPbehavior"
       :outline-color="pbehaviorPatternOutlineColor"
-      :title="$t('common.pbehaviorPatterns')"
+      :title="pbehaviorTitle || $t('common.pbehaviorPatterns')"
     >
       <c-pbehavior-patterns-field
         v-field="value.pbehavior_pattern"
         :required="isPatternRequired"
         :disabled="disabled"
         :readonly="readonly"
-        :name="pbehaviorFieldName"
+        :name="pbehaviorName"
         :counter="counters.pbehavior_pattern"
         with-type
-        @input="errors.remove(pbehaviorFieldName)"
+        @input="errors.remove(pbehaviorName)"
       />
     </c-collapse-panel>
     <c-collapse-panel
       v-if="withEvent"
       :outline-color="eventPatternOutlineColor"
-      :title="$t('common.eventPatterns')"
+      :title="eventTitle || $t('common.eventPatterns')"
     >
       <c-event-filter-patterns-field
         v-field="value.event_pattern"
         :required="isPatternRequired"
         :disabled="disabled"
         :readonly="readonly"
-        :name="eventFieldName"
+        :name="eventName"
         :counter="counters.event_pattern"
-        @input="errors.remove(eventFieldName)"
+        @input="errors.remove(eventName)"
       />
     </c-collapse-panel>
     <c-collapse-panel
       v-if="withTotalEntity"
       :outline-color="totalEntityPatternOutlineColor"
-      :title="$t('common.totalEntityPatterns')"
+      :title="totalEntityTitle || $t('common.totalEntityPatterns')"
     >
       <c-entity-patterns-field
         v-field="value.total_entity_pattern"
         :required="isPatternRequired"
         :disabled="disabled"
         :readonly="readonly"
-        :name="totalEntityFieldName"
+        :name="totalEntityName"
         :counter="counters.total_entity_pattern"
         with-type
-        @input="errors.remove(totalEntityFieldName)"
+        @input="errors.remove(totalEntityName)"
       />
     </c-collapse-panel>
     <c-collapse-panel
       v-if="withServiceWeather"
       :outline-color="serviceWeatherPatternOutlineColor"
-      :title="$t('common.serviceWeatherPatterns')"
+      :title="serviceWeatherTitle || $t('common.serviceWeatherPatterns')"
     >
       <c-service-weather-patterns-field
         v-field="value.weather_service_pattern"
         :required="isPatternRequired"
         :disabled="disabled"
-        :name="serviceWeatherFieldName"
+        :name="serviceWeatherName"
         :counter="counters.weather_service_pattern"
-        @input="errors.remove(serviceWeatherFieldName)"
+        @input="errors.remove(serviceWeatherName)"
       />
     </c-collapse-panel>
     <c-alert
@@ -133,9 +133,9 @@
         </v-btn>
       </template>
       <v-btn
-        class="mr-0 ml-4"
         :disabled="!hasPatterns"
         :loading="countersPending"
+        class="mr-0 ml-4"
         color="primary"
         @click="checkFilter"
       >
@@ -165,6 +165,8 @@ import { patternCountEntitiesModalMixin } from '@/mixins/pattern/pattern-count-e
 import PatternCountMessage from '@/components/forms/fields/pattern/pattern-count-message.vue';
 
 const { mapActions: mapPatternActions } = createNamespacedHelpers('pattern');
+
+const getFieldPatternName = (componentName, fieldName) => [componentName, fieldName].filter(Boolean).join('.');
 
 export default {
   inject: ['$validator'],
@@ -243,6 +245,66 @@ export default {
       type: Boolean,
       default: false,
     },
+    alarmTitle: {
+      type: String,
+      default: '',
+    },
+    entityTitle: {
+      type: String,
+      default: '',
+    },
+    pbehaviorTitle: {
+      type: String,
+      default: '',
+    },
+    eventTitle: {
+      type: String,
+      default: '',
+    },
+    totalEntityTitle: {
+      type: String,
+      default: '',
+    },
+    serviceWeatherTitle: {
+      type: String,
+      default: '',
+    },
+    alarmName: {
+      type: String,
+      default() {
+        return getFieldPatternName(this.name, PATTERNS_FIELDS.alarm);
+      },
+    },
+    entityName: {
+      type: String,
+      default() {
+        return getFieldPatternName(this.name, PATTERNS_FIELDS.entity);
+      },
+    },
+    pbehaviorName: {
+      type: String,
+      default() {
+        return getFieldPatternName(this.name, PATTERNS_FIELDS.pbehavior);
+      },
+    },
+    eventName: {
+      type: String,
+      default() {
+        return getFieldPatternName(this.name, PATTERNS_FIELDS.event);
+      },
+    },
+    totalEntityName: {
+      type: String,
+      default() {
+        return getFieldPatternName(this.name, PATTERNS_FIELDS.totalEntity);
+      },
+    },
+    serviceWeatherName: {
+      type: String,
+      default() {
+        return getFieldPatternName(this.name, PATTERNS_FIELDS.serviceWeather);
+      },
+    },
   },
   data() {
     return {
@@ -260,28 +322,15 @@ export default {
       return this.someRequired ? !this.hasPatterns : this.required;
     },
 
-    alarmFieldName() {
-      return this.preparePatternsFieldName(PATTERNS_FIELDS.alarm);
-    },
-
-    eventFieldName() {
-      return this.preparePatternsFieldName(PATTERNS_FIELDS.event);
-    },
-
-    entityFieldName() {
-      return this.preparePatternsFieldName(PATTERNS_FIELDS.entity);
-    },
-
-    pbehaviorFieldName() {
-      return this.preparePatternsFieldName(PATTERNS_FIELDS.pbehavior);
-    },
-
-    totalEntityFieldName() {
-      return this.preparePatternsFieldName(PATTERNS_FIELDS.totalEntity);
-    },
-
-    serviceWeatherFieldName() {
-      return this.preparePatternsFieldName(PATTERNS_FIELDS.serviceWeather);
+    patternNamesToFields() {
+      return {
+        [PATTERNS_FIELDS.alarm]: this.alarmName,
+        [PATTERNS_FIELDS.entity]: this.entityName,
+        [PATTERNS_FIELDS.event]: this.eventName,
+        [PATTERNS_FIELDS.totalEntity]: this.totalEntityName,
+        [PATTERNS_FIELDS.pbehavior]: this.pbehaviorName,
+        [PATTERNS_FIELDS.serviceWeather]: this.serviceWeatherName,
+      };
     },
 
     alarmPatternOutlineColor() {
@@ -425,16 +474,17 @@ export default {
 
     getPatternOutlineColor(name) {
       const rules = formGroupsToPatternRules(this.value[name]?.groups ?? []);
+      const fieldName = this.patternNamesToFields[name];
+
+      if (this.errors.has(fieldName)) {
+        return CSS_COLORS_VARS.error;
+      }
 
       if (!this.isPatternRequired && !rules.length) {
         return undefined;
       }
 
       return this.isValidPatternRules(rules) ? CSS_COLORS_VARS.primary : CSS_COLORS_VARS.error;
-    },
-
-    preparePatternsFieldName(name) {
-      return [this.name, name].filter(Boolean).join('.');
     },
   },
 };

@@ -20,13 +20,9 @@ describe('kpi-chart-export-actions', () => {
       },
     });
 
-    const exportCsvButton = wrapper.findAll('button.v-btn').at(0);
+    wrapper.findAll('button.v-btn').at(0).trigger('click');
 
-    exportCsvButton.trigger('click');
-
-    const exportCsvEvents = wrapper.emitted('export:csv');
-
-    expect(exportCsvEvents).toHaveLength(1);
+    expect(wrapper).toHaveBeenEmit('export:csv');
   });
 
   it('Export png event emitted with correct blob', (done) => {
@@ -47,13 +43,7 @@ describe('kpi-chart-export-actions', () => {
         callback(...args);
 
         Vue.nextTick(() => {
-          const exportCsvEvents = wrapper.emitted('export:png');
-
-          expect(exportCsvEvents).toHaveLength(1);
-
-          const [exportEventData] = exportCsvEvents[0];
-
-          expect(exportEventData).toEqual(expect.any(Blob));
+          expect(wrapper).toEmit('export:png', expect.any(Blob));
 
           done();
         });

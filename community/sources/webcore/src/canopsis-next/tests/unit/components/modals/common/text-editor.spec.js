@@ -1,12 +1,11 @@
-import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
-
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
+
 import ClickOutside from '@/services/click-outside';
 
 import TextEditor from '@/components/modals/common/text-editor.vue';
@@ -294,7 +293,7 @@ describe('text-editor', () => {
 
     const newValue = Faker.datatype.string();
 
-    textEditorField.vm.$emit('input', newValue);
+    textEditorField.triggerCustomEvent('input', newValue);
 
     selectSubmitButton(wrapper).trigger('click');
 

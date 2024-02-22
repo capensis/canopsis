@@ -1,7 +1,7 @@
 <template>
   <v-layout
-    class="my-2"
     v-if="!form"
+    class="my-2"
     justify-center
   >
     <v-progress-circular
@@ -10,8 +10,8 @@
     />
   </v-layout>
   <v-flex
-    class="py-2"
     v-else
+    class="py-2"
     xs10
     offset-xs1
     md8
@@ -26,9 +26,9 @@
         justify-end
       >
         <v-btn
-          class="primary mr-0"
           :disabled="isDisabled"
           :loading="submitting"
+          class="primary mr-0"
           type="submit"
         >
           {{ $t('common.submit') }}
