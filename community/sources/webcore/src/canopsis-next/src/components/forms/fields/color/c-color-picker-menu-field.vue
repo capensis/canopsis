@@ -1,23 +1,24 @@
-<template lang="pug">
-  v-menu(
-    :close-on-content-click="false",
-    :disabled="disabled",
-    content-class="c-color-picker-menu-field__dropdown",
-    bottom,
-    left,
-    lazy-with-unmount,
-    lazy,
+<template>
+  <v-menu
+    :close-on-content-click="false"
+    :disabled="disabled"
+    content-class="c-color-picker-menu-field__dropdown"
+    bottom
+    left
     offset-x
-  )
-    template(#activator="{ on }")
-      v-btn.c-color-picker-menu-field__button.ma-0.pa-0(
-        v-on="on",
-        :style="style",
-        :disabled="disabled",
+  >
+    <template #activator="{ on }">
+      <v-btn
+        :style="style"
+        :disabled="disabled"
+        class="c-color-picker-menu-field__button ma-0 pa-0"
         block
-      )
-    c-color-chrome-picker-field(v-model="colorObject")
-    c-color-compact-picker-field(v-model="colorObject")
+        v-on="on"
+      />
+    </template>
+    <c-color-chrome-picker-field v-model="colorObject" />
+    <c-color-compact-picker-field v-model="colorObject" />
+  </v-menu>
 </template>
 
 <script>
@@ -77,8 +78,9 @@ export default {
 <style lang="scss">
 .c-color-picker-menu-field {
   &__button {
-    min-width: unset;
+    min-width: unset !important;
     max-width: 80px;
+    width: 80px;
     flex-shrink: 0;
   }
 

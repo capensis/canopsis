@@ -22,7 +22,7 @@ exports[`kpi-alarms-filters Renders \`kpi-alarms-filters\` with hour sampling 1`
     />
     <c-alarm-metric-parameters-field-stub
       class="kpi-alarms-toolbar__parameters"
-      hide-details="hide-details"
+      hide-details=""
       value="ticket_active_alarms,ack_alarms"
     />
   </div>
@@ -51,7 +51,7 @@ exports[`kpi-alarms-filters Renders \`kpi-alarms-filters\` with hour sampling an
     />
     <c-alarm-metric-parameters-field-stub
       class="kpi-alarms-toolbar__parameters"
-      hide-details="hide-details"
+      hide-details=""
       value="ticket_active_alarms,ack_alarms"
     />
   </div>
@@ -79,7 +79,7 @@ exports[`kpi-alarms-filters Renders \`kpi-alarms-filters\` with query 1`] = `
     />
     <c-alarm-metric-parameters-field-stub
       class="kpi-alarms-toolbar__parameters"
-      hide-details="hide-details"
+      hide-details=""
       value="ticket_active_alarms,ack_alarms"
     />
   </div>

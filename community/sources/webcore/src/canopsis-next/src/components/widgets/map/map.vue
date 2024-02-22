@@ -1,55 +1,91 @@
-<template lang="pug">
-  div.pa-2
-    v-layout.mx-1(wrap)
-      v-flex(v-if="hasAccessToCategory", xs3)
-        c-entity-category-field.mr-3(:category="query.category", @input="updateCategory")
-      v-flex(v-if="hasAccessToUserFilter", xs4)
-        v-layout(row, align-center)
-          filter-selector(
-            :label="$t('settings.selectAFilter')",
-            :filters="userPreference.filters",
-            :locked-filters="widget.filters",
-            :value="mainFilter",
-            :locked-value="lockedFilter",
-            :disabled="!hasAccessToListFilters && !hasAccessToUserFilter",
+<template>
+  <div class="pa-2">
+    <v-layout
+      class="mx-1"
+      wrap
+    >
+      <v-flex
+        v-if="hasAccessToCategory"
+        xs3
+      >
+        <c-entity-category-field
+          :category="query.category"
+          class="mr-3"
+          @input="updateCategory"
+        />
+      </v-flex>
+      <v-flex
+        v-if="hasAccessToUserFilter"
+        xs4
+      >
+        <v-layout align-center>
+          <filter-selector
+            :label="$t('settings.selectAFilter')"
+            :filters="userPreference.filters"
+            :locked-filters="widget.filters"
+            :value="mainFilter"
+            :locked-value="lockedFilter"
+            :disabled="!hasAccessToListFilters && !hasAccessToUserFilter"
             @input="updateSelectedFilter"
-          )
-          filters-list-btn(
-            v-if="hasAccessToAddFilter || hasAccessToEditFilter",
-            :widget-id="widget._id",
-            :addable="hasAccessToAddFilter",
-            :editable="hasAccessToEditFilter",
-            with-entity,
-            with-service-weather,
+          />
+          <filters-list-btn
+            v-if="hasAccessToAddFilter || hasAccessToEditFilter"
+            :widget-id="widget._id"
+            :addable="hasAccessToAddFilter"
+            :editable="hasAccessToEditFilter"
+            with-entity
+            with-service-weather
             private
-          )
-
-    template(v-if="mapState")
-      v-fade-transition(v-if="pending", key="progress", mode="out-in")
-        v-progress-linear.progress-linear-absolute--top(height="2", indeterminate)
-    template(v-else)
-      v-layout.pa-4(v-if="pending", justify-center)
-        v-progress-circular(color="primary", indeterminate)
-
-    map-breadcrumbs.mb-2(
-      v-if="previousMaps.length",
-      :previous-maps="previousMaps",
-      :active-map="mapState",
-      :pending="pending",
+          />
+        </v-layout>
+      </v-flex>
+    </v-layout>
+    <template v-if="mapState">
+      <v-fade-transition
+        v-if="pending"
+        key="progress"
+        mode="out-in"
+      >
+        <v-progress-linear
+          class="progress-linear-absolute--top"
+          height="2"
+          indeterminate
+        />
+      </v-fade-transition>
+    </template>
+    <template v-else>
+      <v-layout
+        v-if="pending"
+        class="pa-4"
+        justify-center
+      >
+        <v-progress-circular
+          color="primary"
+          indeterminate
+        />
+      </v-layout>
+    </template>
+    <map-breadcrumbs
+      v-if="previousMaps.length"
+      :previous-maps="previousMaps"
+      :active-map="mapState"
+      :pending="pending"
+      class="mb-2"
       @click="backToBreadcrumb"
-    )
-    component(
-      v-if="mapState",
-      :is="component",
-      :map="mapState",
-      :columns="widget.parameters.entitiesColumns",
-      :popup-template="widget.parameters.entity_info_template",
-      :color-indicator="widget.parameters.color_indicator",
-      :pbehavior-enabled="widget.parameters.entities_under_pbehavior_enabled",
-      popup-actions,
-      @show:map="showMap",
+    />
+    <component
+      v-if="mapState"
+      :is="component"
+      :map="mapState"
+      :columns="widget.parameters.entitiesColumns"
+      :popup-template="widget.parameters.entity_info_template"
+      :color-indicator="widget.parameters.color_indicator"
+      :pbehavior-enabled="widget.parameters.entities_under_pbehavior_enabled"
+      popup-actions
+      @show:map="showMap"
       @show:alarms="showAlarmListModal"
-    )
+    />
+  </div>
 </template>
 
 <script>

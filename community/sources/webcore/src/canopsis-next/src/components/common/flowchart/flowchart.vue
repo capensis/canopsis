@@ -1,30 +1,53 @@
-<template lang="pug">
-  div.flowchart.fill-height
-    flowchart-sidebar.flowchart__sidebar(
-      v-if="!readonly",
-      v-field="shapes",
-      :view-box="viewBox",
-      :selected.sync="selected",
-      :background-color="backgroundColor",
-      :readonly="readonly",
+<template>
+  <div class="flowchart fill-height">
+    <flowchart-sidebar
+      v-if="!readonly"
+      v-field="shapes"
+      :view-box="viewBox"
+      :selected.sync="selected"
+      :background-color="backgroundColor"
+      :readonly="readonly"
+      class="flowchart__sidebar"
       @update:backgroundColor="$emit('update:backgroundColor', $event)"
-    )
-      template(#prepend="")
-        slot(name="sidebar-prepend")
-    c-zoom-overlay.flowchart__editor(:class="{ 'flowchart__editor--readonly': readonly }", skip-alt, skip-shift)
-      flowchart-editor(
-        v-field="shapes",
-        :view-box.sync="viewBox",
-        :selected.sync="selected",
-        :background-color="backgroundColor",
-        :readonly="readonly",
+    >
+      <template #prepend="">
+        <slot name="sidebar-prepend" />
+      </template>
+    </flowchart-sidebar>
+    <c-zoom-overlay
+      :class="{ 'flowchart__editor--readonly': readonly }"
+      class="flowchart__editor"
+      skip-alt
+      skip-shift
+    >
+      <flowchart-editor
+        v-field="shapes"
+        :view-box.sync="viewBox"
+        :selected.sync="selected"
+        :background-color="backgroundColor"
+        :readonly="readonly"
         :cursor-style="cursorStyle"
-      )
-        template(#layers="{ data }")
-          slot(name="layers", :data="data")
-    div.flowchart__properties(v-if="selected.length")
-      flowchart-properties(v-if="!readonly", v-field="shapes", :selected="selected")
-    slot
+      >
+        <template #layers="{ data }">
+          <slot
+            :data="data"
+            name="layers"
+          />
+        </template>
+      </flowchart-editor>
+    </c-zoom-overlay>
+    <div
+      v-if="selected.length"
+      class="flowchart__properties"
+    >
+      <flowchart-properties
+        v-if="!readonly"
+        v-field="shapes"
+        :selected="selected"
+      />
+    </div>
+    <slot />
+  </div>
 </template>
 
 <script>

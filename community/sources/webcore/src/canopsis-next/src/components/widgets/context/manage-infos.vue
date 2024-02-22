@@ -1,31 +1,37 @@
-<template lang="pug">
-  div
-    v-layout(justify-end)
-      c-action-btn(
-        :tooltip="$t('entity.addInformation')",
-        icon="add",
+<template>
+  <div>
+    <v-layout justify-end>
+      <c-action-btn
+        :tooltip="$t('entity.addInformation')"
+        icon="add"
         @click="showAddInfoModal"
-      )
-    v-data-table(
-      :items="infos",
-      :headers="tableHeaders",
-      :no-data-text="$t('entity.emptyInfos')",
+      />
+    </v-layout>
+    <v-data-table
+      :items="infos"
+      :headers="tableHeaders"
+      :no-data-text="$t('entity.emptyInfos')"
       item-key="name"
-    )
-      template(#items="{ item, index }")
-        td {{ item.name }}
-        td {{ item.description }}
-        td {{ item.value }}
-        td
-          v-layout(row)
-            c-action-btn(
-              type="edit",
+    >
+      <template #items="{ item, index }">
+        <td>{{ item.name }}</td>
+        <td>{{ item.description }}</td>
+        <td>{{ item.value }}</td>
+        <td>
+          <v-layout>
+            <c-action-btn
+              type="edit"
               @click="showEditInfoModal(index, item)"
-            )
-            c-action-btn(
-              type="delete",
+            />
+            <c-action-btn
+              type="delete"
               @click="removeItemFromArray(index)"
-            )
+            />
+          </v-layout>
+        </td>
+      </template>
+    </v-data-table>
+  </div>
 </template>
 
 <script>

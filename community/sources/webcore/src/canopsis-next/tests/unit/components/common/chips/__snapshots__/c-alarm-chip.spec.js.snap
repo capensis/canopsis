@@ -5,26 +5,35 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with custom props 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
     >
       stealthy
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          3
+          <span
+            class="px-1"
+          >
+            3
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -34,27 +43,35 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with default props 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
     >
       ok
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
-        style="display: none;"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px); display: none;"
         >
-          0
+          <span
+            class="px-1"
+          >
+            0
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -64,7 +81,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: ack 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -72,19 +89,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: ack 1`] = `
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          ack20
+          <span
+            class="px-1"
+          >
+            ack20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -94,7 +120,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: ackRemove 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -102,19 +128,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: ackRemove 1`] = `
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          ackremove20
+          <span
+            class="px-1"
+          >
+            ackremove20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -124,7 +159,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: assocTicket 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -132,19 +167,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: assocTicket 1`] = `
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          assocticket20
+          <span
+            class="px-1"
+          >
+            assocticket20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -154,7 +198,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: autoInstructionAlread
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -162,19 +206,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: autoInstructionAlread
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          autoinstructionalreadyrunning20
+          <span
+            class="px-1"
+          >
+            autoinstructionalreadyrunning20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -184,7 +237,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: autoInstructionComple
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -192,19 +245,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: autoInstructionComple
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          autoinstructioncomplete20
+          <span
+            class="px-1"
+          >
+            autoinstructioncomplete20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -214,7 +276,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: autoInstructionFail 1
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -222,19 +284,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: autoInstructionFail 1
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          autoinstructionfail20
+          <span
+            class="px-1"
+          >
+            autoinstructionfail20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -244,7 +315,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: autoInstructionStart 
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -252,19 +323,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: autoInstructionStart 
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          autoinstructionstart20
+          <span
+            class="px-1"
+          >
+            autoinstructionstart20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -274,7 +354,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: cancel 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -282,19 +362,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: cancel 1`] = `
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          cancel20
+          <span
+            class="px-1"
+          >
+            cancel20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -304,7 +393,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: changeState 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -312,19 +401,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: changeState 1`] = `
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          changestate20
+          <span
+            class="px-1"
+          >
+            changestate20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -334,7 +432,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: check 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -342,19 +440,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: check 1`] = `
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          check20
+          <span
+            class="px-1"
+          >
+            check20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -364,7 +471,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: comment 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -372,19 +479,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: comment 1`] = `
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          comment20
+          <span
+            class="px-1"
+          >
+            comment20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -394,7 +510,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: createManualMetaAlarm
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -402,19 +518,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: createManualMetaAlarm
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          createManualMetaAlarm20
+          <span
+            class="px-1"
+          >
+            createManualMetaAlarm20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -424,7 +549,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: declareTicket 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -432,19 +557,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: declareTicket 1`] = `
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          declareticket20
+          <span
+            class="px-1"
+          >
+            declareticket20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -454,7 +588,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: declareTicketFail 1`]
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -462,19 +596,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: declareTicketFail 1`]
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          declareticketfail20
+          <span
+            class="px-1"
+          >
+            declareticketfail20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -484,7 +627,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: delete 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -492,19 +635,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: delete 1`] = `
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          delete20
+          <span
+            class="px-1"
+          >
+            delete20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -514,7 +666,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: executeInstruction 1`
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -522,19 +674,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: executeInstruction 1`
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          executeInstruction20
+          <span
+            class="px-1"
+          >
+            executeInstruction20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -544,7 +705,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: fastAck 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -552,19 +713,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: fastAck 1`] = `
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          fastAck20
+          <span
+            class="px-1"
+          >
+            fastAck20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -574,7 +744,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: group 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -582,19 +752,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: group 1`] = `
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          group20
+          <span
+            class="px-1"
+          >
+            group20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -604,7 +783,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionAbort 1`] 
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -612,19 +791,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionAbort 1`] 
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          instructionabort20
+          <span
+            class="px-1"
+          >
+            instructionabort20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -634,7 +822,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionComplete 1
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -642,19 +830,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionComplete 1
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          instructioncomplete20
+          <span
+            class="px-1"
+          >
+            instructioncomplete20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -664,7 +861,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionFail 1`] =
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -672,19 +869,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionFail 1`] =
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          instructionfail20
+          <span
+            class="px-1"
+          >
+            instructionfail20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -694,7 +900,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionJobAbort 1
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -702,19 +908,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionJobAbort 1
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          instructionjobabort20
+          <span
+            class="px-1"
+          >
+            instructionjobabort20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -724,7 +939,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionJobComplet
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -732,19 +947,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionJobComplet
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          instructionjobcomplete20
+          <span
+            class="px-1"
+          >
+            instructionjobcomplete20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -754,7 +978,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionJobFail 1`
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -762,19 +986,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionJobFail 1`
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          instructionjobfail20
+          <span
+            class="px-1"
+          >
+            instructionjobfail20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -784,7 +1017,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionJobStart 1
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -792,19 +1025,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionJobStart 1
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          instructionjobstart20
+          <span
+            class="px-1"
+          >
+            instructionjobstart20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -814,7 +1056,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionPause 1`] 
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -822,19 +1064,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionPause 1`] 
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          instructionpause20
+          <span
+            class="px-1"
+          >
+            instructionpause20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -844,7 +1095,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionResume 1`]
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -852,19 +1103,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionResume 1`]
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          instructionresume20
+          <span
+            class="px-1"
+          >
+            instructionresume20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -874,7 +1134,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionStart 1`] 
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -882,19 +1142,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionStart 1`] 
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          instructionstart20
+          <span
+            class="px-1"
+          >
+            instructionstart20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -904,7 +1173,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: invalidate 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -912,19 +1181,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: invalidate 1`] = `
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          invalidate20
+          <span
+            class="px-1"
+          >
+            invalidate20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -934,7 +1212,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: junitTestCaseUpdate 1
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -942,19 +1220,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: junitTestCaseUpdate 1
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          junittestcaseupdate20
+          <span
+            class="px-1"
+          >
+            junittestcaseupdate20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -964,7 +1251,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: junitTestSuiteUpdate 
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -972,19 +1259,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: junitTestSuiteUpdate 
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          junittestsuiteupdate20
+          <span
+            class="px-1"
+          >
+            junittestsuiteupdate20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -994,7 +1290,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: metaalarmattach 1`] =
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -1002,19 +1298,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: metaalarmattach 1`] =
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          metaalarmattach20
+          <span
+            class="px-1"
+          >
+            metaalarmattach20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -1024,7 +1329,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: pause 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -1032,19 +1337,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: pause 1`] = `
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          pause20
+          <span
+            class="px-1"
+          >
+            pause20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -1054,7 +1368,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: pbehaviorAdd 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -1062,19 +1376,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: pbehaviorAdd 1`] = `
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          pbehaviorAdd20
+          <span
+            class="px-1"
+          >
+            pbehaviorAdd20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -1084,7 +1407,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: pbehaviorList 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -1092,19 +1415,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: pbehaviorList 1`] = `
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          pbehaviorList20
+          <span
+            class="px-1"
+          >
+            pbehaviorList20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -1114,7 +1446,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: pbhenter 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -1122,19 +1454,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: pbhenter 1`] = `
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          pbhenter20
+          <span
+            class="px-1"
+          >
+            pbhenter20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -1144,7 +1485,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: pbhleave 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -1152,19 +1493,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: pbhleave 1`] = `
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          pbhleave20
+          <span
+            class="px-1"
+          >
+            pbhleave20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -1174,7 +1524,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: play 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -1182,19 +1532,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: play 1`] = `
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          play20
+          <span
+            class="px-1"
+          >
+            play20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -1204,7 +1563,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: removeAlarmsFromAutoM
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -1212,19 +1571,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: removeAlarmsFromAutoM
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          removeAlarmsFromAutoMetaAlarm20
+          <span
+            class="px-1"
+          >
+            removeAlarmsFromAutoMetaAlarm20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -1234,7 +1602,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: removeAlarmsFromManua
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -1242,19 +1610,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: removeAlarmsFromManua
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          removeAlarmsFromManualMetaAlarm20
+          <span
+            class="px-1"
+          >
+            removeAlarmsFromManualMetaAlarm20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -1264,7 +1641,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: snooze 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -1272,19 +1649,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: snooze 1`] = `
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          snooze20
+          <span
+            class="px-1"
+          >
+            snooze20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -1294,7 +1680,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: statedec 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -1302,19 +1688,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: statedec 1`] = `
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          statedec20
+          <span
+            class="px-1"
+          >
+            statedec20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -1324,7 +1719,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: stateinc 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -1332,19 +1727,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: stateinc 1`] = `
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          stateinc20
+          <span
+            class="px-1"
+          >
+            stateinc20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -1354,7 +1758,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: statusdec 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -1362,19 +1766,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: statusdec 1`] = `
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          statusdec20
+          <span
+            class="px-1"
+          >
+            statusdec20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -1384,7 +1797,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: statusinc 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -1392,19 +1805,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: statusinc 1`] = `
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          statusinc20
+          <span
+            class="px-1"
+          >
+            statusinc20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -1414,7 +1836,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: uncancel 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -1422,19 +1844,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: uncancel 1`] = `
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          uncancel20
+          <span
+            class="px-1"
+          >
+            uncancel20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -1444,7 +1875,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: unsooze 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -1452,19 +1883,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: unsooze 1`] = `
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          unsooze20
+          <span
+            class="px-1"
+          >
+            unsooze20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -1474,7 +1914,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: validate 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -1482,19 +1922,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: validate 1`] = `
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          validate20
+          <span
+            class="px-1"
+          >
+            validate20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -1504,7 +1953,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: webhookComplete 1`] =
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -1512,19 +1961,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: webhookComplete 1`] =
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          webhookcomplete20
+          <span
+            class="px-1"
+          >
+            webhookcomplete20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -1534,7 +1992,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: webhookFail 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -1542,19 +2000,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: webhookFail 1`] = `
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          webhookfail20
+          <span
+            class="px-1"
+          >
+            webhookfail20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -1564,7 +2031,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: webhookStart 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
@@ -1572,19 +2039,28 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: webhookStart 1`] = `
     >
       Invalid val
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          webhookstart20
+          <span
+            class="px-1"
+          >
+            webhookstart20
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -1594,26 +2070,35 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: cancelled 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
     >
       cancelled
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          14
+          <span
+            class="px-1"
+          >
+            14
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -1623,26 +2108,35 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: closed 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
     >
       closed
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          10
+          <span
+            class="px-1"
+          >
+            10
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -1652,26 +2146,35 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: flapping 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
     >
       flapping
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          13
+          <span
+            class="px-1"
+          >
+            13
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -1681,26 +2184,35 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: noEvents 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
     >
       no events
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          15
+          <span
+            class="px-1"
+          >
+            15
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -1710,26 +2222,35 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: ongoing 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
     >
       ongoing
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          11
+          <span
+            class="px-1"
+          >
+            11
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;
@@ -1739,26 +2260,35 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: stealthy 1`] = `
   class="chip-container"
 >
   <span
-    class="v-badge v-badge--overlap"
+    class="v-badge v-badge--overlap theme--light"
   >
     <span
       class="chip"
     >
       stealthy
     </span>
-    <transition-stub
-      name="fab-transition"
+    <span
+      class="v-badge__wrapper"
     >
-      <span
-        class="v-badge__badge secondary"
+      <transition-stub
+        name="scale-rotate-transition"
       >
         <span
-          class="px-1"
+          aria-atomic="true"
+          aria-label="Badge"
+          aria-live="polite"
+          class="v-badge__badge secondary"
+          role="status"
+          style="bottom: calc(100% - 12px); left: calc(100% - 12px);"
         >
-          12
+          <span
+            class="px-1"
+          >
+            12
+          </span>
         </span>
-      </span>
-    </transition-stub>
+      </transition-stub>
+    </span>
   </span>
 </div>
 `;

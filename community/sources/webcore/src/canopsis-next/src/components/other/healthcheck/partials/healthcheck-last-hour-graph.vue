@@ -1,14 +1,27 @@
-<template lang="pug">
-  limited-time-line-chart.text--primary(
-    :datasets="datasets",
-    :options="lastHourChartOptions",
+<template>
+  <limited-time-line-chart
+    :datasets="datasets"
+    :options="lastHourChartOptions"
     :dark="$system.dark"
-  )
-    template(#actions="{ chart }")
-      v-layout.mt-4(justify-end)
-        v-btn.ma-0(color="primary", @click="exportChart(chart)")
-          v-icon(left) file_download
-          span {{ $t('common.downloadAsPng') }}
+    class="text--primary"
+  >
+    <template #actions="{ chart }">
+      <v-layout
+        class="mt-4"
+        justify-end
+      >
+        <v-btn
+          color="primary"
+          @click="exportChart(chart)"
+        >
+          <v-icon left>
+            file_download
+          </v-icon>
+          <span>{{ $t('common.downloadAsPng') }}</span>
+        </v-btn>
+      </v-layout>
+    </template>
+  </limited-time-line-chart>
 </template>
 
 <script>

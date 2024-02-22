@@ -37,22 +37,15 @@ describe('switcher', () => {
       },
     });
 
-    const switchField = selectSwitchField(wrapper);
+    selectSwitchField(wrapper).setChecked(true);
 
-    switchField.setChecked(true);
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-
-    const [eventData] = inputEvents[0];
-    expect(eventData).toBe(true);
+    expect(wrapper).toEmitInput(true);
   });
 
   it('Renders `switcher` with default and required props', () => {
     const wrapper = snapshotFactory();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `switcher` with custom props', () => {
@@ -63,6 +56,6 @@ describe('switcher', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

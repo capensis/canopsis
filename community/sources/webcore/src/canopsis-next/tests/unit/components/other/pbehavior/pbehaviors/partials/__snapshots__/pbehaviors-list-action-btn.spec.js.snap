@@ -7,4 +7,4 @@ exports[`pbehaviors-list-action-btn Renders \`pbehaviors-list-action-btn\` with 
 />
 `;
 
-exports[`pbehaviors-list-action-btn Renders \`pbehaviors-list-action-btn\` without access 1`] = `<!---->`;
+exports[`pbehaviors-list-action-btn Renders \`pbehaviors-list-action-btn\` without access 1`] = `undefined`;

@@ -1,22 +1,34 @@
-<template lang="pug">
-  c-advanced-data-table(
-    :items="detailsItems",
-    :headers="headers",
-    :loading="pending",
-    :pagination.sync="pagination",
-    :total-items="totalItems",
-    advanced-pagination,
+<template>
+  <c-advanced-data-table
+    :items="detailsItems"
+    :headers="headers"
+    :loading="pending"
+    :options.sync="options"
+    :total-items="totalItems"
+    advanced-pagination
     expand
-  )
-    template(#status="{ item }")
-      v-tooltip(:disabled="!item.message", bottom)
-        template(#activator="{ on }")
-          c-test-suite-chip(v-on="on", :value="item.status")
-        span {{ item.message }}
-    template(#time="{ item }")
-      span {{ item.time | fixed }}{{ $constants.TIME_UNITS.second }}
-    template(#expand="{ item }")
-      test-suite-details-expand-panel(:test-suite-detail="item")
+  >
+    <template #status="{ item }">
+      <v-tooltip
+        :disabled="!item.message"
+        bottom
+      >
+        <template #activator="{ on }">
+          <c-test-suite-chip
+            :value="item.status"
+            v-on="on"
+          />
+        </template>
+        <span>{{ item.message }}</span>
+      </v-tooltip>
+    </template>
+    <template #time="{ item }">
+      <span>{{ item.time | fixed }}{{ $constants.TIME_UNITS.second }}</span>
+    </template>
+    <template #expand="{ item }">
+      <test-suite-details-expand-panel :test-suite-detail="item" />
+    </template>
+  </c-advanced-data-table>
 </template>
 
 <script>

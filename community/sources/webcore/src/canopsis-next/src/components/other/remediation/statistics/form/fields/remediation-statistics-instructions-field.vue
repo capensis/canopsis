@@ -1,13 +1,13 @@
-<template lang="pug">
-  v-select(
-    v-field="value",
-    :items="items",
-    :label="$t('common.instructions')",
-    :loading="pending",
-    item-text="name",
-    item-value="_id",
+<template>
+  <v-select
+    v-field="value"
+    :items="items"
+    :label="$t('common.instructions')"
+    :loading="pending"
+    item-text="name"
+    item-value="_id"
     hide-details
-  )
+  />
 </template>
 
 <script>

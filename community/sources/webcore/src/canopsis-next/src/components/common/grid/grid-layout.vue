@@ -1,25 +1,33 @@
-<template lang="pug">
-  div.grid-layout(
-    ref="layout",
-    :class="{ 'grid-layout--disabled': disabled }",
+<template>
+  <div
+    ref="layout"
+    :class="{ 'grid-layout--disabled': disabled }"
     :style="style"
-  )
-    grid-item.grid-layout__placeholder.primary.darken-1(
-      v-if="!disabled",
-      v-show="resizing || moving",
-      v-bind="itemBind",
-      :item="placeholder",
+    class="grid-layout"
+  >
+    <grid-item
+      v-if="!disabled"
+      v-show="resizing || moving"
+      v-bind="itemBind"
       key="placeholder"
-    )
-    grid-item(
-      v-for="layoutItem in layout",
-      v-on="itemOn",
-      v-bind="itemBind",
-      :key="layoutItem.i",
+      :item="placeholder"
+      class="grid-layout__placeholder primary darken-1"
+    />
+    <grid-item
+      v-for="layoutItem in layout"
+      v-bind="itemBind"
+      :key="layoutItem.i"
       :item="layoutItem"
-    )
-      template(#default="props")
-        slot(name="item", v-bind="props")
+      v-on="itemOn"
+    >
+      <template #default="props">
+        <slot
+          name="item"
+          v-bind="props"
+        />
+      </template>
+    </grid-item>
+  </div>
 </template>
 
 <script>

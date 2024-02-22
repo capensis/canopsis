@@ -2,7 +2,7 @@
 
 exports[`c-enabled-field Renders \`c-enabled-field\` with custom props correctly 1`] = `
 <div
-  class="v-input v-input--selection-controls v-input--switch v-input--hide-details v-input--is-disabled theme--light"
+  class="v-input v-input--hide-details v-input--is-disabled theme--light v-input--selection-controls v-input--switch"
 >
   <div
     class="v-input__control"
@@ -15,9 +15,9 @@ exports[`c-enabled-field Renders \`c-enabled-field\` with custom props correctly
       >
         <input
           aria-checked="false"
-          aria-label="Custom label"
+          aria-disabled="true"
           disabled="disabled"
-          role="checkbox"
+          role="switch"
           type="checkbox"
           value=""
         />
@@ -37,8 +37,7 @@ exports[`c-enabled-field Renders \`c-enabled-field\` with custom props correctly
         </div>
       </div>
       <label
-        aria-hidden="true"
-        class="v-label theme--light"
+        class="v-label v-label--is-disabled theme--light"
         style="left: 0px; position: relative;"
       >
         Custom label
@@ -50,7 +49,7 @@ exports[`c-enabled-field Renders \`c-enabled-field\` with custom props correctly
 
 exports[`c-enabled-field Renders \`c-enabled-field\` with default props correctly 1`] = `
 <div
-  class="v-input v-input--selection-controls v-input--switch v-input--is-label-active v-input--is-dirty theme--light"
+  class="v-input v-input--is-label-active v-input--is-dirty theme--light v-input--selection-controls v-input--switch primary--text"
 >
   <div
     class="v-input__control"
@@ -63,8 +62,8 @@ exports[`c-enabled-field Renders \`c-enabled-field\` with default props correctl
       >
         <input
           aria-checked="true"
-          aria-label="Enabled"
-          role="checkbox"
+          aria-disabled="false"
+          role="switch"
           type="checkbox"
           value=""
         />
@@ -84,7 +83,6 @@ exports[`c-enabled-field Renders \`c-enabled-field\` with default props correctl
         </div>
       </div>
       <label
-        aria-hidden="true"
         class="v-label theme--light"
         style="left: 0px; position: relative;"
       >
@@ -92,7 +90,7 @@ exports[`c-enabled-field Renders \`c-enabled-field\` with default props correctl
       </label>
     </div>
     <div
-      class="v-messages theme--light"
+      class="v-messages theme--light primary--text"
     >
       <transition-group-stub
         class="v-messages__wrapper"

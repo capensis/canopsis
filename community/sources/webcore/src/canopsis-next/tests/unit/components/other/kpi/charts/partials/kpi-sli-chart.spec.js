@@ -1,6 +1,5 @@
-import flushPromises from 'flush-promises';
+import { flushPromises, generateRenderer } from '@unit/utils/vue';
 
-import { generateRenderer } from '@unit/utils/vue';
 import { KPI_SLI_GRAPH_DATA_TYPE, SAMPLINGS } from '@/constants';
 
 import KpiSliChart from '@/components/other/kpi/charts/partials/kpi-sli-chart';
@@ -152,7 +151,7 @@ describe('kpi-sli-chart', () => {
 
     const kpiChartExportActions = wrapper.find('kpi-chart-export-actions-stub');
 
-    kpiChartExportActions.vm.$emit('export:csv');
+    kpiChartExportActions.triggerCustomEvent('export:csv');
 
     expect(exportCsv).toHaveBeenCalledTimes(1);
   });
@@ -170,7 +169,7 @@ describe('kpi-sli-chart', () => {
 
     const kpiChartExportActions = wrapper.find('kpi-chart-export-actions-stub');
 
-    kpiChartExportActions.vm.$emit('export:png');
+    kpiChartExportActions.triggerCustomEvent('export:png');
 
     expect(exportPng).toHaveBeenCalledTimes(1);
   });
@@ -260,7 +259,7 @@ describe('kpi-sli-chart', () => {
     const canvas = wrapper.find('canvas');
 
     expect(canvas.element).toMatchCanvasSnapshot();
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `kpi-sli-chart` with downloading true', async () => {
@@ -275,6 +274,6 @@ describe('kpi-sli-chart', () => {
 
     await flushPromises();
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -1,5 +1,6 @@
-import { mergeChangedProperties } from '@/helpers/collection';
 import { cloneDeep } from 'lodash';
+
+import { mergeChangedProperties } from '@/helpers/collection';
 
 describe('mergeChangedProperties', () => {
   it('shouldn\'t change link to empty object', () => {

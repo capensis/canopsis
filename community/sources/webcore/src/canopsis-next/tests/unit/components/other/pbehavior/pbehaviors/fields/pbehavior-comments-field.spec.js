@@ -28,9 +28,9 @@ describe('pbehavior-comments-field', () => {
       },
     });
 
-    selectAddCommentButton(wrapper).vm.$emit('click');
+    selectAddCommentButton(wrapper).triggerCustomEvent('click');
 
-    expect(wrapper).toEmit('input', [
+    expect(wrapper).toEmitInput([
       ...comments,
       {
         key: expect.any(String),
@@ -55,9 +55,9 @@ describe('pbehavior-comments-field', () => {
       message: Faker.datatype.number(),
     };
 
-    selectCommentFieldByIndex(wrapper, 1).vm.$emit('input', newComment);
+    selectCommentFieldByIndex(wrapper, 1).triggerCustomEvent('input', newComment);
 
-    expect(wrapper).toEmit('input', [
+    expect(wrapper).toEmitInput([
       comments[0],
       newComment,
     ]);
@@ -74,9 +74,9 @@ describe('pbehavior-comments-field', () => {
       },
     });
 
-    selectCommentFieldByIndex(wrapper, 1).vm.$emit('remove');
+    selectCommentFieldByIndex(wrapper, 1).triggerCustomEvent('remove');
 
-    expect(wrapper).toEmit('input', [
+    expect(wrapper).toEmitInput([
       comments[0],
     ]);
   });
@@ -86,7 +86,7 @@ describe('pbehavior-comments-field', () => {
       propsData: { comments: [] },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pbehavior-comments-field` with custom props', () => {
@@ -99,6 +99,6 @@ describe('pbehavior-comments-field', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

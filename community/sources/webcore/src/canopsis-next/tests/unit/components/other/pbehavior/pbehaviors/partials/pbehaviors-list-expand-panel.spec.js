@@ -1,4 +1,5 @@
 import { generateRenderer } from '@unit/utils/vue';
+
 import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
 
 import PbehaviorsListExpandItem from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-list-expand-item.vue';
@@ -10,7 +11,7 @@ const stubs = {
   'pbehavior-recurrence-rule': true,
 };
 
-const selectTabItems = wrapper => wrapper.findAll('a.v-tabs__item');
+const selectTabItems = wrapper => wrapper.findAll('.v-tab');
 const selectTabItemByIndex = (wrapper, index) => selectTabItems(wrapper).at(index);
 
 describe('pbehaviors-list-expand-item', () => {
@@ -29,7 +30,7 @@ describe('pbehaviors-list-expand-item', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pbehaviors-list-expand-item` with custom props', () => {
@@ -44,7 +45,7 @@ describe('pbehaviors-list-expand-item', () => {
       },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders `pbehaviors-list-expand-item` with opened entities tab', async () => {
@@ -58,7 +59,7 @@ describe('pbehaviors-list-expand-item', () => {
 
     await selectTabItemByIndex(wrapper, 1).trigger('click');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pbehaviors-list-expand-item` with opened comments tab', async () => {
@@ -73,7 +74,7 @@ describe('pbehaviors-list-expand-item', () => {
 
     await selectTabItemByIndex(wrapper, 2).trigger('click');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 
   test('Renders `pbehaviors-list-expand-item` with opened recurrence rule tab', async () => {
@@ -88,6 +89,6 @@ describe('pbehaviors-list-expand-item', () => {
 
     await selectTabItemByIndex(wrapper, 3).trigger('click');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

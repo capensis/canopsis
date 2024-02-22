@@ -1,15 +1,37 @@
-<template lang="pug">
-  div
-    v-layout(v-for="(value, index) in values", :key="index", align-center)
-      v-flex
-        v-text-field(
-          v-field="values[index]",
-          :disabled="disabled",
+<template>
+  <div>
+    <v-layout
+      v-for="(value, index) in values"
+      :key="index"
+      align-center
+    >
+      <v-flex>
+        <v-text-field
+          v-field="values[index]"
+          :disabled="disabled"
           :label="$t('common.value')"
-        )
-      c-action-btn(v-if="!disabled", type="delete", @click="removeItemFromArray(index)")
-    v-messages(:value="errorMessages", color="error")
-    v-btn.mx-0(:disabled="disabled", color="primary", outline, @click="addItem") {{ $t('common.add') }}
+        />
+      </v-flex>
+      <c-action-btn
+        v-if="!disabled"
+        type="delete"
+        @click="removeItemFromArray(index)"
+      />
+    </v-layout>
+    <v-messages
+      :value="errorMessages"
+      color="error"
+    />
+    <v-btn
+      :disabled="disabled"
+      class="v-btn-legacy-m--y"
+      color="primary"
+      outlined
+      @click="addItem"
+    >
+      {{ $t('common.add') }}
+    </v-btn>
+  </div>
 </template>
 
 <script>

@@ -1,48 +1,88 @@
-<template lang="pug">
-  v-tabs.view-tabs(
-    ref="tabs",
-    :key="vTabsKey",
-    :value="$route.fullPath",
-    :class="{ hidden: tabs.length < 2 && !editing, 'tabs-editing': editing }",
-    :hide-slider="changed",
-    color="secondary lighten-2",
-    slider-color="primary",
-    dark
-  )
-    c-draggable-list-field.d-flex(
-      v-if="tabs.length",
-      :value="tabs",
-      :disabled="!editing",
-      drag-class="draggable-item--dragging",
-      chosen-class="draggable-item--chosen",
-      @end="onDragEnd",
+<template>
+  <v-tabs
+    ref="tabs"
+    :key="vTabsKey"
+    :value="$route.fullPath"
+    :class="{ hidden: tabs.length &lt; 2 && !editing, 'tabs-editing': editing }"
+    :hide-slider="changed"
+    class="view-tabs"
+    background-color="secondary lighten-2"
+    slider-color="primary"
+  >
+    <c-draggable-list-field
+      v-if="tabs.length"
+      :value="tabs"
+      :disabled="!editing"
+      class="d-flex"
+      drag-class="draggable-item--dragging"
+      chosen-class="draggable-item--chosen"
+      @end="onDragEnd"
       @input="$emit('update:tabs', $event)"
-    )
-      v-tab.draggable-item(
-        v-for="{ to, tab, title, key } in preparedTabs",
-        :key="key",
-        :disabled="changed",
-        :to="to",
-        exact,
+    >
+      <v-tab
+        v-for="{ to, tab, title, key } in preparedTabs"
+        :key="key"
+        :to="to"
+        class="draggable-item"
+        exact
         ripple
-      )
-        span {{ title }}
-        template(v-if="updatable && editing")
-          v-btn(small, flat, icon, @click.prevent="showUpdateTabModal(tab)")
-            v-icon(small) edit
-          v-btn(small, flat, icon, @click.prevent="showSelectViewModal(tab)")
-            v-icon(small) file_copy
-          v-btn(small, flat, icon, @click.prevent="showDeleteTabModal(tab)")
-            v-icon(small) delete
-    template(v-if="$scopedSlots.default")
-      v-tabs-items(touchless)
-        v-tab-item(
-          v-for="{ to, tab, key } in preparedTabs",
-          :key="key",
-          :value="to",
-          lazy
-        )
-          slot(:tab="tab", :visible="to === $route.fullPath")
+      >
+        <span>{{ title }}</span>
+        <template v-if="updatable && editing">
+          <v-btn
+            :disabled="changed"
+            small
+            text
+            icon
+            @click.prevent="showUpdateTabModal(tab)"
+          >
+            <v-icon small>
+              edit
+            </v-icon>
+          </v-btn>
+          <v-btn
+            :disabled="changed"
+            small
+            text
+            icon
+            @click.prevent="showSelectViewModal(tab)"
+          >
+            <v-icon small>
+              file_copy
+            </v-icon>
+          </v-btn>
+          <v-btn
+            :disabled="changed"
+            small
+            text
+            icon
+            @click.prevent="showDeleteTabModal(tab)"
+          >
+            <v-icon small>
+              delete
+            </v-icon>
+          </v-btn>
+        </template>
+      </v-tab>
+    </c-draggable-list-field>
+    <template v-if="$scopedSlots.default">
+      <v-tabs-items
+        :value="$route.fullPath"
+        touchless
+      >
+        <v-tab-item
+          v-for="{ to, tab, key } in preparedTabs"
+          :key="key"
+          :value="to"
+        >
+          <slot
+            :tab="tab"
+            :visible="to === $route.fullPath"
+          />
+        </v-tab-item>
+      </v-tabs-items>
+    </template>
+  </v-tabs>
 </template>
 
 <script>
@@ -214,7 +254,7 @@ export default {
 
 <style lang="scss" scoped>
   .view-tabs.hidden {
-    & ::v-deep > .v-tabs__bar {
+    & ::v-deep > .v-tabs-bar {
       display: none;
     }
   }

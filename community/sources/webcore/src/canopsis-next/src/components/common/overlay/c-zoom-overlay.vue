@@ -1,9 +1,18 @@
-<template lang="pug">
-  div.zoom-overlay__wrapper(@wheel="wheelListener")
-    v-fade-transition
-      div.zoom-overlay(v-if="shown")
-        span.zoom-overlay__text {{ $t('common.ctrlZoom') }}
-    slot
+<template>
+  <div
+    class="zoom-overlay__wrapper"
+    @wheel="wheelListener"
+  >
+    <v-fade-transition>
+      <div
+        v-if="shown"
+        class="zoom-overlay"
+      >
+        <span class="zoom-overlay__text">{{ $t('common.ctrlZoom') }}</span>
+      </div>
+    </v-fade-transition>
+    <slot />
+  </div>
 </template>
 
 <script>

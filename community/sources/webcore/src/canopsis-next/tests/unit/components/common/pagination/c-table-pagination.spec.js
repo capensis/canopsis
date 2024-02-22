@@ -6,7 +6,7 @@ import CTablePagination from '@/components/common/pagination/c-table-pagination.
 
 const mockData = {
   page: Faker.datatype.number(),
-  rowsPerPage: Faker.datatype.number(),
+  itemsPerPage: Faker.datatype.number(),
   falseTotalItems: 0,
   totalItems: Faker.datatype.number({ min: 1 }),
 };
@@ -17,15 +17,15 @@ const stubs = {
       <input class="c-pagination" @input="$listeners.input(+$event.target.value)" />
     `,
   },
-  'c-records-per-page-field': {
+  'c-items-per-page-field': {
     template: `
-      <input class="c-records-per-page-field" @input="$listeners.input(+$event.target.value)" />
+      <input class="c-items-per-page-field" @input="$listeners.input(+$event.target.value)" />
     `,
   },
 };
 
 const snapshotStubs = {
-  'c-records-per-page-field': true,
+  'c-items-per-page-field': true,
   'c-pagination': true,
 };
 
@@ -44,35 +44,25 @@ describe('c-table-pagination', () => {
     const { page } = mockData;
     const wrapper = factory();
 
-    const pagination = wrapper.find('.c-pagination');
+    wrapper.find('.c-pagination').setValue(page);
 
-    pagination.setValue(page);
-
-    const updatePageEvents = wrapper.emitted('update:page');
-
-    expect(updatePageEvents).toHaveLength(1);
-    expect(updatePageEvents[0]).toEqual([page]);
+    expect(wrapper).toEmit('update:page', page);
   });
 
   it('Update pagination rows per page', () => {
-    const { rowsPerPage } = mockData;
+    const { itemsPerPage } = mockData;
     const wrapper = factory();
 
-    const recordsPerPage = wrapper.find('.c-records-per-page-field');
+    wrapper.find('.c-items-per-page-field').setValue(itemsPerPage);
 
-    recordsPerPage.setValue(rowsPerPage);
-
-    const updateRowsPerPageEvents = wrapper.emitted('update:rows-per-page');
-
-    expect(updateRowsPerPageEvents).toHaveLength(1);
-    expect(updateRowsPerPageEvents[0]).toEqual([rowsPerPage]);
+    expect(wrapper).toEmit('update:items-per-page', itemsPerPage);
   });
 
   it('Renders `c-table-pagination` with custom props', () => {
     const wrapper = snapshotFactory({
-      propsData: { page: 3, rowsPerPage: 10, totalItems: 100 },
+      propsData: { page: 3, itemsPerPage: 10, totalItems: 100 },
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });

@@ -47,5 +47,7 @@ type Sender interface {
 
 	SendEventMetrics(alarm types.Alarm, entity types.Entity, alarmChange types.AlarmChange, timestamp time.Time, initiator, userID, instructionID, notAckedMetricType string)
 
+	SendSliMetric(timestamp time.Time, alarm types.Alarm, entity types.Entity)
+
 	SendMessageRate(timestamp time.Time)
 }
