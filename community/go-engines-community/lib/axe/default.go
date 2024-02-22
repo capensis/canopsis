@@ -48,6 +48,7 @@ type Options struct {
 	FifoAckExchange          string
 	PeriodicalWaitTime       time.Duration
 	TagsPeriodicalWaitTime   time.Duration
+	SliPeriodicalWaitTime    time.Duration
 	WithRemediation          bool
 	RecomputeAllOnInit       bool
 	Workers                  int
@@ -62,6 +63,7 @@ func ParseOptions() Options {
 	flag.DurationVar(&opts.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
 	flag.StringVar(&opts.FifoAckExchange, "fifoAckExchange", canopsis.FIFOAckExchangeName, "Publish FIFO Ack event to this exchange.")
 	flag.DurationVar(&opts.TagsPeriodicalWaitTime, "tagsPeriodicalWaitTime", 5*time.Second, "Duration to wait between two run of periodical process to update alarm tags")
+	flag.DurationVar(&opts.SliPeriodicalWaitTime, "sliPeriodicalWaitTime", 5*time.Minute, "Duration to wait between two run of periodical process to update SLI metrics")
 	flag.BoolVar(&opts.WithRemediation, "withRemediation", false, "Start remediation instructions")
 	flag.BoolVar(&opts.RecomputeAllOnInit, "recomputeAllOnInit", false, "Recompute entity services on init.")
 	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
